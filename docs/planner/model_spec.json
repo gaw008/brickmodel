@@ -1,0 +1,809 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema_version": "0.1.0",
+  "model_id": "sludge-brick-vme-mvp",
+  "status": "design_proposal",
+  "language": "zh-CN",
+  "purpose": "Virtual screening and inverse design of synthetic sewage-sludge fingerprints in a fixed shale/coal-gangue fired-brick matrix and fixed tunnel-kiln spatial boundary map.",
+  "prohibited_uses": [
+    "direct_production_control",
+    "automatic_PLC_or_kiln_car_write",
+    "regulatory_compliance_claim_without_supplied_thresholds_and_validation",
+    "claim_of_guaranteed_product_quality"
+  ],
+  "canonical_basis": {
+    "feed_fraction_basis": "kg_dry_solids",
+    "moisture_basis": "kg_water_per_kg_wet_feed",
+    "species_amount_basis": "mol_per_m3_bulk",
+    "temperature_internal_unit": "K",
+    "pressure_internal_unit": "Pa",
+    "time_internal_unit": "s",
+    "normalization_tolerance": 1e-08,
+    "rules": [
+      "wet mass is converted to dry mass before mixture fractions are formed",
+      "crystalline phases, amorphous oxide pool, organic pseudo-components and trace elements must not double-count elements",
+      "all mixture and internal component simplexes must close within normalization_tolerance"
+    ]
+  },
+  "dimension_registry": {
+    "base_order": ["mass", "length", "time", "temperature", "amount"],
+    "kg": [1, 0, 0, 0, 0],
+    "m": [0, 1, 0, 0, 0],
+    "s": [0, 0, 1, 0, 0],
+    "K": [0, 0, 0, 1, 0],
+    "mol": [0, 0, 0, 0, 1],
+    "Pa": [1, -1, -2, 0, 0],
+    "J": [1, 2, -2, 0, 0],
+    "W": [1, 2, -3, 0, 0],
+    "energy_rate_density": [1, -1, -3, 0, 0],
+    "molar_source_rate": [0, -3, -1, 0, 1],
+    "molar_flux": [0, -2, -1, 0, 1]
+  },
+  "fidelity_levels": {
+    "L0": {
+      "name": "lumped_screening",
+      "space_dimension": 0,
+      "required": true,
+      "physics": [
+        "enthalpy_balance",
+        "multistep_arrhenius_kinetics",
+        "gas_inventory_and_surface_release",
+        "equilibrium_target_cache",
+        "algebraic_packing_sintering_porosity",
+        "performance_and_defect_proxies"
+      ],
+      "limitations": ["no_resolved_internal_gradients", "stress_is_bound_or_proxy_only"]
+    },
+    "L1": {
+      "name": "half_thickness_1d_refinement",
+      "space_dimension": 1,
+      "required": true,
+      "default_cells": 21,
+      "refinement_cells": 41,
+      "physics": [
+        "finite_volume_heat_transfer",
+        "pore_gas_species_transport",
+        "quasi_steady_darcy_pressure",
+        "multistep_kinetics",
+        "kinetically_limited_equilibrium_phases",
+        "reduced_SOVS_sintering",
+        "gradient_stress_and_defect_proxies"
+      ],
+      "limitations": ["no_hole_corner_or_stacking_geometry", "fixed_kiln_map_has_no_flow_feedback"]
+    },
+    "L2": {
+      "name": "local_PC_high_fidelity",
+      "space_dimension": "2D_or_3D",
+      "required": false,
+      "candidate_software": ["OpenFOAM", "DOLFINx", "phase_field_custom"],
+      "execution_target": "later_local_PC",
+      "excluded_from_current_MVP": true
+    }
+  },
+  "elements": ["C", "H", "O", "N", "S", "Si", "Al", "Fe", "Ca", "Mg", "Na", "K", "P", "Ti", "Cl"],
+  "pore_gas_species": ["H2O", "CO2", "CO", "O2", "N2", "VOC_pseudo", "SO2", "NOx_pseudo"],
+  "default_condensed_phase_candidates": [
+    "quartz",
+    "cristobalite",
+    "kaolinite",
+    "illite_pseudo",
+    "metakaolin_pseudo",
+    "mullite",
+    "hematite",
+    "magnetite",
+    "calcite",
+    "lime",
+    "feldspar_pseudo",
+    "anorthite",
+    "amorphous_oxide_pool",
+    "oxide_liquid_ideal_pseudo",
+    "fixed_carbon"
+  ],
+  "input_schema": {
+    "feedstocks": {
+      "required": ["shale", "coal_gangue", "sludge"],
+      "per_feedstock_required": [
+        "dry_mass_fraction",
+        "crystalline_phase_fractions",
+        "amorphous_oxide_fractions",
+        "organic_pseudocomponents",
+        "trace_element_inventory",
+        "particle_size_distribution",
+        "morphology"
+      ]
+    },
+    "particle_size_distribution": {
+      "required": ["d10_m", "d50_m", "d90_m"],
+      "constraint": "0 < d10_m < d50_m < d90_m"
+    },
+    "morphology": {
+      "required": ["sphericity", "aspect_ratio"],
+      "constraints": ["0 < sphericity <= 1", "aspect_ratio >= 1"]
+    },
+    "kiln_boundary_map": {
+      "independent_axis": "s_m",
+      "required_profiles": ["gas_temperature_K_or_degC", "wall_temperature_K_or_degC", "oxygen_mole_fraction", "h_W_m2_K", "km_m_s", "ambient_pressure_Pa"],
+      "mapping": "s(t) = s_entry + v_ref * speed_ratio * t",
+      "interpolation": "monotone_piecewise_linear",
+      "ambient_gas_fallback": "for_synthetic_MVP_only_N2=1-O2_and_other_ambient_species_zero; real_humidity_and_combustion_species_must_be_explicit",
+      "rule": "optimizer may change speed_ratio but not individual profile knot values"
+    }
+  },
+  "decision_variables": [
+    {
+      "id": "sludge_dry_mass_fraction",
+      "unit": "1",
+      "default": 0.08,
+      "bounds": [0.0, 0.2],
+      "source_kind": "synthetic_policy_bound",
+      "transform": "bounded"
+    },
+    {
+      "id": "sludge_component_simplex",
+      "unit": "1",
+      "default": "from_synthetic_example",
+      "bounds": [0.0, 1.0],
+      "source_kind": "synthetic_design_space",
+      "transform": "softmax_or_stick_breaking",
+      "constraint": "sum_equals_one"
+    },
+    {
+      "id": "sludge_free_moisture_wet_basis",
+      "unit": "1",
+      "default": 0.3,
+      "bounds": [0.0, 0.8],
+      "source_kind": "synthetic_policy_bound"
+    },
+    {
+      "id": "sludge_d10_m",
+      "unit": "m",
+      "default": 5e-06,
+      "bounds": [1e-07, 0.001],
+      "source_kind": "synthetic_policy_bound"
+    },
+    {
+      "id": "sludge_d50_m",
+      "unit": "m",
+      "default": 3e-05,
+      "bounds": [5e-07, 0.003],
+      "source_kind": "synthetic_policy_bound"
+    },
+    {
+      "id": "sludge_d90_m",
+      "unit": "m",
+      "default": 0.00015,
+      "bounds": [1e-06, 0.01],
+      "source_kind": "synthetic_policy_bound"
+    },
+    {
+      "id": "sludge_sphericity",
+      "unit": "1",
+      "default": 0.65,
+      "bounds": [0.2, 1.0],
+      "source_kind": "synthetic_policy_bound"
+    },
+    {
+      "id": "sludge_aspect_ratio",
+      "unit": "1",
+      "default": 2.0,
+      "bounds": [1.0, 10.0],
+      "source_kind": "synthetic_policy_bound"
+    },
+    {
+      "id": "pretreatment_moisture_target_wet_basis",
+      "unit": "1",
+      "default": 0.2,
+      "bounds": [0.0, 0.5],
+      "source_kind": "synthetic_policy_bound",
+      "constraint": "target_not_greater_than_initial_for_drying_only"
+    },
+    {
+      "id": "pretreatment_grind_d50_target_m",
+      "unit": "m",
+      "default": 3e-05,
+      "bounds": [5e-07, 0.003],
+      "source_kind": "synthetic_policy_bound",
+      "constraint": "target_not_greater_than_initial_for_grinding_only"
+    },
+    {
+      "id": "speed_ratio",
+      "unit": "1",
+      "default": 1.0,
+      "bounds": [0.7, 1.3],
+      "source_kind": "synthetic_policy_bound_requires_human_approved_equipment_limits"
+    }
+  ],
+  "fixed_context_variables": [
+    {"id": "brick_half_thickness", "unit": "m", "required": true},
+    {"id": "brick_initial_bulk_volume", "unit": "m3", "required": true},
+    {"id": "green_porosity", "unit": "1", "required": false, "fallback": "packing_closure"},
+    {"id": "forming_pressure", "unit": "Pa", "required": false, "fallback": "uncertain_compaction_factor"},
+    {"id": "reference_kiln_car_speed", "unit": "m/s", "required": true},
+    {"id": "kiln_spatial_boundary_map", "unit": "mixed", "required": true},
+    {"id": "shale_parameter_pack", "unit": "mixed", "required": true},
+    {"id": "coal_gangue_parameter_pack", "unit": "mixed", "required": true}
+  ],
+  "state_variables": [
+    {"id": "temperature", "symbol": "T", "unit": "K", "bounds": [1.0, 3000.0], "domain": "cell"},
+    {"id": "gas_concentrations", "symbol": "c_g,k", "unit": "mol/m3_pore_gas", "bounds": [0.0, null], "domain": "cell_by_species", "bulk_inventory_rule": "phi*c_g,k", "conservative_storage": "N_gas_k_cell=phi*c_g,k*V_cell_current"},
+    {"id": "reaction_extents", "symbol": "alpha_r", "unit": "1", "bounds": [0.0, 1.0], "domain": "cell_by_reaction"},
+    {"id": "condensed_phase_amounts", "symbol": "n_p", "unit": "mol/m3_current_bulk", "bounds": [0.0, null], "domain": "cell_by_phase", "conservative_storage": "N_phase_p_cell=n_p*V_cell_current"},
+    {"id": "relative_density", "symbol": "rho_rel", "unit": "1", "bounds": [0.0, 1.0], "domain": "cell"},
+    {"id": "bulk_volume_ratio", "symbol": "V_over_V0", "unit": "1", "bounds": [0.0, null], "domain": "cell"},
+    {"id": "total_porosity", "symbol": "phi_total", "unit": "1", "bounds": [0.0, 1.0], "domain": "cell"},
+    {"id": "open_porosity", "symbol": "phi_open", "unit": "1", "bounds": [0.0, 1.0], "domain": "cell"},
+    {"id": "gas_pressure", "symbol": "P_g", "unit": "Pa", "bounds": [1.0, null], "domain": "cell"},
+    {"id": "escaped_species", "symbol": "N_out,k", "unit": "mol/m2", "bounds": [0.0, null], "domain": "surface_by_species"}
+  ],
+  "reaction_network": [
+    {
+      "id": "free_water_removal",
+      "class": "phase_change_or_kinetic",
+      "reactant": "free_H2O_liquid",
+      "products": {"H2O": 1.0},
+      "heat_sign": "endothermic",
+      "parameter_source_kind": "public_or_synthetic_interval"
+    },
+    {
+      "id": "organic_devolatilization",
+      "class": "distributed_or_multistep_arrhenius",
+      "reactant": "organic_pseudocomponents",
+      "products": ["VOC_pseudo", "CO", "CO2", "H2O", "fixed_carbon"],
+      "parameter_source": "https://chemicalpapers.com/?id=7&paper=874",
+      "rule": "product_yields_must_close_CHONS_elements"
+    },
+    {
+      "id": "organic_oxidation",
+      "class": "oxygen_limited_arrhenius",
+      "reactants": ["organic_pseudocomponents", "O2"],
+      "products": ["CO2", "CO", "H2O", "SO2", "NOx_pseudo"],
+      "rule": "element_matrix_defines_stoichiometry_or_balanced_yield_set"
+    },
+    {
+      "id": "kaolinite_dehydroxylation",
+      "class": "arrhenius",
+      "reactant": "kaolinite",
+      "products": ["metakaolin_pseudo", "H2O"],
+      "parameter_source": "https://www.mdpi.com/2075-163X/15/6/607"
+    },
+    {
+      "id": "carbonate_decomposition",
+      "class": "reversible_pressure_inhibited_arrhenius",
+      "reactant": "calcite",
+      "products": ["lime", "CO2"],
+      "rule": "rate_multiplier=max(0,1-Q_over_Keq)"
+    },
+    {
+      "id": "iron_redox",
+      "class": "oxygen_activity_dependent_relaxation",
+      "reactants": ["hematite", "magnetite", "O2"],
+      "products": ["hematite", "magnetite"],
+      "rule": "element_conserving_equilibrium_target"
+    },
+    {
+      "id": "mullitization_and_liquid_formation",
+      "class": "equilibrium_target_with_kinetic_relaxation",
+      "reactants": ["metakaolin_pseudo", "quartz", "feldspar_pseudo", "amorphous_oxide_pool"],
+      "products": ["mullite", "cristobalite", "anorthite", "oxide_liquid_ideal_pseudo"],
+      "rule": "database_coverage_score_required"
+    }
+  ],
+  "uncertain_parameters": [
+    {
+      "id": "arrhenius_preexponential_by_reaction",
+      "unit": "1/s_or_reaction_specific",
+      "bounds": [1000.0, 1e+15],
+      "default": 100000000.0,
+      "distribution": "log_uniform_policy",
+      "source_kind": "source_ensemble_or_synthetic_policy",
+      "correlation_group": "paired_with_activation_energy"
+    },
+    {
+      "id": "activation_energy_by_reaction",
+      "unit": "J/mol",
+      "bounds": [50000.0, 400000.0],
+      "default": 200000.0,
+      "distribution": "source_ensemble_preferred_else_interval",
+      "source_kind": "public_literature_or_synthetic_policy",
+      "correlation_group": "paired_with_preexponential"
+    },
+    {
+      "id": "reaction_enthalpy_by_reaction",
+      "unit": "J/mol",
+      "bounds": [-1000000.0, 1000000.0],
+      "default": 0.0,
+      "distribution": "database_value_plus_interval",
+      "source_kind": "NIST_JANAF_NASA_or_explicit_unknown",
+      "hard_rule": "zero_default_may_not_be_used_for_active_reaction_without_unknown_flag"
+    },
+    {
+      "id": "solid_specific_heat",
+      "unit": "J/kg/K",
+      "bounds": [300.0, 2000.0],
+      "default": 1000.0,
+      "distribution": "triangular_policy",
+      "source_kind": "public_property_or_synthetic_policy"
+    },
+    {
+      "id": "effective_thermal_conductivity",
+      "unit": "W/m/K",
+      "bounds": [0.05, 5.0],
+      "default": 1.0,
+      "distribution": "closure_ensemble",
+      "source_kind": "public_property_plus_Maxwell_Eucken_Russell_model_form"
+    },
+    {
+      "id": "effective_diffusivity",
+      "unit": "m2/s",
+      "bounds": [1e-10, 0.0001],
+      "default": 1e-07,
+      "distribution": "log_uniform_policy",
+      "source_kind": "synthetic_policy_bound"
+    },
+    {
+      "id": "kozeny_carman_constant",
+      "unit": "1",
+      "bounds": [10.0, 1000.0],
+      "default": 180.0,
+      "distribution": "log_uniform_policy",
+      "source_kind": "semi_empirical_closure"
+    },
+    {
+      "id": "heat_transfer_coefficient",
+      "unit": "W/m2/K",
+      "bounds": [1.0, 200.0],
+      "default": 20.0,
+      "distribution": "spatial_map_interval",
+      "source_kind": "kiln_boundary_or_synthetic_policy"
+    },
+    {
+      "id": "surface_mass_transfer_coefficient",
+      "unit": "m/s",
+      "bounds": [1e-08, 0.1],
+      "default": 1e-05,
+      "distribution": "log_uniform_policy",
+      "source_kind": "kiln_boundary_or_synthetic_policy"
+    },
+    {
+      "id": "emissivity",
+      "unit": "1",
+      "bounds": [0.1, 1.0],
+      "default": 0.8,
+      "distribution": "uniform_policy",
+      "source_kind": "synthetic_policy_bound"
+    },
+    {
+      "id": "sintering_bulk_viscosity_prefactor",
+      "unit": "Pa*s",
+      "bounds": [1e-06, 1e+18],
+      "default": 1000000.0,
+      "distribution": "log_uniform_policy",
+      "source_kind": "material_specific_unknown"
+    },
+    {
+      "id": "sintering_viscosity_activation_energy",
+      "unit": "J/mol",
+      "bounds": [50000.0, 1000000.0],
+      "default": 300000.0,
+      "distribution": "log_uniform_policy",
+      "source_kind": "material_specific_unknown"
+    },
+    {
+      "id": "surface_energy",
+      "unit": "J/m2",
+      "bounds": [0.01, 5.0],
+      "default": 0.5,
+      "distribution": "log_uniform_policy",
+      "source_kind": "material_specific_unknown"
+    },
+    {
+      "id": "youngs_modulus_effective",
+      "unit": "Pa",
+      "bounds": [1000000.0, 100000000000.0],
+      "default": 1000000000.0,
+      "distribution": "log_uniform_policy",
+      "source_kind": "porosity_and_phase_closure"
+    },
+    {
+      "id": "poisson_ratio_effective",
+      "unit": "1",
+      "bounds": [0.05, 0.45],
+      "default": 0.25,
+      "distribution": "uniform_policy",
+      "source_kind": "synthetic_policy_bound"
+    },
+    {
+      "id": "thermal_expansion_coefficient",
+      "unit": "1/K",
+      "bounds": [1e-07, 0.0001],
+      "default": 1e-05,
+      "distribution": "log_uniform_policy",
+      "source_kind": "phase_weighted_property_unknown"
+    },
+    {
+      "id": "dense_strength_proxy",
+      "unit": "Pa",
+      "bounds": [1000000.0, 1000000000.0],
+      "default": 50000000.0,
+      "distribution": "log_uniform_policy",
+      "source_kind": "empirical_proxy_unknown"
+    },
+    {
+      "id": "strength_porosity_coefficient",
+      "unit": "1",
+      "bounds": [0.1, 30.0],
+      "default": 5.0,
+      "distribution": "uniform_policy",
+      "source_kind": "empirical_proxy_unknown"
+    },
+    {
+      "id": "open_pore_connectivity",
+      "unit": "1",
+      "bounds": [0.0, 1.0],
+      "default": 0.7,
+      "distribution": "closure_ensemble",
+      "source_kind": "model_form_unknown"
+    },
+    {
+      "id": "one_dimensional_model_discrepancy",
+      "unit": "output_specific",
+      "bounds": [-1.0, 1.0],
+      "default": 0.0,
+      "distribution": "interval_not_probability",
+      "source_kind": "declared_model_form_uncertainty"
+    }
+  ],
+  "equation_modules": [
+    {
+      "id": "element_conservation",
+      "equation": "d(Jdef*b_e)/dt + Div_X(Jdef*inv(F)*sum_k(A_ek*J_k)) = 0; b_e=sum_p(A_ep*n_p)+phi*sum_k(A_ek*c_k)",
+      "residual_dimension": "mol/m3/s",
+      "dependencies": ["element_matrix", "phase_amounts", "gas_fluxes"],
+      "invariants": ["inventory_plus_cumulative_outflow_equals_initial_inventory"]
+    },
+    {
+      "id": "enthalpy_balance",
+      "equation": "d(Jdef*H)/dt = Div_X(Jdef*inv(F)*(k_eff*grad(T)-sum_k(h_k*J_k))) - Jdef*sum_r(deltaH_r*r_r)",
+      "residual_dimension_vector": [1, -1, -3, 0, 0],
+      "dependencies": ["temperature", "phase_amounts", "gas_fluxes", "reaction_rates", "thermochemical_properties"],
+      "hard_rule": "latent_or_reaction_enthalpy_must_not_be_double_counted"
+    },
+    {
+      "id": "arrhenius_kinetics",
+      "equation": "r_r=c_r0*A_r*exp(-E_r/(R*T))*f_r(alpha_r)*g_r(partial_pressures)",
+      "output_unit": "mol/m3/s",
+      "dependencies": ["temperature", "reaction_extent", "gas_pressure", "kinetic_parameter_pack"]
+    },
+    {
+      "id": "gibbs_equilibrium",
+      "equation": "minimize G=sum_j(n_j*mu_j(T,P,n)) subject to A*n=b_available and n>=0",
+      "output_unit": "mol/m3_bulk_by_phase",
+      "dependencies": ["thermochemical_database", "candidate_phase_list", "element_inventory"],
+      "outputs": ["equilibrium_phase_amounts", "liquid_fraction", "chemical_potentials", "thermo_coverage_score"]
+    },
+    {
+      "id": "phase_kinetic_relaxation",
+      "equation": "dn_p/dt=(n_eq_p-n_p)/tau_p(T,PSD)",
+      "output_unit": "mol/m3/s",
+      "dependencies": ["equilibrium_target", "relaxation_time"],
+      "hard_rule": "project_update_to_nonnegative_element_conserving_feasible_set"
+    },
+    {
+      "id": "gas_species_transport",
+      "equation": "d(Jdef*phi*c_k)/dt + Div_X(Jdef*inv(F)*(c_k*u_g-phi*D_eff_k*grad(c_k)))=Jdef*sum_r(nu_kr*r_r)",
+      "residual_dimension": "mol/m3/s",
+      "dependencies": ["porosity", "gas_concentration", "darcy_velocity", "effective_diffusivity", "reaction_rates"]
+    },
+    {
+      "id": "darcy_pressure",
+      "equation": "u_g=-(K/mu_g)*grad(P_g); P_g=R*T*sum_k(c_k)",
+      "velocity_unit": "m/s",
+      "permeability_unit": "m2",
+      "dependencies": ["porosity", "d32", "kozeny_carman_constant", "gas_viscosity"]
+    },
+    {
+      "id": "packing_permeability",
+      "equation": "K=d32^2*phi^3/(C_KC*(1-phi)^2)",
+      "output_unit": "m2",
+      "dependencies": ["PSD", "packing_closure", "sphericity", "forming_compaction_factor"]
+    },
+    {
+      "id": "reduced_sintering",
+      "equation": "eps_v_dot=-P_s/K_v; K_v=eta_ref*exp(Q_eta/(R*T))*psi(rho_rel,f_liq); P_s=(gamma/d_eff)*p(rho_rel)",
+      "strain_rate_unit": "1/s",
+      "dependencies": ["temperature", "relative_density", "liquid_fraction", "surface_energy", "viscosity_parameters", "particle_size"]
+    },
+    {
+      "id": "volume_porosity",
+      "equation": "dV/dt=V*eps_v_dot; n_p_current=N_p_cell/V_cell_current; v_s=sum_p(n_p_current*M_p/rho_p); phi_total=clip(1-v_s,0,1)",
+      "dependencies": ["sintering_strain_rate", "phase_amounts", "phase_molar_mass", "phase_density"],
+      "outputs": ["volume_ratio", "linear_shrinkage", "total_porosity"]
+    },
+    {
+      "id": "open_porosity",
+      "equation": "phi_open=phi_total*C_open(phi_total,gas_generation,sintering_state)",
+      "output_unit": "1",
+      "dependencies": ["total_porosity", "connectivity_closure"],
+      "status": "closure_dependent_proxy"
+    },
+    {
+      "id": "stress_proxy",
+      "equation": "sigma_proxy=E_eff/(1-nu_eff)*(eigenstrain-cross_section_mean(eigenstrain))",
+      "output_unit": "Pa",
+      "dependencies": ["temperature", "thermal_expansion", "sintering_strain", "phase_strain", "elastic_properties"],
+      "status": "L1_engineering_proxy_not_full_mechanics"
+    },
+    {
+      "id": "performance_proxies",
+      "equations": [
+        "rho_bulk=final_dry_mass/final_volume",
+        "WA_proxy_percent=100*rho_water*phi_open/rho_bulk",
+        "strength_proxy=sigma_dense*exp(-b_strength*phi_open)*(1-D_crack)"
+      ],
+      "outputs": ["bulk_density", "water_absorption_proxy", "strength_proxy"],
+      "status": "density_is_conservation_derived_others_are_closure_dependent"
+    }
+  ],
+  "boundary_conditions": {
+    "center_symmetry_x0": ["dT_dx=0", "dc_k_dx=0", "dP_dx=0"],
+    "exposed_surface_xL": {
+      "heat": "n_dot_minus_k_gradT=h*(T_surface-T_gas)+emissivity*sigmaSB*(T_surface^4-T_wall^4)+sum_k(h_k*n_dot_J_k)",
+      "mass": "n_dot_J_k=km_k*(c_k_surface-c_k_ambient)",
+      "pressure": "P_g=ambient_pressure"
+    },
+    "initial_conditions": ["T=T_entry", "alpha_r=0", "n_p=input_mineral_amounts", "phi=green_porosity", "P=ambient_pressure"],
+    "sign_convention": "positive_surface_flux_is_outward"
+  },
+  "solver_specification": {
+    "spatial_discretization": "cell_centered_finite_volume_with_deforming_cell_extensive_inventories",
+    "deformation_closure": "F=Jdef^(1/3)*I_for_reduced_isotropic_MVP",
+    "time_discretization": "method_of_lines",
+    "stiff_integrator": ["BDF", "Radau"],
+    "jacobian": "block_sparse_analytic_or_colored_finite_difference",
+    "coupling": "operator_split_with_Picard_correction_or_monolithic_if_stable",
+    "property_update_order": [
+      "kiln_boundary_from_speed",
+      "thermophysical_properties",
+      "reaction_rates",
+      "pressure_and_darcy_velocity",
+      "coupled_heat_species_extent_step",
+      "equilibrium_target_and_phase_relaxation",
+      "sintering_volume_porosity",
+      "conservation_projection_and_residuals",
+      "postprocess_metrics"
+    ],
+    "default_tolerances": {
+      "relative_ode": 1e-05,
+      "absolute_temperature_K": 0.001,
+      "absolute_extent": 1e-08,
+      "element_relative_residual": 1e-08,
+      "energy_relative_residual": 0.0001,
+      "phase_simplex": 1e-08,
+      "Picard_relative_change": 0.0001
+    },
+    "failure_policy": "retry_with_smaller_step_then_return_structured_failure",
+    "forbidden_failure_policy": "NaN_as_objective_or_silent_clipping_of_conservation_error"
+  },
+  "inverse_design": {
+    "objectives": [
+      {"id": "maximize_robust_quality_margin", "sense": "maximize"},
+      {"id": "minimize_gas_and_bloating_risk", "sense": "minimize"},
+      {"id": "minimize_residence_time_proxy", "sense": "minimize"},
+      {"id": "minimize_uncertainty_width", "sense": "minimize"},
+      {"id": "maximize_sludge_utilization", "sense": "maximize"}
+    ],
+    "hard_constraints": [
+      "all_simplexes_close",
+      "element_representation_is_consistent",
+      "PSD_order_is_valid",
+      "pretreatment_is_directionally_feasible",
+      "speed_ratio_within_human_approved_bounds",
+      "q05_quality_margin_greater_or_equal_zero_when_target_is_resolved",
+      "q95_each_enabled_risk_less_or_equal_one",
+      "element_and_energy_residuals_within_tolerance",
+      "thermo_coverage_score_above_configured_minimum"
+    ],
+    "missing_threshold_policy": "not_evaluated_not_passed",
+    "algorithm": [
+      "scrambled_Sobol_2_power_m_designs",
+      "L0_filter",
+      "nondominated_sort",
+      "epsilon_constraint_or_scalarized_differential_evolution_workers_1",
+      "diverse_shortlist",
+      "L1_robust_refinement",
+      "final_nondominated_filter"
+    ],
+    "many_solution_policy": "return_Pareto_set_and_feasible_neighborhood_not_unique_optimum",
+    "reproducibility": ["explicit_seed", "source_pack_hash", "config_hash", "software_versions"]
+  },
+  "uncertainty_propagation": {
+    "categories": ["thermochemical_database", "kinetics", "transport_properties", "kiln_boundary", "packing_and_connectivity", "sintering", "performance_proxy", "one_dimensional_model_form"],
+    "sampling": "scrambled_Sobol_random_base2",
+    "L0_default_samples_per_design": 16,
+    "L1_default_samples_per_design": 8,
+    "report_statistics": ["min", "q05", "q50", "q95", "max", "coverage_score"],
+    "interval_policy": "bounds_without_evidence_are_not_called_probability_distributions",
+    "robust_constraint_policy": "explicitly_choose_interval_worst_case_or_quantile_never_mix",
+    "sensitivity_MVP": ["Spearman_rank", "standardized_effect"],
+    "model_discrepancy_reporting": "separate_from_parameter_quantiles"
+  },
+  "outputs": {
+    "fields": [
+      "temperature",
+      "reaction_extents",
+      "gas_concentrations",
+      "gas_pressure",
+      "condensed_phase_amounts",
+      "liquid_fraction",
+      "total_porosity",
+      "open_porosity",
+      "volume_ratio",
+      "sintering_strain",
+      "stress_proxy"
+    ],
+    "integrals_and_summaries": [
+      "released_gas_by_species",
+      "element_residual_by_element",
+      "mass_residual",
+      "energy_residual",
+      "linear_shrinkage",
+      "bulk_density",
+      "water_absorption_proxy",
+      "strength_proxy",
+      "max_center_surface_temperature_difference",
+      "max_overpressure",
+      "reaction_completion_by_reaction",
+      "thermo_coverage_score"
+    ],
+    "defect_risks": ["cracking", "warpage", "bloating", "underfiring", "overfiring", "efflorescence"],
+    "status_flags": [
+      "success",
+      "solver_failure",
+      "conservation_failure",
+      "thermo_database_gap",
+      "proxy_unresolved",
+      "environmental_threshold_missing",
+      "fidelity_warning",
+      "budget_truncated",
+      "outside_validity_domain"
+    ],
+    "inverse_artifacts": ["pareto.json", "pareto.csv", "feasible_windows.json", "rank_stability.json", "run_manifest.json"]
+  },
+  "verification_cases": [
+    {"id": "adiabatic_no_reaction", "checks": ["constant_temperature", "constant_elements", "zero_gas_outflow"]},
+    {"id": "lumped_newton_cooling", "checks": ["analytic_temperature_curve"]},
+    {"id": "slab_conduction", "checks": ["analytic_or_high_resolution_reference"]},
+    {"id": "fick_diffusion", "checks": ["mass_conservation", "analytic_limit"]},
+    {"id": "isothermal_first_order_reaction", "checks": ["analytic_extent"]},
+    {"id": "single_closed_reaction", "checks": ["element_conservation", "enthalpy_sign"]},
+    {"id": "gibbs_minimization", "checks": ["A_n_equals_b", "nonnegative_n", "G_not_increased"]},
+    {"id": "mesh_convergence", "checks": ["21_vs_41_cells_key_metrics"]},
+    {"id": "L0_L1_low_gradient", "checks": ["spatial_mean_consistency"]},
+    {"id": "inverse_feasibility", "checks": ["all_returned_points_satisfy_hard_constraints", "no_strictly_dominated_final_point"]},
+    {"id": "missing_environment_threshold", "checks": ["status_not_evaluated", "never_passed"]}
+  ],
+  "resource_budget": {
+    "target_platform": "Linux_aarch64_1_OCPU_6GB",
+    "workers": 1,
+    "L0_peak_RSS_target_bytes": 1000000000,
+    "L1_peak_RSS_target_bytes": 3000000000,
+    "default_design_count": 256,
+    "default_L1_shortlist_count": 16,
+    "policy": "benchmark_on_target_machine_and_emit_budget_truncated_flag_if_reduced",
+    "paid_services": false,
+    "new_OCI_resources": false
+  },
+  "source_registry": {
+    "sludge_brick_observations": "https://scholars.lib.ntu.edu.tw/bitstreams/4d2777ec-a7bb-4afc-89c3-e37a70e593e8/download",
+    "sludge_firing_emissions": "https://pubmed.ncbi.nlm.nih.gov/12737969/",
+    "sludge_pyrolysis_kinetics": "https://chemicalpapers.com/?id=7&paper=874",
+    "kaolinite_dehydroxylation": "https://www.mdpi.com/2075-163X/15/6/607",
+    "NIST_JANAF": "https://data.nist.gov/od/id/mds00xmwqs",
+    "NASA_CEA": "https://www.nasa.gov/glenn/research/chemical-equilibrium-with-applications",
+    "Thermochimica": "https://github.com/ORNL-CEES/thermochimica",
+    "Cantera_equilibrium": "https://cantera.org/stable/cxx/d3/d3d/group__equilGroup.html",
+    "pycalphad": "https://pycalphad.org/docs",
+    "COD": "https://qiserver.ugr.es/cod/",
+    "SOVS": "https://doi.org/10.1016/j.jeurceramsoc.2023.03.053",
+    "phase_field_review": "https://doi.org/10.32604/cmes.2024.049367",
+    "particle_packing": "https://doi.org/10.1021/ie00054a045",
+    "kozeny_carman_limitations": "https://doi.org/10.1016/j.advwatres.2007.06.003",
+    "SciPy_solve_ivp": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html",
+    "SciPy_differential_evolution": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.differential_evolution.html",
+    "SciPy_Sobol": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.qmc.Sobol.html"
+  },
+  "synthetic_example": {
+    "id": "tiny_synthetic_end_to_end_v1",
+    "disclaimer": "All values in this example are synthetic policy values for code execution and are not plant facts, product standards or recommendations.",
+    "geometry": {
+      "brick_half_thickness_m": 0.03,
+      "initial_bulk_volume_m3": 0.001,
+      "green_porosity": 0.35
+    },
+    "dry_feed_fractions": {
+      "shale": 0.72,
+      "coal_gangue": 0.2,
+      "sludge": 0.08
+    },
+    "sludge_fingerprint": {
+      "dry_component_fractions": {
+        "organic_pseudo_A": 0.25,
+        "quartz": 0.15,
+        "kaolinite": 0.15,
+        "illite_pseudo": 0.1,
+        "calcite": 0.1,
+        "hematite": 0.05,
+        "amorphous_oxide_pool": 0.2
+      },
+      "organic_pseudo_A_formula": {"C": 1.0, "H": 1.5, "O": 0.5, "N": 0.1, "S": 0.02},
+      "amorphous_oxide_fractions": {
+        "SiO2": 0.35,
+        "Al2O3": 0.2,
+        "Fe2O3": 0.1,
+        "CaO": 0.15,
+        "MgO": 0.05,
+        "Na2O": 0.05,
+        "K2O": 0.05,
+        "P2O5": 0.05
+      },
+      "free_moisture_wet_basis": 0.3,
+      "PSD": {"d10_m": 5e-06, "d50_m": 3e-05, "d90_m": 0.00015},
+      "morphology": {"sphericity": 0.65, "aspect_ratio": 2.0}
+    },
+    "fixed_matrix_parameter_pack": "synthetic_matrix_v1",
+    "forming": {"moisture_wet_basis": 0.2, "compaction_factor": 0.5},
+    "kiln": {
+      "length_m": 100.0,
+      "reference_speed_m_s": 0.001,
+      "speed_ratio": 1.0,
+      "profile": [
+        {"s_m": 0.0, "gas_temperature_degC": 25.0, "wall_temperature_degC": 25.0, "oxygen_mole_fraction": 0.21, "h_W_m2_K": 10.0, "km_m_s": 1e-05, "ambient_pressure_Pa": 101325.0},
+        {"s_m": 20.0, "gas_temperature_degC": 200.0, "wall_temperature_degC": 180.0, "oxygen_mole_fraction": 0.18, "h_W_m2_K": 20.0, "km_m_s": 2e-05, "ambient_pressure_Pa": 101325.0},
+        {"s_m": 50.0, "gas_temperature_degC": 900.0, "wall_temperature_degC": 850.0, "oxygen_mole_fraction": 0.08, "h_W_m2_K": 35.0, "km_m_s": 5e-05, "ambient_pressure_Pa": 101325.0},
+        {"s_m": 70.0, "gas_temperature_degC": 1000.0, "wall_temperature_degC": 980.0, "oxygen_mole_fraction": 0.06, "h_W_m2_K": 40.0, "km_m_s": 5e-05, "ambient_pressure_Pa": 101325.0},
+        {"s_m": 100.0, "gas_temperature_degC": 100.0, "wall_temperature_degC": 120.0, "oxygen_mole_fraction": 0.15, "h_W_m2_K": 15.0, "km_m_s": 2e-05, "ambient_pressure_Pa": 101325.0}
+      ]
+    },
+    "synthetic_good_brick_fingerprint": {
+      "bulk_density_kg_m3": {"min": 1400.0, "max": 2200.0},
+      "open_porosity": {"min": 0.1, "max": 0.45},
+      "linear_shrinkage": {"min": 0.0, "max": 0.12},
+      "water_absorption_proxy_percent": {"max": 25.0},
+      "strength_proxy_Pa": {"min": 5000000.0},
+      "cracking_risk": {"max": 1.0},
+      "bloating_risk": {"max": 1.0},
+      "thermo_coverage_score": {"min": 0.7}
+    },
+    "tiny_inverse_budget": {
+      "Sobol_designs": 16,
+      "L0_uncertainty_samples": 4,
+      "L1_shortlist": 2,
+      "L1_uncertainty_samples": 2,
+      "seed": 20260831
+    },
+    "required_commands": [
+      "sludge-vme validate examples/tiny_synthetic.json",
+      "sludge-vme forward examples/tiny_synthetic.json --fidelity L0 --out runs/tiny_L0",
+      "sludge-vme forward examples/tiny_synthetic.json --fidelity L1 --out runs/tiny_L1",
+      "sludge-vme inverse examples/tiny_synthetic.json --budget tiny --out runs/tiny_inverse",
+      "sludge-vme verify runs/tiny_L1"
+    ],
+    "required_artifacts": [
+      "state_trajectory.json",
+      "summary.json",
+      "conservation.json",
+      "uncertainty.json",
+      "flags.json",
+      "pareto.json",
+      "pareto.csv",
+      "run_manifest.json"
+    ]
+  },
+  "human_approval_gates": [
+    "any_use_of_output_as_real_plant_recipe_or_speed_window",
+    "any_connection_to_PLC_kiln_car_robot_or_production_system",
+    "any_external_publication_or_compliance_claim",
+    "any_paid_service_or_new_cloud_resource",
+    "any_privileged_system_install"
+  ]
+}

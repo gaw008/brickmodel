@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sludge-vme"
+version = "0.1.0"
+description = "Research-only virtual materials engine for synthetic sludge fired-brick screening"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = ["numpy==2.5.2", "scipy==1.18.1"]
+
+[project.optional-dependencies]
+dev = ["pytest==8.4.2"]
+
+[project.scripts]
+sludge-vme = "sludge_vme.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

@@ -1,0 +1,27 @@
+{
+  "pack_id": "synthetic_policy_v1",
+  "spec_version": "0.1.0",
+  "disclaimer": "Synthetic policy intervals and public-formula defaults for software execution only; not calibrated material constants.",
+  "parameters": {
+    "solid_specific_heat_J_kg_K": {"default": 1000.0, "interval": [700.0, 1300.0], "unit": "J/kg/K", "source_kind": "synthetic_policy", "validity": "300-1500 K effective mixture"},
+    "solid_thermal_conductivity_W_m_K": {"default": 1.0, "interval": [0.4, 1.8], "unit": "W/m/K", "source_kind": "closure_ensemble", "source": "https://www.osti.gov/servlets/purl/1813261", "validity": "porous fired-clay screening"},
+    "effective_diffusivity_m2_s": {"default": 1e-7, "interval": [1e-8, 1e-6], "unit": "m2/s", "source_kind": "synthetic_policy", "validity": "open-pore gas transport proxy"},
+    "emissivity": {"default": 0.8, "interval": [0.6, 0.95], "unit": "1", "source_kind": "synthetic_policy", "validity": "opaque gray surface assumption"},
+    "solid_true_density_kg_m3": {"default": 2600.0, "interval": [2300.0, 2900.0], "unit": "kg/m3", "source_kind": "synthetic_policy", "validity": "silicate-rich synthetic mixture"},
+    "open_pore_connectivity": {"default": 0.7, "interval": [0.45, 0.9], "unit": "1", "source_kind": "model_form_unknown", "validity": "closure-dependent proxy"},
+    "dense_strength_proxy_Pa": {"default": 5e7, "interval": [1e7, 2e8], "unit": "Pa", "source_kind": "empirical_proxy_unknown", "validity": "not certification strength"},
+    "strength_porosity_coefficient": {"default": 5.0, "interval": [2.0, 9.0], "unit": "1", "source_kind": "empirical_proxy_unknown", "validity": "not certification strength"},
+    "bloating_pressure_scale_Pa": {"default": 4.5e8, "interval": [2e7, 5e8], "unit": "Pa", "source_kind": "defect_proxy_unknown", "validity": "synthetic configured risk normalization; not a measured failure threshold"},
+    "kozeny_carman_constant": {"default": 180.0, "interval": [60.0, 500.0], "unit": "1", "source_kind": "semi_empirical_closure", "source": "https://doi.org/10.1016/j.advwatres.2007.06.003", "validity": "screening only"}
+  },
+  "reactions": {
+    "free_water_removal": {"A_1_s": 20000.0, "E_J_mol": 60000.0, "deltaH_J_kg_product": 2260000.0, "enthalpy_interval": [2200000.0, 2400000.0], "source_kind": "public_property_plus_synthetic_kinetics", "validity": "effective evaporation step"},
+    "organic_oxidation": {"A_1_s": 1000000.0, "E_J_mol": 100000.0, "deltaH_J_kg_feed": -10000000.0, "enthalpy_interval": [-20000000.0, -3000000.0], "source_kind": "synthetic_policy_with_literature_window", "source": "https://chemicalpapers.com/?id=7&paper=874", "validity": "organic pseudo-component only"},
+    "kaolinite_dehydroxylation": {"A_1_s": 2000000.0, "E_J_mol": 150000.0, "deltaH_J_kg_product": 3000000.0, "enthalpy_interval": [1500000.0, 5000000.0], "source_kind": "synthetic_policy_with_literature_window", "source": "https://www.mdpi.com/2075-163X/15/6/607", "validity": "kaolinite pseudo-phase"},
+    "carbonate_decomposition": {"A_1_s": 5000000.0, "E_J_mol": 180000.0, "deltaH_J_kg_product": 4000000.0, "enthalpy_interval": [3000000.0, 5000000.0], "source_kind": "synthetic_policy", "validity": "calcite pseudo-step"}
+  },
+  "sintering": {
+    "rate_at_1273K_1_s": {"default": 2e-6, "interval": [2e-7, 1e-5], "unit": "1/s", "source_kind": "SOVS_inspired_synthetic_closure", "source": "https://doi.org/10.1016/j.jeurceramsoc.2023.03.053", "validity": "reduced isotropic screening"},
+    "activation_energy_J_mol": {"default": 120000.0, "interval": [80000.0, 300000.0], "unit": "J/mol", "source_kind": "material_specific_unknown", "validity": "synthetic interval"}
+  }
+}
