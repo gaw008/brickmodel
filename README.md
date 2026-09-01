@@ -60,7 +60,7 @@ uv pip install --python .venv/bin/python -e '.[dev]'
 .venv/bin/sludge-vme benchmark examples/tiny_synthetic.json --out runs/benchmark
 ```
 
-Exit codes：`0` 成功；`2` schema/validation（含 malformed top-level/kiln/profile/inverse container，无 traceback）；`3` solver/conservation/inverse；`4` hard coverage（保留）；`5` resource budget；`10` internal I/O。L0/L1/inverse/benchmark 的 runtime solver exception 都会原子写入含 stage/reason/安全异常摘要/provenance/manifest 的 structured-failure artifact；若目标目录非空且未给 `--overwrite`，原目录保持不动，失败证据写入隐藏 sibling。
+Exit codes：`0` 成功；`2` schema/validation（含 malformed top-level/kiln/profile/inverse container，无 traceback）；`3` solver/conservation/inverse；`4` hard coverage（保留）；`5` resource budget；`10` internal I/O。L0/L1/inverse/benchmark 的 runtime solver exception 都会原子写入 structured-failure artifact；它只含固定 stage/reason 和 allowlisted exception category，绝不序列化 exception message/repr/args/traceback/locals、真实可控 class name、resolved user input、CLI args 或输出路径。若目标目录非空且未给 `--overwrite`，原目录保持不动，失败证据写入隐藏 sibling。
 
 ## Forward artifacts
 
@@ -70,18 +70,24 @@ Exit codes：`0` 成功；`2` schema/validation（含 malformed top-level/kiln/p
 - `resolved_case.json`, `status.json`, `summary.json`, `conservation.json`, `provenance.json`, `flags.json`；
 - `state_trajectory.json`, `state_trajectory.csv`, `uncertainty.json`, `report.md`。
 
-`state_trajectory.json` schema 2.0 同时保留 projected/raw reaction extents、species mass 与 molar reference inventories、released-gas extensive states、current-pore `mol/m3`、`phi_open/J`、cumulative boundary/reaction heat 和 state counts；每个 gas species 都显式携带 `kg/mol` 与 mass↔moles↔current-pore conversion。`conservation.json` 使用 deforming-cell reference-volume extensive inventory ledger，并序列化 initial/final mass、bulk volume、element inventories、O2 与 reduced-enthalpy ledger。默认 tolerances：mass/element `1e-8`，`reduced_effective_enthalpy_ode` `1e-4`。后者只验证 reduced ODE 的数值恒等式，不再冒充含 variable mass/escaped-gas sensible enthalpy 的完整 energy conservation，也不作为完整物理 hard-pass。BDF 的微小 extent overshoot 会显式投影到 `[0,1]`，并记录 `extent_projection_max`；超过 `1e-5` 则运行失败。
+`state_trajectory.json` schema 2.0 同时保留 projected/raw reaction extents、species mass 与 molar reference inventories、released-gas extensive states、current-pore `mol/m3`、`phi_open/J`、cumulative boundary/reaction heat 和 state counts；每个 gas species 都显式携带 `kg/mol` 与 mass↔moles↔current-pore conversion。内嵌 semantic contract 3.0 对每个 strict trajectory field 声明 exact species/unit/basis/conversion、resolved shape、finite requirement 与 inclusive/exclusive range；没有未声明的 strict derived field。`conservation.json` 使用 deforming-cell reference-volume extensive inventory ledger，并序列化 initial/final mass、bulk volume、element inventories、O2 与 reduced-enthalpy ledger。默认 tolerances：mass/element `1e-8`，`reduced_effective_enthalpy_ode` `1e-4`。后者只验证 reduced ODE 的数值恒等式，不再冒充含 variable mass/escaped-gas sensible enthalpy 的完整 energy conservation，也不作为完整物理 hard-pass。BDF 的微小 extent overshoot 会显式投影到 `[0,1]`，并记录 `extent_projection_max`；超过 `1e-5` 则运行失败。
 
-`verify --strict` 不把 summary/conservation 的自报数值或同步更新后的 manifest hash 当作语义证据。它从 `resolved_case.json + provenance.json + state_trajectory.json` 独立重建 context，并重算 mass/volume/density、element/O2/reduced-enthalpy residual、trajectory-derived fields/extrema 和全部 summary values/status。正常 hash inventory 仍验证普通字节篡改；cross-artifact recomputation 负责拒绝攻击者同步改 hash 后的合法范围数值伪造。
+`verify --strict` 不把 summary/conservation 的自报数值或同步更新后的 manifest hash 当作语义证据。它从 `resolved_case.json + provenance.json + state_trajectory.json` 独立重建 context，并逐时点重算 mass↔moles↔current-pore conversion、released-gas ledger、ideal-gas pressure/overpressure、reaction heat、由温度与 reaction heat 反演的 boundary-heat ODE path、porosity/liquid/sintering/stress trajectories、全部 extrema、summary values/metadata 和 conservation ledgers。正常 hash inventory 仍验证普通字节篡改；cross-artifact recomputation 负责拒绝攻击者同步改 hash 后的合法范围数值、单位或 trajectory 伪造。
 
 ## Inverse artifacts
 
-- `all_evaluations.jsonl`：16 个 L0 designs 加全部 L1 refined records；每条保留逐 policy-sample status/message、quality/risk/conservation verification inputs、failure rate、constraint slack 与 active constraints，Pareto 点必须可按 `(design_id,fidelity)` 精确回溯；
+- `all_evaluations.jsonl`：16 个 L0 designs 加全部 L1 refined records；每条保留逐 policy-sample 固定 status code、sample ID、sampler seed/algorithm、parameters、forward case/parameter-pack provenance 和 primary-state semantic SHA-256（finite floats 先量化到 8 位有效数字，以容忍跨进程 solver roundoff，但 material change 会改变 hash；不保留任意 solver message），以及 quality/risk/conservation verification inputs、failure rate、constraint slack 与 active constraints；Pareto 点必须可按 `(design_id,fidelity)` 精确回溯；
 - `pareto.json`, `pareto.csv`：仅含 L1 hard-constraint-pass 且 nondominated points；
 - `rank_stability.json`, `feasible_windows.json`, `uncertainty.json`, `report.md`；少于 3 个配对点时 rank 为 `insufficient_points`，两点范围只称 `observed_candidate_envelope`，不称连续 feasible window；
 - environmental threshold 缺失时始终是 `not_evaluated`，不是 `passed`。
 
-Inverse strict verification 会从逐 sample inputs 重算 quantiles、failure policy、constraints/slacks/active set/objectives，重算 L0/L1/feasible/Pareto counts，并在全部 L1 hard-feasible records 上重做 nondominance；`pareto.json`、`pareto.csv`、`all_evaluations.jsonl` 与 observed envelope 必须互相一致。
+Inverse `verify --strict` 会从 `resolved_case + declared budget + seed + sampler contract` 重新运行确定性 Sobol design、policy samples、全部 L0、L1 shortlist/grid check 和 Pareto pipeline。它精确核对 ordered design IDs/decisions/record counts、decision bounds、speed→residence time、policy IDs/seeds/parameters/forward-state hashes，并从 replay 重算 feasibility、quantiles、constraints/slacks/objectives、shortlist、counts、rank、observed envelope、CSV 与 nondominance。只有 `solver_statistics.wall_time_s` 和 manifest runtime/platform/transaction provenance 被明确列为 integrity-only；tiny strict replay 在单核上有与一次 inverse 求解同阶的 wall time。
+
+## Hash、semantic replay 与 authenticity
+
+- Artifact SHA-256/size 只能证明当前 manifest 与当前 payload 字节一致；攻击者同步重写 payload 与 manifest hash 时，它不提供语义保护。
+- Trusted verifier 中的 forward primary-state recomputation 与 inverse deterministic full-solver replay 提供本仓库声明的 semantic checks；被列为 integrity-only 的字段不在 hard semantic claim 中。
+- 本仓库没有签名、MAC、透明日志、remote attestation 或可信时间戳，因此不提供 cryptographic authenticity。能同时替换 verifier 程序和全部 primary states 的攻击者不在边界内。
 
 ## 科学边界
 
@@ -98,6 +104,7 @@ Inverse 的 12 个坐标全部进入真实 closure：sludge dry fraction、organ
 - `docs/PARAMETER_SOURCES.md`
 - `docs/LIMITATIONS_AND_UPGRADE_PATH.md`
 - `docs/SAFETY_REWORK_B1_B8.md`
+- `docs/VERIFIER_THREAT_MODEL.md`
 - Planner 原始交付（原文保留）：`docs/planner/`
 
 ## 安全与人工 gate

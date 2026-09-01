@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import Any, Literal
 
 import numpy as np
 from scipy.stats import qmc, spearmanr
 
+from ..config import sha256_json
 from ..models import simulate
 from ..types import CaseConfig
 from ..uq.sampling import sample_parameters
@@ -83,14 +85,76 @@ def _rank_stability(l0_quality: list[float], l1_quality: list[float]) -> dict[st
     }
 
 
-def _record_from_results(case: CaseConfig, decision: dict[str, float], design_id: int, fidelity: str, results: list, *, grid_converged: bool | None = None) -> dict[str, Any]:
+def _semantic_hash_payload(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {str(key): _semantic_hash_payload(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_semantic_hash_payload(item) for item in value]
+    if isinstance(value, np.ndarray):
+        return _semantic_hash_payload(value.tolist())
+    if isinstance(value, np.generic):
+        return _semantic_hash_payload(value.item())
+    if isinstance(value, float):
+        if not math.isfinite(value):
+            raise ValueError("forward semantic hash requires finite values")
+        return 0.0 if value == 0.0 else float(f"{value:.8g}")
+    return value
+
+
+def _forward_primary_state_hash(item: Any) -> str:
+    provenance = {
+        name: item.provenance.get(name)
+        for name in ("case_hash", "parameter_pack_hash", "parameter_overrides")
+    }
+    state = {
+        "status": {"code": item.status.code, "success": bool(item.status.success)},
+        "coordinates": item.coordinates,
+        "fields": item.fields,
+        "summary": item.summary,
+        "conservation": item.conservation,
+        "provenance": provenance,
+    }
+    return sha256_json({
+        "semantic_hash_version": "primary_state_finite_float_8_significant_digits_v2",
+        "state": _semantic_hash_payload(state),
+    })
+
+
+def _record_from_results(
+    case: CaseConfig,
+    decision: dict[str, float],
+    design_id: int,
+    fidelity: str,
+    results: list,
+    *,
+    grid_converged: bool | None = None,
+    policy_provenance: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    provenance_records = policy_provenance or [
+        {
+            "sample_id": f"{fidelity}-design-{design_id:04d}-policy-{index:04d}",
+            "sampler_seed": None,
+            "parameters": {},
+            "sampler_algorithm": "unspecified_direct_call",
+        }
+        for index in range(len(results))
+    ]
+    if len(provenance_records) != len(results):
+        raise ValueError("policy provenance count must match forward result count")
     policy_samples = []
     for index, item in enumerate(results):
+        sample_provenance = provenance_records[index]
         sample = {
             "sample_index": index,
+            "sample_id": sample_provenance["sample_id"],
+            "sampler_seed": sample_provenance["sampler_seed"],
+            "sampler_algorithm": sample_provenance["sampler_algorithm"],
+            "parameters": sample_provenance["parameters"],
             "success": bool(item.status.success),
             "status": str(item.status.code),
-            "message": str(item.status.message),
+            "forward_case_hash": item.provenance.get("case_hash", case.content_hash),
+            "forward_parameter_pack_hash": item.provenance.get("parameter_pack_hash"),
+            "forward_primary_state_sha256": _forward_primary_state_hash(item),
             "quality_margin": quality_margin(item.summary, case.raw["quality_targets"]) if item.status.success else None,
             "enabled_risk": _risk(item.summary) if item.status.success else None,
             "conservation": {
@@ -115,7 +179,7 @@ def _record_from_results(case: CaseConfig, decision: dict[str, float], design_id
             f"required policy sample failure rate {failure_rate:.6g} exceeds "
             f"declared maximum {maximum_failure_rate:.6g}: "
             + "; ".join(
-                f"sample {item['sample_index']}={item['status']}: {item['message']}"
+                f"sample {item['sample_index']}={item['status']}"
                 for item in policy_samples
                 if not item["success"]
             )
@@ -217,9 +281,29 @@ def _l0_library(case: CaseConfig, budget: str, seed: int) -> list[tuple[CaseConf
     uq_power = int(round(np.log2(uq_count)))
     for index, point in enumerate(points):
         design_case, decision = design_from_unit(case, point, index)
-        samples = sample_parameters(uq_power, seed + 31 * (index + 1))
+        policy_seed = seed + 31 * (index + 1)
+        samples = sample_parameters(uq_power, policy_seed)
         results = [simulate(design_case, "L0", sample) for sample in samples]
-        library.append((design_case, _record_from_results(design_case, decision, index, "L0", results)))
+        policy_provenance = [
+            {
+                "sample_id": f"L0-design-{index:04d}-policy-{sample_index:04d}",
+                "sampler_seed": policy_seed,
+                "parameters": sample,
+                "sampler_algorithm": "scipy_sobol_parameter_policy_v1",
+            }
+            for sample_index, sample in enumerate(samples)
+        ]
+        library.append((
+            design_case,
+            _record_from_results(
+                design_case,
+                decision,
+                index,
+                "L0",
+                results,
+                policy_provenance=policy_provenance,
+            ),
+        ))
     _L0_CACHE[key] = library
     return library
 
@@ -274,16 +358,43 @@ def run_inverse(case: CaseConfig, budget: Literal["tiny", "default"] = "tiny", s
     refined: list[dict[str, Any]] = []
     disagreement: list[dict[str, Any]] = []
     for position, (design_case, l0_record) in enumerate(shortlist):
-        base_result = simulate(design_case, "L1", {"grid_check": True})
+        base_parameters = {"grid_check": True}
+        base_result = simulate(design_case, "L1", base_parameters)
         l1_sample_count = int(case.raw["inverse_design"][budget]["l1_uncertainty_samples"])
         l1_power = int(round(np.log2(l1_sample_count)))
         if 2**l1_power != l1_sample_count:
             raise ValueError("L1 uncertainty sample count must be a power of two")
-        extra_samples = sample_parameters(l1_power, seed + 10007 + position)[: max(0, l1_sample_count - 1)]
+        policy_seed = seed + 10007 + position
+        extra_samples = sample_parameters(l1_power, policy_seed)[: max(0, l1_sample_count - 1)]
         extra_results = [simulate(design_case, "L1", sample) for sample in extra_samples]
         grid = base_result.solver_statistics.get("grid_convergence", {})
         grid_converged = bool(grid.get("converged", False))
-        record = _record_from_results(design_case, l0_record["decision"], l0_record["design_id"], "L1", [base_result, *extra_results], grid_converged=grid_converged)
+        policy_provenance = [
+            {
+                "sample_id": f"L1-design-{int(l0_record['design_id']):04d}-grid-baseline",
+                "sampler_seed": None,
+                "parameters": base_parameters,
+                "sampler_algorithm": "fixed_grid_convergence_baseline_v1",
+            },
+            *[
+                {
+                    "sample_id": f"L1-design-{int(l0_record['design_id']):04d}-policy-{sample_index:04d}",
+                    "sampler_seed": policy_seed,
+                    "parameters": sample,
+                    "sampler_algorithm": "scipy_sobol_parameter_policy_v1",
+                }
+                for sample_index, sample in enumerate(extra_samples, start=1)
+            ],
+        ]
+        record = _record_from_results(
+            design_case,
+            l0_record["decision"],
+            l0_record["design_id"],
+            "L1",
+            [base_result, *extra_results],
+            grid_converged=grid_converged,
+            policy_provenance=policy_provenance,
+        )
         refined.append(record)
         all_evaluations.append(record)
         disagreement.append({

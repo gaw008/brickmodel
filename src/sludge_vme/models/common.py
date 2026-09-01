@@ -403,9 +403,9 @@ def finalize_result(
     success = solver_success and bounds_ok and conservation_ok
     status = RunStatus("success" if success else ("conservation_failure" if solver_success else "solver_failure"), solver_message, success)
     fields = {
-        "temperature": _field(temperature[:, 0].tolist() if temperature.shape[1] == 1 else temperature.tolist(), "K", basis="cell"),
-        "reaction_extents": {name: _field(extents[:, index, 0].tolist() if temperature.shape[1] == 1 else extents[:, index, :].tolist(), "1", basis="cell") for index, name in enumerate(REACTIONS)},
-        "raw_reaction_extents": {name: _field(raw_extents[:, index, 0].tolist() if temperature.shape[1] == 1 else raw_extents[:, index, :].tolist(), "1", basis="unprojected conservative ODE extent state per cell") for index, name in enumerate(REACTIONS)},
+        "temperature": _field(temperature[:, 0].tolist() if temperature.shape[1] == 1 else temperature.tolist(), "K", basis="cell-average internal temperature on reference spatial discretization", conversion="identity"),
+        "reaction_extents": {name: _field(extents[:, index, 0].tolist() if temperature.shape[1] == 1 else extents[:, index, :].tolist(), "1", basis="projected reaction progress per cell", conversion="clip(raw_reaction_extent, 0, 1)") for index, name in enumerate(REACTIONS)},
+        "raw_reaction_extents": {name: _field(raw_extents[:, index, 0].tolist() if temperature.shape[1] == 1 else raw_extents[:, index, :].tolist(), "1", basis="unprojected conservative ODE extent state per cell", conversion="identity") for index, name in enumerate(REACTIONS)},
         "gas_concentrations": {
             name: _field(
                 gas[:, index, 0].tolist() if temperature.shape[1] == 1 else gas[:, index, :].tolist(),
@@ -450,15 +450,15 @@ def finalize_result(
             )
             for index, name in enumerate(GASES)
         },
-        "boundary_heat_cumulative": _field(q_boundary.tolist(), "J/m3_reference_bulk", basis="cumulative boundary heat source on reference bulk volume"),
-        "reaction_heat_cumulative": _field(q_reaction.tolist(), "J/m3_reference_bulk", basis="cumulative reduced-model reaction heat source on reference bulk volume"),
-        "gas_overpressure": _field(generated_partial_pressure[:, 0].tolist() if temperature.shape[1] == 1 else generated_partial_pressure.tolist(), "Pa", proxy=True),
-        "liquid_fraction": _field(liquid[:, 0].tolist() if temperature.shape[1] == 1 else liquid.tolist(), "1", proxy=True, status="unresolved_oxide_liquid_database"),
-        "total_porosity": _field(porosity[:, 0].tolist() if temperature.shape[1] == 1 else porosity.tolist(), "1"),
-        "open_porosity": _field(open_porosity[:, 0].tolist() if temperature.shape[1] == 1 else open_porosity.tolist(), "1", proxy=True),
-        "volume_ratio": _field(volume_ratio[:, 0].tolist() if temperature.shape[1] == 1 else volume_ratio.tolist(), "1"),
-        "sintering_strain": _field((np.log(volume_ratio) / 3.0)[:, 0].tolist() if temperature.shape[1] == 1 else (np.log(volume_ratio) / 3.0).tolist(), "1", proxy=True),
-        "stress_proxy": _field((gradient * 1e6 * 1e-5 / 0.75).tolist(), "Pa", proxy=True),
+        "boundary_heat_cumulative": _field(q_boundary.tolist(), "J/m3_reference_bulk", basis="cumulative boundary heat source on reference bulk volume", conversion="time integral of resolved boundary heat rate"),
+        "reaction_heat_cumulative": _field(q_reaction.tolist(), "J/m3_reference_bulk", basis="cumulative reduced-model reaction heat source on reference bulk volume", conversion="-rho_dry * sum(deltaH * raw_reaction_extent)"),
+        "gas_overpressure": _field(generated_partial_pressure[:, 0].tolist() if temperature.shape[1] == 1 else generated_partial_pressure.tolist(), "Pa", basis="ideal-gas pressure of modeled internal gases in current open pore volume", conversion="R*T*sum(molar_inventory)/(phi_open*J)", proxy=True),
+        "liquid_fraction": _field(liquid[:, 0].tolist() if temperature.shape[1] == 1 else liquid.tolist(), "1", basis="composition-sensitive unresolved screening closure per cell", conversion="liquid_fraction(temperature, oxide_flux_index)", proxy=True, status="unresolved_oxide_liquid_database"),
+        "total_porosity": _field(porosity[:, 0].tolist() if temperature.shape[1] == 1 else porosity.tolist(), "1", basis="current total pore volume fraction", conversion="1-solid_mass/(true_density*J)"),
+        "open_porosity": _field(open_porosity[:, 0].tolist() if temperature.shape[1] == 1 else open_porosity.tolist(), "1", basis="connected current open pore volume fraction", conversion="total_porosity * connectivity", proxy=True),
+        "volume_ratio": _field(volume_ratio[:, 0].tolist() if temperature.shape[1] == 1 else volume_ratio.tolist(), "1", basis="current bulk volume divided by reference bulk volume per cell", conversion="exp(log_volume_state)"),
+        "sintering_strain": _field((np.log(volume_ratio) / 3.0)[:, 0].tolist() if temperature.shape[1] == 1 else (np.log(volume_ratio) / 3.0).tolist(), "1", basis="isotropic logarithmic linear strain", conversion="log(volume_ratio)/3", proxy=True),
+        "stress_proxy": _field((gradient * 1e6 * 1e-5 / 0.75).tolist(), "Pa", basis="temperature-gradient screening proxy", conversion="gradient_K*1e6*1e-5/0.75", proxy=True),
     }
     summary = {
         "residence_time_s": _summary(ctx.residence_time_s, "s"),

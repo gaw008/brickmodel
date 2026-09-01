@@ -97,7 +97,8 @@ def test_inverse_required_policy_sample_failures_are_fail_safe_and_auditable(fai
     assert len(record["policy_samples"]) == 4
     assert sum(item["success"] is False for item in record["policy_samples"]) == failed_count
     assert all(item["status"] for item in record["policy_samples"])
-    assert all(item["message"] for item in record["policy_samples"] if not item["success"])
+    assert all("message" not in item for item in record["policy_samples"])
+    assert all(item["forward_primary_state_sha256"] for item in record["policy_samples"])
 
 
 def test_feed_moisture_morphology_and_oxide_fingerprint_are_not_phantom() -> None:
@@ -774,11 +775,8 @@ def test_forward_solver_exception_writes_structured_failure_artifact_and_returns
     assert status["success"] is False
     assert status["stage"] == f"forward_{fidelity}"
     assert status["reason"] == "solver_runtime_exception"
-    assert status["exception"] == {
-        "class": "RuntimeError",
-        "summary": "manufactured solver failure",
-    }
-    assert json.loads((out / "provenance.json").read_text())["requested_output"] == str(out)
+    assert status["exception"] == {"category": "runtime_error"}
+    assert json.loads((out / "provenance.json").read_text())["case_hash"] == BASE.content_hash
     assert json.loads((out / "run_manifest.json").read_text())["run_type"] == "structured_failure"
     assert "Traceback" not in capsys.readouterr().err
 
@@ -803,7 +801,7 @@ def test_inverse_solver_exception_writes_structured_failure_artifact_and_returns
     assert exit_code == 3
     status = json.loads((out / "status.json").read_text())
     assert status["stage"] == "inverse"
-    assert status["exception"]["class"] == "RuntimeError"
+    assert status["exception"] == {"category": "runtime_error"}
     assert "Traceback" not in capsys.readouterr().err
 
 
@@ -826,7 +824,7 @@ def test_benchmark_solver_exception_writes_structured_failure_artifact_and_retur
     assert exit_code == 3
     status = json.loads((out / "status.json").read_text())
     assert status["stage"] == "benchmark_L0"
-    assert status["exception"]["summary"] == "manufactured benchmark failure"
+    assert status["exception"] == {"category": "runtime_error"}
     assert "Traceback" not in capsys.readouterr().err
 
 

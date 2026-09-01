@@ -9,7 +9,7 @@ import os
 import uuid
 from dataclasses import asdict, dataclass, is_dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal, cast
 
 import numpy as np
 
@@ -17,7 +17,7 @@ from ..chemistry.formula import formula_element_moles, formula_molar_mass
 from ..chemistry.stoichiometry import GAS_FORMULAS, initial_element_inventory
 from ..config import sha256_json
 from ..inverse.pareto import nondominated_mask
-from ..inverse.search import _rank_stability
+from ..inverse.search import _design_space, _rank_stability, run_inverse
 from ..models.common import GAS_MOLAR_MASS_KG_MOL, GASES, REACTIONS, R_GAS, boundary, build_context, liquid_fraction, oxygen_available_mol_m3
 from ..thermo.coverage import assess_thermo_coverage
 from ..types import CaseConfig, ForwardResult
@@ -55,6 +55,230 @@ def _write_json(path: Path, value: Any) -> None:
 
 def _root() -> Path:
     return Path(__file__).resolve().parents[3]
+
+
+def _forward_semantic_contract(time_count: int, cell_count: int) -> dict[str, Any]:
+    field_shape = ["time"] if cell_count == 1 else ["time", "cell"]
+    curve_shape = ["time"]
+    fields: dict[str, dict[str, Any]] = {}
+
+    def add(
+        name: str,
+        unit: str,
+        basis: str,
+        conversion: str,
+        shape: list[str],
+        *,
+        minimum: float | None = None,
+        maximum: float | None = None,
+        minimum_inclusive: bool = True,
+        maximum_inclusive: bool = True,
+        proxy: bool = False,
+        status: str = "resolved",
+        species: str | None = None,
+        molar_mass_kg_mol: float | None = None,
+    ) -> None:
+        metadata: dict[str, Any] = {
+            "unit": unit,
+            "basis": basis,
+            "proxy": proxy,
+            "status": status,
+            "conversion": conversion,
+        }
+        if species is not None:
+            metadata["species"] = species
+        if molar_mass_kg_mol is not None:
+            metadata["molar_mass_kg_mol"] = molar_mass_kg_mol
+        fields[name] = {
+            "species": species,
+            "unit": unit,
+            "basis": basis,
+            "conversion": conversion,
+            "shape": shape,
+            "finite_required": True,
+            "range": {
+                "minimum": minimum,
+                "minimum_inclusive": minimum_inclusive,
+                "maximum": maximum,
+                "maximum_inclusive": maximum_inclusive,
+            },
+            "artifact_metadata": metadata,
+        }
+
+    add(
+        "temperature",
+        "K",
+        "cell-average internal temperature on reference spatial discretization",
+        "identity",
+        field_shape,
+        minimum=0.0,
+        maximum=5000.0,
+        minimum_inclusive=False,
+        maximum_inclusive=False,
+    )
+    for name in REACTIONS:
+        add("reaction_extents." + name, "1", "projected reaction progress per cell", "clip(raw_reaction_extent, 0, 1)", field_shape, minimum=0.0, maximum=1.0)
+        add("raw_reaction_extents." + name, "1", "unprojected conservative ODE extent state per cell", "identity", field_shape, minimum=-1e-5, maximum=1.0 + 1e-5)
+    for name in GASES:
+        molar_mass = GAS_MOLAR_MASS_KG_MOL[name]
+        add(
+            "gas_concentrations." + name,
+            "kg/m3_reference_bulk",
+            "conservative species mass inventory per reference bulk volume",
+            "molar_inventory * molar_mass",
+            field_shape,
+            minimum=-1e-8,
+            species=name,
+            molar_mass_kg_mol=molar_mass,
+        )
+        add(
+            "gas_molar_inventories." + name,
+            "mol/m3_reference_bulk",
+            "conservative species molar inventory per reference bulk volume; mass_inventory/molar_mass",
+            "mass_storage / molar_mass",
+            field_shape,
+            minimum=-1e-8,
+            species=name,
+            molar_mass_kg_mol=molar_mass,
+        )
+        add(
+            "gas_current_pore_concentrations." + name,
+            "mol/m3_current_pore",
+            "current pore volume; molar_inventory/(phi_open*J)",
+            "mass_storage / molar_mass / (phi_open * J)",
+            field_shape,
+            minimum=-1e-8,
+            species=name,
+            molar_mass_kg_mol=molar_mass,
+        )
+        add(
+            "released_gas_mass_inventories." + name,
+            "kg/m3_reference_bulk",
+            "cumulative species mass crossing the reference-area boundary per reference bulk volume",
+            "released_molar_inventory * molar_mass",
+            curve_shape,
+            minimum=-1e-8,
+            species=name,
+            molar_mass_kg_mol=molar_mass,
+        )
+    add("boundary_heat_cumulative", "J/m3_reference_bulk", "cumulative boundary heat source on reference bulk volume", "time integral of resolved boundary heat rate", curve_shape)
+    add("reaction_heat_cumulative", "J/m3_reference_bulk", "cumulative reduced-model reaction heat source on reference bulk volume", "-rho_dry * sum(deltaH * raw_reaction_extent)", curve_shape)
+    add("gas_overpressure", "Pa", "ideal-gas pressure of modeled internal gases in current open pore volume", "R*T*sum(molar_inventory)/(phi_open*J)", field_shape, minimum=-1e-6, proxy=True)
+    add("liquid_fraction", "1", "composition-sensitive unresolved screening closure per cell", "liquid_fraction(temperature, oxide_flux_index)", field_shape, minimum=0.0, maximum=1.0, proxy=True, status="unresolved_oxide_liquid_database")
+    add("total_porosity", "1", "current total pore volume fraction", "1-solid_mass/(true_density*J)", field_shape, minimum=0.0, maximum=1.0)
+    add("open_porosity", "1", "connected current open pore volume fraction", "total_porosity * connectivity", field_shape, minimum=0.0, maximum=1.0, proxy=True)
+    add("volume_ratio", "1", "current bulk volume divided by reference bulk volume per cell", "exp(log_volume_state)", field_shape, minimum=0.0, minimum_inclusive=False)
+    add("sintering_strain", "1", "isotropic logarithmic linear strain", "log(volume_ratio)/3", field_shape, proxy=True)
+    add("stress_proxy", "Pa", "temperature-gradient screening proxy", "gradient_K*1e6*1e-5/0.75", curve_shape, minimum=0.0, proxy=True)
+    return {
+        "contract_version": "3.0-full-trajectory-semantic-replay",
+        "verification_mode": "primary_state_recomputation",
+        "strict_semantic_claims": ["fields." + name for name in fields],
+        "integrity_only_fields": [],
+        "coordinate_contract": {
+            "time_s": {"unit": "s", "shape": ["time"], "finite_required": True, "strictly_increasing": True},
+            "x_m": {"unit": "m", "shape": ["cell"], "finite_required": True},
+        },
+        "fields": fields,
+        "resolved_shape": {"time": time_count, "cell": cell_count},
+    }
+
+
+def _forward_manifest_semantic_claims(contract: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "mode": "primary_state_recomputation",
+        "contract_version": contract["contract_version"],
+        "strict_semantic_claims": [
+            *contract["strict_semantic_claims"],
+            "summary.json values and metadata",
+            "conservation.json ledgers and residuals",
+            "state_trajectory.csv projected state columns",
+        ],
+        "integrity_only_claims": [
+            "uncertainty.json",
+            "report.md prose",
+            "runtime and platform provenance",
+        ],
+        "authenticity": "not_provided; hashes provide integrity only and are not signatures",
+    }
+
+
+def _inverse_sampler_contract(case: CaseConfig, budget: str, seed: int) -> dict[str, Any]:
+    budget_config = case.raw["inverse_design"][budget]
+    return {
+        "contract_version": "1.0-deterministic-inverse-replay",
+        "design_sampler": {
+            "algorithm": "scipy.stats.qmc.Sobol",
+            "algorithm_version": "scrambled_random_base2_v1",
+            "dimension": 12,
+            "scramble": True,
+            "seed": int(seed),
+            "design_count": int(budget_config["sobol_designs"]),
+            "design_ids": "zero_based_sobol_emission_order",
+            "transform": "design_from_unit_v1",
+        },
+        "l0_policy_sampler": {
+            "algorithm": "scipy_sobol_parameter_policy_v1",
+            "samples_per_design": int(budget_config["l0_uncertainty_samples"]),
+            "seed_schedule": "seed + 31 * (design_id + 1)",
+            "forward_primary_state_hash": "SHA-256 over primary state and semantic provenance; finite floats quantized to 8 significant digits v2",
+        },
+        "l1_shortlist": {
+            "algorithm": "diverse_low_bloating_then_composition_v1",
+            "count": int(budget_config["l1_shortlist"]),
+        },
+        "l1_policy_sampler": {
+            "baseline": "fixed_grid_convergence_baseline_v1",
+            "samples_per_design_including_baseline": int(budget_config["l1_uncertainty_samples"]),
+            "seed_schedule": "seed + 10007 + shortlist_position",
+            "forward_primary_state_hash": "SHA-256 over primary state and semantic provenance; finite floats quantized to 8 significant digits v2",
+        },
+        "record_order": "all L0 design_id order followed by L1 shortlist order",
+    }
+
+
+def _inverse_manifest_semantic_claims(case: CaseConfig, budget: str, seed: int) -> dict[str, Any]:
+    sampler = _inverse_sampler_contract(case, budget, seed)
+    return {
+        "mode": "deterministic_full_solver_replay",
+        "contract_version": sampler["contract_version"],
+        "strict_semantic_claims": [
+            "ordered L0 and L1 all_evaluations records",
+            "design IDs, decision vectors, bounds and resolved design cases",
+            "policy sample IDs, seeds, parameters and forward primary-state hashes",
+            "feasibility, constraints, slacks and objectives",
+            "L1 shortlist, Pareto membership and nondominance",
+            "summary counts, observed envelope, rank stability, uncertainty and Pareto CSV",
+            "flags and report derived from replay result",
+        ],
+        "integrity_only_claims": [
+            "solver_statistics.wall_time_s",
+            "manifest runtime, platform and transaction provenance",
+        ],
+        "authenticity": "not_provided; hashes provide integrity only and are not signatures",
+    }
+
+
+_INVERSE_REPLAY_CACHE: dict[tuple[str, str, int], Any] = {}
+
+
+def _deterministic_inverse_replay(resolved: dict[str, Any], budget: str, seed: int, source_path: Path) -> Any:
+    case_hash = sha256_json(resolved)
+    key = (case_hash, budget, int(seed))
+    if key not in _INVERSE_REPLAY_CACHE:
+        case = CaseConfig(copy.deepcopy(resolved), source_path, case_hash)
+        replay_budget = cast(Literal["tiny", "default"], budget)
+        _INVERSE_REPLAY_CACHE[key] = run_inverse(case, budget=replay_budget, seed=int(seed))
+    return _INVERSE_REPLAY_CACHE[key]
+
+
+def _canonical_replay_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    canonical = copy.deepcopy(records)
+    for record in canonical:
+        statistics = record.get("solver_statistics")
+        if isinstance(statistics, dict):
+            statistics.pop("wall_time_s", None)
+    return canonical
 
 
 def _begin_atomic_output(out: Path | str, overwrite: bool) -> tuple[Path, Path, dict[str, Any]]:
@@ -110,6 +334,9 @@ def _artifact_inventory(directory: Path) -> dict[str, dict[str, Any]]:
 
 def write_forward_run(out: Path | str, case: CaseConfig, result: ForwardResult, *, cli_args: list[str], seed: int, uncertainty: Any | None = None, overwrite: bool = False) -> Path:
     target, directory, transaction = _begin_atomic_output(out, overwrite)
+    time_count = len(result.coordinates.get("time_s", []))
+    cell_count = len(result.coordinates.get("x_m", []))
+    semantic_contract = _forward_semantic_contract(time_count, cell_count)
     _write_json(directory / "resolved_case.json", case.raw)
     _write_json(directory / "status.json", result.status)
     _write_json(directory / "summary.json", result.summary)
@@ -138,6 +365,7 @@ def write_forward_run(out: Path | str, case: CaseConfig, result: ForwardResult, 
                 "driving_concentration": "mol/m3_current_pore",
                 "geometry": "current phi_open and J with isotropic reference/current area mapping",
             },
+            "semantic_contract": semantic_contract,
         },
     )
     _write_json(directory / "uncertainty.json", uncertainty.as_dict() if uncertainty is not None else {"status": "not_requested", "notice": "No uncertainty run requested; interval metadata remain in the parameter pack."})
@@ -146,6 +374,7 @@ def write_forward_run(out: Path | str, case: CaseConfig, result: ForwardResult, 
         cli_args=cli_args, seed=seed, run_type="forward", fidelity=result.fidelity,
     )
     manifest["solver_statistics"] = result.solver_statistics
+    manifest["semantic_verification"] = _forward_manifest_semantic_claims(semantic_contract)
     manifest["output_transaction"] = transaction
     _write_trajectory_csv(directory / "state_trajectory.csv", result)
     (directory / "report.md").write_text(_forward_markdown(result), encoding="utf-8")
@@ -221,6 +450,16 @@ def write_inverse_run(out: Path | str, case: CaseConfig, result: Any, *, cli_arg
     parameter_hash = result.ranked_candidates[0]["source_hashes"]["parameter_pack"] if result.ranked_candidates else "unavailable"
     manifest = build_manifest(root=_root(), case_hash=case.content_hash, parameter_pack_hash=parameter_hash, cli_args=cli_args, seed=seed, run_type="inverse", budget=result.budget)
     manifest["design_space"] = result.design_space
+    if result.budget in {"tiny", "default"}:
+        manifest["sampler_contract"] = _inverse_sampler_contract(case, result.budget, seed)
+        manifest["semantic_verification"] = _inverse_manifest_semantic_claims(case, result.budget, seed)
+    else:
+        manifest["semantic_verification"] = {
+            "mode": "manufactured_fixture_self_consistency_only",
+            "strict_semantic_claims": [],
+            "integrity_only_claims": ["all manufactured inverse fixture artifacts"],
+            "authenticity": "not_provided; hashes provide integrity only and are not signatures",
+        }
     manifest["output_transaction"] = transaction
     (directory / "report.md").write_text(_inverse_markdown(result), encoding="utf-8")
     manifest["artifacts"] = _artifact_inventory(directory)
@@ -228,22 +467,27 @@ def write_inverse_run(out: Path | str, case: CaseConfig, result: Any, *, cli_arg
     return _finish_atomic_output(target, directory, transaction)
 
 
-def _safe_exception_summary(exc: Exception) -> str:
-    message = " ".join(str(exc).split())[:240]
-    sensitive_markers = (
-        "api_key",
-        "authorization",
-        "bearer ",
-        "connection string",
-        "oauth",
-        "password",
-        "refresh_token",
-        "secret",
-        "token=",
-    )
-    if any(marker in message.lower() for marker in sensitive_markers):
-        return "[REDACTED]"
-    return message or "runtime exception without a message"
+_FAILURE_STAGES = frozenset({"forward_L0", "forward_L1", "inverse", "benchmark_L0", "benchmark_L1"})
+
+
+def _exception_category(exc: Exception) -> str:
+    """Map exact trusted built-in exception types to fixed categories only."""
+    categories = {
+        RuntimeError: "runtime_error",
+        ValueError: "invalid_value",
+        json.JSONDecodeError: "invalid_value",
+        OSError: "io_error",
+        FileNotFoundError: "io_error",
+        FileExistsError: "io_error",
+        PermissionError: "io_error",
+        IsADirectoryError: "io_error",
+        NotADirectoryError: "io_error",
+        ArithmeticError: "numeric_error",
+        LookupError: "lookup_error",
+        KeyError: "lookup_error",
+        IndexError: "lookup_error",
+    }
+    return categories.get(type(exc), "unexpected_error")
 
 
 def write_structured_failure(
@@ -259,56 +503,60 @@ def write_structured_failure(
     budget: str | None = None,
 ) -> Path:
     """Atomically record a solver failure without clobbering occupied output."""
+    safe_stage = stage if stage in _FAILURE_STAGES else "unknown"
+    exception_category = _exception_category(exc)
     requested = Path(out).resolve()
     requested.parent.mkdir(parents=True, exist_ok=True)
     occupied = requested.exists() and (not requested.is_dir() or any(requested.iterdir()))
     preserved = bool(occupied and not overwrite)
     target_out = requested.parent / f".{requested.name}.failure-{uuid.uuid4().hex}" if preserved else requested
     target, directory, transaction = _begin_atomic_output(target_out, overwrite and not preserved)
-    exception = {"class": type(exc).__name__, "summary": _safe_exception_summary(exc)}
+    exception = {"category": exception_category}
     status = {
         "code": "solver_exception",
         "success": False,
-        "stage": stage,
+        "stage": safe_stage,
         "reason": "solver_runtime_exception",
         "exception": exception,
     }
+    safe_transaction = {
+        "write_strategy": transaction["write_strategy"],
+        "overwrite_requested": transaction["overwrite_requested"],
+        "requested_output_preserved": preserved,
+        "manifest_self_hash": transaction["manifest_self_hash"],
+    }
     provenance = {
         "case_hash": case.content_hash,
-        "spec_version": case.raw.get("spec_version") if isinstance(case.raw, dict) else None,
-        "stage": stage,
-        "requested_output": str(requested),
-        "actual_failure_output": str(target),
+        "stage": safe_stage,
         "requested_output_preserved": preserved,
-        "output_transaction": transaction,
+        "output_transaction": safe_transaction,
         "network_used_by_solver": False,
         "paid_services": False,
         "production_control_side_effects": False,
     }
-    _write_json(directory / "resolved_case.json", case.raw)
     _write_json(directory / "status.json", status)
     _write_json(directory / "provenance.json", provenance)
     _write_json(directory / "flags.json", {"flags": ["solver_exception", "no_physical_result"], "warnings": []})
     (directory / "report.md").write_text(
         "# Structured solver failure\n\n"
         "> No physical or optimization result was produced.\n\n"
-        f"- stage: `{stage}`\n"
-        f"- exception class: `{exception['class']}`\n"
-        f"- safe summary: `{exception['summary']}`\n",
+        f"- stage: `{safe_stage}`\n"
+        "- reason: `solver_runtime_exception`\n"
+        f"- exception category: `{exception_category}`\n",
         encoding="utf-8",
     )
     manifest = build_manifest(
         root=_root(),
         case_hash=case.content_hash,
         parameter_pack_hash="unavailable_solver_exception",
-        cli_args=cli_args,
+        cli_args=[],
         seed=seed,
         run_type="structured_failure",
         fidelity=fidelity,
         budget=budget,
     )
-    manifest["failure"] = {"stage": stage, "reason": "solver_runtime_exception", "exception_class": exception["class"]}
-    manifest["output_transaction"] = transaction
+    manifest["failure"] = {"stage": safe_stage, "reason": "solver_runtime_exception", "exception_category": exception_category}
+    manifest["output_transaction"] = safe_transaction
     manifest["artifacts"] = _artifact_inventory(directory)
     _write_json(directory / "run_manifest.json", manifest)
     return _finish_atomic_output(target, directory, transaction)
@@ -444,6 +692,117 @@ def _time_cell(values: Any, time_count: int, cell_count: int, name: str) -> np.n
     return array
 
 
+def _forward_field_schema_valid(
+    trajectory: dict[str, Any],
+    time_count: int,
+    cell_count: int,
+) -> bool:
+    expected_contract = _forward_semantic_contract(time_count, cell_count)
+    if not _semantic_close(trajectory.get("semantic_contract"), expected_contract):
+        return False
+    fields = trajectory.get("fields")
+    if not isinstance(fields, dict):
+        return False
+    expected_top_level = {name.split(".", 1)[0] for name in expected_contract["fields"]}
+    if set(fields) != expected_top_level:
+        return False
+    grouped = {
+        "reaction_extents",
+        "raw_reaction_extents",
+        "gas_concentrations",
+        "gas_molar_inventories",
+        "gas_current_pore_concentrations",
+        "released_gas_mass_inventories",
+    }
+    for group in grouped:
+        expected_members = {
+            name.split(".", 1)[1]
+            for name in expected_contract["fields"]
+            if name.startswith(group + ".")
+        }
+        if not isinstance(fields.get(group), dict) or set(fields[group]) != expected_members:
+            return False
+    resolved_shape = {"time": time_count, "cell": cell_count}
+    for path, spec in expected_contract["fields"].items():
+        parts = path.split(".")
+        field = fields.get(parts[0])
+        if len(parts) == 2 and isinstance(field, dict):
+            field = field.get(parts[1])
+        if not isinstance(field, dict) or set(field) != {"values", *spec["artifact_metadata"]}:
+            return False
+        metadata = {key: field[key] for key in spec["artifact_metadata"]}
+        if not _semantic_close(metadata, spec["artifact_metadata"]):
+            return False
+        try:
+            array = np.asarray(field["values"], dtype=float)
+        except (TypeError, ValueError):
+            return False
+        expected_shape = tuple(resolved_shape[axis] for axis in spec["shape"])
+        if array.shape != expected_shape or not np.all(np.isfinite(array)):
+            return False
+        range_spec = spec["range"]
+        minimum = range_spec["minimum"]
+        maximum = range_spec["maximum"]
+        if minimum is not None:
+            if range_spec["minimum_inclusive"] and not np.all(array >= minimum):
+                return False
+            if not range_spec["minimum_inclusive"] and not np.all(array > minimum):
+                return False
+        if maximum is not None:
+            if range_spec["maximum_inclusive"] and not np.all(array <= maximum):
+                return False
+            if not range_spec["maximum_inclusive"] and not np.all(array < maximum):
+                return False
+    return True
+
+
+def _forward_summary_metadata_contract(fidelity: str, thermo: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    def metadata(
+        unit: str,
+        *,
+        proxy: bool = False,
+        status: str = "resolved",
+        validity: str = "synthetic screening domain",
+    ) -> dict[str, Any]:
+        return {"unit": unit, "proxy": proxy, "status": status, "validity": validity}
+
+    return {
+        "residence_time_s": metadata("s"),
+        "as_received_water_kg_per_kg_dry": metadata("kg/kg_dry"),
+        "forming_added_water_kg_per_kg_dry": metadata("kg/kg_dry"),
+        "total_initial_water_kg_per_kg_dry": metadata("kg/kg_dry"),
+        "effective_true_density_kg_m3": metadata("kg/m3", validity="dry-feed harmonic-volume mixture closure"),
+        "effective_specific_heat_J_kg_K": metadata("J/kg/K", validity="dry-feed mass-weighted mixture closure"),
+        "effective_thermal_conductivity_W_m_K": metadata("W/m/K", validity="dry-feed geometric-mean mixture closure"),
+        "effective_gas_diffusivity_m2_s": metadata("m2/s", validity="dry-feed geometric-mean pore transport closure"),
+        "effective_permeability_m2": metadata("m2", proxy=True, validity="Kozeny-Carman morphology closure"),
+        "oxide_flux_index": metadata("1", proxy=True, status="closure_proxy", validity="amorphous oxide network-modifier mass fraction"),
+        "bulk_density_kg_m3": metadata("kg/m3"),
+        "open_porosity": metadata("1", proxy=True),
+        "linear_shrinkage": metadata("1", proxy=True),
+        "water_absorption_proxy_percent": metadata("%", proxy=True),
+        "strength_proxy_Pa": metadata("Pa", proxy=True, status="unresolved_for_certification"),
+        "liquid_fraction": metadata("1", proxy=True, status="unresolved_oxide_liquid_database"),
+        "phase_amounts": metadata("mass_fraction_proxy", proxy=True, status="unresolved_oxide_liquid_database"),
+        "released_gas_kg_per_kg_dry": metadata("kg/kg_dry"),
+        "max_overpressure_Pa": metadata("Pa", proxy=True),
+        "max_center_surface_temperature_difference_K": metadata("K", proxy=fidelity == "L0"),
+        "stress_proxy_Pa": metadata("Pa", proxy=True),
+        "reaction_completion": metadata("1"),
+        "oxygen_ledger_mol_O2_per_m3_reference": metadata("mol_O2/m3_reference", validity="finite initial pore inventory plus configured boundary-transfer upper bound"),
+        "emissions_coverage": metadata("", status="not_evaluated", validity="complete oxidation products only; no CO/VOC/NOx submodel"),
+        "enthalpy_coverage": metadata("", status="reduced_model_not_full_energy_conservation", validity="ODE identity/numerical consistency only"),
+        "cracking_risk": metadata("1", proxy=True),
+        "bloating_risk": metadata("1", proxy=True),
+        "underfiring_risk": metadata("1", proxy=True),
+        "overfiring_risk": metadata("1", proxy=True),
+        "warpage_risk": metadata("1", proxy=True),
+        "efflorescence_risk": metadata("1", proxy=True, status="unresolved"),
+        "thermo_coverage_score": metadata("1", status=thermo["status"], validity=thermo["validity"]),
+        "environmental_status": metadata("", status="not_evaluated", validity="thresholds absent"),
+    }
+
+
 def _forward_independent_semantics(
     directory: Path,
     manifest: dict[str, Any],
@@ -501,8 +860,14 @@ def _forward_independent_semantics(
         open_porosity = _time_cell(fields["open_porosity"]["values"], time_count, cell_count, "open porosity")
         boundary_heat = np.asarray(fields["boundary_heat_cumulative"]["values"], dtype=float)
         reaction_heat = np.asarray(fields["reaction_heat_cumulative"]["values"], dtype=float)
+        gas_overpressure = _time_cell(fields["gas_overpressure"]["values"], time_count, cell_count, "gas overpressure")
+        liquid_trajectory = _time_cell(fields["liquid_fraction"]["values"], time_count, cell_count, "liquid fraction")
+        sintering_strain = _time_cell(fields["sintering_strain"]["values"], time_count, cell_count, "sintering strain")
+        stress_proxy = np.asarray(fields["stress_proxy"]["values"], dtype=float)
         if boundary_heat.shape != (time_count,) or reaction_heat.shape != (time_count,):
             raise ValueError("cumulative heat state shape mismatch")
+        if stress_proxy.shape != (time_count,):
+            raise ValueError("stress proxy shape mismatch")
         overrides = provenance.get("parameter_overrides")
         if not isinstance(overrides, dict):
             raise ValueError("parameter_overrides provenance must be an object")
@@ -522,6 +887,13 @@ def _forward_independent_semantics(
     }
     semantic_results.append(_semantic_check(checks, errors, "trajectory_schema", trajectory.get("schema_version"), "2.0-independent-semantic-verification"))
     semantic_results.append(_semantic_check(checks, errors, "trajectory_counts", trajectory.get("state_counts"), expected_counts))
+    field_schema_ok = _forward_field_schema_valid(trajectory, time_count, cell_count)
+    checks["forward_field_schema_contract"] = field_schema_ok
+    if not field_schema_ok:
+        errors.append("forward trajectory field schema contract mismatch")
+    semantic_results.append(field_schema_ok)
+    expected_claims = _forward_manifest_semantic_claims(_forward_semantic_contract(time_count, cell_count))
+    semantic_results.append(_semantic_check(checks, errors, "forward_manifest_semantic_claims", manifest.get("semantic_verification"), expected_claims))
     semantic_results.append(_semantic_check(checks, errors, "provenance_case_hash", provenance.get("case_hash"), manifest.get("resolved_case_hash")))
     semantic_results.append(_semantic_check(checks, errors, "provenance_parameter_pack_hash", provenance.get("parameter_pack_hash"), manifest.get("parameter_pack_hash")))
     expected_transport = {
@@ -538,17 +910,29 @@ def _forward_independent_semantics(
     expected_current_pore = expected_gas_molar / np.maximum(open_porosity[:, None, :] * volume_ratio[:, None, :], 1e-12)
     semantic_results.append(_semantic_check(checks, errors, "mass_to_molar_inventory", gas_molar.tolist(), expected_gas_molar.tolist()))
     semantic_results.append(_semantic_check(checks, errors, "molar_to_current_pore", current_pore_molar.tolist(), expected_current_pore.tolist()))
-    for name in GASES:
-        expected_metadata = {
-            "unit": "mol/m3_current_pore",
-            "basis": "current pore volume; molar_inventory/(phi_open*J)",
-            "species": name,
-            "molar_mass_kg_mol": GAS_MOLAR_MASS_KG_MOL[name],
-            "conversion": "mass_storage / molar_mass / (phi_open * J)",
-        }
-        actual_field = fields["gas_current_pore_concentrations"][name]
-        actual_metadata = {key: actual_field.get(key) for key in expected_metadata}
-        semantic_results.append(_semantic_check(checks, errors, f"molar_metadata_{name}", actual_metadata, expected_metadata))
+    semantic_results.append(_semantic_check(checks, errors, "projected_extent_trajectory", projected_extents.tolist(), np.clip(raw_extents, 0.0, 1.0).tolist()))
+
+    generated_gas_trajectory = ctx.rho_dry * np.einsum("trc,rg->tgc", raw_extents, ctx.gas_mass_matrix)
+    expected_released_mass = generated_gas_trajectory.mean(axis=2) - gas_mass.mean(axis=2)
+    semantic_results.append(_semantic_check(checks, errors, "recomputed_released_gas_trajectory", released_mass.tolist(), expected_released_mass.tolist(), rtol=1e-8, atol=1e-7))
+
+    reaction_enthalpies = np.asarray([item.deltaH_J_per_kg_dry for item in ctx.potentials], dtype=float)
+    expected_reaction_heat = -ctx.rho_dry * np.mean(
+        np.tensordot(raw_extents - raw_extents[0], reaction_enthalpies, axes=(1, 0)),
+        axis=1,
+    )
+    stored_energy_trajectory = (
+        ctx.rho_dry
+        * (1.0 + ctx.water_ratio)
+        * ctx.cp
+        * (temperature.mean(axis=1) - float(temperature[0].mean()))
+    )
+    expected_boundary_heat = stored_energy_trajectory - expected_reaction_heat
+    semantic_results.append(_semantic_check(checks, errors, "recomputed_reaction_heat_trajectory", reaction_heat.tolist(), expected_reaction_heat.tolist(), rtol=1e-9, atol=1e-4))
+    semantic_results.append(_semantic_check(checks, errors, "recomputed_boundary_heat_trajectory", boundary_heat.tolist(), expected_boundary_heat.tolist(), rtol=1e-9, atol=1e-4))
+
+    expected_gas_overpressure = R_GAS * temperature * gas_molar.sum(axis=1) / np.maximum(open_porosity * volume_ratio, 1e-6)
+    semantic_results.append(_semantic_check(checks, errors, "recomputed_gas_overpressure_trajectory", gas_overpressure.tolist(), expected_gas_overpressure.tolist()))
 
     dry_loss = np.array([
         0.0,
@@ -647,6 +1031,8 @@ def _forward_independent_semantics(
         semantic_results.append(_semantic_check(checks, errors, f"recomputed_conservation_{key}", conservation.get(key), expected))
 
     liquid = liquid_fraction(temperature, ctx.oxide_flux_index)
+    semantic_results.append(_semantic_check(checks, errors, "recomputed_liquid_fraction_trajectory", liquid_trajectory.tolist(), liquid.tolist()))
+    semantic_results.append(_semantic_check(checks, errors, "recomputed_sintering_strain_trajectory", sintering_strain.tolist(), (np.log(volume_ratio) / 3.0).tolist()))
     try:
         with (directory / "state_trajectory.csv").open("r", encoding="utf-8", newline="") as handle:
             trajectory_rows = list(csv.DictReader(handle))
@@ -672,15 +1058,15 @@ def _forward_independent_semantics(
     if not checks["trajectory_csv_cross_artifact"]:
         errors.append("failed check: trajectory_csv_cross_artifact")
     semantic_results.append(checks["trajectory_csv_cross_artifact"])
-    gas_moles = gas_mass / molar_masses[None, :, None]
-    generated_pressure = R_GAS * temperature * gas_moles.sum(axis=1) / np.maximum(open_porosity * volume_ratio, 1e-6)
-    overpressure = float(np.max(generated_pressure))
+    overpressure = float(np.max(expected_gas_overpressure))
     fidelity = manifest.get("fidelity")
     if cell_count == 1:
         gradient = np.array([abs(boundary(ctx, time_s)["gas_temperature_K"] - row[0]) for time_s, row in zip(times, temperature)]) * 0.12
     else:
         gradient = np.abs(temperature[:, 0] - temperature[:, -1])
     max_gradient = float(np.max(gradient))
+    expected_stress_proxy = gradient * 1e6 * 1e-5 / 0.75
+    semantic_results.append(_semantic_check(checks, errors, "recomputed_stress_proxy_trajectory", stress_proxy.tolist(), expected_stress_proxy.tolist()))
     final_dry_mass = ctx.rho_dry - feed_loss_density
     bulk_density = final_dry_mass / final_volume_ratio
     final_open = float(open_porosity[-1].mean())
@@ -692,6 +1078,22 @@ def _forward_independent_semantics(
     overfire_risk = float(np.max(liquid)) / 0.45
     strength = ctx.dense_strength * math.exp(-ctx.strength_coefficient * final_open) * max(0.2, 1.0 - 0.2 * min(crack_risk, 1.0))
     thermo = assess_thermo_coverage(case, float(temperature[-1].mean()), boundary(ctx, ctx.residence_time_s)["ambient_pressure_Pa"])
+    expected_summary_metadata = _forward_summary_metadata_contract(str(fidelity), thermo)
+    summary_schema_ok = set(summary) == set(expected_summary_metadata)
+    if summary_schema_ok:
+        for name, expected_metadata in expected_summary_metadata.items():
+            item = summary.get(name)
+            summary_schema_ok = (
+                isinstance(item, dict)
+                and set(item) == {"value", *expected_metadata}
+                and _semantic_close({key: item[key] for key in expected_metadata}, expected_metadata)
+            )
+            if not summary_schema_ok:
+                break
+    checks["forward_summary_schema_contract"] = summary_schema_ok
+    if not summary_schema_ok:
+        errors.append("forward summary metadata contract mismatch")
+    semantic_results.append(summary_schema_ok)
     expected_summary_values = {
         "residence_time_s": ctx.residence_time_s,
         "as_received_water_kg_per_kg_dry": ctx.as_received_water_ratio,
@@ -880,6 +1282,8 @@ def _inverse_independent_semantics(
     all_evaluations: list[dict[str, Any]],
     errors: list[str],
     checks: dict[str, bool],
+    *,
+    strict: bool,
 ) -> None:
     record_semantics = all(_inverse_record_semantics(record, manifest, resolved) for record in all_evaluations)
     checks["inverse_record_semantics"] = record_semantics
@@ -961,6 +1365,101 @@ def _inverse_independent_semantics(
     ):
         if not checks[name]:
             errors.append(f"failed check: {name}")
+
+    if not strict:
+        return
+    budget = manifest.get("budget")
+    seed = manifest.get("seed")
+    if budget not in {"tiny", "default"}:
+        checks["inverse_deterministic_replay"] = (
+            manifest.get("semantic_verification", {}).get("mode")
+            == "manufactured_fixture_self_consistency_only"
+        )
+        return
+    if not isinstance(seed, int) or isinstance(seed, bool):
+        checks["inverse_deterministic_replay"] = False
+        errors.append("deterministic inverse replay requires an integer manifest seed")
+        return
+
+    replay_case = CaseConfig(copy.deepcopy(resolved), directory / "resolved_case.json", sha256_json(resolved))
+    expected_sampler = _inverse_sampler_contract(replay_case, budget, seed)
+    expected_claims = _inverse_manifest_semantic_claims(replay_case, budget, seed)
+    checks["inverse_sampler_contract"] = _semantic_close(manifest.get("sampler_contract"), expected_sampler)
+    checks["inverse_semantic_claim_contract"] = _semantic_close(manifest.get("semantic_verification"), expected_claims)
+    checks["inverse_design_space_contract"] = _semantic_close(manifest.get("design_space"), _design_space(replay_case))
+    try:
+        replay = _deterministic_inverse_replay(resolved, budget, seed, directory / "resolved_case.json")
+    except Exception:
+        checks["inverse_deterministic_replay"] = False
+        errors.append("deterministic inverse replay failed")
+        return
+
+    expected_records = _canonical_replay_records(replay.all_evaluations)
+    actual_records = _canonical_replay_records(all_evaluations)
+    checks["inverse_replay_ordered_records"] = _semantic_close(actual_records, expected_records)
+    checks["inverse_replay_pareto"] = _semantic_close(
+        _canonical_replay_records(pareto),
+        _canonical_replay_records(replay.pareto_set),
+    )
+    expected_replay_summary = {
+        "status": replay.status,
+        "evaluated_designs": sum(record.get("fidelity") == "L0" for record in replay.all_evaluations),
+        "evaluation_records": len(replay.all_evaluations),
+        "l0_feasible_designs": len(replay.feasible_set),
+        "l1_ranked_candidates": len(replay.ranked_candidates),
+        "pareto_candidates": len(replay.pareto_set),
+        "environmental_status": replay.environmental_status,
+    }
+    checks["inverse_replay_status"] = _semantic_close(
+        status,
+        {"code": replay.status, "success": replay.status == "success"},
+    )
+    checks["inverse_replay_summary"] = _semantic_close(summary, expected_replay_summary)
+    checks["inverse_replay_rank"] = _semantic_close(rank_stability, replay.rank_stability)
+    checks["inverse_replay_envelope"] = _semantic_close(envelope, _feasible_windows(replay.ranked_candidates))
+    expected_uncertainty = {
+        "rank_stability": replay.rank_stability,
+        "l0_l1_disagreement": replay.l0_l1_disagreement,
+        "notice": "Policy quantiles are not empirical confidence intervals.",
+    }
+    checks["inverse_replay_uncertainty"] = _semantic_close(uncertainty, expected_uncertainty)
+    flags = _safe_json(directory, "flags.json", errors)
+    expected_flags = {
+        "warnings": replay.warnings,
+        "flags": ["synthetic_demo", "research_only", "environmental_threshold_missing", "thermo_database_gap"],
+    }
+    checks["inverse_replay_flags"] = _semantic_close(flags, expected_flags)
+    try:
+        report = (directory / "report.md").read_text(encoding="utf-8")
+    except OSError:
+        report = None
+    checks["inverse_replay_report"] = report == _inverse_markdown(replay)
+    expected_parameter_hash = (
+        replay.ranked_candidates[0]["source_hashes"]["parameter_pack"]
+        if replay.ranked_candidates
+        else "unavailable"
+    )
+    checks["inverse_replay_parameter_pack"] = manifest.get("parameter_pack_hash") == expected_parameter_hash
+    replay_checks = (
+        "inverse_sampler_contract",
+        "inverse_semantic_claim_contract",
+        "inverse_design_space_contract",
+        "inverse_replay_ordered_records",
+        "inverse_replay_pareto",
+        "inverse_replay_status",
+        "inverse_replay_summary",
+        "inverse_replay_rank",
+        "inverse_replay_envelope",
+        "inverse_replay_uncertainty",
+        "inverse_replay_flags",
+        "inverse_replay_report",
+        "inverse_replay_parameter_pack",
+        "pareto_csv_cross_artifact",
+    )
+    checks["inverse_deterministic_replay"] = all(checks[name] for name in replay_checks)
+    for name in replay_checks:
+        if not checks[name]:
+            errors.append(f"failed deterministic replay check: {name}")
 
 
 def verify_run(run_dir: Path | str, strict: bool = False) -> VerifyResult:
@@ -1137,6 +1636,7 @@ def verify_run(run_dir: Path | str, strict: bool = False) -> VerifyResult:
             all_evaluations,
             errors,
             checks,
+            strict=strict,
         )
     else:
         errors.append(f"unknown run_type: {run_type!r}")

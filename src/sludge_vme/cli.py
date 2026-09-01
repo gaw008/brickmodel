@@ -9,7 +9,7 @@ from pathlib import Path
 
 from .config import load_case
 from .inverse.search import run_inverse
-from .io.artifacts import _begin_atomic_output, _finish_atomic_output, _write_json, verify_run, write_forward_run, write_inverse_run, write_structured_failure
+from .io.artifacts import _begin_atomic_output, _exception_category, _finish_atomic_output, _write_json, verify_run, write_forward_run, write_inverse_run, write_structured_failure
 from .models import simulate
 from .uq.propagation import propagate
 from .uq.sampling import sample_parameters
@@ -86,7 +86,7 @@ def _record_solver_exception(
         fidelity=fidelity,
         budget=budget,
     )
-    print(f"ERROR: structured solver failure stage={stage} out={directory}", file=sys.stderr)
+    print(f"ERROR: structured solver failure stage={stage} reason=solver_runtime_exception", file=sys.stderr)
     return EXIT_SOLVER
 
 
@@ -217,8 +217,10 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "benchmark":
             return command_benchmark(args)
     except (OSError, ValueError, KeyError, json.JSONDecodeError) as exc:
-        print(f"ERROR: {type(exc).__name__}: {exc}", file=sys.stderr)
-        return EXIT_VALIDATION if isinstance(exc, (FileExistsError, ValueError, KeyError, json.JSONDecodeError)) else EXIT_INTERNAL
+        validation_error = isinstance(exc, (FileExistsError, ValueError, KeyError, json.JSONDecodeError))
+        reason = "validation_error" if validation_error else "internal_io_error"
+        print(f"ERROR: reason={reason} category={_exception_category(exc)}", file=sys.stderr)
+        return EXIT_VALIDATION if validation_error else EXIT_INTERNAL
     return EXIT_INTERNAL
 
 
