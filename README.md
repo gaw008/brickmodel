@@ -66,13 +66,15 @@ Exit codes：`0` 成功；`2` schema/validation（含 malformed top-level/kiln/p
 
 每个 forward 目录至少含：
 
-- `run_manifest.json`：UTC、CLI、seed、case/source/parameter hashes、Python/NumPy/SciPy、platform、fidelity、git commit，以及每个 payload artifact 的 SHA-256/size；manifest 自身因自引用不可能自哈希，显式记为 `not_applicable_self_reference`；
+- `run_manifest.json`：UTC、CLI、seed、case/source/parameter hashes、Python/NumPy/SciPy、platform、fidelity、git commit、solver statistics，以及每个 payload artifact 的 SHA-256/size；manifest 自身因自引用不可能自哈希，显式记为 `not_applicable_self_reference`；
 - `resolved_case.json`, `status.json`, `summary.json`, `conservation.json`, `provenance.json`, `flags.json`；
 - `state_trajectory.json`, `state_trajectory.csv`, `uncertainty.json`, `report.md`。
 
 `state_trajectory.json` schema 2.0 同时保留 projected/raw reaction extents、species mass 与 molar reference inventories、released-gas extensive states、current-pore `mol/m3`、`phi_open/J`、cumulative boundary/reaction heat 和 state counts；每个 gas species 都显式携带 `kg/mol` 与 mass↔moles↔current-pore conversion。内嵌 semantic contract 3.0 对每个 strict trajectory field 声明 exact species/unit/basis/conversion、resolved shape、finite requirement 与 inclusive/exclusive range；没有未声明的 strict derived field。`conservation.json` 使用 deforming-cell reference-volume extensive inventory ledger，并序列化 initial/final mass、bulk volume、element inventories、O2 与 reduced-enthalpy ledger。默认 tolerances：mass/element `1e-8`，`reduced_effective_enthalpy_ode` `1e-4`。后者只验证 reduced ODE 的数值恒等式，不再冒充含 variable mass/escaped-gas sensible enthalpy 的完整 energy conservation，也不作为完整物理 hard-pass。BDF 的微小 extent overshoot 会显式投影到 `[0,1]`，并记录 `extent_projection_max`；超过 `1e-5` 则运行失败。
 
-`verify --strict` 不把 summary/conservation 的自报数值或同步更新后的 manifest hash 当作语义证据。它从 `resolved_case.json + provenance.json + state_trajectory.json` 独立重建 context，并逐时点重算 mass↔moles↔current-pore conversion、released-gas ledger、ideal-gas pressure/overpressure、reaction heat、由温度与 reaction heat 反演的 boundary-heat ODE path、porosity/liquid/sintering/stress trajectories、全部 extrema、summary values/metadata 和 conservation ledgers。正常 hash inventory 仍验证普通字节篡改；cross-artifact recomputation 负责拒绝攻击者同步改 hash 后的合法范围数值、单位或 trajectory 伪造。
+正常 synthetic L0/L1 的 `provenance.json.forward_semantic_replay` 固定 resolved-case hash、fidelity、seed、parameter-overrides digest、parameter/source-pack digest、SciPy solver/version/configuration digest 和比较规则。`verify --strict` 在当前 fresh CLI process 内从这些输入重新运行完整 forward ODE/FVM solver，而不是把 artifact 中的温度、extent 或 gas state 当作真值。它先用 `5 × configured solve_ivp rtol/atol`（默认 L0 `rtol=5e-6, atol=5e-8`；L1 `rtol=5e-6, atol=5e-9`）逐点比较 time/x grid、temperature、raw/projected reaction extents、species mass/molar/current-pore inventories、released gas、volume ratio/Jacobian、porosity、cumulative heat states；mapping keys 比较前按字典序 canonicalize，sequence order 保留。10 K 等 material mutation 远超容差，机器舍入级微差被接受。
+
+只有 primary replay 成功后，strict 才把 replay result 作为独立期望值，比较 pressure/liquid/sintering/stress 等 derived trajectories、全部 summary/extrema/conservation、status 和 CSV projection；原有 algebraic cross-artifact recomputation 是额外检查，不能替代 ODE replay。正常 L0/L1 的 replay failure、缺失 provenance 或 case/fidelity/parameter/source/solver digest mismatch 均返回非零。显式 custom/manufactured fixture 可由 writer 标为 `forward_semantic_replay=not_evaluated`；此时 manifest 把完整 ODE trajectory 列为 integrity-only，strict 输出 warning 并返回非零，绝不声称完整 trajectory semantic verified。
 
 ## Inverse artifacts
 
@@ -86,7 +88,7 @@ Inverse `verify --strict` 会从 `resolved_case + declared budget + seed + sampl
 ## Hash、semantic replay 与 authenticity
 
 - Artifact SHA-256/size 只能证明当前 manifest 与当前 payload 字节一致；攻击者同步重写 payload 与 manifest hash 时，它不提供语义保护。
-- Trusted verifier 中的 forward primary-state recomputation 与 inverse deterministic full-solver replay 提供本仓库声明的 semantic checks；被列为 integrity-only 的字段不在 hard semantic claim 中。
+- Trusted verifier 中的 forward deterministic full-ODE replay、replay-derived artifact comparison 与 inverse deterministic full-solver replay 提供本仓库声明的 semantic checks；endpoint reduced-enthalpy identity 或 artifact 内部自洽不等于 forward ODE replay，被列为 integrity-only 的字段不在 hard semantic claim 中。
 - 本仓库没有签名、MAC、透明日志、remote attestation 或可信时间戳，因此不提供 cryptographic authenticity。能同时替换 verifier 程序和全部 primary states 的攻击者不在边界内。
 
 ## 科学边界

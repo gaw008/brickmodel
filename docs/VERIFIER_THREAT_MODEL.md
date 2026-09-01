@@ -16,17 +16,16 @@ This is only a self-declared byte-integrity layer. An attacker who rewrites a pa
 
 The verifier program is trusted in this model.
 
-Forward strict verification rebuilds the model context from the resolved case and parameter provenance. The trajectory semantic contract fixes every strict field's species, unit, basis, conversion, resolved shape, finite requirement and range. The verifier independently recomputes:
+For a normal synthetic L0/L1 artifact, forward strict verification first validates a replay descriptor that binds the resolved-case hash, fidelity, seed, canonical parameter-overrides digest, local parameter/source-pack hashes, SciPy version, solver method/fallback/grid configuration and its digest. It rebuilds the case in the verifier process and reruns the complete forward ODE/FVM solver. The replay comparison uses both absolute and relative thresholds equal to five times the configured `solve_ivp` tolerances; mapping keys are canonicalized lexicographically, while sequence/time order remains significant. The verifier compares replay against artifact point-by-point for:
 
-- projected extents from raw ODE extents;
-- gas mass-to-molar and molar-to-current-pore mappings;
-- released-gas cumulative inventories from reaction generation minus internal storage;
-- ideal-gas pressure at every time point and cell from molar inventory, temperature, open porosity and current volume ratio;
-- cumulative reaction heat from raw extents and declared reaction enthalpies;
-- cumulative boundary heat at every time point from stored reduced enthalpy minus independently reconstructed reaction heat;
-- total/open porosity, liquid closure, sintering strain and stress trajectories;
-- trajectory extrema, CSV projections, summary values and summary metadata;
-- mass, bulk-volume, elemental, oxygen and reduced-enthalpy ledgers.
+- time and spatial grids;
+- temperature and raw/projected reaction extents, including the free-water state;
+- conservative gas species mass/molar inventories, current-pore molarity and released inventories;
+- current volume ratio/Jacobian, total/open porosity and cumulative boundary/reaction heat states;
+- all replay-derived ideal-gas pressure, liquid, sintering and stress trajectories;
+- trajectory extrema, summary values/metadata, conservation/status and CSV projections.
+
+The existing algebraic reconstruction of mass↔moles↔current-pore conversion, released-gas ledger, pressure, porosity and reduced-enthalpy identity remains defense in depth. It is not the source of replay truth: coherent modification of primary temperature or molar inventory plus all dependent algebraic artifacts still disagrees with the fresh ODE solve and fails. An endpoint reduced-enthalpy identity is not represented as complete ODE trajectory validation.
 
 Inverse strict verification for `tiny` and `default` runs reconstructs the design population from `resolved_case + budget + seed + sampler algorithm/version`. It reruns the complete deterministic pipeline: scrambled Sobol designs, bounded design transform, L0 policy samples, robust feasibility, diverse L1 shortlist, grid checks and policy scenarios, ranking and Pareto filtering. It compares:
 
@@ -38,7 +37,7 @@ Inverse strict verification for `tiny` and `default` runs reconstructs the desig
 - L1 shortlist, feasible/ranked counts, rank stability, observed envelope, Pareto membership and nondominance;
 - `all_evaluations.jsonl`, Pareto JSON/CSV, summary, uncertainty, flags and report.
 
-A rehashed artifact that disagrees with these recomputations fails semantic replay even if every manifest hash was updated.
+A rehashed artifact that disagrees with these replays/recomputations fails semantic replay even if every manifest hash was updated. Missing or mismatched forward case/fidelity/parameter/source/solver provenance also fails. An explicitly opted-out custom/manufactured fixture reports `forward_semantic_replay=not_evaluated`, moves the complete ODE trajectory to integrity-only, and does not make a full trajectory claim.
 
 ### 3. Cryptographic authenticity
 
@@ -58,6 +57,8 @@ Semantic replay is not cryptographic authenticity.
 The verifier is designed to reject an attacker who can copy an artifact directory, modify payload JSON/JSONL/CSV/Markdown, and synchronously update all corresponding SHA-256/size records in `run_manifest.json`, including:
 
 - interior cumulative heat and pressure/extrema changes;
+- coherent nonterminal primary temperature or conservative molar-inventory changes accompanied by dependent heat/pressure/liquid/stress/summary/CSV/hash rewrites;
+- forward replay descriptor, fidelity, parameter/source digest, solver version/configuration/digest and stable solver-statistics changes;
 - field unit, basis, species, conversion, shape, finite/range or summary metadata changes;
 - summary/conservation residual and count rewrites;
 - L0/L1 record deletion, insertion or reordering;
@@ -80,8 +81,8 @@ Structured solver-failure handling also assumes exception text and class names m
 
 Each forward/inverse manifest has a `semantic_verification` section. Fields listed under `strict_semantic_claims` are recomputed or deterministically replayed. Fields under `integrity_only_claims` are hash-checked but are not hard semantic claims.
 
-Current forward integrity-only claims are UQ payload content, report prose, and runtime/platform provenance. Current inverse integrity-only claims are per-record `solver_statistics.wall_time_s` and manifest runtime/platform/transaction provenance. Manufactured test fixtures are labeled self-consistency-only and are not equivalent to a `tiny`/`default` deterministic replay.
+For replay-evaluated forward runs, current integrity-only claims are UQ payload content, report prose, runtime/platform provenance and solver work counters. For an explicit custom/manufactured forward opt-out, the complete ODE trajectory and every claim dependent on it are also integrity-only; strict verification emits a `not_evaluated` warning and returns nonzero. Current inverse integrity-only claims are per-record `solver_statistics.wall_time_s` and manifest runtime/platform/transaction provenance. Manufactured inverse fixtures are labeled self-consistency-only and are not equivalent to a `tiny`/`default` deterministic replay.
 
 ## Cost and operational limit
 
-Inverse strict replay intentionally has approximately the cost of another inverse run. It remains single-worker and performs no network or paid-service calls. Resource measurements must report replay wall time and peak RSS rather than hiding this cost.
+Forward strict replay intentionally has approximately the cost of another corresponding L0/L1 solve; inverse strict replay has approximately the cost of another inverse run. Both remain single-worker and perform no network or paid-service calls. Resource measurements must report replay wall time and peak RSS rather than hiding this cost.

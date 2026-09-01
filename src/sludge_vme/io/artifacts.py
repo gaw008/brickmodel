@@ -12,16 +12,18 @@ from pathlib import Path
 from typing import Any, Literal, cast
 
 import numpy as np
+import scipy
 
 from ..chemistry.formula import formula_element_moles, formula_molar_mass
 from ..chemistry.stoichiometry import GAS_FORMULAS, initial_element_inventory
 from ..config import sha256_json
 from ..inverse.pareto import nondominated_mask
 from ..inverse.search import _design_space, _rank_stability, run_inverse
+from ..models import simulate
 from ..models.common import GAS_MOLAR_MASS_KG_MOL, GASES, REACTIONS, R_GAS, boundary, build_context, liquid_fraction, oxygen_available_mol_m3
 from ..thermo.coverage import assess_thermo_coverage
 from ..types import CaseConfig, ForwardResult
-from .manifest import build_manifest
+from .manifest import build_manifest, file_sha256
 
 
 @dataclass
@@ -29,7 +31,7 @@ class VerifyResult:
     valid: bool
     errors: list[str]
     warnings: list[str]
-    checks: dict[str, bool]
+    checks: dict[str, Any]
 
     def as_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -184,22 +186,115 @@ def _forward_semantic_contract(time_count: int, cell_count: int) -> dict[str, An
     }
 
 
-def _forward_manifest_semantic_claims(contract: dict[str, Any]) -> dict[str, Any]:
+def _forward_manifest_semantic_claims(
+    contract: dict[str, Any], replay: dict[str, Any] | None
+) -> dict[str, Any]:
+    replay_status = replay.get("status") if isinstance(replay, dict) else "missing"
+    if replay_status == "evaluated":
+        return {
+            "mode": "deterministic_full_ode_trajectory_replay",
+            "contract_version": "4.0-forward-ode-replay",
+            "forward_semantic_replay": "evaluated",
+            "strict_semantic_claims": [
+                "resolved case, fidelity, seed and parameter/source/solver provenance",
+                "complete L0/L1 ODE primary trajectory",
+                *contract["strict_semantic_claims"],
+                "summary.json values and metadata",
+                "conservation.json ledgers and residuals",
+                "state_trajectory.csv projected state columns",
+            ],
+            "integrity_only_claims": [
+                "uncertainty.json",
+                "report.md prose",
+                "runtime, platform and solver work counters",
+            ],
+            "authenticity": "not_provided; hashes provide integrity only and are not signatures",
+        }
     return {
-        "mode": "primary_state_recomputation",
+        "mode": "algebraic_cross_artifact_recomputation_only",
         "contract_version": contract["contract_version"],
+        "forward_semantic_replay": "not_evaluated",
         "strict_semantic_claims": [
-            *contract["strict_semantic_claims"],
-            "summary.json values and metadata",
-            "conservation.json ledgers and residuals",
-            "state_trajectory.csv projected state columns",
+            "field schema and algebraic cross-artifact identities only",
         ],
         "integrity_only_claims": [
+            "complete forward ODE primary trajectory",
+            "all claims that depend on unreplayed primary states",
             "uncertainty.json",
             "report.md prose",
             "runtime and platform provenance",
         ],
         "authenticity": "not_provided; hashes provide integrity only and are not signatures",
+    }
+
+
+def _forward_solver_configuration(fidelity: str, parameters: dict[str, Any]) -> dict[str, Any]:
+    if fidelity == "L0":
+        return {
+            "engine": "scipy.integrate.solve_ivp",
+            "engine_version": scipy.__version__,
+            "method_sequence": ["BDF"],
+            "rtol": float(parameters.get("solver_rtol", 1e-6)),
+            "atol": float(parameters.get("solver_atol", 1e-8)),
+            "max_step_fraction_of_residence_time": {"BDF": 1.0 / 240.0},
+            "time_grid_points": 121,
+            "cells": 1,
+            "grid_check": False,
+        }
+    if fidelity == "L1":
+        cells = int(parameters.get("cells", 21))
+        return {
+            "engine": "scipy.integrate.solve_ivp",
+            "engine_version": scipy.__version__,
+            "method_sequence": ["BDF", "Radau_on_BDF_failure"],
+            "rtol": float(parameters.get("solver_rtol", 1e-6)),
+            "atol": float(parameters.get("solver_atol", 1e-9)),
+            "max_step_fraction_of_residence_time": {
+                "BDF": 1.0 / 180.0,
+                "Radau": 1.0 / 240.0,
+            },
+            "time_grid_points": 101,
+            "cells": cells,
+            "grid_check": bool(parameters.get("grid_check", True) and cells == 21),
+            "grid_check_cells": [21, 41] if bool(parameters.get("grid_check", True) and cells == 21) else [],
+        }
+    raise ValueError("forward replay supports only L0 and L1")
+
+
+def _forward_replay_descriptor(
+    *,
+    case_hash: str,
+    fidelity: str,
+    seed: int,
+    parameter_overrides: dict[str, Any],
+    parameter_invocation: str,
+    parameter_pack_hash: str,
+    source_pack_hash: str,
+) -> dict[str, Any]:
+    configuration = _forward_solver_configuration(fidelity, parameter_overrides)
+    solver_rtol = float(configuration["rtol"])
+    solver_atol = float(configuration["atol"])
+    return {
+        "status": "evaluated",
+        "contract_version": "1.0-deterministic-forward-ode-replay",
+        "fidelity": fidelity,
+        "seed": int(seed),
+        "seed_role": "bound run/UQ provenance; the baseline forward ODE is deterministic",
+        "resolved_case_sha256": case_hash,
+        "parameter_overrides_sha256": sha256_json(parameter_overrides),
+        "parameter_invocation": parameter_invocation,
+        "parameter_pack_sha256": parameter_pack_hash,
+        "source_pack_sha256": source_pack_hash,
+        "solver_configuration": configuration,
+        "solver_configuration_sha256": sha256_json(configuration),
+        "comparison": {
+            "algorithm": "recursive numeric comparison after lexicographic mapping-key canonicalization",
+            "relative_tolerance": 5.0 * solver_rtol,
+            "absolute_tolerance": 5.0 * solver_atol,
+            "basis": "five times the configured solve_ivp relative/absolute tolerances",
+            "mapping_order": "ignored; keys canonicalized lexicographically before comparison",
+            "sequence_order": "significant",
+        },
     }
 
 
@@ -332,16 +427,59 @@ def _artifact_inventory(directory: Path) -> dict[str, dict[str, Any]]:
     return inventory
 
 
-def write_forward_run(out: Path | str, case: CaseConfig, result: ForwardResult, *, cli_args: list[str], seed: int, uncertainty: Any | None = None, overwrite: bool = False) -> Path:
+def write_forward_run(
+    out: Path | str,
+    case: CaseConfig,
+    result: ForwardResult,
+    *,
+    cli_args: list[str],
+    seed: int,
+    uncertainty: Any | None = None,
+    overwrite: bool = False,
+    semantic_replay: Literal["auto", "not_evaluated"] = "auto",
+) -> Path:
     target, directory, transaction = _begin_atomic_output(out, overwrite)
     time_count = len(result.coordinates.get("time_s", []))
     cell_count = len(result.coordinates.get("x_m", []))
     semantic_contract = _forward_semantic_contract(time_count, cell_count)
+    provenance = copy.deepcopy(result.provenance)
+    overrides = provenance.get("parameter_overrides")
+    parameter_invocation = provenance.get("parameter_invocation")
+    parameter_hash = provenance.get("parameter_pack_hash")
+    replay: dict[str, Any]
+    if (
+        semantic_replay == "auto"
+        and result.status.success
+        and result.fidelity in {"L0", "L1"}
+        and isinstance(overrides, dict)
+        and parameter_invocation in {"model_defaults", "explicit_overrides"}
+        and isinstance(parameter_hash, str)
+    ):
+        replay = _forward_replay_descriptor(
+            case_hash=case.content_hash,
+            fidelity=result.fidelity,
+            seed=seed,
+            parameter_overrides=overrides,
+            parameter_invocation=parameter_invocation,
+            parameter_pack_hash=parameter_hash,
+            source_pack_hash=file_sha256(_root() / "data" / "sources.json"),
+        )
+    else:
+        replay = {
+            "status": "not_evaluated",
+            "contract_version": "1.0-deterministic-forward-ode-replay",
+            "reason": (
+                "explicit_custom_or_manufactured_fixture"
+                if semantic_replay == "not_evaluated"
+                else "unsupported_or_unsuccessful_forward_result"
+            ),
+        }
+    provenance["forward_semantic_replay"] = replay
     _write_json(directory / "resolved_case.json", case.raw)
     _write_json(directory / "status.json", result.status)
     _write_json(directory / "summary.json", result.summary)
     _write_json(directory / "conservation.json", result.conservation)
-    _write_json(directory / "provenance.json", result.provenance)
+    _write_json(directory / "provenance.json", provenance)
     _write_json(directory / "flags.json", {"flags": result.flags, "warnings": result.warnings})
     _write_json(
         directory / "state_trajectory.json",
@@ -374,7 +512,7 @@ def write_forward_run(out: Path | str, case: CaseConfig, result: ForwardResult, 
         cli_args=cli_args, seed=seed, run_type="forward", fidelity=result.fidelity,
     )
     manifest["solver_statistics"] = result.solver_statistics
-    manifest["semantic_verification"] = _forward_manifest_semantic_claims(semantic_contract)
+    manifest["semantic_verification"] = _forward_manifest_semantic_claims(semantic_contract, replay)
     manifest["output_transaction"] = transaction
     _write_trajectory_csv(directory / "state_trajectory.csv", result)
     (directory / "report.md").write_text(_forward_markdown(result), encoding="utf-8")
@@ -756,6 +894,332 @@ def _forward_field_schema_valid(
     return True
 
 
+def _canonical_mapping(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {key: _canonical_mapping(value[key]) for key in sorted(value)}
+    if isinstance(value, list):
+        return [_canonical_mapping(item) for item in value]
+    return value
+
+
+def _stable_solver_statistics(value: Any) -> Any:
+    if not isinstance(value, dict):
+        return None
+    stable = {
+        name: value.get(name)
+        for name in ("method", "rtol", "atol", "cells")
+    }
+    if "grid_convergence" in value:
+        stable["grid_convergence"] = value["grid_convergence"]
+    return _canonical_mapping(stable)
+
+
+def _forward_replay_csv_valid(
+    directory: Path,
+    replay: ForwardResult,
+    *,
+    rtol: float,
+    atol: float,
+) -> bool:
+    try:
+        with (directory / "state_trajectory.csv").open(
+            "r", encoding="utf-8", newline=""
+        ) as handle:
+            rows = list(csv.DictReader(handle))
+        times = replay.coordinates["time_s"]
+        x_values = replay.coordinates["x_m"]
+        if len(rows) != len(times) * len(x_values):
+            return False
+        for time_index, time_s in enumerate(times):
+            for cell_index, x_m in enumerate(x_values):
+                row = rows[time_index * len(x_values) + cell_index]
+                expected = {
+                    "time_s": time_s,
+                    "x_m": x_m,
+                    "temperature_K": _field_cell(
+                        replay.fields["temperature"]["values"], time_index, cell_index
+                    ),
+                    "total_porosity": _field_cell(
+                        replay.fields["total_porosity"]["values"], time_index, cell_index
+                    ),
+                    "open_porosity": _field_cell(
+                        replay.fields["open_porosity"]["values"], time_index, cell_index
+                    ),
+                    "liquid_fraction": _field_cell(
+                        replay.fields["liquid_fraction"]["values"], time_index, cell_index
+                    ),
+                }
+                expected.update(
+                    {
+                        f"extent_{name}": _field_cell(
+                            field["values"], time_index, cell_index
+                        )
+                        for name, field in replay.fields["reaction_extents"].items()
+                    }
+                )
+                if set(row) != set(expected):
+                    return False
+                if not all(
+                    _semantic_close(float(row[name]), value, rtol=rtol, atol=atol)
+                    for name, value in expected.items()
+                ):
+                    return False
+    except (OSError, KeyError, TypeError, ValueError, IndexError):
+        return False
+    return True
+
+
+def _forward_deterministic_replay(
+    directory: Path,
+    manifest: dict[str, Any],
+    resolved: dict[str, Any],
+    status: dict[str, Any],
+    summary: dict[str, Any],
+    conservation: dict[str, Any],
+    trajectory: dict[str, Any],
+    errors: list[str],
+    warnings: list[str],
+    checks: dict[str, Any],
+) -> None:
+    provenance = _safe_json(directory, "provenance.json", errors)
+    if not isinstance(provenance, dict):
+        checks["forward_semantic_replay"] = False
+        errors.append("forward replay provenance missing or invalid")
+        return
+    descriptor = provenance.get("forward_semantic_replay")
+    if not isinstance(descriptor, dict):
+        checks["forward_semantic_replay"] = False
+        errors.append("forward replay provenance missing or invalid")
+        return
+    if descriptor.get("status") == "not_evaluated":
+        coordinates = trajectory.get("coordinates")
+        if not isinstance(coordinates, dict):
+            coordinates = {}
+        expected_claims = _forward_manifest_semantic_claims(
+            _forward_semantic_contract(
+                len(coordinates.get("time_s", [])),
+                len(coordinates.get("x_m", [])),
+            ),
+            descriptor,
+        )
+        if not _semantic_close(manifest.get("semantic_verification"), expected_claims):
+            checks["forward_semantic_replay"] = False
+            errors.append("forward replay opt-out claim mismatch")
+            return
+        checks["forward_semantic_replay"] = "not_evaluated"
+        warnings.append(
+            "forward_semantic_replay=not_evaluated; ODE primary trajectory is integrity-only"
+        )
+        errors.append(
+            "strict forward semantic replay was not evaluated for this artifact"
+        )
+        return
+    if descriptor.get("status") != "evaluated":
+        checks["forward_semantic_replay"] = False
+        errors.append("forward replay provenance status is invalid")
+        return
+
+    fidelity = manifest.get("fidelity")
+    seed = manifest.get("seed")
+    overrides = provenance.get("parameter_overrides")
+    parameter_invocation = provenance.get("parameter_invocation")
+    if (
+        fidelity not in {"L0", "L1"}
+        or not isinstance(seed, int)
+        or isinstance(seed, bool)
+        or not isinstance(overrides, dict)
+        or parameter_invocation not in {"model_defaults", "explicit_overrides"}
+    ):
+        checks["forward_semantic_replay"] = False
+        errors.append("forward replay inputs are missing or invalid")
+        return
+    try:
+        case_hash = sha256_json(resolved)
+        case = CaseConfig(copy.deepcopy(resolved), directory / "resolved_case.json", case_hash)
+        context = build_context(case, copy.deepcopy(overrides))
+        expected_descriptor = _forward_replay_descriptor(
+            case_hash=case_hash,
+            fidelity=fidelity,
+            seed=seed,
+            parameter_overrides=overrides,
+            parameter_invocation=parameter_invocation,
+            parameter_pack_hash=context.parameter_pack_hash,
+            source_pack_hash=file_sha256(_root() / "data" / "sources.json"),
+        )
+    except (OSError, ArithmeticError, KeyError, TypeError, ValueError, IndexError):
+        checks["forward_semantic_replay"] = False
+        errors.append("forward replay provenance could not be reconstructed")
+        return
+
+    provenance_ok = _semantic_check(
+        checks,
+        errors,
+        "forward_replay_provenance",
+        _canonical_mapping(descriptor),
+        _canonical_mapping(expected_descriptor),
+    )
+    source_ok = _semantic_check(
+        checks,
+        errors,
+        "forward_replay_source_pack",
+        manifest.get("source_pack_hash"),
+        expected_descriptor["source_pack_sha256"],
+    )
+    parameter_ok = _semantic_check(
+        checks,
+        errors,
+        "forward_replay_parameter_pack",
+        manifest.get("parameter_pack_hash"),
+        expected_descriptor["parameter_pack_sha256"],
+    )
+    software = manifest.get("software")
+    declared_scipy = software.get("scipy") if isinstance(software, dict) else None
+    solver_version_ok = _semantic_check(
+        checks,
+        errors,
+        "forward_replay_solver_version",
+        declared_scipy,
+        scipy.__version__,
+    )
+    if not all((provenance_ok, source_ok, parameter_ok, solver_version_ok)):
+        checks["forward_semantic_replay"] = False
+        return
+
+    try:
+        replay_parameters = (
+            None
+            if parameter_invocation == "model_defaults"
+            else copy.deepcopy(overrides)
+        )
+        replay = simulate(
+            case,
+            cast(Literal["L0", "L1"], fidelity),
+            replay_parameters,
+        )
+    except Exception:
+        checks["forward_semantic_replay"] = False
+        errors.append("forward deterministic replay failed")
+        return
+    if not replay.status.success:
+        checks["forward_semantic_replay"] = False
+        errors.append("forward deterministic replay returned a non-success status")
+        return
+
+    comparison = expected_descriptor["comparison"]
+    rtol = float(comparison["relative_tolerance"])
+    atol = float(comparison["absolute_tolerance"])
+    replay_results: list[bool] = [
+        _semantic_check(
+            checks,
+            errors,
+            "forward_replay_solver_statistics",
+            _stable_solver_statistics(manifest.get("solver_statistics")),
+            _stable_solver_statistics(replay.solver_statistics),
+            rtol=rtol,
+            atol=atol,
+        )
+    ]
+    replay_results.append(
+        _semantic_check(
+            checks,
+            errors,
+            "forward_replay_primary_time_grid",
+            trajectory.get("coordinates", {}).get("time_s"),
+            replay.coordinates.get("time_s"),
+            rtol=rtol,
+            atol=atol,
+        )
+    )
+    replay_results.append(
+        _semantic_check(
+            checks,
+            errors,
+            "forward_replay_primary_spatial_grid",
+            trajectory.get("coordinates", {}).get("x_m"),
+            replay.coordinates.get("x_m"),
+            rtol=rtol,
+            atol=atol,
+        )
+    )
+    primary_fields = (
+        "temperature",
+        "raw_reaction_extents",
+        "reaction_extents",
+        "gas_concentrations",
+        "gas_molar_inventories",
+        "released_gas_mass_inventories",
+        "volume_ratio",
+        "total_porosity",
+        "open_porosity",
+        "boundary_heat_cumulative",
+        "reaction_heat_cumulative",
+    )
+    artifact_fields = trajectory.get("fields")
+    if not isinstance(artifact_fields, dict):
+        artifact_fields = {}
+    for name in primary_fields:
+        replay_results.append(
+            _semantic_check(
+                checks,
+                errors,
+                f"forward_replay_primary_{name}",
+                _canonical_mapping(artifact_fields.get(name)),
+                _canonical_mapping(replay.fields.get(name)),
+                rtol=rtol,
+                atol=atol,
+            )
+        )
+    for name in (field for field in replay.fields if field not in primary_fields):
+        replay_results.append(
+            _semantic_check(
+                checks,
+                errors,
+                f"forward_replay_derived_{name}",
+                _canonical_mapping(artifact_fields.get(name)),
+                _canonical_mapping(replay.fields.get(name)),
+                rtol=rtol,
+                atol=atol,
+            )
+        )
+    replay_results.append(
+        _semantic_check(
+            checks,
+            errors,
+            "forward_replay_summary",
+            _canonical_mapping(summary),
+            _canonical_mapping(replay.summary),
+            rtol=rtol,
+            atol=atol,
+        )
+    )
+    replay_results.append(
+        _semantic_check(
+            checks,
+            errors,
+            "forward_replay_conservation",
+            _canonical_mapping(conservation),
+            _canonical_mapping(replay.conservation),
+            rtol=rtol,
+            atol=atol,
+        )
+    )
+    replay_results.append(
+        _semantic_check(
+            checks,
+            errors,
+            "forward_replay_status",
+            {"code": status.get("code"), "success": status.get("success")},
+            {"code": replay.status.code, "success": replay.status.success},
+        )
+    )
+    csv_ok = _forward_replay_csv_valid(directory, replay, rtol=rtol, atol=atol)
+    checks["forward_replay_csv"] = csv_ok
+    if not csv_ok:
+        errors.append("forward replay CSV mismatch")
+    replay_results.append(csv_ok)
+    checks["forward_semantic_replay"] = all(replay_results)
+
+
 def _forward_summary_metadata_contract(fidelity: str, thermo: dict[str, Any]) -> dict[str, dict[str, Any]]:
     def metadata(
         unit: str,
@@ -892,7 +1356,10 @@ def _forward_independent_semantics(
     if not field_schema_ok:
         errors.append("forward trajectory field schema contract mismatch")
     semantic_results.append(field_schema_ok)
-    expected_claims = _forward_manifest_semantic_claims(_forward_semantic_contract(time_count, cell_count))
+    expected_claims = _forward_manifest_semantic_claims(
+        _forward_semantic_contract(time_count, cell_count),
+        provenance.get("forward_semantic_replay"),
+    )
     semantic_results.append(_semantic_check(checks, errors, "forward_manifest_semantic_claims", manifest.get("semantic_verification"), expected_claims))
     semantic_results.append(_semantic_check(checks, errors, "provenance_case_hash", provenance.get("case_hash"), manifest.get("resolved_case_hash")))
     semantic_results.append(_semantic_check(checks, errors, "provenance_parameter_pack_hash", provenance.get("parameter_pack_hash"), manifest.get("parameter_pack_hash")))
@@ -1583,6 +2050,19 @@ def verify_run(run_dir: Path | str, strict: bool = False) -> VerifyResult:
             errors,
             checks,
         )
+        if strict:
+            _forward_deterministic_replay(
+                directory,
+                manifest,
+                resolved,
+                status,
+                summary,
+                conservation,
+                trajectory,
+                errors,
+                warnings,
+                checks,
+            )
         if strict and manifest.get("fidelity") == "L1":
             grid = manifest.get("solver_statistics", {}).get("grid_convergence")
             if not grid or not grid.get("converged"):

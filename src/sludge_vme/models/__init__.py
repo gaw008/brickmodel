@@ -21,7 +21,11 @@ def simulate(case: CaseConfig, fidelity: Literal["L0", "L1"], parameters: dict |
         raise ValueError("fidelity must be L0 or L1")
     context = build_context(case, parameters)
     if fidelity == "L0":
-        return run_l0(context)
+        result = run_l0(context)
+        result.provenance["parameter_invocation"] = (
+            "model_defaults" if parameters is None else "explicit_overrides"
+        )
+        return result
     cells = int((parameters or {}).get("cells", 21))
     result = run_l1(context, cells)
     if (parameters or {}).get("grid_check", parameters is None) and cells == 21 and result.status.success:
@@ -37,6 +41,9 @@ def simulate(case: CaseConfig, fidelity: Literal["L0", "L1"], parameters: dict |
         if not converged:
             result.flags.append("fidelity_warning")
             result.warnings.append("21/41-cell convergence tolerance was not met; this point must not be treated as inverse-feasible at L1.")
+    result.provenance["parameter_invocation"] = (
+        "model_defaults" if parameters is None else "explicit_overrides"
+    )
     return result
 
 
