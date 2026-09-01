@@ -15,6 +15,56 @@ def finite_volume_laplacian(values: np.ndarray, dx: float, surface_flux_per_cond
     return result
 
 
+def current_pore_concentration(
+    reference_inventory: np.ndarray,
+    open_porosity: np.ndarray,
+    volume_ratio: np.ndarray,
+) -> np.ndarray:
+    """Convert extensive inventory per reference bulk volume to current pore concentration."""
+    inventory = np.asarray(reference_inventory, dtype=float)
+    porosity = np.asarray(open_porosity, dtype=float)
+    jacobian = np.asarray(volume_ratio, dtype=float)
+    if inventory.ndim != 1 or porosity.shape != inventory.shape or jacobian.shape != inventory.shape:
+        raise ValueError("inventory, porosity and volume ratio must be one-dimensional arrays of equal shape")
+    if not np.all(np.isfinite(inventory)) or not np.all(np.isfinite(porosity)) or not np.all(np.isfinite(jacobian)):
+        raise ValueError("current-pore transport inputs must be finite")
+    if np.any(porosity <= 0.0) or np.any(jacobian <= 0.0):
+        raise ValueError("open porosity and volume ratio must be strictly positive")
+    return inventory / (porosity * jacobian)
+
+
+def conservative_fick_rate(
+    reference_inventory: np.ndarray,
+    open_porosity: np.ndarray,
+    volume_ratio: np.ndarray,
+    *,
+    diffusivity_m2_s: float,
+    dx_reference_m: float,
+    surface_mass_transfer_m_s: float,
+) -> tuple[np.ndarray, float]:
+    """Return reference-volume storage rate and outward reference-area surface flux.
+
+    The current concentration is ``N_ref / (phi_open * J)``.  Isotropic
+    deformation gives the reference-area Fick mobility ``D * J**(1/3)`` and
+    transforms the current surface area by ``J**(2/3)``.  Summing the returned
+    cell rates times ``dx_reference_m`` exactly cancels the returned outflow.
+    """
+    if diffusivity_m2_s <= 0.0 or dx_reference_m <= 0.0 or surface_mass_transfer_m_s < 0.0:
+        raise ValueError("diffusivity and dx must be positive; mass transfer must be nonnegative")
+    concentration = current_pore_concentration(reference_inventory, open_porosity, volume_ratio)
+    if concentration.size < 2:
+        raise ValueError("Fick finite-volume transport requires at least two cells")
+    stretch = np.asarray(volume_ratio, dtype=float) ** (1.0 / 3.0)
+    face_stretch = 0.5 * (stretch[:-1] + stretch[1:])
+    internal_flux = -diffusivity_m2_s * face_stretch * np.diff(concentration) / dx_reference_m
+    surface_outflow = surface_mass_transfer_m_s * float(concentration[-1]) * stretch[-1] ** 2
+    rate = np.empty_like(concentration)
+    rate[0] = -internal_flux[0] / dx_reference_m
+    rate[1:-1] = (internal_flux[:-1] - internal_flux[1:]) / dx_reference_m
+    rate[-1] = (internal_flux[-1] - surface_outflow) / dx_reference_m
+    return rate, float(surface_outflow)
+
+
 def block_jacobian_sparsity(cells: int, reactions: int, gases: int):
     size = cells * (2 + reactions + gases) + gases + 2
     pattern = lil_matrix((size, size), dtype=int)

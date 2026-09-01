@@ -16,7 +16,7 @@ CASE = load_case(ROOT / "examples" / "tiny_synthetic.json")
 def assert_conservation(result) -> None:
     assert result.conservation["mass_relative_residual"] < 1e-8
     assert result.conservation["max_element_relative_residual"] < 1e-8
-    assert result.conservation["energy_relative_residual"] < 1e-4
+    assert result.conservation["reduced_effective_enthalpy_ode_relative_residual"] < 1e-4
 
 
 def test_l0_forward_is_conservative_bounded_and_reports_proxies() -> None:

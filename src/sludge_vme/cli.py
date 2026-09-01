@@ -9,10 +9,11 @@ from pathlib import Path
 
 from .config import load_case
 from .inverse.search import run_inverse
-from .io.artifacts import _write_json, verify_run, write_forward_run, write_inverse_run
+from .io.artifacts import _begin_atomic_output, _finish_atomic_output, _write_json, verify_run, write_forward_run, write_inverse_run
 from .models import simulate
 from .uq.propagation import propagate
 from .uq.sampling import sample_parameters
+from .types import ForwardResult, RunStatus
 from .validation import validate_case
 
 EXIT_VALIDATION = 2
@@ -36,12 +37,14 @@ def build_parser() -> argparse.ArgumentParser:
     forward.add_argument("--out", type=Path, required=True)
     forward.add_argument("--uq-power", type=int)
     forward.add_argument("--seed", type=int, default=20260831)
+    forward.add_argument("--overwrite", action="store_true")
 
     inverse = sub.add_parser("inverse", help="run constrained Sobol/UQ/L1/Pareto inverse search")
     inverse.add_argument("case", type=Path)
     inverse.add_argument("--budget", choices=("tiny", "default"), default="tiny")
     inverse.add_argument("--out", type=Path, required=True)
     inverse.add_argument("--seed", type=int, default=20260831)
+    inverse.add_argument("--overwrite", action="store_true")
 
     verify = sub.add_parser("verify", help="verify hashes, conservation, status and Pareto artifacts")
     verify.add_argument("run_dir", type=Path)
@@ -54,6 +57,7 @@ def build_parser() -> argparse.ArgumentParser:
     benchmark.add_argument("case", type=Path)
     benchmark.add_argument("--out", type=Path, required=True)
     benchmark.add_argument("--seed", type=int, default=20260831)
+    benchmark.add_argument("--overwrite", action="store_true")
     return parser
 
 
@@ -82,13 +86,37 @@ def command_forward(args: argparse.Namespace) -> int:
     if not report.valid:
         print(json.dumps(report.as_dict(), indent=2), file=sys.stderr)
         return EXIT_VALIDATION
-    result = simulate(case, args.fidelity)
+    try:
+        result = simulate(case, args.fidelity)
+    except Exception as exc:
+        result = ForwardResult(
+            args.fidelity,
+            RunStatus("solver_exception", f"{type(exc).__name__}: {exc}", False),
+            {},
+            {},
+            {},
+            {},
+            ["solver_exception"],
+            ["Solver raised an exception; no physical result was produced."],
+            {"case_hash": case.content_hash, "parameter_pack_hash": "unavailable_solver_exception"},
+            {"exception_type": type(exc).__name__},
+        )
+        directory = write_forward_run(
+            args.out,
+            case,
+            result,
+            cli_args=sys.argv[1:],
+            seed=args.seed,
+            overwrite=args.overwrite,
+        )
+        print(f"ERROR: structured solver failure status={result.status.code} out={directory}", file=sys.stderr)
+        return EXIT_SOLVER
     uncertainty = None
     if args.uq_power is not None and result.status.success:
         uncertainty = propagate(case, args.fidelity, sample_parameters(args.uq_power, args.seed))
-    directory = write_forward_run(args.out, case, result, cli_args=sys.argv[1:], seed=args.seed, uncertainty=uncertainty)
+    directory = write_forward_run(args.out, case, result, cli_args=sys.argv[1:], seed=args.seed, uncertainty=uncertainty, overwrite=args.overwrite)
     print(f"RESEARCH-ONLY synthetic forward {args.fidelity}: status={result.status.code} out={directory}")
-    print(f"mass_residual={result.conservation.get('mass_relative_residual')} element_residual={result.conservation.get('max_element_relative_residual')} energy_residual={result.conservation.get('energy_relative_residual')}")
+    print(f"mass_residual={result.conservation.get('mass_relative_residual')} element_residual={result.conservation.get('max_element_relative_residual')} reduced_effective_enthalpy_ode_residual={result.conservation.get('reduced_effective_enthalpy_ode_relative_residual')}")
     for warning in result.warnings:
         print(f"WARNING: {warning}")
     return 0 if result.status.success else EXIT_SOLVER
@@ -100,8 +128,9 @@ def command_inverse(args: argparse.Namespace) -> int:
         print(json.dumps(report.as_dict(), indent=2), file=sys.stderr)
         return EXIT_VALIDATION
     result = run_inverse(case, budget=args.budget, seed=args.seed)
-    directory = write_inverse_run(args.out, case, result, cli_args=sys.argv[1:], seed=args.seed)
-    print(f"RESEARCH-ONLY synthetic inverse: status={result.status} evaluated={len(result.all_evaluations)} L0_feasible={len(result.feasible_set)} L1_ranked={len(result.ranked_candidates)} pareto={len(result.pareto_set)} out={directory}")
+    directory = write_inverse_run(args.out, case, result, cli_args=sys.argv[1:], seed=args.seed, overwrite=args.overwrite)
+    l0_design_count = sum(item.get("fidelity") == "L0" for item in result.all_evaluations)
+    print(f"RESEARCH-ONLY synthetic inverse: status={result.status} evaluated={l0_design_count} records={len(result.all_evaluations)} L0_feasible={len(result.feasible_set)} L1_ranked={len(result.ranked_candidates)} pareto={len(result.pareto_set)} out={directory}")
     print("environmental_status=not_evaluated; no plant recipe, certification, deployment or control action was produced")
     for warning in result.warnings:
         print(f"WARNING: {warning}")
@@ -134,8 +163,7 @@ def command_benchmark(args: argparse.Namespace) -> int:
     if not report.valid:
         print(json.dumps(report.as_dict(), indent=2), file=sys.stderr)
         return EXIT_VALIDATION
-    out = args.out.resolve()
-    out.mkdir(parents=True, exist_ok=True)
+    target, out, transaction = _begin_atomic_output(args.out, args.overwrite)
     records = []
     results = {}
     for fidelity in ("L0", "L1"):
@@ -153,9 +181,11 @@ def command_benchmark(args: argparse.Namespace) -> int:
         "limits": {"L0_peak_RSS_bytes": 1_000_000_000, "L1_peak_RSS_bytes": 3_000_000_000, "overall_memory_bytes": 6_000_000_000},
         "within_budget": all(record["status"] == "success" for record in records) and records[-1]["peak_rss_bytes_process_high_water"] < 3_000_000_000,
         "notice": "ru_maxrss is the process high-water mark; L1 includes the 21/41-cell convergence run.",
+        "output_transaction": transaction,
     }
     _write_json(out / "benchmark.json", payload)
     (out / "report.md").write_text("# Target benchmark\n\n```json\n" + json.dumps(payload, indent=2) + "\n```\n", encoding="utf-8")
+    _finish_atomic_output(target, out, transaction)
     print(json.dumps(payload, indent=2))
     return 0 if payload["within_budget"] else EXIT_RESOURCE
 
@@ -178,7 +208,7 @@ def main(argv: list[str] | None = None) -> int:
             return command_benchmark(args)
     except (OSError, ValueError, KeyError, json.JSONDecodeError) as exc:
         print(f"ERROR: {type(exc).__name__}: {exc}", file=sys.stderr)
-        return EXIT_VALIDATION if isinstance(exc, (ValueError, KeyError, json.JSONDecodeError)) else EXIT_INTERNAL
+        return EXIT_VALIDATION if isinstance(exc, (FileExistsError, ValueError, KeyError, json.JSONDecodeError)) else EXIT_INTERNAL
     return EXIT_INTERNAL
 
 

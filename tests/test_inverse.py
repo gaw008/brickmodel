@@ -23,12 +23,12 @@ def test_tiny_inverse_returns_reproducible_multiple_constrained_candidates() -> 
     first = run_inverse(CASE, budget="tiny", seed=20260831)
     second = run_inverse(CASE, budget="tiny", seed=20260831, refine_l1=False)
     assert first.status == "success"
-    assert len(first.all_evaluations) == 16
+    assert len(first.all_evaluations) == 16 + len(first.l0_l1_disagreement)
     assert len(first.feasible_set) >= 2
     assert len(first.ranked_candidates) >= 2
     assert all(item["constraints"]["all_hard_constraints"] for item in first.ranked_candidates)
     assert all(item["fidelity"] == "L1" for item in first.ranked_candidates)
-    assert [item["decision"] for item in first.all_evaluations] == [item["decision"] for item in second.all_evaluations]
+    assert [item["decision"] for item in first.all_evaluations[:16]] == [item["decision"] for item in second.all_evaluations]
     pareto_objectives = np.array([item["objectives"] for item in first.pareto_set])
     if len(pareto_objectives):
         assert nondominated_mask(pareto_objectives, np.ones(len(pareto_objectives), dtype=bool)).all()

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 from sludge_vme.config import load_case
@@ -17,6 +18,9 @@ def test_inverse_artifacts_preserve_all_evaluations_and_pareto(tmp_path: Path) -
     write_inverse_run(out, CASE, result, cli_args=["inverse"], seed=20260831)
     required = {"all_evaluations.jsonl", "pareto.json", "pareto.csv", "rank_stability.json", "feasible_windows.json", "report.md"}
     assert required <= {path.name for path in out.iterdir()}
-    assert len((out / "all_evaluations.jsonl").read_text().splitlines()) == 16
+    assert len((out / "all_evaluations.jsonl").read_text().splitlines()) == 16 + len(result.l0_l1_disagreement)
+    summary = json.loads((out / "summary.json").read_text())
+    assert summary["evaluated_designs"] == 16
+    assert summary["evaluation_records"] == 16 + len(result.l0_l1_disagreement)
     verification = verify_run(out, strict=True)
     assert verification.valid, verification.errors

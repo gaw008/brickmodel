@@ -9,7 +9,7 @@ from scipy.stats import qmc, spearmanr
 from ..models import simulate
 from ..types import CaseConfig
 from ..uq.sampling import sample_parameters
-from .constraints import constraint_record, quality_margin
+from .constraints import constraint_record, constraint_slacks, quality_margin
 from .pareto import nondominated_mask
 from .transforms import design_from_unit
 
@@ -59,16 +59,74 @@ def _quantiles(values: list[float]) -> dict[str, float]:
     return {name: float(value) for name, value in zip(("q05", "q50", "q95"), np.quantile(array, (0.05, 0.5, 0.95)))}
 
 
+def _rank_stability(l0_quality: list[float], l1_quality: list[float]) -> dict[str, Any]:
+    count = len(l0_quality)
+    if count != len(l1_quality) or count < 3:
+        return {
+            "status": "insufficient_points",
+            "spearman_quality_rank": None,
+            "design_count": min(count, len(l1_quality)),
+            "reason": "at least three paired nonconstant points are required",
+        }
+    coefficient = float(spearmanr(l0_quality, l1_quality).statistic)
+    if not np.isfinite(coefficient):
+        return {
+            "status": "insufficient_points",
+            "spearman_quality_rank": None,
+            "design_count": count,
+            "reason": "constant or undefined ranks",
+        }
+    return {
+        "status": "stable" if coefficient >= 0.5 else "unstable",
+        "spearman_quality_rank": coefficient,
+        "design_count": count,
+    }
+
+
 def _record_from_results(case: CaseConfig, decision: dict[str, float], design_id: int, fidelity: str, results: list, *, grid_converged: bool | None = None) -> dict[str, Any]:
+    policy_samples = [
+        {
+            "sample_index": index,
+            "success": bool(item.status.success),
+            "status": str(item.status.code),
+            "message": str(item.status.message),
+        }
+        for index, item in enumerate(results)
+    ]
     successes = [item for item in results if item.status.success]
+    failure_count = len(results) - len(successes)
+    failure_rate = failure_count / max(len(results), 1)
+    policy = case.raw.get("inverse_design", {}).get("robust_failure_policy", {})
+    maximum_failure_rate = float(policy.get("maximum_failure_rate", 0.0))
+    required_samples_successful = bool(results) and failure_rate <= maximum_failure_rate
+    failure_reason = None
+    if not required_samples_successful:
+        failure_reason = (
+            f"required policy sample failure rate {failure_rate:.6g} exceeds "
+            f"declared maximum {maximum_failure_rate:.6g}: "
+            + "; ".join(
+                f"sample {item['sample_index']}={item['status']}: {item['message']}"
+                for item in policy_samples
+                if not item["success"]
+            )
+        )
     if not successes:
         return {
             "design_id": design_id,
             "decision": decision,
             "fidelity": fidelity,
-            "status": "failed",
-            "failure_reason": "; ".join(item.status.code for item in results),
-            "constraints": {"all_hard_constraints": False},
+            "status": "infeasible",
+            "failure_reason": failure_reason or "no successful policy samples",
+            "failure_rate": failure_rate,
+            "robust_failure_policy": {
+                "maximum_failure_rate": maximum_failure_rate,
+                "scientific_basis": policy.get("scientific_basis", "fail_safe_default_any_failure_is_infeasible"),
+            },
+            "policy_samples": policy_samples,
+            "constraints": {
+                "required_policy_samples_successful": False,
+                "all_hard_constraints": False,
+            },
             "objectives": [None] * 5,
             "source_hashes": {"case": case.content_hash},
         }
@@ -78,6 +136,13 @@ def _record_from_results(case: CaseConfig, decision: dict[str, float], design_id
     risk_q = _quantiles(risks)
     representative = successes[0]
     constraints = constraint_record(representative, quality_q["q05"], risk_q["q95"], grid_converged=grid_converged)
+    constraints["required_policy_samples_successful"] = required_samples_successful
+    constraints["all_hard_constraints"] = bool(
+        constraints["all_hard_constraints"] and required_samples_successful
+    )
+    slacks = constraint_slacks(representative, quality_q["q05"], risk_q["q95"], grid_converged=grid_converged)
+    slacks["required_policy_sample_failure_rate"] = maximum_failure_rate - failure_rate
+    active_constraints = sorted(name for name, slack in slacks.items() if slack <= 0.05)
     uncertainty_width = quality_q["q95"] - quality_q["q05"]
     objectives = [
         -quality_q["q05"],
@@ -92,11 +157,19 @@ def _record_from_results(case: CaseConfig, decision: dict[str, float], design_id
         "decision": decision,
         "fidelity": fidelity,
         "status": status,
-        "failure_reason": None,
+        "failure_reason": failure_reason,
+        "failure_rate": failure_rate,
+        "robust_failure_policy": {
+            "maximum_failure_rate": maximum_failure_rate,
+            "scientific_basis": policy.get("scientific_basis", "fail_safe_default_any_failure_is_infeasible"),
+        },
+        "policy_samples": policy_samples,
         "quality_margin": quality_q,
         "enabled_risk": risk_q,
         "uncertainty_width": uncertainty_width,
         "constraints": constraints,
+        "constraint_slacks": slacks,
+        "active_constraints": active_constraints,
         "objectives": objectives,
         "summary": {key: representative.summary[key] for key in (
             "bulk_density_kg_m3", "open_porosity", "linear_shrinkage", "water_absorption_proxy_percent",
@@ -123,7 +196,7 @@ def _l0_library(case: CaseConfig, budget: str, seed: int) -> list[tuple[CaseConf
     power = int(round(np.log2(count)))
     if 2**power != count:
         raise ValueError("Sobol design count must be a power of two")
-    points = qmc.Sobol(d=8, scramble=True, seed=seed).random_base2(power)
+    points = qmc.Sobol(d=12, scramble=True, seed=seed).random_base2(power)
     library: list[tuple[CaseConfig, dict[str, Any]]] = []
     uq_count = int(budget_config["l0_uncertainty_samples"])
     uq_power = int(round(np.log2(uq_count)))
@@ -197,6 +270,7 @@ def run_inverse(case: CaseConfig, budget: Literal["tiny", "default"] = "tiny", s
         grid_converged = bool(grid.get("converged", False))
         record = _record_from_results(design_case, l0_record["decision"], l0_record["design_id"], "L1", [base_result, *extra_results], grid_converged=grid_converged)
         refined.append(record)
+        all_evaluations.append(record)
         disagreement.append({
             "design_id": record["design_id"],
             "quality_q05_absolute_difference": abs(float(record.get("quality_margin", {}).get("q05", float("nan"))) - float(l0_record["quality_margin"]["q05"])),
@@ -215,23 +289,10 @@ def run_inverse(case: CaseConfig, budget: Literal["tiny", "default"] = "tiny", s
         pareto = [record for record, keep in zip(ranked, mask) if keep]
     else:
         pareto = []
-    rank_stability: dict[str, Any]
-    if len(refined) >= 2:
-        l0_quality = [next(record for record in feasible_records if record["design_id"] == item["design_id"])["quality_margin"]["q05"] for item in refined]
-        l1_quality = [item.get("quality_margin", {}).get("q05", float("nan")) for item in refined]
-        coefficient = float(spearmanr(l0_quality, l1_quality).statistic)
-        if np.isfinite(coefficient):
-            rank_stability = {"status": "stable" if coefficient >= 0.5 else "unstable", "spearman_quality_rank": coefficient, "design_count": len(refined)}
-        else:
-            rank_stability = {"status": "insufficient_points", "spearman_quality_rank": None, "design_count": len(refined), "reason": "constant or undefined ranks"}
-    else:
-        rank_stability = {"status": "insufficient_points", "design_count": len(refined)}
-    active = sorted({
-        name
-        for record in ranked
-        for name, value in record["constraints"].items()
-        if name not in {"all_hard_constraints", "environmental_threshold"} and value is True
-    })
+    l0_quality = [next(record for record in feasible_records if record["design_id"] == item["design_id"])["quality_margin"]["q05"] for item in refined]
+    l1_quality = [item.get("quality_margin", {}).get("q05", float("nan")) for item in refined]
+    rank_stability = _rank_stability(l0_quality, l1_quality)
+    active = sorted({name for record in ranked for name in record.get("active_constraints", [])})
     status = "success" if len(ranked) >= 2 else ("partial_refinement" if ranked else "no_l1_feasible_designs")
     warnings = [
         "Inverse output is a robust synthetic screening set, not a unique optimum or plant recipe.",
@@ -248,6 +309,10 @@ def _design_space(case: CaseConfig) -> dict[str, Any]:
         "sludge_dry_mass_fraction": bounds["sludge_dry_mass_fraction_bounds"],
         "sludge_free_moisture_wet_basis": bounds["sludge_free_moisture_bounds"],
         "speed_ratio": bounds["speed_ratio_bounds"],
+        "sludge_true_density_kg_m3": bounds["sludge_true_density_kg_m3_bounds"],
+        "sludge_specific_heat_J_kg_K": bounds["sludge_specific_heat_J_kg_K_bounds"],
+        "sludge_thermal_conductivity_W_m_K": bounds["sludge_thermal_conductivity_W_m_K_bounds"],
+        "sludge_effective_gas_diffusivity_m2_s": bounds["sludge_effective_gas_diffusivity_m2_s_bounds"],
         "sludge_component_simplex": {"organic": [0.12, 0.35], "calcite": [0.04, 0.18], "amorphous": [0.12, 0.35], "remaining_minerals": "positive fixed-ratio partition"},
         "particle_size": {"d50_m": [1e-5, 1.2e-4], "ordering": "d10=0.2*d50 < d50 < d90=5*d50"},
         "morphology": {"sphericity": [0.4, 0.95], "aspect_ratio": "1+4*(1-sphericity)"},

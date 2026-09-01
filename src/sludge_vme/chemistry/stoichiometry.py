@@ -4,6 +4,7 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
+from ..config import normalize_feedstocks
 from ..types import CaseConfig
 from .formula import ATOMIC_WEIGHTS_KG_PER_MOL, formula_element_moles, formula_molar_mass, parse_formula
 
@@ -81,8 +82,9 @@ def reaction_potentials(case: CaseConfig) -> list[ReactionPotential]:
     pack = _parameter_pack()["reactions"]
     results: list[ReactionPotential] = []
 
-    water_mass = float(case.raw["forming"]["moisture_wet_basis"])
-    water_mass /= 1.0 - float(case.raw["forming"]["moisture_wet_basis"])
+    forming_water = float(case.raw["forming"]["moisture_wet_basis"])
+    water_mass = forming_water / (1.0 - forming_water)
+    water_mass += normalize_feedstocks(case).mixture_water_kg_per_kg_dry
     water_moles = water_mass / formula_molar_mass("H2O")
     water_heat = pack["free_water_removal"]["deltaH_J_kg_product"] * water_mass
     results.append(ReactionPotential(

@@ -1,6 +1,6 @@
 # Parameter source and validity table
 
-Machine-readable normative table: `data/parameter_pack_synthetic_v1.json`. Every entry carries default, interval (or enthalpy interval), unit, `source_kind` and validity. Defaults are executable assumptions, not measured plant values.
+Machine-readable normative tables: `data/parameter_pack_synthetic_v1.json` plus feed-specific `material_properties` in `examples/tiny_synthetic.json`. Every pack entry carries default, interval (or enthalpy interval), unit, `source_kind` and validity. Defaults are executable assumptions, not measured plant values. Effective density/cp/k/diffusivity are now mixed from each feed fingerprint and then multiplied by UQ policy scales; the legacy pack property defaults are reference metadata, not silently substituted values.
 
 | Parameter | Default | Unit | Source kind | Validity / limitation |
 |---|---:|---|---|---|
@@ -9,6 +9,9 @@ Machine-readable normative table: `data/parameter_pack_synthetic_v1.json`. Every
 | gas effective diffusivity | 1e-7 | m2/s | synthetic policy | open-pore proxy |
 | emissivity | 0.8 | 1 | synthetic policy | gray opaque surface |
 | true solid density | 2600 | kg/m3 | synthetic policy | silicate-rich synthetic mixture |
+| shale density/cp/k/effective gas D | 2650/900/1.4/8e-8 | mixed units | synthetic feed fingerprint | required positive case inputs; not plant measurements |
+| gangue density/cp/k/effective gas D | 2500/950/1.0/1e-7 | mixed units | synthetic feed fingerprint | required positive case inputs; not plant measurements |
+| sludge density/cp/k/effective gas D | 1800/1200/0.6/2e-7 | mixed units | synthetic feed fingerprint | bounded inverse variables; no extrapolation beyond declared bounds |
 | open-pore connectivity | 0.7 | 1 | model-form unknown | not measured connectivity |
 | dense-strength proxy | 5e7 | Pa | empirical proxy unknown | never certification strength |
 | strength/porosity coefficient | 5.0 | 1 | empirical proxy unknown | never certification strength |
@@ -29,7 +32,9 @@ Public links and exact validity statements are in `data/sources.json`. Planner's
 
 ## Unknown handling
 
-- Complete multicomponent oxide-liquid/glass thermodynamics: missing; pseudo-liquid coverage flag is mandatory.
+- Complete multicomponent oxide-liquid/glass thermodynamics: missing; backend call/status and composition-domain mapping are recorded, Gibbs hard-pass is disabled, and the liquid value is only an unresolved screening proxy.
+- Wet-feed free moisture and forming-added water both enter wet mass and latent/effective heat capacity. This basis convention is synthetic and must be replaced by measured as-received/added-water bookkeeping before calibration.
+- O2 availability is bounded by initial pore inventory plus configured boundary-transfer integral. CO/VOC/NOx pathways remain `not_evaluated` rather than zero.
 - Real matrix fingerprint, kinetics, transport, SOVS, stress, strength and connectivity: unknown intervals/closures.
 - Real kiln map and equipment-approved speed bounds: absent; synthetic fixed map only.
 - Product/environmental limits: absent; environmental result is `not_evaluated`.

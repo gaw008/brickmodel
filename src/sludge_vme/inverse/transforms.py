@@ -11,8 +11,8 @@ from ..types import CaseConfig
 
 
 def design_from_unit(base: CaseConfig, point: np.ndarray, design_id: int) -> tuple[CaseConfig, dict[str, float]]:
-    if len(point) < 8 or np.any((point < 0.0) | (point > 1.0)):
-        raise ValueError("design point must contain at least eight unit-cube coordinates")
+    if len(point) != 12 or np.any((point < 0.0) | (point > 1.0)):
+        raise ValueError("design point must contain exactly twelve unit-cube coordinates")
     raw = copy.deepcopy(base.raw)
     bounds = raw["inverse_design"]
     sludge_low, sludge_high = bounds["sludge_dry_mass_fraction_bounds"]
@@ -44,6 +44,18 @@ def design_from_unit(base: CaseConfig, point: np.ndarray, design_id: int) -> tup
     speed_low, speed_high = bounds["speed_ratio_bounds"]
     speed = speed_low + float(point[7]) * (speed_high - speed_low)
     raw["kiln"]["speed_ratio"] = speed
+    property_coordinates = (
+        ("true_density_kg_m3", "sludge_true_density_kg_m3_bounds", 8),
+        ("specific_heat_J_kg_K", "sludge_specific_heat_J_kg_K_bounds", 9),
+        ("thermal_conductivity_W_m_K", "sludge_thermal_conductivity_W_m_K_bounds", 10),
+        ("effective_gas_diffusivity_m2_s", "sludge_effective_gas_diffusivity_m2_s_bounds", 11),
+    )
+    property_decisions: dict[str, float] = {}
+    for property_name, bounds_name, coordinate in property_coordinates:
+        lower, upper = bounds[bounds_name]
+        value = float(lower) + float(point[coordinate]) * (float(upper) - float(lower))
+        raw["feedstocks"]["sludge"]["material_properties"][property_name] = value
+        property_decisions[f"sludge_{property_name}"] = value
     raw["case_id"] = f"inverse_design_{design_id:04d}"
     decision = {
         "sludge_dry_mass_fraction": sludge_fraction,
@@ -54,5 +66,6 @@ def design_from_unit(base: CaseConfig, point: np.ndarray, design_id: int) -> tup
         "sludge_sphericity": sphericity,
         "sludge_free_moisture_wet_basis": moisture,
         "speed_ratio": speed,
+        **property_decisions,
     }
     return CaseConfig(raw, base.source_path, sha256_json(raw)), decision
