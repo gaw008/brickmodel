@@ -3,7 +3,7 @@
 一个可执行的 research-grade 污泥烧结砖 Virtual Materials Engine。它把污泥 composition/mineralogy/thermal properties/particle morphology 当作可设计 fingerprint，在固定 synthetic 页岩/煤矸石基体与固定隧道窑空间边界上运行：
 
 - `L0`：lumped reduced-effective enthalpy ODE + finite-O2-capped multistep Arrhenius + conserved gas inventories + reduced sintering；
-- `L1`：21/41-cell half-thickness finite volume + SciPy BDF（失败时 Radau）+ current-pore-concentration Fick transport；
+- `L1`：21/41-cell half-thickness finite volume + SciPy BDF（失败时 Radau）+ current-pore **molar** concentration Fick transport；
 - UQ：power-of-two scrambled Sobol policy samples；
 - inverse：physically-realizable Sobol design library → robust constraints → L1 refinement → nondominated Pareto/ranked candidates。
 
@@ -60,24 +60,28 @@ uv pip install --python .venv/bin/python -e '.[dev]'
 .venv/bin/sludge-vme benchmark examples/tiny_synthetic.json --out runs/benchmark
 ```
 
-Exit codes：`0` 成功；`2` schema/validation；`3` solver/conservation/inverse；`4` hard coverage（保留）；`5` resource budget；`10` internal I/O。
+Exit codes：`0` 成功；`2` schema/validation（含 malformed top-level/kiln/profile/inverse container，无 traceback）；`3` solver/conservation/inverse；`4` hard coverage（保留）；`5` resource budget；`10` internal I/O。L0/L1/inverse/benchmark 的 runtime solver exception 都会原子写入含 stage/reason/安全异常摘要/provenance/manifest 的 structured-failure artifact；若目标目录非空且未给 `--overwrite`，原目录保持不动，失败证据写入隐藏 sibling。
 
 ## Forward artifacts
 
 每个 forward 目录至少含：
 
 - `run_manifest.json`：UTC、CLI、seed、case/source/parameter hashes、Python/NumPy/SciPy、platform、fidelity、git commit，以及每个 payload artifact 的 SHA-256/size；manifest 自身因自引用不可能自哈希，显式记为 `not_applicable_self_reference`；
-- `resolved_case.json`, `status.json`, `summary.json`, `conservation.json`, `flags.json`；
+- `resolved_case.json`, `status.json`, `summary.json`, `conservation.json`, `provenance.json`, `flags.json`；
 - `state_trajectory.json`, `state_trajectory.csv`, `uncertainty.json`, `report.md`。
 
-`conservation.json` 使用 deforming-cell reference-volume extensive inventory ledger。默认 tolerances：mass/element `1e-8`，`reduced_effective_enthalpy_ode` `1e-4`。后者只验证 reduced ODE 的数值恒等式，不再冒充含 variable mass/escaped-gas sensible enthalpy 的完整 energy conservation，也不作为完整物理 hard-pass。BDF 的微小 extent overshoot 会显式投影到 `[0,1]`，并记录 `extent_projection_max`；超过 `1e-5` 则运行失败。
+`state_trajectory.json` schema 2.0 同时保留 projected/raw reaction extents、species mass 与 molar reference inventories、released-gas extensive states、current-pore `mol/m3`、`phi_open/J`、cumulative boundary/reaction heat 和 state counts；每个 gas species 都显式携带 `kg/mol` 与 mass↔moles↔current-pore conversion。`conservation.json` 使用 deforming-cell reference-volume extensive inventory ledger，并序列化 initial/final mass、bulk volume、element inventories、O2 与 reduced-enthalpy ledger。默认 tolerances：mass/element `1e-8`，`reduced_effective_enthalpy_ode` `1e-4`。后者只验证 reduced ODE 的数值恒等式，不再冒充含 variable mass/escaped-gas sensible enthalpy 的完整 energy conservation，也不作为完整物理 hard-pass。BDF 的微小 extent overshoot 会显式投影到 `[0,1]`，并记录 `extent_projection_max`；超过 `1e-5` 则运行失败。
+
+`verify --strict` 不把 summary/conservation 的自报数值或同步更新后的 manifest hash 当作语义证据。它从 `resolved_case.json + provenance.json + state_trajectory.json` 独立重建 context，并重算 mass/volume/density、element/O2/reduced-enthalpy residual、trajectory-derived fields/extrema 和全部 summary values/status。正常 hash inventory 仍验证普通字节篡改；cross-artifact recomputation 负责拒绝攻击者同步改 hash 后的合法范围数值伪造。
 
 ## Inverse artifacts
 
-- `all_evaluations.jsonl`：16 个 L0 designs 加全部 L1 refined records；每条保留逐 policy-sample status/message、failure rate、constraint slack 与 active constraints，Pareto 点必须可按 `(design_id,fidelity)` 回溯；
+- `all_evaluations.jsonl`：16 个 L0 designs 加全部 L1 refined records；每条保留逐 policy-sample status/message、quality/risk/conservation verification inputs、failure rate、constraint slack 与 active constraints，Pareto 点必须可按 `(design_id,fidelity)` 精确回溯；
 - `pareto.json`, `pareto.csv`：仅含 L1 hard-constraint-pass 且 nondominated points；
 - `rank_stability.json`, `feasible_windows.json`, `uncertainty.json`, `report.md`；少于 3 个配对点时 rank 为 `insufficient_points`，两点范围只称 `observed_candidate_envelope`，不称连续 feasible window；
 - environmental threshold 缺失时始终是 `not_evaluated`，不是 `passed`。
+
+Inverse strict verification 会从逐 sample inputs 重算 quantiles、failure policy、constraints/slacks/active set/objectives，重算 L0/L1/feasible/Pareto counts，并在全部 L1 hard-feasible records 上重做 nondominance；`pareto.json`、`pareto.csv`、`all_evaluations.jsonl` 与 observed envelope 必须互相一致。
 
 ## 科学边界
 

@@ -20,6 +20,12 @@ from ..types import CaseConfig, ForwardResult, RunStatus
 
 REACTIONS = ("free_water_removal", "organic_oxidation", "kaolinite_dehydroxylation", "carbonate_decomposition")
 GASES = ("H2O", "CO2", "N2", "SO2")
+GAS_MOLAR_MASS_KG_MOL = {
+    "H2O": formula_molar_mass(GAS_FORMULAS["H2O"]),
+    "CO2": formula_molar_mass(GAS_FORMULAS["CO2"]),
+    "N2": formula_molar_mass(GAS_FORMULAS["N2"]),
+    "SO2": formula_molar_mass(GAS_FORMULAS["SO2"]),
+}
 SIGMA_SB = 5.670374419e-8
 R_GAS = 8.31446261815324
 
@@ -239,8 +245,16 @@ def sintering_rate(ctx: ModelContext, temperature_K: np.ndarray) -> np.ndarray:
     return scale * np.vectorize(reduced_sintering_rate)(temperature_K, liquid_fraction(temperature_K, ctx.oxide_flux_index), ctx.d32_m)
 
 
-def _field(values: Any, unit: str, *, basis: str = "", proxy: bool = False, status: str = "resolved") -> dict[str, Any]:
-    return {"values": values, "unit": unit, "basis": basis, "proxy": proxy, "status": status}
+def _field(
+    values: Any,
+    unit: str,
+    *,
+    basis: str = "",
+    proxy: bool = False,
+    status: str = "resolved",
+    **metadata: Any,
+) -> dict[str, Any]:
+    return {"values": values, "unit": unit, "basis": basis, "proxy": proxy, "status": status, **metadata}
 
 
 def _summary(value: Any, unit: str, *, proxy: bool = False, status: str = "resolved", validity: str = "synthetic screening domain") -> dict[str, Any]:
@@ -334,7 +348,10 @@ def finalize_result(
     porosity_raw = 1.0 - solid_mass_density / (ctx.true_density * volume_ratio)
     porosity = np.clip(porosity_raw, 0.0, 1.0)
     open_porosity = porosity * ctx.connectivity
-    current_pore_gas = gas / np.maximum(open_porosity[:, None, :] * volume_ratio[:, None, :], 1e-12)
+    gas_moles = np.zeros_like(gas)
+    for index, species in enumerate(GASES):
+        gas_moles[:, index, :] = gas[:, index, :] / GAS_MOLAR_MASS_KG_MOL[species]
+    current_pore_gas_molar = gas_moles / np.maximum(open_porosity[:, None, :] * volume_ratio[:, None, :], 1e-12)
     liquid = liquid_fraction(temperature, ctx.oxide_flux_index)
     final_volume = float(volume_ratio[-1].mean())
     final_dry_mass = ctx.rho_dry - feed_loss_density
@@ -343,9 +360,6 @@ def finalize_result(
     shrinkage = 1.0 - final_volume ** (1.0 / 3.0)
     absorption = 100.0 * 1000.0 * final_open / max(bulk_density, 1.0)
 
-    gas_moles = np.zeros_like(gas)
-    for index, species in enumerate(GASES):
-        gas_moles[:, index, :] = gas[:, index, :] / formula_molar_mass(GAS_FORMULAS[species])
     generated_partial_pressure = R_GAS * temperature * gas_moles.sum(axis=1) / np.maximum(open_porosity * volume_ratio, 1e-6)
     overpressure = float(np.max(generated_partial_pressure))
     if temperature.shape[1] == 1:
@@ -391,8 +405,53 @@ def finalize_result(
     fields = {
         "temperature": _field(temperature[:, 0].tolist() if temperature.shape[1] == 1 else temperature.tolist(), "K", basis="cell"),
         "reaction_extents": {name: _field(extents[:, index, 0].tolist() if temperature.shape[1] == 1 else extents[:, index, :].tolist(), "1", basis="cell") for index, name in enumerate(REACTIONS)},
-        "gas_concentrations": {name: _field(gas[:, index, 0].tolist() if temperature.shape[1] == 1 else gas[:, index, :].tolist(), "kg/m3_reference_bulk", basis="deforming-cell extensive inventory per reference bulk volume") for index, name in enumerate(GASES)},
-        "gas_current_pore_concentrations": {name: _field(current_pore_gas[:, index, 0].tolist() if temperature.shape[1] == 1 else current_pore_gas[:, index, :].tolist(), "kg/m3_current_pore", basis="current pore volume; N_ref/(phi_open*J)") for index, name in enumerate(GASES)},
+        "raw_reaction_extents": {name: _field(raw_extents[:, index, 0].tolist() if temperature.shape[1] == 1 else raw_extents[:, index, :].tolist(), "1", basis="unprojected conservative ODE extent state per cell") for index, name in enumerate(REACTIONS)},
+        "gas_concentrations": {
+            name: _field(
+                gas[:, index, 0].tolist() if temperature.shape[1] == 1 else gas[:, index, :].tolist(),
+                "kg/m3_reference_bulk",
+                basis="conservative species mass inventory per reference bulk volume",
+                species=name,
+                molar_mass_kg_mol=GAS_MOLAR_MASS_KG_MOL[name],
+                conversion="molar_inventory * molar_mass",
+            )
+            for index, name in enumerate(GASES)
+        },
+        "gas_molar_inventories": {
+            name: _field(
+                gas_moles[:, index, 0].tolist() if temperature.shape[1] == 1 else gas_moles[:, index, :].tolist(),
+                "mol/m3_reference_bulk",
+                basis="conservative species molar inventory per reference bulk volume; mass_inventory/molar_mass",
+                species=name,
+                molar_mass_kg_mol=GAS_MOLAR_MASS_KG_MOL[name],
+                conversion="mass_storage / molar_mass",
+            )
+            for index, name in enumerate(GASES)
+        },
+        "gas_current_pore_concentrations": {
+            name: _field(
+                current_pore_gas_molar[:, index, 0].tolist() if temperature.shape[1] == 1 else current_pore_gas_molar[:, index, :].tolist(),
+                "mol/m3_current_pore",
+                basis="current pore volume; molar_inventory/(phi_open*J)",
+                species=name,
+                molar_mass_kg_mol=GAS_MOLAR_MASS_KG_MOL[name],
+                conversion="mass_storage / molar_mass / (phi_open * J)",
+            )
+            for index, name in enumerate(GASES)
+        },
+        "released_gas_mass_inventories": {
+            name: _field(
+                released[:, index].tolist(),
+                "kg/m3_reference_bulk",
+                basis="cumulative species mass crossing the reference-area boundary per reference bulk volume",
+                species=name,
+                molar_mass_kg_mol=GAS_MOLAR_MASS_KG_MOL[name],
+                conversion="released_molar_inventory * molar_mass",
+            )
+            for index, name in enumerate(GASES)
+        },
+        "boundary_heat_cumulative": _field(q_boundary.tolist(), "J/m3_reference_bulk", basis="cumulative boundary heat source on reference bulk volume"),
+        "reaction_heat_cumulative": _field(q_reaction.tolist(), "J/m3_reference_bulk", basis="cumulative reduced-model reaction heat source on reference bulk volume"),
         "gas_overpressure": _field(generated_partial_pressure[:, 0].tolist() if temperature.shape[1] == 1 else generated_partial_pressure.tolist(), "Pa", proxy=True),
         "liquid_fraction": _field(liquid[:, 0].tolist() if temperature.shape[1] == 1 else liquid.tolist(), "1", proxy=True, status="unresolved_oxide_liquid_database"),
         "total_porosity": _field(porosity[:, 0].tolist() if temperature.shape[1] == 1 else porosity.tolist(), "1"),
@@ -487,6 +546,25 @@ def finalize_result(
         "extent_projection_tolerance": 1e-5,
         "tolerances": {"mass": 1e-8, "element": 1e-8, "reduced_effective_enthalpy_ode": 1e-4},
         "storage_basis": "deforming-cell extensive inventories on reference volume",
+        "mass_ledger_kg_m3_reference": {
+            "initial_wet_feed": initial_mass_density,
+            "oxygen_reactant_in": oxygen_in_density,
+            "final_condensed": final_condensed_density,
+            "final_internal_and_released_gas": float(actual_gas_density.sum()),
+            "residual": mass_residual,
+        },
+        "bulk_volume_ledger_m3": {
+            "initial": float(ctx.case.raw["geometry"]["initial_bulk_volume_m3"]),
+            "final": float(ctx.case.raw["geometry"]["initial_bulk_volume_m3"]) * final_volume,
+            "final_to_initial_ratio": final_volume,
+        },
+        "element_inventory_mol_m3_reference": {
+            "initial": initial_elements,
+            "reactant_side_with_oxygen": left,
+            "final_condensed": condensed,
+            "final_internal_and_released_gas": gas_elements,
+            "residual": element_residual,
+        },
     }
     provenance = {
         "spec_version": ctx.case.raw.get("spec_version"),

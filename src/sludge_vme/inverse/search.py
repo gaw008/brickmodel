@@ -84,15 +84,25 @@ def _rank_stability(l0_quality: list[float], l1_quality: list[float]) -> dict[st
 
 
 def _record_from_results(case: CaseConfig, decision: dict[str, float], design_id: int, fidelity: str, results: list, *, grid_converged: bool | None = None) -> dict[str, Any]:
-    policy_samples = [
-        {
+    policy_samples = []
+    for index, item in enumerate(results):
+        sample = {
             "sample_index": index,
             "success": bool(item.status.success),
             "status": str(item.status.code),
             "message": str(item.status.message),
+            "quality_margin": quality_margin(item.summary, case.raw["quality_targets"]) if item.status.success else None,
+            "enabled_risk": _risk(item.summary) if item.status.success else None,
+            "conservation": {
+                name: item.conservation.get(name)
+                for name in (
+                    "mass_relative_residual",
+                    "max_element_relative_residual",
+                    "reduced_effective_enthalpy_ode_relative_residual",
+                )
+            } if item.status.success else None,
         }
-        for index, item in enumerate(results)
-    ]
+        policy_samples.append(sample)
     successes = [item for item in results if item.status.success]
     failure_count = len(results) - len(successes)
     failure_rate = failure_count / max(len(results), 1)
@@ -123,6 +133,7 @@ def _record_from_results(case: CaseConfig, decision: dict[str, float], design_id
                 "scientific_basis": policy.get("scientific_basis", "fail_safe_default_any_failure_is_infeasible"),
             },
             "policy_samples": policy_samples,
+            "verification_inputs": {"grid_converged": grid_converged, "representative_sample_index": None},
             "constraints": {
                 "required_policy_samples_successful": False,
                 "all_hard_constraints": False,
@@ -164,6 +175,10 @@ def _record_from_results(case: CaseConfig, decision: dict[str, float], design_id
             "scientific_basis": policy.get("scientific_basis", "fail_safe_default_any_failure_is_infeasible"),
         },
         "policy_samples": policy_samples,
+        "verification_inputs": {
+            "grid_converged": grid_converged,
+            "representative_sample_index": next(index for index, item in enumerate(results) if item.status.success),
+        },
         "quality_margin": quality_q,
         "enabled_risk": risk_q,
         "uncertainty_width": uncertainty_width,

@@ -20,7 +20,7 @@ Feed composition is `kg dry solids`. Wet-basis moisture is converted by
 
 `m_water / m_dry = w_wet / (1-w_wet)`.
 
-L1 gas storage uses `kg species / m3 initial reference bulk`. It is an extensive deforming-cell inventory divided by initial volume. Both Fick/surface flux and ideal-gas pressure use current pore concentration `c_current=N_ref/(phi_open Jdef)` rather than gradients of reference-bulk inventory. For isotropic deformation, internal reference-area mobility is `D Jdef^(1/3)` and surface area is scaled by `Jdef^(2/3)`. Condensed inventory remains on the same reference basis.
+L0/L1 integrate each gas species as conservative molar inventory `n_k,ref` in `mol / m3 initial reference bulk`. Every species has an explicit molar mass `M_k`; sources map `kg→mol`, Fick/surface transport uses current pore molarity `c_k,current=n_k,ref/(phi_open Jdef)`, and artifact/conservation mass storage maps back exactly through `m_k,ref=M_k n_k,ref`. For isotropic deformation, internal reference-area molar mobility is `D Jdef^(1/3)` and surface area is scaled by `Jdef^(2/3)`. Condensed inventory remains on the reference basis.
 
 ## Reactions and exact elemental ledger
 
@@ -40,7 +40,7 @@ This is deliberately not labeled full energy conservation: variable condensed/ga
 
 State:
 
-`[T, alpha_r, gas_k(ref), ln(V/V0), gas_out_k(ref), Q_boundary, Q_reaction]`.
+`[T, alpha_r, gas_moles_k(ref), ln(V/V0), gas_out_moles_k(ref), Q_boundary, Q_reaction]`.
 
 Kiln position is not optimized independently:
 
@@ -52,7 +52,7 @@ Domain is half thickness `x in [0,L]`, cell-centered, with `dT/dx=dc/dx=0` at th
 
 `q_in=h(T_g-T_s)+epsilon*sigma(T_wall^4-T_s^4)`
 
-and `J_out,k=km*c_current,surface,k`. Heat and each gas species use conservative face fluxes; reaction and enthalpy source terms are local. `solve_ivp(BDF)` is used with a sparse dependency pattern; Radau is only a structured fallback.
+and `J_out,k=km*c_k,current,surface` in molar units. Heat and each gas species use conservative face fluxes; reaction and enthalpy source terms are local. `solve_ivp(BDF)` is used with a sparse dependency pattern; Radau is only a structured fallback. Sparse finite-difference Jacobian warnings are filtered only for SciPy's private zero-column perturbation-factor overflow/invalid multiply; finite state, solver success, conservation and bounds remain mandatory.
 
 A strict forward run computes both 21 and 41 cells. Reported convergence metrics are final open porosity, final linear shrinkage and maximum center-surface temperature difference. A nonconverged candidate is not L1 hard-feasible.
 
@@ -71,3 +71,9 @@ Only `2^m` Sobol sample counts are accepted. Bounds are called policy intervals/
 The 12-coordinate inverse transform enforces feed/internal simplexes, ordered PSD, morphology, wet-feed moisture, fixed-map speed bounds and bounded sludge density/cp/k/effective diffusivity. Every coordinate has a one-at-a-time physical-sensitivity test. Each L0 point is evaluated under four required policy samples. The default/configured policy allows zero failures; any solver/conservation failure makes the record robust-infeasible and remains serialized. Only hard-feasible designs enter a gas-risk-aware diverse L1 shortlist; each shortlisted design receives a base 21/41 check and another uncertainty scenario. Final Pareto filtering receives only traceable L1 hard-feasible points.
 
 The returned set is intentionally many-solution: ranked candidates, Pareto points, observed candidate envelopes, slack-defined active constraints, rank stability and L0/L1 disagreement. Fewer than three paired points gives `insufficient_points`; an observed envelope is not a continuously validated feasible window. No unique optimum is claimed.
+
+## Failure and semantic-verification lanes
+
+Config loading performs only type-safe unit normalization; malformed top-level/kiln/profile/inverse containers reach the validator and return CLI exit 2 without traceback. Runtime `Exception` from forward L0/L1, inverse or benchmark is caught at the solver boundary (never `KeyboardInterrupt`/`SystemExit`) and atomically serialized as a no-result artifact with stage, reason, safe exception class/summary, provenance and manifest. Occupied output is preserved unless overwrite was explicit.
+
+Forward trajectory schema 2.0 retains the primary/extensive states needed to recompute derived claims: raw/projected extents, internal/released gas inventories, molar conversion, volume, porosity, temperature and cumulative heat. Strict verification independently rebuilds the model context from resolved case/provenance and cross-checks all summary values plus mass/bulk-volume/element/O2/reduced-enthalpy ledgers and trajectory extrema/counts. Inverse verification derives policy quantiles/constraints/objectives/counts from `all_evaluations`, computes nondominance against all hard-feasible L1 records, and cross-checks Pareto JSON/CSV and observed-envelope sources. SHA-256 remains a byte-integrity layer, not the source of semantic truth.

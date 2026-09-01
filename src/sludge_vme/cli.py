@@ -9,11 +9,10 @@ from pathlib import Path
 
 from .config import load_case
 from .inverse.search import run_inverse
-from .io.artifacts import _begin_atomic_output, _finish_atomic_output, _write_json, verify_run, write_forward_run, write_inverse_run
+from .io.artifacts import _begin_atomic_output, _finish_atomic_output, _write_json, verify_run, write_forward_run, write_inverse_run, write_structured_failure
 from .models import simulate
 from .uq.propagation import propagate
 from .uq.sampling import sample_parameters
-from .types import ForwardResult, RunStatus
 from .validation import validate_case
 
 EXIT_VALIDATION = 2
@@ -67,11 +66,35 @@ def _load_valid(path: Path):
     return case, report
 
 
+def _record_solver_exception(
+    args: argparse.Namespace,
+    case,
+    exc: Exception,
+    *,
+    stage: str,
+    fidelity: str | None = None,
+    budget: str | None = None,
+) -> int:
+    directory = write_structured_failure(
+        args.out,
+        case,
+        exc,
+        stage=stage,
+        cli_args=sys.argv[1:],
+        seed=args.seed,
+        overwrite=args.overwrite,
+        fidelity=fidelity,
+        budget=budget,
+    )
+    print(f"ERROR: structured solver failure stage={stage} out={directory}", file=sys.stderr)
+    return EXIT_SOLVER
+
+
 def command_validate(args: argparse.Namespace) -> int:
     case, report = _load_valid(args.case)
     payload = report.as_dict()
     payload["case_hash"] = case.content_hash
-    payload["spec_version"] = case.raw.get("spec_version")
+    payload["spec_version"] = case.raw.get("spec_version") if isinstance(case.raw, dict) else None
     if args.json:
         print(json.dumps(payload, indent=2, sort_keys=True))
     else:
@@ -88,32 +111,11 @@ def command_forward(args: argparse.Namespace) -> int:
         return EXIT_VALIDATION
     try:
         result = simulate(case, args.fidelity)
+        uncertainty = None
+        if args.uq_power is not None and result.status.success:
+            uncertainty = propagate(case, args.fidelity, sample_parameters(args.uq_power, args.seed))
     except Exception as exc:
-        result = ForwardResult(
-            args.fidelity,
-            RunStatus("solver_exception", f"{type(exc).__name__}: {exc}", False),
-            {},
-            {},
-            {},
-            {},
-            ["solver_exception"],
-            ["Solver raised an exception; no physical result was produced."],
-            {"case_hash": case.content_hash, "parameter_pack_hash": "unavailable_solver_exception"},
-            {"exception_type": type(exc).__name__},
-        )
-        directory = write_forward_run(
-            args.out,
-            case,
-            result,
-            cli_args=sys.argv[1:],
-            seed=args.seed,
-            overwrite=args.overwrite,
-        )
-        print(f"ERROR: structured solver failure status={result.status.code} out={directory}", file=sys.stderr)
-        return EXIT_SOLVER
-    uncertainty = None
-    if args.uq_power is not None and result.status.success:
-        uncertainty = propagate(case, args.fidelity, sample_parameters(args.uq_power, args.seed))
+        return _record_solver_exception(args, case, exc, stage=f"forward_{args.fidelity}", fidelity=args.fidelity)
     directory = write_forward_run(args.out, case, result, cli_args=sys.argv[1:], seed=args.seed, uncertainty=uncertainty, overwrite=args.overwrite)
     print(f"RESEARCH-ONLY synthetic forward {args.fidelity}: status={result.status.code} out={directory}")
     print(f"mass_residual={result.conservation.get('mass_relative_residual')} element_residual={result.conservation.get('max_element_relative_residual')} reduced_effective_enthalpy_ode_residual={result.conservation.get('reduced_effective_enthalpy_ode_relative_residual')}")
@@ -127,7 +129,10 @@ def command_inverse(args: argparse.Namespace) -> int:
     if not report.valid:
         print(json.dumps(report.as_dict(), indent=2), file=sys.stderr)
         return EXIT_VALIDATION
-    result = run_inverse(case, budget=args.budget, seed=args.seed)
+    try:
+        result = run_inverse(case, budget=args.budget, seed=args.seed)
+    except Exception as exc:
+        return _record_solver_exception(args, case, exc, stage="inverse", budget=args.budget)
     directory = write_inverse_run(args.out, case, result, cli_args=sys.argv[1:], seed=args.seed, overwrite=args.overwrite)
     l0_design_count = sum(item.get("fidelity") == "L0" for item in result.all_evaluations)
     print(f"RESEARCH-ONLY synthetic inverse: status={result.status} evaluated={l0_design_count} records={len(result.all_evaluations)} L0_feasible={len(result.feasible_set)} L1_ranked={len(result.ranked_candidates)} pareto={len(result.pareto_set)} out={directory}")
@@ -163,16 +168,21 @@ def command_benchmark(args: argparse.Namespace) -> int:
     if not report.valid:
         print(json.dumps(report.as_dict(), indent=2), file=sys.stderr)
         return EXIT_VALIDATION
-    target, out, transaction = _begin_atomic_output(args.out, args.overwrite)
     records = []
     results = {}
     for fidelity in ("L0", "L1"):
         started = time.perf_counter()
-        result = simulate(case, fidelity)
+        try:
+            result = simulate(case, fidelity)
+        except Exception as exc:
+            return _record_solver_exception(args, case, exc, stage=f"benchmark_{fidelity}", fidelity=fidelity)
         wall = time.perf_counter() - started
         peak_rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024
         results[fidelity] = result
         records.append({"fidelity": fidelity, "status": result.status.code, "wall_time_s": wall, "peak_rss_bytes_process_high_water": peak_rss, "solver_statistics": result.solver_statistics})
+    target, out, transaction = _begin_atomic_output(args.out, args.overwrite)
+    for fidelity in ("L0", "L1"):
+        result = results[fidelity]
         write_forward_run(out / fidelity, case, result, cli_args=sys.argv[1:], seed=args.seed)
     payload = {
         "target": "Linux aarch64 1 OCPU / 6 GB",

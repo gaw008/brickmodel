@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import time as clock
+import warnings
 
 import numpy as np
 from scipy.integrate import solve_ivp
 
-from .common import GASES, REACTIONS, SIGMA_SB, ModelContext, boundary, finalize_result, oxygen_available_mol_m3, reaction_rates, sintering_rate
-from .fvm import block_jacobian_sparsity, conservative_fick_rate, finite_volume_laplacian
+from .common import GAS_MOLAR_MASS_KG_MOL, GASES, REACTIONS, SIGMA_SB, ModelContext, boundary, finalize_result, oxygen_available_mol_m3, reaction_rates, sintering_rate
+from .fvm import block_jacobian_sparsity, conservative_molar_fick_rate, finite_volume_laplacian
 
 
 def run_l1(ctx: ModelContext, cells: int = 21):
@@ -26,6 +27,7 @@ def run_l1(ctx: ModelContext, cells: int = 21):
     conductivity = ctx.conductivity
     diffusivity = ctx.diffusivity
     alpha_heat = conductivity / (rho_heat * ctx.cp)
+    gas_molar_masses = np.array([GAS_MOLAR_MASS_KG_MOL[species] for species in GASES])
 
     alpha_start = cells
     gas_start = alpha_start + n_r * cells
@@ -45,7 +47,11 @@ def run_l1(ctx: ModelContext, cells: int = 21):
             oxygen_available_mol_m3(ctx, time_s),
         )
 
-        gas_source = ctx.rho_dry * np.tensordot(ctx.gas_mass_matrix.T, rates, axes=(1, 0))
+        gas_source_molar = (
+            ctx.rho_dry
+            * np.tensordot(ctx.gas_mass_matrix.T, rates, axes=(1, 0))
+            / gas_molar_masses[:, None]
+        )
         q_in = (
             bc["h_W_m2_K"] * float(ctx.parameters.get("h_scale", 1.0)) * (bc["gas_temperature_K"] - temperature[-1])
             + ctx.emissivity * SIGMA_SB * (bc["wall_temperature_K"] ** 4 - temperature[-1] ** 4)
@@ -67,40 +73,34 @@ def run_l1(ctx: ModelContext, cells: int = 21):
         solid_mass = ctx.rho_dry - local_feed_loss
         total_porosity = np.clip(1.0 - solid_mass / (ctx.true_density * volume_ratio), 1e-9, 1.0)
         open_porosity = np.maximum(total_porosity * ctx.connectivity, 1e-9)
-        outflow = np.zeros(n_g)
+        molar_outflow = np.zeros(n_g)
         gas_derivative = np.zeros_like(gas)
         for index in range(n_g):
-            fick_rate, outflow[index] = conservative_fick_rate(
+            molar_fick_rate, molar_outflow[index] = conservative_molar_fick_rate(
                 gas[index],
                 open_porosity,
                 volume_ratio,
                 diffusivity_m2_s=diffusivity,
                 dx_reference_m=dx,
-                surface_mass_transfer_m_s=mass_transfer,
+                surface_transfer_m_s=mass_transfer,
             )
-            gas_derivative[index] = fick_rate + gas_source[index]
+            gas_derivative[index] = molar_fick_rate + gas_source_molar[index]
         derivative[gas_start:volume_start] = gas_derivative.reshape(-1)
         derivative[volume_start:released_start] = -sintering_rate(ctx, temperature)
-        derivative[released_start : released_start + n_g] = outflow / length
+        derivative[released_start : released_start + n_g] = molar_outflow / length
         derivative[-2] = q_in / length
         derivative[-1] = float(heat_reaction.mean())
         return derivative
 
     started = clock.perf_counter()
     method = "BDF"
-    solution = solve_ivp(
-        rhs,
-        (0.0, ctx.residence_time_s),
-        y0,
-        method=method,
-        t_eval=t_eval,
-        rtol=rtol,
-        atol=atol,
-        max_step=ctx.residence_time_s / 180.0,
-        jac_sparsity=block_jacobian_sparsity(cells, n_r, n_g),
-    )
-    if not solution.success:
-        method = "Radau"
+    with warnings.catch_warnings():
+        # SciPy's sparse finite-difference Jacobian can overflow its private
+        # perturbation-factor probe for identically zero species columns. The
+        # state itself remains finite and is checked below by conservation and
+        # physical bounds, so suppress only those two internal probe warnings.
+        warnings.filterwarnings("ignore", message="overflow encountered in multiply", category=RuntimeWarning, module=r"scipy\.integrate\._ivp\.common")
+        warnings.filterwarnings("ignore", message="invalid value encountered in multiply", category=RuntimeWarning, module=r"scipy\.integrate\._ivp\.common")
         solution = solve_ivp(
             rhs,
             (0.0, ctx.residence_time_s),
@@ -109,9 +109,25 @@ def run_l1(ctx: ModelContext, cells: int = 21):
             t_eval=t_eval,
             rtol=rtol,
             atol=atol,
-            max_step=ctx.residence_time_s / 240.0,
+            max_step=ctx.residence_time_s / 180.0,
             jac_sparsity=block_jacobian_sparsity(cells, n_r, n_g),
         )
+    if not solution.success:
+        method = "Radau"
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", message="overflow encountered in multiply", category=RuntimeWarning, module=r"scipy\.integrate\._ivp\.common")
+            warnings.filterwarnings("ignore", message="invalid value encountered in multiply", category=RuntimeWarning, module=r"scipy\.integrate\._ivp\.common")
+            solution = solve_ivp(
+                rhs,
+                (0.0, ctx.residence_time_s),
+                y0,
+                method=method,
+                t_eval=t_eval,
+                rtol=rtol,
+                atol=atol,
+                max_step=ctx.residence_time_s / 240.0,
+                jac_sparsity=block_jacobian_sparsity(cells, n_r, n_g),
+            )
     wall = clock.perf_counter() - started
     y = solution.y.T
     extents = y[:, alpha_start:gas_start].reshape(-1, n_r, cells)
@@ -124,9 +140,9 @@ def run_l1(ctx: ModelContext, cells: int = 21):
         x,
         y[:, :cells],
         extents,
-        gas,
+        gas * gas_molar_masses[None, :, None],
         y[:, volume_start:released_start],
-        y[:, released_start : released_start + n_g],
+        y[:, released_start : released_start + n_g] * gas_molar_masses[None, :],
         y[:, -2],
         y[:, -1],
         bool(solution.success),

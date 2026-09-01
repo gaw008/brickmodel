@@ -68,6 +68,9 @@ def _simplex(report: ValidationReport, values: list[Any], path: str, key: str) -
 def validate_case(case: CaseConfig) -> ValidationReport:
     raw = case.raw
     report = ValidationReport()
+    if not isinstance(raw, dict):
+        _issue(report, "$", "invalid_top_level", "case must be a JSON object")
+        return report
     basis = raw.get("basis")
     if not isinstance(basis, dict):
         _issue(report, "$.basis", "missing_basis", "canonical basis object is required")
@@ -83,7 +86,7 @@ def validate_case(case: CaseConfig) -> ValidationReport:
     for name in REQUIRED_FEEDS:
         if name not in feeds:
             _issue(report, f"$.feedstocks.{name}", "missing_feedstock", "required feedstock is missing")
-    feed_values = [feeds[name].get("dry_mass_fraction") for name in feeds]
+    feed_values = [feed.get("dry_mass_fraction") if isinstance(feed, dict) else None for feed in feeds.values()]
     numeric_feed = [float(v) for v in feed_values if _finite(v)]
     feed_residual = sum(numeric_feed) - 1.0
     report.normalized_simplex_residuals["dry_feed_fractions"] = feed_residual
@@ -93,15 +96,23 @@ def validate_case(case: CaseConfig) -> ValidationReport:
     sourced = 0
     for name, feed in feeds.items():
         prefix = f"$.feedstocks.{name}"
+        if not isinstance(feed, dict):
+            _issue(report, prefix, "invalid_feedstock", "feedstock must be an object")
+            report.element_double_count_checks[name] = "failed"
+            continue
         components = feed.get("components")
         if not isinstance(components, list) or not components:
             _issue(report, f"{prefix}.components", "missing_components", "nonempty canonical component partition is required")
         else:
-            _simplex(report, [item.get("fraction") for item in components], f"{prefix}.components", f"{name}.components")
-            identifiers = [item.get("id") for item in components]
+            component_objects = [item for item in components if isinstance(item, dict)]
+            for index, component in enumerate(components):
+                if not isinstance(component, dict):
+                    _issue(report, f"{prefix}.components[{index}]", "invalid_component", "component must be an object")
+            _simplex(report, [item.get("fraction") for item in component_objects], f"{prefix}.components", f"{name}.components")
+            identifiers = [item.get("id") for item in component_objects]
             if len(identifiers) != len(set(identifiers)):
                 _issue(report, f"{prefix}.components", "duplicate_component_id", "component ids must be unique within a feedstock")
-            for index, component in enumerate(components):
+            for index, component in enumerate(component_objects):
                 if component.get("kind") == "amorphous_oxide_pool":
                     oxides = component.get("oxide_fractions", {})
                     if not isinstance(oxides, dict) or not oxides:
@@ -186,7 +197,17 @@ def validate_case(case: CaseConfig) -> ValidationReport:
     elif speed_bounds is not None and not speed_bounds[0] <= float(speed) <= speed_bounds[1]:
         _issue(report, "$.kiln.speed_ratio", "speed_ratio_out_of_bounds", "speed ratio must lie inside declared bounds")
 
-    profile = kiln.get("profile", [])
+    profile_value = kiln.get("profile")
+    if not isinstance(profile_value, list):
+        _issue(report, "$.kiln.profile", "invalid_kiln_profile_type", "kiln profile must be a list of objects")
+        profile: list[dict[str, Any]] = []
+    else:
+        profile = []
+        for index, knot in enumerate(profile_value):
+            if not isinstance(knot, dict):
+                _issue(report, f"$.kiln.profile[{index}]", "invalid_kiln_knot", "kiln profile knot must be an object")
+            else:
+                profile.append(knot)
     positions = [knot.get("s_m") for knot in profile]
     if len(profile) < 2 or any(not _finite(value) for value in positions) or any(float(a) >= float(b) for a, b in zip(positions, positions[1:])):
         _issue(report, "$.kiln.profile", "invalid_kiln_map", "kiln map requires at least two strictly increasing s_m knots")

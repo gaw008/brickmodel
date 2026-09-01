@@ -7,7 +7,7 @@ from typing import Any
 
 @dataclass(frozen=True)
 class CaseConfig:
-    raw: dict[str, Any]
+    raw: Any
     source_path: Path
     content_hash: str
 

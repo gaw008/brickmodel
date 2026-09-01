@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import csv
 import hashlib
 import json
 import math
@@ -16,10 +17,11 @@ from sludge_vme import cli as cli_module
 from sludge_vme.inverse.search import _record_from_results
 from sludge_vme.inverse.search import _rank_stability
 from sludge_vme.inverse.constraints import constraint_record
+from sludge_vme.inverse.pareto import nondominated_mask
 from sludge_vme.inverse.transforms import design_from_unit
 from sludge_vme.models import simulate
-from sludge_vme.models.common import build_context
-from sludge_vme.models.fvm import conservative_fick_rate, current_pore_concentration
+from sludge_vme.models.common import GAS_MOLAR_MASS_KG_MOL, build_context
+from sludge_vme.models.fvm import conservative_molar_fick_rate, current_pore_molar_concentration
 from sludge_vme.io.artifacts import _feasible_windows, verify_run, write_forward_run, write_inverse_run
 from sludge_vme.types import CaseConfig, RunStatus
 from sludge_vme.validation import validate_case
@@ -33,6 +35,18 @@ def mutated_case(mutator) -> CaseConfig:
     raw = copy.deepcopy(BASE.raw)
     mutator(raw)
     return CaseConfig(raw, BASE.source_path, sha256_json(raw))
+
+
+def rehash_artifact(directory: Path, name: str) -> None:
+    path = directory / name
+    manifest_path = directory / "run_manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    payload = path.read_bytes()
+    manifest["artifacts"][name] = {
+        "sha256": hashlib.sha256(payload).hexdigest(),
+        "size_bytes": len(payload),
+    }
+    manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
 
 
 @pytest.mark.parametrize(
@@ -153,67 +167,110 @@ def test_organic_oxidation_is_bounded_by_finite_oxygen_inventory_and_flux(oxygen
         assert ledger["boundary_supplied"] == pytest.approx(0.0, abs=1e-12)
 
 
-def test_current_pore_fick_flux_uses_phi_and_deforming_geometry_conservatively() -> None:
+@pytest.mark.parametrize("species", ["H2O", "CO2"])
+def test_current_pore_molar_fick_flux_uses_phi_and_deforming_geometry_conservatively(species: str) -> None:
     porosity = np.array([0.20, 0.30, 0.40, 0.50])
     volume_ratio = np.array([0.80, 0.90, 1.00, 1.10])
-    uniform_current_concentration = 2.5
-    reference_inventory = uniform_current_concentration * porosity * volume_ratio
+    uniform_current_molar_concentration = 2.5
+    reference_molar_inventory = uniform_current_molar_concentration * porosity * volume_ratio
 
-    recovered = current_pore_concentration(reference_inventory, porosity, volume_ratio)
-    rate, surface_outflow = conservative_fick_rate(
-        reference_inventory,
+    recovered = current_pore_molar_concentration(reference_molar_inventory, porosity, volume_ratio)
+    rate, surface_outflow = conservative_molar_fick_rate(
+        reference_molar_inventory,
         porosity,
         volume_ratio,
         diffusivity_m2_s=2.0e-7,
         dx_reference_m=0.01,
-        surface_mass_transfer_m_s=0.0,
+        surface_transfer_m_s=0.0,
     )
 
-    assert recovered == pytest.approx(np.full(4, uniform_current_concentration))
+    assert GAS_MOLAR_MASS_KG_MOL[species] > 0.0
+    assert recovered == pytest.approx(np.full(4, uniform_current_molar_concentration))
     assert rate == pytest.approx(np.zeros(4), abs=1e-18)
     assert surface_outflow == pytest.approx(0.0, abs=1e-18)
 
-    gradient_inventory = np.array([0.2, 0.4, 0.9, 1.6])
-    gradient_rate, surface_outflow = conservative_fick_rate(
-        gradient_inventory,
+    gradient_molar_inventory = np.array([0.2, 0.4, 0.9, 1.6])
+    gradient_rate, surface_outflow = conservative_molar_fick_rate(
+        gradient_molar_inventory,
         porosity,
         volume_ratio,
         diffusivity_m2_s=2.0e-7,
         dx_reference_m=0.01,
-        surface_mass_transfer_m_s=1.0e-5,
+        surface_transfer_m_s=1.0e-5,
     )
     assert np.max(np.abs(gradient_rate)) > 0.0
     assert float(np.sum(gradient_rate) * 0.01 + surface_outflow) == pytest.approx(0.0, abs=1e-14)
 
-    changed_geometry_rate, _ = conservative_fick_rate(
-        gradient_inventory,
+    changed_geometry_rate, _ = conservative_molar_fick_rate(
+        gradient_molar_inventory,
         porosity * 0.8,
         volume_ratio * 0.9,
         diffusivity_m2_s=2.0e-7,
         dx_reference_m=0.01,
-        surface_mass_transfer_m_s=1.0e-5,
+        surface_transfer_m_s=1.0e-5,
     )
     assert changed_geometry_rate != pytest.approx(gradient_rate)
 
 
-def test_l1_serializes_current_pore_concentration_and_agrees_with_l0_at_low_gradient() -> None:
+def test_equal_molar_gradients_have_equal_molar_flux_for_different_molar_mass_species() -> None:
+    porosity = np.array([0.25, 0.30, 0.35])
+    volume_ratio = np.array([0.90, 1.00, 1.10])
+    current_molar_concentration = np.array([1.0, 1.5, 2.25])
+    reference_molar_inventory = current_molar_concentration * porosity * volume_ratio
+
+    species_fluxes = {}
+    mass_storage_rates = {}
+    for species in ("H2O", "CO2"):
+        molar_mass = GAS_MOLAR_MASS_KG_MOL[species]
+        reference_mass_inventory = reference_molar_inventory * molar_mass
+        recovered_moles = reference_mass_inventory / molar_mass
+        molar_rate, molar_outflow = conservative_molar_fick_rate(
+            recovered_moles,
+            porosity,
+            volume_ratio,
+            diffusivity_m2_s=3.0e-7,
+            dx_reference_m=0.02,
+            surface_transfer_m_s=2.0e-5,
+        )
+        species_fluxes[species] = molar_outflow
+        mass_storage_rates[species] = molar_rate * molar_mass
+
+    assert GAS_MOLAR_MASS_KG_MOL["H2O"] != pytest.approx(GAS_MOLAR_MASS_KG_MOL["CO2"])
+    assert species_fluxes["H2O"] == pytest.approx(species_fluxes["CO2"])
+    assert mass_storage_rates["H2O"] != pytest.approx(mass_storage_rates["CO2"])
+
+
+def test_l1_serializes_current_pore_concentration_and_agrees_with_l0_at_low_gradient(recwarn) -> None:
     parameters = {
         "grid_check": False,
         "cells": 5,
         "conductivity_scale": 100.0,
         "diffusivity_scale": 100.0,
         "mass_transfer_scale": 0.0,
+        "solver_rtol": 1e-7,
+        "solver_atol": 1e-10,
     }
     l0 = simulate(BASE, "L0", parameters)
     l1 = simulate(BASE, "L1", parameters)
     assert l0.status.success, l0.status.message
     assert l1.status.success, l1.status.message
-    assert l1.fields["gas_concentrations"]["H2O"]["basis"] == "deforming-cell extensive inventory per reference bulk volume"
-    assert l1.fields["gas_current_pore_concentrations"]["H2O"]["basis"] == "current pore volume; N_ref/(phi_open*J)"
+    mass_inventory = l1.fields["gas_concentrations"]["H2O"]
+    molar_inventory = l1.fields["gas_molar_inventories"]["H2O"]
+    current_pore = l1.fields["gas_current_pore_concentrations"]["H2O"]
+    assert mass_inventory["basis"] == "conservative species mass inventory per reference bulk volume"
+    assert mass_inventory["unit"] == "kg/m3_reference_bulk"
+    assert molar_inventory["basis"] == "conservative species molar inventory per reference bulk volume; mass_inventory/molar_mass"
+    assert molar_inventory["unit"] == "mol/m3_reference_bulk"
+    assert current_pore["basis"] == "current pore volume; molar_inventory/(phi_open*J)"
+    assert current_pore["unit"] == "mol/m3_current_pore"
+    assert current_pore["species"] == "H2O"
+    assert current_pore["molar_mass_kg_mol"] == pytest.approx(GAS_MOLAR_MASS_KG_MOL["H2O"])
+    assert current_pore["conversion"] == "mass_storage / molar_mass / (phi_open * J)"
     assert l1.conservation["gas_species_relative_residual"] < 1e-8
     assert l1.summary["reaction_completion"]["value"]["organic_oxidation"] == pytest.approx(
         l0.summary["reaction_completion"]["value"]["organic_oxidation"], rel=0.05, abs=1e-6
     )
+    assert not [warning for warning in recwarn if warning.category is RuntimeWarning]
 
 
 def test_thermo_coverage_is_traceable_composition_sensitive_and_never_fake_hard_pass() -> None:
@@ -361,6 +418,83 @@ def test_manifest_hashes_every_payload_and_strict_verify_rejects_hash_and_semant
     assert any("trajectory violates finite physical state bounds" in error for error in trajectory_tamper.errors)
 
 
+def test_forward_artifact_serializes_sufficient_extensive_states_for_independent_verification(tmp_path: Path) -> None:
+    result = simulate(BASE, "L0", {"grid_check": False})
+    out = tmp_path / "extensive_states"
+    write_forward_run(out, BASE, result, cli_args=["forward"], seed=91)
+    trajectory = json.loads((out / "state_trajectory.json").read_text())
+    conservation = json.loads((out / "conservation.json").read_text())
+    provenance = json.loads((out / "provenance.json").read_text())
+
+    assert trajectory["schema_version"] == "2.0-independent-semantic-verification"
+    assert trajectory["state_counts"]["time_points"] == len(trajectory["coordinates"]["time_s"])
+    assert set(trajectory["fields"]["raw_reaction_extents"]) == {
+        "free_water_removal", "organic_oxidation", "kaolinite_dehydroxylation", "carbonate_decomposition"
+    }
+    assert set(trajectory["fields"]["released_gas_mass_inventories"]) == {"H2O", "CO2", "N2", "SO2"}
+    assert trajectory["fields"]["boundary_heat_cumulative"]["unit"] == "J/m3_reference_bulk"
+    assert trajectory["fields"]["reaction_heat_cumulative"]["unit"] == "J/m3_reference_bulk"
+    assert conservation["mass_ledger_kg_m3_reference"]["initial_wet_feed"] > 0.0
+    assert conservation["element_inventory_mol_m3_reference"]["initial"]
+    assert provenance["parameter_overrides"] == {"grid_check": False}
+    assert verify_run(out, strict=True).valid is True
+
+
+@pytest.mark.parametrize("attack", ["density", "summary_legal", "conservation", "oxygen", "reduced_enthalpy", "counts", "csv"])
+def test_strict_verify_rejects_rehashed_forward_derived_semantic_attacks(tmp_path: Path, attack: str) -> None:
+    result = simulate(BASE, "L0", {"grid_check": False})
+    out = tmp_path / attack
+    write_forward_run(out, BASE, result, cli_args=["forward"], seed=92)
+    assert verify_run(out, strict=True).valid is True
+
+    if attack in {"density", "summary_legal", "oxygen"}:
+        path = out / "summary.json"
+        payload = json.loads(path.read_text())
+        if attack == "density":
+            payload["bulk_density_kg_m3"]["value"] *= 2.0
+        elif attack == "summary_legal":
+            payload["linear_shrinkage"]["value"] += 0.01
+        else:
+            payload["oxygen_ledger_mol_O2_per_m3_reference"]["value"]["residual"] = 0.0
+        path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+        rehash_artifact(out, "summary.json")
+    elif attack in {"conservation", "reduced_enthalpy"}:
+        path = out / "conservation.json"
+        payload = json.loads(path.read_text())
+        if attack == "conservation":
+            payload["mass_relative_residual"] = 0.0
+            payload["max_element_relative_residual"] = 0.0
+            payload["element_relative_residual_by_element"] = {
+                name: 0.0 for name in payload["element_relative_residual_by_element"]
+            }
+        else:
+            payload["reduced_effective_enthalpy_ode_relative_residual"] = 0.0
+            payload["reduced_effective_enthalpy_ode_residual_J_m3"] = 0.0
+        path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+        rehash_artifact(out, "conservation.json")
+    elif attack == "counts":
+        path = out / "state_trajectory.json"
+        payload = json.loads(path.read_text())
+        payload["state_counts"]["time_points"] += 1
+        path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+        rehash_artifact(out, "state_trajectory.json")
+    else:
+        path = out / "state_trajectory.csv"
+        with path.open("r", newline="") as handle:
+            rows = list(csv.DictReader(handle))
+            fieldnames = list(rows[0])
+        rows[0]["temperature_K"] = str(float(rows[0]["temperature_K"]) + 1.0)
+        with path.open("w", newline="") as handle:
+            writer = csv.DictWriter(handle, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(rows)
+        rehash_artifact(out, "state_trajectory.csv")
+
+    verification = verify_run(out, strict=True)
+    assert verification.valid is False, attack
+    assert verification.errors
+
+
 def test_output_directory_rejects_nonempty_by_default_and_overwrite_keeps_rollback(tmp_path: Path) -> None:
     result = simulate(BASE, "L0", {"grid_check": False})
     out = tmp_path / "forward"
@@ -465,6 +599,127 @@ def test_inverse_traceability_requires_exact_pareto_record_match(tmp_path: Path)
     assert verification.checks["pareto_traceability"] is False
 
 
+def _manufactured_inverse_result(records: list[dict]) -> SimpleNamespace:
+    pareto_mask = nondominated_mask(
+        np.asarray([record["objectives"] for record in records], dtype=float),
+        np.ones(len(records), dtype=bool),
+    )
+    pareto = [record for record, keep in zip(records, pareto_mask) if keep]
+    return SimpleNamespace(
+        status="success",
+        all_evaluations=records,
+        feasible_set=[],
+        ranked_candidates=records,
+        pareto_set=pareto,
+        rank_stability=_rank_stability([], []),
+        l0_l1_disagreement=[],
+        environmental_status="not_evaluated",
+        warnings=[],
+        budget="manufactured",
+        design_space={"speed_ratio": [0.7, 1.3]},
+    )
+
+
+def test_inverse_strict_verify_recomputes_constraints_and_observed_envelope(tmp_path: Path) -> None:
+    design_case, decision = design_from_unit(BASE, np.full(12, 0.5), 101)
+    successful = simulate(design_case, "L0", {"grid_check": False})
+    record = _record_from_results(
+        design_case,
+        decision,
+        101,
+        "L1",
+        [successful, successful],
+        grid_converged=True,
+    )
+    out = tmp_path / "inverse_semantics"
+    write_inverse_run(out, BASE, _manufactured_inverse_result([record]), cli_args=["inverse"], seed=93)
+    assert verify_run(out, strict=True).valid is True
+
+    pareto_path = out / "pareto.json"
+    pareto = json.loads(pareto_path.read_text())
+    pareto[0]["constraints"]["q95_enabled_risk"] = False
+    pareto_path.write_text(json.dumps(pareto, indent=2, sort_keys=True) + "\n")
+    rehash_artifact(out, "pareto.json")
+    evaluations_path = out / "all_evaluations.jsonl"
+    evaluation = json.loads(evaluations_path.read_text().strip())
+    evaluation["constraints"]["q95_enabled_risk"] = False
+    evaluations_path.write_text(json.dumps(evaluation, sort_keys=True) + "\n")
+    rehash_artifact(out, "all_evaluations.jsonl")
+    assert verify_run(out, strict=True).valid is False
+
+    fresh = tmp_path / "inverse_envelope"
+    write_inverse_run(fresh, BASE, _manufactured_inverse_result([record]), cli_args=["inverse"], seed=94)
+    envelope_path = fresh / "feasible_windows.json"
+    envelope = json.loads(envelope_path.read_text())
+    envelope["windows"]["speed_ratio"]["max"] += 0.01
+    envelope_path.write_text(json.dumps(envelope, indent=2, sort_keys=True) + "\n")
+    rehash_artifact(fresh, "feasible_windows.json")
+    assert verify_run(fresh, strict=True).valid is False
+
+    csv_attack = tmp_path / "inverse_csv"
+    write_inverse_run(csv_attack, BASE, _manufactured_inverse_result([record]), cli_args=["inverse"], seed=96)
+    csv_path = csv_attack / "pareto.csv"
+    csv_payload = csv_path.read_text()
+    original_value = str(record["quality_margin"]["q05"])
+    csv_path.write_text(csv_payload.replace(original_value, str(float(original_value) + 0.5), 1))
+    rehash_artifact(csv_attack, "pareto.csv")
+    assert verify_run(csv_attack, strict=True).valid is False
+
+    source_attack = tmp_path / "inverse_source"
+    write_inverse_run(source_attack, BASE, _manufactured_inverse_result([record]), cli_args=["inverse"], seed=97)
+    source_pareto_path = source_attack / "pareto.json"
+    source_pareto = json.loads(source_pareto_path.read_text())
+    source_pareto[0]["source_hashes"]["case"] = "forged-source"
+    source_pareto_path.write_text(json.dumps(source_pareto, indent=2, sort_keys=True) + "\n")
+    rehash_artifact(source_attack, "pareto.json")
+    source_evaluations_path = source_attack / "all_evaluations.jsonl"
+    source_evaluation = json.loads(source_evaluations_path.read_text().strip())
+    source_evaluation["source_hashes"]["case"] = "forged-source"
+    source_evaluations_path.write_text(json.dumps(source_evaluation, sort_keys=True) + "\n")
+    rehash_artifact(source_attack, "all_evaluations.jsonl")
+    assert verify_run(source_attack, strict=True).valid is False
+
+    rank_attack = tmp_path / "inverse_rank"
+    write_inverse_run(rank_attack, BASE, _manufactured_inverse_result([record]), cli_args=["inverse"], seed=98)
+    rank_path = rank_attack / "rank_stability.json"
+    rank = json.loads(rank_path.read_text())
+    rank["status"] = "stable"
+    rank_path.write_text(json.dumps(rank, indent=2, sort_keys=True) + "\n")
+    rehash_artifact(rank_attack, "rank_stability.json")
+    assert verify_run(rank_attack, strict=True).valid is False
+
+
+def test_inverse_strict_verify_rejects_traceable_but_dominated_pareto_source(tmp_path: Path) -> None:
+    first_case, first_decision = design_from_unit(BASE, np.full(12, 0.45), 201)
+    first_successful = simulate(first_case, "L0", {"grid_check": False})
+    first = _record_from_results(
+        first_case,
+        first_decision,
+        201,
+        "L1",
+        [first_successful, first_successful],
+        grid_converged=True,
+    )
+    second_case, second_decision = design_from_unit(BASE, np.full(12, 0.65), 202)
+    second_successful = simulate(second_case, "L0", {"grid_check": False})
+    second = _record_from_results(
+        second_case,
+        second_decision,
+        202,
+        "L1",
+        [second_successful, second_successful],
+        grid_converged=True,
+    )
+    second["objectives"] = [value + 1.0 for value in first["objectives"]]
+    out = tmp_path / "dominated_pareto"
+    result = _manufactured_inverse_result([first, second])
+    result.pareto_set = [second]
+    write_inverse_run(out, BASE, result, cli_args=["inverse"], seed=95)
+    verification = verify_run(out, strict=True)
+    assert verification.valid is False
+    assert verification.checks["pareto_nondominated_from_all_l1"] is False
+
+
 def test_small_rank_samples_and_candidate_envelopes_are_labeled_honestly() -> None:
     rank = _rank_stability([0.1, 0.2], [0.2, 0.1])
     assert rank["status"] == "insufficient_points"
@@ -494,16 +749,19 @@ def test_inverse_record_serializes_constraint_slacks_and_defines_active_by_slack
     )
 
 
-def test_solver_exception_writes_structured_failure_artifact_and_returns_exit_3(tmp_path: Path, monkeypatch) -> None:
+@pytest.mark.parametrize("fidelity", ["L0", "L1"])
+def test_forward_solver_exception_writes_structured_failure_artifact_and_returns_exit_3(
+    tmp_path: Path, monkeypatch, capsys, fidelity: str
+) -> None:
     def fail_solver(*args, **kwargs):
         raise RuntimeError("manufactured solver failure")
 
     monkeypatch.setattr(cli_module, "simulate", fail_solver)
-    out = tmp_path / "structured_failure"
+    out = tmp_path / f"structured_failure_{fidelity}"
     exit_code = cli_module.command_forward(
         Namespace(
             case=ROOT / "examples" / "tiny_synthetic.json",
-            fidelity="L0",
+            fidelity=fidelity,
             out=out,
             uq_power=None,
             seed=1,
@@ -512,11 +770,138 @@ def test_solver_exception_writes_structured_failure_artifact_and_returns_exit_3(
     )
     assert exit_code == 3
     status = json.loads((out / "status.json").read_text())
-    assert status == {
-        "code": "solver_exception",
-        "message": "RuntimeError: manufactured solver failure",
-        "success": False,
+    assert status["code"] == "solver_exception"
+    assert status["success"] is False
+    assert status["stage"] == f"forward_{fidelity}"
+    assert status["reason"] == "solver_runtime_exception"
+    assert status["exception"] == {
+        "class": "RuntimeError",
+        "summary": "manufactured solver failure",
     }
+    assert json.loads((out / "provenance.json").read_text())["requested_output"] == str(out)
+    assert json.loads((out / "run_manifest.json").read_text())["run_type"] == "structured_failure"
+    assert "Traceback" not in capsys.readouterr().err
+
+
+def test_inverse_solver_exception_writes_structured_failure_artifact_and_returns_exit_3(
+    tmp_path: Path, monkeypatch, capsys
+) -> None:
+    def fail_solver(*args, **kwargs):
+        raise RuntimeError("manufactured inverse failure")
+
+    monkeypatch.setattr(cli_module, "run_inverse", fail_solver)
+    out = tmp_path / "inverse_failure"
+    exit_code = cli_module.command_inverse(
+        Namespace(
+            case=ROOT / "examples" / "tiny_synthetic.json",
+            budget="tiny",
+            out=out,
+            seed=2,
+            overwrite=False,
+        )
+    )
+    assert exit_code == 3
+    status = json.loads((out / "status.json").read_text())
+    assert status["stage"] == "inverse"
+    assert status["exception"]["class"] == "RuntimeError"
+    assert "Traceback" not in capsys.readouterr().err
+
+
+def test_benchmark_solver_exception_writes_structured_failure_artifact_and_returns_exit_3(
+    tmp_path: Path, monkeypatch, capsys
+) -> None:
+    def fail_solver(*args, **kwargs):
+        raise RuntimeError("manufactured benchmark failure")
+
+    monkeypatch.setattr(cli_module, "simulate", fail_solver)
+    out = tmp_path / "benchmark_failure"
+    exit_code = cli_module.command_benchmark(
+        Namespace(
+            case=ROOT / "examples" / "tiny_synthetic.json",
+            out=out,
+            seed=3,
+            overwrite=False,
+        )
+    )
+    assert exit_code == 3
+    status = json.loads((out / "status.json").read_text())
+    assert status["stage"] == "benchmark_L0"
+    assert status["exception"]["summary"] == "manufactured benchmark failure"
+    assert "Traceback" not in capsys.readouterr().err
+
+
+def test_solver_failure_preserves_nonempty_requested_output_and_writes_sibling_artifact(
+    tmp_path: Path, monkeypatch
+) -> None:
+    def fail_solver(*args, **kwargs):
+        raise RuntimeError("manufactured safe-output failure")
+
+    monkeypatch.setattr(cli_module, "simulate", fail_solver)
+    out = tmp_path / "occupied"
+    out.mkdir()
+    sentinel = out / "sentinel.txt"
+    sentinel.write_text("preserve me")
+    exit_code = cli_module.command_forward(
+        Namespace(
+            case=ROOT / "examples" / "tiny_synthetic.json",
+            fidelity="L0",
+            out=out,
+            uq_power=None,
+            seed=4,
+            overwrite=False,
+        )
+    )
+    assert exit_code == 3
+    assert sentinel.read_text() == "preserve me"
+    failures = list(tmp_path.glob(".occupied.failure-*"))
+    assert len(failures) == 1
+    provenance = json.loads((failures[0] / "provenance.json").read_text())
+    assert provenance["requested_output_preserved"] is True
+
+
+@pytest.mark.parametrize("interruption", [KeyboardInterrupt(), SystemExit(17)])
+def test_solver_wrapper_does_not_swallow_process_control_exceptions(tmp_path: Path, monkeypatch, interruption) -> None:
+    def interrupt(*args, **kwargs):
+        raise interruption
+
+    monkeypatch.setattr(cli_module, "simulate", interrupt)
+    out = tmp_path / "must_not_exist"
+    with pytest.raises(type(interruption)):
+        cli_module.command_forward(
+            Namespace(
+                case=ROOT / "examples" / "tiny_synthetic.json",
+                fidelity="L0",
+                out=out,
+                uq_power=None,
+                seed=5,
+                overwrite=False,
+            )
+        )
+    assert not out.exists()
+
+
+@pytest.mark.parametrize(
+    "mutator, expected_path",
+    [
+        (lambda raw: [], "$"),
+        (lambda raw: {**raw, "kiln": []}, "$.kiln"),
+        (lambda raw: {**raw, "kiln": {**raw["kiln"], "profile": None}}, "$.kiln.profile"),
+        (lambda raw: {**raw, "kiln": {**raw["kiln"], "profile": [1, 2]}}, "$.kiln.profile[0]"),
+        (lambda raw: {**raw, "inverse_design": []}, "$.inverse_design"),
+        (lambda raw: {**raw, "inverse_design": None}, "$.inverse_design"),
+    ],
+)
+def test_malformed_container_matrix_returns_validation_exit_2_without_traceback(
+    tmp_path: Path, capsys, mutator, expected_path: str
+) -> None:
+    payload = mutator(copy.deepcopy(BASE.raw))
+    path = tmp_path / "malformed.json"
+    path.write_text(json.dumps(payload))
+    exit_code = cli_module.main(["validate", str(path), "--json"])
+    captured = capsys.readouterr()
+    assert exit_code == 2
+    assert expected_path in captured.out
+    assert "Traceback" not in captured.err
 
 
 @pytest.mark.parametrize(

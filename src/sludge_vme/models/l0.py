@@ -5,7 +5,7 @@ import time as clock
 import numpy as np
 from scipy.integrate import solve_ivp
 
-from .common import GASES, REACTIONS, SIGMA_SB, ModelContext, boundary, finalize_result, oxygen_available_mol_m3, reaction_rates, sintering_rate
+from .common import GAS_MOLAR_MASS_KG_MOL, GASES, REACTIONS, SIGMA_SB, ModelContext, boundary, finalize_result, oxygen_available_mol_m3, reaction_rates, sintering_rate
 
 
 def run_l0(ctx: ModelContext):
@@ -19,6 +19,7 @@ def run_l0(ctx: ModelContext):
     y0 = np.zeros(1 + n_r + n_g + 1 + n_g + 2)
     y0[0] = initial_temperature
     rho_heat = ctx.rho_dry * (1.0 + ctx.water_ratio)
+    gas_molar_masses = np.array([GAS_MOLAR_MASS_KG_MOL[species] for species in GASES])
 
     def rhs(time_s: float, y: np.ndarray) -> np.ndarray:
         temperature = y[0]
@@ -34,7 +35,7 @@ def run_l0(ctx: ModelContext):
             oxygen_available_mol_m3(ctx, time_s),
         )[:, 0]
 
-        gas_source = ctx.rho_dry * (rates @ ctx.gas_mass_matrix)
+        gas_source_molar = ctx.rho_dry * (rates @ ctx.gas_mass_matrix) / gas_molar_masses
         morphology_scale = ctx.morphology_transport_factor / 0.55
         external_mass_transfer = max(0.0, bc["km_m_s"] * morphology_scale * float(ctx.parameters.get("mass_transfer_scale", 1.0)))
         internal_mass_transfer = ctx.diffusivity / ctx.half_thickness_m
@@ -53,9 +54,9 @@ def run_l0(ctx: ModelContext):
         solid_mass = ctx.rho_dry - ctx.rho_dry * float(np.dot(extents, dry_loss))
         total_porosity = float(np.clip(1.0 - solid_mass / (ctx.true_density * volume_ratio), 1e-9, 1.0))
         open_porosity = max(total_porosity * ctx.connectivity, 1e-9)
-        current_pore_concentration = gas / (open_porosity * volume_ratio)
-        surface_outflow = surface_mass_transfer * current_pore_concentration * volume_ratio ** (2.0 / 3.0)
-        outflow = surface_outflow / ctx.half_thickness_m
+        current_pore_molar_concentration = gas / (open_porosity * volume_ratio)
+        surface_molar_outflow = surface_mass_transfer * current_pore_molar_concentration * volume_ratio ** (2.0 / 3.0)
+        molar_outflow = surface_molar_outflow / ctx.half_thickness_m
         external_h = bc["h_W_m2_K"] * float(ctx.parameters.get("h_scale", 1.0))
         effective_h = 0.0 if external_h == 0.0 else 1.0 / (1.0 / external_h + ctx.half_thickness_m / (3.0 * ctx.conductivity))
         heat_boundary = (
@@ -66,10 +67,10 @@ def run_l0(ctx: ModelContext):
         derivative = np.zeros_like(y)
         derivative[0] = (heat_boundary + heat_reaction) / (rho_heat * ctx.cp)
         derivative[1 : 1 + n_r] = rates
-        derivative[gas_start : gas_start + n_g] = gas_source - outflow
+        derivative[gas_start : gas_start + n_g] = gas_source_molar - molar_outflow
         derivative[gas_start + n_g] = -float(sintering_rate(ctx, np.array([temperature]))[0])
         released_start = gas_start + n_g + 1
-        derivative[released_start : released_start + n_g] = outflow
+        derivative[released_start : released_start + n_g] = molar_outflow
         derivative[-2] = heat_boundary
         derivative[-1] = heat_reaction
         return derivative
@@ -87,9 +88,9 @@ def run_l0(ctx: ModelContext):
         np.array([0.0]),
         y[:, 0, None],
         y[:, 1 : 1 + n_r, None],
-        y[:, gas_start : gas_start + n_g, None],
+        y[:, gas_start : gas_start + n_g, None] * gas_molar_masses[None, :, None],
         y[:, gas_start + n_g, None],
-        y[:, released_start : released_start + n_g],
+        y[:, released_start : released_start + n_g] * gas_molar_masses[None, :],
         y[:, -2],
         y[:, -1],
         bool(solution.success),

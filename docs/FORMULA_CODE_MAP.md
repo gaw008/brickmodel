@@ -16,7 +16,7 @@
 | reduced effective enthalpy ODE identity (not full physical energy conservation) | `models.l0.rhs` + cumulative heat states | adiabatic reduced-residual/honesty test |
 | center-symmetric cell FVM | `models.fvm.finite_volume_laplacian` | uniform-field manufactured test |
 | L1 convection/radiation surface flux | `models.l1.rhs` | L1 run + 21/41 check |
-| `c_current=N_ref/(phi_open J)`, deforming-cell Fick flux + `km*c_current,surface` | `models.fvm.current_pore_concentration`, `conservative_fick_rate`, `models.l1.rhs` | nontrivial Fick/phi-J/deforming conservation/low-gradient tests |
+| `n_ref=m_ref/M_k`, `c_k,current=n_k,ref/(phi_open J)` in `mol/m3_current_pore`; molar Fick/surface flux mapped back by `M_k` | `models.fvm.current_pore_molar_concentration`, `conservative_molar_fick_rate`, `models.l0/l1.rhs` | H2O/CO2 different-molar-mass manufactured flux, phi/J/deformation, global conservation and L0/L1 low-gradient tests |
 | `P_partial=RT sum(c_k)` | `models.common.finalize_result` | pressure bounds in forward/inverse |
 | reduced SOVS-inspired `dlnV/dt=-rate` | `physics.sintering`, L0/L1 volume state | temperature monotonicity + state bounds |
 | `phi=1-Vsolid/Vcurrent` | `models.common.finalize_result` | forward porosity bounds |
@@ -30,6 +30,6 @@
 | fail-safe robust quality/risk constraints and slack | `inverse.constraints`, `inverse.search._record_from_results` | 1/4, 3/4, 4/4 policy-failure + active-slack tests |
 | strict Pareto dominance | `inverse.pareto.nondominated_mask` | dominated/NaN/infeasible test |
 | multifidelity inverse pipeline | `inverse.search.run_inverse` | reproducibility + L1 candidates test |
-| artifact SHA-256/size inventory + semantic consistency | `io.manifest`, `io.artifacts` | byte tamper, rehashed negative-state, Pareto traceability tests |
+| artifact SHA-256/size inventory + independent resolved-case/trajectory semantic recomputation | `io.manifest`, `io.artifacts` | byte tamper; rehashed legal-range summary/density/mass/element/O2/reduced-enthalpy/count/envelope/Pareto source/constraint/dominance attacks |
 
 The oxide-liquid output is an `unresolved_screening_proxy`, not a Gibbs/CALPHAD phase result. Connectivity, pressure normalization, SOVS reduction, stress, strength, absorption and defect metrics are also closure-dependent. Their appearance in this table maps formulas to code; it does not upgrade them to first-principles constants.
