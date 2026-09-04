@@ -26,6 +26,19 @@ from ..types import CaseConfig, ForwardResult
 from .manifest import build_manifest, file_sha256
 
 
+_FORWARD_SOLVER_TOLERANCE_POLICY = {
+    "policy_version": "1.0-trusted-forward-solver-tolerance-range",
+    "trust_source": "verifier-owned constants in sludge_vme.io.artifacts",
+    "solver_rtol": {"minimum": 1e-10, "maximum": 1e-5},
+    "solver_atol": {"minimum": 1e-13, "maximum": 1e-7},
+}
+_FORWARD_SEMANTIC_COMPARISON_POLICY = {
+    "policy_version": "1.0-verifier-owned-forward-semantic-tolerance",
+    "relative_tolerance": 5e-6,
+    "absolute_tolerance": 5e-8,
+}
+
+
 @dataclass
 class VerifyResult:
     valid: bool
@@ -193,10 +206,10 @@ def _forward_manifest_semantic_claims(
     if replay_status == "evaluated":
         return {
             "mode": "deterministic_full_ode_trajectory_replay",
-            "contract_version": "4.0-forward-ode-replay",
+            "contract_version": "5.0-forward-ode-replay-trusted-tolerances",
             "forward_semantic_replay": "evaluated",
             "strict_semantic_claims": [
-                "resolved case, fidelity, seed and parameter/source/solver provenance",
+                "resolved case, fidelity and parameter/source/solver provenance",
                 "complete L0/L1 ODE primary trajectory",
                 *contract["strict_semantic_claims"],
                 "summary.json values and metadata",
@@ -207,6 +220,7 @@ def _forward_manifest_semantic_claims(
                 "uncertainty.json",
                 "report.md prose",
                 "runtime, platform and solver work counters",
+                "forward seed (self-declared run/UQ provenance; deterministic baseline solver does not consume it and coherent rewrite requires external authenticity)",
             ],
             "authenticity": "not_provided; hashes provide integrity only and are not signatures",
         }
@@ -261,6 +275,33 @@ def _forward_solver_configuration(fidelity: str, parameters: dict[str, Any]) -> 
     raise ValueError("forward replay supports only L0 and L1")
 
 
+def _forward_solver_tolerance_policy_valid(
+    fidelity: str,
+    parameters: dict[str, Any],
+) -> bool:
+    defaults = {
+        "L0": {"solver_rtol": 1e-6, "solver_atol": 1e-8},
+        "L1": {"solver_rtol": 1e-6, "solver_atol": 1e-9},
+    }
+    if fidelity not in defaults:
+        return False
+    for name in ("solver_rtol", "solver_atol"):
+        raw_value = parameters.get(name, defaults[fidelity][name])
+        if isinstance(raw_value, bool) or not isinstance(
+            raw_value,
+            (int, float, np.integer, np.floating),
+        ):
+            return False
+        value = float(raw_value)
+        limits = _FORWARD_SOLVER_TOLERANCE_POLICY[name]
+        if not (
+            math.isfinite(value)
+            and float(limits["minimum"]) <= value <= float(limits["maximum"])
+        ):
+            return False
+    return True
+
+
 def _forward_replay_descriptor(
     *,
     case_hash: str,
@@ -272,14 +313,15 @@ def _forward_replay_descriptor(
     source_pack_hash: str,
 ) -> dict[str, Any]:
     configuration = _forward_solver_configuration(fidelity, parameter_overrides)
-    solver_rtol = float(configuration["rtol"])
-    solver_atol = float(configuration["atol"])
     return {
         "status": "evaluated",
-        "contract_version": "1.0-deterministic-forward-ode-replay",
+        "contract_version": "2.0-deterministic-forward-ode-replay",
         "fidelity": fidelity,
         "seed": int(seed),
-        "seed_role": "bound run/UQ provenance; the baseline forward ODE is deterministic",
+        "seed_role": (
+            "self-declared run/UQ provenance only; baseline forward ODE is deterministic; "
+            "coherent rewrite requires external authenticity"
+        ),
         "resolved_case_sha256": case_hash,
         "parameter_overrides_sha256": sha256_json(parameter_overrides),
         "parameter_invocation": parameter_invocation,
@@ -287,11 +329,11 @@ def _forward_replay_descriptor(
         "source_pack_sha256": source_pack_hash,
         "solver_configuration": configuration,
         "solver_configuration_sha256": sha256_json(configuration),
+        "solver_tolerance_policy": copy.deepcopy(_FORWARD_SOLVER_TOLERANCE_POLICY),
         "comparison": {
             "algorithm": "recursive numeric comparison after lexicographic mapping-key canonicalization",
-            "relative_tolerance": 5.0 * solver_rtol,
-            "absolute_tolerance": 5.0 * solver_atol,
-            "basis": "five times the configured solve_ivp relative/absolute tolerances",
+            **_FORWARD_SEMANTIC_COMPARISON_POLICY,
+            "basis": "independent verifier-owned hard caps; artifact solver tolerances cannot widen semantic acceptance",
             "mapping_order": "ignored; keys canonicalized lexicographically before comparison",
             "sequence_order": "significant",
         },
@@ -446,6 +488,11 @@ def write_forward_run(
     overrides = provenance.get("parameter_overrides")
     parameter_invocation = provenance.get("parameter_invocation")
     parameter_hash = provenance.get("parameter_pack_hash")
+    tolerance_policy_ok = (
+        isinstance(overrides, dict)
+        and result.fidelity in {"L0", "L1"}
+        and _forward_solver_tolerance_policy_valid(result.fidelity, overrides)
+    )
     replay: dict[str, Any]
     if (
         semantic_replay == "auto"
@@ -454,6 +501,7 @@ def write_forward_run(
         and isinstance(overrides, dict)
         and parameter_invocation in {"model_defaults", "explicit_overrides"}
         and isinstance(parameter_hash, str)
+        and tolerance_policy_ok
     ):
         replay = _forward_replay_descriptor(
             case_hash=case.content_hash,
@@ -465,14 +513,16 @@ def write_forward_run(
             source_pack_hash=file_sha256(_root() / "data" / "sources.json"),
         )
     else:
+        if semantic_replay == "not_evaluated":
+            replay_reason = "explicit_custom_or_manufactured_fixture"
+        elif not tolerance_policy_ok:
+            replay_reason = "unsupported_solver_tolerance_policy"
+        else:
+            replay_reason = "unsupported_or_unsuccessful_forward_result"
         replay = {
             "status": "not_evaluated",
-            "contract_version": "1.0-deterministic-forward-ode-replay",
-            "reason": (
-                "explicit_custom_or_manufactured_fixture"
-                if semantic_replay == "not_evaluated"
-                else "unsupported_or_unsuccessful_forward_result"
-            ),
+            "contract_version": "2.0-deterministic-forward-ode-replay",
+            "reason": replay_reason,
         }
     provenance["forward_semantic_replay"] = replay
     _write_json(directory / "resolved_case.json", case.raw)
@@ -1032,6 +1082,12 @@ def _forward_deterministic_replay(
     ):
         checks["forward_semantic_replay"] = False
         errors.append("forward replay inputs are missing or invalid")
+        return
+    tolerance_policy_ok = _forward_solver_tolerance_policy_valid(fidelity, overrides)
+    checks["forward_replay_solver_tolerance_policy"] = tolerance_policy_ok
+    if not tolerance_policy_ok:
+        checks["forward_semantic_replay"] = False
+        errors.append("forward replay solver tolerances violate trusted policy")
         return
     try:
         case_hash = sha256_json(resolved)

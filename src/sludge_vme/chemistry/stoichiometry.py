@@ -47,7 +47,9 @@ def _add(target: dict[str, float], values: dict[str, float]) -> None:
 
 
 def _component_mass_records(case: CaseConfig):
-    for feed in case.raw["feedstocks"].values():
+    feedstocks = case.raw["feedstocks"]
+    for feed_name in sorted(feedstocks):
+        feed = feedstocks[feed_name]
         feed_fraction = float(feed["dry_mass_fraction"])
         for component in feed["components"]:
             component_mass = feed_fraction * float(component["fraction"])
@@ -67,8 +69,12 @@ def initial_element_inventory(case: CaseConfig) -> dict[str, float]:
             formula = component["formula"]
             amount = mass / formula_molar_mass(formula)
             _add(inventory, formula_element_moles(formula, amount))
-    for feed in case.raw["feedstocks"].values():
-        for element, amount in feed.get("trace_element_inventory_mol_per_kg_dry", {}).items():
+    feedstocks = case.raw["feedstocks"]
+    for feed_name in sorted(feedstocks):
+        feed = feedstocks[feed_name]
+        trace_inventory = feed.get("trace_element_inventory_mol_per_kg_dry", {})
+        for element in sorted(trace_inventory):
+            amount = trace_inventory[element]
             inventory[element] = inventory.get(element, 0.0) + float(feed["dry_mass_fraction"]) * float(amount)
     return inventory
 

@@ -19,6 +19,7 @@ from sludge_vme.io import artifacts as artifact_module
 from sludge_vme.io.artifacts import verify_run, write_forward_run, write_inverse_run
 from sludge_vme.models import simulate
 from sludge_vme.types import CaseConfig
+from sludge_vme.uq.sampling import sample_parameters
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -295,6 +296,31 @@ def test_forward_primary_state_hash_ignores_nonsemantic_mapping_order() -> None:
 
     baseline = simulate(BASE, "L0", {"grid_check": False})
     reordered = simulate(reordered_case, "L0", {"grid_check": False})
+    assert _forward_primary_state_hash(reordered) == _forward_primary_state_hash(baseline)
+
+
+def test_inverse_design_forward_hash_ignores_feedstock_mapping_order() -> None:
+    seed = 20260904
+    reordered_raw = copy.deepcopy(BASE.raw)
+    reordered_raw["feedstocks"] = {
+        name: reordered_raw["feedstocks"][name]
+        for name in sorted(reordered_raw["feedstocks"])
+    }
+    reordered_case = CaseConfig(
+        reordered_raw,
+        BASE.source_path,
+        sha256_json(reordered_raw),
+    )
+    point = qmc.Sobol(d=12, scramble=True, seed=seed).random_base2(4)[10]
+    baseline_design, _ = design_from_unit(BASE, point, 10)
+    reordered_design, _ = design_from_unit(reordered_case, point, 10)
+    parameters = sample_parameters(2, seed + 31 * 11)[0]
+
+    baseline = simulate(baseline_design, "L0", parameters)
+    reordered = simulate(reordered_design, "L0", parameters)
+
+    assert baseline.status.success, baseline.status.message
+    assert reordered.status.success, reordered.status.message
     assert _forward_primary_state_hash(reordered) == _forward_primary_state_hash(baseline)
 
 

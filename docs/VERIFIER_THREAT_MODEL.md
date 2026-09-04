@@ -16,7 +16,7 @@ This is only a self-declared byte-integrity layer. An attacker who rewrites a pa
 
 The verifier program is trusted in this model.
 
-For a normal synthetic L0/L1 artifact, forward strict verification first validates a replay descriptor that binds the resolved-case hash, fidelity, seed, canonical parameter-overrides digest, local parameter/source-pack hashes, SciPy version, solver method/fallback/grid configuration and its digest. It rebuilds the case in the verifier process and reruns the complete forward ODE/FVM solver. The replay comparison uses both absolute and relative thresholds equal to five times the configured `solve_ivp` tolerances; mapping keys are canonicalized lexicographically, while sequence/time order remains significant. The verifier compares replay against artifact point-by-point for:
+For a normal synthetic L0/L1 artifact, forward strict verification first validates a replay descriptor that binds the resolved-case hash, fidelity, canonical parameter-overrides digest, local parameter/source-pack hashes, SciPy version, solver method/fallback/grid configuration and its digest. It rebuilds the case in the verifier process and reruns the complete forward ODE/FVM solver. A verifier-owned versioned policy admits only finite numeric solver tolerances in the inclusive ranges `solver_rtol=[1e-10, 1e-5]` and `solver_atol=[1e-13, 1e-7]`; NaN, Inf, nonpositive, nonnumeric and oversized settings fail before the solver is called. Admitted artifact values configure the replay solve but never its acceptance threshold. Replay comparisons instead use independent verifier-owned hard caps `rtol=5e-6` and `atol=5e-8`; mapping keys are canonicalized lexicographically, while sequence/time order remains significant. The verifier compares replay against artifact point-by-point for:
 
 - time and spatial grids;
 - temperature and raw/projected reaction extents, including the free-water state;
@@ -38,6 +38,8 @@ Inverse strict verification for `tiny` and `default` runs reconstructs the desig
 - `all_evaluations.jsonl`, Pareto JSON/CSV, summary, uncertainty, flags and report.
 
 A rehashed artifact that disagrees with these replays/recomputations fails semantic replay even if every manifest hash was updated. Missing or mismatched forward case/fidelity/parameter/source/solver provenance also fails. An explicitly opted-out custom/manufactured fixture reports `forward_semantic_replay=not_evaluated`, moves the complete ODE trajectory to integrity-only, and does not make a full trajectory claim.
+
+The baseline forward ODE is deterministic and does not consume the run seed. Forward seed is therefore self-declared run/UQ provenance, not a strict semantic binding: a missing seed or a one-sided manifest/descriptor change fails consistency checks, but a coherent rewrite of both copies cannot be distinguished without a trusted external authenticity anchor. No random physical perturbation, signature, MAC, attestation, credential or remote service is introduced. This limitation does not apply to inverse `tiny`/`default` replay, where the seed reconstructs the Sobol design and policy schedule and remains a strict semantic input.
 
 ### 3. Cryptographic authenticity
 
@@ -73,6 +75,7 @@ Structured solver-failure handling also assumes exception text and class names m
 - An attacker who replaces the verifier program, dependency code and all primary states together.
 - Host compromise, debugger/in-memory manipulation, malicious Python import paths or compromised pinned packages.
 - Cryptographic attribution, non-repudiation or trusted creation time.
+- Detection of a coherent rewrite of both self-declared forward-seed copies; forward seed is integrity-only because the deterministic baseline solver does not consume it.
 - Proving that synthetic inputs are real plant measurements or that closures are scientifically calibrated.
 - Protecting normal successful forward artifacts from secrets deliberately placed in the resolved case; secret-bearing cases must not be used. The credential-safe rule here applies to structured failure output and arbitrary exception text.
 - Production recipe, emissions/compliance, certification or control-system approval.
@@ -81,7 +84,7 @@ Structured solver-failure handling also assumes exception text and class names m
 
 Each forward/inverse manifest has a `semantic_verification` section. Fields listed under `strict_semantic_claims` are recomputed or deterministically replayed. Fields under `integrity_only_claims` are hash-checked but are not hard semantic claims.
 
-For replay-evaluated forward runs, current integrity-only claims are UQ payload content, report prose, runtime/platform provenance and solver work counters. For an explicit custom/manufactured forward opt-out, the complete ODE trajectory and every claim dependent on it are also integrity-only; strict verification emits a `not_evaluated` warning and returns nonzero. Current inverse integrity-only claims are per-record `solver_statistics.wall_time_s` and manifest runtime/platform/transaction provenance. Manufactured inverse fixtures are labeled self-consistency-only and are not equivalent to a `tiny`/`default` deterministic replay.
+For replay-evaluated forward runs, current integrity-only claims are the self-declared forward seed, UQ payload content, report prose, runtime/platform provenance and solver work counters. For an explicit custom/manufactured forward opt-out, the complete ODE trajectory and every claim dependent on it are also integrity-only; strict verification emits a `not_evaluated` warning and returns nonzero. Current inverse integrity-only claims are per-record `solver_statistics.wall_time_s` and manifest runtime/platform/transaction provenance. Manufactured inverse fixtures are labeled self-consistency-only and are not equivalent to a `tiny`/`default` deterministic replay.
 
 ## Cost and operational limit
 
