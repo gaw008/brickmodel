@@ -1,0 +1,60 @@
+{
+  "schema_version": "B2-1.0.1",
+  "contract_version": "B2-1.0.1",
+  "kind": "schema_examples_not_solver_results",
+  "purpose": "Small declarative status examples for Manager readback; not additional simulation cases",
+  "notice": "All assumed_conditions and expected fields are hypothetical schema examples, not observations, executed tests, real evidence or numerical PASS results.",
+  "executed": false,
+  "usable_as_runtime_verification_evidence": false,
+  "actual_numerical_validation": "not_run",
+  "actual_source_identity": null,
+  "actual_input_identity": null,
+  "actual_evidence_files": [],
+  "implementation_authorized": false,
+  "production_approved": false,
+  "scope": "synthetic_prescribed_temperature_equimolar",
+  "material_mapping": "unknown_real_material",
+  "mapping_status": "unknown_real_material",
+  "verification_scope_allowed": ["frozen_suite", "audit_only"],
+  "numerical_validation_allowed": ["passed_frozen_suite", "not_verified_for_custom_case", "failed", "not_run"],
+  "examples": [
+    {
+      "example_id": "default_before_run",
+      "assumed_conditions": ["Exact current frozen input; no execution or bound numerical evidence"],
+      "expected": {"verification_scope": "frozen_suite", "numerical_validation": "not_run", "formal_sampled_screening_allowed": false}
+    },
+    {
+      "example_id": "demo_audit_is_not_focused_validation",
+      "assumed_conditions": ["Default W pair integrated with current inventory audit passed", "No bound focused/reference/convergence coverage"],
+      "expected": {"verification_scope": "frozen_suite", "numerical_validation": "not_run", "screening_status": "unresolved_in_assumption_envelope", "formal_sampled_screening_allowed": false}
+    },
+    {
+      "example_id": "conditional_bound_default_pass",
+      "assumed_conditions": ["Current default execution integrated and its raw audit actually passed", "Applicable named numerical gates actually executed and passed with no missing or skipped coverage", "Consumer recomputed and matched actual source, contract, complete expanded inputs and referenced evidence identities"],
+      "expected": {"verification_scope": "frozen_suite", "numerical_validation": "passed_frozen_suite", "screening_status": null},
+      "explanation": "Conditional expected label only, not an executed PASS. Final screening still requires both W members, real metrics and unchanged original guard; no candidate result is supplied here. Not G0 or Safety approval."
+    },
+    {
+      "example_id": "custom_same_name_cannot_inherit",
+      "assumed_conditions": ["Legal custom input retains name W03 but complete input content differs from the frozen W03", "Inventory audit passed and a legacy default PASS artifact is supplied"],
+      "expected": {"verification_scope": "audit_only", "numerical_validation": "not_verified_for_custom_case", "formal_sampled_screening_allowed": false},
+      "explanation": "Custom execution failure or unrun checks remain separately visible in execution_status and per-check results; the custom label never grants a pass. No new parameter value or solver case is defined."
+    },
+    {
+      "example_id": "default_stale_source_or_evidence",
+      "assumed_conditions": ["Current input is in the frozen manifest", "Supplied PASS belongs to a different source, contract, expanded input hash or mutated evidence bytes"],
+      "expected": {"verification_scope": "frozen_suite", "numerical_validation": "not_run", "formal_sampled_screening_allowed": false}
+    },
+    {
+      "example_id": "default_actual_failure_overrides_old_pass",
+      "assumed_conditions": ["An applicable numerical or current raw audit gate actually failed", "Old PASS or scope=frozen_suite is also present"],
+      "expected": {"verification_scope": "frozen_suite", "numerical_validation": "failed", "screening_status": "unknown_numerical", "formal_sampled_screening_allowed": false}
+    },
+    {
+      "example_id": "reject_scope_as_validation_result",
+      "assumed_conditions": ["A status object incorrectly uses audit_only as numerical_validation"],
+      "invalid_candidate": {"verification_scope": "audit_only", "numerical_validation": "audit_only"},
+      "expected": {"schema_accepted": false, "formal_sampled_screening_allowed": false}
+    }
+  ]
+}
