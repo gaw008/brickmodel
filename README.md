@@ -1,3 +1,20 @@
+# 污泥烧结砖：第一性原理研究与反向原料设计
+
+本仓库从 Hermes 的 `research/material-dynamics-v2b2` 分支导入，保留完整的 10 个原始提交；最新模型提交为 `3b501c5`。上传不会改变模型的科学验收状态。
+
+**目前没有砖厂可用的污泥成分窗口，也没有完成完整 virtual world model。所有模型结果只用于研究。**
+
+| 模块 | 内容 | 状态 |
+| --- | --- | --- |
+| [公开材料研究](experiments/material_design_v2/artifacts/DIRECTION_REPORT.md) | DTU 污泥焚烧灰数据重算、基料依赖、吸水与收缩折衷 | 独立审核通过，仅 Stage1 研究 |
+| [B1 反应—输运](experiments/material_dynamics_v2b1/README.md) | 一维等温、固定几何、有限氧库存与局部残碳 | 独立审核通过，仅冻结诊断范围 |
+| [B2 给定温度程序](experiments/material_dynamics_v2b2/README.md) | prescribed-temperature 扩展 | **blocked：实际运行审计失败，未获独立 Safety 批准** |
+| [早期 VME](docs/MODEL_ARCHITECTURE.md) | 正向/反向求解与 synthetic 筛选框架 | 受限研究原型；不能继承 B1 的审核结论 |
+
+完整审核、失败原始数据、上传核验与复跑方法见 [研究状态说明](docs/research-status/README.md)。早期文档和历史产物中的 pending / PASS 均属于各自提交与范围，应结合独立审核阅读。
+
+---
+
 # Sludge VME MVP
 
 一个可执行的 research-grade 污泥烧结砖 Virtual Materials Engine。它把污泥 composition/mineralogy/thermal properties/particle morphology 当作可设计 fingerprint，在固定 synthetic 页岩/煤矸石基体与固定隧道窑空间边界上运行：
