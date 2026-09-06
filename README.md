@@ -11,6 +11,8 @@
 | [B2 给定温度程序](experiments/material_dynamics_v2b2/README.md) | prescribed-temperature 扩展 | **blocked：实际运行审计失败，未获独立 Safety 批准** |
 | [早期 VME](docs/MODEL_ARCHITECTURE.md) | 正向/反向求解与 synthetic 筛选框架 | 受限研究原型；不能继承 B1 的审核结论 |
 
+后续更新每 15 分钟由 Codex 自动同步：[同步范围、分支位置与运行条件](docs/research-status/GITHUB_SYNC.md)。
+
 完整审核、失败原始数据、上传核验与复跑方法见 [研究状态说明](docs/research-status/README.md)。早期文档和历史产物中的 pending / PASS 均属于各自提交与范围，应结合独立审核阅读。
 
 ---
