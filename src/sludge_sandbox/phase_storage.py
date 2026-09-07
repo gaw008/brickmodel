@@ -12,6 +12,7 @@ from types import MappingProxyType
 from typing import Protocol
 
 from .ideal_water_vapor import IdealWaterVapor
+from .continuous_caloric import ContinuousShomateGas
 from .thermochemistry import ShomateGas
 from .water_properties import WaterProperties
 
@@ -123,18 +124,21 @@ class LiquidWaterPhase:
 
 @dataclass(frozen=True)
 class IdealGasPhase:
-    """Identity-bearing Shomate gas with explicit single branch, or water bridge."""
+    """Explicit original single branch, continuous derived gas, or water bridge."""
     caloric: object
     molar_mass_kg_mol: float
     segment_index: int | None = None
     additional_source_ids: tuple[str,...] = ()
 
     def __post_init__(self):
-        if type(self.caloric) not in (IdealWaterVapor,ShomateGas):raise PhaseStorageError('supported_caloric_provider_required')
+        if type(self.caloric) not in (IdealWaterVapor,ShomateGas,ContinuousShomateGas):raise PhaseStorageError('supported_caloric_provider_required')
         _number(self.molar_mass_kg_mol,'molar_mass',positive=True)
         if type(self.caloric) is IdealWaterVapor:
             if self.segment_index is not None or self.molar_mass_kg_mol!=self.caloric.molar_mass_kg_mol:
                 raise PhaseStorageError('water_molar_identity_mismatch')
+        elif type(self.caloric) is ContinuousShomateGas:
+            if self.segment_index is not None:
+                raise PhaseStorageError('continuous_provider_must_not_select_single_segment')
         else:
             if type(self.segment_index) is not int or not 0<=self.segment_index<len(self.caloric.segments):
                 raise PhaseStorageError('explicit_single_segment_required')
@@ -144,7 +148,7 @@ class IdealGasPhase:
 
     @property
     def _curve(self):
-        return self.caloric if type(self.caloric) is IdealWaterVapor else self.caloric.segments[self.segment_index]
+        return self.caloric.segments[self.segment_index] if type(self.caloric) is ShomateGas else self.caloric
 
     @property
     def metadata(self):
