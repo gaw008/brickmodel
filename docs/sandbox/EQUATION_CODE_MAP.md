@@ -22,5 +22,7 @@
 | 当前n/U解码、EOS、共享扩散/Darcy/导热/物质焓 | `gas_heat_model.GasHeatModel` | `test_gas_heat_model.py`；刚性气相验证域，无固液储能/蒸发/收缩 |
 | 独立质量、元素和储存U分步/前缀账本 | `conservation.audit_conservation` | `test_conservation.py`；使用显式基准，不调用求解器导数作为真值，仍须多相热物性重建 |
 | IAPWS Helmholtz水物性、h−pv、Cp/Cv导数与统一参考偏移 | `water_properties.WaterProperties` | 78测试、33官方数值核验；`WATER_ADAPTER.md`；原生R显式，未拼接混合气 |
+| 连续分段炉温/壁温/压力/气氛与时间节点 | `boundary_program.BoundaryProgram` | 41测试、实际积分与独立解析热量；不是已完成动态边界耦合 |
+| 固定R理想水汽 h保持、u=h−RT、Cv=Cp−R | `ideal_water_vapor.IdealWaterVapor` | 28测试、独立2071温点，水来源与CODATA常数来源分列；无相平衡资格 |
 
 完整湿砖组装器、材料动力学、水分迁移、烧结、力学和多代实验还没有实际映射，保持未完成。后续任何结果的完整DAG还需绑定实际启用的函数、参数和模型版本，不能用这张人读表替代运行时追溯。

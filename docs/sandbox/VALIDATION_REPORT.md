@@ -93,3 +93,11 @@ uv sync --frozen --no-editable --extra dev --extra research --extra water --offl
 ## Baloi 2025候选证据
 
 已核读出版商原文，保留同研究5组体积配比/烧后性质和Table3派生计算；4份资产hash与提取重跑一致，独立审核通过。N19/N20导热计算与印刷值差异保留，低温有效cp显式归类派生；没有将这些烧后数据移作湿坯/高温本构。该来源增加终态对照候选，不使完整原污泥材料域成立。
+
+## 连续边界与显式理想水汽增量复验
+
+`622d376` 增加连续边界程序及41测试：有真实integrate节点连接和独立分段热量解析检查；另独立1000极端浮点插值核验。`7d3aaca` 增加固定R理想水汽热量转换及28测试：独立2071温点的最大h-u残差1.46e-11 J/mol、转换差值残差4.71e-11 J/mol，du/dT-Cv最大4.23e-8 J/(mol K)。最终源码hash均已绑定独立审核。
+
+加入两模块后再次按上述冻结/非editable/离线方式重装，并从/private/tmp执行全部sandbox测试，实际 **498 passed in 1.99s，0失败、0跳过**。15个site-packages模块与工作区逐一hash一致，XML及身份记录为 `research/g2-installed-boundary-vapor-tests.xml`、`research/g2-installed-boundary-vapor-identity.json`。这次耗时只记录当前缓存/环境下观察，不和旧16.01s运行解释为性能改进。
+
+新边界只是连续输入及积分节点；动态气体库/对流辐射组装仍待完成。水汽模块未自动加入现有Shomate组装器，保留纯水R门禁，并显式标记混合物资格未建立。当前没有完成液/气相平衡、固液气储能反演或全湿砖应用验收。
