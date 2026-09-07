@@ -23,7 +23,9 @@ python3 -B build_repro.py --run validation/demo001 --tests validation/tests001 -
 
 ## 资源与复现
 
-focused额外积分：B2 28次（3sealed+6diffusion+4回归+15收敛），B1 4次，共32次≤40。默认22情景；不自动加case/网格/重跑失败全套。单thread/worker，RSS512MiB，单例含拒步1000000步；tests300s、demo180s、每角色累计900s。外部/usr/bin/time统计与内部active/ceiling需同时报告。
+focused额外积分：B2 30次（2历史暴露量回归+3sealed+6diffusion+4回归+15收敛），B1 4次，共34次≤40；run_tests 实测计入单元测试中的积分调用。默认22情景；不自动加case/网格/重跑失败全套。单thread/worker，RSS512MiB，单例含拒步1000000步；tests300s、demo180s、每角色累计900s。外部/usr/bin/time统计与内部active/ceiling需同时报告。
+
+2026-09-07 数值修复：原保存运行的 W07 在 τ=1.5 因 H=∫K dτ 的梯形积分误差超过固定1e-6而被拒绝；新增基于K二阶导数上界的步长限制，绝对积分误差预算1e-7。库存和通量仍用原SSPRK2阶段权重，不修改历史合同、容差或失败产物。macOS的ru_maxrss按字节换算，Linux按KiB换算。根因、推导及新验证见 ../../docs/sandbox/research/B2_ROOT_CAUSE.md。该修复不提供真实材料参数或新增热场。
 
 reproduce.py是预先规定的离线新副本验证：复制当前源码和真正消费的tests/demo；重跑轻量测试及同22默认demo，沿用该源码下保存的真实focused证据（不增加32次focused求解）。比较11个确定性产物的真实字节；资源与时间戳重新测量。不修改旧tests/demo，也不是补绑定的第二次finalize。最终包保持原模块相对引用，包含SOURCE_SNAPSHOT.json作为离线字节定位，不将其当数字签名或Safety批准。包不包含攻击测试的符号链接，但保留创建/拒绝这些链接的测试源和结果。
 

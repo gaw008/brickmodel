@@ -8,6 +8,48 @@ import math
 from temperature import data, evaluate
 
 
+# Numerical quadrature budget, not a material parameter or audit tolerance.
+# Reserve a factor of ten below B2-AUDIT-1's fixed 1e-6 minimum scale.
+EXPOSURE_ABS_BUDGET = 1e-7
+
+
+def exposure_step_limits(s):
+    """Bound cumulative trapezoidal H error without changing RK ledger weights.
+
+    On a linear temperature segment, A = theta*T_ref and slope = dT/dtau:
+      K'' = K*slope**2*A/T**3*(A/T - 2).
+    Its absolute maximum occurs at a segment end or A/T = 3 +/- sqrt(3).
+    Each step's trapezoid error is <= max|K''|*h**3/12. Allocating the
+    absolute budget by ramp duration bounds their sum at every output time.
+    Holds have constant K and no quadrature truncation error.
+    """
+    d = data(s)
+    segments = list(zip(d['temperature']['knots'], d['temperature']['knots'][1:]))
+    ramp_duration = sum(b['tau'] - a['tau'] for a, b in segments if a['T_K'] != b['T_K'])
+    activation = d['reaction']['theta'] * d['temperature']['T_ref_K']
+    kref = d['reaction']['K_ref']
+    limits = []
+    for left, right in segments:
+        limit = math.inf
+        if activation and kref and left['T_K'] != right['T_K']:
+            low, high = sorted((left['T_K'], right['T_K']))
+            slope = (right['T_K'] - left['T_K']) / (right['tau'] - left['tau'])
+            candidates = [low, high]
+            for x in (3 - math.sqrt(3), 3 + math.sqrt(3)):
+                critical = activation / x
+                if low <= critical <= high:
+                    candidates.append(critical)
+            curvature = max(
+                abs(kref * math.exp(d['reaction']['theta'] - activation / temperature)
+                    * slope**2 * activation / temperature**3 * (activation / temperature - 2))
+                for temperature in candidates
+            )
+            if curvature:
+                limit = math.sqrt(12 * EXPOSURE_ABS_BUDGET / (ramp_duration * curvature))
+        limits.append((right['tau'], limit))
+    return limits
+
+
 @dataclass(slots=True)
 class State:
     u: list
@@ -115,6 +157,7 @@ def integrate(s,budget,*,test_only_dirichlet=False):
         state.u=[0.]*n; state.v=[1.]*n
     records=[(0.,state)]; t=0.; steps=0; rejected=0; small=float('inf'); large=0.; knots_seen=[0.]
     knots=[k['tau'] for k in d['temperature']['knots']]
+    exposure_limits = exposure_step_limits(s)
     for sample in range(1,math.ceil(end/.1)+1):
         target=min(sample*.1,end)
         while t<target:
@@ -126,7 +169,8 @@ def integrate(s,budget,*,test_only_dirichlet=False):
             g0=2*c0.a_D*n if test_only_dirichlet else conductance(c0.a_D,c0.b,1/n)
             g1=2*c1.a_D*n if test_only_dirichlet else conductance(c1.a_D,c1.b,1/n)
             maxloss=max(loss(s,state,c0,g0),loss(s,state,c1,g1))
-            h=min(num['max_dtau']*scale,.8*scale/maxloss,stop-t)
+            exposure_limit = next(limit for end_time, limit in exposure_limits if end_time > t)
+            h=min(num['max_dtau']*scale,.8*scale/maxloss,exposure_limit*scale,stop-t)
             for attempt in range(32):
                 if t+h==t: raise ArithmeticError('time_stagnation')
                 try: nxt=step(s,state,t,h,dirichlet=test_only_dirichlet)

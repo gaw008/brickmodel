@@ -1,7 +1,14 @@
 """Wall-clock telemetry is never physical process time."""
 import math
 import resource
+import sys
 import time
+
+
+def peak_rss_mib():
+    """getrusage reports bytes on macOS and KiB on Linux."""
+    divisor = 1024 * 1024 if sys.platform == 'darwin' else 1024
+    return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / divisor
 
 
 class Budget:
@@ -11,12 +18,12 @@ class Budget:
 
     def check(self):
         if self.active is not None and time.monotonic()-self.start>self.active: raise TimeoutError('wall_budget')
-        if resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024>512: raise RuntimeError('rss_resource_limit')
+        if peak_rss_mib()>512: raise RuntimeError('rss_resource_limit')
 
     def snapshot(self,status,reason=None):
         return dict(active_budget_seconds=self.active,ceiling_budget_seconds=self.ceiling,
                     elapsed_wall_seconds=time.monotonic()-self.start,
-                    peak_rss_mib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024,
+                    peak_rss_mib=peak_rss_mib(),
                     workers=1,threads=1,phase=self.phase,completed_scenario_ids=list(self.completed),
                     pending_scenario_ids=list(self.pending),status=status,reason=reason)
 

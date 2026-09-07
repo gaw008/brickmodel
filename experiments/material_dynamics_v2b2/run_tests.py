@@ -9,6 +9,8 @@ import platform
 import sys
 import time
 import unittest
+from unittest.mock import patch
+import solver
 from model import ROOT, canonical
 from paths import new_directory, relative
 from resources import Budget, parse_budget
@@ -35,13 +37,18 @@ def main(argv=None):
                                           'encoding':'UTF-8','cwd':relative(ROOT) or '.', 'workers':1,'threads':1,'dependencies':'stdlib_only'})
         budget.phase='focused_unit'; os.environ['B2_TEST_OUT']=relative(out/'unit_fixtures')
         stream=io.StringIO(); tests=unittest.defaultTestLoader.discover(str(ROOT/'tests'),pattern='test_*.py')
-        actual=unittest.TextTestRunner(stream=stream,verbosity=2).run(tests)
+        with patch('solver.integrate', wraps=solver.integrate) as unit_integrations:
+            actual=unittest.TextTestRunner(stream=stream,verbosity=2).run(tests)
         log=out/'unit_tests.log'; log.write_text(stream.getvalue(),encoding='utf-8')
-        unit={'tests_run':actual.testsRun,'failures':len(actual.failures),'errors':len(actual.errors),'skipped':len(actual.skipped),'exit_code':0 if actual.wasSuccessful() else 1}
+        unit={'tests_run':actual.testsRun,'failures':len(actual.failures),'errors':len(actual.errors),'skipped':len(actual.skipped),
+              'B2_solver_invocations':unit_integrations.call_count,'exit_code':0 if actual.wasSuccessful() else 1}
         write_json(out/'unit_test_results.json',unit)
         if not actual.wasSuccessful() or actual.skipped: raise ArithmeticError('focused_tests_failed')
         coeff=coefficient_record(out)
         runner=NumericalEvidence(out,budget)
+        # The two historical-ramp regressions are real solves and count toward
+        # the same 40-invocation ceiling as the named numerical evidence.
+        runner.calls=unit['B2_solver_invocations']
         unit_entry=runner.save_input('executed_unit_semantics',{'kind':'executed_unit_fixture_inputs','test_command':['python3','-B','-m','unittest','discover','-s','tests','-v'],
                                                              'tests_run':actual.testsRun,'frozen_inputs':frozen,
                                                              'fixture_files':[reference(p) for p in sorted((out/'unit_fixtures').rglob('*')) if p.is_file() and not p.is_symlink() and not any(x.is_symlink() for x in p.parents if x!=ROOT)]})

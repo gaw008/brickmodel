@@ -14,6 +14,14 @@ from paths import safe_directory, safe_file, relative
 TOL=1e-6
 
 
+class AuditMismatch(ValueError):
+    """Only internally computed, finite comparison data may reach the report."""
+    def __init__(self,label,observed,expected,scale,error):
+        super().__init__('audit_'+label)
+        self.details = dict(check=label,observed=observed,expected=expected,
+                            normalization_scale=max(1,abs(scale)),scaled_error=error)
+
+
 def read_json(p):
     return strict_json(p.read_text(encoding='utf-8'),size_limit=20*1024*1024,depth_limit=32)
 
@@ -55,7 +63,7 @@ def threshold(times,values,q,upper):
 
 
 def audit_exports(run_directory):
-    checks=0; maxima={}; per_case={}
+    checks=0; maxima={}; per_case={}; context={}
     def close(a,b,scale=1.,label='derived'):
         nonlocal checks
         checks+=1
@@ -63,8 +71,10 @@ def audit_exports(run_directory):
             if a is not b: raise ValueError('null_mismatch')
             return
         if not math.isfinite(a) or not math.isfinite(b): raise ValueError('nonfinite')
-        err=abs(a-b)/max(1,abs(scale)); maxima[label]=max(maxima.get(label,0),err)
-        if err>TOL: raise ValueError('audit_'+label)
+        err=abs(a-b)/max(1,abs(scale))
+        if not math.isfinite(err): raise ValueError('nonfinite_difference')
+        maxima[label]=max(maxima.get(label,0),err)
+        if err>TOL: raise AuditMismatch(label,a,b,scale,err)
     try:
         out=safe_directory(run_directory)
         def local(name): return safe_file(relative(out/name))
@@ -81,6 +91,7 @@ def audit_exports(run_directory):
         for case in index['cases']:
             sid=case['scenario_id']; d=read_json(local(case['input_file'])); Scenario.from_dict(d)
             if d['scenario_id']!=sid: raise ValueError('input_identity')
+            context={'scenario_id':sid}
             n=d['numerics']['n_cells']; gamma=d['reaction']['Gamma']; rho=d['boundary']['reservoir_ratio']; mode=d['boundary']['mode']
             rows=[r for r in ts if r['scenario_id']==sid]; cells=[r for r in pr if r['scenario_id']==sid]; intervals=[r for r in fl if r['scenario_id']==sid]
             end=d['numerics']['tau_end']; times=[0.]+[min(.1*i,end) for i in range(1,math.ceil(end/.1)+1)]
@@ -95,6 +106,7 @@ def audit_exports(run_directory):
             C0=gamma+v0; O0=1.; M0=12*gamma+32*u0+44*v0
             upper=None if mode=='infinite' else min(1,(1+(rho or 0))/gamma)
             for j,(t,r) in enumerate(zip(times,rows)):
+                context['tau']=t
                 close(r['tau'],t,label='sample_time')
                 if j:
                     f=intervals[j-1]; close(f['tau_left'],times[j-1]); close(f['tau_right'],t)
@@ -163,6 +175,10 @@ def audit_exports(run_directory):
             per_case[sid]={'result':'passed','samples':len(times),'profiles':n*len(times)}
         return {'passed':True,'policy':'B2-AUDIT-1','fixed_tolerance':TOL,'checks':checks,'max_scaled_errors':maxima,'per_case':per_case,
                 'limitation':'Inventory/derived consistency only; not full ODE replay or arbitrary coordinated-tamper detection'}
+    except AuditMismatch as exc:
+        return {'passed':False,'policy':'B2-AUDIT-1','fixed_tolerance':TOL,'checks':checks,
+                'reason':'export_audit_rejected','per_case':per_case,'max_scaled_errors':maxima,
+                'failure':{**context,**exc.details}}
     except (ValueError,KeyError,TypeError,IndexError,OSError,StopIteration,OverflowError):
         return {'passed':False,'policy':'B2-AUDIT-1','fixed_tolerance':TOL,'checks':checks,'reason':'export_audit_rejected','per_case':per_case}
 
