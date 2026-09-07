@@ -141,3 +141,11 @@ uv sync --frozen --no-editable --extra dev --extra research --extra water --offl
 `eacdad3`保留CC BY Ghodke2022单次原TGA，共11575记录；独立检查所有原列/SI转换、噪声回升保留、原件官方hash/size与许可。没有独立实验holdout，也没有把PDF拟合表或DTA µV当运行参数/反应热。首次派生CSV的CRLF导致暂存格式检查失败，停止提交后原版本归档，再仅改LF；字段逐值不变，重建与格式最终复验通过。
 
 当前冻结非editable离线安装，在/private/tmp无PYTHONPATH实际全量 **638 passed in63.82s，0失败/跳过**；21个site-packages模块hash与工作区一致。产物 `research/installed-sandbox-fluid-heat-tests.xml` 与 `research/installed-sandbox-fluid-heat-identity.json`；原619项检查点保留，不将新增原TGA行数混算为测试或独立实验数。
+
+## 化学势与相间迁移增量
+
+`f92de4f`的36项化学势测试及独立审查通过；独立显式Table1八温点oracle预登记后运行，peq相对差最大2.59e-13，h差≤2.57e-9 J/mol、s差≤7.28e-12 J/(mol K)。该oracle不用候选模块或原_phi0计算参考理想项，液体仍共用来源门控EOS。对native真实饱和压的模型近似偏差完整保留（500K约−11.24%），未设置虚假的零偏差通过门槛。产物 `research/water_chemical_oracle.json`，首版输出另存，独立审核包含脚本核查。
+
+`f8b5a86`的16项相变耦合测试独立通过61.11s。真实绝热蒸发/凝结积分均按预登记水库存1e-11mol、U误差1e-7J、方向性温变超过1e-4K验证；不重复添加潜热。有限库存超步拒绝并保留初态，零汽化学势不伪造有限值，无液界面缺成核模型时退出。系数和载气是制造值，闭合反演误差界仍有条件；这些测试不是实测干燥/完整熵轨迹/全周期砖验证。原XML为 `research/water-phase-transfer-tests.xml`。
+
+全量冻结非editable离线安装验证最终 **690 passed in124.57s，0失败/错误/跳过**；从/private/tmp运行，无PYTHONPATH，23个真实安装模块hash与工作区一致。最终XML与源码/测试/锁文件身份分别为 `research/installed-sandbox-phase-transfer-tests.xml`、`research/installed-sandbox-phase-transfer-identity.json`。性能profile另列且没有实施后加速声明。

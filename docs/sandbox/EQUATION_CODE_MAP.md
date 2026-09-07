@@ -45,3 +45,9 @@
 | 连续气体相H/U/体积 | `phase_storage.IdealGasPhase` | 新增3测试，旧规则保留，独立7个NIST跨缝反解；不自动补水桥 |
 | 多格流体P/T—面输运—热量 | `rigid_fluid_heat.RigidFluidHeat` | 16测试及真实两格积分，局部/系统账本、供体焓；液水不迁移 |
 | 原TGA列与SI转换 | `data/sandbox/research/ghodke2022/extract_tga.py` | 独立11575行/单位核对，单次运行；没有拟合或持出预测 |
+
+| 化学势增量 | 实现 | 验证与范围 |
+|---|---|---|
+| s_g=s0(T,p0)−Rmix ln(p/p0)，mu=h−Ts | `water_chemical_potential.WaterChemicalPotential` | 36测试、独立导数检查、显式Table1八温点oracle；固定p0、共同native熵与能量参考 |
+| peq=p0 exp((mu_l−mu_g0)/(Rmix T)) | 同模块的两个明确液态参考入口 | 理想水汽/真实纯液水近似；500K相对native psat约−11.24%，不等同完整真实流体EOS或泥料活度 |
+| r=K(peq−p_H2O)，S_liquid=−r，S_vapor=r，新增U源=0 | `water_phase_transfer.WaterPhaseTransfer` | 真实蒸发/凝结制造积分；K显式声明，不由平衡式推得；无液界面退出、零汽极限、不clip有限库存 |
