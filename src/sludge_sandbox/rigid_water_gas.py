@@ -78,6 +78,10 @@ class RigidWaterGasState:
     qualification: str = 'pure_water_planar_interface_ideal_gas_not_sludge_or_phase_equilibrium'
     gas_constant_j_mol_k: float = _R
     liquid_native_molar_gas_constant_j_mol_k: float = 8.314371357587
+    final_numerical_pressure_bracket_pa: tuple[float,float] | None = None
+    final_bracket_volume_residuals_m3: tuple[float,float] | None = None
+    pressure_solution_path: str = 'not_recorded'
+    pressure_bracket_qualification: str = 'not_recorded_legacy_constructor'
 
 
 @dataclass(frozen=True)
@@ -131,7 +135,7 @@ class RigidWaterGas:
             f=_sum((vl,vg,-volume))
             return vl,f
 
-        def finish(p,vl,iterations):
+        def finish(p,vl,iterations,final_bracket,endpoint_residuals,solution_path):
             vg=_finite(_sum((volume,-vl)),'open_gas_volume',positive=True)
             ideal_p=_finite(nrt/vg,'gas_pressure',positive=True)
             residual_p=_sum((p,-ideal_p))
@@ -153,12 +157,17 @@ class RigidWaterGas:
             return RigidWaterGasState(t,p,p if nl else None,nl,MappingProxyType(gas),vl,vg,
                 MappingProxyType(partial),residual_v,residual_p,vr,pr,self.pressure_bracket_pa,
                 self.policy,iterations,self.water.reference.source_ids+self.constant_source_ids,
-                self.water.source_asset_sha256,liquid_native_molar_gas_constant_j_mol_k=self.water.reference.native_molar_gas_constant_j_mol_k)
+                self.water.source_asset_sha256,liquid_native_molar_gas_constant_j_mol_k=self.water.reference.native_molar_gas_constant_j_mol_k,
+                final_numerical_pressure_bracket_pa=final_bracket,
+                final_bracket_volume_residuals_m3=endpoint_residuals,
+                pressure_solution_path=solution_path,
+                pressure_bracket_qualification='numerical_forward_function_only_excludes_eos_error')
 
         if not nl:
             p=_finite(nrt/volume,'gas_pressure',positive=True)
             if not lo<=p<=hi:raise RigidClosureDomainError('pure_gas_pressure_out_of_explicit_bracket')
-            state=finish(p,0.,0)
+            residual=_sum((nrt/p,-volume))
+            state=finish(p,0.,0,(p,p),(residual,residual),'pure_gas_analytic_rounded')
             if state is None:raise RigidClosureNumericalError('pure_gas_closure_residual')
             return state
         # F(P)=V_liquid(T,P)+Ng RT/P-V_available is strictly decreasing on
@@ -169,7 +178,7 @@ class RigidWaterGas:
             raise RigidClosureDomainError('no_root_in_stable_pressure_bracket_or_insufficient_volume')
         for edge,vl,f in ((lo,vl_lo,flo),(hi,vl_hi,fhi)):
             if f==0:
-                state=finish(edge,vl,0)
+                state=finish(edge,vl,0,(edge,edge),(f,f),'liquid_exact_numerical_endpoint')
                 if state is not None:return state
         for count in range(1,self.policy.maximum_iterations+1):
             middle=lo+(hi-lo)/2
@@ -177,7 +186,7 @@ class RigidWaterGas:
             vl,f=trial(middle)
             if not fhi<=f<=flo:raise RigidClosureNumericalError('nonmonotonic_pressure_evaluation')
             if hi-lo<=self.policy.pressure_tolerance_pa:
-                state=finish(middle,vl,count)
+                state=finish(middle,vl,count,(lo,hi),(flo,fhi),'liquid_bisection')
                 if state is not None:return state
             if f>0:lo=middle;flo=f
             else:hi=middle;fhi=f

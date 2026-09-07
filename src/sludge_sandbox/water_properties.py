@@ -164,6 +164,25 @@ class WaterState(WaterCaloricState):
 
 
 @dataclass(frozen=True)
+class WaterResponse:
+    """Local TP derivatives, not pressure-interval error bounds or material data."""
+
+    state: WaterState
+    thermal_expansion_k_inverse: float
+    isothermal_compressibility_pa_inverse: float
+    molar_dv_dt_m3_mol_k: float
+    molar_dv_dp_m3_mol_pa: float
+    molar_du_dp_j_mol_pa: float
+    cp_cv_identity_residual_j_mol_k: float
+    derivative_scope: str = "local_state_sensitivity_not_interval_bound"
+    method_id: str = "derived_iapws95_local_tp_response_v1"
+
+    @property
+    def source_ids(self):
+        return self.state.source_ids
+
+
+@dataclass(frozen=True)
 class SaturationPair:
     temperature_k: float
     pressure_pa: float
@@ -342,6 +361,50 @@ class WaterProperties:
                 or (phase == "vapor" and state.density_kg_m3 > pair.vapor.density_kg_m3)):
             raise WaterNumericalError("iapws_returned_wrong_density_branch")
         return state
+
+    def state_tp_response(self, temperature_k, pressure_pa, *, phase: Literal["liquid", "vapor"]) -> WaterResponse:
+        """Evaluate sourced IAPWS Table 3 derivatives at one verified TP state.
+
+        Kappa is computed directly in 1/Pa from SI mass-based constants. No
+        upstream MPa response property, ideal u0, or numerical differencing is
+        used. These are local sensitivities, never a certified interval bound.
+        """
+        state = self.state_tp(temperature_k, pressure_pa, phase=phase)
+        if (type(state) is not WaterState or state.temperature_k != temperature_k
+                or state.pressure_pa != pressure_pa or state.phase != phase
+                or state.reference is not self.reference
+                or state.method_id != "iapws95_real_fluid_helmholtz"):
+            raise WaterNumericalError("response_state_identity_mismatch")
+        try:
+            t = state.temperature_k
+            rho = _number(state.density_kg_m3, "response_density", error=WaterNumericalError, positive=True)
+            delta = rho / _CRITICAL_RHO
+            tau = _CRITICAL_T / t
+            residual = self._model._phir(tau, delta)
+            derivatives = {key: _number(residual[key], "response_"+key, error=WaterNumericalError)
+                           for key in ("fird", "firdd", "firdt")}
+            d = _number(1 + 2*delta*derivatives["fird"] + delta**2*derivatives["firdd"],
+                        "response_stability", error=WaterNumericalError, positive=True)
+            alpha = _number((1+delta*derivatives["fird"]-delta*tau*derivatives["firdt"])/(t*d),
+                            "response_expansion", error=WaterNumericalError)
+            kappa = _number(1/(rho*self.reference.native_specific_gas_constant_j_kg_k*t*d),
+                            "response_compressibility", error=WaterNumericalError, positive=True)
+            volume = _number(state.molar_mass_kg_mol/rho, "response_molar_volume", error=WaterNumericalError, positive=True)
+            dv_dt = _number(volume*alpha, "response_dv_dt", error=WaterNumericalError)
+            dv_dp = -_number(volume*kappa, "response_negative_dv_dp", error=WaterNumericalError, positive=True)
+            du_dp = _number(math.fsum((-t*dv_dt, -state.pressure_pa*dv_dp)),
+                            "response_du_dp", error=WaterNumericalError)
+            cp_cv = _number((state.cp_j_kg_k-state.cv_j_kg_k)*state.molar_mass_kg_mol,
+                            "response_cp_minus_cv", error=WaterNumericalError)
+            expected = _number(t*volume*alpha**2/kappa, "response_cp_cv_identity", error=WaterNumericalError)
+            identity = _number(cp_cv-expected, "response_cp_cv_residual", error=WaterNumericalError)
+            if abs(identity) > 1e-7:
+                raise WaterNumericalError("response_cp_cv_identity_residual")
+            return WaterResponse(state, alpha, kappa, dv_dt, dv_dp, du_dp, identity)
+        except WaterNumericalError:
+            raise
+        except (ArithmeticError, ValueError, TypeError, AttributeError, KeyError) as exc:
+            raise WaterNumericalError("iapws_invalid_response_result") from exc
 
     def ideal_vapor(self, temperature_k) -> WaterCaloricState:
         """Independent ideal-Helmholtz caloric limit; no pure-fluid TP or mud claim."""

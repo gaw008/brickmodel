@@ -113,3 +113,76 @@ def test_representable_trace_partial_pressure_is_not_lost_in_intermediate_ratio(
     m=model(water,volume,bracket=(1e99,1e101),policy=policy(volume_tolerance_m3=1e-50,pressure_tolerance_pa=1e90))
     result=m.evaluate_at_temperature(300,0,{'N2':1e50,'H2O':1e-300})
     assert result.partial_pressures_pa['H2O']==pytest.approx(1e-250,rel=1e-14,abs=0)
+
+
+def test_final_numerical_bracket_is_actual_small_interval_with_eos_endpoint_residuals(water):
+    from scipy.optimize import brentq
+    t,nl,ng,volume=300.,1.,.01,1e-4
+    m=model(water,volume,policy=policy(pressure_tolerance_pa=.001))
+    result=m.evaluate_at_temperature(t,nl,{'N2':ng,'H2O':0})
+    low,high=result.final_numerical_pressure_bracket_pa
+    assert result.pressure_bracket_pa==(1e4,1e6)
+    assert low<=result.pressure_pa<=high
+    assert high-low<=m.policy.pressure_tolerance_pa
+    assert result.pressure_pa==low+(high-low)/2
+    def residual(p):
+        rho=water.state_tp(t,p,phase='liquid').density_kg_m3
+        return math.fsum((nl*water.reference.molar_mass_kg_mol/rho,ng*R*t/p,-volume))
+    endpoints=(residual(low),residual(high))
+    assert result.final_bracket_volume_residuals_m3==pytest.approx(endpoints,rel=0,abs=1e-18)
+    assert endpoints[0]>=0 and endpoints[1]<=0
+    reference=brentq(residual,1e4,1e6,xtol=1e-8)
+    assert low<=reference<=high
+    assert result.pressure_solution_path=='liquid_bisection'
+    assert result.pressure_bracket_qualification=='numerical_forward_function_only_excludes_eos_error'
+
+
+def test_zero_liquid_final_bracket_is_analytic_rounded_single_point(water,monkeypatch):
+    def forbidden(*args,**kwargs):
+        raise AssertionError('zero liquid must not query water EOS')
+    monkeypatch.setattr(type(water),'state_tp',forbidden)
+    result=model(water).evaluate_at_temperature(1000,0,{'N2':.01,'H2O':.005})
+    assert result.final_numerical_pressure_bracket_pa==(result.pressure_pa,result.pressure_pa)
+    assert result.final_bracket_volume_residuals_m3==(result.volume_residual_m3,)*2
+    assert result.pressure_solution_path=='pure_gas_analytic_rounded'
+    assert result.pressure_bracket_qualification=='numerical_forward_function_only_excludes_eos_error'
+
+
+def test_failed_bracket_refinement_has_no_success_state(water):
+    with pytest.raises(RigidClosureNumericalError,match='pressure_iteration_limit'):
+        model(water,1e-4,policy=policy(maximum_iterations=1)).evaluate_at_temperature(
+            300,1,{'N2':.01,'H2O':0})
+
+
+@pytest.mark.parametrize('bracket',[(1e5,1e6),(1e4,1e5)])
+def test_exact_numeric_endpoint_returns_explicit_degenerate_bracket(water,bracket):
+    pressure=1e5;temperature=300.
+    state=water.state_tp(temperature,pressure,phase='liquid')
+    liquid_volume=state.molar_mass_kg_mol/state.density_kg_m3
+    ng=liquid_volume*pressure/(R*temperature)
+    gas_volume=ng*R*temperature/pressure
+    volume=liquid_volume+gas_volume
+    assert math.fsum((liquid_volume,gas_volume,-volume))==0
+    result=model(water,volume,bracket=bracket).evaluate_at_temperature(
+        temperature,1,{'N2':ng,'H2O':0})
+    assert result.pressure_pa==pressure
+    assert result.iterations==0
+    assert result.pressure_bracket_pa==bracket
+    assert result.final_numerical_pressure_bracket_pa==(pressure,pressure)
+    assert result.final_bracket_volume_residuals_m3==(0.,0.)
+    assert result.pressure_solution_path=='liquid_exact_numerical_endpoint'
+    assert result.pressure_bracket_qualification=='numerical_forward_function_only_excludes_eos_error'
+
+
+def test_legacy_state_constructor_keeps_new_diagnostics_explicitly_unavailable(water):
+    from dataclasses import fields
+    from sludge_sandbox.rigid_water_gas import RigidWaterGasState
+    result=model(water).evaluate_at_temperature(1000,0,{'N2':.01,'H2O':0})
+    new={'final_numerical_pressure_bracket_pa','final_bracket_volume_residuals_m3',
+         'pressure_solution_path','pressure_bracket_qualification'}
+    old=RigidWaterGasState(**{f.name:getattr(result,f.name) for f in fields(result) if f.name not in new})
+    assert old.pressure_pa==result.pressure_pa
+    assert old.final_numerical_pressure_bracket_pa is None
+    assert old.final_bracket_volume_residuals_m3 is None
+    assert old.pressure_solution_path=='not_recorded'
+    assert old.pressure_bracket_qualification=='not_recorded_legacy_constructor'
