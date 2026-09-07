@@ -1,0 +1,19 @@
+# Compatibility correction prereview
+
+The earlier Fraction-clock approval is qualified by two actual full-suite compatibility failures. Read depletion-failure.xml: two failures in terminal/all-normal component preservation and total-energy binding across terminal/normal restart, both unresolvable_stage_time. The live full-suite source must remain unchanged while its evidence completes.
+
+Read depletion-trace.json: final normal segment is .15->.2 with nominal .01; accepted times end at .19999999999999998 before unresolvable tail. Independently reproduced Fraction(.15)+five Fraction(.01) and its rounded endpoint. Gap is exactly ulp(.2)=2.7755575615628914e-17 s. Thus exact nominal accumulation alone cannot remove binary representation differences between separately supplied start/end/step values. This is distinct from repeated-addition drift causing the prior2-ULP tail.
+
+Conditionally approve the proposed minimal isolated correction: after exact proposed-clock rounding, retain the old bounded one-ULP end merge when0<target-next_time<=min(ulp(target),32*ulp(min(h,target-at))). Set next_time=target and proposed_clock=Fraction(target), then compute actual step=next_time-at before any RK evaluation. Both halves, weights and ledger must integrate that full interval. Existing rejection reanchoring and all numerical gates remain. This is no state-only timestamp snap and no general arbitrary tolerance increase; it restores the narrowly bounded old behavior alongside exact accumulation.
+
+Required tests: reproduce both actual depletion component failures; add .15->.2/.01 five-panel nonzero constant-power test comparing final state and exact integrated ledger; retain prior2-ULP drift regression, large-origin strict rejection and unresolvable true-short-stage checks. The min with32ulp(step) must remain, preventing large absolute-time ulp from swallowing a materially longer interval when nominal h is tiny. Review actual isolated diff/results before applying; no candidate/EOS execution performed in this prereview.
+
+## Isolated v2 actual review
+
+Approve the v2 correction source `b3d3665b0dc73d372af4b88c1b3c17b4637288a271d66b9168d89b3682587524`. Actual diff against current production Fraction-clock source adds only the old double-limited local merge and explanatory comment after rounded proposed-clock creation. Target synchronization then executes before actual step/RK calculation. Rejection paths and all scientific controls remain unchanged. No production or installed files were modified by reviewer.
+
+Read v2/targeted.xml:50 tests,zero failures/errors/skips,1.024 s, covering the new local-endpoint test plus11 clock,28 integration and10 depletion-component tests. Independently imported v2 integration with an explicit __file__ assertion and ran the .15->.2 five-panel3 W exact-ledger test: pass. First reviewer invocation omitted test-helper search path and stopped on ModuleNotFoundError before the test; adding only that path fixed the test harness, with no implementation change. Also reran the two actual failing depletion cases under the asserted v2 module:2 passed,8 deselected,0.22 s. No EOS involved.
+
+Independently checked the large-origin/small-step guard: at1e16, h=.001 and target=nextafter(at,+inf), gap2 s exceeds the retained32ulp(step) limit6.938893903907228e-18 s, so it cannot swallow that interval merely because ulp(target) is large. v2/reviewer-check.json retains actual source path/hash and checks. This supplements existing unresolvable-stage/strict-retry tests.
+
+The first full-suite failures remain failures of the prior source. Wait for that live run to finish before changing production/installation; then bind and verify v2 separately. Earlier successful scientific clock results are not automatically source-bound to v2, though its change restores the narrowly bounded pre-existing guard. No new wet/EOS run is claimed in this correction review.

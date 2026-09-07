@@ -118,3 +118,7 @@
 | 同次current_storage/thermal_inverse面装配 | solid_fluid_heat.py私有_assemble_decoded、deforming_solid_storage.py尾追加current_storage | 旧evaluate AST实际非零热/气/固相反应黄金比对一致；旧positional兼容与single-inverse通过 |
 | 固定Ns总E推进，五分项功 | deforming_solid_heat.py | test_deforming_solid_heat.py；CODE_REVIEW_DEFORMING_SOLID_HEAT.md |
 | η0闭式T=T0(Vp0/Vp)^(NgR/Ctotal)，elastic/interface势差、pore=CtotalΔT | 同上独立常Cp制造oracle | 实际512/1024/2048均匀0拒步；fine原T和各功门槛通过；非湿/自由烧结验证 |
+
+## 普通积分器时钟（numerical_policy）
+
+`NUM-TIME-CLOCK-EXACT-BINARY-1` → `integration.integrate`：名义二进制步长用 Fraction 精确累加，断点同步、两种拒绝重锚；保留原 min(ulp(target),32ulp(step)) 局部端点界。实际 RK/通量/功始终积分真实端点差。`tests/sandbox/test_integration_clock.py` 有12项新回归，含完整边界通量和3W功；完整安装1124测试通过，三尺度短湿活动相变制造案例通过。历史失败、数值理由、安装身份与独立审查见 `research/integration-clock-correction/README.md`。这不是材料方程或全周期验证。

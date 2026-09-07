@@ -4,6 +4,22 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新恢复检查点：最终 v2 普通积分器时钟修正已完成实际冻结安装验证：**1124 pass / 0 fail / 0 error / 0 skip，525.571 s，session83463 exit0**。测试后再次导入核对41个实际安装模块与源码逐字节一致。当前没有待轮询测试或EOS句柄。证据见 research/integration-clock-correction/；原v1完整1121pass/2fail、独立失败重现、修复与审查均保留。
+
+最终v2用Fraction累加名义时间，拒步重锚，并保留原严格局部1ULP guard；实际RK与全部账本仍完整积分表示后的端点差。新增12项clock回归。原活动相变制造三尺度实际2/4/8步、15/29/57评估全部到.51s，原25/30s资源及两最细N/E/T/P门槛通过。不是完整湿变形、原污泥实验或全模型现实验证。
+
+新增 data/sandbox/research/areias2019/：UENF官方论文的实验室15%石灰基准为采集污泥干质量；采前已有不明剂量加灰，不能把 lodo bruto 当作确证未经处理原泥。与2025筛分/制样不同，同批未证实，材料参数未准入。2025 Fig.4 已完成26点数字化的旧错误描述已更正，原始历史事实不覆盖。
+
+下一步：核读2019自身三批采集泥与实验室处理泥的组成/热分析及样品映射，评估可闭合的材料域，不能迁移2025参数冒充同批；实现方向继续完整湿态活动相变/变形与耗尽组合及自由烧结，保留原门槛与实测成本控制。原污泥热化学/反应/输运/烧结/冷却本构、三个公开机制与独立留出、全周期CLI/UI和多代搜索仍为必需未完成项。Goal active，本轮为实际实现、验证和来源核读进展。下文是历史检查点，状态以本段为准。
+
+运行中检查点（本轮尚未提交）：普通integrate已试行Fraction名义时钟、接受推进/拒绝重锚/断点同步，实际RK/账本仍端点差。先10clock7fail3pass，修改后38pass，另补第11常功测试后联合117pass。已安装这一v1（integration SHA a2afb84f开头），同原活动相变三尺度实际2/4/8步15/29/57eval，原25/30时间限制及两最细N/E/T/P门槛通过。结果 /private/tmp/brick-clock-fix/wet，源码/数值独立审查已通过。但它不是最终版本。
+
+完整安装v1 suite **session61318已终态：1121pass/2fail，520.78s**，实际XML与身份保留在/private/tmp/brick-clock-fix。两项失败：test_depletion_components 的 terminal_and_all_normal_components_preserved 与 total_energy_binding_survives_terminal_and_normal_restart，原因unresolvable_stage_time。定向无EOS重现2fail，trace定位.15→.2名义.01在binary输入差下尚留1ULP；先前单ULP端点合并仍有必要。
+
+上述v1完整suite期间源码/安装保持冻结，终态后已应用受审v2并加入第12个clock回归、重新安装。正在/private/tmp/brick-clock-final重新原三尺度，尚未完成最终完整suite。受审v2已在/private/tmp/brick-clock-fix/v2/sludge_sandbox/integration.py，SHA b3d3665b0dc73d372af4b88c1b3c17b4637288a271d66b9168d89b3682587524，仅在exact时钟后恢复原min(ulp(target),32ulp(step))局部guard，再同步target并完整积分。50目标测试/独立大origin短步拒绝/两个原fail通过，COMPATIBILITY_REVIEW.md已批准。/private/tmp/brick-clock-fix/test_local_endpoint.py是先失败的新增常3W端点回归，尚未并入生产tests。
+
+下一步：等待61318真实终态并保存v1完整报告；应用受审v2、合入新增回归、冻结重装，重新原三尺度和全suite，核真实安装41模块、归档所有初失败/补正/审查并本地commit。此前goal缺项均保留；不可把v1三尺度通过或v2定向通过称最终全套已过。当前有实际实现/失败诊断/验证进展，Goal active。
+
 最新检查点：2b1d07f生产源码未改，已用实际安装HEOS验证非零相变与规定变形，证据research/heos-active-phase。原callback独立Decimal/Fraction算术、当前几何/一次逆解/液汽精确±/无重复潜热通过，exit0/1.956s。明确layout[solid,H2O汽,H2O液,carrier]、初态[2,1e-8,1e-4,.001]为制造fixture。两条同初态/模型/运动/精度t.5→.51轨迹，K1e-7/K0，实际各2步15eval、外部7.998/7.930s，全部prefixN/E/总水与反应对称账本通过。活跃汽增3.4788077e-6mol、比K0末温低.0014410767K，满足预登记1e-4K；局部亲和力/熵产生可独立重算，不能称全系统熵或独立轨迹真值。
 
 按预登记减半步长：fine .0025完成实际5步36eval/14.562s积分，含2.22e-16s尾步，所有prefix账本通过；finer .00125失败wall_time_limit25.052s/外26.543s、62eval8接受停.5099999999999998，未到同终点。未提高25/30上限，三尺度refinement_compare未执行，不能宣布三尺度通过。无EOS解析常库存复现同时间行为：8步cap在57eval停、10步cap实际64eval9步完成，尾步=2ulp(.51)。原失败/算术审核/源绑定全部保存，41安装模块与当前源字节匹配。

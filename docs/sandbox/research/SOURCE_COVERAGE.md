@@ -82,4 +82,8 @@ USGS Bulletin1248（Robie/Bethke/Beardsley，1967）官方原PDF已核读题名�
 
 ## 新增同配方热分析与膨胀实验候选：Areias2025
 
-官方Minerals 15,879、DOI10.3390/min15080879原文已实际核读，CC BY4.0声明、方法、Table3、Fig3/4和原图/文本差异均保留在 `data/sandbox/research/areias2025/`；独立审核为 `CODE_REVIEW_AREIAS2025.md`。材料是65°C/48h干燥后混熟石灰的市政污泥；不是焚烧灰，也不是未经处理原泥。MIA1/MIA3有同配方TG/DTA及空气膨胀曲线，多配方有不同峰温墙砖试验，提供后续耦合比较候选。TG气氛、膨胀仪几何/载荷、完整动力学与不确定性仍缺，曲线未数字化；未得到可直接运行的完整材料包或持出预测。全文只留ignored缓存，有限事实与位置/hash可追查。
+官方Minerals 15,879、DOI10.3390/min15080879原文已实际核读，CC BY4.0声明、方法、Table3、Fig3/4和原图/文本差异均保留在 `data/sandbox/research/areias2025/`；独立审核为 `CODE_REVIEW_AREIAS2025.md`。材料是65°C/48h干燥后混熟石灰的市政污泥；不是焚烧灰，也不是未经处理原泥。MIA1/MIA3有同配方TG/DTA及空气膨胀曲线，多配方有不同峰温墙砖试验，提供后续耦合比较候选。TG气氛、膨胀仪几何/载荷、完整动力学与不确定性仍缺。Fig.4 A/B 实线已完成各 13 点数字化并独立审核，见 `../../../data/sandbox/research/areias2025/dilatometry_digitization/README.md` 和 `CODE_REVIEW_AREIAS2025_DIGITIZATION.md`；Fig.3 TG/DTA 尚未数字化。数字化点是总轴向长度变化候选，不是自由烧结或闭孔本构；未得到可直接运行的完整材料包或持出预测。全文只留ignored缓存，有限事实与位置/hash可追查。
+
+## Areias2019 方法引用链核读
+
+UENF官方155页论文已取得，限定核读与逐项事实见 `../../../data/sandbox/research/areias2019/`。印刷64/83页确认实验室石灰投料以干污泥为分母；印刷83页另报告采前厂内加灰剂量不明，因此 lodo bruto 并非无处理历史的证明。与2025筛分不同、同批未证实，比例基准的引用链推断与2025独立投料记录分开。未准入运行材料包；原文件仅ignored缓存，许可未明确。独立复核见 `SOURCE_REVIEW_AREIAS2019.md`。

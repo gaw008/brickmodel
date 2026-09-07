@@ -284,6 +284,8 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
     adaptivity does not certify the truncation error of cancelling components.
     This optional contract is implemented here only; depletion terminal panels
     and wrappers must explicitly propagate it before claiming equivalent support.
+    Step limits bound nominal durations. Binary-float absolute endpoints round
+    independently; all fluxes use their actual differences, not nominal steps.
     Breakpoints split continuous forcing. Discontinuous forcing requires explicit
     piecewise restarts with the appropriate one-sided operator on each interval.
     """
@@ -387,6 +389,7 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
         return result, fields, parts, exact_parts
 
     h = policy.initial_step_s
+    clock = Fraction(start)
     last_domain = None
     try:
         # Initial domain failure is not a reason to try infinitesimal time steps.
@@ -406,12 +409,17 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
         if at == knots[knot_index]:
             knot_index += 1
         target = knots[knot_index]
-        step = min(h, target-at)
-        # Avoid leaving a one-ULP sliver solely from decimal time addition.
-        # Integrate the complete remainder; never snap a state without its flux.
-        if 0 < target-(at+step) <= min(math.ulp(target), 32*math.ulp(step)):
-            step = target-at
-        next_time = target if step == target-at else at+step
+        # Accumulate nominal binary-float durations exactly, so rounding an
+        # absolute stage time cannot drift into a spurious final RK panel.
+        # The actual rounded endpoint difference still drives every RK weight.
+        proposed_clock = min(clock+Fraction(h), Fraction(target))
+        next_time = float(proposed_clock)
+        # Retain the original local endpoint guard: even an exact nominal sum
+        # can differ from a separately rounded interval endpoint by one ULP.
+        if 0 < target-next_time <= min(math.ulp(target), 32*math.ulp(min(h, target-at))):
+            next_time = target
+        if next_time == target:
+            proposed_clock = Fraction(target)
         step = next_time-at
         if h < policy.minimum_step_s or at+step <= at:
             return finish("domain_exit" if last_domain else "numerical_failure",
@@ -442,6 +450,7 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
                 rejected += 1
                 h = smaller_step(at, next_time, step*max(0.2, 0.9*error**(-1/3)))
                 last_domain = None
+                clock = Fraction(at)
                 continue
             # Validate the accepted combination in the actual physical operator.
             evaluate(accepted, next_time)
@@ -477,11 +486,13 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
             ledgers.append(ledger)
             states.append(accepted)
             times.append(next_time)
+            clock = proposed_clock
             h = max(policy.minimum_step_s, min(policy.maximum_step_s, step*(2 if error == 0 else min(2, max(0.2, 0.9*error**(-1/3))))))
             last_domain = None
         except (DomainExit, _Reject) as exc:
             rejected += 1
             h = smaller_step(at, next_time, step/2)
+            clock = Fraction(at)
             last_domain = str(exc) if isinstance(exc, DomainExit) else None
         except IntegrationError as exc:
             return finish("numerical_failure", str(exc))
