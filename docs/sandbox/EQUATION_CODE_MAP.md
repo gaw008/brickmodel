@@ -28,3 +28,9 @@
 | 固定相压力的U/H/V求和与条件温度反演 | `phase_storage.PhaseStorage` | 22测试；量化/相消/导数下溢反例，结果保存实际单调路径声明 |
 
 完整湿砖组装器、材料动力学、水分迁移、烧结、力学和多代实验还没有实际映射，保持未完成。后续任何结果的完整DAG还需绑定实际启用的函数、参数和模型版本，不能用这张人读表替代运行时追溯。
+
+| 新增方程 | 实现 | 验证与范围 |
+|---|---|---|
+| Vliq(T,P)+NgRT/P=Vavailable | `rigid_water_gas.RigidWaterGas` | 17测试、独立压力根/体积审核；平界面固定腔体，非相平衡 |
+| h(T)=h(Tanchor)+分段积分Cp，u=h−RT | `continuous_caloric.ContinuousShomateGas` | 22测试、独立Decimal核查及真实GasHeatModel跨接缝；原拟合保留 |
+| Cclosed=Cp_total−T A²/B | 推导 `RIGID_STORAGE_DERIVATION.md`；尚无生产反演实现 | 独立三状态闭合压力中央差分，原始结果 `research/rigid-storage-derivative-identity.json` |

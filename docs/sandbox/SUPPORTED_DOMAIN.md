@@ -23,3 +23,8 @@
 | Wang 干燥提取 | 12工况/186个图中实验符号派生读数与像素误差 | 完整实验散差、整砖模型验证或本厂验证 |
 
 当前没有任何一个包含原污泥的真实材料包已获全周期计算资格。现有公开数据属于候选/分模块来源，尚未完成三机制组的预测对照。`software_status=implementation_in_progress`；`scientific_status=partial_sources_no_complete_raw_sludge_domain`；`deployment_status=offline_research_only`。
+
+| 新增有界能力 | 实际支持 | 未获支持 |
+|---|---|---|
+| 刚性液水—理想气机械闭合 | 显式压力区间内固定库存与流体腔体，IAPWS液水受压占积、理想气总压/分压；17测试及独立审核 | 原泥毛细、相平衡、变化孔隙、完整能量反演或真实气体混合物资格 |
+| 连续Shomate热量派生 | 原Cp覆盖内显式锚点/积分/偏移；22测试与独立120点数值核查，真实气热积分跨接缝 | 新材料物性、自动JSON替换、IAPWS低温衔接、任意状态事件自动检测 |
