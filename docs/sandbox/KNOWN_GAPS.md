@@ -51,3 +51,5 @@ Areias2025 Fig4 A/B各13个实线点已数字化并独立审核，原像素/刻�
 Areias2019方法核读见 data/sandbox/research/areias2019/ 与 research/SOURCE_REVIEW_AREIAS2019.md。实验室15%按采集泥干质量计；采前加灰剂量未知，与2025制样/筛分不同，同批关系未证实。下一个来源任务是论文内部原泥各批/处理泥分析映射，不能直接迁移跨年材料参数。
 
 Areias2019组成/热实验核读更新：已保存Tables16–21全部83条报告值及Table22四项热值，明确三采集批日期对应XRF与TG图（data/sandbox/research/areias2019/batch-links.json）。Table20含小于项的条件总和仍不足92.31%，未补齐/归一化；Table21与处理泥批次和基准未明。TG/DSC为N2单速率，与正文氧化解释存在未解决机制问题，TG/MS另为He等温且无摩尔产率。正面证据是名义批次可匹配的观测候选，完整反应/热化学/烧结材料准入仍未满足。
+
+规定形变+活动相变+耗尽新组合实际失败，见 research/deforming-active-depletion/README.md。HEOS在299.9996124454831K的共存Newton八轮振荡，原1e-4Pa门槛未过；旧固定/短轨迹通过不覆盖此路径。独立密度半步探针通过原共存残差，仅支持研究阻尼策略，不是已应用修复或整段验证。原物理门槛不变，生产源码未改；完整材料域仍未准入。

@@ -1,8 +1,16 @@
 # 物理沙盒 Goal 进度
 
-更新时间：2026-09-07 UTC。完整任务合同：[GOAL_BRICK_PHYSICS_SANDBOX.md](../GOAL_BRICK_PHYSICS_SANDBOX.md)。最新证据以文末检查点为准，较早段落保留当时状态。
+更新时间：2026-09-07 UTC。完整任务合同：[GOAL_BRICK_PHYSICS_SANDBOX.md](../GOAL_BRICK_PHYSICS_SANDBOX.md)。最新状态以当前恢复入口及其实际产物为准，较早段落保留当时状态。
 
 ## 当前恢复入口（后续详细历史保留）
+
+最新恢复检查点（2e16a70后）：规定形变/活动蒸发/耗尽组合已实际运行并揭示HEOS共存求解故障，证据 research/deforming-active-depletion/。单callback通过；耗尽attempt01 exit1/27.881735s、72评估、6提交步、0事件，heos_coexistence_not_converged，不能称耗尽通过。已提交前缀能量/水与5功精确分项检查通过。
+
+真实末状态重启诊断exit0/6.0085565s，内部仍失败：chemical kernel在299.9996124454831K八轮密度更新振荡，dp略超1e-4Pa而dg已在1e-6J/kg内。两端点独立native probe复现，半步/四分之一步均过原dp/dg，实际exit0/1.149743s。未改kernel、未放宽门槛、未将调试exit0称物理成功。replay unused vapor的−Infinity是未初始化私有诊断，原件保留，不作物性。
+
+**所有句柄6613/41736/24073/77192均终态，目前无活动测试/EOS进程。** 下一可执行动作：隔离实现有界回溯Newton，先以保存的精确失败温度和邻近点复现/验证原共存及Table3门槛，保持源/运行身份；通过相关数值/故障/安装检查后，重新原组合耗尽案例，保留旧失败。生产仍是9ba520d源码及1124安装回归证据，本轮没有新生产修改或完整suite。
+
+TG原图提取可行性已核三原生图及8资产哈希，见 research/AREIAS2019_TG_EXTRACTION_FEASIBILITY.md；绿色重量可以有限读图，Figure40纵轴不同，三图分别校准；有界未发现仪器数组，不声称不存在。尚未数字化。来源与完整材料域、反应/输运/自由烧结冷却、三机制/留出、全周期CLI/UI/多代搜索仍为必需未完成项。Goal active，本轮是真实运行、故障定位与局部数值证据进展。
 
 最新来源检查点（9ba520d之后）：已核读Areias2019 Tables16–22和热分析方法/批次对应。六组成表83条转录与原页逐项复核，独立Decimal保留Table20条件总和[91.66,92.31)%而不归一化。三批日期支持Tables17–19与Figures38–40的明确名义批次链接，见 data/sandbox/research/areias2019/batch-links.json；不证明同分样/共同质量基准，处理泥与Table21未强行匹配。
 
