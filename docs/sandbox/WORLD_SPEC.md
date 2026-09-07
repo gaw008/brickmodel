@@ -132,3 +132,7 @@ JoinedWaterVapor从原低温500K的h锚积分原高温NIST分段Cp，逐段原h/
 每次组装均使用实际当前固体库存、占积及 Vp=Vbulk−ΣNi vi，并将反应配置重绑到同一当前储能对象。总储能为热化学内能加机械/界面内能，保持一次温度反解。组成机械能通过储能变化与热化学部分交换，不能再作为外功或额外反应热加入。声明共同压力与准静态总控制体后，压力外功为 −p Vbulk_dot；固定 bulk 而固体占积改变不产生这一外功。
 
 新账本字段为 elastic_deformation、interface_deformation、dissipation、bulk_pressure、body；前两项取固定组成偏导。旧 fixed_solid 域与字段语义保留，禁止混用两套专属字段。当前准入仅限这个显式制造骨架；未提供自由烧结运动闭合、动力学第二定律证明或真实原污泥参数准入。实际验证范围与保留的失败见 research/reacting-deformation-v1/README.md。
+
+## 固体占积误差的压力传播增量
+
+原声明体积误差ε先在全局域获得压力包络并通过原越域检查，再取其已证实上端U，用稳定液体非负压缩性与理想气体下界NgRT/U²收紧额外压力界；原流体压力误差完整保留，液体内能误差同步使用这一界。详见 research/solid-pressure-bound-v1/README.md。该改进没有更换材料参数、减小声明误差或扩大可接受压力域。

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="7" time="0.499" timestamp="2026-09-07T10:30:52.472342-10:00" hostname="Ws-MacBook-Pro.local"><testcase classname="tests.sandbox.test_solid_pressure_bound" name="test_both_exact_perturbed_roots_inside_tight_local_bound[1e-12-0.0]" time="0.004"><failure message="assert Fraction(7395444509038391, 9007199254740992) &lt; (Fraction(48357032784585166015625, 58895909386559183388672) / 100)">tests/sandbox/test_solid_pressure_bound.py:68: in test_both_exact_perturbed_roots_inside_tight_local_bound
+    assert error &lt; global_extra/100
+E   assert Fraction(7395444509038391, 9007199254740992) &lt; (Fraction(48357032784585166015625, 58895909386559183388672) / 100)</failure></testcase><testcase classname="tests.sandbox.test_solid_pressure_bound" name="test_both_exact_perturbed_roots_inside_tight_local_bound[1e-11-0.0]" time="0.003"><failure message="sludge_sandbox.incompressible_solid.SolidPhaseError: u_error_omits_reference_volume_contribution">tests/sandbox/test_solid_pressure_bound.py:53: in test_both_exact_perturbed_roots_inside_tight_local_bound
+    model = pressure_fixture(water, monkeypatch, volume_error=volume_error, bulk_error=bulk_error)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/sandbox/test_solid_pressure_bound.py:32: in pressure_fixture
+    solid = phase(molar_volume_m3_mol=SOLID_V, declared_v_error_m3_mol=volume_error)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/sandbox/test_incompressible_solid.py:29: in phase
+    return IncompressibleSolidPhase(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;string&gt;:19: in __init__
+    ???
+src/sludge_sandbox/incompressible_solid.py:180: in __post_init__
+    raise SolidPhaseError('u_error_omits_reference_volume_contribution')
+E   sludge_sandbox.incompressible_solid.SolidPhaseError: u_error_omits_reference_volume_contribution</failure></testcase><testcase classname="tests.sandbox.test_solid_pressure_bound" name="test_both_exact_perturbed_roots_inside_tight_local_bound[0.0-1e-11]" time="0.003"><failure message="assert Fraction(4622152817988963, 1125899906842624) &lt;= ((Fraction(2749331822584509, 77371252455336267181195264) + Fraction(20148763660243818359375, 4907992448879931949056)) + Fraction(1, 1125899906842624))&#10; +  where Fraction(1, 1125899906842624) = F(8.881784197001252e-16)&#10; +    where 8.881784197001252e-16 = &lt;built-in function ulp&gt;(4.105296385493917)&#10; +      where &lt;built-in function ulp&gt; = math.ulp&#10; +      and   4.105296385493917 = float((Fraction(2749331822584509, 77371252455336267181195264) + Fraction(20148763660243818359375, 4907992448879931949056)))">tests/sandbox/test_solid_pressure_bound.py:65: in test_both_exact_perturbed_roots_inside_tight_local_bound
+    assert error &lt;= baseline+global_extra+F(math.ulp(float(baseline+global_extra)))
+E   assert Fraction(4622152817988963, 1125899906842624) &lt;= ((Fraction(2749331822584509, 77371252455336267181195264) + Fraction(20148763660243818359375, 4907992448879931949056)) + Fraction(1, 1125899906842624))
+E    +  where Fraction(1, 1125899906842624) = F(8.881784197001252e-16)
+E    +    where 8.881784197001252e-16 = &lt;built-in function ulp&gt;(4.105296385493917)
+E    +      where &lt;built-in function ulp&gt; = math.ulp
+E    +      and   4.105296385493917 = float((Fraction(2749331822584509, 77371252455336267181195264) + Fraction(20148763660243818359375, 4907992448879931949056)))</failure></testcase><testcase classname="tests.sandbox.test_solid_pressure_bound" name="test_zero_volume_error_preserves_original_nonzero_fluid_error" time="0.003" /><testcase classname="tests.sandbox.test_solid_pressure_bound" name="test_near_upper_bracket_still_contains_both_roots_and_never_increases_bound" time="0.002" /><testcase classname="tests.sandbox.test_solid_pressure_bound" name="test_original_global_domain_rejection_is_not_bypassed_by_local_estimate" time="0.003" /><testcase classname="tests.sandbox.test_solid_pressure_bound" name="test_volume_domain_rejects_uncertainty_reaching_zero_pore" time="0.002" /></testsuite></testsuites>

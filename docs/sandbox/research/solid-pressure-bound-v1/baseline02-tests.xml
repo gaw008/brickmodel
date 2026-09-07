@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="7" time="0.462" timestamp="2026-09-07T10:31:33.473904-10:00" hostname="Ws-MacBook-Pro.local"><testcase classname="tests.sandbox.test_solid_pressure_bound" name="test_both_exact_perturbed_roots_inside_tight_local_bound[1e-12-0.0]" time="0.004"><failure message="assert Fraction(7395444509038391, 9007199254740992) &lt; (Fraction(48357032784585166015625, 58895909386559183388672) / 100)">water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x10db55b80&gt;
+volume_error = 1e-12, bulk_error = 0.0
+
+    @pytest.mark.parametrize('volume_error,bulk_error', [(1e-12, 0.), (1e-11, 0.), (0., 1e-11)])
+    def test_both_exact_perturbed_roots_inside_tight_local_bound(water, monkeypatch, volume_error, bulk_error):
+        model = pressure_fixture(water, monkeypatch, volume_error=volume_error, bulk_error=bulk_error)
+        point = evaluate(model)
+        lower_root, nominal_root, upper_root = exact_roots(volume_error, bulk_error)
+        pressure, error = F(point.mechanical.pressure_pa), F(point.pressure_error_bound_pa)
+        assert pressure-error &lt;= lower_root &lt;= nominal_root &lt;= upper_root &lt;= pressure+error
+        # The nonzero nominal closure/representation error is retained, not replaced.
+        baseline = F(point.fluid_state.pressure_error_bound_pa)
+        assert baseline &gt; 0 and error &gt;= baseline
+        assert upper_root-nominal_root &gt; nominal_root-lower_root
+        numerator = F(GAS_N)*F(R)*F(TEMPERATURE)
+        delta = F(bulk_error)+F(SOLID_N)*F(volume_error)
+        global_extra = delta*F(1e6)**2/numerator
+        # The old bound rounds the additional term outward, then rounds its
+        # sum with the fluid bound outward: compare that exact two-stage ceiling.
+        assert error &lt;= exact_binary_ceiling(baseline+exact_binary_ceiling(global_extra))
+        # Preregistered fixture nominal pressure is about 26.6 kPa, far below
+        # the 1 MPa global envelope. One local bootstrap must improve &gt;100-fold.
+&gt;       assert error &lt; global_extra/100
+E       assert Fraction(7395444509038391, 9007199254740992) &lt; (Fraction(48357032784585166015625, 58895909386559183388672) / 100)
+
+tests/sandbox/test_solid_pressure_bound.py:82: AssertionError</failure></testcase><testcase classname="tests.sandbox.test_solid_pressure_bound" name="test_both_exact_perturbed_roots_inside_tight_local_bound[1e-11-0.0]" time="0.003"><failure message="assert Fraction(4622152817968959, 562949953421312) &lt; (Fraction(20148763660243818359375, 2453996224439965974528) / 100)">water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x10e1d7860&gt;
+volume_error = 1e-11, bulk_error = 0.0
+
+    @pytest.mark.parametrize('volume_error,bulk_error', [(1e-12, 0.), (1e-11, 0.), (0., 1e-11)])
+    def test_both_exact_perturbed_roots_inside_tight_local_bound(water, monkeypatch, volume_error, bulk_error):
+        model = pressure_fixture(water, monkeypatch, volume_error=volume_error, bulk_error=bulk_error)
+        point = evaluate(model)
+        lower_root, nominal_root, upper_root = exact_roots(volume_error, bulk_error)
+        pressure, error = F(point.mechanical.pressure_pa), F(point.pressure_error_bound_pa)
+        assert pressure-error &lt;= lower_root &lt;= nominal_root &lt;= upper_root &lt;= pressure+error
+        # The nonzero nominal closure/representation error is retained, not replaced.
+        baseline = F(point.fluid_state.pressure_error_bound_pa)
+        assert baseline &gt; 0 and error &gt;= baseline
+        assert upper_root-nominal_root &gt; nominal_root-lower_root
+        numerator = F(GAS_N)*F(R)*F(TEMPERATURE)
+        delta = F(bulk_error)+F(SOLID_N)*F(volume_error)
+        global_extra = delta*F(1e6)**2/numerator
+        # The old bound rounds the additional term outward, then rounds its
+        # sum with the fluid bound outward: compare that exact two-stage ceiling.
+        assert error &lt;= exact_binary_ceiling(baseline+exact_binary_ceiling(global_extra))
+        # Preregistered fixture nominal pressure is about 26.6 kPa, far below
+        # the 1 MPa global envelope. One local bootstrap must improve &gt;100-fold.
+&gt;       assert error &lt; global_extra/100
+E       assert Fraction(4622152817968959, 562949953421312) &lt; (Fraction(20148763660243818359375, 2453996224439965974528) / 100)
+
+tests/sandbox/test_solid_pressure_bound.py:82: AssertionError</failure></testcase><testcase classname="tests.sandbox.test_solid_pressure_bound" name="test_both_exact_perturbed_roots_inside_tight_local_bound[0.0-1e-11]" time="0.003"><failure message="assert Fraction(4622152817988963, 1125899906842624) &lt; (Fraction(20148763660243818359375, 4907992448879931949056) / 100)">water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x10e1e8e60&gt;
+volume_error = 0.0, bulk_error = 1e-11
+
+    @pytest.mark.parametrize('volume_error,bulk_error', [(1e-12, 0.), (1e-11, 0.), (0., 1e-11)])
+    def test_both_exact_perturbed_roots_inside_tight_local_bound(water, monkeypatch, volume_error, bulk_error):
+        model = pressure_fixture(water, monkeypatch, volume_error=volume_error, bulk_error=bulk_error)
+        point = evaluate(model)
+        lower_root, nominal_root, upper_root = exact_roots(volume_error, bulk_error)
+        pressure, error = F(point.mechanical.pressure_pa), F(point.pressure_error_bound_pa)
+        assert pressure-error &lt;= lower_root &lt;= nominal_root &lt;= upper_root &lt;= pressure+error
+        # The nonzero nominal closure/representation error is retained, not replaced.
+        baseline = F(point.fluid_state.pressure_error_bound_pa)
+        assert baseline &gt; 0 and error &gt;= baseline
+        assert upper_root-nominal_root &gt; nominal_root-lower_root
+        numerator = F(GAS_N)*F(R)*F(TEMPERATURE)
+        delta = F(bulk_error)+F(SOLID_N)*F(volume_error)
+        global_extra = delta*F(1e6)**2/numerator
+        # The old bound rounds the additional term outward, then rounds its
+        # sum with the fluid bound outward: compare that exact two-stage ceiling.
+        assert error &lt;= exact_binary_ceiling(baseline+exact_binary_ceiling(global_extra))
+        # Preregistered fixture nominal pressure is about 26.6 kPa, far below
+        # the 1 MPa global envelope. One local bootstrap must improve &gt;100-fold.
+&gt;       assert error &lt; global_extra/100
+E       assert Fraction(4622152817988963, 1125899906842624) &lt; (Fraction(20148763660243818359375, 4907992448879931949056) / 100)
+
+tests/sandbox/test_solid_pressure_bound.py:82: AssertionError</failure></testcase><testcase classname="tests.sandbox.test_solid_pressure_bound" name="test_zero_volume_error_preserves_original_nonzero_fluid_error" time="0.002" /><testcase classname="tests.sandbox.test_solid_pressure_bound" name="test_near_upper_bracket_still_contains_both_roots_and_never_increases_bound" time="0.002" /><testcase classname="tests.sandbox.test_solid_pressure_bound" name="test_original_global_domain_rejection_is_not_bypassed_by_local_estimate" time="0.002" /><testcase classname="tests.sandbox.test_solid_pressure_bound" name="test_volume_domain_rejects_uncertainty_reaching_zero_pore" time="0.002" /></testsuite></testsuites>

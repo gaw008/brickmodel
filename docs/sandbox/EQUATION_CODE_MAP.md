@@ -135,3 +135,5 @@ HEOS共存数值政策 `NUM-HEOS-COEXISTENCE-BACKTRACK-1`：固定T的F=(Δp,Δg
 | 不混合两套分项功字段 | integration.py | test_reacting_deforming_solid_heat.py 与原 component/depletion 回归 |
 
 上述 q 与 A→B 参数均为 manufactured_test_fixture，不属于材料证据注册或实验验证。实际细化、旧失败和审查见 research/reacting-deformation-v1/README.md。
+
+`NUM-SOLID-VOLUME-PRESSURE-LOCAL-1` → `solid_fluid_storage.py`：保留原全局压力包络拒绝，再用已证实上端收紧同一体积误差的导数界，原流体误差不变；`test_solid_pressure_bound.py` 的独立双向有理气体根验证。实际边界与原湿态失败见 `research/solid-pressure-bound-v1/README.md`；这是数值传播政策，不能据此称湿态事件已收敛。

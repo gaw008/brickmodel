@@ -146,6 +146,16 @@ class SolidFluidStorage:
         plo,phi=fluid.mechanical.pressure_bracket_pa
         if not Fraction(plo)<=Fraction(p)-Fraction(pressure_error)<=Fraction(p)+Fraction(pressure_error)<=Fraction(phi):
             raise SolidFluidStorageError('pressure_uncertainty_outside_envelope')
+        # The accepted global interval encloses both volume-perturbed roots.
+        # On that entire interval, stable liquid adds nonnegative compliance
+        # and the ideal gas gives |dV/dp| >= nRT / certified_upper**2.
+        certified_upper=min(Fraction(fluid.envelope.pressure_range_pa[1]),
+                            Fraction(p)+Fraction(pressure_error))
+        local_bmin=ng*Fraction(fluid.mechanical.gas_constant_j_mol_k)*Fraction(t)/certified_upper**2
+        extra_p=_directed(error_v/local_bmin,upper=True)
+        pressure_error=_sum_upper((f.pressure_error_bound_pa,extra_p))
+        if not Fraction(plo)<=Fraction(p)-Fraction(pressure_error)<=Fraction(p)+Fraction(pressure_error)<=Fraction(phi):
+            raise SolidFluidStorageError('pressure_uncertainty_outside_envelope')
         points={};ut=[f.internal_energy_j];ht=[f.enthalpy_j];ct=[f.closed_heat_capacity_j_k]
         lower=Fraction(f.minimum_heat_capacity_j_k);rounding=[];errors=[f.energy_error_bound_j]
         for key,n in amounts.items():

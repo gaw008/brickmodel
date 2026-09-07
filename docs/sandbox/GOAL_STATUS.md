@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新终态：压力传播修正完整安装 **1172通过/零失败错误跳过，XML557.992s，session36717 exit0**；前后42模块实际导入与源码逐字节一致。当前无活动测试/EOS。代码/7解析回归/48相关回归、v2湿态实际仍超时、独立算术与完整来源身份已归档 research/solid-pressure-bound-v1/。下一算法预登记 NEXT_EVENT_PREREGISTRATION.md；暂未实现。CLI_UI_NEXT_SCOPE.md核实应用层仍缺真实sandbox入口/持久运行与结果溯源，旧synthetic CLI不能充当完成。完整Goal仍active；真实原污泥材料、自由烧结冷却、三公开机制/留出、全周期CLI/UI及多代实验仍为必需未完成项。
+
+最新恢复入口：v2 depletion0 session87557已终态failed/child1/121.7245s，内层wall120.0288s325评估6接受步0事件。已完成的三次细化压力指标变为0.00607/0.00519/0.00492Pa，原压力门槛通过；库存最后仍6.1412e-10mol高于1e-10，因此不能宣布联合轨迹完成。v1/v2所有失败保留；下一机制需提高事件定位收敛效率，不能增加本次上限或删去事件库存比较。当前完整安装回归 **session36717正在运行**，XML /private/tmp/brick-solid-pressure-bound-v1/installed-full-tests.xml，cwd/private/tmp无PYTHONPATH；同目录installed-identity.json已记录运行状态。源码/测试/安装/脚本冻结，轮询同句柄，无其他活动EOS。尚未提交solid_fluid_storage.py与新test_solid_pressure_bound.py，完整suite过后核XML+42模块再归档提交。tg_code_review正在只读v2算术审计，python_backtracking_integration_review在写下一事件数值设计；记录在pressure-bound-v1临时目录。
+
+最新运行入口（994adec之后，未提交数值改动）：solid_fluid_storage.py已在保留原全局包络/越域拒绝后，以该已证明区间上端收紧同一体积误差的压力传播，原流体误差及液体能量界一致保留。7新解析测试：旧实现3预期失败/4通过，新实现7通过；48相关回归通过，两份代码/Python审查批准。重新安装42模块逐字节一致。v2位于 /private/tmp/brick-reacting-wet-v2，沿用原脚本字节/物理参数/误差/资源/事件门槛；callback session1060已终态passed，depletion0 **session87557正在运行**（120s内部/150s外部）。冻结源码/测试/安装/脚本，轮询同句柄，不并发EOS。完整新安装suite尚未启动；之前1165通过不能转移到这次源码改动。新数值证据目录 /private/tmp/brick-solid-pressure-bound-v1/。
+
 最新终态：湿态联合callback通过，depletion0 session48458已终态failed/child1/122.0877s，内部wall_time_limit120.2988s。六接受步322评估、无事件；守恒前缀通过，但试探压力门槛含约1.602Pa误差下限，原1Pa门槛不可靠细化跨越。完整失败及173输入核验已归档 research/reacting-wet-v1-failure/。当前无活动EOS/测试，第二轨迹未运行。下一实际实现：保留全局区间及旧越域拒绝，使用已证实局部压力上端收紧同一体积不确定性的传播；证明/预登记在归档中。worker正在 tests/sandbox/test_solid_pressure_bound.py 写无EOS解析回归，root尚未改生产源码；不要把新误差界当已验证。
 
 最新运行入口：公开 Lu2026 补充材料六条 MS 多速率失重记录及逐页独立核对已提交7af6f8d，见 data/sandbox/research/lu2026/。正文官方链接拒绝下载，基准/制备/气氛组成未知保留，未准入运行。湿态联合实验 /private/tmp/brick-reacting-wet-v1 已预登记并完成两份交叉审查；修正的是监督退出状态与失败证据保存，不改物理门槛。callback session42799 已终态complete/child0，实际同时A→B与蒸发、当前反应储能绑定通过。depletion0 **session48458正在运行**，同目录depletion0-attempt01监督，原120s内部/150s外部上限；不要重启同run或并发EOS。当前求解器/安装/脚本/PLAN冻结。下一步轮询同句柄，核实际完整结果与终态；成功后按原计划第二步长运行及独立账本审计，失败则保留原因诊断。
