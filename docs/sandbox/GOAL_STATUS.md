@@ -8,9 +8,9 @@
 
 最新湿态结果：独立熵参照9无EOS测试通过；真实初点/10%压缩端点2.07s完成，但端点roundtrip不是轨迹。实际原运动0→1/64s短前缀14.067s结束，2接受/15评估/0拒；T/P与账本通过，孔压功2.97406436e-6J超过原1e-6J，整体精度FAILED。原证据及独立60绑定/有理账本审查已归档research/wet-deformation-entropy。保留缺失native u/s操作数、测试fixture at-run绑定及原runner退出传播/固定文件名局限；无新EOS重跑。
 
-显式边界/相变准入候选7noEOS独立通过，但唯一真实source-matched非零K回调在相变化学前失败：当前总storage的fluid_template仍持reference孔隙体积，缩小bulk时被RigidFluidHeat体积门禁拒绝。boundary_program正在/tmp/brick-deforming-wet-admission修复当前配置和noEOS回归，不关闭门禁或更改失败fixture。尚未应用候选。
+显式边界/相变准入及当前孔隙模板修复现已应用。原callback01体积门禁失败保留；先RED后修复，9noEOS独立通过。callback02经审查监督器实际1.387s exit0，113声明输入绑定不变，非零K速率、液汽精确成对、无额外潜热、当前几何与单次反解通过独立复算。原callback使用1e-5J/1e-4K，不混同上文未通过的湿态轨迹。证据research/deforming-wet-admission；应用34测试实际73.00s通过，包含实际fine干态压缩。下一步对这次4源码及9新测试做冻结非editable完整套件；旧1103只是旧fa3194b检查点，不宣称涵盖新改动。
 
-更快水后端仅有两点可行性，生产EOS不变。探针/许可/原失败/独立审查及后端设计已归档research/water-backend-feasibility。新的独立子进程监督器在/tmp/brick-water-backend-runner，作者12noEOS测试0.50s，fast_backend_review审核中；尚未生产应用。不得重跑已完成1103套件；后续实际源码更新再冻结验证。真实原污泥材料域、全周期、三机制公开留出和使用验收仍未完成。
+更快水后端仅有两点可行性，生产EOS不变。探针/许可/原失败/独立审查及设计在research/water-backend-feasibility。有界研究监督器现位于research/research-process-supervisor：原SIGTERM子进程残留及中间EPERM失败保留，最终17独立测试1.38s通过，真实TERM清理/failed传播通过。源码已在callback02实际使用；不是通用进程沙箱。当前没有其他EOS/测试进程运行。真实原污泥材料域、全周期、三机制公开留出和使用验收仍未完成。
 
 ## 当前状态
 

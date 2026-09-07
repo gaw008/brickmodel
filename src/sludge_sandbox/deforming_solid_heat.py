@@ -34,7 +34,14 @@ class DeformingSolidHeatEvaluation:
     pressure_for_work_pa: tuple
     energy_model_identity: tuple
     source_ids: tuple
-    qualification: str='prescribed_fixed_solid_total_energy_not_free_sintering_not_wrapper_admitted'
+    qualification: str='prescribed_fixed_solid_total_energy_not_free_sintering'
+
+    @property
+    def storage_states(self):return self.thermal_evaluation.storage_states
+    @property
+    def storage_inverses(self):return self.thermal_evaluation.storage_inverses
+    @property
+    def gas_states(self):return self.thermal_evaluation.gas_states
 
 
 @dataclass(frozen=True,kw_only=True)
@@ -88,6 +95,15 @@ class DeformingSolidHeat:
     def material_qualified(self):return False
     @property
     def motion(self):return self.point_storages[0].motion
+    @property
+    def species_order(self):return self.base_model.species_order
+    @property
+    def gas_species_order(self):return self.base_model.gas_species_order
+    @property
+    def inventory_layout(self):return self.base_model.inventory_layout
+    @property
+    def coefficient_classification(self):return self.base_model.coefficient_classification
+    def _check_state(self,state):return self._check(state)
     def breakpoints_s(self,start_s,end_s):return self.motion.breakpoints_s(start_s,end_s)
 
     def _check(self,state,tag=True):

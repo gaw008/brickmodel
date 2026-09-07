@@ -3,7 +3,7 @@ from dataclasses import dataclass,fields,is_dataclass,replace,field
 from fractions import Fraction
 from collections.abc import Mapping
 import hashlib,json,math
-from sludge_sandbox.solid_fluid_storage import SolidFluidStorage
+from sludge_sandbox.solid_fluid_storage import SolidFluidStorage, SolidFluidStorageError
 from sludge_sandbox.incompressible_solid import IncompressibleSolidPhase
 from sludge_sandbox.skeleton_energy import DiagonalSkeletonEnergy
 from sludge_sandbox.deformation_program import PrescribedSlabMotion
@@ -172,7 +172,18 @@ class DeformingSolidStorage:
         current=float(snap.current.volumes_m3[i])
         volume_error=j*reference_error+abs(Fraction(current)-j*exact_v0)+Fraction(self.error_bounds.additional_bulk_volume_error_m3)
         bulk_error=_upper(volume_error)
-        current_storage=replace(self.template,bulk_volume_m3=current,bulk_volume_error_m3=bulk_error)
+        # Bind transport and inversion to the same current pore geometry. The
+        # thermal storage still derives bulk-minus-solid volume itself, including
+        # its original volume/error checks; this is not a second subtraction.
+        exact_solid_volume=sum((Fraction(float(solid_mol[k]))*Fraction(phase.molar_volume_m3_mol)
+            for k,phase in self.template.solid_phases.items()),Fraction())
+        exact_available=Fraction(current)-exact_solid_volume
+        if exact_available<=0:
+            raise SolidFluidStorageError('no_positive_fluid_available_volume')
+        current_fluid=replace(self.template.fluid_template,mechanical=replace(
+            self.template.fluid_template.mechanical,available_pore_volume_m3=_out(exact_available)))
+        current_storage=replace(self.template,fluid_template=current_fluid,
+            bulk_volume_m3=current,bulk_volume_error_m3=bulk_error)
         # Elastic energy is linear in represented V0. Explicit additional bound
         # must cover any other physical/kinematic parameter uncertainty.
         e_el=Fraction(sk.elastic_energy_j);el_error=Fraction(sk.numerical_error_bounds['elastic_energy_j'])

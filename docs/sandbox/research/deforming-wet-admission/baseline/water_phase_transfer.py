@@ -3,7 +3,6 @@
 The pressure-difference conductance is supplied, not derived from equilibrium.
 Only equimolar phase inventories change; stored U receives no second latent heat.
 """
-from .deforming_solid_heat import DeformingSolidHeat,DeformingSolidHeatEvaluation
 from dataclasses import dataclass, replace
 from fractions import Fraction
 import math
@@ -62,7 +61,7 @@ class CellWaterTransfer:
 @dataclass(frozen=True)
 class WaterTransferEvaluation:
     rates: Rates
-    base_evaluation: FluidHeatEvaluation | SolidFluidHeatEvaluation | ProgrammedSolidFluidEvaluation | DeformingSolidHeatEvaluation
+    base_evaluation: FluidHeatEvaluation | SolidFluidHeatEvaluation | ProgrammedSolidFluidEvaluation
     cell_transfers: tuple[CellWaterTransfer,...]
     coefficient_set_id: str
     coefficient_version: str
@@ -75,7 +74,7 @@ class WaterTransferEvaluation:
 
 @dataclass(frozen=True,kw_only=True)
 class WaterPhaseTransfer:
-    base_model: RigidFluidHeat | SolidFluidHeat | ProgrammedSolidFluidHeat | DeformingSolidHeat
+    base_model: RigidFluidHeat | SolidFluidHeat | ProgrammedSolidFluidHeat
     chemical: WaterChemicalPotential
     coefficients_mol_s_pa: tuple[float,...]
     coefficient_set_id: str
@@ -87,7 +86,7 @@ class WaterPhaseTransfer:
     dry_policy: str = 'strict'
 
     def __post_init__(self):
-        if type(self.base_model) not in (RigidFluidHeat,SolidFluidHeat,ProgrammedSolidFluidHeat,DeformingSolidHeat) or type(self.chemical) is not WaterChemicalPotential:
+        if type(self.base_model) not in (RigidFluidHeat,SolidFluidHeat,ProgrammedSolidFluidHeat) or type(self.chemical) is not WaterChemicalPotential:
             raise WaterPhaseTransferError('explicit_fluid_and_chemical_models_required')
         if 'H2O' not in self.base_model.gas_species_order:
             raise WaterPhaseTransferError('explicit_gas_water_species_required')
@@ -116,7 +115,7 @@ class WaterPhaseTransfer:
                 or len(set(sources))!=len(sources)):
             raise WaterPhaseTransferError('explicit_unique_coefficient_sources_required')
         object.__setattr__(self,'coefficient_source_ids',tuple(sources))
-        manufactured=(self._deforming_host is not None or self.coefficient_classification=='manufactured_test_fixture'
+        manufactured=(self.coefficient_classification=='manufactured_test_fixture'
                       or self.base_model.coefficient_classification=='manufactured'
                       or self._thermal_host.coefficient_classification=='manufactured'
                       or any(p.metadata.classification=='manufactured_test_fixture'
@@ -143,18 +142,13 @@ class WaterPhaseTransfer:
                 raise WaterPhaseTransferError('phase_transfer_requires_matching_ideal_water_caloric_bridge')
 
     @property
-    def _deforming_host(self):
-        host=self.base_model.base_model if type(self.base_model) is ProgrammedSolidFluidHeat else self.base_model
-        return host if type(host) is DeformingSolidHeat else None
-
-    @property
     def _thermal_host(self):
-        host=self.base_model.base_model if type(self.base_model) is ProgrammedSolidFluidHeat else self.base_model
-        return host.base_model if type(host) is DeformingSolidHeat else host
+        return (self.base_model.base_model if type(self.base_model) is ProgrammedSolidFluidHeat
+                else self.base_model)
 
     def breakpoints_s(self,start_s,end_s):
         return (self.base_model.breakpoints_s(start_s,end_s)
-                if type(self.base_model) in (ProgrammedSolidFluidHeat,DeformingSolidHeat) else ())
+                if type(self.base_model) is ProgrammedSolidFluidHeat else ())
 
     @property
     def _fluid_storages(self):
