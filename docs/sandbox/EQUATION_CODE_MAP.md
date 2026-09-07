@@ -64,3 +64,9 @@
 | Vavailable=Vbulk−ΣNs vs；Utotal=Ufluid+ΣNs us | `solid_fluid_storage.SolidFluidStorage` | 23测试，独立Decimal解析对照、真实25W/10s积分；每个温度试算重解压力，体积误差传播至压力与液水U |
 | 完整库存列的U/P/T反解与共享气体/焓/热通量 | `solid_fluid_heat.SolidFluidHeat` | 新host及相变共13测试；两格积分、固体域退出、来源门禁；固体不跨面迁移 |
 | 液/汽等摩尔交换、总U不另加潜热 | `water_phase_transfer.WaterPhaseTransfer` 两种显式host | 两种固体Cp的真实蒸发积分温度误差区间分离；不能推定泥料动力学 |
+
+
+| 动态固液气边界增量 | 实现 | 验证与范围 |
+|---|---|---|
+| A*k/(dx/2)*(Ts−Tc)=A*h*(Tg−Ts)+A*epsilon*sigma*(Trad^4−Ts^4) | `programmed_solid_fluid_heat.ProgrammedSolidFluidHeat` | 半格膜串联解析、独立辐射根；真实升温/保温/冷却与动态气体入流mol/h账本 |
+| 同一动态面账本叠加等摩尔液/汽源，额外潜热源=0 | `water_phase_transfer.WaterPhaseTransfer`显式第三host | 真实外热+蒸发积分；原program evaluation/inverses保留，breakpoints显式转发 |

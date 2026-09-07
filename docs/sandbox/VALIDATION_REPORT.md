@@ -168,3 +168,17 @@ uv sync --frozen --no-editable --extra dev --extra research --extra water --offl
 `3f69e34`实现SolidFluidHeat与WaterPhaseTransfer显式双host支持。13新案例加16旧相变案例独立运行29项54.68s；在该次收集后强化的两个案例另运行2项17.37s，原XML与强化XML分别保存在`research/solid-fluid-heat-review.xml`和`research/solid-fluid-heat-strengthened-review.xml`，不混淆快照。制造固体/几何在wrapper的门禁遗漏已修复并独立复验。两种固体Cp下真实蒸发终温的条件误差区间严格分离，固体域退出单独隔离验证；不据此推定真实泥料动力学。
 
 最终冻结非editable离线安装，从/private/tmp无PYTHONPATH运行全部sandbox测试：**773 passed in96.01s，0失败/错误/跳过**。26个实际site-packages模块与工作区源码逐个hash一致，最终强化测试均包含在此次全量执行中。XML与身份分别为`research/installed-sandbox-solid-fluid-tests.xml`、`research/installed-sandbox-solid-fluid-identity.json`。完整湿砖、动态收缩、公开三机制预测、多代搜索与界面验收仍未完成。
+
+
+## 动态固液气边界与完整相变主机
+
+ProgrammedSolidFluidHeat每trial仅调用一次实际固液气base.evaluate；完整动态气体库影响压力/组成驱动流及供体焓，半格导热与膜对流/辐射共同确定真实表面温度。8项新测试包含实际升温/保温/冷却、非线性辐射独立根、实际气氛入流及每步mol/J账本。WaterPhaseTransfer显式第三host另5测试包含真实外热+蒸发、完整诊断及breakpoints转发。独立最终兼容/组合32项通过68.29s，原XML为research/programmed-solid-final-review.xml；制造系数未升级为材料物性。
+
+独立60位Decimal常C线性炉温对照，执行完整40s三段程序：首次十进制dt=.4/.2/.1出现节点极短余步和后续自适应增长，uniform=false，因此完整判定false；脚本/计划/实际轨迹原样保存在research/programmed-solid-decimal-step-first-run.zip。没有修改积分器或声称该时间步策略已被修复。随后在复跑前登记仅将步长改成二进制精确.5/.25/.125，原材料/边界/容差/比例门槛不变；最终三档确为uniform且零拒步。
+
+三档最大轨迹温差为0.000520179、0.000127759、0.0000316464K，比例4.07158、4.03707，均满足原门槛。库存逐状态精确不变，最大每步能量账本误差2.85e-11J内、全前缀3.50e-10J内。最大条件温度反解界3.994e-9K，本线性极限下表面残差允许界的40s保守累计温度量级5.947e-11K，均远小于观察离散误差。产物research/programmed_solid_analytic_reference.json与programmed_solid_candidate_check.json包含全轨迹、逐面热量、实际次数/耗时和代码hash。公式与脚本由独立代理只读核查，实际运行由主代理执行，不混淆角色。
+
+这证明一个有界惰性固体/干气模型在指定程序下的时间收敛，不证明液水空间迁移、全湿砖时空收敛、长期真实烧成、收缩或实验预测。动态湿相变案例仍是短时制造系数验证。
+
+
+本轮最终冻结非editable离线安装，在/private/tmp且无PYTHONPATH执行全部sandbox：**786 passed in109.64s，0失败/错误/跳过**。27个真实site-packages模块与工作区hash一致；证据research/installed-sandbox-programmed-solid-tests.xml及installed-sandbox-programmed-solid-identity.json。此安装验证包含全部13项新增测试及最终wrapper，旧773项检查点保留。

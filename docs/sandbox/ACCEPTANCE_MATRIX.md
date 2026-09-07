@@ -72,3 +72,6 @@
 
 
 固液气增量证据：`solid_fluid_storage`、`solid_fluid_heat`及相变host适配已实际耦合惰性固体占积/储能与气热/蒸发；见两个实现说明、独立代码审核及`research/solid_fluid_candidate_check.json`。这是相关热湿/储能要求的部分实现，液水跨面输运、反应/收缩/应力、公开三机制预测和完整应用验收均仍未完成，原必需条目不据此升级为全项PASS。
+
+
+动态外边界增量：ProgrammedSolidFluidHeat及WaterPhaseTransfer第三host已经完成虚拟炉温/气氛程序到实际总体积/储能/相变反馈，保留完整诊断；独立32项主机兼容/组合测试通过。该项不补液相跨格迁移、材料h/渗透来源、原污泥反应、烧结收缩或全周期实际实验验收。独立三档时间细化另见programmed_solid_candidate_check产物，不作为空间收敛证据。
