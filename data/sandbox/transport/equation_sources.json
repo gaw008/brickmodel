@@ -1,0 +1,109 @@
+{
+  "checked_at_utc": "2026-09-07T05:35:36.625896+00:00",
+  "evidence_class": "equation_definition_only",
+  "material_parameters_supplied": false,
+  "raw_sludge_transport_validated": false,
+  "official_rendered_pages": [
+    "https://cantera.org/3.2/reference/onedim/governing-equations.html#diffusive-fluxes",
+    "https://cantera.org/3.2/cxx/d7/dfa/classCantera_1_1IdealGasPhase.html",
+    "https://mooseframework.inl.gov/releases/moose/2024-11-11/modules/porous_flow/governing_equations.html"
+  ],
+  "records": [
+    {
+      "path": "data/sandbox/transport/cantera-3.2-governing-equations.md",
+      "source_url": "https://raw.githubusercontent.com/Cantera/cantera/v3.2.0/doc/sphinx/reference/onedim/governing-equations.md",
+      "version": "Cantera 3.2.0",
+      "license": "BSD-3-Clause",
+      "locator": "Diffusive Fluxes, lines 73-91",
+      "supports": "Mixture-averaged mass-flux correction; no sludge coefficients",
+      "sha256": "24a7f39ea07a1737af8aee88592fecc06241eea136c1980e088f94fc4bed23ed",
+      "bytes": 9911,
+      "unmodified": true
+    },
+    {
+      "path": "data/sandbox/transport/cantera-3.2-GasTransport.h",
+      "source_url": "https://raw.githubusercontent.com/Cantera/cantera/v3.2.0/include/cantera/transport/GasTransport.h",
+      "version": "Cantera 3.2.0",
+      "license": "BSD-3-Clause",
+      "locator": "getMixDiffCoeffs, lines 56-75",
+      "supports": "Mass-averaged velocity with mole-fraction gradient; distinguish Mole/Mass coefficient methods",
+      "sha256": "c5279321e0af453b613e5632f7e603ea39ac7260e12bdd6510564d87a3b8aa8d",
+      "bytes": 18663,
+      "unmodified": true
+    },
+    {
+      "path": "data/sandbox/transport/cantera-3.2-IdealGasPhase.h",
+      "source_url": "https://raw.githubusercontent.com/Cantera/cantera/v3.2.0/include/cantera/thermo/IdealGasPhase.h",
+      "version": "Cantera 3.2.0",
+      "license": "BSD-3-Clause",
+      "locator": "standard concentration lines 152-163; pressure lines 338-340",
+      "supports": "Ideal-gas EOS; mol/kmol conversion remains explicit in adapter",
+      "sha256": "6103a15fa89b9c85f6a1179255104cef772911cc5390ed42ec791f5399697f13",
+      "bytes": 20371,
+      "unmodified": true
+    },
+    {
+      "path": "data/sandbox/transport/cantera-3.2-LICENSE.txt",
+      "source_url": "https://raw.githubusercontent.com/Cantera/cantera/v3.2.0/License.txt",
+      "version": "Cantera 3.2.0",
+      "license": "BSD-3-Clause",
+      "locator": "whole license",
+      "supports": "Unmodified source redistribution notice",
+      "sha256": "e92980b9712ce20e73898a97b0116889e84e07f548d6be8591e87dcad79c41bb",
+      "bytes": 1796,
+      "unmodified": true
+    },
+    {
+      "path": "data/sandbox/transport/moose-governing-equations.md",
+      "source_url": "https://raw.githubusercontent.com/idaholab/moose/master/modules/porous_flow/doc/content/modules/porous_flow/governing_equations.md",
+      "version": "master snapshot; immutable local bytes identified by sha256",
+      "license": "repository LGPL-2.1; notices retained",
+      "locator": "Advection, eq:darcy, lines 80-104",
+      "supports": "Darcy volume flux and phase-relative permeability; this implementation omits gravity",
+      "sha256": "3215ecc012b321062a2470f032ec480a2569fe3511146adc81110ecc512fa0c8",
+      "bytes": 22908,
+      "unmodified": true
+    },
+    {
+      "path": "data/sandbox/transport/moose-COPYRIGHT.txt",
+      "source_url": "https://raw.githubusercontent.com/idaholab/moose/master/COPYRIGHT",
+      "version": "master snapshot",
+      "license": "copyright notice",
+      "locator": "whole notice",
+      "supports": "Unmodified notice",
+      "sha256": "00c942e96f0c7dd5cb843e6e866a5330120bd896c5ee3d195bc3527d3e296288",
+      "bytes": 2856,
+      "unmodified": true
+    },
+    {
+      "path": "data/sandbox/transport/moose-LICENSE.txt",
+      "source_url": "https://raw.githubusercontent.com/idaholab/moose/master/LICENSE",
+      "version": "master snapshot",
+      "license": "LGPL-2.1",
+      "locator": "whole license",
+      "supports": "Unmodified license",
+      "sha256": "dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551",
+      "bytes": 26530,
+      "unmodified": true
+    },
+    {
+      "path": "data/sandbox/transport/moose-COPYING.txt",
+      "source_url": "https://raw.githubusercontent.com/idaholab/moose/master/COPYING",
+      "version": "master snapshot",
+      "license": "LGPL-2.1",
+      "locator": "whole license",
+      "supports": "Unmodified license",
+      "sha256": "dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551",
+      "bytes": 26530,
+      "unmodified": true
+    }
+  ],
+  "access_notes": "Official rendered documents read using browser. Direct rendered-page downloads returned HTTP 403; the public official GitHub raw files were downloaded successfully. MOOSE raw source is a timestamped master snapshot, not claimed identical to the 2024-11-11 release document. Their Darcy equation and velocity convention agree.",
+  "implementation_choices": [
+    "linear face p,T,X with explicit geometric weight",
+    "face EOS density; upwind advective composition",
+    "gravity omitted",
+    "no porosity multiplier: D_eff and Darcy already use bulk-face area",
+    "caller supplies energy flux and positive inventory integration"
+  ]
+}

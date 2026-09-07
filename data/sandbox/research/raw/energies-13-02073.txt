@@ -1,0 +1,1758 @@
+          energies
+Article
+Convective Drying of Ceramic Bricks by CFD:
+Transport Phenomena and Process
+Parameters Analysis
+Morgana de Vasconcellos Araújo 1, * , Balbina Raquel de Brito Correia 1 ,
+Vanderson Alves Agra Brandão 1 , Iran Rodrigues de Oliveira 1 , Rosilda Sousa Santos 2 ,
+Guilherme Luiz de Oliveira Neto 3 , Leonardo Pereira de Lucena Silva 4 and
+Antonio Gilson Barbosa de Lima 1
+ 1    Department of Mechanical Engineering, Federal University of Campina Grande,
+      58428-830 Campina Grande, Paraíba, Brazil; balbinacorreia@hotmail.com (B.R.d.B.C.);
+      vanderson_agra@hotmail.com (V.A.A.B.); rodrigues.iran@hotmail.com (I.R.d.O.);
+      antonio.gilson@ufcg.edu.br (A.G.B.d.L.)
+ 2    Department of Science and Technology, Federal Rural University of the Semi-Arid Region,
+      59780-000 Caraúbas, Rio Grande do Norte, Brazil; rosilda.santos@ufersa.edu.br
+ 3    Federal Institute of Education, Science and Technology of Piauí, 64800-000 Floriano, Piauí, Brazil;
+      guilherme@ifpi.edu.br
+ 4    Federal Institute of Education, Science and Technology of Paraíba, 58900-000 Cajazeiras, Paraíba, Brazil;
+      lpdelsilva@gmail.com
+ *    Correspondence: morganamva@gmail.com; Tel.: +55-83-98669-0075
+                                                                                                         
+ Received: 14 February 2020; Accepted: 15 April 2020; Published: 21 April 2020                           
+
+
+ Abstract: In the manufacturing process of ceramic brick, the step of drying needs the control of process
+ variables to uniformly dry the porous material, producing a good end-product. The majority of
+ numerical simulations involving drying of ceramic materials is performed considering only the solid
+ domain, resulting in a very simplified and limited study. This way, the objective of this work is the
+ analysis of the drying process with hot air of an industrial hollow clay brick inside the oven at different
+ temperatures by using computational fluid dynamic (CFD). The results of the temperature and water
+ mass distribution inside the brick and of air in the oven at different times of the drying process are
+ shown, analyzed and checked with experimental data, and it was obtained in a concordance with
+ the data. An equation to calculate the brick water mass diffusivity depending on the drying air
+ temperature was proposed.
+
+ Keywords: numerical simulation; CFX; heat; mass; temperature; moisture
+
+
+
+
+1. Introduction
+     The production sector of ceramic clay materials needs improvement in quality control. Despite
+the simplicity of the ceramic manufacturing process, the market is supplied with low quality products,
+resulting from poor drying—stages of the production chain, which can lead to cracks, deformities or
+warping. The final product is verified for factors such as resistance and water absorption. A low-quality
+brick (low resistance) can break easily resulting in waste. This may be the main cause of cracks in the walls,
+increasing water infiltrations, that may compromise the construction structure of homes and buildings.
+     The drying process is one of the most complex unit operations that requires a large energy
+consumption and has a wide industrial application that has been used in different wet materials, such
+as grains, fruits, vegetables, wood and ceramic products, among others. This operation consists of
+removing the moisture of materials by using thermal and mechanical mechanisms. The idea is to
+
+
+Energies 2020, 13, 2073; doi:10.3390/en13082073                                     www.mdpi.com/journal/energies
+Energies 2020, 13, 2073                                                                            2 of 18
+
+
+
+control judiciously the whole process in order to preserve the quality of the final product. Thus, the
+optimization of existing drying technologies or the development of newer ones with the purpose of
+reducing energy costs and time required to reach the desired moisture in the product, with attention to
+the quality control of the material, is extremely important.
+      Drying conditions should be determined primarily considering the effects on the quality of the
+product and the economy of the process or the convenience of the operation, which are sub-factors [1].
+The use of high drying time rates in the brick manufacturing process results in large differences in
+moisture content and temperature within the samples, which causes cracks and deformations. In
+more severe situations, it can form a relatively impermeable coating of partially dried material, which
+inhibits the drying progress, and accentuate the inequality of the moisture content in the sample, and
+consequently enhance the tendency for the material to deteriorate.
+      When ceramic materials, such as bricks, are manufactured by air optimized processes, it results
+in less production time, less waste, lower energy consumption, higher quality product, and they can
+be acquired by the consumer for a more affordable price. For this reason, quality control of the final
+product is of utmost importance.
+      Many researches with experimental and theoretical approaches related to the drying process of
+ceramic bricks have been reported in literature [2–9]. However, these studies are focused on bricks of
+small dimensions, at a laboratory scale, and few works are related to bricks at the industrial scale and
+mainly using computational fluid dynamics as the tool of analysis. Furthermore, it can be seen an
+evident lack of interest in conducting researches focusing on the fluid flow phenomena occurring in
+the drying environment that directly influences the quality of the final product.
+      Numerical simulation technologies that study drying processes have presented several advantages
+over experimental works carried out in laboratories and pilot plants, such as:
+
+(a)   The practicality of observing the temperature and moisture gradients, inside the material as
+      it dries;
+(b)   The possibility of quantifying heat and mass fluxes inside the material over time and space: then,
+      it is possible to control the drying process adequately;
+(c)   Greater sensitivity to detect the effects of changes in temperature and moisture content inside the
+      material, eliminating uncertainties of experimental tests;
+(d)   The predictive capacity of the modeling allows the design and optimization of dryers and drying
+      processes, eliminating the construction of the prototype, and reducing costs;
+(e)   Depending on the problem, numerical simulation can does not require a reduction of scale;
+      enabling the study to be performed on a real scale, giving more physical values to the results
+      which are obtained.
+
+    To theoretically describe the drying phenomenon, several mechanisms of moisture migration are
+proposed in the literature [10–12]:
+
+(a)   Liquid diffusion due to the concentration gradient;
+(b)   Vapor diffusion due to the gradient of moisture concentration and partial vapor pressure;
+(c)   Liquid movement due to capillary forces;
+(d)   Liquid or vapor flux due to differences in total pressure;
+(e)   Flux by effusion (Knudsen): important in conditions of high vacuum, as in freeze drying, and
+      occurs when the average free path of the vapor molecules is of the same order of magnitude as
+      the pore diameter;
+(f)   Flux of liquid due to gravity.
+
+     The liquid diffusion theory applied is the simplest of these theories. It only considers moisture
+diffusion inside the material in the liquid phase, and the effects such as moisture evaporation and vapor
+transport are disregarded. This theory has been applied with success on the drying of clay [13,14],
+ceramic tile [15] and ceramic bricks [4,16–18].
+Energies 2020, 13, 2073                                                                                                     3 of 18
+
+
+
+     The existence and maintenance of an appropriated database of the drying process of different
+ceramic materials provides an in-depth knowledge. Thus, industrial and research engineers can,
+consequently, propose sufficient changes in the operational parameters for the purpose of process
+optimization. Furthermore, the use of the CFD tool helps to improve the ceramic brick drying process
+database, especially with regard to the data accuracy of experimental studies comparison, lowering the
+number of experimental tests.
+     In this context, this research is directed to give significant contribution to technological
+advancement in the ceramic industry, with regards to the improvement of the drying process efficiency,
+with special    attention
+           Energies              to PEER
+                    2020, 13, x FOR  the REVIEW
+                                          quality of the final product. Its purpose is to identify 3better             of 19 drying
+conditions (optimized process), with less process time, in order to reduce or eliminate dry material
+waste, by optimization.
+           using a CFD        Furthermore, the use of the CFD tool helps to improve the ceramic brick drying process
+                                 analysis. The authors have contributed to the numerical study of the drying
+           database, especially with regard to the data accuracy of experimental studies comparison, lowering
+ceramic brick     considering
+           the number of experimental  the mass
+                                              tests.and heat transfer and fluid flow in the air around the solid in
+previous works       [19–22].
+                 In this context, this research is directed to give significant contribution to technological
+           advancement
+     Therefore,                in the ceramic
+                     the general                industry,
+                                        objective           with regards
+                                                     is to analyze    the toconvective
+                                                                              the improvement
+                                                                                           drying  of of
+                                                                                                      thethe
+                                                                                                           drying  process
+                                                                                                              bricks   by CFD, in a
+           efficiency, with special attention to the quality of the final product. Its purpose is to identify better
+three-dimensional approach.
+           drying conditions (optimized process), with less process time, in order to reduce or eliminate dry
+     The material
+          numerical         simulation
+                      waste, by              wasanalysis.
+                                    using a CFD      performed     withhave
+                                                            The authors   thecontributed
+                                                                                inclusiontoof thethe    external
+                                                                                                   numerical       environment to
+                                                                                                               study of the
+the brick in  the ceramic
+           drying    modeling,         considering
+                                brick considering   the the previously
+                                                        mass and           predicted
+                                                                 heat transfer           variables
+                                                                                and fluid flow         by the
+                                                                                               in the air       software—such as
+                                                                                                          around the solid
+convectiveinheat
+              previous
+                     andworks
+                            mass[19–22].
+                                      transfer coefficients—by using the velocity at which the air surrounds the
+                 Therefore, the general objective is to analyze the convective drying of the bricks by CFD, in a
+ceramic brick, making the process closer to the real. The simulation with the external medium can
+           three-dimensional approach.
+show that the Thebrick     dryingsimulation
+                       numerical       is not aswas
+                                                  symmetrical      as ithe
+                                                      performed with     has   been reported
+                                                                           inclusion              in the
+                                                                                      of the external      literature.
+                                                                                                       environment   to the
+             brick in the modeling, considering the previously predicted variables by the software—such as
+2. Methodology
+         convective heat and mass transfer coefficients—by using the velocity at which the air surrounds the
+             ceramic brick, making the process closer to the real. The simulation with the external medium can
+2.1. Experimental  Procedure
+           show that the brick drying is not as symmetrical as it has been reported in the literature.
+
+      The 2.
+          drying    experiments were performed with industrial clay bricks using an oven with controlled
+              Methodology
+temperature and air velocity conditions. In the process, at 10-minute intervals during the drying, data
+           2.1. Experimental Procedure
+of mass and temperature (at the vertex) of the sample were collected. The drying process was realized
+until the massThe     drying
+                  of the       experiments
+                           brick  reachedwere      performed
+                                             a constant           with Afterward,
+                                                             value.     industrial claythebricks  usingwas
+                                                                                             sample      an oven
+                                                                                                              keptwith
+                                                                                                                    at a constant
+           controlled temperature and air velocity conditions. In the process, at 10-minute intervals during the
+temperature    for  24  hours   inside  the  oven,   with   the   aim   of  obtaining    a  uniform    moisture
+           drying, data of mass and temperature (at the vertex) of the sample were collected. The drying process
+                                                                                                                   content.   Then,
+the sample    was    placed    inside  the  oven    at  105   ◦ C, for 24 hs, to obtain a dry brick mass [6,23]. The
+           was realized until the mass of the brick reached a constant value. Afterward, the sample was kept at
+experiments    were performed
+           a constant                under
+                        temperature for       atmospheric
+                                         24 hours inside         pressure.
+                                                           the oven,  with the aim of obtaining a uniform moisture
+           content.
+      A digital      Then, (accuracy
+                 balance    the sample was
+                                        ± 1 placed  inside
+                                             g, model       the oven
+                                                          KC-01        at 105 °C,
+                                                                   Western        for 24 hs, to
+                                                                               company)         obtain a dry
+                                                                                              measured       brick
+                                                                                                           the     mass
+                                                                                                                mass   of the brick,
+           [6,23]. The experiments were performed under atmospheric      ◦    pressure.
+and an infrared     thermometer (range from −50 to 1000 C, model TI 890, Instrutherm) measured the
+                 A digital balance (accuracy ± 1 g, model KC-01 Western company) measured the mass of the
+brick temperature      [6,23].
+           brick, and an        A digital
+                          infrared          vane(range from
+                                   thermometer     anemometer         (accuracy
+                                                                −50 to 1000         of ±
+                                                                             °C, model  TI 2%,
+                                                                                           890, model    AMI 300,
+                                                                                                Instrutherm)  measuredInstrutemp)
+was used tothe brick   temperature
+              measure the       air [6,23].
+                                    velocity,A and
+                                                digital
+                                                      a vane    anemometer (accuracy
+                                                        thermohygrometer            (model of ±HT2%,  model
+                                                                                                    208,      AMIto300,
+                                                                                                          ICEL)      measure the
+           Instrutemp)
+relative humidity     and was used to measure
+                            temperature     of the
+                                                theair
+                                                     airvelocity,
+                                                         external andtoa thermohygrometer
+                                                                          the oven. The clay   (model  HT and
+                                                                                                   brick   208, ICEL)
+                                                                                                                 oventoused in the
+           measure the relative humidity and temperature of the air external to the oven. The clay brick and
+experiments    are shown in Figure 1.
+           oven used in the experiments are shown in Figure 1.
+
+
+
+
+                                                   Figure
+                                                Figure 1. 1.Ceramic
+                                                             Ceramic brick
+                                                                     brickinin
+                                                                             thethe
+                                                                                 oven.
+                                                                                    oven.
+
+             Energies 2020, 12, x; doi: FOR PEER REVIEW                                     www.mdpi.com/journal/energies
+Energies 2020, 13, 2073                                                                                       4 of 18
+
+Energies 2020, 13, x FOR PEER REVIEW                                                                          4 of 19
+Energies 2020, 13, x FOR PEER REVIEW                                                                          4 of 19
+2.2. Mathematical and Computational Modeling
+2.2. Mathematical and Computational Modeling
+2.2. Mathematical and Computational Modeling
+2.2.1. The Geometry and Mesh
+      2.2.1. The Geometry and Mesh
+      2.2.1.study
+      The     The Geometry   and Mesh
+                   domain (Figure    2) consists of a hollow ceramic brick inside the oven. The brick is
+placedTheat study
+             a     domain
+               height of    (Figure
+                         16.5 cm     2) the
+                                  above  consists of a hollow
+                                              base.            ceramic  brick8 inside the  oven.  The brick is
+      The study domain (Figure 2) consists        of The ceramic
+                                                     a hollow     brick brick
+                                                               ceramic   has    holes the
+                                                                               inside [23].oven.
+                                                                                            In theThe
+                                                                                                   numerical
+                                                                                                      brick is
+placed   at a the
+simulation,    height of was
+                   brick  16.5 cm  abovewith
+                               inserted    the the
+                                               base. The  ceramic
+                                                   channels  open  brick
+                                                                   in a  has  8 holes [23].
+                                                                        position            In theto the
+                                                                                  perpendicular     numerical
+                                                                                                         flow
+placed at a height of 16.5 cm above the base. The ceramic brick has 8 holes [23]. In the numerical
+simulation,
+direction      the 2),
+            (Figurebrick was   inserted
+                       according         with the
+                                   to thewith      channels
+                                          experimental       open in a position perpendicular to the flow
+                                                        drying.
+simulation,    the brick was inserted          the channels  open in a position perpendicular to the flow
+direction (Figure 2), according to the experimental drying.
+direction (Figure 2), according to the experimental drying.
+
+
+
+
+                                (a)                                                      (b)
+                                (a)                                                      (b)
+                 Figure 2.
+                 Figure 2. Geometry representative of the (a)
+                                                          (a) oven
+                                                              oven with
+                                                                   with ceramic
+                                                                        ceramic brick
+                                                                                brick and
+                                                                                      and (b)
+                                                                                          (b) brick.
+                                                                                              brick.
+                 Figure 2. Geometry representative of the (a) oven with ceramic brick and (b) brick.
+
+     The
+     The geometry
+          geometryand
+                   andmesh
+                       mesh(Figure
+                             (Figure3)3)were
+                                         wereconstructed
+                                              constructedusing ICEM
+                                                           using ICEMCFD
+                                                                      CFD15.0 software.
+                                                                            15.0        The
+                                                                                 software.  mesh
+                                                                                           The   of
+                                                                                               mesh
+     The geometry and mesh (Figure 3) were constructed using ICEM CFD 15.0 software. The mesh
+the brick was made using the blocking  method,  having  673,625 hexahedral elements.
+of the brick was made using the blocking method, having 673,625 hexahedral elements.
+of the brick was made using the blocking method, having 673,625 hexahedral elements.
+
+
+
+
+                                      (a)                                        (b)
+                                      (a)                                        (b)
+                                Figure 3. Mesh of the (a) full domain and (b) brick.
+                                Figure 3. Mesh of the (a) full domain and (b) brick.
+                                Figure 3.
+
+      2.2.2.
+2.2.2.2.2.2. Governing
+       Governing         Equations
+                    Equations
+             Governing   Equations
+      (a) Solid phase
+      (a)       phase
+      (a) Solid
+          Solid phase
+      The water mass (moisture) was inserted like an additional variable. The transport equation for
+      The water mass (moisture) was inserted like an additional variable. The transport equation for
+this The   water
+     variable      mass by:
+               is given (moisture) was inserted like an additional variable. The transport equation for
+this variable is given by:
+this variable is given by:                 ∂m
+                                           𝜕𝑚  = ∇·(Dms ∆m)                                         (1)
+                                            ∂t
+                                           𝜕𝑚         (𝐷ms Δ𝑚)                                     (1)
+                                               = ∇ ∙ (𝐷                                            (1)
+                                           𝜕𝑡 = ∇ ∙ ms Δ𝑚)
+                                           𝜕𝑡
+
+
+
+Energies 2020, 12, x; doi: FOR PEER REVIEW                                             www.mdpi.com/journal/energies
+Energies 2020, 12, x; doi: FOR PEER REVIEW                                             www.mdpi.com/journal/energies
+Energies 2020, 13, 2073                                                                                5 of 18
+
+
+
+where m is the water mass inside the solid material in the time t, and Dms represents the mass
+diffusion coefficient.
+     The heat transfer equation is given by:
+
+                                             ∂(ρS HS )
+                                                       = ∇·(λS ∇TS )                                      (2)
+                                                ∂t
+where ρS is the specific mass, HS is the enthalpy, λS is the thermal conductivity, and TS is the temperature
+of the solid phase.
+     (b) Fluid phase
+     The mass conservation equation for the air in the fluid domain is given as follow:
+
+                                               ∂ρ f             
+                                                       + ∇· ρ f U = 0                                     (3)
+                                                ∂t
+where ρ f is the specific mass of air, and U is the air speed vector in the oven.
+    The transport equation that describes the flow of water in the fluid domain is given by:
+
+                                           ∂m                      
+                                              + ∇·(mU) = ∇· Dm f ∆m                                       (4)
+                                           ∂t
+where m is the water mass in the air, and Dmf is the water diffusivity into the air.
+    The momentum conservation equation is given as follows:
+                                
+                          ∂ ρf U
+                                     = −∇· ρ f UU − ∇p + ∇· µe f f ∇U + (∇U)T + SM
+                                                         n      h          io
+                                                                                                          (5)
+                            ∂t
+where ∇p is the pressure gradient, µeff is the effective fluid dynamic viscosity, and SM is source term of
+linear momentum.
+     The κ-ε turbulence model was chosen to predict the turbulence behavior of the fluid flow in
+the domain, being considered an industry standard model [24]. Because the low air velocity and the
+occurrence of a weak vortex formation after the brick, a more careful study of turbulence models has
+not been carried out. For this model, the effective fluid dynamic viscosity is given by:
+
+                                                  µe f f = µ + µt                                         (6)
+
+where µ is the fluid dynamic viscosity, and µt is de turbulent viscosity defined as follows:
+
+                                                                  κ2
+                                                      µt = Cµ ρ                                           (7)
+                                                                  ε
+where Cµ is a constant value equal to 0.09, and κ and ε represent the turbulent kinetic energy and
+turbulent kinetic energy dissipation rate, respectively.
+    This turbulence model is classified as a two-equation model [24]:
+
+                          ∂(ρκ)    ∂            ∂         µt  ∂κ
+                                                     "            #
+                                             
+                                +      ρU j κ =         µ+           + Pκ − ρε + Pκb                      (8)
+                            ∂t    ∂x j          ∂x j       σκ ∂x j
+
+                    ∂(ρε)    ∂            ∂        µt  ∂ε    ε
+                                               "           #
+                                       
+                          +      ρU j ε =        µ+           + (Cε1 Pκ − Cε2 ρε + Cε1 Pκb )              (9)
+                      ∂t    ∂x j          ∂x j      σε ∂x j    κ
+where Cε1 , Cε2 , σκ and σε are constants of which the values are: 1.44, 1.92; 1.0 and 1.3, respectively, Pκb
+and Pk are parameters that represent the influence of buoyancy forces. More details about this model
+can be found in the literature [25].
+Energies 2020, 13, 2073                                                                              6 of 18
+
+
+
+     For heat transfer in the fluid, the model of thermal energy was adopted, which is suitable for low
+speed flows. Disregarding the internal heating by friction effects in the fluid and the source term, the
+heat transfer equation is given as follows:
+                                                
+                                         ∂ ρf Hf                              
+                                                     + ∇· ρ f UH f = ∇· λ f ∇T f                         (10)
+                                             ∂t
+      λf is the air thermal conductivity, Hf is the air enthalpy and Tf is the air temperature.
+
+2.2.3. Initial and Boundary Conditions
+(a)   Solid Phase
+
+      •      Initial conditions:
+
+             #        Prescribed temperature, Ts_in ;
+             #        Prescribed water mass, ms_in ;
+      •      Boundary conditions:
+
+             #        Conservative interface flux at the interface between the solid and fluid phases.
+(b)   Fluid Phase
+
+      •      Initial conditions:
+
+             #        Prescribed temperature inside the oven, Tf ;
+             #        Prescribed water mass inside the oven, mf_in ;
+      •      Boundary conditions:
+                                                                           .
+             #        Prescribed air flow rate in the oven inlet, mdry air
+                                                                               .
+             #        Prescribed water flow rate in the oven inlet, mwater
+             #        Conservative interface flux at the interface between the solid and fluid phases
+                      was used;
+             #        Average pressure of 101,325 Pa in the oven outlet.
+
+2.2.4. Interface between the Solid and Fluid Phases
+      To consider the flux of a variable (mass or energy) between the domains, the condition of
+conservative interface flux at the interface of the brick was adopted. This boundary condition means that
+the flux of a specified variable of the brick (solid phase) crosses the interface without losses and flows
+through the air (fluid phase). Then, the equation that the software uses for this type of condition is:
+                                                                                           
+                                   − Dm f ∇minter f ace = hm minter f ace − meq−inter f ace              (11)
+
+where minterface is the instantaneous water mass of the interface; meq−interface is the water mass at
+equilibrium conditions, both provided by numerical simulation at the final time of the drying process,
+and hm is the convective mass transfer coefficient, which is calculated by using the mass diffusivity value.
+     For the temperature, the convective heat flux equals the diffusive heat flux at the brick surface
+as follows:                                                                           
+                               − λ f ∇Tinter f ace = hC Teq−inter f ace − Tinter f ace                 (12)
+
+where λf is the thermal conductivity of the air; Tinterface is the temperature at the interface at each
+time instant; Teq−interface is the temperature at equilibrium condition and hC is the convective heat
+transfer coefficient, which is calculated as a result of the numerical simulation at the final time of the
+drying process.
+Energies 2020, 13, 2073                                                                                                  7 of 18
+
+
+
+2.2.5. Process Parameters and Studied Cases
+            The thermophysical properties of the brick and air used for all studied cases are:
+
+•           Solid domain (clay brick):
+
+            #           Specific mass: 1985.8 kg/m3 [23]
+            #           Specific heat capacity: 1673 J/(kg·K) [23]
+            #           Thermal conductivity: 1.675 W/(m·K) [26]
+•           Fluid domain (air as an ideal gas):
+
+            #           Specific heat capacity: 1004.4 J/(kg·K) [27]
+            #           Thermal conductivity: 0.0261 W/(m·K) [27]
+            #           Dynamic viscosity: 1.831 × 10−5 kg/(m·s) [27]
+
+      Since the temperature gradient in the air is not large enough to cause significant changes in the
+specific heat capacity, thermal conductivity and dynamic viscosity, it was considered constant along
+the process. These parameters and density are established in the Ansys CFX software.
+      The moisture diffusivity of the brick (DS ) varied for each air drying temperature. As in the present
+study, it was decided to use the water mass in the solid and fluid domains, instead of the dry basis
+moisture content in the material. Thus, the diffusion coefficient of moisture in the brick had to be
+adapted, for this new condition. In addition, the brick is being considered as a solid domain, unlike
+the real brick, which is a porous material.
+      All parameters used in the simulation can be found in Table 1, where Dms is the initial value of the
+moisture diffusivity of the brick, Ts_in is the brick initial temperature, Urel is the air relative humidity,
+                                                                                           .
+ms_in is the initial water mass on brick, mf_in is the initial water mass in the oven, mdry air is the mass
+                  .
+flow rate of air, mwater is the mass flow rate of water, Dmf is the moisture diffusivity in air and ttotal is the
+total drying time.
+
+                            Table 1. Useful data for the numerical simulations of ceramic brick drying.
+
+        Tf [◦ C] *              50              60              70                80              90             100
+    Dms [m2 /s] *           4.0 × 10−10     0.3 × 10−10     0.9 × 10−10       8.0 × 10−10     10 × 10−10      16 × 10−10
+    Ts_in [◦ C] *               20.6           20.5             26               21.4             21             26.1
+        Urel [%] *             20.80           13.58           7.68              4.68            3.30            1.80
+        U [m/s] *               0.05           0.06            0.07              0.08            0.09            0.10
+     ms_in [g] *                365            386             408               394             420             440
+            mf_in [g]         2.62601        2.68886         2.30198           2.06730         2.10014         1.60376
+    .
+    mdry air [g/s]           13.65458        15.89367        18.00225          19.99141        21.87102        23.64989
+        .
+    mwater [g/s]              0.22092        0.27145         0.27112           0.27827         0.31802         0.26984
+    Dmf [m2 /s]             2.728 × 10−5   2.8948 × 10−5   3.0662 × 10−5     3.2419 × 10−5   3.4218 × 10−5   3.6058 × 10−5
+    ttotal [min] *              990            820             950               900             690             860
+                                                            * Source [23].
+
+
+
+     At the interface between the liquid and solid domains, the condition of conservative flux was
+inserted, so, the water mass that migrates inside the brick by diffusion, crosses the interface and
+penetrates in the liquid medium by convection.
+     All simulations are transient, with a time step of 10 seconds and an average quadratic residue
+     −8
+of 10 .
+Energies 2020, 13, 2073                                                                              8 of 18
+
+
+
+2.2.6. Statistical Treatment of Data
+    For providing reliability to the adopted mathematical model, the statistical treatment of dispersion
+measurement was used.
+    (a) Dispersion Analysis
+    The relative error (ERMQ) is given by the sum of the squares of the differences between the
+numerical values, Vnum , and the experimental values, Vexp , as follows:
+
+                                                 n 
+                                                 X                   2
+                                       ERMQ =          Vnum − Vexp                                     (13)
+                                                 i=1
+
+where n is the number of experimental points.
+    The variance of the residuals squares (δV 2 ) is given by:
+
+                                                       ERMQ
+                                              δV 2 =                                                   (14)
+                                                       n − np
+
+where np is the number of fitted parameters (number of degrees of freedom) [23]. The effective
+moisture diffusivity of the brick was obtained by minimizing the values of ERMQ and δV 2 after the
+fitting process.
+      This procedure was carried out for each drying condition, as specified in Table 1.
+      As the only variable to be fitted is the mass diffusion coefficient, since the other values were taken
+from the literature or calculated during the numerical simulation, np is equal to 1.
+      (b) Mass Diffusion Coefficient of the Brick as a Function of Temperature
+      Diffusion phenomena can occur in fluid (gaseous and liquids) and solid materials. Mass diffusion
+of gases, vapor and liquids in porous materials is a more complex phenomenon than diffusion in
+liquids. This fact occurs because porous materials usually have heterogeneous structures, and they may
+interact with the diffusing compounds. Thus, diffusion velocity of molecules inside these porous solids
+is lower than in fluids, and this effect alters the physical and chemical process velocities involving
+mass transfer, and consequently, the mass transport parameters.
+      According to water migration mechanisms through porous materials listed before, in theory, the
+estimative and determination of the mass transport parameters associated with each one of these
+mechanisms can be done in different ways.
+      When we use, for example, the liquid transport by pressure gradient or capillary forces
+(capillary flow theory), in general, the transport parameters are the permeability and porosity
+of the porous material, and Darcy’s law has been utilized appropriately. This theory has been well
+applied in water flux processes in almost dry brick, concrete block, unsaturated soil, membranes, etc.
+However, when the liquid transport occurs by concentration gradients (liquid diffusion theory), the
+main transport parameter is the mass diffusion coefficient, and Fick´s law of diffusion is well utilized.
+This theory has been applied appropriately in the drying process of different materials, such as wet
+brick, wood, grains, fruits and vegetables.
+      It is well-known that the mass diffusion coefficient is strongly dependent on the different
+geometrical (size, shape and distribution of the pores, shape, dimensions, tortuosity, porosity,
+constrictivity of the porous material, etc.) and physical (moisture, temperature, pressure, etc.)
+parameters. However, because of the complex structure of the pore network, some assumptions have
+been made, and the usual way to estimate the mass diffusion coefficient is to consider it to be constant
+along the process (effective moisture diffusion coefficient that incorporates all the cited effects).
+      Thus, moisture diffusivity was considered to be dependent only on the drying air temperature.
+Its dependence can be described by the Arrhenius equation as follows:
+
+                                                         −Ea
+                                                            
+                                           Dms = D0 exp                                                (15)
+                                                         RT
+Energies 2020, 13, 2073                                                                                                               9 of 18
+
+
+
+where D0 [m2 /s] is the Arrhenius factor, Ea [kJ/mol] is the activation energy for diffusion, R [kJ/(kmol.K)]
+is the gas constant and T [K] is the absolute temperature.
+      Effective moisture diffusivity is the key drying parameter that represents the moisture migration
+velocity and incorporates all moisture transfer mechanisms present in the brick during the process.
+This parameter is usually determined by the drying curves. Activation energy is another important
+drying parameter that represents the energy level of water molecules for moisture diffusion and
+evaporation [28].
+      Applying the Neperian logarithm on both sides of Equation (15), Equation (16) is found, which
+resembles Energies
+            the equation        of the line with angular coefficient Ea /R and linear coefficient ln(D
+                   2020, 13, x FOR PEER REVIEW                                                      9 of 0
+                                                                                                         19
+                                                                                                           ):
+             Energies 2020, 13, x FOR PEER REVIEW                                                                       9 of 19
+
+                                                                      Ea 1
+                                                                        
+             3.3.Results
+                 Resultsand
+                         andDiscussion
+                            Discussion              ln(Dms ) = −           + ln(D0 )                                                    (16)
+                                                                      R T
+              3.1.Transient
+             3.1. TransientAnalysis
+                            AnalysisofofMass
+                                        MassTransfer
+                                             Transfer
+with the use of Equation (16), a linear regression is found using the Grapher software.
+                  Inorder
+                 In  ordertotoexpose
+                               exposethethereliability
+                                            reliabilityofofthe
+                                                            themathematical
+                                                                mathematicalmodelmodelused
+                                                                                         usedin
+                                                                                              insimulations,
+                                                                                                  simulations,the thecomparison
+                                                                                                                      comparison
+            betweenthe
+           between     theaverage
+                            averagewater
+                                      watermass
+                                             massof ofthe
+                                                        theceramic
+                                                             ceramic brick
+                                                                        brickand
+                                                                              and the
+                                                                                    theexperimental
+                                                                                        experimental data
+                                                                                                        datawas
+                                                                                                             was mademadeduring
+                                                                                                                           during
+3. Resultstheand
+            the     Discussion
+                process,
+               process,    forall
+                          for  alldrying-air
+                                  drying-airconditions
+                                               conditionsreported
+                                                             reportedin inTable
+                                                                           Table1.1.These
+                                                                                     Thesecomparisons
+                                                                                           comparisonsare areshown
+                                                                                                               shownin  inFigures
+                                                                                                                           Figures
+            4–6.
+           4–6.
+3.1. Transient Analysis
+                  Afterthe
+                 After        of MassofofTransfer
+                         theanalysis
+                              analysis     thesefigures,
+                                          these  figures,we wecan
+                                                                canstate,
+                                                                      state,qualitatively,
+                                                                             qualitatively,that
+                                                                                            thatthe
+                                                                                                 thenumerical
+                                                                                                     numericalcurves
+                                                                                                                   curvesfit
+                                                                                                                           fitwell
+                                                                                                                               well
+            with the
+           with    the experimental
+                        experimental data.
+                                         data. Note
+                                                Note that
+                                                        that at
+                                                              at all
+                                                                  all drying
+                                                                       drying temperatures,
+                                                                                temperatures, the
+                                                                                                the decay
+                                                                                                     decay displayed
+                                                                                                             displayed by   by the
+                                                                                                                                the
+      In order   to expose
+            numericalresults
+           numerical
+                                the
+                         resultsof
+                                     reliability
+                                  ofthe
+                                     theamount
+                                          amountof
+                                                              mathematical
+                                                        the contained
+                                                    ofwater
+                                                   ofwater     containedin  inthe
+                                                                                    model
+                                                                               thesolid
+                                                                                             usedfollowed
+                                                                                    solidmaterial
+                                                                                                    in simulations,
+                                                                                         materialfollowed
+                                                                                                                           the comparison
+                                                                                                               theexperimental
+                                                                                                              the    experimental
+between the    average
+            data
+           data    behavior.
+                  behavior. water
+                               Thesemass
+                               These         ofgive
+                                        results
+                                       results   the credibility
+                                                give   ceramic      brick
+                                                       credibility to to  theand the
+                                                                         the            experimental
+                                                                              mathematical
+                                                                              mathematical             usedata
+                                                                                              model used
+                                                                                              model           in the
+                                                                                                             in     was
+                                                                                                                   the    made during the
+                                                                                                                        numerical
+                                                                                                                       numerical
+            simulations.
+process, for all
+           simulations.     Furthermore,
+                   drying-air      conditions
+                           Furthermore,      we can
+                                            we        see
+                                                 can see
+                                                   reportedthat the
+                                                          that   in    higher1.
+                                                                 theTable
+                                                                     higher    theThese
+                                                                              the   temperature,   the higher
+                                                                                          comparisons
+                                                                                   temperature,   the   higher
+                                                                                                            are  the
+                                                                                                                the   drying in
+                                                                                                                    shown
+                                                                                                                     drying    rate;
+                                                                                                                                  Figures 4–6.
+                                                                                                                              rate;
+            thus,the
+           thus,   thesolid
+                       soliddries
+                              driesquickly.
+                                    quickly.
+
+
+
+
+                        Average
+              Figure 4.Figure
+                        Figure      waterwater
+                                  Average
+                              4.4.Average mass
+                                          water  of ofof
+                                                mass
+                                               mass thethebrick
+                                                         the brickas
+                                                            brick as     function
+                                                                   asaaafunction
+                                                                         function    thethe
+                                                                                    of
+                                                                                  ofthe
+                                                                                 of         drying
+                                                                                         drying
+                                                                                        drying       (50
+                                                                                                time(50
+                                                                                               time      and(50
+                                                                                                      time
+                                                                                                        and      and 60 ◦ C).
+                                                                                                              60°C).
+                                                                                                             60°C).
+
+
+
+
+                        Figure
+              Figure 5.Figure 5.5.Average
+                         Average  Average water
+                                    waterwater
+                                           mass  of ofof
+                                                mass
+                                               mass  the the
+                                                        the  brickas
+                                                            brick
+                                                           brick   asaa
+                                                                  as  afunction
+                                                                        function
+                                                                        function ofthe
+                                                                                of  thethe
+                                                                                    of  drying
+                                                                                       drying  time(70
+                                                                                              time
+                                                                                            drying  (70 and80
+                                                                                                       and
+                                                                                                     time  (70  and 80 ◦ C).
+                                                                                                            80°C).
+                                                                                                               °C).
+
+
+
+
+              Energies2020,
+             Energies  2020,12,
+                             12,x;x;doi:
+                                     doi:FOR
+                                          FORPEER
+                                              PEERREVIEW
+                                                   REVIEW                                       www.mdpi.com/journal/energies
+                                                                                                www.mdpi.com/journal/energies
+Energies 2020, 13, 2073                                                                                                                                  10 of 18
+                Energies 2020, 13, x FOR PEER REVIEW                                                                                       10 of 19
+
+
+   Energies 2020, 13, x FOR PEER REVIEW                                                                       10 of 19
+
+
+
+
+                Figure
+              Figure 6. 6.  Average
+                       Average water   water
+                                     mass of     mass
+                                             the brick as aofunction
+                                                              the of
+                                                                   brick
+                                                                      the as  a time
+                                                                          dryingfunction
+                                                                                     (90 andof   °C).drying time (90 and 100 ◦ C).
+                                                                                             100the
+                             Figure 6. Average water mass of the brick as a function of the drying time (90 and 100 °C).
+        Figure 7 shows the moisture distribution (dry basis) on the brick surface for drying at 90 °C. Due
+  to the  flow ofthe
+       After              analysis
+                        Figure
+                   drying
+                                   7 shows
+                             air from right ofto these
+                                                the         figures,
+                                                     moisture               we
+                                                                  distribution
+                                                  left (perpendicular      to     can
+                                                                              the ZY
+                                                                                    (dry  state,
+                                                                                           basis)
+                                                                                       plane),
+                                                                                                              brick surfacethat
+                                                                                                      qualitatively,
+                                                                                                    on the
+                                                                                               it is noted   that the superior
+                                                                                                                                 for the    numerical
+                                                                                                                                     drying at 90 °C. Due curves fit
+well   inferiorto
+  and with       thethe flow
+                        experimental
+                  vertices        of drying
+                             on the  brick right airside,
+                                                     fromwhich
+                                                   data.     right
+                                                              Note    inleft
+                                                                   isto  that (perpendicular
+                                                                          direct at  all with
+                                                                                 contact  drying        the ZY
+                                                                                                 thetodrying      plane),
+                                                                                                         temperatures,
+                                                                                                               air,         it is noted
+                                                                                                                    dries faster         that thedisplayed
+                                                                                                                                   the decay     superior    by the
+  compared toand       inferior
+                   other  regions ofvertices
+                                        the on       the brick right side, which is in direct contact with the drying air, dries faster
+                                             material.
+numerical         results
+                 compared
+        It is also noted
+                              ofthe
+                           that to
+                                   the
+                                     other
+                                          amount
+                                              regions of
+                                      surface that
+                                                         of the
+                                                             water       contained in the solid material followed the experimental data
+                                                                  material.
+                                                       characterizes    the hollow region of the ceramic brick remains
+behavior.
+  wetter         These
+            than the         results      give     credibility
+                        It is also noted that the surface that in
+                      others,    due   to  the  low   air flow         to
+                                                                 velocity   the   mathematical
+                                                                                this region.
+                                                                             characterizes    This
+                                                                                               the hollow  model
+                                                                                                      difference   in used
+                                                                                                                      moisture
+                                                                                                                 region              the numerical
+                                                                                                                          of theinceramic              simulations.
+                                                                                                                                            brick remains
+  affects the drying     process
+Furthermore,     wetter we     canand
+                            than         proves
+                                    thesee    that
+                                          others,  the
+                                                     dueusefulness
+                                                       the   higher
+                                                            to the     of theair
+                                                                      low  theCFD   technique
+                                                                                 temperature,
+                                                                                 flow    velocity          purpose.
+                                                                                                      thisthis
+                                                                                                 for in
+                                                                                                          the    higherThis
+                                                                                                                region.             drying in
+                                                                                                                             thedifference    rate; thus, the solid
+                                                                                                                                                 moisture
+        From the analysis of Figure 7, we state that a 90-degree rotation of the ceramic brick around the
+dries    quickly.affects the drying process and proves the usefulness of the CFD technique for this purpose.
+  Z axis would     favor the flow of air in the hollow region and would reduce the difference between the
+  moisture     observed
+                        From     thesurface.
+                            on thethe
+                                      analysis      of Figure 7, weposition
+                                                 Thus, due to the
+                                                                           state that the
+                                                                                        a 90-degree       rotation   of  the ceramic brick around the ◦
+       Figure       7 shows                moisture         distribution of                 materialon
+                                                                                  (dry basis)            inside
+                                                                                                            the the   oven, an
+                                                                                                                  brick     surface for drying at 90 C. Due
+  asymmetric Z      axis would
+                  drying   occurs. favor the flow of air in the hollow region and would reduce the difference between the
+to theInflow       of  drying
+                 moisture
+             simulations     where   air
+                                observed    from
+                                      only the on the rightof
+                                                   domain surface.  left
+                                                               toceramic   (perpendicular
+                                                                        Thus,    due
+                                                                             brick  is to the
+                                                                                        considered    to the
+                                                                                                 position     ofZY the it is
+                                                                                                       [4,23,29–31],         not it is
+                                                                                                                       plane),
+                                                                                                                        material          noted
+                                                                                                                                     inside  the oven, the superior
+                                                                                                                                                  that an
+and   inferior
+  possible           vertices
+                 asymmetric
+               to observe     the on
+                                   drying  the
+                                    asymmetry     bricktheright
+                                               occurs.
+                                                     in               side,
+                                                               variable        which
+                                                                            at the         is of
+                                                                                     surface  in thedirectbrick.contact
+                                                                                                                  Asymmetric with the drying air, dries faster
+  dehumidificationIn     is important
+                             simulations  to study, as it    can the
+                                                                  causedomain
+                                                                           defects inofthe brick during      burning,   such as [4,23,29–31], it is not
+compared          to other
+  cracks and deformations.
+                                  regions where  of theonly material.                    ceramic      brick is     considered
+                 possible to observe the asymmetry in theEnergies                      variable
+                                                                                           2020, 13,at   thePEER
+                                                                                                     x FOR     surface
+                                                                                                                  REVIEW of the brick. Asymmetric                      11 of 19
+
+                dehumidification is important to study, as it can cause defects in the brick during burning, such as
+                Moisture content [g/g, d.b.]               Moisture content [g/g, d.b.]       Moisture content [g/g, d.b.]
+                cracks and deformations.
+
+                                Moisture content [g/g, d.b.]                                    Moisture content [g/g, d.b.]
+
+
+
+
+                        (a) 10 minutes                                          (b) 60 minutes                             (c) 690 minutes
+   Energies 2020, 12, x; doi: FOR PEER REVIEW                  www.mdpi.com/journal/energies
+                                                              Figure 7. Moisture content distribution on the brick surface for drying at 90 °C at different
+        Figure 7. Moisture content distribution on the brick surface for drying at 90 ◦ C at different durations.
+                                                                                                      durations.
+
+     It is also noted that the surface that characterizes    Figuresthe   hollow
+                                                                      8–11 show       region
+                                                                                  the field of of
+                                                                                                waterthe  ceramic
+                                                                                                      mass in          brick
+                                                                                                                the oven        remains
+                                                                                                                          for drying air at 90 °C. Note that at the
+                                    (a) 10 minutes                                   (b)min),
+                                                       initial instant of drying (t = 0  60 the
+                                                                                             minutes
+                                                                                                  water mass distribution is almost uniform, containing only the
+wetter than the others, due to the low air flow velocity           in this region. This difference
+                                                       mass equivalent to the absolute humidity of the
+                                                                                                                 in moisture affects
+                                                                                                             drying air. Throughout the process, it is noticed that
+            Energies 2020, 12, x; doi: FOR PEER REVIEW                                      www.mdpi.com/journal/energies
+the drying process and proves the usefulness of        thethe    CFDit flows
+                                                            air, when    technique
+                                                                                over the for
+                                                                                         brick,this  purpose.
+                                                                                                transports  the mass of water lost by the material. This is clearly
+                                                       observable by the hue in the mass field, especially in the left side region of the brick.
+     From the analysis of Figure 7, we state that          a 90-degree rotation of the ceramic brick around the
+                                                             Due to the position of the brick inside the oven, air accumulates in the hollow region of the brick.
+Z axis would favor the flow of air in the hollow               region
+                                                       This justifies     andthat
+                                                                      the fact   would      reduce
+                                                                                    these regions       thedifficult
+                                                                                                  are more    difference       between
+                                                                                                                      to dehumidify,  and also to heat up. It is also
+the moisture observed on the surface. Thus, due        possible
+                                                              to to
+                                                                  theobserve,
+                                                                        positionnear the
+                                                                                       of brick  surface, a region
+                                                                                           the material        insidewiththe
+                                                                                                                           a high  water–mass
+                                                                                                                               oven,    an       gradient and the
+                                                       concentration boundary layer. The results prove that there is a symmetry between the upper and
+asymmetric drying occurs.                              lower part of the XZ plane.
+     In simulations where only the domain of ceramic               brick
+                                                             To reach  the is  considered
+                                                                           values of            [4,23,29–31],
+                                                                                      the best mass  diffusivity of it
+                                                                                                                    theis notseveral
+                                                                                                                        brick,  possible
+                                                                                                                                      numerical simulations were
+                                                       made, in each drying air conditions. For each temperature, the mass diffusivity varied, producing
+to observe the asymmetry in the variable at thedifferent surface      of  the   brick.    Asymmetric          dehumidification           is
+                                                                  drying kinetics, and which the average moisture content values of the brick were compared
+important to study, as it can cause defects in thewith  brick     during data.
+                                                             experimental    burning, such as cracks and deformations.
+                   Figures 8–11 show the field of water mass in the oven for drying air at 90 °C. Note that at the
+             initial instant of drying (t = 0 min), the water mass distribution is almost uniform, containing only the
+             mass equivalent to the absolute humidity of the drying air. Throughout the process, it is noticed that
+             the air, when it flows over the brick, transports the mass of water lost by the material. This is clearly
+Energies 2020,observable
+               13, 2073 by the hue in the mass field, especially in the left side region of the brick.                       11 of 18
+                   Due to the position of the brick inside the oven, air accumulates in the hollow region of the brick.
+             This justifies the fact that these regions are more difficult to dehumidify, and also to heat up. It is also
+             possible to observe, near the brick surface, a region with a high water–mass gradient              and the
+      Figures    8–11 show the field of water mass in the oven for drying air at 90 ◦ C. Note that at the
+             concentration boundary layer. The results prove that there is a symmetry between the upper and
+initial instant
+             lowerofpart
+                       drying      =plane.
+                          of the(tXZ  0 min), the water mass distribution is almost uniform, containing only the
+mass equivalent    To to   thethe values
+                       reach    absolute     humidity
+                                          of the best massof the  drying
+                                                           diffusivity      air.
+                                                                       of the    Throughout
+                                                                              brick, several      the process,
+                                                                                             numerical          it is
+                                                                                                       simulations     noticed that
+                                                                                                                    were
+the air, whenmade,    in each over
+                  it flows     dryingthe
+                                       air brick,
+                                           conditions. For each the
+                                                   transports    temperature,
+                                                                      mass of the    masslost
+                                                                                 water     diffusivity
+                                                                                               by thevaried, producing
+                                                                                                       material.    This is clearly
+             different drying kinetics, and which the average moisture content values of the brick were compared
+observablewith by experimental
+                    the hue in the data.
+                                        mass field, especially in the left side region of the brick.
+
+
+
+
+             Energies 2020, 13, x FOR PEER REVIEW                                                                       12 of 19
+             Energies 2020, 13, x FOR PEER REVIEW                                                                       12 of 19
+                    Figure 8. Water mass distribution inside the oven (Plane XZ) for drying at 90 °C (t = 0 min).
+                  8. Water
+           Figure Figure     massmass
+                         8. Water distribution
+                                      distributioninside   theoven
+                                                   inside the   oven  (Plane
+                                                                   (Plane      XZ)
+                                                                          XZ) for   for drying
+                                                                                  drying              0 ◦
+                                                                                                  at= 90
+                                                                                         at 90 °C (t      C (t = 0 min).
+                                                                                                       min).
+
+             Energies 2020, 12, x; doi: FOR PEER REVIEW                                         www.mdpi.com/journal/energies
+
+
+
+
+                     Water9.mass distribution    inside  the                                              ◦ C (t = 10 min).
+           Figure 9. Figure Water mass distribution inside theoven   (Plane
+                                                               oven (Plane  XZ)
+                                                                           XZ) for for drying
+                                                                                   drying at     at (t90= 10
+                                                                                             90 °C           min).
+                      Figure 9. Water mass distribution inside the oven (Plane XZ) for drying at 90 °C (t = 10 min).
+
+
+
+
+          Figure 10. Water mass distribution inside the oven (Plane XZ) for drying at 90 ◦ C (t = 60 min).
+                      Figure 10. Water mass distribution inside the oven (Plane XZ) for drying at 90 °C (t = 60 min).
+                      Figure 10. Water mass distribution inside the oven (Plane XZ) for drying at 90 °C (t = 60 min).
+Energies 2020, 13, 2073                                                                                      12 of 18
+Energies 2020, 13, x FOR PEER REVIEW                                                                         13 of 19
+
+
+
+
+         Figure 11. Water mass distribution inside the oven (Plane XZ) for drying at 90 ◦ C (t = 690 min).
+         Figure 11. Water mass distribution inside the oven (Plane XZ) for drying at 90 °C (t = 690 min).
+     Due to the position of the brick inside the oven, air accumulates in the hollow region of the brick.
+This Taking
+      justifiesthe
+                thebest
+                    factmass
+                         that diffusivities
+                               these regionsvalues
+                                              are more    difficult
+                                                     inside         to dehumidify,
+                                                            the brick                   and also
+                                                                        (Table 2) for each       to heatcondition
+                                                                                             drying-air  up. It is
+also possible
+obtained   and to  observe,
+                applying   thenear the brick
+                                Arrhenius     surface, a
+                                           equation       region (14)),
+                                                       (Equation   with aa high
+                                                                             linearwater–mass   gradient
+                                                                                    regression was        and the
+                                                                                                    performed.
+concentration boundary layer. The results prove that there is a symmetry between the upper and lower
+part of the XZ plane.       Table 2. Mass diffusivities obtained with the simulations.
+     To reach the values of the best mass diffusivity of the brick, several numerical simulations were
+                                       Temperature [°C] Dms [m²/s]
+made, in each drying air conditions. For each temperature, the mass diffusivity varied, producing
+                                                50               1 × 10−7
+different drying kinetics, and which the average moisture content values of the brick were compared
+                                                60               3 × 10−7
+with experimental data.
+     Taking the best mass diffusivities values  70 inside the brick
+                                                                 9 × 10(Table
+                                                                         −7
+                                                                                 2) for each drying-air condition
+                                                80              24  × 10  −7
+obtained and applying the Arrhenius equation (Equation (14)), a linear regression was performed.
+                                                90              65 × 10−7
+                                                100 obtained155
+                            Table 2. Mass diffusivities          with× 10
+                                                                       the−7simulations.
+
+                   Temperature
+     Figure 12 shows
+                                   ◦
+                                 [ C]
+                         the Neperian   logarithm of the mass diffusivity Dfor
+                                                                            ms [m
+                                                                               each /s]air predicted by the
+                                                                                        2
+
+
+simulations and Equation                                                      × 10a−7linear behavior of this
+                           50 (16). From the analysis of this figure, we can1see
+variable, and an excellent 60 concordance between the results, with the 3coefficient
+                                                                              × 10−7       of determination
+equal to 0.998.            70                                               9 × 10−7
+     After fitting, the following values were obtained: D0 = 2.577 × 10−9 m²/s and −7
+                                                                                       Ea = 101562.96 J/mol.
+                            80                                                   24 × 10
+                            90                                                   65 × 10−7
+                           100                                                  155 × 10−7
+
+
+      Figure 12 shows the Neperian logarithm of the mass diffusivity for each air predicted by the
+simulations and Equation (16). From the analysis of this figure, we can see a linear behavior of this
+variable, and an excellent concordance between the results, with the coefficient of determination equal
+to 0.998.
+      After fitting, the following values were obtained: D0 = 2.577 × 10−9 m2 /s and Ea = 101562.96 J/mol.
+      The water mass gradient on the three cartesian axes (∂mX /∂X, ∂mY /∂Y e ∂mZ /∂Z) was provided for
+each time step in the numerical simulation, as well as the overall surface average (∂m/∂). Equation (11)
+is solved to obtain the convective mass transfer coefficient for each time and for each cartesian axis.
+From an arithmetic mean, the values of the convective mass transfer coefficient were calculated, as
+shown in Table 3.
+
+
+Energies 2020, 12, x; doi: FOR PEER REVIEW                                          www.mdpi.com/journal/energies
+       Figure 12 shows the Neperian logarithm of the mass diffusivity for each air predicted by the
+simulations and Equation (16). From the analysis of this figure, we can see a linear behavior of this
+variable, and an excellent concordance between the results, with the coefficient of determination
+equal to 0.998.
+Energies 2020, 13, 2073                                                                            13 of 18
+       After fitting, the following values were obtained: D0 = 2.577 × 10−9 m²/s and Ea = 101562.96 J/mol.
+ Energies 2020, 13, x FOR PEER REVIEW                                                                                     14 of 19
+
+
+                          Figure 12. Mass diffusivity in brick according to Arrhenius Law.
+
+       The water mass gradient on the three cartesian axes (∂mX/∂X, ∂mY/∂Y e ∂mZ/∂Z) was provided
+ for each time step in the numerical simulation, as well as the overall surface average (∂m/∂). Equation
+ (11) is solved to obtain the convective mass transfer coefficient for each time and for each cartesian
+ axis. From an arithmetic mean, the values of the convective mass transfer coefficient were calculated,
+ as shown in Table 3.
+
+
+                    Table 3. Convective mass transfer coefficients obtained with the simulations.
+
+                    Drying Temperature hm,X [m/s] hm,Y [m/s] hm,Z [m/s] hm [m/s]
+                              50 °C              6.87 × 10−5 5.95 × 10−7 1.82 × 10−6 8.38 × 10−4
+                              60 °C              4.50 × 10−5 4.22 × 10−7 4.56 × 10−7 4.78 × 10−4
+                              70 °C              4.78 × 10−5 4.87 × 10−7 1.08 × 10−7 4.83 × 10−4
+                            Figure 12. Mass diffusivity in −5
+                                                           brick according   to Arrhenius Law.
+                              80 °C              5.10 × 10      5.46 × 10−7 1.11 × 10−7 5.07 × 10−4
+Energies 2020, 12, x; doi: FOR PEER REVIEW                                                www.mdpi.com/journal/energies
+                    Table 3. 90 °C
+                              Convective mass 5.41    × 10
+                                                transfer   −5   6.00 × 10
+                                                         coefficients     −7
+                                                                      obtained  2.33
+                                                                                with×the
+                                                                                      10simulations.
+                                                                                         −7 5.31 × 10−4
+                              100 °C             5.89 × 10−5 6.65 × 10−7 2.86 × 10−7 5.71 × 10−4
+      Drying
+                             |hm,X | [m/s]            |hm,Y | [m/s]            |hm,Z | [m/s]                |hm | [m/s]
+    Temperature
+ 3.2. Transient
+          ◦
+                Analysis of Heat Transfer
+                                   −5
+         50 C                 6.87 × 10               5.95 × 10−7              1.82 × 10−6              8.38 × 10−4
+        The
+          60 ◦temporal
+                C        evolution     of the surface 4.22
+                                4.50 × 10−5
+                                                        temperature
+                                                             × 10−7
+                                                                        of the brick   (vertex) is shown
+                                                                                4.56 × 10−7
+                                                                                                            in Figure 13,
+                                                                                                        4.78 × 10−4
+ with the ◦temperature measured−5in the point highlighted                by  Figure   2b. The   same   credibility  of the
+          70 C                  4.78 × 10               4.87 × 10−7             1.08 × 10−7             4.83 × 10−4
+ model is observed in the material heating curves, where the numerical data are in reasonable
+          80 ◦ C with the experimental
+ concordance                    5.10 × 10−5 data. 5.46 × 10−7                   1.11 × 10−7             5.07 × 10−4
+           is ◦ C
+        It90  observed that the           −5
+                                   numerical
+                                5.41 × 10       curve 6.00   × 10−7
+                                                       presents   values below2.33the× 10−7
+                                                                                      experimental ones     for10−4
+                                                                                                        5.31 ×  instances
+ of time     below 600 min,5.89
+         100 ◦ C                 after  the
+                                     × 10 −5 curve is 6.65
+                                                       inverted,
+                                                             × 10−7and the 2.86
+                                                                             numerical
+                                                                                     × 10−7values are 5.71
+                                                                                                        higher   than the
+                                                                                                             × 10−4
+ experimental data. This behavior is common for all temperatures, and this phenomenon may be
+ explained
+3.2.  Transientby the  factofthat
+                  Analysis        constant
+                               Heat  Transferthermophysical properties have been adopted in the solid domain
+ and due to the energy required to evaporate the product water, was considered negligible in the
+       The temporal
+ mathematical          evolution
+                     model.   Thus,ofthe
+                                       theheat
+                                           surface  temperature
+                                                transferred        of solid
+                                                              to the  the brick  (vertex) is shown
+                                                                            by convection            in Figure only
+                                                                                              is transformed    13, with
+                                                                                                                      into
+the  temperature     measured     in the  point  highlighted   by  Figure  2b. The   same  credibility  of
+ sensitive heat for the heating of the brick, whereas in practice, the heat is transformed into sensitive  the  model  is
+observed     in  the material  heating   curves,  where   the numerical    data are  in reasonable
+ heat for the heating of the clay mass and the moisture of the brick and heat latent for moisture    concordance    with
+the  experimental data.
+ vaporization.
+
+
+
+
+                    Figure13.
+                   Figure  13.Temperature
+                               Temperatureofofthe
+                                                thebrick
+                                                    bricksurface
+                                                          surfaceasasa afunction
+                                                                          functionofofthe
+                                                                                        thedrying
+                                                                                            dryingtime.
+                                                                                                    time.
+
+
+ Energies 2020, 12, x; doi: FOR PEER REVIEW                                                www.mdpi.com/journal/energies
+Energies 2020, 13, 2073                                                                                                           14 of 18
+
+
+
+      It is observed that the numerical curve presents values below the experimental ones for instances
+of time below 600 min, after the curve is inverted, and the numerical values are higher than the
+experimental data. This behavior is common for all temperatures, and this phenomenon may be
+explained by the fact that constant thermophysical properties have been adopted in the solid domain
+and due to the energy required to evaporate the product water, was considered negligible in the
+mathematical model. Thus, the heat transferred to the solid by convection is transformed only into
+sensitive heat for the heating of the brick, whereas in practice, the heat is transformed into sensitive heat
+for the heating of the clay mass and the moisture of the brick and heat latent for moisture vaporization.
+      It is worth mentioning that in order to carry out the experimental measurements, it was necessary
+to remove  Energies
+               the2020,   13, x FOR
+                      brick     fromPEER  REVIEW the oven to perform the measurements, causing 15
+                                        inside                                                                            of 19external air
+                                                                                                                         the
+that is colderItand        morementioning
+                     is worth      humid tothat  interfere
+                                                     in orderwith      the measured
+                                                                 to carry                  data. This
+                                                                             out the experimental        experimental
+                                                                                                      measurements,         measurement
+                                                                                                                       it was
+methodologynecessarycauses     inaccuracies
+                         to remove     the brickinfrom
+                                                    the inside
+                                                          experimental
+                                                                  the oven to results,
+                                                                                 perform being
+                                                                                            the one of    the causes
+                                                                                                 measurements,         of the
+                                                                                                                 causing   the mentioned
+           external air
+discrepancy.               that is colder
+                  Furthermore,          theand more
+                                             measurementhumid tof the
+                                                                    interfere with   the measured
+                                                                           temperature       has beendata.done
+                                                                                                           This in the
+                                                                                                                experimental
+                                                                                                                         vertex region of
+           measurement methodology causes inaccuracies in the experimental results, being one of the causes
+the brick, and it is subjected to experimental errors easily.
+           of the mentioned discrepancy. Furthermore, the measurement of the temperature has been done in
+      For the
+           an vertex
+               appropriate
+                         region ofthermal
+                                     the brick,analysis,    the temperature
+                                                and it is subjected                 fields
+                                                                      to experimental       on easily.
+                                                                                         errors the brick surface are represented in
+Figure 14. AFor   small     temperature
+                       an appropriate          variation
+                                         thermal  analysis, is
+                                                             theperceived
+                                                                  temperaturein     thison the
+                                                                                 fields   region,
+                                                                                                brickwhich    can reduce
+                                                                                                     surface are represented the effects of
+non-uniformin Figure    14. A small
+                    drying      and, temperature
+                                       consequently, variation  is
+                                                           failuresperceived
+                                                                        in  thein this
+                                                                                materialregion, which can
+                                                                                              in the  firingreduce the The
+                                                                                                              stage.   effects
+                                                                                                                             results show
+           of non-uniform drying and, consequently, failures in the material in the firing stage. The results show
+that the greatest       temperature variation always occurs in the first hour of the process.
+           that the greatest temperature variation always occurs in the first hour of the process.
+
+
+
+
+                                  (a) 10 minutes                                         (b) 60 minutes
+
+
+
+
+                                                             (c) 690 minutes
+
+      Figure 14. Figure 14. Temperature
+                  Temperature           distribution
+                                  distribution     onon the
+                                                        the brick
+                                                             bricksurface for drying
+                                                                      surface    for atdrying
+                                                                                        90 °C, with 90 ◦ C, with different
+                                                                                                at different
+                                                durations—(a), (b), and (c).
+      durations—(a–c).
+                 The vertices on the right side of the brick reach high temperatures more quickly comparing to
+    Theother
+        vertices  onshowing
+             regions,  the rightthatside   of the
+                                     it is not     brick reach
+                                               appropriate         high
+                                                           to assume      temperatures
+                                                                       a constant          more
+                                                                                  temperature      quickly
+                                                                                               on the  surfacecomparing
+                                                                                                               of         to
+other the
+     regions,  showing
+          solid. Due  to thethat
+                             air it
+                                flowis not   appropriate
+                                      direction (from        toleft,
+                                                      right to  assume     a constant
+                                                                     perpendicular       temperature
+                                                                                   to the ZY plane), the on   the surface of
+                                                                                                         internal
+           part of the brick remains colder than the others region of the brick during the entire drying process.
+
+           Energies 2020, 12, x; doi: FOR PEER REVIEW                                        www.mdpi.com/journal/energies
+Energies 2020, 13, 2073                                                                                                      15 of 18
+      Energies 2020, 13, x FOR PEER REVIEW                                                                             16 of 19
+
+the solid.
+     This Due    to the air
+           asymmetric          flowshows
+                         heating     direction    (from
+                                            that the      right of
+                                                       position   tothe
+                                                                     left,material
+                                                                            perpendicular
+                                                                                     inside thetooventhe ZY    plane),
+                                                                                                           directly      the the
+                                                                                                                     affects  internal
+part of the  brick gradient
+     temperature    remainsin thecolder  than the others region of the brick during the entire drying process.
+                                      brick.
+          Therefore,heating
+This asymmetric        it is expected
+                                 showsthatthata the
+                                                 change   in theof
+                                                      position     position   of the brick
+                                                                     the material       inside inside   the oven
+                                                                                                  the oven          completely
+                                                                                                                directly   affects the
+     changes  the  behavior    of
+temperature gradient in the brick.the temperature      on the  surface  of  the  solid.  It is important     to note  that high
+     temperature
+     Therefore, itgradients,
+                     is expected caused  by auncontrolled
+                                      that     change in drying,       can cause
+                                                              the position          various
+                                                                                of the    bricktypes   of defects
+                                                                                                  inside           in thecompletely
+                                                                                                            the oven      brick,
+     such as cracks, deformations, fissures, among others. These types of problems can occur when using,
+changes the behavior of the temperature on the surface of the solid. It is important to note that high
+     for example, drying air conditions, a high temperature and velocity, and low relative humidity of the
+temperature gradients, caused by uncontrolled drying, can cause various types of defects in the brick,
+     drying air. Obviously, defects arising from the forming process are not being taken into account.
+such as cracks,
+          Figuresdeformations,
+                   15–17 illustratefissures,      amongofothers.
+                                      the distribution                These types
+                                                             air temperature     insideoftheproblems
+                                                                                               oven (Plane canXZ)
+                                                                                                                occur    when using,
+                                                                                                                    at different
+for example,
+     drying times and conditions. From the analysis of these figures, we can see that the heat transfer byof the
+               drying    air  conditions,    a high    temperature      and   velocity,     and   low    relative  humidity
+drying  air. Obviously,
+     a spontaneous          defects
+                       process        arising
+                                  occurs   fromfrom     the forming
+                                                   the high   temperatureprocess
+                                                                               (air)are
+                                                                                      to not
+                                                                                          the being
+                                                                                                lower taken      into account.
+                                                                                                         temperature     (brick)
+     Figures 15–17
+     regions. Duringillustrate
+                         drying, thethehot air
+                                         distribution
+                                                  supplyofheats
+                                                             air the
+                                                                  temperature
+                                                                        brick and, inside
+                                                                                       as it the   oven
+                                                                                              passes       (Plane
+                                                                                                        over   the XZ)    at it
+                                                                                                                    material,different
+     undergoes
+drying  times and a slight   decrease
+                     conditions.        in its
+                                     From       temperature,
+                                             the analysis        especially
+                                                              of these         near we
+                                                                          figures,    thecanbrickseesurface
+                                                                                                      that theand   within
+                                                                                                                 heat        the by a
+                                                                                                                        transfer
+     thermal boundary
+spontaneous    process layer.      Furthermore,
+                           occurs from     the high  as the air flows from
+                                                        temperature            right
+                                                                         (air) to  theto left
+                                                                                         lower  of the   brick, there is
+                                                                                                   temperature            also a
+                                                                                                                     (brick)  regions.
+     symmetry   between     the  upper  and   lower   part of  the  material  in  the  XZ   Plane.
+During drying, the hot air supply heats the brick and, as it passes over the material, it undergoes a
+          The greatest temperature variation occurs in the initial drying times, where the brick is at a low
+slight decrease in its temperature, especially near the brick surface and within the thermal boundary
+     temperature and at any temperature of the drying air. It was observed that the largest temperature
+layer. Furthermore, as the air flows from right to left of the brick, there is also a symmetry between the
+     gradients occur, precisely in the vicinity of the brick surface, corresponding to the thermal boundary
+upper  and lower part of the material in the XZ Plane.
+     layer.
+
+
+
+
+       Figure2020,  Air
+               15. 13,   temperature  distribution inside the oven (Plane XZ) for drying at 90             ◦ C (t = 10 min).
+      Energies         x FOR PEER REVIEW                                                                               17 of 19
+             Figure 15. Air temperature distribution inside the oven (Plane XZ) for drying at 90 °C (t = 10 min).
+
+
+
+
+      Energies 2020, 12, x; doi: FOR PEER REVIEW                                              www.mdpi.com/journal/energies
+
+       Figure 16. Air temperature distribution inside the oven (Plane XZ) for drying at 90 ◦ C (t = 60 min).
+             Figure 16. Air temperature distribution inside the oven (Plane XZ) for drying at 90 °C (t = 60 min).
+Energies 2020, 13, 2073                                                                                       16 of 18
+       Figure 16. Air temperature distribution inside the oven (Plane XZ) for drying at 90 °C (t = 60 min).
+
+
+
+
+      Figure 17. Air temperature distribution inside the oven (Plane XZ) for drying at 90 ◦ C (t = 690 min).
+      Figure 17. Air temperature distribution inside the oven (Plane XZ) for drying at 90 °C (t = 690 min).
+    The greatest temperature variation occurs in the initial drying times, where the brick is at
+    Fortemperature
+a low    each instantandof time,
+                           at anythe  results of the
+                                   temperature         numerical
+                                                  of the   drying simulation
+                                                                    air. It wasprovide
+                                                                                  observed thethat
+                                                                                                values of the
+                                                                                                   the largest
+convective
+temperature heat transfer
+             gradients    coefficients.
+                        occur,          Performing
+                               precisely in the      an of the
+                                                vicinity arithmetic
+                                                                brickmean   of the results,
+                                                                      surface,              the to
+                                                                                corresponding   values
+                                                                                                   the of this
+                                                                                                      thermal
+parameter  for
+boundary layer.each drying   temperature   are reported   in Table 4.
+     For each instant of time, the results of the numerical simulation provide the values of the convective
+                 Table 4. Convective heat transfer coefficient obtained with the simulations.
+heat transfer coefficients. Performing an arithmetic mean of the results, the values of this parameter
+for each drying temperature are reported
+                                    Temperaturein Table
+                                                    [°C]4. hc [W/(m².K)]
+                                             50                 0.9655
+                 Table 4. Convective heat transfer coefficient obtained with the simulations.
+                                             60                 1.0700
+                  Temperature [◦ C]          70                 1.1603      hc [W/(m2 ·K)]
+                           50
+                                             80                 1.2486           0.9655
+                                             90                 1.2887
+                           60                                                    1.0700
+                                            100                 1.3931
+                            70                                                    1.1603
+4. Conclusions              80                                                    1.2486
+                            90                                                    1.2887
+Energies 2020, 12, x; doi: FOR PEER REVIEW                                         www.mdpi.com/journal/energies
+                            100                                                   1.3931
+
+
+4. Conclusions
+    According to the numerical results obtained for drying hollow ceramic bricks, it can be
+concluded that:
+
+(a)   The proposed mathematical modeling was adequate, providing numerical results of the
+      temperature at the vertex and water mass of the bricks along the drying process with a good
+      agreement with the experimental data;
+(b)   The higher the drying air temperature, the faster the heating and drying rates are;
+(c)   The temperature and moisture content distribution on the brick surface have shown a strong
+      dependence with the direction of air flow inside the oven and drying conditions;
+(d)   There were variations in both moisture content and temperature on the brick surface and
+      temperature and absolute humidity, showing that a convective boundary condition is more
+      appropriate for describing this process;
+Energies 2020, 13, 2073                                                                                      17 of 18
+
+
+
+(e)   The heat and mass transfer coefficients by convection and the mass diffusion coefficient increased
+      with increasing drying air temperature;
+(f)   The rise in mass diffusivity with the drying-air temperature is in accordance with the Arrhenius law.
+
+
+Author Contributions: Conceptualization, M.d.V.A.; methodology, M.d.V.A.; R.S.S. and A.G.B.d.L.; software,
+M.d.V.A.; validation, M.d.V.A. and A.G.B.d.L.; formal analysis, M.d.V.A. and A.G.B.d.L.; investigation, M.d.V.A.;
+resources, M.d.V.A. and A.G.B.d.L.; data curation, M.d.V.A. and A.G.B.d.L.; writing—original draft preparation,
+M.d.V.A.; B.R.d.B.C. and A.G.B.d.L.; writing—review and editing, M.d.V.A. and A.G.B.d.L.; visualization, M.d.V.A.;
+B.R.d.B.C.; R.S.S.; supervision, M.d.V.A. and A.G.B.d.L.; project administration, M.d.V.A.; V.A.A.B.; funding
+acquisition, M.d.V.A.; B.R.d.B.C.; V.A.A.B.; I.R.d.O.; R.S.S.; G.L.d.O.N.; L.P.d.L.S. and A.G.B.d.L. All authors have
+read and agreed to the published version of the manuscript.
+Funding: This research was funded by CNPQ, CAPES and FINEP.
+Acknowledgments: The authors thank CNPQ, CAPES and FINEP (Brazilian Research Agencies) for financial
+support and the researchers cited in the text that helped in the improvement.
+Conflicts of Interest: The authors declare no conflict of interest.
+
+References
+1.    Foust, A.S.; Wenzel, L.A.; Clump, C.W.; Maus, L.; Andersen, L.B. Principles of Unit Operations. Rio Jan.
+      Guanabara Dois S. A 2015, 1.
+2.    Batista, V.R.; Nascimento, J.J.S.; Lima, A.G.B. Drying and burning of massive and cast ceramic bricks
+      including dimensional variations and structural damage. Rev. Eletrônica Mater. Process. 2008, 3, 46–61.
+      (In Portuguese)
+3.    Batista, V.R.; Nascimento, J.J.S.; Lima, A.G.B. Drying and volumetric retraction of solid and hollow ceramic
+      bricks: A theoretical and experimental investigation. Matéria 2009, 14, 1088–1100. (In Portuguese)
+4.    Cadé, M.A.; Nascimento, J.J.S.; Lima, A.G.B. Drying of Holed Ceramic Bricks: An Approach by Finite-Volumes.
+      Matéria 2005, 10, 443–453. (In Portuguese)
+5.    Nascimento, J.J.S.; Lima, A.G.B. Experimental Drying of Ceramics Bricks Including Shrinkage. Defect Diffus.
+      Forum 2015, 365, 106–111. [CrossRef]
+6.    Silva, J.B.; Almeida, G.S.; Lima, W.C.P.B.; Neves, G.A.; Lima, A.G.B. Heat and Mass Transfer and Volume
+      Variations during Drying of Industrial Ceramic Bricks: An Experimental Investigation. Defect Diffus. Forum
+      2012, 326, 267–272. [CrossRef]
+7.    Lopez, E.M.; Cortes, L.L. Moisture transfer analysis during drying of brick by temperature and relative
+      humidity profiles. Eur. Sci. J. 2012, 9, 109–122.
+8.    Pel, L.; Ketelaars, A.A.J.; Adan, O.C.G.; Van Well, A.A. Determination of moisture diffusivity in porous
+      media using scanning neutron radiography. Int. J. Heat Mass Transf. 1993, 36, 1261–1267. [CrossRef]
+9.    Gualtieri, A.F.; Ricchi, A.; Gualtieri, M.L.; Maretti, S.; Tamburini, M. Kinetic study of the drying process of
+      clay bricks. J. Therm. Anal. Calorim. 2016, 123, 153–167. [CrossRef]
+10.   Brooker, D.B.; Bakker-Arkema, F.W.; Hall, C.W. Drying and Storage of Grains and Oilseeds; AVI Book: New
+      York, NY, USA, 1992; 450p.
+11.   Fortes, M.; Okos, M.R. Advances in Drying; Hemisphere Publishing Corporation: Washington, WA, USA,
+      1980; Volume 1, pp. 119–154.
+12.   Strumillo, C.; Kudra, T. Drying: Principles, Science and Design; Gordon and Breach Science Publishers:
+      New York, NY, USA, 1986; 448p.
+13.   Augier, F.; Coumans, W.J.; Hugget, A.; Kaasschieter, E.F. On the risk of cracking in clay drying. Chem. Eng. J.
+      2002, 86, 133–138. [CrossRef]
+14.   Van der Zanden, A.J.J.; Schoenmakers, A.M.E.; Kerkhof, P.J.A.M. Isothermal vapour and liquid transport
+      inside clay during drying. Dry. Technol. 1996, 14, 647–676. [CrossRef]
+15.   Silva, W.P.; Farias, V.S.O.; Neves, G.A.; Lima, A.G.B. Modeling of water transport in roof tiles by removal of
+      moisture at isothermal conditions. Heat Mass Transf. 2012, 48, 809–821. [CrossRef]
+16.   Tomas, S.; Skansi, D.; Sokele, M. Convection drying of porous material. Ceram. Int. 1994, 20, 9–16. [CrossRef]
+17.   Van der Zanden, A.J.J.; de Wit, M.H. A procedure to measure the diffusion coefficient of water in brick as a
+      function of the water concentration. Dry. Technol. Int. J. 2012, 30, 526–534. [CrossRef]
+Energies 2020, 13, 2073                                                                                            18 of 18
+
+
+
+18.   Telljohann, U.; Junge, K.; Specht, E. Moisture diffusion coefficients for modeling the first and second drying
+      sections of green bricks. Dry. Technol. 2008, 26, 855–863. [CrossRef]
+19.   Araújo, M.V.; Santos, R.S.; Silva, R.M.E.; Lima, A.G.B. Drying of Industrial Hollow Ceramic Brick: Analysis
+      of the Moisture Content and Temperature Parameters. Defect Diffus. Forum 2017, 380, 72–78. [CrossRef]
+20.   Araújo, M.V.; Delgado, J.M.P.Q.; Barbosa de Lima, A.G. On the Use of CFD in Thermal Analysis of Industrial
+      Hollow Ceramic Brick. Diffus. Found. 2017, 10, 70–82. [CrossRef]
+21.   Araújo, M.V.; Santos, R.S.; Silva, R.M.; Nascimento, J.B.S.; Santos, W.R.G.; Lima, A.G.B. Drying of Industrial
+      Hollow Ceramic Brick: A Numerical Analysis Using CFD. Defect Diffus. Forum 2019, 391, 48–53. [CrossRef]
+22.   Araújo, M.V.; Pereira, A.S.; Oliveira, J.L.; Brandão, V.A.A.; Brasileiro Filho, F.; De, A.; Silva, R.M.; Lima, A.G.B.
+      Industrial Ceramic Brick Drying in Oven by CFD. Materials 2019, 12, 1612. [CrossRef]
+23.   Silva, J.B. Simulation and Experimentation of Drying Ceramic Bricks. Ph.D. Thesis, Federal University of
+      Campina Grande, Campina Grande, Brazil, 2009; 173p. (In Portuguese).
+24.   Inc Ansys. NSYS CFX-Solver Theory Guide; Inc Ansys: Canonsburg, PA, USA, 2013; 356p.
+25.   Araújo, M.V. Numerical Study of the Water and Oil Biphasic Flow in T-Connections in the Presence of Leak.
+      Master’s Thesis, dissertation in Chemical Engineering, Federal University of Campina Grande, Campina
+      Grande, Brazil, 2014; 87p. (In Portuguese).
+26.   Almeida, G.S. Simulation and Experimentation of Red Ceramic Drying in Industrial Thermal Systems.
+      Ph.D. Thesis, Federal University of Campina Grande, Campina Grande, Brazil, 2009; 189p. (In Portuguese).
+27.   Çengel, Y.A.E.; Ghajar, A.J. Heat and Mass Transfer: Fundamentals & Applications; AMGH: Porto Alegre, Brazil,
+      2012. (In Portuguese)
+28.   Corrêa, P.C.; Resende, O.; Goneli, A.L.D.; Botelho, F.M.; Nogueira, B.L. Determination of the liquid diffusion
+      coefficient of beans. Braz. J. Agro Ind. Prod. 2006, 8, 117–126. (In Portuguese)
+29.   Silva, J.B.; Almeida, G.S.; Lima, W.C.P.B.; Neves, G.A.; Lima, A.G.B. Heat and mass diffusion including
+      shrinkage and hygrothermal stress during drying of holed ceramics bricks. Defect Diffus. Forum 2011, 312,
+      971–976. [CrossRef]
+30.   Silva, W.P.; Silva, C.M.D.P.S.; Silva, L.D.; Farias, V.S.O. Drying of clay slabs: Experimental determination and
+      prediction by two-dimensional diffusion models. Ceram. Int. 2013, 39, 7911–7919. [CrossRef]
+31.   Shokouhmand, H.; Abdollahi, V.; Hosseini, S.; Vahidkhah, K. Performance optimization of a brick dryer
+      using porous simulation approach. Dry. Technol. Int. J. 2011, 29, 360–370. [CrossRef]
+
+                          © 2020 by the authors. Licensee MDPI, Basel, Switzerland. This article is an open access
+                          article distributed under the terms and conditions of the Creative Commons Attribution
+                          (CC BY) license (http://creativecommons.org/licenses/by/4.0/).
+
