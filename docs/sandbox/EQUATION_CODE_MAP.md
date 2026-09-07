@@ -124,3 +124,14 @@
 `NUM-TIME-CLOCK-EXACT-BINARY-1` → `integration.integrate`：名义二进制步长用 Fraction 精确累加，断点同步、两种拒绝重锚；保留原 min(ulp(target),32ulp(step)) 局部端点界。实际 RK/通量/功始终积分真实端点差。`tests/sandbox/test_integration_clock.py` 有12项新回归，含完整边界通量和3W功；完整安装1124测试通过，三尺度短湿活动相变制造案例通过。历史失败、数值理由、安装身份与独立审查见 `research/integration-clock-correction/README.md`。这不是材料方程或全周期验证。
 
 HEOS共存数值政策 `NUM-HEOS-COEXISTENCE-BACKTRACK-1`：固定T的F=(Δp,Δg)，对logρ的Jacobian保持原式；最大原门槛归一化残差下降回溯见 `src/sludge_sandbox/_heos_kernel.py::_saturation_pair_locked`。数值控制回归 `tests/sandbox/test_heos_backtracking.py`，原生公式与原组合耗尽实际证据 `research/heos-coexistence-backtracking/`。回溯仅为数值政策，不是新增物理本构。
+
+## 反应与规定变形的组成储能
+
+| 关系/合同 | 实现 | 实际检查 |
+|---|---|---|
+| q(N) 及机械内能、组成偏导、固定组成应力/耗散缩放 | reacting_skeleton_energy.py | test_reacting_skeleton_energy.py；独立同时改变 F/N 的链式法则差分 |
+| 当前库存占积与总储能一次反解 | deforming_solid_storage.py | test_reacting_deforming_solid_heat.py；固定总能量组成变化 |
+| 当前反应储能重绑、固定组成外功、−p Vbulk_dot | deforming_solid_heat.py | 非一阶速率当前体积与反解对象一致性；实际干态反应/压缩轨迹 |
+| 不混合两套分项功字段 | integration.py | test_reacting_deforming_solid_heat.py 与原 component/depletion 回归 |
+
+上述 q 与 A→B 参数均为 manufactured_test_fixture，不属于材料证据注册或实验验证。实际细化、旧失败和审查见 research/reacting-deformation-v1/README.md。

@@ -1,0 +1,704 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="0" tests="5" time="0.687" timestamp="2026-09-07T09:52:38.424211-10:00" hostname="Ws-MacBook-Pro.local"><testcase classname="tests.sandbox.test_reacting_deforming_solid_heat" name="test_reactions_use_current_storage_volume_and_one_inverse" time="0.010"><failure message="sludge_sandbox.deforming_solid_heat.DeformingSolidHeatError: unsupported_identity_type:Fraction">self = DeformingSolidHeat(base_model=SolidFluidHeat(storages=(SolidFluidStorage(fluid_template=RigidStorage(mechanical=RigidW...odata-2022', 'nist-h2o-chase-1998-reference'), allow_manufactured=True, solid_inventory_regime='reacting_manufactured')
+
+    def __post_init__(self):
+        base=self.base_model
+        if type(base) is not SolidFluidHeat or not isinstance(self.point_storages,tuple) or not self.point_storages:
+            raise DeformingSolidHeatError('explicit_solid_base_and_points_required')
+        if len(self.point_storages)!=len(base.storages) or any(type(p) is not DeformingSolidStorage for p in self.point_storages):
+            raise DeformingSolidHeatError('complete_point_storages_required')
+        if self.solid_inventory_regime not in ('fixed_solid','reacting_manufactured'):
+            raise DeformingSolidHeatError('explicit_solid_inventory_regime_required')
+        reacting=self.solid_inventory_regime=='reacting_manufactured'
+        if any((type(p.skeleton) is ManufacturedReactingSkeletonEnergy)!=reacting for p in self.point_storages):
+            raise DeformingSolidHeatError('skeleton_inventory_regime_mismatch')
+        if not reacting and base.solid_reactions is not None:raise DeformingSolidHeatError('solid_reactions_not_admitted')
+        if (self.mechanical_regime!='prescribed_cellwise_quasistatic_incompressible_skeleton'
+            or self.transport_regime!='manufactured_relative_moving_faces'):
+            raise DeformingSolidHeatError('explicit_prescribed_relative_motion_regimes_required')
+        if self.allow_manufactured is not True or base.transport.coefficient_classification!='manufactured':
+            raise DeformingSolidHeatError('explicit_manufactured_transport_required')
+        if not isinstance(self.source_ids,tuple) or not self.source_ids:
+            raise DeformingSolidHeatError('explicit_host_sources_required')
+        for value in (self.model_id,self.version)+self.source_ids:
+            if not isinstance(value,str) or not value or value.strip()!=value:
+                raise DeformingSolidHeatError('explicit_host_identity_required')
+        motion=self.point_storages[0].motion
+        object.__setattr__(self,'source_ids',tuple(sorted(set(self.source_ids+base.source_ids+motion.source_ids+
+            tuple(v for p in self.point_storages for v in p.skeleton.source_ids+p.error_bounds.source_ids)))))
+        for i,(p,storage) in enumerate(zip(self.point_storages,base.storages)):
+            if p.template is not storage or p.skeleton.cell_index!=i or p.motion.identity!=motion.identity:
+                raise DeformingSolidHeatError('point_template_cell_motion_mismatch')
+        try:
+            motion.validate_reference_geometry(cell_count=len(base.storages),face_area_m2=base.transport.face_area_m2,
+                cell_widths_m=base.transport.cell_widths_m,gas_volumes_m3=tuple(s.bulk_volume_m3 for s in base.storages))
+&gt;           digest=_digest(base)
+                   ^^^^^^^^^^^^^
+
+src/sludge_sandbox/deforming_solid_heat.py:93:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/sludge_sandbox/deforming_solid_storage.py:62: in _digest
+    def _digest(x):return hashlib.sha256(json.dumps(_canonical(x),sort_keys=True,separators=(',',':')).encode()).hexdigest()
+                                                    ^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:57: in _canonical
+    if isinstance(x,(tuple,list)):return [_canonical(v) for v in x]
+                                          ^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:56: in _canonical
+    if isinstance(x,Mapping):return ['mapping',[[k,_canonical(v)] for k,v in sorted(x.items())]]
+                                                   ^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+x = Fraction(-1, 1)
+
+    def _canonical(x):
+        if x is None or type(x) in (str,bool,int):return x
+        if type(x) is float:
+            if not math.isfinite(x):raise DeformingStorageError('nonfinite_identity')
+            return ['float',x.hex()]
+        if is_water_provider(x):
+            return ['source_gated_water',_canonical(x.reference),_canonical(x.source_asset_sha256),_canonical(x.numerical_limits)]
+        if isinstance(x,Mapping):return ['mapping',[[k,_canonical(v)] for k,v in sorted(x.items())]]
+        if isinstance(x,(tuple,list)):return [_canonical(v) for v in x]
+        if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+&gt;       raise DeformingStorageError('unsupported_identity_type:'+type(x).__name__)
+E       sludge_sandbox.deforming_solid_storage.DeformingStorageError: unsupported_identity_type:Fraction
+
+src/sludge_sandbox/deforming_solid_storage.py:59: DeformingStorageError
+
+The above exception was the direct cause of the following exception:
+
+water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x10cd8b440&gt;
+
+    def test_reactions_use_current_storage_volume_and_one_inverse(water,monkeypatch):
+        forbid_eos(water,monkeypatch)
+&gt;       op = reacting_host(water,order=2.)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_reacting_deforming_solid_heat.py:71:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests/sandbox/test_reacting_deforming_solid_heat.py:56: in reacting_host
+    return replace(old,base_model=base,point_storages=(p,),solid_inventory_regime='reacting_manufactured')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/dataclasses.py:1588: in replace
+    return obj.__class__(**changes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;string&gt;:12: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = DeformingSolidHeat(base_model=SolidFluidHeat(storages=(SolidFluidStorage(fluid_template=RigidStorage(mechanical=RigidW...odata-2022', 'nist-h2o-chase-1998-reference'), allow_manufactured=True, solid_inventory_regime='reacting_manufactured')
+
+    def __post_init__(self):
+        base=self.base_model
+        if type(base) is not SolidFluidHeat or not isinstance(self.point_storages,tuple) or not self.point_storages:
+            raise DeformingSolidHeatError('explicit_solid_base_and_points_required')
+        if len(self.point_storages)!=len(base.storages) or any(type(p) is not DeformingSolidStorage for p in self.point_storages):
+            raise DeformingSolidHeatError('complete_point_storages_required')
+        if self.solid_inventory_regime not in ('fixed_solid','reacting_manufactured'):
+            raise DeformingSolidHeatError('explicit_solid_inventory_regime_required')
+        reacting=self.solid_inventory_regime=='reacting_manufactured'
+        if any((type(p.skeleton) is ManufacturedReactingSkeletonEnergy)!=reacting for p in self.point_storages):
+            raise DeformingSolidHeatError('skeleton_inventory_regime_mismatch')
+        if not reacting and base.solid_reactions is not None:raise DeformingSolidHeatError('solid_reactions_not_admitted')
+        if (self.mechanical_regime!='prescribed_cellwise_quasistatic_incompressible_skeleton'
+            or self.transport_regime!='manufactured_relative_moving_faces'):
+            raise DeformingSolidHeatError('explicit_prescribed_relative_motion_regimes_required')
+        if self.allow_manufactured is not True or base.transport.coefficient_classification!='manufactured':
+            raise DeformingSolidHeatError('explicit_manufactured_transport_required')
+        if not isinstance(self.source_ids,tuple) or not self.source_ids:
+            raise DeformingSolidHeatError('explicit_host_sources_required')
+        for value in (self.model_id,self.version)+self.source_ids:
+            if not isinstance(value,str) or not value or value.strip()!=value:
+                raise DeformingSolidHeatError('explicit_host_identity_required')
+        motion=self.point_storages[0].motion
+        object.__setattr__(self,'source_ids',tuple(sorted(set(self.source_ids+base.source_ids+motion.source_ids+
+            tuple(v for p in self.point_storages for v in p.skeleton.source_ids+p.error_bounds.source_ids)))))
+        for i,(p,storage) in enumerate(zip(self.point_storages,base.storages)):
+            if p.template is not storage or p.skeleton.cell_index!=i or p.motion.identity!=motion.identity:
+                raise DeformingSolidHeatError('point_template_cell_motion_mismatch')
+        try:
+            motion.validate_reference_geometry(cell_count=len(base.storages),face_area_m2=base.transport.face_area_m2,
+                cell_widths_m=base.transport.cell_widths_m,gas_volumes_m3=tuple(s.bulk_volume_m3 for s in base.storages))
+            digest=_digest(base)
+            binding=('reacting_deforming_solid_heat_total_v1' if reacting else 'deforming_solid_heat_total_v1',SCOPE,_digest((digest,tuple(p.identity for p in self.point_storages),
+                self.mechanical_regime,self.transport_regime,self.model_id,self.version,self.source_ids)))
+&gt;       except (DeformingStorageError,DeformationProgramError) as exc:raise DeformingSolidHeatError(str(exc)) from exc
+                                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       sludge_sandbox.deforming_solid_heat.DeformingSolidHeatError: unsupported_identity_type:Fraction
+
+src/sludge_sandbox/deforming_solid_heat.py:96: DeformingSolidHeatError</failure></testcase><testcase classname="tests.sandbox.test_reacting_deforming_solid_heat" name="test_fixed_default_and_state_binding_are_preserved" time="0.004"><failure message="sludge_sandbox.deforming_solid_heat.DeformingSolidHeatError: unsupported_identity_type:Fraction">self = DeformingSolidHeat(base_model=SolidFluidHeat(storages=(SolidFluidStorage(fluid_template=RigidStorage(mechanical=RigidW...odata-2022', 'nist-h2o-chase-1998-reference'), allow_manufactured=True, solid_inventory_regime='reacting_manufactured')
+
+    def __post_init__(self):
+        base=self.base_model
+        if type(base) is not SolidFluidHeat or not isinstance(self.point_storages,tuple) or not self.point_storages:
+            raise DeformingSolidHeatError('explicit_solid_base_and_points_required')
+        if len(self.point_storages)!=len(base.storages) or any(type(p) is not DeformingSolidStorage for p in self.point_storages):
+            raise DeformingSolidHeatError('complete_point_storages_required')
+        if self.solid_inventory_regime not in ('fixed_solid','reacting_manufactured'):
+            raise DeformingSolidHeatError('explicit_solid_inventory_regime_required')
+        reacting=self.solid_inventory_regime=='reacting_manufactured'
+        if any((type(p.skeleton) is ManufacturedReactingSkeletonEnergy)!=reacting for p in self.point_storages):
+            raise DeformingSolidHeatError('skeleton_inventory_regime_mismatch')
+        if not reacting and base.solid_reactions is not None:raise DeformingSolidHeatError('solid_reactions_not_admitted')
+        if (self.mechanical_regime!='prescribed_cellwise_quasistatic_incompressible_skeleton'
+            or self.transport_regime!='manufactured_relative_moving_faces'):
+            raise DeformingSolidHeatError('explicit_prescribed_relative_motion_regimes_required')
+        if self.allow_manufactured is not True or base.transport.coefficient_classification!='manufactured':
+            raise DeformingSolidHeatError('explicit_manufactured_transport_required')
+        if not isinstance(self.source_ids,tuple) or not self.source_ids:
+            raise DeformingSolidHeatError('explicit_host_sources_required')
+        for value in (self.model_id,self.version)+self.source_ids:
+            if not isinstance(value,str) or not value or value.strip()!=value:
+                raise DeformingSolidHeatError('explicit_host_identity_required')
+        motion=self.point_storages[0].motion
+        object.__setattr__(self,'source_ids',tuple(sorted(set(self.source_ids+base.source_ids+motion.source_ids+
+            tuple(v for p in self.point_storages for v in p.skeleton.source_ids+p.error_bounds.source_ids)))))
+        for i,(p,storage) in enumerate(zip(self.point_storages,base.storages)):
+            if p.template is not storage or p.skeleton.cell_index!=i or p.motion.identity!=motion.identity:
+                raise DeformingSolidHeatError('point_template_cell_motion_mismatch')
+        try:
+            motion.validate_reference_geometry(cell_count=len(base.storages),face_area_m2=base.transport.face_area_m2,
+                cell_widths_m=base.transport.cell_widths_m,gas_volumes_m3=tuple(s.bulk_volume_m3 for s in base.storages))
+&gt;           digest=_digest(base)
+                   ^^^^^^^^^^^^^
+
+src/sludge_sandbox/deforming_solid_heat.py:93:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/sludge_sandbox/deforming_solid_storage.py:62: in _digest
+    def _digest(x):return hashlib.sha256(json.dumps(_canonical(x),sort_keys=True,separators=(',',':')).encode()).hexdigest()
+                                                    ^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:57: in _canonical
+    if isinstance(x,(tuple,list)):return [_canonical(v) for v in x]
+                                          ^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:56: in _canonical
+    if isinstance(x,Mapping):return ['mapping',[[k,_canonical(v)] for k,v in sorted(x.items())]]
+                                                   ^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+x = Fraction(-1, 1)
+
+    def _canonical(x):
+        if x is None or type(x) in (str,bool,int):return x
+        if type(x) is float:
+            if not math.isfinite(x):raise DeformingStorageError('nonfinite_identity')
+            return ['float',x.hex()]
+        if is_water_provider(x):
+            return ['source_gated_water',_canonical(x.reference),_canonical(x.source_asset_sha256),_canonical(x.numerical_limits)]
+        if isinstance(x,Mapping):return ['mapping',[[k,_canonical(v)] for k,v in sorted(x.items())]]
+        if isinstance(x,(tuple,list)):return [_canonical(v) for v in x]
+        if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+&gt;       raise DeformingStorageError('unsupported_identity_type:'+type(x).__name__)
+E       sludge_sandbox.deforming_solid_storage.DeformingStorageError: unsupported_identity_type:Fraction
+
+src/sludge_sandbox/deforming_solid_storage.py:59: DeformingStorageError
+
+The above exception was the direct cause of the following exception:
+
+water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+
+    def test_fixed_default_and_state_binding_are_preserved(water):
+        from sludge_sandbox.integration import ConservedState
+&gt;       op=reacting_host(water)
+           ^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_reacting_deforming_solid_heat.py:90:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests/sandbox/test_reacting_deforming_solid_heat.py:56: in reacting_host
+    return replace(old,base_model=base,point_storages=(p,),solid_inventory_regime='reacting_manufactured')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/dataclasses.py:1588: in replace
+    return obj.__class__(**changes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;string&gt;:12: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = DeformingSolidHeat(base_model=SolidFluidHeat(storages=(SolidFluidStorage(fluid_template=RigidStorage(mechanical=RigidW...odata-2022', 'nist-h2o-chase-1998-reference'), allow_manufactured=True, solid_inventory_regime='reacting_manufactured')
+
+    def __post_init__(self):
+        base=self.base_model
+        if type(base) is not SolidFluidHeat or not isinstance(self.point_storages,tuple) or not self.point_storages:
+            raise DeformingSolidHeatError('explicit_solid_base_and_points_required')
+        if len(self.point_storages)!=len(base.storages) or any(type(p) is not DeformingSolidStorage for p in self.point_storages):
+            raise DeformingSolidHeatError('complete_point_storages_required')
+        if self.solid_inventory_regime not in ('fixed_solid','reacting_manufactured'):
+            raise DeformingSolidHeatError('explicit_solid_inventory_regime_required')
+        reacting=self.solid_inventory_regime=='reacting_manufactured'
+        if any((type(p.skeleton) is ManufacturedReactingSkeletonEnergy)!=reacting for p in self.point_storages):
+            raise DeformingSolidHeatError('skeleton_inventory_regime_mismatch')
+        if not reacting and base.solid_reactions is not None:raise DeformingSolidHeatError('solid_reactions_not_admitted')
+        if (self.mechanical_regime!='prescribed_cellwise_quasistatic_incompressible_skeleton'
+            or self.transport_regime!='manufactured_relative_moving_faces'):
+            raise DeformingSolidHeatError('explicit_prescribed_relative_motion_regimes_required')
+        if self.allow_manufactured is not True or base.transport.coefficient_classification!='manufactured':
+            raise DeformingSolidHeatError('explicit_manufactured_transport_required')
+        if not isinstance(self.source_ids,tuple) or not self.source_ids:
+            raise DeformingSolidHeatError('explicit_host_sources_required')
+        for value in (self.model_id,self.version)+self.source_ids:
+            if not isinstance(value,str) or not value or value.strip()!=value:
+                raise DeformingSolidHeatError('explicit_host_identity_required')
+        motion=self.point_storages[0].motion
+        object.__setattr__(self,'source_ids',tuple(sorted(set(self.source_ids+base.source_ids+motion.source_ids+
+            tuple(v for p in self.point_storages for v in p.skeleton.source_ids+p.error_bounds.source_ids)))))
+        for i,(p,storage) in enumerate(zip(self.point_storages,base.storages)):
+            if p.template is not storage or p.skeleton.cell_index!=i or p.motion.identity!=motion.identity:
+                raise DeformingSolidHeatError('point_template_cell_motion_mismatch')
+        try:
+            motion.validate_reference_geometry(cell_count=len(base.storages),face_area_m2=base.transport.face_area_m2,
+                cell_widths_m=base.transport.cell_widths_m,gas_volumes_m3=tuple(s.bulk_volume_m3 for s in base.storages))
+            digest=_digest(base)
+            binding=('reacting_deforming_solid_heat_total_v1' if reacting else 'deforming_solid_heat_total_v1',SCOPE,_digest((digest,tuple(p.identity for p in self.point_storages),
+                self.mechanical_regime,self.transport_regime,self.model_id,self.version,self.source_ids)))
+&gt;       except (DeformingStorageError,DeformationProgramError) as exc:raise DeformingSolidHeatError(str(exc)) from exc
+                                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       sludge_sandbox.deforming_solid_heat.DeformingSolidHeatError: unsupported_identity_type:Fraction
+
+src/sludge_sandbox/deforming_solid_heat.py:96: DeformingSolidHeatError</failure></testcase><testcase classname="tests.sandbox.test_reacting_deforming_solid_heat" name="test_changed_inventory_updates_storage_energy_and_pore_volume" time="0.005"><failure message="sludge_sandbox.deforming_solid_heat.DeformingSolidHeatError: unsupported_identity_type:Fraction">self = DeformingSolidHeat(base_model=SolidFluidHeat(storages=(SolidFluidStorage(fluid_template=RigidStorage(mechanical=RigidW...odata-2022', 'nist-h2o-chase-1998-reference'), allow_manufactured=True, solid_inventory_regime='reacting_manufactured')
+
+    def __post_init__(self):
+        base=self.base_model
+        if type(base) is not SolidFluidHeat or not isinstance(self.point_storages,tuple) or not self.point_storages:
+            raise DeformingSolidHeatError('explicit_solid_base_and_points_required')
+        if len(self.point_storages)!=len(base.storages) or any(type(p) is not DeformingSolidStorage for p in self.point_storages):
+            raise DeformingSolidHeatError('complete_point_storages_required')
+        if self.solid_inventory_regime not in ('fixed_solid','reacting_manufactured'):
+            raise DeformingSolidHeatError('explicit_solid_inventory_regime_required')
+        reacting=self.solid_inventory_regime=='reacting_manufactured'
+        if any((type(p.skeleton) is ManufacturedReactingSkeletonEnergy)!=reacting for p in self.point_storages):
+            raise DeformingSolidHeatError('skeleton_inventory_regime_mismatch')
+        if not reacting and base.solid_reactions is not None:raise DeformingSolidHeatError('solid_reactions_not_admitted')
+        if (self.mechanical_regime!='prescribed_cellwise_quasistatic_incompressible_skeleton'
+            or self.transport_regime!='manufactured_relative_moving_faces'):
+            raise DeformingSolidHeatError('explicit_prescribed_relative_motion_regimes_required')
+        if self.allow_manufactured is not True or base.transport.coefficient_classification!='manufactured':
+            raise DeformingSolidHeatError('explicit_manufactured_transport_required')
+        if not isinstance(self.source_ids,tuple) or not self.source_ids:
+            raise DeformingSolidHeatError('explicit_host_sources_required')
+        for value in (self.model_id,self.version)+self.source_ids:
+            if not isinstance(value,str) or not value or value.strip()!=value:
+                raise DeformingSolidHeatError('explicit_host_identity_required')
+        motion=self.point_storages[0].motion
+        object.__setattr__(self,'source_ids',tuple(sorted(set(self.source_ids+base.source_ids+motion.source_ids+
+            tuple(v for p in self.point_storages for v in p.skeleton.source_ids+p.error_bounds.source_ids)))))
+        for i,(p,storage) in enumerate(zip(self.point_storages,base.storages)):
+            if p.template is not storage or p.skeleton.cell_index!=i or p.motion.identity!=motion.identity:
+                raise DeformingSolidHeatError('point_template_cell_motion_mismatch')
+        try:
+            motion.validate_reference_geometry(cell_count=len(base.storages),face_area_m2=base.transport.face_area_m2,
+                cell_widths_m=base.transport.cell_widths_m,gas_volumes_m3=tuple(s.bulk_volume_m3 for s in base.storages))
+&gt;           digest=_digest(base)
+                   ^^^^^^^^^^^^^
+
+src/sludge_sandbox/deforming_solid_heat.py:93:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/sludge_sandbox/deforming_solid_storage.py:62: in _digest
+    def _digest(x):return hashlib.sha256(json.dumps(_canonical(x),sort_keys=True,separators=(',',':')).encode()).hexdigest()
+                                                    ^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:57: in _canonical
+    if isinstance(x,(tuple,list)):return [_canonical(v) for v in x]
+                                          ^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:56: in _canonical
+    if isinstance(x,Mapping):return ['mapping',[[k,_canonical(v)] for k,v in sorted(x.items())]]
+                                                   ^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+x = Fraction(-1, 1)
+
+    def _canonical(x):
+        if x is None or type(x) in (str,bool,int):return x
+        if type(x) is float:
+            if not math.isfinite(x):raise DeformingStorageError('nonfinite_identity')
+            return ['float',x.hex()]
+        if is_water_provider(x):
+            return ['source_gated_water',_canonical(x.reference),_canonical(x.source_asset_sha256),_canonical(x.numerical_limits)]
+        if isinstance(x,Mapping):return ['mapping',[[k,_canonical(v)] for k,v in sorted(x.items())]]
+        if isinstance(x,(tuple,list)):return [_canonical(v) for v in x]
+        if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+&gt;       raise DeformingStorageError('unsupported_identity_type:'+type(x).__name__)
+E       sludge_sandbox.deforming_solid_storage.DeformingStorageError: unsupported_identity_type:Fraction
+
+src/sludge_sandbox/deforming_solid_storage.py:59: DeformingStorageError
+
+The above exception was the direct cause of the following exception:
+
+water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x10dfa5fa0&gt;
+
+    def test_changed_inventory_updates_storage_energy_and_pore_volume(water,monkeypatch):
+        forbid_eos(water,monkeypatch)
+&gt;       op=reacting_host(water,constant=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_reacting_deforming_solid_heat.py:104:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests/sandbox/test_reacting_deforming_solid_heat.py:56: in reacting_host
+    return replace(old,base_model=base,point_storages=(p,),solid_inventory_regime='reacting_manufactured')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/dataclasses.py:1588: in replace
+    return obj.__class__(**changes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;string&gt;:12: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = DeformingSolidHeat(base_model=SolidFluidHeat(storages=(SolidFluidStorage(fluid_template=RigidStorage(mechanical=RigidW...odata-2022', 'nist-h2o-chase-1998-reference'), allow_manufactured=True, solid_inventory_regime='reacting_manufactured')
+
+    def __post_init__(self):
+        base=self.base_model
+        if type(base) is not SolidFluidHeat or not isinstance(self.point_storages,tuple) or not self.point_storages:
+            raise DeformingSolidHeatError('explicit_solid_base_and_points_required')
+        if len(self.point_storages)!=len(base.storages) or any(type(p) is not DeformingSolidStorage for p in self.point_storages):
+            raise DeformingSolidHeatError('complete_point_storages_required')
+        if self.solid_inventory_regime not in ('fixed_solid','reacting_manufactured'):
+            raise DeformingSolidHeatError('explicit_solid_inventory_regime_required')
+        reacting=self.solid_inventory_regime=='reacting_manufactured'
+        if any((type(p.skeleton) is ManufacturedReactingSkeletonEnergy)!=reacting for p in self.point_storages):
+            raise DeformingSolidHeatError('skeleton_inventory_regime_mismatch')
+        if not reacting and base.solid_reactions is not None:raise DeformingSolidHeatError('solid_reactions_not_admitted')
+        if (self.mechanical_regime!='prescribed_cellwise_quasistatic_incompressible_skeleton'
+            or self.transport_regime!='manufactured_relative_moving_faces'):
+            raise DeformingSolidHeatError('explicit_prescribed_relative_motion_regimes_required')
+        if self.allow_manufactured is not True or base.transport.coefficient_classification!='manufactured':
+            raise DeformingSolidHeatError('explicit_manufactured_transport_required')
+        if not isinstance(self.source_ids,tuple) or not self.source_ids:
+            raise DeformingSolidHeatError('explicit_host_sources_required')
+        for value in (self.model_id,self.version)+self.source_ids:
+            if not isinstance(value,str) or not value or value.strip()!=value:
+                raise DeformingSolidHeatError('explicit_host_identity_required')
+        motion=self.point_storages[0].motion
+        object.__setattr__(self,'source_ids',tuple(sorted(set(self.source_ids+base.source_ids+motion.source_ids+
+            tuple(v for p in self.point_storages for v in p.skeleton.source_ids+p.error_bounds.source_ids)))))
+        for i,(p,storage) in enumerate(zip(self.point_storages,base.storages)):
+            if p.template is not storage or p.skeleton.cell_index!=i or p.motion.identity!=motion.identity:
+                raise DeformingSolidHeatError('point_template_cell_motion_mismatch')
+        try:
+            motion.validate_reference_geometry(cell_count=len(base.storages),face_area_m2=base.transport.face_area_m2,
+                cell_widths_m=base.transport.cell_widths_m,gas_volumes_m3=tuple(s.bulk_volume_m3 for s in base.storages))
+            digest=_digest(base)
+            binding=('reacting_deforming_solid_heat_total_v1' if reacting else 'deforming_solid_heat_total_v1',SCOPE,_digest((digest,tuple(p.identity for p in self.point_storages),
+                self.mechanical_regime,self.transport_regime,self.model_id,self.version,self.source_ids)))
+&gt;       except (DeformingStorageError,DeformationProgramError) as exc:raise DeformingSolidHeatError(str(exc)) from exc
+                                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       sludge_sandbox.deforming_solid_heat.DeformingSolidHeatError: unsupported_identity_type:Fraction
+
+src/sludge_sandbox/deforming_solid_heat.py:96: DeformingSolidHeatError</failure></testcase><testcase classname="tests.sandbox.test_reacting_deforming_solid_heat" name="test_actual_reaction_motion_prefixes_and_independent_temperature[True]" time="0.005"><failure message="sludge_sandbox.deforming_solid_heat.DeformingSolidHeatError: unsupported_identity_type:Fraction">self = DeformingSolidHeat(base_model=SolidFluidHeat(storages=(SolidFluidStorage(fluid_template=RigidStorage(mechanical=RigidW...odata-2022', 'nist-h2o-chase-1998-reference'), allow_manufactured=True, solid_inventory_regime='reacting_manufactured')
+
+    def __post_init__(self):
+        base=self.base_model
+        if type(base) is not SolidFluidHeat or not isinstance(self.point_storages,tuple) or not self.point_storages:
+            raise DeformingSolidHeatError('explicit_solid_base_and_points_required')
+        if len(self.point_storages)!=len(base.storages) or any(type(p) is not DeformingSolidStorage for p in self.point_storages):
+            raise DeformingSolidHeatError('complete_point_storages_required')
+        if self.solid_inventory_regime not in ('fixed_solid','reacting_manufactured'):
+            raise DeformingSolidHeatError('explicit_solid_inventory_regime_required')
+        reacting=self.solid_inventory_regime=='reacting_manufactured'
+        if any((type(p.skeleton) is ManufacturedReactingSkeletonEnergy)!=reacting for p in self.point_storages):
+            raise DeformingSolidHeatError('skeleton_inventory_regime_mismatch')
+        if not reacting and base.solid_reactions is not None:raise DeformingSolidHeatError('solid_reactions_not_admitted')
+        if (self.mechanical_regime!='prescribed_cellwise_quasistatic_incompressible_skeleton'
+            or self.transport_regime!='manufactured_relative_moving_faces'):
+            raise DeformingSolidHeatError('explicit_prescribed_relative_motion_regimes_required')
+        if self.allow_manufactured is not True or base.transport.coefficient_classification!='manufactured':
+            raise DeformingSolidHeatError('explicit_manufactured_transport_required')
+        if not isinstance(self.source_ids,tuple) or not self.source_ids:
+            raise DeformingSolidHeatError('explicit_host_sources_required')
+        for value in (self.model_id,self.version)+self.source_ids:
+            if not isinstance(value,str) or not value or value.strip()!=value:
+                raise DeformingSolidHeatError('explicit_host_identity_required')
+        motion=self.point_storages[0].motion
+        object.__setattr__(self,'source_ids',tuple(sorted(set(self.source_ids+base.source_ids+motion.source_ids+
+            tuple(v for p in self.point_storages for v in p.skeleton.source_ids+p.error_bounds.source_ids)))))
+        for i,(p,storage) in enumerate(zip(self.point_storages,base.storages)):
+            if p.template is not storage or p.skeleton.cell_index!=i or p.motion.identity!=motion.identity:
+                raise DeformingSolidHeatError('point_template_cell_motion_mismatch')
+        try:
+            motion.validate_reference_geometry(cell_count=len(base.storages),face_area_m2=base.transport.face_area_m2,
+                cell_widths_m=base.transport.cell_widths_m,gas_volumes_m3=tuple(s.bulk_volume_m3 for s in base.storages))
+&gt;           digest=_digest(base)
+                   ^^^^^^^^^^^^^
+
+src/sludge_sandbox/deforming_solid_heat.py:93:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/sludge_sandbox/deforming_solid_storage.py:62: in _digest
+    def _digest(x):return hashlib.sha256(json.dumps(_canonical(x),sort_keys=True,separators=(',',':')).encode()).hexdigest()
+                                                    ^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:57: in _canonical
+    if isinstance(x,(tuple,list)):return [_canonical(v) for v in x]
+                                          ^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:56: in _canonical
+    if isinstance(x,Mapping):return ['mapping',[[k,_canonical(v)] for k,v in sorted(x.items())]]
+                                                   ^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+x = Fraction(-1, 1)
+
+    def _canonical(x):
+        if x is None or type(x) in (str,bool,int):return x
+        if type(x) is float:
+            if not math.isfinite(x):raise DeformingStorageError('nonfinite_identity')
+            return ['float',x.hex()]
+        if is_water_provider(x):
+            return ['source_gated_water',_canonical(x.reference),_canonical(x.source_asset_sha256),_canonical(x.numerical_limits)]
+        if isinstance(x,Mapping):return ['mapping',[[k,_canonical(v)] for k,v in sorted(x.items())]]
+        if isinstance(x,(tuple,list)):return [_canonical(v) for v in x]
+        if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+&gt;       raise DeformingStorageError('unsupported_identity_type:'+type(x).__name__)
+E       sludge_sandbox.deforming_solid_storage.DeformingStorageError: unsupported_identity_type:Fraction
+
+src/sludge_sandbox/deforming_solid_storage.py:59: DeformingStorageError
+
+The above exception was the direct cause of the following exception:
+
+water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x10e02a120&gt;
+constant = True
+
+    @pytest.mark.parametrize('constant',[True,False])
+    def test_actual_reaction_motion_prefixes_and_independent_temperature(water,monkeypatch,constant):
+        forbid_eos(water,monkeypatch)
+&gt;       op=reacting_host(water,constant=constant)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_reacting_deforming_solid_heat.py:135:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests/sandbox/test_reacting_deforming_solid_heat.py:56: in reacting_host
+    return replace(old,base_model=base,point_storages=(p,),solid_inventory_regime='reacting_manufactured')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/dataclasses.py:1588: in replace
+    return obj.__class__(**changes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;string&gt;:12: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = DeformingSolidHeat(base_model=SolidFluidHeat(storages=(SolidFluidStorage(fluid_template=RigidStorage(mechanical=RigidW...odata-2022', 'nist-h2o-chase-1998-reference'), allow_manufactured=True, solid_inventory_regime='reacting_manufactured')
+
+    def __post_init__(self):
+        base=self.base_model
+        if type(base) is not SolidFluidHeat or not isinstance(self.point_storages,tuple) or not self.point_storages:
+            raise DeformingSolidHeatError('explicit_solid_base_and_points_required')
+        if len(self.point_storages)!=len(base.storages) or any(type(p) is not DeformingSolidStorage for p in self.point_storages):
+            raise DeformingSolidHeatError('complete_point_storages_required')
+        if self.solid_inventory_regime not in ('fixed_solid','reacting_manufactured'):
+            raise DeformingSolidHeatError('explicit_solid_inventory_regime_required')
+        reacting=self.solid_inventory_regime=='reacting_manufactured'
+        if any((type(p.skeleton) is ManufacturedReactingSkeletonEnergy)!=reacting for p in self.point_storages):
+            raise DeformingSolidHeatError('skeleton_inventory_regime_mismatch')
+        if not reacting and base.solid_reactions is not None:raise DeformingSolidHeatError('solid_reactions_not_admitted')
+        if (self.mechanical_regime!='prescribed_cellwise_quasistatic_incompressible_skeleton'
+            or self.transport_regime!='manufactured_relative_moving_faces'):
+            raise DeformingSolidHeatError('explicit_prescribed_relative_motion_regimes_required')
+        if self.allow_manufactured is not True or base.transport.coefficient_classification!='manufactured':
+            raise DeformingSolidHeatError('explicit_manufactured_transport_required')
+        if not isinstance(self.source_ids,tuple) or not self.source_ids:
+            raise DeformingSolidHeatError('explicit_host_sources_required')
+        for value in (self.model_id,self.version)+self.source_ids:
+            if not isinstance(value,str) or not value or value.strip()!=value:
+                raise DeformingSolidHeatError('explicit_host_identity_required')
+        motion=self.point_storages[0].motion
+        object.__setattr__(self,'source_ids',tuple(sorted(set(self.source_ids+base.source_ids+motion.source_ids+
+            tuple(v for p in self.point_storages for v in p.skeleton.source_ids+p.error_bounds.source_ids)))))
+        for i,(p,storage) in enumerate(zip(self.point_storages,base.storages)):
+            if p.template is not storage or p.skeleton.cell_index!=i or p.motion.identity!=motion.identity:
+                raise DeformingSolidHeatError('point_template_cell_motion_mismatch')
+        try:
+            motion.validate_reference_geometry(cell_count=len(base.storages),face_area_m2=base.transport.face_area_m2,
+                cell_widths_m=base.transport.cell_widths_m,gas_volumes_m3=tuple(s.bulk_volume_m3 for s in base.storages))
+            digest=_digest(base)
+            binding=('reacting_deforming_solid_heat_total_v1' if reacting else 'deforming_solid_heat_total_v1',SCOPE,_digest((digest,tuple(p.identity for p in self.point_storages),
+                self.mechanical_regime,self.transport_regime,self.model_id,self.version,self.source_ids)))
+&gt;       except (DeformingStorageError,DeformationProgramError) as exc:raise DeformingSolidHeatError(str(exc)) from exc
+                                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       sludge_sandbox.deforming_solid_heat.DeformingSolidHeatError: unsupported_identity_type:Fraction
+
+src/sludge_sandbox/deforming_solid_heat.py:96: DeformingSolidHeatError</failure></testcase><testcase classname="tests.sandbox.test_reacting_deforming_solid_heat" name="test_actual_reaction_motion_prefixes_and_independent_temperature[False]" time="0.005"><failure message="sludge_sandbox.deforming_solid_heat.DeformingSolidHeatError: unsupported_identity_type:Fraction">self = DeformingSolidHeat(base_model=SolidFluidHeat(storages=(SolidFluidStorage(fluid_template=RigidStorage(mechanical=RigidW...odata-2022', 'nist-h2o-chase-1998-reference'), allow_manufactured=True, solid_inventory_regime='reacting_manufactured')
+
+    def __post_init__(self):
+        base=self.base_model
+        if type(base) is not SolidFluidHeat or not isinstance(self.point_storages,tuple) or not self.point_storages:
+            raise DeformingSolidHeatError('explicit_solid_base_and_points_required')
+        if len(self.point_storages)!=len(base.storages) or any(type(p) is not DeformingSolidStorage for p in self.point_storages):
+            raise DeformingSolidHeatError('complete_point_storages_required')
+        if self.solid_inventory_regime not in ('fixed_solid','reacting_manufactured'):
+            raise DeformingSolidHeatError('explicit_solid_inventory_regime_required')
+        reacting=self.solid_inventory_regime=='reacting_manufactured'
+        if any((type(p.skeleton) is ManufacturedReactingSkeletonEnergy)!=reacting for p in self.point_storages):
+            raise DeformingSolidHeatError('skeleton_inventory_regime_mismatch')
+        if not reacting and base.solid_reactions is not None:raise DeformingSolidHeatError('solid_reactions_not_admitted')
+        if (self.mechanical_regime!='prescribed_cellwise_quasistatic_incompressible_skeleton'
+            or self.transport_regime!='manufactured_relative_moving_faces'):
+            raise DeformingSolidHeatError('explicit_prescribed_relative_motion_regimes_required')
+        if self.allow_manufactured is not True or base.transport.coefficient_classification!='manufactured':
+            raise DeformingSolidHeatError('explicit_manufactured_transport_required')
+        if not isinstance(self.source_ids,tuple) or not self.source_ids:
+            raise DeformingSolidHeatError('explicit_host_sources_required')
+        for value in (self.model_id,self.version)+self.source_ids:
+            if not isinstance(value,str) or not value or value.strip()!=value:
+                raise DeformingSolidHeatError('explicit_host_identity_required')
+        motion=self.point_storages[0].motion
+        object.__setattr__(self,'source_ids',tuple(sorted(set(self.source_ids+base.source_ids+motion.source_ids+
+            tuple(v for p in self.point_storages for v in p.skeleton.source_ids+p.error_bounds.source_ids)))))
+        for i,(p,storage) in enumerate(zip(self.point_storages,base.storages)):
+            if p.template is not storage or p.skeleton.cell_index!=i or p.motion.identity!=motion.identity:
+                raise DeformingSolidHeatError('point_template_cell_motion_mismatch')
+        try:
+            motion.validate_reference_geometry(cell_count=len(base.storages),face_area_m2=base.transport.face_area_m2,
+                cell_widths_m=base.transport.cell_widths_m,gas_volumes_m3=tuple(s.bulk_volume_m3 for s in base.storages))
+&gt;           digest=_digest(base)
+                   ^^^^^^^^^^^^^
+
+src/sludge_sandbox/deforming_solid_heat.py:93:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/sludge_sandbox/deforming_solid_storage.py:62: in _digest
+    def _digest(x):return hashlib.sha256(json.dumps(_canonical(x),sort_keys=True,separators=(',',':')).encode()).hexdigest()
+                                                    ^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:57: in _canonical
+    if isinstance(x,(tuple,list)):return [_canonical(v) for v in x]
+                                          ^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:56: in _canonical
+    if isinstance(x,Mapping):return ['mapping',[[k,_canonical(v)] for k,v in sorted(x.items())]]
+                                                   ^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+x = Fraction(-1, 1)
+
+    def _canonical(x):
+        if x is None or type(x) in (str,bool,int):return x
+        if type(x) is float:
+            if not math.isfinite(x):raise DeformingStorageError('nonfinite_identity')
+            return ['float',x.hex()]
+        if is_water_provider(x):
+            return ['source_gated_water',_canonical(x.reference),_canonical(x.source_asset_sha256),_canonical(x.numerical_limits)]
+        if isinstance(x,Mapping):return ['mapping',[[k,_canonical(v)] for k,v in sorted(x.items())]]
+        if isinstance(x,(tuple,list)):return [_canonical(v) for v in x]
+        if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+&gt;       raise DeformingStorageError('unsupported_identity_type:'+type(x).__name__)
+E       sludge_sandbox.deforming_solid_storage.DeformingStorageError: unsupported_identity_type:Fraction
+
+src/sludge_sandbox/deforming_solid_storage.py:59: DeformingStorageError
+
+The above exception was the direct cause of the following exception:
+
+water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x10e3377d0&gt;
+constant = False
+
+    @pytest.mark.parametrize('constant',[True,False])
+    def test_actual_reaction_motion_prefixes_and_independent_temperature(water,monkeypatch,constant):
+        forbid_eos(water,monkeypatch)
+&gt;       op=reacting_host(water,constant=constant)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_reacting_deforming_solid_heat.py:135:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests/sandbox/test_reacting_deforming_solid_heat.py:56: in reacting_host
+    return replace(old,base_model=base,point_storages=(p,),solid_inventory_regime='reacting_manufactured')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/dataclasses.py:1588: in replace
+    return obj.__class__(**changes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;string&gt;:12: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = DeformingSolidHeat(base_model=SolidFluidHeat(storages=(SolidFluidStorage(fluid_template=RigidStorage(mechanical=RigidW...odata-2022', 'nist-h2o-chase-1998-reference'), allow_manufactured=True, solid_inventory_regime='reacting_manufactured')
+
+    def __post_init__(self):
+        base=self.base_model
+        if type(base) is not SolidFluidHeat or not isinstance(self.point_storages,tuple) or not self.point_storages:
+            raise DeformingSolidHeatError('explicit_solid_base_and_points_required')
+        if len(self.point_storages)!=len(base.storages) or any(type(p) is not DeformingSolidStorage for p in self.point_storages):
+            raise DeformingSolidHeatError('complete_point_storages_required')
+        if self.solid_inventory_regime not in ('fixed_solid','reacting_manufactured'):
+            raise DeformingSolidHeatError('explicit_solid_inventory_regime_required')
+        reacting=self.solid_inventory_regime=='reacting_manufactured'
+        if any((type(p.skeleton) is ManufacturedReactingSkeletonEnergy)!=reacting for p in self.point_storages):
+            raise DeformingSolidHeatError('skeleton_inventory_regime_mismatch')
+        if not reacting and base.solid_reactions is not None:raise DeformingSolidHeatError('solid_reactions_not_admitted')
+        if (self.mechanical_regime!='prescribed_cellwise_quasistatic_incompressible_skeleton'
+            or self.transport_regime!='manufactured_relative_moving_faces'):
+            raise DeformingSolidHeatError('explicit_prescribed_relative_motion_regimes_required')
+        if self.allow_manufactured is not True or base.transport.coefficient_classification!='manufactured':
+            raise DeformingSolidHeatError('explicit_manufactured_transport_required')
+        if not isinstance(self.source_ids,tuple) or not self.source_ids:
+            raise DeformingSolidHeatError('explicit_host_sources_required')
+        for value in (self.model_id,self.version)+self.source_ids:
+            if not isinstance(value,str) or not value or value.strip()!=value:
+                raise DeformingSolidHeatError('explicit_host_identity_required')
+        motion=self.point_storages[0].motion
+        object.__setattr__(self,'source_ids',tuple(sorted(set(self.source_ids+base.source_ids+motion.source_ids+
+            tuple(v for p in self.point_storages for v in p.skeleton.source_ids+p.error_bounds.source_ids)))))
+        for i,(p,storage) in enumerate(zip(self.point_storages,base.storages)):
+            if p.template is not storage or p.skeleton.cell_index!=i or p.motion.identity!=motion.identity:
+                raise DeformingSolidHeatError('point_template_cell_motion_mismatch')
+        try:
+            motion.validate_reference_geometry(cell_count=len(base.storages),face_area_m2=base.transport.face_area_m2,
+                cell_widths_m=base.transport.cell_widths_m,gas_volumes_m3=tuple(s.bulk_volume_m3 for s in base.storages))
+            digest=_digest(base)
+            binding=('reacting_deforming_solid_heat_total_v1' if reacting else 'deforming_solid_heat_total_v1',SCOPE,_digest((digest,tuple(p.identity for p in self.point_storages),
+                self.mechanical_regime,self.transport_regime,self.model_id,self.version,self.source_ids)))
+&gt;       except (DeformingStorageError,DeformationProgramError) as exc:raise DeformingSolidHeatError(str(exc)) from exc
+                                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       sludge_sandbox.deforming_solid_heat.DeformingSolidHeatError: unsupported_identity_type:Fraction
+
+src/sludge_sandbox/deforming_solid_heat.py:96: DeformingSolidHeatError</failure></testcase></testsuite></testsuites>

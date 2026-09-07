@@ -1,4 +1,4 @@
-"""Prescribed fixed-solid mechanics, total energy, relative moving fluid faces.
+"""Prescribed solid mechanics, total energy, relative moving fluid faces.
 
 No water/depletion wrapper admission or free-sintering prediction is supplied.
 """
@@ -11,6 +11,7 @@ from .deforming_solid_storage import DeformingSolidStorage,DeformingStorageError
 from .deformation_program import DeformationProgramError
 from .rigid_fluid_heat import _FAILURES,_column
 from .skeleton_energy import SkeletonEnergyError
+from .reacting_skeleton_energy import ManufacturedReactingSkeletonEnergy
 from .solid_fluid_storage import SolidFluidStorageError
 
 
@@ -54,6 +55,7 @@ class DeformingSolidHeat:
     version: str
     source_ids: tuple
     allow_manufactured: bool=False
+    solid_inventory_regime: str='fixed_solid'
     _binding: tuple=field(init=False,repr=False)
     _base_digest: str=field(init=False,repr=False)
 
@@ -63,7 +65,12 @@ class DeformingSolidHeat:
             raise DeformingSolidHeatError('explicit_solid_base_and_points_required')
         if len(self.point_storages)!=len(base.storages) or any(type(p) is not DeformingSolidStorage for p in self.point_storages):
             raise DeformingSolidHeatError('complete_point_storages_required')
-        if base.solid_reactions is not None:raise DeformingSolidHeatError('solid_reactions_not_admitted')
+        if self.solid_inventory_regime not in ('fixed_solid','reacting_manufactured'):
+            raise DeformingSolidHeatError('explicit_solid_inventory_regime_required')
+        reacting=self.solid_inventory_regime=='reacting_manufactured'
+        if any((type(p.skeleton) is ManufacturedReactingSkeletonEnergy)!=reacting for p in self.point_storages):
+            raise DeformingSolidHeatError('skeleton_inventory_regime_mismatch')
+        if not reacting and base.solid_reactions is not None:raise DeformingSolidHeatError('solid_reactions_not_admitted')
         if (self.mechanical_regime!='prescribed_cellwise_quasistatic_incompressible_skeleton'
             or self.transport_regime!='manufactured_relative_moving_faces'):
             raise DeformingSolidHeatError('explicit_prescribed_relative_motion_regimes_required')
@@ -84,7 +91,7 @@ class DeformingSolidHeat:
             motion.validate_reference_geometry(cell_count=len(base.storages),face_area_m2=base.transport.face_area_m2,
                 cell_widths_m=base.transport.cell_widths_m,gas_volumes_m3=tuple(s.bulk_volume_m3 for s in base.storages))
             digest=_digest(base)
-            binding=('deforming_solid_heat_total_v1',SCOPE,_digest((digest,tuple(p.identity for p in self.point_storages),
+            binding=('reacting_deforming_solid_heat_total_v1' if reacting else 'deforming_solid_heat_total_v1',SCOPE,_digest((digest,tuple(p.identity for p in self.point_storages),
                 self.mechanical_regime,self.transport_regime,self.model_id,self.version,self.source_ids)))
         except (DeformingStorageError,DeformationProgramError) as exc:raise DeformingSolidHeatError(str(exc)) from exc
         object.__setattr__(self,'_base_digest',digest);object.__setattr__(self,'_binding',binding)
@@ -112,9 +119,10 @@ class DeformingSolidHeat:
         if _digest(self.base_model)!=self._base_digest:raise DeformingSolidHeatError('runtime_base_identity_changed')
         if state.amounts_mol.shape!=(len(self.point_storages),len(self.base_model.species_order)):
             raise DeformingSolidHeatError('complete_inventory_shape_required')
-        for row,p in zip(state.amounts_mol,self.point_storages):
-            if self.base_model.inventory_layout.solid_inventory(row)!=dict(p.skeleton.fixed_solid_inventory_mol):
-                raise DeformingSolidHeatError('fixed_solid_inventory_changed')
+        if self.solid_inventory_regime=='fixed_solid':
+            for row,p in zip(state.amounts_mol,self.point_storages):
+                if self.base_model.inventory_layout.solid_inventory(row)!=dict(p.skeleton.fixed_solid_inventory_mol):
+                    raise DeformingSolidHeatError('fixed_solid_inventory_changed')
 
     def _inputs(self,row):
         layout=self.base_model.inventory_layout
@@ -145,15 +153,22 @@ class DeformingSolidHeat:
             storages=tuple(inv.state.current_storage for inv in inverses)
             transport=replace(base.transport,storages=tuple(s.fluid_template for s in storages),
                 face_area_m2=float(snap.current.face_areas_m2[0]),cell_widths_m=tuple(float(x) for x in snap.current.widths_m))
-            current=replace(base,storages=storages,transport=transport)
+            reactions=(replace(base.solid_reactions,storages=storages) if base.solid_reactions is not None else None)
+            current=replace(base,storages=storages,transport=transport,solid_reactions=reactions)
             thermal=current._assemble_decoded(state.amounts_mol,tuple(inv.thermal_inverse for inv in inverses),brackets)
-            components={key:[] for key in ('elastic','interface','dissipation','pore','body')}
+            reacting=self.solid_inventory_regime=='reacting_manufactured'
+            elastic_key='elastic_deformation' if reacting else 'elastic'
+            interface_key='interface_deformation' if reacting else 'interface'
+            pressure_key='bulk_pressure' if reacting else 'pore'
+            components={key:[] for key in (elastic_key,interface_key,'dissipation',pressure_key,'body')}
             pressures=[]
             for i,inv in enumerate(inverses):
                 sk=inv.state.skeleton_state;p=inv.state.thermal_state.mechanical.pressure_pa;pressures.append(p)
-                components['elastic'].append(sk.elastic_rate_w);components['interface'].append(sk.interface_rate_w)
+                # These are derivatives at fixed composition. Composition
+                # energy is already in the storage; it is not external power.
+                components[elastic_key].append(sk.elastic_rate_w);components[interface_key].append(sk.interface_rate_w)
                 components['dissipation'].append(sk.dissipation_w)
-                components['pore'].append(_float(-Fraction(p)*Fraction(float(snap.volume_rates_m3_s[i]))))
+                components[pressure_key].append(_float(-Fraction(p)*Fraction(float(snap.volume_rates_m3_s[i]))))
                 components['body'].append(float(thermal.rates.cell_power_w[i]))
             total=[_float(sum((Fraction(values[i]) for values in components.values()),Fraction())) for i in range(len(inverses))]
             rates=Rates(thermal.rates.face_species_mol_s,thermal.rates.face_energy_w,
@@ -162,6 +177,8 @@ class DeformingSolidHeat:
         except (DeformingStorageError,DeformationProgramError,SkeletonEnergyError) as exc:raise DeformingSolidHeatError(str(exc)) from exc
         sources=tuple(sorted(set(self.source_ids+base.source_ids+self.motion.source_ids+tuple(
             v for p in self.point_storages for v in p.skeleton.source_ids+p.error_bounds.source_ids))))
-        return DeformingSolidHeatEvaluation(rates,snap,inverses,thermal,current,tuple(pressures),self.energy_model_identity,sources)
+        qualification=('prescribed_reacting_manufactured_total_energy_not_free_sintering' if reacting
+                       else 'prescribed_fixed_solid_total_energy_not_free_sintering')
+        return DeformingSolidHeatEvaluation(rates,snap,inverses,thermal,current,tuple(pressures),self.energy_model_identity,sources,qualification)
 
     def __call__(self,state,time_s):return self.evaluate(state,time_s).rates

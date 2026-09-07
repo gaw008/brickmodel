@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="0" tests="5" time="0.846" timestamp="2026-09-07T09:52:07.014371-10:00" hostname="Ws-MacBook-Pro.local"><testcase classname="tests.sandbox.test_reacting_deforming_solid_heat" name="test_reactions_use_current_storage_volume_and_one_inverse" time="0.010"><failure message="sludge_sandbox.reactions.ReactionError: unknown_element">water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x108ee8fb0&gt;
+
+    def test_reactions_use_current_storage_volume_and_one_inverse(water,monkeypatch):
+        forbid_eos(water,monkeypatch)
+&gt;       op = reacting_host(water,order=2.)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_reacting_deforming_solid_heat.py:71:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests/sandbox/test_reacting_deforming_solid_heat.py:46: in reacting_host
+    species = tuple(SpeciesDefinition(n,'solid',{'X':1},a.molar_mass_kg_mol,sources,'manufactured') for n in ('A','B'))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/sandbox/test_reacting_deforming_solid_heat.py:46: in &lt;genexpr&gt;
+    species = tuple(SpeciesDefinition(n,'solid',{'X':1},a.molar_mass_kg_mol,sources,'manufactured') for n in ('A','B'))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;string&gt;:9: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = SpeciesDefinition(species_id='A', phase='solid', elements={'X': 1}, molar_mass_kg_mol=0.05, source_ids=('manufactured:reacting-deformation-A-to-B',), classification='manufactured')
+
+    def __post_init__(self) -&gt; None:
+        _text(self.species_id, 'species_id')
+        if self.phase not in ('solid', 'liquid', 'gas'):
+            raise ReactionError('invalid_species_phase')
+        _classification(self.classification)
+        if not isinstance(self.elements, Mapping) or not self.elements:
+            raise ReactionError('explicit_element_counts_required')
+        elements = {}
+        for element, count in self.elements.items():
+            if element not in ELEMENT_SYMBOLS:
+&gt;               raise ReactionError('unknown_element')
+E               sludge_sandbox.reactions.ReactionError: unknown_element
+
+src/sludge_sandbox/reactions.py:109: ReactionError</failure></testcase><testcase classname="tests.sandbox.test_reacting_deforming_solid_heat" name="test_fixed_default_and_state_binding_are_preserved" time="0.004"><failure message="sludge_sandbox.reactions.ReactionError: unknown_element">water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+
+    def test_fixed_default_and_state_binding_are_preserved(water):
+        from sludge_sandbox.integration import ConservedState
+&gt;       op=reacting_host(water)
+           ^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_reacting_deforming_solid_heat.py:90:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests/sandbox/test_reacting_deforming_solid_heat.py:46: in reacting_host
+    species = tuple(SpeciesDefinition(n,'solid',{'X':1},a.molar_mass_kg_mol,sources,'manufactured') for n in ('A','B'))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/sandbox/test_reacting_deforming_solid_heat.py:46: in &lt;genexpr&gt;
+    species = tuple(SpeciesDefinition(n,'solid',{'X':1},a.molar_mass_kg_mol,sources,'manufactured') for n in ('A','B'))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;string&gt;:9: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = SpeciesDefinition(species_id='A', phase='solid', elements={'X': 1}, molar_mass_kg_mol=0.05, source_ids=('manufactured:reacting-deformation-A-to-B',), classification='manufactured')
+
+    def __post_init__(self) -&gt; None:
+        _text(self.species_id, 'species_id')
+        if self.phase not in ('solid', 'liquid', 'gas'):
+            raise ReactionError('invalid_species_phase')
+        _classification(self.classification)
+        if not isinstance(self.elements, Mapping) or not self.elements:
+            raise ReactionError('explicit_element_counts_required')
+        elements = {}
+        for element, count in self.elements.items():
+            if element not in ELEMENT_SYMBOLS:
+&gt;               raise ReactionError('unknown_element')
+E               sludge_sandbox.reactions.ReactionError: unknown_element
+
+src/sludge_sandbox/reactions.py:109: ReactionError</failure></testcase><testcase classname="tests.sandbox.test_reacting_deforming_solid_heat" name="test_changed_inventory_updates_storage_energy_and_pore_volume" time="0.004"><failure message="sludge_sandbox.reactions.ReactionError: unknown_element">water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x10a2fb8f0&gt;
+
+    def test_changed_inventory_updates_storage_energy_and_pore_volume(water,monkeypatch):
+        forbid_eos(water,monkeypatch)
+&gt;       op=reacting_host(water,constant=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_reacting_deforming_solid_heat.py:104:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests/sandbox/test_reacting_deforming_solid_heat.py:46: in reacting_host
+    species = tuple(SpeciesDefinition(n,'solid',{'X':1},a.molar_mass_kg_mol,sources,'manufactured') for n in ('A','B'))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/sandbox/test_reacting_deforming_solid_heat.py:46: in &lt;genexpr&gt;
+    species = tuple(SpeciesDefinition(n,'solid',{'X':1},a.molar_mass_kg_mol,sources,'manufactured') for n in ('A','B'))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;string&gt;:9: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = SpeciesDefinition(species_id='A', phase='solid', elements={'X': 1}, molar_mass_kg_mol=0.05, source_ids=('manufactured:reacting-deformation-A-to-B',), classification='manufactured')
+
+    def __post_init__(self) -&gt; None:
+        _text(self.species_id, 'species_id')
+        if self.phase not in ('solid', 'liquid', 'gas'):
+            raise ReactionError('invalid_species_phase')
+        _classification(self.classification)
+        if not isinstance(self.elements, Mapping) or not self.elements:
+            raise ReactionError('explicit_element_counts_required')
+        elements = {}
+        for element, count in self.elements.items():
+            if element not in ELEMENT_SYMBOLS:
+&gt;               raise ReactionError('unknown_element')
+E               sludge_sandbox.reactions.ReactionError: unknown_element
+
+src/sludge_sandbox/reactions.py:109: ReactionError</failure></testcase><testcase classname="tests.sandbox.test_reacting_deforming_solid_heat" name="test_actual_reaction_motion_prefixes_and_independent_temperature[True]" time="0.004"><failure message="sludge_sandbox.reactions.ReactionError: unknown_element">water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x10a282660&gt;
+constant = True
+
+    @pytest.mark.parametrize('constant',[True,False])
+    def test_actual_reaction_motion_prefixes_and_independent_temperature(water,monkeypatch,constant):
+        forbid_eos(water,monkeypatch)
+&gt;       op=reacting_host(water,constant=constant)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_reacting_deforming_solid_heat.py:135:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests/sandbox/test_reacting_deforming_solid_heat.py:46: in reacting_host
+    species = tuple(SpeciesDefinition(n,'solid',{'X':1},a.molar_mass_kg_mol,sources,'manufactured') for n in ('A','B'))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/sandbox/test_reacting_deforming_solid_heat.py:46: in &lt;genexpr&gt;
+    species = tuple(SpeciesDefinition(n,'solid',{'X':1},a.molar_mass_kg_mol,sources,'manufactured') for n in ('A','B'))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;string&gt;:9: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = SpeciesDefinition(species_id='A', phase='solid', elements={'X': 1}, molar_mass_kg_mol=0.05, source_ids=('manufactured:reacting-deformation-A-to-B',), classification='manufactured')
+
+    def __post_init__(self) -&gt; None:
+        _text(self.species_id, 'species_id')
+        if self.phase not in ('solid', 'liquid', 'gas'):
+            raise ReactionError('invalid_species_phase')
+        _classification(self.classification)
+        if not isinstance(self.elements, Mapping) or not self.elements:
+            raise ReactionError('explicit_element_counts_required')
+        elements = {}
+        for element, count in self.elements.items():
+            if element not in ELEMENT_SYMBOLS:
+&gt;               raise ReactionError('unknown_element')
+E               sludge_sandbox.reactions.ReactionError: unknown_element
+
+src/sludge_sandbox/reactions.py:109: ReactionError</failure></testcase><testcase classname="tests.sandbox.test_reacting_deforming_solid_heat" name="test_actual_reaction_motion_prefixes_and_independent_temperature[False]" time="0.004"><failure message="sludge_sandbox.reactions.ReactionError: unknown_element">water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x10a604170&gt;
+constant = False
+
+    @pytest.mark.parametrize('constant',[True,False])
+    def test_actual_reaction_motion_prefixes_and_independent_temperature(water,monkeypatch,constant):
+        forbid_eos(water,monkeypatch)
+&gt;       op=reacting_host(water,constant=constant)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_reacting_deforming_solid_heat.py:135:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests/sandbox/test_reacting_deforming_solid_heat.py:46: in reacting_host
+    species = tuple(SpeciesDefinition(n,'solid',{'X':1},a.molar_mass_kg_mol,sources,'manufactured') for n in ('A','B'))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/sandbox/test_reacting_deforming_solid_heat.py:46: in &lt;genexpr&gt;
+    species = tuple(SpeciesDefinition(n,'solid',{'X':1},a.molar_mass_kg_mol,sources,'manufactured') for n in ('A','B'))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;string&gt;:9: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = SpeciesDefinition(species_id='A', phase='solid', elements={'X': 1}, molar_mass_kg_mol=0.05, source_ids=('manufactured:reacting-deformation-A-to-B',), classification='manufactured')
+
+    def __post_init__(self) -&gt; None:
+        _text(self.species_id, 'species_id')
+        if self.phase not in ('solid', 'liquid', 'gas'):
+            raise ReactionError('invalid_species_phase')
+        _classification(self.classification)
+        if not isinstance(self.elements, Mapping) or not self.elements:
+            raise ReactionError('explicit_element_counts_required')
+        elements = {}
+        for element, count in self.elements.items():
+            if element not in ELEMENT_SYMBOLS:
+&gt;               raise ReactionError('unknown_element')
+E               sludge_sandbox.reactions.ReactionError: unknown_element
+
+src/sludge_sandbox/reactions.py:109: ReactionError</failure></testcase></testsuite></testsuites>

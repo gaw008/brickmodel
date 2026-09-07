@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="5" time="0.616" timestamp="2026-09-07T09:53:02.301448-10:00" hostname="Ws-MacBook-Pro.local"><testcase classname="tests.sandbox.test_reacting_deforming_solid_heat" name="test_reactions_use_current_storage_volume_and_one_inverse" time="0.016"><failure message="sludge_sandbox.integration.IntegrationError: invalid_component_work_keys">tests/sandbox/test_reacting_deforming_solid_heat.py:74: in test_reactions_use_current_storage_volume_and_one_inverse
+    out = op.evaluate(state,.5)
+          ^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_heat.py:174: in evaluate
+    rates=Rates(thermal.rates.face_species_mol_s,thermal.rates.face_energy_w,
+&lt;string&gt;:8: in __init__
+    ???
+src/sludge_sandbox/integration.py:163: in __post_init__
+    components, residual = _components(self.cell_power_components_w, self.cell_power_w, rate=True)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/integration.py:87: in _components
+    raise IntegrationError("invalid_component_work_keys")
+E   sludge_sandbox.integration.IntegrationError: invalid_component_work_keys</failure></testcase><testcase classname="tests.sandbox.test_reacting_deforming_solid_heat" name="test_fixed_default_and_state_binding_are_preserved" time="0.009" /><testcase classname="tests.sandbox.test_reacting_deforming_solid_heat" name="test_changed_inventory_updates_storage_energy_and_pore_volume" time="0.010"><failure message="sludge_sandbox.integration.IntegrationError: invalid_component_work_keys">tests/sandbox/test_reacting_deforming_solid_heat.py:107: in test_changed_inventory_updates_storage_energy_and_pore_volume
+    out=op.evaluate(changed,.5)
+        ^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_heat.py:174: in evaluate
+    rates=Rates(thermal.rates.face_species_mol_s,thermal.rates.face_energy_w,
+&lt;string&gt;:8: in __init__
+    ???
+src/sludge_sandbox/integration.py:163: in __post_init__
+    components, residual = _components(self.cell_power_components_w, self.cell_power_w, rate=True)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/integration.py:87: in _components
+    raise IntegrationError("invalid_component_work_keys")
+E   sludge_sandbox.integration.IntegrationError: invalid_component_work_keys</failure></testcase><testcase classname="tests.sandbox.test_reacting_deforming_solid_heat" name="test_actual_reaction_motion_prefixes_and_independent_temperature[True]" time="0.010"><failure message="AssertionError: invalid_component_work_keys&#10;assert 'numerical_failure' == 'completed'&#10;  &#10;  - completed&#10;  + numerical_failure">tests/sandbox/test_reacting_deforming_solid_heat.py:144: in test_actual_reaction_motion_prefixes_and_independent_temperature
+    assert run.status=='completed',run.reason
+E   AssertionError: invalid_component_work_keys
+E   assert 'numerical_failure' == 'completed'
+E
+E     - completed
+E     + numerical_failure</failure></testcase><testcase classname="tests.sandbox.test_reacting_deforming_solid_heat" name="test_actual_reaction_motion_prefixes_and_independent_temperature[False]" time="0.010"><failure message="AssertionError: invalid_component_work_keys&#10;assert 'numerical_failure' == 'completed'&#10;  &#10;  - completed&#10;  + numerical_failure">tests/sandbox/test_reacting_deforming_solid_heat.py:144: in test_actual_reaction_motion_prefixes_and_independent_temperature
+    assert run.status=='completed',run.reason
+E   AssertionError: invalid_component_work_keys
+E   assert 'numerical_failure' == 'completed'
+E
+E     - completed
+E     + numerical_failure</failure></testcase></testsuite></testsuites>

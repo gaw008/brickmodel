@@ -1,4 +1,4 @@
-"""Fixed-solid total-energy point storage, not an integration host."""
+"""Total-energy point storage with explicit fixed or manufactured reacting solids."""
 from sludge_sandbox.water_properties import is_water_provider
 from dataclasses import dataclass,fields,is_dataclass,replace,field
 from fractions import Fraction
@@ -7,6 +7,7 @@ import hashlib,json,math
 from sludge_sandbox.solid_fluid_storage import SolidFluidStorage, SolidFluidStorageError
 from sludge_sandbox.incompressible_solid import IncompressibleSolidPhase
 from sludge_sandbox.skeleton_energy import DiagonalSkeletonEnergy
+from sludge_sandbox.reacting_skeleton_energy import ManufacturedReactingSkeletonEnergy
 from sludge_sandbox.deformation_program import PrescribedSlabMotion
 from sludge_sandbox.water_properties import WaterProperties
 
@@ -47,6 +48,7 @@ def _label(x):
 
 def _canonical(x):
     if x is None or type(x) in (str,bool,int):return x
+    if type(x) is Fraction:return ['fraction',x.numerator,x.denominator]
     if type(x) is float:
         if not math.isfinite(x):raise DeformingStorageError('nonfinite_identity')
         return ['float',x.hex()]
@@ -134,7 +136,7 @@ class DeformingSolidInverse:
 class DeformingSolidStorage:
     template: SolidFluidStorage
     motion: PrescribedSlabMotion
-    skeleton: DiagonalSkeletonEnergy
+    skeleton: DiagonalSkeletonEnergy | ManufacturedReactingSkeletonEnergy
     error_bounds: DeformationErrorBounds
     model_id: str
     version: str
@@ -142,13 +144,15 @@ class DeformingSolidStorage:
     _template_digest: str=field(init=False,repr=False)
 
     def __post_init__(self):
-        if type(self.template) is not SolidFluidStorage or type(self.motion) is not PrescribedSlabMotion or type(self.skeleton) is not DiagonalSkeletonEnergy or type(self.error_bounds) is not DeformationErrorBounds:
+        if type(self.template) is not SolidFluidStorage or type(self.motion) is not PrescribedSlabMotion or type(self.skeleton) not in (DiagonalSkeletonEnergy,ManufacturedReactingSkeletonEnergy) or type(self.error_bounds) is not DeformationErrorBounds:
             raise DeformingStorageError('explicit_storage_motion_skeleton_bounds_required')
         if type(self.allow_manufactured) is not bool or not self.allow_manufactured:raise DeformingStorageError('manufactured_opt_in_required')
         _label(self.model_id);_label(self.version)
         if self.motion.reference!=self.skeleton.reference:raise DeformingStorageError('reference_geometry_mismatch')
         if solid_provider_identity(self.template.solid_phases)!=self.skeleton.solid_provider_identity:raise DeformingStorageError('actual_solid_identity_mismatch')
-        if {k for k,_ in self.skeleton.fixed_solid_inventory_mol}!=set(self.template.solid_phases):raise DeformingStorageError('complete_solid_inventory_required')
+        inventory=(self.skeleton.reference_solid_inventory_mol if type(self.skeleton) is ManufacturedReactingSkeletonEnergy
+                   else self.skeleton.fixed_solid_inventory_mol)
+        if {k for k,_ in inventory}!=set(self.template.solid_phases):raise DeformingStorageError('complete_solid_inventory_required')
         expected=self.skeleton.reference_volume_m3;actual=self.template.bulk_volume_m3
         if abs(actual-expected)>2*max(math.ulp(actual),math.ulp(expected)):raise DeformingStorageError('reference_bulk_volume_mismatch')
         if not self.error_bounds.time_range_s[0]<=self.motion.knot_times_s[0]<self.motion.knot_times_s[-1]<=self.error_bounds.time_range_s[1]:raise DeformingStorageError('motion_outside_error_domain')
@@ -157,7 +161,8 @@ class DeformingSolidStorage:
     @property
     def identity(self):
         return (self.model_id,self.version,self._template_digest,self.motion.identity,self.skeleton.identity,
-                _digest(self.error_bounds),'deforming_solid_total_point_v1',SCOPE)
+                _digest(self.error_bounds),
+                'reacting_deforming_solid_total_point_v1' if type(self.skeleton) is ManufacturedReactingSkeletonEnergy else 'deforming_solid_total_point_v1',SCOPE)
 
     def target(self,value_j,error_bound_j):return TotalEnergyTarget(value_j,error_bound_j,self.identity)
 

@@ -124,3 +124,11 @@ JoinedWaterVapor从原低温500K的h锚积分原高温NIST分段Cp，逐段原h/
 五项cell power为elastic/interface/dissipation/pore/body，总量是所表示分项的精确有理和正确舍入；pore=−p*Vbulk_dot仅因本片固定不可压Ns时Vp_dot=Vbulk_dot成立。D只一次，face h不加第二次pQ。初始totalE为forward所表示确定值，dynamic target误差0不宣称初值材料不确定性为0或已经传播整轨迹误差。
 
 实际干态等向压缩η0已过逐prefix各分项功及温度解析门槛；两格移动共享面与η非零仅点校验。真实湿轨迹、WaterPhaseTransfer/ProgrammedSolidFluidHeat对新host类型的准入、自由烧结和反应引起的Vs/机械能变化仍待后续。
+
+## 组成变化与规定形变（制造模型 v1）
+
+新显式 `reacting_manufactured` 域允许固体反应改变当前库存。`ManufacturedReactingSkeletonEnergy` 定义温度无关的机械内能：q(N)=q0+ΣwiNi，q0>0、wi≥0（1/mol），Eel=q Eel,ref(F)，Einterface=q Einterface,ref(F)。组成导数为 wi Eref；应力、固定组成变形功率与黏性耗散乘 q。该关系是人工制造解定义，不是污泥本构或有外部实验依据的烧结定律。
+
+每次组装均使用实际当前固体库存、占积及 Vp=Vbulk−ΣNi vi，并将反应配置重绑到同一当前储能对象。总储能为热化学内能加机械/界面内能，保持一次温度反解。组成机械能通过储能变化与热化学部分交换，不能再作为外功或额外反应热加入。声明共同压力与准静态总控制体后，压力外功为 −p Vbulk_dot；固定 bulk 而固体占积改变不产生这一外功。
+
+新账本字段为 elastic_deformation、interface_deformation、dissipation、bulk_pressure、body；前两项取固定组成偏导。旧 fixed_solid 域与字段语义保留，禁止混用两套专属字段。当前准入仅限这个显式制造骨架；未提供自由烧结运动闭合、动力学第二定律证明或真实原污泥参数准入。实际验证范围与保留的失败见 research/reacting-deformation-v1/README.md。
