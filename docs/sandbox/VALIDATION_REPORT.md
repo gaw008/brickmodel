@@ -101,3 +101,15 @@ uv sync --frozen --no-editable --extra dev --extra research --extra water --offl
 加入两模块后再次按上述冻结/非editable/离线方式重装，并从/private/tmp执行全部sandbox测试，实际 **498 passed in 1.99s，0失败、0跳过**。15个site-packages模块与工作区逐一hash一致，XML及身份记录为 `research/g2-installed-boundary-vapor-tests.xml`、`research/g2-installed-boundary-vapor-identity.json`。这次耗时只记录当前缓存/环境下观察，不和旧16.01s运行解释为性能改进。
 
 新边界只是连续输入及积分节点；动态气体库/对流辐射组装仍待完成。水汽模块未自动加入现有Shomate组装器，保留纯水R门禁，并显式标记混合物资格未建立。当前没有完成液/气相平衡、固液气储能反演或全湿砖应用验收。
+
+## 动态外边界与给定压力储能增量
+
+`a84f46e`：ProgrammedGasHeat在每个实际积分阶段更新外部完整气氛/总压，求末半格导热与对流/辐射串联的表面温度，再调用原面通量/物种焓账本。15测试通过，独立80组非线性表面根最大温差1.93e-9 K；另有反向压力出流供体焓手算与真实升降温积分验证。制造案例不赋予真实材料系数资格。
+
+`23cee3d`：PhaseStorage提供各相显式固定压力的物种U/H/V求和，条件反演保存实际MonotonicPath及来源，不自动证明声明的连续单调区间。22测试通过。大生成能量化平台、相消、导数下界乘积下溢等实际失败保留后修补；裸Shomate段不能默认重标物种。独立真实液水/水汽三组往返最大T差4.37e-10 K、U残差6.80e-8 J；固定p导数遵循Cp−p dv/dT，不冒用Cv。
+
+经当前冻结非editable离线重装，从/private/tmp运行最后全部sandbox测试，**535 passed in 2.94s，0失败、0跳过**。17个实际site-packages模块hash均与工作区一致，全部测试源码hash记录于 `research/g2-installed-programmed-storage-identity.json`；最终XML为 `research/g2-installed-programmed-storage-final-tests.xml`，较早同535项快照亦保留。没有宣称这就是CLI/UI或原污泥全周期安装验收。
+
+本次审核曾误以为pytest显式abs未指定rel会放宽比较。读取当前pytest8.4.2源码及实际反例证明该判断错误，审核记录已更正；显式rel=0是可读性澄清，不是虚构的旧门槛缺陷。最初粗积分未通过原2e-6 K绝对门槛的实际失败仍保留，物理结果门槛没有放宽。
+
+水/气孔体积与压力机械闭合、相变/液态迁移、固体实际材料热化学、烧结/应力及三个机制组的公开预测检查仍未完成。

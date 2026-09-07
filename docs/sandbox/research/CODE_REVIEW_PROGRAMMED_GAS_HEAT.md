@@ -25,6 +25,17 @@ Independent outward-flow check: cell 600 K/4800 Pa, boundary 800 K/4000 Pa, last
 
 No unresolved actionable issue above review confidence threshold. This is a fixed-geometry gas model boundary extension. It supplies no liquid/solid storage, full brick mechanics or material coefficient admission. Time knots still require explicit `breakpoints_s` integration argument. Tiny existing reservoir normalization is exposed alongside unchanged program composition. Numerical root/resource failure is not relabeled as material infeasibility.
 
+## Follow-up assertion clarity review
+
+Preserve the original source/test binding above as historical evidence. A later review suggestion that `pytest.approx(..., abs=...)` retained default relative tolerance was wrong for the project's pytest 8.4.2. Root corrected it; reviewer independently inspected `ApproxScalar.tolerance` and ran `600.0000125 == pytest.approx(600, abs=2e-6)`, which is false. Supplying abs with rel omitted already selects absolute tolerance alone. There is no basis to claim the original coarse-step failure or original absolute comparisons were false evidence.
+
+Read subsequent test/documentation diff: explicit `rel=0` on existing absolute assertions clarifies their unchanged semantics. Previously default pressure and endpoint-composition comparisons now have explicit tighter policies. Production source and integration settings remain unchanged. Actual final rerun: **15 passed in 0.61 s**, including the unchanged 2e-6 K analytic response threshold.
+
+Current test SHA-256: `85beea6331da9ece32144992b5f9f6b9bd64fc501dd08724ab4cdb5a0e419222`.
+Current source SHA-256 remains `4f249494d434ce9bbc26a850fea37d3eaa2172fbf4811939b917273d4667d74c`.
+
+Approval extends to this exact test/documentation-only increment. The historical coarse-step comparison values in the document are indeed outside 2e-6 K; no threshold relaxation or changed physics occurred.
+
 ## Review Summary
 
 | Severity | Count | Status |

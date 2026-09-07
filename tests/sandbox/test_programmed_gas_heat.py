@@ -42,12 +42,12 @@ def test_convection_is_in_series_with_actual_half_cell_and_area():
     state = op.base_model.state_from_temperatures([[2, 0]], [600])
     evaluation = op.evaluate(state, 0)
     # half-cell width 1m, k=2 => G/A=2, film h=3, series=1.2 W/m²K.
-    assert evaluation.surface_temperature_k == pytest.approx(780, abs=1e-8)
-    assert evaluation.heat.total_in_w == pytest.approx(360, abs=1e-8)
-    assert evaluation.rates.face_energy_w[-1] == pytest.approx(-360, abs=1e-8)
+    assert evaluation.surface_temperature_k == pytest.approx(780, abs=1e-8, rel=0)
+    assert evaluation.heat.total_in_w == pytest.approx(360, abs=1e-8, rel=0)
+    assert evaluation.rates.face_energy_w[-1] == pytest.approx(-360, abs=1e-8, rel=0)
     large = wrapped(base_model=replace(op.base_model, face_area_m2=4, gas_volumes_m3=(8.,)))
     state = large.base_model.state_from_temperatures([[8, 0]], [600])
-    assert large(state, 0).face_energy_w[-1] == pytest.approx(-1440, abs=1e-7)
+    assert large(state, 0).face_energy_w[-1] == pytest.approx(-1440, abs=1e-7, rel=0)
 
 
 def test_radiation_and_convection_balance_independent_nonlinear_reference():
@@ -56,8 +56,8 @@ def test_radiation_and_convection_balance_independent_nonlinear_reference():
     e = op.evaluate(state, 0)
     sigma = 5.670374419e-8
     root = brentq(lambda s: 2*(s-600)-3*(900-s)-.8*sigma*(1100**4-s**4), 600, 1100, xtol=1e-11)
-    assert e.surface_temperature_k == pytest.approx(root, abs=1e-7)
-    assert e.heat.total_in_w == pytest.approx(2*(root-600), abs=1e-7)
+    assert e.surface_temperature_k == pytest.approx(root, abs=1e-7, rel=0)
+    assert e.heat.total_in_w == pytest.approx(2*(root-600), abs=1e-7, rel=0)
     assert abs(e.surface_balance_residual_w) <= 1e-8 + 1e-11*abs(e.heat.total_in_w)
 
 
@@ -68,8 +68,8 @@ def test_dynamic_pressure_and_composition_affect_actual_mass_and_enthalpy_flux()
     state = base.state_from_temperatures([[2, 0]], [600])
     low = op.evaluate(state, .3)
     high = op.evaluate(state, .1)
-    assert high.reservoir.pressure_pa == pytest.approx(6000)
-    assert low.reservoir.mole_fractions == pytest.approx({'A': 0, 'B': 1})
+    assert high.reservoir.pressure_pa == pytest.approx(6000, rel=1e-12, abs=0)
+    assert low.reservoir.mole_fractions == pytest.approx({'A': 0, 'B': 1}, rel=0, abs=1e-15)
     assert high.rates.face_species_mol_s[-1].sum() < 0
     assert low.rates.face_species_mol_s[-1].sum() > 0
     assert not np.allclose(low.rates.face_species_mol_s, high.rates.face_species_mol_s)
@@ -83,10 +83,10 @@ def test_zero_conductivity_transmits_no_film_heat_and_adiabatic_case():
     state = op.base_model.state_from_temperatures([[2, 0]], [600])
     insulated = replace(op, base_model=replace(op.base_model, conductivities_w_m_k=(0.,)))
     assert insulated(state, 0).face_energy_w[-1] == 0
-    assert insulated.evaluate(state, 0).surface_temperature_k == pytest.approx(900, abs=1e-8)
+    assert insulated.evaluate(state, 0).surface_temperature_k == pytest.approx(900, abs=1e-8, rel=0)
     off = replace(op, convection_w_m2_k=0, emissivity=0)
     assert off(state, 0).face_energy_w[-1] == 0
-    assert off.evaluate(state, 0).surface_temperature_k == pytest.approx(600, abs=1e-9)
+    assert off.evaluate(state, 0).surface_temperature_k == pytest.approx(600, abs=1e-9, rel=0)
 
 
 def test_real_integration_program_knots_and_outer_ledger():
@@ -102,10 +102,10 @@ def test_real_integration_program_knots_and_outer_ledger():
     for dt, gas0, slope in [(.1, 900., 1000.), (.2, 1000., -1000.)]:
         a = 1.2/44
         temp = gas0 + slope*dt - slope/a + (temp-gas0+slope/a)*math.exp(-a*dt)
-    assert op.base_model.temperatures_k(result.states[-1])[0] == pytest.approx(temp, abs=2e-6)
+    assert op.base_model.temperatures_k(result.states[-1])[0] == pytest.approx(temp, abs=2e-6, rel=0)
     for before, after, step in zip(result.states, result.states[1:], result.steps):
-        assert after.internal_energy_j[0]-before.internal_energy_j[0] == pytest.approx(-step.face_energy_j[-1], abs=1e-9)
-    assert initial.internal_energy_j[0]-math.fsum(s.face_energy_j[-1] for s in result.steps) == pytest.approx(result.states[-1].internal_energy_j[0], abs=1e-8)
+        assert after.internal_energy_j[0]-before.internal_energy_j[0] == pytest.approx(-step.face_energy_j[-1], abs=1e-9, rel=0)
+    assert initial.internal_energy_j[0]-math.fsum(s.face_energy_j[-1] for s in result.steps) == pytest.approx(result.states[-1].internal_energy_j[0], abs=1e-8, rel=0)
 
 
 @pytest.mark.parametrize('changes', [dict(convection_w_m2_k=-1), dict(emissivity=1.1),
@@ -136,9 +136,9 @@ def test_inflow_moles_and_donor_enthalpy_independent_half_cell_calculation():
     result = op.evaluate(state, .1)
     velocity = -1e-5 * (6000-4800) / 1  # actual last half-cell = 1 m
     total_flux = velocity * (6000 / (8*1000))
-    assert result.rates.face_species_mol_s[-1] == pytest.approx([total_flux/2]*2, abs=1e-14)
+    assert result.rates.face_species_mol_s[-1] == pytest.approx([total_flux/2]*2, abs=1e-14, rel=0)
     expected_h = 30*(1000-298.15) - 500  # mean formation h of A/B is -500 J/mol
-    assert result.rates.face_energy_w[-1] == pytest.approx(total_flux*expected_h, abs=1e-8)
+    assert result.rates.face_energy_w[-1] == pytest.approx(total_flux*expected_h, abs=1e-8, rel=0)
     assert result.heat.total_in_w == 0
 
 

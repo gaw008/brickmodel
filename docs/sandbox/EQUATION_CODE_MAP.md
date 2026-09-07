@@ -24,5 +24,7 @@
 | IAPWS Helmholtz水物性、h−pv、Cp/Cv导数与统一参考偏移 | `water_properties.WaterProperties` | 78测试、33官方数值核验；`WATER_ADAPTER.md`；原生R显式，未拼接混合气 |
 | 连续分段炉温/壁温/压力/气氛与时间节点 | `boundary_program.BoundaryProgram` | 41测试、实际积分与独立解析热量；不是已完成动态边界耦合 |
 | 固定R理想水汽 h保持、u=h−RT、Cv=Cp−R | `ideal_water_vapor.IdealWaterVapor` | 28测试、独立2071温点，水来源与CODATA常数来源分列；无相平衡资格 |
+| 动态外气与半格导热/对流/辐射串联 | `programmed_gas_heat.ProgrammedGasHeat` | 15测试、独立80表面根及真实积分；仅刚性气相核 |
+| 固定相压力的U/H/V求和与条件温度反演 | `phase_storage.PhaseStorage` | 22测试；量化/相消/导数下溢反例，结果保存实际单调路径声明 |
 
 完整湿砖组装器、材料动力学、水分迁移、烧结、力学和多代实验还没有实际映射，保持未完成。后续任何结果的完整DAG还需绑定实际启用的函数、参数和模型版本，不能用这张人读表替代运行时追溯。
