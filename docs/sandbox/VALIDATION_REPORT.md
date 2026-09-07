@@ -273,3 +273,7 @@ wet_to_hot_attempt02完成600s模拟、实际198.3825s，8953评估/1272试算pa
 首次isotropic attempt05实际1fail5pass，finest128温度过但pore功1.84969e-4J未过1e-6J。attempt06仅细化512/1024/2048并按实测成本改变wall20→90s/总150s，原物理/数值/比较gate不变，实际72.6178s完成。每档实际均匀、0reject；pore prefix误差1.1560369e-5→2.8900834e-6→7.2252057e-7J，fineT7.0783983e-8K、elastic4.3959833e-10J、interface1.6987324e-11J，原fine门槛全过。原coarse失败不删；正式测试固定fine而非隐藏env。
 
 长扫描未被独立审者重复：审者核实际XML、指标和数学解析，另独立短测试/旧路径对照。扫描源只有运行后采集，README明确非前后hash测量；后续唯一initializer修复及正式测试配置与实际选择有独立AST/初值等价证据。完整候选、错误、源码快照、XML/metric和review归档research/deforming-solid-host-candidate-history.zip。实际历史.py测试fixture保持原字节；不把后续入口修复冒称已在旧扫描运行。新完整安装测试75509正在执行，尚未终态。
+
+### 规定形变固体主机安装最终验证
+
+session75509实际exit0：**1103 passed523.90s，0fail/error/skip**，包括正式默认的fine等向压缩扫描及initializer修复；37个实际site-packages模块与fa3194b源码逐一一致。实际XML已读取，环境/源码身份见installed-sandbox-deforming-solid-identity.json。此结果仍不含真实湿态主机时间积分、phase/depletion新host准入或材料验证。

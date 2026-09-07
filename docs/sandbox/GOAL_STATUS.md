@@ -4,7 +4,9 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
-最新已提交检查点 `1c4ab7f`（源码32965ce）：1089项安装测试/36模块实际一致。当前新增DeformingSolidHeat、私有已解码assembler及point context已应用/独立审核；细档实际等向干态解析温度和各分项功过原gate，原粗档pore失败保留。新冻结非editable全sandbox测试 **session75509** 正在运行，XML目标research/installed-sandbox-deforming-solid-tests.xml；恢复先poll同一session，src/tests冻结，不提前宣称预计1103项/37模块通过。89265等旧suite全部终态，不重跑。下一实际湿态独立entropy oracle仅/tmp/brick-wet-deformation-oracle，由review_water_resume先推导/无EOS测试，须等Root新整包终态后再给湿EOS成本测试。所有材料/全周期/公开验证/使用验收原合同未完成。
+最新源码检查点 `fa3194b`：规定形变固体总能量主机已正式接入；冻结非editable安装 **1103 passed523.90s**，37个实际site-packages模块与源码一致。research/installed-sandbox-deforming-solid-tests.xml及identity.json为实际证据。session75509已exit0，旧75509/89265/46721全部结束，不再轮询/重跑。当前没有运行中的完整suite。
+
+下一工作：独立wet entropy oracle在/tmp/brick-wet-deformation-oracle，9无EOS测试与独立审核通过；实际初点/10%压缩端点在2.07s完成，halfxtol复验通过，真实point inverse约.8125s。该端点不是时间轨迹；2048步预计数小时，暂停450s粗pilot提案，先执行最多一次30s的真实DeformingSolidHeat湿态前缀0→1/64s（同原1s/10% motion，两个maxstep1/128，仅smoke不替代全程）。review_water_resume负责实际进程/结果。review_convergence_resume在/tmp/brick-water-backend-probe核更快的同IAPWS95后端可行性/官方许可与1–2点，不改生产EOS。boundary_program在/tmp/brick-deforming-wet-admission按已读设计准备显式边界/相变新host准入，仅noEOS候选。全部真实原污泥材料、全周期、三机制公开留出与使用验收缺项仍未完成。
 
 ## 当前状态
 
@@ -354,3 +356,11 @@ session89265已实际exit0：**1089 passed in453.56s，0失败/错误/跳过**�
 本回合实际完成点储能、identity/depletion组件与干态机械主机，属于progress，Goal仍active。干态首轮pore失败保持；细化后512/1024/2048实际无拒步，finestpore7.2252e-7J过1e-6J。源码修复只涉及审核提出的current_storage尾追加和initializer严格输入，原physics/gate不变。独立13轻测及真实旧热/气/反应golden通过，Root应用13通过；完整archive/readme与3src应用精确比较已核。
 
 新fullsuite唯一session75509正在运行（开始已返回6%进度），源码/tests冻结。完成后实际XML计数与37预期实际安装模块身份逐一核，不重旧1089套件。下一wet entropy oracle在/tmp独立推导，尚不运行湿EOS；未来用同Nl=1/Ng=.01/Ns2/300K与10%isotropic，独立water EOS entropy closure与主机energy积分比较，不能调用被测storage作参照。当前还没有此湿积分验证成果。
+
+### 规定形变固体主机完整安装实际终态
+
+源码fa3194b冻结安装session75509实际exit0：**1103 passed in523.90s，0失败/错误/跳过**，包含正式默认fine3档扫描。37个实际site-packages模块与源hash逐一相同，cwd=/private/tmp、无PYTHONPATH。实际XML和installed-sandbox-deforming-solid-identity.json已保存。当前没有待结束的旧完整suite。
+
+独立湿熵参照已完成数学/代码审核和9轻测试，dry volume残差漏门槛先RED后修，没放宽gate。真实30s硬限两点probe仅2.0704s：初态p304469.313540Pa；lambda=.9，T300.186070144980K/p567435.655362327Pa，ΔS−4.01e-11J/K、ΔV−1.36e-20m3；halfxtol差T2.503e-10K/P4.899e-7Pa过原gate。154是公开water.state_tp调用次数，不是内部EOS求解次数。optional已测storage forward.1696s/inverse.8125s，使用oracleT初始化的roundtrip不冒实际trajectory。结果与完整source/assets/limits在/private/tmp/brick-wet-deformation-oracle。
+
+按实测成本不盲跑2048步湿扫描或450s粗pilot。Root另事前登记30s硬限真实wet host前缀smoke：同物理motion/库存，只推进原曲线0→1/64s，cap1/128、≤4接受/4拒，原gate不动，失败保存；不能将此前缀升级成原完整10%轨迹通过。并行仅可做来源/无EOS准入设计与快速同EOS后端微探针，生产backend未改。
