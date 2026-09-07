@@ -14,6 +14,7 @@ from .ideal_water_vapor import IdealWaterVapor,IdealWaterVaporError
 from .integration import ConservedState,DomainExit,IntegrationError,Rates
 from .rigid_fluid_heat import FluidHeatEvaluation,RigidFluidHeat
 from .solid_fluid_heat import SolidFluidHeat,SolidFluidHeatEvaluation
+from .programmed_solid_fluid_heat import ProgrammedSolidFluidHeat,ProgrammedSolidFluidEvaluation
 from .water_chemical_potential import WaterChemicalError,WaterChemicalPotential,WaterPhaseEquilibrium
 from .water_properties import WaterDomainError,WaterNumericalError
 
@@ -58,7 +59,7 @@ class CellWaterTransfer:
 @dataclass(frozen=True)
 class WaterTransferEvaluation:
     rates: Rates
-    base_evaluation: FluidHeatEvaluation | SolidFluidHeatEvaluation
+    base_evaluation: FluidHeatEvaluation | SolidFluidHeatEvaluation | ProgrammedSolidFluidEvaluation
     cell_transfers: tuple[CellWaterTransfer,...]
     coefficient_set_id: str
     coefficient_version: str
@@ -69,7 +70,7 @@ class WaterTransferEvaluation:
 
 @dataclass(frozen=True,kw_only=True)
 class WaterPhaseTransfer:
-    base_model: RigidFluidHeat | SolidFluidHeat
+    base_model: RigidFluidHeat | SolidFluidHeat | ProgrammedSolidFluidHeat
     chemical: WaterChemicalPotential
     coefficients_mol_s_pa: tuple[float,...]
     coefficient_set_id: str
@@ -79,12 +80,12 @@ class WaterPhaseTransfer:
     allow_manufactured: bool = False
 
     def __post_init__(self):
-        if type(self.base_model) not in (RigidFluidHeat,SolidFluidHeat) or type(self.chemical) is not WaterChemicalPotential:
+        if type(self.base_model) not in (RigidFluidHeat,SolidFluidHeat,ProgrammedSolidFluidHeat) or type(self.chemical) is not WaterChemicalPotential:
             raise WaterPhaseTransferError('explicit_fluid_and_chemical_models_required')
         if 'H2O' not in self.base_model.gas_species_order:
             raise WaterPhaseTransferError('explicit_gas_water_species_required')
         values=self.coefficients_mol_s_pa
-        if not isinstance(values,(tuple,list)) or len(values)!=len(self.base_model.storages):
+        if not isinstance(values,(tuple,list)) or len(values)!=len(self._thermal_host.storages):
             raise WaterPhaseTransferError('explicit_per_cell_rate_coefficients_required')
         coefficients=tuple(_num(v,'phase_transfer_coefficient',nonnegative=True) for v in values)
         object.__setattr__(self,'coefficients_mol_s_pa',coefficients)
@@ -101,13 +102,14 @@ class WaterPhaseTransfer:
         object.__setattr__(self,'coefficient_source_ids',tuple(sources))
         manufactured=(self.coefficient_classification=='manufactured_test_fixture'
                       or self.base_model.coefficient_classification=='manufactured'
+                      or self._thermal_host.coefficient_classification=='manufactured'
                       or any(p.metadata.classification=='manufactured_test_fixture'
                              for s in self._fluid_storages for p in s.gas_phases.values()))
-        if type(self.base_model) is SolidFluidHeat:
+        if type(self._thermal_host) is SolidFluidHeat:
             manufactured = manufactured or any(
-                s.geometry_classification=='manufactured_test_fixture' for s in self.base_model.storages) or any(
+                s.geometry_classification=='manufactured_test_fixture' for s in self._thermal_host.storages) or any(
                 p.metadata.classification=='manufactured_test_fixture'
-                for s in self.base_model.storages for p in s.solid_phases.values())
+                for s in self._thermal_host.storages for p in s.solid_phases.values())
         if manufactured and not self.allow_manufactured:
             raise WaterPhaseTransferError('manufactured_requires_explicit_test_mode')
         for storage,k in zip(self._fluid_storages,coefficients):
@@ -123,14 +125,23 @@ class WaterPhaseTransfer:
                 raise WaterPhaseTransferError('phase_transfer_requires_matching_ideal_water_caloric_bridge')
 
     @property
+    def _thermal_host(self):
+        return (self.base_model.base_model if type(self.base_model) is ProgrammedSolidFluidHeat
+                else self.base_model)
+
+    def breakpoints_s(self,start_s,end_s):
+        return (self.base_model.breakpoints_s(start_s,end_s)
+                if type(self.base_model) is ProgrammedSolidFluidHeat else ())
+
+    @property
     def _fluid_storages(self):
-        return (tuple(s.fluid_template for s in self.base_model.storages)
-                if type(self.base_model) is SolidFluidHeat else self.base_model.storages)
+        return (tuple(s.fluid_template for s in self._thermal_host.storages)
+                if type(self._thermal_host) is SolidFluidHeat else self._thermal_host.storages)
 
     @property
     def _liquid_index(self):
-        return (self.base_model.inventory_layout.liquid_index
-                if type(self.base_model) is SolidFluidHeat else 0)
+        return (self._thermal_host.inventory_layout.liquid_index
+                if type(self._thermal_host) is SolidFluidHeat else 0)
 
     @property
     def species_order(self):return self.base_model.species_order
