@@ -57,3 +57,30 @@ No experiment outcome is inferred from these code checks. The unique bounded run
 Read `wet_to_hot_attempt01.json` without repeating the run. It has unchanged dependency hashes and one actual depletion event, followed by dry continuation, but ends at 198.0041396847951 s with resource_limit/rejected_trial_limit (100 rejections, 4523 evaluations, 526 accepted trial panels, 179.8826 s). It did not reach the 600 s target, so the full final-temperature oracle was not passed. Independently reconstructed the saved energy prefix (maximum residual 4.44123e-10 J) and total water (maximum drift 5.39322e-22 mol); these passing partial ledgers do not convert the failed run into success. Repeated ordinary dry-segment restarts are being addressed separately without enlarging the rejection budget or relaxing physical/error gates.
 
 - Failure binding `docs/sandbox/research/wet_to_hot_attempt01.json`: `4049fb85b16c8931116bb7b6fd14e017bfabd46609886e4a9d5579284554fe9f`
+
+## Attempt 02: completed trajectory and independent artifact audit
+
+Read the actual `wet_to_hot_attempt02.json` after the separately reviewed continuous-dry integration fix. The physical experiment was executed by the implementation/root team, not rerun by this reviewer. It completed at exactly 600 s in 198.3825 wall seconds, with 8953 model evaluations, 1272 accepted trial panels including previews, one rejected trial, and 1259 committed states. The actual liquid-depletion event is at 0.00028422094020779965 s. The 240 s / 100-rejection limits and physical/error gates were retained; safe_inventory_fraction is the default 0.25.
+
+The saved host audit passed: final temperature 530.7349451167803 K versus the previously reviewed independent, event-conditioned dry reference 530.7349459107604 K. Their independently recomputed difference is −7.939801207612618e-7 K, within the preregistered 5e-4 K gate. The source-Cp reference is conditional on the actual event state/time, not an independent event-time truth. The above-500 K branch remains explicitly metastable without a nucleation/condensation claim.
+
+Independently recomputed from raw saved states and StepLedgers using exact Fractions, without importing the candidate audit or evaluating EOS:
+
+- Every step time corresponds to its two states; terminal ledger equals the saved event panel; every post-event liquid inventory is exactly zero.
+- All four inventory columns include physical face/source increments and, only at the terminal event, the paired correction plus vapor-storage residual. Maximum individual-column prefix residual is 4.665298654799076e-22 mol; maximum step residual is 1.4558378780933287e-22 mol.
+- Total-U prefix maximum residual is 7.130317478083259e-10 J; step maximum is 2.8400393148331204e-11 J. Exact cumulative amount and energy fractions match the saved cumulative fields.
+- Maximum total-water drift is 5.39321759384574e-22 mol, corresponding to H 1.078643518769148e-21 mol, O 5.39321759384574e-22 mol and native-water mass 9.716026033544615e-24 kg for this fixture; inert columns are included in the preceding full-column audit.
+- The exact paired correction is ±1.1249656330721176e-22 mol. Actual vapor write-back minus that ideal increment is +9.926167350636332e-23 mol; signed/absolute storage and cumulative correction totals match exactly. This is recorded numerical write-back, not extra physical evaporation or latent heating.
+
+All **81** dependency hashes match both before/after manifests and the current files. The experiment JSON SHA256 is `3a16319a1a4f81a3e797cf4e96791967491ae806b8c096400d96215723220ccd`; the exercised integrator is `afff823dd48ca2bc4eeb650bf2e7ab4bf12a70d60f45a32ce6bc35091d0b3355`. Attempt 01 remains preserved as a failure. No additional physical run or altered threshold was used for this audit.
+
+## Final Review Summary
+
+| Severity | Count | Status |
+|----------|-------|--------|
+| CRITICAL | 0 | pass |
+| HIGH | 0 | pass |
+| MEDIUM | 0 | pass |
+| LOW | 0 | pass |
+
+Verdict: APPROVE — the specified manufactured-solid/kinetics wet-to-dry-to-hot fixture now has an actual completed run and independently reconstructed saved ledgers. This does not establish real sludge sintering, material qualification or full-trajectory error certification.

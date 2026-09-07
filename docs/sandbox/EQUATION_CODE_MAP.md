@@ -92,3 +92,5 @@
 | 精确液净率与向下最近事件时间；独立clock残量=abs(netNl)*(root−end) | `depletion_roundoff.DepletionClockEvidence` | 原4ULP默认不变，4项clock证据/伪造拒绝；仍受真实正蒸发比例与累计预算 |
 | 完整Rates终端Euler与真实干态共同时间续算，全段Fraction账本 | `depletion_integration.integrate_depletion` | 常/线性根、真细化回归、程序节点、资源/失败隔离；实际host attempt03水/元素/M/U与升温通过；非全轨迹ODE误差证书 |
 | existing_liquid→depleted_no_nucleation，假想平界面筛查独立于实际液态μ | `water_phase_transfer.WaterPhaseTransfer` | 11项模式测试；strict域外/凝结退出，显式metastable研究模式，K和来源保留 |
+| 多格第二事件重选共同时间并重启比较；普通步局部库存时间比例；全显式dry保持普通自适应积分 | `depletion_integration.integrate_depletion`、`DepletionPolicy.safe_inventory_fraction` | 独立55项事件/clock/写回/多格/比例/干段测试；真实水两格液迁移+反应耗尽attempt02通过；局部预测不构成全轨迹误差界 |
+| 实际NL精确0时选择显式dry温度反解括号；正NL保留wet括号与原EOS域 | `solid_fluid_heat.SolidFluidHeat.temperature_brackets_for` | 独立9项括号测试；真实湿态到530.7349451K连续轨迹及独立条件干段参照通过；不是液chemical高温扩域 |

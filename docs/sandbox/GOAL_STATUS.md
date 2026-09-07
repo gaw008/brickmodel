@@ -285,3 +285,13 @@ wet→hot同主机600s/恒1000K炉温首轮也已真实终止：wet_to_hot_attem
 非editable冻结离线安装已完成，实际从/private/tmp、不设PYTHONPATH启动完整tests/sandbox，PTY session **78292** 仍在运行（最近工具返回带此session的进度，而非终态）。目标XML为research/installed-sandbox-multicell-hot-tests.xml。恢复时先轮询同一session；观察超时不重启。完成后读取真实XML，并逐模块核源码与实际site-packages身份；未完成前不得宣称新版本全套通过。两实际实验66952及97463均已exit0，不再轮询或重复运行。src/tests/runner冻结至全套终态。
 
 之后完成来源数字化独立审核、保存整体测试/身份和阶段提交；继续可变几何与机械功、原污泥成套材料证据、烧结/连通性/冷却力学、三机制公开留出验证、全周期、多代搜索及CLI/UI。所有原Goal必需项保留。
+
+### 本检查点最终核验与下一步
+
+上面78292运行记录已终止：实际exit0，**954 passed in444.54s，0失败/错误/跳过**。新XML已由ElementTree读取计数；32个真实site-packages模块在测试后逐一核对源码hash一致，cwd=/private/tmp且无PYTHONPATH。证据为research/installed-sandbox-multicell-hot-tests.xml和installed-sandbox-multicell-hot-identity.json。不要再轮询或重启78292，也不要重复旧918项。冻结版本已包含本轮全部src/tests修复；尚未加入后述隔离motion候选。
+
+`f3aabfc`保存两实际通过实验及原失败；`01c1d42`保存Areias26点独立审查通过的数字化证据。Areias独立检查25资产hash、26点原图与Decimal75角点/舍入一致；不授予材料准入。高温结果原独立预审者也已只读复核1259状态与81依赖、完整pair/storage/逐步及prefix，报告追加在CODE_REVIEW_WET_TO_HOT.md，未冒称再次运行EOS。
+
+可变几何设计及独立审查已完成：DEFORMING_HOST_DESIGN.md/CODE_REVIEW_DEFORMING_HOST_DESIGN.md。审查发现同V但A×2/width÷2会破坏零变形等价，已补全部格数/面积/宽度/体积与参考构形绑定及明确算术容差/拒绝测试。设计最终hash652d5af0b356466ab5b426215e44638d8f849c71b412176a7e7d6d2928ff0e59。
+
+下一工作已经分配给review_water_resume：仅在/private/tmp/brick-deformation-motion-candidate/准备C1运动学provider与独立测试候选，不动仓库src/tests，不做GasHeat refactor。恢复先检查代理实际状态和候选文件；取得独立代码审查后再应用。先完成统一V/A/d/Vdot入口，再接可审计规定形变气体功测试及湿固体真正机械储能/烧结闭合，不能停留在气腔并改称完整砖模型。其余原Goal必需项仍全部未豁免，Goal保持active。

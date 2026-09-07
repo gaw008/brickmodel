@@ -227,3 +227,15 @@ attempt01/02的120s资源失败及源码绑定限制原样保留。attempt03收�
 首轮新冻结安装回归实际 **3 failed, 914 passed in230.46s**，XML `research/installed-sandbox-depletion-tests.xml`。失败均为默认界面None被物化成单格tuple，旧dataclasses.replace构建两格液迁移/反应主机时引发invalid_interface_modes；不能将31项局部通过当作整个版本通过。原测试与失败XML保留，后续修复另行验证。
 
 `3c65ee7`修复默认None的主机替换语义，显式模式仍严格校验；12模式+原3失败组合独立15项通过。再次冻结非editable离线安装，在/private/tmp不设PYTHONPATH执行全部sandbox，实际 **918 passed in234.43s，0失败/错误/跳过**。这次包括最终默认模式修复后的真实湿干主机积分断言。32个实际安装模块在运行后再次逐一核对hash一致，最终XML和身份为research/installed-sandbox-depletion-final-tests.xml、installed-sandbox-depletion-identity.json。旧失败XML原字节保存为raw.zip，可读副本的行尾空白转换已单独登记。
+
+## 两格耦合与连续湿态到高温
+
+`9194fd1`加入分离多事件共同时间重选与显式相态反解括号；`fa88647`加入统一普通步库存比例及全显式干态的自适应历史保持。新比例/干态和既有事件测试共55项独立通过7.36s。原二次事件加速失败、干段反复重启导致100拒步失败及实际运行超时都保留。
+
+两格真实水配制造反应/固相/输运的attempt02完成，444.525s、494评估、58接受试算panels、42已提交steps。两个事件0.0002883791755s与0.0010885050888s后继续至1/256s，程序节点1/512s保留。独立从保存的每步数据重算库存最大残差8.2756816e-18mol、元素1.1232598e-17mol、质量1.5340836e-19kg、U6.6127672e-13J；数值相间修正/实际存储舍入及全累计精确核对。来源绑定与验证限制见research/CODE_REVIEW_COUPLED_DEPLETION.md。初次360s失败与第二次已登记600s预算分别保存，未改物理输入和误差门槛。
+
+wet_to_hot_attempt02完成600s模拟、实际198.3825s，8953评估/1272试算panels。终温530.7349451167803K，对以实际已接受事件U/time为条件的独立干段参照530.7349459107604K，差约7.94e-7K，小于事前5e-4K门槛；这不独立认证耗尽时间。max水量5.3932176e-22mol、单库存prefix4.6652987e-22mol、U7.1303175e-10J，运行前后源码一致。原240s/100拒步预算与全部误差门槛保持。高温chemical unknown的显式metastable分支不构成实际不凝结证明。
+
+上述是软件/数值耦合验证，固体与动力学仍为制造值，不是原污泥材料验证或全时空收敛。当前版本完整冻结安装测试已启动；最终结果必须读取新XML后单独登记，不能沿用旧918项宣布通过。
+
+最终安装结果已实际完成：**954 passed in444.54s，0失败/错误/跳过**，非editable离线锁定安装，cwd=/private/tmp、无PYTHONPATH。实际解析research/installed-sandbox-multicell-hot-tests.xml核计数，测试后32个真实安装模块逐一与源码hash一致；身份产物research/installed-sandbox-multicell-hot-identity.json。原918项及失败历史保留；本证据不包含尚在隔离目录准备的可变几何候选。
