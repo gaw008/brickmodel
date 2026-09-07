@@ -4,6 +4,16 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新检查点：HEOS stage5 已把显式可选混合后端接入生产源码。真实液汽 EOS 用已审查 HEOS 内核，理想部分保留 Python IAPWS；物理参考态与不可变软件实现身份分开，完整 canonical 身份绑定 provider/schema/source IDs/定义及代码。身份贯穿水状态、化学、相、闭合储能与目标记录。默认 Python 不变，状态 dataclass 新增 implementation=None 字段；不宣称历史全部 JSON 字节不变。
+
+清单固定 SHA、实际运行 descriptor 二次比对与来源路径已独立审核；不接受调用者自行改写清单来准入未验证构建。来源记录 data/sandbox/water/heos-8.0.0-source.json、固定 manifest 与 docs/sandbox/HEOS_BACKEND.md 可查询软件、许可证、原始流体及 IAPWS。缺少可选依赖时明确 WaterSourceError，无静默降级。实际已安装默认环境没有 CoolProp，该拒绝已验证。
+
+隔离候选默认相关 212/298 测试通过；最终固定清单候选 smoke 与原闭合储能制造测试逆解合并实际 exit0/3.948618084s，保留原逆解 1e-5J/1e-4K 等门槛。默认 canonical 与旧记录相同，替代实现身份不同且稳定、剥离身份与混用拒绝。早期 descriptor 摘要未涵盖完整 envelope 的碰撞已修复；原候选、失败/修复及独立复审归档 research/heos-stage5。应用的 13 个源码文件与最终审查候选逐字节一致。
+
+冻结非 editable 离线安装后，实际从 /private/tmp、无 PYTHONPATH 运行全 sandbox 套件：**1112 passed in 519.65s**，XML 1112 tests/0 failures/0 errors/0 skipped、time519.651s。session34061 已 exit0，41 个实际 site-packages 模块在测试后重新导入并与当前源逐字节及 SHA 一致。证据 research/installed-sandbox-heos-interface-tests.xml 与 identity.json。本套件证明默认安装回归，替代后端的有界运行证据来自单独已核查的 HEOS 环境；不将二者混称替代后端完整主机测试。目前无待轮询测试/EOS句柄。
+
+下一动作：完善可选依赖锁定/安装契约及替代后端集成故障测试，再以原门槛验证活动相变湿逆解、短前缀和实际成本。尚无整体提速证明，不能直接扩大为长湿扫描。全原污泥材料证据、反应/输运/自由烧结/冷却、三公开机制与留出对照、全周期 CLI/中文 UI/逐代搜索仍是完整 Goal 必需项。Goal active，当前为阶段性实现和验证，尚未完成全模型。
+
 最新检查点：HEOS stage4隔离TP改进与扩大验证已归档research/heos-stage4，生产src仍6dc5aa9。初30state网格28pass/2fail，293/300K100MPa液体energy残差2.314e-6/2.096e-6>1e-6保持失败。新增nativePT只做phase-verifiedseed，再解pEOS(rho,T)=原targetP，logrhoNewton slope=rhoRTD，max8/step<.1，目标min1e-4Pa,rho*1e-7。nativeh/u/s与targetP不重置，原全部gate不变。新同30cases全部通过1.52217s/exit0，两原失败实际一步密度更新改善，raw迭代独立重算通过。
 
 另外7原liquid/vapor中心差分案例通过1.50251s，原33IAPWS印刷点通过1.03654s；实际5snapshots/导数差分与单位/API经独立复审。math.isclose symmetric与原pytest.approx尺度略异，已对实际21+33数值额外按原expected尺度重算54项全部通过，不重标代码执行方式。275/625K是raw backend公式核，不扩candidate293–500K域，也不算实测材料验证。
