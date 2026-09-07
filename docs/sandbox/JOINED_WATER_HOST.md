@@ -1,0 +1,17 @@
+# 来源门禁的joined水汽接入真实整体主机
+
+实施前计划：在现IdealGasPhase显式接纳JoinedWaterVapor，保留水物种/摩尔质量、whole-provider语义和segment_index=None；反应绑定使用完整joined.identity而非只同名H2O。WaterPhaseTransfer仅核对joined.low_model与原chemical共享参考/来源，不扩展293–500K液化学域或改变无液耗尽规则。高温水汽是独立热量延拓接口，不等于高温液水、成核或湿干事件已实现。
+
+测试预登记：真实SolidFluidHeat每stage整体库存/U反解，2mol制造恒Cp固体+0.01molH2O气体，实际正/负功分别从498K/502K跨500K；另在原高段接缝1700K附近1698/1702K用显式适域固相验证。固定总mol、全部固体列不动，前缀U与真实work账本误差1e-7J；终温对独立分段Cp积分能量参考绝对2e-5K。反解/积分政策更严或与误差合同相容；Joined numerical_error的低锚声明与高段表示误差必须被gas envelope覆盖，不能用原小误差预算默认为接入成功。另测低温真实湿状态相变仍可用、超域/无液K>0仍退出、反应完整provider identity和质量/R门禁。
+
+实际接入采用provider作者冻结接口：JoinedWaterVapor的`low_model`、完整`identity`、`numerical_error(T).internal_energy_error_j_mol`。IdealGasPhase只增加显式类型分支，要求正确水摩尔质量且segment_index=None，whole `_curve`按实际温度走低/高分支；旧gas、continuous和原水桥路径不变。SolidReactionConfig绑定Joined时显式保存完整identity，含低桥语义、高段原始源/积分/offset及声明误差身份，不只比较species或标准参考字符串。同源独立加载可匹配，改声明误差或来源身份会拒绝反应provider混用。
+
+原RigidStorage按显式envelope计gas u误差，旧路径不自动访问provider的numerical_error。本轮新增最小运行时检查：每个活动Joined气体，在实际T查询其条件内能数值误差，若envelope.gas_u_error小于它就拒绝。先新增测试，实际出现DID NOT RAISE，再实现检查；不把fixture手工核对当成生产门禁。该检查只保证声明覆盖Joined的条件数值预算，不证明低锚声明本身或源数据模型误差已独立准入；原fluid+solid误差传播仍保留。
+
+WaterPhaseTransfer的活跃气水若为Joined，仅取其`low_model`与chemical原水桥的method/reference/assets/R比较。后续实际化学查询仍使用原293–500K域；Joined的6000K高界不给液相化学额外资格。无液且K>0仍按旧规则DomainExit，K=0可以保留水汽在新高域继续纯气/固体储能，这是明确禁用相间过程的测试，不称液耗尽已实现。正液库存的1702K状态仍拒绝；没有全局移除water EOS温域校验。
+
+真实host测试用2mol、Cp=50J/(mol K)且v=1e-6m³/mol的制造固相，0.01mol有据Joined水汽，液库存和载气库存为0。恒功±100W持续4s，从498/502K以及1698/1702K分别跨500/1700K；每stage调用完整SolidFluidHeat.evaluate，保留整体inverse，水汽/固体库存始终不丢失。总体U账本前缀误差≤1e-7J，终温对独立源系数Decimal积分（低段参考使用已独立核验的原水桥）误差≤2e-5K。高段实际来源范围是500–1700与1700–6000K，没有猜测接缝。制造solid域显式延至2000K、机械压力域1e4–1e7Pa、误差域和逆温括区各按案例给出；这不构成这些制造参数的材料准入。
+
+测试记录：初次新host文件因provider尚未落盘收集失败；待provider就绪后四条真实积分通过。低温湿回归最初错误地将inverse下界设290K，真实water域拒绝，修正fixture共同域下界为293K，没有放宽水域。7项通过2.22s，旧PhaseStorage和SolidReaction合计35项通过1.04s；最终加入低/高/高段接缝误差预算回归后的9项结果由本轮独立审核绑定。未扩大昂贵湿周期回归或修改新provider实现。
+
+该交付仅证明保留水汽的真实整体主机可跨热量拼接点往返，尚未处理干湿相出现/消失事件、成核、固相真实转变/收缩或整砖材料预测。Joined数值Cp接缝保留，h/u连续来自明确派生积分，不称实验真实水汽误差因此更小。

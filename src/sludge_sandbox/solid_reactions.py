@@ -9,6 +9,7 @@ from numbers import Integral, Real
 
 from .reactions import ReactionNetwork,ReactionRates,ReactionError,ArrheniusMassAction
 from .phase_storage import IdealGasPhase,LiquidWaterPhase
+from .joined_water_vapor import JoinedWaterVapor
 from .incompressible_solid import IncompressibleSolidPhase
 from .solid_fluid_storage import SolidFluidStorage,SolidFluidState
 from .solid_fluid_heat import InventoryLayout
@@ -25,7 +26,9 @@ def _label(value):
 
 def _identity(provider):
     if type(provider) is IdealGasPhase:
-        return (type(provider),provider.metadata,_caloric_identity(provider.caloric),provider.segment_index,provider.additional_source_ids)
+        caloric_identity=((JoinedWaterVapor,provider.caloric.identity) if type(provider.caloric) is JoinedWaterVapor
+                          else _caloric_identity(provider.caloric))
+        return (type(provider),provider.metadata,caloric_identity,provider.segment_index,provider.additional_source_ids)
     if type(provider) is IncompressibleSolidPhase:return (type(provider),provider)
     if type(provider) is LiquidWaterPhase:
         water=provider.water

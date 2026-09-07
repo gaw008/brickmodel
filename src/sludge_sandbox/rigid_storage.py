@@ -10,6 +10,7 @@ import math
 from numbers import Real
 from types import MappingProxyType
 
+from .joined_water_vapor import JoinedWaterVapor
 from .phase_storage import IdealGasPhase, InversePolicy
 from .rigid_water_gas import RigidWaterGas, RigidWaterGasState
 
@@ -190,6 +191,10 @@ class RigidStorage:
             if not n:
                 continue
             phase = self.gas_phases[key]
+            if type(phase.caloric) is JoinedWaterVapor:
+                required_error = phase.caloric.numerical_error(t).internal_energy_error_j_mol
+                if self.envelope.gas_u_error_j_mol[key] < required_error:
+                    raise RigidStorageError('joined_water_numerical_error_exceeds_declared_gas_budget')
             point = phase.evaluate(t, p)  # total pressure yields additive partial molar volumes
             cp, cv = phase._curve.cp_j_mol_k(t), phase._curve.cv_j_mol_k(t)
             bound = self.envelope.gas_cv_lower_j_mol_k[key]

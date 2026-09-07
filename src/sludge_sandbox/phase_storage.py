@@ -12,6 +12,7 @@ from types import MappingProxyType
 from typing import Protocol
 
 from .ideal_water_vapor import IdealWaterVapor
+from .joined_water_vapor import JoinedWaterVapor
 from .continuous_caloric import ContinuousShomateGas
 from .thermochemistry import ShomateGas
 from .water_properties import WaterProperties
@@ -131,9 +132,9 @@ class IdealGasPhase:
     additional_source_ids: tuple[str,...] = ()
 
     def __post_init__(self):
-        if type(self.caloric) not in (IdealWaterVapor,ShomateGas,ContinuousShomateGas):raise PhaseStorageError('supported_caloric_provider_required')
+        if type(self.caloric) not in (IdealWaterVapor,JoinedWaterVapor,ShomateGas,ContinuousShomateGas):raise PhaseStorageError('supported_caloric_provider_required')
         _number(self.molar_mass_kg_mol,'molar_mass',positive=True)
-        if type(self.caloric) is IdealWaterVapor:
+        if type(self.caloric) in (IdealWaterVapor,JoinedWaterVapor):
             if self.segment_index is not None or self.molar_mass_kg_mol!=self.caloric.molar_mass_kg_mol:
                 raise PhaseStorageError('water_molar_identity_mismatch')
         elif type(self.caloric) is ContinuousShomateGas:

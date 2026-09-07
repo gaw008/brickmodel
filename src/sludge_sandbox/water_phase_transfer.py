@@ -11,6 +11,7 @@ from numbers import Real
 import numpy as np
 
 from .ideal_water_vapor import IdealWaterVapor,IdealWaterVaporError
+from .joined_water_vapor import JoinedWaterVapor
 from .integration import ConservedState,DomainExit,IntegrationError,Rates
 from .rigid_fluid_heat import FluidHeatEvaluation,RigidFluidHeat
 from .solid_fluid_heat import SolidFluidHeat,SolidFluidHeatEvaluation
@@ -114,7 +115,9 @@ class WaterPhaseTransfer:
             raise WaterPhaseTransferError('manufactured_requires_explicit_test_mode')
         for storage,k in zip(self._fluid_storages,coefficients):
             if k==0:continue
-            vapor=storage.gas_phases['H2O'].caloric
+            caloric=storage.gas_phases['H2O'].caloric
+            # Only the exact source-gated low branch supplies liquid chemistry.
+            vapor=caloric.low_model if type(caloric) is JoinedWaterVapor else caloric
             if (type(vapor) is not IdealWaterVapor
                     or vapor.method_id!=self.chemical.caloric_method_id
                     or vapor.reference!=self.chemical.reference
