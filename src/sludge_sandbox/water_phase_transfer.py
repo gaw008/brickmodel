@@ -97,7 +97,8 @@ class WaterPhaseTransfer:
             raise WaterPhaseTransferError('invalid_interface_modes')
         if self.dry_policy not in ('strict','metastable_no_nucleation'):
             raise WaterPhaseTransferError('invalid_dry_policy')
-        object.__setattr__(self,'interface_modes',tuple(modes))
+        if self.interface_modes is not None:
+            object.__setattr__(self,'interface_modes',tuple(modes))
         values=self.coefficients_mol_s_pa
         if not isinstance(values,(tuple,list)) or len(values)!=len(self._thermal_host.storages):
             raise WaterPhaseTransferError('explicit_per_cell_rate_coefficients_required')
@@ -166,7 +167,9 @@ class WaterPhaseTransfer:
     def water_vapor_index(self):return self.species_order.index('H2O')
 
     @property
-    def interfaces(self):return self.interface_modes
+    def interfaces(self):
+        return (('existing_liquid',)*len(self._thermal_host.storages)
+                if self.interface_modes is None else self.interface_modes)
 
     def with_depleted_cells(self,state,cell_indices):
         """Explicit caller mode switch, not certification of an event location."""

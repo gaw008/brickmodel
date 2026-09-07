@@ -112,3 +112,17 @@ def test_zero_k_does_not_bypass_explicit_strict_dry_screen(ingredients):
     dry=replace(dry_transfer(ingredients),coefficients_mol_s_pa=(0.,))
     initial=dry.base_model.state_from_temperatures([[0.,.01,.001]],[300.])
     with pytest.raises(DomainExit,match='condensation'):dry.evaluate(initial,0)
+
+
+def test_default_modes_follow_replaced_host_but_explicit_modes_do_not_expand(ingredients):
+    from test_liquid_solid_fluid_heat import liquid_host
+    old=transfer(ingredients)
+    two=liquid_host(ingredients)
+    changed=replace(old,base_model=two,coefficients_mol_s_pa=(0.,0.))
+    assert old.interface_modes is None and changed.interface_modes is None
+    assert old.interfaces==('existing_liquid',)
+    assert changed.interfaces==('existing_liquid','existing_liquid')
+    for mode in ('existing_liquid','depleted_no_nucleation'):
+        explicit=replace(old,interface_modes=(mode,))
+        with pytest.raises(WaterPhaseTransferError,match='invalid_interface_modes'):
+            replace(explicit,base_model=two,coefficients_mol_s_pa=(0.,0.))
