@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="6" time="1.737" timestamp="2026-09-07T11:05:52.784130-10:00" hostname="Ws-MacBook-Pro.local"><testcase classname="test_spine_source_guards" name="test_original_source_contract_mutation_cannot_commit_stale_trial[-1-source_ids]" time="0.440"><failure message="AssertionError: ('completed', None, 8)&#10;assert 'completed' == 'failed'&#10;  &#10;  - failed&#10;  + completed">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x101b140e0&gt;
+descriptor = 'source_ids', terminal_offset = -1
+
+    @pytest.mark.parametrize('descriptor', ['source_ids', 'deterministic_contract'])
+    @pytest.mark.parametrize('terminal_offset', [-1, 0])
+    def test_original_source_contract_mutation_cannot_commit_stale_trial(monkeypatch, descriptor, terminal_offset):
+        policy, event = configured()
+        original_switch = candidate.ManufacturedDepletionAdapter.with_depleted_cells
+
+        def execute(fault_switch=None):
+            operator, calls = oracle(0.)
+            switches = []
+
+            def switch(self, state, cells):
+                switched = original_switch(self, state, cells)
+                switches.append(float(state.amounts_mol[0, 2]))
+                if len(switches) == fault_switch:
+                    # Fault occurs after creating the new terminal operator,
+                    # which still carries its previous source declaration.
+                    object.__setattr__(operator, descriptor, ('injected:changed-during-localization',))
+                return switched
+
+            with monkeypatch.context() as patch:
+                patch.setattr(candidate.ManufacturedDepletionAdapter, 'with_depleted_cells', switch)
+                out = candidate.integrate_depletion(initial(), operator, start_s=0., end_s=.2,
+                    integration_policy=policy, event_policy=event)
+            return out, calls, switches
+
+        # This baseline schedules the fault at an actual terminal transition;
+        # it supplies no numerical truth or looser acceptance criterion.
+        baseline, _, baseline_switches = execute()
+        assert baseline.status == 'completed', baseline.reason
+        assert baseline.refinements[-1].status == 'independent_approach_pass'
+        assert len(baseline_switches) &gt;= 3
+        fault_switch = len(baseline_switches)+terminal_offset
+        out, calls, switches = execute(fault_switch)
+        assert len(switches) &gt;= fault_switch, (out.status, out.reason, fault_switch)
+&gt;       assert out.status == 'failed', (out.status, out.reason, fault_switch)
+E       AssertionError: ('completed', None, 8)
+E       assert 'completed' == 'failed'
+E
+E         - failed
+E         + completed
+
+/private/tmp/brick-depletion-spine-v1/test_spine_source_guards.py:56: AssertionError</failure></testcase><testcase classname="test_spine_source_guards" name="test_original_source_contract_mutation_cannot_commit_stale_trial[-1-deterministic_contract]" time="0.369"><failure message="AssertionError: ('completed', None, 8)&#10;assert 'completed' == 'failed'&#10;  &#10;  - failed&#10;  + completed">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x107ae91f0&gt;
+descriptor = 'deterministic_contract', terminal_offset = -1
+
+    @pytest.mark.parametrize('descriptor', ['source_ids', 'deterministic_contract'])
+    @pytest.mark.parametrize('terminal_offset', [-1, 0])
+    def test_original_source_contract_mutation_cannot_commit_stale_trial(monkeypatch, descriptor, terminal_offset):
+        policy, event = configured()
+        original_switch = candidate.ManufacturedDepletionAdapter.with_depleted_cells
+
+        def execute(fault_switch=None):
+            operator, calls = oracle(0.)
+            switches = []
+
+            def switch(self, state, cells):
+                switched = original_switch(self, state, cells)
+                switches.append(float(state.amounts_mol[0, 2]))
+                if len(switches) == fault_switch:
+                    # Fault occurs after creating the new terminal operator,
+                    # which still carries its previous source declaration.
+                    object.__setattr__(operator, descriptor, ('injected:changed-during-localization',))
+                return switched
+
+            with monkeypatch.context() as patch:
+                patch.setattr(candidate.ManufacturedDepletionAdapter, 'with_depleted_cells', switch)
+                out = candidate.integrate_depletion(initial(), operator, start_s=0., end_s=.2,
+                    integration_policy=policy, event_policy=event)
+            return out, calls, switches
+
+        # This baseline schedules the fault at an actual terminal transition;
+        # it supplies no numerical truth or looser acceptance criterion.
+        baseline, _, baseline_switches = execute()
+        assert baseline.status == 'completed', baseline.reason
+        assert baseline.refinements[-1].status == 'independent_approach_pass'
+        assert len(baseline_switches) &gt;= 3
+        fault_switch = len(baseline_switches)+terminal_offset
+        out, calls, switches = execute(fault_switch)
+        assert len(switches) &gt;= fault_switch, (out.status, out.reason, fault_switch)
+&gt;       assert out.status == 'failed', (out.status, out.reason, fault_switch)
+E       AssertionError: ('completed', None, 8)
+E       assert 'completed' == 'failed'
+E
+E         - failed
+E         + completed
+
+/private/tmp/brick-depletion-spine-v1/test_spine_source_guards.py:56: AssertionError</failure></testcase><testcase classname="test_spine_source_guards" name="test_original_source_contract_mutation_cannot_commit_stale_trial[0-source_ids]" time="0.368"><failure message="AssertionError: ('completed', None, 9)&#10;assert 'completed' == 'failed'&#10;  &#10;  - failed&#10;  + completed">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x107ba47a0&gt;
+descriptor = 'source_ids', terminal_offset = 0
+
+    @pytest.mark.parametrize('descriptor', ['source_ids', 'deterministic_contract'])
+    @pytest.mark.parametrize('terminal_offset', [-1, 0])
+    def test_original_source_contract_mutation_cannot_commit_stale_trial(monkeypatch, descriptor, terminal_offset):
+        policy, event = configured()
+        original_switch = candidate.ManufacturedDepletionAdapter.with_depleted_cells
+
+        def execute(fault_switch=None):
+            operator, calls = oracle(0.)
+            switches = []
+
+            def switch(self, state, cells):
+                switched = original_switch(self, state, cells)
+                switches.append(float(state.amounts_mol[0, 2]))
+                if len(switches) == fault_switch:
+                    # Fault occurs after creating the new terminal operator,
+                    # which still carries its previous source declaration.
+                    object.__setattr__(operator, descriptor, ('injected:changed-during-localization',))
+                return switched
+
+            with monkeypatch.context() as patch:
+                patch.setattr(candidate.ManufacturedDepletionAdapter, 'with_depleted_cells', switch)
+                out = candidate.integrate_depletion(initial(), operator, start_s=0., end_s=.2,
+                    integration_policy=policy, event_policy=event)
+            return out, calls, switches
+
+        # This baseline schedules the fault at an actual terminal transition;
+        # it supplies no numerical truth or looser acceptance criterion.
+        baseline, _, baseline_switches = execute()
+        assert baseline.status == 'completed', baseline.reason
+        assert baseline.refinements[-1].status == 'independent_approach_pass'
+        assert len(baseline_switches) &gt;= 3
+        fault_switch = len(baseline_switches)+terminal_offset
+        out, calls, switches = execute(fault_switch)
+        assert len(switches) &gt;= fault_switch, (out.status, out.reason, fault_switch)
+&gt;       assert out.status == 'failed', (out.status, out.reason, fault_switch)
+E       AssertionError: ('completed', None, 9)
+E       assert 'completed' == 'failed'
+E
+E         - failed
+E         + completed
+
+/private/tmp/brick-depletion-spine-v1/test_spine_source_guards.py:56: AssertionError</failure></testcase><testcase classname="test_spine_source_guards" name="test_original_source_contract_mutation_cannot_commit_stale_trial[0-deterministic_contract]" time="0.379"><failure message="AssertionError: ('completed', None, 9)&#10;assert 'completed' == 'failed'&#10;  &#10;  - failed&#10;  + completed">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x107acd940&gt;
+descriptor = 'deterministic_contract', terminal_offset = 0
+
+    @pytest.mark.parametrize('descriptor', ['source_ids', 'deterministic_contract'])
+    @pytest.mark.parametrize('terminal_offset', [-1, 0])
+    def test_original_source_contract_mutation_cannot_commit_stale_trial(monkeypatch, descriptor, terminal_offset):
+        policy, event = configured()
+        original_switch = candidate.ManufacturedDepletionAdapter.with_depleted_cells
+
+        def execute(fault_switch=None):
+            operator, calls = oracle(0.)
+            switches = []
+
+            def switch(self, state, cells):
+                switched = original_switch(self, state, cells)
+                switches.append(float(state.amounts_mol[0, 2]))
+                if len(switches) == fault_switch:
+                    # Fault occurs after creating the new terminal operator,
+                    # which still carries its previous source declaration.
+                    object.__setattr__(operator, descriptor, ('injected:changed-during-localization',))
+                return switched
+
+            with monkeypatch.context() as patch:
+                patch.setattr(candidate.ManufacturedDepletionAdapter, 'with_depleted_cells', switch)
+                out = candidate.integrate_depletion(initial(), operator, start_s=0., end_s=.2,
+                    integration_policy=policy, event_policy=event)
+            return out, calls, switches
+
+        # This baseline schedules the fault at an actual terminal transition;
+        # it supplies no numerical truth or looser acceptance criterion.
+        baseline, _, baseline_switches = execute()
+        assert baseline.status == 'completed', baseline.reason
+        assert baseline.refinements[-1].status == 'independent_approach_pass'
+        assert len(baseline_switches) &gt;= 3
+        fault_switch = len(baseline_switches)+terminal_offset
+        out, calls, switches = execute(fault_switch)
+        assert len(switches) &gt;= fault_switch, (out.status, out.reason, fault_switch)
+&gt;       assert out.status == 'failed', (out.status, out.reason, fault_switch)
+E       AssertionError: ('completed', None, 9)
+E       assert 'completed' == 'failed'
+E
+E         - failed
+E         + completed
+
+/private/tmp/brick-depletion-spine-v1/test_spine_source_guards.py:56: AssertionError</failure></testcase><testcase classname="test_spine_source_guards" name="test_fresh_terminal_source_failure_after_reuse_rolls_back" time="0.066" /><testcase classname="test_spine_source_guards" name="test_nested_simultaneous_events_keep_original_unsupported_state" time="0.000" /></testsuite></testsuites>

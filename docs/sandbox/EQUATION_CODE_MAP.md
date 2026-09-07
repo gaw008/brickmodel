@@ -137,3 +137,5 @@ HEOS共存数值政策 `NUM-HEOS-COEXISTENCE-BACKTRACK-1`：固定T的F=(Δp,Δg
 上述 q 与 A→B 参数均为 manufactured_test_fixture，不属于材料证据注册或实验验证。实际细化、旧失败和审查见 research/reacting-deformation-v1/README.md。
 
 `NUM-SOLID-VOLUME-PRESSURE-LOCAL-1` → `solid_fluid_storage.py`：保留原全局压力包络拒绝，再用已证实上端收紧同一体积误差的导数界，原流体误差不变；`test_solid_pressure_bound.py` 的独立双向有理气体根验证。实际边界与原湿态失败见 `research/solid-pressure-bound-v1/README.md`；这是数值传播政策，不能据此称湿态事件已收敛。
+
+`NUM-DEPLETION-NESTED-APPROACH-1` → `depletion_integration.py` 的 `NestedApproachPolicy`、普通湿态前缀与独立实际网格比较：`test_depletion_spine.py` 独立根/反应/能量参照、缓存等价、共同偏差拒绝、多事件和成本回滚；`test_depletion_spine_source_guards.py` 最后两次试算来源变化与新终端故障拒绝。原 `depletion_roundoff.py` 线性最近向下时钟证据未改。来源注册类别为数值策略，不是材料本构。

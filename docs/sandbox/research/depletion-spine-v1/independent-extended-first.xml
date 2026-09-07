@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="6" skipped="0" tests="14" time="3.180" timestamp="2026-09-07T11:01:19.048939-10:00" hostname="Ws-MacBook-Pro.local"><testcase classname="test_independent_spine" name="test_nested_cached_and_uncached_match_independent_oracles[0.0]" time="0.544" /><testcase classname="test_independent_spine" name="test_nested_cached_and_uncached_match_independent_oracles[0.002]" time="0.554" /><testcase classname="test_independent_spine" name="test_immediate_cancel_has_no_committed_or_speculative_event" time="0.000" /><testcase classname="test_independent_spine" name="test_attempt_limit_keeps_only_committed_positive_wet_prefix" time="0.004" /><testcase classname="test_independent_spine" name="test_reuse_rejects_missing_deterministic_contract" time="0.000" /><testcase classname="test_independent_spine" name="test_diagnostics_detached_and_actual_costs" time="0.214" /><testcase classname="test_independent_spine" name="test_nested_multicell_existing_analytic_and_rollback_contracts[test_two_separated_events_inside_original_preview_horizon]" time="0.002"><failure message="AssertionError: oracle_evaluation_type&#10;assert 'failed' == 'completed'&#10;  &#10;  - completed&#10;  + failed">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x1019efa70&gt;
+test_name = 'test_two_separated_events_inside_original_preview_horizon'
+
+    @pytest.mark.parametrize('test_name', [
+        'test_two_separated_events_inside_original_preview_horizon',
+        'test_two_event_full_physical_and_correction_prefix',
+        'test_accelerating_second_event_replans_common_time_after_first_switch',
+        'test_horizon_restart_discards_all_old_comparisons_and_charges_cost',
+        'test_resource_failure_after_horizon_restart_does_not_commit_trial_modes',
+    ])
+    def test_nested_multicell_existing_analytic_and_rollback_contracts(monkeypatch, test_name):
+        import test_depletion_multicell as old
+
+        def wrapped(state, op, **kwargs):
+            op = candidate.ManufacturedDepletionAdapter(**{f.name: getattr(op, f.name) for f in fields(op)},
+                deterministic_contract=('same-input-same-output:multicell-v1',))
+            previous = kwargs.pop('event_policy')
+            event = candidate.DepletionPolicy(**{f.name: getattr(previous, f.name) for f in fields(previous)},
+                nested_approach=candidate.NestedApproachPolicy(maximum_step_s=.001, reuse_ordinary_spine=True))
+            out = candidate.integrate_depletion(state, op, event_policy=event, **kwargs)
+            check_costs(out)
+            return out
+
+        monkeypatch.setattr(old, 'integrate_depletion', wrapped)
+&gt;       getattr(old, test_name)()
+
+/private/tmp/brick-depletion-spine-v1/test_independent_spine.py:188:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def test_two_separated_events_inside_original_preview_horizon():
+        out=run_case()
+&gt;       assert out.status=='completed',out.reason
+E       AssertionError: oracle_evaluation_type
+E       assert 'failed' == 'completed'
+E
+E         - completed
+E         + failed
+
+tests/sandbox/test_depletion_multicell.py:35: AssertionError</failure></testcase><testcase classname="test_independent_spine" name="test_nested_multicell_existing_analytic_and_rollback_contracts[test_two_event_full_physical_and_correction_prefix]" time="0.001"><failure message="AssertionError: oracle_evaluation_type&#10;assert 'failed' == 'completed'&#10;  &#10;  - completed&#10;  + failed">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x1078ab8c0&gt;
+test_name = 'test_two_event_full_physical_and_correction_prefix'
+
+    @pytest.mark.parametrize('test_name', [
+        'test_two_separated_events_inside_original_preview_horizon',
+        'test_two_event_full_physical_and_correction_prefix',
+        'test_accelerating_second_event_replans_common_time_after_first_switch',
+        'test_horizon_restart_discards_all_old_comparisons_and_charges_cost',
+        'test_resource_failure_after_horizon_restart_does_not_commit_trial_modes',
+    ])
+    def test_nested_multicell_existing_analytic_and_rollback_contracts(monkeypatch, test_name):
+        import test_depletion_multicell as old
+
+        def wrapped(state, op, **kwargs):
+            op = candidate.ManufacturedDepletionAdapter(**{f.name: getattr(op, f.name) for f in fields(op)},
+                deterministic_contract=('same-input-same-output:multicell-v1',))
+            previous = kwargs.pop('event_policy')
+            event = candidate.DepletionPolicy(**{f.name: getattr(previous, f.name) for f in fields(previous)},
+                nested_approach=candidate.NestedApproachPolicy(maximum_step_s=.001, reuse_ordinary_spine=True))
+            out = candidate.integrate_depletion(state, op, event_policy=event, **kwargs)
+            check_costs(out)
+            return out
+
+        monkeypatch.setattr(old, 'integrate_depletion', wrapped)
+&gt;       getattr(old, test_name)()
+
+/private/tmp/brick-depletion-spine-v1/test_independent_spine.py:188:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def test_two_event_full_physical_and_correction_prefix():
+&gt;       out=run_case();assert out.status=='completed',out.reason
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: oracle_evaluation_type
+E       assert 'failed' == 'completed'
+E
+E         - completed
+E         + failed
+
+tests/sandbox/test_depletion_multicell.py:58: AssertionError</failure></testcase><testcase classname="test_independent_spine" name="test_nested_multicell_existing_analytic_and_rollback_contracts[test_accelerating_second_event_replans_common_time_after_first_switch]" time="0.001"><failure message="AssertionError: oracle_evaluation_type&#10;assert 'failed' == 'completed'&#10;  &#10;  - completed&#10;  + failed">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x1078aaf60&gt;
+test_name = 'test_accelerating_second_event_replans_common_time_after_first_switch'
+
+    @pytest.mark.parametrize('test_name', [
+        'test_two_separated_events_inside_original_preview_horizon',
+        'test_two_event_full_physical_and_correction_prefix',
+        'test_accelerating_second_event_replans_common_time_after_first_switch',
+        'test_horizon_restart_discards_all_old_comparisons_and_charges_cost',
+        'test_resource_failure_after_horizon_restart_does_not_commit_trial_modes',
+    ])
+    def test_nested_multicell_existing_analytic_and_rollback_contracts(monkeypatch, test_name):
+        import test_depletion_multicell as old
+
+        def wrapped(state, op, **kwargs):
+            op = candidate.ManufacturedDepletionAdapter(**{f.name: getattr(op, f.name) for f in fields(op)},
+                deterministic_contract=('same-input-same-output:multicell-v1',))
+            previous = kwargs.pop('event_policy')
+            event = candidate.DepletionPolicy(**{f.name: getattr(previous, f.name) for f in fields(previous)},
+                nested_approach=candidate.NestedApproachPolicy(maximum_step_s=.001, reuse_ordinary_spine=True))
+            out = candidate.integrate_depletion(state, op, event_policy=event, **kwargs)
+            check_costs(out)
+            return out
+
+        monkeypatch.setattr(old, 'integrate_depletion', wrapped)
+&gt;       getattr(old, test_name)()
+
+/private/tmp/brick-depletion-spine-v1/test_independent_spine.py:188:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def test_accelerating_second_event_replans_common_time_after_first_switch():
+        from dataclasses import replace
+        from sludge_sandbox.integration import DomainExit
+        original=two_cell_oracle();base=original.evaluate_callback
+        def accelerated(state,t,modes):
+            if any(m=='existing_liquid' and state.amounts_mol[i,1]&lt;=0 for i,m in enumerate(modes)):
+                raise DomainExit('manufactured_wet_branch_requires_positive_inventory')
+            evaluated=base(state,t,modes)
+            rates=evaluated.rates;source=np.array(rates.reaction_species_mol_s)
+            r=.0001+100*max(t-.004,0)**2 if modes[1]=='existing_liquid' else 0.
+            source[1,1]=-r;source[1,3]=r
+            return replace(evaluated,rates=Rates(rates.face_species_mol_s,rates.face_energy_w,source,rates.cell_power_w),
+                evaporation_mol_s=(evaluated.evaporation_mol_s[0],r))
+        op=replace(original,evaluate_callback=accelerated)
+        initial=ConservedState([[0.,4.8e-6,.01,.01],[0.,8e-7,.01,.01]],[600.,700.])
+        p,e=policies()
+        # Tight ordinary policy controls this cubic integrated sink independently
+        # of the event refinement indicator. The preregistered event gates stay.
+        p=replace(p,relative_tolerance=1e-9,amount_absolute_tolerance_mol=1e-14)
+        out=integrate_depletion(initial,op,start_s=0,end_s=.012,integration_policy=p,event_policy=e)
+&gt;       assert out.status=='completed',out.reason
+E       AssertionError: oracle_evaluation_type
+E       assert 'failed' == 'completed'
+E
+E         - completed
+E         + failed
+
+tests/sandbox/test_depletion_multicell.py:95: AssertionError</failure></testcase><testcase classname="test_independent_spine" name="test_nested_multicell_existing_analytic_and_rollback_contracts[test_horizon_restart_discards_all_old_comparisons_and_charges_cost]" time="0.001"><failure message="AssertionError: oracle_evaluation_type&#10;assert 'failed' == 'completed'&#10;  &#10;  - completed&#10;  + failed">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x1078a9850&gt;
+test_name = 'test_horizon_restart_discards_all_old_comparisons_and_charges_cost'
+
+    @pytest.mark.parametrize('test_name', [
+        'test_two_separated_events_inside_original_preview_horizon',
+        'test_two_event_full_physical_and_correction_prefix',
+        'test_accelerating_second_event_replans_common_time_after_first_switch',
+        'test_horizon_restart_discards_all_old_comparisons_and_charges_cost',
+        'test_resource_failure_after_horizon_restart_does_not_commit_trial_modes',
+    ])
+    def test_nested_multicell_existing_analytic_and_rollback_contracts(monkeypatch, test_name):
+        import test_depletion_multicell as old
+
+        def wrapped(state, op, **kwargs):
+            op = candidate.ManufacturedDepletionAdapter(**{f.name: getattr(op, f.name) for f in fields(op)},
+                deterministic_contract=('same-input-same-output:multicell-v1',))
+            previous = kwargs.pop('event_policy')
+            event = candidate.DepletionPolicy(**{f.name: getattr(previous, f.name) for f in fields(previous)},
+                nested_approach=candidate.NestedApproachPolicy(maximum_step_s=.001, reuse_ordinary_spine=True))
+            out = candidate.integrate_depletion(state, op, event_policy=event, **kwargs)
+            check_costs(out)
+            return out
+
+        monkeypatch.setattr(old, 'integrate_depletion', wrapped)
+&gt;       getattr(old, test_name)()
+
+/private/tmp/brick-depletion-spine-v1/test_independent_spine.py:188:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def test_horizon_restart_discards_all_old_comparisons_and_charges_cost():
+&gt;       out=run_case();assert out.status=='completed',out.reason
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: oracle_evaluation_type
+E       assert 'failed' == 'completed'
+E
+E         - completed
+E         + failed
+
+tests/sandbox/test_depletion_multicell.py:103: AssertionError</failure></testcase><testcase classname="test_independent_spine" name="test_nested_multicell_existing_analytic_and_rollback_contracts[test_resource_failure_after_horizon_restart_does_not_commit_trial_modes]" time="0.001"><failure message="AssertionError: oracle_evaluation_type&#10;assert 'failed' == 'resource_limit'&#10;  &#10;  - resource_limit&#10;  + failed">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x1078a8620&gt;
+test_name = 'test_resource_failure_after_horizon_restart_does_not_commit_trial_modes'
+
+    @pytest.mark.parametrize('test_name', [
+        'test_two_separated_events_inside_original_preview_horizon',
+        'test_two_event_full_physical_and_correction_prefix',
+        'test_accelerating_second_event_replans_common_time_after_first_switch',
+        'test_horizon_restart_discards_all_old_comparisons_and_charges_cost',
+        'test_resource_failure_after_horizon_restart_does_not_commit_trial_modes',
+    ])
+    def test_nested_multicell_existing_analytic_and_rollback_contracts(monkeypatch, test_name):
+        import test_depletion_multicell as old
+
+        def wrapped(state, op, **kwargs):
+            op = candidate.ManufacturedDepletionAdapter(**{f.name: getattr(op, f.name) for f in fields(op)},
+                deterministic_contract=('same-input-same-output:multicell-v1',))
+            previous = kwargs.pop('event_policy')
+            event = candidate.DepletionPolicy(**{f.name: getattr(previous, f.name) for f in fields(previous)},
+                nested_approach=candidate.NestedApproachPolicy(maximum_step_s=.001, reuse_ordinary_spine=True))
+            out = candidate.integrate_depletion(state, op, event_policy=event, **kwargs)
+            check_costs(out)
+            return out
+
+        monkeypatch.setattr(old, 'integrate_depletion', wrapped)
+&gt;       getattr(old, test_name)()
+
+/private/tmp/brick-depletion-spine-v1/test_independent_spine.py:188:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def test_resource_failure_after_horizon_restart_does_not_commit_trial_modes():
+        from dataclasses import replace
+        p,e=policies();p=replace(p,maximum_steps=16)
+        out=integrate_depletion(initial_state(),two_cell_oracle(),start_s=0,end_s=.012,integration_policy=p,event_policy=e)
+&gt;       assert out.status=='resource_limit',out.reason
+E       AssertionError: oracle_evaluation_type
+E       assert 'failed' == 'resource_limit'
+E
+E         - resource_limit
+E         + failed
+
+tests/sandbox/test_depletion_multicell.py:122: AssertionError</failure></testcase><testcase classname="test_independent_spine" name="test_mutable_observation_buffer_has_value_semantics" time="0.558" /><testcase classname="test_independent_spine" name="test_independent_approach_rejects_shared_bias_without_commit" time="0.475"><failure message="AssertionError: ('unsupported', 'event_refinement_limit')&#10;assert 'event_refinement_limit' == 'independent_...arison_failed'&#10;  &#10;  - independent_approach_comparison_failed&#10;  + event_refinement_limit">def test_independent_approach_rejects_shared_bias_without_commit():
+        out, count = biased_run()
+&gt;       assert out.reason == 'independent_approach_comparison_failed', (out.status, out.reason)
+E       AssertionError: ('unsupported', 'event_refinement_limit')
+E       assert 'event_refinement_limit' == 'independent_...arison_failed'
+E
+E         - independent_approach_comparison_failed
+E         + event_refinement_limit
+
+/private/tmp/brick-depletion-spine-v1/test_independent_spine.py:238: AssertionError</failure></testcase><testcase classname="test_independent_spine" name="test_cancel_after_reuse_does_not_commit_speculative_branch" time="0.696" /></testsuite></testsuites>

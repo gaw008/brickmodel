@@ -1,9 +1,11 @@
 """Bounded wet-to-dry event integration, with explicit terminal-panel accounting."""
-from dataclasses import dataclass,replace
+from dataclasses import dataclass,replace,field
 from fractions import Fraction
 import math
 import time
 import numpy as np
+from types import MappingProxyType
+from collections.abc import Mapping
 from .integration import ConservedState,Rates,StepLedger,IntegrationPolicy,IntegrationError,DomainExit,integrate
 from .depletion_roundoff import (DepletionRoundoffPolicy,DepletionRoundoffTotals,
     DepletionRoundoffError,DepletionClockEvidence,depletion_writeback)
@@ -18,6 +20,31 @@ def _number(v,positive=False):
     return float(v)
 
 
+def _freeze_diagnostic(value):
+    """Detach nested diagnostic containers from mutable caller-owned inputs."""
+    if isinstance(value,Mapping):
+        return MappingProxyType({key:_freeze_diagnostic(item) for key,item in value.items()})
+    if isinstance(value,(tuple,list)):
+        return tuple(_freeze_diagnostic(item) for item in value)
+    if isinstance(value,np.ndarray):
+        return _freeze_diagnostic(value.tolist())
+    return value
+
+
+@dataclass(frozen=True,kw_only=True)
+class NestedApproachPolicy:
+    """Explicit event-local ordinary mesh; terminal threshold is separate."""
+    maximum_step_s: float
+    reuse_ordinary_spine: bool = False
+    strategy_id: str = 'nested_wet_ordinary_spine_v1'
+
+    def __post_init__(self):
+        _number(self.maximum_step_s,True)
+        if (type(self.reuse_ordinary_spine) is not bool
+                or self.strategy_id!='nested_wet_ordinary_spine_v1'):
+            raise DepletionIntegrationError('explicit_nested_approach_policy_required')
+
+
 @dataclass(frozen=True,kw_only=True)
 class DepletionPolicy:
     time_absolute_s: float
@@ -30,6 +57,7 @@ class DepletionPolicy:
     roundoff_policy: DepletionRoundoffPolicy
     common_time_horizon_s: float = .01
     safe_inventory_fraction: float = .25
+    nested_approach: NestedApproachPolicy | None = None
 
     def __post_init__(self):
         for n in ('time_absolute_s','amount_absolute_mol','energy_absolute_j','temperature_absolute_k',
@@ -41,6 +69,8 @@ class DepletionPolicy:
             raise DepletionIntegrationError('at_least_two_refinements_required')
         if type(self.roundoff_policy) is not DepletionRoundoffPolicy:
             raise DepletionIntegrationError('explicit_roundoff_policy_required')
+        if self.nested_approach is not None and type(self.nested_approach) is not NestedApproachPolicy:
+            raise DepletionIntegrationError('explicit_nested_approach_policy_required')
 
 
 @dataclass(frozen=True)
@@ -63,6 +93,7 @@ class ManufacturedDepletionAdapter:
     program_knots_s: tuple
     source_ids: tuple
     classification: str = 'manufactured_numerical_oracle_not_material'
+    deterministic_contract: tuple[str,...] = ()
 
     def __post_init__(self):
         if (not callable(self.evaluate_callback) or type(self.liquid_index) is not int
@@ -74,6 +105,9 @@ class ManufacturedDepletionAdapter:
         for name in ('interfaces','program_knots_s','source_ids'):object.__setattr__(self,name,tuple(getattr(self,name)))
         if any(not math.isfinite(v) for v in self.program_knots_s) or tuple(sorted(set(self.program_knots_s)))!=self.program_knots_s:
             raise DepletionIntegrationError('invalid_program_knots')
+        if (not isinstance(self.deterministic_contract,tuple)
+                or any(not isinstance(v,str) or not v or v!=v.strip() for v in self.deterministic_contract)):
+            raise DepletionIntegrationError('immutable_deterministic_contract_required')
 
     def evaluate(self,state,t):return self.evaluate_callback(state,t,self.interfaces)
     def __call__(self,state,t):return self.evaluate(state,t).rates
@@ -117,6 +151,15 @@ class DepletionRefinement:
     evaluations: int
     elapsed_seconds: float
     next_common_time_s: float | None = None
+    comparison_details: Mapping = field(default_factory=lambda: MappingProxyType({}))
+    phase_costs: Mapping = field(default_factory=lambda: MappingProxyType({}))
+    approach_role: str = 'legacy'
+    approach_cap_s: float | None = None
+    approach_safe_inventory_fraction: float | None = None
+
+    def __post_init__(self):
+        for name in ('comparison_details','phase_costs'):
+            object.__setattr__(self,name,_freeze_diagnostic(getattr(self,name)))
 
 
 @dataclass(frozen=True)
@@ -139,6 +182,13 @@ class DepletionResult:
     refinements: tuple = ()
     safe_inventory_fraction: float = .25
     cumulative_absolute_component_residual_j: tuple | None = None
+    phase_costs: Mapping = field(default_factory=lambda: MappingProxyType({}))
+    reuse_counts: Mapping = field(default_factory=lambda: MappingProxyType({}))
+    approach_strategy: str = 'legacy'
+
+    def __post_init__(self):
+        for name in ('phase_costs','reuse_counts'):
+            object.__setattr__(self,name,_freeze_diagnostic(getattr(self,name)))
 
     @property
     def accepted_trial_panels(self):
@@ -166,6 +216,15 @@ class _Path:
     event: object = None
     event_state: object = None
     event_observation: object = None
+    approach_grid: tuple = ()
+
+
+@dataclass
+class _WetSpine:
+    """Internal ordinary-only records, scoped to one root/horizon/mesh."""
+    binding: tuple
+    observations: dict = field(default_factory=dict)
+    segments: dict = field(default_factory=dict)
 
 
 def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,event_policy,cancel=None):
@@ -183,6 +242,10 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             event_policy.roundoff_policy.molar_mass_kg_mol!=operator.chemical.reference.molar_mass_kg_mol):
         raise DepletionIntegrationError('roundoff_water_molar_mass_mismatch')
     policy=integration_policy;ep=event_policy;begin=time.monotonic()
+    nested=ep.nested_approach
+    if (nested is not None and nested.reuse_ordinary_spine
+            and type(operator) is ManufacturedDepletionAdapter and not operator.deterministic_contract):
+        raise DepletionIntegrationError('ordinary_reuse_requires_deterministic_adapter_contract')
     times=[start];states=[initial];steps=[];events=[];corrections=[]
     totals=DepletionRoundoffTotals(ep.roundoff_policy)
     cumulative_n=[Fraction(0) for _ in initial.amounts_mol.flat]
@@ -192,6 +255,16 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
     energy_binding=initial.energy_model_identity
     component_schema=...
     component_residual_totals=[Fraction() for _ in initial.internal_energy_j]
+    costs={name:{'evaluations':0,'panels':0,'rejections':0}
+           for name in ('ordinary','approach','terminal','dry','comparison')}
+    reused={'observations':0,'panels':0}
+
+    def frozen_costs(before=None):
+        return MappingProxyType({name:MappingProxyType({key:value-(before[name][key] if before else 0)
+            for key,value in values.items()}) for name,values in costs.items()})
+
+    def cost_snapshot():
+        return {name:dict(values) for name,values in costs.items()}
 
     def check_component_schema(rates):
         nonlocal component_schema
@@ -205,9 +278,9 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         if attempted>=policy.maximum_steps:raise _Failure('resource_limit','global_accepted_trial_panel_limit')
         if rejected>=policy.maximum_rejections:raise _Failure('resource_limit','total_rejection_limit')
 
-    def observe(op,state,t):
+    def observe(op,state,t,phase='ordinary'):
         nonlocal evaluations
-        guard();evaluations+=1
+        guard();evaluations+=1;costs[phase]['evaluations']+=1
         if state.energy_model_identity!=energy_binding:raise DepletionIntegrationError(
             'energy_model_identity_changed')
         raw=op.evaluate(state,t)
@@ -221,6 +294,12 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                 tuple(s.temperature_error_bound_k for s in base.storage_inverses),
                 tuple(s.mechanical.pressure_pa for s in base.storage_states),
                 tuple(s.pressure_error_bound_pa for s in base.storage_states))
+        # A deterministic callback may reuse mutable output buffers. Detach
+        # every observation sequence before ordinary caching or event storage.
+        # Rates already owns immutable copies of its numeric arrays.
+        result=replace(result,evaporation_mol_s=tuple(result.evaporation_mol_s),
+            temperatures_k=tuple(result.temperatures_k),temperature_errors_k=tuple(result.temperature_errors_k),
+            pressures_pa=tuple(result.pressures_pa),pressure_errors_pa=tuple(result.pressure_errors_pa))
         count=state.amounts_mol.shape[0]
         if type(result.rates) is not Rates:raise DepletionIntegrationError('explicit_rates_required')
         result.rates.derivatives(state)
@@ -230,7 +309,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         if any(v<0 for v in result.temperature_errors_k+result.pressure_errors_pa):raise DepletionIntegrationError('negative_observation_error')
         guard();return result
 
-    def normal(op,state,t,finish,maxstep,stage_check=None):
+    def normal(op,state,t,finish,maxstep,stage_check=None,phase='ordinary'):
         nonlocal evaluations,rejected,attempted
         guard()
         if finish<=t:raise _Failure('unsupported','unresolvable_time_panel')
@@ -253,7 +332,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                 check_component_schema(rates)
                 return rates
             try:
-                observed=observe(op,stage,at)
+                observed=observe(op,stage,at,phase)
                 stage_check(stage,at,observed)
             except (_ReduceCommonTime,_Failure) as exc:
                 pending=exc
@@ -263,8 +342,10 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             return observed.rates
         run=integrate(state,checked_operator,
                       start_s=t,end_s=finish,policy=p,cancel=cancel)
-        if stage_check is None:evaluations+=run.evaluations
+        if stage_check is None:
+            evaluations+=run.evaluations;costs[phase]['evaluations']+=run.evaluations
         rejected+=run.rejected_trials;attempted+=len(run.steps)
+        costs[phase]['rejections']+=run.rejected_trials;costs[phase]['panels']+=len(run.steps)
         if pending is not None:raise pending
         return run
 
@@ -326,10 +407,10 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             rounding={key:tuple(Fraction(float(value))-interval*Fraction(float(rate))
                        for value,rate in zip(components[key],obs.rates.cell_power_components_w[key]))
                       for key in components}
-        panel=StepLedger(t,endpoint,*fields,components,rounding);attempted+=1
+        panel=StepLedger(t,endpoint,*fields,components,rounding);attempted+=1;costs['terminal']['panels']+=1
         path.op=path.op.with_depleted_cells(raw,(cell,))
         path.times.append(endpoint);path.states.append(raw);path.steps.append(panel)
-        path.event_state=raw;path.event_observation=observe(path.op,raw,endpoint)
+        path.event_state=raw;path.event_observation=observe(path.op,raw,endpoint,'terminal')
         path.event=DepletionEvent(cell,endpoint,endpoint,endpoint,endpoint,0.,0.,0.,0.,0.,panel,record,
             exact-Fraction(endpoint),evap)
 
@@ -351,32 +432,82 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             return other
         while path.times[-1]<tc:
             at=path.times[-1];current=path.states[-1]
-            obs=observe(path.op,current,at);other=check_remaining(current,at,obs)
+            obs=observe(path.op,current,at,'dry');other=check_remaining(current,at,obs)
             desired=min(policy.maximum_step_s,tc-at,ep.safe_inventory_fraction*float(other[0]) if other else policy.maximum_step_s)
             extend(path,normal(path.op,current,at,min(tc,at+desired),policy.maximum_step_s,
-                               check_remaining if any(m=='existing_liquid' for m in path.op.interfaces) else None))
+                               check_remaining if any(m=='existing_liquid' for m in path.op.interfaces) else None,
+                               phase='dry'))
 
-    def proposal(op,state,t,tc,cap,total):
+    def spine_binding(op,state,t,tc,approach_cap,safe_fraction,event_cell):
+        # Explicit immutable model/source descriptors, not a callback-result
+        # cache across operators. Native source/config guards still run on
+        # every newly executed observation, terminal and common-time decode.
+        if type(op) is ManufacturedDepletionAdapter:
+            source=(id(op.evaluate_callback),op.deterministic_contract,op.source_ids)
+        else:
+            implementation=op.chemical.water.implementation
+            source=(op.source_ids,tuple(sorted(op.chemical.source_asset_sha256.items())),
+                    None if implementation is None else implementation.sha256,
+                    getattr(op.base_model,'energy_model_identity',None))
+        return (id(op),id(state),state.energy_model_identity,t,tc,approach_cap,safe_fraction,
+                event_cell,op.interfaces,op.liquid_index,op.water_vapor_index,source)
+
+    def proposal(op,state,t,tc,cap,total,*,approach_cap=None,safe_fraction=None,spine=None,event_cell=None):
+        ordinary_cap=cap if approach_cap is None else approach_cap
+        safe=ep.safe_inventory_fraction if safe_fraction is None else safe_fraction
+        binding=spine_binding(op,state,t,tc,ordinary_cap,safe,event_cell) if spine is not None else None
+        if spine is not None and spine.binding!=binding:
+            raise DepletionIntegrationError('ordinary_spine_binding_changed')
         path=_Path([t],[state],[],op,total)
         while path.times[-1]<tc:
-            at=path.times[-1];current=path.states[-1];obs=observe(path.op,current,at)
+            guard()
+            if spine is not None and spine.binding!=spine_binding(op,state,t,tc,ordinary_cap,safe,event_cell):
+                raise DepletionIntegrationError('ordinary_spine_binding_changed')
+            at=path.times[-1];current=path.states[-1]
+            node=spine.observations.get(at) if spine is not None else None
+            if node is not None:
+                if node[0] is not current:raise DepletionIntegrationError('ordinary_spine_state_changed')
+                obs=node[1];reused['observations']+=1
+                # No new EOS work is charged for a previously evaluated node.
+                # Still run cancellation/resource and state binding guards.
+                if current.energy_model_identity!=energy_binding:
+                    raise DepletionIntegrationError('energy_model_identity_changed')
+            else:
+                obs=observe(path.op,current,at,'approach')
             choice=candidate(path.op,current,obs)
+            if choice is not None and event_cell is not None and choice[1]!=event_cell:
+                raise _Failure('unsupported','event_identity_not_separated')
+            if node is None and spine is not None:
+                spine.observations[at]=(current,obs)
             if choice is not None:
                 tau,cell=choice
                 if tau<=Fraction(cap) and Fraction(at)+tau<=Fraction(tc):
+                    path.approach_grid=tuple(path.times)
                     terminal(path,obs,tau,cell)
                     if path.times[-1]>=tc:raise _Failure('unsupported','no_common_post_event_time')
                     continue_after_event(path,tc)
                     return path
-            desired=min(cap,tc-at,ep.safe_inventory_fraction*float(choice[0]) if choice else cap)
+            desired=min(ordinary_cap,tc-at,safe*float(choice[0]) if choice else ordinary_cap)
             finish=min(tc,at+desired)
-            extend(path,normal(path.op,current,at,finish,cap))
+            segment=spine.segments.get(at) if spine is not None else None
+            if segment is not None:
+                if segment.states[0] is not current or segment.times_s[-1]!=finish:
+                    raise DepletionIntegrationError('ordinary_spine_edge_changed')
+                reused['panels']+=len(segment.steps)
+                extend(path,segment)
+            else:
+                segment=normal(path.op,current,at,finish,ordinary_cap,phase='approach')
+                extend(path,segment)
+                # extend raises on every non-completed ordinary segment: no
+                # partial/failing path is eligible for later reuse.
+                if spine is not None:spine.segments[at]=segment
+        path.approach_grid=tuple(path.times)
         return path
 
     def comparison(a,b,tc):
         if a.event is None or b.event is None:raise _Failure('unsupported','event_node_order_not_separated')
         if a.event.cell_index!=b.event.cell_index:raise _Failure('unsupported','event_identity_not_separated')
-        ao=observe(a.op,a.states[-1],tc);bo=observe(b.op,b.states[-1],tc)
+        ao=observe(a.op,a.states[-1],tc,'comparison');bo=observe(b.op,b.states[-1],tc,'comparison')
         def delta(x,y):return float(np.max(np.abs(np.asarray(x)-np.asarray(y))))
         dn=max(delta(a.event_state.amounts_mol,b.event_state.amounts_mol),delta(a.states[-1].amounts_mol,b.states[-1].amounts_mol))
         du=max(delta(a.event_state.internal_energy_j,b.event_state.internal_energy_j),delta(a.states[-1].internal_energy_j,b.states[-1].internal_energy_j))
@@ -387,7 +518,27 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         dtime=abs(a.event.time_s-b.event.time_s)+float(a.event.event_time_rounding_s+b.event.event_time_rounding_s)
         passed=(dtime<=ep.time_absolute_s and dn<=ep.amount_absolute_mol and du<=ep.energy_absolute_j
                 and dt<=ep.temperature_absolute_k and dp<=ep.pressure_absolute_pa)
-        return passed,(dtime,dn,du,dt,dp)
+        def difference_record(x,y):
+            differences=np.abs(np.asarray(x)-np.asarray(y))
+            index=tuple(int(i) for i in np.unravel_index(np.argmax(differences),differences.shape))
+            return MappingProxyType({'absolute_differences':tuple(tuple(float(v) for v in row)
+                for row in differences) if differences.ndim==2 else tuple(float(v) for v in differences),
+                'maximum_index':index,'maximum':float(np.max(differences))})
+        def observation_record(x,y):
+            return MappingProxyType({'temperature_nominal_difference_k':delta(x.temperatures_k,y.temperatures_k),
+                'temperature_errors_a_k':tuple(x.temperature_errors_k),'temperature_errors_b_k':tuple(y.temperature_errors_k),
+                'pressure_nominal_difference_pa':delta(x.pressures_pa,y.pressures_pa),
+                'pressure_errors_a_pa':tuple(x.pressure_errors_pa),'pressure_errors_b_pa':tuple(y.pressure_errors_pa)})
+        details=MappingProxyType({'event_amounts':difference_record(a.event_state.amounts_mol,b.event_state.amounts_mol),
+            'common_amounts':difference_record(a.states[-1].amounts_mol,b.states[-1].amounts_mol),
+            'event_energy':difference_record(a.event_state.internal_energy_j,b.event_state.internal_energy_j),
+            'common_energy':difference_record(a.states[-1].internal_energy_j,b.states[-1].internal_energy_j),
+            'event_observations':observation_record(a.event_observation,b.event_observation),
+            'common_observations':observation_record(ao,bo),
+            'terminal_start_a_s':a.event.terminal_panel.start_s,'terminal_start_b_s':b.event.terminal_panel.start_s,
+            'terminal_end_a_s':a.event.time_s,'terminal_end_b_s':b.event.time_s,
+            'approach_grid_a_s':a.approach_grid,'approach_grid_b_s':b.approach_grid})
+        return passed,(dtime,dn,du,dt,dp),details
 
     def commit(path):
         nonlocal cumulative_n,cumulative_u,totals,operator,component_residual_totals
@@ -435,39 +586,123 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                     tc=min(tb,t+max(ep.common_time_horizon_s,2*ep.terminal_window_s))
                     previous=None;successes=0;first_time=None
                     level=0;horizon_restarts=0
+                    approach_cap=(min(nested.maximum_step_s,policy.maximum_step_s) if nested else None)
+                    root_binding=(spine_binding(operator,state,t,tc,approach_cap,ep.safe_inventory_fraction,choice[1])
+                                  if nested else None)
+                    spine=(_WetSpine(root_binding)
+                           if nested and nested.reuse_ordinary_spine else None)
                     while level<=ep.maximum_refinements:
                         cap=min(ep.terminal_window_s,float(choice[0]))/(2**level)
                         level_start=time.monotonic();level_evaluations=evaluations
+                        before_cost=cost_snapshot()
                         try:
-                            path=proposal(operator,state,t,tc,cap,totals)
+                            path=proposal(operator,state,t,tc,cap,totals,approach_cap=approach_cap,
+                                spine=spine,event_cell=choice[1] if nested else None)
                         except _ReduceCommonTime as exc:
                             refinements.append(DepletionRefinement(t,level,cap,tc,exc.event_time_s,None,
                                 'common_time_horizon_reduced',evaluations-level_evaluations,time.monotonic()-level_start,
-                                exc.common_time_s))
+                                exc.common_time_s,phase_costs=frozen_costs(before_cost),
+                                approach_role='terminal_refinement' if nested else 'legacy',approach_cap_s=approach_cap,
+                                approach_safe_inventory_fraction=ep.safe_inventory_fraction if nested else None))
                             horizon_restarts+=1
                             if horizon_restarts>ep.maximum_refinements:
                                 raise _Failure('resource_limit','common_time_restart_limit')
+                            if nested is not None and root_binding!=spine_binding(operator,state,t,tc,approach_cap,
+                                    ep.safe_inventory_fraction,choice[1]):
+                                raise DepletionIntegrationError('ordinary_spine_binding_changed')
                             tc=exc.common_time_s;previous=None;successes=0;first_time=None;level=0
+                            root_binding=(spine_binding(operator,state,t,tc,approach_cap,ep.safe_inventory_fraction,choice[1])
+                                          if nested else None)
+                            spine=(_WetSpine(root_binding)
+                                   if nested and nested.reuse_ordinary_spine else None)
                             continue
                         except (_Failure,IntegrationError,DomainExit,DepletionRoundoffError,ValueError,OverflowError) as exc:
                             refinements.append(DepletionRefinement(t,level,cap,tc,None,None,
-                                getattr(exc,'reason',str(exc)),evaluations-level_evaluations,time.monotonic()-level_start))
+                                getattr(exc,'reason',str(exc)),evaluations-level_evaluations,time.monotonic()-level_start,
+                                phase_costs=frozen_costs(before_cost),approach_role='terminal_refinement' if nested else 'legacy',
+                                approach_cap_s=approach_cap,approach_safe_inventory_fraction=ep.safe_inventory_fraction if nested else None))
                             raise
                         if path.event is None:raise _Failure('unsupported','event_node_order_not_separated')
                         if first_time is None:first_time=path.event.time_s
                         if previous is not None:
-                            passed,diffs=comparison(previous,path,tc)
+                            passed,diffs,details=comparison(previous,path,tc)
                             successes=successes+1 if passed else 0
                             refinements.append(DepletionRefinement(t,level,cap,tc,path.event.time_s,diffs,
-                                'comparison_pass' if passed else 'comparison_fail',evaluations-level_evaluations,time.monotonic()-level_start))
+                                'comparison_pass' if passed else 'comparison_fail',evaluations-level_evaluations,time.monotonic()-level_start,
+                                comparison_details=details,phase_costs=frozen_costs(before_cost),
+                                approach_role='terminal_refinement' if nested else 'legacy',approach_cap_s=approach_cap,
+                                approach_safe_inventory_fraction=ep.safe_inventory_fraction if nested else None))
                             if successes>=2:
+                                if nested is not None:
+                                    guard()
+                                    if root_binding!=spine_binding(operator,state,t,tc,approach_cap,
+                                            ep.safe_inventory_fraction,choice[1]):
+                                        raise DepletionIntegrationError('ordinary_spine_binding_changed')
+                                    # Shared terminal agreement must survive a genuinely
+                                    # different ordinary mesh. Both controls are halved:
+                                    # an inactive maximum cap alone is not refinement.
+                                    fine_cap=approach_cap/2
+                                    fine_safe=ep.safe_inventory_fraction/2
+                                    independent_start=time.monotonic();independent_evaluations=evaluations
+                                    independent_cost=cost_snapshot()
+                                    independent_recorded=False
+                                    try:
+                                        fine=proposal(operator,state,t,tc,cap,totals,
+                                            approach_cap=fine_cap,safe_fraction=fine_safe,event_cell=choice[1])
+                                        if fine.approach_grid==path.approach_grid:
+                                            raise _Failure('unsupported','independent_approach_grid_uninformative')
+                                        approach_pass,approach_diffs,approach_details=comparison(path,fine,tc)
+                                        refinements.append(DepletionRefinement(t,level,cap,tc,fine.event.time_s,approach_diffs,
+                                            'independent_approach_pass' if approach_pass else 'independent_approach_fail',
+                                            evaluations-independent_evaluations,time.monotonic()-independent_start,
+                                            comparison_details=approach_details,phase_costs=frozen_costs(independent_cost),
+                                            approach_role='independent_halved_controls',approach_cap_s=fine_cap,
+                                            approach_safe_inventory_fraction=fine_safe))
+                                        independent_recorded=True
+                                        if not approach_pass:
+                                            raise _Failure('unsupported','independent_approach_comparison_failed')
+                                        diffs=tuple(max(a,b) for a,b in zip(diffs,approach_diffs))
+                                    except _ReduceCommonTime as exc:
+                                        refinements.append(DepletionRefinement(t,level,cap,tc,exc.event_time_s,None,
+                                            'common_time_horizon_reduced',evaluations-independent_evaluations,
+                                            time.monotonic()-independent_start,exc.common_time_s,
+                                            phase_costs=frozen_costs(independent_cost),approach_role='independent_halved_controls',
+                                            approach_cap_s=fine_cap,approach_safe_inventory_fraction=fine_safe))
+                                        horizon_restarts+=1
+                                        if horizon_restarts>ep.maximum_refinements:
+                                            raise _Failure('resource_limit','common_time_restart_limit')
+                                        if root_binding!=spine_binding(operator,state,t,tc,approach_cap,
+                                                ep.safe_inventory_fraction,choice[1]):
+                                            raise DepletionIntegrationError('ordinary_spine_binding_changed')
+                                        tc=exc.common_time_s;previous=None;successes=0;first_time=None;level=0
+                                        root_binding=spine_binding(operator,state,t,tc,approach_cap,ep.safe_inventory_fraction,choice[1])
+                                        spine=(_WetSpine(root_binding)
+                                               if nested.reuse_ordinary_spine else None)
+                                        continue
+                                    except (_Failure,IntegrationError,DomainExit,DepletionRoundoffError,ValueError,OverflowError) as exc:
+                                        if not independent_recorded:
+                                            refinements.append(DepletionRefinement(t,level,cap,tc,None,None,
+                                                getattr(exc,'reason',str(exc)),evaluations-independent_evaluations,
+                                                time.monotonic()-independent_start,phase_costs=frozen_costs(independent_cost),
+                                                approach_role='independent_halved_controls',approach_cap_s=fine_cap,
+                                                approach_safe_inventory_fraction=fine_safe))
+                                        raise
+                                    # Commit the twice-terminal-verified candidate only;
+                                    # the finer independent branch remains speculative.
                                 path.event=replace(path.event,coarse_time_s=first_time,previous_time_s=previous.event.time_s,
                                     common_time_s=tc,event_time_difference_s=diffs[0],common_amount_difference_mol=diffs[1],
                                     common_energy_difference_j=diffs[2],common_temperature_difference_k=diffs[3],common_pressure_difference_pa=diffs[4])
+                                if nested is not None:
+                                    guard()
+                                    if root_binding!=spine_binding(operator,state,t,tc,approach_cap,
+                                            ep.safe_inventory_fraction,choice[1]):
+                                        raise DepletionIntegrationError('ordinary_spine_binding_changed')
                                 commit(path);break
                         else:
                             refinements.append(DepletionRefinement(t,level,cap,tc,path.event.time_s,None,'coarse_reference',
-                                evaluations-level_evaluations,time.monotonic()-level_start))
+                                evaluations-level_evaluations,time.monotonic()-level_start,
+                                phase_costs=frozen_costs(before_cost),approach_role='terminal_refinement' if nested else 'legacy',
+                                approach_cap_s=approach_cap,approach_safe_inventory_fraction=ep.safe_inventory_fraction if nested else None))
                         previous=path;level+=1
                     else:raise _Failure('unsupported','event_refinement_limit')
                 else:
@@ -482,4 +717,5 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
     except (IntegrationError,DepletionRoundoffError,ValueError,OverflowError) as exc:status='failed';reason=str(exc)
     return DepletionResult(status,reason,tuple(times),tuple(states),tuple(steps),tuple(events),tuple(corrections),operator,
         totals,tuple(cumulative_n),tuple(cumulative_u),evaluations,rejected,attempted,time.monotonic()-begin,tuple(refinements),ep.safe_inventory_fraction,
-        tuple(component_residual_totals) if component_schema not in (...,None) else None)
+        tuple(component_residual_totals) if component_schema not in (...,None) else None,
+        frozen_costs(),MappingProxyType(dict(reused)),nested.strategy_id if nested else 'legacy')

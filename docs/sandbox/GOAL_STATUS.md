@@ -4,6 +4,14 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新终态：1192完整安装测试通过（session11689/535.553s），42模块前后匹配；v3联合轨迹仍在level3 HEOS TP失败，0事件。诊断43826已terminal failed49.48452s，精确捕捉295K/53692.54782795906Pa的8次双密度周期；295K是反解下界、非实际砖温。独立公开接口单点92373已terminal failed1.18991s，复现相同heos_tp_not_converged；原动态min(1e-4,rho*1e-7)Pa门槛未改。当前无活动EOS/测试。全部本轮证据归档 research/depletion-spine-v1/（旧失败/审查/安装/原v3/异常捕捉/单点），下一TP修正设计见 TP_FAILURE_NUMERICAL_REVIEW.md；须先保留精确失败并预登记有界校正，不重复整条无诊断运行。完整Goal仍active，原污泥材料闭合、自由烧结冷却、三公开机制/留出、全周期CLI/UI与多代搜索仍未完成。
+
+完整安装新终态：session11689 exit0，1192通过/零失败错误跳过，XML535.553s；前后42实际模块与源码逐字节一致。当前唯一EOS句柄为诊断session43826，目录 /private/tmp/brick-reacting-wet-v3-diagnostic/diagnostic-attempt01；已完成两份只读脚本审查，原120s内部/150s外部限额，异常追踪不改求解器/来源守卫且不增加EOS调用。原v3失败仍未解决；先poll43826至终态，再核实际失败TP/迭代及source证据，不能把捕捉成功称轨迹通过。
+
+最新运行入口：v3 callback session39396已terminal complete/child0/2.09734s；depletion0 session45698已terminal failed/child1/47.38958s，内部45.76055s147评估18试算panel、6已接受步、0事件，原因为 liquid_property_solution:heos_tp_not_converged；复用12观测9普通panel。不能称新事件策略完成联合轨迹；第二全轨迹细化未运行。完整新安装回归唯一session11689正在运行，XML /private/tmp/brick-depletion-spine-v1/installed-full-tests.xml；源码/tests/安装冻结，轮询同句柄，不并行EOS。下一终态核XML和42实际模块后归档提交；v3独立账本审计与TP失败捕捉方案由只读代理准备。
+
+当前新改动（未提交）：耗尽普通湿态接近策略已应用 src/sludge_sandbox/depletion_integration.py，新增20独立测试；实际55相关测试通过13.26s，候选最终SHAab465ad7a1da9d39787afd7dd2c6dfc24e680936e9a6c99593b345ddbc49135a。可变观测别名、重复计费和最终来源绑定漏检均保留失败后修复；最后20通过5.828s。重新非editable安装，42实际模块逐字节匹配。下一串行执行 /private/tmp/brick-reacting-wet-v3 的原物理/门槛/120s内部150s外部500panel联合实验；随后完整安装回归。证据准备 /private/tmp/brick-depletion-spine-v1。原1172完整证据仅属a4f968f，不能移到当前源码。Goal完整§11仍未完成。
+
 最新终态：压力传播修正完整安装 **1172通过/零失败错误跳过，XML557.992s，session36717 exit0**；前后42模块实际导入与源码逐字节一致。当前无活动测试/EOS。代码/7解析回归/48相关回归、v2湿态实际仍超时、独立算术与完整来源身份已归档 research/solid-pressure-bound-v1/。下一算法预登记 NEXT_EVENT_PREREGISTRATION.md；暂未实现。CLI_UI_NEXT_SCOPE.md核实应用层仍缺真实sandbox入口/持久运行与结果溯源，旧synthetic CLI不能充当完成。完整Goal仍active；真实原污泥材料、自由烧结冷却、三公开机制/留出、全周期CLI/UI及多代实验仍为必需未完成项。
 
 最新恢复入口：v2 depletion0 session87557已终态failed/child1/121.7245s，内层wall120.0288s325评估6接受步0事件。已完成的三次细化压力指标变为0.00607/0.00519/0.00492Pa，原压力门槛通过；库存最后仍6.1412e-10mol高于1e-10，因此不能宣布联合轨迹完成。v1/v2所有失败保留；下一机制需提高事件定位收敛效率，不能增加本次上限或删去事件库存比较。当前完整安装回归 **session36717正在运行**，XML /private/tmp/brick-solid-pressure-bound-v1/installed-full-tests.xml，cwd/private/tmp无PYTHONPATH；同目录installed-identity.json已记录运行状态。源码/测试/安装/脚本冻结，轮询同句柄，无其他活动EOS。尚未提交solid_fluid_storage.py与新test_solid_pressure_bound.py，完整suite过后核XML+42模块再归档提交。tg_code_review正在只读v2算术审计，python_backtracking_integration_review在写下一事件数值设计；记录在pressure-bound-v1临时目录。
