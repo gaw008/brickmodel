@@ -3,10 +3,10 @@
 The pressure-difference conductance is supplied, not derived from equilibrium.
 Only equimolar phase inventories change; stored U receives no second latent heat.
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from fractions import Fraction
 import math
-from numbers import Real
+from numbers import Real, Integral
 
 import numpy as np
 
@@ -55,6 +55,7 @@ class CellWaterTransfer:
     entropy_production_w_k: float | None
     status: str
     driving_force_definition: str = 'R_T_log_of_computed_equilibrium_pressure_over_vapor_pressure'
+    hypothetical_equilibrium: WaterPhaseEquilibrium | None = None
 
 
 @dataclass(frozen=True)
@@ -67,6 +68,8 @@ class WaterTransferEvaluation:
     coefficient_classification: str
     source_ids: tuple[str,...]
     qualification: str = 'declared_pressure_difference_kinetics_existing_liquid_interface_not_sludge_nucleation'
+    interface_modes: tuple[str,...] = ()
+    dry_policy: str = 'strict'
 
 
 @dataclass(frozen=True,kw_only=True)
@@ -79,12 +82,22 @@ class WaterPhaseTransfer:
     coefficient_classification: str
     coefficient_source_ids: tuple[str,...]
     allow_manufactured: bool = False
+    interface_modes: tuple[str,...] | None = None
+    dry_policy: str = 'strict'
 
     def __post_init__(self):
         if type(self.base_model) not in (RigidFluidHeat,SolidFluidHeat,ProgrammedSolidFluidHeat) or type(self.chemical) is not WaterChemicalPotential:
             raise WaterPhaseTransferError('explicit_fluid_and_chemical_models_required')
         if 'H2O' not in self.base_model.gas_species_order:
             raise WaterPhaseTransferError('explicit_gas_water_species_required')
+        modes=self.interface_modes
+        if modes is None:modes=('existing_liquid',)*len(self._thermal_host.storages)
+        if (not isinstance(modes,(tuple,list)) or len(modes)!=len(self._thermal_host.storages)
+                or any(m not in ('existing_liquid','depleted_no_nucleation') for m in modes)):
+            raise WaterPhaseTransferError('invalid_interface_modes')
+        if self.dry_policy not in ('strict','metastable_no_nucleation'):
+            raise WaterPhaseTransferError('invalid_dry_policy')
+        object.__setattr__(self,'interface_modes',tuple(modes))
         values=self.coefficients_mol_s_pa
         if not isinstance(values,(tuple,list)) or len(values)!=len(self._thermal_host.storages):
             raise WaterPhaseTransferError('explicit_per_cell_rate_coefficients_required')
@@ -113,8 +126,8 @@ class WaterPhaseTransfer:
                 for s in self._thermal_host.storages for p in s.solid_phases.values())
         if manufactured and not self.allow_manufactured:
             raise WaterPhaseTransferError('manufactured_requires_explicit_test_mode')
-        for storage,k in zip(self._fluid_storages,coefficients):
-            if k==0:continue
+        for storage,k,mode in zip(self._fluid_storages,coefficients,self.interfaces):
+            if k==0 and mode=='existing_liquid':continue
             caloric=storage.gas_phases['H2O'].caloric
             # Only the exact source-gated low branch supplies liquid chemistry.
             vapor=caloric.low_model if type(caloric) is JoinedWaterVapor else caloric
@@ -147,6 +160,32 @@ class WaterPhaseTransfer:
                 if type(self._thermal_host) is SolidFluidHeat else 0)
 
     @property
+    def liquid_index(self):return self._liquid_index
+
+    @property
+    def water_vapor_index(self):return self.species_order.index('H2O')
+
+    @property
+    def interfaces(self):return self.interface_modes
+
+    def with_depleted_cells(self,state,cell_indices):
+        """Explicit caller mode switch, not certification of an event location."""
+        self.base_model._check_state(state)
+        if not isinstance(cell_indices,(tuple,list)):
+            raise WaterPhaseTransferError('invalid_depleted_cell_indices')
+        if any(isinstance(i,bool) or not isinstance(i,Integral)
+               or i<0 or i>=len(self.interfaces) for i in cell_indices):
+            raise WaterPhaseTransferError('invalid_depleted_cell_indices')
+        if len(set(cell_indices))!=len(cell_indices):
+            raise WaterPhaseTransferError('duplicate_depleted_cell_indices')
+        modes=list(self.interfaces)
+        for i in cell_indices:
+            if state.amounts_mol[i,self.liquid_index]!=0:
+                raise WaterPhaseTransferError('depleted_cell_requires_exact_zero_liquid')
+            modes[i]='depleted_no_nucleation'
+        return replace(self,interface_modes=tuple(modes))
+
+    @property
     def species_order(self):return self.base_model.species_order
 
     @property
@@ -158,14 +197,20 @@ class WaterPhaseTransfer:
 
     def evaluate(self,state:ConservedState,time_s:float)->WaterTransferEvaluation:
         self.base_model._check_state(state)
-        for row,k in zip(state.amounts_mol,self.coefficients_mol_s_pa):
+        for row,k,mode in zip(state.amounts_mol,self.coefficients_mol_s_pa,self.interfaces):
+            if mode=='depleted_no_nucleation':
+                if row[self.liquid_index]!=0:raise DomainExit('dry_interface_requires_exact_zero_liquid')
+                continue
             if k>0 and row[self._liquid_index]==0:
                 raise DomainExit('no_existing_liquid_interface_nucleation_not_modelled')
         base=self.base_model.evaluate(state,time_s)
         water_index=self.species_order.index('H2O')
         reactions=np.array(base.rates.reaction_species_mol_s)
         diagnostics=[]
-        for row,closed,k in zip(state.amounts_mol,base.storage_states,self.coefficients_mol_s_pa):
+        for index,(row,closed,k,mode) in enumerate(zip(state.amounts_mol,base.storage_states,self.coefficients_mol_s_pa,self.interfaces)):
+            if mode=='depleted_no_nucleation':
+                diagnostics.append(self._dry_diagnostic(row,closed,k,base.rates,index))
+                continue
             if k==0:
                 diagnostics.append(CellWaterTransfer(0.,k,None,None,None,None,None,'disabled'))
                 continue
@@ -203,6 +248,39 @@ class WaterPhaseTransfer:
             diagnostics.append(CellWaterTransfer(rate,k,pressure,equilibrium,mu,delta_mu,entropy,status))
         rates=Rates(base.rates.face_species_mol_s,base.rates.face_energy_w,reactions,base.rates.cell_power_w)
         return WaterTransferEvaluation(rates,base,tuple(diagnostics),self.coefficient_set_id,self.coefficient_version,
-                                       self.coefficient_classification,self.source_ids)
+                                       self.coefficient_classification,self.source_ids,
+                                       interface_modes=self.interfaces,dry_policy=self.dry_policy,
+                                       qualification=('explicit_'+self.dry_policy+'_dry_interface_choice_not_nucleation_model'
+                                           if 'depleted_no_nucleation' in self.interfaces else
+                                           'declared_pressure_difference_kinetics_existing_liquid_interface_not_sludge_nucleation'))
+
+    def _dry_diagnostic(self,row,closed,k,rates,index):
+        # Exact sum of represented net terms; this is not a gross reaction audit.
+        net=(Fraction(float(rates.face_species_mol_s[index,self.liquid_index]))
+             -Fraction(float(rates.face_species_mol_s[index+1,self.liquid_index]))
+             +Fraction(float(rates.reaction_species_mol_s[index,self.liquid_index])))
+        if net>0:raise DomainExit('dry_interface_liquid_reappearance_unsupported')
+        mechanical=closed.mechanical
+        pressure=_float_exact(Fraction(float(row[self.water_vapor_index]))
+            *Fraction(self.chemical.gas_constant_j_mol_k)*Fraction(mechanical.temperature_k)
+            /Fraction(mechanical.gas_volume_m3),'water_partial_pressure')
+        try:
+            hypothetical=self.chemical.equilibrium_at_liquid_tp(
+                mechanical.temperature_k,mechanical.pressure_pa)
+        except WaterDomainError as exc:
+            if self.dry_policy=='strict':
+                raise DomainExit('dry_interface_condensation_drive_unknown: '+str(exc)) from exc
+            hypothetical=None
+        except (WaterChemicalError,WaterNumericalError,IdealWaterVaporError) as exc:
+            raise WaterPhaseTransferError(str(exc)) from exc
+        if hypothetical is None:
+            status='metastable_no_nucleation_condensation_drive_unknown'
+        elif pressure>hypothetical.equilibrium_partial_pressure_pa:
+            if self.dry_policy=='strict':raise DomainExit('dry_interface_condensation_requires_unsupported_nucleation')
+            status='metastable_no_nucleation_supersaturated'
+        else:
+            status=self.dry_policy+'_no_nominal_condensation_demand'
+        return CellWaterTransfer(0.,k,pressure,None,None,None,None,status,
+                                 hypothetical_equilibrium=hypothetical)
 
     def __call__(self,state,time_s):return self.evaluate(state,time_s).rates
