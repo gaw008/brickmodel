@@ -76,3 +76,9 @@
 |---|---|---|
 | λ=k*krel_l/mu；Q=AΔP/(dL/λL+dR/λR)；Ndot=Q/vdonor；Edot=Ndot*hdonor | `liquid_transport.liquid_face_exchange` | 20独立测试与正反供体手算、极端Fraction；四档实际pure-water连续流对照；不重复pQ |
 | S=Vl/(Vbulk−ΣNs vs)，单次decode后共享液mol/h面 | `solid_fluid_heat.LiquidTransportConfig`及SolidFluidHeat | 6独立测试、真实两格逐前缀水/U账本、完整program/phase诊断链与仅液制造门禁 |
+
+
+| 固相反应增量 | 实现 | 实际证据与范围 |
+|---|---|---|
+| 网络物种→实际相provider→完整库存列，bulk浓度速率 | `solid_reactions.SolidReactionConfig` | 13项绑定测试；独立二阶速率/列置换手算；相、质量、能量参考与制造门禁，不是材料准入 |
+| 同一计量源推进Ns/Ng，总U包含生成能、重解Vs/Vg/P/T | `solid_fluid_heat.SolidFluidHeat.solid_reactions` | 8项host测试，有限O2实际积分、无氧通道、正Ea温敏比、元素/质量/U、完整wrapper诊断链；独立审核 `research/CODE_REVIEW_SOLID_REACTIONS.md` |

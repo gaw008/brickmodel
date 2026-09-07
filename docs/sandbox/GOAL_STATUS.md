@@ -206,3 +206,17 @@ Baloi2025出版商HTML/JATS原文、5组配比/终态热物性及派生提取已
 3. 同一原污泥材料域的毛细/饱和度输运、热解/残碳氧化计量与热效应、烧结/连通性/几何和冷却力学仍缺来源或实现；三机制公开持出预测、全周期、多代搜索和CLI/UI保持原必需范围。现无有源材料表被自动准入，方程真不等于泥料参数真。
 
 恢复优先读LIQUID_TRANSPORT.md、LIQUID_SOLID_FLUID_HEAT.md及CODE_REVIEW_LIQUID_TRANSPORT.md。不要重复无变化的812项测试代替反应/干燥完成路径和真实来源工作。当前仍有可独立继续的实现与证据任务，不符合blocked条件。
+
+
+## 最新固相反应与整体热力学反馈检查点
+
+上一Goal回合仅给出任务书入口，按no progress处理；本回合重新核对实际工作区并完成实现的独立解析验证、来源审核及本地提交，属于progress。完整Goal继续active，§11仍未满足。
+
+- `82f9f15`：SolidReactionConfig显式多相provider/网络/全列绑定，反应源接入SolidFluidHeat单次整体T反解，改变真实Ns/Ng及Vs/Vg/P/T，形成能留在总U中不重复加热。13项绑定与8项host最终独立通过，有限O2/零氧无氧通道/正Ea比/诊断组合/制造门禁覆盖。位置参数兼容和kinetic域分类两处审核缺陷已修复。连续净源ODE并未调用旧gross-extent限步工具，不宣称通用刚性网络已验证。
+- 三档2s独立解析候选最终attempt002实际32/64/128均匀步、零拒步，最大Ns误差6.13022e-7→1.51459e-7→3.76428e-8mol，比4.04745/4.02358；最细T误差0.000352617K、P1.56026Pa，U/step/prefix差0，质量max5.421e-20kg。原预登记门槛未改；001首次PASS记录保留，002只补报告字段。独立审核重推227个节点及全部误差/hash，不冒称重跑积分。制造Xsolid→Xgas不是真实碳或污泥。
+- 最终冻结非editable离线安装，在/private/tmp无PYTHONPATH实际 **833 passed in136.56s，0失败/错误/跳过**，29个真实安装模块与当前源码一致。证据research/installed-sandbox-solid-reactions-tests.xml及installed-sandbox-solid-reactions-identity.json。独立局部XML也复制到research保留，旧812项证据未覆盖。完整回归进程12298已exit0，不再轮询或重启。
+- `b4dd270`：Areias/Maciel/Holanda2025官方来源有限事实与独立审核已提交。先干燥并混熟石灰的市政污泥，不是SSA也不是未经处理原泥；Table3、TG/dilatometry与四峰温烧成方法可追查，TG气氛/膨胀仪几何未知，图文阶段失重2.808/2.806差异保留。未数字化、未材料准入、未外部预测。
+
+下一步：先实现液界面耗尽后的守恒事件/干态路径及低高温水汽共同参考。现water_caloric_join_probe已实际测得500K高减低h/u=0.17481133254477754J/mol、Cp/Cv=−0.007918945959858092J/(mol K)，仅模型端点差，不是物性误差证书或实现了拼接；方案见research/WATER_CALORIC_JOIN_DESIGN.md。液耗尽方案已写入research/LIQUID_DEPLETION_DESIGN.md，独立设计审查中；它明确原SSPRK2中间Eulerstage限制会使有限时间耗尽难以到达，拟用有误差控制和完整账本的终端事件panel。尚未实施，不可用静默clip、关闭相变或纯干例替代湿→干实际路径。
+
+之后仍需湿相变/液迁移/热气多格时空收敛、真实原污泥计量/形成能/动力学、烧结连通性/几何与冷却力学、同域公开三机制持出验证、全周期、多代搜索和CLI/UI。以上原合同范围全部保留，软件通过不替代材料适用性与现实验证；目前仍有可继续实现的工作，不满足blocked条件。

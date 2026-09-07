@@ -195,3 +195,14 @@ ProgrammedSolidFluidHeat每trial仅调用一次实际固液气base.evaluate；�
 该检查针对给定恒温压力剖面上的面离散，使用外部恒温约束，不宣称绝热稳态、完整湿砖空间收敛、EOS独立验证或真实泥料透水系数。来源标签的表即使有S依赖，也不自动得到材料资格。冻结制造和tabulated关系允许有源平台的语义明确区分。
 
 最终冻结非editable离线安装，从/private/tmp无PYTHONPATH实际运行 **812 passed in134.01s，0失败/错误/跳过**；28个真实安装模块与工作区源码逐个hash一致。产物research/installed-sandbox-liquid-transport-tests.xml与installed-sandbox-liquid-transport-identity.json；旧786项记录保留。
+
+
+## 固相反应与全库存热力学反馈
+
+新增SolidReactionConfig的13项绑定测试及SolidFluidHeat反应主机8项测试由独立审核者实际复验，分别0.49s/2.42s通过。覆盖显式列/相/摩尔质量/共同参考/provider身份、零O2只停止氧化、有限氧闭合轨迹、正Ea两温度比、库存—占积—能量反馈、完整程序/液迁移/水相变diagnostics及制造门禁。审核发现的位置参数兼容与kinetic域分类问题均先有失败回归再修复。没有将旧gross-extent工具冒称成实际积分限步。
+
+预登记的60位Decimal独立一阶Xsolid→Xgas极限固定总U，并由各相常Cp/形成能独立推导T、Vs/Vg与P。实际候选2s三档dt=1/16、1/32、1/64，最终attempt002为32/64/128均匀步且零拒步；最大Ns误差6.13022e-7、1.51459e-7、3.76428e-8mol，比例4.04745、4.02358。最细温度误差0.000352617K，压力1.56026Pa；总U与逐步/全前缀能量差均0，质量最大偏差5.421e-20kg。全部符合原计划门槛，未调宽比较条件。attempt001已通过但少报告字段，补拒步/求值次数与显式step能量字段后运行002；两次产物均保留。
+
+原plan、独立reference与candidate代码、所有轨迹JSON/CSV在research/SOLID_REACTION_ANALYTIC_PLAN.md及solid_reaction_analytic_*。这验证固定bulk、常速一阶制造反应，不能解释为真实碳热解、刚性污泥反应网络、烧结变形或整砖外部验证。
+
+最终冻结非editable离线安装，在/private/tmp无PYTHONPATH运行全部sandbox：**833 passed in136.56s，0失败/错误/跳过**。29个真实site-packages模块与工作区hash一致，证据research/installed-sandbox-solid-reactions-tests.xml及installed-sandbox-solid-reactions-identity.json。新增公开Areias2025记录只属核读来源候选，未数字化或执行预测对照，科学资格不因安装通过而提升。

@@ -20,13 +20,13 @@
 | M03 | 湿坯初态、成型水不重复 | prepare_green_batch水账目通过；完整相库存待实现 | in_progress |
 | M04 | 明确原污泥材料域可全周期运行 | 来源完整案例；不能用fixture替代 | pending |
 | P01 | 一维厚度场、几何适用性 | 网格、边界、尺度论证与收敛 | in_progress |
-| P02 | 炉温/壁温/气氛分段程序 | BoundaryProgram 41测试；ProgrammedGasHeat 15测试，动态气体库与表面串联换热已在刚性气相组装，全湿砖待接 | in_progress |
+| P02 | 炉温/壁温/气氛分段程序 | BoundaryProgram、ProgrammedGasHeat和ProgrammedSolidFluidHeat已组装动态气体库/表面串联换热；完整湿砖全周期尚待验证 | in_progress |
 | P03 | 导热/对流/辐射 | 半格/膜串联与非线性表面平衡；解析升降温及80独立根检查，完整材料域待验证 | in_progress |
-| P04 | 液态水/蒸气迁移、蒸发 | WaterChemicalPotential与WaterPhaseTransfer接通已存在液界面的蒸发/凝结；真实制造例积分和水/U账本已检查。材料速率、液态迁移/毛细、耗尽后过程与公开干燥对照尚缺 | in_progress |
-| P05 | 组成/温度储能、流焓、反应/相变 | PhaseStorage、液水—理想气机械闭合、连续热量派生、条件反演及多格流体气热已实现；相间等摩尔库存变化通过同一U反解反馈T/P，无重复潜热。单相固体provider及PhaseStorage实际组装已通过29新测试；数值界准入、固体整体占积/储能及全砖反应能量仍未完成 | in_progress |
+| P04 | 液态水/蒸气迁移、蒸发 | WaterChemicalPotential与WaterPhaseTransfer接通已存在液界面的蒸发/凝结；真实制造例积分和水/U账本已检查。受限压力液态迁移及供体焓已接入；材料速率/毛细、耗尽后过程与公开干燥对照尚缺 | in_progress |
+| P05 | 组成/温度储能、流焓、反应/相变 | PhaseStorage、液水—理想气机械闭合、连续热量派生、条件反演及多格流体气热已实现；相间等摩尔库存变化通过同一U反解反馈T/P，无重复潜热。单相固体provider及PhaseStorage实际组装已通过29新测试；固体整体占积/储能及制造反应源已接通；数值界准入、有源材料反应与全砖全周期能量仍未完成 | in_progress |
 | P06 | 原泥热解与残炭氧化分开 | 成套反应/计量/热效应证据 | pending |
 | P07 | 必需矿物脱羟/分解 | 适用反应及独立/公开验证 | pending |
-| P08 | 局部有限O2与真实边界交换 | 氧库存场、无氧/有限库验证 | pending |
+| P08 | 局部有限O2与真实边界交换 | SolidReactionConfig接入完整库存；制造闭合例有限氧上界/零氧通道已验证，动态外气库已有；反应与开放供氧完整轨迹及实材证据仍待 | in_progress |
 | P09 | 气相含必要载气、组分缺口诚实 | 摩尔/质量/分压/总压/体积一致 | in_progress |
 | P10 | 扩散/压力驱动流动及反馈 | 有据Fick/Darcy等、极限验证 | in_progress |
 | P11 | 有据烧结/液相/黏度关系 | 覆盖判断；无旧sigmoid冒充 | pending |
@@ -78,3 +78,6 @@
 
 
 液水迁移增量：`7bd4a38`接入显式液相关系、连通与共享mol/供体焓面，保留完整固液气压力/储能反解。20+6独立新测试、两格实际积分及四档面离散连续流对照通过；这是热湿迁移的软件部分进展，来源支持的泥中毛细/渗透关系、全湿砖时空收敛和公开实验预测仍未完成，不能升级整项干燥验收。
+
+
+反应接入更新：P05/P06/P08/P16已有显式网络—完整库存—总U—Vs/Vg/P/T的制造测试证据，详见SOLID_REACTIONS、REACTIVE_SOLID_FLUID_HEAT及独立CODE_REVIEW_SOLID_REACTIONS。P06要求的原污泥成套材料路径并未由制造值满足；P16完整湿砖所有机制的双向耦合仍未完成。Areias2025来源候选不使M04、P11或现实验证条目自动通过。
