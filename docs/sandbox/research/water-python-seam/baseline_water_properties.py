@@ -20,8 +20,6 @@ from typing import Literal
 import warnings
 import zipfile
 
-from ._water_python_backend import PythonIAPWS95Calls
-
 
 class WaterError(ValueError):
     """Base error for the bounded pure-water adapter."""
@@ -269,7 +267,7 @@ class WaterProperties:
 
     def __init__(self, source_directory):
         backend, facts = _verify_sources(source_directory)
-        model = PythonIAPWS95Calls.solve(backend)
+        model = backend.IAPWS95()
         mass = float(model.M) / 1000
         r_specific = float(model.R) * 1000
         r_molar = float(model.R) * float(model.M)
@@ -277,7 +275,7 @@ class WaterProperties:
             raise WaterSourceError("native_iapws_fitted_constant_mismatch")
         anchor_t = float(facts["reference_temperature_k"])
         anchor_h = float(facts["gas_formation_h_j_mol"])
-        phi = PythonIAPWS95Calls.ideal(model, _CRITICAL_T / anchor_t, 1.0)
+        phi = model._phi0(_CRITICAL_T / anchor_t, 1.0)
         anchor_native_h = r_specific * anchor_t * (1 + _CRITICAL_T / anchor_t * phi["fiot"])
         reference = WaterReference(mass, r_specific, r_molar, float(anchor_h - mass * anchor_native_h), anchor_t, anchor_h)
         object.__setattr__(self, "reference", reference)
@@ -291,7 +289,7 @@ class WaterProperties:
         try:
             with warnings.catch_warnings(record=True) as emitted:
                 warnings.simplefilter("always")
-                result = PythonIAPWS95Calls.solve(self._backend, **inputs)
+                result = self._backend.IAPWS95(**inputs)
             if emitted:
                 raise WaterNumericalError("iapws_solver_warning:" + str(emitted[0].message))
             if result.status != 1:
@@ -315,7 +313,7 @@ class WaterProperties:
             cv = _number(values['cv'] * 1000, 'cv_SI', error=WaterNumericalError, positive=True)
             for name, value in (("h_SI", h), ("u_SI", u), ("s_SI", entropy)):
                 _number(value, name, error=WaterNumericalError)
-            eos = PythonIAPWS95Calls.helmholtz(self._model, rho, temperature)
+            eos = self._model._Helmholtz(rho, temperature)
             eos_h = _number(eos['h'] * 1000, 'eos_h_SI', error=WaterNumericalError)
             eos_s = _number(eos['s'] * 1000, 'eos_s_SI', error=WaterNumericalError)
             pressure_residual = _number(float(eos["P"]) * 1000 - pressure, "eos_pressure_residual", error=WaterNumericalError)
@@ -328,7 +326,7 @@ class WaterProperties:
                     or abs(eos_s - entropy) > self.numerical_limits.eos_caloric_absolute_j_kg / temperature):
                 raise WaterNumericalError("iapws_caloric_eos_residual")
             delta = rho / _CRITICAL_RHO
-            residual = PythonIAPWS95Calls.residual(self._model, _CRITICAL_T / temperature, delta)
+            residual = self._model._phir(_CRITICAL_T / temperature, delta)
             stability = _number(1 + 2 * delta * residual["fird"] + delta**2 * residual["firdd"],
                                 "mechanical_stability", error=WaterNumericalError)
             if stability <= 0:
@@ -336,7 +334,7 @@ class WaterProperties:
             # IAPWS-95 Table 3: independent caloric derivatives at this (T,rho),
             # including the ideal contribution; not merely Cp/Cv positivity.
             tau = _CRITICAL_T / temperature
-            ideal = PythonIAPWS95Calls.ideal(self._model, tau, delta)
+            ideal = self._model._phi0(tau, delta)
             r_specific = self.reference.native_specific_gas_constant_j_kg_k
             expected_cv = _number(-r_specific*tau**2*(ideal['fiott']+residual['firtt']),
                                   'helmholtz_cv', error=WaterNumericalError, positive=True)
@@ -359,7 +357,7 @@ class WaterProperties:
         entry = self._saturation_cache
         assets = tuple(sorted(self.source_asset_sha256.items()))
         try:
-            solver = PythonIAPWS95Calls.solver_identity(self._backend)
+            solver = self._backend.IAPWS95
         except AttributeError as exc:
             raise WaterNumericalError("iapws_solver_failed") from exc
         hit = (entry is not None and entry.temperature == temperature
@@ -436,7 +434,7 @@ class WaterProperties:
             rho = _number(state.density_kg_m3, "response_density", error=WaterNumericalError, positive=True)
             delta = rho / _CRITICAL_RHO
             tau = _CRITICAL_T / t
-            residual = PythonIAPWS95Calls.residual(self._model, tau, delta)
+            residual = self._model._phir(tau, delta)
             derivatives = {key: _number(residual[key], "response_"+key, error=WaterNumericalError)
                            for key in ("fird", "firdd", "firdt")}
             d = _number(1 + 2*delta*derivatives["fird"] + delta**2*derivatives["firdd"],
@@ -466,7 +464,7 @@ class WaterProperties:
         """Independent ideal-Helmholtz caloric limit; no pure-fluid TP or mud claim."""
         temperature = _temperature(temperature_k)
         tau = _CRITICAL_T / temperature
-        phi = PythonIAPWS95Calls.ideal(self._model, tau, 1.0)
+        phi = self._model._phi0(tau, 1.0)
         r_specific = self.reference.native_specific_gas_constant_j_kg_k
         u = r_specific * temperature * tau * phi["fiot"]
         h = u + r_specific * temperature

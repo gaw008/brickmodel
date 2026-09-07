@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新检查点：默认Python水后端调用层已独立审核并应用（下文ecfb3e9/1112为历史完整suite）。新增私有固定静态调用类，仅转发当前native对象，不改变来源、单位、参考、容差、异常作用域或缓存。独立AST九调用逆变换后与旧模块整体相同。隔离117+95相关测试通过；冻结非editable安装后212相关测试实际1.46s通过，38实际site-packages模块与源逐字节一致，session12878已exit0。没有运行新全套或湿轨迹，不把旧1112升级为本版本完整证据。
+
+初轮golden因直接执行candidate目录脚本可能污染sys.path，不作为旧/新比较证据，原记录保留。修正bound_golden.py在stdin独立进程运行，先断言实际加载路径并记录不同源码hash；old ed7adf/new66ccc，5温度30数值+4域错误、reference is和冷热canonical检查，JSON逐字节相同。证据research/water-python-seam。本轮有实现与实际验证进展，Goal active。
+
+下一动作：按water-backend-feasibility/ADAPTER_DESIGN第3步，在隔离目录实现显式HEOS来源/二进制/流体/常数身份与小范围TP、饱和及Helmholtz检查。先原两液态点与300K两饱和相，原门槛不变；尚未准入任何替代后端，不应修改生产科学引用来伪装，也不立即跑长湿扫描。全原污泥材料域、反应/输运/自由烧结/冷却力学、公开三个机制组、CLI/UI和逐代实验仍未完成。
+
 最新源码ecfb3e9：当前孔隙模板、规定变形程序边界与相变显式组合已应用。冻结非editable离线安装从/private/tmp无PYTHONPATH实际 **1112 passed514.98s**；37个真实site-packages模块与源码匹配。research/installed-sandbox-wet-admission-tests.xml及identity.json保存实际证据。session45600已exit0；旧75509/89265/46721均已结束，不再轮询。当前无运行中的测试/EOS进程。
 
 真实callback01在相变化学前被参考孔体积门禁拒绝，保留后修复当前bulk减固定固体占积；9noEOS独立通过。callback02实际1.387s/exit0、113声明输入不变、非零K/液汽精确成对/无额外潜热/当前几何/单次反解通过独立审核。其原fixture反解1e-5J/1e-4K，不能混同下一段1e-6J/K。原候选/失败/先RED/回调与应用34测试73s在research/deforming-wet-admission。
