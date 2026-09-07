@@ -4,6 +4,14 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新阶段完成：affine_midpoint及不可变二次时钟已通过1279完整安装回归（session8135终态exit0，XML585.898s，零失败错误跳过），运行前后43模块字节一致。v5两条联合湿反应/规定变形/耗尽/干态延续及原N/E/T/P/时间对照通过；独立14/16步账本、相修正及每次182输入核查通过。跨cap湿态路径相同、只干态网格改变，不能把事件时差0解释为收敛阶数；每条内部不同湿态网格检查真实通过。当前无活动EOS/测试。证据归档 research/affine-terminal-v1/（含全部候选失败、审查、原v5结果、完整suite）。下一实际步骤见该归档 readable/affine-terminal/NEXT_COUPLED_SCOPE.md：用现有模块建立2格非均匀湿态反应/传热/传质及关闭输运对照，再固定域空间细化；.005普通程序节点失分辨率仍是独立未修bug。原污泥材料闭合、自由烧结冷却、三公开机制/留出、CLI/UI与多代搜索仍为必需未完成项，Goal active。
+
+最新v5两条均完成并比较passed：18043/36073均terminalcomplete，内层87.845694/85.501777s，260/303eval、31/36panel、14/16接受步，各1耗尽事件。compare.py exit0，N6.65799e-12mol/E2.61061e-8J/T2.60496e-9K/P3.96649e-7Pa/time0，原gate全部通过。当前唯一EOS为完整安装回归session8135，XML /private/tmp/brick-affine-terminal-v1/installed-full-tests.xml；43模块运行前匹配。先轮询终态并核XML/运行后43模块，再归档所有控制失败/独立审计/v5证据并阶段提交。源码/tests/安装/脚本冻结；不能把v5或99目标测试代替完整suite及全Goal验收。
+
+最新v5第一条已通过：session18043 terminalcomplete/child0/89.429237s，内层completed87.845694s260评估31panel、1实际耗尽事件(.5002854010435919s)、14接受步，到.5078125s；两次末端比较及独立减半检查均通过原门槛。当前唯一EOS第二轨迹session36073（depletion1），同原120/150预算。先轮询36073终态，若通过才compare.py；随后当前源码完整安装回归与43模块复核、归档阶段提交。第一条通过只属制造反应/规定变形/真实水物性的组合，非完整原泥全周期或材料现实验证。
+
+当前候选（e9db77b后，未提交）：新增不可变affine_depletion_clock与可选affine_midpoint末端，同权积分全部物种/能量/分项；59新测试+40旧相关测试实际99pass34.213s。来源最终switch/common漏洞已故障注入后修复；非线性公开无关制造oracle通过，较粗普通路径误差与.005旧knot失败完整保留。已非editable安装43模块字节匹配；v5 freshcallback46178终态complete2.014814s。当前唯一EOS session18043，/private/tmp/brick-reacting-wet-v5/depletion0-attempt01；原120s内部150s外部500panel及全部物理/门槛，唯一改动terminal_method。源码/tests/安装/脚本冻结，先轮询该句柄真实终态；未通过不执行depletion1。当前源码完整suite尚未执行，旧1220不能转移。Goal仍active且完整材料/全周期任务未完成。
+
 最新完成阶段：HEOS TP回溯修正完整安装回归 session9190 terminal exit0，1220通过/零失败错误跳过，XML539.545s；前后42实际导入模块与源码逐字节一致。当前无活动EOS/测试。原生九点旧8pass1fail/新9pass；v4通过旧TP失败点和两次末端比较，但必需独立减半检查在原120s预算耗尽，0事件，depletion1未运行。74项原始证据已归档并逐项复读核SHA/长度：research/heos-tp-backtracking-v1/，包含失败XML、原始候选、源码绑定、v4结果与独立审计。下一有限数值步骤见其中 readable/wet-v4/NEXT_NUMERICAL_STEP.md：研究二阶末端积分与真实事件时钟证据，保留全部门槛和独立检查，先解析/制造解验证再原联合实验；暂未实现。完整Goal仍active；原污泥材料闭合、自由烧结冷却、三公开机制/留出、全周期CLI/UI与多代搜索仍未完成。
 
 当前最新终态：v4 callback session26272 complete/child0/2.087812s；depletion0 session10907 terminal failed/child1/121.780958s，内部resource_limit:wall_time_limit120.127148s、365评估44试算panel、6接受步、0事件。TP旧失败点已通过；level4/5两次末端比较均通过原门槛，但独立减半普通接近检查在13panel/122评估时耗尽预算，未提交事件；depletion1未运行。完整安装回归唯一活动session9190，XML /private/tmp/brick-heos-tp-backtracking-v1/installed-full-tests.xml，42模块运行前匹配，源码/测试/安装冻结。先轮询同句柄至终态、核XML及运行后身份，再归档全部失败/审查并本地阶段提交。Goal仍active，真实材料/全周期完整范围未完成。

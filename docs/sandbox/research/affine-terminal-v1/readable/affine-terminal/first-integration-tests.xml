@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="29" time="1.356" timestamp="2026-09-07T12:13:51.762785-10:00" hostname="Ws-MacBook-Pro.local"><testcase classname="tests.sandbox.test_affine_depletion_integration" name="test_affine_event_matches_independent_root_reaction_and_energy[0.0]" time="0.198"><failure message="assert np.float64(1.4067502718262404e-10) &lt; 1e-10&#10; +  where np.float64(1.4067502718262404e-10) = abs((np.float64(1.9800996676390112) - (2 * 0.9900498337491681)))&#10; +    where 0.9900498337491681 = &lt;built-in function exp&gt;((-0.1 * 0.10000000000000002))&#10; +      where &lt;built-in function exp&gt; = math.exp&#10; +      and   0.10000000000000002 = DepletionEvent(cell_index=0, time_s=0.10000000000000002, coarse_time_s=0.10000000000000002, previous_time_s=0.10000000...), temperatures_k=(300.01498308686973,), temperature_errors_k=(0.0,), pressures_pa=(0.0,), pressure_errors_pa=(0.0,)))).time_s">b = 0.0
+
+    @pytest.mark.parametrize('b', [0., .002])
+    def test_affine_event_matches_independent_root_reaction_and_energy(b):
+        out, counts = run_affine(b)
+        audit(out, b)
+        check_costs(out)
+        event = out.events[0]
+        assert abs(event.time_s-exact_event(b)) &lt; 1e-10
+        assert counts['calls'] == out.evaluations
+        assert event.terminal_evidence is not None
+        certificate = event.terminal_evidence.clock
+        assert certificate.start_s &lt; certificate.midpoint_s &lt; certificate.end_s
+        assert certificate.end_s == event.time_s
+        row = out.states[out.times_s.index(event.time_s)].amounts_mol[0]
+&gt;       assert abs(row[2]-2*math.exp(-.1*event.time_s)) &lt; 1e-10
+E       assert np.float64(1.4067502718262404e-10) &lt; 1e-10
+E        +  where np.float64(1.4067502718262404e-10) = abs((np.float64(1.9800996676390112) - (2 * 0.9900498337491681)))
+E        +    where 0.9900498337491681 = &lt;built-in function exp&gt;((-0.1 * 0.10000000000000002))
+E        +      where &lt;built-in function exp&gt; = math.exp
+E        +      and   0.10000000000000002 = DepletionEvent(cell_index=0, time_s=0.10000000000000002, coarse_time_s=0.10000000000000002, previous_time_s=0.10000000...), temperatures_k=(300.01498308686973,), temperature_errors_k=(0.0,), pressures_pa=(0.0,), pressure_errors_pa=(0.0,)))).time_s
+
+tests/sandbox/test_affine_depletion_integration.py:36: AssertionError</failure></testcase><testcase classname="tests.sandbox.test_affine_depletion_integration" name="test_affine_event_matches_independent_root_reaction_and_energy[0.002]" time="0.120"><failure message="assert np.float64(1.280615613552527e-10) &lt; 1e-10&#10; +  where np.float64(1.280615613552527e-10) = abs((np.float64(1.981762069010066) - (2 * 0.9908810344410022)))&#10; +    where 0.9908810344410022 = &lt;built-in function exp&gt;((-0.1 * 0.09160797830996158))&#10; +      where &lt;built-in function exp&gt; = math.exp&#10; +      and   0.09160797830996158 = DepletionEvent(cell_index=0, time_s=0.09160797830996158, coarse_time_s=0.09160797830996158, previous_time_s=0.09160797...), temperatures_k=(300.01372401074946,), temperature_errors_k=(0.0,), pressures_pa=(0.0,), pressure_errors_pa=(0.0,)))).time_s">b = 0.002
+
+    @pytest.mark.parametrize('b', [0., .002])
+    def test_affine_event_matches_independent_root_reaction_and_energy(b):
+        out, counts = run_affine(b)
+        audit(out, b)
+        check_costs(out)
+        event = out.events[0]
+        assert abs(event.time_s-exact_event(b)) &lt; 1e-10
+        assert counts['calls'] == out.evaluations
+        assert event.terminal_evidence is not None
+        certificate = event.terminal_evidence.clock
+        assert certificate.start_s &lt; certificate.midpoint_s &lt; certificate.end_s
+        assert certificate.end_s == event.time_s
+        row = out.states[out.times_s.index(event.time_s)].amounts_mol[0]
+&gt;       assert abs(row[2]-2*math.exp(-.1*event.time_s)) &lt; 1e-10
+E       assert np.float64(1.280615613552527e-10) &lt; 1e-10
+E        +  where np.float64(1.280615613552527e-10) = abs((np.float64(1.981762069010066) - (2 * 0.9908810344410022)))
+E        +    where 0.9908810344410022 = &lt;built-in function exp&gt;((-0.1 * 0.09160797830996158))
+E        +      where &lt;built-in function exp&gt; = math.exp
+E        +      and   0.09160797830996158 = DepletionEvent(cell_index=0, time_s=0.09160797830996158, coarse_time_s=0.09160797830996158, previous_time_s=0.09160797...), temperatures_k=(300.01372401074946,), temperature_errors_k=(0.0,), pressures_pa=(0.0,), pressure_errors_pa=(0.0,)))).time_s
+
+tests/sandbox/test_affine_depletion_integration.py:36: AssertionError</failure></testcase><testcase classname="tests.sandbox.test_affine_depletion_integration" name="test_affine_total_work_reduces_at_same_acceptance_gates" time="0.299" /><testcase classname="tests.sandbox.test_affine_depletion_integration" name="test_affine_midpoint_failure_does_not_commit_event" time="0.524" /><testcase classname="tests.sandbox.test_affine_depletion_integration" name="test_unknown_terminal_method_rejected" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_constant_sink_exact_root_and_each_component" time="0.001" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_affine_irrational_root_decimal_oracle" time="0.001" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_decelerating_but_strictly_decreasing_enclosure" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_nearly_constant_coefficient_not_dropped" time="0.001" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_uncertified_crossings_fail[start_rates0-mid_rates0-1.0-nonmonotone]" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_uncertified_crossings_fail[start_rates1-mid_rates1-1.0-nonmonotone]" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_uncertified_crossings_fail[start_rates2-mid_rates2-0.5-no_root]" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_uncertified_crossings_fail[start_rates3-mid_rates3-1.0-nonmonotone]" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_uncertified_crossings_fail[start_rates4-mid_rates4-2.0-nonmonotone]" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_large_origin_exact_represented_midpoint_and_downward_root" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_insufficient_time_budget_fails" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_clock_with_no_representable_interior_midpoint_fails" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_negative_origin_crosses_zero" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_manually_selected_nonroot_endpoint_rejected[0.49]" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_manually_selected_nonroot_endpoint_rejected[0.51]" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_invalid_arguments[False-0.25-1.0-rates0-midrates0]" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_invalid_arguments[0.0-nan-1.0-rates1-midrates1]" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_invalid_arguments[0.0-0.25-0.0-rates2-midrates2]" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_invalid_arguments[0.0-0.25-1.0-rates3-midrates3]" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_invalid_arguments[0.0-0.25-1.0-rates4-midrates4]" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_invalid_arguments[0.0-0.25-1.0-rates5-midrates5]" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_exact_root_at_maximum_and_immutable_inventory_binding" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_next_representable_exact_root_cannot_be_skipped" time="0.000" /><testcase classname="tests.sandbox.test_affine_depletion_clock" name="test_actual_midpoint_delta_is_used_at_large_origin" time="0.000" /></testsuite></testsuites>

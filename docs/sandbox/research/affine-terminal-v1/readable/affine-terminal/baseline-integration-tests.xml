@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="0" tests="5" time="0.152" timestamp="2026-09-07T12:10:04.744789-10:00" hostname="Ws-MacBook-Pro.local"><testcase classname="tests.sandbox.test_affine_depletion_integration" name="test_affine_event_matches_independent_root_reaction_and_energy[0.0]" time="0.000"><failure message="TypeError: DepletionPolicy.__init__() got an unexpected keyword argument 'terminal_method'">b = 0.0
+
+    @pytest.mark.parametrize('b', [0., .002])
+    def test_affine_event_matches_independent_root_reaction_and_energy(b):
+&gt;       out, counts = run_affine(b)
+                      ^^^^^^^^^^^^^
+
+tests/sandbox/test_affine_depletion_integration.py:25:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests/sandbox/test_affine_depletion_integration.py:14: in run_affine
+    e = replace(e, terminal_method=method, amount_absolute_mol=1e-10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+obj = DepletionPolicy(time_absolute_s=1e-08, amount_absolute_mol=1e-11, energy_absolute_j=1e-07, temperature_absolute_k=1e-0...oach=NestedApproachPolicy(maximum_step_s=0.001, reuse_ordinary_spine=True, strategy_id='nested_wet_ordinary_spine_v1'))
+changes = {'amount_absolute_mol': 1e-10, 'common_time_horizon_s': 0.01, 'energy_absolute_j': 1e-07, 'maximum_refinements': 14, ...}
+f = Field(name='nested_approach',type=sludge_sandbox.depletion_integration.NestedApproachPolicy | None,default=None,defaul...t at 0x104950380&gt;,init=True,repr=True,hash=None,compare=True,metadata=mappingproxy({}),kw_only=True,_field_type=_FIELD)
+
+    def replace(obj, /, **changes):
+        """Return a new object replacing specified fields with new values.
+
+        This is especially useful for frozen classes.  Example usage::
+
+          @dataclass(frozen=True)
+          class C:
+              x: int
+              y: int
+
+          c = C(1, 2)
+          c1 = replace(c, x=3)
+          assert c1.x == 3 and c1.y == 2
+        """
+
+        # We're going to mutate 'changes', but that's okay because it's a
+        # new dict, even if called with 'replace(obj, **my_changes)'.
+
+        if not _is_dataclass_instance(obj):
+            raise TypeError("replace() should be called on dataclass instances")
+
+        # It's an error to have init=False fields in 'changes'.
+        # If a field is not in 'changes', read its value from the provided obj.
+
+        for f in getattr(obj, _FIELDS).values():
+            # Only consider normal fields or InitVars.
+            if f._field_type is _FIELD_CLASSVAR:
+                continue
+
+            if not f.init:
+                # Error if this field is specified in changes.
+                if f.name in changes:
+                    raise ValueError(f'field {f.name} is declared with '
+                                     'init=False, it cannot be specified with '
+                                     'replace()')
+                continue
+
+            if f.name not in changes:
+                if f._field_type is _FIELD_INITVAR and f.default is MISSING:
+                    raise ValueError(f"InitVar {f.name!r} "
+                                     'must be specified with replace()')
+                changes[f.name] = getattr(obj, f.name)
+
+        # Create the new object, which calls __init__() and
+        # __post_init__() (if defined), using all of the init fields we've
+        # added and/or left in 'changes'.  If there are values supplied in
+        # changes that aren't fields, this will correctly raise a
+        # TypeError.
+&gt;       return obj.__class__(**changes)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: DepletionPolicy.__init__() got an unexpected keyword argument 'terminal_method'
+
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/dataclasses.py:1588: TypeError</failure></testcase><testcase classname="tests.sandbox.test_affine_depletion_integration" name="test_affine_event_matches_independent_root_reaction_and_energy[0.002]" time="0.000"><failure message="TypeError: DepletionPolicy.__init__() got an unexpected keyword argument 'terminal_method'">b = 0.002
+
+    @pytest.mark.parametrize('b', [0., .002])
+    def test_affine_event_matches_independent_root_reaction_and_energy(b):
+&gt;       out, counts = run_affine(b)
+                      ^^^^^^^^^^^^^
+
+tests/sandbox/test_affine_depletion_integration.py:25:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests/sandbox/test_affine_depletion_integration.py:14: in run_affine
+    e = replace(e, terminal_method=method, amount_absolute_mol=1e-10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+obj = DepletionPolicy(time_absolute_s=1e-08, amount_absolute_mol=1e-11, energy_absolute_j=1e-07, temperature_absolute_k=1e-0...oach=NestedApproachPolicy(maximum_step_s=0.001, reuse_ordinary_spine=True, strategy_id='nested_wet_ordinary_spine_v1'))
+changes = {'amount_absolute_mol': 1e-10, 'common_time_horizon_s': 0.01, 'energy_absolute_j': 1e-07, 'maximum_refinements': 14, ...}
+f = Field(name='nested_approach',type=sludge_sandbox.depletion_integration.NestedApproachPolicy | None,default=None,defaul...t at 0x104950380&gt;,init=True,repr=True,hash=None,compare=True,metadata=mappingproxy({}),kw_only=True,_field_type=_FIELD)
+
+    def replace(obj, /, **changes):
+        """Return a new object replacing specified fields with new values.
+
+        This is especially useful for frozen classes.  Example usage::
+
+          @dataclass(frozen=True)
+          class C:
+              x: int
+              y: int
+
+          c = C(1, 2)
+          c1 = replace(c, x=3)
+          assert c1.x == 3 and c1.y == 2
+        """
+
+        # We're going to mutate 'changes', but that's okay because it's a
+        # new dict, even if called with 'replace(obj, **my_changes)'.
+
+        if not _is_dataclass_instance(obj):
+            raise TypeError("replace() should be called on dataclass instances")
+
+        # It's an error to have init=False fields in 'changes'.
+        # If a field is not in 'changes', read its value from the provided obj.
+
+        for f in getattr(obj, _FIELDS).values():
+            # Only consider normal fields or InitVars.
+            if f._field_type is _FIELD_CLASSVAR:
+                continue
+
+            if not f.init:
+                # Error if this field is specified in changes.
+                if f.name in changes:
+                    raise ValueError(f'field {f.name} is declared with '
+                                     'init=False, it cannot be specified with '
+                                     'replace()')
+                continue
+
+            if f.name not in changes:
+                if f._field_type is _FIELD_INITVAR and f.default is MISSING:
+                    raise ValueError(f"InitVar {f.name!r} "
+                                     'must be specified with replace()')
+                changes[f.name] = getattr(obj, f.name)
+
+        # Create the new object, which calls __init__() and
+        # __post_init__() (if defined), using all of the init fields we've
+        # added and/or left in 'changes'.  If there are values supplied in
+        # changes that aren't fields, this will correctly raise a
+        # TypeError.
+&gt;       return obj.__class__(**changes)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: DepletionPolicy.__init__() got an unexpected keyword argument 'terminal_method'
+
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/dataclasses.py:1588: TypeError</failure></testcase><testcase classname="tests.sandbox.test_affine_depletion_integration" name="test_affine_total_work_reduces_at_same_acceptance_gates" time="0.000"><failure message="TypeError: DepletionPolicy.__init__() got an unexpected keyword argument 'terminal_method'">def test_affine_total_work_reduces_at_same_acceptance_gates():
+&gt;       affine, _ = run_affine(.002)
+                    ^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_affine_depletion_integration.py:41:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests/sandbox/test_affine_depletion_integration.py:14: in run_affine
+    e = replace(e, terminal_method=method, amount_absolute_mol=1e-10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+obj = DepletionPolicy(time_absolute_s=1e-08, amount_absolute_mol=1e-11, energy_absolute_j=1e-07, temperature_absolute_k=1e-0...oach=NestedApproachPolicy(maximum_step_s=0.001, reuse_ordinary_spine=True, strategy_id='nested_wet_ordinary_spine_v1'))
+changes = {'amount_absolute_mol': 1e-10, 'common_time_horizon_s': 0.01, 'energy_absolute_j': 1e-07, 'maximum_refinements': 14, ...}
+f = Field(name='nested_approach',type=sludge_sandbox.depletion_integration.NestedApproachPolicy | None,default=None,defaul...t at 0x104950380&gt;,init=True,repr=True,hash=None,compare=True,metadata=mappingproxy({}),kw_only=True,_field_type=_FIELD)
+
+    def replace(obj, /, **changes):
+        """Return a new object replacing specified fields with new values.
+
+        This is especially useful for frozen classes.  Example usage::
+
+          @dataclass(frozen=True)
+          class C:
+              x: int
+              y: int
+
+          c = C(1, 2)
+          c1 = replace(c, x=3)
+          assert c1.x == 3 and c1.y == 2
+        """
+
+        # We're going to mutate 'changes', but that's okay because it's a
+        # new dict, even if called with 'replace(obj, **my_changes)'.
+
+        if not _is_dataclass_instance(obj):
+            raise TypeError("replace() should be called on dataclass instances")
+
+        # It's an error to have init=False fields in 'changes'.
+        # If a field is not in 'changes', read its value from the provided obj.
+
+        for f in getattr(obj, _FIELDS).values():
+            # Only consider normal fields or InitVars.
+            if f._field_type is _FIELD_CLASSVAR:
+                continue
+
+            if not f.init:
+                # Error if this field is specified in changes.
+                if f.name in changes:
+                    raise ValueError(f'field {f.name} is declared with '
+                                     'init=False, it cannot be specified with '
+                                     'replace()')
+                continue
+
+            if f.name not in changes:
+                if f._field_type is _FIELD_INITVAR and f.default is MISSING:
+                    raise ValueError(f"InitVar {f.name!r} "
+                                     'must be specified with replace()')
+                changes[f.name] = getattr(obj, f.name)
+
+        # Create the new object, which calls __init__() and
+        # __post_init__() (if defined), using all of the init fields we've
+        # added and/or left in 'changes'.  If there are values supplied in
+        # changes that aren't fields, this will correctly raise a
+        # TypeError.
+&gt;       return obj.__class__(**changes)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: DepletionPolicy.__init__() got an unexpected keyword argument 'terminal_method'
+
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/dataclasses.py:1588: TypeError</failure></testcase><testcase classname="tests.sandbox.test_affine_depletion_integration" name="test_affine_midpoint_failure_does_not_commit_event" time="0.000"><failure message="TypeError: DepletionPolicy.__init__() got an unexpected keyword argument 'terminal_method'">def test_affine_midpoint_failure_does_not_commit_event():
+        # The midpoint callback is an actual evaluation: fail there, not a cached lookup.
+        def injected(original):
+            def evaluate(state, t, modes):
+                import inspect
+                if any(f.function == 'affine_terminal' for f in inspect.stack()):
+                    raise ValueError('manufactured_midpoint_failure')
+                return original(state, t, modes)
+            return evaluate
+&gt;       out, _ = run_affine(.002, callback=injected)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_affine_depletion_integration.py:57:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests/sandbox/test_affine_depletion_integration.py:14: in run_affine
+    e = replace(e, terminal_method=method, amount_absolute_mol=1e-10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+obj = DepletionPolicy(time_absolute_s=1e-08, amount_absolute_mol=1e-11, energy_absolute_j=1e-07, temperature_absolute_k=1e-0...oach=NestedApproachPolicy(maximum_step_s=0.001, reuse_ordinary_spine=True, strategy_id='nested_wet_ordinary_spine_v1'))
+changes = {'amount_absolute_mol': 1e-10, 'common_time_horizon_s': 0.01, 'energy_absolute_j': 1e-07, 'maximum_refinements': 14, ...}
+f = Field(name='nested_approach',type=sludge_sandbox.depletion_integration.NestedApproachPolicy | None,default=None,defaul...t at 0x104950380&gt;,init=True,repr=True,hash=None,compare=True,metadata=mappingproxy({}),kw_only=True,_field_type=_FIELD)
+
+    def replace(obj, /, **changes):
+        """Return a new object replacing specified fields with new values.
+
+        This is especially useful for frozen classes.  Example usage::
+
+          @dataclass(frozen=True)
+          class C:
+              x: int
+              y: int
+
+          c = C(1, 2)
+          c1 = replace(c, x=3)
+          assert c1.x == 3 and c1.y == 2
+        """
+
+        # We're going to mutate 'changes', but that's okay because it's a
+        # new dict, even if called with 'replace(obj, **my_changes)'.
+
+        if not _is_dataclass_instance(obj):
+            raise TypeError("replace() should be called on dataclass instances")
+
+        # It's an error to have init=False fields in 'changes'.
+        # If a field is not in 'changes', read its value from the provided obj.
+
+        for f in getattr(obj, _FIELDS).values():
+            # Only consider normal fields or InitVars.
+            if f._field_type is _FIELD_CLASSVAR:
+                continue
+
+            if not f.init:
+                # Error if this field is specified in changes.
+                if f.name in changes:
+                    raise ValueError(f'field {f.name} is declared with '
+                                     'init=False, it cannot be specified with '
+                                     'replace()')
+                continue
+
+            if f.name not in changes:
+                if f._field_type is _FIELD_INITVAR and f.default is MISSING:
+                    raise ValueError(f"InitVar {f.name!r} "
+                                     'must be specified with replace()')
+                changes[f.name] = getattr(obj, f.name)
+
+        # Create the new object, which calls __init__() and
+        # __post_init__() (if defined), using all of the init fields we've
+        # added and/or left in 'changes'.  If there are values supplied in
+        # changes that aren't fields, this will correctly raise a
+        # TypeError.
+&gt;       return obj.__class__(**changes)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: DepletionPolicy.__init__() got an unexpected keyword argument 'terminal_method'
+
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/dataclasses.py:1588: TypeError</failure></testcase><testcase classname="tests.sandbox.test_affine_depletion_integration" name="test_unknown_terminal_method_rejected" time="0.000"><failure message="TypeError: DepletionPolicy.__init__() got an unexpected keyword argument 'terminal_method'">def test_unknown_terminal_method_rejected():
+        _, event = configured()
+        with pytest.raises(ValueError, match='terminal_method'):
+&gt;           replace(event, terminal_method='uncertified')
+
+tests/sandbox/test_affine_depletion_integration.py:68:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+obj = DepletionPolicy(time_absolute_s=1e-08, amount_absolute_mol=1e-11, energy_absolute_j=1e-07, temperature_absolute_k=1e-0...oach=NestedApproachPolicy(maximum_step_s=0.001, reuse_ordinary_spine=True, strategy_id='nested_wet_ordinary_spine_v1'))
+changes = {'amount_absolute_mol': 1e-11, 'common_time_horizon_s': 0.01, 'energy_absolute_j': 1e-07, 'maximum_refinements': 14, ...}
+f = Field(name='nested_approach',type=sludge_sandbox.depletion_integration.NestedApproachPolicy | None,default=None,defaul...t at 0x104950380&gt;,init=True,repr=True,hash=None,compare=True,metadata=mappingproxy({}),kw_only=True,_field_type=_FIELD)
+
+    def replace(obj, /, **changes):
+        """Return a new object replacing specified fields with new values.
+
+        This is especially useful for frozen classes.  Example usage::
+
+          @dataclass(frozen=True)
+          class C:
+              x: int
+              y: int
+
+          c = C(1, 2)
+          c1 = replace(c, x=3)
+          assert c1.x == 3 and c1.y == 2
+        """
+
+        # We're going to mutate 'changes', but that's okay because it's a
+        # new dict, even if called with 'replace(obj, **my_changes)'.
+
+        if not _is_dataclass_instance(obj):
+            raise TypeError("replace() should be called on dataclass instances")
+
+        # It's an error to have init=False fields in 'changes'.
+        # If a field is not in 'changes', read its value from the provided obj.
+
+        for f in getattr(obj, _FIELDS).values():
+            # Only consider normal fields or InitVars.
+            if f._field_type is _FIELD_CLASSVAR:
+                continue
+
+            if not f.init:
+                # Error if this field is specified in changes.
+                if f.name in changes:
+                    raise ValueError(f'field {f.name} is declared with '
+                                     'init=False, it cannot be specified with '
+                                     'replace()')
+                continue
+
+            if f.name not in changes:
+                if f._field_type is _FIELD_INITVAR and f.default is MISSING:
+                    raise ValueError(f"InitVar {f.name!r} "
+                                     'must be specified with replace()')
+                changes[f.name] = getattr(obj, f.name)
+
+        # Create the new object, which calls __init__() and
+        # __post_init__() (if defined), using all of the init fields we've
+        # added and/or left in 'changes'.  If there are values supplied in
+        # changes that aren't fields, this will correctly raise a
+        # TypeError.
+&gt;       return obj.__class__(**changes)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: DepletionPolicy.__init__() got an unexpected keyword argument 'terminal_method'
+
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/dataclasses.py:1588: TypeError</failure></testcase></testsuite></testsuites>

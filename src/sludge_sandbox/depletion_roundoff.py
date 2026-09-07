@@ -11,6 +11,7 @@ from numbers import Real
 import numpy as np
 
 from .integration import ConservedState
+from .affine_depletion_clock import AffineDepletionClockEvidence, AffineDepletionClockError
 
 
 class DepletionRoundoffError(ValueError):
@@ -154,7 +155,7 @@ class DepletionWritebackRecord:
     positive_evaporated_mol: float
     half_neighbor_spacing_mol: Fraction
     qualification: str = 'event_only_accounting_not_event_time_or_full_trajectory_verification'
-    clock_evidence: DepletionClockEvidence | None = None
+    clock_evidence: DepletionClockEvidence | AffineDepletionClockEvidence | None = None
     numerical_clock_inventory_residual_mol: Fraction = Fraction(0)
 
 
@@ -219,8 +220,12 @@ def depletion_writeback(state, *, cell_index, liquid_index, vapor_index,
     local=4*sum((Fraction(math.ulp(v)) for v in (start,*terms,liquid)),Fraction())
     clock_residual=Fraction(0)
     if clock_evidence is not None:
-        if type(clock_evidence) is not DepletionClockEvidence:raise DepletionRoundoffError('explicit_clock_evidence_required')
-        clock_residual=clock_evidence.inventory_residual(start,terms)
+        if type(clock_evidence) not in (DepletionClockEvidence,AffineDepletionClockEvidence):
+            raise DepletionRoundoffError('explicit_clock_evidence_required')
+        try:
+            clock_residual=clock_evidence.inventory_residual(start,terms)
+        except AffineDepletionClockError as exc:
+            raise DepletionRoundoffError(str(exc)) from exc
     if delta>local+clock_residual:
         raise DepletionRoundoffError('correction_exceeds_local_ulp_limit')
     if delta>Fraction(policy.correction_absolute_mol):

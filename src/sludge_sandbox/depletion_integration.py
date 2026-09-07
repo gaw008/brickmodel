@@ -9,6 +9,7 @@ from collections.abc import Mapping
 from .integration import ConservedState,Rates,StepLedger,IntegrationPolicy,IntegrationError,DomainExit,integrate
 from .depletion_roundoff import (DepletionRoundoffPolicy,DepletionRoundoffTotals,
     DepletionRoundoffError,DepletionClockEvidence,depletion_writeback)
+from .affine_depletion_clock import locate_affine_depletion_clock
 
 
 class DepletionIntegrationError(IntegrationError):pass
@@ -29,6 +30,24 @@ def _freeze_diagnostic(value):
     if isinstance(value,np.ndarray):
         return _freeze_diagnostic(value.tolist())
     return value
+
+
+def _quadratic_inventory_minimum(n, a, b, h):
+    """Exact minimum of n+a*s+b*s² over the represented panel [0,h]."""
+    points=[Fraction(),h]
+    if b>0 and 0<-a/(2*b)<h:points.append(-a/(2*b))
+    return min(n+a*s+b*s*s for s in points)
+
+
+def _positive_affine_integral(initial, slope, h):
+    """Exact gross positive transfer; signed negative transfer is separate."""
+    cuts=[Fraction(),h]
+    if slope and 0<-initial/slope<h:cuts.insert(1,-initial/slope)
+    total=Fraction()
+    for left,right in zip(cuts,cuts[1:]):
+        if initial+slope*(left+right)/2>0:
+            total+=initial*(right-left)+slope*(right*right-left*left)/2
+    return total
 
 
 @dataclass(frozen=True,kw_only=True)
@@ -58,6 +77,7 @@ class DepletionPolicy:
     common_time_horizon_s: float = .01
     safe_inventory_fraction: float = .25
     nested_approach: NestedApproachPolicy | None = None
+    terminal_method: str = 'euler'
 
     def __post_init__(self):
         for n in ('time_absolute_s','amount_absolute_mol','energy_absolute_j','temperature_absolute_k',
@@ -71,6 +91,8 @@ class DepletionPolicy:
             raise DepletionIntegrationError('explicit_roundoff_policy_required')
         if self.nested_approach is not None and type(self.nested_approach) is not NestedApproachPolicy:
             raise DepletionIntegrationError('explicit_nested_approach_policy_required')
+        if type(self.terminal_method) is not str or self.terminal_method not in ('euler','affine_midpoint'):
+            raise DepletionIntegrationError('unsupported_terminal_method')
 
 
 @dataclass(frozen=True)
@@ -137,6 +159,16 @@ class DepletionEvent:
     event_time_rounding_s: Fraction
     positive_evaporated_mol: float
     qualification: str = 'existing_interface_evaporation_depletion_refinement_indicator_not_ode_certificate'
+    terminal_evidence: object = None
+
+
+@dataclass(frozen=True)
+class AffineTerminalEvidence:
+    """Actual two rate samples and midpoint predictor, not material evidence."""
+    clock: object
+    midpoint_state: ConservedState
+    initial_observation: DepletionEvaluation
+    midpoint_observation: DepletionEvaluation
 
 
 @dataclass(frozen=True)
@@ -185,6 +217,7 @@ class DepletionResult:
     phase_costs: Mapping = field(default_factory=lambda: MappingProxyType({}))
     reuse_counts: Mapping = field(default_factory=lambda: MappingProxyType({}))
     approach_strategy: str = 'legacy'
+    terminal_method: str = 'euler'
 
     def __post_init__(self):
         for name in ('phase_costs','reuse_counts'):
@@ -369,8 +402,116 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             raise _Failure('unsupported','simultaneous_events_not_separated')
         return options[0]
 
-    def terminal(path,obs,tau,cell):
+    def affine_terminal(path,obs,tau,cell,tc):
         nonlocal attempted
+        t=path.times[-1];state=path.states[-1];li=path.op.liquid_index;vi=path.op.water_vapor_index
+        binding=spine_binding(path.op,state,t,tc,0.,0.,cell)
+        midpoint=float(Fraction(t)+tau/2)
+        upper_exact=min(Fraction(tc),Fraction(t)+2*tau)
+        upper=float(upper_exact)
+        if Fraction(upper)>upper_exact:upper=math.nextafter(upper,-math.inf)
+        if not t<midpoint<upper or Fraction(midpoint)>=Fraction(t)+tau:
+            raise _Failure('unsupported','unresolvable_affine_midpoint')
+        hm=Fraction(midpoint)-Fraction(t)
+        names=('face_species_mol_s','face_energy_w','reaction_species_mol_s','cell_power_w')
+
+        def integrate_fields(interval,second=None):
+            arrays=[]
+            for name in names:
+                values=getattr(obs.rates,name);other=getattr(second.rates,name) if second else values
+                out=np.empty_like(values)
+                for idx in np.ndindex(values.shape):
+                    a=Fraction(float(values[idx]));b=Fraction(float(other[idx]))
+                    out[idx]=float(interval*a+interval*interval*(b-a)/(2*hm))
+                arrays.append(out)
+            return arrays
+
+        def advance(fields):
+            fn,fu,rn,work=fields
+            def add(before,terms):
+                out=np.empty_like(before)
+                for idx in np.ndindex(before.shape):
+                    out[idx]=float(Fraction(float(before[idx]))+sum(
+                        (Fraction(float(v[idx])) for v in terms),Fraction()))
+                return out
+            amounts=add(state.amounts_mol,(fn[:-1],-fn[1:],rn))
+            energy=add(state.internal_energy_j,(fu[:-1],-fu[1:],work))
+            if np.any(amounts<0) or not np.all(np.isfinite(amounts)) or not np.all(np.isfinite(energy)):
+                raise _Failure('unsupported','affine_panel_invalid_inventory_or_energy')
+            return ConservedState(amounts,energy,energy_model_identity=state.energy_model_identity)
+
+        predictor=advance(integrate_fields(hm))
+        if any(predictor.amounts_mol[i,li]<=0 for i,mode in enumerate(path.op.interfaces)
+               if mode=='existing_liquid'):
+            raise _Failure('unsupported','affine_midpoint_not_wet')
+        middle=observe(path.op,predictor,midpoint,'terminal')
+        if binding!=spine_binding(path.op,state,t,tc,0.,0.,cell):
+            raise DepletionIntegrationError('affine_terminal_source_binding_changed')
+        guard()
+        def liquid_rates(observed):
+            r=observed.rates
+            return (float(r.face_species_mol_s[cell,li]),-float(r.face_species_mol_s[cell+1,li]),
+                    float(r.reaction_species_mol_s[cell,li]))
+        clock=locate_affine_depletion_clock(t,midpoint,float(state.amounts_mol[cell,li]),
+            liquid_rates(obs),liquid_rates(middle),upper,ep.time_absolute_s)
+        endpoint=clock.end_s
+        if not midpoint<endpoint<tc:raise _Failure('unsupported','affine_root_outside_terminal_interval')
+        h=Fraction(endpoint)-Fraction(t)
+        # Check the entire reconstructed inventory polynomial, including any
+        # interior minimum. Endpoint positivity alone can miss a crossed zero.
+        for idx in np.ndindex(state.amounts_mol.shape):
+            i,j=idx
+            def net(observed):
+                r=observed.rates
+                return (Fraction(float(r.face_species_mol_s[i,j]))-Fraction(float(r.face_species_mol_s[i+1,j]))
+                        +Fraction(float(r.reaction_species_mol_s[i,j])))
+            a=net(obs);b=(net(middle)-a)/(2*hm);n=Fraction(float(state.amounts_mol[idx]))
+            minimum=_quadratic_inventory_minimum(n,a,b,h)
+            competing=(j==li and i!=cell and path.op.interfaces[i]=='existing_liquid' and n>0)
+            if minimum<0 or (competing and minimum==0):
+                raise _Failure('unsupported','affine_competing_inventory_crossing')
+        fields=integrate_fields(h,middle);raw=advance(fields);fn,fu,rn,work=fields
+        # Transfer observations are signed. Integrate their positive part
+        # exactly; rounding this diagnostic upward would loosen a budget.
+        e0=Fraction(float(obs.evaporation_mol_s[cell]));slope=(Fraction(float(middle.evaporation_mol_s[cell]))-e0)/hm
+        gross=_positive_affine_integral(e0,slope,h)
+        evap=float(gross)
+        if Fraction(evap)>gross:evap=math.nextafter(evap,-math.inf)
+        record=None
+        if raw.amounts_mol[cell,li]>0:
+            raw,record,path.totals=depletion_writeback(raw,cell_index=cell,liquid_index=li,vapor_index=vi,
+                panel_liquid_start_mol=float(state.amounts_mol[cell,li]),
+                panel_liquid_terms_mol=(float(fn[cell,li]),-float(fn[cell+1,li]),float(rn[cell,li])),
+                positive_evaporated_mol=evap,policy=ep.roundoff_policy,totals=path.totals,clock_evidence=clock)
+        components=rounding=None
+        if obs.rates.cell_power_components_w is not None:
+            components={};rounding={}
+            for key,values in obs.rates.cell_power_components_w.items():
+                other=middle.rates.cell_power_components_w[key]
+                exact=[h*Fraction(float(a))+h*h*(Fraction(float(b))-Fraction(float(a)))/(2*hm)
+                       for a,b in zip(values,other)]
+                components[key]=np.array([float(v) for v in exact])
+                rounding[key]=tuple(Fraction(float(v))-q for v,q in zip(components[key],exact))
+        guard()
+        if binding!=spine_binding(path.op,state,t,tc,0.,0.,cell):
+            raise DepletionIntegrationError('affine_terminal_source_binding_changed')
+        panel=StepLedger(t,endpoint,*fields,components,rounding)
+        attempted+=1;costs['terminal']['panels']+=1
+        original_op=path.op
+        path.op=path.op.with_depleted_cells(raw,(cell,))
+        if binding!=spine_binding(original_op,state,t,tc,0.,0.,cell):
+            raise DepletionIntegrationError('affine_terminal_source_binding_changed')
+        path.times.append(endpoint);path.states.append(raw);path.steps.append(panel)
+        path.event_state=raw;path.event_observation=observe(path.op,raw,endpoint,'terminal')
+        if binding!=spine_binding(original_op,state,t,tc,0.,0.,cell):
+            raise DepletionIntegrationError('affine_terminal_source_binding_changed')
+        path.event=DepletionEvent(cell,endpoint,endpoint,endpoint,endpoint,0.,0.,0.,0.,0.,panel,record,
+            clock.event_time_rounding_s,evap,terminal_evidence=AffineTerminalEvidence(clock,predictor,obs,middle))
+
+    def terminal(path,obs,tau,cell,tc):
+        nonlocal attempted
+        if ep.terminal_method=='affine_midpoint':
+            return affine_terminal(path,obs,tau,cell,tc)
         t=path.times[-1];state=path.states[-1];exact=Fraction(t)+tau;endpoint=float(exact)
         if Fraction(endpoint)>exact:endpoint=math.nextafter(endpoint,-math.inf)
         if endpoint<=t:raise _Failure('unsupported','unresolvable_event_time')
@@ -450,7 +591,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                     None if implementation is None else implementation.sha256,
                     getattr(op.base_model,'energy_model_identity',None))
         return (id(op),id(state),state.energy_model_identity,t,tc,approach_cap,safe_fraction,
-                event_cell,op.interfaces,op.liquid_index,op.water_vapor_index,source)
+                event_cell,op.interfaces,op.liquid_index,op.water_vapor_index,source,ep.terminal_method)
 
     def proposal(op,state,t,tc,cap,total,*,approach_cap=None,safe_fraction=None,spine=None,event_cell=None):
         ordinary_cap=cap if approach_cap is None else approach_cap
@@ -483,7 +624,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                 tau,cell=choice
                 if tau<=Fraction(cap) and Fraction(at)+tau<=Fraction(tc):
                     path.approach_grid=tuple(path.times)
-                    terminal(path,obs,tau,cell)
+                    terminal(path,obs,tau,cell,tc)
                     if path.times[-1]>=tc:raise _Failure('unsupported','no_common_post_event_time')
                     continue_after_event(path,tc)
                     return path
@@ -588,7 +729,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                     level=0;horizon_restarts=0
                     approach_cap=(min(nested.maximum_step_s,policy.maximum_step_s) if nested else None)
                     root_binding=(spine_binding(operator,state,t,tc,approach_cap,ep.safe_inventory_fraction,choice[1])
-                                  if nested else None)
+                                  if nested or ep.terminal_method=='affine_midpoint' else None)
                     spine=(_WetSpine(root_binding)
                            if nested and nested.reuse_ordinary_spine else None)
                     while level<=ep.maximum_refinements:
@@ -607,12 +748,12 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                             horizon_restarts+=1
                             if horizon_restarts>ep.maximum_refinements:
                                 raise _Failure('resource_limit','common_time_restart_limit')
-                            if nested is not None and root_binding!=spine_binding(operator,state,t,tc,approach_cap,
+                            if (nested is not None or ep.terminal_method=='affine_midpoint') and root_binding!=spine_binding(operator,state,t,tc,approach_cap,
                                     ep.safe_inventory_fraction,choice[1]):
                                 raise DepletionIntegrationError('ordinary_spine_binding_changed')
                             tc=exc.common_time_s;previous=None;successes=0;first_time=None;level=0
                             root_binding=(spine_binding(operator,state,t,tc,approach_cap,ep.safe_inventory_fraction,choice[1])
-                                          if nested else None)
+                                          if nested or ep.terminal_method=='affine_midpoint' else None)
                             spine=(_WetSpine(root_binding)
                                    if nested and nested.reuse_ordinary_spine else None)
                             continue
@@ -692,7 +833,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                                 path.event=replace(path.event,coarse_time_s=first_time,previous_time_s=previous.event.time_s,
                                     common_time_s=tc,event_time_difference_s=diffs[0],common_amount_difference_mol=diffs[1],
                                     common_energy_difference_j=diffs[2],common_temperature_difference_k=diffs[3],common_pressure_difference_pa=diffs[4])
-                                if nested is not None:
+                                if nested is not None or ep.terminal_method=='affine_midpoint':
                                     guard()
                                     if root_binding!=spine_binding(operator,state,t,tc,approach_cap,
                                             ep.safe_inventory_fraction,choice[1]):
@@ -718,4 +859,4 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
     return DepletionResult(status,reason,tuple(times),tuple(states),tuple(steps),tuple(events),tuple(corrections),operator,
         totals,tuple(cumulative_n),tuple(cumulative_u),evaluations,rejected,attempted,time.monotonic()-begin,tuple(refinements),ep.safe_inventory_fraction,
         tuple(component_residual_totals) if component_schema not in (...,None) else None,
-        frozen_costs(),MappingProxyType(dict(reused)),nested.strategy_id if nested else 'legacy')
+        frozen_costs(),MappingProxyType(dict(reused)),nested.strategy_id if nested else 'legacy',ep.terminal_method)
