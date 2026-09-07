@@ -4,6 +4,10 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新终态：湿态联合callback通过，depletion0 session48458已终态failed/child1/122.0877s，内部wall_time_limit120.2988s。六接受步322评估、无事件；守恒前缀通过，但试探压力门槛含约1.602Pa误差下限，原1Pa门槛不可靠细化跨越。完整失败及173输入核验已归档 research/reacting-wet-v1-failure/。当前无活动EOS/测试，第二轨迹未运行。下一实际实现：保留全局区间及旧越域拒绝，使用已证实局部压力上端收紧同一体积不确定性的传播；证明/预登记在归档中。worker正在 tests/sandbox/test_solid_pressure_bound.py 写无EOS解析回归，root尚未改生产源码；不要把新误差界当已验证。
+
+最新运行入口：公开 Lu2026 补充材料六条 MS 多速率失重记录及逐页独立核对已提交7af6f8d，见 data/sandbox/research/lu2026/。正文官方链接拒绝下载，基准/制备/气氛组成未知保留，未准入运行。湿态联合实验 /private/tmp/brick-reacting-wet-v1 已预登记并完成两份交叉审查；修正的是监督退出状态与失败证据保存，不改物理门槛。callback session42799 已终态complete/child0，实际同时A→B与蒸发、当前反应储能绑定通过。depletion0 **session48458正在运行**，同目录depletion0-attempt01监督，原120s内部/150s外部上限；不要重启同run或并发EOS。当前求解器/安装/脚本/PLAN冻结。下一步轮询同句柄，核实际完整结果与终态；成功后按原计划第二步长运行及独立账本审计，失败则保留原因诊断。
+
 本次实现与完整证据已提交 **69a14f4**。当前下一阶段由 reacting_skeleton_provider 在 /private/tmp/brick-reacting-wet-v1 准备湿态反应/耗尽预登记与脚本；python_backtracking_integration_review 与 tg_code_review 等待最终文件进行只读审查。尚未运行新 EOS/轨迹，原完整安装 session99225 已终态。下一次恢复先读三代理结果与该目录 PLAN/审查，不重复旧全suite；先受监督回调，再按预登记执行联合轨迹。
 
 最新终态：反应—规定变形完整安装回归 session99225 exit0，实际1165通过/零失败错误跳过，XML561.281s；前后42安装模块逐字节一致。93相关测试、两阶段细化与旧能量失败、独立代码/算术审查已归档 research/reacting-deformation-v1/，原始ZIP逐条重开核验。当前无活动测试/EOS。下文“99225运行中”为旧检查点。下一实验准备于 /private/tmp/brick-reacting-wet-v1，构建反应+真实水相变+耗尽联合验证，尚未执行；先审查预登记与脚本再运行。真实污泥材料/自由烧结/全周期范围继续未完成。

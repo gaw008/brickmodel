@@ -1,0 +1,129 @@
+{
+  "experiment_id": "manufactured-reacting-wet-v1",
+  "baseline_commit": "69a14f4",
+  "status": "preregistered_not_executed",
+  "purpose": "Actual A/B solid reaction plus source-qualified active water transfer, prescribed isotropic deformation and depletion",
+  "scope": "Manufactured A/B chemistry and skeleton, not raw sludge or free sintering. No independent wet temperature oracle.",
+  "layout": [
+    "A",
+    "B",
+    "H2O",
+    "H2O_liquid",
+    "fixture"
+  ],
+  "initial_amounts_mol": [
+    2,
+    0,
+    1e-08,
+    1e-06,
+    0.001
+  ],
+  "initial_temperature_k": 300,
+  "time_interval_s": [
+    0.5,
+    0.5078125
+  ],
+  "water": "Installed approved HEOS 8.0.0 with matched IdealWaterVapor and WaterChemicalPotential; exact current source/hash guards unchanged",
+  "solid": {
+    "caloric_and_volume_fixture": "test_incompressible_solid.phase/caloric, matching test_reacting_deforming_solid_heat A/B",
+    "molar_mass_kg_mol": 0.012,
+    "cp_j_mol_k": 5,
+    "vA_m3_mol": 2e-05,
+    "vB_m3_mol": 1e-05,
+    "formation_enthalpy_A_j_mol": -100000,
+    "formation_enthalpy_B_j_mol": -100005,
+    "reference_pressure_pa": 100000.0,
+    "delta_u_BA_j_mol": -4,
+    "declared_u_error_j_mol": 2e-07,
+    "declared_v_error_m3_mol": 1e-12,
+    "rate": "A -> B; k=0.1 /s, Ea=0, complete current storage rebinding",
+    "kinetic_temperature_domain_k": [
+      295,
+      310
+    ],
+    "domain_note": "Explicit new manufactured valid domain; dry helper default300..1500 not reused because wet cooling may cross300",
+    "element_definition": "A and B each have one declared C atom; no invented elemental composition for inert carrier"
+  },
+  "mechanics": {
+    "reference_volume_m3": 0.0001,
+    "normal_and_tangential_knots": [
+      1,
+      0.9
+    ],
+    "knots_s": [
+      0,
+      1
+    ],
+    "motion": "Original wet isotropic cubic smoothstep rest-to-rest",
+    "bulk_modulus_pa": 1000,
+    "shear_modulus_pa": 400,
+    "viscosity_pa_s": 3,
+    "interface_gamma_j_m2": 100,
+    "interface_area_m2": 0.003,
+    "q0": 1,
+    "wA_per_mol": 0,
+    "wB_per_mol": 10,
+    "change_note": "Interface reference0.3J deliberately differs from old fixed wet0.0015J; initial totalE recomputed under new identity",
+    "power_keys": [
+      "elastic_deformation",
+      "interface_deformation",
+      "dissipation",
+      "bulk_pressure",
+      "body"
+    ],
+    "power_semantics": "fixed-N deformation and dissipation, -p*dVbulk; no composition derivative as extra power, no extra reaction/latent heat"
+  },
+  "interface_coefficient_mol_s_pa": 1e-06,
+  "inverse_policy": {
+    "energy_absolute_j": 1e-06,
+    "temperature_absolute_k": 1e-06,
+    "maximum_iterations": 120
+  },
+  "resource_limits": {
+    "callback_external_s": 30,
+    "integration_internal_s": 120,
+    "integration_external_s": 150,
+    "maximum_steps": 500
+  },
+  "two_runs": [
+    {
+      "refinement": 0,
+      "initial_step_s": 0.0009765625,
+      "maximum_step_s": 0.00390625
+    },
+    {
+      "refinement": 1,
+      "initial_step_s": 0.00048828125,
+      "maximum_step_s": 0.001953125
+    }
+  ],
+  "event_gates": {
+    "time_s": 1e-07,
+    "amount_mol": 1e-10,
+    "energy_j": 1e-06,
+    "temperature_k": 1e-05,
+    "pressure_pa": 1,
+    "terminal_window_s": 6.103515625e-05,
+    "common_time_horizon_s": 0.00390625
+  },
+  "other_policies": "test_depletion_integration.policies unchanged including roundoff budgets; water mass from actual source provider",
+  "prefix_gates": {
+    "A_plus_B_mol": 1e-10,
+    "analytic_A_mol": 1e-09,
+    "water_total_mol": 1e-12,
+    "total_energy_j": 1e-07,
+    "closed_face_flux": "exact zero",
+    "carrier": "exact unchanged",
+    "components": "exact Fraction sum plus recorded residual"
+  },
+  "required_event": "Exactly one actual depletion, dry continuation with positive A->B reaction, zero liquid, nonzero retained interface coefficient. Failure/domain exit retained without forcing event.",
+  "evidence": "Complete run states/steps/events/refinements/corrections/roundoff totals before assertions; each accepted prefix audit; actual installed-vs-source identity before/after and supervisor hashes/cleanup; second cap comparison at original event gates",
+  "execution_order": "Review frozen scripts, bounded callback, inspect terminal and evidence, depletion0, inspect, depletion1, inspect, compare; no concurrent EOS; never restart live handle",
+  "prepared_script_sha256": {
+    "callback.py": "a84b7ea5dd7adfd4838595d41ddbe149482442a1b31391de56c99f8f907faae6",
+    "fixture.py": "9eca7a20d0874a0250fe23cded1a896967fb0315cade9e99930e79ee423ab174",
+    "run.py": "dcc9ba014c8f642824f25662dc0ac39961f5580e0db85d367f7032bb7369e612",
+    "depletion.py": "141a90056e70c21318cc2b72615150a0d78827b77992e0b4444c93695d9891f4",
+    "compare.py": "b2f9385f489f3362f88bea79e21b8e9c40a3557a359a45945f8e20b687ede3c3"
+  }
+}
