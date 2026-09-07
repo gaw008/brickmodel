@@ -16,3 +16,9 @@
 
 
 主代理追加实际反例：非零Fraction(1,10**400)作为panel项转换binary64原先静默变0，先得到DID NOT RAISE失败，再明确nonzero_underflow拒绝。最终16项，防止在写回前就丢掉来源项；不改变已保存binary64 ledger的正常行为。
+
+## Explicit clock evidence extension
+
+The original default `depletion_writeback` interface and local 4 ULP inventory budget remain unchanged. Its optional `clock_evidence=DepletionClockEvidence(start_s,end_s,liquid_rates_mol_s,time_absolute_s)` reconstructs the exact rational Euler zero from the original panel liquid inventory and the exact sum of signed stored liquid rates. The endpoint must be the nearest representable time at or below that root, its gap must fit the explicit time budget, and every supplied liquid panel integral must exactly match the once-rounded product of its rate and the exact represented endpoint interval. The only additional allowed residual is `abs(net_liquid_rate) * clock_gap`, recorded separately as `numerical_clock_inventory_residual_mol`. It is numerical clock representation, not measured evaporation or a free amount tolerance.
+
+The helper still requires the entire paired δ to satisfy absolute, gross positive evaporation-relative and cumulative correction budgets; storage/element/mass rounding remains independently constrained. `local_correction_limit_mol` retains its original inventory-only ULP meaning. The record appends clock evidence and its derived residual after all pre-existing fields. Event-time convergence and physical source eligibility remain the caller's responsibility.

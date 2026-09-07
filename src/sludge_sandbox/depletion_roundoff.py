@@ -106,6 +106,38 @@ class DepletionRoundoffTotals:
 
 
 @dataclass(frozen=True)
+class DepletionClockEvidence:
+    """Exact endpoint arithmetic evidence, not a caller-chosen amount tolerance."""
+    start_s: float
+    end_s: float
+    liquid_rates_mol_s: tuple
+    time_absolute_s: float
+
+    def __post_init__(self):
+        for name in ('start_s','end_s','time_absolute_s'):
+            object.__setattr__(self,name,_number(getattr(self,name),name,positive=name=='time_absolute_s'))
+        if self.end_s<=self.start_s or not self.liquid_rates_mol_s:
+            raise DepletionRoundoffError('invalid_clock_interval')
+        object.__setattr__(self,'liquid_rates_mol_s',tuple(_number(v,'clock_rate') for v in self.liquid_rates_mol_s))
+
+    def inventory_residual(self, start_mol, terms):
+        rates=tuple(map(Fraction,self.liquid_rates_mol_s))
+        net=sum(rates,Fraction())
+        if net>=0 or len(rates)!=len(terms):raise DepletionRoundoffError('clock_negative_complete_net_rate_required')
+        root=Fraction(self.start_s)+Fraction(start_mol)/-net
+        endpoint=Fraction(self.end_s)
+        neighbor=math.nextafter(self.end_s,math.inf)
+        if endpoint>root or (math.isfinite(neighbor) and Fraction(neighbor)<=root):
+            raise DepletionRoundoffError('clock_endpoint_not_nearest_downward_root')
+        gap=root-endpoint
+        if gap>Fraction(self.time_absolute_s):raise DepletionRoundoffError('clock_time_budget')
+        interval=endpoint-Fraction(self.start_s)
+        if any(float(interval*r)!=term for r,term in zip(rates,terms)):
+            raise DepletionRoundoffError('clock_panel_term_mismatch')
+        return -net*gap
+
+
+@dataclass(frozen=True)
 class DepletionWritebackRecord:
     cell_index: int
     liquid_index: int
@@ -122,6 +154,8 @@ class DepletionWritebackRecord:
     positive_evaporated_mol: float
     half_neighbor_spacing_mol: Fraction
     qualification: str = 'event_only_accounting_not_event_time_or_full_trajectory_verification'
+    clock_evidence: DepletionClockEvidence | None = None
+    numerical_clock_inventory_residual_mol: Fraction = Fraction(0)
 
 
 def _check_budgets(absolute_residual, policy, *, cumulative=False):
@@ -147,7 +181,7 @@ def _half_neighbor_spacing(exact, rounded):
 
 def depletion_writeback(state, *, cell_index, liquid_index, vapor_index,
                         panel_liquid_start_mol, panel_liquid_terms_mol,
-                        positive_evaporated_mol, policy, totals):
+                        positive_evaporated_mol, policy, totals, clock_evidence=None):
     """Round one already-localized evaporation panel onto its dry phase face.
 
     The caller supplies its saved panel liquid terms and separate gross phase
@@ -183,7 +217,11 @@ def depletion_writeback(state, *, cell_index, liquid_index, vapor_index,
         raise DepletionRoundoffError('no_positive_liquid_remainder')
     delta=Fraction(liquid)
     local=4*sum((Fraction(math.ulp(v)) for v in (start,*terms,liquid)),Fraction())
-    if delta>local:
+    clock_residual=Fraction(0)
+    if clock_evidence is not None:
+        if type(clock_evidence) is not DepletionClockEvidence:raise DepletionRoundoffError('explicit_clock_evidence_required')
+        clock_residual=clock_evidence.inventory_residual(start,terms)
+    if delta>local+clock_residual:
         raise DepletionRoundoffError('correction_exceeds_local_ulp_limit')
     if delta>Fraction(policy.correction_absolute_mol):
         raise DepletionRoundoffError('correction_absolute_budget')
@@ -215,5 +253,6 @@ def depletion_writeback(state, *, cell_index, liquid_index, vapor_index,
     result=ConservedState(amounts,state.internal_energy_j)
     record=DepletionWritebackRecord(cell_index,liquid_index,vapor_index,liquid,vapor,after,
         -delta,delta,Fraction(after)-Fraction(vapor),residual,Fraction(liquid)-exact_liquid,
-        local,evaporated,half)
+        local,evaporated,half,clock_evidence=clock_evidence,
+        numerical_clock_inventory_residual_mol=clock_residual)
     return result,record,updated_totals
