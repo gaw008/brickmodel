@@ -2,6 +2,10 @@
 
 更新时间：2026-09-07 UTC。完整任务合同：[GOAL_BRICK_PHYSICS_SANDBOX.md](../GOAL_BRICK_PHYSICS_SANDBOX.md)。最新证据以文末检查点为准，较早段落保留当时状态。
 
+## 当前恢复入口（后续详细历史保留）
+
+最新已提交检查点 `41e5911`：骨架储能、原thermal反解目标误差、普通RK分项功，1051项安装测试/35模块实际一致。当前新增状态身份、点式DeformingSolidStorage、耗尽terminal/wrappers分项功均已实现并独立审核/应用；对应局部73、11、38测试实际通过。新冻结非editable全sandbox测试 **session89265** 已启动，目标XML research/installed-sandbox-total-storage-tests.xml；恢复先轮询此唯一重测试，不重启。repo src/tests冻结至终态；未提前宣称预计1089/36模块通过。原46721已结束。下一DeformingSolidHeat单次解码/机械耦合候选仅在/tmp/brick-deforming-solid-host-candidate，由boundary_program执行，未应用、不计入本次安装。所有材料/全周期/公开机制与使用验收缺项保持原Goal合同。
+
 ## 当前状态
 
 - Goal：active；持续实现中，本回合已修补数值缺陷并完成阶段提交，属于 progress。
@@ -330,3 +334,11 @@ review_water_resume已接新的隔离任务，仅/private/tmp/brick-skeleton-ene
 冻结非editable安装session46721已实际exit0：**1051 passed in446.61s，0失败/错误/跳过**。XML实际解析；35个真实site-packages模块逐一与源hash相同，cwd=/private/tmp，无PYTHONPATH。证据：research/installed-sandbox-skeleton-components-tests.xml和installed-sandbox-skeleton-components-identity.json。不要再轮询46721或重复原1001全套。
 
 下一工作：review_water_resume在/private/tmp/brick-deforming-solid-storage-candidate/准备有明确TotalEnergyTarget与实际完整固体身份的点储能候选，9项dry轻测先通过，独立review_convergence_resume审核中；Root仅在完整suite终态后开放≤90s真实wet验证。尚未应用repo，不属于上述1051安装证据。boundary_program在/private/tmp/brick-depletion-components-candidate/追耗尽panel/wrapper分项功后续，不改repo。点储能完成仍需明确作用域的积分状态、实际湿机械host和独立轨迹验证；材料证据、自由烧结/孔道/冷却力学、三机制公开留出、全周期、多代实验及CLI/UI全部仍必需。
+
+## 模型能量身份、点储能与耗尽分项的应用检查点
+
+`41e5911`保存上一1051/35安装版。新ConservedState追加默认None不透明energy_model_identity，RK与inventory writeback保留，旧三热主机拒绝非None；新13项先RED后共73通过，独立73通过并实际比旧HEAD三个默认轨迹。DeformingSolidStorage完整固体provider绑定与显式TotalEnergyTarget、机械/几何/表示误差传播，独立11通过、应用后11通过；全部原wet大误差拒绝和新exact rational制造volume定义保存archive。后者不是实际原泥物性证据。
+
+耗尽分项候选正式按原字节应用：terminal取实际Fraction(end-start)权重、全程schema/tag核查、跨普通/事件段累计绝对分解残差在整path commit前检查；两真实wrapper仅转发原cell components，不额外加heat。独立25通过，另实际时变分项经29拒步/1573observations完整越event至.2s，终端有理权重和prefix复核；dry schema变更保留19已commitsteps及原湿模式。Root应用再测38（含身份13）通过0.93s。README/原RED/log/manifest/两基线源码及输出均归档；旧None默认baseline实际重跑逐字节相同。
+
+新完整冻结安装session89265仍运行，唯一恢复动作先poll同session；新src/tests冻结，不能把局部测试当新完整suite。终态后解析实际XML与真实site-packages逐文件身份，再保存版本验证/提交。下一新host隔离候选需同次total->thermal inverse供传热/输运/porework，保留完整误差/几何/source，尚未接实际时间推进或wet/depletionhost准入。原§11未完成，Goal持续active，本回合有实际实现/测试属于progress。

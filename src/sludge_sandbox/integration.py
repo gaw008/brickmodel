@@ -106,10 +106,30 @@ def _components(value, total, *, rate):
 
 @dataclass(frozen=True)
 class ConservedState:
+    """Cell inventories and energy with an optional opaque model binding.
+
+    None preserves the historical untagged energy interface. A non-None binding
+    must be checked by its physical host; it does not certify sources or imply
+    a universal definition of total energy. RK and inventory writeback preserve
+    it without reinterpretation. Explicit strings/tuples exclude mutable keys.
+    """
     amounts_mol: NDArray[np.float64]
     internal_energy_j: NDArray[np.float64]
+    energy_model_identity: tuple | None = None
 
     def __post_init__(self):
+        if self.energy_model_identity is not None:
+            if type(self.energy_model_identity) is not tuple:
+                raise IntegrationError("invalid_energy_model_identity")
+            pending = [self.energy_model_identity]
+            while pending:
+                item = pending.pop()
+                if type(item) is tuple and item:
+                    pending.extend(item)
+                elif type(item) is str and item and item == item.strip():
+                    continue
+                else:
+                    raise IntegrationError("invalid_energy_model_identity")
         amounts = _array(self.amounts_mol, "amounts", 2)
         energy = _array(self.internal_energy_j, "energy", 1)
         if amounts.shape[0] != energy.size or np.any(amounts < 0):
@@ -338,7 +358,7 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
         u = _updated(state.internal_energy_j, step*du, policy.energy_absolute_tolerance_j, "energy")
         if np.any(n < 0) or not np.all(np.isfinite(n)) or not np.all(np.isfinite(u)):
             raise _Reject("trial_inventory_or_energy_invalid")
-        return ConservedState(n, u)
+        return ConservedState(n, u, energy_model_identity=state.energy_model_identity)
 
     def rk2(state, at, endpoint):
         step = endpoint-at
@@ -354,7 +374,8 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
             _updated(state.amounts_mol, _sum_arrays(faces_n[:-1], -faces_n[1:], sources),
                      policy.amount_absolute_tolerance_mol, "amount"),
             _updated(state.internal_energy_j, _sum_arrays(faces_u[:-1], -faces_u[1:], work),
-                     policy.energy_absolute_tolerance_j, "energy"))
+                     policy.energy_absolute_tolerance_j, "energy"),
+            energy_model_identity=state.energy_model_identity)
         parts, exact_parts = None, None
         if first.cell_power_components_w is not None:
             parts, exact_parts = {}, {}

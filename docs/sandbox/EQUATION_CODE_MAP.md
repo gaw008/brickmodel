@@ -105,3 +105,10 @@
 | D=eta V0 sum(log-rate²)，Rayleigh势=D/2 | 同上 | 同上 | T独立对角规定变形，不是自由烧结模型 |
 | 目标能量区间到温度包络 | src/sludge_sandbox/solid_fluid_storage.py | tests/sandbox/test_solid_target_uncertainty.py | 上游误差显式给定；原物理域不变 |
 | 接受RK分项功及total-minus-components精确残差 | src/sludge_sandbox/integration.py | tests/sandbox/test_component_work_ledger.py；research/CODE_REVIEW_COMPONENT_WORK_LEDGER.md | 普通integrate；非单项截断误差证书，尚未覆盖耗尽panel |
+
+| 新接口 | 实现 | 独立证据 |
+|---|---|---|
+| 不透明能量模型身份，普通RK/writeback保留、旧host拒混用 | integration.py/depletion_roundoff.py及三个旧heat host | test_energy_state_identity.py；CODE_REVIEW_ENERGY_STATE_IDENTITY.md，73测试与旧41e5911三轨迹逐字段相同 |
+| 当前bulk+固定Ns+Etotal点反解及数值界 | deforming_solid_storage.py | test_deforming_solid_storage.py；CODE_REVIEW_DEFORMING_SOLID_STORAGE.md，11测试与独立target区间 |
+
+上表尚不包含真实湿机械时间积分、自由烧结或材料准入。

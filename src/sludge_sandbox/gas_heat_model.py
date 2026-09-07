@@ -252,6 +252,8 @@ class GasHeatModel:
     def _check_state(self, state):
         if not isinstance(state, ConservedState) or state.amounts_mol.shape != (len(self.cell_widths_m), len(self.species_order)):
             raise GasHeatModelError('model_state_shape_mismatch')
+        if state.energy_model_identity is not None:
+            raise GasHeatModelError('unsupported_energy_model_identity')
         if _thermo_signature(self.thermochemistry) != self._caloric_signature:
             raise GasHeatModelError('thermochemistry_changed_after_construction')
 

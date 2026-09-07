@@ -138,6 +138,7 @@ class DepletionResult:
     elapsed_seconds: float
     refinements: tuple = ()
     safe_inventory_fraction: float = .25
+    cumulative_absolute_component_residual_j: tuple | None = None
 
     @property
     def accepted_trial_panels(self):
@@ -188,6 +189,15 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
     cumulative_u=[Fraction(0) for _ in initial.internal_energy_j.flat]
     evaluations=rejected=attempted=0
     refinements=[]
+    energy_binding=initial.energy_model_identity
+    component_schema=...
+    component_residual_totals=[Fraction() for _ in initial.internal_energy_j]
+
+    def check_component_schema(rates):
+        nonlocal component_schema
+        schema=None if rates.cell_power_components_w is None else tuple(rates.cell_power_components_w)
+        if component_schema is ...:component_schema=schema
+        elif schema!=component_schema:raise DepletionIntegrationError('component_work_schema_changed')
 
     def guard():
         if cancel is not None and cancel():raise _Failure('cancelled','cancel_requested')
@@ -198,6 +208,8 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
     def observe(op,state,t):
         nonlocal evaluations
         guard();evaluations+=1
+        if state.energy_model_identity!=energy_binding:raise DepletionIntegrationError(
+            'energy_model_identity_changed')
         raw=op.evaluate(state,t)
         if type(op) is ManufacturedDepletionAdapter:
             if type(raw) is not DepletionEvaluation:raise DepletionIntegrationError('oracle_evaluation_type')
@@ -212,6 +224,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         count=state.amounts_mol.shape[0]
         if type(result.rates) is not Rates:raise DepletionIntegrationError('explicit_rates_required')
         result.rates.derivatives(state)
+        check_component_schema(result.rates)
         for seq in (result.evaporation_mol_s,result.temperatures_k,result.temperature_errors_k,result.pressures_pa,result.pressure_errors_pa):
             if len(seq)!=count or any(not math.isfinite(v) for v in seq):raise DepletionIntegrationError('finite_complete_observations_required')
         if any(v<0 for v in result.temperature_errors_k+result.pressure_errors_pa):raise DepletionIntegrationError('negative_observation_error')
@@ -230,6 +243,15 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         pending=None
         def checked_operator(stage,at):
             nonlocal pending
+            if stage.energy_model_identity!=energy_binding:raise DepletionIntegrationError(
+                'energy_model_identity_changed')
+            if stage_check is None:
+                # Preserve the old ordinary-segment callback/evaluation counting;
+                # only add the cross-segment schema guard, without another decode.
+                rates=op(stage,at)
+                if type(rates) is not Rates:raise DepletionIntegrationError('explicit_rates_required')
+                check_component_schema(rates)
+                return rates
             try:
                 observed=observe(op,stage,at)
                 stage_check(stage,at,observed)
@@ -239,7 +261,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                 # already attempted evaluations/panels/rejections are retained.
                 raise DepletionIntegrationError('preview_common_time_replan') from exc
             return observed.rates
-        run=integrate(state,op if stage_check is None else checked_operator,
+        run=integrate(state,checked_operator,
                       start_s=t,end_s=finish,policy=p,cancel=cancel)
         if stage_check is None:evaluations+=run.evaluations
         rejected+=run.rejected_trials;attempted+=len(run.steps)
@@ -286,7 +308,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         amounts=update(state.amounts_mol,increments);energy=update(state.internal_energy_j,powers)
         if np.any(amounts<0) or not np.all(np.isfinite(amounts)) or not np.all(np.isfinite(energy)):
             raise _Failure('unsupported','terminal_panel_invalid_other_inventory_or_energy')
-        raw=ConservedState(amounts,energy);record=None
+        raw=ConservedState(amounts,energy,energy_model_identity=state.energy_model_identity);record=None
         evap=float(Fraction(float(obs.evaporation_mol_s[cell]))*interval)
         li=path.op.liquid_index;vi=path.op.water_vapor_index
         if raw.amounts_mol[cell,li]>0:
@@ -298,7 +320,13 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                     (float(obs.rates.face_species_mol_s[cell,li]),-float(obs.rates.face_species_mol_s[cell+1,li]),
                      float(obs.rates.reaction_species_mol_s[cell,li])),ep.time_absolute_s))
         guard()
-        panel=StepLedger(t,endpoint,*fields);attempted+=1
+        components=rounding=None
+        if obs.rates.cell_power_components_w is not None:
+            components={key:integrated(value) for key,value in obs.rates.cell_power_components_w.items()}
+            rounding={key:tuple(Fraction(float(value))-interval*Fraction(float(rate))
+                       for value,rate in zip(components[key],obs.rates.cell_power_components_w[key]))
+                      for key in components}
+        panel=StepLedger(t,endpoint,*fields,components,rounding);attempted+=1
         path.op=path.op.with_depleted_cells(raw,(cell,))
         path.times.append(endpoint);path.states.append(raw);path.steps.append(panel)
         path.event_state=raw;path.event_observation=observe(path.op,raw,endpoint)
@@ -362,10 +390,15 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         return passed,(dtime,dn,du,dt,dp)
 
     def commit(path):
-        nonlocal cumulative_n,cumulative_u,totals,operator
+        nonlocal cumulative_n,cumulative_u,totals,operator,component_residual_totals
         event=path.event
-        cn=list(cumulative_n);cu=list(cumulative_u)
+        cn=list(cumulative_n);cu=list(cumulative_u);component_totals=list(component_residual_totals)
         for j,step in enumerate(path.steps):
+            if step.component_sum_residual_j is not None:
+                component_totals=[old+abs(delta) for old,delta in
+                                  zip(component_totals,step.component_sum_residual_j)]
+                if any(v>Fraction(policy.energy_absolute_tolerance_j) for v in component_totals):
+                    raise _Failure('failed','cross_segment_component_sum_roundoff')
             after=path.states[j+1]
             nterms=(step.face_species_mol[:-1],-step.face_species_mol[1:],step.reaction_species_mol)
             uterms=(step.face_energy_j[:-1],-step.face_energy_j[1:],step.cell_work_j)
@@ -382,7 +415,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                 error=Fraction(float(after.internal_energy_j[idx]))-Fraction(float(initial.internal_energy_j[idx]))-cu[flat]
                 if abs(error)>Fraction(policy.energy_absolute_tolerance_j):raise _Failure('failed','cross_segment_energy_prefix_roundoff')
         # Validate the entire speculative path before any global state/mode/prefix mutation.
-        cumulative_n=cn;cumulative_u=cu
+        cumulative_n=cn;cumulative_u=cu;component_residual_totals=component_totals
         times.extend(path.times[1:]);states.extend(path.states[1:]);steps.extend(path.steps)
         operator=path.op;totals=path.totals
         if event is not None:
@@ -448,4 +481,5 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
     except DomainExit as exc:status='domain_exit';reason=str(exc)
     except (IntegrationError,DepletionRoundoffError,ValueError,OverflowError) as exc:status='failed';reason=str(exc)
     return DepletionResult(status,reason,tuple(times),tuple(states),tuple(steps),tuple(events),tuple(corrections),operator,
-        totals,tuple(cumulative_n),tuple(cumulative_u),evaluations,rejected,attempted,time.monotonic()-begin,tuple(refinements),ep.safe_inventory_fraction)
+        totals,tuple(cumulative_n),tuple(cumulative_u),evaluations,rejected,attempted,time.monotonic()-begin,tuple(refinements),ep.safe_inventory_fraction,
+        tuple(component_residual_totals) if component_schema not in (...,None) else None)

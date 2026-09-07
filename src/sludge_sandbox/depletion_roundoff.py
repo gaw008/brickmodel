@@ -250,7 +250,7 @@ def depletion_writeback(state, *, cell_index, liquid_index, vapor_index,
     amounts=np.array(state.amounts_mol)
     amounts[cell_index,liquid_index]=0.
     amounts[cell_index,vapor_index]=after
-    result=ConservedState(amounts,state.internal_energy_j)
+    result=ConservedState(amounts,state.internal_energy_j,energy_model_identity=state.energy_model_identity)
     record=DepletionWritebackRecord(cell_index,liquid_index,vapor_index,liquid,vapor,after,
         -delta,delta,Fraction(after)-Fraction(vapor),residual,Fraction(liquid)-exact_liquid,
         local,evaporated,half,clock_evidence=clock_evidence,

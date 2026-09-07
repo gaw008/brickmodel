@@ -253,3 +253,11 @@ wet_to_hot_attempt02完成600s模拟、实际198.3825s，8953评估/1272试算pa
 非editable离线安装后，从/private/tmp且无PYTHONPATH实际执行完整tests/sandbox：**1051 passed in446.61s**，实际XML计数0failure/error/skip；35个site-packages模块逐一匹配当前源码。详见research/installed-sandbox-skeleton-components-tests.xml及installed-sandbox-skeleton-components-identity.json。该结果不含仍在/tmp的DeformingSolidStorage候选。
 
 独立局部证据：骨架23测试和75输出有理级数包络；target uncertainty新旧共34测试与旧HEAD反解一致；component work新旧44测试与旧HEAD 123接受/3拒完整默认路径一致。三份CODE_REVIEW及XML在research下。保留skeleton-energy-application-failure.xml（应用时漏sys import导致1fail）与候选history.zip。普通RK分项账本非耗尽panel支持，数值自测非原污泥实验验证，当前仍未完成湿机械整体耦合。
+
+### 点储能与状态能量身份增量（未计入旧1051安装套件）
+
+状态身份13新测试先实际RED（energy-state-identity-initial-red.xml），实现后新旧共73通过0.83s，独立73通过0.81s。独立从41e5911装载旧integration，比对惰性、含反应/面/分项功、domainexit三个场景，状态/时间/所有旧账本/计数逐字段相同，只排除wall和新增默认None字段。
+
+点storage候选独立11通过2.18s，应用仅docstring和测试导入差异后11再通过2.18s。审核另在两个motion时刻用常Cp解析解检查目标误差1e-4J+机械2e-4J端点温度被返回区间包含。9资产hash与v=1/50000的二进制表示差核验通过；候选archive内原wet大误差失败和新独立制造输入定义均保留。原wet病例仍拒绝，新fixture不替代原病例可解证明。两CODE_REVIEW、XML与candidate-history.zip保存完整范围。
+
+耗尽terminal与wrapper分项传播：候选独立25测试0.64s，应用38测试0.93s。独立时变组件实际拒步/终端权重、dry schema失败原prefix保留、旧None baseline重跑逐字节相同；详见CODE_REVIEW_DEPLETION_COMPONENT_WORK.md、depletion-components-applied-tests.xml及depletion-component-candidate-history.zip。新全sandbox安装测试session89265尚未终态，这些局部结果未宣称全套通过。

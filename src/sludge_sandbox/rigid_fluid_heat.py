@@ -233,6 +233,8 @@ class RigidFluidHeat:
     def _check_state(self,state):
         if type(state) is not ConservedState or state.amounts_mol.shape!=(len(self.storages),len(self.species_order)):
             raise RigidFluidHeatError('state_shape_mismatch')
+        if state.energy_model_identity is not None:
+            raise RigidFluidHeatError('unsupported_energy_model_identity')
 
     def _gas_inventory(self,row):
         return {n:float(v) for n,v in zip(self.gas_species_order,row[1:])}

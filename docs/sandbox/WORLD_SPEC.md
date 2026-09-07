@@ -102,3 +102,11 @@ JoinedWaterVapor从原低温500K的h锚积分原高温NIST分段Cp，逐段原h/
 `SolidFluidStorage.temperature_from_energy`现在显式接受target_energy_error_bound_j，并将其与目标表示误差合并进入反解区间与停止门槛；默认零保持旧语义。该参数并不把原thermal U自动改成含骨架的总能量。
 
 普通`integrate`可选分解cell power为elastic/interface/dissipation/pore/body，并按实际接受RK阶段记录各项功、精确有理舍入残差和累计绝对分解残差预算。总功仍是唯一状态能量驱动，残差不作为额外热源。净能量误差控制不保证巨大抵消分项各自的截断精度；耗尽终端panel与湿态wrapper尚未转发此合同。总能量作用域明确的湿储能/耦合host仍待实现。
+
+### 模型能量身份与变形点储能
+
+`ConservedState.energy_model_identity`是默认None的不透明不可变字符串/元组身份。普通RK和耗尽库存writeback保留它；旧gas、rigid fluid和solid fluid主机拒非None。新机械主机必须核对完整模型canonical digest；字段存在本身不授材料或总能量物理资格。耗尽terminal传播在另一个候选中审核，不能据普通RK通过声称全耗尽支持。
+
+`DeformingSolidStorage`已实现：原固体完整dataclass身份与固定Ns绑定，当前motion bulk及声明几何误差，Etotal=thermal+骨架+内部界面能。明确TotalEnergyTarget含本模型身份与误差，减机械能的精确有理舍入及误差进入原thermal反解。点evaluation保留原反解及温度界。它尚不是积分host。实际湿态原大体积误差fixture正确被原1e-6J精度门槛拒绝；独立v=1/50000m3/mol制造常量案例以可核查表示误差通过，旧/新证据并存，不能称为真实污泥物性精度改善。
+
+耗尽分项与身份传播现已正式应用并独立审核：普通/terminal全程schema、实际terminal时间权重、跨段累计绝对残差预算和两wrapper转发。应用38轻测通过。此后仍须新机械主机实际类型准入与湿轨迹；转发已有字段不等于已有完整湿机械模型。

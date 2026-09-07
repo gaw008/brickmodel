@@ -166,7 +166,8 @@ class ProgrammedSolidFluidHeat:
                 index=self.species_order.index(n)
                 fn[-1,index]=_sum((float(fn[-1,index]),exchange.net_mol_s[n]))
             fe[-1]=_sum((float(fe[-1]),enthalpy,-into))
-            rates=Rates(fn,fe,base.rates.reaction_species_mol_s,base.rates.cell_power_w)
+            rates=Rates(fn,fe,base.rates.reaction_species_mol_s,base.rates.cell_power_w,
+                        cell_power_components_w=base.rates.cell_power_components_w)
         except _FAILURES as exc:_failure(exc)
         except OverflowError as exc:raise ProgrammedSolidFluidHeatError('nonfinite_programmed_boundary') from exc
         return ProgrammedSolidFluidEvaluation(rates=rates,base_evaluation=base,boundary=boundary,reservoir=reservoir,

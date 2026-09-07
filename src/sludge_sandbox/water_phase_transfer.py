@@ -249,7 +249,8 @@ class WaterPhaseTransfer:
             reactions[index,self._liquid_index]-=rate
             reactions[index,water_index]+=rate
             diagnostics.append(CellWaterTransfer(rate,k,pressure,equilibrium,mu,delta_mu,entropy,status))
-        rates=Rates(base.rates.face_species_mol_s,base.rates.face_energy_w,reactions,base.rates.cell_power_w)
+        rates=Rates(base.rates.face_species_mol_s,base.rates.face_energy_w,reactions,base.rates.cell_power_w,
+                    cell_power_components_w=base.rates.cell_power_components_w)
         return WaterTransferEvaluation(rates,base,tuple(diagnostics),self.coefficient_set_id,self.coefficient_version,
                                        self.coefficient_classification,self.source_ids,
                                        interface_modes=self.interfaces,dry_policy=self.dry_policy,
