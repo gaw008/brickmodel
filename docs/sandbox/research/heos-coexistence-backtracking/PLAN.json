@@ -1,0 +1,16 @@
+{
+  "id": "NUM-HEOS-COEXISTENCE-BACKTRACK-1",
+  "classification": "numerical_policy",
+  "baseline_commit": "ae38c70",
+  "evidence": "deforming-active-depletion, chemical T299.9996124454831 K, eight alternating residuals; two half-density probes meet old gates",
+  "equations": "At fixed T, F=(p_l-p_v,g_l-g_v); log-density Jacobian [[rho_l dp_l/drho_l,-rho_v dp_v/drho_v],[dp_l/drho_l,-dp_v/drho_v]].",
+  "policy": "Original eight evaluated outer states including seed, same original Newton direction/max log step<0.1 and branch/phase/stability guards; at most six fractions 1,1/2,...1/32, original dp1e-4Pa/dg1e-6Jkg gates or strict decrease of max-scaled residual. Explicit failure on no decrease, no inventory/native h/u/s rewrite.",
+  "verification_sequence": [
+    "RED original saved failure and neighbors",
+    "no-EOS deterministic rescue/rejection/bounds tests",
+    "candidate exact failure/neighbors and unchanged30 state +7 derivative checks",
+    "independent review, updated implementation-source identity if applied",
+    "frozen installed related tests and original combined depletion case; preserve failure if any"
+  ],
+  "resource_limits": "each direct EOS/check block supervised30s; combined depletion original120s integration/150s external. No concurrent EOS."
+}

@@ -4,6 +4,14 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新恢复检查点（ae38c70之后）：HEOS共存求解已应用有界回溯Newton，保留原dp≤1e-4Pa、dg≤1e-6J/kg、分支/稳定性/源身份和8个外层状态上限；每次至多6个半分试探，总计至多43对EOS状态。kernel SHA 88bbbdd91fbe12d351faf6415883c177fec2fec4a7e51d77d98d864b49d51d93，manifest及固定包装摘要同步更新，11项数值控制回归已加入。独立代码/Python集成审查通过。
+
+原精确失败温度及邻点：旧版11通过1失败，新版12通过；原30状态/7导数/17故障路由检查通过。冻结非editable安装后192项相关测试通过。**完整安装套件session85070已exit0：1135通过、0失败/错误/跳过，517.635s；测试后再次核41个实际site-packages模块与源字节一致。** 所有本轮EOS/测试句柄均终态，无待轮询进程。证据见 research/heos-coexistence-backtracking/。
+
+原callback脚本/物理字段不变，新组合耗尽session70146 exit0/57.216599209s，14提交步/15状态/1事件到0.5078125s；原事件门槛和独立逐步/累计水能量与浮点修正账本通过。修正预算含原显式numerical_clock_inventory_residual，未放宽为任意容差。只保存的refinement指标已核门槛，不能从未保存的全部参考态独立重建T/P差。旧失败和不同版本保持分开，不迁移其验证身份。
+
+本轮为数值修复和制造夹具耦合验证，不是自由烧结或真实原污泥全周期。下一来源动作：按三批TG各自刻度预登记稀疏数字化及读图误差，生成经独立复读的观测候选，不由单速率推断唯一动力学。下一实现须推进反应/空间输运/自由烧结冷却的实质缺项；原污泥材料闭合、三个公开机制及留出、全周期CLI/UI/多代搜索仍为Goal必需未完成项。Goal active。下文为历史检查点。
+
 最新恢复检查点（2e16a70后）：规定形变/活动蒸发/耗尽组合已实际运行并揭示HEOS共存求解故障，证据 research/deforming-active-depletion/。单callback通过；耗尽attempt01 exit1/27.881735s、72评估、6提交步、0事件，heos_coexistence_not_converged，不能称耗尽通过。已提交前缀能量/水与5功精确分项检查通过。
 
 真实末状态重启诊断exit0/6.0085565s，内部仍失败：chemical kernel在299.9996124454831K八轮密度更新振荡，dp略超1e-4Pa而dg已在1e-6J/kg内。两端点独立native probe复现，半步/四分之一步均过原dp/dg，实际exit0/1.149743s。未改kernel、未放宽门槛、未将调试exit0称物理成功。replay unused vapor的−Infinity是未初始化私有诊断，原件保留，不作物性。

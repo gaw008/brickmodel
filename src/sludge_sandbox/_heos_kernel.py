@@ -214,20 +214,50 @@ class HEOSCandidate:
                     return pressure,h-t*entropy,slope,h,u,entropy
                 finally:
                     a.unspecify_phase()
+            left=right=None
             for iteration in range(8):
                 rl,rv=densities
                 require(rl>322>rv>0,'heos_coexistence_density_branches')
-                left,right=evaluate(rl,'liquid'),evaluate(rv,'vapor')
+                if left is None:
+                    left,right=evaluate(rl,'liquid'),evaluate(rv,'vapor')
                 fp,fg=left[0]-right[0],left[1]-right[1]
                 self._coexistence.append({'iteration':iteration,'rho':list(densities),'liquid':left,'vapor':right,'dp':fp,'dg':fg})
                 if abs(fp)<=1e-4 and abs(fg)<=1e-6:
                     break
+                if iteration == 7:
+                    raise WaterNumericalError('heos_coexistence_not_converged')
                 a,b,c,d=rl*left[2],-rv*right[2],left[2],-right[2]
                 determinant=a*d-b*c
                 require(math.isfinite(determinant) and determinant!=0,'heos_coexistence_singular')
                 dx,dy=(-fp*d+b*fg)/determinant,(-a*fg+c*fp)/determinant
                 require(max(abs(dx),abs(dy))<.1,'heos_coexistence_step_outside_seed_branch')
-                densities=[rl*math.exp(dx),rv*math.exp(dy)]
+                # Numerical globalization only: retain the original EOS,
+                # branch limits and both absolute coexistence tolerances.
+                merit=max(abs(fp)/1e-4,abs(fg)/1e-6)
+                attempts=[]
+                self._coexistence[-1]['attempts']=attempts
+                for trial in range(6):
+                    fraction=2.**(-trial)
+                    trial_densities=[rl*math.exp(fraction*dx),rv*math.exp(fraction*dy)]
+                    require(trial_densities[0]>322>trial_densities[1]>0,
+                            'heos_coexistence_density_branches')
+                    # Invalid EOS responses remain fatal, rather than being
+                    # treated as ordinary lack of numerical improvement.
+                    trial_left=evaluate(trial_densities[0],'liquid')
+                    trial_right=evaluate(trial_densities[1],'vapor')
+                    trial_fp=trial_left[0]-trial_right[0]
+                    trial_fg=trial_left[1]-trial_right[1]
+                    trial_merit=max(abs(trial_fp)/1e-4,abs(trial_fg)/1e-6)
+                    accepted=(abs(trial_fp)<=1e-4 and abs(trial_fg)<=1e-6) or trial_merit<merit
+                    attempts.append({'fraction':fraction,'rho':trial_densities,
+                                     'dp':trial_fp,'dg':trial_fg,'merit':trial_merit,
+                                     'accepted':accepted})
+                    if accepted:
+                        densities=trial_densities
+                        left,right=trial_left,trial_right
+                        break
+                else:
+                    raise WaterNumericalError('heos_coexistence_backtracking_failed')
             else:
                 raise WaterNumericalError('heos_coexistence_not_converged')
             # The converged vapor EOS pressure defines the common pressure;

@@ -1,0 +1,7 @@
+# Bounded coexistence backtracking candidate
+
+Numerical globalization only, not new physical assumptions. Six candidate fractions (1, 1/2, 1/4, 1/8, 1/16, 1/32). Merit is max(abs(dp)/1e-4, abs(dg)/1e-6). Candidate acceptance requires original two absolute convergence gates or strict decrease of this merit. No branch/step/stability/source/tolerance widening. Invalid native/EOS trial responses terminate explicitly; they are never treated as retryable lack of improvement. At most eight outer evaluated states including the seed; after unsuccessful state 7 no ninth accepted state is computed. Accepted EOS pairs are carried without recomputation. Diagnostics preserve each outer state and add an attempts list (candidate density, fraction, pressure/Gibbs residuals, merit, accepted flag). No h/u/s resets.
+
+No native EOS run by this worker. The deterministic stub deliberately models solver control only and is not a thermodynamic validation. Initial seven tests yielded 2 failures and 5 passes on unchanged production copy (before.xml). Final 11 tests pass on the candidate (after.xml). Tests cover full Newton, half-step rescue, exhaustion, invalid EOS, unstable slope, seed/trial branch violations, original full-step restriction, each absolute convergence gate and eight-state exhaustion. Baseline failures preserved.
+
+Candidate integration and real EOS evaluation remain root-owned. Wrapper fixed manifest is untouched. Production files were not edited.

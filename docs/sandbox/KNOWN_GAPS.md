@@ -53,3 +53,7 @@ Areias2019方法核读见 data/sandbox/research/areias2019/ 与 research/SOURCE_
 Areias2019组成/热实验核读更新：已保存Tables16–21全部83条报告值及Table22四项热值，明确三采集批日期对应XRF与TG图（data/sandbox/research/areias2019/batch-links.json）。Table20含小于项的条件总和仍不足92.31%，未补齐/归一化；Table21与处理泥批次和基准未明。TG/DSC为N2单速率，与正文氧化解释存在未解决机制问题，TG/MS另为He等温且无摩尔产率。正面证据是名义批次可匹配的观测候选，完整反应/热化学/烧结材料准入仍未满足。
 
 规定形变+活动相变+耗尽新组合实际失败，见 research/deforming-active-depletion/README.md。HEOS在299.9996124454831K的共存Newton八轮振荡，原1e-4Pa门槛未过；旧固定/短轨迹通过不覆盖此路径。独立密度半步探针通过原共存残差，仅支持研究阻尼策略，不是已应用修复或整段验证。原物理门槛不变，生产源码未改；完整材料域仍未准入。
+
+## HEOS共存回溯修复与原组合耗尽复验
+
+上述 research/deforming-active-depletion 的旧失败保留。新实现已应用有界回溯Newton，原物理/数值门槛未放宽；同一脚本和物理条件的安装组合轨迹实际完成14提交步/1耗尽事件并继续到0.5078125s。逐步和累计水/能量、五功分项及精确相修正/存储舍入经独立核算通过，详见 [修复证据](research/heos-coexistence-backtracking/README.md)。这是规定变形、制造固体/界面系数配真实水的限定集成验证。不能把旧失败改为通过，也不能扩大到自由烧结、完整湿坯变形轨迹或真实原污泥材料资格；全流程和外部机制验证缺项继续保留。
