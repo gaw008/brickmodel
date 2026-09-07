@@ -116,6 +116,7 @@ class DeformingSolidState:
     model_identity: tuple
     energy_scope: str=SCOPE
     qualification: str='conditional_declared_geometry_and_mechanical_bounds_not_material_admission'
+    current_storage: object = None
 
 
 @dataclass(frozen=True)
@@ -180,16 +181,16 @@ class DeformingSolidStorage:
         mechanical_error=el_error+Fraction(sk.numerical_error_bounds['interface_energy_j'])+elastic_geometry_error+Fraction(self.error_bounds.additional_mechanical_energy_error_j)
         return snap,sk,current_storage,_upper(mechanical_error),bulk_error
 
-    def _assemble(self,thermal,snap,sk,error,bulk_error):
+    def _assemble(self,thermal,snap,sk,error,bulk_error,storage):
         exact=Fraction(thermal.internal_energy_j)+Fraction(sk.elastic_energy_j)+Fraction(sk.interface_energy_j)
         total=_out(exact);rounding=abs(Fraction(total)-exact)
         bound=_upper(Fraction(thermal.energy_error_bound_j)+Fraction(error)+rounding)
-        return DeformingSolidState(thermal,sk,snap,total,bound,error,_upper(rounding),bulk_error,self.error_bounds,self.identity)
+        return DeformingSolidState(thermal,sk,snap,total,bound,error,_upper(rounding),bulk_error,self.error_bounds,self.identity,current_storage=storage)
 
     def forward(self,temperature_k,*,liquid_mol,gas_mol,solid_mol,time_s):
         snap,sk,storage,error,bulk=self._prepare(time_s,solid_mol)
         thermal=storage.evaluate_at_temperature(temperature_k,liquid_mol,gas_mol,solid_mol)
-        return self._assemble(thermal,snap,sk,error,bulk)
+        return self._assemble(thermal,snap,sk,error,bulk,storage)
 
     def temperature_from_total_energy(self,target,*,liquid_mol,gas_mol,solid_mol,time_s,temperature_bracket_k,policy):
         if type(target) is not TotalEnergyTarget or target.energy_scope!=SCOPE or target.model_identity!=self.identity:
@@ -200,6 +201,6 @@ class DeformingSolidStorage:
         target_error=_upper(Fraction(target.error_bound_j)+Fraction(error)+rounding)
         inverse=storage.temperature_from_energy(thermal_target,liquid_mol,gas_mol,solid_mol,temperature_bracket_k,policy,
             target_energy_error_bound_j=target_error)
-        state=self._assemble(inverse.state,snap,sk,error,bulk)
+        state=self._assemble(inverse.state,snap,sk,error,bulk,storage)
         residual=_out(Fraction(state.total_energy_j)-Fraction(target.value_j))
         return DeformingSolidInverse(state,inverse,target,residual,_upper(rounding),inverse.temperature_error_bound_k)

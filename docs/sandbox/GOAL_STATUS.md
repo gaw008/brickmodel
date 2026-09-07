@@ -4,7 +4,7 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
-最新源码检查点 `32965ce`：完整模型能量身份、当前几何点储能、普通/耗尽分项账本已实现/独立审核。冻结非editable安装 **1089 passed453.56s**，36个实际site-packages模块逐一与源码一致；research/installed-sandbox-total-storage-tests.xml与identity.json为实际证据。session89265已exit0，勿再轮询或重复旧1051套件。当前没有运行中的完整suite。下一DeformingSolidHeat仅在/tmp/brick-deforming-solid-host-candidate，尚未应用：首版attempt05实际1fail5pass，fine128孔压功误差1.84969e-4J未过原1e-6J，完整失败保留；只细化到512/1024/2048步并按已测成本把单次wall20→90s、整次150s，上述数值/物理/结果门槛不变，attempt06由boundary_program在本次安装终态后执行。恢复先查看其实际进程/日志，不重跑。所有材料/全周期/公开机制与使用验收缺项仍按原Goal合同。
+最新已提交检查点 `1c4ab7f`（源码32965ce）：1089项安装测试/36模块实际一致。当前新增DeformingSolidHeat、私有已解码assembler及point context已应用/独立审核；细档实际等向干态解析温度和各分项功过原gate，原粗档pore失败保留。新冻结非editable全sandbox测试 **session75509** 正在运行，XML目标research/installed-sandbox-deforming-solid-tests.xml；恢复先poll同一session，src/tests冻结，不提前宣称预计1103项/37模块通过。89265等旧suite全部终态，不重跑。下一实际湿态独立entropy oracle仅/tmp/brick-wet-deformation-oracle，由review_water_resume先推导/无EOS测试，须等Root新整包终态后再给湿EOS成本测试。所有材料/全周期/公开验证/使用验收原合同未完成。
 
 ## 当前状态
 
@@ -348,3 +348,9 @@ review_water_resume已接新的隔离任务，仅/private/tmp/brick-skeleton-ene
 session89265已实际exit0：**1089 passed in453.56s，0失败/错误/跳过**。XML实际解析，36个真实site-packages模块逐一与32965ce源码核对一致，cwd=/private/tmp，无PYTHONPATH。research/installed-sandbox-total-storage-tests.xml及installed-sandbox-total-storage-identity.json已保存。没有尚未观察终态的旧完整suite，不再轮询89265/46721。
 
 下一host仍隔离，不在此1089证据中：私有thermal assembler复用、point current_storage与全能量scope候选正在审核。初等向压缩η0解析试验attempt05温度过2e-5K但pore功未过1e-6J，保留失败；64→128呈二阶趋势不等于门槛通过。事前登记下一512/1024/2048三档与实际网格/拒步统计，原门槛不动，只因已测成本扩资源wall20→90s且整个attempt≤150s。作者已收到安装终态后开跑通知。新current_storage曾插入中部破坏旧positional，独立审查指出后改尾追加并新增回归1pass；尚待最后代码/物理审查与应用。
+
+## 规定形变总能量主机当前恢复点
+
+本回合实际完成点储能、identity/depletion组件与干态机械主机，属于progress，Goal仍active。干态首轮pore失败保持；细化后512/1024/2048实际无拒步，finestpore7.2252e-7J过1e-6J。源码修复只涉及审核提出的current_storage尾追加和initializer严格输入，原physics/gate不变。独立13轻测及真实旧热/气/反应golden通过，Root应用13通过；完整archive/readme与3src应用精确比较已核。
+
+新fullsuite唯一session75509正在运行（开始已返回6%进度），源码/tests冻结。完成后实际XML计数与37预期实际安装模块身份逐一核，不重旧1089套件。下一wet entropy oracle在/tmp独立推导，尚不运行湿EOS；未来用同Nl=1/Ng=.01/Ns2/300K与10%isotropic，独立water EOS entropy closure与主机energy积分比较，不能调用被测storage作参照。当前还没有此湿积分验证成果。

@@ -261,17 +261,40 @@ class SolidFluidHeat:
     def evaluate(self,state,time_s):
         _num(time_s,'time')
         inverses=self.decode_inverse(state)
+        return self._assemble_decoded(state.amounts_mol,inverses,self.temperature_brackets_for(state))
+
+    def _assemble_decoded(self,amounts_mol,storage_inverses,temperature_brackets_k):
+        """Private assembly from validated inverses; never solves another target."""
+        from .solid_fluid_storage import SolidFluidInverse
+        from fractions import Fraction
+        amounts_mol=np.asarray(amounts_mol)
+        inverses=tuple(storage_inverses)
+        if amounts_mol.shape!=(len(self.storages),len(self.species_order)) or len(inverses)!=len(self.storages):
+            raise SolidFluidHeatError('decoded_assembly_shape')
+        if len(temperature_brackets_k)!=len(inverses):raise SolidFluidHeatError('decoded_bracket_shape')
+        for row,inv,storage,bracket in zip(amounts_mol,inverses,self.storages,temperature_brackets_k):
+            if type(inv) is not SolidFluidInverse:raise SolidFluidHeatError('original_thermal_inverse_required')
+            state=inv.state;m=state.mechanical
+            if (m.liquid_inventory_mol!=float(row[self.inventory_layout.liquid_index])
+                or dict(m.gas_inventory_mol)!=self.inventory_layout.gas_inventory(row)
+                or dict(state.solid_inventory_mol)!=self.inventory_layout.solid_inventory(row)):
+                raise SolidFluidHeatError('decoded_inventory_mismatch')
+            volume=Fraction(state.available_pore_volume_m3)+Fraction(state.solid_volume_m3)
+            if abs(volume-Fraction(storage.bulk_volume_m3))>2*Fraction(math.ulp(storage.bulk_volume_m3)):
+                raise SolidFluidHeatError('decoded_geometry_mismatch')
+            if state.source_ids!=storage.source_ids:raise SolidFluidHeatError('decoded_source_mismatch')
+            if not bracket[0]<=m.temperature_k<=bracket[1]:raise SolidFluidHeatError('decoded_temperature_outside_bracket')
         decoded=tuple(v.state for v in inverses)
         transport=self.transport
         first=transport.storages[0]
         liquid_faces=self._liquid_faces(decoded)
-        reactions=np.zeros_like(state.amounts_mol)
+        reactions=np.zeros_like(amounts_mol)
         reaction_cells=()
         if self.solid_reactions is not None:
             from .solid_reactions import SolidReactionError
             try:
                 reaction_cells=tuple(self.solid_reactions.evaluate_cell(row,closed,i)
-                    for i,(row,closed) in enumerate(zip(state.amounts_mol,decoded)))
+                    for i,(row,closed) in enumerate(zip(amounts_mol,decoded)))
                 reactions=np.array([cell.source_mol_s for cell in reaction_cells],dtype=float)
             except SolidReactionError as exc:
                 if str(exc).startswith('temperature_out_of_kinetic_domain:'):
@@ -286,7 +309,7 @@ class SolidFluidHeat:
             gases=tuple(ideal_gas_state(self.inventory_layout.gas_inventory(row),
                 temperature_k=s.mechanical.temperature_k,gas_volume_m3=s.mechanical.gas_volume_m3,
                 molar_masses_kg_mol=masses,gas_constant_j_mol_k=first.mechanical.gas_constant_j_mol_k)
-                for row,s in zip(state.amounts_mol,decoded))
+                for row,s in zip(amounts_mol,decoded))
             for face in range(1,count):
                 left,right=face-1,face
                 exchange=transport._face(gases[left],gases[right],left,right)
@@ -312,7 +335,7 @@ class SolidFluidHeat:
                 fe[-1]=_sum((fe[-1],heat))
         except _FAILURES as exc:_failure(exc)
         return SolidFluidHeatEvaluation(Rates(fn,fe,reactions,np.zeros(count)),decoded,gases,inverses,liquid_faces=liquid_faces,reaction_cells=reaction_cells,
-            temperature_brackets_k=self.temperature_brackets_for(state),
+            temperature_brackets_k=tuple(temperature_brackets_k),
             inverse_bracket_policy_id=self.inverse_bracket_policy_id,
             inverse_bracket_policy_version=self.inverse_bracket_policy_version,
             inverse_bracket_policy_reason=self.inverse_bracket_policy_reason)

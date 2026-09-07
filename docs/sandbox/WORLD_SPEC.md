@@ -110,3 +110,13 @@ JoinedWaterVapor从原低温500K的h锚积分原高温NIST分段Cp，逐段原h/
 `DeformingSolidStorage`已实现：原固体完整dataclass身份与固定Ns绑定，当前motion bulk及声明几何误差，Etotal=thermal+骨架+内部界面能。明确TotalEnergyTarget含本模型身份与误差，减机械能的精确有理舍入及误差进入原thermal反解。点evaluation保留原反解及温度界。它尚不是积分host。实际湿态原大体积误差fixture正确被原1e-6J精度门槛拒绝；独立v=1/50000m3/mol制造常量案例以可核查表示误差通过，旧/新证据并存，不能称为真实污泥物性精度改善。
 
 耗尽分项与身份传播现已正式应用并独立审核：普通/terminal全程schema、实际terminal时间权重、跨段累计绝对残差预算和两wrapper转发。应用38轻测通过。此后仍须新机械主机实际类型准入与湿轨迹；转发已有字段不等于已有完整湿机械模型。
+
+## 规定形变固体—流体总能量主机
+
+`DeformingSolidHeat`已正式实现，严格匹配总能量state身份、实际point/template/index/motion、固定Ns及完整参考格数/面积/宽度/bulk体积。当前输运明确为制造的相对移动面网络，力学为逐格准静态执行器，不是自由烧结闭合；固相反应拒绝准入。
+
+每格仅一次total-energy inverse；同次current_storage及其原thermal_inverse进入SolidFluidHeat私有已解码assembler。原temperature/pressure/error界用于当前面积/距离上的同一面通量，保留target机械误差，不重新造热target或重复解码。原heat.evaluate仍走原反解路径，旧源码非零共享热/气/反应对照一致。
+
+五项cell power为elastic/interface/dissipation/pore/body，总量是所表示分项的精确有理和正确舍入；pore=−p*Vbulk_dot仅因本片固定不可压Ns时Vp_dot=Vbulk_dot成立。D只一次，face h不加第二次pQ。初始totalE为forward所表示确定值，dynamic target误差0不宣称初值材料不确定性为0或已经传播整轨迹误差。
+
+实际干态等向压缩η0已过逐prefix各分项功及温度解析门槛；两格移动共享面与η非零仅点校验。真实湿轨迹、WaterPhaseTransfer/ProgrammedSolidFluidHeat对新host类型的准入、自由烧结和反应引起的Vs/机械能变化仍待后续。

@@ -112,3 +112,9 @@
 | 当前bulk+固定Ns+Etotal点反解及数值界 | deforming_solid_storage.py | test_deforming_solid_storage.py；CODE_REVIEW_DEFORMING_SOLID_STORAGE.md，11测试与独立target区间 |
 
 上表尚不包含真实湿机械时间积分、自由烧结或材料准入。
+
+| 规定形变增量 | 实现 | 验证与边界 |
+|---|---|---|
+| 同次current_storage/thermal_inverse面装配 | solid_fluid_heat.py私有_assemble_decoded、deforming_solid_storage.py尾追加current_storage | 旧evaluate AST实际非零热/气/固相反应黄金比对一致；旧positional兼容与single-inverse通过 |
+| 固定Ns总E推进，五分项功 | deforming_solid_heat.py | test_deforming_solid_heat.py；CODE_REVIEW_DEFORMING_SOLID_HEAT.md |
+| η0闭式T=T0(Vp0/Vp)^(NgR/Ctotal)，elastic/interface势差、pore=CtotalΔT | 同上独立常Cp制造oracle | 实际512/1024/2048均匀0拒步；fine原T和各功门槛通过；非湿/自由烧结验证 |
