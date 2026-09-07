@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新检查点：HEOS运行时检查优化已应用，证据 research/heos-runtime-optimization。阶段7仅runtime canonical重编码改rawSHA，构造双核验/前后读取/配置/锁/警告不变，30点7导数9故障stub通过；原湿前缀仍wall_limit/27eval3接受。阶段8另将原饱和try-body原样提取为私有锁内方法，公开饱和和温压各自完整事务，内部不重复，无缓存。原算术AST等价，17故障/公开路由stub和30点7导数通过；stage8原四步积分14.502s/29eval4接受0拒，所有原门槛通过，阶段7共同3步账本/4状态库存能量精确一致。旧失败均保留。
+
+两源码与对应真实manifest/source摘要经独立审查后应用；源码身份改变不冒充旧结果。普通uv pip离线无法选缓存numpy失败后，uv sync --frozen --no-editable --inexact --extra dev --extra water --offline成功安装锁中numpy2.5.2并保留单独核查CP8.0.0。实际41site-packages模块与源码字节一致，水相关212tests/0fail/error/skip/1.486s，测试后再核41模块；本轮未重跑全1112。安装湿态runner仅tests helper在PYTHONPATH、无候选包，并assert所有sludge导入site-packages；原四步14.40582975s积分/18.59541429s外部，29eval4接受，T误差8.606e-9K/P1.1998e-5Pa/孔压功7.35993e-7J及全部Fraction账本/独立Python熵原门槛通过。独立审查已核实际源码/来源/安装/数值记录。
+
+所有本轮工具句柄已终态，无EOS待轮询。下一动作：把显式HEOS接入原非零相变系数的规定变形callback及实际活动相变短积分，保留共同化学/能量/源身份、当前孔隙、单次逆解及耗尽门槛。不要把当前固定库存前缀称为活动蒸发或完整10%变形。仍需完整原污泥材料证据、干燥反应/供氧输运、自由烧结冷却、三公开机制/留出、全周期CLI/UI和多代搜索。Goal active，本轮有实际实现与验证progress。
+
 最新检查点：dcabd8d 生产源码未改，HEOS 原四步湿压缩短前缀已实际尝试并暴露成本瓶颈，证据 research/heos-wet-stage6。预登记保持原 0..1/64s、4步、1e-6J/K逆解、T2e-5K/P.2Pa/各功1e-6J、25秒积分/30秒外限，独立 Python entropy oracle 原文件不改。初态库存精确、新旧身份规范化后不同且各自匹配 operator；同300K初能差1.74623e-10J通过原1e-6J，未覆盖能量。执行前修正测试tuple/list假身份差异，审查记录保留。
 
 attempt01 缺pytest导入失败未进EOS，离线补锁中pytest8.4.2及已记依赖后原脚本attempt02实际exit1/28.734s；积分wall_time_limit，26.853s/10eval/1接受/0拒，未到熵参照或末端门槛，不能称湿轨迹通过。没有放宽门槛重跑。session29821已终态。

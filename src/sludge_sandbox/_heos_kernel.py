@@ -73,7 +73,7 @@ class HEOSCandidate:
         if json.loads(CP.get_config_as_json_string()) != expected['config']:
             raise WaterSourceError('heos_config_changed')
         self._config = json.dumps(expected['config'], sort_keys=True)
-        self._fluid_digest = expected['fluid_canonical_sha256']
+        self._fluid_digest = expected['fluid_sha256']
         self._coexistence = []
         self._tp_iterations = []
         if importlib.metadata.version('CoolProp') != expected['version'] or CP.get_global_param_string('gitrevision') != expected['git']:
@@ -127,14 +127,14 @@ class HEOSCandidate:
         with self._lock:
             if json.dumps(json.loads(self._cp.get_config_as_json_string()),sort_keys=True) != self._config:
                 raise WaterSourceError('heos_runtime_config_changed')
-            if digest(json.loads(self._cp.get_fluid_param_string('Water','JSON'))) != self._fluid_digest:
+            if hashlib.sha256(self._cp.get_fluid_param_string('Water','JSON').encode()).hexdigest() != self._fluid_digest:
                 raise WaterSourceError('heos_runtime_fluid_changed')
             with warnings.catch_warnings(record=True) as emitted:
                 warnings.simplefilter('always')
                 yield
             if emitted:
                 raise WaterNumericalError('heos_native_warning:'+str(emitted[0].message))
-            if digest(json.loads(self._cp.get_fluid_param_string('Water','JSON'))) != self._fluid_digest:
+            if hashlib.sha256(self._cp.get_fluid_param_string('Water','JSON').encode()).hexdigest() != self._fluid_digest:
                 raise WaterSourceError('heos_runtime_fluid_changed')
             if json.dumps(json.loads(self._cp.get_config_as_json_string()),sort_keys=True) != self._config:
                 raise WaterSourceError('heos_runtime_config_changed')
@@ -188,64 +188,68 @@ class HEOSCandidate:
     def saturation_pair(self,t):
         t=self._temperature(t)
         with self._transaction():
-            try:
-                # QT is an initial guess only. Solve coexistence on the EOS,
-                # retaining both equal-pressure and equal-Gibbs residuals.
-                densities=[]
-                for q in (0,1):
-                    self._flash.update(self._cp.QT_INPUTS,q,t)
-                    require(self._flash.phase()==self._cp.iphase_twophase and self._flash.Q()==q,'heos_seed_quality')
-                    densities.append(self._flash.rhomass())
-                self._coexistence.clear()
-                def evaluate(rho,phase):
-                    a=self._flash
-                    a.specify_phase(self._cp.iphase_liquid if phase=='liquid' else self._cp.iphase_gas)
-                    try:
-                        a.update(self._cp.DmassT_INPUTS,rho,t)
-                        pressure,h,u,entropy=a.p(),a.hmass(),a.umass(),a.smass()
-                        delta=rho/322.
-                        D=1+2*delta*a.dalphar_dDelta()+delta*delta*a.d2alphar_dDelta2()
-                        slope=self._r*t*D
-                        require(all(math.isfinite(x) for x in (pressure,h,u,entropy,slope)) and slope>0,'heos_coexistence_invalid')
-                        return pressure,h-t*entropy,slope,h,u,entropy
-                    finally:
-                        a.unspecify_phase()
-                for iteration in range(8):
-                    rl,rv=densities
-                    require(rl>322>rv>0,'heos_coexistence_density_branches')
-                    left,right=evaluate(rl,'liquid'),evaluate(rv,'vapor')
-                    fp,fg=left[0]-right[0],left[1]-right[1]
-                    self._coexistence.append({'iteration':iteration,'rho':list(densities),'liquid':left,'vapor':right,'dp':fp,'dg':fg})
-                    if abs(fp)<=1e-4 and abs(fg)<=1e-6:
-                        break
-                    a,b,c,d=rl*left[2],-rv*right[2],left[2],-right[2]
-                    determinant=a*d-b*c
-                    require(math.isfinite(determinant) and determinant!=0,'heos_coexistence_singular')
-                    dx,dy=(-fp*d+b*fg)/determinant,(-a*fg+c*fp)/determinant
-                    require(max(abs(dx),abs(dy))<.1,'heos_coexistence_step_outside_seed_branch')
-                    densities=[rl*math.exp(dx),rv*math.exp(dy)]
-                else:
-                    raise WaterNumericalError('heos_coexistence_not_converged')
-                # The converged vapor EOS pressure defines the common pressure;
-                # the liquid pressure residual is independently checked below.
-                # No h/u/s or inventory is algebraically reset to close energy.
-                common_p=right[0]
-                pair=[]
-                for rho,phase in zip(densities,('liquid','vapor')):
-                    self._flash.specify_phase(self._cp.iphase_liquid if phase=='liquid' else self._cp.iphase_gas)
-                    try:
-                        self._flash.update(self._cp.DmassT_INPUTS,rho,t)
-                        pair.append(self._snapshot(t,common_p,phase))
-                    finally:
-                        self._flash.unspecify_phase()
-                liquid,vapor=pair
-                require(liquid.density>vapor.density,'heos_saturation_order')
-                require(abs(liquid.pressure-vapor.pressure)<=max(.01,2e-8*liquid.pressure),'heos_saturation_pressure')
-                require(abs(liquid.h-t*liquid.s-vapor.h+t*vapor.s)<=.001,'heos_saturation_gibbs')
-                return tuple(pair)
-            except (ArithmeticError,ValueError,RuntimeError,AttributeError,TypeError) as e:
-                if isinstance(e,WaterNumericalError):raise
-                raise WaterNumericalError('heos_saturation_failed') from e
+            return self._saturation_pair_locked(t)
+
+    def _saturation_pair_locked(self,t):
+        # Called only within the public operation's lock and source checks.
+        try:
+            # QT is an initial guess only. Solve coexistence on the EOS,
+            # retaining both equal-pressure and equal-Gibbs residuals.
+            densities=[]
+            for q in (0,1):
+                self._flash.update(self._cp.QT_INPUTS,q,t)
+                require(self._flash.phase()==self._cp.iphase_twophase and self._flash.Q()==q,'heos_seed_quality')
+                densities.append(self._flash.rhomass())
+            self._coexistence.clear()
+            def evaluate(rho,phase):
+                a=self._flash
+                a.specify_phase(self._cp.iphase_liquid if phase=='liquid' else self._cp.iphase_gas)
+                try:
+                    a.update(self._cp.DmassT_INPUTS,rho,t)
+                    pressure,h,u,entropy=a.p(),a.hmass(),a.umass(),a.smass()
+                    delta=rho/322.
+                    D=1+2*delta*a.dalphar_dDelta()+delta*delta*a.d2alphar_dDelta2()
+                    slope=self._r*t*D
+                    require(all(math.isfinite(x) for x in (pressure,h,u,entropy,slope)) and slope>0,'heos_coexistence_invalid')
+                    return pressure,h-t*entropy,slope,h,u,entropy
+                finally:
+                    a.unspecify_phase()
+            for iteration in range(8):
+                rl,rv=densities
+                require(rl>322>rv>0,'heos_coexistence_density_branches')
+                left,right=evaluate(rl,'liquid'),evaluate(rv,'vapor')
+                fp,fg=left[0]-right[0],left[1]-right[1]
+                self._coexistence.append({'iteration':iteration,'rho':list(densities),'liquid':left,'vapor':right,'dp':fp,'dg':fg})
+                if abs(fp)<=1e-4 and abs(fg)<=1e-6:
+                    break
+                a,b,c,d=rl*left[2],-rv*right[2],left[2],-right[2]
+                determinant=a*d-b*c
+                require(math.isfinite(determinant) and determinant!=0,'heos_coexistence_singular')
+                dx,dy=(-fp*d+b*fg)/determinant,(-a*fg+c*fp)/determinant
+                require(max(abs(dx),abs(dy))<.1,'heos_coexistence_step_outside_seed_branch')
+                densities=[rl*math.exp(dx),rv*math.exp(dy)]
+            else:
+                raise WaterNumericalError('heos_coexistence_not_converged')
+            # The converged vapor EOS pressure defines the common pressure;
+            # the liquid pressure residual is independently checked below.
+            # No h/u/s or inventory is algebraically reset to close energy.
+            common_p=right[0]
+            pair=[]
+            for rho,phase in zip(densities,('liquid','vapor')):
+                self._flash.specify_phase(self._cp.iphase_liquid if phase=='liquid' else self._cp.iphase_gas)
+                try:
+                    self._flash.update(self._cp.DmassT_INPUTS,rho,t)
+                    pair.append(self._snapshot(t,common_p,phase))
+                finally:
+                    self._flash.unspecify_phase()
+            liquid,vapor=pair
+            require(liquid.density>vapor.density,'heos_saturation_order')
+            require(abs(liquid.pressure-vapor.pressure)<=max(.01,2e-8*liquid.pressure),'heos_saturation_pressure')
+            require(abs(liquid.h-t*liquid.s-vapor.h+t*vapor.s)<=.001,'heos_saturation_gibbs')
+            return tuple(pair)
+        except (ArithmeticError,ValueError,RuntimeError,AttributeError,TypeError) as e:
+            if isinstance(e,WaterNumericalError):raise
+            raise WaterNumericalError('heos_saturation_failed') from e
 
     def state_tp(self,t,p,*,phase):
         t=self._temperature(t)
@@ -254,7 +258,7 @@ class HEOSCandidate:
         if phase not in ('liquid','vapor'):
             raise WaterDomainError('phase_must_be_liquid_or_vapor')
         with self._transaction():
-            liquid,vapor=self.saturation_pair(t)
+            liquid,vapor=self._saturation_pair_locked(t)
             ps=liquid.pressure
             if abs(p-ps)<=max(.01,2e-8*ps):raise WaterDomainError('saturation_ambiguous')
             if (phase=='liquid' and p<ps) or (phase=='vapor' and p>ps):raise WaterDomainError('unstable_requested_phase')

@@ -20,7 +20,7 @@ class HEOSWaterProperties:
     def __init__(self,source_directory,manifest):
         try:
             verified_bytes=Path(manifest).read_bytes()
-            if hashlib.sha256(verified_bytes).hexdigest()!='a2d309e79615b283477d8368fe03477704ed5ba468cc3bf11350773ac716783d':
+            if hashlib.sha256(verified_bytes).hexdigest()!='38296d993f21193a011aaa0ef31faaa9ccb83385cf97c79f39fed133d2659219':
                 raise WaterSourceError('unreviewed_heos_manifest')
             verified_manifest=json.loads(verified_bytes)
             kernel=HEOSCandidate(manifest,source_directory)
