@@ -4,6 +4,14 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新检查点：dcabd8d 生产源码未改，HEOS 原四步湿压缩短前缀已实际尝试并暴露成本瓶颈，证据 research/heos-wet-stage6。预登记保持原 0..1/64s、4步、1e-6J/K逆解、T2e-5K/P.2Pa/各功1e-6J、25秒积分/30秒外限，独立 Python entropy oracle 原文件不改。初态库存精确、新旧身份规范化后不同且各自匹配 operator；同300K初能差1.74623e-10J通过原1e-6J，未覆盖能量。执行前修正测试tuple/list假身份差异，审查记录保留。
+
+attempt01 缺pytest导入失败未进EOS，离线补锁中pytest8.4.2及已记依赖后原脚本attempt02实际exit1/28.734s；积分wall_time_limit，26.853s/10eval/1接受/0拒，未到熵参照或末端门槛，不能称湿轨迹通过。没有放宽门槛重跑。session29821已终态。
+
+一次实际同初态求值profile exit0/4.56048s（session19385终态）：求值约2.72s，205水状态，410事务/820生成器进出，事务累计2.648s，JSON encode/decode自身约1.077/.610s；累计项不相加。独立审查核脚本、输入、失败和profile，表明当前主要成本是反复完整fluid JSON核验，不是原生EOS计算，未证明整体加速。生产41模块/1112完整安装测试仍是dcabd8d证据，本轮只有制造诊断而无新完整suite。
+
+下一动作明确：隔离候选仅将runtime流体canonical重编码检查改为构造时已同时核读的原始字符串SHA，保留每次前后读取/配置/lock/warnings及全部数值门禁；格式变化更严格拒绝。先单变量故障和公式验证、更新真实实现manifest后再回原四步短前缀。不要同时缓存/嵌套去重或提高超时。完整原污泥域、活动相变/全周期、烧结冷却、公开对照及CLI/UI/搜索仍为完整Goal必需缺项。上一轮和本轮均为progress；Goal active，无运行句柄待轮询。
+
 最新检查点：HEOS stage5 已把显式可选混合后端接入生产源码。真实液汽 EOS 用已审查 HEOS 内核，理想部分保留 Python IAPWS；物理参考态与不可变软件实现身份分开，完整 canonical 身份绑定 provider/schema/source IDs/定义及代码。身份贯穿水状态、化学、相、闭合储能与目标记录。默认 Python 不变，状态 dataclass 新增 implementation=None 字段；不宣称历史全部 JSON 字节不变。
 
 清单固定 SHA、实际运行 descriptor 二次比对与来源路径已独立审核；不接受调用者自行改写清单来准入未验证构建。来源记录 data/sandbox/water/heos-8.0.0-source.json、固定 manifest 与 docs/sandbox/HEOS_BACKEND.md 可查询软件、许可证、原始流体及 IAPWS。缺少可选依赖时明确 WaterSourceError，无静默降级。实际已安装默认环境没有 CoolProp，该拒绝已验证。
