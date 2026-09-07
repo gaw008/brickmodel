@@ -123,3 +123,11 @@ uv sync --frozen --no-editable --extra dev --extra research --extra water --offl
 固定相库存的闭合路径推导 `Cclosed=Cp_total−T A²/B≥ΣCv>0` 已独立审核。直接IAPWS与独立压力求根的三状态中央差分最大偏差2.79e-7 J/K，小于预登记1e-4 J/K；这是导数恒等式核查，不是完整储能反演程序或砖坯实验。
 
 冻结、非editable、离线重装后，从 `/private/tmp` 无PYTHONPATH执行全量sandbox测试，实际 **574 passed in 5.63s，零失败/跳过**。19个真实site-packages模块源码与工作区一致。原始产物 `research/installed-sandbox-574-20260907.xml` 和 `research/installed-sandbox-574-identity-20260907.json` 保存模块、测试、锁文件和XML身份。既有535项记录保留；未把测试数量当作现实准确率或全流程完成度。
+
+## 闭合路径储能与实际热量积分
+
+`94257d6`新增水局部响应与最终数值压力括区：21项新水导数+78项旧水+23项压力闭合组合通过，独立不同步长有限差分和三压力根核对通过；记录见两份独立审核报告。水局部导数和数值函数括区不自动构成EOS全区间误差界。
+
+`315337a`的rigid_storage每温度试算重新求液水占积/气压，使用同一压力求物种U/H与闭合热容。条件反解保留显式数值envelope，正下界/上界有向算术以及源来源；端点符号不确定、粗压力预算和表示精度不足时拒绝。18测试实际通过18.48s，真实积分每次operator调用均执行实际反解。单格电加热反馈下库存逐值不变，U与积分功账本在1e-8 J绝对门槛内一致，终温与独立嵌套求根在1e-4 K内一致。源和范围见 `RIGID_STORAGE.md`，不作为原泥实验或固体/相变模型验证。
+
+冻结非editable离线重装后，在/private/tmp无PYTHONPATH运行全部sandbox测试，实际 **619 passed in23.27s，0失败/跳过**。20个site-packages模块与工作区逐一hash一致。原始XML `research/installed-sandbox-closed-storage-tests.xml`，安装/测试/锁文件身份 `research/installed-sandbox-closed-storage-identity.json`；原574项检查点保留，两个既有模块的本轮扩展没有重写旧验证产物。

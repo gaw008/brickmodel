@@ -31,6 +31,11 @@
 
 | 新增方程 | 实现 | 验证与范围 |
 |---|---|---|
-| Vliq(T,P)+NgRT/P=Vavailable | `rigid_water_gas.RigidWaterGas` | 17测试、独立压力根/体积审核；平界面固定腔体，非相平衡 |
+| Vliq(T,P)+NgRT/P=Vavailable | `rigid_water_gas.RigidWaterGas` | 现23测试、独立压力根/体积审核及最终数值括区诊断；平界面固定腔体，非相平衡 |
 | h(T)=h(Tanchor)+分段积分Cp，u=h−RT | `continuous_caloric.ContinuousShomateGas` | 22测试、独立Decimal核查及真实GasHeatModel跨接缝；原拟合保留 |
-| Cclosed=Cp_total−T A²/B | 推导 `RIGID_STORAGE_DERIVATION.md`；尚无生产反演实现 | 独立三状态闭合压力中央差分，原始结果 `research/rigid-storage-derivative-identity.json` |
+| Cclosed=Cp_total−T A²/B | 推导 `RIGID_STORAGE_DERIVATION.md`；条件反演 `rigid_storage.RigidStorage` | 独立三状态闭合压力中央差分，原始结果 `research/rigid-storage-derivative-identity.json` |
+
+| 后续方程/接口 | 实现 | 验证与范围 |
+|---|---|---|
+| α、κ、dv/dT、dv/dP、du/dP | `water_properties.WaterProperties.state_tp_response` | 21新测试+78旧水测试；局部导数非区间界 |
+| 每温度重新闭合P的U反解及条件误差传播 | `rigid_storage.RigidStorage` | 18测试、真实单格热量反馈；显式数值界尚未独立全域准入 |
