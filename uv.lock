@@ -12,6 +12,18 @@ wheels = [
 ]
 
 [[package]]
+name = "iapws"
+version = "1.5.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "scipy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ce/3f/9d90a362ef2f214965f98e8a11b2fbc3a315871f9a22c5e12a49d8e3286c/iapws-1.5.5.tar.gz", hash = "sha256:c86e1e171551877fe9ceb03ee415e4a4906d2e52698ff9d5656784609739df4d", size = 115380, upload-time = "2026-03-27T20:24:35.246Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/cb/01/256404a8f1fec81606c7127fa99b5a45f88da3c5ecce7a07f38b46e54984/iapws-1.5.5-py3-none-any.whl", hash = "sha256:97810dca5155cce1e2ec964dd254fc9e4858fbb1c9967da6c4f817adaf3a818e", size = 117421, upload-time = "2026-03-27T20:24:33.765Z" },
+]
+
+[[package]]
 name = "iniconfig"
 version = "2.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -292,12 +304,16 @@ dev = [
 research = [
     { name = "pillow" },
 ]
+water = [
+    { name = "iapws" },
+]
 
 [package.metadata]
 requires-dist = [
+    { name = "iapws", marker = "extra == 'water'", specifier = "==1.5.5" },
     { name = "numpy", specifier = "==2.5.2" },
     { name = "pillow", marker = "extra == 'research'", specifier = "==12.1.1" },
     { name = "pytest", marker = "extra == 'dev'", specifier = "==8.4.2" },
     { name = "scipy", specifier = "==1.18.1" },
 ]
-provides-extras = ["dev", "research"]
+provides-extras = ["dev", "research", "water"]
