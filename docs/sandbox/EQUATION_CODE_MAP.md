@@ -82,3 +82,10 @@
 |---|---|---|
 | 网络物种→实际相provider→完整库存列，bulk浓度速率 | `solid_reactions.SolidReactionConfig` | 13项绑定测试；独立二阶速率/列置换手算；相、质量、能量参考与制造门禁，不是材料准入 |
 | 同一计量源推进Ns/Ng，总U包含生成能、重解Vs/Vg/P/T | `solid_fluid_heat.SolidFluidHeat.solid_reactions` | 8项host测试，有限O2实际积分、无氧通道、正Ea温敏比、元素/质量/U、完整wrapper诊断链；独立审核 `research/CODE_REVIEW_SOLID_REACTIONS.md` |
+
+
+| 水汽跨域与事件数值部件 | 实现 | 验证及边界 |
+|---|---|---|
+| 低温h锚+高温逐段原Cp积分，u=h−RT与Cv>0 | `joined_water_vapor.JoinedWaterVapor` | 低分支保持、500/1700接缝、独立积分/正Cv界/来源/数值误差测试；不扩展液相chemical域 |
+| Joined相身份/来源及活动气体数值预算 | `phase_storage.IdealGasPhase`、`solid_reactions`、`rigid_storage`、`water_phase_transfer` | 实际SolidFluidHeat跨500/1700升降温及预算不足拒绝；低分支phase匹配 |
+| 精确±δ与binary64写回残差分账、不可取消累计预算 | `depletion_roundoff.depletion_writeback` | 16项数值反例/恢复测试，独立组件审核通过；非事件定位器或全湿干积分 |

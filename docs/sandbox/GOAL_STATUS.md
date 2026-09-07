@@ -225,3 +225,20 @@ Baloi2025出版商HTML/JATS原文、5组配比/终态热物性及派生提取已
 恢复补充：`c49fdf4`已提交833项安装证据、29模块身份与独立水汽端点测量。湿干设计审核明确保留REQUEST CHANGES：逐操作两库存float精确增量相等可能使正常耗尽无解，不能把普遍unsupported当完成。设计末尾主代理已要求选择实际补偿库存表示，或精确成对extent账本加独立、显式、逐步/全prefix有界存储舍入残差合同；数值相间修正、实际蒸发量与存储舍入三者分开。原δ的局部ULP及相对蒸发积分上限继续有效，不能只凭一般atol或扩大阈值验收。此为下一实现前须关闭的数值设计项，不影响已验证反应实现，也不使Goal无可推进工作。
 
 低高水汽设计可独立实施：完整域须证明Cp>R、保留h锚与各高温接缝偏移、gas_u_error包含锚/积分/偏移数值预算；0.1748J/mol是模型差而非误差界。高温chemical未知不能被当成已证明不凝结。所有本回合运行测试已结束；设计review终态见research/REVIEW_WET_DRY_CONTINUATION_DESIGN.md。下一回合直接开始上述实现/针对性反例，不再重复833项或同一设计措辞。
+
+
+## 最新水汽跨域与事件写回检查点
+
+上一回合实际完成反应/来源/安装验证并提交，属于progress；本回合继续新增实际caloric/host/写回实现、反例修复与独立审核，属于progress。原§11未满足，Goal继续active，无须外部输入即可继续下一实现。
+
+- `4ef76a2`：源门禁JoinedWaterVapor低293–500K保持原bridge，500以上按原NIST Cp从同一低h锚分段Fraction积分至6000K，保留500/1700 Cp跳、原h/偏移/sourceassets。低正理想项及高区间有理数证明Cv>0；低h全域误差仍显式条件声明，不将接缝差当误差证书。budget最大float的溢出由独立2RED修复。IdealGasPhase/mass、反应完整identity、WaterPhaseTransfer仅low_modelchemical相容和RigidStorage活动Joined实际数值预算门禁均接通。四条实际SolidFluidHeat ±100W/4s轨迹跨500/1700升降温，完整mol/U与独立系数积分终温检查通过；这不是湿耗尽或真实高温固相验证。
+- `624d89c`：选择耗尽方案(b)的具体写回部件depletion_roundoff。独立成对±δ与实际汽浮点残差分账；局部液ULP/绝对/真实蒸发积分相对限和逐事件/全prefix水mol/H/O/Mkg预算；累计绝对残差不抵消，JSON恢复保留Fraction与原政策。部分正常事件无需逐位相等即可按事前预算继续，但未定位事件或切换模式。主代理非零Fraction输入下溢反例先RED后拒绝修复，最终16作者测试通过，独立旧15+新增单项分开保留；另120边界算术独立通过。
+- 独立provider31项与host9+写回初15项均实际通过；新两份CODE_REVIEW_JOINED_WATER和CODE_REVIEW_DEPLETION_ROUNDOFF为限定组件APPROVE。旧设计review被迟到精简覆盖后，经原审核者确认恢复602ebdc的完整历史；原worker节点/第二事件澄清+2行保留，没有新造已通过门槛。
+- 最终冻结非editable离线安装在/private/tmp无PYTHONPATH实际 **889 passed in136.85s，0失败/错误/跳过**，31个实际安装模块与源码一致。research/installed-sandbox-joined-water-tests.xml及installed-sandbox-joined-water-identity.json为最终证据。进程22155已exit0，所有代理本轮执行已结束，没有待轮询测试句柄。旧833项证据保留。
+
+### 下一步直接实现完整事件主机
+
+1. 不再重写同一设计或重复889项。在已选方案(b)上实现depletion_integration事件panel、显式existing_liquid/depleted_no_nucleation模式与完整结果/跨段账本，实际关闭湿→干连续积分缺项。普通RK中间Eulerstage限制仍真实存在，不能靠最大step数趋近耗尽。写回函数只处理panel后的δ与存储残差，不能自行授权事件、伪造正向蒸发积分、丢弃原face/reaction/U误差或重置prefix。实际host绑定H2O两列与原native水摩尔质量。
+2. 预登记并执行恒定汇/时变汇独立耗尽时刻、粗细事件面的时间/状态差、共同物理时刻继续积分差、节点先后/其他事件、微小蒸发但液流主导、实水/固体/气体/液面/反应组合。每个fine段都受下一程序节点限制；节点两侧事件未分离不能强行推进。完整状态反解和每step/prefix mol/元素/M/U/面账本照常保留，数值修正与物理传质及存储舍入三者分开。
+3. 高温dry chemical驱动力超原293–500K域时strict unknown/unsupported或明确记录的亚稳无成核研究分支，不把未计算当成不会凝结。Joined高温热量域不解除液相、固相或材料范围约束；真实湿干/烧结高温材料资格依然未完成。
+4. 持续保留原Goal全范围：湿相变/液迁移/热气多格时空收敛、原泥成套动力学/计量/形成能、烧结连通性/几何、冷却力学、同域三机制公开留出预测、完整原污泥全周期、多代搜索与CLI/UI。不能把本次caloric接缝测试或数值写回部件当成完整模型。

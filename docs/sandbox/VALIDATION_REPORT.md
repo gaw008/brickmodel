@@ -206,3 +206,12 @@ ProgrammedSolidFluidHeat每trial仅调用一次实际固液气base.evaluate；�
 原plan、独立reference与candidate代码、所有轨迹JSON/CSV在research/SOLID_REACTION_ANALYTIC_PLAN.md及solid_reaction_analytic_*。这验证固定bulk、常速一阶制造反应，不能解释为真实碳热解、刚性污泥反应网络、烧结变形或整砖外部验证。
 
 最终冻结非editable离线安装，在/private/tmp无PYTHONPATH运行全部sandbox：**833 passed in136.56s，0失败/错误/跳过**。29个真实site-packages模块与工作区hash一致，证据research/installed-sandbox-solid-reactions-tests.xml及installed-sandbox-solid-reactions-identity.json。新增公开Areias2025记录只属核读来源候选，未数字化或执行预测对照，科学资格不因安装通过而提升。
+
+
+## 低高温水汽衔接与耗尽写回部件
+
+`4ef76a2`实现JoinedWaterVapor并接到IdealGasPhase/完整反应identity/WaterPhaseTransfer低分支/活动RigidStorage数值预算。原低293–500K调用保持，500以上从低h锚精确积分原NIST分段Cp，500/1700的Cp跳与h偏移原样可追查。低理想项正贡献和高Fraction区间提供Cv>0数学下界；不是来源物性误差或真实高压水汽资格。显式低温h误差声明仍条件有效，预算溢出两处独立RED后修复。独立provider31项0.31s、host9与写回初15共24项2.23s通过，原XML已保留。实际四条SolidFluidHeat轨迹分别跨500和1700K升/降温，水汽/固体库存不丢，终温对独立系数积分2e-5K、prefixU/work1e-7J门槛通过。
+
+`624d89c`实现耗尽事件写回的方案(b)部件：精确成对数值相间修正与实际存储舍入分账，局部液ULP/绝对mol/正向蒸发相对限以及逐事件/全prefix水mol/H/O/Mkg预算；累计绝对残差不因正负抵消而取消。精确有理数累计器可JSON保存/恢复。初15项独立运行，主代理随后查到非零Fraction项下溢成0，先RED后两行拒绝修复，独立新增单项1passed/15deselected0.05s，最终作者16项0.06s；独立另120项相邻float有理数核查通过。写回不是事件定位器，没有关闭程序节点/模式切换/完整湿干积分缺项。
+
+最终冻结非editable离线安装，从/private/tmp无PYTHONPATH实际 **889 passed in136.85s，0失败/错误/跳过**；31个真实安装模块与工作区hash一致。证据research/installed-sandbox-joined-water-tests.xml及installed-sandbox-joined-water-identity.json，旧833项证据保留。新增测试进入同一最终环境，不将独立初15项误记为最终16项全跑。
