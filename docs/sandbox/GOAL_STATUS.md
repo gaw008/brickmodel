@@ -4,6 +4,14 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新检查点：HEOS stage4隔离TP改进与扩大验证已归档research/heos-stage4，生产src仍6dc5aa9。初30state网格28pass/2fail，293/300K100MPa液体energy残差2.314e-6/2.096e-6>1e-6保持失败。新增nativePT只做phase-verifiedseed，再解pEOS(rho,T)=原targetP，logrhoNewton slope=rhoRTD，max8/step<.1，目标min1e-4Pa,rho*1e-7。nativeh/u/s与targetP不重置，原全部gate不变。新同30cases全部通过1.52217s/exit0，两原失败实际一步密度更新改善，raw迭代独立重算通过。
+
+另外7原liquid/vapor中心差分案例通过1.50251s，原33IAPWS印刷点通过1.03654s；实际5snapshots/导数差分与单位/API经独立复审。math.isclose symmetric与原pytest.approx尺度略异，已对实际21+33数值额外按原expected尺度重算54项全部通过，不重标代码执行方式。275/625K是raw backend公式核，不扩candidate293–500K域，也不算实测材料验证。
+
+参考态初测试错误预期existing实例跟随global setter，identity01 failed保留。核读官方Reference States后不改kernel/gate、更正验证对象：旧snapshot完全不变，新nativeh实际变，新candidate被原anchor拒绝；DEF恢复后4workers/12calls（4独特点重复3次）sharedinstance结果与sequential相同，identity02exit0/1.40425s。不是多实例或并发全局mutation安全证明。所有research脚本/失败/实际过程及review保存；没有待轮询运行句柄（13010/5191/52153/27773已终态，其余本轮工具直接exit）。
+
+下一工作保持完整Goal：完成HEOS剩余故障/种子拒绝与显式loader/immutable公共descriptor，贯穿caloric/chemical/provider/closed-storage身份后才准入原wet逆解与短前缀，不把30点称为全域或完整stage4。测完整验证后端成本再扩大湿积分。cache尚未新增，需先定义契约；全原污泥物性/反应/输运/自由烧结/冷却/三公开机制对照/CLI/UI/多代全周期仍未完成。Goal active，本回合真实代码/失败修复/验证属于progress。
+
 最新检查点：隔离HEOS stage3候选已实际实现并归档research/heos-stage3，生产源码仍6dc5aa9。初始QT饱和蒸汽h-u-p/rho2.74099875e-6J/kg未过1e-6；独立子进程关superancillary反而.00182574，两失败保留，不声称开关唯一根因。改用QT种子、DmassT原生EOS评估与同T双相p/Gibbs共存门禁，能量/熵不代数重置；Newton Jacobian已独立核对。seed重评已过gate，最终删除强制更新，不能称为Newton误差改善或广域收敛证明。
 
 最终attempt05实际exit0/1.169895s、59声明输入不变：300K两饱和相+两液态TP点4对照、6域拒绝、3不可变、5故障拒绝均通过。原pressure/caloric/Gibbs/cp-cv/energy等门槛不变，最大h-u-p/rho9.818086e-8J/kg。raw JSON、不同版本候选、原失败/运行日志/监督器证据与review03均保留。实际来源/28package文件/loadedextension/完整fluid/精确M与R/adapterSHA/effectiveconfig进入区别于Python的descriptor，ideal h/s anchor及前后config/fluid检查已实现。原设计R字面值舍入已纠正。不代表完整backend/主机准入或已提速。

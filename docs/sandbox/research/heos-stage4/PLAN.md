@@ -1,0 +1,3 @@
+# Preregistered stage4 grid
+
+Freeze stage3 kernel and unchanged numerical gates. Six temperatures293,300,350,400,450,500K. At each: saturated liquid/vapor, vapor at0.1*Psat, liquid at2*Psat and100MPa (30 states). Compare native density (relative2e-8), h/u(.002Jkg), T*s(.002Jkg), cp/cv(1e-5JkgK) against original source-verified Python, using exactly stage3 gates. Each candidate itself enforces original Table3 identities. Save every result/failure and actual source/reference fields; failures do not truncate other independent cases, and any case failure yields process exit1. <=30s supervised run. This is a grid, not full continuous-domain proof. No manufacturing/real-sludge/host claim or benchmark. Broader official points and derivatives remain separate checks.
