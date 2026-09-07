@@ -1,6 +1,6 @@
 # 物理沙盒 Goal 进度
 
-更新时间：2026-09-07 UTC。完整任务合同：[GOAL_BRICK_PHYSICS_SANDBOX.md](../GOAL_BRICK_PHYSICS_SANDBOX.md)。
+更新时间：2026-09-07 UTC。完整任务合同：[GOAL_BRICK_PHYSICS_SANDBOX.md](../GOAL_BRICK_PHYSICS_SANDBOX.md)。最新证据以文末检查点为准，较早段落保留当时状态。
 
 ## 当前状态
 
@@ -242,3 +242,21 @@ Baloi2025出版商HTML/JATS原文、5组配比/终态热物性及派生提取已
 2. 预登记并执行恒定汇/时变汇独立耗尽时刻、粗细事件面的时间/状态差、共同物理时刻继续积分差、节点先后/其他事件、微小蒸发但液流主导、实水/固体/气体/液面/反应组合。每个fine段都受下一程序节点限制；节点两侧事件未分离不能强行推进。完整状态反解和每step/prefix mol/元素/M/U/面账本照常保留，数值修正与物理传质及存储舍入三者分开。
 3. 高温dry chemical驱动力超原293–500K域时strict unknown/unsupported或明确记录的亚稳无成核研究分支，不把未计算当成不会凝结。Joined高温热量域不解除液相、固相或材料范围约束；真实湿干/烧结高温材料资格依然未完成。
 4. 持续保留原Goal全范围：湿相变/液迁移/热气多格时空收敛、原泥成套动力学/计量/形成能、烧结连通性/几何、冷却力学、同域三机制公开留出预测、完整原污泥全周期、多代搜索与CLI/UI。不能把本次caloric接缝测试或数值写回部件当成完整模型。
+
+## 最新实际湿→耗尽→干态继续检查点
+
+本回合为progress，原Goal仍active，§11未完成。`89d5d26`实现显式existing_liquid/depleted_no_nucleation与strict/metastable研究分支；`7da961b`实现完整Rates耗尽panel、clock表示误差独立预算、实际干态共同时间续算和跨全部段的精确库存/能量账本。旧SSPRK2有限时间耗尽失败、clock表示残量超库存ULP以及相邻级实际同一terminal的反例均保留并有对应修复。
+
+31项事件/clock/写回测试独立通过；非线性cubic探针证明局部event指标不能认证此前普通湿段误差，原普通容差失败及100倍更严普通容差对照均保存，不将local completed当完整ODE误差证书。
+
+实际真实水provider+制造固体/载气/K/传热主机attempt03在86.82s、224评估、27个接受试算panel、0拒步完成；21保存状态，事件0.00028422061165952946s，终时0.03125s，程序节点保留。完整水量max残差1.15805e-22mol、全prefixU6.81945e-11J、逐stepU2.02577e-11J；独立G=1/15传热和干升温超反解区间断言通过。执行前后所有源码/fixturehash一致；独立reviewer另外只读重算JSON账本，未冒称重跑物性。attempt01/02各120s失败原样保留；第三次收紧terminal_window减少重复湿前段，精度门槛及资源上限不变。
+
+首轮冻结安装917项出现3failed/914passed（230.46s）：默认None模式物化成单格tuple导致原有两格液面/反应wrapper组合失败。`3c65ee7`保留None声明、由interfaces按当前host生成默认模式；显式tuple仍严格长度检查，不自动复制dry。原3测试未改，12模式+原3失败节点独立15passed5.54s。首次失败XML原字节在installed-sandbox-depletion-tests.raw.zip，可读XML仅去行尾空白，normalization.json记录hash；曾因此git diff --cached --check非零，保留raw后重新检查exit0才提交。
+
+最终冻结非editable离线安装已实际完成：/private/tmp运行、不设PYTHONPATH，**918 passed in234.43s，0失败/错误/跳过**，32个真实site-packages模块在执行后与源码再次hash匹配。最终证据research/installed-sandbox-depletion-final-tests.xml和installed-sandbox-depletion-identity.json。包括修复默认模式后的真实湿干host测试，未只跑旧失败节点来代替整体集成。所有本轮代理与测试进程均结束；最后测试session84474已exit0，不再轮询。上一轮889通过和本轮917的3失败证据都保留。
+
+### 下一可执行物理工作
+
+1. 在现真实事件积分器上补两格非同时耗尽、液水共享面和反应同时活动的全过程；现最早候选/第二事件歧义会明确unsupported，未证明通用多事件路径。对完整湿前段和事件后段分别做有独立参照的时空收敛；不得用已通过的单格低温制造轨迹代替一维砖分布场。
+2. 衔接真实湿态低温到干态高温的相态适用反解括号；当前固定括号不能在仍有液水时跨过液EOS稳定/压力域。保留strict未知或显式metastable资格、同一K与来源，不能预置dry或抹去液域限制。
+3. 原污泥成套反应/毛细输运/烧结/孔隙几何/力学证据与实现、三机制公开留出预测、全周期、多代搜索和CLI/UI全部仍为原合同必需项。来源参数不能由制造值升格，不因本次数值修复宣称模型全部完成。

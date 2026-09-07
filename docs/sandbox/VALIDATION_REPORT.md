@@ -215,3 +215,15 @@ ProgrammedSolidFluidHeat每trial仅调用一次实际固液气base.evaluate；�
 `624d89c`实现耗尽事件写回的方案(b)部件：精确成对数值相间修正与实际存储舍入分账，局部液ULP/绝对mol/正向蒸发相对限以及逐事件/全prefix水mol/H/O/Mkg预算；累计绝对残差不因正负抵消而取消。精确有理数累计器可JSON保存/恢复。初15项独立运行，主代理随后查到非零Fraction项下溢成0，先RED后两行拒绝修复，独立新增单项1passed/15deselected0.05s，最终作者16项0.06s；独立另120项相邻float有理数核查通过。写回不是事件定位器，没有关闭程序节点/模式切换/完整湿干积分缺项。
 
 最终冻结非editable离线安装，从/private/tmp无PYTHONPATH实际 **889 passed in136.85s，0失败/错误/跳过**；31个真实安装模块与工作区hash一致。证据research/installed-sandbox-joined-water-tests.xml及installed-sandbox-joined-water-identity.json，旧833项证据保留。新增测试进入同一最终环境，不将独立初15项误记为最终16项全跑。
+
+## 实际耗尽事件与干态继续
+
+`89d5d26`新增显式界面模式；`7da961b`接通完整Rates终端panel、精确clock表示误差、成对数值修正及独立存储舍入、全段Fraction库存/能量账本。常/时变汇独立根、资源/取消、节点歧义和真终端细化等31轻量测试独立通过。初始相同terminal重复计pass的缺陷由先失败回归发现并修复。额外非线性cubic探针保留默认普通容差下外部误差门槛失败，证明局部事件差不是全轨迹误差证书；收紧普通容差的结果单独保留。
+
+真实水provider、制造固体/载气/K的主机attempt03实际86.82s完成：21保存状态，液水从正库存于0.00028422061165952946s耗尽，再继续受炉温加热至0.03125s，实际程序节点保留，K不变。独立源/fixture前后hash一致。完整水量最大残差1.15805e-22mol，总U全prefix最大6.81945e-11J、单step最大2.02577e-11J；热输入0.075520921343J。H/O、摩尔质量、精确pair/storage累计、独立G(Tgas−Tcell)状态诊断与超出反解区间的干态温升检查通过。不是同一原污泥的物性/干燥实验验证。
+
+attempt01/02的120s资源失败及源码绑定限制原样保留。attempt03收紧terminal_window以避免反复湿前段试算，所有比较门槛、common horizon和120s上限均不变。
+
+首轮新冻结安装回归实际 **3 failed, 914 passed in230.46s**，XML `research/installed-sandbox-depletion-tests.xml`。失败均为默认界面None被物化成单格tuple，旧dataclasses.replace构建两格液迁移/反应主机时引发invalid_interface_modes；不能将31项局部通过当作整个版本通过。原测试与失败XML保留，后续修复另行验证。
+
+`3c65ee7`修复默认None的主机替换语义，显式模式仍严格校验；12模式+原3失败组合独立15项通过。再次冻结非editable离线安装，在/private/tmp不设PYTHONPATH执行全部sandbox，实际 **918 passed in234.43s，0失败/错误/跳过**。这次包括最终默认模式修复后的真实湿干主机积分断言。32个实际安装模块在运行后再次逐一核对hash一致，最终XML和身份为research/installed-sandbox-depletion-final-tests.xml、installed-sandbox-depletion-identity.json。旧失败XML原字节保存为raw.zip，可读副本的行尾空白转换已单独登记。

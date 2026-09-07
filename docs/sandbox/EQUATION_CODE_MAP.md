@@ -89,3 +89,6 @@
 | 低温h锚+高温逐段原Cp积分，u=h−RT与Cv>0 | `joined_water_vapor.JoinedWaterVapor` | 低分支保持、500/1700接缝、独立积分/正Cv界/来源/数值误差测试；不扩展液相chemical域 |
 | Joined相身份/来源及活动气体数值预算 | `phase_storage.IdealGasPhase`、`solid_reactions`、`rigid_storage`、`water_phase_transfer` | 实际SolidFluidHeat跨500/1700升降温及预算不足拒绝；低分支phase匹配 |
 | 精确±δ与binary64写回残差分账、不可取消累计预算 | `depletion_roundoff.depletion_writeback` | 16项数值反例/恢复测试，独立组件审核通过；非事件定位器或全湿干积分 |
+| 精确液净率与向下最近事件时间；独立clock残量=abs(netNl)*(root−end) | `depletion_roundoff.DepletionClockEvidence` | 原4ULP默认不变，4项clock证据/伪造拒绝；仍受真实正蒸发比例与累计预算 |
+| 完整Rates终端Euler与真实干态共同时间续算，全段Fraction账本 | `depletion_integration.integrate_depletion` | 常/线性根、真细化回归、程序节点、资源/失败隔离；实际host attempt03水/元素/M/U与升温通过；非全轨迹ODE误差证书 |
+| existing_liquid→depleted_no_nucleation，假想平界面筛查独立于实际液态μ | `water_phase_transfer.WaterPhaseTransfer` | 11项模式测试；strict域外/凝结退出，显式metastable研究模式，K和来源保留 |
