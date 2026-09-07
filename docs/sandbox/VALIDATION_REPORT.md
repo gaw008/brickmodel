@@ -159,3 +159,12 @@ uv sync --frozen --no-editable --extra dev --extra research --extra water --offl
 `12f6f06`单相固体29测试，与PhaseStorage旧测试共51项独立通过；50组独立驻点/导数检验通过，内能差分最大误差7.25e-9 J/(mol K)，低于预登记1e-6门槛。实际PhaseStorage求和与320K反解通过，仍是给定压力的条件反解；固体占积尚未接入rigid整体系统。制造误差预算曾小于精确p0*εv，保留原比较，显式增加制造预算余量后通过，未改变科学验证门槛。
 
 冻结非editable离线全量安装验证：**737 passed in78.91s，0失败/错误/跳过**，24个实际安装模块与工作区hash一致。原XML `research/installed-sandbox-solid-cache-tests.xml`，身份 `research/installed-sandbox-solid-cache-identity.json`；旧690项记录保留。测试数量与运行速度均不表示三机制实验验证或完整材料域已经完成。
+
+
+## 固液气整体储能、输运与蒸发耦合
+
+`96d70dd`实现SolidFluidStorage：23项最终独立测试通过0.63s；固定bulk减去实际固体占积，每个trial在总U中包含固体并重解流体压力，体积误差在干支也传播。单独60位Decimal参考不调用候选求解器，三状态V/P/U/H/C、U反解、实际25W/10s积分均通过预登记门槛；71次operator执行真实整体反解，保存库存不变、各时刻U−U0−25t误差为0。零表示本次浮点比较结果，不表示没有模型误差。产物`research/solid_fluid_analytic_oracle.json`与`research/solid_fluid_candidate_check.json`绑定最终源a592373d。
+
+`3f69e34`实现SolidFluidHeat与WaterPhaseTransfer显式双host支持。13新案例加16旧相变案例独立运行29项54.68s；在该次收集后强化的两个案例另运行2项17.37s，原XML与强化XML分别保存在`research/solid-fluid-heat-review.xml`和`research/solid-fluid-heat-strengthened-review.xml`，不混淆快照。制造固体/几何在wrapper的门禁遗漏已修复并独立复验。两种固体Cp下真实蒸发终温的条件误差区间严格分离，固体域退出单独隔离验证；不据此推定真实泥料动力学。
+
+最终冻结非editable离线安装，从/private/tmp无PYTHONPATH运行全部sandbox测试：**773 passed in96.01s，0失败/错误/跳过**。26个实际site-packages模块与工作区源码逐个hash一致，最终强化测试均包含在此次全量执行中。XML与身份分别为`research/installed-sandbox-solid-fluid-tests.xml`、`research/installed-sandbox-solid-fluid-identity.json`。完整湿砖、动态收缩、公开三机制预测、多代搜索与界面验收仍未完成。

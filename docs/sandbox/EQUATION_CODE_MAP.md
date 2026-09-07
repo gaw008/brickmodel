@@ -55,5 +55,12 @@
 | 固体与数值增量 | 实现 | 验证与范围 |
 |---|---|---|
 | 单相Cp及h0原Shomate、全温段正下界 | `incompressible_solid.SolidShomateCaloric` | Fraction区间代数、50组独立驻点/差分；不施加气体Cp>R条件、不跨晶相转变 |
-| u=h0−p0v0，h(T,p)=u+pv0，Cv=Cp | `incompressible_solid.IncompressibleSolidPhase` | 29新测试，实际PhaseStorage求和/反解；体积及误差显式声明，尚未接rigid整体固体库存 |
+| u=h0−p0v0，h(T,p)=u+pv0，Cv=Cp | `incompressible_solid.IncompressibleSolidPhase` | 29新测试，实际PhaseStorage求和/反解；体积及误差显式声明，后续已接SolidFluidStorage整体固体库存 |
 | 成功饱和求解快照缓存，命中仍EOS/Gibbs | `water_properties.WaterProperties.saturation_pair` | 18缓存测试+相关181测试、实际计数/同输入反解计时，原容差和域检查保留 |
+
+
+| 固液气整体增量 | 实现 | 验证与范围 |
+|---|---|---|
+| Vavailable=Vbulk−ΣNs vs；Utotal=Ufluid+ΣNs us | `solid_fluid_storage.SolidFluidStorage` | 23测试，独立Decimal解析对照、真实25W/10s积分；每个温度试算重解压力，体积误差传播至压力与液水U |
+| 完整库存列的U/P/T反解与共享气体/焓/热通量 | `solid_fluid_heat.SolidFluidHeat` | 新host及相变共13测试；两格积分、固体域退出、来源门禁；固体不跨面迁移 |
+| 液/汽等摩尔交换、总U不另加潜热 | `water_phase_transfer.WaterPhaseTransfer` 两种显式host | 两种固体Cp的真实蒸发积分温度误差区间分离；不能推定泥料动力学 |

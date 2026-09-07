@@ -156,3 +156,14 @@ Baloi2025出版商HTML/JATS原文、5组配比/终态热物性及派生提取已
 4. 同一原污泥材料包、成套热解/有限氧计量与反应热、烧结/连通性/几何、冷却应力、三机制公开预测验证、多代搜索、CLI/UI仍保持原Goal必需未完成范围。Quartz只补一个固相来源，不能掩盖这些缺口。
 
 本轮代理任务及所有测试进程已结束；关键代码/来源独立审核均APPROVE，含义仅限各自有界范围，不是外部科学认证。完整Goal继续active，没有满足第11节完成条件，也没有发生无法继续的阻塞。
+
+
+## 最新固液气实际耦合检查点
+
+本回合为progress，完整Goal继续active。原合同§11仍未满足；没有因为局部模型通过而缩减原污泥全周期范围。
+
+- `96d70dd`：SolidFluidStorage整体固体库存/占积/储能，每trial真实闭合P/T。23项独立测试及单独Decimal三状态/反解/25W十秒积分通过；固体体积误差连干支压力也传播。几何virtual_design_choice保留ID/版本/来源和制造材料门禁，不能给材料升格。实现说明及独立oracle在SOLID_FLUID_STORAGE.md和research目录。
+- `3f69e34`：SolidFluidHeat共享多格气体/焓/热量通量，WaterPhaseTransfer明确支持完整固体布局。固体Cp实际改变蒸发降温，两个终温条件误差区间分离。独立审核发现wrapper制造固体/几何门禁缺项，已修复复验。裸ConservedState不带列身份，未宣称自动识别同形状列置换。
+- 审核29项原收集版与2项后强化版分别保留XML；最终全量安装执行全部强化断言。冻结非editable离线安装，在/private/tmp无PYTHONPATH实际 **773 passed in96.01s，0失败/错误/跳过**，26个安装模块与当前源码hash一致。产物research/installed-sandbox-solid-fluid-tests.xml与installed-sandbox-solid-fluid-identity.json。旧737项证据保留。
+
+下一步执行：液水跨格迁移及携带焓、完整主机动态炉温/气氛边界、多格时空收敛与轨迹账本仍需接入。低高温水汽参考衔接、液界面耗尽后路径、反应库存与能量、烧结/连通性/变形、冷却应力继续按原合同实现；制造例不替代来源支持的材料域。原污泥同域参数、公开三机制预测、全周期和多代搜索、CLI/UI仍未完成。不要重复无变化测试代替这些工作。
