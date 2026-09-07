@@ -239,3 +239,11 @@ wet_to_hot_attempt02完成600s模拟、实际198.3825s，8953评估/1272试算pa
 上述是软件/数值耦合验证，固体与动力学仍为制造值，不是原污泥材料验证或全时空收敛。当前版本完整冻结安装测试已启动；最终结果必须读取新XML后单独登记，不能沿用旧918项宣布通过。
 
 最终安装结果已实际完成：**954 passed in444.54s，0失败/错误/跳过**，非editable离线锁定安装，cwd=/private/tmp、无PYTHONPATH。实际解析research/installed-sandbox-multicell-hot-tests.xml核计数，测试后32个真实安装模块逐一与源码hash一致；身份产物research/installed-sandbox-multicell-hot-identity.json。原918项及失败历史保留；本证据不包含尚在隔离目录准备的可变几何候选。
+
+## 规定形变几何与气体机械功
+
+`bb3098c`公开单次气体解码的诊断，独立从旧HEAD函数保存的非零流/热/反应/外边界黄金数据逐位相同。`1dca610`将C1参考运动与当前V/A/d、相对共享面和−p*完整Vdot机械功接入统一N/U步。运动模块独立29项通过，负非零时间下溢、普通16/32/64格坐标误拒及构造节点遗漏的原失败完整保留在candidate-history.zip。
+
+独立host+motion+诊断47项通过4.87s。三档闭式绝热参照使用实际均匀dt=1/128、1/256、1/512s及256/512/1024步，独立临时hook在同次运行逐步核实，不只从步数猜测。最大T误差6.7844911e-4、1.6957182e-4、4.2387968e-5K；减半比4.000954/4.000471。最细相对P/等熵不变量7.8168645e-8、U解析误差9.3253496e-4J，满足原最细门槛。各步/前缀能量及库存、双格异压执行器功、切向形变、当前体积反应、流焓单计和域/资源失败均有实际断言。metrics来自原XML，未再运行补指标。
+
+最终冻结非editable离线安装实际 **1001 passed in448.58s，0失败/错误/跳过**，从/private/tmp无PYTHONPATH执行。已解析research/installed-sandbox-deforming-gas-tests.xml，测试后34个真实安装模块与源码hash一致，见installed-sandbox-deforming-gas-identity.json。此为明确受控气体腔体的机械功验证，不是湿固体骨架储能、自由烧结或真实砖力学；原完整Goal仍未完成。

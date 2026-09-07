@@ -94,3 +94,5 @@
 | existing_liquid→depleted_no_nucleation，假想平界面筛查独立于实际液态μ | `water_phase_transfer.WaterPhaseTransfer` | 11项模式测试；strict域外/凝结退出，显式metastable研究模式，K和来源保留 |
 | 多格第二事件重选共同时间并重启比较；普通步局部库存时间比例；全显式dry保持普通自适应积分 | `depletion_integration.integrate_depletion`、`DepletionPolicy.safe_inventory_fraction` | 独立55项事件/clock/写回/多格/比例/干段测试；真实水两格液迁移+反应耗尽attempt02通过；局部预测不构成全轨迹误差界 |
 | 实际NL精确0时选择显式dry温度反解括号；正NL保留wet括号与原EOS域 | `solid_fluid_heat.SolidFluidHeat.temperature_brackets_for` | 独立9项括号测试；真实湿态到530.7349451K连续轨迹及独立条件干段参照通过；不是液chemical高温扩域 |
+| C1规定法/切向伸长；A=A0*lambda_t²；Vdot=A*width_dot+A_dot*width | `deformation_program.PrescribedSlabMotion` | 独立29项运动学/输入域/不可变性/16–64格坐标检查；非材料收缩律 |
+| 相同当前V/A/d与同次气体解码；显式压力匹配气腔功−p*Vdot | `gas_heat_model.GasHeatModel.evaluate`、`deforming_gas_heat.DeformingGasHeat` | 旧版四Rates黄金对照；三档绝热压缩膨胀约4倍温度误差下降，双格/流焓/当前bulk反应与完整prefix检查；非湿固体骨架功 |

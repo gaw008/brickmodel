@@ -295,3 +295,26 @@ wet→hot同主机600s/恒1000K炉温首轮也已真实终止：wet_to_hot_attem
 可变几何设计及独立审查已完成：DEFORMING_HOST_DESIGN.md/CODE_REVIEW_DEFORMING_HOST_DESIGN.md。审查发现同V但A×2/width÷2会破坏零变形等价，已补全部格数/面积/宽度/体积与参考构形绑定及明确算术容差/拒绝测试。设计最终hash652d5af0b356466ab5b426215e44638d8f849c71b412176a7e7d6d2928ff0e59。
 
 下一工作已经分配给review_water_resume：仅在/private/tmp/brick-deformation-motion-candidate/准备C1运动学provider与独立测试候选，不动仓库src/tests，不做GasHeat refactor。恢复先检查代理实际状态和候选文件；取得独立代码审查后再应用。先完成统一V/A/d/Vdot入口，再接可审计规定形变气体功测试及湿固体真正机械储能/烧结闭合，不能停留在气腔并改称完整砖模型。其余原Goal必需项仍全部未豁免，Goal保持active。
+
+## 规定几何与机械功实际接入
+
+上一回合已实际运行与保存954项安装证据，属于progress。本回合新增代码、解析验证与独立审查，亦为progress；原Goal§11未完成，仍active。
+
+- `bb3098c`：GasHeatEvaluation公开原有一次解码的T/p/source，__call__保持Rates。Root新3测试先缺API失败后44相关通过；独立审查从HEAD旧__call__保存黄金对照，非零共享热/流/反应/外边界四Rates逐位一致，新增冻结回归后独立30通过。不是仅新evaluate与新__call__自比。
+- `1dca610`：PrescribedSlabMotion正式接入固定参考C1法/切伸长与当前V/A/d及完整Vdot；独立29轻测通过，应用后29再核。原负Fraction时间下溢放入域、0维输入异常、16/32/64格按width ULP误拒均有真实失败；按坐标加法/减法ULP传播修复局部一致性，非累计位置误差证书。完整隔离源码/测试/原始失败zip与verification已保存，构造逐knot/运行逐sample检查不冒全域float证明。
+- 同提交DeformingGasHeat在同一当前几何及同次T/p上计算相对输运与−p*Vdot；只允许显式压力匹配气体执行器/制造输运网络。父thermo变更在replace之前拒绝；flow h不额外pQ；当前bulk用于反应；参考count/A/width/V完整匹配。14实际host测试4.87s通过，独立host+motion+gas诊断共47通过4.87s，并用同次测试hook确认三档每个实际step均为规定dt。
+- 闭式绝热压缩/膨胀三档dt=1/128,1/256,1/512s，实际256/512/1024steps。最大T误差6.7844911e-4、1.6957182e-4、4.2387968e-5K，减半比4.000954/4.000471；最细P与等熵不变量相对误差7.8168645e-8，U解析误差9.3253496e-4J。原最细门槛不变，粗档结果没有冒称通过最细要求。各档stdout、XML及从XML抽取metrics一致，未重复运行补造指标。
+
+当前冻结非editable离线全sandbox测试 **session1707** 已实际启动并返回进度，XML目标research/installed-sandbox-deforming-gas-tests.xml；尚未终态，不宣称新全套通过。恢复先轮询同一session，不重启；src/tests冻结。结束后解析真实XML与34个预期新安装模块（须实际计数）再保存身份。原954版本和两实际实验均已终止，不重跑。
+
+下一物理工作由review_water_resume独立准备research/DEFORMING_SOLID_ENERGY_DESIGN.md，只读现湿固体整体U/几何并核2–3份原理主来源，定义总应力功、骨架/界面储能与thermalU分账，不把气体孔压乘bulk变化代替湿砖力学。仅文档/证据，不动冻结源码；完成后独立审核再实现。真实原污泥材料、自由烧结/孔道/冷却力学、公开三机制留出预测、完整周期、多代搜索和CLI/UI仍为原合同必需，不缩范围。
+
+### 规定气腔分支最终冻结检查点
+
+session1707已实际exit0：**1001 passed in448.58s，0失败/错误/跳过**。XML已实际解析；34个真实site-packages模块在测试后与源码再次hash匹配。cwd=/private/tmp、无PYTHONPATH，结果为research/installed-sandbox-deforming-gas-tests.xml与installed-sandbox-deforming-gas-identity.json。所有测试进程已终止，不再轮询1707/19915，也不重复旧954整套。当前源实现止于bb3098c/1dca610加上述验证，尚无skeleton_energy实现。
+
+湿固体下一合同DEFORMING_SOLID_ENERGY_DESIGN.md已核读三主来源并给具体接口：Etotal=thermalU+温度独立骨架/界面内能；同势给应力，Wtot含储能率、耗散与真实孔体积功；初始固定Ns，反应体积/机械能导数后续仍必需。独立初审纠正耗散功率D与Rayleigh势Phi=D/2术语，并把湿恒温oracle限定为固定液汽库存，活跃相变不能据U恒定推T恒定。修订hash ef7c5795cd5c6e451b4cf97cac6ffd1f46ecf9fae3da434d099573547184a219；boundary_program正在完成最终来源/接口审查，恢复先读其实际状态/报告再实现。没有待运行EOS；不因文档预登记而宣称湿固体机械实现完成。
+
+湿固体设计最终APPROVE已闭合：Root在热U推导中补齐总E已含的explicit_body_heat，最终设计hashbc8392df0f4d3921b10fc6207f0d6fa526038218545400516d0fee174477cb08；独立CODE_REVIEW_DEFORMING_SOLID_ENERGY.md实际核读绑定，保留原修订史。总/热能身份、target误差传播、accepted RK分项功账本仍为下一真实实现必需门槛。
+
+review_water_resume已接新的隔离任务，仅/private/tmp/brick-skeleton-energy-candidate/准备skeleton_energy.py及独立测试/失败记录：明确制造的log-strain势、内部界面能、Rayleigh耗散、Piola和能量率及保守数值预算；不改repo src/tests、不做EOS/storage/integrationhook。恢复先检查代理与实际文件，完成后独立审查再应用。尚不能宣称该provider已经完成或通过；本版本完整安装证据仍仅1001项/34模块。
