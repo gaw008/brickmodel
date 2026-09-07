@@ -49,6 +49,34 @@ class InventoryLayout:
     def solid_inventory(self,row):return {n:float(row[self.species_order.index(n)]) for n in self.solid_species_order}
 
 
+@dataclass(frozen=True,kw_only=True)
+class LiquidTransportConfig:
+    relations: tuple
+    connections: tuple
+    allow_manufactured: bool = False
+
+    def __post_init__(self):
+        from .liquid_transport import SaturationMobilityTable,LiquidConnection
+        if (not isinstance(self.relations,(tuple,list)) or not self.relations
+                or any(type(v) is not SaturationMobilityTable for v in self.relations)
+                or not isinstance(self.connections,(tuple,list))
+                or any(type(v) is not LiquidConnection for v in self.connections)
+                or len(self.connections)!=len(self.relations)-1
+                or type(self.allow_manufactured) is not bool):
+            raise SolidFluidHeatError('explicit_liquid_relations_connections_required')
+        object.__setattr__(self,'relations',tuple(self.relations))
+        object.__setattr__(self,'connections',tuple(self.connections))
+        if self.manufactured and not self.allow_manufactured:
+            raise SolidFluidHeatError('manufactured_liquid_requires_explicit_test_mode')
+
+    @property
+    def manufactured(self):
+        return any(v.classification=='manufactured_test_fixture' for v in self.relations+self.connections)
+
+    @property
+    def source_ids(self):return tuple(sorted({i for v in self.relations+self.connections for i in v.source_ids}))
+
+
 @dataclass(frozen=True)
 class SolidFluidHeatEvaluation:
     rates: Rates
@@ -56,6 +84,9 @@ class SolidFluidHeatEvaluation:
     gas_states: tuple
     storage_inverses: tuple
     qualification: str = 'conditional_fixed_solid_inventory_fluid_transport_not_brick'
+    liquid_faces: tuple = ()
+    liquid_pressure_interval_scope: str = 'fixed_decoded_temperature'
+    full_inverse_liquid_direction_certified: bool = False
 
 
 @dataclass(frozen=True,kw_only=True)
@@ -63,6 +94,7 @@ class SolidFluidHeat:
     storages: tuple
     inventory_layout: InventoryLayout
     transport: RigidFluidHeat
+    liquid_transport: LiquidTransportConfig | None = None
 
     def __post_init__(self):
         from .solid_fluid_storage import SolidFluidStorage
@@ -71,6 +103,11 @@ class SolidFluidHeat:
                 or any(type(s) is not SolidFluidStorage for s in self.storages)):
             raise SolidFluidHeatError('explicit_solid_storage_layout_transport_required')
         object.__setattr__(self,'storages',tuple(self.storages))
+        if self.liquid_transport is not None:
+            if type(self.liquid_transport) is not LiquidTransportConfig or len(self.liquid_transport.relations)!=len(self.storages):
+                raise SolidFluidHeatError('per_cell_liquid_configuration_required')
+            if self.liquid_transport.manufactured and not self.transport.allow_manufactured:
+                raise SolidFluidHeatError('manufactured_liquid_requires_explicit_test_mode')
         if (len(self.storages)!=len(self.transport.storages)
                 or self.gas_species_order!=self.transport.gas_species_order
                 or self.inventory_layout.liquid_column_id!=self.transport.liquid_column_id):
@@ -96,10 +133,14 @@ class SolidFluidHeat:
     @property
     def coefficient_classification(self):return self.transport.coefficient_classification
     @property
+    def has_manufactured_liquid_transport(self):
+        return self.liquid_transport is not None and self.liquid_transport.manufactured
+    @property
     def material_qualified(self):return False
     @property
     def source_ids(self):
         sources=set(self.transport.source_ids)
+        if self.liquid_transport is not None:sources.update(self.liquid_transport.source_ids)
         for storage in self.storages:
             sources.update(storage.source_ids)
         return tuple(sorted(sources))
@@ -134,12 +175,43 @@ class SolidFluidHeat:
 
     def decode(self,state):return tuple(v.state for v in self.decode_inverse(state))
 
+    def _liquid_faces(self,decoded):
+        if self.liquid_transport is None:return ()
+        from .liquid_transport import LiquidTransportState,liquid_face_exchange,LiquidTransportError,LiquidTransportDomainError
+        from .phase_storage import LiquidWaterPhase
+        states=[]
+        try:
+            for closed,storage in zip(decoded,self.storages):
+                mechanical=closed.mechanical
+                water=storage.fluid_template.mechanical.water
+                volume=enthalpy=None
+                if mechanical.liquid_inventory_mol>0:
+                    point=water.state_tp(mechanical.temperature_k,mechanical.liquid_pressure_pa,phase='liquid')
+                    volume=point.molar_mass_kg_mol/point.density_kg_m3
+                    enthalpy=point.enthalpy_j_mol
+                states.append(LiquidTransportState(temperature_k=mechanical.temperature_k,
+                    pressure_pa=mechanical.pressure_pa,inventory_mol=mechanical.liquid_inventory_mol,
+                    saturation=mechanical.liquid_volume_m3/closed.available_pore_volume_m3,
+                    pressure_error_pa=closed.pressure_error_bound_pa,molar_volume_m3_mol=volume,
+                    enthalpy_j_mol=enthalpy,metadata=LiquidWaterPhase(water).metadata,
+                    provider_id='iapws95_real_fluid_helmholtz',provider_version='1.5.5',
+                    source_asset_sha256=tuple(sorted(water.source_asset_sha256.items()))))
+            config=self.liquid_transport
+            return tuple(liquid_face_exchange(states[i],states[i+1],left_relation=config.relations[i],
+                right_relation=config.relations[i+1],connection=connection,area_m2=self.transport.face_area_m2,
+                left_distance_m=self.transport.cell_widths_m[i]/2,right_distance_m=self.transport.cell_widths_m[i+1]/2,
+                allow_manufactured=config.allow_manufactured) for i,connection in enumerate(config.connections))
+        except LiquidTransportDomainError as exc:raise DomainExit(str(exc)) from exc
+        except LiquidTransportError as exc:raise SolidFluidHeatError(str(exc)) from exc
+        except _FAILURES as exc:_failure(exc)
+
     def evaluate(self,state,time_s):
         _num(time_s,'time')
         inverses=self.decode_inverse(state)
         decoded=tuple(v.state for v in inverses)
         transport=self.transport
         first=transport.storages[0]
+        liquid_faces=self._liquid_faces(decoded)
         names=self.gas_species_order
         masses={n:first.gas_phases[n].metadata.molar_mass_kg_mol for n in names}
         count=len(self.storages)
@@ -159,7 +231,9 @@ class SolidFluidHeat:
                     right_distance_m=transport.cell_widths_m[right]/2,
                     left_conductivity_w_m_k=transport.conductivities_w_m_k[left],
                     right_conductivity_w_m_k=transport.conductivities_w_m_k[right])
-                fe[face]=_sum((heat,transport._enthalpy(exchange)))
+                liquid=liquid_faces[face-1] if liquid_faces else None
+                if liquid is not None:fn[face,self.inventory_layout.liquid_index]=liquid.molar_flow_mol_s
+                fe[face]=_sum((heat,transport._enthalpy(exchange),liquid.enthalpy_flow_w if liquid is not None else 0.))
             if transport.outer_reservoir is not None:
                 exchange=transport._face(gases[-1],transport.outer_reservoir,count-1,None)
                 fn[-1,indices]=[exchange.net_mol_s[n] for n in names]
@@ -172,6 +246,6 @@ class SolidFluidHeat:
                     right_conductivity_w_m_k=transport.conductivities_w_m_k[-1])
                 fe[-1]=_sum((fe[-1],heat))
         except _FAILURES as exc:_failure(exc)
-        return SolidFluidHeatEvaluation(Rates(fn,fe,np.zeros_like(state.amounts_mol),np.zeros(count)),decoded,gases,inverses)
+        return SolidFluidHeatEvaluation(Rates(fn,fe,np.zeros_like(state.amounts_mol),np.zeros(count)),decoded,gases,inverses,liquid_faces=liquid_faces)
 
     def __call__(self,state,time_s):return self.evaluate(state,time_s).rates

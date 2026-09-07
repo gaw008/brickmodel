@@ -106,7 +106,7 @@ class WaterPhaseTransfer:
                       or any(p.metadata.classification=='manufactured_test_fixture'
                              for s in self._fluid_storages for p in s.gas_phases.values()))
         if type(self._thermal_host) is SolidFluidHeat:
-            manufactured = manufactured or any(
+            manufactured = manufactured or self._thermal_host.has_manufactured_liquid_transport or any(
                 s.geometry_classification=='manufactured_test_fixture' for s in self._thermal_host.storages) or any(
                 p.metadata.classification=='manufactured_test_fixture'
                 for s in self._thermal_host.storages for p in s.solid_phases.values())
