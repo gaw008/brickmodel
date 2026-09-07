@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新检查点：2b1d07f生产源码未改，已用实际安装HEOS验证非零相变与规定变形，证据research/heos-active-phase。原callback独立Decimal/Fraction算术、当前几何/一次逆解/液汽精确±/无重复潜热通过，exit0/1.956s。明确layout[solid,H2O汽,H2O液,carrier]、初态[2,1e-8,1e-4,.001]为制造fixture。两条同初态/模型/运动/精度t.5→.51轨迹，K1e-7/K0，实际各2步15eval、外部7.998/7.930s，全部prefixN/E/总水与反应对称账本通过。活跃汽增3.4788077e-6mol、比K0末温低.0014410767K，满足预登记1e-4K；局部亲和力/熵产生可独立重算，不能称全系统熵或独立轨迹真值。
+
+按预登记减半步长：fine .0025完成实际5步36eval/14.562s积分，含2.22e-16s尾步，所有prefix账本通过；finer .00125失败wall_time_limit25.052s/外26.543s、62eval8接受停.5099999999999998，未到同终点。未提高25/30上限，三尺度refinement_compare未执行，不能宣布三尺度通过。无EOS解析常库存复现同时间行为：8步cap在57eval停、10步cap实际64eval9步完成，尾步=2ulp(.51)。原失败/算术审核/源绑定全部保存，41安装模块与当前源字节匹配。
+
+本轮所有句柄64204/78508/68872/83417/44702均终态。下一动作：为时间推进累加舍入尾步建立数值政策/回归并修复（仍须完整积分剩余区间并入账本，不能snap终态或放宽物理门槛），然后重跑同finer并完成三尺度比较。当前活动相变短积分已实现运行，但完整湿变形/耗尽、实际原污泥材料、空间输运/烧结冷却、三个公开机制及全周期CLI/UI/多代搜索仍为必需缺项。Goal active，本轮属于progress。
+
 最新检查点：HEOS运行时检查优化已应用，证据 research/heos-runtime-optimization。阶段7仅runtime canonical重编码改rawSHA，构造双核验/前后读取/配置/锁/警告不变，30点7导数9故障stub通过；原湿前缀仍wall_limit/27eval3接受。阶段8另将原饱和try-body原样提取为私有锁内方法，公开饱和和温压各自完整事务，内部不重复，无缓存。原算术AST等价，17故障/公开路由stub和30点7导数通过；stage8原四步积分14.502s/29eval4接受0拒，所有原门槛通过，阶段7共同3步账本/4状态库存能量精确一致。旧失败均保留。
 
 两源码与对应真实manifest/source摘要经独立审查后应用；源码身份改变不冒充旧结果。普通uv pip离线无法选缓存numpy失败后，uv sync --frozen --no-editable --inexact --extra dev --extra water --offline成功安装锁中numpy2.5.2并保留单独核查CP8.0.0。实际41site-packages模块与源码字节一致，水相关212tests/0fail/error/skip/1.486s，测试后再核41模块；本轮未重跑全1112。安装湿态runner仅tests helper在PYTHONPATH、无候选包，并assert所有sludge导入site-packages；原四步14.40582975s积分/18.59541429s外部，29eval4接受，T误差8.606e-9K/P1.1998e-5Pa/孔压功7.35993e-7J及全部Fraction账本/独立Python熵原门槛通过。独立审查已核实际源码/来源/安装/数值记录。
