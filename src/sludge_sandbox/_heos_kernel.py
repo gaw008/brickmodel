@@ -301,22 +301,51 @@ class HEOSCandidate:
                 self._tp_iterations.clear()
                 a.specify_phase(self._cp.iphase_liquid if phase=='liquid' else self._cp.iphase_gas)
                 try:
+                    def evaluate_density(density: float, iteration: int, fraction: float | None) -> tuple[float, float, float, dict]:
+                        require(math.isfinite(density) and density>0,'heos_tp_invalid_density')
+                        require(density>=liquid.density if phase=='liquid' else density<=vapor.density,'heos_tp_density_branch')
+                        record={'iteration':iteration,'rho':density,'target_p':p,
+                                'fraction':fraction,'accepted':False,'status':'started'}
+                        self._tp_iterations.append(record)
+                        try:
+                            a.update(self._cp.DmassT_INPUTS,density,t)
+                            delta=density/322.
+                            slope=density*self._r*t*(1+2*delta*a.dalphar_dDelta()+delta*delta*a.d2alphar_dDelta2())
+                            residual=a.p()-p
+                            record.update(native_p=a.p(),h=a.hmass(),u=a.umass(),residual_pa=residual,slope=slope)
+                            require(math.isfinite(slope) and slope>0 and math.isfinite(residual),'heos_tp_invalid_slope')
+                            require(a.phase() in allowed,'heos_tp_seed_wrong_phase')
+                            gate=min(1e-4,density*1e-7)
+                            # Keep the original gate even at underflow: only an
+                            # actual zero residual passes a zero gate.
+                            merit=abs(residual)/gate if gate>0 else (0. if residual==0 else math.inf)
+                            record.update(gate_pa=gate,normalized_residual=merit,status='complete')
+                            return slope,residual,merit,record
+                        except BaseException as exc:
+                            record.update(status='failed',error_type=type(exc).__name__,reason=str(exc))
+                            raise
+
+                    slope,residual,merit,record=evaluate_density(rho,0,None)
+                    record['accepted']=True
                     for iteration in range(8):
-                        require(math.isfinite(rho) and rho>0,'heos_tp_invalid_density')
-                        require(rho>=liquid.density if phase=='liquid' else rho<=vapor.density,'heos_tp_density_branch')
-                        a.update(self._cp.DmassT_INPUTS,rho,t)
-                        delta=rho/322.
-                        slope=rho*self._r*t*(1+2*delta*a.dalphar_dDelta()+delta*delta*a.d2alphar_dDelta2())
-                        residual=a.p()-p
-                        self._tp_iterations.append({'iteration':iteration,'rho':rho,'native_p':a.p(),'target_p':p,'h':a.hmass(),'u':a.umass(),'residual_pa':residual,'slope':slope})
-                        require(math.isfinite(slope) and slope>0 and math.isfinite(residual),'heos_tp_invalid_slope')
                         if abs(residual)<=min(1e-4,rho*1e-7):
                             break
+                        if iteration==7:
+                            raise WaterNumericalError('heos_tp_not_converged')
                         step=-residual/slope
+                        # Test the ORIGINAL Newton direction before damping.
                         require(math.isfinite(step) and abs(step)<.1,'heos_tp_step_outside_seed_branch')
-                        rho*=math.exp(step)
-                    else:
-                        raise WaterNumericalError('heos_tp_not_converged')
+                        for fraction in (1.,.5,.25,.125,.0625,.03125):
+                            candidate=rho*math.exp(fraction*step)
+                            trial_slope,trial_residual,trial_merit,trial_record=evaluate_density(candidate,iteration+1,fraction)
+                            if abs(trial_residual)<=min(1e-4,candidate*1e-7) or trial_merit<merit:
+                                trial_record['accepted']=True
+                                rho,slope,residual,merit=candidate,trial_slope,trial_residual,trial_merit
+                                break
+                        else:
+                            raise WaterNumericalError('heos_tp_backtracking_failed')
+                        # The accepted candidate is already the current native
+                        # state. Reuse it without another native evaluation.
                     result=self._snapshot(t,p,phase)
                 finally:
                     a.unspecify_phase()

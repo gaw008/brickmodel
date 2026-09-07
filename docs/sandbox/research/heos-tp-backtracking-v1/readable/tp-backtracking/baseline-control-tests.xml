@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="14" skipped="0" tests="15" time="0.163" timestamp="2026-09-07T11:37:21.667567-10:00" hostname="Ws-MacBook-Pro.local"><testcase classname="test_heos_tp_backtracking" name="test_seed_gate_pass_has_one_actual_density_evaluation" time="0.000"><failure message="sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous">def test_seed_gate_pass_has_one_actual_density_evaluation():
+        obj, flags = fixture([0.])
+&gt;       out = solve(obj)
+              ^^^^^^^^^^
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:90:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:85: in solve
+    return obj.state_tp(300., .01, phase=phase)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;sludge_sandbox._heos_kernel.HEOSCandidate object at 0x10a7b0f50&gt;
+t = 300.0, p = 0.01
+
+    def state_tp(self,t,p,*,phase):
+        t=self._temperature(t)
+        if isinstance(p,bool) or not isinstance(p,(int,float)) or not math.isfinite(p) or not 0&lt;p&lt;=1e8:
+            raise WaterDomainError('pressure_out_of_declared_domain')
+        if phase not in ('liquid','vapor'):
+            raise WaterDomainError('phase_must_be_liquid_or_vapor')
+        with self._transaction():
+            liquid,vapor=self._saturation_pair_locked(t)
+            ps=liquid.pressure
+&gt;           if abs(p-ps)&lt;=max(.01,2e-8*ps):raise WaterDomainError('saturation_ambiguous')
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous
+
+src/sludge_sandbox/_heos_kernel.py:293: WaterDomainError</failure></testcase><testcase classname="test_heos_tp_backtracking" name="test_improving_full_step_has_no_duplicate_native_evaluation" time="0.000"><failure message="sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous">def test_improving_full_step_has_no_duplicate_native_evaluation():
+        obj, _ = fixture([.001, 0.])
+&gt;       solve(obj)
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:99:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:85: in solve
+    return obj.state_tp(300., .01, phase=phase)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;sludge_sandbox._heos_kernel.HEOSCandidate object at 0x10a7b2f00&gt;
+t = 300.0, p = 0.01
+
+    def state_tp(self,t,p,*,phase):
+        t=self._temperature(t)
+        if isinstance(p,bool) or not isinstance(p,(int,float)) or not math.isfinite(p) or not 0&lt;p&lt;=1e8:
+            raise WaterDomainError('pressure_out_of_declared_domain')
+        if phase not in ('liquid','vapor'):
+            raise WaterDomainError('phase_must_be_liquid_or_vapor')
+        with self._transaction():
+            liquid,vapor=self._saturation_pair_locked(t)
+            ps=liquid.pressure
+&gt;           if abs(p-ps)&lt;=max(.01,2e-8*ps):raise WaterDomainError('saturation_ambiguous')
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous
+
+src/sludge_sandbox/_heos_kernel.py:293: WaterDomainError</failure></testcase><testcase classname="test_heos_tp_backtracking" name="test_worse_full_step_uses_half_of_same_original_direction" time="0.000"><failure message="sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous">def test_worse_full_step_uses_half_of_same_original_direction():
+        obj, _ = fixture([.001, .002, 0.])
+&gt;       solve(obj)
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:108:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:85: in solve
+    return obj.state_tp(300., .01, phase=phase)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;sludge_sandbox._heos_kernel.HEOSCandidate object at 0x10a7b2a80&gt;
+t = 300.0, p = 0.01
+
+    def state_tp(self,t,p,*,phase):
+        t=self._temperature(t)
+        if isinstance(p,bool) or not isinstance(p,(int,float)) or not math.isfinite(p) or not 0&lt;p&lt;=1e8:
+            raise WaterDomainError('pressure_out_of_declared_domain')
+        if phase not in ('liquid','vapor'):
+            raise WaterDomainError('phase_must_be_liquid_or_vapor')
+        with self._transaction():
+            liquid,vapor=self._saturation_pair_locked(t)
+            ps=liquid.pressure
+&gt;           if abs(p-ps)&lt;=max(.01,2e-8*ps):raise WaterDomainError('saturation_ambiguous')
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous
+
+src/sludge_sandbox/_heos_kernel.py:293: WaterDomainError</failure></testcase><testcase classname="test_heos_tp_backtracking" name="test_equal_merit_stagnation_fails_after_six_trials" time="0.000"><failure message="sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous">def test_equal_merit_stagnation_fails_after_six_trials():
+        obj, flags = fixture([.001])
+        with pytest.raises(WaterNumericalError, match='heos_tp_backtracking_failed'):
+&gt;           solve(obj)
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:122:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:85: in solve
+    return obj.state_tp(300., .01, phase=phase)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;sludge_sandbox._heos_kernel.HEOSCandidate object at 0x10a6b04d0&gt;
+t = 300.0, p = 0.01
+
+    def state_tp(self,t,p,*,phase):
+        t=self._temperature(t)
+        if isinstance(p,bool) or not isinstance(p,(int,float)) or not math.isfinite(p) or not 0&lt;p&lt;=1e8:
+            raise WaterDomainError('pressure_out_of_declared_domain')
+        if phase not in ('liquid','vapor'):
+            raise WaterDomainError('phase_must_be_liquid_or_vapor')
+        with self._transaction():
+            liquid,vapor=self._saturation_pair_locked(t)
+            ps=liquid.pressure
+&gt;           if abs(p-ps)&lt;=max(.01,2e-8*ps):raise WaterDomainError('saturation_ambiguous')
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous
+
+src/sludge_sandbox/_heos_kernel.py:293: WaterDomainError</failure></testcase><testcase classname="test_heos_tp_backtracking" name="test_invalid_first_trial_is_fatal_without_shorter_retry[native-heos_tp_failed]" time="0.000"><failure message="sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous">invalid = 'native', reason = 'heos_tp_failed'
+
+    @pytest.mark.parametrize('invalid, reason', [('native', 'heos_tp_failed'),
+        ('slope', 'heos_tp_invalid_slope'), ('residual', 'heos_tp_invalid_slope')])
+    def test_invalid_first_trial_is_fatal_without_shorter_retry(invalid, reason):
+        obj, flags = fixture([.001, .002, 0.], invalid=invalid)
+        with pytest.raises(WaterNumericalError, match=reason):
+&gt;           solve(obj)
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:134:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:85: in solve
+    return obj.state_tp(300., .01, phase=phase)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;sludge_sandbox._heos_kernel.HEOSCandidate object at 0x10a6afbf0&gt;
+t = 300.0, p = 0.01
+
+    def state_tp(self,t,p,*,phase):
+        t=self._temperature(t)
+        if isinstance(p,bool) or not isinstance(p,(int,float)) or not math.isfinite(p) or not 0&lt;p&lt;=1e8:
+            raise WaterDomainError('pressure_out_of_declared_domain')
+        if phase not in ('liquid','vapor'):
+            raise WaterDomainError('phase_must_be_liquid_or_vapor')
+        with self._transaction():
+            liquid,vapor=self._saturation_pair_locked(t)
+            ps=liquid.pressure
+&gt;           if abs(p-ps)&lt;=max(.01,2e-8*ps):raise WaterDomainError('saturation_ambiguous')
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous
+
+src/sludge_sandbox/_heos_kernel.py:293: WaterDomainError</failure></testcase><testcase classname="test_heos_tp_backtracking" name="test_invalid_first_trial_is_fatal_without_shorter_retry[slope-heos_tp_invalid_slope]" time="0.000"><failure message="sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous">invalid = 'slope', reason = 'heos_tp_invalid_slope'
+
+    @pytest.mark.parametrize('invalid, reason', [('native', 'heos_tp_failed'),
+        ('slope', 'heos_tp_invalid_slope'), ('residual', 'heos_tp_invalid_slope')])
+    def test_invalid_first_trial_is_fatal_without_shorter_retry(invalid, reason):
+        obj, flags = fixture([.001, .002, 0.], invalid=invalid)
+        with pytest.raises(WaterNumericalError, match=reason):
+&gt;           solve(obj)
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:134:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:85: in solve
+    return obj.state_tp(300., .01, phase=phase)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;sludge_sandbox._heos_kernel.HEOSCandidate object at 0x10a733260&gt;
+t = 300.0, p = 0.01
+
+    def state_tp(self,t,p,*,phase):
+        t=self._temperature(t)
+        if isinstance(p,bool) or not isinstance(p,(int,float)) or not math.isfinite(p) or not 0&lt;p&lt;=1e8:
+            raise WaterDomainError('pressure_out_of_declared_domain')
+        if phase not in ('liquid','vapor'):
+            raise WaterDomainError('phase_must_be_liquid_or_vapor')
+        with self._transaction():
+            liquid,vapor=self._saturation_pair_locked(t)
+            ps=liquid.pressure
+&gt;           if abs(p-ps)&lt;=max(.01,2e-8*ps):raise WaterDomainError('saturation_ambiguous')
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous
+
+src/sludge_sandbox/_heos_kernel.py:293: WaterDomainError</failure></testcase><testcase classname="test_heos_tp_backtracking" name="test_invalid_first_trial_is_fatal_without_shorter_retry[residual-heos_tp_invalid_slope]" time="0.000"><failure message="sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous">invalid = 'residual', reason = 'heos_tp_invalid_slope'
+
+    @pytest.mark.parametrize('invalid, reason', [('native', 'heos_tp_failed'),
+        ('slope', 'heos_tp_invalid_slope'), ('residual', 'heos_tp_invalid_slope')])
+    def test_invalid_first_trial_is_fatal_without_shorter_retry(invalid, reason):
+        obj, flags = fixture([.001, .002, 0.], invalid=invalid)
+        with pytest.raises(WaterNumericalError, match=reason):
+&gt;           solve(obj)
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:134:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:85: in solve
+    return obj.state_tp(300., .01, phase=phase)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;sludge_sandbox._heos_kernel.HEOSCandidate object at 0x10a730a40&gt;
+t = 300.0, p = 0.01
+
+    def state_tp(self,t,p,*,phase):
+        t=self._temperature(t)
+        if isinstance(p,bool) or not isinstance(p,(int,float)) or not math.isfinite(p) or not 0&lt;p&lt;=1e8:
+            raise WaterDomainError('pressure_out_of_declared_domain')
+        if phase not in ('liquid','vapor'):
+            raise WaterDomainError('phase_must_be_liquid_or_vapor')
+        with self._transaction():
+            liquid,vapor=self._saturation_pair_locked(t)
+            ps=liquid.pressure
+&gt;           if abs(p-ps)&lt;=max(.01,2e-8*ps):raise WaterDomainError('saturation_ambiguous')
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous
+
+src/sludge_sandbox/_heos_kernel.py:293: WaterDomainError</failure></testcase><testcase classname="test_heos_tp_backtracking" name="test_original_large_step_is_not_rescued_by_damping" time="0.000"><failure message="sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous">def test_original_large_step_is_not_rescued_by_damping():
+        obj, _ = fixture([1e8])
+        with pytest.raises(WaterNumericalError, match='heos_tp_step_outside_seed_branch'):
+&gt;           solve(obj)
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:142:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:85: in solve
+    return obj.state_tp(300., .01, phase=phase)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;sludge_sandbox._heos_kernel.HEOSCandidate object at 0x10a730860&gt;
+t = 300.0, p = 0.01
+
+    def state_tp(self,t,p,*,phase):
+        t=self._temperature(t)
+        if isinstance(p,bool) or not isinstance(p,(int,float)) or not math.isfinite(p) or not 0&lt;p&lt;=1e8:
+            raise WaterDomainError('pressure_out_of_declared_domain')
+        if phase not in ('liquid','vapor'):
+            raise WaterDomainError('phase_must_be_liquid_or_vapor')
+        with self._transaction():
+            liquid,vapor=self._saturation_pair_locked(t)
+            ps=liquid.pressure
+&gt;           if abs(p-ps)&lt;=max(.01,2e-8*ps):raise WaterDomainError('saturation_ambiguous')
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous
+
+src/sludge_sandbox/_heos_kernel.py:293: WaterDomainError</failure></testcase><testcase classname="test_heos_tp_backtracking" name="test_density_branch_crossing_is_fatal_before_native_trial" time="0.000"><failure message="sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous">def test_density_branch_crossing_is_fatal_before_native_trial():
+        obj, _ = fixture([100.], seed=997.000001)
+        with pytest.raises(WaterNumericalError, match='heos_tp_density_branch'):
+&gt;           solve(obj)
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:149:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:85: in solve
+    return obj.state_tp(300., .01, phase=phase)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;sludge_sandbox._heos_kernel.HEOSCandidate object at 0x10a6ae630&gt;
+t = 300.0, p = 0.01
+
+    def state_tp(self,t,p,*,phase):
+        t=self._temperature(t)
+        if isinstance(p,bool) or not isinstance(p,(int,float)) or not math.isfinite(p) or not 0&lt;p&lt;=1e8:
+            raise WaterDomainError('pressure_out_of_declared_domain')
+        if phase not in ('liquid','vapor'):
+            raise WaterDomainError('phase_must_be_liquid_or_vapor')
+        with self._transaction():
+            liquid,vapor=self._saturation_pair_locked(t)
+            ps=liquid.pressure
+&gt;           if abs(p-ps)&lt;=max(.01,2e-8*ps):raise WaterDomainError('saturation_ambiguous')
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous
+
+src/sludge_sandbox/_heos_kernel.py:293: WaterDomainError</failure></testcase><testcase classname="test_heos_tp_backtracking" name="test_vapor_uses_original_density_scaled_gate" time="0.000"><failure message="AssertionError: Regex pattern did not match.&#10; Regex: 'heos_tp_backtracking_failed'&#10; Input: 'heos_tp_not_converged'">def test_vapor_uses_original_density_scaled_gate():
+        obj, flags = fixture([7e-8], phase='vapor')
+        with pytest.raises(WaterNumericalError, match='heos_tp_backtracking_failed'):
+&gt;           solve(obj, 'vapor')
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:156:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:85: in solve
+    return obj.state_tp(300., .01, phase=phase)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;sludge_sandbox._heos_kernel.HEOSCandidate object at 0x10a7b2c00&gt;
+t = 300.0, p = 0.01
+
+    def state_tp(self,t,p,*,phase):
+        t=self._temperature(t)
+        if isinstance(p,bool) or not isinstance(p,(int,float)) or not math.isfinite(p) or not 0&lt;p&lt;=1e8:
+            raise WaterDomainError('pressure_out_of_declared_domain')
+        if phase not in ('liquid','vapor'):
+            raise WaterDomainError('phase_must_be_liquid_or_vapor')
+        with self._transaction():
+            liquid,vapor=self._saturation_pair_locked(t)
+            ps=liquid.pressure
+            if abs(p-ps)&lt;=max(.01,2e-8*ps):raise WaterDomainError('saturation_ambiguous')
+            if (phase=='liquid' and p&lt;ps) or (phase=='vapor' and p&gt;ps):raise WaterDomainError('unstable_requested_phase')
+            try:
+                a=self._flash
+                a.update(self._cp.PT_INPUTS,p,t)
+                allowed=(self._cp.iphase_liquid,self._cp.iphase_supercritical_liquid) if phase=='liquid' else (self._cp.iphase_gas,)
+                require(a.phase() in allowed,'heos_tp_seed_wrong_phase')
+                rho=a.rhomass()
+                self._tp_iterations.clear()
+                a.specify_phase(self._cp.iphase_liquid if phase=='liquid' else self._cp.iphase_gas)
+                try:
+                    for iteration in range(8):
+                        require(math.isfinite(rho) and rho&gt;0,'heos_tp_invalid_density')
+                        require(rho&gt;=liquid.density if phase=='liquid' else rho&lt;=vapor.density,'heos_tp_density_branch')
+                        a.update(self._cp.DmassT_INPUTS,rho,t)
+                        delta=rho/322.
+                        slope=rho*self._r*t*(1+2*delta*a.dalphar_dDelta()+delta*delta*a.d2alphar_dDelta2())
+                        residual=a.p()-p
+                        self._tp_iterations.append({'iteration':iteration,'rho':rho,'native_p':a.p(),'target_p':p,'h':a.hmass(),'u':a.umass(),'residual_pa':residual,'slope':slope})
+                        require(math.isfinite(slope) and slope&gt;0 and math.isfinite(residual),'heos_tp_invalid_slope')
+                        if abs(residual)&lt;=min(1e-4,rho*1e-7):
+                            break
+                        step=-residual/slope
+                        require(math.isfinite(step) and abs(step)&lt;.1,'heos_tp_step_outside_seed_branch')
+                        rho*=math.exp(step)
+                    else:
+&gt;                       raise WaterNumericalError('heos_tp_not_converged')
+E                       sludge_sandbox.water_properties.WaterNumericalError: heos_tp_not_converged
+
+src/sludge_sandbox/_heos_kernel.py:319: WaterNumericalError
+
+During handling of the above exception, another exception occurred:
+
+    def test_vapor_uses_original_density_scaled_gate():
+        obj, flags = fixture([7e-8], phase='vapor')
+&gt;       with pytest.raises(WaterNumericalError, match='heos_tp_backtracking_failed'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E        Regex: 'heos_tp_backtracking_failed'
+E        Input: 'heos_tp_not_converged'
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:155: AssertionError</failure></testcase><testcase classname="test_heos_tp_backtracking" name="test_eighth_accepted_density_cannot_create_a_ninth" time="0.000"><failure message="sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous">def test_eighth_accepted_density_cannot_create_a_ninth():
+        obj, flags = fixture([.001/(i+1) for i in range(10)])
+        with pytest.raises(WaterNumericalError, match='heos_tp_not_converged'):
+&gt;           solve(obj)
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:164:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:85: in solve
+    return obj.state_tp(300., .01, phase=phase)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;sludge_sandbox._heos_kernel.HEOSCandidate object at 0x10a733b30&gt;
+t = 300.0, p = 0.01
+
+    def state_tp(self,t,p,*,phase):
+        t=self._temperature(t)
+        if isinstance(p,bool) or not isinstance(p,(int,float)) or not math.isfinite(p) or not 0&lt;p&lt;=1e8:
+            raise WaterDomainError('pressure_out_of_declared_domain')
+        if phase not in ('liquid','vapor'):
+            raise WaterDomainError('phase_must_be_liquid_or_vapor')
+        with self._transaction():
+            liquid,vapor=self._saturation_pair_locked(t)
+            ps=liquid.pressure
+&gt;           if abs(p-ps)&lt;=max(.01,2e-8*ps):raise WaterDomainError('saturation_ambiguous')
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous
+
+src/sludge_sandbox/_heos_kernel.py:293: WaterDomainError</failure></testcase><testcase classname="test_heos_tp_backtracking" name="test_seven_six_trial_searches_have_exact_43_evaluation_bound" time="0.000"><failure message="sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous">def test_seven_six_trial_searches_have_exact_43_evaluation_bound():
+        # Five deliberately worse proposals followed by one strict improvement
+        # at each of seven updates; none reaches the unchanged physical gate.
+        values = [.008]
+        for level in range(1, 8):
+            values.extend([.02]*5+[.008/(level+1)])
+        obj, flags = fixture(values)
+        with pytest.raises(WaterNumericalError, match='heos_tp_not_converged'):
+&gt;           solve(obj)
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:178:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:85: in solve
+    return obj.state_tp(300., .01, phase=phase)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;sludge_sandbox._heos_kernel.HEOSCandidate object at 0x10a731ee0&gt;
+t = 300.0, p = 0.01
+
+    def state_tp(self,t,p,*,phase):
+        t=self._temperature(t)
+        if isinstance(p,bool) or not isinstance(p,(int,float)) or not math.isfinite(p) or not 0&lt;p&lt;=1e8:
+            raise WaterDomainError('pressure_out_of_declared_domain')
+        if phase not in ('liquid','vapor'):
+            raise WaterDomainError('phase_must_be_liquid_or_vapor')
+        with self._transaction():
+            liquid,vapor=self._saturation_pair_locked(t)
+            ps=liquid.pressure
+&gt;           if abs(p-ps)&lt;=max(.01,2e-8*ps):raise WaterDomainError('saturation_ambiguous')
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous
+
+src/sludge_sandbox/_heos_kernel.py:293: WaterDomainError</failure></testcase><testcase classname="test_heos_tp_backtracking" name="test_source_transaction_failure_never_returns_a_state[pre_source]" time="0.000" /><testcase classname="test_heos_tp_backtracking" name="test_source_transaction_failure_never_returns_a_state[post_source]" time="0.000"><failure message="sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous">invalid = 'post_source'
+
+    @pytest.mark.parametrize('invalid', ['pre_source', 'post_source'])
+    def test_source_transaction_failure_never_returns_a_state(invalid):
+        obj, flags = fixture([0.], invalid=invalid)
+        with pytest.raises(WaterSourceError, match='scripted_source_changed'):
+&gt;           solve(obj)
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:189:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:85: in solve
+    return obj.state_tp(300., .01, phase=phase)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;sludge_sandbox._heos_kernel.HEOSCandidate object at 0x10a8b2780&gt;
+t = 300.0, p = 0.01
+
+    def state_tp(self,t,p,*,phase):
+        t=self._temperature(t)
+        if isinstance(p,bool) or not isinstance(p,(int,float)) or not math.isfinite(p) or not 0&lt;p&lt;=1e8:
+            raise WaterDomainError('pressure_out_of_declared_domain')
+        if phase not in ('liquid','vapor'):
+            raise WaterDomainError('phase_must_be_liquid_or_vapor')
+        with self._transaction():
+            liquid,vapor=self._saturation_pair_locked(t)
+            ps=liquid.pressure
+&gt;           if abs(p-ps)&lt;=max(.01,2e-8*ps):raise WaterDomainError('saturation_ambiguous')
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous
+
+src/sludge_sandbox/_heos_kernel.py:293: WaterDomainError</failure></testcase><testcase classname="test_heos_tp_backtracking" name="test_final_snapshot_failure_is_not_relabelled_as_success" time="0.000"><failure message="sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous">def test_final_snapshot_failure_is_not_relabelled_as_success():
+        obj, _ = fixture([0.], invalid='snapshot')
+        with pytest.raises(WaterNumericalError, match='scripted_snapshot_invalid'):
+&gt;           solve(obj)
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:197:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:85: in solve
+    return obj.state_tp(300., .01, phase=phase)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;sludge_sandbox._heos_kernel.HEOSCandidate object at 0x10a8b04a0&gt;
+t = 300.0, p = 0.01
+
+    def state_tp(self,t,p,*,phase):
+        t=self._temperature(t)
+        if isinstance(p,bool) or not isinstance(p,(int,float)) or not math.isfinite(p) or not 0&lt;p&lt;=1e8:
+            raise WaterDomainError('pressure_out_of_declared_domain')
+        if phase not in ('liquid','vapor'):
+            raise WaterDomainError('phase_must_be_liquid_or_vapor')
+        with self._transaction():
+            liquid,vapor=self._saturation_pair_locked(t)
+            ps=liquid.pressure
+&gt;           if abs(p-ps)&lt;=max(.01,2e-8*ps):raise WaterDomainError('saturation_ambiguous')
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           sludge_sandbox.water_properties.WaterDomainError: saturation_ambiguous
+
+src/sludge_sandbox/_heos_kernel.py:293: WaterDomainError</failure></testcase></testsuite></testsuites>

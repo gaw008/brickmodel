@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="9" time="1.046" timestamp="2026-09-07T11:44:55.509270-10:00" hostname="Ws-MacBook-Pro.local"><testcase classname="brick-heos-tp-backtracking-v1.test_heos_tp_native" name="test_tp_cycling_point_and_fixed_neighbors_keep_original_gate[53692.53782795906-294.999]" time="0.030" /><testcase classname="brick-heos-tp-backtracking-v1.test_heos_tp_native" name="test_tp_cycling_point_and_fixed_neighbors_keep_original_gate[53692.53782795906-295.0]" time="0.003" /><testcase classname="brick-heos-tp-backtracking-v1.test_heos_tp_native" name="test_tp_cycling_point_and_fixed_neighbors_keep_original_gate[53692.53782795906-295.001]" time="0.003" /><testcase classname="brick-heos-tp-backtracking-v1.test_heos_tp_native" name="test_tp_cycling_point_and_fixed_neighbors_keep_original_gate[53692.54782795906-294.999]" time="0.003" /><testcase classname="brick-heos-tp-backtracking-v1.test_heos_tp_native" name="test_tp_cycling_point_and_fixed_neighbors_keep_original_gate[53692.54782795906-295.0]" time="0.002"><failure message="sludge_sandbox.water_properties.WaterNumericalError: heos_tp_not_converged">qualified_heos = HEOSWaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg...e"]},"schema":"hybrid_water_v1","wrapper_sha256":"763837050119a98f99653449d3d56d3d45c24f7b152cee4d383e867198be6afe"}'))
+temperature = 295.0, pressure = 53692.54782795906
+
+    @pytest.mark.parametrize('temperature', [T0-.001, T0, T0+.001])
+    @pytest.mark.parametrize('pressure', [P0-.01, P0, P0+.01])
+    def test_tp_cycling_point_and_fixed_neighbors_keep_original_gate(qualified_heos, temperature, pressure):
+&gt;       state = qualified_heos.state_tp(temperature, pressure, phase='liquid')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+brick-heos-tp-backtracking-v1/test_heos_tp_native.py:20:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/water_heos.py:75: in state_tp
+    return self._state(self._kernel.state_tp(temperature_k,pressure_pa,phase=phase))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;sludge_sandbox._heos_kernel.HEOSCandidate object at 0x10bf24410&gt;
+t = 295.0, p = 53692.54782795906
+
+    def state_tp(self,t,p,*,phase):
+        t=self._temperature(t)
+        if isinstance(p,bool) or not isinstance(p,(int,float)) or not math.isfinite(p) or not 0&lt;p&lt;=1e8:
+            raise WaterDomainError('pressure_out_of_declared_domain')
+        if phase not in ('liquid','vapor'):
+            raise WaterDomainError('phase_must_be_liquid_or_vapor')
+        with self._transaction():
+            liquid,vapor=self._saturation_pair_locked(t)
+            ps=liquid.pressure
+            if abs(p-ps)&lt;=max(.01,2e-8*ps):raise WaterDomainError('saturation_ambiguous')
+            if (phase=='liquid' and p&lt;ps) or (phase=='vapor' and p&gt;ps):raise WaterDomainError('unstable_requested_phase')
+            try:
+                a=self._flash
+                a.update(self._cp.PT_INPUTS,p,t)
+                allowed=(self._cp.iphase_liquid,self._cp.iphase_supercritical_liquid) if phase=='liquid' else (self._cp.iphase_gas,)
+                require(a.phase() in allowed,'heos_tp_seed_wrong_phase')
+                rho=a.rhomass()
+                self._tp_iterations.clear()
+                a.specify_phase(self._cp.iphase_liquid if phase=='liquid' else self._cp.iphase_gas)
+                try:
+                    for iteration in range(8):
+                        require(math.isfinite(rho) and rho&gt;0,'heos_tp_invalid_density')
+                        require(rho&gt;=liquid.density if phase=='liquid' else rho&lt;=vapor.density,'heos_tp_density_branch')
+                        a.update(self._cp.DmassT_INPUTS,rho,t)
+                        delta=rho/322.
+                        slope=rho*self._r*t*(1+2*delta*a.dalphar_dDelta()+delta*delta*a.d2alphar_dDelta2())
+                        residual=a.p()-p
+                        self._tp_iterations.append({'iteration':iteration,'rho':rho,'native_p':a.p(),'target_p':p,'h':a.hmass(),'u':a.umass(),'residual_pa':residual,'slope':slope})
+                        require(math.isfinite(slope) and slope&gt;0 and math.isfinite(residual),'heos_tp_invalid_slope')
+                        if abs(residual)&lt;=min(1e-4,rho*1e-7):
+                            break
+                        step=-residual/slope
+                        require(math.isfinite(step) and abs(step)&lt;.1,'heos_tp_step_outside_seed_branch')
+                        rho*=math.exp(step)
+                    else:
+&gt;                       raise WaterNumericalError('heos_tp_not_converged')
+E                       sludge_sandbox.water_properties.WaterNumericalError: heos_tp_not_converged
+
+brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/_heos_kernel.py:319: WaterNumericalError</failure></testcase><testcase classname="brick-heos-tp-backtracking-v1.test_heos_tp_native" name="test_tp_cycling_point_and_fixed_neighbors_keep_original_gate[53692.54782795906-295.001]" time="0.003" /><testcase classname="brick-heos-tp-backtracking-v1.test_heos_tp_native" name="test_tp_cycling_point_and_fixed_neighbors_keep_original_gate[53692.55782795906-294.999]" time="0.003" /><testcase classname="brick-heos-tp-backtracking-v1.test_heos_tp_native" name="test_tp_cycling_point_and_fixed_neighbors_keep_original_gate[53692.55782795906-295.0]" time="0.003" /><testcase classname="brick-heos-tp-backtracking-v1.test_heos_tp_native" name="test_tp_cycling_point_and_fixed_neighbors_keep_original_gate[53692.55782795906-295.001]" time="0.003" /></testsuite></testsuites>

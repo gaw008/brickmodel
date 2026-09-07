@@ -1,0 +1,196 @@
+{
+  "experiment_id": "manufactured-reacting-wet-v4-tp-backtracking",
+  "baseline_commit": "a4f968f",
+  "status": "preregistered_not_executed",
+  "purpose": "Actual A/B solid reaction plus source-qualified active water transfer, prescribed isotropic deformation and depletion",
+  "scope": "Manufactured A/B chemistry and skeleton, not raw sludge or free sintering. No independent wet temperature oracle.",
+  "layout": [
+    "A",
+    "B",
+    "H2O",
+    "H2O_liquid",
+    "fixture"
+  ],
+  "initial_amounts_mol": [
+    2,
+    0,
+    1e-08,
+    1e-06,
+    0.001
+  ],
+  "initial_temperature_k": 300,
+  "time_interval_s": [
+    0.5,
+    0.5078125
+  ],
+  "water": "Installed approved HEOS 8.0.0 with matched IdealWaterVapor and WaterChemicalPotential; exact current source/hash guards unchanged",
+  "solid": {
+    "caloric_and_volume_fixture": "test_incompressible_solid.phase/caloric, matching test_reacting_deforming_solid_heat A/B",
+    "molar_mass_kg_mol": 0.012,
+    "cp_j_mol_k": 5,
+    "vA_m3_mol": 2e-05,
+    "vB_m3_mol": 1e-05,
+    "formation_enthalpy_A_j_mol": -100000,
+    "formation_enthalpy_B_j_mol": -100005,
+    "reference_pressure_pa": 100000.0,
+    "delta_u_BA_j_mol": -4,
+    "declared_u_error_j_mol": 2e-07,
+    "declared_v_error_m3_mol": 1e-12,
+    "rate": "A -> B; k=0.1 /s, Ea=0, complete current storage rebinding",
+    "kinetic_temperature_domain_k": [
+      295,
+      310
+    ],
+    "domain_note": "Explicit new manufactured valid domain; dry helper default300..1500 not reused because wet cooling may cross300",
+    "element_definition": "A and B each have one declared C atom; no invented elemental composition for inert carrier"
+  },
+  "mechanics": {
+    "reference_volume_m3": 0.0001,
+    "normal_and_tangential_knots": [
+      1,
+      0.9
+    ],
+    "knots_s": [
+      0,
+      1
+    ],
+    "motion": "Original wet isotropic cubic smoothstep rest-to-rest",
+    "bulk_modulus_pa": 1000,
+    "shear_modulus_pa": 400,
+    "viscosity_pa_s": 3,
+    "interface_gamma_j_m2": 100,
+    "interface_area_m2": 0.003,
+    "q0": 1,
+    "wA_per_mol": 0,
+    "wB_per_mol": 10,
+    "change_note": "Interface reference0.3J deliberately differs from old fixed wet0.0015J; initial totalE recomputed under new identity",
+    "power_keys": [
+      "elastic_deformation",
+      "interface_deformation",
+      "dissipation",
+      "bulk_pressure",
+      "body"
+    ],
+    "power_semantics": "fixed-N deformation and dissipation, -p*dVbulk; no composition derivative as extra power, no extra reaction/latent heat"
+  },
+  "interface_coefficient_mol_s_pa": 1e-06,
+  "inverse_policy": {
+    "energy_absolute_j": 1e-06,
+    "temperature_absolute_k": 1e-06,
+    "maximum_iterations": 120
+  },
+  "resource_limits": {
+    "callback_external_s": 30,
+    "integration_internal_s": 120,
+    "integration_external_s": 150,
+    "maximum_steps": 500
+  },
+  "two_runs": [
+    {
+      "refinement": 0,
+      "initial_step_s": 0.0009765625,
+      "maximum_step_s": 0.00390625
+    },
+    {
+      "refinement": 1,
+      "initial_step_s": 0.00048828125,
+      "maximum_step_s": 0.001953125
+    }
+  ],
+  "event_gates": {
+    "time_s": 1e-07,
+    "amount_mol": 1e-10,
+    "energy_j": 1e-06,
+    "temperature_k": 1e-05,
+    "pressure_pa": 1,
+    "terminal_window_s": 6.103515625e-05,
+    "common_time_horizon_s": 0.00390625
+  },
+  "other_policies": "test_depletion_integration.policies unchanged including roundoff budgets; water mass from actual source provider",
+  "prefix_gates": {
+    "A_plus_B_mol": 1e-10,
+    "analytic_A_mol": 1e-09,
+    "water_total_mol": 1e-12,
+    "total_energy_j": 1e-07,
+    "closed_face_flux": "exact zero",
+    "carrier": "exact unchanged",
+    "components": "exact Fraction sum plus recorded residual"
+  },
+  "required_event": "Exactly one actual depletion, dry continuation with positive A->B reaction, zero liquid, nonzero retained interface coefficient. Failure/domain exit retained without forcing event.",
+  "evidence": "Complete run states/steps/events/refinements/corrections/roundoff totals before assertions; each accepted prefix audit; actual installed-vs-source identity before/after and supervisor hashes/cleanup; second cap comparison at original event gates",
+  "execution_order": "Review frozen scripts, bounded callback, inspect terminal and evidence, depletion0, inspect, depletion1, inspect, compare; no concurrent EOS; never restart live handle",
+  "prepared_script_sha256": {
+    "fixture.py": "b85f1d55460b65b64ff4ecade268b9b2f2168a87271c472b3065ddb682f0c531",
+    "callback.py": "a84b7ea5dd7adfd4838595d41ddbe149482442a1b31391de56c99f8f907faae6",
+    "depletion.py": "141a90056e70c21318cc2b72615150a0d78827b77992e0b4444c93695d9891f4",
+    "compare.py": "b2f9385f489f3362f88bea79e21b8e9c40a3557a359a45945f8e20b687ede3c3",
+    "run.py": "dcc9ba014c8f642824f25662dc0ac39961f5580e0db85d367f7032bb7369e612"
+  },
+  "prior_failed_experiment": "/private/tmp/brick-reacting-wet-v3/depletion0-attempt01",
+  "numerical_change": {
+    "source": "src/sludge_sandbox/solid_fluid_storage.py",
+    "sha256": "67e407cdce28a159902f292d53d4076b507a2bb43c6fb2989b8699423f8580e6",
+    "policy": "one certified local pressure enclosure after original global domain check",
+    "preregistration": "/private/tmp/brick-solid-pressure-bound-v1/PLAN.md",
+    "physical_parameters_unchanged": true,
+    "source_uncertainties_unchanged": true,
+    "original_event_and_resource_gates_unchanged": true
+  },
+  "numerical_strategy": {
+    "strategy_id": "nested_wet_ordinary_spine_v1",
+    "ordinary_maximum_step_s": "same as each run ordinary integration maximum",
+    "safe_inventory_fraction": 0.25,
+    "reuse_ordinary_spine": true,
+    "independent_check": "both ordinary cap and actual safe fraction halved; no sharing; all original gates; original path requires two terminal passes",
+    "candidate_sha256": "ab465ad7a1da9d39787afd7dd2c6dfc24e680936e9a6c99593b345ddbc49135a"
+  },
+  "execution_gate": "Single EOS process only. After nine-point native terminal evidence reviewed, run fresh v4 callback at30s; inspect then depletion0 internal120s/external150s. Only if first integration completes all unchanged gates run depletion1 and compare. Preserve any failure; do not rerun or relax budgets/gates.",
+  "preparation_baseline_commit": "9ab4b659c539dcc790e4286c241a92016f9de670",
+  "baseline_commit_note": "Original physical/depletion preregistration baseline preserved; preparation commit does not include pending reviewed TP source and manifest changes, which are separately pinned below.",
+  "eos_numerical_change": {
+    "source": "src/sludge_sandbox/_heos_kernel.py",
+    "old_sha256": "88bbbdd91fbe12d351faf6415883c177fec2fec4a7e51d77d98d864b49d51d93",
+    "new_sha256": "c1ecb59c702382c78891f4fcf6b6ac5eb8c68cc57869b1e261ec8a3a4a796b12",
+    "manifest": "data/sandbox/water/heos-8.0.0-approved-manifest.json",
+    "old_manifest_sha256": "ffb53b365cf8e77222b9384403fe4670029f94e7ac46df28a786ad03031f4bf0",
+    "new_manifest_sha256": "5f9e39bf1d3376b931caaf8fbda478b482cafe4c8b57a490860ac6ed080bf6db",
+    "strategy": "Bounded TP Newton backtracking; original full-step abs(log density change)<0.1 guard before damping; each trial valid or fatal; accept original residual gate or strict normalized merit decrease; final original snapshot required.",
+    "maximum_accepted_density_states": 8,
+    "fractions": [
+      1,
+      0.5,
+      0.25,
+      0.125,
+      0.0625,
+      0.03125
+    ],
+    "maximum_density_evaluations_per_tp_solve": 43,
+    "density_evaluation_limit_scope": "1 seed+7*6 trial evaluations; excludes original constructor/saturation/PT seed/full snapshot work.",
+    "residual_gate": "min(1e-4, rho*1e-7) Pa unchanged",
+    "accepted_trial_reused_without_duplicate_native_evaluation": true,
+    "actual_failed_and_rejected_trials_recorded": true,
+    "physics_source_assets_and_host_inverse_brackets_unchanged": true,
+    "physical_parameters_and_all_original_integration_event_resource_gates_unchanged": true,
+    "implementation_review": "/private/tmp/brick-heos-tp-backtracking-v1/IMPLEMENTATION.md",
+    "prerequisite": "Parent reviews terminal candidate nine-point native evidence before any v4 EOS execution; prepare-only while that run is live."
+  },
+  "exact_copy_from_v3": {
+    "directory": "/private/tmp/brick-reacting-wet-v3",
+    "scripts": [
+      "fixture.py",
+      "callback.py",
+      "depletion.py",
+      "compare.py",
+      "run.py"
+    ],
+    "all_five_byte_identical": true,
+    "note": "Legacy callback attempt_id and manufactured material/geometry v1 labels remain byte-identical; new experiment identity is PLAN experiment_id and v4 attempt directory, not a new physical fixture."
+  },
+  "fresh_callback_requirement": "No v3 callback or depletion/comparison results copied. Generate a fresh v4 callback with current implementation/source identity before depletion0; inspect terminal status and identities. Never use v3 callback result as v4 acceptance.",
+  "reviewed_execution_commands": [
+    "/private/tmp/brick-water-backend-probe/venv/bin/python /private/tmp/brick-reacting-wet-v4/run.py callback callback-attempt01",
+    "/private/tmp/brick-water-backend-probe/venv/bin/python /private/tmp/brick-reacting-wet-v4/run.py depletion0 depletion0-attempt01",
+    "/private/tmp/brick-water-backend-probe/venv/bin/python /private/tmp/brick-reacting-wet-v4/run.py depletion1 depletion1-attempt01",
+    "/private/tmp/brick-water-backend-probe/venv/bin/python /private/tmp/brick-reacting-wet-v4/compare.py"
+  ]
+}

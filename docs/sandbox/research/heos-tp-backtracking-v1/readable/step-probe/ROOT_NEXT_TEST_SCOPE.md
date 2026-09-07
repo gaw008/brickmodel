@@ -1,0 +1,7 @@
+# Next no-EOS control test scope (conditional on native step probe)
+
+For a later bounded TP correction, root will own tests. Scripted native responses are explicitly numerical control fixtures, not an alternative EOS or material evidence. Preserve the original 8 accepted outer density states and all current branch/phase/slope, abs(log step)<.1, dynamic min(1e-4,rho*1e-7), transaction and final snapshot checks.
+
+Proposed cases before implementation: seed gate pass needs one density evaluation; monotonically improving full step uses no duplicated native evaluation; worsening full step followed by passing half step uses same original base; all six fractions nonimproving exits explicitly; every invalid native/slope/source/branch result remains fatal and phase cleanup occurs; a too-large original step is not rescued by damping; vapor density-dependent gate rejects residual above rho*1e-7 even below1e-4; at most8 accepted iterates and at most1+7*6 density evaluations if each search bounded6; accepted records retain actual rejected attempts and candidate fraction; source transaction failure cannot return snapshot; earlier saturation solver numerical behavior remains unchanged.
+
+Native validation after a reviewed candidate must first reproduce saved failing exactpoint in old source, then verify candidate there and at preregistered nearby temperatures/pressures plus existing broad water checks. All guards and comparison gates remain unchanged. No candidate is chosen or accepted solely by this control-test plan.

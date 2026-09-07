@@ -139,3 +139,5 @@ HEOS共存数值政策 `NUM-HEOS-COEXISTENCE-BACKTRACK-1`：固定T的F=(Δp,Δg
 `NUM-SOLID-VOLUME-PRESSURE-LOCAL-1` → `solid_fluid_storage.py`：保留原全局压力包络拒绝，再用已证实上端收紧同一体积误差的导数界，原流体误差不变；`test_solid_pressure_bound.py` 的独立双向有理气体根验证。实际边界与原湿态失败见 `research/solid-pressure-bound-v1/README.md`；这是数值传播政策，不能据此称湿态事件已收敛。
 
 `NUM-DEPLETION-NESTED-APPROACH-1` → `depletion_integration.py` 的 `NestedApproachPolicy`、普通湿态前缀与独立实际网格比较：`test_depletion_spine.py` 独立根/反应/能量参照、缓存等价、共同偏差拒绝、多事件和成本回滚；`test_depletion_spine_source_guards.py` 最后两次试算来源变化与新终端故障拒绝。原 `depletion_roundoff.py` 线性最近向下时钟证据未改。来源注册类别为数值策略，不是材料本构。
+
+`NUM-HEOS-TP-BACKTRACK-1` → `_heos_kernel.py:HEOSCandidate.state_tp`：原动态压力门槛、最多8接受状态/6候选/43实际评估；`test_heos_tp_backtracking.py` 控制反例、精确停滞、失败尝试、来源/快照终止与下溢门槛；`test_heos_tp_native.py` 原失败295K/53692.54782795906Pa及固定八邻点。`water_heos.py`、HEOS manifest 与 source 注册仅同步实现身份，不改物理常数或水数据。

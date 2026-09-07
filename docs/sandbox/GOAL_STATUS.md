@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新完成阶段：HEOS TP回溯修正完整安装回归 session9190 terminal exit0，1220通过/零失败错误跳过，XML539.545s；前后42实际导入模块与源码逐字节一致。当前无活动EOS/测试。原生九点旧8pass1fail/新9pass；v4通过旧TP失败点和两次末端比较，但必需独立减半检查在原120s预算耗尽，0事件，depletion1未运行。74项原始证据已归档并逐项复读核SHA/长度：research/heos-tp-backtracking-v1/，包含失败XML、原始候选、源码绑定、v4结果与独立审计。下一有限数值步骤见其中 readable/wet-v4/NEXT_NUMERICAL_STEP.md：研究二阶末端积分与真实事件时钟证据，保留全部门槛和独立检查，先解析/制造解验证再原联合实验；暂未实现。完整Goal仍active；原污泥材料闭合、自由烧结冷却、三公开机制/留出、全周期CLI/UI与多代搜索仍未完成。
+
+当前最新终态：v4 callback session26272 complete/child0/2.087812s；depletion0 session10907 terminal failed/child1/121.780958s，内部resource_limit:wall_time_limit120.127148s、365评估44试算panel、6接受步、0事件。TP旧失败点已通过；level4/5两次末端比较均通过原门槛，但独立减半普通接近检查在13panel/122评估时耗尽预算，未提交事件；depletion1未运行。完整安装回归唯一活动session9190，XML /private/tmp/brick-heos-tp-backtracking-v1/installed-full-tests.xml，42模块运行前匹配，源码/测试/安装冻结。先轮询同句柄至终态、核XML及运行后身份，再归档全部失败/审查并本地阶段提交。Goal仍active，真实材料/全周期完整范围未完成。
+
+当前未提交TP修正：六分数原生探针session54000 complete1.16260s，五短步原动态gate+完整snapshot通过；候选控制30通过，原生九点旧版8pass1fail、新版9pass（session64092 complete1.46507s，XML1.031s）。kernel已应用c1ecb59c702382c78891f4fcf6b6ac5eb8c68cc57869b1e261ec8a3a4a796b12；manifest5f9e39bf...、wrapper和source注册仅绑定hash同步，42实际安装模块匹配。证据 /private/tmp/brick-heos-tp-backtracking-v1 与 /private/tmp/brick-heos-tp-step-probe-v1。当前无活动EOS/测试。worker准备 /private/tmp/brick-reacting-wet-v4 原5脚本/物理/门槛/120s内部150s外部500panel；还未运行联合v4或当前源码完整套件，旧1192不能移到新源码。完成review后先v4，再完整安装回归。Goal仍active且完整材料/全周期范围未完成。
+
 最新终态：1192完整安装测试通过（session11689/535.553s），42模块前后匹配；v3联合轨迹仍在level3 HEOS TP失败，0事件。诊断43826已terminal failed49.48452s，精确捕捉295K/53692.54782795906Pa的8次双密度周期；295K是反解下界、非实际砖温。独立公开接口单点92373已terminal failed1.18991s，复现相同heos_tp_not_converged；原动态min(1e-4,rho*1e-7)Pa门槛未改。当前无活动EOS/测试。全部本轮证据归档 research/depletion-spine-v1/（旧失败/审查/安装/原v3/异常捕捉/单点），下一TP修正设计见 TP_FAILURE_NUMERICAL_REVIEW.md；须先保留精确失败并预登记有界校正，不重复整条无诊断运行。完整Goal仍active，原污泥材料闭合、自由烧结冷却、三公开机制/留出、全周期CLI/UI与多代搜索仍未完成。
 
 完整安装新终态：session11689 exit0，1192通过/零失败错误跳过，XML535.553s；前后42实际模块与源码逐字节一致。当前唯一EOS句柄为诊断session43826，目录 /private/tmp/brick-reacting-wet-v3-diagnostic/diagnostic-attempt01；已完成两份只读脚本审查，原120s内部/150s外部限额，异常追踪不改求解器/来源守卫且不增加EOS调用。原v3失败仍未解决；先poll43826至终态，再核实际失败TP/迭代及source证据，不能把捕捉成功称轨迹通过。

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="0" tests="15" time="0.074" timestamp="2026-09-07T11:37:51.234065-10:00" hostname="Ws-MacBook-Pro.local"><testcase classname="test_heos_tp_backtracking" name="test_seed_gate_pass_has_one_actual_density_evaluation" time="0.000" /><testcase classname="test_heos_tp_backtracking" name="test_improving_full_step_has_no_duplicate_native_evaluation" time="0.000" /><testcase classname="test_heos_tp_backtracking" name="test_worse_full_step_uses_half_of_same_original_direction" time="0.000"><failure message="assert 999.99999 == (1000.0 * 0.9999999983333333)&#10; +  where 0.9999999983333333 = &lt;built-in function exp&gt;((-3.3333333333333363e-09 / 2))&#10; +    where &lt;built-in function exp&gt; = math.exp">def test_worse_full_step_uses_half_of_same_original_direction():
+        obj, _ = fixture([.001, .002, 0.])
+        solve(obj)
+        assert len(obj._flash.evaluations) == 3
+        base, full, half = obj.last_tp
+        step = -base['residual_pa']/base['slope']
+        assert full['rho'] == base['rho']*math.exp(step)
+&gt;       assert half['rho'] == base['rho']*math.exp(step/2)
+E       assert 999.99999 == (1000.0 * 0.9999999983333333)
+E        +  where 0.9999999983333333 = &lt;built-in function exp&gt;((-3.3333333333333363e-09 / 2))
+E        +    where &lt;built-in function exp&gt; = math.exp
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:113: AssertionError</failure></testcase><testcase classname="test_heos_tp_backtracking" name="test_equal_merit_stagnation_fails_after_six_trials" time="0.000"><failure message="AssertionError: Regex pattern did not match.&#10; Regex: 'heos_tp_backtracking_failed'&#10; Input: 'heos_tp_not_converged'">def test_equal_merit_stagnation_fails_after_six_trials():
+        obj, flags = fixture([.001])
+        with pytest.raises(WaterNumericalError, match='heos_tp_backtracking_failed'):
+&gt;           solve(obj)
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:122:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:85: in solve
+    return obj.state_tp(300., .1, phase=phase)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;sludge_sandbox._heos_kernel.HEOSCandidate object at 0x10192a900&gt;
+t = 300.0, p = 0.1
+
+    def state_tp(self,t,p,*,phase):
+        t=self._temperature(t)
+        if isinstance(p,bool) or not isinstance(p,(int,float)) or not math.isfinite(p) or not 0&lt;p&lt;=1e8:
+            raise WaterDomainError('pressure_out_of_declared_domain')
+        if phase not in ('liquid','vapor'):
+            raise WaterDomainError('phase_must_be_liquid_or_vapor')
+        with self._transaction():
+            liquid,vapor=self._saturation_pair_locked(t)
+            ps=liquid.pressure
+            if abs(p-ps)&lt;=max(.01,2e-8*ps):raise WaterDomainError('saturation_ambiguous')
+            if (phase=='liquid' and p&lt;ps) or (phase=='vapor' and p&gt;ps):raise WaterDomainError('unstable_requested_phase')
+            try:
+                a=self._flash
+                a.update(self._cp.PT_INPUTS,p,t)
+                allowed=(self._cp.iphase_liquid,self._cp.iphase_supercritical_liquid) if phase=='liquid' else (self._cp.iphase_gas,)
+                require(a.phase() in allowed,'heos_tp_seed_wrong_phase')
+                rho=a.rhomass()
+                self._tp_iterations.clear()
+                a.specify_phase(self._cp.iphase_liquid if phase=='liquid' else self._cp.iphase_gas)
+                try:
+                    for iteration in range(8):
+                        require(math.isfinite(rho) and rho&gt;0,'heos_tp_invalid_density')
+                        require(rho&gt;=liquid.density if phase=='liquid' else rho&lt;=vapor.density,'heos_tp_density_branch')
+                        a.update(self._cp.DmassT_INPUTS,rho,t)
+                        delta=rho/322.
+                        slope=rho*self._r*t*(1+2*delta*a.dalphar_dDelta()+delta*delta*a.d2alphar_dDelta2())
+                        residual=a.p()-p
+                        self._tp_iterations.append({'iteration':iteration,'rho':rho,'native_p':a.p(),'target_p':p,'h':a.hmass(),'u':a.umass(),'residual_pa':residual,'slope':slope})
+                        require(math.isfinite(slope) and slope&gt;0 and math.isfinite(residual),'heos_tp_invalid_slope')
+                        if abs(residual)&lt;=min(1e-4,rho*1e-7):
+                            break
+                        step=-residual/slope
+                        require(math.isfinite(step) and abs(step)&lt;.1,'heos_tp_step_outside_seed_branch')
+                        rho*=math.exp(step)
+                    else:
+&gt;                       raise WaterNumericalError('heos_tp_not_converged')
+E                       sludge_sandbox.water_properties.WaterNumericalError: heos_tp_not_converged
+
+src/sludge_sandbox/_heos_kernel.py:319: WaterNumericalError
+
+During handling of the above exception, another exception occurred:
+
+    def test_equal_merit_stagnation_fails_after_six_trials():
+        obj, flags = fixture([.001])
+&gt;       with pytest.raises(WaterNumericalError, match='heos_tp_backtracking_failed'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E        Regex: 'heos_tp_backtracking_failed'
+E        Input: 'heos_tp_not_converged'
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:121: AssertionError</failure></testcase><testcase classname="test_heos_tp_backtracking" name="test_invalid_first_trial_is_fatal_without_shorter_retry[native-heos_tp_failed]" time="0.000" /><testcase classname="test_heos_tp_backtracking" name="test_invalid_first_trial_is_fatal_without_shorter_retry[slope-heos_tp_invalid_slope]" time="0.000" /><testcase classname="test_heos_tp_backtracking" name="test_invalid_first_trial_is_fatal_without_shorter_retry[residual-heos_tp_invalid_slope]" time="0.000" /><testcase classname="test_heos_tp_backtracking" name="test_original_large_step_is_not_rescued_by_damping" time="0.000" /><testcase classname="test_heos_tp_backtracking" name="test_density_branch_crossing_is_fatal_before_native_trial" time="0.000" /><testcase classname="test_heos_tp_backtracking" name="test_vapor_uses_original_density_scaled_gate" time="0.000"><failure message="AssertionError: Regex pattern did not match.&#10; Regex: 'heos_tp_backtracking_failed'&#10; Input: 'heos_tp_not_converged'">def test_vapor_uses_original_density_scaled_gate():
+        obj, flags = fixture([7e-8], phase='vapor')
+        with pytest.raises(WaterNumericalError, match='heos_tp_backtracking_failed'):
+&gt;           solve(obj, 'vapor')
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:156:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:85: in solve
+    return obj.state_tp(300., .1, phase=phase)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;sludge_sandbox._heos_kernel.HEOSCandidate object at 0x1018d2870&gt;
+t = 300.0, p = 0.1
+
+    def state_tp(self,t,p,*,phase):
+        t=self._temperature(t)
+        if isinstance(p,bool) or not isinstance(p,(int,float)) or not math.isfinite(p) or not 0&lt;p&lt;=1e8:
+            raise WaterDomainError('pressure_out_of_declared_domain')
+        if phase not in ('liquid','vapor'):
+            raise WaterDomainError('phase_must_be_liquid_or_vapor')
+        with self._transaction():
+            liquid,vapor=self._saturation_pair_locked(t)
+            ps=liquid.pressure
+            if abs(p-ps)&lt;=max(.01,2e-8*ps):raise WaterDomainError('saturation_ambiguous')
+            if (phase=='liquid' and p&lt;ps) or (phase=='vapor' and p&gt;ps):raise WaterDomainError('unstable_requested_phase')
+            try:
+                a=self._flash
+                a.update(self._cp.PT_INPUTS,p,t)
+                allowed=(self._cp.iphase_liquid,self._cp.iphase_supercritical_liquid) if phase=='liquid' else (self._cp.iphase_gas,)
+                require(a.phase() in allowed,'heos_tp_seed_wrong_phase')
+                rho=a.rhomass()
+                self._tp_iterations.clear()
+                a.specify_phase(self._cp.iphase_liquid if phase=='liquid' else self._cp.iphase_gas)
+                try:
+                    for iteration in range(8):
+                        require(math.isfinite(rho) and rho&gt;0,'heos_tp_invalid_density')
+                        require(rho&gt;=liquid.density if phase=='liquid' else rho&lt;=vapor.density,'heos_tp_density_branch')
+                        a.update(self._cp.DmassT_INPUTS,rho,t)
+                        delta=rho/322.
+                        slope=rho*self._r*t*(1+2*delta*a.dalphar_dDelta()+delta*delta*a.d2alphar_dDelta2())
+                        residual=a.p()-p
+                        self._tp_iterations.append({'iteration':iteration,'rho':rho,'native_p':a.p(),'target_p':p,'h':a.hmass(),'u':a.umass(),'residual_pa':residual,'slope':slope})
+                        require(math.isfinite(slope) and slope&gt;0 and math.isfinite(residual),'heos_tp_invalid_slope')
+                        if abs(residual)&lt;=min(1e-4,rho*1e-7):
+                            break
+                        step=-residual/slope
+                        require(math.isfinite(step) and abs(step)&lt;.1,'heos_tp_step_outside_seed_branch')
+                        rho*=math.exp(step)
+                    else:
+&gt;                       raise WaterNumericalError('heos_tp_not_converged')
+E                       sludge_sandbox.water_properties.WaterNumericalError: heos_tp_not_converged
+
+src/sludge_sandbox/_heos_kernel.py:319: WaterNumericalError
+
+During handling of the above exception, another exception occurred:
+
+    def test_vapor_uses_original_density_scaled_gate():
+        obj, flags = fixture([7e-8], phase='vapor')
+&gt;       with pytest.raises(WaterNumericalError, match='heos_tp_backtracking_failed'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E        Regex: 'heos_tp_backtracking_failed'
+E        Input: 'heos_tp_not_converged'
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:155: AssertionError</failure></testcase><testcase classname="test_heos_tp_backtracking" name="test_eighth_accepted_density_cannot_create_a_ninth" time="0.000"><failure message="KeyError: 'accepted'">def test_eighth_accepted_density_cannot_create_a_ninth():
+        obj, flags = fixture([.001/(i+1) for i in range(10)])
+        with pytest.raises(WaterNumericalError, match='heos_tp_not_converged'):
+            solve(obj)
+        assert len(obj._flash.evaluations) == 8
+&gt;       assert sum(bool(row['accepted']) for row in obj.last_tp) == 8
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:166:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+.0 = &lt;list_iterator object at 0x101929ea0&gt;
+
+&gt;   assert sum(bool(row['accepted']) for row in obj.last_tp) == 8
+                    ^^^^^^^^^^^^^^^
+E   KeyError: 'accepted'
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:166: KeyError</failure></testcase><testcase classname="test_heos_tp_backtracking" name="test_seven_six_trial_searches_have_exact_43_evaluation_bound" time="0.000"><failure message="AssertionError: assert 8 == 43&#10; +  where 8 = len([{'h': 19.0, 'iteration': 0, 'native_p': 0.10800000000000001, 'residual_pa': 0.008000000000000007, ...}, {'h': 19.0, '...004, ...}, {'h': 19.0, 'iteration': 5, 'native_p': 0.12000000000000001, 'residual_pa': 0.020000000000000004, ...}, ...])&#10; +    where [{'h': 19.0, 'iteration': 0, 'native_p': 0.10800000000000001, 'residual_pa': 0.008000000000000007, ...}, {'h': 19.0, '...004, ...}, {'h': 19.0, 'iteration': 5, 'native_p': 0.12000000000000001, 'residual_pa': 0.020000000000000004, ...}, ...] = &lt;sludge_sandbox._heos_kernel.HEOSCandidate object at 0x10192a810&gt;.last_tp">def test_seven_six_trial_searches_have_exact_43_evaluation_bound():
+        # Five deliberately worse proposals followed by one strict improvement
+        # at each of seven updates; none reaches the unchanged physical gate.
+        values = [.008]
+        for level in range(1, 8):
+            values.extend([.02]*5+[.008/(level+1)])
+        obj, flags = fixture(values)
+        with pytest.raises(WaterNumericalError, match='heos_tp_not_converged'):
+            solve(obj)
+&gt;       assert len(obj._flash.evaluations) == len(obj.last_tp) == 43
+E       AssertionError: assert 8 == 43
+E        +  where 8 = len([{'h': 19.0, 'iteration': 0, 'native_p': 0.10800000000000001, 'residual_pa': 0.008000000000000007, ...}, {'h': 19.0, '...004, ...}, {'h': 19.0, 'iteration': 5, 'native_p': 0.12000000000000001, 'residual_pa': 0.020000000000000004, ...}, ...])
+E        +    where [{'h': 19.0, 'iteration': 0, 'native_p': 0.10800000000000001, 'residual_pa': 0.008000000000000007, ...}, {'h': 19.0, '...004, ...}, {'h': 19.0, 'iteration': 5, 'native_p': 0.12000000000000001, 'residual_pa': 0.020000000000000004, ...}, ...] = &lt;sludge_sandbox._heos_kernel.HEOSCandidate object at 0x10192a810&gt;.last_tp
+
+/private/tmp/brick-heos-tp-backtracking-v1/test_heos_tp_backtracking.py:179: AssertionError</failure></testcase><testcase classname="test_heos_tp_backtracking" name="test_source_transaction_failure_never_returns_a_state[pre_source]" time="0.000" /><testcase classname="test_heos_tp_backtracking" name="test_source_transaction_failure_never_returns_a_state[post_source]" time="0.000" /><testcase classname="test_heos_tp_backtracking" name="test_final_snapshot_failure_is_not_relabelled_as_success" time="0.000" /></testsuite></testsuites>
