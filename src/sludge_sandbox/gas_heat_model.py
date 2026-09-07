@@ -113,6 +113,16 @@ def _thermo_signature(thermo):
 
 
 @dataclass(frozen=True, kw_only=True)
+class GasHeatEvaluation:
+    """Single-decode diagnostics from the state used for shared exchanges."""
+
+    rates: Rates
+    temperatures_k: tuple[float, ...]
+    gas_states: tuple[GasState, ...]
+    source_ids: tuple[str, ...]
+
+
+@dataclass(frozen=True, kw_only=True)
 class GasHeatModel:
     thermochemistry: Thermochemistry
     species_order: tuple[str, ...]
@@ -295,6 +305,9 @@ class GasHeatModel:
                              permeability_m2=permeability, relative_permeability=1., viscosity_pa_s=viscosity)
 
     def __call__(self, state: ConservedState, time_s: float) -> Rates:
+        return self.evaluate(state, time_s).rates
+
+    def evaluate(self, state: ConservedState, time_s: float) -> GasHeatEvaluation:
         self._check_state(state)
         at = _number(time_s, 'time')
         temperatures = self.temperatures_k(state)
@@ -338,4 +351,6 @@ class GasHeatModel:
                     reactions[cell] = rates.source_mol_s
         except (ThermochemistryError, GasTransportError, ExchangeError, ReactionError) as exc:
             _raise_operator_failure(exc)
-        return Rates(faces_n, faces_u, reactions, powers)
+        return GasHeatEvaluation(rates=Rates(faces_n, faces_u, reactions, powers),
+                                 temperatures_k=temperatures, gas_states=tuple(gases),
+                                 source_ids=self.source_ids)
