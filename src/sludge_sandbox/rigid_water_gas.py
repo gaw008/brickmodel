@@ -1,0 +1,184 @@
+"""Rigid available pore volume: planar liquid water plus complete ideal-gas inventory.
+
+Only pressure/volume mechanical closure at prescribed temperature is solved.
+No vapor-liquid chemical equilibrium, capillarity, or sludge constitutive law is
+inferred. Liquid water retains its native IAPWS EOS and fitted gas constant.
+"""
+from collections.abc import Mapping
+from dataclasses import dataclass
+from fractions import Fraction
+import math
+from numbers import Real
+from types import MappingProxyType
+from typing import ClassVar
+
+from .water_properties import WaterProperties, WaterDomainError, WaterNumericalError
+
+
+class RigidClosureDomainError(ValueError):
+    """Inventory/geometry/model domain or the explicit stable pressure bracket is invalid."""
+
+
+class RigidClosureNumericalError(ValueError):
+    """Permitted closure cannot be resolved within explicit numerical requirements."""
+
+
+_R = 8.31446261815324
+_ASSUMPTION = 'planar_interface_no_capillary_pressure'
+
+
+def _number(value,name,*,positive=False,nonnegative=False,error=RigidClosureDomainError):
+    try:v=float(value) if isinstance(value,Real) and not isinstance(value,bool) else math.nan
+    except (OverflowError,ValueError):v=math.nan
+    if not math.isfinite(v) or (positive and v<=0) or (nonnegative and v<0):raise error('invalid_'+name)
+    return v
+
+
+def _finite(value,name,*,positive=False):
+    return _number(value,name,positive=positive,error=RigidClosureNumericalError)
+
+
+def _sum(values):
+    try:return _finite(math.fsum(values),'finite_sum')
+    except OverflowError as exc:raise RigidClosureNumericalError('nonfinite_sum') from exc
+
+
+@dataclass(frozen=True)
+class PressurePolicy:
+    volume_tolerance_m3: float
+    pressure_tolerance_pa: float
+    maximum_iterations: int
+
+    def __post_init__(self):
+        _number(self.volume_tolerance_m3,'volume_tolerance',positive=True)
+        _number(self.pressure_tolerance_pa,'pressure_tolerance',positive=True)
+        if type(self.maximum_iterations) is not int or self.maximum_iterations<=0:raise RigidClosureDomainError('invalid_iteration_limit')
+
+
+@dataclass(frozen=True)
+class RigidWaterGasState:
+    temperature_k: float
+    pressure_pa: float
+    liquid_pressure_pa: float | None
+    liquid_inventory_mol: float
+    gas_inventory_mol: Mapping[str,float]
+    liquid_volume_m3: float
+    gas_volume_m3: float
+    partial_pressures_pa: Mapping[str,float]
+    volume_residual_m3: float
+    pressure_residual_pa: float
+    volume_resolution_m3: float
+    pressure_resolution_pa: float
+    pressure_bracket_pa: tuple[float,float]
+    policy: PressurePolicy
+    iterations: int
+    source_ids: tuple[str,...]
+    source_asset_sha256: Mapping[str,str]
+    assumption: str = _ASSUMPTION
+    qualification: str = 'pure_water_planar_interface_ideal_gas_not_sludge_or_phase_equilibrium'
+    gas_constant_j_mol_k: float = _R
+    liquid_native_molar_gas_constant_j_mol_k: float = 8.314371357587
+
+
+@dataclass(frozen=True)
+class RigidWaterGas:
+    water: WaterProperties
+    gas_species_ids: tuple[str,...]
+    available_pore_volume_m3: float
+    pressure_bracket_pa: tuple[float,float]
+    assumption: str
+    policy: PressurePolicy
+    gas_constant_j_mol_k: ClassVar[float] = _R
+    constant_source_ids: ClassVar[tuple[str,...]] = ('nist-codata-2022',)
+
+    def __post_init__(self):
+        if type(self.water) is not WaterProperties:raise RigidClosureDomainError('source_gated_water_required')
+        ids=self.gas_species_ids
+        if not isinstance(ids,tuple) or not ids or any(not isinstance(x,str) or not x.strip() for x in ids) or len(set(ids))!=len(ids):
+            raise RigidClosureDomainError('explicit_unique_complete_gas_species_required')
+        _number(self.available_pore_volume_m3,'available_volume',positive=True)
+        if not isinstance(self.pressure_bracket_pa,tuple) or len(self.pressure_bracket_pa)!=2:raise RigidClosureDomainError('explicit_pressure_bracket_required')
+        lo,hi=(_number(x,'pressure',positive=True) for x in self.pressure_bracket_pa)
+        if lo>=hi:raise RigidClosureDomainError('invalid_pressure_bracket')
+        if self.assumption!=_ASSUMPTION:raise RigidClosureDomainError('explicit_planar_interface_assumption_required')
+        if type(self.policy) is not PressurePolicy:raise RigidClosureDomainError('explicit_pressure_policy_required')
+
+    def _liquid_volume(self,t,p,n):
+        if not n:return 0.
+        try:s=self.water.state_tp(t,p,phase='liquid')
+        except WaterDomainError as exc:raise RigidClosureDomainError('unstable_liquid_pressure_bracket_or_water_domain:'+str(exc)) from exc
+        except WaterNumericalError as exc:raise RigidClosureNumericalError('liquid_property_solution:'+str(exc)) from exc
+        return _finite(n*s.molar_mass_kg_mol/s.density_kg_m3,'liquid_volume',positive=True)
+
+    def evaluate_at_temperature(self,temperature_k,liquid_inventory_mol,gas_inventory_mol):
+        t=_number(temperature_k,'temperature',positive=True)
+        nl=_number(liquid_inventory_mol,'liquid_inventory',nonnegative=True)
+        if not isinstance(gas_inventory_mol,Mapping) or set(gas_inventory_mol)!=set(self.gas_species_ids):
+            raise RigidClosureDomainError('complete_gas_inventory_keys_required')
+        gas={key:_number(gas_inventory_mol[key],'gas_inventory',nonnegative=True) for key in self.gas_species_ids}
+        ng=_sum(gas.values())
+        if ng<=0:raise RigidClosureDomainError('positive_total_gas_inventory_required')
+        nrt=_finite(ng*_R*t,'gas_inventory_RT',positive=True)
+        nrt_resolution=_sum((math.ulp(ng)*_R*t,math.ulp(ng*_R)*t,math.ulp(nrt)))
+        lo,hi=self.pressure_bracket_pa
+        if max(math.ulp(lo),math.ulp(hi))>self.policy.pressure_tolerance_pa:
+            raise RigidClosureNumericalError('unresolvable_pressure_precision')
+        volume=self.available_pore_volume_m3
+
+        def trial(p):
+            vl=self._liquid_volume(t,p,nl)
+            vg=_finite(nrt/p,'trial_gas_volume',positive=True)
+            f=_sum((vl,vg,-volume))
+            return vl,f
+
+        def finish(p,vl,iterations):
+            vg=_finite(_sum((volume,-vl)),'open_gas_volume',positive=True)
+            ideal_p=_finite(nrt/vg,'gas_pressure',positive=True)
+            residual_p=_sum((p,-ideal_p))
+            residual_v=_sum((vl,nrt/p,-volume))
+            # Preserve representability of the two large volumes even when
+            # their difference leaves a very small open gas volume.
+            vr=_sum((math.ulp(volume),math.ulp(vl),math.ulp(vg),math.ulp(nrt/p),nrt_resolution/p))
+            pr=_sum((math.ulp(p),math.ulp(ideal_p),abs(ideal_p)*vr/vg))
+            if vr>self.policy.volume_tolerance_m3 or pr>self.policy.pressure_tolerance_pa:
+                raise RigidClosureNumericalError('unresolvable_volume_pressure_precision')
+            if abs(residual_v)>self.policy.volume_tolerance_m3 or abs(residual_p)>self.policy.pressure_tolerance_pa:
+                return None
+            # Form the ratio-product exactly from represented inputs: n/ng can
+            # underflow even when n*p/ng is representable.
+            partial={key:_finite(float(Fraction(n)*Fraction(p)/Fraction(ng)),
+                       'partial_pressure',positive=n>0) for key,n in gas.items()}
+            if abs(_sum(partial.values())-p)>self.policy.pressure_tolerance_pa:
+                raise RigidClosureNumericalError('partial_pressure_sum_residual')
+            return RigidWaterGasState(t,p,p if nl else None,nl,MappingProxyType(gas),vl,vg,
+                MappingProxyType(partial),residual_v,residual_p,vr,pr,self.pressure_bracket_pa,
+                self.policy,iterations,self.water.reference.source_ids+self.constant_source_ids,
+                self.water.source_asset_sha256,liquid_native_molar_gas_constant_j_mol_k=self.water.reference.native_molar_gas_constant_j_mol_k)
+
+        if not nl:
+            p=_finite(nrt/volume,'gas_pressure',positive=True)
+            if not lo<=p<=hi:raise RigidClosureDomainError('pure_gas_pressure_out_of_explicit_bracket')
+            state=finish(p,0.,0)
+            if state is None:raise RigidClosureNumericalError('pure_gas_closure_residual')
+            return state
+        # F(P)=V_liquid(T,P)+Ng RT/P-V_available is strictly decreasing on
+        # the stable liquid branch: dV_liquid/dP<0 and Ng>0. No density sampling
+        # is presented as proof; mechanical stability is checked by water EOS.
+        vl_lo,flo=trial(lo);vl_hi,fhi=trial(hi)
+        if flo<0 or fhi>0:
+            raise RigidClosureDomainError('no_root_in_stable_pressure_bracket_or_insufficient_volume')
+        for edge,vl,f in ((lo,vl_lo,flo),(hi,vl_hi,fhi)):
+            if f==0:
+                state=finish(edge,vl,0)
+                if state is not None:return state
+        for count in range(1,self.policy.maximum_iterations+1):
+            middle=lo+(hi-lo)/2
+            if middle in (lo,hi):raise RigidClosureNumericalError('unresolvable_pressure_bracket')
+            vl,f=trial(middle)
+            if not fhi<=f<=flo:raise RigidClosureNumericalError('nonmonotonic_pressure_evaluation')
+            if hi-lo<=self.policy.pressure_tolerance_pa:
+                state=finish(middle,vl,count)
+                if state is not None:return state
+            if f>0:lo=middle;flo=f
+            else:hi=middle;fhi=f
+        raise RigidClosureNumericalError('pressure_iteration_limit')
