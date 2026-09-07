@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新检查点：隔离HEOS stage3候选已实际实现并归档research/heos-stage3，生产源码仍6dc5aa9。初始QT饱和蒸汽h-u-p/rho2.74099875e-6J/kg未过1e-6；独立子进程关superancillary反而.00182574，两失败保留，不声称开关唯一根因。改用QT种子、DmassT原生EOS评估与同T双相p/Gibbs共存门禁，能量/熵不代数重置；Newton Jacobian已独立核对。seed重评已过gate，最终删除强制更新，不能称为Newton误差改善或广域收敛证明。
+
+最终attempt05实际exit0/1.169895s、59声明输入不变：300K两饱和相+两液态TP点4对照、6域拒绝、3不可变、5故障拒绝均通过。原pressure/caloric/Gibbs/cp-cv/energy等门槛不变，最大h-u-p/rho9.818086e-8J/kg。raw JSON、不同版本候选、原失败/运行日志/监督器证据与review03均保留。实际来源/28package文件/loadedextension/完整fluid/精确M与R/adapterSHA/effectiveconfig进入区别于Python的descriptor，ideal h/s anchor及前后config/fluid检查已实现。原设计R字面值舍入已纠正。不代表完整backend/主机准入或已提速。
+
+下一可执行工作：HEOS stage4分批验证官方点、293–500K液/汽与高低压、响应有限差分、确实需要迭代的共存种子与拒绝路径、fluid/reference故障、并发与cache契约；随后才能把descriptor贯穿现有桥接/化学/储能身份并接原湿前缀。保留受控单进程研究范围，不能把instance lock当进程全局修改安全。无EOS运行句柄待轮询（40652/18934/94515/72418/64056/82691全部已终态）；生产38模块/212相关安装测试为上一轮，旧1112完整套件是更早源码证据。全原污泥域/全周期/公开机制对照/CLI/UI/多代搜索仍未完成。Goal active；本回合有真实代码、失败诊断与验证进展。
+
 最新检查点：默认Python水后端调用层已独立审核并应用（下文ecfb3e9/1112为历史完整suite）。新增私有固定静态调用类，仅转发当前native对象，不改变来源、单位、参考、容差、异常作用域或缓存。独立AST九调用逆变换后与旧模块整体相同。隔离117+95相关测试通过；冻结非editable安装后212相关测试实际1.46s通过，38实际site-packages模块与源逐字节一致，session12878已exit0。没有运行新全套或湿轨迹，不把旧1112升级为本版本完整证据。
 
 初轮golden因直接执行candidate目录脚本可能污染sys.path，不作为旧/新比较证据，原记录保留。修正bound_golden.py在stdin独立进程运行，先断言实际加载路径并记录不同源码hash；old ed7adf/new66ccc，5温度30数值+4域错误、reference is和冷热canonical检查，JSON逐字节相同。证据research/water-python-seam。本轮有实现与实际验证进展，Goal active。
