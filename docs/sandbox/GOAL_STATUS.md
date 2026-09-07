@@ -4,7 +4,7 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
-最新已提交检查点 `41e5911`：骨架储能、原thermal反解目标误差、普通RK分项功，1051项安装测试/35模块实际一致。当前新增状态身份、点式DeformingSolidStorage、耗尽terminal/wrappers分项功均已实现并独立审核/应用；对应局部73、11、38测试实际通过。新冻结非editable全sandbox测试 **session89265** 已启动，目标XML research/installed-sandbox-total-storage-tests.xml；恢复先轮询此唯一重测试，不重启。repo src/tests冻结至终态；未提前宣称预计1089/36模块通过。原46721已结束。下一DeformingSolidHeat单次解码/机械耦合候选仅在/tmp/brick-deforming-solid-host-candidate，由boundary_program执行，未应用、不计入本次安装。所有材料/全周期/公开机制与使用验收缺项保持原Goal合同。
+最新源码检查点 `32965ce`：完整模型能量身份、当前几何点储能、普通/耗尽分项账本已实现/独立审核。冻结非editable安装 **1089 passed453.56s**，36个实际site-packages模块逐一与源码一致；research/installed-sandbox-total-storage-tests.xml与identity.json为实际证据。session89265已exit0，勿再轮询或重复旧1051套件。当前没有运行中的完整suite。下一DeformingSolidHeat仅在/tmp/brick-deforming-solid-host-candidate，尚未应用：首版attempt05实际1fail5pass，fine128孔压功误差1.84969e-4J未过原1e-6J，完整失败保留；只细化到512/1024/2048步并按已测成本把单次wall20→90s、整次150s，上述数值/物理/结果门槛不变，attempt06由boundary_program在本次安装终态后执行。恢复先查看其实际进程/日志，不重跑。所有材料/全周期/公开机制与使用验收缺项仍按原Goal合同。
 
 ## 当前状态
 
@@ -342,3 +342,9 @@ review_water_resume已接新的隔离任务，仅/private/tmp/brick-skeleton-ene
 耗尽分项候选正式按原字节应用：terminal取实际Fraction(end-start)权重、全程schema/tag核查、跨普通/事件段累计绝对分解残差在整path commit前检查；两真实wrapper仅转发原cell components，不额外加heat。独立25通过，另实际时变分项经29拒步/1573observations完整越event至.2s，终端有理权重和prefix复核；dry schema变更保留19已commitsteps及原湿模式。Root应用再测38（含身份13）通过0.93s。README/原RED/log/manifest/两基线源码及输出均归档；旧None默认baseline实际重跑逐字节相同。
 
 新完整冻结安装session89265仍运行，唯一恢复动作先poll同session；新src/tests冻结，不能把局部测试当新完整suite。终态后解析实际XML与真实site-packages逐文件身份，再保存版本验证/提交。下一新host隔离候选需同次total->thermal inverse供传热/输运/porework，保留完整误差/几何/source，尚未接实际时间推进或wet/depletionhost准入。原§11未完成，Goal持续active，本回合有实际实现/测试属于progress。
+
+### 总储能/耗尽分项整包终态
+
+session89265已实际exit0：**1089 passed in453.56s，0失败/错误/跳过**。XML实际解析，36个真实site-packages模块逐一与32965ce源码核对一致，cwd=/private/tmp，无PYTHONPATH。research/installed-sandbox-total-storage-tests.xml及installed-sandbox-total-storage-identity.json已保存。没有尚未观察终态的旧完整suite，不再轮询89265/46721。
+
+下一host仍隔离，不在此1089证据中：私有thermal assembler复用、point current_storage与全能量scope候选正在审核。初等向压缩η0解析试验attempt05温度过2e-5K但pore功未过1e-6J，保留失败；64→128呈二阶趋势不等于门槛通过。事前登记下一512/1024/2048三档与实际网格/拒步统计，原门槛不动，只因已测成本扩资源wall20→90s且整个attempt≤150s。作者已收到安装终态后开跑通知。新current_storage曾插入中部破坏旧positional，独立审查指出后改尾追加并新增回归1pass；尚待最后代码/物理审查与应用。

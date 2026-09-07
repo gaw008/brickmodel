@@ -261,3 +261,7 @@ wet_to_hot_attempt02完成600s模拟、实际198.3825s，8953评估/1272试算pa
 点storage候选独立11通过2.18s，应用仅docstring和测试导入差异后11再通过2.18s。审核另在两个motion时刻用常Cp解析解检查目标误差1e-4J+机械2e-4J端点温度被返回区间包含。9资产hash与v=1/50000的二进制表示差核验通过；候选archive内原wet大误差失败和新独立制造输入定义均保留。原wet病例仍拒绝，新fixture不替代原病例可解证明。两CODE_REVIEW、XML与candidate-history.zip保存完整范围。
 
 耗尽terminal与wrapper分项传播：候选独立25测试0.64s，应用38测试0.93s。独立时变组件实际拒步/终端权重、dry schema失败原prefix保留、旧None baseline重跑逐字节相同；详见CODE_REVIEW_DEPLETION_COMPONENT_WORK.md、depletion-components-applied-tests.xml及depletion-component-candidate-history.zip。新全sandbox安装测试session89265尚未终态，这些局部结果未宣称全套通过。
+
+### 总储能增量完整安装最终结果
+
+上述session89265已实际exit0，**1089 passed453.56s，0fail/error/skip**。36个实际site-packages模块与32965ce源码一致；XML实际计数及身份环境保存在installed-sandbox-total-storage-tests.xml、installed-sandbox-total-storage-identity.json。未将/tmp的新变形主机候选或其未通过的孔压功门槛算入通过范围。旧1051版本仍保留，不重复验证。
