@@ -71,3 +71,8 @@
 [NIST WebBook石英Shomate](https://webbook.nist.gov/cgi/cbook.cgi?ID=C14808607&Mask=2&Table=on&Type=JANAFS)及[JANAF O-037](https://janaf.nist.gov/tables/O-037.html)原HTML已取得并核读；有限事实、原页本地hash/定位、提取代码与审核见 `data/sandbox/solids/quartz/`、`CODE_REVIEW_QUARTZ.md`。16系数、2温段、19个打印温点的4个输出列共76值独立复算通过，来源表以0.1MPa/298.15K为参考。
 
 847K两支具有真实来源标记的相变焓跳跃；JANAF打印差728J/mol，Shomate拟合差729.127J/mol及非零Gibbs接缝残差均保留。不可套用气体连续Cp拼接将其抹平。数据只支持明确纯石英相的标准热化学候选，未给泥中含量、摩尔体积、热膨胀/压缩性或烧结速率；高温拟合域不等于全域相稳定性。原完整SRD版权页面仅留忽略缓存，不作为自由再分发资源提交。
+
+
+## 新增石英离散体积来源候选
+
+USGS Bulletin1248（Robie/Bethke/Beardsley，1967）官方原PDF已核读题名、方法及印刷54页/PDF索引59，alpha25°C和beta575°C的摩尔体积与X射线密度有限事实见`data/sandbox/solids/quartz/usgs-b1248/`。体积22.688±0.001与23.718±0.013 cm³/mol保留各自温度、历史常数及编者误差含义；压力未知，上游实验论文未核读。它补充两个条件点，不提供全温区恒体积、热膨胀曲线、同温相变体积差、严格EOS误差界或泥中矿物含量。未自动准入运行时材料包，完整源仅存ignored缓存。

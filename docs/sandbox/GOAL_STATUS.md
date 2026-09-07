@@ -167,3 +167,6 @@ Baloi2025出版商HTML/JATS原文、5组配比/终态热物性及派生提取已
 - 审核29项原收集版与2项后强化版分别保留XML；最终全量安装执行全部强化断言。冻结非editable离线安装，在/private/tmp无PYTHONPATH实际 **773 passed in96.01s，0失败/错误/跳过**，26个安装模块与当前源码hash一致。产物research/installed-sandbox-solid-fluid-tests.xml与installed-sandbox-solid-fluid-identity.json。旧737项证据保留。
 
 下一步执行：液水跨格迁移及携带焓、完整主机动态炉温/气氛边界、多格时空收敛与轨迹账本仍需接入。低高温水汽参考衔接、液界面耗尽后路径、反应库存与能量、烧结/连通性/变形、冷却应力继续按原合同实现；制造例不替代来源支持的材料域。原污泥同域参数、公开三机制预测、全周期和多代搜索、CLI/UI仍未完成。不要重复无变化测试代替这些工作。
+
+
+另取得并核读USGS Bulletin1248石英离散体积/密度表：有限事实、原文hash与温度/晶相/历史常数/误差边界在data/sandbox/solids/quartz/usgs-b1248/。压力保持unknown；两个不同温度点不成为高温恒体积关系，纯石英来源不解决同一原污泥材料包缺项。完整原文仅ignored缓存，不作为可发布原文。
