@@ -1,0 +1,52 @@
+# Opt-in IAPWS-95 HEOS adapter: bounded implementation proposal
+
+Status: design only. No production source change, additional EOS solve or benchmark. Initial implementation stays isolated. Existing `load_water_properties` continues to default to pinned Python iapws 1.5.5, with unchanged behavior and source hashes. New backend selection must be explicit and recorded; installation does not activate it. The two-point probe establishes feasibility, not admission or a model-error bound.
+
+## Backend seam and immutable scientific identity
+
+First introduce a private backend protocol in an isolated copy: source-verified construction; TP solve; saturation solve; evaluation of Helmholtz values and first/second derivatives at specified T/rho; ideal Helmholtz at specified T; backend identity. Keep WaterProperties' public state, reference, validation and domain contracts. Adapt Python 1.5.5 through that protocol first and prove default-path parity against frozen old source. A separate explicit HEOS factory returns the same scientific public shape but declares a distinct implementation identity. Do not monkeypatch `_backend` or counterfeit the Python package identity.
+
+An immutable backend descriptor includes implementation method/version, CoolProp version and git revision, extension binary hashes, installed fluid JSON raw hash and canonical scientific-data digest, EOS citation and original IAPWS release/source hashes, nominal constants, reference convention and numerical-policy identity. Binary path and host installation metadata are provenance; object IDs and lock identities are not scientific identity. Source verification runs before any state is trusted. Returned states and canonical provider signatures carry the backend descriptor transitively. Audit consumers that currently hard-code source IDs, concrete types or method strings: water caloric bridges, chemical potential, phase providers, closed storage, reaction identity and host wrappers. Keep rejection of genuinely different providers. Two independently loaded instances of the same verified descriptor must compare scientifically equal.
+
+The existing public WaterReference keeps precisely the current conversion: M = float(18.015268)/1000 and native mass R = float(0.46151805)*1000; native molar R remains 8.314371357587. CoolProp publishes nominal M = float(0.018015268), one ULP different from the former expression. Validate both against their exact decimal source declarations, retain both representations in the descriptor, and use the existing public M for all adapter mass-to-mole conversions. This is an explicit conversion convention, not a relaxed identity tolerance. Compare raw HEOS molar-derived quantities only after accounting for the documented convention; use mass-native outputs for the public bridge. Never use CODATA R for this liquid EOS.
+
+Compute the common formation-energy offset using the existing ideal-Helmholtz anchor expression and source convention. Establish its budget against the original, then preserve the existing published reference value/identity where required. Do not silently adopt CoolProp's rounded molar anchor or independently reset reference states. Expose native entropy in its original IAPWS convention; no NIST entropy alignment is introduced.
+
+## Reproduce the current checks, rather than retaining a slow Python oracle per call
+
+The installed AbstractState class exposes alpha0/alphar, tau/delta first and second derivatives, T_reducing and rhomolar_reducing; this was verified by attribute inspection without solving a state. Official low-level API: https://coolprop.org/coolprop/LowLevelAPI.html. Whether each numerical path satisfies the old tolerances is an implementation test, not settled by API availability.
+
+Use distinct, instance-owned HEOS objects for flash and checking. Flash obtains raw mass-native T/P/rho/h/u/s/cp/cv and phase. A separate density-temperature update at the returned rho/T obtains alpha derivatives. Assemble the IAPWS Table 3 identities in adapter arithmetic with the verified source constants, rather than simply comparing two aliases of the same high-level output. For tau=Tc/T, delta=rho/rhoc, a=a0+ar:
+
+- p = rho R_specific T (1 + delta ar_delta).
+- u = R_specific T tau a_tau; h = R_specific T [1 + tau a_tau + delta ar_delta].
+- s = R_specific [tau a_tau - a]; cv = -R_specific tau² a_tautau.
+- D = 1 + 2 delta ar_delta + delta² ar_deltadelta must be positive.
+- B = 1 + delta ar_delta - delta tau ar_deltatau; cp = cv + R_specific B²/D.
+- alpha = B/(T D), kappa = 1/(rho R_specific T D); v = public_M/rho.
+- dv/dT = v alpha, dv/dP = -v kappa; du_molar/dP = -T dv/dT - p dv/dP.
+
+Verify reducing constants and coordinate conversion against source Tc=647.096 K/rhoc=322 kg/m³. CoolProp uses molar reducing density internally; do not substitute a rounded nominal critical point or mix the public-M representation with internal delta without accounting for that conversion. A private checking-object imposed phase may only evaluate the already accepted stable density branch; it cannot choose or authorize the flash's phase.
+
+Keep current tolerances unchanged: pressure max(0.01 Pa, 2e-8 |p|), h-u-p/rho 1e-6 J/kg, independent caloric residual 0.002 J/kg and entropy corresponding /T, cp/cv 1e-5 J/kg/K, saturation Gibbs 0.001 J/kg, returned T 1e-9 K, response cp-cv identity 1e-7 J/mol/K. Retain finite/positive checks and exact reference/method identity on response states. A failed check is an explicit numerical failure, not a fallback to a less strict backend.
+
+These C++ derivative identities provide the same class of runtime algebraic checks, but share the CoolProp coefficient implementation. They are not an independent EOS truth oracle. Official printed verification, the frozen Python implementation and source coefficient checks remain separate verification tools. Keeping Python `_phir`/`_Helmholtz` in every runtime check is a defensible transitional debug mode but will limit speed; measure only after checks exist, with no promised 338-fold adapter improvement.
+
+## Stable phase, saturation, cache and mutation
+
+Maintain the exact 293–500 K, positive P <=100 MPa contract and requested liquid/vapor enum. Obtain both saturated branches at the same T, verify pressure agreement, correct returned T/phase, positive ordered densities, all Table 3 identities and Gibbs equality. HEOS quality endpoint/ancillary internals differ from Python x=.5 machinery: validate physical results, not the old backend's raw object layout. Reject TP within the existing saturation ambiguity tolerance and unstable requested phase; validate flash phase and density against both branches. Failure or warning mappings must never turn an invalid result into an accepted phase. Domains outside this range remain rejected even if HEOS supports them.
+
+Use a per-adapter reentrant lock covering each complete public solve/check/cache transaction. Never share mutable AbstractState instances between adapters; do not expose them to callers. Saturation cache contains immutable numeric snapshots only, at most the existing one entry. Key includes T, public reference identity, full backend/scientific descriptor, numerical policy and implementation dispatch identity. A hit still reruns current EOS/caloric/Gibbs validations. Fault injection after cache warming must still fail. Changed backend, fluid/reference/policy or checking implementation invalidates the cache. Global reference-state changes and backend configuration are forbidden in production adapter code; tests must show detectable incompatible state cannot reuse prior snapshots. Locks/instances are implementation resources, not source identity or serialized cache payload.
+
+Map native exceptions and malformed/missing/nonfinite outputs to the existing WaterNumericalError family; preserve WaterDomainError and WaterSourceError semantics. No broad catch that silently retries Python. Atomic creation and failure paths must not leave a partially initialized scientific identity or publish a partial state.
+
+## Small implementation and validation order
+
+1. Preserve the successful probe and its corrected limitations. Write a new external subprocess supervisor using unique attempt directories and explicit terminal statuses; test timeout and stale-result cases without EOS. Independent review precedes another benchmark.
+2. In a separate candidate directory, extract the backend seam and implement only the existing Python adapter. Run source verification and default-path frozen-source golden comparisons, phase/domain/fault tests and immutable-cache regressions. Do not alter default production behavior.
+3. Implement HEOS identity and one TP/saturation/Helmholtz response path behind explicit selection. Start with the existing two liquid points and both 300 K saturation branches, keeping original tolerances. Verify mass/molar representation and reference conversion explicitly. No host integration yet.
+4. Run the existing official printed IAPWS check points plus the adapter's admitted-domain liquid/vapor regression points; test all derived identities, finite-difference local responses, ambiguous saturation, wrong phase, changed sources/binary/fluid/reference, cache-warm faults and concurrent calls. High/low caloric bridge and chemical reference parity must be checked before any mixture host accepts the provider. Broad upstream points only validate the backend, not expanded adapter admission.
+5. Only after independent source/numerical review, integrate the explicit backend descriptor through provider signatures and the existing closed-storage inverse, unchanged error budget. Compare actual pressure/temperature brackets and uncertainty gates with the frozen old backend. Source-scoped numerical discrepancies cannot be relabelled as physical-model uncertainty.
+6. Run the already registered short wet entropy and coupled-host case with the original thresholds and all energy components. The existing partial smoke failed its 1e-6 J pore-work gate; a faster backend does not erase or relax that temporal-discretization failure. Perform a preregistered small refinement only after measuring completed adapter/host cost. No immediate 2048-panel scan.
+
+All benchmark timings distinguish flash-only, validated adapter, point inverse and accepted host panel. Timeouts preserve partial diagnostics as failures. None of these steps provides sludge property qualification, shrinkage kinetics or full wet-brick process completion.

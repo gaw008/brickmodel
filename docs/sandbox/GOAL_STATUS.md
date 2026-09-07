@@ -6,7 +6,11 @@
 
 最新源码检查点 `fa3194b`：规定形变固体总能量主机已正式接入；冻结非editable安装 **1103 passed523.90s**，37个实际site-packages模块与源码一致。research/installed-sandbox-deforming-solid-tests.xml及identity.json为实际证据。session75509已exit0，旧75509/89265/46721全部结束，不再轮询/重跑。当前没有运行中的完整suite。
 
-下一工作：独立wet entropy oracle在/tmp/brick-wet-deformation-oracle，9无EOS测试与独立审核通过；实际初点/10%压缩端点在2.07s完成，halfxtol复验通过，真实point inverse约.8125s。该端点不是时间轨迹；2048步预计数小时，暂停450s粗pilot提案，先执行最多一次30s的真实DeformingSolidHeat湿态前缀0→1/64s（同原1s/10% motion，两个maxstep1/128，仅smoke不替代全程）。review_water_resume负责实际进程/结果。review_convergence_resume在/tmp/brick-water-backend-probe核更快的同IAPWS95后端可行性/官方许可与1–2点，不改生产EOS。boundary_program在/tmp/brick-deforming-wet-admission按已读设计准备显式边界/相变新host准入，仅noEOS候选。全部真实原污泥材料、全周期、三机制公开留出与使用验收缺项仍未完成。
+最新湿态结果：独立熵参照9无EOS测试通过；真实初点/10%压缩端点2.07s完成，但端点roundtrip不是轨迹。实际原运动0→1/64s短前缀14.067s结束，2接受/15评估/0拒；T/P与账本通过，孔压功2.97406436e-6J超过原1e-6J，整体精度FAILED。原证据及独立60绑定/有理账本审查已归档research/wet-deformation-entropy。保留缺失native u/s操作数、测试fixture at-run绑定及原runner退出传播/固定文件名局限；无新EOS重跑。
+
+显式边界/相变准入候选7noEOS独立通过，但唯一真实source-matched非零K回调在相变化学前失败：当前总storage的fluid_template仍持reference孔隙体积，缩小bulk时被RigidFluidHeat体积门禁拒绝。boundary_program正在/tmp/brick-deforming-wet-admission修复当前配置和noEOS回归，不关闭门禁或更改失败fixture。尚未应用候选。
+
+更快水后端仅有两点可行性，生产EOS不变。探针/许可/原失败/独立审查及后端设计已归档research/water-backend-feasibility。新的独立子进程监督器在/tmp/brick-water-backend-runner，作者12noEOS测试0.50s，fast_backend_review审核中；尚未生产应用。不得重跑已完成1103套件；后续实际源码更新再冻结验证。真实原污泥材料域、全周期、三机制公开留出和使用验收仍未完成。
 
 ## 当前状态
 
