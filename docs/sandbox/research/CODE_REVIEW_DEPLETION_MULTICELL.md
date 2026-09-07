@@ -49,3 +49,36 @@ This is demonstrated separated two-event scheduling with full shared-face conser
 | LOW | 0 | pass |
 
 Verdict: APPROVE for the explicit separated-event numerical scope; physical-run outcomes remain separately evidenced.
+
+
+## Root coupled attempt 01: preserved failure
+
+Read the saved `coupled-depletion-attempt-01.json` without rerunning the physical experiment. It reports resource_limit/wall_time_limit after 360.9708 s, 314 evaluations, 35 accepted trial panels and 3 rejected trials, with unchanged run dependencies. Ten committed states remain, last time 0.00023739636134257572 s, and no event was globally committed. The shared-horizon reduction was actually requested and recorded. Subsequent comparisons reduced the local time difference to 9.1941e-9 s, but U difference was still 1.5432e-5 J, exceeding the original 1e-6 J event gate; the next refinement timed out. Thus the physical coupled case has not passed, notwithstanding the separately passing manufactured two-event tests.
+
+A proposed smaller terminal window (1/1048576 s) is a numerical setting intended to compute more safe ordinary wet prefix once and reduce terminal Euler transport/enthalpy error. It does not authorize weakening physical liquid flow, the U gate, or claiming earlier ordinary-prefix error is certified. Actual resource/accuracy outcome remains to be measured in a separately named run.
+
+- Failure artifact `docs/sandbox/research/coupled-depletion-attempt-01.json`: `aee4bf4581679ad480ae2ad11f08ea34c417a06016199da276eb743d48c11b65`
+
+
+## Explicit inventory-step policy and continuous dry integration
+
+Reviewed the final minimal follow-up source diff and new 14 safe-fraction / 5 dry-continuation tests. safe_inventory_fraction defaults to 0.25, rejects boolean/nonfinite/nonpositive values and values >=0.5, and is recorded in the result. It replaces the same three ordinary tau/4 caps consistently. Terminal root reconstruction, refinement gates, physical rates, clock/storage audits and original stage positivity/error rejection are unchanged. For a constant sink the original SSPRK2 second Euler stage requires h<=tau/2; the strict sub-half policy provides margin in that frozen-rate model only. It is not a proof of positivity for arbitrary time-varying rates, which still require actual stage checks.
+
+When and only when every interface is explicitly depleted_no_nucleation, the outer driver now calls the original normal integrator through the current program boundary tb rather than restarting it at each maximum-step interval. This retains its adaptive step history and avoids repeated initial-step rejections. It still obeys the same maximum_step, error policy, domain checks, complete ledger, cancellation and remaining global resource budgets. If any wet interface remains, even with currently zero/no-negative liquid rate, the prior bounded progression remains. No program node is crossed in one normal segment and no rate is clipped.
+
+Independent final verification: **55 passed in 7.36 s**, XML `/private/tmp/depletion-safe-dry-review.xml`; source afff823dd48ca2bc4eeb650bf2e7ab4bf12a70d60f45a32ce6bc35091d0b3355. The new tests verify default versus explicit .25 equivalence, .4 two-cell shared-face/reaction formulas, accelerating/strong sinks, invalid policy values and resource exit. Dry heating/cooling use an independent exact exponential solution with k=.01 and unchanged 1e-4 J final gate; a linear change in forcing at 300 s has its own analytic solution. Every dry energy prefix and node boundary is checked. A wet initially-zero-rate case later evaporates and produces a real event, preventing accidental classification by current rate. This is not a claim of bitwise equivalence with the prior driver: preserving dry adaptive history intentionally changes its time grid.
+
+The reported earlier memory-only timing comparisons are performance observations, not a guarantee that source-gated EOS workloads improve. The next physical two-cell attempt explicitly selects .4 and terminal_window=1/1048576 s with a recorded 600 s resource cap, based on the saved 360 s failure. This is an acknowledged resource-budget change for a separately named attempt; no physical coefficient or error/result gate was weakened. Actual outcome remains separately measured. The worker also reports a preexisting decimal-node wet-grid exploratory failure; this patch does not claim to fix all representable-time/node combinations.
+
+Final verdict for this follow-up: APPROVE within these explicit numerical-policy and dry-continuation contracts. No unresolved HIGH finding in the reviewed diff.
+
+- Final policy binding `src/sludge_sandbox/depletion_integration.py`: `afff823dd48ca2bc4eeb650bf2e7ab4bf12a70d60f45a32ce6bc35091d0b3355`
+- Final policy binding `tests/sandbox/test_depletion_safe_fraction.py`: `d110d983f847feaf816a19a0f81f7d11143c06d4fc7c4f8ade1f2f8693e75d5c`
+- Final policy binding `tests/sandbox/test_depletion_dry_continuity.py`: `207232f63d8c71b6a5ceb29d7ee67da0522109b02e34ca3d7f059111cda1f8ce`
+- Final policy binding `tests/sandbox/test_depletion_coupled_host.py`: `fb29fdd1b37ca5b8939f186eab93da0d727740d494fde823454d63196f94efed`
+- Final policy binding `docs/sandbox/research/COUPLED_DEPLETION_PLAN.md`: `4e8468d85cbb981cedc04cba1424b9dd0227abd4b1e77b18a1815e50a196b4bf`
+
+Final documentation read after completion: descriptions accurately distinguish isolated safe-fraction default equivalence from the intentionally changed dry time grid, preserve the unsuccessful .001 reproduction and canonical .01 regression, and do not claim to fix the recorded decimal wet-node limitation.
+
+- Final documentation `docs/sandbox/DEPLETION_SAFE_FRACTION.md`: `7531c0d7a411c7ca68757fabe0d9d2b48558be0d29731e7bd2a060e85d21aa89`
+- Final documentation `docs/sandbox/DEPLETION_INTEGRATION.md`: `6fc05ad8ffff280c898d6a1cb0525cd95ad84c1cbdff053e7a02a8a328931fa3`

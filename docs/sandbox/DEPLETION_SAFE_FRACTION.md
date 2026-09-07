@@ -1,0 +1,23 @@
+# Ordinary inventory fraction and continuous dry integration
+
+`DepletionPolicy.safe_inventory_fraction` defaults to 0.25 and requires a finite numeric value strictly between zero and 0.5; bool, NaN, infinity, zero, negative values and 0.5 are rejected. The factor uniformly multiplies the current exact-rate depletion-time estimate when choosing ordinary wet-prefix, wet-preview and remaining-wet-cell continuation caps. It does not change the terminal Euler root, event clock correction or any event/ordinary error tolerance. `DepletionResult.safe_inventory_fraction` records the actual configured value after all pre-existing result fields.
+
+For a constant negative inventory rate, a full SSPRK2 trial checks both Euler stages, so a fraction below 0.5 leaves positive inventory in this simple frozen-rate calculation. This is not a positivity proof for changing/nonlinear rates or other species. Every existing RK-stage positivity, source/domain, adaptive error, conservation and resource check remains active. A chosen value of 0.4 is a numerical efficiency setting, not a weakened material or thermodynamic requirement.
+
+The readonly AST experiment is preserved in `research/depletion_safe_fraction_memory_probe.json`: uniform 0.4 reduced evaluations 290→209 for a thin constant sink, 808→511 for the two-cell face/reaction oracle, and 9995→6717 for the accelerating oracle, at the same analytic gates. Changing only the outer wet fraction worsened that last case to 10582 evaluations, supporting uniform rather than partial configuration. These are manufactured numerical examples, not proof of the EOS workload's wall time.
+
+The separate dry-continuation change applies **only when every interface is explicitly `depleted_no_nucleation`**. Then one ordinary integrate call proceeds to the next program node/end with the same maximum step and error policy, preserving its adaptive history. A wet cell with zero current negative net rate does not qualify; it continues to be checked in shorter outer segments. Remaining nodes, all physical Rates and full ledgers, mode/domain errors, cancellation, global wall, accepted-panel and rejection budgets remain effective. Each subsequent program interval can use its changed forcing.
+
+The original all-dry outer loop restarted a maximum-step trial every short segment, repeatedly discarding the ordinary solver's learned smaller step. With `U'=.01*(target-U)`, U0=600 J, targets 1000/200 J, end600 s, maxstep2 s and the existing original error tolerances, both directions first exhausted the unchanged 100-rejection budget. After the all-dry change both complete, match the independent exponential solution within 1e-4 J, preserve exact reconstructed energy prefixes, and respect the program node. The initially suggested .001/s coefficient at the same original tolerances did not reproduce the defect; .01/s was selected before the canonical RED. This adjustment and failures are preserved in `research/depletion_dry_restart_failure.json`. No error or rejection threshold was loosened.
+
+New tests additionally cover a continuous but changing forcing slope after a program node, resource termination during the long dry solve, and a wet cell whose initially zero evaporation later activates and genuinely depletes. One exploratory decimal wet-node configuration encountered the pre-existing unresolvable-stage-time limitation and is recorded separately in `research/depletion_wet_decimal_node_probe.json`; this dry-continuation repair does not claim to fix that separate wet time-grid issue. The final wet mode-selection case uses an exact binary node at unchanged error gates.
+
+Verification: the 14 new fraction tests first failed against the original absent API; temporary candidate import then passed those 14 plus the prior 36 tests (50 passed). A separate saved-prechange-function comparison proved bitwise default-0.25 state/ledger/time and counter identity **for the isolated safe-fraction patch before dry continuation was changed**. That historical statement does not apply to the final combined change: continuous dry integration intentionally changes the dry time grid.
+
+The formal combined command is:
+
+```sh
+PYTHONPATH=src .venv/bin/python -m pytest tests/sandbox/test_depletion_dry_continuity.py tests/sandbox/test_depletion_safe_fraction.py tests/sandbox/test_depletion_multicell.py tests/sandbox/test_depletion_integration.py tests/sandbox/test_depletion_clock.py tests/sandbox/test_depletion_roundoff.py -q
+```
+
+Result: **55 passed in 7.32 s** (14 fraction + 5 dry continuity + 36 prior). The source-gated coupled and high-temperature runs require their own evidence and are not inferred from these lightweight tests.

@@ -29,11 +29,14 @@ class DepletionPolicy:
     maximum_refinements: int
     roundoff_policy: DepletionRoundoffPolicy
     common_time_horizon_s: float = .01
+    safe_inventory_fraction: float = .25
 
     def __post_init__(self):
         for n in ('time_absolute_s','amount_absolute_mol','energy_absolute_j','temperature_absolute_k',
                   'pressure_absolute_pa','terminal_window_s','common_time_horizon_s'):
             _number(getattr(self,n),True)
+        fraction=_number(self.safe_inventory_fraction,True)
+        if fraction>=.5:raise DepletionIntegrationError('safe_inventory_fraction_must_be_below_half')
         if type(self.maximum_refinements) is not int or self.maximum_refinements<2:
             raise DepletionIntegrationError('at_least_two_refinements_required')
         if type(self.roundoff_policy) is not DepletionRoundoffPolicy:
@@ -134,6 +137,7 @@ class DepletionResult:
     attempted_steps: int
     elapsed_seconds: float
     refinements: tuple = ()
+    safe_inventory_fraction: float = .25
 
     @property
     def accepted_trial_panels(self):
@@ -320,7 +324,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         while path.times[-1]<tc:
             at=path.times[-1];current=path.states[-1]
             obs=observe(path.op,current,at);other=check_remaining(current,at,obs)
-            desired=min(policy.maximum_step_s,tc-at,float(other[0])/4 if other else policy.maximum_step_s)
+            desired=min(policy.maximum_step_s,tc-at,ep.safe_inventory_fraction*float(other[0]) if other else policy.maximum_step_s)
             extend(path,normal(path.op,current,at,min(tc,at+desired),policy.maximum_step_s,
                                check_remaining if any(m=='existing_liquid' for m in path.op.interfaces) else None))
 
@@ -336,7 +340,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                     if path.times[-1]>=tc:raise _Failure('unsupported','no_common_post_event_time')
                     continue_after_event(path,tc)
                     return path
-            desired=min(cap,tc-at,float(choice[0])/4 if choice else cap)
+            desired=min(cap,tc-at,ep.safe_inventory_fraction*float(choice[0]) if choice else cap)
             finish=min(tc,at+desired)
             extend(path,normal(path.op,current,at,finish,cap))
         return path
@@ -434,7 +438,8 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                         previous=path;level+=1
                     else:raise _Failure('unsupported','event_refinement_limit')
                 else:
-                    finish=min(tb,t+policy.maximum_step_s,t+float(choice[0])/4 if choice else tb)
+                    finish=(tb if all(m=='depleted_no_nucleation' for m in operator.interfaces) else
+                            min(tb,t+policy.maximum_step_s,t+ep.safe_inventory_fraction*float(choice[0]) if choice else tb))
                     run=normal(operator,state,t,finish,policy.maximum_step_s)
                     path=_Path(list(run.times_s),list(run.states),list(run.steps),operator,totals)
                     commit(path)
@@ -443,4 +448,4 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
     except DomainExit as exc:status='domain_exit';reason=str(exc)
     except (IntegrationError,DepletionRoundoffError,ValueError,OverflowError) as exc:status='failed';reason=str(exc)
     return DepletionResult(status,reason,tuple(times),tuple(states),tuple(steps),tuple(events),tuple(corrections),operator,
-        totals,tuple(cumulative_n),tuple(cumulative_u),evaluations,rejected,attempted,time.monotonic()-begin,tuple(refinements))
+        totals,tuple(cumulative_n),tuple(cumulative_u),evaluations,rejected,attempted,time.monotonic()-begin,tuple(refinements),ep.safe_inventory_fraction)
