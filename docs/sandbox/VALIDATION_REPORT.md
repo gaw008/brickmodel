@@ -1,4 +1,4 @@
-# 实际验证报告：G0/G1 基础模块
+# 实际验证报告：G0/G1 基础与G2有界模块
 
 日期：2026-09-07 UTC；平台 macOS arm64，Python 3.12.13。本报告只有已实际运行的验证，不代表完整 Goal 验收。
 
@@ -59,3 +59,37 @@ env -u PYTHONPATH /private/tmp/brick-sandbox-g1-install-20260907/bin/python \
 已提取 Wang 2021 的12干燥条件/186图中实验符号读数；40/60°C拟合、50°C留出的计划已登记，但尚未执行内核预测对照。Nowicki和Mohajerani的参数/条件/语义问题仍隔离。三个机制组的独立预测对照、完整原污泥材料域与整砖耦合验证均未完成。
 
 `software_status=implementation_in_progress`；`scientific_status=partial_sources_no_complete_raw_sludge_domain`；`deployment_status=offline_research_only`。本 Goal 保持 active。
+
+## G2 当前完整模块安装复验
+
+已审核模块在冻结的Python3.12.13环境中非editable安装，包含锁定的 `iapws==1.5.5` 水物性可选依赖。最终源码重装使用：
+
+```sh
+UV_CACHE_DIR=/private/tmp/brick-sandbox-uv-cache \
+UV_PROJECT_ENVIRONMENT=/private/tmp/brick-sandbox-g2-install-20260907 \
+uv sync --frozen --no-editable --extra dev --extra research --extra water --offline --reinstall-package sludge-vme
+```
+
+从 `/private/tmp` 执行该环境Python的 `-m pytest /Users/wanggaoying/Desktop/brickmodel-github/tests/sandbox -q`，未设置PYTHONPATH。实际 **429 passed in 16.01s，0失败、0跳过**。13模块的实际导入位置和源码hash逐一与工作区一致；见 `research/g2-installed-final-tests.xml` 与 `research/g2-installed-final-identity.json`。早期314测试快照保留，最终证据没有覆盖旧结果。
+
+| G2新增模块 | 实际覆盖 |
+|---|---|
+| reactions | 49测试，元素/摩尔质量独立配平、联合消耗与不可表征库存增量拒绝 |
+| integration | 28测试，SSPRK2真实子步与不等半步误差估计、局部/前缀舍入、失败/取消/超时 |
+| gas_heat_model | 26测试，刚性气相库存/U实际解码T/P并反馈传热/扩散/Darcy/物质焓 |
+| conservation | 37测试，精确加权质量/元素、分格分步及前缀的库存/U账本；不代表热物性重建 |
+| water_properties | 78测试，原始来源和安装源码门禁、同相参考偏移、Cp/Cv导数及有限性；未接混合气 |
+
+全部上述模块有独立审核记录，修补前反例未删除。水模块另有66状态和独立导数有限差分核验，最大Cp/Cv误差分别2.68e-6/6.55e-7 J/(kg K)，门槛1e-5未放宽。官方33水表点是公式/软件核验，不是新的实验观测。
+
+## 刚性气相导热时空收敛
+
+`research/RIGID_HEAT_CONVERGENCE.md` 及对应JSON记录7个实际制造案例：空间N=8/16/32，对连续解析余弦模态误差阶为1.967057/1.991756；时间步0.1/0.05/0.025s，对离散解析模态阶为2.011998/2.005992。N32再减半时间步，变化为其空间误差的0.00313%，低于预登记1%污染限。预登记阶数范围1.8–2.2没有改变。
+
+7例无拒步，系统U残差0，末态逐格账本残差最大3.89e-16 J；资源8.52s/40.625MiB。独立审核重算解析轨迹与Fraction账本，并验证真实失败注入出口为非零。源码和完整轨迹均有hash绑定；纯格式检查曾报告脚本末尾空行，详见GOAL_STATUS，不冒充全格式检查通过。
+
+这组实验只证明刚性气相导热离散，不证明水迁移、形变或真实砖全周期收敛。CLI/UI、完整材料包和三机制组实验预测仍未验收。
+
+## Baloi 2025候选证据
+
+已核读出版商原文，保留同研究5组体积配比/烧后性质和Table3派生计算；4份资产hash与提取重跑一致，独立审核通过。N19/N20导热计算与印刷值差异保留，低温有效cp显式归类派生；没有将这些烧后数据移作湿坯/高温本构。该来源增加终态对照候选，不使完整原污泥材料域成立。

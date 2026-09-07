@@ -9,7 +9,7 @@
 | G02 | B2失败定位与必要修复 | B2_ROOT_CAUSE、0634e80、b2-bound-0634e80实际绑定22情景/审计 | verified（仅原B2域） |
 | E01 | 八种知识/输入类别，禁止混用 | schema、分类校验/测试 | in_progress |
 | E02 | 逐参数具体原文定位和元数据 | source/parameter registry及核读证据 | in_progress |
-| E03 | 派生/转换/拟合链完整 | 依赖图、原值/单位/代码链 | pending |
+| E03 | 派生/转换/拟合链完整 | 依赖图；IAPWS与Baloi原值/单位/派生代码已核查，全结果链尚未闭合 | in_progress |
 | E04 | 来源文件、hash、日期、许可 | 合法原始缓存与registry | in_progress |
 | E05 | 材料/气氛/温压/几何匹配 | domain gate与域外测试 | in_progress |
 | E06 | unknown传播、无默认补值 | 下游阻断、fixture隔离测试 | in_progress |
@@ -45,9 +45,9 @@
 | X08 | 数值失败/缺证/域外/约束分开 | 类型化状态及搜索行为测试 | pending |
 | V01 | 事前登记验证与容差理由 | VALIDATION_PLAN及版本记录 | in_progress |
 | V02 | 单位/计量/比例/正性 | 独立针对性数值测试 | in_progress |
-| V03 | 传热/扩散/密闭反应/有限氧极限 | 解析/半解析/制造解，独立oracle | pending |
-| V04 | 时空收敛与刚性失败 | 全耦合收敛及异常证据 | pending |
-| V05 | 分时段质量/元素/能量独立账本 | audit不以solver残差作真值 | pending |
+| V03 | 传热/扩散/密闭反应/有限氧极限 | 解析/半解析/制造解，独立oracle；G2刚性气相/反应已实际积分，全湿砖仍待实现 | in_progress |
+| V04 | 时空收敛与刚性失败 | 刚性气相导热空间/时间二阶及失败证据已验证；全耦合收敛未完成 | in_progress |
+| V05 | 分时段质量/元素/能量独立账本 | conservation独立分格/分步/前缀审计已实现，完整多相储能重建待接入 | in_progress |
 | V06 | 不静默clip/改阈值/删除失败 | 修正记录与回归检查 | pending |
 | V07 | 干燥/传热公开实验验证 | 来源、条件、留出/拟合、误差 | pending |
 | V08 | 原泥反应或残炭公开实验验证 | 同上，区别char制备条件 | pending |

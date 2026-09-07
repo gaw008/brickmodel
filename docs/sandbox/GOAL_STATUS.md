@@ -4,11 +4,11 @@
 
 ## 当前状态
 
-- Goal：active；首个实现回合，已取得工作区和模型证据，属于 progress。
+- Goal：active；持续实现中，本回合已修补数值缺陷并完成阶段提交，属于 progress。
 - software_status：implementation_in_progress。
 - scientific_status：partial_sources_no_complete_raw_sludge_domain；完整原污泥材料域尚未成立。
 - deployment_status：offline_research_only。
-- 当前阶段：G0 的历史B2故障已定位/修复并提交验证；G1 基础模块已实现；G2 面交换开始，完整时间积分器未实现。
+- 当前阶段：G0 历史B2故障已修复；G1 基础模块已提交；G2 守恒积分、配平反应、刚性气热、独立账本、纯水适配器已通过有界验证与独立复审；完整湿砖全周期未实现。
 - 基线：`4b4f2d3`；分支：`codex/physics-sandbox-v1`。
 - 开始时已有未跟踪文件仅 `docs/GOAL_BRICK_PHYSICS_SANDBOX.md`，为本 Goal 合同，保留并纳入本任务。
 - 当前工作目录 `/Users/wanggaoying/Desktop/brickmodel-github`；未修改 Hermes、同步任务或远程仓库。
@@ -35,29 +35,43 @@
 
 平台细节：本地工具回合会使 `.venv` 文件隐藏，Python3.12跳过隐藏 `.pth`，editable导入不稳定。开发显式 `PYTHONPATH=src`；最终必须另测干净非editable安装，不能靠该路径声明安装验收。外部`/usr/bin/time -l`曾因sandbox kern.clockrate/sysctl被拒绝，内部RSS/耗时单独报告，未反复重跑掩盖该问题。
 
-## 分工与所有权
+## G2 已完成的有界能力
 
-| 子任务 | 所有权 | 工作 |
-|---|---|---|
-| 主代理 | 新 sandbox 包/测试、进度/验收/政策及集成 | 来源图、缺项阻断、材料接口、全局验收 |
-| source_evidence | 已完成研究提取；当前gas_transport及tests、transport缓存/报告 | 气体保正通量修复与来源说明 |
-| b2_repair | 已完成B2；thermochemistry包/测试/数据/来源报告 | NIST移录、反解精度与溢出修复已完成 |
-| physics_architecture | ARCHITECTURE_PROPOSAL；PHYSICS_REVIEW_GAS_TRANSPORT | 气体独立物理/数值审查 |
-| code_review_g1_b2 | CODE_REVIEW_* 报告 | evidence/geometry/B2、digitize、材料、thermo已复审；exchanges审查 |
+| 本地提交 | 实现与验证 |
+|---|---|
+| `e3dda49` | 配平反应、库存分辨率守卫；49测试、独立复审通过 |
+| `a18310b` | 13份IAPWS原始/派生资产；33个官方数值独立重算 |
+| `e259c29` | 守恒积分器28测试、刚性气热26测试；实际stage时刻、累计舍入、正性/取消/超时与独立审核 |
+| `8bb92ca` | 独立精确加权审计37测试；系统/单元分步和前缀，保留权重舍入与局部漂移反例 |
+| `2842691` | 来源门禁IAPWS适配器78测试；Cp/Cv导数和SI有限性修补，独立66状态复验 |
+| `f2f2f31` | 刚性气相导热7个实际收敛案例；空间阶1.967/1.992、时间阶2.012/2.006；独立解析审核 |
 
-来源代理不写 `B2_ROOT_CAUSE.md`。工作共享同一分支，由主代理统一提交。
+水适配器使用IAPWS原生R与同相统一参考偏移；未与混合载气/高温Shomate拼接。审计器检查存储U账本，不冒充多相热物性重建。收敛案例为明确制造解，不是现实砖试验。
+
+收敛脚本提交前 `git diff --cached --check` 曾报告文件末尾多一空行，编排未在该非零结果后停止提交。保留这项格式检查失败记录；不把它称为通过，也未改变绑定数值产物的源码字节。独立数值审核与源hash验证通过。
+
+## 完整安装复验与来源增量
+
+从 `/private/tmp` 在 `/private/tmp/brick-sandbox-g2-install-20260907` 运行冻结、非editable、离线安装；无PYTHONPATH。最后实际429测试通过（16.01s，0失败/跳过），13个实际site-packages模块源码hash与工作区一致。证据：`research/g2-installed-final-tests.xml`、`research/g2-installed-final-identity.json`。较早排除审计/水模块的314测试与11模块hash快照作为历史证据保留，不能混作最终版本。
+
+Baloi2025出版商HTML/JATS原文、5组配比/终态热物性及派生提取已独立审核通过；4份清单资产逐一核验bytes/hash。详见 `research/BALOI2025_COVERAGE.md`、`research/CODE_REVIEW_BALOI2025.md`。体积配比没有擅自转质量；烧后低温有效cp没有冒充湿坯/高温热容。
+
+独立代理的早期额度错误已终止；实际账户限额重新读取后可继续，未使用重置信用。恢复后的水、收敛和Baloi审核均完成。审核是代码/数值独立核查，不是外部科学专家认证。
 
 ## 当前关键缺项
 
-1. 原污泥全周期的成套、适用参数及独立验证覆盖尚待证据核查。
-2. 完整能量、热湿迁移、局部氧/载气、压力驱动输运和孔隙/几何反馈尚未实现。
-3. B2 历史失败修复只覆盖原synthetic域；不作新模型完整验收。
-4. CLI/界面、多代搜索与耦合公开实验验证尚未完成。
+1. 同一原污泥材料域的成套组成、产物、参考能、湿热/烧结/力学关系及独立实验覆盖尚未闭合。
+2. 纯水与载气、固体的统一储能及热湿耦合尚未实现；纯水EOS不是泥中吸附/毛细本构。
+3. 烧结、闭孔/渗透演变、几何反馈和冷却应力尚未实现。
+4. 全周期CLI/界面、可恢复批量运行、多代搜索与公开实验预测对照尚未完成。
 
-## 下一步
+## 下一步与所有权
 
-1. G1基础模块、来源缓存和复查记录已准备本地阶段提交；本阶段提交可用 `git log -1 -- src/sludge_sandbox` 查询。新实现和证据仍按完整合同继续。
-2. 在manufactured模式实现元素配平反应、统一多相储能、有限体积时间积分与同步账本；先封闭反应/两格气体交换与热传导解析验证。
-3. 同步补水物性、反应产物与动态收缩的实际来源资格，不依赖它们的求解器/应用开发继续。不可把纯气体热化学包改称湿砖包。
+- 主代理：维护安装证据/当前声明，推进实际多相接口与来源缺项阻断，统一阶段提交。
+- review_water_resume：仅 `MULTIPHASE_STORAGE_DESIGN.md`，核对R/参考态/相平衡和可实施的固液气接口，不修改已审核水代码。
+- boundary_program：仅边界程序模块/测试/说明，实现连续分段炉温/壁温/压力/完整气氛与显式节点，后续独立审核。
+- 原 review_convergence_resume：已完成收敛及Baloi独立审核，当前无代码所有权。
 
-尚未满足合同第 11 节任何“完整实现”结论，不标记 Goal 完成。
+先完成无需猜测材料值的边界和统一储能，再逐项接有证据热湿机制；继续原泥材料来源与公开验证。缺证项保持未完成，不把广延库存换算、来源hash或制造解当作真实材料资格。
+
+尚未满足合同第11节的完整实现条件，Goal保持active。

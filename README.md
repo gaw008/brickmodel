@@ -4,11 +4,13 @@
 
 **目前没有砖厂可用的污泥成分窗口，也没有完成完整 virtual world model。所有模型结果只用于研究。**
 
+当前正在按 [完整 Goal 合同](docs/GOAL_BRICK_PHYSICS_SANDBOX.md) 构建独立的 `sludge_sandbox` 物理沙盒。已有来源/材料账目、热化学、气体输运、守恒积分、反应算子和独立账本审计；刚性气相的气体—热量耦合已实际验证。纯水物性适配器与刚性气相导热时空收敛已通过独立复审；当前基础及G2模块已通过429项非editable安装测试。完整湿砖的干燥、烧结收缩、冷却应力、公开实验对照及新 CLI/界面仍待完成。最新范围和实际验证见 [Goal 进度](docs/sandbox/GOAL_STATUS.md) 与 [验收矩阵](docs/sandbox/ACCEPTANCE_MATRIX.md)。下文 `sludge-vme` 命令仍属于已有 synthetic 原型，不能当作新沙盒全流程入口。
+
 | 模块 | 内容 | 状态 |
 | --- | --- | --- |
 | [公开材料研究](experiments/material_design_v2/artifacts/DIRECTION_REPORT.md) | DTU 污泥焚烧灰数据重算、基料依赖、吸水与收缩折衷 | 独立审核通过，仅 Stage1 研究 |
 | [B1 反应—输运](experiments/material_dynamics_v2b1/README.md) | 一维等温、固定几何、有限氧库存与局部残碳 | 独立审核通过，仅冻结诊断范围 |
-| [B2 给定温度程序](experiments/material_dynamics_v2b2/README.md) | prescribed-temperature 扩展 | **blocked：实际运行审计失败，未获独立 Safety 批准** |
+| [B2 给定温度程序](experiments/material_dynamics_v2b2/README.md) | prescribed-temperature 扩展 | 历史审计失败已在 `0634e80` 修复并完成[冻结范围复验](docs/sandbox/research/b2-bound-0634e80/summary.json)；不代表湿砖全周期验证 |
 | [早期 VME](docs/MODEL_ARCHITECTURE.md) | 正向/反向求解与 synthetic 筛选框架 | 受限研究原型；不能继承 B1 的审核结论 |
 
 后续更新每 15 分钟由 Codex 自动同步：[同步范围、分支位置与运行条件](docs/research-status/GITHUB_SYNC.md)。

@@ -17,5 +17,10 @@
 | 对流+灰表面/黑体环境辐射 | `exchanges.boundary_heat` | 相反方向热输入、独立气温/辐射温度与非法值测试 |
 | 扩散/对流分项的物质焓率 | `exchanges.gas_enthalpy_exchange` | 实际热化学/气体模块接口测试；EOS与热化学R一致 |
 | B2被动暴露积分误差步长界 | B2 `solver.exposure_step_limits` | 原容差、独立oracle、提交绑定22情景；仅历史synthetic域 |
+| 元素计量矩阵、归一化Arrhenius质量作用源 | `reactions.ReactionNetwork` | `test_reactions.py`；49项及独立审查，仅显式候选/制造算子，不是原污泥机制包 |
+| SSPRK2接受子步的共同库存/能量账本 | `integration.integrate` | `test_integration.py`；实际stage时间、局部/累计舍入和拒步，不代替物理守恒验证 |
+| 当前n/U解码、EOS、共享扩散/Darcy/导热/物质焓 | `gas_heat_model.GasHeatModel` | `test_gas_heat_model.py`；刚性气相验证域，无固液储能/蒸发/收缩 |
+| 独立质量、元素和储存U分步/前缀账本 | `conservation.audit_conservation` | `test_conservation.py`；使用显式基准，不调用求解器导数作为真值，仍须多相热物性重建 |
+| IAPWS Helmholtz水物性、h−pv、Cp/Cv导数与统一参考偏移 | `water_properties.WaterProperties` | 78测试、33官方数值核验；`WATER_ADAPTER.md`；原生R显式，未拼接混合气 |
 
-完整组装器、动力学、水分迁移、烧结、力学和多代实验还没有实际映射，保持未完成。后续任何结果的完整DAG还需绑定实际启用的函数、参数和模型版本，不能用这张人读表替代运行时追溯。
+完整湿砖组装器、材料动力学、水分迁移、烧结、力学和多代实验还没有实际映射，保持未完成。后续任何结果的完整DAG还需绑定实际启用的函数、参数和模型版本，不能用这张人读表替代运行时追溯。
