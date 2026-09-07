@@ -195,6 +195,36 @@ class SaturationPair:
         return self.vapor.enthalpy_j_mol - self.liquid.enthalpy_j_mol
 
 
+@dataclass(frozen=True)
+class _PhaseSnapshot:
+    rho: float
+    h: float
+    u: float
+    s: float
+    cp: float
+    cv: float
+
+
+@dataclass(frozen=True)
+class _SaturationSnapshot:
+    T: float
+    P: float
+    x: float
+    Liquid: _PhaseSnapshot
+    Gas: _PhaseSnapshot
+
+
+@dataclass(frozen=True)
+class _SaturationCacheEntry:
+    temperature: float
+    reference: WaterReference
+    assets: tuple
+    limits: NumericalLimits
+    backend: object
+    solver: object
+    raw: _SaturationSnapshot
+
+
 def _verify_sources(directory):
     directory = Path(directory)
     try:
@@ -233,6 +263,7 @@ class WaterProperties:
     numerical_limits: NumericalLimits
     _backend: object = field(repr=False)
     _model: object = field(repr=False)
+    _saturation_cache: _SaturationCacheEntry | None = field(default=None, repr=False, compare=False, hash=False)
 
     def __init__(self, source_directory):
         backend, facts = _verify_sources(source_directory)
@@ -252,6 +283,7 @@ class WaterProperties:
         object.__setattr__(self, "numerical_limits", NumericalLimits())
         object.__setattr__(self, "_backend", backend)
         object.__setattr__(self, "_model", model)
+        object.__setattr__(self, "_saturation_cache", None)
 
     def _solve(self, **inputs):
         try:
@@ -322,7 +354,19 @@ class WaterProperties:
 
     def saturation_pair(self, temperature_k) -> SaturationPair:
         temperature = _temperature(temperature_k)
-        raw = self._solve(T=temperature, x=0.5)
+        entry = self._saturation_cache
+        assets = tuple(sorted(self.source_asset_sha256.items()))
+        try:
+            solver = self._backend.IAPWS95
+        except AttributeError as exc:
+            raise WaterNumericalError("iapws_solver_failed") from exc
+        hit = (entry is not None and entry.temperature == temperature
+               and entry.reference is self.reference and entry.assets == assets
+               and entry.limits == self.numerical_limits
+               and entry.backend is self._backend and entry.solver is solver)
+        # Only skip the nonlinear saturation solve. Current EOS/caloric checks
+        # below run even on a hit, including mutable-model fault injection.
+        raw = entry.raw if hit else self._solve(T=temperature, x=0.5)
         try:
             if raw.x != 0.5:
                 raise WaterNumericalError("iapws_wrong_saturation_quality")
@@ -337,7 +381,17 @@ class WaterProperties:
                  - vapor.native_enthalpy_j_kg + temperature * vapor.native_entropy_j_kg_k)
         if abs(gibbs) > self.numerical_limits.gibbs_absolute_j_kg:
             raise WaterNumericalError("iapws_saturation_chemical_equilibrium_residual")
-        return SaturationPair(temperature, pressure, liquid, vapor, gibbs)
+        pair = SaturationPair(temperature, pressure, liquid, vapor, gibbs)
+        if not hit:
+            def snapshot(phase):
+                return _PhaseSnapshot(*(float(getattr(phase, name))
+                                        for name in ("rho", "h", "u", "s", "cp", "cv")))
+            raw_snapshot = _SaturationSnapshot(float(raw.T), float(raw.P), float(raw.x),
+                                               snapshot(raw.Liquid), snapshot(raw.Gas))
+            object.__setattr__(self, "_saturation_cache", _SaturationCacheEntry(
+                temperature, self.reference, assets, self.numerical_limits,
+                self._backend, solver, raw_snapshot))
+        return pair
 
     def state_tp(self, temperature_k, pressure_pa, *, phase: Literal["liquid", "vapor"]) -> WaterState:
         temperature = _temperature(temperature_k)
