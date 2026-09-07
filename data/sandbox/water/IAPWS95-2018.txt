@@ -1,0 +1,1086 @@
+                                                                                   IAPWS R6-95(2018)
+
+
+The International Association for the Properties of Water and Steam
+                                     Prague, Czech Republic
+                                        September 2018
+
+    Revised Release on the IAPWS Formulation 1995 for the Thermodynamic
+     Properties of Ordinary Water Substance for General and Scientific Use
+
+                2018 International Association for the Properties of Water and Steam
+   Publication in whole or in part is allowed in all countries provided that attribution is given to the
+                   International Association for the Properties of Water and Steam
+
+Please cite as: International Association for the Properties of Water and Steam, IAPWS R6-95(2018),
+  Revised Release on the IAPWS Formulation 1995 for the Thermodynamic Properties of Ordinary
+                         Water Substance for General and Scientific Use (2018)
+
+   This revised release replaces the corresponding revised releases of 2016, 2014, and 2009 (which
+       replaced the original release of 1996), and contains 19 pages, including this cover page.
+
+        This Release has been authorized by the International Association for the Properties of Water
+and Steam (IAPWS) at its meeting in Prague, Czech Republic, 2-7 September, 2018. The members of
+IAPWS are: Australia, Britain and Ireland, Canada, the Czech Republic, Germany, Japan, New
+Zealand, Russia, Scandinavia (Denmark, Finland, Norway, Sweden), and the United States, and
+associate members Argentina and Brazil, China, Egypt, France, Greece, Italy, and Switzerland. The
+President at the time of adoption of this document was Prof. Hans-Joachim Kretzschmar of Germany.
+                                                Summary
+        The formulation provided in this release is recommended for general and scientific use; further
+details about the formulation can be found in an article “The IAPWS Formulation 1995 for the
+Thermodynamic Properties of Ordinary Water Substance for General and Scientific Use” by W.
+Wagner and A. Pruß [1]. This formulation provides the most accurate representation of the
+thermodynamic properties of the fluid phases of water substance over a wide range of conditions
+available at the time this release was prepared.
+        IAPWS also has a formulation intended for industrial use.
+         This revised release is identical to the original release issued by IAPWS in 1996, except for
+inclusion of the calculated triple-point pressure, improved values for the coefficients n1o and n2o in
+Table 1 to match more accurately the arbitrary conventions for the zeros of energy and entropy. The
+improved coefficients produce slight changes in the numerical values of u, s, h, f, and g; other
+properties (and all measurable differences in properties) are unchanged. In the 2014 revision, the
+uncertainties for the speed of sound and heat capacity were replaced with improved estimates; the
+2016 revision improved the uncertainty estimates for the specific isobaric heat capacity and updated
+language regarding extrapolation in the metastable subcooled liquid; the 2018 revision added details
+about computing virial coefficients and clarified uncertainty estimates at low densities. Minor
+editorial corrections have also been made, including corrections in the last digits of a few calculated
+values in Tables 6-8 and updates to references. In 2010, a reference for estimated uncertainties in
+enthalpy was added. In 2012, advice was given regarding the use of the formulation in the gas region
+down to 130 K.
+
+
+        Further information about this Release and other documents issued by IAPWS can be obtained
+from the Executive Secretary of IAPWS (Dr. R.B. Dooley, bdooley@structint.com) or from
+http://www.iapws.org.
+                                                         2
+
+
+
+
+ The IAPWS Formulation 1995 for the Thermodynamic Properties of
+      Ordinary Water Substance for General and Scientific Use
+
+
+                                              1 Nomenclature
+
+
+
+Thermodynamic quantities:                                                 Superscripts
+
+B        Second virial coefficient                                        o   Ideal-gas property
+C        Third virial coefficient                                         r   Residual
+cp       Specific isobaric heat capacity                                  ′   Saturated liquid state
+cv       Specific isochoric heat capacity                                 ″   Saturated vapor state
+f        Specific Helmholtz free energy
+h        Specific enthalpy
+M        Molar mass                                         Subscripts
+p        Pressure                                           c critical point
+R        Specific gas constant                              σ saturation
+Rm       Molar gas constant                                 t triple point
+s        Specific entropy
+T        Absolute temperature
+u        Specific internal energy
+w        Speed of sound
+βs       Isentropic throttling coefficient
+δ        Reduced density, δ = ρ / ρc
+δT       Isothermal throttling coefficient
+φ        Dimensionless Helmholtz free energy, φ = f /( RT )
+κT       Isothermal compressibility
+µ        Joule-Thomson coefficient
+ρ        Mass density
+τ        Inverse reduced temperature, τ = Tc / T
+
+Note: T denotes absolute temperature on the International Temperature Scale of 1990. This is unaffected by the
+revision to the SI system of units scheduled to go into effect in 2019.
+                                                  3
+
+
+                                   2 Reference Constants
+
+
+                                     Tc = 647.096 K                                           (1)
+                                     ρ c = 322 kg m–3                                         (2)
+                                     R = 0.461 518 05 kJ kg–1 K–1                             (3)
+
+
+        The numerical values for the critical temperature Tc and critical density ρc are identical
+to those given in the IAPWS revised release on the critical parameters of ordinary water
+substance [2]. The value of the specific gas constant R is derived from values of the molar gas
+constant Rm [3] and the molar mass M [4], which differ slightly from the accepted values of
+these quantities at the time this release was prepared. The use of the more recent values would
+yield a specific gas constant which is greater than the value given in Eq. (3) by about 1 part in
+60 000. Since the value of R in Eq. (3) has been used in obtaining the coefficients in the
+residual part φ r , Eq. (6), then this value of R must be used in obtaining property values from
+the formulation, Eq. (4).
+
+
+       Due to the use of the specific gas constant, Eq. (4) corresponds to a mass-based
+formulation. In order to convert values of specific properties to molar properties, an
+appropriate value for the molar mass should be used (see [5]).
+
+
+
+                                      3 The Formulation
+
+
+       The formulation is a fundamental equation for the specific Helmholtz free energy f.
+This equation is expressed in dimensionless form, φ = f /(RT ), and is separated into two parts,
+an ideal-gas part φ o and a residual part φ r , so that :
+                                f ( ρ, T )
+                                  = φ (δ   , τ ) φ o (δ , τ ) + φ r (δ , τ ) ,
+                                           =                                                  (4)
+                                  RT
+where δ = ρ /ρc and τ = Tc /T with ρ c , Tc , and R given by Eqs. (2), (1) and (3).
+
+
+       The ideal-gas part φ o of the dimensionless Helmholtz free energy is obtained from an
+equation for the specific isobaric heat capacity in the ideal-gas state developed by Cooper [6]
+and reads:
+                                                           8
+                                                          ∑ nio ln 1 − e−γ τ  ,
+                                                                               o
+                     φ =
+                       o
+                           lnδ + n1o + n2oτ + n3o lnτ +                        i              (5)
+                                                          i=4
+
+where δ = ρ /ρc and τ = Tc /T with ρ c and Tc according to Eqs. (2) and (1). Table 1 contains
+the coefficients and parameters of Eq. (5).
+                                                                      4
+
+
+The form of the residual part φ r of the dimensionless Helmholtz free energy is as follows:
+
+               7                51                           54                                                          56
+                                                                          di ti −α i ( δ − εi ) − βi (τ −γ i )
+              ∑                ∑ niδ τ e                     ∑ niδ τ e                                                   ∑ niΔb δψ
+                                                                                               2                 2
+                                        di ti −δ ci
+       φ =niδ τ +
+         r             di ti
+                                                      +                                                              +         i     (6)
+=i 1 =i 8                                =i 52                                                     =i 55
+
+                                                   2 ai
+                with       ∆= θ 2 + Bi ( δ − 1) 
+                                                
+                                                                  1
+                           θ = (1 − τ ) + Ai ( δ − 1)  2βi
+                                                      2
+                                                       
+                          ψ = e −Ci (δ −1) − Di (τ −1)
+                                           2             2
+                                                              ,
+
+where δ = ρ /ρc and τ = Tc /T with ρc and Tc according to Eqs. (2) and (1). The coefficients
+and parameters of Eq. (6) are listed in Table 2.
+
+       Since the 5th International Conference on the Properties of Steam in London in 1956,
+the specific internal energy and the specific entropy of the saturated liquid at the triple point
+                                                      1
+have been set equal to zero. Thus, at the triple-point temperature Tt = 273.16 K,
+                                            =     =
+                                            u ′t 0 , s ′t 0.                                                                         (7)
+
+In order to meet this condition, the coefficients n1o and n2o in Eq. (5) have been adjusted
+accordingly. As a consequence, after calculating for Tt the saturated liquid density ρ ′t via the
+phase-equilibrium condition (see Table 3), Eq. (4) yields for the specific enthalpy of the
+saturated liquid at the triple point:
+                                           h′t = 0.611 782 J kg−1.                                                                   (8)
+
+In the liquid-water region, small changes in density along an isotherm cause large changes in
+pressure. For this reason, due to an accumulation of small errors, a particular computer code
+may fail to return the zeros in Eq. (7) for the saturated liquid density at the triple-point
+temperature. If a user wants to reproduce the zeros of Eq. (7) more precisely, the constants
+ n1o and n2o in Eq. (5) may be readjusted by imposing the condition u =  ′t 0,=s ′t 0 with the
+desired accuracy.
+
+
+
+
+                         4 Relations of Thermodynamic Properties to the
+                                Dimensionless Helmholtz Free Energy
+
+      All thermodynamic properties can be derived from Eq. (4) by using the appropriate
+combinations of the ideal-gas part φ o , Eq. (5), and the residual part φ r , Eq. (6), of the
+dimensionless Helmholtz free energy and their derivatives. Relations between thermodynamic
+
+1
+    The calculation of the triple-point pressure pt from Eq. (4) yields pt = 611.654 771 Pa.
+                                                       5
+
+
+properties and φ o and φ r and their derivatives are summarized in Table 3. All required
+derivatives of the ideal-gas part and of the residual part of the Helmholtz free energy are
+explicitly given in Table 4 and Table 5, respectively.
+        Besides the single-phase region, the formulation also covers the liquid-vapor saturation
+curve. For given saturation temperature and solving simultaneously the three equations of the
+phase-equilibrium condition (see Table 3) by iteration, Eq. (6) yields the thermal saturation
+properties pσ , ρ ′ and ρ ′′ . Then, all the other properties can be derived from Eq. (4). In this
+way, the properties calculated on the saturation curve are thermodynamically consistent with
+the properties of the single-phase region.
+
+Note: IAPWS has issued the Supplementary Release on Saturation Properties of Ordinary Water Substance [7]
+containing a set of simple equations which yield values for the vapor pressure as well as the density, specific
+enthalpy and specific entropy of the saturated vapor and liquid. The values calculated from these equations are
+not identical with the corresponding values derived from Eq. (4), but agree with them within the uncertainties of
+the simple equations for the saturation properties.
+
+
+
+                                          5 Range of Validity
+
+
+IAPWS has tested the formulation and endorses its validity in the following way:
+
+
+(1) The formulation is valid in the entire stable fluid region of H2O from the melting-pressure
+    curve [8] to 1273 K at pressures up to 1000 MPa; the lowest temperature on the melting-
+    pressure curve is 251.165 K (at 208.566 MPa) [8], see Fig. 1.
+
+     In this entire region, Eq. (4) represents the experimental data available at the time the
+     release was prepared (except for very few data points) to within their uncertainties.
+
+     Although Eq. (4) is also in satisfactory agreement with the experimental data in the
+     critical region, the equation has some unsatisfactory features in the immediate vicinity of
+     the critical point. These features involve second order and higher derivatives of the
+     dimensionless Helmholtz free energy and properties obtained from them. Specifically, the
+                                            (
+     isothermal compressibility κT κT= ρ −1 ( ∂ρ /∂ p )T             )
+                                                                and the specific isobaric heat
+     capacity cp exhibit unphysical behavior which occurs in a region from Tc to 5 K above Tc
+     for densities ± 0.5 % from ρc. In addition, within a temperature range from 20 mK below
+     Tc up to Tc, the isochoric heat capacity cv exhibits a maximum and the speed of sound w
+     exhibits a minimum not at the saturation temperature Tσ of the corresponding isochore
+     (as it should be) but in the single-phase region up to 2.5 mK above Tσ .
+
+
+(2) In the stable fluid region, the formulation can also be extrapolated beyond the limits given
+    under item (1).
+                                               6
+
+
+    Tests show that Eq. (4) behaves reasonably when extrapolated to pressures up to about
+    100 GPa and temperatures up to about 5000 K. This holds at least for the density and
+    enthalpy of undissociated H2O.
+
+    In the gas region at pressures below the triple-point pressure, Eq. (4) behaves reasonably
+    when extrapolated to the sublimation-pressure curve [8] for temperatures down to 130 K.
+
+
+(3) As far as can be tested with experimental data, the formulation behaves reasonably when
+    extrapolated into the metastable regions. Equation (4) represents the currently available
+    experimental data of the superheated liquid at positive pressures (liquid-gas metastable
+    region) to within the experimental uncertainty. For the subcooled liquid (solid-liquid
+    metastable region), the available data are in fair agreement with Eq. (4) but some recent
+    high-pressure data are not represented within their uncertainties; IAPWS has a separate
+    Guideline that better represents the thermodynamic properties of subcooled liquid water
+    [11]. In the case of the subcooled gas (gas-liquid metastable region), no experimental data
+    are available. In this region, for pressures below 10 MPa, Eq. (4) produces reasonable
+    values close to the saturation line. For calculations further away from the saturation line,
+    an alternative equation (the so-called gas equation) is given in reference [1].
+
+For further details see reference [1].
+
+
+
+                                6 Estimates of Uncertainty
+
+        Estimates have been made of the uncertainty of the density, speed of sound, and
+isobaric heat capacity when calculated from the formulation, Eq. (4). These estimates were
+derived from comparisons with the various sets of experimental data together with the
+judgement of the Working Group on Thermophysical Properties of Water and Steam of
+IAPWS.
+
+        For the single-phase region, these tolerances are indicated in Figs. 1 to 3, which give
+the estimated uncertainties in various areas. As used here, “tolerance” means the range of
+possible values as judged by IAPWS, and no statistical significance can be attached to it.
+With regard to the uncertainty for the speed of sound and the specific isobaric heat capacity,
+see Figs. 2 and 3, it should be noted that the uncertainties for these properties increase
+drastically when approaching the critical point. The statement “no definitive uncertainty
+estimates possible” for the high-pressure region in Figs. 2 and 3 is based on the lack of
+experimental data in this region. Further details concerning uncertainties of this formulation
+at high pressure are given in [9].
+
+        For the saturation properties, the estimates of the uncertainties of vapor pressure,
+saturated liquid density, and saturated vapor density are shown in Fig. 4.
+                                                7
+
+
+        Estimated uncertainties in enthalpy, in enthalpy differences in the single-phase region,
+and in the enthalpy of vaporization are given in IAPWS Advisory Note No. 1 [10].
+
+
+
+                            7 Computer-Program Verification
+
+
+        To assist the user in computer-program verification, three tables with test values are
+given. Table 6 contains values of the ideal-gas part φ o and the residual part φ r of the
+dimensionless Helmholtz free energy together with the corresponding derivatives. Table 7
+lists values for the pressure p, the specific isochoric heat capacity cv, the speed of sound w,
+and the specific entropy s calculated at selected values of temperature T and density ρ .
+Table 8 gives values for the vapor pressure pσ , values for the density ρ ′ , specific enthalpy h′
+and specific entropy s′ for the saturated liquid, and values for the density ρ ′′ , specific
+enthalpy h″ and specific entropy s″ for the saturated vapor. All these saturation values have
+been calculated with Eq. (4) by using the phase-equilibrium condition (see the corresponding
+comment in Section 4).
+
+
+                                        8 References
+[1] Wagner, W., and Pruß, A., The IAPWS Formulation 1995 for the Thermodynamic Properties of
+    Ordinary Water Substance for General and Scientific Use, J. Phys. Chem. Ref. Data 31, 387-535
+    (2002).
+[2] IAPWS, R2-83(1992), Release on the Values of Temperature, Pressure, and Density of Ordinary
+    and Heavy Water Substances at Their Respective Critical Points (1992). Available from
+    http://www.iapws.org.
+[3] Taylor, B. N., Parker, W. H., and Langenberg, D. N., Determination of e / h, Using Macroscopic
+    Quantum Phase Coherence in Superconductors: Implications for Quantum Electrodynamics and
+    the Fundamental Physical Constants, Rev. Mod. Phys. 41, 375-496 (1969).
+[4] Kell, G. S., Effects of Isotopic Composition, Temperature, Pressure, and Dissolved Gases on the
+    Density of Liquid Water, J. Phys. Chem. Ref. Data 6, 1109-1131 (1977).
+[5] IAPWS, G5-01(2016), Guideline on the Use of Fundamental Physical Constants and Basic
+    Constants of Water (2001). Available from http://www.iapws.org.
+[6] Cooper, J. R., Representation of the Ideal-Gas Thermodynamic Properties of Water, Int. J.
+    Thermophys. 3, 35-43 (1982).
+[7] IAPWS, SR1-86(1992), Revised Supplementary Release on Saturation Properties of Ordinary
+    Water Substance (1992). Available from http://www.iapws.org. See also Wagner, W., and
+    Pruß, A., International Equations for the Saturation Properties of Ordinary Water Substance –
+    Revised According to the International Temperature Scale of 1990. J. Phys. Chem. Ref. Data 22,
+    783-787 (1993).
+[8] IAPWS, R14-08(2011), Revised Release on the Pressure along the Melting and Sublimation
+    Curves of Ordinary Water Substance (2011). Available from http://www.iapws.org. See also
+    Wagner, W., Riethmann, T., Feistel, R., and Harvey, A. H., J. Phys. Chem. Ref. Data 40, 043103
+    (2011).
+                                               8
+
+
+[9] Wagner, W., and Thol, M., The Behavior of IAPWS-95 at Temperatures from 250 to 300 K and
+    Pressures up to 400 MPa: Evaluation Based on Recently Derived Property Data, J. Phys. Chem.
+    Ref. Data 44, 043102 (2015).
+[10] IAPWS, AN1-03, Advisory Note No. 1: Uncertainties in Enthalpy for the IAPWS Formulation
+     1995 for the Thermodynamic Properties of Ordinary Water Substance for General and Scientific
+     Use (IAPWS-95) and the IAPWS Industrial Formulation 1997 for the Thermodynamic Properties
+     of Water and Steam (IAPWS-IF97) (2003). Available from http://www.iapws.org.
+[11] IAPWS, G12-15, Guideline on Thermodynamic Properties of Supercooled Water (2015).
+     Available from http://www.iapws.org.
+                                        9
+
+
+Table 1. Numerical values of the coefficients and parameters of the ideal-gas
+         part of the dimensionless Helmholtz free energy, Eq. (5)
+
+  i            nio               γ io        i        nio           γ io
+  1   –8.320 446 483 749 7        –         5      0.973 15     3.537 342 22
+  2    6.683 210 527 593 2        –         6      1.279 50     7.740 737 08
+  3    3.006 32                   –         7      0.969 56     9.244 377 96
+  4    0.012 436             1.287 289 67   8      0.248 73    27.507 510 5
+                                                 10
+
+
+Table 2. Numerical values of the coefficients and parameters of the
+         residual part of the dimensionless Helmholtz free energy, Eq. (6)
+   i    ci     di     ti                 ni
+   1     –     1     –0.5     0.125 335 479 355 23 × 10–1
+   2     –     1     0.875    0.789 576 347 228 28 × 101
+   3     –     1       1     –0.878 032 033 035 61 × 101
+   4     –     2      0.5     0.318 025 093 454 18
+   5     –     2     0.75    –0.261 455 338 593 58
+   6     –     3     0.375   –0.781 997 516 879 81 × 10–2
+   7     –     4       1      0.880 894 931 021 34 × 10–2
+   8     1     1       4     –0.668 565 723 079 65
+   9     1     1       6      0.204 338 109 509 65
+  10     1     1      12     –0.662 126 050 396 87 × 10–4
+  11     1     2       1     –0.192 327 211 560 02
+  12     1     2       5     –0.257 090 430 034 38
+  13     1     3       4      0.160 748 684 862 51
+  14     1     4       2     –0.400 928 289 258 07 × 10–1
+  15     1     4      13      0.393 434 226 032 54 × 10–6
+  16     1     5       9     –0.759 413 770 881 44 × 10–5
+  17     1     7       3      0.562 509 793 518 88 × 10–3
+  18     1     9       4     –0.156 086 522 571 35 × 10–4
+  19     1     10     11      0.115 379 964 229 51 × 10–8
+  20     1     11      4      0.365 821 651 442 04 × 10–6
+  21     1     13     13     –0.132 511 800 746 68 × 10–11
+  22     1     15      1     –0.626 395 869 124 54 × 10–9
+  23     2     1       7     –0.107 936 009 089 32
+  24     2     2       1      0.176 114 910 087 52 × 10–1
+  25     2     2       9      0.221 322 951 675 46
+  26     2     2      10     –0.402 476 697 635 28
+  27     2     3      10      0.580 833 999 857 59
+  28     2     4       3      0.499 691 469 908 06 × 10–2
+  29     2     4       7     –0.313 587 007 125 49 × 10–1
+  30     2     4      10     –0.743 159 297 103 41
+  31     2     5      10      0.478 073 299 154 80
+  32     2     6       6      0.205 279 408 959 48 × 10–1
+  33     2     6      10     –0.136 364 351 103 43
+  34     2     7      10      0.141 806 344 006 17 × 10–1
+  35     2     9       1      0.833 265 048 807 13 × 10–2
+  36     2     9       2     –0.290 523 360 095 85 × 10–1
+  37     2     9       3      0.386 150 855 742 06 × 10–1
+  38     2     9       4     –0.203 934 865 137 04 × 10–1
+  39     2     9       8     –0.165 540 500 637 34 × 10–2
+  40     2     10      6      0.199 555 719 795 41 × 10–2
+  41     2     10      9      0.158 703 083 241 57 × 10–3
+  42     2     12      8     –0.163 885 683 425 30 × 10–4
+  43     3     3      16      0.436 136 157 238 11 × 10–1
+  44     3     4      22      0.349 940 054 637 65 × 10–1
+  45     3     4      23     –0.767 881 978 446 21 × 10–1
+  46     3     5      23      0.224 462 773 320 06 × 10–1
+  47     4     14     10     –0.626 897 104 146 85 × 10–4
+  48     6     3      50     –0.557 111 185 656 45 × 10–9
+  49     6     6      44     –0.199 057 183 544 08
+  50     6     6      46      0.317 774 973 307 38
+  51     6     6      50     –0.118 411 824 259 81
+   i    ci     di     ti                   ni                αi   βi     γi    εi
+  52     –     3      0      –0.313 062 603 234 35 × 102     20   150   1.21   1
+  53     –     3      1       0.315 461 402 377 81 × 102     20   150   1.21   1
+  54     –     3      4      –0.252 131 543 416 95 × 104     20   250   1.25   1
+   i    ai     bi     Bi                   ni                Ci   Di    Ai     βi
+  55    3.5   0.85   0.2     –0.148 746 408 567 24           28   700   0.32   0.3
+  56    3.5   0.95   0.2      0.318 061 108 784 44           32   800   0.32   0.3
+                                                                     11
+
+
+Table 3. Relations of thermodynamic properties to the ideal-gas part φ o and the residual
+               part φ r of the dimensionless Helmholtz free energy and their derivativesa
+
+Property                                           Relation
+Pressure                                            p (δ , τ )
+                                                               = 1 + δφδr
+ p= ρ 2 ( ∂ f /∂ρ )T                                 ρ RT
+
+Internal energy                                    u (δ , τ )
+ u = f − T ( ∂ f /∂T ) ρ                              = τ φτo + φτr
+                                                     RT
+                                                                     (            )
+                                                   s( δ , τ )
+                                                                    (             )
+Entropy
+                                                            = τ φτo + φτr − φ o − φ r
+ s = − ( ∂ f /∂T ) ρ                                  R
+                                                   h (δ , τ )
+Enthalpy
+ h = f − T ( ∂ f /∂T ) ρ + ρ ( ∂ f /∂ρ )T            RT
+                                                                          (
+                                                                1 + τ φτo + φτr + δφδr
+                                                                =                     )
+                                                   cv ( δ , τ )
+Isochoric heat capacity
+ cv = ( ∂u /∂T ) ρ                                     R
+                                                                −τ
+                                                                =  2 φo + φr
+                                                                      ττ   ττ (            )
+                                                                                    (                   )
+                                                                                                                                     2
+                                                   c p (δ , τ )                      1 + δφδr − δτφδτ
+                                                                                                    r
+                                                                   τ (φττ + φττ ) +
+Isobaric heat capacity                                              2  o     r
+                                                                  =
+                                                                  −
+ c p = ( ∂h /∂T ) p                                    R                                     r
+                                                                                     1 + 2δφ + δ φ2   r
+                                                                                                               δ                 δδ
+
+                                                                                       (1 + δφδr − δτφδτr )
+                                                                                                                                         2
+Speed of sound                                     w2 ( δ , τ )
+                                                                   = + 2δφδr + δ 2φδδ
+                                                                                   r −
+                                                                                          τ 2 (φττ    ττ )
+                                                                   1
+ w =( ∂ p/∂ρ ) s
+                1/ 2
+                                                      RT                                        o + φr
+
+
+Joule-Thomson coefficient                                                   − ( δφδr + δ 2φδδ
+                                                                                            r        r
+                                                                                                + δτφδτ  )
+                                                   µ Rρ =
+ µ = ( ∂T /∂ p ) h
+                                                          (1 + δφδr − δτφδτr ) − τ 2 (φττo + φττr ) (1 + 2δφδr + δ 2φδδr )
+                                                                               2
+
+
+Isothermal throttling                                               1 + δφδr − δτφδτ
+                                                                                  r
+coefficient                                        δT ρ = 1 −
+ δT = ( ∂h /∂ p )T                                                 1 + 2δφδr + δ 2φδδ
+                                                                                   r
+
+
+Isentropic temperature-                                                                        1 + δφδr − δτφδτ
+                                                                                                             r
+                                                   βs ρ R =
+pressure coefficient
+                                                                  (1 + δφδr − δτφδτr ) − τ 2 (φττo + φττr ) (1 + 2δφδr + δ 2φδδr )
+                                                                                           2
+ β s =( ∂T /∂ p ) s
+
+Second virial coefficientb                      =
+                                                B (τ ) ρc lim φ
+                                                           =   δ ( δ ,τ )
+                                                                r
+                                                                                                  ∑            niτ ti
+                  (
+        lim ∂ ( p /( ρ RT ) ) /∂ρ
+ B (T ) =
+           ρ →0
+                                      )T                           δ →0
+                                                                                          i =1,2,3,8,9,10,23
+                                                                                            56
+                                                                                           ∑ ni (θi2 + Bi ) exp −Ci − Di (τ − 1)2 
+                                                                                                                         bi
+                                                                                      +
+                                                                                          i =55
+                                  b
+Third virial coefficient                                                                                                                 10
+             1
+                       (               
+        lim  ∂ 2 ( p/( ρ RT ) ) /∂ρ 2 
+ C (T ) =
+                                        =C (τ ) ρc2 lim φδδ
+                                            )        =
+                                                    δ →0
+                                                         r
+                                                            ( δ ,τ ) 2                                ∑
+                                                                                                niτ ti − 2 niτ ti                        ∑
+        ρ →0  2                      T                                 i = 4,5,11,12,24,25,26           i =8
+                                                                         56
+                                                                                                                 
+                                                                    +4                         ∑
+                                                                                                           Aθ
+                                                                                                               (
+                                                                               ni Ci θi2 + Bi − bi  i i + Bi ai  
+                                                                                                           βi    
+                                                                                                                                 )
+                                                                       i =55 
+
+                                                                                                  (                )
+                                                                                                                       bi −1
+                                                                                                                               exp  −Ci − Di (τ − 1) 
+                                                                                                                                                      2
+                                                                                                 × θi2 + Bi
+                                                                                                                                                       
+                                                                    12
+
+
+                                                        pσ                             pσ
+          Phase-equilibrium condition                         1 + δ ′φδr ( δ
+                                                              =              ′, τ ) ;         1 + δ ′′φδr ( δ
+                                                                                              =               ′′, τ )
+          (Maxwell criterion)                          RT ρ ′                         RT ρ ′′
+                                                       pσ  1    1       ρ′ 
+                                                               −  − ln  =       φ r ( δ ′, τ ) − φ r ( δ ′′, τ )
+                                                       RT  ρ ′′ ρ ′     ρ ′′ 
+
+
+    a φ r  ∂=
+             φr        r   ∂ 2φ r      r  ∂=
+                                               φr        r   ∂ 2φ r      r   ∂ 2φ r  o  ∂φ o              ∂ 2φ o 
+   =   δ  ∂δ      , φδδ   =       , φτ          , φττ     =     , φδτ  =        , φτ  =      , φ o
+                                                                                                            ττ       2 
+                                                                                                                           .
+                                             ∂τ δ                          ∂δ ∂τ        ∂τ δ
+                                 2                                 2
+              τ        ∂δ τ                          ∂τ δ                                           ∂τ δ
+         b
+             For calculation of B and C, θi (τ ) = Ai + 1 − τ . For checking computer implementations, at
+         600 K B = −0.555 366 808 × 10−2 m3 kg−1 and C = −0.669 015 050 × 10−5 m6 kg−2.
+
+
+
+
+        Table 4. The ideal-gas part φ o of the dimensionless Helmholtz free energy and its derivatives
+                                                                                                                                               a
+
+
+
+
+                                                                                                             (               )
+                                                                                                  8
+                                                                                                 ∑ nio ln 1 − e−γ τ
+                                                                                                                         o
+         φ   o
+                 =      lnδ        +       n1o   +      n2oτ    +         n3o lnτ        +                               i
+
+                                                                                                 i=4
+
+         φδo     =      1/δ        +      0      +      0       +        0               +      0
+
+
+         φδδ
+          o
+             =          − 1/δ 2    +      0      +      0       +        0               +      0
+
+
+                                                                                                                 (               )
+                                                                                                                         −1
+                                                                                                       o o                    
+                                                                                                  8
+         φτo     =      0          +      0      +      n2o     +         n3o / τ        +       ∑i i
+                                                                                                     n  γ   1 − e −γ ioτ
+                                                                                                                            − 1
+                                                                                                 i=4                          
+
+                                                                                                         ( )                 (           )−2
+                                                                                                  8                  2
+                                                                                                 ∑ nio γ io e−γ i τ 1 − e−γ i τ
+                                                                                                                         o           o
+         φττ
+          o
+                 =      0          +      0      +      0       –         n3o / τ 2      –
+                                                                                                 i=4
+
+         φδτ
+          o
+             =          0          +      0      +      0       +        0               +      0
+
+
+ a φ o =∂φ o           ∂ 2φ o          ∂φ o           ∂ 2φ o           ∂ 2φ o 
+=   δ   ∂δ     , φ o
+                     δδ  =
+                         2        , φτ
+                                        o
+                                           =
+                                           ∂τ      , φ o
+                                                        ττ    =
+                                                            2        , φ o
+                                                                           δτ          .
+             τ         ∂ δ    τ              δ        ∂ τ    δ         ∂ δ ∂ τ 
+                                                                                                                               13
+               Table 5. The residual part φ r of the dimensionless Helmholtz free                                                   energy and its derivativesa
+
+                                                                                                                                                                                                                      a
+                                                                              −α i ( δ − εi ) − βi (τ −γ i )
+                                                                                                                                                                                 with ∆ =θ + Bi ( δ − 1) 
+                       7              51                  ci   54                                 2             2     56                                                                                  2 i
+                  ∑ niδ di τ ti + ∑ niδ di τ ti e −δ + ∑ niδ di τ ti e
+                                                                                                                                                                                          2
+               φ=
+                r
+                                                                                                                    + ∑ ni ∆ bi δψ
+           =i 1 =i 8                             =i 52                                                 =i 55
+                                                                                                                                                                                                                             1
+                                                                                                                                                                                             θ = (1 − τ ) + Ai ( δ − 1)  2βi
+                                                                                                                                                                                                                            2
+                                                                                                                                                                                                                             
+                                                                                                                                                                                             ψ = e −Ci (δ −1) − Di (τ −1)
+                                                                                                                                                                                                             2            2
+
+
+                                                                                                                                                 56  bi                        
+                                                                     (             ) di ti −αi (δ −ε i ) − βi (τ −γ i )  di                                         ∂ψ  ∂∆bi
+                       7          51                                         54                         2              2
+                                          −δ ci  di −1 ti            ci 
+          = ∑ i i
+           φδr  n d δ di −1 ti
+                           τ   + ∑ i n  e
+                                                
+                                                 δ     τ   d   − c  δ
+                                                                         
+                                                                           + ∑  n  δ   τ  e                              δ  − 2α   ( δ − ε   )  + ∑ n    ∆ ψ + δ     +    δψ 
+                                                                                                                                                                     ∂δ  ∂δ
+                                                             i    i              i                                                i         i          i
+       =i 1 =i 8                                           =i 52                                                               =                i 55                         
+
+                                                                              ((                       )(                       )
+            ∑ ni di ( di − 1) δ di −2τ ti + ∑ ni e−δ δ di −2τ ti di − ciδ ci di − 1 − ciδ ci − ci2δ ci  + ∑ niτ ti e i ( i ) i ( i )    )
+             7                               51                                                                           54                   2         2
+                                                      ci                                                                            −α δ −ε − β τ −γ
+       =φδδ
+         r
+            i 1 =i 8                                                                    =i 52
+                                                                                                                      56     b  ∂ψ      ∂2ψ        ∂∆bi       ∂ψ  ∂ 2 ∆bi    
+                             
+                           ⋅  −2α i δ + 4α i δ (δ − ε i ) − 4diα iδ
+                                      di    2 di          2          di −1
+                                                                           ( δ − ε i ) + di ( di − 1) δ di − 2 
+                                                                                                                  +   ∑      ∆      + δ        +         ψ + δ      +       δψ 
+                                                                                                                                                                    
+                                                                                                                         n      i   2               2
+                                                                                                                                      ∂δ 2 
+                                                                                                                              ∂δ                     ∂δ        ∂δ  ∂δ 2
+                                                                                                                          i
+                                                                                                                    i =55                                                        
+                                                                                                                                                                                                                                  13
+
+                       7                   51                   ci       54
+                                                                                            −αi (δ −ε i ) − βi (τ −γ i )
+                                                                                                            2              2
+                                                                                                                                ti                     56          ∂∆bi       bi ∂ψ 
+      =φτr            ∑ nitiδ diτ ti −1 + ∑ nitiδ diτ ti −1e−δ + ∑ niδ diτ ti e                                                τ   − 2 β   (τ − γ   )  + ∑  n  δ        ψ + ∆        
+                                                                                                                                                                    ∂τ            ∂τ 
+                                                                                                                                          i        i           i
+       =i 1 =i 8                                     =i 52                                                                             =               i 55
+
+                                                                                                                                                  2                                 2              
+                                                                                                                                                          t                     
+     ∑ niti ( ti − 1) δ diτ ti −2 + ∑ niti ( ti − 1) δ diτ ti −2e−δ + ∑ niδ diτ ti e i ( i ) i ( i )  i − 2βi (τ − γ i )  − i2 − 2βi 
+                       7                             51                                           54                                  2                                                  t
+                                                                                    −α δ −ε − β τ −γ
+                                                                                       ci
+ φ
+ = r
+  ττ
+=i 1 =i 8                                     =i 52                                                   τ                  τ          
+                              56    ∂ 2 ∆bi       ∂∆bi ∂ψ     bi ∂ ψ 
+                                                                   2
+                           + ∑ niδ          ψ + 2         + ∆         
+                            i =55   ∂τ
+                                          2         ∂τ ∂τ         ∂τ 2 
+
+
+                                                                     (             )                                       −αi (δ −ε i ) − βi (τ −γ i )        di                    ti                  
+                       7                        51                                           ci        54                                 2               2
+         =φδτ         ∑ ni ditiδ di −1τ ti −1 + ∑ nitiδ di −1τ ti −1 di − ciδ ci e−δ + ∑ niδ diτ ti e                                                          δ − 2α i (δ − ε i )   τ − 2 βi (τ − γ i ) 
+           r
+    =i 1 =i 8                                                            =i 52                                                                                                                           
+                              56    ∂ψ        ∂2ψ       ∂∆bi ∂ψ ∂∆bi       ∂ψ  ∂ 2 ∆bi    
+                           + ∑ ni  ∆bi     +δ        +δ         +    ψ + δ     +       δψ 
+                            i =55 
+                                         ∂τ    ∂δ ∂τ      ∂δ  ∂τ   ∂τ       ∂δ    ∂δ ∂τ
+                                                                                            
+                                                                                                             14
+
+     Table 5. Continued
+
+     Derivatives of the distance function ∆bi:                                                                    Derivatives of the exponential function ψ :
+      ∂∆bi                 ∂∆
+              = bi ∆bi −1                                                                                         ∂ψ
+       ∂δ                  ∂δ                                                                                             =
+                                                                                                                          −2Ci (δ − 1)ψ
+                                                                                                                  ∂δ
+      ∂ 2 ∆bi       b −1 ∂ 2 ∆                        2
+                                           bi − 2  ∂∆  
+               =  i   ∆         + (i )
+                                     −   ∆                                                                     ∂ 2ψ
+                                                                                                                            {                 }
+                         i
+                                                                                                                      = 2Ci (δ − 1) − 1 2Ciψ
+                 b                 b   1                                                                                             2
+       ∂δ 2               ∂δ 2                   ∂δ  
+                                                                                                                  ∂δ  2
+
+      ∂∆bi                                                                                                        ∂ψ
+           −2θ bi ∆bi −1
+           =                                                                                                            =
+                                                                                                                        −2 Di (τ − 1)ψ
+       ∂τ                                                                                                         ∂τ
+      ∂ 2 ∆bi
+       ∂τ   2
+                 = 2bi ∆   bi −1
+                                   + 4 θ bi ( bi − 1) ∆
+                                        2                 bi − 2                                                  ∂ 2ψ
+                                                                                                                  ∂τ 2
+                                                                                                                      =     {2D (τ − 1) − 1} 2D ψ
+                                                                                                                                i
+                                                                                                                                         2
+                                                                                                                                                   i
+
+                                                                   1                                               ∂ 2ψ
+      ∂ 2 ∆bi         2                              −1
+                                                                               ∂∆                                     = 4Ci Di (δ − 1)(τ − 1)ψ
+               − Ai bi ∆bi −1 (δ − 1) (δ − 1)  2 βi − 2θ bi ( bi − 1) ∆bi −2
+                                              2
+              =                                                                                                   ∂δ ∂τ                                         14
+      ∂δ ∂τ           βi                                                     ∂δ
+
+                                                     1                                 
+                  ∂∆               2           2  2 β −1                  2  ai −1 
+     with            (
+                     = δ − 1) iA θ      ( δ − 1)      i   + 2 Bi i (
+                                                                  a     δ − 1)  
+                  ∂δ              βi                                                 
+                                                                                             2          1     
+                                                                                                                   2
+                ∂ ∆2
+                        1 ∂∆             2                              a  − 2          1                −1  
+                                + (δ − 1) 4 Bi ai ( ai − 1) (δ − 1)          + 2 Ai2    (δ − 1)  2 βi 
+                                                                     2    i                           2
+                =
+                ∂δ 2
+                     (δ − 1) ∂δ           
+                                                                                       βi        
+                                                                                                                
+                                          
+                                                                                             1      
+                                                                   4  1               2  2 β −2 
+                                                            + Ai θ         − 1 (δ − 1)        i   
+                                                                   βi  2 βi             
+                                                                                                    
+                                                                                                    
+
+      ∂φ r                          ∂ 2φ r           ∂φ r             ∂ 2φ r           ∂ 2φ r 
+= φδ 
+ a r
+       =      , φδδ
+                  r
+                                       =
+                                      2       , φτr    =      , φττr      =
+                                                                            2       , φδτ
+                                                                                         r
+                                                                                                       .
+      ∂δ τ                        ∂δ τ           ∂τ δ           ∂τ δ           ∂δ ∂τ 
+                                                               15
+
+
+          Table 6. Values for the ideal-gas part φ o , Eq. (5), and for the residual part φ r ,
+                   Eq. (6), of the dimensionless Helmholtz free energy together with the
+                   corresponding derivativesa for T = 500 K and ρ = 838.025 kg m–3
+
+                    φ o = 0.204 797 733 × 101                       φ r = –0.342 693 206 × 101
+                    φδo = 0.384 236 747                             φδr = –0.364 366 650
+                    φδδ
+                      o
+                        = –0.147 637 878                            φδδ
+                                                                      r
+                                                                         = 0.856 063 701
+                    φτ = 0.904 611 106 × 101
+                      o
+                                                                    φτ = –0.581 403 435 × 101
+                                                                      r
+
+                    φττ
+                      o
+                        = –0.193 249 185 × 10
+                                             1                      φττ
+                                                                      r
+                                                                         = –0.223 440 737 × 10
+                                                                                                  1
+
+                    φδτ
+                      o
+                        = 0                                         φδτ
+                                                                      r
+                                                                         = –0.112 176 915 × 10
+                                                                                                  1
+
+          a For the abbreviated notation of the derivatives of φ o and φ r see the footnotes of Tables 4 and
+            5, respectively.
+
+
+Table 7. Thermodynamic property values in the single-phase region for selected values of T and ρ
+
+ T/K       ρ / (kg m–3)               p/MPa                          –1 –1
+                                                           cv /(kJ kg K )               w/(m s–1)             s/(kJ kg–1 K–1)
+                          3                         –1a                        1                        4
+ 300    0.996 556 0 × 10       0.992 418 352 × 10         0.413 018 112 × 10       0.150 151 914 × 10       0.393 062 643
+                          4                         2                          1                        4
+        0.100 530 8 × 10       0.200 022 515 × 10         0.406 798 347 × 10       0.153 492 501 × 10       0.387 405 401
+                          4                         3                          1                        4
+        0.118 820 2 × 10       0.700 004 704 × 10         0.346 135 580 × 10       0.244 357 992 × 10       0.132 609 616
+                                                    –1                         1                        3                        1
+ 500    0.435 000 0            0.999 679 423 × 10         0.150 817 541 × 10       0.548 314 253 × 10       0.794 488 271 × 10
+                          1                                                    1                        3                        1
+        0.453 200 0 × 10       0.999 938 125              0.166 991 025 × 10       0.535 739 001 × 10       0.682 502 725 × 10
+                          3                         2                          1                        4                        1
+        0.838 025 0 × 10       0.100 003 858 × 10         0.322 106 219 × 10       0.127 128 441 × 10       0.256 690 919 × 10
+                          4                         3                          1                        4                        1
+        0.108 456 4 × 10       0.700 000 405 × 10         0.307 437 693 × 10       0.241 200 877 × 10       0.203 237 509 × 10
+                          3                         2                          1                        3                        1
+ 647    0.358 000 0 × 10       0.220 384 756 × 10         0.618 315 728 × 10       0.252 145 078 × 10       0.432 092 307 × 10
+                                                                               1                        3                        1
+ 900    0.241 000 0            0.100 062 559              0.175 890 657 × 10       0.724 027 147 × 10       0.916 653 194 × 10
+                          2                         2                          1                        3                        1
+        0.526 150 0 × 10       0.200 000 690 × 10         0.193 510 526 × 10       0.698 445 674 × 10       0.659 070 225 × 10
+                          3                         3                          1                        4                        1
+        0.870 769 0 × 10       0.700 000 006 × 10         0.266 422 350 × 10       0.201 933 608 × 10       0.417 223 802 × 10
+a In the liquid-water region at low pressures small changes in density along an isotherm cause large changes in pressure.
+  For this reason, due to an accumulation of small errors, a particular computer code or a particular PC may fail to
+  reproduce the pressure value with nine significant figures.
+
+
+   Table 8. Thermodynamic property values in the two-phase region for selected values of
+            temperaturea
+                                    T = 275 K                       T = 450 K                    T = 625 K
+                                                          –3
+         pσ /MPa                0.698 451 167 × 10             0.932 203 564                  0.169 082 693 × 102
+        ρ ′ / (kg m–3)          0.999 887 406 × 103            0.890 341 250 × 103            0.567 090 385 × 103
+        ρ ′′ / (kg m–3)         0.550 664 919 × 10–2           0.481 200 360 × 101            0.118 290 280 × 103
+        h′/(kJ kg–1)            0.775 972 202 × 101            0.749 161 585 × 103            0.168 626 976 × 104
+        h″/(kJ kg –1)           0.250 428 995 × 104            0.277 441 078 × 104            0.255 071 625 × 104
+        s′/(kJ kg–1 K–1)        0.283 094 670 × 10–1           0.210 865 845 × 101            0.380 194 683 × 101
+        s″/(kJ kg–1 K–1)        0.910 660 121 × 101            0.660 921 221 × 101            0.518 506 121 × 101
+   a All these test values were calculated from the Helmholtz free energy, Eq. (4), by applying the phase-
+     equilibrium condition (Maxwell criterion).
+                                                                                         16
+
+                       10 3
+                                                                                                                          0.5%
+
+                                         0.2%      0.05%      0.02%                        0.1%
+
+                       10 2
+
+                                                                                                   0.02%
+                                                                                                             0.1%
+                                                            0.003%                                                         0.25%
+                                                                                     0.01%
+                       10 1                                                                            0.1%
+                                                                                                      (∆ p/p)
+                                                            0.001%
+
+
+
+
+    Pressure p / MPa               Melting curve
+                       10 0                                                          e
+                                                                                 rv
+                                                                                cu
+                                                           0.0001%         on
+                                                                          ati
+                            −1                                        tu r
+                       10
+                                                                     Sa
+                                                                                0.03%                      0.05%           0.1%
+                            −2
+                       10
+
+
+
+                            −3
+                       10
+                                                     Sublimation curve
+
+                             235                     300        359    400               500      600               800    1000    1273
+                                                                                     Temperature T/ K
+Fig. 1. Uncertainties in density, ∆ ρ /ρ , estimated for Eq. (4). In the enlarged critical region (triangle), the
+        uncertainty is given as percentage uncertainty in pressure, ∆p /p. This region is bordered by the two
+        isochores 527 kg m−3 and 144 kg m−3 and by the 30 MPa isobar. The positions of the lines separating the
+        uncertainty regions are approximate. At low pressures for the vapor, the uncertainties become much
+        smaller than indicated because the vapor is nearly an ideal gas.
+                                                                                                                           17
+
+                        10 3
+                                                                       0.3%                                         no definitive uncertainty estimates possible
+
+                                                                                                                                           1%
+                        10 2
+                                                                                                                                                                 0.5%
+                                                                       see the lower diagram                                        0.2%
+
+                        10 1
+                                                                                                                                             >1%
+
+
+
+
+                                    Melting curve
+                                                                                                                                        0.1%
+
+
+
+
+     Pressure p / MPa
+                        10 0
+                                                                                                                  rv
+                                                               0.1%       0.03%
+                                                                                   0.1%                             e
+                                                                                                                cu
+                                                                                                         on
+                             −1                                                                    ati
+                        10                                                                       tur
+                                                                       0.005%            Sa
+                                                                                                                                                       0.15%
+                             −2
+                        10
+
+
+
+                             −3
+                        10
+                                                                       Sublimation curve
+                                                                                                                         473
+
+                              235                                      300        350             400                        500           600                 800             1000          1273
+                                                                                                                   Temperature T/ K
+                                                                        400
+                                                                                         283 K          293 K   313 K     333 K                                      453 K
+
+                                                                        350                                             0.3%
+                                                                                                                                                      0.4%
+                                                                                                                                                                300 MPa
+                                                                        300                              0.1%                                                                 0.2%
+
+
+
+
+                                                    Pressure p / MPa
+                                                                                                 0.2%
+                                                                        250                                             0.2%                          0.3%
+                                                                                  0.3%
+                                                                                                                                                                200 MPa
+                                                                        200
+
+
+                                                                        150
+                                                                                                                                                      0.2%
+
+                                                                                                                0.05%                                           100 MPa
+                                                                        100
+
+
+                                                                         50               0.1%                                                        0.1%                    0.2%
+                                                                                                                                                                      453 K          473 K
+                                                                          1
+                                                                           250                           300                         350               400           450
+                                                                                                                                  Temperature T / K
+
+Fig. 2. The uncertainties in speed of sound, ∆w/w, estimated for Eq. (4), are given in the upper diagram. The
+        uncertainty values in the shaded area are given in the lower diagram. For the uncertainty in the triangle
+        around the critical point, see the remark in Section 6; for the definition of this region, see Fig. 1. The
+        positions of the lines separating the uncertainty regions are approximate. At low pressures for the vapor,
+        the uncertainties become much smaller than indicated because the vapor is nearly an ideal gas.
+                                                        18
+
+
+
+
+                                                       Temperature T K
+
+Fig. 3. The uncertainties in specific isobaric heat capacity, ∆cp /cp , estimated for Eq. (4), are given in the upper
+        diagram. The uncertainty values in the shaded area are given in the lower diagram, where the uncertainty
+        in the region between two lines should be conservatively given by the larger of the two corresponding
+        values. Above the 18% line, the estimated uncertainty is 20%. For the uncertainty in the triangle around
+        the critical point, see the remark in Section 6; for the definition of this region, see Fig. 1. The positions
+        of the lines separating the uncertainty regions are approximate. The uncertainty in the vapor phase at low
+        pressures approaches the uncertainty of the ideal-gas heat capacity, which is less than 0.1 %.
+                                                           19
+
+                           0.05
+
+
+
+          100 ∆ pσ / pσ
+                             0
+
+
+
+                                       300         400                500               600
+
+                          0.003                                 0.3
+
+
+
+          100 ∆ ρ'/ρ'
+                             0                                   0
+
+
+                          0.003
+                                   300       400     470         470 500                600
+
+                            0.5
+                                             Uncertainty
+
+                             0
+
+                                  Tt
+                            0.5
+                                       300         400                500               600     Tc
+
+                                                    Temperature T /K
+Fig. 4. Uncertainties in vapor pressure, ∆pσ /pσ , in saturated liquid density, ∆ ρ ′/ρ ′ , and in saturated vapor
+        density, ∆ ρ ″/ρ ″, estimated for Eq. (4).
+
