@@ -6,11 +6,12 @@ Species inventories and total internal energy use exactly the same face/source
 weights. Rejected trials never enter the accepted trajectory or its ledgers.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from fractions import Fraction
 import math
 import time
-from typing import Callable
+from typing import Callable, Mapping
+from types import MappingProxyType
 
 import numpy as np
 from numpy.typing import NDArray
@@ -76,6 +77,33 @@ def _check_update(old: NDArray, result: NDArray, increment: NDArray,
         raise IntegrationError(f"unresolvable_{name}_increment")
 
 
+_WORK_COMPONENTS = frozenset(("elastic", "interface", "dissipation", "pore", "body"))
+
+
+def _components(value, total, *, rate):
+    if value is None:
+        return None, None
+    if not isinstance(value, Mapping) or not value or not set(value) <= _WORK_COMPONENTS:
+        raise IntegrationError("invalid_component_work_keys")
+    snapshot = {key: _array(value[key], "work_component", 1) for key in sorted(value)}
+    if any(v.shape != total.shape for v in snapshot.values()):
+        raise IntegrationError("component_work_shape_mismatch")
+    if "dissipation" in snapshot and np.any(snapshot["dissipation"] < 0):
+        raise IntegrationError("negative_dissipation_component")
+    residual = []
+    for i, net in enumerate(total):
+        exact = sum((Fraction(float(v[i])) for v in snapshot.values()), Fraction())
+        if rate:
+            try:
+                rounded = float(exact)
+            except OverflowError as exc:
+                raise IntegrationError("component_power_sum_unrepresentable") from exc
+            if rounded != float(net):
+                raise IntegrationError("component_power_sum_mismatch")
+        residual.append(Fraction(float(net))-exact)
+    return MappingProxyType(snapshot), tuple(residual)
+
+
 @dataclass(frozen=True)
 class ConservedState:
     amounts_mol: NDArray[np.float64]
@@ -96,16 +124,25 @@ class Rates:
 
     Reaction formation energy is in the state: do not add it again to cell_power.
     Each interior face is stored once, not separately evaluated by its neighbors.
+    Optional named components decompose cell power; total power must be the
+    correctly rounded exact sum of their represented values. The exact residual
+    is diagnostic, not a second power source. No material identity is inferred.
     """
     face_species_mol_s: NDArray[np.float64]
     face_energy_w: NDArray[np.float64]
     reaction_species_mol_s: NDArray[np.float64]
     cell_power_w: NDArray[np.float64]
+    cell_power_components_w: Mapping[str, NDArray[np.float64]] | None = None
+    component_sum_residual_w: tuple[Fraction, ...] | None = field(init=False, default=None)
 
     def __post_init__(self):
         for name, dimensions in (("face_species_mol_s", 2), ("face_energy_w", 1),
                                  ("reaction_species_mol_s", 2), ("cell_power_w", 1)):
             object.__setattr__(self, name, _array(getattr(self, name), name, dimensions))
+
+        components, residual = _components(self.cell_power_components_w, self.cell_power_w, rate=True)
+        object.__setattr__(self, "cell_power_components_w", components)
+        object.__setattr__(self, "component_sum_residual_w", residual)
 
     def derivatives(self, state: ConservedState) -> tuple[NDArray, NDArray]:
         cells, species = state.amounts_mol.shape
@@ -125,17 +162,40 @@ class Rates:
 
 @dataclass(frozen=True)
 class StepLedger:
+    """Accepted quadrature, including optional power-component decomposition.
+
+    component_sum_residual_j = represented total - exact sum of represented
+    component integrals. component_quadrature_roundoff_j records each represented
+    integral minus the exact sum of represented stage powers times RK weights;
+    it includes products and both levels of summation, not truncation/EOS error.
+    Manually constructed ledgers may omit the latter unavailable stage evidence.
+    """
     start_s: float
     end_s: float
     face_species_mol: NDArray[np.float64]
     face_energy_j: NDArray[np.float64]
     reaction_species_mol: NDArray[np.float64]
     cell_work_j: NDArray[np.float64]
+    cell_work_components_j: Mapping[str, NDArray[np.float64]] | None = None
+    component_quadrature_roundoff_j: Mapping[str, tuple[Fraction, ...]] | None = None
+    component_sum_residual_j: tuple[Fraction, ...] | None = field(init=False, default=None)
 
     def __post_init__(self):
         for name, dimensions in (("face_species_mol", 2), ("face_energy_j", 1),
                                  ("reaction_species_mol", 2), ("cell_work_j", 1)):
             object.__setattr__(self, name, _array(getattr(self, name), name, dimensions))
+        components, residual = _components(self.cell_work_components_j, self.cell_work_j, rate=False)
+        object.__setattr__(self, "cell_work_components_j", components)
+        object.__setattr__(self, "component_sum_residual_j", residual)
+        rounding = self.component_quadrature_roundoff_j
+        if rounding is not None:
+            if components is None or set(rounding) != set(components):
+                raise IntegrationError("invalid_component_roundoff_keys")
+            rounding = {key: tuple(value) for key, value in rounding.items()}
+            if any(len(v) != len(self.cell_work_j) or any(type(x) is not Fraction for x in v)
+                   for v in rounding.values()):
+                raise IntegrationError("invalid_component_roundoff")
+            object.__setattr__(self, "component_quadrature_roundoff_j", MappingProxyType(rounding))
 
 
 @dataclass(frozen=True)
@@ -175,6 +235,7 @@ class IntegrationResult:
     evaluations: int
     rejected_trials: int
     elapsed_seconds: float
+    cumulative_absolute_component_residual_j: tuple[Fraction, ...] | None = None
 
 
 class _Reject(Exception):
@@ -197,6 +258,12 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
     an operator extracting from a zero inventory fails immediately. Restarting
     from result.states[-1]/times_s[-1] is possible; persistent identity-checked
     checkpoint/resume belongs to the application layer, not this API yet.
+    Optional component schemas are fixed across every evaluation in this call.
+    Only accepted fine RK stages enter their ledger. Cumulative absolute per-cell
+    decomposition residual is bounded by energy_absolute_tolerance_j. Net-energy
+    adaptivity does not certify the truncation error of cancelling components.
+    This optional contract is implemented here only; depletion terminal panels
+    and wrappers must explicitly propagate it before claiming equivalent support.
     Breakpoints split continuous forcing. Discontinuous forcing requires explicit
     piecewise restarts with the appropriate one-sided operator on each interval.
     """
@@ -215,6 +282,8 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
     knots.append(end)
     times, states, ledgers = [start], [initial], []
     evaluations, rejected, knot_index = 0, 0, 0
+    component_schema = ...
+    cumulative_components = [Fraction() for _ in initial.internal_energy_j]
     begin = time.monotonic()
     cumulative_n = [Fraction(0) for _ in initial.amounts_mol.flat]
     cumulative_u = [Fraction(0) for _ in initial.internal_energy_j.flat]
@@ -233,7 +302,8 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
 
     def finish(status, reason=None):
         return IntegrationResult(status, reason, tuple(times), tuple(states), tuple(ledgers),
-                                 evaluations, rejected, time.monotonic()-begin)
+                                 evaluations, rejected, time.monotonic()-begin,
+                                 tuple(cumulative_components) if component_schema not in (..., None) else None)
 
     def guard():
         if cancel is not None and cancel():
@@ -247,7 +317,7 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
         return desired
 
     def evaluate(state, at):
-        nonlocal evaluations
+        nonlocal evaluations, component_schema
         guard()
         evaluations += 1
         rates = operator(state, at)
@@ -255,6 +325,11 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
         if not isinstance(rates, Rates):
             raise IntegrationError("operator_must_return_rates")
         rates.derivatives(state)
+        schema = None if rates.cell_power_components_w is None else tuple(rates.cell_power_components_w)
+        if component_schema is ...:
+            component_schema = schema
+        elif schema != component_schema:
+            raise IntegrationError("component_work_schema_changed")
         return rates
 
     def advance(state, rates, step):
@@ -280,7 +355,15 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
                      policy.amount_absolute_tolerance_mol, "amount"),
             _updated(state.internal_energy_j, _sum_arrays(faces_u[:-1], -faces_u[1:], work),
                      policy.energy_absolute_tolerance_j, "energy"))
-        return result, fields
+        parts, exact_parts = None, None
+        if first.cell_power_components_w is not None:
+            parts, exact_parts = {}, {}
+            for key in first.cell_power_components_w:
+                a, b = first.cell_power_components_w[key], second.cell_power_components_w[key]
+                parts[key] = _sum_arrays((step/2)*a, (step/2)*b)
+                exact_parts[key] = tuple(Fraction(step/2)*(Fraction(float(x))+Fraction(float(y)))
+                                         for x, y in zip(a, b))
+        return result, fields, parts, exact_parts
 
     h = policy.initial_step_s
     last_domain = None
@@ -319,9 +402,9 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
             left_step, right_step = midpoint-at, next_time-midpoint
             if (not at < midpoint < next_time or left_step/2 == 0 or right_step/2 == 0):
                 raise IntegrationError("unresolvable_stage_time")
-            full, _ = rk2(state, at, next_time)
-            half, first_fields = rk2(state, at, midpoint)
-            accepted, second_fields = rk2(half, midpoint, next_time)
+            full, _, _, _ = rk2(state, at, next_time)
+            half, first_fields, first_parts, first_exact = rk2(state, at, midpoint)
+            accepted, second_fields, second_parts, second_exact = rk2(half, midpoint, next_time)
             nscale = policy.amount_absolute_tolerance_mol+policy.relative_tolerance*policy.amount_scale_mol
             uscale = policy.energy_absolute_tolerance_j+policy.relative_tolerance*policy.energy_scale_j
             # Leading local SSPRK2 error is C*h^3. For the two actual substeps,
@@ -355,9 +438,22 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
             proposed_u = accumulated_exchange(cumulative_u, initial.internal_energy_j, accepted.internal_energy_j,
                                               (faces_u[:-1], -faces_u[1:], work),
                                               policy.energy_absolute_tolerance_j, "energy")
+            parts, rounding = None, None
+            if first_parts is not None:
+                parts = {key: _sum_arrays(first_parts[key], second_parts[key]) for key in first_parts}
+                rounding = {key: tuple(Fraction(float(value))-a-b for value, a, b in
+                                      zip(parts[key], first_exact[key], second_exact[key])) for key in parts}
+            ledger = StepLedger(at, next_time, *fields, parts, rounding)
+            proposed_components = cumulative_components
+            if ledger.component_sum_residual_j is not None:
+                proposed_components = [old+abs(delta) for old, delta in
+                                       zip(cumulative_components, ledger.component_sum_residual_j)]
+                if any(x > Fraction(policy.energy_absolute_tolerance_j) for x in proposed_components):
+                    raise IntegrationError("cumulative_component_sum_roundoff")
             guard()
             cumulative_n, cumulative_u = proposed_n, proposed_u
-            ledgers.append(StepLedger(at, next_time, *fields))
+            cumulative_components = proposed_components
+            ledgers.append(ledger)
             states.append(accepted)
             times.append(next_time)
             h = max(policy.minimum_step_s, min(policy.maximum_step_s, step*(2 if error == 0 else min(2, max(0.2, 0.9*error**(-1/3))))))

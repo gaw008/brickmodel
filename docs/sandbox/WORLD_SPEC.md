@@ -94,3 +94,11 @@ JoinedWaterVapor从原低温500K的h锚积分原高温NIST分段Cp，逐段原h/
 `DeformingGasHeat`仅支持明确的逐格准静态压力匹配气腔执行器：每格当前体积全为气体，原N/U保持广延库存。每次求值用同一当前V/A/d解码温度/压力并组装相对运动隔板的共享流焓和导热面；机械输入为`cell_power_w=-p_current*Vdot`，与所有通量使用同一积分权重进入`cell_work_j`。流焓已含流动功，不另加pQ。相邻气腔压力不等时内部执行器功不必抵消，不能称为只有最外表面的大气功。
 
 该分支构造时校验参考格数、面积、每格宽度与气体体积，不能只对总体积。固定输运仅允许显式制造网络，实际材料准入恒false。它没有固体、液体、骨架弹性/界面储能或自由烧结律，不能把此处孔压功直接套到湿砖bulk体积变化；后续湿固体必须另外闭合总应力功与可恢复能，并与现有整体U反解一致。
+
+## 湿固体机械储能部件的当前实现边界
+
+`skeleton_energy.DiagonalSkeletonEnergy`已实现温度独立的对角log-strain弹性内能、明确取向的有效内部界面能及黏性耗散，同一势给出Piola应力和能量率。仅显式manufactured_test_fixture可构造；模量、黏度和界面参数没有因此成为原污泥材料事实。Decimal对数邻界与有理区间传播约束的是所表示输入的计算误差，不包括材料或几何真实性。骨架声明的固体provider身份仍须由实际组合储能接口核对。
+
+`SolidFluidStorage.temperature_from_energy`现在显式接受target_energy_error_bound_j，并将其与目标表示误差合并进入反解区间与停止门槛；默认零保持旧语义。该参数并不把原thermal U自动改成含骨架的总能量。
+
+普通`integrate`可选分解cell power为elastic/interface/dissipation/pore/body，并按实际接受RK阶段记录各项功、精确有理舍入残差和累计绝对分解残差预算。总功仍是唯一状态能量驱动，残差不作为额外热源。净能量误差控制不保证巨大抵消分项各自的截断精度；耗尽终端panel与湿态wrapper尚未转发此合同。总能量作用域明确的湿储能/耦合host仍待实现。

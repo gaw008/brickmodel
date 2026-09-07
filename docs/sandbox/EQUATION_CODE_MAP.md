@@ -96,3 +96,12 @@
 | 实际NL精确0时选择显式dry温度反解括号；正NL保留wet括号与原EOS域 | `solid_fluid_heat.SolidFluidHeat.temperature_brackets_for` | 独立9项括号测试；真实湿态到530.7349451K连续轨迹及独立条件干段参照通过；不是液chemical高温扩域 |
 | C1规定法/切向伸长；A=A0*lambda_t²；Vdot=A*width_dot+A_dot*width | `deformation_program.PrescribedSlabMotion` | 独立29项运动学/输入域/不可变性/16–64格坐标检查；非材料收缩律 |
 | 相同当前V/A/d与同次气体解码；显式压力匹配气腔功−p*Vdot | `gas_heat_model.GasHeatModel.evaluate`、`deforming_gas_heat.DeformingGasHeat` | 旧版四Rates黄金对照；三档绝热压缩膨胀约4倍温度误差下降，双格/流焓/当前bulk反应与完整prefix检查；非湿固体骨架功 |
+
+## 骨架与分项功接口增量
+
+| 关系/合同 | 实现 | 验证 | 限定 |
+|---|---|---|---|
+| E_el=V0(K theta²/2+G sum dev²)，E_int=gamma Aint0 t²；同势Piola与E率 | src/sludge_sandbox/skeleton_energy.py | tests/sandbox/test_skeleton_energy.py；research/CODE_REVIEW_SKELETON_ENERGY.md | 制造参数；独立有理对数级数检查75个输出界 |
+| D=eta V0 sum(log-rate²)，Rayleigh势=D/2 | 同上 | 同上 | T独立对角规定变形，不是自由烧结模型 |
+| 目标能量区间到温度包络 | src/sludge_sandbox/solid_fluid_storage.py | tests/sandbox/test_solid_target_uncertainty.py | 上游误差显式给定；原物理域不变 |
+| 接受RK分项功及total-minus-components精确残差 | src/sludge_sandbox/integration.py | tests/sandbox/test_component_work_ledger.py；research/CODE_REVIEW_COMPONENT_WORK_LEDGER.md | 普通integrate；非单项截断误差证书，尚未覆盖耗尽panel |

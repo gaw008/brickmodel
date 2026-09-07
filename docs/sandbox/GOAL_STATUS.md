@@ -318,3 +318,15 @@ session1707已实际exit0：**1001 passed in448.58s，0失败/错误/跳过**。
 湿固体设计最终APPROVE已闭合：Root在热U推导中补齐总E已含的explicit_body_heat，最终设计hashbc8392df0f4d3921b10fc6207f0d6fa526038218545400516d0fee174477cb08；独立CODE_REVIEW_DEFORMING_SOLID_ENERGY.md实际核读绑定，保留原修订史。总/热能身份、target误差传播、accepted RK分项功账本仍为下一真实实现必需门槛。
 
 review_water_resume已接新的隔离任务，仅/private/tmp/brick-skeleton-energy-candidate/准备skeleton_energy.py及独立测试/失败记录：明确制造的log-strain势、内部界面能、Rayleigh耗散、Piola和能量率及保守数值预算；不改repo src/tests、不做EOS/storage/integrationhook。恢复先检查代理与实际文件，完成后独立审查再应用。尚不能宣称该provider已经完成或通过；本版本完整安装证据仍仅1001项/34模块。
+
+## 骨架、目标区间与普通RK分项功：实际完成检查点
+
+本回合新增可执行源码与独立验证，属于progress，Goal仍active，原§11未完成。
+
+- `skeleton_energy.py`：温度独立log-strain弹性/显式取向内部界面势，同势Piola与能量率；D与Rayleigh D/2区分。只准入显式制造参数。23测试通过0.08s；独立240项有理atanh对数级数核75个输出包络。原候选与失败历史zip保留；Root应用时误去sys import导致1failed22passed，application-failure.xml原样保存，恢复import后23通过。
+- `solid_fluid_storage.py`：显式target_energy_error_bound_j向外传播，负tiny Fraction拒绝、正tiny不归零，默认零旧结果逐位兼容。新11加旧23共34测试通过0.69s，独立34通过0.66s，保存两个XML。尚非Etotal storage。
+- `integration.py`：可选elastic/interface/dissipation/pore/body分项功，schema每次评价锁定，实际接受stage同权积分；每项quadrature roundoff和总量分解残差有理记录，累计绝对分解残差受既有能量绝对预算约束。独立44通过0.50s，旧HEAD nonlinear 123接受/3拒默认路径逐位一致。仅普通integrate；wet wrappers/耗尽panel尚未转发，净U自适应不证明抵消分项截断准确。
+
+冻结非editable安装session46721已实际exit0：**1051 passed in446.61s，0失败/错误/跳过**。XML实际解析；35个真实site-packages模块逐一与源hash相同，cwd=/private/tmp，无PYTHONPATH。证据：research/installed-sandbox-skeleton-components-tests.xml和installed-sandbox-skeleton-components-identity.json。不要再轮询46721或重复原1001全套。
+
+下一工作：review_water_resume在/private/tmp/brick-deforming-solid-storage-candidate/准备有明确TotalEnergyTarget与实际完整固体身份的点储能候选，9项dry轻测先通过，独立review_convergence_resume审核中；Root仅在完整suite终态后开放≤90s真实wet验证。尚未应用repo，不属于上述1051安装证据。boundary_program在/private/tmp/brick-depletion-components-candidate/追耗尽panel/wrapper分项功后续，不改repo。点储能完成仍需明确作用域的积分状态、实际湿机械host和独立轨迹验证；材料证据、自由烧结/孔道/冷却力学、三机制公开留出、全周期、多代实验及CLI/UI全部仍必需。

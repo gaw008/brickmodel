@@ -62,6 +62,7 @@ class SolidFluidInverse:
     final_temperature_bracket_k: tuple[float,float]
     iterations: int
     policy: InversePolicy
+    target_energy_error_bound_j: float = 0.
 
 
 @dataclass(frozen=True,kw_only=True)
@@ -168,13 +169,30 @@ class SolidFluidStorage:
             total_u,total_h,capacity,cmin,_sum_upper((f.energy_roundoff_j,added_roundoff)),
             _directed(error_v,upper=True),pressure_error,_sum_upper(errors),self.source_ids)
 
-    def temperature_from_energy(self,target_energy_j,liquid_mol,gas_mol,solid_mol,temperature_bracket_k,policy):
+    def temperature_from_energy(self,target_energy_j,liquid_mol,gas_mol,solid_mol,temperature_bracket_k,policy,
+                                *,target_energy_error_bound_j=0.):
+        """Invert a target interval, including upstream energy-subtraction error.
+
+        The bound is additional to the existing target representation budget.
+        It participates in bracket signs, residual/radius and acceptance gates.
+        """
         target=_num(target_energy_j,'target_energy')
+        _num(target_energy_error_bound_j,'target_energy_error_bound',nonnegative=True)
+        try:
+            exact_error=Fraction(target_energy_error_bound_j)
+        except (TypeError,ValueError,OverflowError) as exc:
+            raise SolidFluidStorageError('invalid_target_energy_error_bound') from exc
+        if exact_error<0:
+            raise SolidFluidStorageError('invalid_target_energy_error_bound')
+        try:
+            target_error=_directed(exact_error,upper=True)
+            tr=_sum_upper((math.ulp(target),target_error))
+        except RigidStorageError as exc:
+            raise SolidFluidStorageError(str(exc)) from exc
         if type(policy) is not InversePolicy:raise SolidFluidStorageError('explicit_inverse_policy_required')
         lo,hi=_range(temperature_bracket_k)
         low=self.evaluate_at_temperature(lo,liquid_mol,gas_mol,solid_mol)
         high=self.evaluate_at_temperature(hi,liquid_mol,gas_mol,solid_mol)
-        tr=math.ulp(target)
         if not (Fraction(low.internal_energy_j)+Fraction(low.energy_error_bound_j)+Fraction(tr)<Fraction(target)
                 <Fraction(high.internal_energy_j)-Fraction(high.energy_error_bound_j)-Fraction(tr)):
             if target<low.internal_energy_j-low.energy_error_bound_j-tr or target>high.internal_energy_j+high.energy_error_bound_j+tr:
@@ -190,7 +208,7 @@ class SolidFluidStorage:
             if residual_bound<=policy.energy_tolerance_j and radius<=policy.temperature_tolerance_k:
                 left=_directed(max(Fraction(lo),Fraction(mid)-Fraction(radius)),upper=False)
                 right=_directed(min(Fraction(hi),Fraction(mid)+Fraction(radius)),upper=True)
-                return SolidFluidInverse(point,target,residual,radius,(left,right),iteration,policy)
+                return SolidFluidInverse(point,target,residual,radius,(left,right),iteration,policy,target_error)
             if budget>policy.energy_tolerance_j or Fraction(budget)/Fraction(point.minimum_heat_capacity_j_k)>Fraction(policy.temperature_tolerance_k):
                 raise SolidFluidStorageError('numerical_envelope_or_representation_exceeds_inverse_tolerance')
             if abs(residual)<=budget:raise SolidFluidStorageError('energy_direction_unresolved_by_declared_envelope')
