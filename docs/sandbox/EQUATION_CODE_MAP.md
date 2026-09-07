@@ -39,3 +39,9 @@
 |---|---|---|
 | α、κ、dv/dT、dv/dP、du/dP | `water_properties.WaterProperties.state_tp_response` | 21新测试+78旧水测试；局部导数非区间界 |
 | 每温度重新闭合P的U反解及条件误差传播 | `rigid_storage.RigidStorage` | 18测试、真实单格热量反馈；显式数值界尚未独立全域准入 |
+
+| 本轮增量 | 实现 | 验证与范围 |
+|---|---|---|
+| 连续气体相H/U/体积 | `phase_storage.IdealGasPhase` | 新增3测试，旧规则保留，独立7个NIST跨缝反解；不自动补水桥 |
+| 多格流体P/T—面输运—热量 | `rigid_fluid_heat.RigidFluidHeat` | 16测试及真实两格积分，局部/系统账本、供体焓；液水不迁移 |
+| 原TGA列与SI转换 | `data/sandbox/research/ghodke2022/extract_tga.py` | 独立11575行/单位核对，单次运行；没有拟合或持出预测 |

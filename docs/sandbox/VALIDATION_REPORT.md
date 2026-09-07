@@ -131,3 +131,13 @@ uv sync --frozen --no-editable --extra dev --extra research --extra water --offl
 `315337a`的rigid_storage每温度试算重新求液水占积/气压，使用同一压力求物种U/H与闭合热容。条件反解保留显式数值envelope，正下界/上界有向算术以及源来源；端点符号不确定、粗压力预算和表示精度不足时拒绝。18测试实际通过18.48s，真实积分每次operator调用均执行实际反解。单格电加热反馈下库存逐值不变，U与积分功账本在1e-8 J绝对门槛内一致，终温与独立嵌套求根在1e-4 K内一致。源和范围见 `RIGID_STORAGE.md`，不作为原泥实验或固体/相变模型验证。
 
 冻结非editable离线重装后，在/private/tmp无PYTHONPATH运行全部sandbox测试，实际 **619 passed in23.27s，0失败/跳过**。20个site-packages模块与工作区逐一hash一致。原始XML `research/installed-sandbox-closed-storage-tests.xml`，安装/测试/锁文件身份 `research/installed-sandbox-closed-storage-identity.json`；原574项检查点保留，两个既有模块的本轮扩展没有重写旧验证产物。
+
+## 多格流体气热、连续相与原始TGA增量
+
+`e24a560`：连续Cp派生相适配新增3测试，与原PhaseStorage合计25通过；独立43项相关测试通过。额外NIST O2跨700/2000 K接缝7点反解最大T偏差5.30e-11 K，零液高温哨兵确认不调用水物性；无IAPWS低高温自动拼接。
+
+`b8ae2aa`的RigidFluidHeat独立16测试通过40.10s。两格实际积分每trial按实际库存/U重解P/T/气孔，液水mol不迁移，气体换格并反馈压力，内部共享面的mol/J及系统账本通过事前门槛。另有双气不同质量扩散、供体焓绝热排出、反向边界携入独立手算、半格Dirichlet热阻与域退出。独立发现同源水汽provider因私有后端对象身份误拒，经RED后按完整语义身份修补并复验。原完整反解误差/括区与条件资格保留。没有液迁移/相变或多格收敛结论。
+
+`eacdad3`保留CC BY Ghodke2022单次原TGA，共11575记录；独立检查所有原列/SI转换、噪声回升保留、原件官方hash/size与许可。没有独立实验holdout，也没有把PDF拟合表或DTA µV当运行参数/反应热。首次派生CSV的CRLF导致暂存格式检查失败，停止提交后原版本归档，再仅改LF；字段逐值不变，重建与格式最终复验通过。
+
+当前冻结非editable离线安装，在/private/tmp无PYTHONPATH实际全量 **638 passed in63.82s，0失败/跳过**；21个site-packages模块hash与工作区一致。产物 `research/installed-sandbox-fluid-heat-tests.xml` 与 `research/installed-sandbox-fluid-heat-identity.json`；原619项检查点保留，不将新增原TGA行数混算为测试或独立实验数。
