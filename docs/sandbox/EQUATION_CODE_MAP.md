@@ -51,3 +51,9 @@
 | s_g=s0(T,p0)−Rmix ln(p/p0)，mu=h−Ts | `water_chemical_potential.WaterChemicalPotential` | 36测试、独立导数检查、显式Table1八温点oracle；固定p0、共同native熵与能量参考 |
 | peq=p0 exp((mu_l−mu_g0)/(Rmix T)) | 同模块的两个明确液态参考入口 | 理想水汽/真实纯液水近似；500K相对native psat约−11.24%，不等同完整真实流体EOS或泥料活度 |
 | r=K(peq−p_H2O)，S_liquid=−r，S_vapor=r，新增U源=0 | `water_phase_transfer.WaterPhaseTransfer` | 真实蒸发/凝结制造积分；K显式声明，不由平衡式推得；无液界面退出、零汽极限、不clip有限库存 |
+
+| 固体与数值增量 | 实现 | 验证与范围 |
+|---|---|---|
+| 单相Cp及h0原Shomate、全温段正下界 | `incompressible_solid.SolidShomateCaloric` | Fraction区间代数、50组独立驻点/差分；不施加气体Cp>R条件、不跨晶相转变 |
+| u=h0−p0v0，h(T,p)=u+pv0，Cv=Cp | `incompressible_solid.IncompressibleSolidPhase` | 29新测试，实际PhaseStorage求和/反解；体积及误差显式声明，尚未接rigid整体固体库存 |
+| 成功饱和求解快照缓存，命中仍EOS/Gibbs | `water_properties.WaterProperties.saturation_pair` | 18缓存测试+相关181测试、实际计数/同输入反解计时，原容差和域检查保留 |

@@ -149,3 +149,13 @@ uv sync --frozen --no-editable --extra dev --extra research --extra water --offl
 `f8b5a86`的16项相变耦合测试独立通过61.11s。真实绝热蒸发/凝结积分均按预登记水库存1e-11mol、U误差1e-7J、方向性温变超过1e-4K验证；不重复添加潜热。有限库存超步拒绝并保留初态，零汽化学势不伪造有限值，无液界面缺成核模型时退出。系数和载气是制造值，闭合反演误差界仍有条件；这些测试不是实测干燥/完整熵轨迹/全周期砖验证。原XML为 `research/water-phase-transfer-tests.xml`。
 
 全量冻结非editable离线安装验证最终 **690 passed in124.57s，0失败/错误/跳过**；从/private/tmp运行，无PYTHONPATH，23个真实安装模块hash与工作区一致。最终XML与源码/测试/锁文件身份分别为 `research/installed-sandbox-phase-transfer-tests.xml`、`research/installed-sandbox-phase-transfer-identity.json`。性能profile另列且没有实施后加速声明。
+
+## 有界缓存、石英来源与单相固体
+
+`3ed9aa1`缓存18项新增测试、相关181项独立通过。修复独立复现的底层求解器删除后异常类别回归，预热后故障检查仍有效。相同反解3对裸计时中位1.3000s/0.8261s，所有T/P/残差/括区/迭代数逐值一致；饱和非线性求解从205次降到5次，真实TP求解仍205次，命中EOS检查没有跳过。详见 `research/CLOSED_STORAGE_PERFORMANCE.md` 与原始JSON；不是全周期速度保证。
+
+`77b4515`石英来源原HTML与有限事实独立核查，2温段16系数及76个格式舍入输出检查通过。原提取只检查3列的版本已归档，新增Gibbs列核验后通过；物理相变焓差和拟合Gibbs差没有归零。纯石英来源候选不提供密度、成分比例或砖材验证。
+
+`12f6f06`单相固体29测试，与PhaseStorage旧测试共51项独立通过；50组独立驻点/导数检验通过，内能差分最大误差7.25e-9 J/(mol K)，低于预登记1e-6门槛。实际PhaseStorage求和与320K反解通过，仍是给定压力的条件反解；固体占积尚未接入rigid整体系统。制造误差预算曾小于精确p0*εv，保留原比较，显式增加制造预算余量后通过，未改变科学验证门槛。
+
+冻结非editable离线全量安装验证：**737 passed in78.91s，0失败/错误/跳过**，24个实际安装模块与工作区hash一致。原XML `research/installed-sandbox-solid-cache-tests.xml`，身份 `research/installed-sandbox-solid-cache-identity.json`；旧690项记录保留。测试数量与运行速度均不表示三机制实验验证或完整材料域已经完成。
