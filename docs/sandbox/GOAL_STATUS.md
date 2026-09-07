@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新恢复检查点（18087a6之后）：Areias2019 Figures38–40已按冻结预登记实际点选39目标，35可辨/4unknown。Fig38的300/400与Fig39的300完整抗锯齿列足迹超±2；Fig39的400被品红遮挡，不换列/补值。数据及来源链、原像素RGB、独立看图/74区间核算、精确舍入修复、4测试、实际JSON/CSV重放与图像重提取/再现证据在 data/sandbox/research/areias2019/tg_digitization/。
+
+中间Decimal舍入对1e-100量级偏移可向内，独立发现已改Fraction整数floor/ceil，原发现与最终复审均保存。35观测是条件坐标读图候选，不是实验置信区间、反应转化率或模型外部验证；N2单速率、基准/制样/产物未知不变，材料/训练/动力学准入false。原论文及六张审阅图保留ignored缓存，无新增再分发许可。
+
+物理src与既有1135安装验证版本不变，本轮不重复全suite或EOS；当前无测试/EOS待轮询句柄。本轮已产生实际来源数据与可重放转换器，属于progress。下一实现正在核查规定变形的固定Ns限制及反应/固体体积/总能量的正确扩展，具体只读子任务 reacting_deformation_scope 输出 /private/tmp/brick-reacting-deformation-scope/REPORT.md；其结果需核后转为实质实现。完整材料域、自由烧结冷却、三公开机制与留出、全周期CLI/UI/多代搜索继续为Goal必需未完成项。Goal active。
+
 本次数值修复及1135完整安装验证已本地提交 `4f4590b`。TG下一步预登记已保存 `research/areias2019-tg-preregistration/`：三图分别校准，六映射/中间刻度残差经独立Fraction核算，固定每图13个目标温度，尚未选择TG曲线点。下一动作按预登记选可辨绿色重量点、保留遮挡unknown、核条件像素包络并独立复读；不能从读图误差推断实验不确定性或反应参数。当前没有待轮询EOS/测试进程。
 
 最新恢复检查点（ae38c70之后）：HEOS共存求解已应用有界回溯Newton，保留原dp≤1e-4Pa、dg≤1e-6J/kg、分支/稳定性/源身份和8个外层状态上限；每次至多6个半分试探，总计至多43对EOS状态。kernel SHA 88bbbdd91fbe12d351faf6415883c177fec2fec4a7e51d77d98d864b49d51d93，manifest及固定包装摘要同步更新，11项数值控制回归已加入。独立代码/Python集成审查通过。

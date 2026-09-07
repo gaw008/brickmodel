@@ -11,3 +11,5 @@
 身份补充：印刷83页末明确厂内曾进行未定剂量、效果不佳的加灰。采集泥未达到 inertizado 条件不能译为从未加灰的未处理原泥；采前石灰量及具体暴露史保持 unknown，实验室15%不代表样品全部石灰库存。报道约77%含水的湿基/干基未由所读段落明确，保持未知，不换算库存。
 
 后续核读已完成：`composition/` 保存Tables16–21逐项转录与条件求和；`thermal/` 保存Table22与四类热实验条件、原文冲突及未知；`batch-links.json` 给出三批明确日期的XRF/TG名义样品链接。上文“未抽取完整组成、动力学或反应热”的限制仍成立：有限表值抽取不等于完整材料闭合。原始核读记录未覆盖；内部独立复核见 docs/sandbox/research/SOURCE_REVIEW_AREIAS2019_COMPOSITION.md 与 SOURCE_REVIEW_AREIAS2019_THERMAL.md。
+
+后续更新：Figures38–40已按事前校准取得35个稀疏TG读图候选，4目标unknown，见 `tg_digitization/README.md`。此前not_performed/下一步文字是该版本当时状态；DSC、动力学、气体产率和材料准入仍未完成。原热分析方法事实未修改。
