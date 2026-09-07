@@ -4,6 +4,8 @@
 
 **已取得可以支持分机制复现的原始证据，但尚未找到可直接拼成一个完整原污泥—黏土材料域的公开成套关系。** 不能把 Mianyang 污泥干燥、Mora 污泥热解、Lodz 预制焦氧化、Melbourne 污泥砖终态和 DTU 焚烧灰热历史混在一起，宣称同一种现实材料已经获验证。可以分域验证软件，再对每个候选材料域保持缺项阻断。
 
+新增低温比热候选见 `ARLABOSSE2005_COVERAGE.md` 及 `data/sandbox/research/arlabosse2005/source.json`：出版商正文与原Eq2/术语表/Table1已核读，35–105°C干物质比热有实际量热来源。样品进水85%工业、15%市政，组成/绝对参考能/误差和烧结数据不完整；不准入完整原污泥材料包。
+
 ## 已实际取得的证据
 
 全部来源元数据、材料条件、页表定位、下载地址、访问时间、许可及 SHA-256 在 [source_candidates.json](../../../data/sandbox/research/source_candidates.json)。这是初始证据覆盖注册表，尚未自动准入任何全流程材料包。原始 PDF/XML 保存在 `data/sandbox/research/raw/`，原表未改写。正文网页多次返回429，转用出版商公开 PDF；PMC 页面受浏览器检查时改用 Europe PMC 全文 XML。没有付费、联系作者或绕过付费访问。

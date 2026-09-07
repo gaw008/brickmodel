@@ -4,13 +4,17 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
-最新源码检查点 `fa3194b`：规定形变固体总能量主机已正式接入；冻结非editable安装 **1103 passed523.90s**，37个实际site-packages模块与源码一致。research/installed-sandbox-deforming-solid-tests.xml及identity.json为实际证据。session75509已exit0，旧75509/89265/46721全部结束，不再轮询/重跑。当前没有运行中的完整suite。
+最新源码ecfb3e9：当前孔隙模板、规定变形程序边界与相变显式组合已应用。冻结非editable离线安装从/private/tmp无PYTHONPATH实际 **1112 passed514.98s**；37个真实site-packages模块与源码匹配。research/installed-sandbox-wet-admission-tests.xml及identity.json保存实际证据。session45600已exit0；旧75509/89265/46721均已结束，不再轮询。当前无运行中的测试/EOS进程。
 
-最新湿态结果：独立熵参照9无EOS测试通过；真实初点/10%压缩端点2.07s完成，但端点roundtrip不是轨迹。实际原运动0→1/64s短前缀14.067s结束，2接受/15评估/0拒；T/P与账本通过，孔压功2.97406436e-6J超过原1e-6J，整体精度FAILED。原证据及独立60绑定/有理账本审查已归档research/wet-deformation-entropy。保留缺失native u/s操作数、测试fixture at-run绑定及原runner退出传播/固定文件名局限；无新EOS重跑。
+真实callback01在相变化学前被参考孔体积门禁拒绝，保留后修复当前bulk减固定固体占积；9noEOS独立通过。callback02实际1.387s/exit0、113声明输入不变、非零K/液汽精确成对/无额外潜热/当前几何/单次反解通过独立审核。其原fixture反解1e-5J/1e-4K，不能混同下一段1e-6J/K。原候选/失败/先RED/回调与应用34测试73s在research/deforming-wet-admission。
 
-显式边界/相变准入及当前孔隙模板修复现已应用。原callback01体积门禁失败保留；先RED后修复，9noEOS独立通过。callback02经审查监督器实际1.387s exit0，113声明输入绑定不变，非零K速率、液汽精确成对、无额外潜热、当前几何与单次反解通过独立复算。原callback使用1e-5J/1e-4K，不混同上文未通过的湿态轨迹。证据research/deforming-wet-admission；应用34测试实际73.00s通过，包含实际fine干态压缩。下一步对这次4源码及9新测试做冻结非editable完整套件；旧1103只是旧fa3194b检查点，不宣称涵盖新改动。
+独立湿态熵端点2.07s通过不等于轨迹。原0→1/64s短前缀2接受/15评估的孔压功2.97406436e-6J未通过1e-6J，保留research/wet-deformation-entropy。refinement02同原1s/10%运动及同短终点，将initial/maxstep1/128→1/256；实际4接受/29评估/0拒，25.5696s/exit0，初始N/E/tag精确匹配原失败，所有原精度门槛保持，孔压功7.35992551e-7J通过。原生u/s及全部账本保留，已归档research/wet-prefix-refinement。因含当前孔隙源码修复，不宣称严格同源码收敛阶；只有末端独立组件真值，全部prefix检查是账本闭合。完整10%湿轨迹、活动相变积分/变形耗尽仍未验证。
 
-更快水后端仅有两点可行性，生产EOS不变。探针/许可/原失败/独立审查及设计在research/water-backend-feasibility。有界研究监督器现位于research/research-process-supervisor：原SIGTERM子进程残留及中间EPERM失败保留，最终17独立测试1.38s通过，真实TERM清理/failed传播通过。源码已在callback02实际使用；不是通用进程沙箱。当前没有其他EOS/测试进程运行。真实原污泥材料域、全周期、三机制公开留出和使用验收仍未完成。
+研究监督器research/research-process-supervisor已独立17测试1.38s通过，实际TERM取消清理/failed传播通过；历史子进程残留与EPERM失败保留。它已用于callback02/refinement02，不是通用进程沙箱。默认生产水EOS仍为iapws1.5.5。可选快后端只有两点可行性与设计，见research/water-backend-feasibility；不要把原始flash倍率冒称完整主机加速。
+
+新增Arlabosse2005低温比热来源记录，原文/3图、4资产哈希、干基单位与35–105°C温区已独立核读；原始文件在ignored .tools缓存，登记data/sandbox/research/arlabosse2005。进水85%工业/15%市政、初始水分正文/表差异保留。它只是特定材料低温关系，缺绝对参考能/误差等，未准入运行材料包。
+
+下一可执行步骤：依据已审查ADAPTER_DESIGN，在隔离目录实现可选后端接口的**现有Python默认路径**，先证明原源码行为/来源/相域/错误/缓存等价；通过后才准备HEOS实现，不能直接替换EOS或启动数小时2048步湿扫描。并保持同原污泥域热化学/动力学/输运/烧结/力学及三个公开机制组、CLI/中文界面/逐代搜索等必需缺项。Goal active，软件仍在实现，科学状态无完整原污泥材料域，部署仅离线研究。
 
 ## 当前状态
 
