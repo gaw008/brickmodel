@@ -13,6 +13,7 @@ import numpy as np
 from .ideal_water_vapor import IdealWaterVapor,IdealWaterVaporError
 from .integration import ConservedState,DomainExit,IntegrationError,Rates
 from .rigid_fluid_heat import FluidHeatEvaluation,RigidFluidHeat
+from .solid_fluid_heat import SolidFluidHeat,SolidFluidHeatEvaluation
 from .water_chemical_potential import WaterChemicalError,WaterChemicalPotential,WaterPhaseEquilibrium
 from .water_properties import WaterDomainError,WaterNumericalError
 
@@ -57,7 +58,7 @@ class CellWaterTransfer:
 @dataclass(frozen=True)
 class WaterTransferEvaluation:
     rates: Rates
-    base_evaluation: FluidHeatEvaluation
+    base_evaluation: FluidHeatEvaluation | SolidFluidHeatEvaluation
     cell_transfers: tuple[CellWaterTransfer,...]
     coefficient_set_id: str
     coefficient_version: str
@@ -68,7 +69,7 @@ class WaterTransferEvaluation:
 
 @dataclass(frozen=True,kw_only=True)
 class WaterPhaseTransfer:
-    base_model: RigidFluidHeat
+    base_model: RigidFluidHeat | SolidFluidHeat
     chemical: WaterChemicalPotential
     coefficients_mol_s_pa: tuple[float,...]
     coefficient_set_id: str
@@ -78,7 +79,7 @@ class WaterPhaseTransfer:
     allow_manufactured: bool = False
 
     def __post_init__(self):
-        if type(self.base_model) is not RigidFluidHeat or type(self.chemical) is not WaterChemicalPotential:
+        if type(self.base_model) not in (RigidFluidHeat,SolidFluidHeat) or type(self.chemical) is not WaterChemicalPotential:
             raise WaterPhaseTransferError('explicit_fluid_and_chemical_models_required')
         if 'H2O' not in self.base_model.gas_species_order:
             raise WaterPhaseTransferError('explicit_gas_water_species_required')
@@ -101,10 +102,15 @@ class WaterPhaseTransfer:
         manufactured=(self.coefficient_classification=='manufactured_test_fixture'
                       or self.base_model.coefficient_classification=='manufactured'
                       or any(p.metadata.classification=='manufactured_test_fixture'
-                             for s in self.base_model.storages for p in s.gas_phases.values()))
+                             for s in self._fluid_storages for p in s.gas_phases.values()))
+        if type(self.base_model) is SolidFluidHeat:
+            manufactured = manufactured or any(
+                s.geometry_classification=='manufactured_test_fixture' for s in self.base_model.storages) or any(
+                p.metadata.classification=='manufactured_test_fixture'
+                for s in self.base_model.storages for p in s.solid_phases.values())
         if manufactured and not self.allow_manufactured:
             raise WaterPhaseTransferError('manufactured_requires_explicit_test_mode')
-        for storage,k in zip(self.base_model.storages,coefficients):
+        for storage,k in zip(self._fluid_storages,coefficients):
             if k==0:continue
             vapor=storage.gas_phases['H2O'].caloric
             if (type(vapor) is not IdealWaterVapor
@@ -115,6 +121,16 @@ class WaterPhaseTransfer:
                     or storage.mechanical.water.reference!=self.chemical.reference
                     or storage.mechanical.water.source_asset_sha256!=self.chemical.source_asset_sha256):
                 raise WaterPhaseTransferError('phase_transfer_requires_matching_ideal_water_caloric_bridge')
+
+    @property
+    def _fluid_storages(self):
+        return (tuple(s.fluid_template for s in self.base_model.storages)
+                if type(self.base_model) is SolidFluidHeat else self.base_model.storages)
+
+    @property
+    def _liquid_index(self):
+        return (self.base_model.inventory_layout.liquid_index
+                if type(self.base_model) is SolidFluidHeat else 0)
 
     @property
     def species_order(self):return self.base_model.species_order
@@ -129,7 +145,7 @@ class WaterPhaseTransfer:
     def evaluate(self,state:ConservedState,time_s:float)->WaterTransferEvaluation:
         self.base_model._check_state(state)
         for row,k in zip(state.amounts_mol,self.coefficients_mol_s_pa):
-            if k>0 and row[0]==0:
+            if k>0 and row[self._liquid_index]==0:
                 raise DomainExit('no_existing_liquid_interface_nucleation_not_modelled')
         base=self.base_model.evaluate(state,time_s)
         water_index=self.species_order.index('H2O')
@@ -168,7 +184,7 @@ class WaterPhaseTransfer:
             except (WaterChemicalError,WaterNumericalError,IdealWaterVaporError) as exc:
                 raise WaterPhaseTransferError(str(exc)) from exc
             index=len(diagnostics)
-            reactions[index,0]-=rate
+            reactions[index,self._liquid_index]-=rate
             reactions[index,water_index]+=rate
             diagnostics.append(CellWaterTransfer(rate,k,pressure,equilibrium,mu,delta_mu,entropy,status))
         rates=Rates(base.rates.face_species_mol_s,base.rates.face_energy_w,reactions,base.rates.cell_power_w)
