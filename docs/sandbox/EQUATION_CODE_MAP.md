@@ -70,3 +70,9 @@
 |---|---|---|
 | A*k/(dx/2)*(Ts−Tc)=A*h*(Tg−Ts)+A*epsilon*sigma*(Trad^4−Ts^4) | `programmed_solid_fluid_heat.ProgrammedSolidFluidHeat` | 半格膜串联解析、独立辐射根；真实升温/保温/冷却与动态气体入流mol/h账本 |
 | 同一动态面账本叠加等摩尔液/汽源，额外潜热源=0 | `water_phase_transfer.WaterPhaseTransfer`显式第三host | 真实外热+蒸发积分；原program evaluation/inverses保留，breakpoints显式转发 |
+
+
+| 液相面增量 | 实现 | 验证与范围 |
+|---|---|---|
+| λ=k*krel_l/mu；Q=AΔP/(dL/λL+dR/λR)；Ndot=Q/vdonor；Edot=Ndot*hdonor | `liquid_transport.liquid_face_exchange` | 20独立测试与正反供体手算、极端Fraction；四档实际pure-water连续流对照；不重复pQ |
+| S=Vl/(Vbulk−ΣNs vs)，单次decode后共享液mol/h面 | `solid_fluid_heat.LiquidTransportConfig`及SolidFluidHeat | 6独立测试、真实两格逐前缀水/U账本、完整program/phase诊断链与仅液制造门禁 |

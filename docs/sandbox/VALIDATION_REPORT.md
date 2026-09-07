@@ -182,3 +182,16 @@ ProgrammedSolidFluidHeat每trial仅调用一次实际固液气base.evaluate；�
 
 
 本轮最终冻结非editable离线安装，在/private/tmp且无PYTHONPATH执行全部sandbox：**786 passed in109.64s，0失败/错误/跳过**。27个真实site-packages模块与工作区hash一致；证据research/installed-sandbox-programmed-solid-tests.xml及installed-sandbox-programmed-solid-identity.json。此安装验证包含全部13项新增测试及最终wrapper，旧773项检查点保留。
+
+
+## 液相共享mol/焓面及连续流离散对照
+
+`7bd4a38`：独立20项液面测试0.04s及6项主机测试22.89s通过，XML为research/liquid-transport-review.xml和liquid-solid-host-review.xml。包含精确Fraction正反向供体v/h、零与非零下溢、关系域/连接/来源、仅液制造参数在两外层主机的隔离门禁，以及真实0.001s两格湿水逐前缀水/U/面账本。固体及封闭气体保持，名义压力随液库存反馈；名义T变化没有被宣称超过温度误差预算。pressure_interval_scope=fixed_decoded_temperature、full_inverse_direction_certified=false不变。
+
+主代理另从已有MOOSE每相Darcy方程推导恒温可压缩稳态参考，使用共用真实纯水EOS与独立Gauss积分/brentq生成压力剖面，不调用候选face。300K、50→1MPa、制造λ=1e-14、A=.01m²/L=.1m参考摩尔流0.00274052205113mol/s；16/32积分相对差3.56e-16只是数值一致性检查，不是严格误差上界。参考2353次EOS调用、9.35s实际完成。
+
+候选4/8/16/32区间最大相对流量误差0.002719757/0.001375341/0.000691605/0.000346795，细化比例1.97752/1.98862/1.99428，原门槛通过；反向供体焓及近等压保留名义流/未认证方向亦通过。预登记、两个独立脚本及全部节点/面结果在research/LIQUID_FACE_CONTINUUM_PLAN.md、liquid_face_continuum_reference.json和liquid_face_continuum_candidate.json。审核者只读核脚本、身份和重算误差；没有将其说成独立重跑整套参考。
+
+该检查针对给定恒温压力剖面上的面离散，使用外部恒温约束，不宣称绝热稳态、完整湿砖空间收敛、EOS独立验证或真实泥料透水系数。来源标签的表即使有S依赖，也不自动得到材料资格。冻结制造和tabulated关系允许有源平台的语义明确区分。
+
+最终冻结非editable离线安装，从/private/tmp无PYTHONPATH实际运行 **812 passed in134.01s，0失败/错误/跳过**；28个真实安装模块与工作区源码逐个hash一致。产物research/installed-sandbox-liquid-transport-tests.xml与installed-sandbox-liquid-transport-identity.json；旧786项记录保留。

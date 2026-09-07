@@ -188,3 +188,21 @@ Baloi2025出版商HTML/JATS原文、5组配比/终态热物性及派生提取已
 3. 低高温水汽参考衔接、液界面耗尽后路线、原泥热解/残炭有限氧计量与热效应、烧结连通性/几何、冷却应力、同一原污泥材料包、公开三机制预测、多代搜索与CLI/UI仍属必需未完成项，不缩减合同。
 
 所有本轮代理任务与实际测试进程均结束；没有待轮询的运行句柄。来源/设计审核不是外部科学认证，制造系数运行不成为真实泥料性能结论。本轮没有不可继续推进的阻塞。
+
+
+## 最新液相共享面与整体接入检查点
+
+上一Goal回合实际完成动态炉温/气氛、解析程序与安装验证，属于progress。本回合继续实现液水跨格mol/焓与完整固液气反馈；Goal保持active，未满足§11，不因面算子通过缩小原合同。
+
+- `7bd4a38`：新增LiquidTransportState、SaturationMobilityTable、LiquidConnection及Fraction单供体Darcy面。独立20测试0.04s通过，正反供体/极端量程另核对。每cell液相关系独立于气相krel；frozen_manufactured只测试，tabulated允许真实来源局部平台或常值，不以数值变化代替准入。source/域/连接始终显式，material_qualified=false。
+- 同提交将液面接入SolidFluidHeat，单次整体decode后从同参考真实水provider取供体v/h，S=Vl/(bulk−Vs)，共享mol与焓进入同一面。ProgrammedSolidFluidHeat/WaterPhaseTransfer保持完整诊断并补仅液制造参数门禁。6项新host独立测试22.89s，实际两格0.001s逐prefix水/U与面账本通过、固定solid/封闭gas不变。T变化仅名义，不宣称超过inverse预算；压力方向资格只fixed-decoded-T，未虚构全域dp/dT界。
+- 主代理真实生成300K、50→1MPa、制造λ下纯水可压缩连续流参考：独立Gauss/brentq，共用水EOS，2353调用9.35s；参考0.00274052205113mol/s。4/8/16/32候选面实际误差比1.97752/1.98862/1.99428，最细相对误差.000346795，预登记门槛通过。Gauss16/32一致性非严格误差证书；恒温外约束的面收敛不叫完整湿砖时空验证。所有节点/面、脚本/源身份保留，独立review报告限定APPROVE。
+- 最终冻结非editable离线安装，从/private/tmp无PYTHONPATH全sandbox **812 passed in134.01s，0失败/错误/跳过**，28个安装模块与当前源码一致。research/installed-sandbox-liquid-transport-tests.xml和installed-sandbox-liquid-transport-identity.json为最终证据，旧786项保留。所有本轮代理与实际进程均已终止，无待轮询session。
+
+### 下一步保持完整Goal继续
+
+1. 固体反应与有限供氧仍需实际接入当前共享库存/总U核。本轮已读现有reactions.py：SpeciesDefinition已区分固液气，ArrheniusMassAction明确按current_cell_bulk_volume归一化，反应算子不额外加热。因此下一步可审查显式网络→完整InventoryLayout映射、各相摩尔质量/元素/能量参考、真实T/库存/体积输入，再连接产物库存与总U反解。不能把文献表面/气孔浓度速率擅自改成现有bulk浓度形式；不为原污泥编造伪组分、A/E/产物或生成焓。需要时扩展有源速率形式，而非强行套旧公式。
+2. 湿相变+液迁移+热/气完整多格时空收敛、液界面耗尽后的受控路线、低/高温水汽共同参考衔接仍必需。不能将这一轮恒温面离散对照冒充整体瞬态验证，不能在无液/孔体积耗尽时clip继续。
+3. 同一原污泥材料域的毛细/饱和度输运、热解/残碳氧化计量与热效应、烧结/连通性/几何和冷却力学仍缺来源或实现；三机制公开持出预测、全周期、多代搜索和CLI/UI保持原必需范围。现无有源材料表被自动准入，方程真不等于泥料参数真。
+
+恢复优先读LIQUID_TRANSPORT.md、LIQUID_SOLID_FLUID_HEAT.md及CODE_REVIEW_LIQUID_TRANSPORT.md。不要重复无变化的812项测试代替反应/干燥完成路径和真实来源工作。当前仍有可独立继续的实现与证据任务，不符合blocked条件。
