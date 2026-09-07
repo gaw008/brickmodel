@@ -88,6 +88,11 @@ class SolidFluidHeatEvaluation:
     liquid_pressure_interval_scope: str = 'fixed_decoded_temperature'
     full_inverse_liquid_direction_certified: bool = False
     reaction_cells: tuple = ()
+    temperature_brackets_k: tuple = ()
+    inverse_bracket_policy_id: str | None = None
+    inverse_bracket_policy_version: str | None = None
+    inverse_bracket_policy_reason: str | None = None
+    inverse_bracket_policy_classification: str = 'numerical_policy'
 
 
 @dataclass(frozen=True,kw_only=True)
@@ -97,6 +102,10 @@ class SolidFluidHeat:
     transport: RigidFluidHeat
     liquid_transport: LiquidTransportConfig | None = None
     solid_reactions: object | None = None
+    dry_temperature_brackets_k: tuple | None = None
+    inverse_bracket_policy_id: str | None = None
+    inverse_bracket_policy_version: str | None = None
+    inverse_bracket_policy_reason: str | None = None
 
     def __post_init__(self):
         from .solid_fluid_storage import SolidFluidStorage
@@ -105,6 +114,25 @@ class SolidFluidHeat:
                 or any(type(s) is not SolidFluidStorage for s in self.storages)):
             raise SolidFluidHeatError('explicit_solid_storage_layout_transport_required')
         object.__setattr__(self,'storages',tuple(self.storages))
+        dry=self.dry_temperature_brackets_k
+        labels=(self.inverse_bracket_policy_id,self.inverse_bracket_policy_version,self.inverse_bracket_policy_reason)
+        if dry is None:
+            if any(v is not None for v in labels):
+                raise SolidFluidHeatError('inverse_bracket_policy_without_dry_brackets')
+        else:
+            if any(not isinstance(v,str) or not v or v!=v.strip() for v in labels):
+                raise SolidFluidHeatError('explicit_inverse_bracket_policy_identity_reason_required')
+            if not isinstance(dry,(tuple,list)) or len(dry)!=len(self.storages):
+                raise SolidFluidHeatError('per_cell_dry_temperature_brackets_required')
+            brackets=[]
+            for pair in dry:
+                if not isinstance(pair,(tuple,list)) or len(pair)!=2:
+                    raise SolidFluidHeatError('invalid_dry_temperature_bracket')
+                try:lo,hi=(_num(v,'dry_temperature_bracket',positive=True) for v in pair)
+                except IntegrationError as exc:raise SolidFluidHeatError(str(exc)) from exc
+                if lo>=hi:raise SolidFluidHeatError('invalid_dry_temperature_bracket_order')
+                brackets.append((lo,hi))
+            object.__setattr__(self,'dry_temperature_brackets_k',tuple(brackets))
         if self.solid_reactions is not None:
             from .solid_reactions import SolidReactionConfig
             config=self.solid_reactions
@@ -179,13 +207,21 @@ class SolidFluidHeat:
         except (SolidFluidStorageError,)+_FAILURES as exc:_failure(exc)
         return ConservedState(state.amounts_mol,energies)
 
+    def temperature_brackets_for(self,state):
+        """Select a numerical search interval, never alter a material domain."""
+        self._check_state(state)
+        return tuple(self.dry_temperature_brackets_k[i]
+                     if self.dry_temperature_brackets_k is not None
+                     and row[self.inventory_layout.liquid_index]==0 else wet
+                     for i,(row,wet) in enumerate(zip(state.amounts_mol,self.transport.temperature_brackets_k)))
+
     def decode_inverse(self,state):
         self._check_state(state)
         from .solid_fluid_storage import SolidFluidStorageError
         try:
             return tuple(s.temperature_from_energy(float(u),*self._inputs(row),bracket,self.transport.inverse_policy)
                 for s,row,u,bracket in zip(self.storages,state.amounts_mol,state.internal_energy_j,
-                                           self.transport.temperature_brackets_k))
+                                           self.temperature_brackets_for(state)))
         except (SolidFluidStorageError,)+_FAILURES as exc:_failure(exc)
 
     def decode(self,state):return tuple(v.state for v in self.decode_inverse(state))
@@ -273,6 +309,10 @@ class SolidFluidHeat:
                     right_conductivity_w_m_k=transport.conductivities_w_m_k[-1])
                 fe[-1]=_sum((fe[-1],heat))
         except _FAILURES as exc:_failure(exc)
-        return SolidFluidHeatEvaluation(Rates(fn,fe,reactions,np.zeros(count)),decoded,gases,inverses,liquid_faces=liquid_faces,reaction_cells=reaction_cells)
+        return SolidFluidHeatEvaluation(Rates(fn,fe,reactions,np.zeros(count)),decoded,gases,inverses,liquid_faces=liquid_faces,reaction_cells=reaction_cells,
+            temperature_brackets_k=self.temperature_brackets_for(state),
+            inverse_bracket_policy_id=self.inverse_bracket_policy_id,
+            inverse_bracket_policy_version=self.inverse_bracket_policy_version,
+            inverse_bracket_policy_reason=self.inverse_bracket_policy_reason)
 
     def __call__(self,state,time_s):return self.evaluate(state,time_s).rates

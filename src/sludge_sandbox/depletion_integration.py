@@ -113,6 +113,7 @@ class DepletionRefinement:
     status: str
     evaluations: int
     elapsed_seconds: float
+    next_common_time_s: float | None = None
 
 
 @dataclass(frozen=True)
@@ -142,6 +143,12 @@ class DepletionResult:
 
 class _Failure(Exception):
     def __init__(self,status,reason):self.status=status;self.reason=reason
+
+
+class _ReduceCommonTime(Exception):
+    def __init__(self, common_time_s, event_time_s):
+        self.common_time_s=common_time_s
+        self.event_time_s=event_time_s
 
 
 @dataclass
@@ -206,7 +213,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         if any(v<0 for v in result.temperature_errors_k+result.pressure_errors_pa):raise DepletionIntegrationError('negative_observation_error')
         guard();return result
 
-    def normal(op,state,t,finish,maxstep):
+    def normal(op,state,t,finish,maxstep,stage_check=None):
         nonlocal evaluations,rejected,attempted
         guard()
         if finish<=t:raise _Failure('unsupported','unresolvable_time_panel')
@@ -216,8 +223,23 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             maximum_steps=max(1,policy.maximum_steps-attempted),
             maximum_rejections=max(1,policy.maximum_rejections-rejected),
             maximum_wall_seconds=max(1e-12,policy.maximum_wall_seconds-(time.monotonic()-begin)))
-        run=integrate(state,op,start_s=t,end_s=finish,policy=p,cancel=cancel)
-        evaluations+=run.evaluations;rejected+=run.rejected_trials;attempted+=len(run.steps)
+        pending=None
+        def checked_operator(stage,at):
+            nonlocal pending
+            try:
+                observed=observe(op,stage,at)
+                stage_check(stage,at,observed)
+            except (_ReduceCommonTime,_Failure) as exc:
+                pending=exc
+                # Return through integrate's normal error boundary so its
+                # already attempted evaluations/panels/rejections are retained.
+                raise DepletionIntegrationError('preview_common_time_replan') from exc
+            return observed.rates
+        run=integrate(state,op if stage_check is None else checked_operator,
+                      start_s=t,end_s=finish,policy=p,cancel=cancel)
+        if stage_check is None:evaluations+=run.evaluations
+        rejected+=run.rejected_trials;attempted+=len(run.steps)
+        if pending is not None:raise pending
         return run
 
     def extend(path,run):
@@ -279,6 +301,29 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         path.event=DepletionEvent(cell,endpoint,endpoint,endpoint,endpoint,0.,0.,0.,0.,0.,panel,record,
             exact-Fraction(endpoint),evap)
 
+    def continue_after_event(path,tc):
+        # Replan at ordinary RK stages as well as accepted panel boundaries:
+        # an accelerating remaining sink can invalidate a beginning-step tau.
+        def check_remaining(current,at,obs):
+            other=candidate(path.op,current,obs)
+            if other is not None:
+                predicted=Fraction(at)+other[0]
+                if predicted<=Fraction(tc)+Fraction(ep.time_absolute_s):
+                    first=Fraction(path.event.time_s)
+                    midpoint=float((first+min(predicted,Fraction(tc)))/2)
+                    if (Fraction(midpoint)-first<=Fraction(ep.time_absolute_s)
+                            or predicted-Fraction(midpoint)<=Fraction(ep.time_absolute_s)
+                            or not midpoint<tc):
+                        raise _Failure('unsupported','successive_events_not_separated')
+                    raise _ReduceCommonTime(midpoint,path.event.time_s)
+            return other
+        while path.times[-1]<tc:
+            at=path.times[-1];current=path.states[-1]
+            obs=observe(path.op,current,at);other=check_remaining(current,at,obs)
+            desired=min(policy.maximum_step_s,tc-at,float(other[0])/4 if other else policy.maximum_step_s)
+            extend(path,normal(path.op,current,at,min(tc,at+desired),policy.maximum_step_s,
+                               check_remaining if any(m=='existing_liquid' for m in path.op.interfaces) else None))
+
     def proposal(op,state,t,tc,cap,total):
         path=_Path([t],[state],[],op,total)
         while path.times[-1]<tc:
@@ -289,14 +334,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                 if tau<=Fraction(cap) and Fraction(at)+tau<=Fraction(tc):
                     terminal(path,obs,tau,cell)
                     if path.times[-1]>=tc:raise _Failure('unsupported','no_common_post_event_time')
-                    # Ordinary dry continuation must not conceal a second interface event.
-                    if any(m=='existing_liquid' for m in path.op.interfaces):
-                        # Other wet cells are allowed only when their locally proposed
-                        # crossing lies beyond the common comparison horizon.
-                        next_obs=observe(path.op,path.states[-1],path.times[-1]);other=candidate(path.op,path.states[-1],next_obs)
-                        if other is not None and Fraction(path.times[-1])+other[0]<=Fraction(tc):
-                            raise _Failure('unsupported','second_event_in_common_time_preview')
-                    extend(path,normal(path.op,path.states[-1],path.times[-1],tc,policy.maximum_step_s))
+                    continue_after_event(path,tc)
                     return path
             desired=min(cap,tc-at,float(choice[0])/4 if choice else cap)
             finish=min(tc,at+desired)
@@ -359,11 +397,21 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                 if choice is not None and choice[0]<=Fraction(ep.terminal_window_s) and Fraction(t)+choice[0]<=Fraction(tb):
                     tc=min(tb,t+max(ep.common_time_horizon_s,2*ep.terminal_window_s))
                     previous=None;successes=0;first_time=None
-                    for level in range(ep.maximum_refinements+1):
+                    level=0;horizon_restarts=0
+                    while level<=ep.maximum_refinements:
                         cap=min(ep.terminal_window_s,float(choice[0]))/(2**level)
                         level_start=time.monotonic();level_evaluations=evaluations
                         try:
                             path=proposal(operator,state,t,tc,cap,totals)
+                        except _ReduceCommonTime as exc:
+                            refinements.append(DepletionRefinement(t,level,cap,tc,exc.event_time_s,None,
+                                'common_time_horizon_reduced',evaluations-level_evaluations,time.monotonic()-level_start,
+                                exc.common_time_s))
+                            horizon_restarts+=1
+                            if horizon_restarts>ep.maximum_refinements:
+                                raise _Failure('resource_limit','common_time_restart_limit')
+                            tc=exc.common_time_s;previous=None;successes=0;first_time=None;level=0
+                            continue
                         except (_Failure,IntegrationError,DomainExit,DepletionRoundoffError,ValueError,OverflowError) as exc:
                             refinements.append(DepletionRefinement(t,level,cap,tc,None,None,
                                 getattr(exc,'reason',str(exc)),evaluations-level_evaluations,time.monotonic()-level_start))
@@ -383,7 +431,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                         else:
                             refinements.append(DepletionRefinement(t,level,cap,tc,path.event.time_s,None,'coarse_reference',
                                 evaluations-level_evaluations,time.monotonic()-level_start))
-                        previous=path
+                        previous=path;level+=1
                     else:raise _Failure('unsupported','event_refinement_limit')
                 else:
                     finish=min(tb,t+policy.maximum_step_s,t+float(choice[0])/4 if choice else tb)
