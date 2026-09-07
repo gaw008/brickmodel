@@ -87,6 +87,7 @@ class SolidFluidHeatEvaluation:
     liquid_faces: tuple = ()
     liquid_pressure_interval_scope: str = 'fixed_decoded_temperature'
     full_inverse_liquid_direction_certified: bool = False
+    reaction_cells: tuple = ()
 
 
 @dataclass(frozen=True,kw_only=True)
@@ -95,6 +96,7 @@ class SolidFluidHeat:
     inventory_layout: InventoryLayout
     transport: RigidFluidHeat
     liquid_transport: LiquidTransportConfig | None = None
+    solid_reactions: object | None = None
 
     def __post_init__(self):
         from .solid_fluid_storage import SolidFluidStorage
@@ -103,6 +105,15 @@ class SolidFluidHeat:
                 or any(type(s) is not SolidFluidStorage for s in self.storages)):
             raise SolidFluidHeatError('explicit_solid_storage_layout_transport_required')
         object.__setattr__(self,'storages',tuple(self.storages))
+        if self.solid_reactions is not None:
+            from .solid_reactions import SolidReactionConfig
+            config=self.solid_reactions
+            if (type(config) is not SolidReactionConfig or config.inventory_layout!=self.inventory_layout
+                    or len(config.storages)!=len(self.storages)
+                    or any(a is not b for a,b in zip(config.storages,self.storages))):
+                raise SolidFluidHeatError('reaction_storage_layout_identity_mismatch')
+            if config.contains_manufactured and not self.transport.allow_manufactured:
+                raise SolidFluidHeatError('manufactured_reaction_requires_explicit_test_mode')
         if self.liquid_transport is not None:
             if type(self.liquid_transport) is not LiquidTransportConfig or len(self.liquid_transport.relations)!=len(self.storages):
                 raise SolidFluidHeatError('per_cell_liquid_configuration_required')
@@ -136,11 +147,15 @@ class SolidFluidHeat:
     def has_manufactured_liquid_transport(self):
         return self.liquid_transport is not None and self.liquid_transport.manufactured
     @property
+    def has_manufactured_reactions(self):
+        return self.solid_reactions is not None and self.solid_reactions.contains_manufactured
+    @property
     def material_qualified(self):return False
     @property
     def source_ids(self):
         sources=set(self.transport.source_ids)
         if self.liquid_transport is not None:sources.update(self.liquid_transport.source_ids)
+        if self.solid_reactions is not None:sources.update(self.solid_reactions.source_ids)
         for storage in self.storages:
             sources.update(storage.source_ids)
         return tuple(sorted(sources))
@@ -212,6 +227,18 @@ class SolidFluidHeat:
         transport=self.transport
         first=transport.storages[0]
         liquid_faces=self._liquid_faces(decoded)
+        reactions=np.zeros_like(state.amounts_mol)
+        reaction_cells=()
+        if self.solid_reactions is not None:
+            from .solid_reactions import SolidReactionError
+            try:
+                reaction_cells=tuple(self.solid_reactions.evaluate_cell(row,closed,i)
+                    for i,(row,closed) in enumerate(zip(state.amounts_mol,decoded)))
+                reactions=np.array([cell.source_mol_s for cell in reaction_cells],dtype=float)
+            except SolidReactionError as exc:
+                if str(exc).startswith('temperature_out_of_kinetic_domain:'):
+                    raise DomainExit(str(exc)) from exc
+                raise SolidFluidHeatError(str(exc)) from exc
         names=self.gas_species_order
         masses={n:first.gas_phases[n].metadata.molar_mass_kg_mol for n in names}
         count=len(self.storages)
@@ -246,6 +273,6 @@ class SolidFluidHeat:
                     right_conductivity_w_m_k=transport.conductivities_w_m_k[-1])
                 fe[-1]=_sum((fe[-1],heat))
         except _FAILURES as exc:_failure(exc)
-        return SolidFluidHeatEvaluation(Rates(fn,fe,np.zeros_like(state.amounts_mol),np.zeros(count)),decoded,gases,inverses,liquid_faces=liquid_faces)
+        return SolidFluidHeatEvaluation(Rates(fn,fe,reactions,np.zeros(count)),decoded,gases,inverses,liquid_faces=liquid_faces,reaction_cells=reaction_cells)
 
     def __call__(self,state,time_s):return self.evaluate(state,time_s).rates

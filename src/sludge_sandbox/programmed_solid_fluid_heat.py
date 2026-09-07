@@ -69,7 +69,7 @@ class ProgrammedSolidFluidHeat:
         if type(self.allow_manufactured) is not bool:raise ProgrammedSolidFluidHeatError('invalid_manufactured_gate')
         if self.coefficient_classification not in ('manufactured','literature_candidate'):
             raise ProgrammedSolidFluidHeatError('invalid_coefficient_classification')
-        manufactured=(base.has_manufactured_liquid_transport or self.coefficient_classification=='manufactured' or transport.coefficient_classification=='manufactured'
+        manufactured=(base.has_manufactured_reactions or base.has_manufactured_liquid_transport or self.coefficient_classification=='manufactured' or transport.coefficient_classification=='manufactured'
             or any(s.geometry_classification=='manufactured_test_fixture' or
                 any(p.metadata.classification=='manufactured_test_fixture' for p in (*s.solid_phases.values(),*s.fluid_template.gas_phases.values()))
                 for s in base.storages))

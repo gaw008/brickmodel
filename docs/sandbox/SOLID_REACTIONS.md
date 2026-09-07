@@ -1,0 +1,21 @@
+# 显式多相反应网络与完整库存列绑定
+
+实施前合同：ReactionSpeciesBinding明确网络species→inventory列+实际phase provider。SolidReactionConfig绑定network、全部storages和layout、来源ID/version；全网络species映射一对一，可有未参与惰性列。逐cell检查相/摩尔质量/共同生成能参考/摩尔基准/气体R以及完整热量provider语义身份，液H2O和气H2O不能默认按同名配对。元素式仍是SpeciesDefinition显式声明，不能从热量表自动核验元素。真正材料资格保持false。
+
+每次evaluate_cell使用完整实际row、同库存decoded温度及该格bulk体积执行旧网络rate；仅当前bulk浓度ArrheniusMassAction，拒把孔体积或表面积标度偷偷传入。共享stoich源映射到全列，未参与列0，无反应热或潜热cellpower。积分器只处理净库存正性/拒步；旧gross extent辅助方法没有自动接入，不宣称生产物绝不能在同一步参与后续反应。
+
+预登记：制造二阶solid→gas等质量网络，以实际bulk和decodedT独立计算extent，源绝对1e-8mol/s（相对规模另显式1e-12）；惰性液/气列严格0。气液H2O使用独立别名绑定真实LiquidWaterPhase与气水bridge，检查相列分离、同质量，错误provider/质量/R/重复映射/未覆盖species拒绝。域外 kinetics诚实抛错；制造门禁包含全provider/geometry和网络，不能由绑定文本洗白。
+
+已实现 `ReactionSpeciesBinding(reaction_species_id, inventory_column_id, provider)`，允许显式网络别名，但provider必须是现有不可变IdealGasPhase、IncompressibleSolidPhase或LiquidWaterPhase。`SolidReactionConfig(network, bindings, storages, inventory_layout, allow_manufactured, binding_id, version, source_ids)`逐cell核查实际相provider：gas保留完整caloric系数/锚/版本及所选segment、附加来源；solid比较整个不可变模型；water比较参考、来源资产和数值方法设置，独立加载的同源后端实例不被误判成不同模型。不能通过相同species文本隐藏不同生成能、体积或分支。
+
+`evaluate_cell(row, decoded, cell_index)`返回完整列`source_mol_s`及原`ReactionRates`（反应次序、各extent和网络species源）、实际名义T、bulk、绑定身份和汇总来源。液、气、固的列映射来自InventoryLayout，不假定液列首位或gas连续排列。网络可以是布局子集，但其全部species（包括网络声明的未参加者）均需映射；其余库存列严格零。气液H2O通过两个明确别名/列/provider绑定，不能因分子名相同自动互换相。
+
+输入row必须与decoded各相库存完全相等，拒绝明显过时库存配对；公开方法没有输入目标U，因此该检查不等于证明外部调用者的decoded来自当前U。实际主机必须在同次试探完整反解后传入该对象，并校核config的storages与主机identity绑定。速率在名义decoded温度求值，没有将储能反解的温度误差自动变成反应率严格上下界。
+
+旧ReactionNetwork负责显式化学计量元素和摩尔质量平衡；元素式来自SpeciesDefinition，不是从热容表推导，也没有独立来源材料审核。旧ArrheniusMassAction严格只接受`current_cell_bulk_volume`和相应单位；本绑定在内部直接传当前storage.bulk_volume_m3，没有可悄悄替换成气孔体积/表面积的参数。真实表面反应或气相孔内浓度定律需另设明确来源/单位模型，不能套用本路径。
+
+反应采用连续净源ODE语义；每trial无反应物时对应速率0，积分器原正性与拒步仍生效。合法配平网络可以含中间体或循环，不强制限制拓扑。旧gross extent辅助工具没有被自动调用，不能称积分已执行“本步生产物不得借用”检查；强刚性/循环反应的时间精度需要独立收敛验证。总U包含形成能，配置没有额外热字段；主机应只叠加反应species源，原cellpower/边界h等不改变。
+
+制造门禁检查网络、所有solid/gas provider及geometry（包括未参与反应的完整储能状态）。`source_ids`汇总绑定、网络、provider、储能/几何来源；labels尚未准入时`material_qualified=false`，不会把candidate或人为别名当材料配方。
+
+实际测试先RED（新模块不存在），首版5项通过0.49s，追加完整合同/零反应物/kinetic域/跨cellprovider/非法库存回归后13项通过0.51s。二阶制造网络以bulk/T独立解析extent和全列源核对；另在实际水EOS闭合状态上验证液/气水别名。真实有限氧氧化与无氧通道积分属于主机接入测试，未用本局部测试代替；本模块未改旧反应网络或热储能实现。
