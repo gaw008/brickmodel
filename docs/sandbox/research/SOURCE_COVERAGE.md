@@ -87,3 +87,5 @@ USGS Bulletin1248（Robie/Bethke/Beardsley，1967）官方原PDF已核读题名�
 ## Areias2019 方法引用链核读
 
 UENF官方155页论文已取得，限定核读与逐项事实见 `../../../data/sandbox/research/areias2019/`。印刷64/83页确认实验室石灰投料以干污泥为分母；印刷83页另报告采前厂内加灰剂量不明，因此 lodo bruto 并非无处理历史的证明。与2025筛分不同、同批未证实，比例基准的引用链推断与2025独立投料记录分开。未准入运行材料包；原文件仅ignored缓存，许可未明确。独立复核见 `SOURCE_REVIEW_AREIAS2019.md`。
+
+Areias2019组成/热实验核读更新：已保存Tables16–21全部83条报告值及Table22四项热值，明确三采集批日期对应XRF与TG图（data/sandbox/research/areias2019/batch-links.json）。Table20含小于项的条件总和仍不足92.31%，未补齐/归一化；Table21与处理泥批次和基准未明。TG/DSC为N2单速率，与正文氧化解释存在未解决机制问题，TG/MS另为He等温且无摩尔产率。正面证据是名义批次可匹配的观测候选，完整反应/热化学/烧结材料准入仍未满足。
