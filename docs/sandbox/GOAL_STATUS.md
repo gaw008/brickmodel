@@ -4,6 +4,10 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+从23be5b6完成多格真实水相间转移准入与当前几何Darcy独立测试，属于实际progress。WaterPhaseTransfer显式接纳FreeSolidSlab，保留真实来源/热化学桥及external_traction、mechanical_constraint、body。源码4真实测试44.25s通过：两档1/2步、8/15eval，蒸发与凝结共同活动，逐prefix水最大5.4063e-17mol、全局外功1.3595e-11J；独立Fraction审计162hash匹配。干态非零Darcy两个方向独立公式/负对照与相关35项通过。资料见FREE_SLAB_PHASE_TRANSFER.md及research/free-slab-phase-v1。
+
+正式非editable安装已终态：97测试61.68s通过，XML零失败/错误/跳过；61实际site-packages模块测试前后逐字一致。session87831/43779已exit0，无活动EOS，不再轮询。骨架/输运/相间系数仍制造，尚非原泥材料或完整干燥。下一推进两格一格耗尽一格仍湿，原六门槛保留；候选在/private/tmp/brick-free-slab-depletion-design，未运行。完整固体反应/动态边界/空间收敛/真实原泥及三机制公开留出仍未完成，Goal active。
+
 本回合从5c5f09a推进多格自由主机，属于实际progress：新增free_slab_rates/CurrentSolidStorage/FreeSolidSlab，全局共同t_dot、局部constraint功和同次当前温压/共享热流真正连接。主机源码b78efa42，瞬时率21bc4cb2，点储能4b94d58a。独立代码/数值审查通过；固体与力学/输运仍是制造参数，material_qualified=False。
 
 实际干态两格独立DOP853对照通过：6/8steps，E误差1.605862e-6/6.980263e-7J，stretch误差3.928e-8/1.707e-8；漏局部constraint的负对照虽全局守恒仍过，局部E偏差.0810722J。真实水两档固定相态轨迹41.693s完成：1/2steps、8/15eval、13.126/24.586s，T终值299.9999889194692/300.99999007520626K；全prefix外功残差最大4.208e-11J。独立Fraction复算通过，全数据见research/free-slab-v1。没有蒸发或液/气物质面流，不能叫完整干燥或完整材料验证。

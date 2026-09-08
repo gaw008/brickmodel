@@ -1,0 +1,7 @@
+# Dry current-geometry gas regression
+
+Two actual tests passed in 0.44s; see results.xml and SOURCE_BINDING.json. No repository edits, installation or native EOS execution. Imported autouse forbid_water_eos fixture rejects water EOS entrypoints.
+
+Both opposite pressure directions use unequal normal stretches (.8,1.2), common tangent .9, heterogeneous serial Darcy mobilities, zero conduction/diffusion and sealed exterior. The oracle independently decodes temperature from explicit constant caloric and logarithmic recoverable energy, then uses Fraction pressure from current pore volume, distance-weighted face P/T, face EOS concentration and upstream donor enthalpy 30T. It does not call tested gas-face/storage/mechanical helpers to produce expected values. Wrong reference geometry and wrong donor concentration produce >1 percent deviations. Full-face molar and carried-energy results must match within 1e-8 relative; separate decoded pressure check uses 1e-4 Pa. Both signed contributions and zero boundary/material channels are checked.
+
+Scope is dry instantaneous host assembly at two states. Initial total energies originate from host state_from_temperatures, but expected temperature is decoded independently from those energies. No gas trajectory, wet transport, multicomponent diffusion, boundary reservoir or material validation is claimed. Existing independent point-storage tests cover prescribed-temperature initialization. Parent should perform independent review before adopting the new test.

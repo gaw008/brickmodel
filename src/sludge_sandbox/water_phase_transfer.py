@@ -4,6 +4,7 @@ The pressure-difference conductance is supplied, not derived from equilibrium.
 Only equimolar phase inventories change; stored U receives no second latent heat.
 """
 from .free_solid_cell import ClosedFreeSolidCell,FreeSolidCellEvaluation
+from .free_solid_slab import FreeSolidSlab,FreeSolidSlabEvaluation
 from .deforming_solid_heat import DeformingSolidHeat,DeformingSolidHeatEvaluation
 from dataclasses import dataclass, replace
 from fractions import Fraction
@@ -63,7 +64,7 @@ class CellWaterTransfer:
 @dataclass(frozen=True)
 class WaterTransferEvaluation:
     rates: Rates
-    base_evaluation: FluidHeatEvaluation | SolidFluidHeatEvaluation | ProgrammedSolidFluidEvaluation | DeformingSolidHeatEvaluation | FreeSolidCellEvaluation
+    base_evaluation: FluidHeatEvaluation | SolidFluidHeatEvaluation | ProgrammedSolidFluidEvaluation | DeformingSolidHeatEvaluation | FreeSolidCellEvaluation | FreeSolidSlabEvaluation
     cell_transfers: tuple[CellWaterTransfer,...]
     coefficient_set_id: str
     coefficient_version: str
@@ -76,7 +77,7 @@ class WaterTransferEvaluation:
 
 @dataclass(frozen=True,kw_only=True)
 class WaterPhaseTransfer:
-    base_model: RigidFluidHeat | SolidFluidHeat | ProgrammedSolidFluidHeat | DeformingSolidHeat | ClosedFreeSolidCell
+    base_model: RigidFluidHeat | SolidFluidHeat | ProgrammedSolidFluidHeat | DeformingSolidHeat | ClosedFreeSolidCell | FreeSolidSlab
     chemical: WaterChemicalPotential
     coefficients_mol_s_pa: tuple[float,...]
     coefficient_set_id: str
@@ -88,7 +89,7 @@ class WaterPhaseTransfer:
     dry_policy: str = 'strict'
 
     def __post_init__(self):
-        if type(self.base_model) not in (RigidFluidHeat,SolidFluidHeat,ProgrammedSolidFluidHeat,DeformingSolidHeat,ClosedFreeSolidCell) or type(self.chemical) is not WaterChemicalPotential:
+        if type(self.base_model) not in (RigidFluidHeat,SolidFluidHeat,ProgrammedSolidFluidHeat,DeformingSolidHeat,ClosedFreeSolidCell,FreeSolidSlab) or type(self.chemical) is not WaterChemicalPotential:
             raise WaterPhaseTransferError('explicit_fluid_and_chemical_models_required')
         if 'H2O' not in self.base_model.gas_species_order:
             raise WaterPhaseTransferError('explicit_gas_water_species_required')
@@ -160,12 +161,12 @@ class WaterPhaseTransfer:
     @property
     def _fluid_storages(self):
         return (tuple(s.fluid_template for s in self._thermal_host.storages)
-                if type(self._thermal_host) in (SolidFluidHeat,ClosedFreeSolidCell) else self._thermal_host.storages)
+                if type(self._thermal_host) in (SolidFluidHeat,ClosedFreeSolidCell,FreeSolidSlab) else self._thermal_host.storages)
 
     @property
     def _liquid_index(self):
         return (self._thermal_host.inventory_layout.liquid_index
-                if type(self._thermal_host) in (SolidFluidHeat,ClosedFreeSolidCell) else 0)
+                if type(self._thermal_host) in (SolidFluidHeat,ClosedFreeSolidCell,FreeSolidSlab) else 0)
 
     @property
     def liquid_index(self):return self._liquid_index

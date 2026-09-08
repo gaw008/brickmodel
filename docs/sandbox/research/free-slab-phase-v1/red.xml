@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.415" timestamp="2026-09-08T11:15:23.583241-10:00" hostname="MacBookPro.lan"><testcase classname="tests.sandbox.test_free_slab_phase_transfer" name="test_slab_admission_requires_explicit_manufactured_gate" time="0.017"><failure message="AssertionError: Regex pattern did not match.&#10; Regex: 'manufactured_requires'&#10; Input: 'explicit_fluid_and_chemical_models_required'">ingredients = (WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=..., 'source_facts.json': '53af498b3974d180d273d7b17a6619d49d9a7d90bbacdd6e0304651f33bd79d6'})), WaterChemicalPotential())
+
+    def test_slab_admission_requires_explicit_manufactured_gate(ingredients):
+        with pytest.raises(ValueError,match='manufactured_requires'):
+&gt;           slab_transfer(ingredients,allow_manufactured=False)
+
+tests/sandbox/test_free_slab_phase_transfer.py:46: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/sandbox/test_free_slab_phase_transfer.py:38: in slab_transfer
+    return WaterPhaseTransfer(**(dict(base_model=base,chemical=chemical,
+&lt;string&gt;:13: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = WaterPhaseTransfer(base_model=FreeSolidSlab(base_model=SolidFluidHeat(storages=(SolidFluidStorage(fluid_template=Rigid...nt_source_ids=('manufactured:phase-coefficient',), allow_manufactured=False, interface_modes=None, dry_policy='strict')
+
+    def __post_init__(self):
+        if type(self.base_model) not in (RigidFluidHeat,SolidFluidHeat,ProgrammedSolidFluidHeat,DeformingSolidHeat,ClosedFreeSolidCell) or type(self.chemical) is not WaterChemicalPotential:
+&gt;           raise WaterPhaseTransferError('explicit_fluid_and_chemical_models_required')
+E           sludge_sandbox.water_phase_transfer.WaterPhaseTransferError: explicit_fluid_and_chemical_models_required
+
+src/sludge_sandbox/water_phase_transfer.py:92: WaterPhaseTransferError
+
+During handling of the above exception, another exception occurred:
+
+ingredients = (WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=..., 'source_facts.json': '53af498b3974d180d273d7b17a6619d49d9a7d90bbacdd6e0304651f33bd79d6'})), WaterChemicalPotential())
+
+    def test_slab_admission_requires_explicit_manufactured_gate(ingredients):
+&gt;       with pytest.raises(ValueError,match='manufactured_requires'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E        Regex: 'manufactured_requires'
+E        Input: 'explicit_fluid_and_chemical_models_required'
+
+tests/sandbox/test_free_slab_phase_transfer.py:45: AssertionError</failure></testcase></testsuite></testsuites>

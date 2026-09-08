@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="2" time="0.421" timestamp="2026-09-08T11:15:46.427350-10:00" hostname="MacBookPro.lan"><testcase classname="tests.sandbox.test_free_slab_phase_transfer" name="test_slab_admission_requires_explicit_manufactured_gate" time="0.015" /><testcase classname="tests.sandbox.test_free_slab_phase_transfer" name="test_second_cell_wrong_caloric_bridge_rejected" time="0.006"><failure message="sludge_sandbox.rigid_fluid_heat.RigidFluidHeatError: cross_cell_caloric_identity_mismatch">ingredients = (WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=..., 'source_facts.json': '53af498b3974d180d273d7b17a6619d49d9a7d90bbacdd6e0304651f33bd79d6'})), WaterChemicalPotential())
+
+    def test_second_cell_wrong_caloric_bridge_rejected(ingredients):
+        op=slab_transfer(ingredients);base=op.base_model
+        points=list(base.point_storages);point=points[1];fluid=point.template.fluid_template
+        wrong=IdealGasPhase(replace(fluid.gas_phases['fixture'].caloric,species_id='H2O'),
+            ingredients[0].reference.molar_mass_kg_mol,0,('manufactured:wrong-water-caloric',))
+        fluid=replace(fluid,gas_phases=fluid.gas_phases|{'H2O':wrong})
+        points[1]=replace(point,template=replace(point.template,fluid_template=fluid));points=tuple(points)
+&gt;       transport=replace(base.base_model.transport,storages=tuple(p.template.fluid_template for p in points))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_free_slab_phase_transfer.py:56: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/dataclasses.py:1588: in replace
+    return obj.__class__(**changes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;string&gt;:24: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = RigidFluidHeat(storages=(RigidStorage(mechanical=RigidWaterGas(water=WaterProperties(reference=WaterReference(molar_ma...=True, outer_reservoir=None, outer_reservoir_source_ids=(), outer_surface_temperature_k=None, outer_heat_source_ids=())
+
+    def __post_init__(self):
+        if (not isinstance(self.storages,(tuple,list)) or not self.storages
+                or any(type(s) is not RigidStorage for s in self.storages)):
+            raise RigidFluidHeatError('explicit_cell_storages_required')
+        object.__setattr__(self,'storages',tuple(self.storages))
+        count=len(self.storages)
+        names=self.gas_species_order
+        if (not isinstance(names,(tuple,list)) or not names or any(not _label(n) for n in names)
+                or len(set(names))!=len(names)):
+            raise RigidFluidHeatError('explicit_unique_gas_species_required')
+        names=tuple(names)
+        object.__setattr__(self,'gas_species_order',names)
+        if not _label(self.liquid_column_id) or self.liquid_column_id in names:
+            raise RigidFluidHeatError('distinct_liquid_column_identity_required')
+        if type(self.allow_manufactured) is not bool:
+            raise RigidFluidHeatError('invalid_manufactured_gate')
+        if self.coefficient_classification not in ('manufactured','literature_candidate'):
+            raise RigidFluidHeatError('invalid_coefficient_classification')
+        if not _label(self.coefficient_set_id) or not _label(self.coefficient_version):
+            raise RigidFluidHeatError('explicit_coefficient_identity_required')
+        object.__setattr__(self,'coefficient_source_ids',_sources(self.coefficient_source_ids))
+        first=self.storages[0]
+        for storage in self.storages:
+            if storage.mechanical.gas_species_ids!=names:
+                raise RigidFluidHeatError('complete_ordered_storage_gas_species_mismatch')
+            for name in names:
+                phase,reference=storage.gas_phases[name],first.gas_phases[name]
+                if (phase.metadata!=reference.metadata or _caloric_identity(phase.caloric)!=_caloric_identity(reference.caloric)
+                        or phase.segment_index!=reference.segment_index
+                        or phase._curve.gas_constant_j_mol_k!=first.mechanical.gas_constant_j_mol_k):
+&gt;                   raise RigidFluidHeatError('cross_cell_caloric_identity_mismatch')
+E                   sludge_sandbox.rigid_fluid_heat.RigidFluidHeatError: cross_cell_caloric_identity_mismatch
+
+src/sludge_sandbox/rigid_fluid_heat.py:159: RigidFluidHeatError</failure></testcase></testsuite></testsuites>
