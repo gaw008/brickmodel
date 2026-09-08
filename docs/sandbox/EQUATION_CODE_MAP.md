@@ -156,3 +156,9 @@ HEOS共存数值政策 `NUM-HEOS-COEXISTENCE-BACKTRACK-1`：固定T的F=(Δp,Δg
 |---|---|---|
 | 终端伸长 λ(s)=λ0+a s+b s²；整区间正性，精确有理求积与表示误差 | `depletion_integration._mechanical_panel` | `test_mechanical_depletion.py`：Euler/affine、内部非正反例、独立 exp(t) 轨迹；制造验证 |
 | 事件态及公共时刻伸长比较，原初态累计伸长账本 | `depletion_integration.integrate_depletion` | 同上机械独立拒绝/跨段预算/取消测试，见 `MECHANICAL_DEPLETION.md`；实际水组合结果以 `research/mechanical-depletion-v1` 原始运行证据为准 |
+
+| 多格自由形变关系 | 实现 | 验证 |
+|---|---|---|
+| 全部n_i与共同t生成当前几何；E减恢复能后逐格反解T/P | `current_solid_storage.CurrentSolidStorage` | 非首格、完整几何、独立热容/势能、保守体积误差、单格数值兼容 |
+| n_i逐格法向平衡，t_dot由sum(V0_i eta_i)加权虚功平衡 | `free_slab_rates.solve_free_slab_rates` | Decimal160、局部非零R、分割/重编号、零tdot反例 |
+| 局部约束功C_i与当前面传热共同推进E | `free_solid_slab.FreeSolidSlab` | 独立DOP853干态两格，漏C_i仍全局守恒的负对照；真实水两档固定相态短轨迹 |

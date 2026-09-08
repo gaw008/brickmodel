@@ -1,0 +1,7 @@
+# Preregistered actual wet two-cell free slab
+
+Same two-layer reference/manufactured skeleton/conduction as dry trajectory, pe101325Pa, initialn/t1, temperatures300/301K, solids2mol each, gas.01/.008mol, liquid1/.5mol. Use existing distinct exact_volume_wet_model manufactured solid-volume fixture (rational1/50000m³/mol with1ULP representation bound), bind actual solid provider identity; original broad-uncertainty fixture unchanged. Real water EOS, no phase transfer, no liquid face transport, no gas D/Darcy in this numerical test. k.2 couples thermalfaces.
+
+0→1e-4s caps1e-4/5e-5, rel1e-7, Nabs1e-11mol,Eabs1e-6J,stretchabs1e-9,scale1,max4accept/4reject/60s each. Whole child hard150s. Before success require both complete; everyprefix fixedN, totalE+peΔV<4e-6J, cumulative abs constraint-power sum<=1e-6J, mechanical andcomponent checkpoint audit. Same final EOS/inverseobject check; two-cap differences stretch<2e-7,E<2e-6J,T<2e-6K. ActualTs mustchange>1e-8K. Save results before assertions; optional artifact environment set inrunner.
+
+No claim of actual sludge material qualification, full wet drying, phasechange, spatialconvergence or externalvalidation. It verifies new multicell currentstorage/free/sharedheat combination with actual water. Do not relax gates after failure; preserve all actual failure artifacts. Prior source oldbroad fixture/derived exact fixture differences remain documented.

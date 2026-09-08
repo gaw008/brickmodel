@@ -79,7 +79,7 @@ def _check_update(old: NDArray, result: NDArray, increment: NDArray,
 
 _WORK_COMPONENTS = frozenset(("elastic", "interface", "dissipation", "pore", "body"))
 _REACTING_WORK_COMPONENTS = frozenset(("elastic_deformation", "interface_deformation", "dissipation", "bulk_pressure", "body"))
-_FREE_WORK_COMPONENTS = frozenset(("external_traction", "body"))
+_FREE_WORK_COMPONENTS = frozenset(("external_traction", "mechanical_constraint", "body"))
 
 
 def _components(value, total, *, rate):

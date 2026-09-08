@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.100" timestamp="2026-09-08T10:48:35.078207-10:00" hostname="MacBookPro.lan"><testcase classname="tests.sandbox.test_free_slab_rates" name="test_constraint_exchange_has_a_separate_total_energy_component" time="0.003"><failure message="sludge_sandbox.integration.IntegrationError: invalid_component_work_keys">def test_constraint_exchange_has_a_separate_total_energy_component():
+        from sludge_sandbox.integration import Rates
+&gt;       rates=Rates([[0.],[0.],[0.]],[0.,0.,0.],[[0.],[0.]],[3.,-1.],
+            {'external_traction':[1.,1.],'mechanical_constraint':[2.,-2.],'body':[0.,0.]},
+            mechanical_rates_per_s=[.1,.2,.3])
+
+tests/sandbox/test_free_slab_rates.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+&lt;string&gt;:9: in __init__
+    ???
+src/sludge_sandbox/integration.py:176: in __post_init__
+    components, residual = _components(self.cell_power_components_w, self.cell_power_w, rate=True)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'body': [0.0, 0.0], 'external_traction': [1.0, 1.0], 'mechanical_constraint': [2.0, -2.0]}
+total = array([ 3., -1.])
+
+    def _components(value, total, *, rate):
+        if value is None:
+            return None, None
+        if (not isinstance(value, Mapping) or not value or
+                not any(set(value) &lt;= schema for schema in (_WORK_COMPONENTS, _REACTING_WORK_COMPONENTS, _FREE_WORK_COMPONENTS))):
+&gt;           raise IntegrationError("invalid_component_work_keys")
+E           sludge_sandbox.integration.IntegrationError: invalid_component_work_keys
+
+src/sludge_sandbox/integration.py:90: IntegrationError</failure></testcase></testsuite></testsuites>

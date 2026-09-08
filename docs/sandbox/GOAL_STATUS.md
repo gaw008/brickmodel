@@ -1,8 +1,17 @@
 # 物理沙盒 Goal 进度
 
-更新时间：2026-09-07 UTC。完整任务合同：[GOAL_BRICK_PHYSICS_SANDBOX.md](../GOAL_BRICK_PHYSICS_SANDBOX.md)。最新状态以当前恢复入口及其实际产物为准，较早段落保留当时状态。
+更新时间：2026-09-08 UTC。完整任务合同：[GOAL_BRICK_PHYSICS_SANDBOX.md](../GOAL_BRICK_PHYSICS_SANDBOX.md)。最新状态以当前恢复入口及其实际产物为准，较早段落保留当时状态。
 
 ## 当前恢复入口（后续详细历史保留）
+
+本回合从5c5f09a推进多格自由主机，属于实际progress：新增free_slab_rates/CurrentSolidStorage/FreeSolidSlab，全局共同t_dot、局部constraint功和同次当前温压/共享热流真正连接。主机源码b78efa42，瞬时率21bc4cb2，点储能4b94d58a。独立代码/数值审查通过；固体与力学/输运仍是制造参数，material_qualified=False。
+
+实际干态两格独立DOP853对照通过：6/8steps，E误差1.605862e-6/6.980263e-7J，stretch误差3.928e-8/1.707e-8；漏局部constraint的负对照虽全局守恒仍过，局部E偏差.0810722J。真实水两档固定相态轨迹41.693s完成：1/2steps、8/15eval、13.126/24.586s，T终值299.9999889194692/300.99999007520626K；全prefix外功残差最大4.208e-11J。独立Fraction复算通过，全数据见research/free-slab-v1。没有蒸发或液/气物质面流，不能叫完整干燥或完整材料验证。
+
+安装已终态：61真实site-packages模块逐字节匹配；150相关测试8.46s通过（session40608已exit0），之后仅补3项纯测试覆盖tdot零但R非零/正确物理重编号/第二cell反解失败保留prefix，installed3项0.54s通过。运行源码未改变；真实wet记录160源/测试hash在当时独立核查一致，后来2个测试文件只增3测试，有单独最终XML。当前无活动测试/EOS，不重复29920/40608。全部原失败/候选/审查/安装身份已归档，随本阶段本地提交保存。
+
+下一直接工作：WaterPhaseTransfer显式准入FreeSolidSlab（保留真实水caloric/source gate与constraint组件），实际多格蒸发/耗尽、非零Darcy/液面迁移组合；之后组成相关自由骨架/固体反应与动态炉温。空间收敛、完整原污泥材料证据、三机制公开留出、全周期/应用入口仍全部必需。Goal active，原§11未满足。
+
 
 本阶段全部运行已终态：源码真实自由液相耗尽1项178.373s通过，安装172相关轻测53.36s通过（session83000已exit0），58真实site-packages模块测试后再次逐字节匹配。research/mechanical-depletion-v1已保存完整原始产物。无活动测试/EOS，不重启旧61001/83000。独立原始结果复核已通过：152源/测试hash一致、19prefix Fraction审计通过，实际独立分支113eval与6项门槛已核。阶段提交后推进多格自由几何/反应/材料域。Goal仍active，原§11未满足。
 

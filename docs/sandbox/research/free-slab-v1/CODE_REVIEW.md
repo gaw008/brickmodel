@@ -1,0 +1,21 @@
+# 独立设计与当前应用审查
+
+program_knot_review推导，mechanical_code_review独立复核：共同横向速率分母sum(V0 eta)，局部约束功+2V0 R tdot必须进入每格E，合力/总功抵消不能替代局部能量账本。共同t约化假设不保证异质三维侧面逐点自由牵引。设计APPROVE；TRANSPORT_HOST_SEAM已补齐原漏写的constraint exchange。
+
+Root free_slab_rates.py SHA21bc4cb24929e8a738f9f5bd882cd652e77f8ba740dd453033880746ea987c79由mechanical_code_review独立代码审查APPROVE。局部减实际constraint后切向残差消去，只补法向速率误差；整体未减constraint，另补2abs(tdot)*sum(V0 eta)*tangent_error/t²。数值残差没有强制归零。独立Decimal160、局部非零constraint、全局抵消、均匀分割及反例测试17项0.13s通过，原缺模块RED保留。
+
+CurrentSolidStorage隔离源码4b94d58a0aea7fd977a51840d861acb17d1a635b5c4070ffee6b2c3c0948df43先由program_knot_review独立检查全局几何、cell_index、exact A*H/N、固体/目标/源身份及误差传播，无阻断；应用时补了同时禁止free_skeleton_rates和dynamic_solid_storage已导入别名的回归。mechanical_code_review最终应用再次APPROVE。Root56项新旧点/率测试0.60s通过。
+
+integration._FREE_WORK_COMPONENTS只新增mechanical_constraint；与D混用仍拒绝。原schema拒绝RED保留，49项component/新率/旧自由主机测试1.43s通过。独立代码审查APPROVE，未修改既有误差门槛或旧默认路径。
+
+上述审查均未调用EOS，不是外部专家认证。尚待实际多格主机与完整轨迹检查；不能把当前点储能和瞬时机械解称完整一维烧结模型。
+
+## 主机、轨迹及实际湿态结果
+
+FreeSolidSlab隔离/应用源码b78efa42172facdc15d121ee919aa71237f95a0b1244494da25af95ba95b2c2a由mechanical_code_review独立APPROVE：当前几何与真实inverse、共享面、三类功、全部actual state来源（由assembler同storage.source_ids严格比对）和失败映射正确；未运行EOS。Root按原字节应用。
+
+program_knot_review独立复核干态ODE的常Cp/参考能、势能导数、孔体积、Fourier与constraint因子和符号，无阻断；ODE不调用被测provider，但共享host初始E，所以是条件演化对照，初态正确性依赖独立点测试。负对照遗漏C_i造成局部.0810722J误差而全局仍过，原2e-6J局部/2e-7伸长门槛未改；原两cap实测6/8steps不是声明固定4/8steps。
+
+湿态测试和实际结果分开审查：mechanical_code_review先核新test/事前WET_PLAN，确认exact manufactured volume fixture与原宽误差fixture分开、全部精度门槛保留。program_knot_review再只读实际wet01.json/log/status，Fraction重算：160源/测试hash当时一致；两档所有前缀外功最大4.208e-11J、局部E账本3.592e-11J、机械账本1.738e-16，累计constraint抵消表示5.422e-20J/精确阶段4.997e-20J。库存固定、物质面流零、时钟连续，终态E表示值相同、伸长差1.555e-15，日志温差0，均在原门槛内。JSON SHAa913e1fce592027a19dd9aeb2e6d0d7679c796370728b2ba09aa22a89215e8dd。该审查不调用EOS；表示值相同不是物理误差为零。
+
+末尾只增加三项无EOS测试：零tdot但非零相反R、重编号后的物理置换、第二格反解失败后完整前缀。mechanical_code_review只读APPROVE；源码不变，Root24相关0.65s和安装3新增0.54s通过。两测试文件与wet运行时hash因此不同，原运行时快照不篡改。
