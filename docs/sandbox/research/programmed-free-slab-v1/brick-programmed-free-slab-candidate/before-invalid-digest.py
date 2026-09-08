@@ -9,7 +9,7 @@ from dataclasses import dataclass,field
 import math
 import numpy as np
 
-from .deforming_solid_storage import _digest,DeformingStorageError
+from .deforming_solid_storage import _digest
 from .boundary_program import BoundaryProgram,BoundaryProgramError,BoundaryState
 from .gas_transport import GasState,GasTransportError,ideal_gas_reservoir
 from .exchanges import BoundaryHeat,ExchangeError,boundary_heat,conduction_rate_w
@@ -37,8 +37,6 @@ class ProgrammedSolidFluidEvaluation:
     surface_iterations: int
     surface_status: str
     qualification: str = 'conditional_solid_fluid_inverse_and_numerical_surface_balance_not_full_brick'
-    operator_identity: tuple | None = None
-    source_ids: tuple[str,...] = ()
 
     @property
     def storage_states(self):return self.base_evaluation.storage_states
@@ -98,11 +96,7 @@ class ProgrammedSolidFluidHeat:
             self.coefficient_classification,self.coefficient_source_ids,self.surface_policy,self.allow_manufactured))
 
     def _check_content(self) -> None:
-        try:
-            current=self._current_content_digest()
-        except (DeformingStorageError,TypeError,AttributeError,OverflowError) as exc:
-            raise ProgrammedSolidFluidHeatError('invalid_runtime_programmed_operator_content') from exc
-        if current!=self._content_digest:
+        if self._current_content_digest()!=self._content_digest:
             raise ProgrammedSolidFluidHeatError('runtime_programmed_operator_content_changed')
 
     @property
@@ -213,8 +207,6 @@ class ProgrammedSolidFluidHeat:
         return ProgrammedSolidFluidEvaluation(rates=rates,base_evaluation=base,boundary=boundary,reservoir=reservoir,
             surface_temperature_k=surface,heat=heat,conductive_into_cell_w=into,surface_balance_residual_w=residual,
             surface_balance_limit_w=limit,surface_iterations=iterations,surface_status=status,
-            operator_identity=self.operator_identity,
-            source_ids=tuple(sorted(set(self.source_ids+getattr(base,'source_ids',())))),
             qualification=('manufactured_reduced_free_slab_furnace_gas_pressure_separate_from_constant_mechanical_traction'
                 if type(self.base_model) is FreeSolidSlab else 'conditional_prescribed_deforming_total_inverse_and_surface_balance_not_full_brick'
                 if type(self.base_model) is DeformingSolidHeat else

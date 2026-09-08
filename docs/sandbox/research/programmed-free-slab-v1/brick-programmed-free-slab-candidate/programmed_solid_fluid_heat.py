@@ -37,8 +37,6 @@ class ProgrammedSolidFluidEvaluation:
     surface_iterations: int
     surface_status: str
     qualification: str = 'conditional_solid_fluid_inverse_and_numerical_surface_balance_not_full_brick'
-    operator_identity: tuple | None = None
-    source_ids: tuple[str,...] = ()
 
     @property
     def storage_states(self):return self.base_evaluation.storage_states
@@ -213,8 +211,6 @@ class ProgrammedSolidFluidHeat:
         return ProgrammedSolidFluidEvaluation(rates=rates,base_evaluation=base,boundary=boundary,reservoir=reservoir,
             surface_temperature_k=surface,heat=heat,conductive_into_cell_w=into,surface_balance_residual_w=residual,
             surface_balance_limit_w=limit,surface_iterations=iterations,surface_status=status,
-            operator_identity=self.operator_identity,
-            source_ids=tuple(sorted(set(self.source_ids+getattr(base,'source_ids',())))),
             qualification=('manufactured_reduced_free_slab_furnace_gas_pressure_separate_from_constant_mechanical_traction'
                 if type(self.base_model) is FreeSolidSlab else 'conditional_prescribed_deforming_total_inverse_and_surface_balance_not_full_brick'
                 if type(self.base_model) is DeformingSolidHeat else

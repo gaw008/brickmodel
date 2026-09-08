@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="3" time="2.435" timestamp="2026-09-08T11:50:17.237980-10:00" hostname="MacBookPro.lan"><testcase classname="test_program" name="test_actual_current_surface_and_mechanics_forwarding" time="0.023" /><testcase classname="test_program" name="test_waveform_knots_energy_and_checkpoint" time="2.001"><failure message="assert Fraction(175161301186792835977626715045547023756130864145915749111603948179, 210624583337114373395836055367340864637790190801098222508621955072) &lt; Fraction(4722366482869645, 1180591620717411303424)&#10; +  where Fraction(175161301186792835977626715045547023756130864145915749111603948179, 210624583337114373395836055367340864637790190801098222508621955072) = abs(((Fraction(-923112953, 17179869184) + ((Fraction(100000, 1) * Fraction(2582544170319337, 18446744073709551616)) * ((((Fraction(4281925189742751, 4503599627370496) + Fraction(2320494245251937, 2251799813685248)) * Fraction(8922972086914007, 9007199254740992)) * Fraction(8922972086914007, 9007199254740992)) - 2))) - Fraction(-8338307367724435, 18446744073709551616)))&#10; +  and   Fraction(4722366482869645, 1180591620717411303424) = F(4e-06)">water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+
+    def test_waveform_knots_energy_and_checkpoint(water):
+        op=wrapped(water);state=initial(op.base_model)
+        p=policy(initial_step_s=.005,maximum_step_s=.005,relative_tolerance=1e-8,
+            energy_absolute_tolerance_j=1e-6,stretch_absolute_tolerance=1e-9,stretch_scale=1.,maximum_wall_seconds=20.)
+        run=integrate(state,op,start_s=0.,end_s=.15,policy=p)
+        assert run.status=='completed',run.reason
+        assert .05 in run.times_s and .1 in run.times_s
+        assert all(not a&lt;k&lt;b for a,b in zip(run.times_s,run.times_s[1:]) for k in (.05,.1))
+        audit_integration(encode(run),p,start_s=0.,end_s=.15)
+        exchange=F();pe=F(op.base_model.external_pressure_pa);v0=F(.00014)
+        for step,after in zip(run.steps,run.states[1:],strict=True):
+            exchange+=F(float(step.face_energy_j[0]))-F(float(step.face_energy_j[-1]))
+            delta=sum((F(float(a))-F(float(b)) for a,b in zip(after.internal_energy_j,state.internal_energy_j)),F())
+            n0,n1,t=map(F,map(float,after.mechanical_stretches))
+&gt;           assert abs(delta+pe*v0*((n0+n1)*t*t-2)-exchange)&lt;F(4e-6)
+E           assert Fraction(175161301186792835977626715045547023756130864145915749111603948179, 210624583337114373395836055367340864637790190801098222508621955072) &lt; Fraction(4722366482869645, 1180591620717411303424)
+E            +  where Fraction(175161301186792835977626715045547023756130864145915749111603948179, 210624583337114373395836055367340864637790190801098222508621955072) = abs(((Fraction(-923112953, 17179869184) + ((Fraction(100000, 1) * Fraction(2582544170319337, 18446744073709551616)) * ((((Fraction(4281925189742751, 4503599627370496) + Fraction(2320494245251937, 2251799813685248)) * Fraction(8922972086914007, 9007199254740992)) * Fraction(8922972086914007, 9007199254740992)) - 2))) - Fraction(-8338307367724435, 18446744073709551616)))
+E            +  and   Fraction(4722366482869645, 1180591620717411303424) = F(4e-06)
+
+/private/tmp/brick-programmed-free-slab-candidate/test_program.py:56: AssertionError</failure></testcase><testcase classname="test_program" name="test_order_source_and_duplicate_boundary_guards" time="0.005" /></testsuite></testsuites>

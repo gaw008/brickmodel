@@ -3,13 +3,11 @@
 The base is evaluated once per trial. Dynamic gas enthalpy and half-cell heat
 are then added to the same outward face ledger without changing stored energy.
 """
-from .free_solid_slab import FreeSolidSlab,FreeSolidSlabEvaluation
 from .deforming_solid_heat import DeformingSolidHeat,DeformingSolidHeatEvaluation
-from dataclasses import dataclass,field
+from dataclasses import dataclass
 import math
 import numpy as np
 
-from .deforming_solid_storage import _digest,DeformingStorageError
 from .boundary_program import BoundaryProgram,BoundaryProgramError,BoundaryState
 from .gas_transport import GasState,GasTransportError,ideal_gas_reservoir
 from .exchanges import BoundaryHeat,ExchangeError,boundary_heat,conduction_rate_w
@@ -26,7 +24,7 @@ class ProgrammedSolidFluidHeatError(IntegrationError):
 @dataclass(frozen=True,kw_only=True)
 class ProgrammedSolidFluidEvaluation:
     rates: Rates
-    base_evaluation: SolidFluidHeatEvaluation | DeformingSolidHeatEvaluation | FreeSolidSlabEvaluation
+    base_evaluation: SolidFluidHeatEvaluation | DeformingSolidHeatEvaluation
     boundary: BoundaryState
     reservoir: GasState
     surface_temperature_k: float
@@ -37,8 +35,6 @@ class ProgrammedSolidFluidEvaluation:
     surface_iterations: int
     surface_status: str
     qualification: str = 'conditional_solid_fluid_inverse_and_numerical_surface_balance_not_full_brick'
-    operator_identity: tuple | None = None
-    source_ids: tuple[str,...] = ()
 
     @property
     def storage_states(self):return self.base_evaluation.storage_states
@@ -50,7 +46,7 @@ class ProgrammedSolidFluidEvaluation:
 
 @dataclass(frozen=True,kw_only=True)
 class ProgrammedSolidFluidHeat:
-    base_model: SolidFluidHeat | DeformingSolidHeat | FreeSolidSlab
+    base_model: SolidFluidHeat | DeformingSolidHeat
     program: BoundaryProgram
     convection_w_m2_k: float
     emissivity: float
@@ -61,10 +57,9 @@ class ProgrammedSolidFluidHeat:
     coefficient_source_ids: tuple[str,...]
     surface_policy: SurfacePolicy
     allow_manufactured: bool = False
-    _content_digest: str = field(init=False,repr=False)
 
     def __post_init__(self):
-        if type(self.base_model) not in (SolidFluidHeat,DeformingSolidHeat,FreeSolidSlab) or type(self.program) is not BoundaryProgram:
+        if type(self.base_model) not in (SolidFluidHeat,DeformingSolidHeat) or type(self.program) is not BoundaryProgram:
             raise ProgrammedSolidFluidHeatError('explicit_solid_fluid_and_program_required')
         if type(self.surface_policy) is not SurfacePolicy:raise ProgrammedSolidFluidHeatError('explicit_surface_policy_required')
         base=self._configuration_host;transport=base.transport
@@ -75,7 +70,7 @@ class ProgrammedSolidFluidHeat:
         if type(self.allow_manufactured) is not bool:raise ProgrammedSolidFluidHeatError('invalid_manufactured_gate')
         if self.coefficient_classification not in ('manufactured','literature_candidate'):
             raise ProgrammedSolidFluidHeatError('invalid_coefficient_classification')
-        manufactured=(type(self.base_model) in (DeformingSolidHeat,FreeSolidSlab) or base.has_manufactured_reactions or base.has_manufactured_liquid_transport or self.coefficient_classification=='manufactured' or transport.coefficient_classification=='manufactured'
+        manufactured=(type(self.base_model) is DeformingSolidHeat or base.has_manufactured_reactions or base.has_manufactured_liquid_transport or self.coefficient_classification=='manufactured' or transport.coefficient_classification=='manufactured'
             or any(s.geometry_classification=='manufactured_test_fixture' or
                 any(p.metadata.classification=='manufactured_test_fixture' for p in (*s.solid_phases.values(),*s.fluid_template.gas_phases.values()))
                 for s in base.storages))
@@ -90,29 +85,10 @@ class ProgrammedSolidFluidHeat:
             except IntegrationError as exc:raise ProgrammedSolidFluidHeatError(str(exc)) from exc
             object.__setattr__(self,name,value)
         if self.emissivity>1:raise ProgrammedSolidFluidHeatError('emissivity_exceeds_one')
-        object.__setattr__(self,'_content_digest',self._current_content_digest())
-
-    def _current_content_digest(self) -> str:
-        return _digest((self.base_model,self.program,self.convection_w_m2_k,self.emissivity,
-            self.stefan_boltzmann_w_m2_k4,self.coefficient_set_id,self.coefficient_version,
-            self.coefficient_classification,self.coefficient_source_ids,self.surface_policy,self.allow_manufactured))
-
-    def _check_content(self) -> None:
-        try:
-            current=self._current_content_digest()
-        except (DeformingStorageError,TypeError,AttributeError,OverflowError) as exc:
-            raise ProgrammedSolidFluidHeatError('invalid_runtime_programmed_operator_content') from exc
-        if current!=self._content_digest:
-            raise ProgrammedSolidFluidHeatError('runtime_programmed_operator_content_changed')
-
-    @property
-    def operator_identity(self) -> tuple:
-        self._check_content()
-        return ('programmed_solid_fluid_operator_v1',self._content_digest)
 
     @property
     def _configuration_host(self):
-        return self.base_model.base_model if type(self.base_model) in (DeformingSolidHeat,FreeSolidSlab) else self.base_model
+        return self.base_model.base_model if type(self.base_model) is DeformingSolidHeat else self.base_model
     @property
     def transport(self):return self._configuration_host.transport
     @property
@@ -126,9 +102,7 @@ class ProgrammedSolidFluidHeat:
     @property
     def source_ids(self):return tuple(sorted(set(self.base_model.source_ids+self.program.identity.source_ids+self.coefficient_source_ids)))
 
-    def _check_state(self,state):
-        self._check_content()
-        return self.base_model._check_state(state)
+    def _check_state(self,state):return self.base_model._check_state(state)
     def breakpoints_s(self,start_s,end_s):
         boundary=self.program.breakpoints_s(start_s,end_s)
         if type(self.base_model) is DeformingSolidHeat:
@@ -181,13 +155,12 @@ class ProgrammedSolidFluidHeat:
         raise ProgrammedSolidFluidHeatError('surface_iteration_limit')
 
     def evaluate(self,state:ConservedState,time_s:float)->ProgrammedSolidFluidEvaluation:
-        self._check_content()
         try:boundary=self.program.at(time_s)
         except BoundaryProgramError as exc:
             if str(exc)=='time_outside_program_domain':raise DomainExit(str(exc)) from exc
             raise ProgrammedSolidFluidHeatError(str(exc)) from exc
         base=self.base_model.evaluate(state,time_s)
-        current=base.current_host if type(self.base_model) in (DeformingSolidHeat,FreeSolidSlab) else self.base_model
+        current=base.current_host if type(self.base_model) is DeformingSolidHeat else self.base_model
         transport=current.transport
         template=current.storages[0].fluid_template
         masses={n:template.gas_phases[n].metadata.molar_mass_kg_mol for n in self.gas_species_order}
@@ -197,7 +170,7 @@ class ProgrammedSolidFluidHeat:
                 gas_constant_j_mol_k=template.mechanical.gas_constant_j_mol_k)
             surface,heat,into,residual,limit,iterations,status=(
                 self._surface(base.gas_states[-1].temperature_k,boundary,transport=transport)
-                if type(self.base_model) in (DeformingSolidHeat,FreeSolidSlab) else self._surface(base.gas_states[-1].temperature_k,boundary))
+                if type(self.base_model) is DeformingSolidHeat else self._surface(base.gas_states[-1].temperature_k,boundary))
             exchange=transport._face(base.gas_states[-1],reservoir,len(base.gas_states)-1,None)
             enthalpy=transport._enthalpy(exchange)
             fn=np.array(base.rates.face_species_mol_s);fe=np.array(base.rates.face_energy_w)
@@ -206,17 +179,13 @@ class ProgrammedSolidFluidHeat:
                 fn[-1,index]=_sum((float(fn[-1,index]),exchange.net_mol_s[n]))
             fe[-1]=_sum((float(fe[-1]),enthalpy,-into))
             rates=Rates(fn,fe,base.rates.reaction_species_mol_s,base.rates.cell_power_w,
-                        cell_power_components_w=base.rates.cell_power_components_w,
-                        mechanical_rates_per_s=base.rates.mechanical_rates_per_s)
+                        cell_power_components_w=base.rates.cell_power_components_w)
         except _FAILURES as exc:_failure(exc)
         except OverflowError as exc:raise ProgrammedSolidFluidHeatError('nonfinite_programmed_boundary') from exc
         return ProgrammedSolidFluidEvaluation(rates=rates,base_evaluation=base,boundary=boundary,reservoir=reservoir,
             surface_temperature_k=surface,heat=heat,conductive_into_cell_w=into,surface_balance_residual_w=residual,
             surface_balance_limit_w=limit,surface_iterations=iterations,surface_status=status,
-            operator_identity=self.operator_identity,
-            source_ids=tuple(sorted(set(self.source_ids+getattr(base,'source_ids',())))),
-            qualification=('manufactured_reduced_free_slab_furnace_gas_pressure_separate_from_constant_mechanical_traction'
-                if type(self.base_model) is FreeSolidSlab else 'conditional_prescribed_deforming_total_inverse_and_surface_balance_not_full_brick'
+            qualification=('conditional_prescribed_deforming_total_inverse_and_surface_balance_not_full_brick'
                 if type(self.base_model) is DeformingSolidHeat else
                 'conditional_solid_fluid_inverse_and_numerical_surface_balance_not_full_brick'))
 

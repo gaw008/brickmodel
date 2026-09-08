@@ -660,8 +660,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             implementation=op.chemical.water.implementation
             source=(op.source_ids,tuple(sorted(op.chemical.source_asset_sha256.items())),
                     None if implementation is None else implementation.sha256,
-                    getattr(op.base_model,'energy_model_identity',None),
-                    getattr(op.base_model,'operator_identity',None))
+                    getattr(op.base_model,'energy_model_identity',None))
         return (id(op),id(state),state.energy_model_identity,t,tc,approach_cap,safe_fraction,
                 event_cell,op.interfaces,op.liquid_index,op.water_vapor_index,source,ep.terminal_method)
 

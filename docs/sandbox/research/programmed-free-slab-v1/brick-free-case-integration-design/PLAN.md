@@ -1,0 +1,41 @@
+# Application case → free reacting slab and spatial refinement
+
+Read-only actual builder/service audit during root native source freeze. No edits/install/EOS. This is integration of current Goal kernel into the existing operable application, not another isolated scientific fixture.
+
+## Exact present gap
+
+verification_case.read_case accepts only model_id manufactured_reacting_wet_prescribed_slab_v1 and exact keysets. mechanics contains prescribed knotstretch arrays, no mechanical externalpressure or initial fullnormal vector; numerics/integration excludes stretch_absolute_tolerance/stretch_scale. _make_model always constructs PrescribedSlabMotion, DeformingSolidStorage and DeformingSolidHeat. _forward calls time_s initializer/pointforward, build_case reconstructs conservative initial withoutmechanical_stretches, snapshot reads base.motion. Thus swapping just the host constructor would drop actual dynamicmechanics and fail schema/initializer/snapshot, even though core FreeSolidSlab now supports reactions.
+
+## Minimal coordinated model branch
+
+Introduce separate explicit model_id manufactured_reacting_wet_free_slab_v1, retaining exact existing prescribed keysets/behavior. Reuse pureread_case validations for water/caloric/reaction/layout/grid and allinputs; free-specific mechanics requires initial_parent_normal_stretches[2], initial_tangential_stretch, external_pressure_pa, explicit reduced_common_tangent and manufacturedrelativefaces regime labels plus existing moduli/eta/gamma/microarea density/q0/beta/error domains. Do not accept unused prescribedstrain knots on thisbranch. Require eta>0, finite nonnegativepe, initialnormals and common tangent inside existingdeclared domains; frozenNs are referenceidentity only under explicitreacting mode. Unknown models/materialqualifications remain error, not fallback.
+
+Construct existing water/solidgas/baseSolidFluidHeat/reaction same sources and same real caseSHA-backed manufactured identities. Replace pointcreation with CurrentSolidStorage(...solid_inventory_regime='reacting_manufactured') using DynamicStorageErrorBounds; replace host with FreeSolidSlab(...mechanical_regime='reduced_common_tangent_quasistatic_reacting_manufactured',solid_inventory_regime='reacting_manufactured',externalpressure). WaterPhaseTransfer already admits this exact host. Do not fabricate PrescribedSlabMotion or funnelmechanics into species. Furnace program is separate optional model feature after its reviewed wrapper, not an implicitcasechange.
+
+## Grid-invariant physical inputs (existing density semantics preserved)
+
+Current code already computes volume=A*H/cells and scale=parent_cells/cells; parent_rows extensive inventories multiply scale and repeat parentprofile. Existing w_a=composition_beta_m3_mol[a]/volume is correct: beta unitsm³/mol, q=q0+beta*N/V0 dimensionless. As each parent splitsfactor, Nchild=Nparent/factor,V0child=V0parent/factor,wchild=factor*wparent; q unchanged. Sameintensive K/G/eta/gamma/q0/beta/T/pressure. Do NOT carry fixed per-cell w to finergrid or divideq itself.
+
+micro_interface_area_density_m2_m3*V0 partitions area and q*interfaceenergy extensively. SolidNs reference inventory follows exactchildrows, bulktemplate uncertainty=parent_bulk_volume_error_m3*scale, phaseconductance=phase_coefficient_density*V0; source/caloricuncertainty stays per-mole, not divided twice. Scalar conductivity/diffusivity/permeability remain intensive. Face area unchanged under reference regrid; widths H/cells, actualnchild copied from parent, common tunchanged. Per-cell constraintpower must distribute with V0 and actualcompatibleclosure, never copied fullparentwork.
+
+Current additional_bulk_volume_error_m3 and additional_mechanical_energy_error_j are passed unscaled percell in prescribedbuilder. Their schema currently says percellabsolute, not density: cannot silentlyreinterpret oldcases. Freebranch should explicitly name parent_additional_* values and multiplyscale, or use distinct error_density fields with units/m³ then multiplyV0. If retaining same absolutepercell semantics, disclose that theiraggregate grows withgrid and do not claim uncertaintyinvariant regridding. Choose andsource this before evidence.
+
+## Initial energy and snapshots
+
+For free _forward derive full normals by parent mapping and common tangent, use actualhost.state_from_temperatures and point.forward(fullvector,t). Preserve same temperaturebuilt/sourceerror records. Conservative parentE/factor inheritance remains; copied mechanical state MUST use forward_state.mechanical_stretches in ConservedState reconstruction. Check parentnormal replicated and common tangentidentical; mechanical stretches are intensive, never divide them. Keep existing independent allN/E extensiveexactchecks and sourceenclosures. No source tolerance widening if initial inverse cannotresolve.
+
+snapshot branch exposes geometry=base.geometry, free=base.free including constraintpower/residuals, fulltotalinverses, mechanicalstretch/rates and originalthermal states. Existing transport audit uses current_host, actualfaceT enthalpy/currentarea/widths and can stay. Do not populate a fake motion key; keep legacy prescribed motion output only onlegacybranch and change consumers explicitly. Reaction/currentstorage identity checks remain actualobjects.
+
+## Application/runtime admission and provenance
+
+IntegrationPolicy must include two explicit positive mechanicalfields onfreecases; relative/time/refinement controls already supported. Integration/checkpoint encode/reconstruct/audit mechanical states and component mechanical_constraint already exist; run_service resume compares originalpolicy/liveenergyidentity and must preserve sourceboundfreecase reconstruction. Add application-level run→cancel→resume→replay test, not merely coretest. Current service primarily uses ordinary integrate; a freewetcase does NOT automatically gain depletion service bychoosingmodel. If end-to-end cases crossliquidzero, expose explicit eventpolicy and integrate_depletion result/ledger/resume mapping separately; otherwise require allwet domain and label depletion unsupported at applicationlayer. Do not silently choose integrator onfailure.
+
+Read-only trace/provenance catalog currently names prescribed equations/anchors and model_id; add matching freecatalog roots with qviscosity, globaltangentclosure/localconstraintwork, geometry and physicalsource scope. Missingcatalog is explicitunknown/error, not prescribedtrace for freeoutputs. Run manifests must bind updatedcatalog and fullsource modules (CurrentSolidStorage/free_slab_rates/FreeSolidSlab). Caseclassification stays manufactured, material_qualified/training_eligible false.
+
+local_app validate/jobs already calls shared strictcase/service, so backend can reuse same API aftermodelbranch. UI must display actualfree geometry/mechanicalstate and expose requiredfreeinitial/traction/errorpolicy fields instead of editableprescribedstretchschedule. Check UI defaults/JSON editor and plottedmotion assumptions beforeadmission. Experiment/sensitivity/search allowlists may assume currentmodel andmechanics; unsupportedfreecases should rejectexplicitly untilsharedcasevalidation/metricbinding verified. No new hidden ranking or materialquality claims.
+
+## Verification sequence
+
+PureJSON tests: model-specific exactfields, oldprescribedcaseparity, invalid/missingmechanicalpolicy/source/classification reject; sourcequeryworks noEOS. Drybuilder2→4(→8 ifsupported) q/volume/area/N/E/error extensity and inheritednormal/common-tangent mapping, conservativeenergy/sourcebound gate. Actual free trajectory2/4 distinctgrids at matchedtimeaccuracy with parentaggregated N/E, volumeweighted T only when physicalmetricdefined, matchedfaceflux and constraintglobalwork, not rawcellarray equality. Uniformprofile is extensitycontrol; heterogeneousprofile is meaningfulspatialcheck. Preserve unresolved discretization error rather than label convergence fromone comparison.
+
+Then installed sharedservice run/replay/resume andUI artifact parity undercorrectfreeprovenance; all sourcebindings. Only then boundednativewaterfreecases with frozenmodules andoriginalaccuracygates. Existing microscopictime/manufacturedcoefficients remain verification-only; this application integration does not complete materialderived firing/cooling coverage.

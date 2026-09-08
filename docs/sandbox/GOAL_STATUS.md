@@ -4,6 +4,11 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+
+ae5bf54 后实际完成动态炉程自由主机接入：当前几何表面热交换、完整机械率/分项功、程序内容身份及受控非法修改错误保留前缀。原生水 attempt01 130.70s 完成，3/7步、22/50eval、两个节点精确命中；独立170源码hash及Fraction逐prefix审计通过，最大水1.86e-16mol/局部E1.75e-10J/含边界热全局E6.30e-11J。源码34dry+1native通过，安装42dry10.27s通过，61实际模块前后逐字匹配。37884/65002已exit0，无活动EOS；不重复native。全部原始失败/JSON/XML/审计与身份见research/programmed-free-slab-v1，说明PROGRAMMED_FREE_SLAB.md。仍为短时制造材料、无物质面流/反应/耗尽，不是完整烧成。
+
+下一实际候选由reacting_skeleton_provider仅在/private/tmp/brick-free-case-integration-candidate构建独立free schema、CurrentSolidStorage/FreeSolidSlab反应主机、完整初态与真实快照和2/4格广延参数缩放；未repo应用/未EOS。program_knot_review只读设计free catalog及run/replay/resume/UI接入，路径/private/tmp/brick-free-app-seam。恢复读取真实候选/审查后继续，不能把应用设计当已实现。原污泥材料及三机制公开留出、全湿烧成冷却、空间收敛仍全部必需，Goal active。
+
 d969905后实际progress：free_slab_rates显式reacting_manufactured精确当前qeta及共同t加权分母，FreeSolidSlab显式反应模式重绑当前reaction storages、当前Ns/总E/孔隙/温压/自由形变真实闭环，fixed模式守卫与身份保留。源码65项3.83s+独立轨迹1项5.16s通过，正式安装104项14.01s通过（31745已exit0），61实际模块前后逐字匹配。无活动EOS/测试。证据research/reacting-free-slab-v1，说明REACTING_FREE_SLAB.md。
 
 独立305/306K干态A→B两格0.1s轨迹23/32steps通过全部原门槛和每prefixDOP853对照；E最大1.395e-6/7.266e-7J，stretch3.173e-8/1.652e-8，解析A/B1.574e-10/8.058e-11mol，外功8.026e-9/4.556e-9J。原300K边界越域零step、域内粗E4.326e-6失败完整保存，仅收紧内部控制，未宽源域/外部gate。两份独立审查通过。仍为制造材料、无湿/气物质面流，非真实原泥/全周期。
