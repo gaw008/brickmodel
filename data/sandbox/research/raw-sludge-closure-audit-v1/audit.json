@@ -1,0 +1,103 @@
+{
+  "audit_id": "raw-sludge-closure-audit-v1",
+  "accessed_at_utc": "2026-09-08 06:18:54 UTC",
+  "outcome": "bounded_negative_complete_package_not_established",
+  "runtime_admission": false,
+  "training_eligible": false,
+  "external_validation_performed": false,
+  "queries": [
+    "sewage sludge pyrolysis enthalpy reaction product gas char elemental analysis energy balance open access",
+    "\"Pyrolysis of Dried Wastewater Biosolids Can Be Energy Positive\" \"heat\" \"formation\""
+  ],
+  "query_limit": 3,
+  "queries_used": 2,
+  "distinct_primary_urls_opened": 4,
+  "primary_url_limit": 6,
+  "existing_records_read": [
+    "docs/sandbox/KNOWN_GAPS.md",
+    "data/sandbox/research/lu2026/README.md",
+    "data/sandbox/research/areias2019/README.md",
+    "data/sandbox/research/ghodke2022/README.md",
+    "data/sandbox/research/arlabosse2005/source.json"
+  ],
+  "new_sources": [
+    {
+      "doi": "10.30955/gnj.003738",
+      "title": "A comprehensive study of the high temperature pyrolysis of sewage sludge: kinetics, energy analysis and products formation",
+      "landing_url": "https://cosmos.gnest.org/publication/gnest_03738",
+      "read_url": "https://journal.gnest.org/sites/default/files/Submissions/gnest_03738/gnest_03738_draft.pdf",
+      "version": "publisher-hosted draft, 35 pages; not asserted identical to final typeset article",
+      "read_status": "actual PDF text: sections2.1-2.5,3.2; Tables2,4,5; table screenshots failed",
+      "facts": {
+        "sample": "El Salitre, Bogota; anaerobically digested, dried, milled; upstream lime mentioned in section3.1",
+        "basis": "Table2 distinguishes moisture/ dry / ash-free; oxygen by difference using 960C ash. Tables4-5: dry feed/product bases explicit.",
+        "table4_TG3_10Kmin": {
+          "570C": {
+            "solid": 0.6919,
+            "liquid": 0.2917,
+            "CO": 0.0041,
+            "CO2": 0.01,
+            "CH4": 0.0016,
+            "H2": 0.0007,
+            "printed_total": 1.0
+          },
+          "960C_printed_total": 0.9507
+        },
+        "energy": "Section2.4: LHV balance at25C; section3.2: inferred2.18MJ/kg dry feed to570C.",
+        "inference_flags": "Liquid yield/composition by difference; liquid water fraction uses borrowed correlation; organic liquid HHV correlated (sections2.1,2.4).",
+        "limitations": "Table5: incomplete high-temperature element recovery. Six fitted components lack individually specified elemental/caloric identities. No complete temperature-dependent storage package established."
+      },
+      "applicability": "digested, conditioned material; not proven untreated raw sludge or existing brick batch",
+      "license_status": "not independently verified; factual notes only, no fulltext redistribution"
+    },
+    {
+      "doi": "10.3390/en13164087",
+      "title": "Detailed Analysis of Sewage Sludge Pyrolysis Gas: Effect of Pyrolysis Temperature",
+      "landing_url": "https://www.mdpi.com/1996-1073/13/16/4087",
+      "landing_access": "web open returned Internal Error; search excerpt not substituted for methods",
+      "read_url": "https://mdpi-res.com/d_attachment/energies/energies-13-04087/article_deploy/energies-13-04087.pdf",
+      "read_status": "actual 12-page PDF text, sections2.1-2.4,3.1-3.3; Tables1-5",
+      "facts": {
+        "sample": "Month-composite municipal sludge; mesophilic digestion, centrifugation, drying; section2.1.",
+        "basis": "Table1 elemental/proximate values dry matter; section2.3 product yields use feed including moisture. Gas volume reference0C/101kPa after helium subtraction.",
+        "available": "Table2 gas volume/speciation/HHV; Table3 sulfur gases; Tables4-5 condensate elemental analyses and HHV; Figure2 product yields.",
+        "limits": "Table2 retains unidentified FID fraction and grouped hydrocarbons. Table3/Figure3 adapted from another publication. Methods/energy section do not supply complete char/feed/condensate temperature-dependent caloric functions or evolving reaction reference energies."
+      },
+      "applicability": "stabilized composite, not a named untreated single raw batch; no connection to other project specimens established",
+      "license_status": "no fulltext redistributed; limited factual summary only"
+    }
+  ],
+  "other_discovered_not_read": [
+    {
+      "doi": "10.1080/09593330.2012.683816",
+      "status": "search excerpt only; not used as methods evidence"
+    },
+    {
+      "doi": "10.1016/j.jaap.2014.09.004",
+      "status": "search excerpt only"
+    },
+    {
+      "doi": "10.2175/106143016X14609975747441",
+      "status": "second query found secondary citations; original article not opened; no claim about its complete contents"
+    }
+  ],
+  "failed_actions": [
+    {
+      "action": "screenshot",
+      "url": "https://journal.gnest.org/sites/default/files/Submissions/gnest_03738/gnest_03738_draft.pdf",
+      "zero_based_pages": [
+        25,
+        26
+      ],
+      "result": "Internal Error; no visual verification claimed"
+    }
+  ],
+  "closure_gaps": [
+    "mutually identified evolving solid/condensate pseudo-species elemental definitions",
+    "complete product elemental recovery including unresolved gas/condensate/mineral transformations",
+    "compatible reference energies and temperature-dependent heat capacities for same material state",
+    "independent validation distinct from fitted or difference-imposed balances"
+  ],
+  "next_step": "Source-specific offline feasibility audit of Global NEST table/model basis and unresolved species; no merging materials, no normalization to hide deficits, no invented kinetics.",
+  "limitations": "This is a scoped evidence search and analyst assessment, not a proof of literature-wide impossibility or external scientific certification."
+}

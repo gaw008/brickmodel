@@ -60,6 +60,17 @@ def main(argv=None):
     ui.add_argument('--storage', required=True, type=Path)
     ui.add_argument('--port', type=int, default=8765)
     ui.add_argument('--maximum-jobs', type=int, default=20)
+    prepare = commands.add_parser('experiment-prepare', help='冻结候选、来源与实验预算；不调用 EOS')
+    prepare.add_argument('spec', type=Path)
+    prepare.add_argument('--water-data', required=True, type=Path)
+    prepare.add_argument('--evidence-data', type=Path)
+    prepare.add_argument('--output', required=True, type=Path)
+    for name, help_text in [('experiment-run', '按累计预算执行或继续实验'),
+                            ('experiment-status', '读取实验与候选保存状态'),
+                            ('experiment-cancel', '提交绑定实验身份的取消请求'),
+                            ('experiment-compare', '比较已验证结果；不生成产品合格排名')]:
+        command = commands.add_parser(name, help=help_text)
+        command.add_argument('directory', type=Path)
     args = parser.parse_args(argv)
     try:
         if args.command == 'ui':
@@ -68,6 +79,22 @@ def main(argv=None):
                         evidence_directory=args.evidence_data, storage_directory=args.storage,
                         port=args.port, maximum_jobs=args.maximum_jobs)
             return 0
+        if args.command.startswith('experiment-'):
+            from .experiments import (prepare_experiment, run_experiment, read_experiment,
+                                      request_experiment_cancel, compare_experiment)
+            if args.command == 'experiment-prepare':
+                value = prepare_experiment(args.spec, args.output, water_directory=args.water_data,
+                                           evidence_directory=args.evidence_data)
+            elif args.command == 'experiment-run':
+                with _cancellation() as cancel:
+                    value = run_experiment(args.directory, cancel=cancel)
+            else:
+                operation = {'experiment-status': read_experiment,
+                             'experiment-cancel': request_experiment_cancel,
+                             'experiment-compare': compare_experiment}[args.command]
+                value = operation(args.directory)
+            print(json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2))
+            return 1 if args.command == 'experiment-run' and value.get('status') != 'completed' else 0
         from .run_service import run_case, trace_run, replay_run, resume_run, runtime_identity
         if args.command == 'validate':
             from .verification_case import read_case
