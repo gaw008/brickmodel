@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="6" skipped="0" tests="6" time="0.102" timestamp="2026-09-08T11:37:20.504330-10:00" hostname="MacBookPro.lan"><testcase classname="test_rates" name="test_unequal_q_current_viscosity_decimal_oracle" time="0.000"><failure message="TypeError: solve_free_slab_rates() got an unexpected keyword argument 'solid_inventory_regime'">def test_unequal_q_current_viscosity_decimal_oracle():
+        bases=skeletons(2);models=tuple(wrap(s) for s in bases);kw=inputs()
+&gt;       out=m.solve_free_slab_rates(models,solid_inventory_regime='reacting_manufactured',**kw)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: solve_free_slab_rates() got an unexpected keyword argument 'solid_inventory_regime'
+
+/private/tmp/brick-reacting-free-rates-candidate/test_rates.py:22: TypeError</failure></testcase><testcase classname="test_rates" name="test_q_one_and_fixed_identity_parity" time="0.009"><failure message="AssertionError: assert FreeSlabRates(rates=(0.008245028657998327, 0.1583111461380655, 0.15503912518241403), rate_error_bounds=(8.446498717055...need not vanish. No pressure/geometry/parameter uncertainty, constitutive accuracy, trajectory or material admission.') == FreeSlabRates(rates=(0.008245028657998327, 0.1583111461380655, 0.15503912518241403), rate_error_bounds=(8.446498717055...need not vanish. No pressure/geometry/parameter uncertainty, constitutive accuracy, trajectory or material admission.')">def test_q_one_and_fixed_identity_parity():
+        base=skeletons(2);kw=inputs()|{'solid_inventories_mol':({'solid':1.},{'solid':1.})}
+        old=original(base,**kw);fixed=m.solve_free_slab_rates(base,**kw)
+&gt;       assert fixed==old
+E       AssertionError: assert FreeSlabRates(rates=(0.008245028657998327, 0.1583111461380655, 0.15503912518241403), rate_error_bounds=(8.446498717055...need not vanish. No pressure/geometry/parameter uncertainty, constitutive accuracy, trajectory or material admission.') == FreeSlabRates(rates=(0.008245028657998327, 0.1583111461380655, 0.15503912518241403), rate_error_bounds=(8.446498717055...need not vanish. No pressure/geometry/parameter uncertainty, constitutive accuracy, trajectory or material admission.')
+
+/private/tmp/brick-reacting-free-rates-candidate/test_rates.py:41: AssertionError</failure></testcase><testcase classname="test_rates" name="test_invalid_current_inputs[changes0]" time="0.000"><failure message="TypeError: solve_free_slab_rates() got an unexpected keyword argument 'solid_inventory_regime'">changes = {'solid_inventories_mol': ({'solid': 0.0}, {'solid': 2.0})}
+
+    @pytest.mark.parametrize('changes',[{'solid_inventories_mol':({'solid':0.},{'solid':2.})},{'solid_inventories_mol':({}, {'solid':2.})},{'normal_stretches':(.01,.9)}])
+    def test_invalid_current_inputs(changes):
+&gt;       with pytest.raises(ValueError):m.solve_free_slab_rates(tuple(wrap(s) for s in skeletons(2)),solid_inventory_regime='reacting_manufactured',**(inputs()|changes))
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: solve_free_slab_rates() got an unexpected keyword argument 'solid_inventory_regime'
+
+/private/tmp/brick-reacting-free-rates-candidate/test_rates.py:49: TypeError</failure></testcase><testcase classname="test_rates" name="test_invalid_current_inputs[changes1]" time="0.000"><failure message="TypeError: solve_free_slab_rates() got an unexpected keyword argument 'solid_inventory_regime'">changes = {'solid_inventories_mol': ({}, {'solid': 2.0})}
+
+    @pytest.mark.parametrize('changes',[{'solid_inventories_mol':({'solid':0.},{'solid':2.})},{'solid_inventories_mol':({}, {'solid':2.})},{'normal_stretches':(.01,.9)}])
+    def test_invalid_current_inputs(changes):
+&gt;       with pytest.raises(ValueError):m.solve_free_slab_rates(tuple(wrap(s) for s in skeletons(2)),solid_inventory_regime='reacting_manufactured',**(inputs()|changes))
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: solve_free_slab_rates() got an unexpected keyword argument 'solid_inventory_regime'
+
+/private/tmp/brick-reacting-free-rates-candidate/test_rates.py:49: TypeError</failure></testcase><testcase classname="test_rates" name="test_invalid_current_inputs[changes2]" time="0.000"><failure message="TypeError: solve_free_slab_rates() got an unexpected keyword argument 'solid_inventory_regime'">changes = {'normal_stretches': (0.01, 0.9)}
+
+    @pytest.mark.parametrize('changes',[{'solid_inventories_mol':({'solid':0.},{'solid':2.})},{'solid_inventories_mol':({}, {'solid':2.})},{'normal_stretches':(.01,.9)}])
+    def test_invalid_current_inputs(changes):
+&gt;       with pytest.raises(ValueError):m.solve_free_slab_rates(tuple(wrap(s) for s in skeletons(2)),solid_inventory_regime='reacting_manufactured',**(inputs()|changes))
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: solve_free_slab_rates() got an unexpected keyword argument 'solid_inventory_regime'
+
+/private/tmp/brick-reacting-free-rates-candidate/test_rates.py:49: TypeError</failure></testcase><testcase classname="test_rates" name="test_regime_mixed_and_eta_guards" time="0.000"><failure message="TypeError: solve_free_slab_rates() got an unexpected keyword argument 'solid_inventory_regime'">def test_regime_mixed_and_eta_guards():
+        base=skeletons(2);wrapped=tuple(wrap(s) for s in base)
+        with pytest.raises(ValueError):m.solve_free_slab_rates(wrapped,**inputs())
+&gt;       with pytest.raises(ValueError):m.solve_free_slab_rates((wrapped[0],base[1]),solid_inventory_regime='reacting_manufactured',**inputs())
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: solve_free_slab_rates() got an unexpected keyword argument 'solid_inventory_regime'
+
+/private/tmp/brick-reacting-free-rates-candidate/test_rates.py:55: TypeError</failure></testcase></testsuite></testsuites>

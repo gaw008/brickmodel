@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+d969905后实际progress：free_slab_rates显式reacting_manufactured精确当前qeta及共同t加权分母，FreeSolidSlab显式反应模式重绑当前reaction storages、当前Ns/总E/孔隙/温压/自由形变真实闭环，fixed模式守卫与身份保留。源码65项3.83s+独立轨迹1项5.16s通过，正式安装104项14.01s通过（31745已exit0），61实际模块前后逐字匹配。无活动EOS/测试。证据research/reacting-free-slab-v1，说明REACTING_FREE_SLAB.md。
+
+独立305/306K干态A→B两格0.1s轨迹23/32steps通过全部原门槛和每prefixDOP853对照；E最大1.395e-6/7.266e-7J，stretch3.173e-8/1.652e-8，解析A/B1.574e-10/8.058e-11mol，外功8.026e-9/4.556e-9J。原300K边界越域零step、域内粗E4.326e-6失败完整保存，仅收紧内部控制，未宽源域/外部gate。两份独立审查通过。仍为制造材料、无湿/气物质面流，非真实原泥/全周期。
+
+下一候选仅由reacting_skeleton_provider在/private/tmp/brick-programmed-free-slab-candidate隔离准备：ProgrammedSolidFluidHeat显式FreeSolidSlab准入、真实当前表面几何、保留mechanicalrates与外功、原程序断点/来源身份；机械Pe独立常数，不随气库压力静默改能量身份。设计/private/tmp/brick-programmed-free-slab-design/PLAN.md。未应用候选、未原生EOS。完整原Goal的动态烧成/冷却、气液联合/空间收敛、原污泥资料及三机制公开留出仍未完成，Goal active。
+
 f1f1349后已实际接入CurrentSolidStorage显式reacting_manufactured模式：当前Ns→q储能/固体体积/孔隙/总E反解；默认fixed身份/数值保留。FreeSolidSlab提前明确拒reacting点，尚未扩自由速率。源码39项3.68s、安装62项3.84s通过（45446/99141已exit0），61实际模块逐字匹配；两份独立审查通过。原候选/RED/源码hash/安装XML保存research/reacting-current-point-v1，说明REACTING_CURRENT_STORAGE.md。无活动EOS/测试，当前阶段可提交。
 
 下一候选由reacting_skeleton_provider仅在/private/tmp/brick-reacting-free-rates-candidate隔离准备：solve_free_slab_rates显式reacting模式，实际q(N)*eta与加权共同t分母，固定路径兼容/当前Ns与误差界；没有repo应用、没有host反应准入。恢复先查看候选与审查，不重跑旧439s事件。原三机制公开留出/原泥材料/全湿烧成冷却/空间收敛仍未完成，Goal active。

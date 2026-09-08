@@ -1,0 +1,77 @@
+--- a/src/sludge_sandbox/free_slab_rates.py
++++ b/src/sludge_sandbox/free_slab_rates.py
+@@ -4,8 +4,9 @@
+ aggregate transverse virtual work. It does not enforce pointwise free traction
+ on every lateral surface of a heterogeneous three-dimensional brick.
+ """
+-from dataclasses import dataclass
++from dataclasses import dataclass,replace
+ from fractions import Fraction as F
++from .reacting_skeleton_energy import ManufacturedReactingSkeletonEnergy
+ from .skeleton_energy import DiagonalSkeletonEnergy,SkeletonEnergyState,_iv,_number,_output
+ from .free_skeleton_rates import FreeSkeletonRatesError,_enclosure,_upper
+ 
+@@ -58,15 +59,19 @@
+ 
+ 
+ def solve_free_slab_rates(skeletons,*,normal_stretches,tangential_stretch,
+-                         pore_pressures_pa,external_pressure_pa,solid_inventories_mol):
++                         pore_pressures_pa,external_pressure_pa,solid_inventories_mol,solid_inventory_regime='fixed_solid'):
+     """Solve n_i rates and one common t rate, retaining per-cell reaction power.
+ 
+     R_i = P_t_i - (p_i-pe)*n_i*t is the generalized constraint reaction.
+     sum(V0_i*R_i)=0; C_i=2*V0_i*R_i*tdot must enter each total-energy RHS.
+     The local power identity is Erec_dot+D-p_i*Vdot_i = -pe*Vdot_i+C_i.
+     """
++    if solid_inventory_regime not in ('fixed_solid','reacting_manufactured'):
++        raise FreeSkeletonRatesError('explicit_solid_inventory_regime_required')
++    reacting=solid_inventory_regime=='reacting_manufactured'
++    expected_type=ManufacturedReactingSkeletonEnergy if reacting else DiagonalSkeletonEnergy
+     if (type(skeletons) is not tuple or not skeletons or
+-            any(type(s) is not DiagonalSkeletonEnergy for s in skeletons)):
++            any(type(s) is not expected_type for s in skeletons)):
+         raise FreeSkeletonRatesError('explicit_ordered_slab_skeletons_required')
+     count=len(skeletons);reference=skeletons[0].reference
+     if reference.cells!=count or any(s.reference!=reference or s.cell_index!=i
+@@ -79,11 +84,19 @@
+     t=_number(tangential_stretch,'tangential_stretch',positive=True)
+     pores=tuple(_number(v,'pore_pressure',nonnegative=True) for v in pore_pressures_pa)
+     pe=_number(external_pressure_pa,'external_pressure',nonnegative=True)
+-    eta=tuple(F(_number(s.viscosity_pa_s,'viscosity',positive=True)) for s in skeletons)
++    eta=tuple(F(_number((s.reference_model if reacting else s).viscosity_pa_s,'viscosity',positive=True)) for s in skeletons)
+     volumes=tuple(F(s.reference_volume_m3) for s in skeletons)
+     static=tuple(s.evaluate(normal_stretch=ni,tangential_stretch=t,
+         normal_rate_per_s=0.,tangential_rate_per_s=0.,solid_inventory_mol=inventory)
+         for s,ni,inventory in zip(skeletons,n,solid_inventories_mol,strict=True))
++    if reacting:
++        # The actual provider above validates complete current N/domain. Retain
++        # exact binary q and eta multiplication; no rounded coefficient or
++        # off-domain probe is introduced into the positive denominator.
++        eta=tuple(viscosity*(F(s.composition_offset)+sum(
++            (F(weight)*F(_number(inventory[key],'solid_mol',nonnegative=True))
++             for key,weight in s.composition_weights_per_mol),F()))
++            for s,inventory,viscosity in zip(skeletons,solid_inventories_mol,eta,strict=True))
+     tangent=F(t);normals=tuple(map(F,n));normal_solutions=[];tangent_drive=_iv(0)
+     for state,ni,p,v,viscosity in zip(static,normals,pores,volumes,eta,strict=True):
+         normal_drive=(F(p)-F(pe))*tangent**2-_field(state,'elastic_piola_pa',0)-_field(state,'interface_piola_pa',0)
+@@ -137,7 +150,7 @@
+     local_values,local_errors=_pairs(local_powers)
+     checks=normal_residuals+local_powers+[(wt,wte),(cp,cpe),(gp,gpe)]
+     enclosed=all(abs(F(value))<=F(error) for value,error in checks)
+-    return FreeSlabRates(rates,rate_errors,states,normal_values,normal_errors,
++    result=FreeSlabRates(rates,rate_errors,states,normal_values,normal_errors,
+         constraint_values,constraint_errors,wt,wte,volume_values,volume_errors,
+         external_values,external_errors,cp_values,cp_errors,cp,cpe,local_values,local_errors,
+         gp,gpe,pores,pe,enclosed,
+@@ -145,3 +158,11 @@
+          'normal_local_transverse_weighted_virtual_work_positive_viscosity',
+          'local_constraint_power_required_no_pointwise_lateral_traction_claim'),
+         tuple(sorted({source for s in skeletons for source in s.source_ids})))
++
++    if reacting:
++        return replace(result,
++            model_identity=('manufactured_reacting_common_tangent_slab_v1',tuple(s.identity for s in skeletons),
++                'effective_viscosity=q_current_N_times_reference_eta_exact_fraction',
++                'fixed_composition_deformation_balance_local_constraint_work_no_chemical_external_heat'),
++            qualification='manufactured_reacting_reduced_common_tangent_fixed_composition_instantaneous_rates')
++    return result

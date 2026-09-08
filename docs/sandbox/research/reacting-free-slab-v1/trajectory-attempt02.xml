@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="1.658" timestamp="2026-09-08T11:44:20.682710-10:00" hostname="MacBookPro.lan"><testcase classname="test_reacting_free_trajectory" name="test_reacting_free_trajectory_explicit_in_domain" time="1.289"><failure message="AssertionError: assert np.float64(4.325993359088898e-06) &lt; 2e-06&#10; +  where np.float64(4.325993359088898e-06) = &lt;function max at 0x10b7986f0&gt;(array([4.32599336e-06, 2.74102786e-06]))&#10; +    where &lt;function max at 0x10b7986f0&gt; = np.max&#10; +    and   array([4.32599336e-06, 2.74102786e-06]) = &lt;ufunc 'absolute'&gt;((array([-196888.12200879, -196891.01505943]) - array([-196888.12200446, -196891.01505669])))&#10; +      where &lt;ufunc 'absolute'&gt; = np.abs&#10; +      and   array([-196888.12200879, -196891.01505943]) = ConservedState(amounts_mol=array([[0.01990033, 0.01      , 0.        , 1.98009967],\n       [0.01990033, 0.008     , 0....81e5a07fac6009253aedd930a46a5ecb8f3f353603a745d206'), mechanical_stretches=array([1.01361987, 1.00907973, 1.01112805])).internal_energy_j">water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-144/test_reacting_free_trajectory_0')
+
+    def test_reacting_free_trajectory_explicit_in_domain(water,tmp_path):
+        # Helper import delayed so the independent oracle can run before host exists.
+        from test_reacting_free_solid_slab import reacting_host
+        artifact=Path(os.environ.get('BRICK_REACTING_FREE_TRAJECTORY_ARTIFACT',str(tmp_path/'trajectory.json')))
+        if artifact.exists():raise RuntimeError('fresh_trajectory_artifact_required')
+        payload={'status':'started','qualification':'manufactured_dry_reacting_reduced_free_slab_not_material_validation','runs':[]}
+        def save():artifact.write_text(json.dumps(payload,indent=2,allow_nan=False)+'\n')
+        save()
+        try:
+            op=reacting_host(water,order=1.,weights=10.,equal_volume=False)
+            initial=op.state_from_temperatures([[0.,.01,0.,2.],[0.,.008,0.,2.]],[305.,306.],normal_stretches=(1.,1.),tangential_stretch=1.)
+            y0=initial_oracle()
+            assert np.max(np.abs(initial.internal_energy_j-y0[3:]))&lt;1e-9
+            ref=solve_ivp(independent_rhs(),(0.,.1),y0,method='DOP853',rtol=1e-12,atol=1e-13,dense_output=True)
+            wrong=solve_ivp(independent_rhs(with_constraint=False),(0.,.1),y0,method='DOP853',rtol=1e-12,atol=1e-13)
+            wrong_eta=solve_ivp(independent_rhs(current_viscosity=False),(0.,.1),y0,method='DOP853',rtol=1e-12,atol=1e-13)
+            assert ref.success and wrong.success and wrong_eta.success
+            payload['oracle']={'final':ref.y[:,-1].tolist(),'omitted_constraint_final':wrong.y[:,-1].tolist(),
+                'reference_eta_final':wrong_eta.y[:,-1].tolist(),'nfev':ref.nfev}
+            save()
+            assert np.max(np.abs(ref.y[3:,-1]-wrong.y[3:,-1]))&gt;1e-4
+            assert np.max(np.abs(ref.y[:3,-1]-wrong_eta.y[:3,-1]))&gt;2e-7
+            runs=[]
+            for cap in (.025,.0125):
+                numerical=policy(initial_step_s=cap,maximum_step_s=cap,relative_tolerance=1e-8,
+                    amount_absolute_tolerance_mol=1e-11,energy_absolute_tolerance_j=1e-6,
+                    stretch_absolute_tolerance=1e-9,stretch_scale=1.)
+                out=integrate(initial,op,start_s=0.,end_s=.1,policy=numerical)
+                payload['runs'].append({'policy':encode(numerical),'result':encode(out)})
+                save()
+                assert out.status=='completed',out.reason
+                assert out.steps and len(out.states)==len(out.steps)+1 and out.times_s[-1]==.1
+                assert np.max(np.abs(out.states[-1].mechanical_stretches-ref.y[:3,-1]))&lt;2e-7
+&gt;               assert np.max(np.abs(out.states[-1].internal_energy_j-ref.y[3:,-1]))&lt;2e-6
+E               AssertionError: assert np.float64(4.325993359088898e-06) &lt; 2e-06
+E                +  where np.float64(4.325993359088898e-06) = &lt;function max at 0x10b7986f0&gt;(array([4.32599336e-06, 2.74102786e-06]))
+E                +    where &lt;function max at 0x10b7986f0&gt; = np.max
+E                +    and   array([4.32599336e-06, 2.74102786e-06]) = &lt;ufunc 'absolute'&gt;((array([-196888.12200879, -196891.01505943]) - array([-196888.12200446, -196891.01505669])))
+E                +      where &lt;ufunc 'absolute'&gt; = np.abs
+E                +      and   array([-196888.12200879, -196891.01505943]) = ConservedState(amounts_mol=array([[0.01990033, 0.01      , 0.        , 1.98009967],\n       [0.01990033, 0.008     , 0....81e5a07fac6009253aedd930a46a5ecb8f3f353603a745d206'), mechanical_stretches=array([1.01361987, 1.00907973, 1.01112805])).internal_energy_j
+
+/private/tmp/brick-reacting-free-trajectory/test_reacting_free_trajectory.py:84: AssertionError</failure></testcase></testsuite></testsuites>

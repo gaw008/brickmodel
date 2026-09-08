@@ -46,6 +46,7 @@ class FreeSolidSlab:
     allow_manufactured: bool
     mechanical_regime: str='reduced_common_tangent_quasistatic_fixed_solid'
     transport_regime: str='manufactured_relative_moving_faces'
+    solid_inventory_regime: str='fixed_solid'
     _base_digest: str=field(init=False,repr=False)
     _binding: tuple=field(init=False,repr=False)
 
@@ -54,12 +55,19 @@ class FreeSolidSlab:
         if (type(base) is not SolidFluidHeat or type(points) is not tuple or not points
                 or len(points)!=len(base.storages) or any(type(p) is not CurrentSolidStorage for p in points)):
             raise IntegrationError('explicit_complete_current_solid_points_required')
-        if any(p.solid_inventory_regime != 'fixed_solid' for p in points):
+        if self.solid_inventory_regime not in ('fixed_solid','reacting_manufactured'):
+            raise IntegrationError('explicit_solid_inventory_regime_required')
+        reacting=self.solid_inventory_regime=='reacting_manufactured'
+        if not reacting and any(p.solid_inventory_regime != 'fixed_solid' for p in points):
             raise IntegrationError('reacting_current_points_not_admitted_by_fixed_free_slab')
-        if base.solid_reactions is not None:raise IntegrationError('fixed_solid_reactions_not_admitted')
+        if any(p.solid_inventory_regime!=self.solid_inventory_regime for p in points):
+            raise IntegrationError('skeleton_inventory_regime_mismatch')
+        if not reacting and base.solid_reactions is not None:raise IntegrationError('fixed_solid_reactions_not_admitted')
         if self.allow_manufactured is not True or base.transport.coefficient_classification!='manufactured':
             raise IntegrationError('explicit_manufactured_transport_required')
-        if (self.mechanical_regime!='reduced_common_tangent_quasistatic_fixed_solid'
+        expected_mechanics=('reduced_common_tangent_quasistatic_reacting_manufactured' if reacting
+                            else 'reduced_common_tangent_quasistatic_fixed_solid')
+        if (self.mechanical_regime!=expected_mechanics
                 or self.transport_regime!='manufactured_relative_moving_faces'):
             raise IntegrationError('explicit_reduced_relative_regimes_required')
         if type(self.source_ids) is not tuple or not self.source_ids:raise IntegrationError('explicit_host_sources_required')
@@ -72,13 +80,14 @@ class FreeSolidSlab:
         for i,(p,storage,width) in enumerate(zip(points,base.storages,base.transport.cell_widths_m,strict=True)):
             if p.template is not storage or p.skeleton.cell_index!=i or p.skeleton.reference!=reference:
                 raise IntegrationError('point_template_reference_cell_mismatch')
-            if p.skeleton.viscosity_pa_s<=0:raise IntegrationError('positive_viscosity_required')
+            reference_model=p.skeleton.reference_model if reacting else p.skeleton
+            if reference_model.viscosity_pa_s<=0:raise IntegrationError('positive_viscosity_required')
             if not same(width,reference.half_thickness_m/reference.cells) or not same(storage.bulk_volume_m3,p.skeleton.reference_volume_m3):
                 raise IntegrationError('reference_geometry_mismatch')
         sources=tuple(sorted(set(self.source_ids+base.source_ids+tuple(v for p in points for v in p.skeleton.source_ids+p.error_bounds.source_ids))))
         object.__setattr__(self,'source_ids',sources)
         digest=_digest(base);object.__setattr__(self,'_base_digest',digest)
-        object.__setattr__(self,'_binding',('free_solid_slab_total_v1',SCOPE,_digest((digest,tuple(p.identity for p in points),
+        object.__setattr__(self,'_binding',('reacting_free_solid_slab_total_v1' if reacting else 'free_solid_slab_total_v1',SCOPE,_digest((digest,tuple(p.identity for p in points),
             self.external_pressure_pa,self.mechanical_regime,self.transport_regime,self.model_id,self.version,sources))))
 
     @property
@@ -102,9 +111,10 @@ class FreeSolidSlab:
         if state.mechanical_stretches is None:raise IntegrationError('explicit_dynamic_stretches_required')
         if binding and state.energy_model_identity!=self.energy_model_identity:raise IntegrationError('matching_free_slab_energy_binding_required')
         if _digest(self.base_model)!=self._base_digest:raise IntegrationError('runtime_base_identity_changed')
-        for row,p in zip(state.amounts_mol,self.point_storages,strict=True):
-            if self.inventory_layout.solid_inventory(row)!=dict(p.skeleton.fixed_solid_inventory_mol):
-                raise IntegrationError('fixed_solid_inventory_changed')
+        if self.solid_inventory_regime=='fixed_solid':
+            for row,p in zip(state.amounts_mol,self.point_storages,strict=True):
+                if self.inventory_layout.solid_inventory(row)!=dict(p.skeleton.fixed_solid_inventory_mol):
+                    raise IntegrationError('fixed_solid_inventory_changed')
 
     def _inputs(self,row) -> dict:
         layout=self.inventory_layout
@@ -136,11 +146,13 @@ class FreeSolidSlab:
             storages=tuple(inv.state.current_storage for inv in inverses)
             transport=replace(base.transport,storages=tuple(s.fluid_template for s in storages),
                 face_area_m2=float(geometry.face_areas_m2[0]),cell_widths_m=tuple(map(float,geometry.widths_m)))
-            current=replace(base,storages=storages,transport=transport)
+            reactions=replace(base.solid_reactions,storages=storages) if base.solid_reactions is not None else None
+            current=replace(base,storages=storages,transport=transport,solid_reactions=reactions)
             thermal=current._assemble_decoded(state.amounts_mol,tuple(inv.thermal_inverse for inv in inverses),brackets)
             free=solve_free_slab_rates(tuple(p.skeleton for p in self.point_storages),normal_stretches=normals,tangential_stretch=tangent,
                 pore_pressures_pa=tuple(s.mechanical.pressure_pa for s in thermal.storage_states),external_pressure_pa=self.external_pressure_pa,
-                solid_inventories_mol=tuple(layout.solid_inventory(row) for row in state.amounts_mol))
+                solid_inventories_mol=tuple(layout.solid_inventory(row) for row in state.amounts_mol),
+                solid_inventory_regime=self.solid_inventory_regime)
             if not free.zero_balance_enclosed:raise IntegrationError('free_slab_balance_not_enclosed')
             components={'external_traction':free.external_powers_w,'mechanical_constraint':free.constraint_powers_w,
                         'body':thermal.rates.cell_power_w}
@@ -153,6 +165,9 @@ class FreeSolidSlab:
                 raise DomainExit(str(exc)) from exc
             raise IntegrationError(str(exc)) from exc
         sources=tuple(sorted(set(self.source_ids+current.source_ids+free.source_ids)))
-        return FreeSolidSlabEvaluation(rates,geometry,inverses,thermal,current,free,self.energy_model_identity,sources)
+        result=FreeSolidSlabEvaluation(rates,geometry,inverses,thermal,current,free,self.energy_model_identity,sources)
+        if self.solid_inventory_regime=='reacting_manufactured':
+            return replace(result,qualification='manufactured_reacting_reduced_common_tangent_total_energy_not_material_admission')
+        return result
 
     def __call__(self,state: ConservedState,time_s: float) -> Rates:return self.evaluate(state,time_s).rates

@@ -1,0 +1,102 @@
+{
+  "status": "failed",
+  "qualification": "manufactured_dry_reacting_reduced_free_slab_not_material_validation",
+  "runs": [
+    {
+      "policy": {
+        "initial_step_s": 0.025,
+        "maximum_step_s": 0.025,
+        "minimum_step_s": 1e-10,
+        "relative_tolerance": 1e-08,
+        "amount_absolute_tolerance_mol": 1e-11,
+        "energy_absolute_tolerance_j": 1e-06,
+        "amount_scale_mol": 1,
+        "energy_scale_j": 100,
+        "maximum_steps": 10000,
+        "maximum_rejections": 1000,
+        "maximum_wall_seconds": 20,
+        "stretch_absolute_tolerance": 1e-09,
+        "stretch_scale": 1.0
+      },
+      "result": {
+        "status": "domain_exit",
+        "reason": "temperature_out_of_kinetic_domain:A-to-B",
+        "times_s": [
+          0.0
+        ],
+        "states": [
+          {
+            "amounts_mol": [
+              [
+                0.0,
+                0.01,
+                0.0,
+                2.0
+              ],
+              [
+                0.0,
+                0.008,
+                0.0,
+                2.0
+              ]
+            ],
+            "internal_energy_j": [
+              -196938.64338785448,
+              -196941.48122598452
+            ],
+            "energy_model_identity": [
+              "reacting_free_solid_slab_total_v1",
+              "thermal_plus_skeleton_recoverable_plus_declared_interface_internal_energy",
+              "dd2d6959e552e681e5a07fac6009253aedd930a46a5ecb8f3f353603a745d206"
+            ],
+            "mechanical_stretches": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ],
+        "steps": [],
+        "evaluations": 57,
+        "rejected_trials": 28,
+        "elapsed_seconds": 0.46272845900966786,
+        "cumulative_absolute_component_residual_j": [
+          {
+            "numerator": 0,
+            "denominator": 1
+          },
+          {
+            "numerator": 0,
+            "denominator": 1
+          }
+        ]
+      }
+    }
+  ],
+  "oracle": {
+    "final": [
+      1.0132483211100947,
+      1.008783930099427,
+      1.0107946103368985,
+      -196939.1877387242,
+      -196941.87201116624
+    ],
+    "omitted_constraint_final": [
+      1.0132485936932536,
+      1.0087837111413862,
+      1.010794636597116,
+      -196939.11514761005,
+      -196941.94460458032
+    ],
+    "reference_eta_final": [
+      1.0145035841643195,
+      1.0096099093025066,
+      1.0118124055564106,
+      -196939.24223785306,
+      -196941.90678503033
+    ],
+    "nfev": 47
+  },
+  "reason": "temperature_out_of_kinetic_domain:A-to-B\nassert 'domain_exit' == 'completed'\n  \n  - completed\n  + domain_exit",
+  "traceback": "Traceback (most recent call last):\n  File \"/private/tmp/brick-reacting-free-trajectory/test_reacting_free_trajectory.py\", line 81, in test_reacting_free_trajectory_independent_coupled_rhs\n    assert out.status=='completed',out.reason\nAssertionError: temperature_out_of_kinetic_domain:A-to-B\nassert 'domain_exit' == 'completed'\n  \n  - completed\n  + domain_exit\n"
+}
