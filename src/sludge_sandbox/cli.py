@@ -29,6 +29,7 @@ def main(argv=None):
     run = commands.add_parser('run', help='运行案例并保存原始输入与求解账本')
     run.add_argument('case', type=Path)
     run.add_argument('--water-data', required=True, type=Path)
+    run.add_argument('--evidence-data', type=Path, help='公开方程证据目录；缺少的来源在图中保持 missing')
     run.add_argument('--output', required=True, type=Path)
     trace = commands.add_parser('trace', help='查询保存结果的实现、参数与来源文件')
     trace.add_argument('run_directory', type=Path)
@@ -48,7 +49,8 @@ def main(argv=None):
                      'source_assets': 'not_checked', 'scientific_status': 'manufactured_verification_only'}
         elif args.command == 'run':
             with _cancellation() as cancel:
-                value = run_case(args.case, args.water_data, args.output, cancel=cancel)
+                value = run_case(args.case, args.water_data, args.output, cancel=cancel,
+                                 evidence_directory=args.evidence_data)
         elif args.command == 'trace':
             value = trace_run(args.run_directory, args.quantity)
         elif args.command == 'replay':

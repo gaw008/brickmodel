@@ -1,0 +1,1668 @@
+{
+  "schema": "sludge_sandbox_equation_catalog_v1",
+  "catalog_id": "wet-slab-equations-v1",
+  "model_id": "manufactured_reacting_wet_prescribed_slab_v1",
+  "scope": "Current 2/4-cell manufactured reacting wet slab with prescribed deformation, qualified pure-water provider and explicit ideal-mixture bridge. Not raw-sludge material admission, free sintering, a full firing cycle or training-eligible production data.",
+  "graph_semantics": "Acyclic declared derivation graph: independent input/constitutive declarations -> stage reconstruction -> fluxes/sources -> accepted time update -> new-time output reconstruction. Physical feedback across time is instantiated anew; no claim that the physical system has no feedback. Expressions are explanatory strings and must never be evaluated.",
+  "result_roots": {
+    "temperature_k": [
+      "accepted-output-reconstruction"
+    ],
+    "pressure_pa": [
+      "accepted-output-reconstruction"
+    ],
+    "amounts_mol": [
+      "accepted-time-update"
+    ],
+    "internal_energy_j": [
+      "accepted-time-update",
+      "total-storage"
+    ]
+  },
+  "equations": [
+    {
+      "id": "initial-prolongation",
+      "title": "Conservative fixed-domain initialization",
+      "equation_kind": "numerical_initialization",
+      "expression": "f = cells/parent_cells; V0_child = V0_parent/f; N_child = N_parent/f; E_child = E_parent/f. Independently computed nominal-temperature forward energies must enclose parent/child discrepancies within their declared combined bounds.",
+      "symbols": {
+        "f": {
+          "meaning": "number of children per parent",
+          "unit": "1"
+        },
+        "V0_child": {
+          "meaning": "reference cell volume",
+          "unit": "m3"
+        },
+        "N_child": {
+          "meaning": "each species inventory",
+          "unit": "mol"
+        },
+        "E_child": {
+          "meaning": "total cell energy",
+          "unit": "J"
+        }
+      },
+      "implemented_at": [
+        {
+          "path": "implementation/verification_case.py",
+          "symbol": "build_case"
+        },
+        {
+          "path": "implementation/verification_case.py",
+          "symbol": "_make_model"
+        },
+        {
+          "path": "implementation/verification_case.py",
+          "symbol": "_forward"
+        }
+      ],
+      "case_parameter_pointers": [
+        "/grid",
+        "/profile",
+        "/initial",
+        "/numerics/start_s"
+      ],
+      "upstream_equation_ids": [],
+      "sources": [
+        {
+          "artifact": "case.json",
+          "locator": "/initial",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        },
+        {
+          "artifact": "case.json",
+          "locator": "/grid",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        }
+      ],
+      "classification": "numerical_policy",
+      "domain": [
+        "Supported fixed domain with 2 or 4 cells; reference volume equals half_thickness_m times reference_face_area_m2 divided by cells.",
+        "Forward initialization also uses all constitutive inputs of the stage-storage nodes; the acyclic input node records the conservation constraint, not a standalone energy formula."
+      ],
+      "omissions": [
+        "Not an independently refined material measurement.",
+        "Arithmetic/source-bound consistency is not a global spatial error estimate."
+      ]
+    },
+    {
+      "id": "prescribed-geometry",
+      "title": "Prescribed smoothstep motion and current geometry",
+      "equation_kind": "kinematic_choice",
+      "expression": "z=(t-ta)/(tb-ta); b=z^2(3-2z); lambda=lambda_a+(lambda_b-lambda_a)b; lambda_dot=(lambda_b-lambda_a)6z(1-z)/(tb-ta). J=lambda_n lambda_p^2; V=V0 J; A=A0 lambda_p^2; dx=dx0 lambda_n; V_dot=A dx_dot+A_dot dx.",
+      "symbols": {
+        "t": {
+          "meaning": "absolute time",
+          "unit": "s"
+        },
+        "lambda_n": {
+          "meaning": "normal stretch",
+          "unit": "1"
+        },
+        "lambda_p": {
+          "meaning": "two equal tangential stretches",
+          "unit": "1"
+        },
+        "J": {
+          "meaning": "Jacobian",
+          "unit": "1"
+        },
+        "V": {
+          "meaning": "current bulk volume",
+          "unit": "m3"
+        },
+        "A": {
+          "meaning": "current face area",
+          "unit": "m2"
+        },
+        "dx": {
+          "meaning": "current cell width",
+          "unit": "m"
+        },
+        "V_dot": {
+          "meaning": "bulk volume rate",
+          "unit": "m3/s"
+        }
+      },
+      "implemented_at": [
+        {
+          "path": "implementation/deformation_program.py",
+          "symbol": "PrescribedSlabMotion.sample"
+        },
+        {
+          "path": "implementation/geometry.py",
+          "symbol": "ReferenceSlab.deform"
+        }
+      ],
+      "case_parameter_pointers": [
+        "/grid",
+        "/mechanics/knot_times_s",
+        "/mechanics/normal_stretches_at_knots",
+        "/mechanics/tangential_stretches_at_knots",
+        "/mechanics/stretch_range",
+        "/mechanics/maximum_absolute_log_rate_per_s"
+      ],
+      "upstream_equation_ids": [],
+      "sources": [
+        {
+          "artifact": "case.json",
+          "locator": "/mechanics",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        }
+      ],
+      "classification": "virtual_design_choice",
+      "domain": [
+        "Piecewise smooth prescribed diagonal deformation; positive stretches inside the declared range."
+      ],
+      "omissions": [
+        "No momentum solve, free sintering law, creep calibration or stress-controlled shrinkage."
+      ]
+    },
+    {
+      "id": "solid-caloric",
+      "title": "Manufactured Shomate solid caloric and incompressible phase",
+      "equation_kind": "constitutive_law",
+      "expression": "x=T/1000 K; Cp=A+B x+C x^2+D x^3+E/x^2; h0=hf298+1000[A x+B x^2/2+C x^3/3+D x^4/4-E/x+F-H]; u=h0-p_ref v0; h(T,p)=u+p v0; Cv=Cp.",
+      "symbols": {
+        "T": {
+          "meaning": "temperature",
+          "unit": "K"
+        },
+        "Cp": {
+          "meaning": "molar constant-pressure heat capacity",
+          "unit": "J/(mol K)"
+        },
+        "h0": {
+          "meaning": "reference-pressure molar enthalpy",
+          "unit": "J/mol"
+        },
+        "u": {
+          "meaning": "molar internal energy",
+          "unit": "J/mol"
+        },
+        "v0": {
+          "meaning": "constant molar volume",
+          "unit": "m3/mol"
+        },
+        "p_ref": {
+          "meaning": "reference pressure",
+          "unit": "Pa"
+        }
+      },
+      "implemented_at": [
+        {
+          "path": "implementation/incompressible_solid.py",
+          "symbol": "SolidShomateCaloric._h"
+        },
+        {
+          "path": "implementation/incompressible_solid.py",
+          "symbol": "SolidShomateCaloric.cp_j_mol_k"
+        },
+        {
+          "path": "implementation/incompressible_solid.py",
+          "symbol": "IncompressibleSolidPhase.evaluate"
+        }
+      ],
+      "case_parameter_pointers": [
+        "/solid"
+      ],
+      "upstream_equation_ids": [],
+      "sources": [
+        {
+          "artifact": "case.json",
+          "locator": "/solid",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        },
+        {
+          "artifact": "evidence/thermochemistry/sources.json",
+          "locator": "/sources/0",
+          "read_status": "data_checked",
+          "kind": "literature_constitutive_model"
+        }
+      ],
+      "classification": "manufactured_test_fixture",
+      "domain": [
+        "A/B coefficient values, formation energies, phase identity and errors are manufactured case inputs.",
+        "The Shomate source documents the polynomial form only; coefficients A-H have the conventional scaled-temperature Shomate units."
+      ],
+      "omissions": [
+        "No measured solid phase, phase diagram, thermal expansion or compressibility."
+      ]
+    },
+    {
+      "id": "carrier-caloric",
+      "title": "Manufactured ideal carrier caloric convention",
+      "equation_kind": "constitutive_law",
+      "expression": "x=T/1000 K; Cp=A+B x+C x^2+D x^3+E/x^2; h=hf298+1000[A x+B x^2/2+C x^3/3+D x^4/4-E/x+F-H]; u=h-Rmix T; Cv=Cp-Rmix.",
+      "symbols": {
+        "T": {
+          "meaning": "temperature",
+          "unit": "K"
+        },
+        "h": {
+          "meaning": "carrier molar enthalpy",
+          "unit": "J/mol"
+        },
+        "u": {
+          "meaning": "carrier molar internal energy",
+          "unit": "J/mol"
+        },
+        "Cp": {
+          "meaning": "molar heat capacity",
+          "unit": "J/(mol K)"
+        },
+        "Rmix": {
+          "meaning": "declared mixture molar gas constant",
+          "unit": "J/(mol K)"
+        }
+      },
+      "implemented_at": [
+        {
+          "path": "implementation/thermochemistry.py",
+          "symbol": "ShomateSegment.enthalpy_j_mol"
+        },
+        {
+          "path": "implementation/thermochemistry.py",
+          "symbol": "ShomateSegment.internal_energy_j_mol"
+        },
+        {
+          "path": "implementation/thermochemistry.py",
+          "symbol": "ShomateSegment.cv_j_mol_k"
+        }
+      ],
+      "case_parameter_pointers": [
+        "/carrier",
+        "/constants"
+      ],
+      "upstream_equation_ids": [],
+      "sources": [
+        {
+          "artifact": "case.json",
+          "locator": "/carrier",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        },
+        {
+          "artifact": "case.json",
+          "locator": "/constants",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        },
+        {
+          "artifact": "evidence/thermochemistry/sources.json",
+          "locator": "/sources/0",
+          "read_status": "data_checked",
+          "kind": "literature_constitutive_model"
+        }
+      ],
+      "classification": "manufactured_test_fixture",
+      "domain": [
+        "Single manufactured carrier called fixture; coefficient range must contain evaluated T.",
+        "Source supports Shomate form, not these manufactured carrier values."
+      ],
+      "omissions": [
+        "Not a qualified atmospheric gas composition or actual carrier chemistry."
+      ]
+    },
+    {
+      "id": "water-caloric",
+      "title": "Source-qualified water EOS and explicit ideal-vapor bridge",
+      "equation_kind": "constitutive_law",
+      "expression": "delta=rho/rhoc; tau=Tc/T; p=rho Rspec T(1+delta phi_r,delta); u_mass=Rspec T tau(phi_0,tau+phi_r,tau); h_mass=u_mass+p/rho. Molar energies multiply by Mwater and add the common reference offset. Ideal mixture water uses source ideal h(T), then u_ideal=h_ideal-Rmix T and Cv_ideal=Cp_ideal-Rmix.",
+      "symbols": {
+        "rho": {
+          "meaning": "water mass density",
+          "unit": "kg/m3"
+        },
+        "Rspec": {
+          "meaning": "IAPWS fitted specific gas constant",
+          "unit": "J/(kg K)"
+        },
+        "T": {
+          "meaning": "temperature",
+          "unit": "K"
+        },
+        "p": {
+          "meaning": "pressure",
+          "unit": "Pa"
+        },
+        "phi_r": {
+          "meaning": "residual dimensionless Helmholtz function",
+          "unit": "1"
+        },
+        "phi_0": {
+          "meaning": "ideal dimensionless Helmholtz function",
+          "unit": "1"
+        },
+        "Mwater": {
+          "meaning": "source water molar mass",
+          "unit": "kg/mol"
+        },
+        "u_mass": {
+          "meaning": "unshifted source specific internal energy",
+          "unit": "J/kg"
+        },
+        "Rmix": {
+          "meaning": "mixture molar gas constant, distinct from fitted Rspec times Mwater",
+          "unit": "J/(mol K)"
+        }
+      },
+      "implemented_at": [
+        {
+          "path": "implementation/water_heos.py",
+          "symbol": "HEOSWaterProperties.state_tp"
+        },
+        {
+          "path": "implementation/water_heos.py",
+          "symbol": "HEOSWaterProperties.ideal_vapor"
+        },
+        {
+          "path": "implementation/ideal_water_vapor.py",
+          "symbol": "IdealWaterVapor.internal_energy_j_mol"
+        },
+        {
+          "path": "implementation/ideal_water_vapor.py",
+          "symbol": "IdealWaterVapor.cv_j_mol_k"
+        }
+      ],
+      "case_parameter_pointers": [
+        "/water",
+        "/constants",
+        "/numerics/envelope"
+      ],
+      "upstream_equation_ids": [],
+      "sources": [
+        {
+          "artifact": "water/IAPWS95-2018.txt",
+          "locator": "Section 2, equations (1)-(3), and Table 3; source EOS constants and thermodynamic derivative relations",
+          "read_status": "data_checked",
+          "kind": "literature_constitutive_model"
+        },
+        {
+          "artifact": "water/reference_alignment.json",
+          "locator": "/anchor",
+          "read_status": "data_checked",
+          "kind": "derived_from_evidence"
+        },
+        {
+          "artifact": "water/source_facts.json",
+          "locator": "Local limited factual extract; NIST gas formation reference and IAPWS facts",
+          "read_status": "data_checked",
+          "kind": "derived_from_evidence"
+        },
+        {
+          "artifact": "water/heos-8.0.0-approved-manifest.json",
+          "locator": "Approved implementation/source identity manifest",
+          "read_status": "data_checked",
+          "kind": "numerical_policy"
+        }
+      ],
+      "classification": "derived_from_evidence",
+      "domain": [
+        "Only source-approved provider phases and domains; source and implementation identities checked at evaluation.",
+        "No NIST gas fit is extrapolated below 500 K: low-temperature gas caloric uses IAPWS ideal bridge.",
+        "Numerical envelope in the case is explicitly manufactured, not a certified EOS uncertainty interval."
+      ],
+      "omissions": [
+        "Bridge is ideal-mixture approximation; fitted IAPWS R and Rmix are not silently equated.",
+        "No water activity of actual sludge, adsorption, electrolytes or mixture EOS."
+      ]
+    },
+    {
+      "id": "skeleton-energy",
+      "title": "Manufactured composition-dependent skeleton storage",
+      "equation_kind": "constitutive_law",
+      "expression": "ell_i=ln(lambda_i); theta=sum ell_i; dev_i=ell_i-theta/3; Eel0=V0[K theta^2/2+G sum dev_i^2]; Es0=gamma Amicro0 lambda_p^2; w_i=beta_i/V0; q=q0+sum w_i N_i; Eel=q Eel0; Es=q Es0; dEel/dN_i=w_i Eel0; dEs/dN_i=w_i Es0.",
+      "symbols": {
+        "Eel": {
+          "meaning": "elastic energy",
+          "unit": "J"
+        },
+        "Es": {
+          "meaning": "micro-interface energy",
+          "unit": "J"
+        },
+        "K": {
+          "meaning": "bulk modulus",
+          "unit": "Pa"
+        },
+        "G": {
+          "meaning": "shear modulus",
+          "unit": "Pa"
+        },
+        "gamma": {
+          "meaning": "interface energy per area",
+          "unit": "J/m2"
+        },
+        "Amicro0": {
+          "meaning": "reference microscopic interface area",
+          "unit": "m2"
+        },
+        "q": {
+          "meaning": "manufactured composition multiplier",
+          "unit": "1"
+        },
+        "w_i": {
+          "meaning": "composition weight",
+          "unit": "1/mol"
+        },
+        "beta_i": {
+          "meaning": "volume-scaled composition input",
+          "unit": "m3/mol"
+        }
+      },
+      "implemented_at": [
+        {
+          "path": "implementation/skeleton_energy.py",
+          "symbol": "DiagonalSkeletonEnergy.evaluate"
+        },
+        {
+          "path": "implementation/reacting_skeleton_energy.py",
+          "symbol": "ManufacturedReactingSkeletonEnergy.evaluate"
+        },
+        {
+          "path": "implementation/verification_case.py",
+          "symbol": "_make_model"
+        }
+      ],
+      "case_parameter_pointers": [
+        "/mechanics",
+        "/grid"
+      ],
+      "upstream_equation_ids": [
+        "prescribed-geometry"
+      ],
+      "sources": [
+        {
+          "artifact": "case.json",
+          "locator": "/mechanics",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        }
+      ],
+      "classification": "manufactured_test_fixture",
+      "domain": [
+        "q0 positive; complete nonnegative weights and inventories; temperature-independent q.",
+        "Amicro0=area density times V0; beta/V0 preserves refinement extensivity."
+      ],
+      "omissions": [
+        "Manufactured energy function; no material surface calibration.",
+        "Composition derivatives are storage derivatives, never additional external power."
+      ]
+    },
+    {
+      "id": "pressure-closure",
+      "title": "Planar liquid and ideal-gas pore-volume closure",
+      "equation_kind": "constitutive_closure",
+      "expression": "Vavailable=Vbulk-sum_s Ns vs; Vliquid=Nliquid Mwater/rho_liquid(T,P); Vgas=sum_g Ng Rmix T/P; solve Vliquid+Vgas=Vavailable with Pliquid=Pgas_total.",
+      "symbols": {
+        "Vavailable": {
+          "meaning": "pore volume after solid exclusion",
+          "unit": "m3"
+        },
+        "Vliquid": {
+          "meaning": "liquid volume",
+          "unit": "m3"
+        },
+        "Vgas": {
+          "meaning": "gas volume",
+          "unit": "m3"
+        },
+        "Nliquid": {
+          "meaning": "liquid amount",
+          "unit": "mol"
+        },
+        "P": {
+          "meaning": "common total pressure",
+          "unit": "Pa"
+        }
+      },
+      "implemented_at": [
+        {
+          "path": "implementation/solid_fluid_storage.py",
+          "symbol": "SolidFluidStorage.evaluate_at_temperature"
+        },
+        {
+          "path": "implementation/rigid_water_gas.py",
+          "symbol": "RigidWaterGas.evaluate_at_temperature"
+        }
+      ],
+      "case_parameter_pointers": [
+        "/water/pressure_range_pa",
+        "/water/liquid_pressure_model",
+        "/numerics/pressure_policy",
+        "/numerics/envelope",
+        "/grid/parent_bulk_volume_error_m3"
+      ],
+      "upstream_equation_ids": [
+        "prescribed-geometry",
+        "solid-caloric",
+        "water-caloric",
+        "carrier-caloric"
+      ],
+      "sources": [
+        {
+          "artifact": "case.json",
+          "locator": "/water",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        },
+        {
+          "artifact": "case.json",
+          "locator": "/numerics/pressure_policy",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        }
+      ],
+      "classification": "derived_from_evidence",
+      "domain": [
+        "Positive remaining pore volume; original global pressure domain/bracket guards retained.",
+        "Declared solid-volume errors contribute a certified local bound where applicable; root tolerance is not a physical uncertainty measurement."
+      ],
+      "omissions": [
+        "No capillary pressure or saturation constraint is imposed by this closure."
+      ]
+    },
+    {
+      "id": "total-storage",
+      "title": "Conserved total cell energy",
+      "equation_kind": "storage_balance",
+      "expression": "Uthermal=sum_s Ns us(T)+Nliquid uliquid(T,P)+sum_g Ng ug(T); E=Uthermal+Eel+Es. Stored uncertainty includes declared caloric/volume bounds, propagated mechanical bounds and arithmetic rounding.",
+      "symbols": {
+        "Uthermal": {
+          "meaning": "thermal internal energy including formation reference",
+          "unit": "J"
+        },
+        "E": {
+          "meaning": "conserved cell total energy",
+          "unit": "J"
+        },
+        "Ns": {
+          "meaning": "solid species amount",
+          "unit": "mol"
+        },
+        "Ng": {
+          "meaning": "gas species amount",
+          "unit": "mol"
+        }
+      },
+      "implemented_at": [
+        {
+          "path": "implementation/solid_fluid_storage.py",
+          "symbol": "SolidFluidStorage.evaluate_at_temperature"
+        },
+        {
+          "path": "implementation/deforming_solid_storage.py",
+          "symbol": "DeformingSolidStorage._assemble"
+        }
+      ],
+      "case_parameter_pointers": [
+        "/solid/declared_u_error_j_mol",
+        "/solid/declared_v_error_m3_mol",
+        "/numerics/envelope",
+        "/mechanics/additional_bulk_volume_error_m3",
+        "/mechanics/additional_mechanical_energy_error_j"
+      ],
+      "upstream_equation_ids": [
+        "pressure-closure",
+        "skeleton-energy"
+      ],
+      "sources": [
+        {
+          "artifact": "case.json",
+          "locator": "/numerics/envelope",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        },
+        {
+          "artifact": "case.json",
+          "locator": "/solid",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        }
+      ],
+      "classification": "derived_from_evidence",
+      "domain": [
+        "All evaluated phase energies share explicit formation/reference convention."
+      ],
+      "omissions": [
+        "No separate reaction-heat or latent-heat addition; those changes are already represented by species storage.",
+        "Declared parameter uncertainty remains manufactured and is not experimental confidence."
+      ]
+    },
+    {
+      "id": "stage-temperature",
+      "title": "Stage temperature reconstructed from conserved state",
+      "equation_kind": "numerical_inverse",
+      "expression": "Given stage (N,E,t), solve E_forward(N,T,t)=E_target within the supplied T bracket; accept only under inverse residual and source-bound checks. Pressure is evaluated from the volume closure at each T.",
+      "symbols": {
+        "N": {
+          "meaning": "complete stage inventories",
+          "unit": "mol"
+        },
+        "E_target": {
+          "meaning": "conserved total stage energy",
+          "unit": "J"
+        },
+        "T": {
+          "meaning": "reconstructed cell temperature",
+          "unit": "K"
+        },
+        "t": {
+          "meaning": "stage time",
+          "unit": "s"
+        }
+      },
+      "implemented_at": [
+        {
+          "path": "implementation/deforming_solid_storage.py",
+          "symbol": "DeformingSolidStorage.temperature_from_total_energy"
+        },
+        {
+          "path": "implementation/rigid_storage.py",
+          "symbol": "RigidStorage.temperature_from_energy"
+        }
+      ],
+      "case_parameter_pointers": [
+        "/numerics/temperature_bracket_k",
+        "/numerics/inverse_policy",
+        "/numerics/envelope"
+      ],
+      "upstream_equation_ids": [
+        "initial-prolongation",
+        "total-storage"
+      ],
+      "sources": [
+        {
+          "artifact": "case.json",
+          "locator": "/numerics",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        }
+      ],
+      "classification": "numerical_policy",
+      "domain": [
+        "Conditional inverse certification uses the declared positive heat-capacity/envelope assumptions."
+      ],
+      "omissions": [
+        "No extrapolation beyond source and case domains; unknown or invalid states fail rather than being clipped."
+      ]
+    },
+    {
+      "id": "gas-face-state",
+      "title": "Gas intensives and common face state",
+      "equation_kind": "spatial_discretization",
+      "expression": "ci=Ni/Vgas; c=sum ci; xi=ci/c; Mbar=sum xi Mi; rho=c Mbar; Yi=xi Mi/Mbar; p=c Rmix T. Face T,p,x interpolate with left weight dr/(dl+dr); face composition is normalized. Serial Dface=(dl+dr)/(dl/DL+dr/DR), or zero when either side coefficient is zero.",
+      "symbols": {
+        "ci": {
+          "meaning": "species molar density",
+          "unit": "mol/m3"
+        },
+        "xi": {
+          "meaning": "mole fraction",
+          "unit": "1"
+        },
+        "Yi": {
+          "meaning": "mass fraction",
+          "unit": "1"
+        },
+        "Mbar": {
+          "meaning": "mean molar mass",
+          "unit": "kg/mol"
+        },
+        "dl": {
+          "meaning": "left center-to-face distance",
+          "unit": "m"
+        },
+        "dr": {
+          "meaning": "right center-to-face distance",
+          "unit": "m"
+        },
+        "Dface": {
+          "meaning": "effective face diffusivity",
+          "unit": "m2/s"
+        }
+      },
+      "implemented_at": [
+        {
+          "path": "implementation/gas_transport.py",
+          "symbol": "ideal_gas_state"
+        },
+        {
+          "path": "implementation/gas_transport.py",
+          "symbol": "face_exchange"
+        },
+        {
+          "path": "implementation/rigid_fluid_heat.py",
+          "symbol": "RigidFluidHeat._face"
+        }
+      ],
+      "case_parameter_pointers": [
+        "/transport",
+        "/carrier/molar_mass_kg_mol",
+        "/constants"
+      ],
+      "upstream_equation_ids": [
+        "stage-temperature",
+        "pressure-closure",
+        "prescribed-geometry"
+      ],
+      "sources": [
+        {
+          "artifact": "case.json",
+          "locator": "/transport",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        }
+      ],
+      "classification": "numerical_policy",
+      "domain": [
+        "Current gas pore volume, face area and cell widths are used."
+      ],
+      "omissions": [
+        "Spatial interpolation and serial averaging are discrete design choices, not new material data."
+      ]
+    },
+    {
+      "id": "gas-diffusion",
+      "title": "Mixture-averaged mass-frame diffusion and disabled Darcy branch",
+      "equation_kind": "constitutive_discretization",
+      "expression": "jstar_i=-rho_face(Mi/Mbar_face)Dface_i(xR_i-xL_i)/(dl+dr); S=sum jstar_i; j_i=jstar_i-Ydonor_i S; Fdiff_i=A j_i/Mi. Correction donor is left if S<0 and right if S>0. Darcy velocity=-permeability*relative_permeability/viscosity*(pR-pL)/(dl+dr)=0 for this case.",
+      "symbols": {
+        "jstar_i": {
+          "meaning": "uncorrected species mass flux density",
+          "unit": "kg/(m2 s)"
+        },
+        "j_i": {
+          "meaning": "corrected species mass flux density",
+          "unit": "kg/(m2 s)"
+        },
+        "S": {
+          "meaning": "sum of uncorrected mass fluxes",
+          "unit": "kg/(m2 s)"
+        },
+        "Fdiff_i": {
+          "meaning": "face molar transfer rate, positive left to right",
+          "unit": "mol/s"
+        },
+        "A": {
+          "meaning": "current face area",
+          "unit": "m2"
+        }
+      },
+      "implemented_at": [
+        {
+          "path": "implementation/gas_transport.py",
+          "symbol": "face_exchange"
+        }
+      ],
+      "case_parameter_pointers": [
+        "/transport",
+        "/transport_mode"
+      ],
+      "upstream_equation_ids": [
+        "gas-face-state"
+      ],
+      "sources": [
+        {
+          "artifact": "evidence/transport/cantera-3.2-governing-equations.md",
+          "locator": "Diffusive Fluxes; mixture-averaged jstar and zero-net-mass correction",
+          "read_status": "data_checked",
+          "kind": "literature_constitutive_model"
+        },
+        {
+          "artifact": "evidence/transport/equation_sources.json",
+          "locator": "Transport source identity and applicability declarations",
+          "read_status": "data_checked",
+          "kind": "derived_from_evidence"
+        },
+        {
+          "artifact": "case.json",
+          "locator": "/transport",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        }
+      ],
+      "classification": "derived_from_evidence",
+      "domain": [
+        "Constitutive form follows recorded transport source; donor selection for correction is the implementation positivity-oriented discretization.",
+        "Zero carrier diffusivity does not force zero corrected carrier flux."
+      ],
+      "omissions": [
+        "No Soret, multicomponent Maxwell-Stefan solver or calibrated porous diffusivity.",
+        "Darcy branch is disabled; this case does not validate nonzero permeability."
+      ]
+    },
+    {
+      "id": "heat-face-transfer",
+      "title": "Fourier transfer plus common-face-temperature diffusive enthalpy",
+      "equation_kind": "energy_transport",
+      "expression": "Qcond=A(TL-TR)/(dl/kL+dr/kR), zero if either conductivity is zero. Hface=Qcond+sum_i Fdiff_i h_i(Tface)+sum_i Fadv_i h_i(Tadv_donor); Fadv=0 in this case.",
+      "symbols": {
+        "Qcond": {
+          "meaning": "conductive power left to right",
+          "unit": "W"
+        },
+        "Hface": {
+          "meaning": "total face energy transfer left to right",
+          "unit": "W"
+        },
+        "kL": {
+          "meaning": "left thermal conductivity",
+          "unit": "W/(m K)"
+        },
+        "kR": {
+          "meaning": "right thermal conductivity",
+          "unit": "W/(m K)"
+        },
+        "h_i": {
+          "meaning": "species molar enthalpy evaluated at specified temperature",
+          "unit": "J/mol"
+        },
+        "Tface": {
+          "meaning": "common interpolated face temperature for diffusion",
+          "unit": "K"
+        }
+      },
+      "implemented_at": [
+        {
+          "path": "implementation/exchanges.py",
+          "symbol": "conduction_rate_w"
+        },
+        {
+          "path": "implementation/rigid_fluid_heat.py",
+          "symbol": "RigidFluidHeat._enthalpy"
+        },
+        {
+          "path": "implementation/solid_fluid_heat.py",
+          "symbol": "SolidFluidHeat._assemble_decoded"
+        }
+      ],
+      "case_parameter_pointers": [
+        "/transport",
+        "/transport_mode"
+      ],
+      "upstream_equation_ids": [
+        "gas-diffusion",
+        "carrier-caloric",
+        "water-caloric"
+      ],
+      "sources": [
+        {
+          "artifact": "evidence/transport/cantera-3.2-governing-equations.md",
+          "locator": "Governing energy equation and Diffusive Fluxes; enthalpy transport",
+          "read_status": "data_checked",
+          "kind": "literature_constitutive_model"
+        },
+        {
+          "artifact": "case.json",
+          "locator": "/transport",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        }
+      ],
+      "classification": "derived_from_evidence",
+      "domain": [
+        "Each internal face is assembled once with opposite neighboring balance signs.",
+        "No external reservoir or imposed surface temperature in the supported case."
+      ],
+      "omissions": [
+        "Diffusive enthalpy uses face T, not species donor T.",
+        "No radiation, kiln atmosphere convection or calibrated brick conductivity."
+      ]
+    },
+    {
+      "id": "solid-reaction",
+      "title": "Manufactured normalized Arrhenius A to B source",
+      "equation_kind": "constitutive_law",
+      "expression": "r_extent=Vcurrent a exp(-Ea/(Rmix T)) product_i[Ni/(Vcurrent cref)]^order_i; Ssolid=nu r_extent. For Ea=0 and order_A=1, r_extent=(a/cref)NA. The packaged default a=0.1 mol/(m3 s), cref=1 mol/m3 gives r_extent=(0.1/s)NA; active case parameters determine the actual rate.",
+      "symbols": {
+        "r_extent": {
+          "meaning": "reaction extent rate",
+          "unit": "mol/s"
+        },
+        "a": {
+          "meaning": "normalized concentration prefactor",
+          "unit": "mol/(m3 s)"
+        },
+        "Ea": {
+          "meaning": "activation energy",
+          "unit": "J/mol"
+        },
+        "cref": {
+          "meaning": "concentration normalization",
+          "unit": "mol/m3"
+        },
+        "nu": {
+          "meaning": "stoichiometric coefficient",
+          "unit": "1"
+        },
+        "Ssolid": {
+          "meaning": "species source rate",
+          "unit": "mol/s"
+        }
+      },
+      "implemented_at": [
+        {
+          "path": "implementation/reactions.py",
+          "symbol": "ReactionNetwork.rates"
+        },
+        {
+          "path": "implementation/reactions.py",
+          "symbol": "ReactionNetwork.source_mol_s"
+        },
+        {
+          "path": "implementation/deforming_solid_heat.py",
+          "symbol": "DeformingSolidHeat.evaluate"
+        }
+      ],
+      "case_parameter_pointers": [
+        "/reaction",
+        "/constants"
+      ],
+      "upstream_equation_ids": [
+        "stage-temperature",
+        "prescribed-geometry"
+      ],
+      "sources": [
+        {
+          "artifact": "case.json",
+          "locator": "/reaction",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        }
+      ],
+      "classification": "manufactured_test_fixture",
+      "domain": [
+        "Artificial element-balanced A to B with current-cell-bulk-volume concentration basis.",
+        "The oxygen_free_pyrolysis label is a declared fixture regime, not evidence of real pyrolysis kinetics."
+      ],
+      "omissions": [
+        "Ea zero means no Arrhenius temperature sensitivity in this verification case.",
+        "No raw-sludge decomposition network or measured reaction-rate parameters."
+      ]
+    },
+    {
+      "id": "water-equilibrium-drive",
+      "title": "Pure-liquid and ideal-vapor chemical-potential drive",
+      "equation_kind": "constitutive_approximation",
+      "expression": "s_v(T,p)=s_v0(T,p0)-Rmix ln(p/p0); mu_v=h_v-T s_v; mu_l=h_l-T s_l; p_eq=p0 exp[(mu_l-mu_v0)/(Rmix T)]. Evaluate liquid at actual total P from storage.",
+      "symbols": {
+        "mu_v": {
+          "meaning": "ideal-vapor molar chemical potential",
+          "unit": "J/mol"
+        },
+        "mu_l": {
+          "meaning": "pure-liquid molar chemical potential",
+          "unit": "J/mol"
+        },
+        "s_v": {
+          "meaning": "ideal-vapor molar entropy",
+          "unit": "J/(mol K)"
+        },
+        "p0": {
+          "meaning": "standard reference pressure",
+          "unit": "Pa"
+        },
+        "p_eq": {
+          "meaning": "equilibrium ideal-vapor partial pressure for this bridge",
+          "unit": "Pa"
+        }
+      },
+      "implemented_at": [
+        {
+          "path": "implementation/water_chemical_potential.py",
+          "symbol": "WaterChemicalPotential.ideal_vapor"
+        },
+        {
+          "path": "implementation/water_chemical_potential.py",
+          "symbol": "WaterChemicalPotential._equilibrium"
+        },
+        {
+          "path": "implementation/water_chemical_potential.py",
+          "symbol": "WaterChemicalPotential.equilibrium_at_liquid_tp"
+        }
+      ],
+      "case_parameter_pointers": [
+        "/water",
+        "/constants"
+      ],
+      "upstream_equation_ids": [
+        "water-caloric",
+        "stage-temperature",
+        "pressure-closure"
+      ],
+      "sources": [
+        {
+          "artifact": "water/IAPWS95-2018.txt",
+          "locator": "Table 3 thermodynamic functions; source liquid entropy/enthalpy",
+          "read_status": "data_checked",
+          "kind": "literature_constitutive_model"
+        },
+        {
+          "artifact": "water/reference_alignment.json",
+          "locator": "Reference alignment values; ideal-vapor bridge is derived in implementation",
+          "read_status": "data_checked",
+          "kind": "derived_from_evidence"
+        },
+        {
+          "artifact": "case.json",
+          "locator": "/water",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        }
+      ],
+      "classification": "derived_from_evidence",
+      "domain": [
+        "Finite positive T and source-approved pure-liquid TP state; explicit common caloric and entropy references."
+      ],
+      "omissions": [
+        "Not native EOS saturation pressure equality, Kelvin correction, liquid mixture activity or nucleation law."
+      ]
+    },
+    {
+      "id": "water-phase-source",
+      "title": "Manufactured finite-rate interphase transfer",
+      "equation_kind": "constitutive_law",
+      "expression": "Kcell=Kdensity V0; r=Kcell(p_eq-p_H2O); Sliquid=-r; Svapor=+r; additional energy source=0.",
+      "symbols": {
+        "Kcell": {
+          "meaning": "cell transfer coefficient",
+          "unit": "mol/(s Pa)"
+        },
+        "Kdensity": {
+          "meaning": "reference-volume transfer coefficient density",
+          "unit": "mol/(s Pa m3)"
+        },
+        "r": {
+          "meaning": "positive evaporation rate",
+          "unit": "mol/s"
+        },
+        "p_H2O": {
+          "meaning": "actual water vapor partial pressure",
+          "unit": "Pa"
+        }
+      },
+      "implemented_at": [
+        {
+          "path": "implementation/water_phase_transfer.py",
+          "symbol": "WaterPhaseTransfer.evaluate"
+        },
+        {
+          "path": "implementation/verification_case.py",
+          "symbol": "_make_model"
+        }
+      ],
+      "case_parameter_pointers": [
+        "/transport/phase_coefficient_density_mol_s_pa_m3",
+        "/transport/interfaces",
+        "/grid"
+      ],
+      "upstream_equation_ids": [
+        "water-equilibrium-drive",
+        "gas-face-state"
+      ],
+      "sources": [
+        {
+          "artifact": "case.json",
+          "locator": "/transport",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        }
+      ],
+      "classification": "manufactured_test_fixture",
+      "domain": [
+        "Existing liquid interface and inventories within supported phase-transfer domain.",
+        "Reference-volume scaling preserves refinement extensivity."
+      ],
+      "omissions": [
+        "Manufactured conductance; no measured drying or pore-interface kinetics.",
+        "Latent energy is already in storage and is not added again."
+      ]
+    },
+    {
+      "id": "mechanical-power",
+      "title": "Fixed-composition skeleton work, dissipation and bulk pressure work",
+      "equation_kind": "power_balance",
+      "expression": "P_el=q V0 sum_i[(K theta+2G dev_i)/lambda_i]lambda_dot_i; P_surface=q dEs0/dt at fixed N; D=q eta V0 sum_i(lambda_dot_i/lambda_i)^2; Rayleigh=D/2; P_bulk=-P Vbulk_dot; Pcell=P_el+P_surface+D+P_bulk+Pbody.",
+      "symbols": {
+        "P_el": {
+          "meaning": "elastic deformation power at fixed composition",
+          "unit": "W"
+        },
+        "P_surface": {
+          "meaning": "interface deformation power at fixed composition",
+          "unit": "W"
+        },
+        "D": {
+          "meaning": "nonnegative viscous dissipation",
+          "unit": "W"
+        },
+        "eta": {
+          "meaning": "skeleton viscosity",
+          "unit": "Pa s"
+        },
+        "P_bulk": {
+          "meaning": "bulk pressure work",
+          "unit": "W"
+        },
+        "Pbody": {
+          "meaning": "additional body power, zero here",
+          "unit": "W"
+        }
+      },
+      "implemented_at": [
+        {
+          "path": "implementation/skeleton_energy.py",
+          "symbol": "DiagonalSkeletonEnergy.evaluate"
+        },
+        {
+          "path": "implementation/reacting_skeleton_energy.py",
+          "symbol": "ManufacturedReactingSkeletonEnergy.evaluate"
+        },
+        {
+          "path": "implementation/deforming_solid_heat.py",
+          "symbol": "DeformingSolidHeat.evaluate"
+        }
+      ],
+      "case_parameter_pointers": [
+        "/mechanics"
+      ],
+      "upstream_equation_ids": [
+        "skeleton-energy",
+        "pressure-closure",
+        "stage-temperature"
+      ],
+      "sources": [
+        {
+          "artifact": "case.json",
+          "locator": "/mechanics",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        }
+      ],
+      "classification": "manufactured_test_fixture",
+      "domain": [
+        "Prescribed moving bulk boundary, fixed-composition deformation derivatives; reaction-induced storage handled by total energy inversion."
+      ],
+      "omissions": [
+        "No composition-derivative power addition or free mechanical equilibrium solve."
+      ]
+    },
+    {
+      "id": "finite-volume-balance",
+      "title": "Conservative inventories and energy on moving cells",
+      "equation_kind": "general_balance",
+      "expression": "dN_cell,i/dt=Fleft_i-Fright_i+Ssolid_i+Sphase_i; dE_cell/dt=Hleft-Hright+Pcell. Conserved variables are extensive: moving volume changes do not add a duplicate concentration-dilution term.",
+      "symbols": {
+        "N_cell": {
+          "meaning": "species amount in moving cell",
+          "unit": "mol"
+        },
+        "E_cell": {
+          "meaning": "cell total energy",
+          "unit": "J"
+        },
+        "Fleft_i": {
+          "meaning": "inward-oriented left face molar rate",
+          "unit": "mol/s"
+        },
+        "Fright_i": {
+          "meaning": "outward-oriented right face molar rate",
+          "unit": "mol/s"
+        },
+        "Hleft": {
+          "meaning": "left face energy rate",
+          "unit": "W"
+        },
+        "Hright": {
+          "meaning": "right face energy rate",
+          "unit": "W"
+        }
+      },
+      "implemented_at": [
+        {
+          "path": "implementation/integration.py",
+          "symbol": "Rates.derivatives"
+        },
+        {
+          "path": "implementation/solid_fluid_heat.py",
+          "symbol": "SolidFluidHeat._assemble_decoded"
+        },
+        {
+          "path": "implementation/deforming_solid_heat.py",
+          "symbol": "DeformingSolidHeat.evaluate"
+        }
+      ],
+      "case_parameter_pointers": [
+        "/initial/species_order",
+        "/transport/outer_reservoir",
+        "/transport/outer_surface_temperature_k",
+        "/transport/liquid_transport"
+      ],
+      "upstream_equation_ids": [
+        "heat-face-transfer",
+        "solid-reaction",
+        "water-phase-source",
+        "mechanical-power"
+      ],
+      "sources": [
+        {
+          "artifact": "evidence/transport/moose-governing-equations.md",
+          "locator": "Fluid flow, mass_cons_sp, Lagrangian-coordinate mass balance; Heat flow energy conservation",
+          "read_status": "data_checked",
+          "kind": "physical_law_or_constant"
+        },
+        {
+          "artifact": "case.json",
+          "locator": "/transport",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        }
+      ],
+      "classification": "derived_from_evidence",
+      "domain": [
+        "All internal shared-face terms cancel in global sums; immobile solids/liquid have no intercell face flow here."
+      ],
+      "omissions": [
+        "No external firing program, open-boundary kiln gas, full-cycle phase inventory or furnace radiation."
+      ]
+    },
+    {
+      "id": "accepted-time-update",
+      "title": "Bounded adaptive SSPRK2 update and accepted-step ledger",
+      "equation_kind": "numerical_method",
+      "expression": "For a panel: y1=y0+h f(y0,t0); y2=(y0+y1+h f(y1,t1))/2. Compare one full panel against two half panels and accept the two-half result if the normalized Richardson indicator is <=1; q=(hleft/h)^3+(hright/h)^3 and indicator=q/(1-q)*normalized(full-twohalf). Use actual representable endpoint durations, positivity/domain gates, and cumulative ledgers.",
+      "symbols": {
+        "y0": {
+          "meaning": "initial extensive state components",
+          "unit": "mol for N; J for E"
+        },
+        "h": {
+          "meaning": "represented panel duration",
+          "unit": "s"
+        },
+        "q": {
+          "meaning": "unequal-half-step Richardson factor",
+          "unit": "1"
+        },
+        "indicator": {
+          "meaning": "scaled local error indicator",
+          "unit": "1"
+        }
+      },
+      "implemented_at": [
+        {
+          "path": "implementation/integration.py",
+          "symbol": "integrate"
+        }
+      ],
+      "case_parameter_pointers": [
+        "/numerics/integration",
+        "/numerics/start_s",
+        "/numerics/end_s",
+        "/refinement",
+        "/mechanics/knot_times_s"
+      ],
+      "upstream_equation_ids": [
+        "finite-volume-balance",
+        "initial-prolongation"
+      ],
+      "sources": [
+        {
+          "artifact": "case.json",
+          "locator": "/numerics/integration",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        },
+        {
+          "artifact": "case.json",
+          "locator": "/numerics",
+          "read_status": "derivation_from_code",
+          "binding": "active_case_sha256",
+          "kind": "numerical_policy"
+        }
+      ],
+      "classification": "numerical_policy",
+      "domain": [
+        "State and ledgers commit only after validation; failure/cancellation returns last accepted prefix.",
+        "Current run service uses ordinary integration for this short wet case; refinement halves the step caps."
+      ],
+      "omissions": [
+        "Local controller is not a global error certificate.",
+        "No depletion-event/affine-clock pathway or whole firing cycle is implied by this node."
+      ]
+    },
+    {
+      "id": "accepted-output-reconstruction",
+      "title": "Saved accepted-state output reconstruction",
+      "equation_kind": "output_reconstruction",
+      "expression": "Output amounts_mol=Naccepted and internal_energy_j=Eaccepted. At accepted time, reapply current geometry, pressure closure and total-energy inversion to (Naccepted,Eaccepted) to produce temperature_k and pressure_pa, retaining inverse bounds and qualified source identities.",
+      "symbols": {
+        "Naccepted": {
+          "meaning": "accepted species inventories by cell",
+          "unit": "mol"
+        },
+        "Eaccepted": {
+          "meaning": "accepted total energy by cell, despite historical internal_energy_j field name",
+          "unit": "J"
+        },
+        "temperature_k": {
+          "meaning": "reconstructed temperature by cell",
+          "unit": "K"
+        },
+        "pressure_pa": {
+          "meaning": "reconstructed total pressure by cell",
+          "unit": "Pa"
+        }
+      },
+      "implemented_at": [
+        {
+          "path": "implementation/verification_case.py",
+          "symbol": "snapshot"
+        },
+        {
+          "path": "implementation/deforming_solid_storage.py",
+          "symbol": "DeformingSolidStorage.temperature_from_total_energy"
+        }
+      ],
+      "case_parameter_pointers": [
+        "/numerics/temperature_bracket_k",
+        "/numerics/inverse_policy",
+        "/numerics/pressure_policy"
+      ],
+      "upstream_equation_ids": [
+        "accepted-time-update",
+        "total-storage",
+        "pressure-closure"
+      ],
+      "sources": [
+        {
+          "artifact": "case.json",
+          "locator": "/numerics",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        },
+        {
+          "artifact": "case.json",
+          "locator": "/scope",
+          "read_status": "data_checked",
+          "binding": "active_case_sha256",
+          "kind": "manufactured_test_fixture"
+        }
+      ],
+      "classification": "derived_from_evidence",
+      "domain": [
+        "The reconstruction node is a new-time instance of storage formulas; it does not feed an edge back into the stage-time decoder.",
+        "Saved result quantities are computed outputs, not measurements."
+      ],
+      "omissions": [
+        "No material qualification or source applicability is established merely by a connected provenance graph."
+      ]
+    }
+  ],
+  "parameter_metadata": {
+    "/carrier": {
+      "symbol": "carrier",
+      "unit": "mixed object: temperature_range_k [K]; coefficients [conventional Shomate scaled-temperature units]; formation_enthalpy_298_j_mol [J/mol]; molar_mass_kg_mol [kg/mol]; segment_index [1]; species/classification [identifiers]",
+      "basis": "Active case declaration bound to raw case SHA; group contains mixed physical settings and identifiers; source applicability remains equation-specific.",
+      "classification": "manufactured_test_fixture"
+    },
+    "/carrier/molar_mass_kg_mol": {
+      "symbol": "carrier.molar_mass_kg_mol",
+      "unit": "kg/mol",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "manufactured_test_fixture"
+    },
+    "/constants": {
+      "symbol": "constants",
+      "unit": "mixed object: gas_constant_j_mol_k [J/(mol K)]; gas_constant_source_id [source identifier]",
+      "basis": "Active case declaration bound to raw case SHA; group contains mixed physical settings and identifiers; source applicability remains equation-specific.",
+      "classification": "physical_law_or_constant"
+    },
+    "/grid": {
+      "symbol": "grid",
+      "unit": "mixed object: cells,parent_cells [1]; half_thickness_m [m]; reference_face_area_m2 [m2]; parent_bulk_volume_error_m3 [m3]",
+      "basis": "Active case declaration bound to raw case SHA; group contains mixed physical settings and identifiers; source applicability remains equation-specific.",
+      "classification": "virtual_design_choice"
+    },
+    "/grid/parent_bulk_volume_error_m3": {
+      "symbol": "grid.parent_bulk_volume_error_m3",
+      "unit": "m3",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "virtual_design_choice"
+    },
+    "/initial": {
+      "symbol": "initial",
+      "unit": "mixed object: species_order [identifiers]; parent_amounts_mol [mol]; parent_temperatures_k [K]; energy_initialization [algorithm identifier]",
+      "basis": "Active case declaration bound to raw case SHA; group contains mixed physical settings and identifiers; source applicability remains equation-specific.",
+      "classification": "virtual_design_choice"
+    },
+    "/initial/species_order": {
+      "symbol": "initial.species_order",
+      "unit": "1 (ordered species identifiers)",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "virtual_design_choice"
+    },
+    "/mechanics": {
+      "symbol": "mechanics",
+      "unit": "mixed object: knot_times_s [s]; stretches,composition_offset,stretch_range [1]; bulk_modulus_pa,shear_modulus_pa [Pa]; viscosity_pa_s [Pa s]; interface_energy_j_m2 [J/m2]; micro_interface_area_density_m2_m3 [m2/m3]; composition_beta_m3_mol [m3/mol]; maximum_absolute_log_rate_per_s [1/s]; additional_bulk_volume_error_m3 [m3]; additional_mechanical_energy_error_j [J]; classification [identifier]",
+      "basis": "Active case declaration bound to raw case SHA; group contains mixed physical settings and identifiers; source applicability remains equation-specific.",
+      "classification": "manufactured_test_fixture"
+    },
+    "/mechanics/additional_bulk_volume_error_m3": {
+      "symbol": "mechanics.additional_bulk_volume_error_m3",
+      "unit": "m3",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "manufactured_test_fixture"
+    },
+    "/mechanics/additional_mechanical_energy_error_j": {
+      "symbol": "mechanics.additional_mechanical_energy_error_j",
+      "unit": "J",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "manufactured_test_fixture"
+    },
+    "/mechanics/knot_times_s": {
+      "symbol": "mechanics.knot_times_s",
+      "unit": "s",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "virtual_design_choice"
+    },
+    "/mechanics/maximum_absolute_log_rate_per_s": {
+      "symbol": "mechanics.maximum_absolute_log_rate_per_s",
+      "unit": "1/s",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "manufactured_test_fixture"
+    },
+    "/mechanics/normal_stretches_at_knots": {
+      "symbol": "mechanics.normal_stretches_at_knots",
+      "unit": "1",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "virtual_design_choice"
+    },
+    "/mechanics/stretch_range": {
+      "symbol": "mechanics.stretch_range",
+      "unit": "1",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "manufactured_test_fixture"
+    },
+    "/mechanics/tangential_stretches_at_knots": {
+      "symbol": "mechanics.tangential_stretches_at_knots",
+      "unit": "1",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "virtual_design_choice"
+    },
+    "/numerics/end_s": {
+      "symbol": "numerics.end_s",
+      "unit": "s",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "numerical_policy"
+    },
+    "/numerics/envelope": {
+      "symbol": "numerics.envelope",
+      "unit": "mixed object: liquid_u_error_j_mol,gas_u_error_j_mol [J/mol]; liquid_v_error_m3_mol [m3/mol]; liquid_abs_du_dp_bound_j_mol_pa [J/(mol Pa)]; gas_cv_lower_j_mol_k [J/(mol K)]; method [identifier]",
+      "basis": "Active case declaration bound to raw case SHA; group contains mixed physical settings and identifiers; source applicability remains equation-specific.",
+      "classification": "numerical_policy"
+    },
+    "/numerics/integration": {
+      "symbol": "numerics.integration",
+      "unit": "mixed object: *_step_s,maximum_wall_seconds [s]; amount_absolute_tolerance_mol,amount_scale_mol [mol]; energy_absolute_tolerance_j,energy_scale_j [J]; relative_tolerance [1]; maximum_steps,maximum_rejections [counts]",
+      "basis": "Active case declaration bound to raw case SHA; group contains mixed physical settings and identifiers; source applicability remains equation-specific.",
+      "classification": "numerical_policy"
+    },
+    "/numerics/inverse_policy": {
+      "symbol": "numerics.inverse_policy",
+      "unit": "mixed object: energy_absolute_j [J]; temperature_absolute_k [K]; maximum_iterations [count]",
+      "basis": "Active case declaration bound to raw case SHA; group contains mixed physical settings and identifiers; source applicability remains equation-specific.",
+      "classification": "numerical_policy"
+    },
+    "/numerics/pressure_policy": {
+      "symbol": "numerics.pressure_policy",
+      "unit": "mixed object: volume_absolute_m3 [m3]; pressure_absolute_pa [Pa]; maximum_iterations [count]",
+      "basis": "Active case declaration bound to raw case SHA; group contains mixed physical settings and identifiers; source applicability remains equation-specific.",
+      "classification": "numerical_policy"
+    },
+    "/numerics/start_s": {
+      "symbol": "numerics.start_s",
+      "unit": "s",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "numerical_policy"
+    },
+    "/numerics/temperature_bracket_k": {
+      "symbol": "numerics.temperature_bracket_k",
+      "unit": "K",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "numerical_policy"
+    },
+    "/profile": {
+      "symbol": "profile",
+      "unit": "1 (categorical profile selector)",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "virtual_design_choice"
+    },
+    "/reaction": {
+      "symbol": "reaction",
+      "unit": "mixed object: prefactor_mol_m3_s [mol/(m3 s)]; activation_energy_j_mol [J/mol]; concentration_reference_mol_m3 [mol/m3]; temperature_range_k [K]; stoichiometry,orders,elements_per_species [dimensionless counts/orders]; other entries [identifiers]",
+      "basis": "Active case declaration bound to raw case SHA; group contains mixed physical settings and identifiers; source applicability remains equation-specific.",
+      "classification": "manufactured_test_fixture"
+    },
+    "/refinement": {
+      "symbol": "refinement",
+      "unit": "1 (temporal refinement index)",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "numerical_policy"
+    },
+    "/solid": {
+      "symbol": "solid",
+      "unit": "mixed object: caloric_temperature_range_k [K]; molar_mass_kg_mol [kg/mol]; pressures [Pa]; u errors and formation_enthalpy_298_j_mol [J/mol]; v errors and molar_volume_m3_mol [m3/mol]; A-H coefficients [conventional Shomate scaled-temperature units]; phase/classification [identifiers]",
+      "basis": "Active case declaration bound to raw case SHA; group contains mixed physical settings and identifiers; source applicability remains equation-specific.",
+      "classification": "manufactured_test_fixture"
+    },
+    "/solid/declared_u_error_j_mol": {
+      "symbol": "solid.declared_u_error_j_mol",
+      "unit": "J/mol",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "manufactured_test_fixture"
+    },
+    "/solid/declared_v_error_m3_mol": {
+      "symbol": "solid.declared_v_error_m3_mol",
+      "unit": "m3/mol",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "manufactured_test_fixture"
+    },
+    "/transport": {
+      "symbol": "transport",
+      "unit": "mixed object: conductivities [W/(m K)]; diffusivities [m2/s]; permeability_m2 [m2]; relative_permeability [1]; viscosity_pa_s [Pa s]; phase_coefficient_density_mol_s_pa_m3 [mol/(s Pa m3)]; outer_surface_temperature_k [K if present]; null outer_reservoir/liquid_transport [disabled]; interfaces/classification [identifiers]",
+      "basis": "Active case declaration bound to raw case SHA; group contains mixed physical settings and identifiers; source applicability remains equation-specific.",
+      "classification": "manufactured_test_fixture"
+    },
+    "/transport/interfaces": {
+      "symbol": "transport.interfaces",
+      "unit": "1 (interface availability identifier)",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "manufactured_test_fixture"
+    },
+    "/transport/liquid_transport": {
+      "symbol": "transport.liquid_transport",
+      "unit": "not applicable: null disables liquid transport",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "manufactured_test_fixture"
+    },
+    "/transport/outer_reservoir": {
+      "symbol": "transport.outer_reservoir",
+      "unit": "not applicable: null disables boundary reservoir",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "manufactured_test_fixture"
+    },
+    "/transport/outer_surface_temperature_k": {
+      "symbol": "transport.outer_surface_temperature_k",
+      "unit": "K when present; null means disabled",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "manufactured_test_fixture"
+    },
+    "/transport/phase_coefficient_density_mol_s_pa_m3": {
+      "symbol": "transport.phase_coefficient_density_mol_s_pa_m3",
+      "unit": "mol/(s Pa m3)",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "manufactured_test_fixture"
+    },
+    "/transport_mode": {
+      "symbol": "transport_mode",
+      "unit": "1 (coupled/control selector)",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "virtual_design_choice"
+    },
+    "/water": {
+      "symbol": "water",
+      "unit": "mixed object: pressure_range_pa [Pa]; classification,backend,manifest,liquid_pressure_model [identifiers]",
+      "basis": "Mixed provider and closure selection, declared source classification, and numerical pressure-domain restriction. Source qualification of underlying water properties is separately bound by equation source records; this object is not collectively verified physical data.",
+      "classification": "virtual_design_choice"
+    },
+    "/water/liquid_pressure_model": {
+      "symbol": "water.liquid_pressure_model",
+      "unit": "1 (pressure closure identifier)",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "virtual_design_choice"
+    },
+    "/water/pressure_range_pa": {
+      "symbol": "water.pressure_range_pa",
+      "unit": "Pa",
+      "basis": "Active case declaration bound to raw case SHA; actual value is used by the declared implementation; it is not a measured plant datum.",
+      "classification": "numerical_policy"
+    }
+  },
+  "supporting_assets": [
+    "evidence/transport/cantera-3.2-LICENSE.txt",
+    "evidence/transport/moose-LICENSE.txt",
+    "evidence/transport/moose-COPYING.txt",
+    "evidence/transport/moose-COPYRIGHT.txt",
+    "evidence/transport/equation_sources.json"
+  ]
+}

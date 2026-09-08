@@ -14,7 +14,7 @@
 | E05 | 材料/气氛/温压/几何匹配 | domain gate与域外测试 | in_progress |
 | E06 | unknown传播、无默认补值 | 下游阻断、fixture隔离测试 | in_progress |
 | E07 | 参数相关性与不确定性依据 | 成套材料包及joint约束 | pending |
-| E08 | 任意结果能查询到原始证据 | CLI和UI trace端到端 | pending |
+| E08 | 任意结果能查询到原始证据 | 当前制造湿态模型4量CLI/Python依赖图已实测（run-provenance-v1，19方程/38参数）；全周期材料和UI仍缺 | in_progress |
 | M01 | 原污泥与SSA等身份分离 | materials身份类别+测试；真实包仍未核准 | in_progress |
 | M02 | 元素/氧化物/矿相/LOI分离 | MassAnalysis typed类别/基准；phase独立ID，运行资格仍待接入 | in_progress |
 | M03 | 湿坯初态、成型水不重复 | prepare_green_batch水账目通过；完整相库存待实现 | in_progress |
@@ -57,13 +57,13 @@
 | V12 | 干净环境全流程运行 | 锁定依赖、实际命令/产物 | pending |
 | V13 | 当前平台与声明平台实测 | 平台报告；无假支持声明 | pending |
 | V14 | 畸形/域外/缺项/恢复检查 | 真正的集成反例 | pending |
-| U01 | 共享内核的Python/CLI/UI | 同输入一致性与实际启动 | pending |
-| U02 | 输入校验/单例/批量/UQ/搜索/重放 | 所有命令实际运行 | pending |
+| U01 | 共享内核的Python/CLI/UI | 新CLI/Python同服务，实际单例/重放与压力来源查询一致；UI尚缺 | in_progress |
+| U02 | 输入校验/单例/批量/UQ/搜索/重放 | 当前制造案例校验/单例/查询/重放实际验证；全周期、批量/UQ/搜索尚缺 | in_progress |
 | U03 | 中文界面编辑/取消/失败/比较 | 浏览器实测及证据 | pending |
 | U04 | 曲线/空间场/未知项/来源跳转 | 浏览器与trace集成实测 | pending |
 | A01 | 世界/政策/方程代码映射文档 | WORLD_SPEC,EVIDENCE_POLICY,EQUATION_CODE_MAP | in_progress |
 | A02 | 支持域/已知缺口/验证报告 | SUPPORTED_DOMAIN,KNOWN_GAPS,VALIDATION_REPORT | in_progress |
-| A03 | 运行原始输入/轨迹/账本/状态/报告 | 成功和失败均持久化 | pending |
+| A03 | 运行原始输入/轨迹/账本/状态/报告 | 新服务保存原始输入/轨迹/账本/失败/代码来源图，诊断失败保留接受前缀；全周期中文报告尚缺 | in_progress |
 | A04 | 物理/数值与代码审查问题关闭 | 实际审查者、证据与修复记录 | in_progress |
 | A05 | 软件/科学/部署三维状态 | 全部入口/报告一致 | pending |
 | A06 | 最终可操作说明与Git证据 | 真实启动/迭代/溯源命令和产物 | pending |

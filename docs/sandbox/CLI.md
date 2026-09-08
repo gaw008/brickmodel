@@ -9,7 +9,7 @@
 ```sh
 python -m sludge_sandbox validate data/sandbox/cases/reacting-wet-slab-v1.json
 python -m sludge_sandbox resources
-python -m sludge_sandbox run data/sandbox/cases/reacting-wet-slab-v1.json --water-data data/sandbox/water --output /tmp/brick-run-new
+python -m sludge_sandbox run data/sandbox/cases/reacting-wet-slab-v1.json --water-data data/sandbox/water --evidence-data data/sandbox --output /tmp/brick-run-new
 python -m sludge_sandbox trace /tmp/brick-run-new --quantity temperature_k
 python -m sludge_sandbox trace /tmp/brick-run-new --quantity internal_energy_j
 python -m sludge_sandbox replay /tmp/brick-run-new --output /tmp/brick-replay-new
@@ -29,7 +29,11 @@ python -m sludge_sandbox replay /tmp/brick-run-new --output /tmp/brick-replay-ne
 
 ## 查询与重放
 
-支持查询 `amounts_mol`、`internal_energy_j`、`temperature_k`、`pressure_pa`。库存和能量来自最后接受状态；温度和压力来自成功运行的终态重构。查询给出结果位置、案例参数 JSON 指针、全部冻结实现与水来源文件，以及若干已实现方程的函数定位。**方程列表只是导航入口，尚不是完整的方程级来源依赖图。** 各量存在耦合，因此当前返回保守的完整案例参数集合，不能把它当作敏感性排序。
+支持查询 `amounts_mol`、`internal_energy_j`、`temperature_k`、`pressure_pa`。库存和能量来自最后接受状态；温度和压力来自成功运行的终态重构。新运行中的 `dependency_graph` 给出本模型已登记方程的上游子图：公式、符号/单位、参数值与基准、计算依赖、实际源码行号、来源文件和具体定位。JSON 来源指针会实际解析；页码/公式号等文字位置保留核读声明，不冒充机器已经理解论文。原 `equations` 字段保留简短导航含义，旧运行没有图时不生成一份新图冒充当时记录。
+
+目前目录覆盖这个制造湿态模型的19个方程声明、38项参数声明和4个输出入口。物理反馈按“当前阶段重构→通量/源项→接受步更新→新状态重构”表示，不能把无环依赖图解释为物理系统没有反馈。分组参数的混合单位明确保留。图验证引用、代码锚点、来源资产与原运行的一致性；**不证明公式对原污泥适用或已经获得实验验证**，也不覆盖尚未实现的全烧制模型。
+
+`--evidence-data` 指向含 `transport/` 等子目录的证据根目录。只复制目录列出的来源和相应许可/署名文件；它不会扫描整份研究数据库。未提供或缺失的额外来源保留为 `missing`，不填默认数值。真实水运行所需资产仍由水提供器独立检查。`source_asset_coverage` 仅表示已登记来源位置对应文件的可读比例，不能当作物理参数、材料适用性或外部验证覆盖率。
 
 文件清单用于检测相对于保存清单的变化，不是第三方签名。重放要求所有登记文件哈希一致、没有额外文件，且当前 Python/平台/包版本/沙盒源码身份与原运行相同；不执行保存目录中的 Python 文件。它从冻结案例重新开始，尚不是中断检查点续算。新目录记录原结果哈希以保留血缘。
 
@@ -38,7 +42,8 @@ Python 使用同一服务：
 ```python
 from sludge_sandbox.run_service import run_case, trace_run, replay_run
 
-result = run_case("case.json", "water", "/tmp/new-run", cancel=lambda: False)
+result = run_case("case.json", "water", "/tmp/new-run",
+                  evidence_directory="data/sandbox", cancel=lambda: False)
 trace = trace_run("/tmp/new-run", "temperature_k")
 replayed = replay_run("/tmp/new-run", "/tmp/new-replay")
 ```

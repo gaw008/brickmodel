@@ -39,7 +39,8 @@ def runtime_identity() -> dict[str, Any]:
             versions[name] = importlib.metadata.version(name)
         except importlib.metadata.PackageNotFoundError:
             versions[name] = None
-    return {'modules': modules, 'versions': versions, 'python': platform.python_version(),
+    catalogs = {p.name: _hash(p.read_bytes()) for p in sorted((Path(__file__).parent/'catalogs').glob('*.json'))}
+    return {'modules': modules, 'catalogs': catalogs, 'versions': versions, 'python': platform.python_version(),
             'platform': platform.platform()}
 
 
@@ -85,7 +86,8 @@ def read_run(directory: str | Path) -> tuple[dict[str, Any], dict[str, Any]]:
 
 def run_case(case_path: str | Path, water_directory: str | Path, output: str | Path, *,
              cancel: Callable[[], bool] | None = None,
-             replay_of: dict[str, str] | None = None) -> dict[str, Any]:
+             replay_of: dict[str, str] | None = None,
+             evidence_directory: str | Path | None = None) -> dict[str, Any]:
     """Run once in a fresh directory; retain failures and accepted prefixes.
 
     Wall/step budgets are explicit case policy. Cancellation is cooperative
@@ -115,6 +117,21 @@ def run_case(case_path: str | Path, water_directory: str | Path, output: str | P
         (output/'implementation').mkdir()
         for source in sorted(Path(__file__).parent.glob('*.py')):
             (output/'implementation'/source.name).write_bytes(source.read_bytes())
+        from .run_provenance import catalog_bytes, evidence_paths, build_graph
+        catalog_raw = catalog_bytes()
+        (output/'equation_catalog.json').write_bytes(catalog_raw)
+        catalog = json.loads(catalog_raw)
+        if evidence_directory is not None:
+            evidence_root = Path(evidence_directory).resolve()
+            for name in evidence_paths(catalog):
+                source = evidence_root/name
+                if not source.resolve().is_relative_to(evidence_root) or source.is_symlink():
+                    raise RunError('invalid_evidence_artifact_path')
+                if source.is_file():
+                    destination = output/'evidence'/name
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    destination.write_bytes(source.read_bytes())
+        _json(output/'provenance.json', build_graph(output, catalog))
         if cancel is not None and cancel():
             result.update(status='cancelled', reason='cancelled_before_build')
         else:
@@ -195,7 +212,7 @@ def trace_run(directory: str | Path, quantity: str) -> dict[str, Any]:
             raise RunError('equation_artifact_missing')
         equations.append({'artifact': artifact, 'sha256': manifest['files'][artifact],
                           'symbol': symbol, 'meaning': meaning})
-    return {'quantity': quantity, 'value': value, 'result_pointer': location,
+    trace = {'quantity': quantity, 'value': value, 'result_pointer': location,
             'result_sha256': manifest['files']['result.json'],
             'case_sha256': result['case_sha256'], 'run_status': result['status'],
             'scientific_status': result['scientific_status'],
@@ -204,6 +221,15 @@ def trace_run(directory: str | Path, quantity: str) -> dict[str, Any]:
             'implementation_artifacts': {k: v for k, v in manifest['files'].items() if k.startswith('implementation/')},
             'evidence_artifacts': {k: v for k, v in manifest['files'].items() if k.startswith('water/')},
             'material_evidence': 'A/B solids, kinetics, carrier, transport and skeleton are manufactured; raw sludge is not admitted.'}
+    if 'provenance.json' in manifest['files']:
+        from .run_provenance import query_graph
+        graph = json.loads((directory/'provenance.json').read_bytes())
+        dependency_graph = query_graph(graph, quantity, artifacts=manifest['files'])
+        if dependency_graph['case_sha256'] != result['case_sha256']:
+            raise RunError('provenance_case_binding_mismatch')
+        trace['dependency_graph'] = dependency_graph
+        trace['provenance_sha256'] = manifest['files']['provenance.json']
+    return trace
 
 
 def replay_run(directory: str | Path, output: str | Path, *,
@@ -213,4 +239,5 @@ def replay_run(directory: str | Path, output: str | Path, *,
         raise RunError('replay_runtime_mismatch')
     return run_case(Path(directory)/'case.json', Path(directory)/'water', output,
                     cancel=cancel, replay_of={'case_sha256': result['case_sha256'],
-                    'result_sha256': manifest['files']['result.json']})
+                    'result_sha256': manifest['files']['result.json']},
+                    evidence_directory=Path(directory)/'evidence')

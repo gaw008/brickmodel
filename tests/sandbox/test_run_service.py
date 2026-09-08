@@ -167,7 +167,7 @@ def test_cli_sigint_requests_cooperative_cancel_and_restores_handler(monkeypatch
     from sludge_sandbox.cli import main
     previous = signal.getsignal(signal.SIGINT)
 
-    def fake_run(*args, cancel):
+    def fake_run(*args, cancel, evidence_directory):
         assert not cancel()
         signal.raise_signal(signal.SIGINT)
         assert cancel()
