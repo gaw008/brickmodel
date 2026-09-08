@@ -4,6 +4,14 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+普通自由液汽转移安装终态：session40338已exit0，80 passed in10.57s，XML实际零失败/错误/跳过；58实际site-packages模块与源码逐字节一致。源码与安装实际蒸发轨迹数值相同，证据research/free-phase-v1完整保存。无活动EOS，不再轮询40338；后面的运行中仅为历史。
+
+下一机械耗尽候选现已冻结在/private/tmp/brick-mechanical-depletion-candidate/depletion_integration.py，SHA9d569f869666fceee92bd13c4a412ab8578391dbb48419b010a025cb347de43f，candidate.patch/PLAN/测试及RED/中间失败保留。作者13新noEOS5.62s、11旧0.35s通过；尚未Root应用/安装/真实wet验证。program_knot_review与mechanical_code_review已启动独立只读审查该候选；恢复先取实际审查结果及文件。不得把候选完成当repo准入，现repo仍明确拒机械耗尽。Goal active。
+
+2026-09-08 UTC 普通自由相转移：WaterPhaseTransfer现显式接纳ClosedFreeSolidCell，真实当前TP/气体积计算液汽源，原热化学桥核查不变，外功和机械率逐项保留。顶层source_ids补入实际基础评价完整来源。源码4真实测试9.63s+76回归1.53s通过；实际.001s液水减少3.2293e-7mol、蒸汽等量增加，T299.999736919K/外功残差1.35e-11J，原预算和checkpoint通过。候选与RED/输出见FREE_PHASE_TRANSFER.md及research/free-phase-v1。源码冻结，安装58实际模块已逐字匹配；唯一活跃安装验证session40338，60s硬限，恢复须先poll该句柄确认终态。
+
+下一机械耗尽候选reacting_skeleton_provider正在/private/tmp/brick-mechanical-depletion-candidate隔离实现（不改repo/不EOS）：frozen/affine终端推进mechanical state与ledger，event/common-time比较、全局原初态累计审计。候选RED4项被原guard拒绝；首轮候选2守卫通过、两terminal完成但独立exp(t)普通approach精度未过1e-8，保留失败并收紧内部数值预算、外部验证门槛不变。未审查/未应用，不能宣称耗尽机械已完成。Goal仍active，完整第11节未满足。
+
 动态储能/自由单格安装终态：session28559已exit0，167 passed in26.70s，外层26.965s回收。XML实际解析零失败/错误/跳过，58个实际安装模块与源码逐字节一致。安装湿轨迹与源码温压/伸长/功残差相同，粗细耗时6.612/12.512s；下文进行中为历史，不再轮询28559。没有活动EOS。
 
 下一只读/隔离候选reacting_skeleton_provider在/private/tmp/brick-free-phase-candidate准备：新动态点/ClosedFreeSolidCell接实际液汽相间转移，保持总E与相参考能，不伪造旧host类型或丢机械state；随后耗尽terminal panels真正推进机械量/账本。该候选不改repo/不安装/不EOS，不属于167已通过结果。恢复从实际代理/文件状态继续。原第11节仍未完成，Goal active。

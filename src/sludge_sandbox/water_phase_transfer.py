@@ -3,6 +3,7 @@
 The pressure-difference conductance is supplied, not derived from equilibrium.
 Only equimolar phase inventories change; stored U receives no second latent heat.
 """
+from .free_solid_cell import ClosedFreeSolidCell,FreeSolidCellEvaluation
 from .deforming_solid_heat import DeformingSolidHeat,DeformingSolidHeatEvaluation
 from dataclasses import dataclass, replace
 from fractions import Fraction
@@ -62,7 +63,7 @@ class CellWaterTransfer:
 @dataclass(frozen=True)
 class WaterTransferEvaluation:
     rates: Rates
-    base_evaluation: FluidHeatEvaluation | SolidFluidHeatEvaluation | ProgrammedSolidFluidEvaluation | DeformingSolidHeatEvaluation
+    base_evaluation: FluidHeatEvaluation | SolidFluidHeatEvaluation | ProgrammedSolidFluidEvaluation | DeformingSolidHeatEvaluation | FreeSolidCellEvaluation
     cell_transfers: tuple[CellWaterTransfer,...]
     coefficient_set_id: str
     coefficient_version: str
@@ -75,7 +76,7 @@ class WaterTransferEvaluation:
 
 @dataclass(frozen=True,kw_only=True)
 class WaterPhaseTransfer:
-    base_model: RigidFluidHeat | SolidFluidHeat | ProgrammedSolidFluidHeat | DeformingSolidHeat
+    base_model: RigidFluidHeat | SolidFluidHeat | ProgrammedSolidFluidHeat | DeformingSolidHeat | ClosedFreeSolidCell
     chemical: WaterChemicalPotential
     coefficients_mol_s_pa: tuple[float,...]
     coefficient_set_id: str
@@ -87,7 +88,7 @@ class WaterPhaseTransfer:
     dry_policy: str = 'strict'
 
     def __post_init__(self):
-        if type(self.base_model) not in (RigidFluidHeat,SolidFluidHeat,ProgrammedSolidFluidHeat,DeformingSolidHeat) or type(self.chemical) is not WaterChemicalPotential:
+        if type(self.base_model) not in (RigidFluidHeat,SolidFluidHeat,ProgrammedSolidFluidHeat,DeformingSolidHeat,ClosedFreeSolidCell) or type(self.chemical) is not WaterChemicalPotential:
             raise WaterPhaseTransferError('explicit_fluid_and_chemical_models_required')
         if 'H2O' not in self.base_model.gas_species_order:
             raise WaterPhaseTransferError('explicit_gas_water_species_required')
@@ -159,12 +160,12 @@ class WaterPhaseTransfer:
     @property
     def _fluid_storages(self):
         return (tuple(s.fluid_template for s in self._thermal_host.storages)
-                if type(self._thermal_host) is SolidFluidHeat else self._thermal_host.storages)
+                if type(self._thermal_host) in (SolidFluidHeat,ClosedFreeSolidCell) else self._thermal_host.storages)
 
     @property
     def _liquid_index(self):
         return (self._thermal_host.inventory_layout.liquid_index
-                if type(self._thermal_host) is SolidFluidHeat else 0)
+                if type(self._thermal_host) in (SolidFluidHeat,ClosedFreeSolidCell) else 0)
 
     @property
     def liquid_index(self):return self._liquid_index
@@ -256,9 +257,11 @@ class WaterPhaseTransfer:
             reactions[index,water_index]+=rate
             diagnostics.append(CellWaterTransfer(rate,k,pressure,equilibrium,mu,delta_mu,entropy,status))
         rates=Rates(base.rates.face_species_mol_s,base.rates.face_energy_w,reactions,base.rates.cell_power_w,
-                    cell_power_components_w=base.rates.cell_power_components_w)
+                    cell_power_components_w=base.rates.cell_power_components_w,
+                    mechanical_rates_per_s=base.rates.mechanical_rates_per_s)
+        sources=tuple(sorted(set(self.source_ids+getattr(base,'source_ids',()))))
         return WaterTransferEvaluation(rates,base,tuple(diagnostics),self.coefficient_set_id,self.coefficient_version,
-                                       self.coefficient_classification,self.source_ids,
+                                       self.coefficient_classification,sources,
                                        interface_modes=self.interfaces,dry_policy=self.dry_policy,
                                        qualification=('explicit_'+self.dry_policy+'_dry_interface_choice_not_nucleation_model'
                                            if 'depleted_no_nucleation' in self.interfaces else

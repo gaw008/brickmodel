@@ -1,7 +1,7 @@
 """Closed single-cell free mechanics and total-energy stage operator.
 
-Fixed phase inventories: no evaporation, reactions, spatial transport or material
-admission. Current geometry and pressure are decoded at every actual RK stage.
+The base operator has zero phase sources; an explicitly admitted phase wrapper
+may add water transfer. No solid reactions, spatial transport or material admission. Current geometry and pressure are decoded at every actual RK stage.
 """
 from dataclasses import dataclass,field
 from fractions import Fraction
@@ -12,7 +12,7 @@ from .deforming_solid_storage import DeformingStorageError,_digest,_num,_out,_la
 from .skeleton_energy import SkeletonEnergyError
 from .phase_storage import InversePolicy
 from .solid_fluid_heat import InventoryLayout,_failure
-from .solid_fluid_storage import SolidFluidStorageError
+from .solid_fluid_storage import SolidFluidStorageError,SolidFluidState,SolidFluidInverse,SolidFluidStorage
 from .rigid_fluid_heat import _FAILURES
 from .geometry import GeometryError
 
@@ -23,6 +23,21 @@ class FreeSolidCellEvaluation:
     inverse: DynamicSolidInverse
     source_ids: tuple
     qualification: str='manufactured_closed_fixed_phase_single_cell_free_mechanics'
+
+    @property
+    def storage_states(self) -> tuple[SolidFluidState,...]:
+        # Actual current-geometry thermal state, not the reference template.
+        return (self.inverse.state.thermal_state,)
+
+    @property
+    def storage_inverses(self) -> tuple[SolidFluidInverse,...]:
+        # The thermal inverse already includes the target subtraction bound.
+        return (self.inverse.thermal_inverse,)
+
+    @property
+    def total_inverses(self) -> tuple[DynamicSolidInverse,...]:
+        return (self.inverse,)
+
 
 
 @dataclass(frozen=True,kw_only=True)
@@ -64,6 +79,22 @@ class ClosedFreeSolidCell:
 
     @property
     def energy_model_identity(self):return self._binding
+
+    @property
+    def species_order(self) -> tuple[str,...]:return self.inventory_layout.species_order
+
+    @property
+    def gas_species_order(self) -> tuple[str,...]:return self.inventory_layout.gas_species_order
+
+    @property
+    def storages(self) -> tuple[SolidFluidStorage,...]:
+        """Source-qualified reference templates, never current geometry."""
+        return (self.point.template,)
+
+    @property
+    def coefficient_classification(self) -> str:return 'manufactured'
+
+    def _check_state(self,state: ConservedState) -> None:self._check(state)
 
     def _inputs(self,row):
         layout=self.inventory_layout

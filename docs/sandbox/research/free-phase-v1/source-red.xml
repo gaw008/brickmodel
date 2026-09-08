@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="3" time="0.646" timestamp="2026-09-08T10:07:53.413796-10:00" hostname="MacBookPro.lan"><testcase classname="tests.sandbox.test_free_water_phase_transfer" name="test_explicit_source_admission_still_requires_manufactured_opt_in" time="0.017"><failure message="AssertionError: Regex pattern did not match.&#10; Regex: 'manufactured_requires'&#10; Input: 'explicit_fluid_and_chemical_models_required'">ingredients = (WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=..., 'source_facts.json': '53af498b3974d180d273d7b17a6619d49d9a7d90bbacdd6e0304651f33bd79d6'})), WaterChemicalPotential())
+
+    def test_explicit_source_admission_still_requires_manufactured_opt_in(ingredients):
+        with pytest.raises(ValueError,match='manufactured_requires'):
+&gt;           free_transfer(ingredients,allow_manufactured=False)
+
+tests/sandbox/test_free_water_phase_transfer.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/sandbox/test_free_water_phase_transfer.py:29: in free_transfer
+    return WaterPhaseTransfer(**(values|changes))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;string&gt;:13: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = WaterPhaseTransfer(base_model=ClosedFreeSolidCell(point=DynamicSolidStorage(template=SolidFluidStorage(fluid_template=..._source_ids=('manufactured:kinetic-coefficient',), allow_manufactured=False, interface_modes=None, dry_policy='strict')
+
+    def __post_init__(self):
+        if type(self.base_model) not in (RigidFluidHeat,SolidFluidHeat,ProgrammedSolidFluidHeat,DeformingSolidHeat) or type(self.chemical) is not WaterChemicalPotential:
+&gt;           raise WaterPhaseTransferError('explicit_fluid_and_chemical_models_required')
+E           sludge_sandbox.water_phase_transfer.WaterPhaseTransferError: explicit_fluid_and_chemical_models_required
+
+src/sludge_sandbox/water_phase_transfer.py:91: WaterPhaseTransferError
+
+During handling of the above exception, another exception occurred:
+
+ingredients = (WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=..., 'source_facts.json': '53af498b3974d180d273d7b17a6619d49d9a7d90bbacdd6e0304651f33bd79d6'})), WaterChemicalPotential())
+
+    def test_explicit_source_admission_still_requires_manufactured_opt_in(ingredients):
+&gt;       with pytest.raises(ValueError,match='manufactured_requires'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E        Regex: 'manufactured_requires'
+E        Input: 'explicit_fluid_and_chemical_models_required'
+
+tests/sandbox/test_free_water_phase_transfer.py:33: AssertionError</failure></testcase><testcase classname="tests.sandbox.test_free_water_phase_transfer" name="test_actual_phase_rate_preserves_free_mechanics_and_external_work" time="0.002"><failure message="sludge_sandbox.water_phase_transfer.WaterPhaseTransferError: explicit_fluid_and_chemical_models_required">ingredients = (WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=..., 'source_facts.json': '53af498b3974d180d273d7b17a6619d49d9a7d90bbacdd6e0304651f33bd79d6'})), WaterChemicalPotential())
+
+    def test_actual_phase_rate_preserves_free_mechanics_and_external_work(ingredients):
+&gt;       op=free_transfer(ingredients)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_free_water_phase_transfer.py:38: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/sandbox/test_free_water_phase_transfer.py:29: in free_transfer
+    return WaterPhaseTransfer(**(values|changes))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;string&gt;:13: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = WaterPhaseTransfer(base_model=ClosedFreeSolidCell(point=DynamicSolidStorage(template=SolidFluidStorage(fluid_template=...t_source_ids=('manufactured:kinetic-coefficient',), allow_manufactured=True, interface_modes=None, dry_policy='strict')
+
+    def __post_init__(self):
+        if type(self.base_model) not in (RigidFluidHeat,SolidFluidHeat,ProgrammedSolidFluidHeat,DeformingSolidHeat) or type(self.chemical) is not WaterChemicalPotential:
+&gt;           raise WaterPhaseTransferError('explicit_fluid_and_chemical_models_required')
+E           sludge_sandbox.water_phase_transfer.WaterPhaseTransferError: explicit_fluid_and_chemical_models_required
+
+src/sludge_sandbox/water_phase_transfer.py:91: WaterPhaseTransferError</failure></testcase><testcase classname="tests.sandbox.test_free_water_phase_transfer" name="test_actual_free_evaporation_step_conserves_water_and_total_work" time="0.002"><failure message="sludge_sandbox.water_phase_transfer.WaterPhaseTransferError: explicit_fluid_and_chemical_models_required">ingredients = (WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=..., 'source_facts.json': '53af498b3974d180d273d7b17a6619d49d9a7d90bbacdd6e0304651f33bd79d6'})), WaterChemicalPotential())
+
+    def test_actual_free_evaporation_step_conserves_water_and_total_work(ingredients):
+&gt;       op=free_transfer(ingredients)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_free_water_phase_transfer.py:52: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/sandbox/test_free_water_phase_transfer.py:29: in free_transfer
+    return WaterPhaseTransfer(**(values|changes))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;string&gt;:13: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = WaterPhaseTransfer(base_model=ClosedFreeSolidCell(point=DynamicSolidStorage(template=SolidFluidStorage(fluid_template=...t_source_ids=('manufactured:kinetic-coefficient',), allow_manufactured=True, interface_modes=None, dry_policy='strict')
+
+    def __post_init__(self):
+        if type(self.base_model) not in (RigidFluidHeat,SolidFluidHeat,ProgrammedSolidFluidHeat,DeformingSolidHeat) or type(self.chemical) is not WaterChemicalPotential:
+&gt;           raise WaterPhaseTransferError('explicit_fluid_and_chemical_models_required')
+E           sludge_sandbox.water_phase_transfer.WaterPhaseTransferError: explicit_fluid_and_chemical_models_required
+
+src/sludge_sandbox/water_phase_transfer.py:91: WaterPhaseTransferError</failure></testcase></testsuite></testsuites>
