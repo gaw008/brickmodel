@@ -20,4 +20,4 @@ sludge-sandbox experiment-cancel /tmp/brick-experiment-new
 
 仅保存了终态回收证据的取消任务才可继续。存在已接受前缀时，调用原有 resume 服务进行检查点验证；零步取消可以重新开始，均计为新尝试。遗留 running 记录或无法核实的中断拒绝继续，不能凭保存 PID 推断进程已死亡。包括 pid=null 的 supervisor_failed 启动失败，目前也保守地拒绝继续；该限制尚未放宽。
 
-验证证据见 research/experiment-batch-v1。人工封存记录测试只证明编排分支；实际两候选运行证明完整服务路径。公开原污泥参数、自由烧结冷却、全周期、多代选择和三组公开机制留出验证仍未完成。
+验证证据见 research/experiment-batch-v1；实际单候选1步取消→4步累计续算及预算/前缀核查见 research/experiment-resume-v1。人工封存记录测试只证明编排分支；实际两候选运行证明完整服务路径。公开原污泥参数、自由烧结冷却、全周期、多代选择和三组公开机制留出验证仍未完成。
