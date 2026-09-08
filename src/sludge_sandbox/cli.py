@@ -71,8 +71,24 @@ def main(argv=None):
                             ('experiment-compare', '比较已验证结果；不生成产品合格排名')]:
         command = commands.add_parser(name, help=help_text)
         command.add_argument('directory', type=Path)
+    sensitivity = commands.add_parser('sensitivity-prepare', help='冻结两水平因子实验；区分设计值与制造参数')
+    sensitivity.add_argument('spec', type=Path)
+    sensitivity.add_argument('--water-data', required=True, type=Path)
+    sensitivity.add_argument('--evidence-data', type=Path)
+    sensitivity.add_argument('--output', required=True, type=Path)
+    analyze = commands.add_parser('sensitivity-analyze', help='从完整保存结果计算因子对比，不推断现实概率')
+    analyze.add_argument('directory', type=Path)
     args = parser.parse_args(argv)
     try:
+        if args.command in ('sensitivity-prepare', 'sensitivity-analyze'):
+            from .sensitivity import prepare_sensitivity, analyze_sensitivity
+            if args.command == 'sensitivity-prepare':
+                value = prepare_sensitivity(args.spec, args.output, water_directory=args.water_data,
+                                            evidence_directory=args.evidence_data)
+            else:
+                value = analyze_sensitivity(args.directory)
+            print(json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2))
+            return 0
         if args.command == 'ui':
             from .local_app import serve_local
             serve_local(case_path=args.case, water_directory=args.water_data,
