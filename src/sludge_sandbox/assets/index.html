@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="sandbox-token" content="__APP_TOKEN__"><title>烧结砖物理沙盒 · 研究工作台</title><link rel="stylesheet" href="/app.css"><script src="/app.js" defer></script></head>
+<body><header><div><p class="eyebrow">BRICK PHYSICS / LOCAL RESEARCH</p><h1>烧结砖物理沙盒</h1><p>编辑案例，观察计算，追查每个结果的依据。</p></div><span class="badge">离线研究 · 验证模型</span></header>
+<main><aside class="notice"><strong>当前材料边界</strong><p>当前入口是真实水物性与制造反应、规定变形的湿态数值验证案例。它尚不支持真实原污泥的完整烧制预测，不能用于判定产品合格。</p><details><summary>查看仍缺少的依据与功能</summary><ul id="unknowns"></ul></details></aside>
+<div id="message" role="status" aria-live="polite">正在载入本地案例…</div>
+<div class="workspace"><section class="panel"><h2>01 · 案例与计算</h2><p id="case-id" class="muted"></p>
+<form id="case-form"><label>厚度网格<select id="cells"><option value="2">2 格</option><option value="4">4 格，同一物理域</option></select></label>
+<label>初始场<select id="profile"><option value="gradient">温度梯度</option><option value="uniform">均匀场对照</option></select></label>
+<label>输运设置<select id="transport"><option value="coupled">耦合传热与水扩散</option><option value="control">关闭输运的验证对照</option></select></label>
+<label>时间步细化<select id="refinement"><option value="0">原案例时间步</option><option value="1">时间步减半</option></select></label>
+<label>整个进程的工作时限（秒）<input id="wall" type="number" min="0.01" max="120" step="0.01" value="120" required></label>
+<p class="muted">到限先协作取消，5 秒宽限后仍未退出则强杀。炉温程序编辑须待完整模型接入。</p>
+<div class="actions"><button type="button" id="validate">校验案例</button><button type="submit" class="primary" id="run">开始运行</button></div>
+<details><summary>案例 JSON 与分类</summary><textarea id="case-json" rows="14" aria-label="案例 JSON" spellcheck="false"></textarea><button type="button" id="apply-json">应用 JSON 编辑</button><p class="muted">允许的字段仍由同一案例校验器检查；未知材料和非有限输入会被拒绝。</p></details></form></section>
+<section class="panel"><div class="section-heading"><h2>02 · 运行记录</h2><button id="refresh" type="button">刷新</button></div><p class="muted">活动标记来自本服务持有的工作线程；保存状态不证明旧进程仍存活。</p><div id="jobs" class="job-list"></div>
+<div id="selected" hidden><h3 id="job-title"></h3><p id="job-state"></p><div class="actions"><button id="cancel" type="button">请求取消</button><button id="replay" type="button">重放</button><button id="resume" type="button">从接受步续算</button><button id="export" type="button">导出结果</button></div><details id="export-panel" hidden><summary id="export-label">生成的 JSON 报告</summary><textarea id="export-report" rows="10" aria-label="生成的 JSON 报告" readonly></textarea></details><details><summary>运行状态与资源记录</summary><pre id="job-detail"></pre></details></div></section></div>
+<section class="panel"><div class="section-heading"><h2>03 · 轨迹与空间分布</h2><label>显示量<select id="quantity"><option value="internal_energy_j">单元内能（J）</option><option value="amounts_mol">水蒸气库存（mol）</option><option value="temperature_k">温度（K，仅初终态）</option><option value="pressure_pa">压力（Pa，仅初终态）</option></select></label></div><p id="plot-note" class="muted">选择运行以查看已保存的数据。可勾选第二条记录比较。</p><div class="plots"><figure><figcaption>保存状态随时间变化</figcaption><svg id="time-chart" viewBox="0 0 640 280" role="img" aria-label="保存状态时间曲线"></svg></figure><figure><figcaption>最后保存状态的厚度单元分布</figcaption><svg id="space-chart" viewBox="0 0 640 280" role="img" aria-label="厚度单元空间分布"></svg></figure></div><div id="legend" aria-label="时间曲线图例"></div><div id="space-legend" aria-label="空间分布图例"></div></section>
+<section class="panel"><div class="section-heading"><h2>04 · 从结果追到依据</h2><button id="trace" type="button">追查当前结果量</button></div><p class="muted">库存图展示水蒸气分量；溯源入口返回完整库存向量。来源文件存在不等于对原污泥适用。</p><p id="trace-status"></p><div id="sources"></div><details><summary>完整来源依赖图与参数</summary><pre id="trace-detail"></pre></details><div id="artifact" hidden><h3 id="artifact-title"></h3><pre id="artifact-text"></pre></div></section>
+</main><footer>守恒验证、来源可读性与现实实验验证分别报告。未知项保持未知。</footer></body></html>

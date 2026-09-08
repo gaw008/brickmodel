@@ -53,8 +53,21 @@ def main(argv=None):
         command = commands.add_parser(name, help=help_text)
         command.add_argument('job_directory', type=Path)
     commands.add_parser('resources', help='显示实现与依赖版本；不调用 EOS')
+    ui = commands.add_parser('ui', help='启动仅监听本机的中文研究界面')
+    ui.add_argument('--case', required=True, type=Path)
+    ui.add_argument('--water-data', required=True, type=Path)
+    ui.add_argument('--evidence-data', type=Path)
+    ui.add_argument('--storage', required=True, type=Path)
+    ui.add_argument('--port', type=int, default=8765)
+    ui.add_argument('--maximum-jobs', type=int, default=20)
     args = parser.parse_args(argv)
     try:
+        if args.command == 'ui':
+            from .local_app import serve_local
+            serve_local(case_path=args.case, water_directory=args.water_data,
+                        evidence_directory=args.evidence_data, storage_directory=args.storage,
+                        port=args.port, maximum_jobs=args.maximum_jobs)
+            return 0
         from .run_service import run_case, trace_run, replay_run, resume_run, runtime_identity
         if args.command == 'validate':
             from .verification_case import read_case

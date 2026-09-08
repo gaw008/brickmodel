@@ -14,7 +14,7 @@
 | E05 | 材料/气氛/温压/几何匹配 | domain gate与域外测试 | in_progress |
 | E06 | unknown传播、无默认补值 | 下游阻断、fixture隔离测试 | in_progress |
 | E07 | 参数相关性与不确定性依据 | 成套材料包及joint约束 | pending |
-| E08 | 任意结果能查询到原始证据 | 当前制造湿态模型4量CLI/Python依赖图已实测（run-provenance-v1，19方程/38参数）；全周期材料和UI仍缺 | in_progress |
+| E08 | 任意结果能查询到原始证据 | 当前制造湿态模型4量CLI/Python依赖图已实测（run-provenance-v1，19方程/38参数）；local-ui-v1已实际打开界面追查来源；全周期材料仍缺 | in_progress |
 | M01 | 原污泥与SSA等身份分离 | materials身份类别+测试；真实包仍未核准 | in_progress |
 | M02 | 元素/氧化物/矿相/LOI分离 | MassAnalysis typed类别/基准；phase独立ID，运行资格仍待接入 | in_progress |
 | M03 | 湿坯初态、成型水不重复 | prepare_green_batch水账目通过；完整相库存待实现 | in_progress |
@@ -36,7 +36,7 @@
 | P15 | 强度/破坏概率等不冒充实测 | 输出资格和unknown约束 | pending |
 | P16 | 必需过程真实双向耦合 | 两格开关输运温度/能量效应通过经验分辨判据；水库存/相变反馈未分辨，真实材料全耦合仍缺 | in_progress |
 | X01 | 候选是可操作、自洽设计 | 混配/粒径/水分属性联动 | pending |
-| X02 | 批量实验可取消、恢复、限资源 | 单例普通积分器同输入/实现取消续算与累计预算实际验证（checkpoint-v1）；批量任务、全进程监督及强杀恢复仍缺 | in_progress |
+| X02 | 批量实验可取消、恢复、限资源 | 单例普通积分器同输入/实现取消续算与累计预算实际验证（checkpoint-v1）；job-supervisor-v1已有整进程时限与实际回收；批量任务及一般强杀恢复仍缺 | in_progress |
 | X03 | 敏感性与有依据不确定性 | 分类型误差、关联采样、分析 | pending |
 | X04 | 真实多代、父子关系和停止标准 | 实际评估/失败/选择记录 | pending |
 | X05 | 冻结模型/材料/目标/种子 | 不跨版本混分的运行测试 | pending |
@@ -57,9 +57,9 @@
 | V12 | 干净环境全流程运行 | 锁定依赖、实际命令/产物 | pending |
 | V13 | 当前平台与声明平台实测 | 平台报告；无假支持声明 | pending |
 | V14 | 畸形/域外/缺项/恢复检查 | 来源图畸形输入、检查点篡改/实现不符/缺接受步/累计误差反例及两次原生续算已验证；全材料/全周期仍未覆盖 | in_progress |
-| U01 | 共享内核的Python/CLI/UI | 新CLI/Python同服务，实际单例/重放与压力来源查询一致；UI尚缺 | in_progress |
+| U01 | 共享内核的Python/CLI/UI | CLI/Python/UI共用服务，local-ui-v1实际求解/重放/取消/续算/来源/无损报告通过；完整材料域流程尚缺 | in_progress |
 | U02 | 输入校验/单例/批量/UQ/搜索/重放 | 当前制造案例校验/单例/查询/重放实际验证；全周期、批量/UQ/搜索尚缺 | in_progress |
-| U03 | 中文界面编辑/取消/失败/比较 | 浏览器实测及证据 | pending |
+| U03 | 中文界面编辑/取消/失败/比较 | local-ui-v1已实测制造案例编辑/取消/超时/双记录曲线/来源/报告；炉温编辑与完整材料周期仍未接入 | in_progress |
 | U04 | 曲线/空间场/未知项/来源跳转 | 浏览器与trace集成实测 | pending |
 | A01 | 世界/政策/方程代码映射文档 | WORLD_SPEC,EVIDENCE_POLICY,EQUATION_CODE_MAP | in_progress |
 | A02 | 支持域/已知缺口/验证报告 | SUPPORTED_DOMAIN,KNOWN_GAPS,VALIDATION_REPORT | in_progress |
