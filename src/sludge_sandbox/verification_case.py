@@ -43,6 +43,7 @@ class BuiltCase:
     end_s: float
     policy: Any
     initialization: dict[str, Any]
+    depletion_policy: Any = None
 
 
 # Exact key sets make misspelled or unsupported settings errors, never defaults.
@@ -72,6 +73,10 @@ _KEYS = {
 
 
 _FREE_MODEL = 'manufactured_reacting_wet_free_slab_v1'
+_EVENT_SCHEMA = 'sludge_sandbox_free_event_case_v1'
+_DEPLETION_KEYS = 'schema time_absolute_s amount_absolute_mol energy_absolute_j temperature_absolute_k pressure_absolute_pa terminal_window_s maximum_refinements roundoff_policy common_time_horizon_s safe_inventory_fraction nested_approach terminal_method'
+_ROUNDOFF_KEYS = 'correction_absolute_mol correction_fraction_evaporated storage_absolute_mol cumulative_storage_absolute_mol element_absolute_mol cumulative_element_absolute_mol mass_absolute_kg cumulative_mass_absolute_kg cumulative_correction_absolute_mol molar_mass_kg_mol'
+
 _FREE_MECHANICS = (_KEYS['mechanics'].split())
 _FREE_MECHANICS = ' '.join(k for k in _FREE_MECHANICS if k not in (
     'knot_times_s','normal_stretches_at_knots','tangential_stretches_at_knots',
@@ -121,7 +126,10 @@ def _validate(p: dict[str, Any]) -> None:
     _require(set(p) == set(_KEYS[''].split()), 'exact top-level case keys required')
     def finite_tree(value: Any, pointer: str = '') -> None:
         if type(value) is bool:
-            _require(pointer in ('/material_qualified', '/training_eligible'), 'boolean is not a physical number: '+pointer)
+            _require(pointer in ('/material_qualified', '/training_eligible') or
+                     (p.get('schema') == _EVENT_SCHEMA and p.get('model_id') == _FREE_MODEL and
+                      pointer == '/numerics/depletion/nested_approach/reuse_ordinary_spine'),
+                     'boolean is not a physical number: '+pointer)
         elif type(value) in (int, float):
             _number(value, pointer)
         elif type(value) is dict:
@@ -133,19 +141,27 @@ def _validate(p: dict[str, Any]) -> None:
     finite_tree(p)
     if p.get('classification') != 'manufactured_verification' or p.get('material_qualified') is not False or p.get('training_eligible') is not False:
         raise CaseError('Real material or training eligibility is not evidenced by this verification model', 'evidence_incomplete')
-    _require(p.get('schema') == 'sludge_sandbox_verification_case_v1' and
-             p.get('model_id') in ('manufactured_reacting_wet_prescribed_slab_v1', _FREE_MODEL), 'unsupported schema/model', 'unsupported_model')
+    event = p.get('schema') == _EVENT_SCHEMA
+    _require((p.get('schema') == 'sludge_sandbox_verification_case_v1' and
+              p.get('model_id') in ('manufactured_reacting_wet_prescribed_slab_v1', _FREE_MODEL)) or
+             (event and p.get('model_id') == _FREE_MODEL), 'unsupported schema/model', 'unsupported_model')
     free = p['model_id'] == _FREE_MODEL
     keys = dict(_KEYS)
     if free:
         keys['mechanics'] = _FREE_MECHANICS
         keys['numerics/integration'] += ' stretch_absolute_tolerance stretch_scale'
+    if event:
+        keys['numerics'] += ' depletion'
+        keys['numerics/depletion'] = _DEPLETION_KEYS
+        keys['numerics/depletion/roundoff_policy'] = _ROUNDOFF_KEYS
     for pointer, names in keys.items():
         try:
             value = _at(p, pointer)
         except (KeyError, TypeError) as exc:
             raise CaseError('missing object: /'+pointer) from exc
         _require(type(value) is dict and set(value) == set(names.split()), 'exact keys required: /'+pointer)
+    if event:
+        _build_depletion_policy(p['numerics']['depletion'])
     _require(type(p['case_id']) is str and bool(p['case_id']) and p['case_id'].strip() == p['case_id'], 'nonempty case_id required')
     _require(type(p['scope']) is str and bool(p['scope'].strip()), 'scope required')
     for name, classification in [('solid', 'manufactured_test_fixture'), ('carrier', 'manufactured_test_fixture'),
@@ -272,6 +288,34 @@ def _validate(p: dict[str, Any]) -> None:
     for value in env['gas_cv_lower_j_mol_k'].values():
         _number(value, 'gas cv lower', positive=True)
     _require(env['gas_cv_lower_j_mol_k']['fixture'] <= cv[0]-r, 'carrier cv lower exceeds constant curve')
+
+
+def _build_depletion_policy(record: dict[str, Any]) -> Any:
+    """Construct a fully explicit numerical policy; imports make no EOS calls."""
+    from .depletion_integration import DepletionPolicy, NestedApproachPolicy
+    from .depletion_roundoff import DepletionRoundoffPolicy
+    _require(type(record) is dict and set(record) == set(_DEPLETION_KEYS.split()), 'exact depletion policy keys required')
+    _require(record['schema'] == 'sandbox_depletion_policy_v1', 'unsupported depletion policy schema')
+    _require(record['terminal_method'] == 'affine_midpoint', 'event case requires affine_midpoint')
+    for key in ('time_absolute_s','amount_absolute_mol','energy_absolute_j','temperature_absolute_k',
+                'pressure_absolute_pa','terminal_window_s','common_time_horizon_s','safe_inventory_fraction'):
+        _number(record[key], 'depletion/'+key, positive=True)
+    _require(type(record['maximum_refinements']) is int and record['maximum_refinements'] >= 2, 'at least two event refinements required')
+    rounding = record['roundoff_policy']
+    _require(type(rounding) is dict and set(rounding) == set(_ROUNDOFF_KEYS.split()), 'exact roundoff policy keys required')
+    for key,value in rounding.items():
+        _number(value, 'roundoff/'+key, positive=True)
+    nested = record['nested_approach']
+    if nested is not None:
+        _require(type(nested) is dict and set(nested) == {'maximum_step_s','reuse_ordinary_spine','strategy_id'}, 'exact nested approach keys required')
+        _number(nested['maximum_step_s'], 'nested maximum step', positive=True)
+        _require(type(nested['reuse_ordinary_spine']) is bool and nested['strategy_id']=='nested_wet_ordinary_spine_v1', 'explicit nested approach strategy required')
+    try:
+        values = {key:value for key,value in record.items() if key not in ('schema','roundoff_policy','nested_approach')}
+        return DepletionPolicy(**values, roundoff_policy=DepletionRoundoffPolicy(**rounding),
+            nested_approach=None if nested is None else NestedApproachPolicy(**nested))
+    except ValueError as exc:
+        raise CaseError('invalid depletion policy: '+str(exc)) from exc
 
 
 def _object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -507,7 +551,11 @@ def build_case(case: CaseDefinition, water_dir: str | Path) -> BuiltCase:
     from .integration import ConservedState, IntegrationPolicy
     p = case.payload
     cells, start, end = p['grid']['cells'], p['numerics']['start_s'], p['numerics']['end_s']
+    depletion = _build_depletion_policy(p['numerics']['depletion']) if p['schema']==_EVENT_SCHEMA else None
     operator, rows, temperatures = _make_model(case, Path(water_dir), cells)
+    if depletion is not None:
+        _require(depletion.roundoff_policy.molar_mass_kg_mol == operator.chemical.reference.molar_mass_kg_mol,
+                 'roundoff water molar mass differs from actual source reference')
     forward_state, fine = _forward(operator, rows, temperatures, start,p)
     if cells == 2:
         parent, coarse = forward_state, fine
@@ -545,7 +593,7 @@ def build_case(case: CaseDefinition, water_dir: str | Path) -> BuiltCase:
         policy_values[name] /= 2**p['refinement']
     policy = IntegrationPolicy(**policy_values)
     _require(read_case(case.path).sha256 == case.sha256, 'case source changed during initialization')
-    return BuiltCase(case, operator, initial, start, end, policy, initialization)
+    return BuiltCase(case, operator, initial, start, end, policy, initialization, depletion)
 
 
 def snapshot(built: BuiltCase, state: Any, time_s: float) -> dict[str, Any]:

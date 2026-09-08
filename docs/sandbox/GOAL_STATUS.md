@@ -4,6 +4,9 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+2026-09-08 free-event application实际检查点：新显式event case、事件记录严格审计、完整累计续算、run/replay/resume与事件来源目录已接入。源码100+6通过；冻结非editable安装后从/private/tmp无PYTHONPATH实际106通过5.77s，62真实安装模块与源码一致。真实water构造4项通过，但service事件生命周期使用analytic callback/builder替身，原生耦合短前缀2步19.188s通过且七trace无缺来源，但0个耗尽事件，尚未做真实耗尽event run/replay/resume。首轮监督脚本证据目录误传导致4来源缺项，原封包保留，正确目录重跑通过。已关闭系数内容绑定、删小额correction、观测/refinement严格类型审查缺口；原失败保留。详见FREE_EVENT_APPLICATION.md及research/free-event-application-v1。当前无活动EOS或测试；下一实际动作是事前登记有界原生耦合事件应用实验。空间收敛仍未成立、原污泥材料及全流程/三机制留出仍必需，Goal active。
+
+
 
 80b5331后实际progress：free schema2/4/8准入（旧prescribed仍2/4）、catalog域和UI模型专属gridoptions；修复JSON8在旧select空值→0问题，未知/不支持值在写case前拒绝。8格N/E/9stretches/当前非零Bq/界面/父误差测试通过。源码61回归1.30s，安装61回归1.24s+11Node UI通过；61实际模块和catalog/assets前后匹配。
 

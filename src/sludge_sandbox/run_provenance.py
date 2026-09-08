@@ -82,8 +82,12 @@ def _anchor(directory: Path, entry: dict[str, str]) -> dict[str, Any]:
 LEGACY_MODEL_ID = 'manufactured_reacting_wet_prescribed_slab_v1'
 
 
-def catalog_filename(model_id: str = LEGACY_MODEL_ID) -> str:
+def catalog_filename(model_id: str = LEGACY_MODEL_ID, *, case_schema: str | None = None) -> str:
     """Resolve only explicitly supported models to fixed packaged filenames."""
+    if case_schema == 'sludge_sandbox_free_event_case_v1':
+        _require(model_id == 'manufactured_reacting_wet_free_slab_v1', 'unsupported_catalog_model')
+        return 'free-wet-event-slab-equations-v1.json'
+    _require(case_schema in (None, 'sludge_sandbox_verification_case_v1'), 'unsupported_catalog_case_schema')
     names = {
         LEGACY_MODEL_ID: 'wet-slab-equations-v1.json',
         'manufactured_reacting_wet_free_slab_v1': 'free-wet-slab-equations-v1.json',
@@ -92,19 +96,22 @@ def catalog_filename(model_id: str = LEGACY_MODEL_ID) -> str:
     return names[model_id]
 
 
-def load_catalog(model_id: str = LEGACY_MODEL_ID) -> dict[str, Any]:
+def load_catalog(model_id: str = LEGACY_MODEL_ID, *, case_schema: str | None = None) -> dict[str, Any]:
     """Installed package resource, kept independent of the working directory."""
-    return json.loads(catalog_bytes(model_id))
+    return json.loads(catalog_bytes(model_id, case_schema=case_schema))
 
 
-def catalog_bytes(model_id: str = LEGACY_MODEL_ID) -> bytes:
-    raw = (Path(__file__).parent/'catalogs'/catalog_filename(model_id)).read_bytes()
+def catalog_bytes(model_id: str = LEGACY_MODEL_ID, *, case_schema: str | None = None) -> bytes:
+    raw = (Path(__file__).parent/'catalogs'/catalog_filename(model_id, case_schema=case_schema)).read_bytes()
     try:
         payload = json.loads(raw)
     except (ValueError, UnicodeDecodeError) as exc:
         raise ProvenanceError('invalid_catalog_json') from exc
     _require(isinstance(payload, dict) and payload.get('model_id') == model_id,
              'catalog_model_mismatch')
+    expected_schema = case_schema or 'sludge_sandbox_verification_case_v1'
+    _require(payload.get('case_schema', 'sludge_sandbox_verification_case_v1') == expected_schema,
+             'catalog_case_schema_mismatch')
     return raw
 
 
@@ -132,6 +139,10 @@ def build_graph(directory: str | Path, catalog: dict[str, Any]) -> dict[str, Any
         case_raw = (directory/'case.json').read_bytes()
         case = json.loads(case_raw)
         _require(case['model_id'] == catalog['model_id'], 'catalog_model_mismatch')
+        # Old ad-hoc graphs can omit schema; event cases require explicit binding.
+        expected_schema = catalog.get('case_schema', 'sludge_sandbox_verification_case_v1')
+        _require(case.get('schema', 'sludge_sandbox_verification_case_v1') == expected_schema,
+                 'catalog_case_schema_mismatch')
         case_sha = _sha(case_raw)
         nodes: dict[str, dict[str, Any]] = {}
         for equation in catalog['equations']:

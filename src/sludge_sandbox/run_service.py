@@ -87,11 +87,85 @@ def read_run(directory: str | Path) -> tuple[dict[str, Any], dict[str, Any]]:
         raise RunError('invalid_run') from exc
 
 
+_EVENT_SCHEMA = 'sludge_sandbox_free_event_case_v1'
+
+
+def _event_cancelled(parent: dict[str, Any]) -> None:
+    record = parent.get('integration')
+    if (parent.get('integration_kind') != 'water_depletion_v1'
+            or parent.get('status') != 'cancelled' or type(record) is not dict
+            or record.get('schema') != 'sandbox_depletion_result_v1'
+            or record.get('status') != 'cancelled' or record.get('reason') != 'cancel_requested'
+            or not record.get('steps')):
+        raise RunError('resume_requires_cancelled_event_prefix')
+
+
+def _run_event(built, result: dict[str, Any], parent: dict[str, Any] | None,
+               output: Path, cancel: Callable[[], bool] | None) -> None:
+    """Adapt complete event evidence without flattening it into ordinary ledgers."""
+    from dataclasses import replace
+    from .checkpoint import exact_state_equal
+    from .depletion_integration import integrate_depletion
+    from .event_record import (audit_depletion_record, encode_depletion_result,
+                               restore_final_operator, state)
+    from .verification_case import encode, snapshot
+    result['integration_kind'] = 'water_depletion_v1'
+    event_policy = built.depletion_policy
+    if event_policy is None:
+        raise RunError('event_case_requires_explicit_policy')
+    result['depletion_policy'] = encode(event_policy)
+    initial, start, operator = built.initial, built.start_s, built.operator
+    original_interfaces = tuple(operator.interfaces)
+    continuation = None
+    boundary = None
+    if parent is None:
+        result['initial_snapshot'] = encode(snapshot(built, initial, start))
+    else:
+        _event_cancelled(parent)
+        if parent.get('policy') != encode(built.policy) or parent.get('depletion_policy') != encode(event_policy):
+            raise RunError('resume_event_original_policy_mismatch')
+        record = parent['integration']
+        if not exact_state_equal(state(record['states'][0]), built.initial):
+            raise RunError('resume_live_initial_mismatch')
+        if not exact_state_equal(state(parent['initial_snapshot']['state']), built.initial):
+            raise RunError('resume_initial_snapshot_binding_mismatch')
+        # Source/case/runtime/manifest checks precede this point. Reconstruct
+        # actual modes from the freshly built original operator, never saved code.
+        operator = restore_final_operator(built.operator, record)
+        continuation = audit_depletion_record(record, built.initial, built.policy, event_policy,
+            original_interfaces, operator=operator, start_s=built.start_s, end_s=built.end_s)
+        restored = continuation.restore_result(operator)
+        initial, start = restored.states[-1], restored.times_s[-1]
+        if start >= built.end_s:
+            raise RunError('resume_requires_interior_event_prefix')
+        boundary = {key:len(record[key]) for key in ('times_s','states','steps','events','corrections','refinements')}
+        boundary.update(schema='sandbox_depletion_continuation_boundary_v1',
+            checkpoint_time_s=start, semantics='Core returns complete cumulative history; counts mark historical prefix, not a locally accepted suffix.',
+            prior_attempted_steps=restored.attempted_steps, prior_evaluations=restored.evaluations,
+            prior_rejected_trials=restored.rejected_trials, prior_elapsed_seconds=restored.elapsed_seconds)
+        result['continuation_boundary'] = boundary
+        result['checkpoint_snapshot'] = encode(snapshot(replace(built,operator=operator), initial, start))
+    _json(output/'result.json', result)
+    run = integrate_depletion(initial, operator, start_s=start, end_s=built.end_s,
+        integration_policy=built.policy, event_policy=event_policy, cancel=cancel, continuation=continuation)
+    record = encode_depletion_result(run, original_interfaces=original_interfaces)
+    # This raw complete result survives audit or diagnostic failure. It is not
+    # mislabeled as a suffix and cannot be merged a second time.
+    _json(output/'depletion_result.json', record)
+    audit_depletion_record(record,built.initial,built.policy,event_policy,original_interfaces,
+        operator=run.operator,start_s=built.start_s,end_s=built.end_s)
+    result.update(status=run.status, reason=run.reason, integration=record)
+    _json(output/'result.json', result)
+    if run.status == 'completed':
+        result['final_snapshot'] = encode(snapshot(replace(built,operator=run.operator), run.states[-1],run.times_s[-1]))
+
+
 def run_case(case_path: str | Path, water_directory: str | Path, output: str | Path, *,
              cancel: Callable[[], bool] | None = None,
              replay_of: dict[str, str] | None = None,
              evidence_directory: str | Path | None = None,
-             _resume: ResumePrefix | None = None) -> dict[str, Any]:
+             _resume: ResumePrefix | None = None,
+             _event_replay: ResumePrefix | None = None) -> dict[str, Any]:
     """Run once in a fresh directory; retain failures and accepted prefixes.
 
     Wall/step budgets are explicit case policy. Cancellation is cooperative
@@ -113,6 +187,18 @@ def run_case(case_path: str | Path, water_directory: str | Path, output: str | P
         case = read_case(output/'case.json')
         result['case_id'] = case.case_id
         result['scope'] = case.payload['scope']
+        if _event_replay is not None:
+            from .checkpoint import ResumePrefix
+            if type(_event_replay) is not ResumePrefix or _resume is not None or case.payload['schema']!=_EVENT_SCHEMA:
+                raise RunError('invalid_private_event_replay_record')
+            replay_parent=_event_replay.result()
+            if (replay_parent['case_sha256']!=result['case_sha256'] or
+                    replay_parent['runtime_before']!=result['runtime_before'] or
+                    replay_parent['runtime_after']!=result['runtime_before']):
+                raise RunError('replay_parent_binding_mismatch')
+            (output/'replay_parent').mkdir()
+            (output/'replay_parent/result.json').write_bytes(_event_replay.parent_result_raw)
+            (output/'replay_parent/manifest.json').write_bytes(_event_replay.parent_manifest_raw)
         if _resume is not None:
             from .checkpoint import ResumePrefix
             if not isinstance(_resume, ResumePrefix):
@@ -145,7 +231,8 @@ def run_case(case_path: str | Path, water_directory: str | Path, output: str | P
         for source in sorted(Path(__file__).parent.glob('*.py')):
             (output/'implementation'/source.name).write_bytes(source.read_bytes())
         from .run_provenance import catalog_bytes, evidence_paths, build_graph
-        catalog_raw = catalog_bytes(case.payload['model_id'])
+        catalog_raw = (catalog_bytes(case.payload['model_id'],case_schema=case.payload['schema'])
+            if case.payload['schema']==_EVENT_SCHEMA else catalog_bytes(case.payload['model_id']))
         (output/'equation_catalog.json').write_bytes(catalog_raw)
         catalog = json.loads(catalog_raw)
         if evidence_directory is not None:
@@ -159,8 +246,14 @@ def run_case(case_path: str | Path, water_directory: str | Path, output: str | P
                     destination.parent.mkdir(parents=True, exist_ok=True)
                     destination.write_bytes(source.read_bytes())
         _json(output/'provenance.json', build_graph(output, catalog))
-        if _resume is not None:
-            parent_files = json.loads(_resume.parent_manifest_raw)['files']
+        input_parent = _resume if _resume is not None else _event_replay
+        if input_parent is not None:
+            if (_hash(input_parent.parent_result_raw)!=input_parent.parent_result_sha256 or
+                    _hash(input_parent.parent_manifest_raw)!=input_parent.parent_manifest_sha256):
+                raise RunError('private_parent_bytes_mismatch')
+            parent_files = json.loads(input_parent.parent_manifest_raw)['files']
+            if parent_files.get('result.json')!=input_parent.parent_result_sha256:
+                raise RunError('private_parent_manifest_result_mismatch')
             for name, digest in parent_files.items():
                 if name.startswith(('water/', 'evidence/', 'implementation/')) or name in ('case.json', 'equation_catalog.json'):
                     copied = output/name
@@ -177,45 +270,56 @@ def run_case(case_path: str | Path, water_directory: str | Path, output: str | P
             built = build_case(case, output/'water')
             result.update(initialization=encode(built.initialization), policy=encode(built.policy))
             _json(output/'result.json', result)
-            if _resume is None:
-                initial = built.initial
-                start_s = built.start_s
-                policy = built.policy
-                result['initial_snapshot'] = encode(snapshot(built, built.initial, built.start_s))
+            if case.payload['schema'] == _EVENT_SCHEMA:
+                if _event_replay is not None:
+                    from .checkpoint import exact_state_equal
+                    from .event_record import state
+                    if (replay_parent.get('policy')!=encode(built.policy) or
+                            replay_parent.get('depletion_policy')!=encode(built.depletion_policy)):
+                        raise RunError('replay_original_policy_mismatch')
+                    if not exact_state_equal(state(replay_parent['initial_snapshot']['state']),built.initial):
+                        raise RunError('replay_live_initial_mismatch')
+                _run_event(built, result, parent if _resume is not None else None, output, cancel)
             else:
-                from .checkpoint import validate_cancelled, exact_state_equal, remaining_policy
-                from .integration import IntegrationPolicy
-                if encode(IntegrationPolicy(**parent['policy'])) != encode(built.policy):
-                    raise RunError('resume_policy_mismatch')
-                prefix = validate_cancelled(parent, built.policy, start_s=built.start_s, end_s=built.end_s)
-                if not exact_state_equal(prefix.states[0], built.initial):
-                    raise RunError('resume_live_initial_mismatch')
-                if prefix.states[-1].energy_model_identity != built.initial.energy_model_identity:
-                    raise RunError('resume_live_energy_binding_mismatch')
-                initial, start_s = prefix.states[-1], prefix.times_s[-1]
-                policy = remaining_policy(parent['integration'], built.policy)
-                result['suffix_policy'] = encode(policy)
-                result['checkpoint_snapshot'] = encode(snapshot(built, initial, start_s))
-            _json(output/'result.json', result)
-            from .integration import integrate
-            run = integrate(initial, built.operator, start_s=start_s,
-                            end_s=built.end_s, policy=policy, cancel=cancel,
-                            breakpoints_s=built.operator.breakpoints_s(start_s, built.end_s))
-            if _resume is None:
-                result.update(status=run.status, reason=run.reason, integration=encode(run))
-            else:
-                # Raw locally accepted suffix is evidence, not yet service acceptance.
-                suffix = encode(run)
-                _json(output/'resume_suffix.json', suffix)
-                from .checkpoint import merge_integration
-                merged, audit = merge_integration(parent['integration'], suffix, built.policy,
-                                                  start_s=built.start_s, end_s=built.end_s)
-                result.update(status=merged['status'], reason=merged['reason'],
-                              integration=merged, resume_ledger_audit=audit)
-            # Persist accepted trajectory before any diagnostic reconstruction.
-            _json(output/'result.json', result)
-            if result['status'] == 'completed':
-                result['final_snapshot'] = encode(snapshot(built, run.states[-1], run.times_s[-1]))
+                if _resume is None:
+                    initial = built.initial
+                    start_s = built.start_s
+                    policy = built.policy
+                    result['initial_snapshot'] = encode(snapshot(built, built.initial, built.start_s))
+                else:
+                    from .checkpoint import validate_cancelled, exact_state_equal, remaining_policy
+                    from .integration import IntegrationPolicy
+                    if encode(IntegrationPolicy(**parent['policy'])) != encode(built.policy):
+                        raise RunError('resume_policy_mismatch')
+                    prefix = validate_cancelled(parent, built.policy, start_s=built.start_s, end_s=built.end_s)
+                    if not exact_state_equal(prefix.states[0], built.initial):
+                        raise RunError('resume_live_initial_mismatch')
+                    if prefix.states[-1].energy_model_identity != built.initial.energy_model_identity:
+                        raise RunError('resume_live_energy_binding_mismatch')
+                    initial, start_s = prefix.states[-1], prefix.times_s[-1]
+                    policy = remaining_policy(parent['integration'], built.policy)
+                    result['suffix_policy'] = encode(policy)
+                    result['checkpoint_snapshot'] = encode(snapshot(built, initial, start_s))
+                _json(output/'result.json', result)
+                from .integration import integrate
+                run = integrate(initial, built.operator, start_s=start_s,
+                                end_s=built.end_s, policy=policy, cancel=cancel,
+                                breakpoints_s=built.operator.breakpoints_s(start_s, built.end_s))
+                if _resume is None:
+                    result.update(status=run.status, reason=run.reason, integration=encode(run))
+                else:
+                    # Raw locally accepted suffix is evidence, not yet service acceptance.
+                    suffix = encode(run)
+                    _json(output/'resume_suffix.json', suffix)
+                    from .checkpoint import merge_integration
+                    merged, audit = merge_integration(parent['integration'], suffix, built.policy,
+                                                      start_s=built.start_s, end_s=built.end_s)
+                    result.update(status=merged['status'], reason=merged['reason'],
+                                  integration=merged, resume_ledger_audit=audit)
+                # Persist accepted trajectory before any diagnostic reconstruction.
+                _json(output/'result.json', result)
+                if result['status'] == 'completed':
+                    result['final_snapshot'] = encode(snapshot(built, run.states[-1], run.times_s[-1]))
     except KeyboardInterrupt:
         result.update(status='cancelled', reason='keyboard_interrupt')
     except Exception as exc:
@@ -276,6 +380,9 @@ def trace_run(directory: str | Path, quantity: str) -> dict[str, Any]:
             raise RunError('unsupported_quantity')
     elif model == 'manufactured_reacting_wet_free_slab_v1':
         anchors = _FREE_EQUATIONS
+        if case.get('schema')==_EVENT_SCHEMA:
+            anchors = [('depletion_integration.py','integrate_depletion','Event-aware mechanical continuation with full original-prefix accounting.'),
+                       ('depletion_roundoff.py','depletion_writeback','Paired depletion correction and exact storage-roundoff evidence.'),*_FREE_EQUATIONS[1:]]
     else:
         raise RunError('unsupported_trace_model')
     if quantity in ('amounts_mol', 'internal_energy_j', 'mechanical_stretches'):
@@ -322,10 +429,37 @@ def replay_run(directory: str | Path, output: str | Path, *,
     result, manifest = read_run(directory)
     if result['runtime_before'] != runtime_identity():
         raise RunError('replay_runtime_mismatch')
+    event_binding=None
+    from .verification_case import read_case
+    saved_case=json.loads((Path(directory)/'case.json').read_bytes())
+    if isinstance(saved_case,dict) and saved_case.get('schema')==_EVENT_SCHEMA:
+        case=read_case(Path(directory)/'case.json')
+        from .checkpoint import ResumePrefix
+        from .run_provenance import catalog_filename
+        current=runtime_identity()
+        if result.get('runtime_after')!=current:
+            raise RunError('replay_runtime_mismatch')
+        if any(manifest['files'].get('implementation/'+name)!=digest for name,digest in current['modules'].items()):
+            raise RunError('replay_implementation_binding_mismatch')
+        catalog_name=catalog_filename(case.payload['model_id'],case_schema=case.payload['schema'])
+        if manifest['files'].get('equation_catalog.json')!=current['catalogs'].get(catalog_name):
+            raise RunError('replay_catalog_binding_mismatch')
+        if case.sha256!=result['case_sha256'] or case.case_id!=result.get('case_id'):
+            raise RunError('replay_case_binding_mismatch')
+        result_raw=(Path(directory)/'result.json').read_bytes()
+        manifest_raw=(Path(directory)/'manifest.json').read_bytes()
+        if _hash(result_raw)!=manifest['files']['result.json'] or json.loads(manifest_raw)!=manifest:
+            raise RunError('replay_parent_changed_after_validation')
+        event_binding=ResumePrefix(result_raw,manifest_raw,_hash(result_raw),_hash(manifest_raw))
+    if event_binding is None:
+        return run_case(Path(directory)/'case.json', Path(directory)/'water', output,
+                        cancel=cancel, replay_of={'case_sha256': result['case_sha256'],
+                        'result_sha256': manifest['files']['result.json']},
+                        evidence_directory=Path(directory)/'evidence')
     return run_case(Path(directory)/'case.json', Path(directory)/'water', output,
                     cancel=cancel, replay_of={'case_sha256': result['case_sha256'],
                     'result_sha256': manifest['files']['result.json']},
-                    evidence_directory=Path(directory)/'evidence')
+                    evidence_directory=Path(directory)/'evidence', _event_replay=event_binding)
 
 
 def resume_run(directory: str | Path, output: str | Path, *,
@@ -345,7 +479,9 @@ def resume_run(directory: str | Path, output: str | Path, *,
             raise RunError('resume_implementation_binding_mismatch')
     case = read_case(directory/'case.json')
     from .run_provenance import catalog_filename
-    catalog_sha = current['catalogs'].get(catalog_filename(case.payload['model_id']))
+    catalog_name = (catalog_filename(case.payload['model_id'],case_schema=case.payload['schema'])
+        if case.payload['schema']==_EVENT_SCHEMA else catalog_filename(case.payload['model_id']))
+    catalog_sha = current['catalogs'].get(catalog_name)
     if catalog_sha is None or manifest['files'].get('equation_catalog.json') != catalog_sha:
         raise RunError('resume_catalog_binding_mismatch')
     if case.sha256 != result['case_sha256'] or case.case_id != result.get('case_id'):
@@ -357,8 +493,14 @@ def resume_run(directory: str | Path, output: str | Path, *,
         policy = IntegrationPolicy(**policy_values)
         if encode(IntegrationPolicy(**result['policy'])) != encode(policy):
             raise RunError('resume_case_policy_mismatch')
-        validate_cancelled(result, policy, start_s=case.payload['numerics']['start_s'],
-                           end_s=case.payload['numerics']['end_s'])
+        if case.payload['schema']==_EVENT_SCHEMA:
+            from .verification_case import _build_depletion_policy
+            _event_cancelled(result)
+            if result.get('depletion_policy') != encode(_build_depletion_policy(case.payload['numerics']['depletion'])):
+                raise RunError('resume_case_event_policy_mismatch')
+        else:
+            validate_cancelled(result, policy, start_s=case.payload['numerics']['start_s'],
+                               end_s=case.payload['numerics']['end_s'])
         if not isinstance(result['initial_snapshot'], dict):
             raise RunError('resume_initial_snapshot_missing')
     except (KeyError, TypeError) as exc:

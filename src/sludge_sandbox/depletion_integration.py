@@ -309,7 +309,41 @@ def _mechanical_panel(state,first,h,second=None,hm=None):
     return np.array(after),increments,rounding
 
 
-def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,event_policy,cancel=None):
+def _restore_continuation(continuation, operator, initial, start, end, policy, event_policy):
+    """Re-audit immutable bytes; an instance's type alone is not a certificate."""
+    import json
+    from .event_record import AuditedDepletionRecord
+    from .verification_case import encode
+    if type(continuation) is not AuditedDepletionRecord:
+        raise DepletionIntegrationError('explicit_audited_depletion_continuation_required')
+    # restore_result must revalidate bytes and original-prefix invariants even
+    # for an object constructed directly rather than through the audit factory.
+    previous = continuation.restore_result(operator)
+    original = json.loads(continuation.original_policy_json)
+    if (set(original) != {'integration_policy','event_policy','start_s','end_s'}
+            or original['integration_policy'] != encode(policy)
+            or original['event_policy'] != encode(event_policy)
+            or original['end_s'] != end):
+        raise DepletionIntegrationError('continuation_original_policy_mismatch')
+    if (type(previous) is not DepletionResult or previous.status != 'cancelled'
+            or previous.reason != 'cancel_requested' or not previous.steps
+            or previous.times_s[0] != original['start_s']
+            or previous.times_s[-1] != start or start >= end):
+        raise DepletionIntegrationError('continuation_requires_interior_cancelled_prefix')
+    saved = previous.states[-1]
+    if (initial.energy_model_identity != saved.energy_model_identity
+            or not np.array_equal(initial.amounts_mol,saved.amounts_mol)
+            or not np.array_equal(initial.internal_energy_j,saved.internal_energy_j)
+            or (initial.mechanical_stretches is None) != (saved.mechanical_stretches is None)
+            or (initial.mechanical_stretches is not None
+                and not np.array_equal(initial.mechanical_stretches,saved.mechanical_stretches))):
+        raise DepletionIntegrationError('continuation_checkpoint_state_mismatch')
+    if tuple(operator.interfaces) != tuple(previous.operator.interfaces):
+        raise DepletionIntegrationError('continuation_interface_mismatch')
+    return previous
+
+
+def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,event_policy,cancel=None,continuation=None):
     from .water_phase_transfer import WaterPhaseTransfer
     if (type(initial) is not ConservedState or type(operator) not in (WaterPhaseTransfer,ManufacturedDepletionAdapter)
             or type(integration_policy) is not IntegrationPolicy or type(event_policy) is not DepletionPolicy
@@ -348,6 +382,46 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
            for name in ('ordinary','approach','terminal','dry','comparison')}
     reused={'observations':0,'panels':0}
 
+    elapsed_before = 0.0
+    if continuation is not None:
+        previous = _restore_continuation(continuation,operator,initial,start,end,policy,ep)
+        times=list(previous.times_s);states=list(previous.states);steps=list(previous.steps)
+        events=list(previous.events);corrections=list(previous.corrections)
+        totals=previous.roundoff_totals
+        cumulative_n=list(previous.cumulative_amounts_mol)
+        cumulative_u=list(previous.cumulative_energy_j)
+        # All subsequent commit checks retain the ORIGINAL initial state.
+        initial=states[0]
+        energy_binding=initial.energy_model_identity
+        evaluations=previous.evaluations;rejected=previous.rejected_trials
+        attempted=previous.attempted_steps;elapsed_before=previous.elapsed_seconds
+        refinements=list(previous.refinements)
+        costs={name:dict(values) for name,values in previous.phase_costs.items()}
+        reused=dict(previous.reuse_counts)
+        component_schema=(None if steps[0].cell_work_components_j is None
+                          else tuple(steps[0].cell_work_components_j))
+        component_residual_totals=(list(previous.cumulative_absolute_component_residual_j)
+            if previous.cumulative_absolute_component_residual_j is not None
+            else [Fraction() for _ in initial.internal_energy_j])
+        if mechanical:
+            cumulative_stretch=[Fraction() for _ in initial.mechanical_stretches]
+            cumulative_stretch_exact=list(cumulative_stretch)
+            cumulative_stretch_roundoff=list(cumulative_stretch)
+            for step in steps:
+                for i,(value,rounding) in enumerate(zip(step.stretch_increment,step.stretch_quadrature_roundoff)):
+                    represented=Fraction(float(value))
+                    cumulative_stretch[i]+=represented
+                    cumulative_stretch_exact[i]+=represented-rounding
+                    cumulative_stretch_roundoff[i]+=abs(rounding)
+
+    def elapsed():
+        measured=time.monotonic()-begin
+        if continuation is None:
+            return measured
+        exact=Fraction(elapsed_before)+Fraction(measured)
+        value=float(exact)
+        return math.nextafter(value,math.inf) if Fraction(value)<exact else value
+
     def frozen_costs(before=None):
         return MappingProxyType({name:MappingProxyType({key:value-(before[name][key] if before else 0)
             for key,value in values.items()}) for name,values in costs.items()})
@@ -363,7 +437,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
 
     def guard():
         if cancel is not None and cancel():raise _Failure('cancelled','cancel_requested')
-        if time.monotonic()-begin>=policy.maximum_wall_seconds:raise _Failure('resource_limit','wall_time_limit')
+        if elapsed()>=policy.maximum_wall_seconds:raise _Failure('resource_limit','wall_time_limit')
         if attempted>=policy.maximum_steps:raise _Failure('resource_limit','global_accepted_trial_panel_limit')
         if rejected>=policy.maximum_rejections:raise _Failure('resource_limit','total_rejection_limit')
 
@@ -407,7 +481,14 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         p=replace(policy,initial_step_s=bounded_step,maximum_step_s=bounded_step,
             maximum_steps=max(1,policy.maximum_steps-attempted),
             maximum_rejections=max(1,policy.maximum_rejections-rejected),
-            maximum_wall_seconds=max(1e-12,policy.maximum_wall_seconds-(time.monotonic()-begin)))
+            maximum_wall_seconds=max(1e-12,policy.maximum_wall_seconds-elapsed()))
+        if continuation is not None:
+            remaining=Fraction(policy.maximum_wall_seconds)-Fraction(elapsed())
+            if remaining<=0:raise _Failure('resource_limit','wall_time_limit')
+            wall=float(remaining)
+            if Fraction(wall)>remaining:wall=math.nextafter(wall,0.)
+            if wall<=0:raise _Failure('resource_limit','wall_time_limit')
+            p=replace(p,maximum_wall_seconds=wall)
         pending=None
         def checked_operator(stage,at):
             nonlocal pending
@@ -962,6 +1043,6 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
     except DomainExit as exc:status='domain_exit';reason=str(exc)
     except (IntegrationError,DepletionRoundoffError,ValueError,OverflowError) as exc:status='failed';reason=str(exc)
     return DepletionResult(status,reason,tuple(times),tuple(states),tuple(steps),tuple(events),tuple(corrections),operator,
-        totals,tuple(cumulative_n),tuple(cumulative_u),evaluations,rejected,attempted,time.monotonic()-begin,tuple(refinements),ep.safe_inventory_fraction,
+        totals,tuple(cumulative_n),tuple(cumulative_u),evaluations,rejected,attempted,elapsed(),tuple(refinements),ep.safe_inventory_fraction,
         tuple(component_residual_totals) if component_schema not in (...,None) else None,
         frozen_costs(),MappingProxyType(dict(reused)),nested.strategy_id if nested else 'legacy',ep.terminal_method)
