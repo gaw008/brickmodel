@@ -152,7 +152,7 @@ def _validate(p: dict[str, Any]) -> None:
                                  ('reaction', 'manufactured'), ('mechanics', 'manufactured_test_fixture'), ('transport', 'manufactured')]:
         _require(p[name]['classification'] == classification, 'unsupported material classification: '+name, 'evidence_incomplete')
     grid, water, solid, carrier = (p[key] for key in ('grid', 'water', 'solid', 'carrier'))
-    _require(type(grid['cells']) is int and grid['cells'] in (2, 4) and type(grid['parent_cells']) is int and grid['parent_cells'] == 2, 'only fixed-domain two/four cell verification supported', 'unsupported_model')
+    _require(type(grid['cells']) is int and grid['cells'] in ((2, 4, 8) if free else (2, 4)) and type(grid['parent_cells']) is int and grid['parent_cells'] == 2, 'only fixed-domain two/four prescribed or two/four/eight free cells supported', 'unsupported_model')
     _require(_number(grid['half_thickness_m'], 'grid/half_thickness_m', positive=True) == .02 and
              _number(grid['reference_face_area_m2'], 'grid/reference_face_area_m2', positive=True) == .01,
              'this verification model has fixed .02 m/.01 m2 domain', 'unsupported_model')

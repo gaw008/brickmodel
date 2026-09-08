@@ -1,0 +1,13 @@
+# Four-cell actual feasibility audit: PASS, no blockers
+
+Independently recomputed all-species reaction+face ledger, cell E, full mechanical represented/exact/cumulative absolute roundoff, constraint cancellation and global pressure-volume work with Fraction. All original scaled policies pass. Current source-before hashes match;89 manifest artifacts match. No EOS or production edits. Machine results: four-audit-metrics.json.
+
+Initial four-cell child inventory and energy exact sums equal prior two-cell parents. Both runs use same runtime, horizon and2 accepted panels; four-cell local Nabs/Eabs/scales are halved and resource wall60 versus prior120. Compare only as exploratory different-grid evidence, not matched-policy convergence. Maximum restricted parent E difference1.5258513e-5J; N difference2.5635266e-15mol. Central material-plane total energy integral changes from-1.5258651e-5 to-3.0517162e-5J; gas H2O integral from-2.9548161e-17 to-5.9096298e-17mol. Near doubling is consistent with steeper discretized gradients at the unresolved initial interface; it is NOT a converged flux claim. No source or physical diffusion coefficient was changed.
+
+Measured integration13.0993→26.1118s (15 evaluations each), service16.5946→32.5229s. Four-cell incremental rate≈1.74079s/evaluation, startup/final overhead≈6.4110s. Thus four-cell time-fine29 evaluations predict50.48s integration,56.89s service before adaptive rejection/OS variance. Source change for8-cell admission must be frozen before next run; new runtime cannot be labelled exact same-runtime replay of old evidence.
+
+## Next four-cell fine preregistration, not executed
+
+Retain exact four-cell physical case, scaled Nabs5e-13/Eabs5e-9/scales5e-5/.5, relative1e-7 and intensive stretchabs1e-9/scale1. Only refinement=1 halves initial/max cap2^-17→2^-18s; same15.258789us horizon. Set integration wall120s, owned outer150s, max100panels/100reject unchanged. This retains the prior staged plan and gives margin over measured~57s service expectation. Register new case/runtime/source digests before serial native launch after all candidate edits applied and freeze confirmed. Save full failures, no retry or tolerance change on failure. Require distinct actual mesh4panels vs2, all prefix budgets and same-shape final comparisons; report time difference independently. Do not compare spatial asymptotic order until8-cell and time-error/point-uncertainty separation are established. If new source changes scientific formulas, rerun the relevant coarse control before combined conclusions.
+
+Remaining Goal includes real-material source qualification, full wet-to-fired/cooling cycle and experimental validation; this microscopic-horizon feasibility result satisfies none of those by itself.

@@ -15,13 +15,25 @@ async function api(path, body, rawText=false) {
   return value;
 }
 function handle(action) { return async(event) => { event?.preventDefault(); try { await action(); } catch(error) { message(error.message,true); } }; }
+function supportedGridSizes(model) {
+  if(model==='manufactured_reacting_wet_free_slab_v1')return [2,4,8];
+  if(model==='manufactured_reacting_wet_prescribed_slab_v1')return [2,4];
+  throw new Error('不支持的案例模型。');
+}
 function fillControls() {
+  const sizes=supportedGridSizes(caseData.model_id);
+  if(!sizes.includes(caseData.grid.cells))throw new Error('该模型不支持此网格数量。');
+  $('cells').replaceChildren(...sizes.map(size=>{
+    const option=document.createElement('option');option.value=String(size);option.textContent=String(size);return option;
+  }));
   $('cells').value=String(caseData.grid.cells); $('profile').value=caseData.profile;
   $('transport').value=caseData.transport_mode; $('refinement').value=String(caseData.refinement);
   $('case-json').value=JSON.stringify(caseData,null,2);
 }
 function controlsToCase() {
-  caseData.grid.cells=Number($('cells').value); caseData.profile=$('profile').value;
+  const cells=Number($('cells').value);
+  if(!supportedGridSizes(caseData.model_id).includes(cells))throw new Error('请选择该模型支持的网格数量。');
+  caseData.grid.cells=cells; caseData.profile=$('profile').value;
   caseData.transport_mode=$('transport').value; caseData.refinement=Number($('refinement').value);
   $('case-json').value=JSON.stringify(caseData,null,2);
   return structuredClone(caseData);

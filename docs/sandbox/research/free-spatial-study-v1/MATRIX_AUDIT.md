@@ -1,0 +1,11 @@
+# Six-run comparison
+
+See matrix-audit-metrics.json. All six completed sealed results verified. Comparison uses exact extensive parent-bin restrictions and width-weighted normal stretches; common tangent is global. Temperature uses explicitly reference-volume-weighted parent averages with summed weighted inverse bounds. All source byte differences are reported; verification_case changes must retain their independent gate-only review evidence. No same-runtime replay claim. The10x flag uses only available bounds and cannot manufacture a complete trajectory error certificate. No spatial order is asserted. Full wet/fired/cooling physics, source-qualified sludge and experimental validation remain outstanding. No EOS executed by this audit.
+
+## Actual six-run conclusion
+
+All six have distinct coarse/fine2/4-panel meshes, caps2^-17/2^-18s and the same2^-16s physical interval. Both newly completed fine runs independently passed every accepted-prefix species, localenergy, globalpressurework, represented/exactmechanical and cumulativequadrature/constraint audits (fine-prefix-metrics.json; audit_prefixes.py). All audit executions exited0; no gate was changed.
+
+Temporal parent-bin temperature changes for2/4/8 are1.1653e-11,2.8990e-12,1.4495e-12K, below paired inverse point bounds~8.24e-8K. Temporal precision is not independently resolved. Time-finer spatial parent-bin E differences2→4 and4→8 are1.52586e-5 and3.05161e-5J; corresponding temperature differences1.52254e-6 and3.04496e-6K. Both approximately double rather than decrease; the temperature differences exceed10×available temporal-plus-point bound. The study therefore rejects a spatial-convergence claim at these grids and this horizon. It does not turn the observed differences into a full trajectory uncertainty certificate. No apparent positive convergence order is reported.
+
+Initial discontinuity and minuscule diffusion duration remain the physical explanation consistent with near-doubling middle-face flux. Longer-duration or independently designed spatial verification is still necessary, and cannot be replaced by these six successful solver runs. Source-module byte comparison permits/report only verification_case changes; physics modules match. CaseSHA-bound identities and runtime versions remain different, so combined study is not exact replay.

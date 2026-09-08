@@ -1,0 +1,9 @@
+# Six-run free-slab grid/time study
+
+Actual2/4/8cells eachhave2/4 accepted panels and15/29 evaluations over2^-16s. Five new native runs completed;2coarse reuses archived actual prior baseline. All six sealed bundles are inraw-evidence.zip including explicit two-coarse-baseline. No numerical physics/source envelope was changed to obtain completion. Fine-cell extensive integration budgets scale2/cells; mechanical tolerance remains intensive.
+
+All native runs and independent Fraction prefix audits completed. MATRIX_AUDIT.md reports the central finding: time-finer spatial parent-temperature differences1.52254e-6→3.04496e-6K increase rather than decrease. No spatial convergence/order claim. Paired time temperature changes are below~8.24e-8K point-inversion bounds; this is not a complete trajectory uncertainty certificate. Full priorcode/case/runtime differences are preserved; scientific module bytes match, only case8admission differed. No exact same-runtime replay claim.
+
+Only free schema8 admission and matchingcatalog/UI choices changed. OriginalcaseJSON/physics unchanged. Candidate RED/development errors (NameError and test keyword call), exactbefore bytes, reviews and actualdryoutputs are preserved. Root61tests passed1.30s; installed61passed1.24s and11Node UItests passed. Actual61installed modules and2catalog/JS/HTML matchedsource. Lasttwo native fine runs usedthe installedpackage. No active native runsremain.
+
+The prior audit's GlobalNEST recommendation is retained as a read-only suggestion, not a new scientific result or approval to repeat an already rejected closure audit. Its previously identified mass/product/caloric gaps remain. Nextsoftware dependency is explicit event-aware freecase/service with finalinterface and checkpoint evidence; initial-rate depletion scale~0.27ms is not an event prediction. No raw-sludge material/full firing/cooling admission.

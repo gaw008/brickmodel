@@ -5,6 +5,15 @@
 ## 当前恢复入口（后续详细历史保留）
 
 
+80b5331后实际progress：free schema2/4/8准入（旧prescribed仍2/4）、catalog域和UI模型专属gridoptions；修复JSON8在旧select空值→0问题，未知/不支持值在写case前拒绝。8格N/E/9stretches/当前非零Bq/界面/父误差测试通过。源码61回归1.30s，安装61回归1.24s+11Node UI通过；61实际模块和catalog/assets前后匹配。
+
+完整实际2/4/8×粗细时间矩阵已完成，新增5原生组、复用原2coarse；均2/4steps、15/29eval无拒步。4coarse32.52s、4fine53.14s、8coarse58.90s、2fine26.49s、8fine106.55s；27357/92902/10876/98307全终态，无活动EOS。逐prefix/封存/当前科学模块逐字比较审计通过；最后2fine/8fine为实际安装运行，不重旧成功组。
+
+关键结论为不支持空间收敛：时间细化后的父格温差2→4为1.52254e-6K，4→8为3.04496e-6K，增长约一倍；大于可用时间+反解界10倍门槛。时间变化低于约8.24e-8K反解界，不能宣称其极小差是独立精度。完整证据research/free-spatial-study-v1，说明FREE_SPATIAL_STUDY.md，原科学/精度门槛未宽。
+
+下一具体事件服务设计由reacting_skeleton_provider仅在/private/tmp/brick-free-event-service-design准备，需显式DepletionPolicy/校正/最终interfaces/全机械prefix与checkpoint累计预算，避免ordinary服务在液水耗尽后继续错误模式。初态Nliq/r约0.27–0.28ms仅量级估计非事件定位。原GNEST缺质量/产品caloric材料问题仍保留，不重做已拒绝审计冒进度。原污泥、三机制公开留出、全湿烧成冷却及完整空间验证仍未完成，Goal active。
+
+
 7f3d24b后实际完成free case应用接入：独立严格schema/current储能+反应自由主机/全机械初态及快照、2/4格beta/V0/界面/父误差缩放；独立20方程7root目录，run/replay/resume/trace真实模型选择与自由锚点；UI逐格n/全局t分开、溯源完整向量。说明FREE_CASE_APPLICATION.md，证据research/free-case-app-v1。
 
 真实水应用2steps15eval16.59s通过；独立逐prefix全物种9.89e-17mol/局部E2.33e-11J/全局外功1.46e-11J，反应/两格蒸发/水蒸气扩散/热/自由形变真实共同活动，7trace无缺来源。重放逐位相同；首次callback3取消零前缀的测试失败保留，按实际guard位置callback19后取消1step+续算成功、原prefix不变，合计19.33s。91971/12781/56117均已终态；无活动EOS，不重复成功native。
