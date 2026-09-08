@@ -54,8 +54,6 @@ class FreeSolidSlab:
         if (type(base) is not SolidFluidHeat or type(points) is not tuple or not points
                 or len(points)!=len(base.storages) or any(type(p) is not CurrentSolidStorage for p in points)):
             raise IntegrationError('explicit_complete_current_solid_points_required')
-        if any(p.solid_inventory_regime != 'fixed_solid' for p in points):
-            raise IntegrationError('reacting_current_points_not_admitted_by_fixed_free_slab')
         if base.solid_reactions is not None:raise IntegrationError('fixed_solid_reactions_not_admitted')
         if self.allow_manufactured is not True or base.transport.coefficient_classification!='manufactured':
             raise IntegrationError('explicit_manufactured_transport_required')

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="3" time="0.373" timestamp="2026-09-08T11:27:53.049463-10:00" hostname="MacBookPro.lan"><testcase classname="test_reacting_current" name="test_changed_composition_energy_pore_pressure_and_temperature" time="0.005"><failure message="TypeError: CurrentSolidStorage.__init__() got an unexpected keyword argument 'solid_inventory_regime'">water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+
+    def test_changed_composition_energy_pore_pressure_and_temperature(water):
+&gt;       point=fixture(water);identity=point.identity
+              ^^^^^^^^^^^^^^
+
+/private/tmp/brick-reacting-current-point-candidate/test_reacting_current.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+reacting = True
+
+    def fixture(water,reacting=True):
+        old=build(water)
+        skeleton=old.skeleton
+        if reacting:
+            skeleton=ManufacturedReactingSkeletonEnergy(reference_model=skeleton,composition_offset=.5,
+                composition_weights_per_mol=(('fixture_solid',.25),),model_id='manufactured-q',version='1',
+                classification='manufactured_test_fixture',allow_manufactured=True)
+&gt;       return m.CurrentSolidStorage(template=old.template,skeleton=skeleton,error_bounds=old.error_bounds,
+            model_id='current',version='1',allow_manufactured=True,solid_inventory_regime='reacting_manufactured' if reacting else 'fixed_solid')
+E       TypeError: CurrentSolidStorage.__init__() got an unexpected keyword argument 'solid_inventory_regime'
+
+/private/tmp/brick-reacting-current-point-candidate/test_reacting_current.py:21: TypeError</failure></testcase><testcase classname="test_reacting_current" name="test_fixed_default_identity_numeric_parity" time="0.003"><failure message="TypeError: CurrentSolidStorage.__init__() got an unexpected keyword argument 'solid_inventory_regime'">water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+
+    def test_fixed_default_identity_numeric_parity(water):
+&gt;       p=fixture(water,False)
+          ^^^^^^^^^^^^^^^^^^^^
+
+/private/tmp/brick-reacting-current-point-candidate/test_reacting_current.py:54: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+reacting = False
+
+    def fixture(water,reacting=True):
+        old=build(water)
+        skeleton=old.skeleton
+        if reacting:
+            skeleton=ManufacturedReactingSkeletonEnergy(reference_model=skeleton,composition_offset=.5,
+                composition_weights_per_mol=(('fixture_solid',.25),),model_id='manufactured-q',version='1',
+                classification='manufactured_test_fixture',allow_manufactured=True)
+&gt;       return m.CurrentSolidStorage(template=old.template,skeleton=skeleton,error_bounds=old.error_bounds,
+            model_id='current',version='1',allow_manufactured=True,solid_inventory_regime='reacting_manufactured' if reacting else 'fixed_solid')
+E       TypeError: CurrentSolidStorage.__init__() got an unexpected keyword argument 'solid_inventory_regime'
+
+/private/tmp/brick-reacting-current-point-candidate/test_reacting_current.py:21: TypeError</failure></testcase><testcase classname="test_reacting_current" name="test_regime_allzero_and_target_guards" time="0.004"><failure message="TypeError: CurrentSolidStorage.__init__() got an unexpected keyword argument 'solid_inventory_regime'">water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+
+    def test_regime_allzero_and_target_guards(water):
+&gt;       p=fixture(water)
+          ^^^^^^^^^^^^^^
+
+/private/tmp/brick-reacting-current-point-candidate/test_reacting_current.py:64: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+reacting = True
+
+    def fixture(water,reacting=True):
+        old=build(water)
+        skeleton=old.skeleton
+        if reacting:
+            skeleton=ManufacturedReactingSkeletonEnergy(reference_model=skeleton,composition_offset=.5,
+                composition_weights_per_mol=(('fixture_solid',.25),),model_id='manufactured-q',version='1',
+                classification='manufactured_test_fixture',allow_manufactured=True)
+&gt;       return m.CurrentSolidStorage(template=old.template,skeleton=skeleton,error_bounds=old.error_bounds,
+            model_id='current',version='1',allow_manufactured=True,solid_inventory_regime='reacting_manufactured' if reacting else 'fixed_solid')
+E       TypeError: CurrentSolidStorage.__init__() got an unexpected keyword argument 'solid_inventory_regime'
+
+/private/tmp/brick-reacting-current-point-candidate/test_reacting_current.py:21: TypeError</failure></testcase></testsuite></testsuites>

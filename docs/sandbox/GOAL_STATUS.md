@@ -4,6 +4,10 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+f1f1349后已实际接入CurrentSolidStorage显式reacting_manufactured模式：当前Ns→q储能/固体体积/孔隙/总E反解；默认fixed身份/数值保留。FreeSolidSlab提前明确拒reacting点，尚未扩自由速率。源码39项3.68s、安装62项3.84s通过（45446/99141已exit0），61实际模块逐字匹配；两份独立审查通过。原候选/RED/源码hash/安装XML保存research/reacting-current-point-v1，说明REACTING_CURRENT_STORAGE.md。无活动EOS/测试，当前阶段可提交。
+
+下一候选由reacting_skeleton_provider仅在/private/tmp/brick-reacting-free-rates-candidate隔离准备：solve_free_slab_rates显式reacting模式，实际q(N)*eta与加权共同t分母，固定路径兼容/当前Ns与误差界；没有repo应用、没有host反应准入。恢复先查看候选与审查，不重跑旧439s事件。原三机制公开留出/原泥材料/全湿烧成冷却/空间收敛仍未完成，Goal active。
+
 233bb8c后本阶段实际progress已完成：真实水两格mixed depletion运行439.44s/积分436.173s、305eval、19步、唯一cell0事件3.041741648e-5s，cell1仍湿且凝结。原两终端+独立不同网格六门槛通过。逐prefix水3.84e-16mol/局部E1.65e-10J/全局外功1.06e-10J，实际局部C约4.25e-6J且全局抵消。163源码hash在解冻前独立一致；session58808已exit0，无活动EOS。全部初末snapshot/失败/分支审计见FREE_SLAB_DEPLETION.md与research/free-slab-depletion-v1。
 
 另新增独立dry gas/enthalpy/自由力学轨迹：16/32步对DOP853通过，原失败保留、外部gate未放宽；陈旧几何负对照可辨。正式安装61实际模块匹配，18相关气流/机械事件测试9.25s通过（99499已exit0），另候选installed5项3.57s。生产源码仍233bb8c，无重复7分钟原生EOS。下一已审候选仅在/private/tmp/brick-reacting-current-point-candidate：CurrentSolidStorage显式reacting_manufactured/currentNs/q储能与孔体积，4drypass，另FreeSlab固定模式提前拒reactingpoint的最小guard1pass；尚未应用repo。先核候选与两个审查再推进自由rates当前qeta、真实反应源与整体能量；完整原泥/边界/空间收敛/三机制留出仍必需，Goal active。

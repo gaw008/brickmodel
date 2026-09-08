@@ -16,7 +16,6 @@ from sludge_sandbox.deforming_solid_storage import (
     _out, _upper, solid_provider_identity,
 )
 from sludge_sandbox.dynamic_solid_storage import DynamicStorageErrorBounds
-from sludge_sandbox.reacting_skeleton_energy import ManufacturedReactingSkeletonEnergy
 from sludge_sandbox.geometry import CurrentSlab
 from sludge_sandbox.phase_storage import InversePolicy
 from sludge_sandbox.skeleton_energy import DiagonalSkeletonEnergy, SkeletonEnergyState
@@ -62,21 +61,16 @@ class CurrentSolidInverse:
 @dataclass(frozen=True, kw_only=True)
 class CurrentSolidStorage:
     template: SolidFluidStorage
-    skeleton: DiagonalSkeletonEnergy | ManufacturedReactingSkeletonEnergy
+    skeleton: DiagonalSkeletonEnergy
     error_bounds: DynamicStorageErrorBounds
     model_id: str
     version: str
     allow_manufactured: bool
-    solid_inventory_regime: str = 'fixed_solid'
     _template_digest: str = field(init=False, repr=False)
 
     def __post_init__(self) -> None:
-        if self.solid_inventory_regime not in ('fixed_solid','reacting_manufactured'):
-            raise DeformingStorageError('explicit_solid_inventory_regime_required')
-        reacting = self.solid_inventory_regime == 'reacting_manufactured'
-        expected_type = ManufacturedReactingSkeletonEnergy if reacting else DiagonalSkeletonEnergy
         if (type(self.template) is not SolidFluidStorage or
-                type(self.skeleton) is not expected_type or
+                type(self.skeleton) is not DiagonalSkeletonEnergy or
                 type(self.error_bounds) is not DynamicStorageErrorBounds):
             raise DeformingStorageError('explicit_dynamic_storage_skeleton_bounds_required')
         if self.allow_manufactured is not True:
@@ -85,22 +79,20 @@ class CurrentSolidStorage:
         _label(self.version)
         if solid_provider_identity(self.template.solid_phases) != self.skeleton.solid_provider_identity:
             raise DeformingStorageError('actual_solid_identity_mismatch')
-        reference_model = self.skeleton.reference_model if reacting else self.skeleton
-        if {key for key, _ in reference_model.fixed_solid_inventory_mol} != set(self.template.solid_phases):
+        if {key for key, _ in self.skeleton.fixed_solid_inventory_mol} != set(self.template.solid_phases):
             raise DeformingStorageError('complete_fixed_solid_inventory_required')
         expected, actual = self.skeleton.reference_volume_m3, self.template.bulk_volume_m3
         if abs(actual-expected) > 2*max(math.ulp(actual), math.ulp(expected)):
             raise DeformingStorageError('reference_bulk_volume_mismatch')
         for domain in (self.error_bounds.normal_stretch_range, self.error_bounds.tangential_stretch_range):
-            if not reference_model.stretch_range[0] <= domain[0] < domain[1] <= reference_model.stretch_range[1]:
+            if not self.skeleton.stretch_range[0] <= domain[0] < domain[1] <= self.skeleton.stretch_range[1]:
                 raise DeformingStorageError('error_domain_outside_skeleton_domain')
         object.__setattr__(self, '_template_digest', _digest(self.template))
 
     @property
     def identity(self) -> tuple:
         return (self.model_id, self.version, self._template_digest, self.skeleton.identity,
-                _digest(self.error_bounds), ('current_reacting_manufactured_total_point_v1'
-                    if self.solid_inventory_regime == 'reacting_manufactured' else 'current_fixed_solid_total_point_v1'), SCOPE)
+                _digest(self.error_bounds), 'current_fixed_solid_total_point_v1', SCOPE)
 
     def target(self, value_j: float, error_bound_j: float) -> TotalEnergyTarget:
         return TotalEnergyTarget(value_j, error_bound_j, self.identity)
@@ -164,11 +156,8 @@ class CurrentSolidStorage:
         total = _out(exact)
         rounding = abs(Fraction(total)-exact)
         bound = _upper(Fraction(thermal.energy_error_bound_j)+Fraction(error)+rounding)
-        state = CurrentSolidState(thermal, skeleton, deformation, total, bound, error,
+        return CurrentSolidState(thermal, skeleton, deformation, total, bound, error,
             _upper(rounding), bulk_error, self.error_bounds, self.identity, storage)
-        if self.solid_inventory_regime == 'reacting_manufactured':
-            return replace(state, qualification='manufactured_reacting_current_state_storage_not_material_admission')
-        return state
 
     def forward(self, temperature_k: float, *, normal_stretches: tuple[float, ...], tangential_stretch: float,
                 liquid_mol: float, gas_mol: Mapping[str, float], solid_mol: Mapping[str, float]) -> CurrentSolidState:
