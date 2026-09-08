@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+固定域4格阶段已完成实际验证：2初态callback各144项面代数检查通过，171项无EOS缩放和6负控通过；4格2/4步轨迹completed30.990010/55.240541s，局部账本门槛减半后仍通过，2/4网格保守比较已完成。空间T诊断差±1.4464e-6K，远大于时间cap差，空间收敛仍未证明。43实际安装模块/4监督输入before-after-current一致，无活动EOS/测试。归档 research/fixed-domain-spatial-v1；原中间孔容构造缺陷候选保留并已修正。下一优先动作按归档NEXT_NUMERICAL_PRIORITY复现/修复普通分段时间节点单ULP尾段问题，保留原失败与中点可表示性门槛；不是继续把极短跳跃场网格比较称为全周期完成。生产/测试仍67730b2。原污泥材料闭合、自由烧结冷却、三公开机制及留出、CLI/UI、多代搜索等完整Goal继续未完成。下文live句柄为已终态历史记录。
+
+固定域4格运行检查点：修正中间流体模板体积构造后，冻结fixture66639ad9/PLAN1ad81a3b（原候选保存在preflight-original）。两初态callback84987/58680终态通过，gradient/uniform各144项独立面代数审计通过，初N/E保守继承及同温forward广延性通过。wet4 coarse session71600已completed30.990010s/2步，逐格账本通过；当前唯一EOS为fine session15156，先轮询同句柄，未通过不可执行网格比较。源码/安装/实验脚本冻结。下一步fine账本、保守2/4网格差异与时间cap分开比较、源身份复核及归档。该短跳跃初场两网格不证明收敛；完整Goal仍active。
+
+固定域空间细化准备中：当前生产/测试仍 67730b2，上一阶段证据提交 c62fb2f。新实验 /private/tmp/brick-fixed-spatial-v1 保持0.02m半板，4格库存/微界面面积/相变系数减半、q权重倍增，初始N/E保守细分。独立无EOS缩放检查已实际通过171项及6个错误权重负控，证据 /private/tmp/brick-fixed-spatial-audit-v1/scaling-result.json。新脚本/初态来源界正在交叉审查；尚未运行新callback或4格轨迹，无活动EOS/测试。下一步完成审查后先初态callback，再固定两timecap轨迹与独立账本/保守网格比较；两个网格不能宣称空间收敛，完整材料/全周期Goal仍未完成。
+
 两格阶段实际完成：4 条轨迹全部 completed（coupled 2/4 步，control 2/4 步），逐格/全域独立账本通过，四组固定判据比较完成。温度约 ±1.4464e-6 K 与能量效应分辨，水库存及相变速率效应未分辨。6 个监督进程均终态，无活动 EOS/测试；全部输入 before/after/current 一致（callback 各180、wet 各181），43 实际安装模块与源码一致。生产/测试仍 67730b2，本轮仅实验/审计及文档证据。归档目标 research/two-cell-wet-coupling-v1；下一步按其中 NEXT_SPATIAL_SCOPE 保持固定物理域与广延量做空间细化，不能简单复制 q(N) 权重。完整 Goal 的真实原泥材料、自由烧结冷却、三个公开机制/留出、CLI/UI 和多代搜索仍未完成。下文旧 live 句柄均为历史检查点，不得据此重启。
 
 当前两格验证（生产仍67730b2，源码/测试未改）：新冻结实验 /private/tmp/brick-reacting-wet-two-cell-v1，2格300/301K、规定变形、A/B反应、活动相变及内部传热/质量修正扩散；制造系数与真实水来源分开。coupled/control freshcallback66328/61026均terminalcomplete2.467376/2.453034s，耦合内面非零/对照全零，43源码安装字节匹配。当前唯一EOS为wet-coupled-0 session25354，2步上限起始设置，内部120/外部150秒100panel。审计脚本 /private/tmp/brick-two-cell-audit-v1 保存逐格/全域精确账本及失败；完整4run两mode两cap尚未完成，不能宣称空间收敛或全砖完成。先poll25354终态和独立账本，再依次剩余三条，保持所有输入冻结。

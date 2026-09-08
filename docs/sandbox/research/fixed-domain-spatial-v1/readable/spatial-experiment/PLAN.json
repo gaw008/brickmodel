@@ -1,0 +1,420 @@
+{
+  "experiment_id": "manufactured-fixed-domain-spatial-2-to-4-v1",
+  "status": "preregistered_not_executed",
+  "purpose": "Conservative spatial refinement2\u21924 at fixed half-thickness. Coupled4cell only first, original matched2cell coupled runs reused. Optional uniform-profile callback supplies a separate scaling/zero-gradient check, not reuse of gradientenergies.",
+  "scope": "ManufacturedAB,phase conductance,q/skeleton and transport; qualified water. Two spatial samples are not convergence; original discontinuous central jump may double initial fineflux. No coefficientretuning or fullbrick/rawsludge/free-sintering claim.",
+  "fixed_geometry": {
+    "half_thickness_m": 0.02,
+    "reference_face_area_m2": 0.01,
+    "allowed_cells": [
+      2,
+      4
+    ],
+    "current_facearea_unchanged": "same prescribed tangential stretch; no microarea/facearea conflation"
+  },
+  "extensive_derivation": {
+    "scale": "2/cells",
+    "reference_width_m": ".02/cells",
+    "reference_bulk_m3": "1e-4*scale",
+    "reference_bulk_error_m3": "1e-18*scale",
+    "all_inventory_mol": "parent*scale with exactFraction parentpair/global sum checks",
+    "micro_interface_area_m2": ".003*scale (density30 m2/m3)",
+    "phase_coefficient_mol_s_pa": "1e-6*scale (density.01 mol/(s Pa m3))",
+    "skeleton_fixed_A_mol": "2*scale",
+    "q0": 1,
+    "wA_per_mol": 0,
+    "wB_per_mol": "10/scale; betaB=.001 m3/mol; q invariant at equal composition density",
+    "per_mole_property_uncertainties": "unchanged"
+  },
+  "inherited_physics": {
+    "solid": {
+      "caloric_and_volume_fixture": "test_incompressible_solid.phase/caloric, matching test_reacting_deforming_solid_heat A/B",
+      "molar_mass_kg_mol": 0.012,
+      "cp_j_mol_k": 5,
+      "vA_m3_mol": 2e-05,
+      "vB_m3_mol": 1e-05,
+      "formation_enthalpy_A_j_mol": -100000,
+      "formation_enthalpy_B_j_mol": -100005,
+      "reference_pressure_pa": 100000.0,
+      "delta_u_BA_j_mol": -4,
+      "declared_u_error_j_mol": 2e-07,
+      "declared_v_error_m3_mol": 1e-12,
+      "rate": "A -> B; k=0.1 /s, Ea=0, complete current storage rebinding",
+      "kinetic_temperature_domain_k": [
+        295,
+        310
+      ],
+      "domain_note": "Explicit new manufactured valid domain; dry helper default300..1500 not reused because wet cooling may cross300",
+      "element_definition": "A and B each have one declared C atom; no invented elemental composition for inert carrier"
+    },
+    "mechanics_intensive": {
+      "bulk_modulus_pa": 1000,
+      "shear_modulus_pa": 400,
+      "viscosity_pa_s": 3,
+      "interface_gamma_j_m2": 100
+    },
+    "water": "Installed approved HEOS 8.0.0 with matched IdealWaterVapor and WaterChemicalPotential; exact current source/hash guards unchanged",
+    "inverse_policy": {
+      "energy_absolute_j": 1e-06,
+      "temperature_absolute_k": 1e-06,
+      "maximum_iterations": 120
+    },
+    "transport_coupled": {
+      "conductivities_w_m_k": [
+        1,
+        1
+      ],
+      "H2O_diffusivities_m2_s": [
+        1e-08,
+        1e-08
+      ]
+    },
+    "carrier_diffusivity": 0,
+    "permeability": 0,
+    "relative_permeability": 1,
+    "gas_viscosity_pa_s": 1e-05,
+    "boundaries": "externallysealed; no liquid transport",
+    "motion": "same0\u21921s rest-to-rest smoothstep1\u2192.9 eachcell; four actual cellindices; tangentialstretchunchanged"
+  },
+  "initialization": {
+    "gradient_temperatures_k": [
+      300,
+      300,
+      301,
+      301
+    ],
+    "gradient_parent_rows_mol": [
+      [
+        2,
+        0,
+        1e-08,
+        1e-06,
+        0.001
+      ],
+      [
+        2,
+        0,
+        2e-08,
+        1e-06,
+        0.001
+      ]
+    ],
+    "uniform_option": "Both parent halves use left300K/vapor1e-8 profile before conservative scaling; independently reconstructed uniformparent, never oldgradientparent energy. Optional new physical initialprofile, not evidence of original gradientconvergence.",
+    "parent_provenance": "Reconstruct2cell forward state at original nominalT under frozen matchedsources; require exact encoded N/E/identity equality to saved coupledcallback for gradient. Saved parentE therefore is explicitly bound.",
+    "forward_storage_check": "Call state_from_temperatures, independently sample point.forward at same nominalT for full DeformingSolidState energy_error_bound_j. Require child energies exactmatch temperaturebuilt state. Record abs(Eparent-sumEchildren)<=parenttotalbound+sumchildtotalbounds; no added atol.",
+    "conservative_initial_state": "Set Echild=parentrepresentedE/(cells/2), inventorysimilarly; tag actualfinehost energyidentity. ExactFraction parentpair/global N/E sums. Preserve both temperaturebuilt and conservative states.",
+    "per_child_gate": "abs(Eforward_child-Econservative_child)<=childtotalbound+parenttotalbound/(cells/2). Each child decodedT difference from nominal checked against inverseTbound + (actualEdiscrepancy + childtotalbound + parenttotalbound/(cells/2))/childforward minimumheatcapacity, allFraction arithmetic. This is an explicitly conditional source/reconstruction bound, not ODE/globalmodelerror.",
+    "cost": "Every build performs temperature-state forward plus separate point.forward for bounds on children and parent; extra native work remains inside originalcallback30s/wet150s external limits. No secondparentinverse; conservative child snapshot performs actualcurrentinverse."
+  },
+  "numerical_policy": {
+    "integrator": "ordinary integrate, no depletion locator or phase writeback",
+    "initial_and_maximum_step_s_by_refinement": [
+      7.62939453125e-06,
+      3.814697265625e-06
+    ],
+    "minimum_step_s": 1e-14,
+    "relative_tolerance": 1e-07,
+    "amount_absolute_tolerance_mol": 1e-12,
+    "energy_absolute_tolerance_j": 1e-08,
+    "amount_scale_mol": 0.0001,
+    "energy_scale_j": 1,
+    "maximum_steps": 100,
+    "maximum_rejections": 100,
+    "internal_wall_s": 120,
+    "external_wall_s": 150,
+    "callback_external_s": 30,
+    "refinements": [
+      0,
+      1
+    ],
+    "each_mode_has_two_caps": true
+  },
+  "time_interval_s": [
+    0.5,
+    0.5000152587890625
+  ],
+  "reused_coarse": {
+    "directory": "/private/tmp/brick-reacting-wet-two-cell-v1",
+    "sha256": {
+      "PLAN.json": "62c6f72747182d7da123d5d8e2afa527e61a4ca15c0d9918dd6f915db4910885",
+      "fixture.py": "6d480756862da864b00451703f570434da59952b3ceeeae924fe175d596b6545",
+      "callback-coupled-result.json": "86273f93ca0afc74eaeb2dab3d5a5ddd0fbe8e337a6fee8e4ac4d19d0401fa09",
+      "wet-coupled-0-result.json": "878f7286553a9d9c7e0d463c27dc11358e793b3f49ad63487f2b7b1d4a63c994",
+      "wet-coupled-1-result.json": "1cf8d187b11acc7056dad545a2b18426364097dc9f5dc1d61f78cbca2875946c"
+    },
+    "source_physics_match": "All43source/installedbytes and16waterassets match reusedPLAN; rebuiltcoarse initial/identity exactcheck before reuse. Coarse timecaps/refined source/gates unchanged."
+  },
+  "evidence_schema": {
+    "callback": "callback-{cells}-{profile}-result.json: initial,initialization,snapshot,perchild source/reconstruction checks, complete failure/identity output before assertions",
+    "wet": "wet-{cells}-{profile}-{refinement}-result.json: initial,initialization,run completeledger,final_snapshot; originaltimes/states/stepwork/faces unchanged. Samecallback exactinitial+initialization match before run.",
+    "snapshot": "Generalized cells/gasstates/rates geometry; internal_faces list with face_index,exchange_reconstructed,enthalpy_j_mol_at_face_temperature. These are sourcealgebra sampling; independentrootaudit calculates expectedflux.",
+    "comparison": "Parent owns saved-only pairwise summedN/E and referencevolumeweightedT diagnostic, distinct temporalcap vs spatial discrepancy. No percell carrier invariant."
+  },
+  "source_snapshot": {
+    "scope": "Read-only source/installed bytes match for43 modules; actual callback imports are independently recorded before/after. This prep does not import modules.",
+    "count": 43,
+    "modules": [
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/__init__.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/__init__.py",
+        "sha256": "93f8de70bb05581ea0c5b5cb1d940fe11ded378f340af29b41ad6d8cf9b5cb38"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/_heos_kernel.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/_heos_kernel.py",
+        "sha256": "c1ecb59c702382c78891f4fcf6b6ac5eb8c68cc57869b1e261ec8a3a4a796b12"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/_water_python_backend.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/_water_python_backend.py",
+        "sha256": "f5bad219d665b18ba9b307110a02054590a24866a5d60314944c66b3bbd28171"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/affine_depletion_clock.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/affine_depletion_clock.py",
+        "sha256": "0475e625120811a457dd4bb21e03c262d7fcf9986ecfe7afc28683ac765f242a"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/boundary_program.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/boundary_program.py",
+        "sha256": "fcf6736c699aea3bb759472d48358dc76d1bce1e9e4cd61a823f3e0e1b378319"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/conservation.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/conservation.py",
+        "sha256": "e787ae71be271bfbfbdedca96bc9b7f4b20bd9aa61f730ca0bdc4e35e5904cdc"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/continuous_caloric.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/continuous_caloric.py",
+        "sha256": "f3a6009df0514bfbe73c5db728e46a3515baa0e81d03f2eb2f8076df3e04e8de"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/deformation_program.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/deformation_program.py",
+        "sha256": "bed652b4c5b1670cd7122d08d331fd7b15f970b0f12fcba2eff37095249253dd"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/deforming_gas_heat.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/deforming_gas_heat.py",
+        "sha256": "22cf6b78eaab05f6090059b27332f53bd4747f4195dd46165f68121be5ddce5b"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/deforming_solid_heat.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/deforming_solid_heat.py",
+        "sha256": "ba538d706b6843e48ca27239d71bca84c9eea13a353f37bda8be94309a902823"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/deforming_solid_storage.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/deforming_solid_storage.py",
+        "sha256": "c51278bae2c1f4043c804cf198c1180d81f64b147f149c5c86080004ada6a3fd"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/depletion_integration.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/depletion_integration.py",
+        "sha256": "bb8c9c04a595c22d187d2b9858ca4607622e52955f165f089b3e33bedfaa89f3"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/depletion_roundoff.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/depletion_roundoff.py",
+        "sha256": "8ee6d7253397af8d4d28edf52198b0b041fdc341ee3a6f9e49c6ee7788270fec"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/evidence.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/evidence.py",
+        "sha256": "616249bd154490ffcb663bfff67bcf1788c78be94e81c7a28c89c6d235cd1a50"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/exchanges.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/exchanges.py",
+        "sha256": "09f148ff097ac6467e38905b36da6de1e6093209b8ff598ff8fcf2befde4d983"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/gas_heat_model.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/gas_heat_model.py",
+        "sha256": "e000fc2aa7fd039e8f43d9741e3a73b04760303a3f2753bd7ad2c1387fd097af"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/gas_transport.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/gas_transport.py",
+        "sha256": "12cd37bca0c21d5ad4489389f5587d2191382f42e34b43e78d934a3e7a51346f"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/geometry.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/geometry.py",
+        "sha256": "384d35d67ed7aa043991d69e795169bafddb8e1466c1d1f0b072521c10a72312"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/ideal_water_vapor.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/ideal_water_vapor.py",
+        "sha256": "e30b7470e50942f56fffe3fec79dde61e347fc1ac40dd62f3fd2bb66425e86b5"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/incompressible_solid.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/incompressible_solid.py",
+        "sha256": "b20d369a15892dd5b8284a1ede26d11bc29397f83137e033f15632b0f0111066"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/integration.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/integration.py",
+        "sha256": "98be85230f031c9245c8b3a9a4f9015a9a9200bb8c135b31eb968683ebef9c28"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/joined_water_vapor.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/joined_water_vapor.py",
+        "sha256": "f91f690cd9cc13bdcc4fd72a64902e2ebdab322f1231a0389dd46c337c5f9df0"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/liquid_transport.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/liquid_transport.py",
+        "sha256": "8cac540401fff281d8b5857ce7ad8096d346249fb9bfe5ff0f90f770f8eb00e3"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/materials.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/materials.py",
+        "sha256": "4fd1ea01d49f345b3cd4745f4a3e44da747ee7ebd2bcc16e6ed4d7f3e833e591"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/phase_storage.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/phase_storage.py",
+        "sha256": "02c9d39f136b724d99bfa2966b6ecde5d52164038cccd851a77a342def413b75"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/programmed_gas_heat.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/programmed_gas_heat.py",
+        "sha256": "4f249494d434ce9bbc26a850fea37d3eaa2172fbf4811939b917273d4667d74c"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/programmed_solid_fluid_heat.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/programmed_solid_fluid_heat.py",
+        "sha256": "a2e3136ee3a62d102f1fb5b36816e97942ffd484fa3939ad06d0e300fe19e2da"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/reacting_skeleton_energy.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/reacting_skeleton_energy.py",
+        "sha256": "8a2c25764d8e47a232f5298b27f54204ad630afdefd63cc346144e6907a93ba7"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/reactions.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/reactions.py",
+        "sha256": "ae6ca26681d03190095e774691fa99761da07f45f4bea498eeb36d7afc8e17b0"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/rigid_fluid_heat.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/rigid_fluid_heat.py",
+        "sha256": "92fdce6f12b7bc4889852676d82188464da4f66b88980ae61380ffefa04f803e"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/rigid_storage.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/rigid_storage.py",
+        "sha256": "7dc2b56522a3b7d3a10ec401549418acc78f50cf2eba8a426eb0f0d316dfebbf"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/rigid_water_gas.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/rigid_water_gas.py",
+        "sha256": "e018c0e0235c7f4710677fba587f41f837b5a1209476706849e008479f212dc9"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/skeleton_energy.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/skeleton_energy.py",
+        "sha256": "d6bd0b76ba5dd8629229ac7747d6ae8545d56c25859748ef34b66fb0161fafe7"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/solid_fluid_heat.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/solid_fluid_heat.py",
+        "sha256": "ee2a4158e2ae32a365069088af1a42c4fdf88cc8f5cb1cf110275b94465ae8d1"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/solid_fluid_storage.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/solid_fluid_storage.py",
+        "sha256": "67e407cdce28a159902f292d53d4076b507a2bb43c6fb2989b8699423f8580e6"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/solid_reactions.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/solid_reactions.py",
+        "sha256": "b159bd9d10281f2bf6d8c8458eb5be7761566d67b728f09d6fa7fd4754e6af3a"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/thermochemistry.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/thermochemistry.py",
+        "sha256": "d2934853eb9b720dc1beeaf16334cf7b8a5f0c0c918b5cea374e5b6a5467bdef"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/units.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/units.py",
+        "sha256": "bf2f0bd87bc87f9264d0dd46c53f8cdd68342a3dbf411817a7857cb348c2d07c"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/water_chemical_potential.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/water_chemical_potential.py",
+        "sha256": "2683bb786ad5e5b6648c02a3d5e9b9671f595820ab4a781e29808c3a95f80767"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/water_heos.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/water_heos.py",
+        "sha256": "5898c1f6d3e5a307b3c142d23a0b7e471b43417a7cf7fa12971638429467a0f7"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/water_implementation.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/water_implementation.py",
+        "sha256": "b759a97c111aeb8588fc6a22b4088a83b7f766debfbf2a7761f7329b690b1a7c"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/water_phase_transfer.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/water_phase_transfer.py",
+        "sha256": "0463ed85ad4719e65c5c617526dd8520f46f9511426a6f0c69ff95ef0f9c2fb1"
+      },
+      {
+        "source_path": "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/water_properties.py",
+        "installed_path": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/water_properties.py",
+        "sha256": "b374ea87873815a4d8959823a3323d29ce70d6c5ce0b706ba1a81f2b9437d8b6"
+      }
+    ]
+  },
+  "water_asset_sha256": {
+    "data/sandbox/water/IAPWS95-2018.pdf": "512879217b94f4d0741c88cab743d41098268914d538d73e680a736cb1c3aad7",
+    "data/sandbox/water/IAPWS95-2018.txt": "7b8d604e3bda9d7cc9c4e87b609461bd20aad440c8e20d4933615ba87af13d7c",
+    "data/sandbox/water/heos-8.0.0-approved-manifest.json": "5f9e39bf1d3376b931caaf8fbda478b482cafe4c8b57a490860ac6ed080bf6db",
+    "data/sandbox/water/heos-8.0.0-source.json": "ebede04e4eaf0779c87961dea3f050505ec99fc15185dcefd6f27b80227b4d4c",
+    "data/sandbox/water/iapws-1.5.5-LICENSE": "fe3eea6c599e23a00c08c5f5cb2320c30adc8f8687db5fcec9b79a662c53ff6b",
+    "data/sandbox/water/iapws-1.5.5-METADATA": "cf357fe11585ee3671d2d5c502aaf2c19a1a39c5c5b9a6473dbf6f6294f90d72",
+    "data/sandbox/water/iapws-1.5.5-iapws95.py": "89edb7c0e3b77533319d253819cdb4c1da50775d2e7b324249574607d6790520",
+    "data/sandbox/water/iapws-1.5.5-py3-none-any.whl": "97810dca5155cce1e2ec964dd254fc9e4858fbb1c9967da6c4f817adaf3a818e",
+    "data/sandbox/water/iapws-1.5.5-pypi.json": "161225fd43b98a7aedfb9bdd1cff4510820da2fff52b9d4bccab2bb8c1244701",
+    "data/sandbox/water/iapws-1.5.5.tar.gz": "c86e1e171551877fe9ceb03ee415e4a4906d2e52698ff9d5656784609739df4d",
+    "data/sandbox/water/official_verification.json": "d24dce59d0822f1af9c61d64c4cc497d38a3864ff7798bb866f2c43e981b70a3",
+    "data/sandbox/water/properties_293_500.json": "e775e37324e5ff953ea1bb99df55d9f5ee11721c301e77932edb80fa3dc4338f",
+    "data/sandbox/water/reference_alignment.json": "fc817045502f2158543e930eed1e3b911a295ee799597636133302ddc5f019c1",
+    "data/sandbox/water/research_runtime.json": "b6849d01896171df2282202668d4107b0b580170a393099589fc7fecb70ee465",
+    "data/sandbox/water/source_facts.json": "53af498b3974d180d273d7b17a6619d49d9a7d90bbacdd6e0304651f33bd79d6",
+    "data/sandbox/water/source_manifest.json": "419ef2b6453c541586d8ca17b41f8e3f3d804b1421f7eb3897f0fb61818cbe2e"
+  },
+  "prepared_script_sha256": {
+    "callback.py": "049d4eb4c23ab4666684b33b1b2481d85e280afe1f785da56594bda3ad13bd96",
+    "fixture.py": "66639ad99b1996a83a1836c58a4b6ca01b59ebcbe88de13a3ae899b973972e77",
+    "run.py": "1f02980049a6fa49765f51e506b0fab3297b2a13c89c9774bd2ff96c4f495a5d",
+    "wet_run.py": "0a5304cdd1659889b030b4aa81b26f473aca19b7f9f163f50ffc6b939fdcb9f9"
+  },
+  "supervisor_inputs": "Existing supervisor snapshots43source/installedmodules, testsandboxhelpers,waterassets,all scripts/PLAN and oldcoupledcallback plus freshsamecells/profilecallback for trajectories, before/afterhash+cleanup. Newresult names and attempts prevent overwrite.",
+  "execution_gate": "AST-only preparation noEOS. Independent scaling controls andcode/numericalreview first. Freeze allinputs, then parentoneEOS atatime4gradientcallback30s; inspectsource/conservativechecks, run4gradientref0 internal120/external150/max100steps; inspectledger; ref1samebounds. Optionaluniformcallback onlyafter separate parentdecision. Preservefailedrecords; no budgetextension/relaxation or modifiedphysics.",
+  "commands": [
+    "/private/tmp/brick-water-backend-probe/venv/bin/python /private/tmp/brick-fixed-spatial-v1/run.py callback callback-4-gradient-attempt01 --cells 4 --profile gradient",
+    "/private/tmp/brick-water-backend-probe/venv/bin/python /private/tmp/brick-fixed-spatial-v1/run.py wet wet-4-gradient-0-attempt01 --cells 4 --profile gradient --refinement 0",
+    "/private/tmp/brick-water-backend-probe/venv/bin/python /private/tmp/brick-fixed-spatial-v1/run.py wet wet-4-gradient-1-attempt01 --cells 4 --profile gradient --refinement 1"
+  ],
+  "preflight_correction": {
+    "reason": "Static review found initial RigidFluidHeat carrier storage retained1e-4m3 while fine geometry cellbulk is5e-5m3; constructor geometry guard would reject before any native experiment.",
+    "change": "Scale fluid-template mechanical.available_pore_volume_m3 by2/cells before replacing transport. Parent scale1 leaves all field values/identity unchanged. This is transient reference carrier volume, not actual current pore volume; DeformingSolidStorage still computes currentbulk minus actualsolidvolume exactly once and rebinds currentstorage. No additional currentvolume scaling or physical change.",
+    "preserved_original_files": {
+      "fixture.py": {
+        "path": "/private/tmp/brick-fixed-spatial-v1/preflight-original/fixture.py",
+        "sha256": "92bce245bafe31b4364384a41aee277aee3db695c638771fa6783945ae3d4129"
+      },
+      "PLAN.json": {
+        "path": "/private/tmp/brick-fixed-spatial-v1/preflight-original/PLAN.json",
+        "sha256": "4c045829c908adc9b7fcaac0f4ab6aa03aae63d68555ec3b3e38031da46c01c2"
+      }
+    },
+    "validation": "AST-only; no EOS/import/test execution; no native attempt existed before correction."
+  }
+}
