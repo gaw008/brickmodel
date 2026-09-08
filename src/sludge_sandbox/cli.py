@@ -78,8 +78,28 @@ def main(argv=None):
     sensitivity.add_argument('--output', required=True, type=Path)
     analyze = commands.add_parser('sensitivity-analyze', help='从完整保存结果计算因子对比，不推断现实概率')
     analyze.add_argument('directory', type=Path)
+    search = commands.add_parser('search-prepare', help='冻结多代搜索的目标、约束、变量与累计预算')
+    search.add_argument('spec', type=Path)
+    search.add_argument('--water-data', required=True, type=Path)
+    search.add_argument('--evidence-data', type=Path)
+    search.add_argument('--output', required=True, type=Path)
+    for name in ('search-run', 'search-status'):
+        command = commands.add_parser(name)
+        command.add_argument('directory', type=Path)
     args = parser.parse_args(argv)
     try:
+        if args.command.startswith('search-'):
+            from .search import prepare_search, run_search, read_search
+            if args.command == 'search-prepare':
+                value = prepare_search(args.spec, args.output, water_directory=args.water_data,
+                                       evidence_directory=args.evidence_data)
+            elif args.command == 'search-run':
+                with _cancellation() as cancel:
+                    value = run_search(args.directory, cancel=cancel)
+            else:
+                value = read_search(args.directory)
+            print(json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2))
+            return 1 if args.command == 'search-run' and value.get('status') != 'completed' else 0
         if args.command in ('sensitivity-prepare', 'sensitivity-analyze'):
             from .sensitivity import prepare_sensitivity, analyze_sensitivity
             if args.command == 'sensitivity-prepare':

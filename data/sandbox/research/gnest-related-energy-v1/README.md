@@ -1,0 +1,9 @@
+# CEST2019 related energy study: bounded access audit
+
+**No complementary material data admitted.** The Global NEST article's actual [landing page](https://cosmos.gnest.org/publication/gnest_03738), Related articles section, links the requested rotary-kiln study. That establishes a website relationship, not a specimen relationship.
+
+The linked [conference page](https://cosmos.gnest.org/cest2019/p/cest201900857) failed with `Cache miss`. One exact-title search identified an [official PDF URL](https://cms.gnest.org/sites/default/files/cest2019_00857_oral_paper.pdf), but opening it returned `404 Not Found`. Retrieval stopped after the third distinct primary URL, without repeated requests. Methods and complete tables were not successfully opened; indexed excerpts are clearly separated in [source_audit.json](source_audit.json).
+
+The search result points to potentially useful liquid-water and product-analysis methods, but this is not evidence of measured heat capacities, consistent formation/reference enthalpies, complete product elemental recovery, or the same collected batch as `gnest2021`. The question remains unresolved through inaccessible full methods, not proven absent in the original work. Neither matching authors nor a related-article link licenses cross-study parameter transfer.
+
+Next action: obtain a working official proceedings file for paper `cest2019_00857` / DOI `10.30955/gnc2019.00857`, then inspect sample collection/preparation and the caloric measurements before extracting or linking parameters. Current query snippets contain basis labels worth checking against the original table; do not silently correct or transfer them. No author message was sent, no full text redistributed, no runtime/model changes, EOS, tests or installation performed. Existing GNEST Table3 discrepancy was not re-audited.
