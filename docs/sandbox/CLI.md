@@ -13,6 +13,8 @@ python -m sludge_sandbox run data/sandbox/cases/reacting-wet-slab-v1.json --wate
 python -m sludge_sandbox trace /tmp/brick-run-new --quantity temperature_k
 python -m sludge_sandbox trace /tmp/brick-run-new --quantity internal_energy_j
 python -m sludge_sandbox replay /tmp/brick-run-new --output /tmp/brick-replay-new
+# 若运行被协作取消并已保存至少一个接受步：
+python -m sludge_sandbox resume /tmp/brick-cancelled-run --output /tmp/brick-resumed-new
 ```
 
 安装后也可用 `sludge-sandbox` 代替 `python -m sludge_sandbox`。旧 `sludge-vme` 筛选入口保持原有含义。
@@ -35,17 +37,25 @@ python -m sludge_sandbox replay /tmp/brick-run-new --output /tmp/brick-replay-ne
 
 `--evidence-data` 指向含 `transport/` 等子目录的证据根目录。只复制目录列出的来源和相应许可/署名文件；它不会扫描整份研究数据库。未提供或缺失的额外来源保留为 `missing`，不填默认数值。真实水运行所需资产仍由水提供器独立检查。`source_asset_coverage` 仅表示已登记来源位置对应文件的可读比例，不能当作物理参数、材料适用性或外部验证覆盖率。
 
-文件清单用于检测相对于保存清单的变化，不是第三方签名。重放要求所有登记文件哈希一致、没有额外文件，且当前 Python/平台/包版本/沙盒源码身份与原运行相同；不执行保存目录中的 Python 文件。它从冻结案例重新开始，尚不是中断检查点续算。新目录记录原结果哈希以保留血缘。
+文件清单用于检测相对于保存清单的变化，不是第三方签名。重放要求所有登记文件哈希一致、没有额外文件，且当前 Python/平台/包版本/沙盒源码身份与原运行相同；不执行保存目录中的 Python 文件。`replay` 从冻结案例重新开始。新目录记录原结果哈希以保留血缘。
+
+`resume` 从协作取消后的最后接受状态继续，当前只接受普通积分器已有至少一个接受步、尚未到终点的 `cancelled/cancel_requested` 记录。输入、运行前后实现、目录、来源、原始策略和重新构建的初态/能量模型身份必须一致；已完成、数值失败、缺少接受步或原预算耗尽的运行会拒绝续算。它不是耗尽事件积分器的通用检查点，也不保证强杀进程后的恢复。
+
+续算目录保留原始初态、全部原接受状态/账本、直接父运行结果和清单的原始字节、父结果哈希，以及单独的检查点诊断。`parent/` 是历史证据，不是独立完整运行目录。后续步数、拒绝次数与积分墙钟预算从整条已合并历史扣除，不能每次恢复重新获得完整预算；初始化/诊断仍不在积分时间预算内。
+
+新的局部接受步先写入 `resume_suffix.json`，再逐步对照原始初态和原始绝对容差核算库存、能量与累计功分项舍入残差。超限时只保留此前通过的合并前缀，状态为数值失败，原始后缀证据仍保留。自适应初始步长及名义时钟会从检查点重新开始，因此一般续算不承诺与不中断运行逐位一致。当前注册的固定步长案例另有实际比较，不能外推成所有自适应问题的全局误差保证。
 
 Python 使用同一服务：
 
 ```python
-from sludge_sandbox.run_service import run_case, trace_run, replay_run
+from sludge_sandbox.run_service import run_case, trace_run, replay_run, resume_run
 
 result = run_case("case.json", "water", "/tmp/new-run",
                   evidence_directory="data/sandbox", cancel=lambda: False)
 trace = trace_run("/tmp/new-run", "temperature_k")
 replayed = replay_run("/tmp/new-run", "/tmp/new-replay")
+# 对已取消且具有接受前缀的运行：
+continued = resume_run("/tmp/cancelled-run", "/tmp/new-resume")
 ```
 
 案例中 `refinement=1` 将显式初始/最大时间步减半；`grid.cells=4` 在相同物理域中对新构建的两格父态进行库存和能量守恒细分，同时检查同温储能广延性。`profile=uniform` 使用左父单元的库存和温度构造两侧一致初场；`transport_mode=control` 使用显式为零的传热/水扩散设置。这些选项用于验证，不代表材料设计的自由搜索域。

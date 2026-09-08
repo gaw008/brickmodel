@@ -12,7 +12,10 @@ import json
 from pathlib import Path, PurePosixPath
 import platform
 import time
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any, Callable
+
+if TYPE_CHECKING:
+    from .checkpoint import ResumePrefix
 
 
 class RunError(ValueError):
@@ -87,7 +90,8 @@ def read_run(directory: str | Path) -> tuple[dict[str, Any], dict[str, Any]]:
 def run_case(case_path: str | Path, water_directory: str | Path, output: str | Path, *,
              cancel: Callable[[], bool] | None = None,
              replay_of: dict[str, str] | None = None,
-             evidence_directory: str | Path | None = None) -> dict[str, Any]:
+             evidence_directory: str | Path | None = None,
+             _resume: ResumePrefix | None = None) -> dict[str, Any]:
     """Run once in a fresh directory; retain failures and accepted prefixes.
 
     Wall/step budgets are explicit case policy. Cancellation is cooperative
@@ -109,6 +113,29 @@ def run_case(case_path: str | Path, water_directory: str | Path, output: str | P
         case = read_case(output/'case.json')
         result['case_id'] = case.case_id
         result['scope'] = case.payload['scope']
+        if _resume is not None:
+            from .checkpoint import ResumePrefix
+            if not isinstance(_resume, ResumePrefix):
+                raise RunError('invalid_private_resume_record')
+            parent = _resume.result()
+            if (parent['case_sha256'] != result['case_sha256'] or
+                    parent['runtime_before'] != result['runtime_before'] or
+                    parent['runtime_after'] != result['runtime_before']):
+                raise RunError('resume_parent_binding_mismatch')
+            (output/'parent').mkdir()
+            (output/'parent/result.json').write_bytes(_resume.parent_result_raw)
+            (output/'parent/manifest.json').write_bytes(_resume.parent_manifest_raw)
+            result['resume_of'] = {
+                'result_sha256': _resume.parent_result_sha256,
+                'manifest_sha256': _resume.parent_manifest_sha256,
+                'case_sha256': parent['case_sha256'],
+                'historical_artifacts': 'parent/result.json and parent/manifest.json preserve historical evidence; parent/ is not a standalone run bundle.',
+                'adaptive_restart': 'Original initial_step_s restarts the adaptive controller and exact nominal clock at the last accepted absolute time. The continuation is not claimed bit-identical to an uninterrupted adaptive solve.',
+                'wall_scope': 'Remaining original integrate-only wall budget; rebuilding and diagnostics are reported separately by service elapsed_seconds.'}
+            result['policy'] = parent['policy']
+            result['initialization'] = parent.get('initialization')
+            result['initial_snapshot'] = parent['initial_snapshot']
+            result['integration'] = parent['integration']
         (output/'water').mkdir()
         for source in sorted(Path(water_directory).iterdir()):
             if source.is_symlink() or not source.is_file():
@@ -132,22 +159,61 @@ def run_case(case_path: str | Path, water_directory: str | Path, output: str | P
                     destination.parent.mkdir(parents=True, exist_ok=True)
                     destination.write_bytes(source.read_bytes())
         _json(output/'provenance.json', build_graph(output, catalog))
+        if _resume is not None:
+            parent_files = json.loads(_resume.parent_manifest_raw)['files']
+            for name, digest in parent_files.items():
+                if name.startswith(('water/', 'evidence/', 'implementation/')) or name in ('case.json', 'equation_catalog.json'):
+                    copied = output/name
+                    if not copied.is_file() or _hash(copied.read_bytes()) != digest:
+                        raise RunError('resume_copied_source_binding_mismatch:'+name)
+            copied_inputs = {p.relative_to(output).as_posix() for root in ('water', 'evidence', 'implementation')
+                             for p in (output/root).rglob('*') if p.is_file()}
+            expected_inputs = {name for name in parent_files if name.startswith(('water/', 'evidence/', 'implementation/'))}
+            if copied_inputs != expected_inputs:
+                raise RunError('resume_copied_source_membership_mismatch')
         if cancel is not None and cancel():
             result.update(status='cancelled', reason='cancelled_before_build')
         else:
             built = build_case(case, output/'water')
             result.update(initialization=encode(built.initialization), policy=encode(built.policy))
             _json(output/'result.json', result)
-            result['initial_snapshot'] = encode(snapshot(built, built.initial, built.start_s))
+            if _resume is None:
+                initial = built.initial
+                start_s = built.start_s
+                policy = built.policy
+                result['initial_snapshot'] = encode(snapshot(built, built.initial, built.start_s))
+            else:
+                from .checkpoint import validate_cancelled, exact_state_equal, remaining_policy
+                if parent['policy'] != encode(built.policy):
+                    raise RunError('resume_policy_mismatch')
+                prefix = validate_cancelled(parent, built.policy, start_s=built.start_s, end_s=built.end_s)
+                if not exact_state_equal(prefix.states[0], built.initial):
+                    raise RunError('resume_live_initial_mismatch')
+                if prefix.states[-1].energy_model_identity != built.initial.energy_model_identity:
+                    raise RunError('resume_live_energy_binding_mismatch')
+                initial, start_s = prefix.states[-1], prefix.times_s[-1]
+                policy = remaining_policy(parent['integration'], built.policy)
+                result['suffix_policy'] = encode(policy)
+                result['checkpoint_snapshot'] = encode(snapshot(built, initial, start_s))
             _json(output/'result.json', result)
             from .integration import integrate
-            run = integrate(built.initial, built.operator, start_s=built.start_s,
-                            end_s=built.end_s, policy=built.policy, cancel=cancel,
-                            breakpoints_s=built.operator.breakpoints_s(built.start_s, built.end_s))
-            result.update(status=run.status, reason=run.reason, integration=encode(run))
+            run = integrate(initial, built.operator, start_s=start_s,
+                            end_s=built.end_s, policy=policy, cancel=cancel,
+                            breakpoints_s=built.operator.breakpoints_s(start_s, built.end_s))
+            if _resume is None:
+                result.update(status=run.status, reason=run.reason, integration=encode(run))
+            else:
+                # Raw locally accepted suffix is evidence, not yet service acceptance.
+                suffix = encode(run)
+                _json(output/'resume_suffix.json', suffix)
+                from .checkpoint import merge_integration
+                merged, audit = merge_integration(parent['integration'], suffix, built.policy,
+                                                  start_s=built.start_s, end_s=built.end_s)
+                result.update(status=merged['status'], reason=merged['reason'],
+                              integration=merged, resume_ledger_audit=audit)
             # Persist accepted trajectory before any diagnostic reconstruction.
             _json(output/'result.json', result)
-            if run.status == 'completed':
+            if result['status'] == 'completed':
                 result['final_snapshot'] = encode(snapshot(built, run.states[-1], run.times_s[-1]))
     except KeyboardInterrupt:
         result.update(status='cancelled', reason='keyboard_interrupt')
@@ -241,3 +307,47 @@ def replay_run(directory: str | Path, output: str | Path, *,
                     cancel=cancel, replay_of={'case_sha256': result['case_sha256'],
                     'result_sha256': manifest['files']['result.json']},
                     evidence_directory=Path(directory)/'evidence')
+
+
+def resume_run(directory: str | Path, output: str | Path, *,
+               cancel: Callable[[], bool] | None = None) -> dict[str, Any]:
+    """Continue a verified cancelled accepted prefix using the current installed model."""
+    from .checkpoint import ResumePrefix, validate_cancelled
+    from .integration import IntegrationPolicy
+    from .verification_case import read_case
+
+    directory = Path(directory)
+    result, manifest = read_run(directory)
+    current = runtime_identity()
+    if result.get('runtime_before') != current or result.get('runtime_after') != current:
+        raise RunError('resume_runtime_mismatch')
+    for name, digest in current['modules'].items():
+        if manifest['files'].get('implementation/'+name) != digest:
+            raise RunError('resume_implementation_binding_mismatch')
+    catalog_sha = current['catalogs'].get('wet-slab-equations-v1.json')
+    if manifest['files'].get('equation_catalog.json') != catalog_sha:
+        raise RunError('resume_catalog_binding_mismatch')
+    case = read_case(directory/'case.json')
+    if case.sha256 != result['case_sha256'] or case.case_id != result.get('case_id'):
+        raise RunError('resume_case_binding_mismatch')
+    try:
+        policy_values = dict(case.payload['numerics']['integration'])
+        for name in ('initial_step_s', 'maximum_step_s'):
+            policy_values[name] /= 2**case.payload['refinement']
+        if result['policy'] != policy_values:
+            raise RunError('resume_case_policy_mismatch')
+        policy = IntegrationPolicy(**policy_values)
+        validate_cancelled(result, policy, start_s=case.payload['numerics']['start_s'],
+                           end_s=case.payload['numerics']['end_s'])
+        if not isinstance(result['initial_snapshot'], dict):
+            raise RunError('resume_initial_snapshot_missing')
+    except (KeyError, TypeError) as exc:
+        raise RunError('invalid_resume_record') from exc
+    result_raw = (directory/'result.json').read_bytes()
+    manifest_raw = (directory/'manifest.json').read_bytes()
+    if (_hash(result_raw) != manifest['files']['result.json'] or
+            json.loads(manifest_raw) != manifest):
+        raise RunError('resume_parent_changed_after_validation')
+    prefix = ResumePrefix(result_raw, manifest_raw, _hash(result_raw), _hash(manifest_raw))
+    return run_case(directory/'case.json', directory/'water', output, cancel=cancel,
+                    evidence_directory=directory/'evidence', _resume=prefix)

@@ -37,10 +37,13 @@ def main(argv=None):
     replay = commands.add_parser('replay', help='以相同实现从冻结输入重新运行；不会执行保存的代码')
     replay.add_argument('run_directory', type=Path)
     replay.add_argument('--output', required=True, type=Path)
+    resume = commands.add_parser('resume', help='从已取消运行的最后接受步继续；保留原始预算和完整账本')
+    resume.add_argument('run_directory', type=Path)
+    resume.add_argument('--output', required=True, type=Path)
     commands.add_parser('resources', help='显示实现与依赖版本；不调用 EOS')
     args = parser.parse_args(argv)
     try:
-        from .run_service import run_case, trace_run, replay_run, runtime_identity
+        from .run_service import run_case, trace_run, replay_run, resume_run, runtime_identity
         if args.command == 'validate':
             from .verification_case import read_case
             case = read_case(args.case)
@@ -56,14 +59,17 @@ def main(argv=None):
         elif args.command == 'replay':
             with _cancellation() as cancel:
                 value = replay_run(args.run_directory, args.output, cancel=cancel)
+        elif args.command == 'resume':
+            with _cancellation() as cancel:
+                value = resume_run(args.run_directory, args.output, cancel=cancel)
         else:
             value = runtime_identity()
-        if args.command in ('run', 'replay'):
+        if args.command in ('run', 'replay', 'resume'):
             # Full results, including accepted prefixes, are in result.json.
             value = {key: value.get(key) for key in ('status', 'reason', 'case_sha256', 'scientific_status')}
             value['output'] = str(args.output.resolve())
         print(json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2))
-        return 1 if args.command in ('run', 'replay') and value.get('status') != 'completed' else 0
+        return 1 if args.command in ('run', 'replay', 'resume') and value.get('status') != 'completed' else 0
     except (ValueError, OSError) as exc:
         print(json.dumps({'status': 'failed', 'error_type': type(exc).__name__,
                           'code': getattr(exc, 'code', None), 'reason': str(exc)}, ensure_ascii=False))
