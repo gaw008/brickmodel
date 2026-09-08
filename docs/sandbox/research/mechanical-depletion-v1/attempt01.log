@@ -1,0 +1,50 @@
+F
+=================================== FAILURES ===================================
+_ test_actual_free_water_depletion_preserves_every_mechanical_and_energy_prefix _
+
+ingredients = (WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=..., 'source_facts.json': '53af498b3974d180d273d7b17a6619d49d9a7d90bbacdd6e0304651f33bd79d6'})), WaterChemicalPotential())
+
+    def test_actual_free_water_depletion_preserves_every_mechanical_and_energy_prefix(ingredients):
+        op=free_transfer(ingredients)
+        initial=op.base_model.state_from_temperature([[1e-8,.01,1e-5,2.]],300.,
+                                                   normal_stretch=1.,tangential_stretch=1.)
+        p,e=policies()
+        p=replace(p,initial_step_s=1e-4,maximum_step_s=1e-4,energy_absolute_tolerance_j=1e-6,
+            stretch_absolute_tolerance=1e-9,stretch_scale=1.,maximum_steps=2000,maximum_wall_seconds=120.)
+        e=replace(e,terminal_method='affine_midpoint',terminal_window_s=1e-6,
+            common_time_horizon_s=1e-4,energy_absolute_j=2e-6,pressure_absolute_pa=.1,
+            nested_approach=NestedApproachPolicy(maximum_step_s=1e-4,reuse_ordinary_spine=True))
+>       out=integrate_depletion(initial,op,start_s=0.,end_s=1e-4,integration_policy=p,event_policy=e)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_free_mechanical_depletion.py:25: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+initial = ConservedState(amounts_mol=array([[1.e-08, 1.e-02, 1.e-05, 2.e+00]]), internal_energy_j=array([-196941.38733082]), ene...id_cell_v1', 'ebbd2c7e0d3e4a0989d8229dddf8f60d715070dba482e47f70a1ab2b98d63b76'), mechanical_stretches=array([1., 1.]))
+operator = WaterPhaseTransfer(base_model=ClosedFreeSolidCell(point=DynamicSolidStorage(template=SolidFluidStorage(fluid_template=...t_source_ids=('manufactured:kinetic-coefficient',), allow_manufactured=True, interface_modes=None, dry_policy='strict')
+
+    def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,event_policy,cancel=None):
+        from .water_phase_transfer import WaterPhaseTransfer
+        if (type(initial) is not ConservedState or type(operator) not in (WaterPhaseTransfer,ManufacturedDepletionAdapter)
+                or type(integration_policy) is not IntegrationPolicy or type(event_policy) is not DepletionPolicy
+                or (cancel is not None and not callable(cancel))):
+            raise DepletionIntegrationError('explicit_depletion_host_state_policies_required')
+        mechanical=initial.mechanical_stretches is not None
+        if mechanical:
+            _number(integration_policy.stretch_absolute_tolerance,True)
+            _number(integration_policy.stretch_scale,True)
+        start=_number(start_s);end=_number(end_s)
+        if end<=start:raise DepletionIntegrationError('end_must_follow_start')
+        if (len(operator.interfaces)!=initial.amounts_mol.shape[0]
+                or max(operator.liquid_index,operator.water_vapor_index)>=initial.amounts_mol.shape[1]):
+            raise DepletionIntegrationError('interface_inventory_shape_mismatch')
+        if (type(operator) is WaterPhaseTransfer and
+                event_policy.roundoff_policy.molar_mass_kg_mol!=operator.chemical.reference.molar_mass_kg_mol):
+>           raise DepletionIntegrationError('roundoff_water_molar_mass_mismatch')
+E           sludge_sandbox.depletion_integration.DepletionIntegrationError: roundoff_water_molar_mass_mismatch
+
+src/sludge_sandbox/depletion_integration.py:329: DepletionIntegrationError
+- generated xml file: /private/tmp/brick-free-mechanical-depletion-v1/attempt01.xml -
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_free_mechanical_depletion.py::test_actual_free_water_depletion_preserves_every_mechanical_and_energy_prefix
+1 failed in 0.69s

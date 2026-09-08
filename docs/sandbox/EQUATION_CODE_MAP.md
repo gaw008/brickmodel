@@ -149,3 +149,10 @@ HEOS共存数值政策 `NUM-HEOS-COEXISTENCE-BACKTRACK-1`：固定T的F=(Δp,Δg
 `NUM-HEOS-TP-BACKTRACK-1` → `_heos_kernel.py:HEOSCandidate.state_tp`：原动态压力门槛、最多8接受状态/6候选/43实际评估；`test_heos_tp_backtracking.py` 控制反例、精确停滞、失败尝试、来源/快照终止与下溢门槛；`test_heos_tp_native.py` 原失败295K/53692.54782795906Pa及固定八邻点。`water_heos.py`、HEOS manifest 与 source 注册仅同步实现身份，不改物理常数或水数据。
 
 - `NUM-AFFINE-TERMINAL-1`：`affine_depletion_clock.py` 的不可变二次根证书；`depletion_integration.py` 的 affine_midpoint 预测、统一场积分、全区间库存与正向相变积分；`depletion_roundoff.py` 验证证书后沿用原预算。对应 `test_affine_depletion_clock.py`、`test_affine_depletion_integration.py`、`test_affine_depletion_guards.py`；制造解与数值政策，不是污泥材料参数。
+
+## 自由机械状态与液相耗尽
+
+| 关系/数值操作 | 实现 | 实际验证与边界 |
+|---|---|---|
+| 终端伸长 λ(s)=λ0+a s+b s²；整区间正性，精确有理求积与表示误差 | `depletion_integration._mechanical_panel` | `test_mechanical_depletion.py`：Euler/affine、内部非正反例、独立 exp(t) 轨迹；制造验证 |
+| 事件态及公共时刻伸长比较，原初态累计伸长账本 | `depletion_integration.integrate_depletion` | 同上机械独立拒绝/跨段预算/取消测试，见 `MECHANICAL_DEPLETION.md`；实际水组合结果以 `research/mechanical-depletion-v1` 原始运行证据为准 |

@@ -29,12 +29,12 @@ def test_fixed_geometry_hosts_reject_dynamic_state_before_decode(water, monkeypa
             op.evaluate(state,0.)
 
 
-def test_depletion_entry_rejects_before_callback():
+def test_depletion_entry_requires_mechanical_scales_before_callback():
     from test_depletion_spine import configured,oracle,initial
     from sludge_sandbox.depletion_integration import integrate_depletion
     p,e=configured();op,counts=oracle(0.)
     state=replace(initial(),mechanical_stretches=[1.,1.])
-    with pytest.raises(ValueError,match='mechanical_depletion_integration_not_implemented'):
+    with pytest.raises(ValueError,match='finite_depletion_policy_required'):
         integrate_depletion(state,op,start_s=0.,end_s=.2,integration_policy=p,event_policy=e)
     assert counts['calls']==0
 

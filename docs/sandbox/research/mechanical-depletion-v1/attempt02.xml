@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="107.541" timestamp="2026-09-08T10:24:10.228793-10:00" hostname="MacBookPro.lan"><testcase classname="tests.sandbox.test_free_mechanical_depletion" name="test_actual_free_water_depletion_preserves_every_mechanical_and_energy_prefix" time="107.083"><failure message="AssertionError: unresolvable_stage_time&#10;assert 'numerical_failure' == 'completed'&#10;  &#10;  - completed&#10;  + numerical_failure">ingredients = (WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=..., 'source_facts.json': '53af498b3974d180d273d7b17a6619d49d9a7d90bbacdd6e0304651f33bd79d6'})), WaterChemicalPotential())
+
+    def test_actual_free_water_depletion_preserves_every_mechanical_and_energy_prefix(ingredients):
+        op=free_transfer(ingredients)
+        initial=op.base_model.state_from_temperature([[1e-8,.01,1e-5,2.]],300.,
+                                                   normal_stretch=1.,tangential_stretch=1.)
+        p,e=policies()
+        p=replace(p,initial_step_s=1e-4,maximum_step_s=1e-4,energy_absolute_tolerance_j=1e-6,
+            stretch_absolute_tolerance=1e-9,stretch_scale=1.,maximum_steps=2000,maximum_wall_seconds=120.)
+        e=replace(e,roundoff_policy=replace(e.roundoff_policy,
+            molar_mass_kg_mol=op.chemical.reference.molar_mass_kg_mol),terminal_method='affine_midpoint',terminal_window_s=1e-6,
+            common_time_horizon_s=1e-4,energy_absolute_j=2e-6,pressure_absolute_pa=.1,
+            nested_approach=NestedApproachPolicy(maximum_step_s=1e-4,reuse_ordinary_spine=True))
+        out=integrate_depletion(initial,op,start_s=0.,end_s=1e-4,integration_policy=p,event_policy=e)
+        payload={name:encode(getattr(out,name)) for name in ('status','reason','times_s','states',
+            'steps','events','corrections','refinements','evaluations','rejected_trials','attempted_steps',
+            'elapsed_seconds','roundoff_totals','phase_costs','reuse_counts')}
+        payload['qualification']='actual_water_manufactured_free_skeleton_short_depletion_not_material_validation'
+        payload['integration_policy']=encode(p);payload['event_policy']=encode(e)
+        artifact=os.environ.get('BRICK_FREE_DEPLETION_ARTIFACT')
+        if artifact:Path(artifact).write_text(json.dumps(payload,indent=2,allow_nan=False)+'\n')
+&gt;       assert out.status=='completed',out.reason
+E       AssertionError: unresolvable_stage_time
+E       assert 'numerical_failure' == 'completed'
+E         
+E         - completed
+E         + numerical_failure
+
+tests/sandbox/test_free_mechanical_depletion.py:34: AssertionError</failure></testcase></testsuite></testsuites>

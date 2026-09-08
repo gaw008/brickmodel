@@ -4,6 +4,22 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+本阶段全部运行已终态：源码真实自由液相耗尽1项178.373s通过，安装172相关轻测53.36s通过（session83000已exit0），58真实site-packages模块测试后再次逐字节匹配。research/mechanical-depletion-v1已保存完整原始产物。无活动测试/EOS，不重启旧61001/83000。独立原始结果复核已通过：152源/测试hash一致、19prefix Fraction审计通过，实际独立分支113eval与6项门槛已核。阶段提交后推进多格自由几何/反应/材料域。Goal仍active，原§11未满足。
+
+
+自由机械液相耗尽真实attempt03已完成：177.721s/305eval/19已提交steps/1事件，终点1e-4s；两次终端比较与独立halved-controls全部通过，原精度门槛保留。事件3.0417417141788028e-5s，逐prefix外压功最大残差1.12965e-10J、水4.68239e-21mol。research/mechanical-depletion-v1保存全部原失败/JSON/XML/sourcehash与审查。session61001已exit0，无活动EOS，不再轮询。自由主机仍是固定固体单格制造骨架，不能称真实原泥全周期。
+
+当前唯一安装轻测session83000，100s外层硬限；非editable实际58模块与源码逐字节一致，src/tests冻结。恢复先poll同handle，完成后核实际XML并复制installed-*证据，完成本阶段本地提交。新源码SHA c9139510，机械候选加干态共同端点修复；没有重复实际湿干EOS。下一工作需将自由几何/全能量/共享面接入一维多格并接固体反应，继续真实原泥材料证据及三机制公开留出验证。Goal原第11节仍未完成。
+
+
+当前唯一实际EOS试验session61001：自由湿干attempt03，固定源码SHAc9139510应用机械耗尽+已审干态共同端点修复，36针对性测试10.55s通过。原attempt02失败来自tc-at再相加舍入到tc前驱float，不是机械守恒/材料失败。按106.9s192eval实测成本，attempt03资源上限180s/外层210s，原物理与精度门槛全部不变。恢复须先poll同session，不重启；src/tests冻结。输出/private/tmp/brick-free-mechanical-depletion-v1/attempt03.*；新版本尚未安装验证，Goal仍active。
+
+
+机械耗尽生产候选已按审查SHA9d569f8696精确应用，13制造新例+11旧例+4host guard共28项6.18s通过；生产应用独立code-reviewer再次APPROVE。非机械旧guard改为缺机械尺度前置拒绝，未改物理参数。来源/原RED/中间失败在research/mechanical-depletion-v1。相关轻测session46325已exit0，168 passed in53.42s；未安装新版本。
+
+真实自由湿干attempt01在积分前被actual水摩尔质量逐位匹配拒绝，正确改为从actual chemical.reference绑定后attempt02运行106.90s/192eval/23试算panels，返回numerical_failure:unresolvable_stage_time。首轮相邻终端细化6维全通过，但level2终端细化的dry续算时间分割失败，尚未进入独立halved-controls验证，因此没有事件提交，保留12湿态有效steps；不能冒称真实事件组合验证成功。原门槛/物理未改，全部JSON/XML/log/源hash与事前合同已保存。program_knot_review正在隔离只读诊断实际时钟边界及轻量复现，禁止跳过独立更细门槛。无活动EOS；测试84176已exit1。Goal仍active，原§11未完成。
+
+
 普通自由液汽转移安装终态：session40338已exit0，80 passed in10.57s，XML实际零失败/错误/跳过；58实际site-packages模块与源码逐字节一致。源码与安装实际蒸发轨迹数值相同，证据research/free-phase-v1完整保存。无活动EOS，不再轮询40338；后面的运行中仅为历史。
 
 下一机械耗尽候选现已冻结在/private/tmp/brick-mechanical-depletion-candidate/depletion_integration.py，SHA9d569f869666fceee92bd13c4a412ab8578391dbb48419b010a025cb347de43f，candidate.patch/PLAN/测试及RED/中间失败保留。作者13新noEOS5.62s、11旧0.35s通过；尚未Root应用/安装/真实wet验证。program_knot_review与mechanical_code_review已启动独立只读审查该候选；恢复先取实际审查结果及文件。不得把候选完成当repo准入，现repo仍明确拒机械耗尽。Goal active。

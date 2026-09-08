@@ -183,6 +183,7 @@ class DepletionEvent:
     positive_evaporated_mol: float
     qualification: str = 'existing_interface_evaporation_depletion_refinement_indicator_not_ode_certificate'
     terminal_evidence: object = None
+    stretch_difference: float | None = None
 
 
 @dataclass(frozen=True)
@@ -283,14 +284,41 @@ class _WetSpine:
     segments: dict = field(default_factory=dict)
 
 
+def _mechanical_panel(state,first,h,second=None,hm=None):
+    if state.mechanical_stretches is None:return None,None,None
+    values=first.mechanical_rates_per_s
+    other=values if second is None else second.mechanical_rates_per_s
+    if values is None or other is None or values.shape!=state.mechanical_stretches.shape or other.shape!=values.shape:
+        raise DepletionIntegrationError('mechanical_panel_rate_shape')
+    exact=[];after=[]
+    for before,a,b in zip(state.mechanical_stretches,values,other):
+        a=Fraction(float(a));slope=Fraction() if second is None else (Fraction(float(b))-a)/(2*hm)
+        value=Fraction(float(before))
+        if _quadratic_inventory_minimum(value,a,slope,h)<=0:
+            raise _Failure('unsupported','mechanical_panel_nonpositive_path')
+        integral=h*a+h*h*slope
+        represented=float(integral)
+        if not math.isfinite(represented) or (integral and represented==0):
+            raise DepletionIntegrationError('unrepresentable_mechanical_panel_increment')
+        result=float(value+Fraction(represented))
+        if not math.isfinite(result) or result<=0:
+            raise _Failure('unsupported','mechanical_panel_nonpositive_endpoint')
+        exact.append(integral);after.append(result)
+    increments=np.array([float(v) for v in exact])
+    rounding=tuple(Fraction(float(v))-q for v,q in zip(increments,exact))
+    return np.array(after),increments,rounding
+
+
 def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,event_policy,cancel=None):
     from .water_phase_transfer import WaterPhaseTransfer
     if (type(initial) is not ConservedState or type(operator) not in (WaterPhaseTransfer,ManufacturedDepletionAdapter)
             or type(integration_policy) is not IntegrationPolicy or type(event_policy) is not DepletionPolicy
             or (cancel is not None and not callable(cancel))):
         raise DepletionIntegrationError('explicit_depletion_host_state_policies_required')
-    if initial.mechanical_stretches is not None:
-        raise DepletionIntegrationError('mechanical_depletion_integration_not_implemented')
+    mechanical=initial.mechanical_stretches is not None
+    if mechanical:
+        _number(integration_policy.stretch_absolute_tolerance,True)
+        _number(integration_policy.stretch_scale,True)
     start=_number(start_s);end=_number(end_s)
     if end<=start:raise DepletionIntegrationError('end_must_follow_start')
     if (len(operator.interfaces)!=initial.amounts_mol.shape[0]
@@ -308,6 +336,9 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
     totals=DepletionRoundoffTotals(ep.roundoff_policy)
     cumulative_n=[Fraction(0) for _ in initial.amounts_mol.flat]
     cumulative_u=[Fraction(0) for _ in initial.internal_energy_j.flat]
+    cumulative_stretch=([Fraction() for _ in initial.mechanical_stretches] if mechanical else [])
+    cumulative_stretch_exact=list(cumulative_stretch)
+    cumulative_stretch_roundoff=list(cumulative_stretch)
     evaluations=rejected=attempted=0
     refinements=[]
     energy_binding=initial.energy_model_identity
@@ -451,7 +482,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                 arrays.append(out)
             return arrays
 
-        def advance(fields):
+        def advance(fields,stretches):
             fn,fu,rn,work=fields
             def add(before,terms):
                 out=np.empty_like(before)
@@ -463,9 +494,11 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             energy=add(state.internal_energy_j,(fu[:-1],-fu[1:],work))
             if np.any(amounts<0) or not np.all(np.isfinite(amounts)) or not np.all(np.isfinite(energy)):
                 raise _Failure('unsupported','affine_panel_invalid_inventory_or_energy')
-            return ConservedState(amounts,energy,energy_model_identity=state.energy_model_identity)
+            return ConservedState(amounts,energy,energy_model_identity=state.energy_model_identity,
+                                  mechanical_stretches=stretches)
 
-        predictor=advance(integrate_fields(hm))
+        predicted_stretches,_,_=_mechanical_panel(state,obs.rates,hm)
+        predictor=advance(integrate_fields(hm),predicted_stretches)
         if any(predictor.amounts_mol[i,li]<=0 for i,mode in enumerate(path.op.interfaces)
                if mode=='existing_liquid'):
             raise _Failure('unsupported','affine_midpoint_not_wet')
@@ -495,7 +528,8 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             competing=(j==li and i!=cell and path.op.interfaces[i]=='existing_liquid' and n>0)
             if minimum<0 or (competing and minimum==0):
                 raise _Failure('unsupported','affine_competing_inventory_crossing')
-        fields=integrate_fields(h,middle);raw=advance(fields);fn,fu,rn,work=fields
+        stretches,stretch_increment,stretch_rounding=_mechanical_panel(state,obs.rates,h,middle.rates,hm)
+        fields=integrate_fields(h,middle);raw=advance(fields,stretches);fn,fu,rn,work=fields
         # Transfer observations are signed. Integrate their positive part
         # exactly; rounding this diagnostic upward would loosen a budget.
         e0=Fraction(float(obs.evaporation_mol_s[cell]));slope=(Fraction(float(middle.evaporation_mol_s[cell]))-e0)/hm
@@ -520,7 +554,8 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         guard()
         if binding!=spine_binding(path.op,state,t,tc,0.,0.,cell):
             raise DepletionIntegrationError('affine_terminal_source_binding_changed')
-        panel=StepLedger(t,endpoint,*fields,components,rounding)
+        panel=StepLedger(t,endpoint,*fields,components,rounding,
+            stretch_increment=stretch_increment,stretch_quadrature_roundoff=stretch_rounding)
         attempted+=1;costs['terminal']['panels']+=1
         original_op=path.op
         path.op=path.op.with_depleted_cells(raw,(cell,))
@@ -555,7 +590,9 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         amounts=update(state.amounts_mol,increments);energy=update(state.internal_energy_j,powers)
         if np.any(amounts<0) or not np.all(np.isfinite(amounts)) or not np.all(np.isfinite(energy)):
             raise _Failure('unsupported','terminal_panel_invalid_other_inventory_or_energy')
-        raw=ConservedState(amounts,energy,energy_model_identity=state.energy_model_identity);record=None
+        stretches,stretch_increment,stretch_rounding=_mechanical_panel(state,obs.rates,interval)
+        raw=ConservedState(amounts,energy,energy_model_identity=state.energy_model_identity,
+                           mechanical_stretches=stretches);record=None
         evap=float(Fraction(float(obs.evaporation_mol_s[cell]))*interval)
         li=path.op.liquid_index;vi=path.op.water_vapor_index
         if raw.amounts_mol[cell,li]>0:
@@ -573,7 +610,8 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             rounding={key:tuple(Fraction(float(value))-interval*Fraction(float(rate))
                        for value,rate in zip(components[key],obs.rates.cell_power_components_w[key]))
                       for key in components}
-        panel=StepLedger(t,endpoint,*fields,components,rounding);attempted+=1;costs['terminal']['panels']+=1
+        panel=StepLedger(t,endpoint,*fields,components,rounding,
+            stretch_increment=stretch_increment,stretch_quadrature_roundoff=stretch_rounding);attempted+=1;costs['terminal']['panels']+=1
         path.op=path.op.with_depleted_cells(raw,(cell,))
         path.times.append(endpoint);path.states.append(raw);path.steps.append(panel)
         path.event_state=raw;path.event_observation=observe(path.op,raw,endpoint,'terminal')
@@ -600,7 +638,15 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             at=path.times[-1];current=path.states[-1]
             obs=observe(path.op,current,at,'dry');other=check_remaining(current,at,obs)
             desired=min(policy.maximum_step_s,tc-at,ep.safe_inventory_fraction*float(other[0]) if other else policy.maximum_step_s)
-            extend(path,normal(path.op,current,at,min(tc,at+desired),policy.maximum_step_s,
+            finish=min(tc,at+desired)
+            # Choose the named common endpoint directly when its entire exact
+            # interval fits both limits; subtract/add can leave a one-ULP tail.
+            remaining=Fraction(tc)-Fraction(at)
+            safe_duration=Fraction(ep.safe_inventory_fraction)*other[0] if other else None
+            if (remaining<=Fraction(policy.maximum_step_s) and
+                    (safe_duration is None or remaining<=safe_duration)):
+                finish=tc
+            extend(path,normal(path.op,current,at,finish,policy.maximum_step_s,
                                check_remaining if any(m=='existing_liquid' for m in path.op.interfaces) else None,
                                phase='dry'))
 
@@ -684,6 +730,11 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         dtime=abs(a.event.time_s-b.event.time_s)+float(a.event.event_time_rounding_s+b.event.event_time_rounding_s)
         passed=(dtime<=ep.time_absolute_s and dn<=ep.amount_absolute_mol and du<=ep.energy_absolute_j
                 and dt<=ep.temperature_absolute_k and dp<=ep.pressure_absolute_pa)
+        ds=None
+        if mechanical:
+            ds=max(delta(a.event_state.mechanical_stretches,b.event_state.mechanical_stretches),
+                   delta(a.states[-1].mechanical_stretches,b.states[-1].mechanical_stretches))
+            passed=passed and math.isfinite(ds) and ds<=policy.stretch_absolute_tolerance
         def difference_record(x,y):
             differences=np.abs(np.asarray(x)-np.asarray(y))
             index=tuple(int(i) for i in np.unravel_index(np.argmax(differences),differences.shape))
@@ -704,12 +755,18 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             'terminal_start_a_s':a.event.terminal_panel.start_s,'terminal_start_b_s':b.event.terminal_panel.start_s,
             'terminal_end_a_s':a.event.time_s,'terminal_end_b_s':b.event.time_s,
             'approach_grid_a_s':a.approach_grid,'approach_grid_b_s':b.approach_grid})
-        return passed,(dtime,dn,du,dt,dp),details
+        if mechanical:
+            details=MappingProxyType(dict(details,
+                event_stretches=difference_record(a.event_state.mechanical_stretches,b.event_state.mechanical_stretches),
+                common_stretches=difference_record(a.states[-1].mechanical_stretches,b.states[-1].mechanical_stretches)))
+        return passed,((dtime,dn,du,dt,dp,ds) if mechanical else (dtime,dn,du,dt,dp)),details
 
     def commit(path):
         nonlocal cumulative_n,cumulative_u,totals,operator,component_residual_totals
+        nonlocal cumulative_stretch,cumulative_stretch_exact,cumulative_stretch_roundoff
         event=path.event
         cn=list(cumulative_n);cu=list(cumulative_u);component_totals=list(component_residual_totals)
+        cs=list(cumulative_stretch);ce=list(cumulative_stretch_exact);cr=list(cumulative_stretch_roundoff)
         for j,step in enumerate(path.steps):
             if step.component_sum_residual_j is not None:
                 component_totals=[old+abs(delta) for old,delta in
@@ -717,6 +774,24 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                 if any(v>Fraction(policy.energy_absolute_tolerance_j) for v in component_totals):
                     raise _Failure('failed','cross_segment_component_sum_roundoff')
             after=path.states[j+1]
+            before=path.states[j]
+            if (after.energy_model_identity!=energy_binding or before.energy_model_identity!=energy_binding
+                    or (after.mechanical_stretches is not None)!=mechanical):
+                raise DepletionIntegrationError('mechanical_prefix_binding_changed')
+            if mechanical:
+                inc=step.stretch_increment;rounding=step.stretch_quadrature_roundoff
+                if (inc is None or rounding is None or inc.shape!=initial.mechanical_stretches.shape
+                        or len(rounding)!=len(inc) or before.mechanical_stretches is None):
+                    raise DepletionIntegrationError('complete_mechanical_prefix_ledger_required')
+                tol=Fraction(policy.stretch_absolute_tolerance)
+                for i,(v,q) in enumerate(zip(inc,rounding)):
+                    represented=Fraction(float(v));exact=represented-q
+                    cs[i]+=represented;ce[i]+=exact;cr[i]+=abs(q)
+                    local=Fraction(float(after.mechanical_stretches[i]))-Fraction(float(before.mechanical_stretches[i]))
+                    change=Fraction(float(after.mechanical_stretches[i]))-Fraction(float(initial.mechanical_stretches[i]))
+                    if (abs(local-represented)>tol or abs(local-exact)>tol or
+                            abs(change-cs[i])>tol or abs(change-ce[i])>tol or cr[i]>tol):
+                        raise _Failure('failed','cross_segment_stretch_prefix_roundoff')
             nterms=(step.face_species_mol[:-1],-step.face_species_mol[1:],step.reaction_species_mol)
             uterms=(step.face_energy_j[:-1],-step.face_energy_j[1:],step.cell_work_j)
             for flat,idx in enumerate(np.ndindex(initial.amounts_mol.shape)):
@@ -733,6 +808,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                 if abs(error)>Fraction(policy.energy_absolute_tolerance_j):raise _Failure('failed','cross_segment_energy_prefix_roundoff')
         # Validate the entire speculative path before any global state/mode/prefix mutation.
         cumulative_n=cn;cumulative_u=cu;component_residual_totals=component_totals
+        cumulative_stretch=cs;cumulative_stretch_exact=ce;cumulative_stretch_roundoff=cr
         times.extend(path.times[1:]);states.extend(path.states[1:]);steps.extend(path.steps)
         operator=path.op;totals=path.totals
         if event is not None:
@@ -857,7 +933,8 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                                     # the finer independent branch remains speculative.
                                 path.event=replace(path.event,coarse_time_s=first_time,previous_time_s=previous.event.time_s,
                                     common_time_s=tc,event_time_difference_s=diffs[0],common_amount_difference_mol=diffs[1],
-                                    common_energy_difference_j=diffs[2],common_temperature_difference_k=diffs[3],common_pressure_difference_pa=diffs[4])
+                                    common_energy_difference_j=diffs[2],common_temperature_difference_k=diffs[3],common_pressure_difference_pa=diffs[4],
+                                    stretch_difference=diffs[5] if mechanical else None)
                                 if nested is not None or ep.terminal_method=='affine_midpoint':
                                     guard()
                                     if root_binding!=spine_binding(operator,state,t,tc,approach_cap,

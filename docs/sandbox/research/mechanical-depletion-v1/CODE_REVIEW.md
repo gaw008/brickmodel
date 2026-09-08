@@ -1,0 +1,25 @@
+# 独立代码审查记录
+
+冻结生产候选 SHA256: 9d569f869666fceee92bd13c4a412ab8578391dbb48419b010a025cb347de43f。
+
+program_knot_review 与 mechanical_code_review 在候选阶段独立只读核查完整路径正性、两种终端状态/账本、事件及公共时刻比较、全局提交事务和取消。两者 APPROVE，无阻断；指出事件比较与算术共用 stretch_absolute_tolerance，需要明确记录，不能冒独立科学误差范围。
+
+应用后 mechanical_code_review 实际复核生产源码与冻结候选完全一致，新增测试仅替换直接生产导入，旧守卫改为缺尺度时在回调前拒绝，最终 APPROVE。其本次审查未运行测试/EOS/安装。Root 实际应用验证28 passed in6.18s，原XML独立保存。代理代码审查不属于外部专家认证。
+
+真实湿干新试验预登记及测试由 program_knot_review 独立只读审核，测试SHA前缀fd5c8689、PLAN314d65f7，无阻断。确认逐前缀独立水量、机械求积与累计舍入、几何外压功和能量账本检查，未运行EOS。其结论不预判实际结果；硬终止不能保证保存未返回轨迹。Root实际attempt02保存的是失败而非通过。
+
+## 干态共同端点修复
+
+program_knot_review 独立无EOS复现旧版unresolvable_stage_time，候选完成1事件/7panels，并保存affine、剩余液体和较小cap分支。源码候选c9139510df1a6a91837d400f5c8eb8c758b02695f868f28f75440e3d3cc4d792，仅8行：精确剩余时间满足maxstep和其他液体safe_duration时直接选tc；原阶段检查、排序和全区间积分不变。mechanical_code_review独立APPROVE，未运行EOS/测试。
+
+Root补逐panel cap断言初次1失败35通过：原积分器按绝对时刻舍入的名义cap可对应稍长实际区间，因此严格Fraction实际间隔<=名义cap不符合原时钟定义。保留该测试及XML，改为不超过正确舍入绝对上界float(F(start)+F(cap))，其他液体的精确安全时长断言不变。修复后的36项10.55s通过，原物理/事件/机械精度门槛未改。clock-fix-history.zip保存完整失败与候选。
+
+最终应用复核：mechanical_code_review确认实际源码与已审c9139510一致；更正后的逐面板cap断言符合现有名义步长→舍入绝对端点规则，仍以完整实际端点差积分，其他湿单元精确safe_duration逐面板断言保留。未修改求解器或物理门槛，最终APPROVE；该审核未运行测试/EOS。
+
+## 实际attempt03独立结果复算
+
+program_knot_review读取实际JSON/log/status，未调用EOS，使用Fraction独立复算全部19提交前缀。水最大残差4.68239e-21mol；机械表示/精确累计误差3.77867e-16、累计绝对求积舍入8.45602e-22；E账本1.12972e-10J；独立外功−101325×.00014×(n×t²−1)残差1.12964e-10J，全部原门槛内。运行305eval/19steps/1event与原日志一致。
+
+实际独立分支independent_approach_pass/independent_halved_controls记录113eval，cap5e-5、safe.125，网格不同；时间/N/E/T/P/机械六项都在原门槛内。152个源码/测试哈希与当前文件一致。源码c9139510df1a6a91837d400f5c8eb8c758b02695f868f28f75440e3d3cc4d792；测试298e3e43cef1e362789cb1d776dd8926770848fba7208d288e2a8fa0238aadd4；结果JSONfdcbe91a388fdce14d42479e20befc08fc918d5b592807cd82b6474d9c5733c4。
+
+无阻断。独立分支保留了比较记录，但没有保存重建完整试探轨迹所需的全部状态，不能冒称独立复算了该完整分支。公开材料验证与完整物理轨迹缺项仍保留。
