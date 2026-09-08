@@ -19,7 +19,7 @@
 | M02 | 元素/氧化物/矿相/LOI分离 | MassAnalysis typed类别/基准；phase独立ID，运行资格仍待接入 | in_progress |
 | M03 | 湿坯初态、成型水不重复 | prepare_green_batch水账目通过；完整相库存待实现 | in_progress |
 | M04 | 明确原污泥材料域可全周期运行 | 来源完整案例；不能用fixture替代 | pending |
-| P01 | 一维厚度场、几何适用性 | 网格、边界、尺度论证与收敛 | in_progress |
+| P01 | 一维厚度场、几何适用性 | 两格湿态反应/规定变形及内部输运实际4轨迹、逐格账本通过（two-cell-wet-coupling-v1）；该组合固定物理域空间收敛仍未完成 | in_progress |
 | P02 | 炉温/壁温/气氛分段程序 | BoundaryProgram、ProgrammedGasHeat和ProgrammedSolidFluidHeat已组装动态气体库/表面串联换热；完整湿砖全周期尚待验证 | in_progress |
 | P03 | 导热/对流/辐射 | 半格/膜串联与非线性表面平衡；解析升降温及80独立根检查，完整材料域待验证 | in_progress |
 | P04 | 液态水/蒸气迁移、蒸发 | WaterChemicalPotential与WaterPhaseTransfer接通已存在液界面的蒸发/凝结；真实制造例积分和水/U账本已检查。受限压力液态迁移及供体焓已接入；材料速率/毛细、耗尽后过程与公开干燥对照尚缺 | in_progress |
@@ -34,7 +34,7 @@
 | P13 | 收缩/密度/体积与变形输运一致 | 参考/当前构形推导及守恒 | in_progress |
 | P14 | 冷却、适用域相变/应力 | 有据热力本构、边界、验证 | pending |
 | P15 | 强度/破坏概率等不冒充实测 | 输出资格和unknown约束 | pending |
-| P16 | 必需过程真实双向耦合 | 开关耦合变化+账本集成测试 | pending |
+| P16 | 必需过程真实双向耦合 | 两格开关输运温度/能量效应通过经验分辨判据；水库存/相变反馈未分辨，真实材料全耦合仍缺 | in_progress |
 | X01 | 候选是可操作、自洽设计 | 混配/粒径/水分属性联动 | pending |
 | X02 | 批量实验可取消、恢复、限资源 | 持久任务和恢复/超时测试 | pending |
 | X03 | 敏感性与有依据不确定性 | 分类型误差、关联采样、分析 | pending |

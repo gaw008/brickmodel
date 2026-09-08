@@ -4,6 +4,10 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+两格阶段实际完成：4 条轨迹全部 completed（coupled 2/4 步，control 2/4 步），逐格/全域独立账本通过，四组固定判据比较完成。温度约 ±1.4464e-6 K 与能量效应分辨，水库存及相变速率效应未分辨。6 个监督进程均终态，无活动 EOS/测试；全部输入 before/after/current 一致（callback 各180、wet 各181），43 实际安装模块与源码一致。生产/测试仍 67730b2，本轮仅实验/审计及文档证据。归档目标 research/two-cell-wet-coupling-v1；下一步按其中 NEXT_SPATIAL_SCOPE 保持固定物理域与广延量做空间细化，不能简单复制 q(N) 权重。完整 Goal 的真实原泥材料、自由烧结冷却、三个公开机制/留出、CLI/UI 和多代搜索仍未完成。下文旧 live 句柄均为历史检查点，不得据此重启。
+
+当前两格验证（生产仍67730b2，源码/测试未改）：新冻结实验 /private/tmp/brick-reacting-wet-two-cell-v1，2格300/301K、规定变形、A/B反应、活动相变及内部传热/质量修正扩散；制造系数与真实水来源分开。coupled/control freshcallback66328/61026均terminalcomplete2.467376/2.453034s，耦合内面非零/对照全零，43源码安装字节匹配。当前唯一EOS为wet-coupled-0 session25354，2步上限起始设置，内部120/外部150秒100panel。审计脚本 /private/tmp/brick-two-cell-audit-v1 保存逐格/全域精确账本及失败；完整4run两mode两cap尚未完成，不能宣称空间收敛或全砖完成。先poll25354终态和独立账本，再依次剩余三条，保持所有输入冻结。
+
 最新阶段完成：affine_midpoint及不可变二次时钟已通过1279完整安装回归（session8135终态exit0，XML585.898s，零失败错误跳过），运行前后43模块字节一致。v5两条联合湿反应/规定变形/耗尽/干态延续及原N/E/T/P/时间对照通过；独立14/16步账本、相修正及每次182输入核查通过。跨cap湿态路径相同、只干态网格改变，不能把事件时差0解释为收敛阶数；每条内部不同湿态网格检查真实通过。当前无活动EOS/测试。证据归档 research/affine-terminal-v1/（含全部候选失败、审查、原v5结果、完整suite）。下一实际步骤见该归档 readable/affine-terminal/NEXT_COUPLED_SCOPE.md：用现有模块建立2格非均匀湿态反应/传热/传质及关闭输运对照，再固定域空间细化；.005普通程序节点失分辨率仍是独立未修bug。原污泥材料闭合、自由烧结冷却、三公开机制/留出、CLI/UI与多代搜索仍为必需未完成项，Goal active。
 
 最新v5两条均完成并比较passed：18043/36073均terminalcomplete，内层87.845694/85.501777s，260/303eval、31/36panel、14/16接受步，各1耗尽事件。compare.py exit0，N6.65799e-12mol/E2.61061e-8J/T2.60496e-9K/P3.96649e-7Pa/time0，原gate全部通过。当前唯一EOS为完整安装回归session8135，XML /private/tmp/brick-affine-terminal-v1/installed-full-tests.xml；43模块运行前匹配。先轮询终态并核XML/运行后43模块，再归档所有控制失败/独立审计/v5证据并阶段提交。源码/tests/安装/脚本冻结；不能把v5或99目标测试代替完整suite及全Goal验收。
