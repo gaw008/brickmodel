@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.936" timestamp="2026-09-08T11:24:28.717433-10:00" hostname="MacBookPro.lan"><testcase classname="test_trajectory" name="test_dry_gas_trajectory" time="0.500"><failure message="assert (5.104376077369466e-08 &lt; 2e-07 and 4.706031177192926e-06 &lt; 2e-06)">water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+
+    def test_dry_gas_trajectory(water):
+        old=host(water);tr=replace(old.base_model.transport,permeability_m2=(1e-15,3e-15),viscosity_pa_s=(1e-5,2e-5))
+        op=replace(old,base_model=replace(old.base_model,transport=tr),external_pressure_pa=101325.)
+        initial=op.state_from_temperatures([[0.,.01,2.],[0.,.008,2.]],[300.,301.],normal_stretches=(1.,1.),tangential_stretch=1.)
+        y0=np.r_[initial.mechanical_stretches,initial.internal_energy_j,initial.amounts_mol[:,1]]
+        good=solve_ivp(rhs(),(0.,.1),y0,method='DOP853',rtol=1e-12,atol=1e-13)
+        bad=solve_ivp(rhs(True),(0.,.1),y0,method='DOP853',rtol=1e-12,atol=1e-13)
+        assert good.success and bad.success
+        negative=float(np.max(np.abs(good.y[5:,-1]-bad.y[5:,-1])));assert negative&gt;1e-9
+        runs=[];errors=[];maxwork=F()
+        for cap in (.025,.0125):
+            p=policy(initial_step_s=cap,maximum_step_s=cap,relative_tolerance=1e-8,amount_absolute_tolerance_mol=1e-11,
+                energy_absolute_tolerance_j=1e-6,stretch_absolute_tolerance=1e-9,stretch_scale=1.)
+            out=integrate(initial,op,start_s=0.,end_s=.1,policy=p);runs.append(encode(out))
+            Path(__file__).with_name('results.json').write_text(json.dumps(runs,indent=2))
+            assert out.status=='completed',out.reason
+            end=out.states[-1];ev=[float(np.max(np.abs(end.mechanical_stretches-good.y[:3,-1]))),float(np.max(np.abs(end.internal_energy_j-good.y[3:5,-1]))),float(np.max(np.abs(end.amounts_mol[:,1]-good.y[5:,-1])))]
+&gt;           assert ev[0]&lt;2e-7 and ev[1]&lt;2e-6 and ev[2]&lt;1e-9;errors.append(ev)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           assert (5.104376077369466e-08 &lt; 2e-07 and 4.706031177192926e-06 &lt; 2e-06)
+
+/private/tmp/brick-free-slab-gas-trajectory/test_trajectory.py:66: AssertionError</failure></testcase></testsuite></testsuites>

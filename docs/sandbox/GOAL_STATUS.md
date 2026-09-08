@@ -4,6 +4,14 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+233bb8c后本阶段实际progress已完成：真实水两格mixed depletion运行439.44s/积分436.173s、305eval、19步、唯一cell0事件3.041741648e-5s，cell1仍湿且凝结。原两终端+独立不同网格六门槛通过。逐prefix水3.84e-16mol/局部E1.65e-10J/全局外功1.06e-10J，实际局部C约4.25e-6J且全局抵消。163源码hash在解冻前独立一致；session58808已exit0，无活动EOS。全部初末snapshot/失败/分支审计见FREE_SLAB_DEPLETION.md与research/free-slab-depletion-v1。
+
+另新增独立dry gas/enthalpy/自由力学轨迹：16/32步对DOP853通过，原失败保留、外部gate未放宽；陈旧几何负对照可辨。正式安装61实际模块匹配，18相关气流/机械事件测试9.25s通过（99499已exit0），另候选installed5项3.57s。生产源码仍233bb8c，无重复7分钟原生EOS。下一已审候选仅在/private/tmp/brick-reacting-current-point-candidate：CurrentSolidStorage显式reacting_manufactured/currentNs/q储能与孔体积，4drypass，另FreeSlab固定模式提前拒reactingpoint的最小guard1pass；尚未应用repo。先核候选与两个审查再推进自由rates当前qeta、真实反应源与整体能量；完整原泥/边界/空间收敛/三机制留出仍必需，Goal active。
+
+233bb8c后当前唯一native验证session58808：tests/sandbox/test_free_slab_depletion.py，两格cell0耗尽/cell1仍湿，600s积分/660s外层硬限，完整源测试冻结；初始真实callback已保存，尚未积分终态。原六门槛不变，补局部constraint非零、跨cell累计绝对和及初末数值界审计。最终snapshot保存先于断言。路径/private/tmp/brick-free-slab-depletion-v1；恢复先poll同58808，不重启、不并发EOS。无生产源码变化；此测试尚未提交/未通过声明。
+
+另独立dry gas trajectory候选/private/tmp/brick-free-slab-gas-trajectory已审：16/32不同网格对独立DOP853通过；原失败与内部收紧记录保留，未放宽外部gate。尚未应用repo（native冻结中）。reacting当前点候选由reacting_skeleton_provider仅在/private/tmp/brick-reacting-current-point-candidate隔离准备。Goal仍active，完整原§11未完成。
+
 从23be5b6完成多格真实水相间转移准入与当前几何Darcy独立测试，属于实际progress。WaterPhaseTransfer显式接纳FreeSolidSlab，保留真实来源/热化学桥及external_traction、mechanical_constraint、body。源码4真实测试44.25s通过：两档1/2步、8/15eval，蒸发与凝结共同活动，逐prefix水最大5.4063e-17mol、全局外功1.3595e-11J；独立Fraction审计162hash匹配。干态非零Darcy两个方向独立公式/负对照与相关35项通过。资料见FREE_SLAB_PHASE_TRANSFER.md及research/free-slab-phase-v1。
 
 正式非editable安装已终态：97测试61.68s通过，XML零失败/错误/跳过；61实际site-packages模块测试前后逐字一致。session87831/43779已exit0，无活动EOS，不再轮询。骨架/输运/相间系数仍制造，尚非原泥材料或完整干燥。下一推进两格一格耗尽一格仍湿，原六门槛保留；候选在/private/tmp/brick-free-slab-depletion-design，未运行。完整固体反应/动态边界/空间收敛/真实原泥及三机制公开留出仍未完成，Goal active。

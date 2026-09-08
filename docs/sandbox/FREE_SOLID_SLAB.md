@@ -28,3 +28,5 @@ python -m pytest tests/sandbox/test_free_solid_slab_wet.py -q -s
 实际水测试必须安装已锁定的water依赖，并遵守测试的资源上限；这些测试命令不是生产原料仿真入口。现已通过WaterPhaseTransfer显式类型准入，保留每格真实水caloric/source桥与三类机械功转发。固体反应与动态边界程序仍未准入；原Goal范围不变。
 
 新增验证见[FREE_SLAB_PHASE_TRANSFER.md](FREE_SLAB_PHASE_TRANSFER.md)：同一两格短轨迹中的蒸发与凝结、共享导热、自由伸长及逐前缀外功同时活动。另有干态非零Darcy/供体焓瞬时独立公式测试；它与湿轨迹分开，不能称为蒸发加气体输运完整联合轨迹。
+
+后续两格耗尽与独立非零气流时间轨迹已取得实际证据，见[FREE_SLAB_DEPLETION.md](FREE_SLAB_DEPLETION.md)。它们分别验证，不构成所有气液过程联合验证。

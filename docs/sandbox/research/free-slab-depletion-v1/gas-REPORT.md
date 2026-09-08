@@ -1,0 +1,7 @@
+# Dry gas trajectory result
+
+Final actual test 1 passed in 3.29s; 16/32 accepted panels. External gates unchanged throughout. Coarse/fine independent DOP853 errors: stretch9.6769941e-9/2.4168545e-9; energy8.9459354e-7/2.2357563e-7 J; gas5.3392674e-11/1.3359822e-11 mol. Maximum every-prefix global pressure work residual2.4324654e-8 J. Stale transport geometry negative control gas error4.0532771e-6 mol. Results.json retains full encoded runs.
+
+Attempt01 original rel1e-8/caps.025,.0125 failed E2e-6J gate with4.706031e-6J; original test/XML/coarse result preserved. Attempt02 tightened rel1e-9 passed but both inactive caps yielded13 adaptive panels, so not counted as informative refinement. Attempt03 tighter active caps.00625/.003125 gives16/32 panels and approximately fourfold error reduction. No physical horizon, model or external accuracy gate was relaxed. PLAN records each change before execution.
+
+RHS uses explicit constant calorics, logarithmic potential gradients, reduced common tangent mechanics, local constraint reaction power, current Fourier heat and serial Darcy mobility with face EOS density and donor enthalpy. No tested face/host/thermodynamic helper is called from reference RHS. Host-generated initial E shared; initial forward verification belongs to independent point tests. Autouse fixture forbids native water EOS. Pure manufactured dry two-cell numerical check, no wet transport, material admission or spatial convergence claim. No repo edits or install. Parent should independently review candidate before adopting it.
