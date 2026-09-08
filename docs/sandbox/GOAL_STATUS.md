@@ -4,6 +4,14 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+动态储能/自由单格安装终态：session28559已exit0，167 passed in26.70s，外层26.965s回收。XML实际解析零失败/错误/跳过，58个实际安装模块与源码逐字节一致。安装湿轨迹与源码温压/伸长/功残差相同，粗细耗时6.612/12.512s；下文进行中为历史，不再轮询28559。没有活动EOS。
+
+下一只读/隔离候选reacting_skeleton_provider在/private/tmp/brick-free-phase-candidate准备：新动态点/ClosedFreeSolidCell接实际液汽相间转移，保持总E与相参考能，不伪造旧host类型或丢机械state；随后耗尽terminal panels真正推进机械量/账本。该候选不改repo/不安装/不EOS，不属于167已通过结果。恢复从实际代理/文件状态继续。原第11节仍未完成，Goal active。
+
+2026-09-08 UTC 动态储能/自由单格阶段：已新增dynamic_solid_storage.py及free_solid_cell.py，当前(n,t,N,E)真实反解温压再求自由牵引率；不构造PrescribedSlabMotion。integration新增独立external_traction/body功schema，保留原schema；数值错误保留接受前缀。dry/source审查通过。源码163回归3.24s+3真实wetpoint3.08s通过；实际湿fixedphase自由轨迹0→.001s两档1/2步通过，T差5.5e-12K、stretch差1.8e-12、外功残差<6e-11J。原宽误差精度失败与资源失败均保留，详见DYNAMIC_SOLID_STORAGE.md及research/dynamic-solid-v1。
+
+当前唯一活跃验证session28559：非editable安装已完成且58个site-packages模块实际与源码逐字相同；安装167相关测试含真实wet两档正运行，外层90s硬限。恢复先poll同句柄，未终态不得宣称安装通过/重启。源码和tests冻结，下一任务不得并行跑EOS。下一必需阶段是固定相host接相间水分转移/耗尽事件及源误差传播，然后多格相容、输运/反应/烧结冷却完整周期；本阶段短单格轨迹不是目标完成。Goal继续active。
+
 机械状态安装验证终态：唯一session47407已exit0，284 passed in44.62s。实际XML解析零失败/错误/跳过，56个实际site-packages模块与源码逐字节相同。安装cwd=/private/tmp、无PYTHONPATH。不存在待运行本阶段测试，不再轮询47407；下文“进行中”仅保存当时状态。
 
 机械core独立审查已实际读完整修改与测试，无阻断；checkpoint/service修复后code-reviewer复核APPROVE。下一点储能候选仅由reacting_skeleton_provider在/private/tmp/brick-dynamic-storage-candidate准备，不改repo、不安装、不跑EOS；恢复先读代理/候选实际文件。候选方向为不依赖PrescribedSlabMotion的单格DynamicSolidStorage，零速率恢复能→实际温压→自由率，完整几何/来源/误差身份保留；尚未应用，不属于284通过版。

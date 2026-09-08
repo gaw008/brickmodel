@@ -79,13 +79,14 @@ def _check_update(old: NDArray, result: NDArray, increment: NDArray,
 
 _WORK_COMPONENTS = frozenset(("elastic", "interface", "dissipation", "pore", "body"))
 _REACTING_WORK_COMPONENTS = frozenset(("elastic_deformation", "interface_deformation", "dissipation", "bulk_pressure", "body"))
+_FREE_WORK_COMPONENTS = frozenset(("external_traction", "body"))
 
 
 def _components(value, total, *, rate):
     if value is None:
         return None, None
     if (not isinstance(value, Mapping) or not value or
-            not any(set(value) <= schema for schema in (_WORK_COMPONENTS, _REACTING_WORK_COMPONENTS))):
+            not any(set(value) <= schema for schema in (_WORK_COMPONENTS, _REACTING_WORK_COMPONENTS, _FREE_WORK_COMPONENTS))):
         raise IntegrationError("invalid_component_work_keys")
     snapshot = {key: _array(value[key], "work_component", 1) for key in sorted(value)}
     if any(v.shape != total.shape for v in snapshot.values()):

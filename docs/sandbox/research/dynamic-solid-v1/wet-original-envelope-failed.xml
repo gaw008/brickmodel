@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="1.476" timestamp="2026-09-07T22:46:24.532219-10:00" hostname="MacBookPro.lan"><testcase classname="tests.sandbox.test_dynamic_solid_storage_wet" name="test_native_wet_inverse_against_independent_pressure_and_energy[0.97-0.99]" time="0.558"><failure message="sludge_sandbox.solid_fluid_storage.SolidFluidStorageError: numerical_envelope_or_representation_exceeds_inverse_tolerance">water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+normal = 0.97, tangent = 0.99
+
+    @pytest.mark.parametrize('normal,tangent',[(.97,.99),(.9,.95)])
+    def test_native_wet_inverse_against_independent_pressure_and_energy(water,normal,tangent):
+        original=build(water)
+        point=DynamicSolidStorage(template=original.template,
+            skeleton=replace(original.skeleton,viscosity_pa_s=1e6),
+            error_bounds=DynamicStorageErrorBounds((.5,2.),(.5,2.),0.,0.,
+              ('manufactured-numerical-envelope',),'manufactured-not-material-data'),
+            model_id='wet-dynamic-point',version='1',allow_manufactured=True)
+        with localcontext() as context:
+            context.prec=100
+            n,t=D.from_float(normal),D.from_float(tangent)
+            bulk=float(D.from_float(.01)*D.from_float(.014)*n*t*t)
+            theta=n.ln()+2*t.ln()
+            elastic=D.from_float(point.skeleton.reference_volume_m3)*(500*theta**2+
+                400*((n.ln()-theta/3)**2+2*(t.ln()-theta/3)**2))
+            surface=D.from_float(.5)*D.from_float(.003)*t*t
+            recoverable=float(elastic+surface)
+        def volume_residual(pressure):
+            liquid=water.state_tp(300.,pressure,phase='liquid')
+            return water.reference.molar_mass_kg_mol/liquid.density_kg_m3+.01*R*300./pressure+4e-5-bulk
+        pressure=brentq(volume_residual,1e4,1e6,xtol=1e-7,rtol=8*math.ulp(1.))
+        assert abs(volume_residual(pressure))&lt;1e-12
+        liquid=water.state_tp(300.,pressure,phase='liquid')
+        target=liquid.internal_energy_j_mol+.01*(30.-R)*300.+2*(-100000+5*300.-2)+recoverable
+&gt;       result=point.temperature_from_total_energy(point.target(target,1e-8),
+            normal_stretch=normal,tangential_stretch=tangent,liquid_mol=1.,
+            gas_mol={'fixture':.01},solid_mol={'fixture_solid':2.},external_pressure_pa=101325.,
+            temperature_bracket_k=(295.,310.),policy=InversePolicy(1e-6,1e-6,100))
+
+tests/sandbox/test_dynamic_solid_storage_wet.py:37: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/dynamic_solid_storage.py:218: in temperature_from_total_energy
+    inverse = storage.temperature_from_energy(thermal_target, liquid_mol, gas_mol, solid_mol,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SolidFluidStorage(fluid_template=RigidStorage(mechanical=RigidWaterGas(water=WaterProperties(reference=WaterReference(...manufactured:bulk', geometry_version='1', geometry_classification='manufactured_test_fixture', allow_manufactured=True)
+target_energy_j = -482640.58140238764, liquid_mol = 1.0
+gas_mol = {'fixture': 0.01}, solid_mol = {'fixture_solid': 2.0}
+temperature_bracket_k = (295.0, 310.0)
+policy = InversePolicy(energy_tolerance_j=1e-06, temperature_tolerance_k=1e-06, maximum_iterations=100)
+
+    def temperature_from_energy(self,target_energy_j,liquid_mol,gas_mol,solid_mol,temperature_bracket_k,policy,
+                                *,target_energy_error_bound_j=0.):
+        """Invert a target interval, including upstream energy-subtraction error.
+    
+        The bound is additional to the existing target representation budget.
+        It participates in bracket signs, residual/radius and acceptance gates.
+        """
+        target=_num(target_energy_j,'target_energy')
+        _num(target_energy_error_bound_j,'target_energy_error_bound',nonnegative=True)
+        try:
+            exact_error=Fraction(target_energy_error_bound_j)
+        except (TypeError,ValueError,OverflowError) as exc:
+            raise SolidFluidStorageError('invalid_target_energy_error_bound') from exc
+        if exact_error&lt;0:
+            raise SolidFluidStorageError('invalid_target_energy_error_bound')
+        try:
+            target_error=_directed(exact_error,upper=True)
+            tr=_sum_upper((math.ulp(target),target_error))
+        except RigidStorageError as exc:
+            raise SolidFluidStorageError(str(exc)) from exc
+        if type(policy) is not InversePolicy:raise SolidFluidStorageError('explicit_inverse_policy_required')
+        lo,hi=_range(temperature_bracket_k)
+        low=self.evaluate_at_temperature(lo,liquid_mol,gas_mol,solid_mol)
+        high=self.evaluate_at_temperature(hi,liquid_mol,gas_mol,solid_mol)
+        if not (Fraction(low.internal_energy_j)+Fraction(low.energy_error_bound_j)+Fraction(tr)&lt;Fraction(target)
+                &lt;Fraction(high.internal_energy_j)-Fraction(high.energy_error_bound_j)-Fraction(tr)):
+            if target&lt;low.internal_energy_j-low.energy_error_bound_j-tr or target&gt;high.internal_energy_j+high.energy_error_bound_j+tr:
+                raise SolidFluidStorageError('energy_outside_closed_temperature_bracket')
+            raise SolidFluidStorageError('initial_energy_bracket_sign_uncertain')
+        mid=lo+(hi-lo)/2
+        for iteration in range(policy.maximum_iterations+1):
+            point=self.evaluate_at_temperature(mid,liquid_mol,gas_mol,solid_mol)
+            residual=_sum((point.internal_energy_j,-target))
+            budget=_sum_upper((point.energy_error_bound_j,tr,math.ulp(residual)))
+            residual_bound=_sum_upper((abs(residual),budget))
+            radius=_directed(Fraction(residual_bound)/Fraction(point.minimum_heat_capacity_j_k),upper=True)
+            if residual_bound&lt;=policy.energy_tolerance_j and radius&lt;=policy.temperature_tolerance_k:
+                left=_directed(max(Fraction(lo),Fraction(mid)-Fraction(radius)),upper=False)
+                right=_directed(min(Fraction(hi),Fraction(mid)+Fraction(radius)),upper=True)
+                return SolidFluidInverse(point,target,residual,radius,(left,right),iteration,policy,target_error)
+            if budget&gt;policy.energy_tolerance_j or Fraction(budget)/Fraction(point.minimum_heat_capacity_j_k)&gt;Fraction(policy.temperature_tolerance_k):
+&gt;               raise SolidFluidStorageError('numerical_envelope_or_representation_exceeds_inverse_tolerance')
+E               sludge_sandbox.solid_fluid_storage.SolidFluidStorageError: numerical_envelope_or_representation_exceeds_inverse_tolerance
+
+src/sludge_sandbox/solid_fluid_storage.py:223: SolidFluidStorageError</failure></testcase><testcase classname="tests.sandbox.test_dynamic_solid_storage_wet" name="test_native_wet_inverse_against_independent_pressure_and_energy[0.9-0.95]" time="0.568"><failure message="sludge_sandbox.solid_fluid_storage.SolidFluidStorageError: numerical_envelope_or_representation_exceeds_inverse_tolerance">water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+normal = 0.9, tangent = 0.95
+
+    @pytest.mark.parametrize('normal,tangent',[(.97,.99),(.9,.95)])
+    def test_native_wet_inverse_against_independent_pressure_and_energy(water,normal,tangent):
+        original=build(water)
+        point=DynamicSolidStorage(template=original.template,
+            skeleton=replace(original.skeleton,viscosity_pa_s=1e6),
+            error_bounds=DynamicStorageErrorBounds((.5,2.),(.5,2.),0.,0.,
+              ('manufactured-numerical-envelope',),'manufactured-not-material-data'),
+            model_id='wet-dynamic-point',version='1',allow_manufactured=True)
+        with localcontext() as context:
+            context.prec=100
+            n,t=D.from_float(normal),D.from_float(tangent)
+            bulk=float(D.from_float(.01)*D.from_float(.014)*n*t*t)
+            theta=n.ln()+2*t.ln()
+            elastic=D.from_float(point.skeleton.reference_volume_m3)*(500*theta**2+
+                400*((n.ln()-theta/3)**2+2*(t.ln()-theta/3)**2))
+            surface=D.from_float(.5)*D.from_float(.003)*t*t
+            recoverable=float(elastic+surface)
+        def volume_residual(pressure):
+            liquid=water.state_tp(300.,pressure,phase='liquid')
+            return water.reference.molar_mass_kg_mol/liquid.density_kg_m3+.01*R*300./pressure+4e-5-bulk
+        pressure=brentq(volume_residual,1e4,1e6,xtol=1e-7,rtol=8*math.ulp(1.))
+        assert abs(volume_residual(pressure))&lt;1e-12
+        liquid=water.state_tp(300.,pressure,phase='liquid')
+        target=liquid.internal_energy_j_mol+.01*(30.-R)*300.+2*(-100000+5*300.-2)+recoverable
+&gt;       result=point.temperature_from_total_energy(point.target(target,1e-8),
+            normal_stretch=normal,tangential_stretch=tangent,liquid_mol=1.,
+            gas_mol={'fixture':.01},solid_mol={'fixture_solid':2.},external_pressure_pa=101325.,
+            temperature_bracket_k=(295.,310.),policy=InversePolicy(1e-6,1e-6,100))
+
+tests/sandbox/test_dynamic_solid_storage_wet.py:37: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/dynamic_solid_storage.py:218: in temperature_from_total_energy
+    inverse = storage.temperature_from_energy(thermal_target, liquid_mol, gas_mol, solid_mol,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SolidFluidStorage(fluid_template=RigidStorage(mechanical=RigidWaterGas(water=WaterProperties(reference=WaterReference(...manufactured:bulk', geometry_version='1', geometry_classification='manufactured_test_fixture', allow_manufactured=True)
+target_energy_j = -482640.75379690266, liquid_mol = 1.0
+gas_mol = {'fixture': 0.01}, solid_mol = {'fixture_solid': 2.0}
+temperature_bracket_k = (295.0, 310.0)
+policy = InversePolicy(energy_tolerance_j=1e-06, temperature_tolerance_k=1e-06, maximum_iterations=100)
+
+    def temperature_from_energy(self,target_energy_j,liquid_mol,gas_mol,solid_mol,temperature_bracket_k,policy,
+                                *,target_energy_error_bound_j=0.):
+        """Invert a target interval, including upstream energy-subtraction error.
+    
+        The bound is additional to the existing target representation budget.
+        It participates in bracket signs, residual/radius and acceptance gates.
+        """
+        target=_num(target_energy_j,'target_energy')
+        _num(target_energy_error_bound_j,'target_energy_error_bound',nonnegative=True)
+        try:
+            exact_error=Fraction(target_energy_error_bound_j)
+        except (TypeError,ValueError,OverflowError) as exc:
+            raise SolidFluidStorageError('invalid_target_energy_error_bound') from exc
+        if exact_error&lt;0:
+            raise SolidFluidStorageError('invalid_target_energy_error_bound')
+        try:
+            target_error=_directed(exact_error,upper=True)
+            tr=_sum_upper((math.ulp(target),target_error))
+        except RigidStorageError as exc:
+            raise SolidFluidStorageError(str(exc)) from exc
+        if type(policy) is not InversePolicy:raise SolidFluidStorageError('explicit_inverse_policy_required')
+        lo,hi=_range(temperature_bracket_k)
+        low=self.evaluate_at_temperature(lo,liquid_mol,gas_mol,solid_mol)
+        high=self.evaluate_at_temperature(hi,liquid_mol,gas_mol,solid_mol)
+        if not (Fraction(low.internal_energy_j)+Fraction(low.energy_error_bound_j)+Fraction(tr)&lt;Fraction(target)
+                &lt;Fraction(high.internal_energy_j)-Fraction(high.energy_error_bound_j)-Fraction(tr)):
+            if target&lt;low.internal_energy_j-low.energy_error_bound_j-tr or target&gt;high.internal_energy_j+high.energy_error_bound_j+tr:
+                raise SolidFluidStorageError('energy_outside_closed_temperature_bracket')
+            raise SolidFluidStorageError('initial_energy_bracket_sign_uncertain')
+        mid=lo+(hi-lo)/2
+        for iteration in range(policy.maximum_iterations+1):
+            point=self.evaluate_at_temperature(mid,liquid_mol,gas_mol,solid_mol)
+            residual=_sum((point.internal_energy_j,-target))
+            budget=_sum_upper((point.energy_error_bound_j,tr,math.ulp(residual)))
+            residual_bound=_sum_upper((abs(residual),budget))
+            radius=_directed(Fraction(residual_bound)/Fraction(point.minimum_heat_capacity_j_k),upper=True)
+            if residual_bound&lt;=policy.energy_tolerance_j and radius&lt;=policy.temperature_tolerance_k:
+                left=_directed(max(Fraction(lo),Fraction(mid)-Fraction(radius)),upper=False)
+                right=_directed(min(Fraction(hi),Fraction(mid)+Fraction(radius)),upper=True)
+                return SolidFluidInverse(point,target,residual,radius,(left,right),iteration,policy,target_error)
+            if budget&gt;policy.energy_tolerance_j or Fraction(budget)/Fraction(point.minimum_heat_capacity_j_k)&gt;Fraction(policy.temperature_tolerance_k):
+&gt;               raise SolidFluidStorageError('numerical_envelope_or_representation_exceeds_inverse_tolerance')
+E               sludge_sandbox.solid_fluid_storage.SolidFluidStorageError: numerical_envelope_or_representation_exceeds_inverse_tolerance
+
+src/sludge_sandbox/solid_fluid_storage.py:223: SolidFluidStorageError</failure></testcase></testsuite></testsuites>

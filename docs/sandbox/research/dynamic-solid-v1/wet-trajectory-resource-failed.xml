@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="31.282" timestamp="2026-09-08T00:37:01.856635-10:00" hostname="MacBookPro.lan"><testcase classname="tests.sandbox.test_free_solid_cell_wet" name="test_native_wet_free_trajectory_and_time_refinement" time="22.724"><failure message="AssertionError: wall_time_limit&#10;assert 'resource_limit' == 'completed'&#10;  &#10;  - completed&#10;  + resource_limit">water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+
+    def test_native_wet_free_trajectory_and_time_refinement(water):
+        op=host(water)
+        initial=op.state_from_temperature([[1.,.01,2.]],300.,normal_stretch=1.,tangential_stretch=1.)
+        initial_volume=op.point.skeleton.reference_volume_m3
+        outputs=[];metrics=[]
+        for step in (.001,.0005):
+            result=integrate(initial,op,start_s=0.,end_s=.001,
+                policy=policy(initial_step_s=step,maximum_step_s=step,relative_tolerance=1e-7,
+                    stretch_absolute_tolerance=1e-9,stretch_scale=1.,energy_absolute_tolerance_j=1e-6,
+                    maximum_steps=4,maximum_rejections=4,maximum_wall_seconds=15.))
+&gt;           assert result.status=='completed',result.reason
+E           AssertionError: wall_time_limit
+E           assert 'resource_limit' == 'completed'
+E             
+E             - completed
+E             + resource_limit
+
+tests/sandbox/test_free_solid_cell_wet.py:20: AssertionError</failure></testcase></testsuite></testsuites>

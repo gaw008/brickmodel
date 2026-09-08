@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="2" time="0.446" timestamp="2026-09-07T22:50:39.984184-10:00" hostname="MacBookPro.lan"><testcase classname="tests.sandbox.test_free_solid_cell" name="test_dry_full_stage_coupling_against_independent_energy_pressure_ode" time="0.013"><failure message="AssertionError: invalid_component_work_keys&#10;assert 'numerical_failure' == 'completed'&#10;  &#10;  - completed&#10;  + numerical_failure">water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x10dd0bb00&gt;
+
+    def test_dry_full_stage_coupling_against_independent_energy_pressure_ode(water,monkeypatch):
+        op=host(water)
+        monkeypatch.setattr(type(water),'state_tp',lambda *a,**k:pytest.fail('dry case called water EOS'))
+        initial=op.state_from_temperature([[0.,.01,2.]],300.,normal_stretch=1.,tangential_stretch=1.)
+        v=op.point.skeleton.reference_volume_m3
+        heat_capacity=10+.01*(30-R)
+        def oracle(_,state):
+            n,t,energy=state
+            theta=math.log(n)+2*math.log(t)
+            elastic=v*(500*theta**2+400*((math.log(n)-theta/3)**2+2*(math.log(t)-theta/3)**2))
+            temperature=(energy-elastic-.0015*t*t+200004.)/heat_capacity
+            pressure=.01*R*temperature/(v*n*t*t-4e-5)
+            normal=(n*n/1e6)*((pressure-101325)*t*t-(1000*theta+800*(math.log(n)-theta/3))/n)
+            tangent=(t*t/1e6)*((pressure-101325)*n*t-(1000*theta+800*(math.log(t)-theta/3))/t-.0015*t/v)
+            return [normal,tangent,-101325*v*(t*t*normal+2*n*t*tangent)]
+        independent=solve_ivp(oracle,(0.,.1),[1.,1.,float(initial.internal_energy_j[0])],
+                              method='DOP853',rtol=1e-12,atol=1e-13)
+        assert independent.success
+        result=integrate(initial,op,start_s=0.,end_s=.1,policy=policy(initial_step_s=.025,maximum_step_s=.025,
+            relative_tolerance=1e-8,energy_absolute_tolerance_j=1e-6,stretch_absolute_tolerance=1e-9,stretch_scale=1.))
+&gt;       assert result.status=='completed',result.reason
+E       AssertionError: invalid_component_work_keys
+E       assert 'numerical_failure' == 'completed'
+E         
+E         - completed
+E         + numerical_failure
+
+tests/sandbox/test_free_solid_cell.py:51: AssertionError</failure></testcase><testcase classname="tests.sandbox.test_free_solid_cell" name="test_free_host_requires_matching_energy_and_explicit_geometry" time="0.004" /></testsuite></testsuites>
