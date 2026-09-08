@@ -289,6 +289,8 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             or type(integration_policy) is not IntegrationPolicy or type(event_policy) is not DepletionPolicy
             or (cancel is not None and not callable(cancel))):
         raise DepletionIntegrationError('explicit_depletion_host_state_policies_required')
+    if initial.mechanical_stretches is not None:
+        raise DepletionIntegrationError('mechanical_depletion_integration_not_implemented')
     start=_number(start_s);end=_number(end_s)
     if end<=start:raise DepletionIntegrationError('end_must_follow_start')
     if (len(operator.interfaces)!=initial.amounts_mol.shape[0]

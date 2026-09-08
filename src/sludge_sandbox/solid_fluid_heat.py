@@ -191,6 +191,8 @@ class SolidFluidHeat:
     def _check_state(self,state):
         if type(state) is not ConservedState or state.amounts_mol.shape!=(len(self.storages),len(self.species_order)):
             raise SolidFluidHeatError('state_shape_mismatch')
+        if state.mechanical_stretches is not None:
+            raise SolidFluidHeatError('unsupported_mechanical_state')
         if state.energy_model_identity is not None:
             raise SolidFluidHeatError('unsupported_energy_model_identity')
 

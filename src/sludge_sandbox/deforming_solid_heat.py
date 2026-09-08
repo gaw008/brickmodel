@@ -115,6 +115,7 @@ class DeformingSolidHeat:
 
     def _check(self,state,tag=True):
         if type(state) is not ConservedState:raise DeformingSolidHeatError('explicit_conserved_state_required')
+        if state.mechanical_stretches is not None:raise DeformingSolidHeatError('unsupported_mechanical_state')
         if tag and state.energy_model_identity!=self.energy_model_identity:raise DeformingSolidHeatError('matching_total_energy_binding_required')
         if _digest(self.base_model)!=self._base_digest:raise DeformingSolidHeatError('runtime_base_identity_changed')
         if state.amounts_mol.shape!=(len(self.point_storages),len(self.base_model.species_order)):

@@ -184,7 +184,8 @@ def run_case(case_path: str | Path, water_directory: str | Path, output: str | P
                 result['initial_snapshot'] = encode(snapshot(built, built.initial, built.start_s))
             else:
                 from .checkpoint import validate_cancelled, exact_state_equal, remaining_policy
-                if parent['policy'] != encode(built.policy):
+                from .integration import IntegrationPolicy
+                if encode(IntegrationPolicy(**parent['policy'])) != encode(built.policy):
                     raise RunError('resume_policy_mismatch')
                 prefix = validate_cancelled(parent, built.policy, start_s=built.start_s, end_s=built.end_s)
                 if not exact_state_equal(prefix.states[0], built.initial):
@@ -314,7 +315,7 @@ def resume_run(directory: str | Path, output: str | Path, *,
     """Continue a verified cancelled accepted prefix using the current installed model."""
     from .checkpoint import ResumePrefix, validate_cancelled
     from .integration import IntegrationPolicy
-    from .verification_case import read_case
+    from .verification_case import read_case, encode
 
     directory = Path(directory)
     result, manifest = read_run(directory)
@@ -334,9 +335,9 @@ def resume_run(directory: str | Path, output: str | Path, *,
         policy_values = dict(case.payload['numerics']['integration'])
         for name in ('initial_step_s', 'maximum_step_s'):
             policy_values[name] /= 2**case.payload['refinement']
-        if result['policy'] != policy_values:
-            raise RunError('resume_case_policy_mismatch')
         policy = IntegrationPolicy(**policy_values)
+        if encode(IntegrationPolicy(**result['policy'])) != encode(policy):
+            raise RunError('resume_case_policy_mismatch')
         validate_cancelled(result, policy, start_s=case.payload['numerics']['start_s'],
                            end_s=case.payload['numerics']['end_s'])
         if not isinstance(result['initial_snapshot'], dict):

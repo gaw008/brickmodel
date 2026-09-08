@@ -52,19 +52,40 @@ def _binding(value: Any) -> tuple | str:
     return value
 
 
+def _mechanical_vector(value: Any, name: str) -> list[float] | None:
+    """Optional JSON vectors must contain finite numbers, never bool coercions."""
+    if value is None:
+        return None
+    _require(type(value) is list and bool(value), 'checkpoint_invalid_'+name)
+    return [_number(item, name) for item in value]
+
+
 def _state(value: Any) -> ConservedState:
-    _require(type(value) is dict and set(value) == {
-        'amounts_mol', 'internal_energy_j', 'energy_model_identity'}, 'checkpoint_invalid_state')
+    required = {'amounts_mol', 'internal_energy_j', 'energy_model_identity'}
+    _require(type(value) is dict and set(value) in
+             (required, required | {'mechanical_stretches'}), 'checkpoint_invalid_state')
     identity = _binding(value['energy_model_identity'])
     _require(type(identity) is tuple, 'checkpoint_missing_energy_binding')
-    return ConservedState(value['amounts_mol'], value['internal_energy_j'], identity)
+    stretches = _mechanical_vector(value.get('mechanical_stretches'), 'mechanical_stretches')
+    return ConservedState(value['amounts_mol'], value['internal_energy_j'], identity,
+                          mechanical_stretches=stretches)
 
 
 def _ledger(value: Any) -> StepLedger:
     required = {'start_s', 'end_s', 'face_species_mol', 'face_energy_j',
                 'reaction_species_mol', 'cell_work_j', 'cell_work_components_j',
                 'component_quadrature_roundoff_j', 'component_sum_residual_j'}
-    _require(type(value) is dict and set(value) == required, 'checkpoint_invalid_ledger')
+    mechanical = {'stretch_increment', 'stretch_quadrature_roundoff'}
+    _require(type(value) is dict and set(value) in (required, required | mechanical),
+             'checkpoint_invalid_ledger')
+    increment = _mechanical_vector(value.get('stretch_increment'), 'stretch_increment')
+    stretch_rounding = value.get('stretch_quadrature_roundoff')
+    if stretch_rounding is not None:
+        _require(type(stretch_rounding) is list and bool(stretch_rounding),
+                 'checkpoint_invalid_stretch_roundoff')
+        stretch_rounding = tuple(_fraction(item) for item in stretch_rounding)
+    _require((increment is None) == (stretch_rounding is None),
+             'checkpoint_incomplete_mechanical_ledger')
     rounding = value['component_quadrature_roundoff_j']
     if rounding is not None:
         _require(type(rounding) is dict, 'checkpoint_invalid_component_roundoff')
@@ -73,7 +94,9 @@ def _ledger(value: Any) -> StepLedger:
                         _number(value['end_s'], 'ledger_time'),
                         value['face_species_mol'], value['face_energy_j'],
                         value['reaction_species_mol'], value['cell_work_j'],
-                        value['cell_work_components_j'], rounding)
+                        value['cell_work_components_j'], rounding,
+                        stretch_increment=increment,
+                        stretch_quadrature_roundoff=stretch_rounding)
     saved = value['component_sum_residual_j']
     saved_residual = None if saved is None else tuple(_fraction(v) for v in saved)
     _require(saved_residual == ledger.component_sum_residual_j,
@@ -83,7 +106,12 @@ def _ledger(value: Any) -> StepLedger:
 
 def exact_state_equal(left: ConservedState, right: ConservedState) -> bool:
     """Preserve nested binding and binary float identity, including signed zero."""
+    lm, rm = left.mechanical_stretches, right.mechanical_stretches
+    mechanical_equal = ((lm is None and rm is None) or
+                        (lm is not None and rm is not None and lm.shape == rm.shape and
+                         lm.tobytes() == rm.tobytes()))
     return (left.energy_model_identity == right.energy_model_identity and
+            mechanical_equal and
             left.amounts_mol.shape == right.amounts_mol.shape and
             left.internal_energy_j.shape == right.internal_energy_j.shape and
             left.amounts_mol.tobytes() == right.amounts_mol.tobytes() and
@@ -110,6 +138,13 @@ def audit_integration(record: dict[str, Any], policy: IntegrationPolicy, *,
              all(a < b for a, b in zip(times, times[1:])), 'checkpoint_time_continuity')
     initial = states[0]
     cells, species = initial.amounts_mol.shape
+    mechanical = initial.mechanical_stretches is not None
+    _require(not mechanical or (policy.stretch_absolute_tolerance is not None and
+                            policy.stretch_scale is not None),
+             'checkpoint_mechanical_policy_mismatch')
+    msum = [Fraction() for _ in range(cells+1)]
+    qsum = [Fraction() for _ in range(cells+1)]
+    qabs = [Fraction() for _ in range(cells+1)]
     nsum = [[Fraction() for _ in range(species)] for _ in range(cells)]
     esum = [Fraction() for _ in range(cells)]
     csum = [Fraction() for _ in range(cells)]
@@ -125,6 +160,14 @@ def audit_integration(record: dict[str, Any], policy: IntegrationPolicy, *,
                  ledger.face_energy_j.shape == (cells+1,) and
                  ledger.reaction_species_mol.shape == (cells, species) and
                  ledger.cell_work_j.shape == (cells,), 'checkpoint_ledger_shape')
+        _require((after.mechanical_stretches is not None) == mechanical and
+                 (ledger.stretch_increment is not None) == mechanical and
+                 (ledger.stretch_quadrature_roundoff is not None) == mechanical,
+                 'checkpoint_mechanical_schema_changed')
+        if mechanical:
+            _audit_mechanical_step((initial, before, after), ledger,
+                                   Fraction(policy.stretch_absolute_tolerance),
+                                   (msum, qsum, qabs))
         current = None if ledger.cell_work_components_j is None else tuple(ledger.cell_work_components_j)
         if schema is ...:
             schema = current
@@ -158,6 +201,33 @@ def audit_integration(record: dict[str, Any], policy: IntegrationPolicy, *,
     actual = None if saved is None else tuple(_fraction(v) for v in saved)
     _require(actual == expected, 'checkpoint_cumulative_component_record_mismatch')
     return PrefixAudit(states, ledgers, times, expected)
+
+
+def _audit_mechanical_step(states: tuple[ConservedState, ConservedState, ConservedState],
+                           ledger: StepLedger, allowance: Fraction,
+                           totals: tuple[list[Fraction], list[Fraction], list[Fraction]]) -> None:
+    """Charge represented writeback and exact-stage discrepancies to original policy."""
+    initial, before, after = states
+    msum, qsum, qabs = totals
+    size = initial.amounts_mol.shape[0]+1
+    _require(all(state.mechanical_stretches.shape == (size,)
+                 for state in (initial, before, after)) and
+             ledger.stretch_increment.shape == (size,) and
+             len(ledger.stretch_quadrature_roundoff) == size,
+             'checkpoint_mechanical_shape')
+    for index in range(size):
+        delta = Fraction(float(ledger.stretch_increment[index]))
+        roundoff = ledger.stretch_quadrature_roundoff[index]
+        exact = delta-roundoff
+        msum[index] += delta
+        qsum[index] += exact
+        qabs[index] += abs(roundoff)
+        _require(qabs[index] <= allowance, 'checkpoint_cumulative_stretch_quadrature_roundoff')
+        for origin, total in ((before, delta), (initial, msum[index]),
+                              (before, exact), (initial, qsum[index])):
+            residual = (Fraction(float(after.mechanical_stretches[index]))-
+                        Fraction(float(origin.mechanical_stretches[index]))-total)
+            _require(abs(residual) <= allowance, 'checkpoint_cumulative_stretch_roundoff')
 
 
 @dataclass(frozen=True)
@@ -252,4 +322,4 @@ def merge_integration(parent: dict[str, Any], suffix: dict[str, Any],
                     'speculative_suffix_steps': len(suffix['steps']),
                     'original_prefix_steps': len(parent['steps']),
                     'status': 'failed' if failure else 'passed', 'reason': failure,
-                    'scope': 'Every retained merged prefix checked by exact binary-float Fraction sums against original initial N/E and original absolute tolerances, including cumulative absolute component-sum residuals. No truncation or material certification.'}
+                    'scope': 'Every retained merged prefix checked by exact binary-float Fraction sums against original initial N/E and optional mechanical stretches under original absolute tolerances, including cumulative absolute component-sum and mechanical quadrature residuals. No truncation or material certification.'}

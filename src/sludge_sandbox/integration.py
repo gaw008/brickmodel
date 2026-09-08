@@ -118,6 +118,8 @@ class ConservedState:
     amounts_mol: NDArray[np.float64]
     internal_energy_j: NDArray[np.float64]
     energy_model_identity: tuple | None = None
+    # Normal stretch for each cell followed by one shared tangential stretch.
+    mechanical_stretches: NDArray[np.float64] | None = None
 
     def __post_init__(self):
         if self.energy_model_identity is not None:
@@ -138,6 +140,11 @@ class ConservedState:
             raise IntegrationError("invalid_state_shape_or_inventory")
         object.__setattr__(self, "amounts_mol", amounts)
         object.__setattr__(self, "internal_energy_j", energy)
+        if self.mechanical_stretches is not None:
+            stretches = _array(self.mechanical_stretches, "mechanical_stretches", 1)
+            if stretches.shape != (energy.size+1,) or np.any(stretches <= 0):
+                raise IntegrationError("invalid_mechanical_stretch_shape_or_positivity")
+            object.__setattr__(self, "mechanical_stretches", stretches)
 
 
 @dataclass(frozen=True)
@@ -156,18 +163,25 @@ class Rates:
     cell_power_w: NDArray[np.float64]
     cell_power_components_w: Mapping[str, NDArray[np.float64]] | None = None
     component_sum_residual_w: tuple[Fraction, ...] | None = field(init=False, default=None)
+    mechanical_rates_per_s: NDArray[np.float64] | None = None
 
     def __post_init__(self):
         for name, dimensions in (("face_species_mol_s", 2), ("face_energy_w", 1),
                                  ("reaction_species_mol_s", 2), ("cell_power_w", 1)):
             object.__setattr__(self, name, _array(getattr(self, name), name, dimensions))
 
+        if self.mechanical_rates_per_s is not None:
+            object.__setattr__(self, "mechanical_rates_per_s", _array(self.mechanical_rates_per_s, "mechanical_rates", 1))
         components, residual = _components(self.cell_power_components_w, self.cell_power_w, rate=True)
         object.__setattr__(self, "cell_power_components_w", components)
         object.__setattr__(self, "component_sum_residual_w", residual)
 
     def derivatives(self, state: ConservedState) -> tuple[NDArray, NDArray]:
         cells, species = state.amounts_mol.shape
+        if (state.mechanical_stretches is None) != (self.mechanical_rates_per_s is None):
+            raise IntegrationError("mechanical_state_rate_pair_required")
+        if self.mechanical_rates_per_s is not None and self.mechanical_rates_per_s.shape != (cells+1,):
+            raise IntegrationError("mechanical_rate_shape_mismatch")
         if (self.face_species_mol_s.shape != (cells+1, species)
                 or self.face_energy_w.shape != (cells+1,)
                 or self.reaction_species_mol_s.shape != (cells, species)
@@ -201,11 +215,25 @@ class StepLedger:
     cell_work_components_j: Mapping[str, NDArray[np.float64]] | None = None
     component_quadrature_roundoff_j: Mapping[str, tuple[Fraction, ...]] | None = None
     component_sum_residual_j: tuple[Fraction, ...] | None = field(init=False, default=None)
+    stretch_increment: NDArray[np.float64] | None = None
+    # Represented increment minus exact represented-stage rate quadrature.
+    stretch_quadrature_roundoff: tuple[Fraction, ...] | None = None
 
     def __post_init__(self):
         for name, dimensions in (("face_species_mol", 2), ("face_energy_j", 1),
                                  ("reaction_species_mol", 2), ("cell_work_j", 1)):
             object.__setattr__(self, name, _array(getattr(self, name), name, dimensions))
+        if self.stretch_increment is not None:
+            increment = _array(self.stretch_increment, "stretch_increment", 1)
+            if increment.shape != (len(self.cell_work_j)+1,):
+                raise IntegrationError("stretch_increment_shape_mismatch")
+            object.__setattr__(self, "stretch_increment", increment)
+            rounding = self.stretch_quadrature_roundoff
+            if (not isinstance(rounding, tuple) or len(rounding) != len(increment) or
+                    any(type(value) is not Fraction for value in rounding)):
+                raise IntegrationError("stretch_quadrature_roundoff_required")
+        elif self.stretch_quadrature_roundoff is not None:
+            raise IntegrationError("stretch_increment_required")
         components, residual = _components(self.cell_work_components_j, self.cell_work_j, rate=False)
         object.__setattr__(self, "cell_work_components_j", components)
         object.__setattr__(self, "component_sum_residual_j", residual)
@@ -234,10 +262,16 @@ class IntegrationPolicy:
     maximum_steps: int
     maximum_rejections: int
     maximum_wall_seconds: float
+    stretch_absolute_tolerance: float | None = None
+    stretch_scale: float | None = None
 
     def __post_init__(self):
+        if (self.stretch_absolute_tolerance is None) != (self.stretch_scale is None):
+            raise IntegrationError("paired_stretch_scales_required")
         for name in self.__dataclass_fields__:
             value = getattr(self, name)
+            if name in {"stretch_absolute_tolerance", "stretch_scale"} and value is None:
+                continue
             if name in {"maximum_steps", "maximum_rejections"}:
                 if type(value) is not int or value < 1:
                     raise IntegrationError(f"invalid_{name}")
@@ -293,6 +327,11 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
     """
     if not isinstance(initial, ConservedState) or not isinstance(policy, IntegrationPolicy):
         raise IntegrationError("validated_initial_state_and_policy_required")
+    if initial.mechanical_stretches is not None:
+        if policy.stretch_absolute_tolerance is None:
+            raise IntegrationError("explicit_stretch_scales_required")
+        _scalar(policy.stretch_absolute_tolerance+policy.relative_tolerance*policy.stretch_scale,
+                "combined_stretch_scale", positive=True)
     if not callable(operator) or (cancel is not None and not callable(cancel)):
         raise IntegrationError("invalid_callback")
     start, end = _scalar(start_s, "start"), _scalar(end_s, "end")
@@ -311,6 +350,10 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
     begin = time.monotonic()
     cumulative_n = [Fraction(0) for _ in initial.amounts_mol.flat]
     cumulative_u = [Fraction(0) for _ in initial.internal_energy_j.flat]
+    mechanical = initial.mechanical_stretches is not None
+    cumulative_stretch = [Fraction() for _ in initial.mechanical_stretches] if mechanical else None
+    cumulative_stretch_exact = list(cumulative_stretch) if mechanical else None
+    cumulative_stretch_roundoff = list(cumulative_stretch) if mechanical else None
 
     def accumulated_exchange(previous, before, after, terms, tolerance, name):
         # Exact binary-float sums avoid building a second drifting float ledger.
@@ -362,7 +405,14 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
         u = _updated(state.internal_energy_j, step*du, policy.energy_absolute_tolerance_j, "energy")
         if np.any(n < 0) or not np.all(np.isfinite(n)) or not np.all(np.isfinite(u)):
             raise _Reject("trial_inventory_or_energy_invalid")
-        return ConservedState(n, u, energy_model_identity=state.energy_model_identity)
+        stretches = None
+        if mechanical:
+            stretches = _updated(state.mechanical_stretches, step*rates.mechanical_rates_per_s,
+                                 policy.stretch_absolute_tolerance, "stretch")
+            if np.any(stretches <= 0):
+                raise _Reject("trial_stretch_not_positive")
+        return ConservedState(n, u, energy_model_identity=state.energy_model_identity,
+                              mechanical_stretches=stretches)
 
     def rk2(state, at, endpoint):
         step = endpoint-at
@@ -374,12 +424,22 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
         fields = [_sum_arrays((step/2)*getattr(first, name), (step/2)*getattr(second, name)) for name in (
             "face_species_mol_s", "face_energy_w", "reaction_species_mol_s", "cell_power_w")]
         faces_n, faces_u, sources, work = fields
+        stretches, stretch_increment, exact_stretch = None, None, None
+        if mechanical:
+            stretch_increment = _sum_arrays((step/2)*first.mechanical_rates_per_s,
+                                            (step/2)*second.mechanical_rates_per_s)
+            stretches = _updated(state.mechanical_stretches, stretch_increment,
+                                 policy.stretch_absolute_tolerance, "stretch")
+            if np.any(stretches <= 0):
+                raise _Reject("trial_stretch_not_positive")
+            exact_stretch = tuple(Fraction(step/2)*(Fraction(float(a))+Fraction(float(b)))
+                                  for a,b in zip(first.mechanical_rates_per_s, second.mechanical_rates_per_s))
         result = ConservedState(
             _updated(state.amounts_mol, _sum_arrays(faces_n[:-1], -faces_n[1:], sources),
                      policy.amount_absolute_tolerance_mol, "amount"),
             _updated(state.internal_energy_j, _sum_arrays(faces_u[:-1], -faces_u[1:], work),
                      policy.energy_absolute_tolerance_j, "energy"),
-            energy_model_identity=state.energy_model_identity)
+            energy_model_identity=state.energy_model_identity, mechanical_stretches=stretches)
         parts, exact_parts = None, None
         if first.cell_power_components_w is not None:
             parts, exact_parts = {}, {}
@@ -388,7 +448,7 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
                 parts[key] = _sum_arrays((step/2)*a, (step/2)*b)
                 exact_parts[key] = tuple(Fraction(step/2)*(Fraction(float(x))+Fraction(float(y)))
                                          for x, y in zip(a, b))
-        return result, fields, parts, exact_parts
+        return result, fields, parts, exact_parts, stretch_increment, exact_stretch
 
     h = policy.initial_step_s
     clock = Fraction(start)
@@ -433,9 +493,9 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
             left_step, right_step = midpoint-at, next_time-midpoint
             if (not at < midpoint < next_time or left_step/2 == 0 or right_step/2 == 0):
                 raise IntegrationError("unresolvable_stage_time")
-            full, _, _, _ = rk2(state, at, next_time)
-            half, first_fields, first_parts, first_exact = rk2(state, at, midpoint)
-            accepted, second_fields, second_parts, second_exact = rk2(half, midpoint, next_time)
+            full, _, _, _, _, _ = rk2(state, at, next_time)
+            half, first_fields, first_parts, first_exact, first_stretch, first_stretch_exact = rk2(state, at, midpoint)
+            accepted, second_fields, second_parts, second_exact, second_stretch, second_stretch_exact = rk2(half, midpoint, next_time)
             nscale = policy.amount_absolute_tolerance_mol+policy.relative_tolerance*policy.amount_scale_mol
             uscale = policy.energy_absolute_tolerance_j+policy.relative_tolerance*policy.energy_scale_j
             # Leading local SSPRK2 error is C*h^3. For the two actual substeps,
@@ -446,6 +506,12 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
                 raise IntegrationError("unresolvable_stage_time")
             error = max(float(np.max(np.abs(accepted.amounts_mol-full.amounts_mol)))/nscale,
                         float(np.max(np.abs(accepted.internal_energy_j-full.internal_energy_j)))/uscale)*q/(1-q)
+            if mechanical:
+                stretch_scale = policy.stretch_absolute_tolerance+policy.relative_tolerance*policy.stretch_scale
+                stretch_error = float(np.max(np.abs(accepted.mechanical_stretches-full.mechanical_stretches)))/stretch_scale*q/(1-q)
+                if not math.isfinite(stretch_error):
+                    raise _Reject("nonfinite_mechanical_error_estimate")
+                error = max(error, stretch_error)
             if not math.isfinite(error):
                 raise _Reject("nonfinite_error_estimate")
             if error > 1:
@@ -475,7 +541,29 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
                 parts = {key: _sum_arrays(first_parts[key], second_parts[key]) for key in first_parts}
                 rounding = {key: tuple(Fraction(float(value))-a-b for value, a, b in
                                       zip(parts[key], first_exact[key], second_exact[key])) for key in parts}
-            ledger = StepLedger(at, next_time, *fields, parts, rounding)
+            stretch_increment, stretch_rounding = None, None
+            proposed_stretch, proposed_stretch_exact = cumulative_stretch, cumulative_stretch_exact
+            proposed_stretch_roundoff = cumulative_stretch_roundoff
+            if mechanical:
+                stretch_increment = _sum_arrays(first_stretch, second_stretch)
+                exact_stretch = tuple(a+b for a,b in zip(first_stretch_exact, second_stretch_exact))
+                stretch_rounding = tuple(Fraction(float(value))-exact for value,exact in zip(stretch_increment, exact_stretch))
+                _check_update(state.mechanical_stretches, accepted.mechanical_stretches, stretch_increment,
+                              policy.stretch_absolute_tolerance, "stretch")
+                proposed_stretch = accumulated_exchange(cumulative_stretch, initial.mechanical_stretches,
+                    accepted.mechanical_stretches, (stretch_increment,), policy.stretch_absolute_tolerance, "stretch")
+                proposed_stretch_exact = [old+delta for old,delta in zip(cumulative_stretch_exact, exact_stretch)]
+                proposed_stretch_roundoff = [old+abs(delta) for old,delta in zip(cumulative_stretch_roundoff, stretch_rounding)]
+                for index, (exact, total) in enumerate(zip(exact_stretch, proposed_stretch_exact)):
+                    value = Fraction(float(accepted.mechanical_stretches[index]))
+                    local = value-Fraction(float(state.mechanical_stretches[index]))-exact
+                    cumulative = value-Fraction(float(initial.mechanical_stretches[index]))-total
+                    if (abs(local) > Fraction(policy.stretch_absolute_tolerance) or
+                            abs(cumulative) > Fraction(policy.stretch_absolute_tolerance) or
+                            proposed_stretch_roundoff[index] > Fraction(policy.stretch_absolute_tolerance)):
+                        raise IntegrationError("cumulative_stretch_quadrature_roundoff")
+            ledger = StepLedger(at, next_time, *fields, parts, rounding,
+                                stretch_increment=stretch_increment, stretch_quadrature_roundoff=stretch_rounding)
             proposed_components = cumulative_components
             if ledger.component_sum_residual_j is not None:
                 proposed_components = [old+abs(delta) for old, delta in
@@ -485,6 +573,8 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
             guard()
             cumulative_n, cumulative_u = proposed_n, proposed_u
             cumulative_components = proposed_components
+            cumulative_stretch, cumulative_stretch_exact = proposed_stretch, proposed_stretch_exact
+            cumulative_stretch_roundoff = proposed_stretch_roundoff
             ledgers.append(ledger)
             states.append(accepted)
             times.append(next_time)

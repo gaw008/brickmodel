@@ -4,6 +4,14 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+机械状态安装验证终态：唯一session47407已exit0，284 passed in44.62s。实际XML解析零失败/错误/跳过，56个实际site-packages模块与源码逐字节相同。安装cwd=/private/tmp、无PYTHONPATH。不存在待运行本阶段测试，不再轮询47407；下文“进行中”仅保存当时状态。
+
+机械core独立审查已实际读完整修改与测试，无阻断；checkpoint/service修复后code-reviewer复核APPROVE。下一点储能候选仅由reacting_skeleton_provider在/private/tmp/brick-dynamic-storage-candidate准备，不改repo、不安装、不跑EOS；恢复先读代理/候选实际文件。候选方向为不依赖PrescribedSlabMotion的单格DynamicSolidStorage，零速率恢复能→实际温压→自由率，完整几何/来源/误差身份保留；尚未应用，不属于284通过版。
+
+2026-09-08 UTC 机械动态状态阶段：从 f7bfa7a 实际推进 integration.py 的显式 mechanical_stretches/rates、独立误差尺度、全RK阶段及拒步/取消事务和伸长求积账本；checkpoint 保存/逐位连接/原初态累计审计机械字段。旧固定/规定几何主机和未同步实现的耗尽路径明确拒绝机械状态，库存舍入回写保留字段。具体合同见 MECHANICAL_STATE.md。源码122核心/检查点/轨迹测试3.16s及162服务/搜索/旧事件测试31.70s通过。旧非机械基准16接受/1拒的原字段逐字一致，新字段均None。相关原始XML、RED和修复前缺import失败已保存在 research/mechanical-state-v1。非editable安装实际56模块匹配；安装同组验证进行中，恢复先检查下述终态记录/唯一session47407，不重复启动。
+
+新的下一执行点：新增直接接受当前机械状态的点储能入口，不能构造预定motion代替动态状态。由(n,t,N)构造体积/孔体积，以Etotal减恢复能反解温压，然后调用自由牵引闭合，给总能量加入真实外压功；先验证单格干/湿轨迹，再实现耗尽事件、多格机械相容和CLI/UI场景。当前DOP853对照只是制造自由机械轨迹（0→0.1s，p0、pe0/100），并未做真实污泥或全湿烧制验证。Goal仍active，§11未完成。
+
 2026-09-08 UTC：新增 free_skeleton_rates.py，实现制造固定固相单格的瞬时自由牵引双速率闭合。法向/横向分别求解，保留实际牵引与功率残差及数值误差证书，不截断越域速率、不追加重复耗散热。独立物理/Python 审查无阻断；源码39测试0.14s及非editable安装39测试0.12s通过，实际56个安装模块与源逐字节相同。证据见 research/free-skeleton-rates-v1。Olevsky 教程/镍粉压力辅助论文核读见 data/sandbox/research/free-sintering-source-v1；没有准入真实污泥参数，没有分发未确认许可的教程PDF/截图。
 
 下一可执行步骤是把 (n,t,N,E) 纳入真实积分阶段和误差控制、拒步、域终止及 checkpoint，替换只能 prescribed motion 的机械状态来源，随后验证完整自由形变轨迹；多格还需共同切向伸长与空间力学相容。当前函数的孔压由调用者提供，并非 EOS 耦合或全周期模型。Goal 继续 active；原第11节尚未完成。材料与公开验证缺口继续保留。
