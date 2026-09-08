@@ -59,3 +59,46 @@ continued = resume_run("/tmp/cancelled-run", "/tmp/new-resume")
 ```
 
 案例中 `refinement=1` 将显式初始/最大时间步减半；`grid.cells=4` 在相同物理域中对新构建的两格父态进行库存和能量守恒细分，同时检查同温储能广延性。`profile=uniform` 使用左父单元的库存和温度构造两侧一致初场；`transport_mode=control` 使用显式为零的传热/水扩散设置。这些选项用于验证，不代表材料设计的自由搜索域。
+
+## 整个服务进程的监督
+
+`supervise` 在独立子进程中调用同一运行服务，覆盖导入、初始化、积分和诊断。
+下面的工作时限为120秒，到限先发协作取消信号，5秒宽限后仍未退出就强杀并回收：
+
+```sh
+python -m sludge_sandbox supervise run data/sandbox/cases/reacting-wet-slab-v1.json --water-data data/sandbox/water --evidence-data data/sandbox --job-directory /tmp/brick-jobs/new --wall-seconds 120 --grace-seconds 5
+# 在另一个终端查看或提交取消请求：
+python -m sludge_sandbox job-status /tmp/brick-jobs/new
+python -m sludge_sandbox cancel-job /tmp/brick-jobs/new
+# 重放或续算仍使用冻结的 run/，每次创建新任务目录：
+python -m sludge_sandbox supervise replay /tmp/brick-jobs/new/run --job-directory /tmp/brick-jobs/replay --wall-seconds 120
+```
+
+任务目录必须不存在；`run/` 保留独立的输入/结果/清单，`job.json` 保存监督状态，
+`stdout.log`、`stderr.log` 保存子进程输出，`child-metrics.json` 在正常经过包装器退出时保存资源观测。
+只有子进程退出码0、运行状态completed且清单验证通过才报告completed。
+超时、取消、数值失败、异常退出和结果未验证分别记录；监督命令除completed外返回非零。
+原始 `run/replay/resume` 仍是直接服务入口，整进程时限需显式使用 `supervise`。
+
+实际边界是工作时限加取消宽限、轮询与回收调度，不能承诺实时操作系统式的精确截止。
+同一解析后任务父目录最多一个活动原生子进程，忙时明确refused；不同父目录不共享此限制。
+当前使用POSIX `flock`，没有Windows兼容实现。子进程继承锁句柄，监督器死亡不会立即放开
+仍活动子进程占用的名额；但监督器死亡后没有独立看门狗继续执行时限，不保证自动恢复。
+
+`job-status` 是保存状态的观察，不能凭旧PID证明进程存活。`cancel-job` 只写入绑定任务UUID的
+请求，成功返回表示请求已保存；实际取消由仍持有子进程句柄的监督器确认，从不向保存的PID发信号。
+强杀可能留下未封存的运行目录，这类目录不能冒充可续算检查点。
+
+资源观测包括本子进程CPU用户/系统时间和原生 `ru_maxrss` 峰值。RSS明确保留平台原单位，
+没有假定其为字节或KiB；不汇总后代进程，也没有设置内存硬上限。被强杀时缺少资源信息记为unknown。
+`resources` 仍只提供安装身份，不能替代一次运行的实际成本测量。
+
+Python同步调用与CLI共享监督器：
+
+```python
+from sludge_sandbox.job_supervisor import SupervisionPolicy, supervise, read_job, request_cancel
+
+job = supervise("run", "case.json", "/tmp/brick-jobs/python-new",
+                SupervisionPolicy(120, cancel_grace_seconds=5),
+                water_directory="water", evidence_directory="data/sandbox")
+```

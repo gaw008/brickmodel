@@ -40,6 +40,18 @@ def main(argv=None):
     resume = commands.add_parser('resume', help='从已取消运行的最后接受步继续；保留原始预算和完整账本')
     resume.add_argument('run_directory', type=Path)
     resume.add_argument('--output', required=True, type=Path)
+    supervised = commands.add_parser('supervise', help='监督整个运行进程，保存状态并限制总耗时')
+    supervised.add_argument('operation', choices=('run', 'replay', 'resume'))
+    supervised.add_argument('source', type=Path)
+    supervised.add_argument('--job-directory', required=True, type=Path)
+    supervised.add_argument('--water-data', type=Path)
+    supervised.add_argument('--evidence-data', type=Path)
+    supervised.add_argument('--wall-seconds', required=True, type=float)
+    supervised.add_argument('--grace-seconds', default=5., type=float)
+    for name, help_text in [('job-status', '读取保存的任务状态；不证明进程仍然存活'),
+                            ('cancel-job', '提交取消请求；实际终止由持有进程的监督器确认')]:
+        command = commands.add_parser(name, help=help_text)
+        command.add_argument('job_directory', type=Path)
     commands.add_parser('resources', help='显示实现与依赖版本；不调用 EOS')
     args = parser.parse_args(argv)
     try:
@@ -62,6 +74,16 @@ def main(argv=None):
         elif args.command == 'resume':
             with _cancellation() as cancel:
                 value = resume_run(args.run_directory, args.output, cancel=cancel)
+        elif args.command == 'supervise':
+            from .job_supervisor import supervise, SupervisionPolicy
+            with _cancellation() as cancel:
+                value = supervise(args.operation, args.source, args.job_directory,
+                                  SupervisionPolicy(args.wall_seconds, args.grace_seconds),
+                                  water_directory=args.water_data,
+                                  evidence_directory=args.evidence_data, cancel=cancel)
+        elif args.command in ('job-status', 'cancel-job'):
+            from .job_supervisor import read_job, request_cancel
+            value = (read_job if args.command == 'job-status' else request_cancel)(args.job_directory)
         else:
             value = runtime_identity()
         if args.command in ('run', 'replay', 'resume'):
@@ -69,7 +91,7 @@ def main(argv=None):
             value = {key: value.get(key) for key in ('status', 'reason', 'case_sha256', 'scientific_status')}
             value['output'] = str(args.output.resolve())
         print(json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2))
-        return 1 if args.command in ('run', 'replay', 'resume') and value.get('status') != 'completed' else 0
+        return 1 if args.command in ('run', 'replay', 'resume', 'supervise') and value.get('status') != 'completed' else 0
     except (ValueError, OSError) as exc:
         print(json.dumps({'status': 'failed', 'error_type': type(exc).__name__,
                           'code': getattr(exc, 'code', None), 'reason': str(exc)}, ensure_ascii=False))
