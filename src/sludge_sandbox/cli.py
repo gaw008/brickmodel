@@ -1,0 +1,72 @@
+"""JSON CLI backed by the same application service as Python clients."""
+import argparse
+import json
+from pathlib import Path
+import signal
+from contextlib import contextmanager
+
+
+@contextmanager
+def _cancellation():
+    requested = False
+
+    def request(signum, frame):
+        nonlocal requested
+        requested = True
+
+    previous = signal.signal(signal.SIGINT, request)
+    try:
+        yield lambda: requested
+    finally:
+        signal.signal(signal.SIGINT, previous)
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description='烧结砖物理沙盒；当前入口仅支持明确标记的数值验证案例。')
+    commands = parser.add_subparsers(dest='command', required=True)
+    validate = commands.add_parser('validate', help='校验案例结构；不调用 EOS，不证明材料有效性')
+    validate.add_argument('case', type=Path)
+    run = commands.add_parser('run', help='运行案例并保存原始输入与求解账本')
+    run.add_argument('case', type=Path)
+    run.add_argument('--water-data', required=True, type=Path)
+    run.add_argument('--output', required=True, type=Path)
+    trace = commands.add_parser('trace', help='查询保存结果的实现、参数与来源文件')
+    trace.add_argument('run_directory', type=Path)
+    trace.add_argument('--quantity', required=True)
+    replay = commands.add_parser('replay', help='以相同实现从冻结输入重新运行；不会执行保存的代码')
+    replay.add_argument('run_directory', type=Path)
+    replay.add_argument('--output', required=True, type=Path)
+    commands.add_parser('resources', help='显示实现与依赖版本；不调用 EOS')
+    args = parser.parse_args(argv)
+    try:
+        from .run_service import run_case, trace_run, replay_run, runtime_identity
+        if args.command == 'validate':
+            from .verification_case import read_case
+            case = read_case(args.case)
+            value = {'status': 'schema_valid', 'case_id': case.case_id,
+                     'case_sha256': case.sha256, 'material_qualified': False,
+                     'source_assets': 'not_checked', 'scientific_status': 'manufactured_verification_only'}
+        elif args.command == 'run':
+            with _cancellation() as cancel:
+                value = run_case(args.case, args.water_data, args.output, cancel=cancel)
+        elif args.command == 'trace':
+            value = trace_run(args.run_directory, args.quantity)
+        elif args.command == 'replay':
+            with _cancellation() as cancel:
+                value = replay_run(args.run_directory, args.output, cancel=cancel)
+        else:
+            value = runtime_identity()
+        if args.command in ('run', 'replay'):
+            # Full results, including accepted prefixes, are in result.json.
+            value = {key: value.get(key) for key in ('status', 'reason', 'case_sha256', 'scientific_status')}
+            value['output'] = str(args.output.resolve())
+        print(json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2))
+        return 1 if args.command in ('run', 'replay') and value.get('status') != 'completed' else 0
+    except (ValueError, OSError) as exc:
+        print(json.dumps({'status': 'failed', 'error_type': type(exc).__name__,
+                          'code': getattr(exc, 'code', None), 'reason': str(exc)}, ensure_ascii=False))
+        return 1
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

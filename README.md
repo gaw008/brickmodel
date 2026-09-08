@@ -4,7 +4,7 @@
 
 **目前没有砖厂可用的污泥成分窗口，也没有完成完整 virtual world model。所有模型结果只用于研究。**
 
-当前正在按 [完整 Goal 合同](docs/GOAL_BRICK_PHYSICS_SANDBOX.md) 构建独立的 `sludge_sandbox` 物理沙盒。已有来源/材料账目、热化学、气体输运、守恒积分、反应算子和独立账本审计；刚性气相的气体—热量耦合已实际验证。纯水物性适配器与刚性气相导热时空收敛已通过独立复审；分段边界程序和显式理想水汽热量转换也已审核，动态气氛/表面串联换热与给定相压力的储能原语已审核，液水—理想气压力/体积闭合与保留原系数的连续焓派生已实现并审核，沿闭合压力路径的条件储能反解已接入真实多格气体/热量共享面，连续热量相适配也已验证，当前基础及G2模块已通过638项非editable安装测试。完整湿砖的干燥、烧结收缩、冷却应力、公开实验对照及新 CLI/界面仍待完成。最新范围和实际验证见 [Goal 进度](docs/sandbox/GOAL_STATUS.md) 与 [验收矩阵](docs/sandbox/ACCEPTANCE_MATRIX.md)。下文 `sludge-vme` 命令仍属于已有 synthetic 原型，不能当作新沙盒全流程入口。
+当前正在按 [完整 Goal 合同](docs/GOAL_BRICK_PHYSICS_SANDBOX.md) 构建独立的 `sludge_sandbox` 物理沙盒。已实现来源/材料账目、热化学、水物性、守恒输运与反应、规定变形储能、耗尽积分及独立账本检查。新增 [统一案例与 CLI/Python 入口](docs/sandbox/CLI.md) 支持明确标记的湿态数值验证案例、保存结果、来源导航和冻结输入重放；仍不具备原污泥全流程准入。完整材料证据、自由烧结与冷却、公开实验和留出验证、完整来源依赖图、批量搜索与界面仍未完成。最新范围和实际验证见 [Goal 进度](docs/sandbox/GOAL_STATUS.md) 与 [验收矩阵](docs/sandbox/ACCEPTANCE_MATRIX.md)。下文 `sludge-vme` 命令仍属于已有 synthetic 原型，不能当作新沙盒全流程入口。
 
 | 模块 | 内容 | 状态 |
 | --- | --- | --- |
