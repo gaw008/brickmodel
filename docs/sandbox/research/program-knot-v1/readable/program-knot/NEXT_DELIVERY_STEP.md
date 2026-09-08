@@ -1,0 +1,13 @@
+# Next end-to-end delivery step after numerical regression
+
+Live source inspection confirms a delivery gap: pyproject.toml exposes only sludge-vme (the legacy screening CLI). sludge_sandbox has no user command. EvidenceRegistry.trace/assess is implemented, but only a manufactured test registry demonstrates its schema; actual thermochemistry source records use a different schema and are not automatically admitted by this registry. Do not wrap the legacy command and describe it as a complete sandbox.
+
+After completing current installed regression/commit, build the first actual sandbox command and versioned runtime case loader, with a thin Python entry point shared with the future local UI. Separate source inspection/trace from simulation admission. A source lookup may show checked NIST facts and exact locations even when the combined raw-sludge scenario is blocked; declared registry coverage is not material validity or asset verification.
+
+Start with a source-bound runnable explicit manufactured verification case assembled without importing tests/sandbox helpers. Its archived world definition must expose all manufactured values and qualified water provenance, and record why it does not qualify a raw-sludge material. Reuse physical modules rather than duplicate solver equations. Raw-material cases with unknown required relationships must return structured evidence-incomplete status; never silently fall back to the verification case.
+
+Suggested owned modules: sludge_sandbox/case_loader.py (versioned scenario validation/provider assembly), sludge_sandbox/cli.py and __main__.py (same Python API), versioned data/sandbox/cases/ verification definition with source/parameter IDs, and focused CLI/subprocess replay tests. Declare and enforce units, unknown inputs, effective geometry/scaling, source identities, output folder non-overwrite, cancellation/status and bounded resource settings. A local UI then calls this same API. Do not change the frozen physical solver simply to make a case load.
+
+Acceptance must include an actually installed command, one bounded run saved with input/source identities and ledgers, a result-to-parameter-to-source lookup, invalid/missing-source rejection, and replay. This partial user-facing integration does not close the full-cycle/public-validation/real-material/search requirements. Continue the raw-material evidence work in parallel where independent, but do not keep all useful user operations postponed until every material gap is solved.
+
+This is a concrete next implementation dependency outline, not executed CLI work or current completion evidence.

@@ -39,3 +39,11 @@ A subsequent real-host diagnostic showed that the first two proposals could use 
 The root's third full source-gated host attempt completed with unchanged source/test dependencies: **86.82 s, 224 evaluations, 27 accepted trial panels, 0 rejections, 21 stored states**. It located the actual liquid-depletion event at **0.00028422061165952946 s** and continued to **0.03125 s**. The independently reconstructed full water/element/mass and energy-prefix ledgers, boundary heat checks, and post-depletion warming interval assertions passed. The numerical terminal window was tightened from 1/1024 s to 1/16384 s before this attempt; the original time/U comparison gates, common-time horizon and 120 s wall limit were not loosened. Earlier attempts remain saved failures. This validates the specified manufactured geometry/coefficient scenario with actual water properties, not sludge material parameters or a complete kiln process.
 
 Subsequent numerical-control extension: `DepletionPolicy.safe_inventory_fraction` (default .25, strict 0<f<.5) now explicitly controls all three ordinary inventory-based step caps and is retained in the result. If and only if all interfaces are dry, ordinary integration proceeds continuously to the next node/end, preserving adaptive history. This intentionally changes dry time grids; no overall default-bitwise-equivalence claim applies to this combined revision. See `DEPLETION_SAFE_FRACTION.md` for the prior isolated-patch comparison, actual dry-restart RED evidence, unchanged accuracy/resource constraints, and 55-test validation.
+
+## Ordinary 程序节点的有限表示调整
+
+外层湿态 ordinary 分段调用会重新启动内部精确时钟；连续十次 binary64 `.005` 加法可能在 `.05` 前留下一个相邻浮点尾段。该尾段没有可表示的内部中点。`_ordinary_program_endpoint` 在前一可解析步选择端点时处理此问题，不在步后只改时间戳。
+
+仅当原拟议端点由最大步长决定、正的节点间隙不超过一个节点 ULP 且不超过局部步长32 ULP、实际完整时长与名义 cap 相差不超过32 cap ULP 时，才允许前一步结束于当前已知程序节点。若存在水库存限制，名义 cap 和实际节点时长都必须不超过精确 `Fraction(safe_fraction) * tau`；时间差也用两个端点的 Fraction 差，不能以已舍入的浮点差替代。这里声明的是最大步长的有限表示误差调整，未改变库存、能量或事件验收容差。
+
+内部 RK 仍使用真实端点生成全部阶段及权重，账本覆盖完整区间，中点可表示性检查保留。直接请求的相邻浮点物理区间仍失败；较远程序边界、库存安全限制以外的端点不得合并。该修复仅在外层 ordinary 选择处调用，不改事件定位或独立 approach 算法。

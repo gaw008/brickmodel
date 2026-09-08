@@ -4,6 +4,10 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+程序节点修复已完成完整验证：session33496终态exit0，XML1293通过/零失败错误跳过573.270s，前后43实际安装模块及冻结源码/tests字节一致。当前无活动EOS/测试。14新回归、102相关验证、原2失败6通过和旧粗精度affine残余2失败全部保留，归档research/program-knot-v1。仅修ordinary端点表示，未放宽中点/库存/能量门槛。下一实际交付按归档NEXT_DELIVERY_STEP：接通新沙盒统一案例加载、CLI/Python运行与结果来源查询，去掉运行对tests帮助函数的依赖；真实原污泥缺项必须结构化阻断，不能自动退到制造案例。完整材料证据、自由烧结冷却、三公开机制/留出、全周期界面/多代搜索仍为Goal必需未完成项。旧live句柄为历史已终态记录。
+
+程序节点修复候选（c3abc7a后未提交）：已在旧源码复现.005步长停在.05前一个float（2失败6通过）；新ordinary端点函数仅在已知节点、32cap-ULP界及精确库存安全余量内合并前一完整panel，不跳时间/不改中点守卫。14新回归及102相关测试实际通过。旧rel1e-7的两个保留affine算例现可完成节点/事件，但A误差1.83e-10/1.65e-10仍超原1e-10门槛，失败与全轨迹保留；当前rel1e-11同.005回归通过，不能称旧配置全通过。审查在 /private/tmp/brick-program-knot-v1/；新源码已非editable安装、43实际模块字节匹配。当前唯一EOS/测试为完整安装回归session33496，XML目标 /private/tmp/brick-program-knot-v1/installed-full-tests.xml，先poll同句柄，不重启、不并发EOS；源码/tests/安装冻结。下一步终态XML/43模块后核、归档失败和新验证、阶段Git提交。完整Goal仍active；当前不得宣称完整suite/材料/全周期通过。
+
 固定域4格阶段已完成实际验证：2初态callback各144项面代数检查通过，171项无EOS缩放和6负控通过；4格2/4步轨迹completed30.990010/55.240541s，局部账本门槛减半后仍通过，2/4网格保守比较已完成。空间T诊断差±1.4464e-6K，远大于时间cap差，空间收敛仍未证明。43实际安装模块/4监督输入before-after-current一致，无活动EOS/测试。归档 research/fixed-domain-spatial-v1；原中间孔容构造缺陷候选保留并已修正。下一优先动作按归档NEXT_NUMERICAL_PRIORITY复现/修复普通分段时间节点单ULP尾段问题，保留原失败与中点可表示性门槛；不是继续把极短跳跃场网格比较称为全周期完成。生产/测试仍67730b2。原污泥材料闭合、自由烧结冷却、三公开机制及留出、CLI/UI、多代搜索等完整Goal继续未完成。下文live句柄为已终态历史记录。
 
 固定域4格运行检查点：修正中间流体模板体积构造后，冻结fixture66639ad9/PLAN1ad81a3b（原候选保存在preflight-original）。两初态callback84987/58680终态通过，gradient/uniform各144项独立面代数审计通过，初N/E保守继承及同温forward广延性通过。wet4 coarse session71600已completed30.990010s/2步，逐格账本通过；当前唯一EOS为fine session15156，先轮询同句柄，未通过不可执行网格比较。源码/安装/实验脚本冻结。下一步fine账本、保守2/4网格差异与时间cap分开比较、源身份复核及归档。该短跳跃初场两网格不证明收敛；完整Goal仍active。

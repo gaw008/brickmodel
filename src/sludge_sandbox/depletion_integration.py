@@ -15,6 +15,29 @@ from .affine_depletion_clock import locate_affine_depletion_clock
 class DepletionIntegrationError(IntegrationError):pass
 
 
+def _ordinary_program_endpoint(start, target, proposed, maximum_step, safe_duration):
+    """Absorb only a bounded cap-rounding tail into the preceding full panel.
+
+    The actual duration may differ from the cap by at most 32 cap ULPs;
+    integration still uses that entire duration in every stage and ledger.
+    Never extend past an exact inventory safety limit or repair an already
+    adjacent-float physical panel by advancing its timestamp alone.
+    """
+    if proposed != min(target, start+maximum_step) or proposed >= target:
+        return proposed
+    duration = Fraction(target)-Fraction(start)
+    allowance = 32*Fraction(math.ulp(maximum_step))
+    if abs(duration-Fraction(maximum_step)) > allowance:
+        return proposed
+    if safe_duration is not None and (
+            Fraction(maximum_step) > safe_duration or duration > safe_duration):
+        return proposed
+    gap = Fraction(target)-Fraction(proposed)
+    local_allowance = min(Fraction(math.ulp(target)),
+                          32*Fraction(math.ulp(min(maximum_step, target-start))))
+    return target if 0 < gap <= local_allowance else proposed
+
+
 def _number(v,positive=False):
     if type(v) not in (int,float) or not math.isfinite(v) or (positive and v<=0):
         raise DepletionIntegrationError('finite_depletion_policy_required')
@@ -849,6 +872,8 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                 else:
                     finish=(tb if all(m=='depleted_no_nucleation' for m in operator.interfaces) else
                             min(tb,t+policy.maximum_step_s,t+ep.safe_inventory_fraction*float(choice[0]) if choice else tb))
+                    safe_duration=(Fraction(ep.safe_inventory_fraction)*choice[0] if choice else None)
+                    finish=_ordinary_program_endpoint(t,tb,finish,policy.maximum_step_s,safe_duration)
                     run=normal(operator,state,t,finish,policy.maximum_step_s)
                     path=_Path(list(run.times_s),list(run.states),list(run.steps),operator,totals)
                     commit(path)

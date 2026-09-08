@@ -1,0 +1,11 @@
+# Program-knot repair evidence (full installed suite completed)
+
+Baseline c3abc7a, physical source baseline67730b2. Source d5620710 adds a narrowly bounded ordinary endpoint choice in depletion_integration.py only; integration.py's midpoint and exact-weight checks are unchanged. Actual baseline tests2failed6passed; fixed initial8passed, expanded14passed. Targeted102passed in31.62s. Actual non-editable install contains43 modules matched to source before full suite.
+
+Original retained second-integration-tests.py at relative_tolerance1e-7 now3passed2failed: both event paths complete, but analyticA errors1.82883264e-10 and1.65367720e-10 exceed original1e-10. The entire original file, XML failure and new full run records remain evidence. No old gate was changed. Separate .005 tests using the existing current affine accuracy setting relative_tolerance1e-11 pass the same original event/A gates. Local step-control accuracy is not a certified global output bound.
+
+New cases cover complete interval integration, dyadic and standalone controls, representable tiny intervals versus truly unrepresentable adjacent-float failure, immediate/prefix cancellation, piecewise explicit restarts, exact inventory safety when rounded cap endpoints tie, negative and zero-boundary times, too-large absolute-clock representation versus cap size, and two complete affine events at current accuracy.
+
+The optional test evidence writer's fields knot_hex and remaining_to_knot_exact_s always use a legacy .05 reference, including negative/zero/no-knot cases. Interpret them only as reference diagnostics. Actual per-case input settings are in the saved test source; accepted times and ledgers remain the authoritative trajectory. Do not label the legacy reference as each case's configured knot.
+
+Session33496 terminated with exit0. Actual XML records1293 passed, zero failures/errors/skips,573.270s. Frozen source/test hashes still match and43 actual imported installed modules match source after execution. All test/EOS processes are terminal; archive may proceed. Full material/source completeness, free sintering/cooling, public three-mechanism/held-out validation, CLI/UI and multigeneration search remain incomplete.
