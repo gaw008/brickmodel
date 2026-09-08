@@ -4,6 +4,11 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+9121200之后实际原生耗尽attempt01已终态：session90003 exit0但模型failed correction_exceeds_evaporation_fraction，499.457s服务/496.887s积分，13accepted steps/0events/751eval/90attempt。固定end0.50032未到，停于0.5002620305782048。level1–11仅P比较失败，~0.005135Pa点误差包络大于原1e-4Pa门槛；不加refinement或放宽gate重跑。独立每prefix N/E/stretch通过，全局pe功最大2.76765e-11J、C累计绝对抵消9.25615e-21J通过原2e-8目标。单点实际安装诊断session46463已终态2.306s，证明流体项与约2e-12m3体积包络均有贡献。全部失败/审查/账本见FREE_NATIVE_EVENT_FAILURE.md及research/free-native-events-v1。
+
+下一数值修复为有证明的成对压力差包络，而非削减原物性误差。reacting_skeleton_provider在/private/tmp/brick-paired-pressure-design-v1准备共享单调闭合推导（仅设计、未应用、无EOS）；恢复先读其实际最终状态/设计再审核实现。当前无活动EOS/测试。Kim2008定向原文检索仍未取得合法全文，未准入Cp或材料。原完整Goal继续active，原污泥材料/三机制留出/全周期/空间收敛都未完成。
+
+
 2026-09-08 free-event application实际检查点：新显式event case、事件记录严格审计、完整累计续算、run/replay/resume与事件来源目录已接入。源码100+6通过；冻结非editable安装后从/private/tmp无PYTHONPATH实际106通过5.77s，62真实安装模块与源码一致。真实water构造4项通过，但service事件生命周期使用analytic callback/builder替身，原生耦合短前缀2步19.188s通过且七trace无缺来源，但0个耗尽事件，尚未做真实耗尽event run/replay/resume。首轮监督脚本证据目录误传导致4来源缺项，原封包保留，正确目录重跑通过。已关闭系数内容绑定、删小额correction、观测/refinement严格类型审查缺口；原失败保留。详见FREE_EVENT_APPLICATION.md及research/free-event-application-v1。当前无活动EOS或测试；下一实际动作是事前登记有界原生耦合事件应用实验。空间收敛仍未成立、原污泥材料及全流程/三机制留出仍必需，Goal active。
 
 

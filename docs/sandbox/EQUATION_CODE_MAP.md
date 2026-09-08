@@ -1,5 +1,11 @@
 # 方程—代码—验证映射 v0.1
 
+## 自由形变耗尽事件映射
+
+显式事件案例使用 `catalogs/free-wet-event-slab-equations-v1.json`，22项方程声明、7个输出入口；普通自由案例和原规定形变目录继续分别保留。`depletion_integration.integrate_depletion`推进完整状态及累计历史，`affine_depletion_clock.locate_affine_depletion_clock`定位仿射末端，`depletion_roundoff.depletion_writeback`量化必要的浮点库存修正，`event_record.audit_depletion_record`复核保存的步骤、事件、比较诊断和原始预算。`run_service`将案例/来源/实际算子与续算绑定，最终快照采用实际耗尽模式。
+
+验证见 `test_event_record.py`、`test_depletion_continuation.py`、`test_event_run_service.py` 及 [FREE_EVENT_APPLICATION.md](FREE_EVENT_APPLICATION.md)。安装106项与原生2步湿前缀不等于真实耗尽事件、空间收敛或原污泥实验验证；各后续运行以实际独立审计为准。
+
 ## 运行时方程目录与来源图
 
 当前制造湿态模型使用 `src/sludge_sandbox/catalogs/wet-slab-equations-v1.json`：19项公式声明、38项参数元数据、4个输出入口。`run_provenance.build_graph` 将目录绑定到实际运行的案例值、代码AST行号及来源资产；`query_graph` 返回指定输出的上游节点。方程文字不执行，真实计算仍在相应物理模块。来源位置若为JSON指针会实际解析，其他页码/公式号保留核读声明。`run_service` 在EOS前保存图，`trace` 同时检查案例、目录、代码和来源资产的原运行绑定；不会为旧运行补造新图。

@@ -14,7 +14,7 @@
 | E05 | 材料/气氛/温压/几何匹配 | domain gate与域外测试 | in_progress |
 | E06 | unknown传播、无默认补值 | 下游阻断、fixture隔离测试 | in_progress |
 | E07 | 参数相关性与不确定性依据 | 成套材料包及joint约束 | pending |
-| E08 | 任意结果能查询到原始证据 | 当前制造湿态模型4量CLI/Python依赖图已实测（run-provenance-v1，19方程/38参数）；local-ui-v1已实际打开界面追查来源；全周期材料仍缺 | in_progress |
+| E08 | 任意结果能查询到原始证据 | 原规定形变4量及自由形变7量CLI/Python依赖图已实测；新显式事件目录22方程/7入口通过安装测试及原生湿前缀追溯（FREE_EVENT_APPLICATION）；local-ui-v1已实际打开界面追查来源，事件专用编辑与全周期材料仍缺 | in_progress |
 | M01 | 原污泥与SSA等身份分离 | materials身份类别+测试；真实包仍未核准 | in_progress |
 | M02 | 元素/氧化物/矿相/LOI分离 | MassAnalysis typed类别/基准；phase独立ID，运行资格仍待接入 | in_progress |
 | M03 | 湿坯初态、成型水不重复 | prepare_green_batch水账目通过；完整相库存待实现 | in_progress |
