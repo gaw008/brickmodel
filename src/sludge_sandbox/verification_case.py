@@ -71,6 +71,20 @@ _KEYS = {
 }
 
 
+_FREE_MODEL = 'manufactured_reacting_wet_free_slab_v1'
+_FREE_MECHANICS = (_KEYS['mechanics'].split())
+_FREE_MECHANICS = ' '.join(k for k in _FREE_MECHANICS if k not in (
+    'knot_times_s','normal_stretches_at_knots','tangential_stretches_at_knots',
+    'additional_bulk_volume_error_m3','additional_mechanical_energy_error_j')) + (
+    ' initial_parent_normal_stretches initial_tangential_stretch external_pressure_pa'
+    ' parent_additional_bulk_volume_error_m3 parent_additional_mechanical_energy_error_j')
+
+
+def _free_normals(payload: dict[str, Any], cells: int) -> tuple[float, ...]:
+    parent = payload['mechanics']['initial_parent_normal_stretches']
+    return tuple(float(parent[0 if payload['profile']=='uniform' else i//(cells//2)]) for i in range(cells))
+
+
 def _require(condition: bool, message: str, code: str = 'invalid_case') -> None:
     if not condition:
         raise CaseError(message, code)
@@ -120,8 +134,13 @@ def _validate(p: dict[str, Any]) -> None:
     if p.get('classification') != 'manufactured_verification' or p.get('material_qualified') is not False or p.get('training_eligible') is not False:
         raise CaseError('Real material or training eligibility is not evidenced by this verification model', 'evidence_incomplete')
     _require(p.get('schema') == 'sludge_sandbox_verification_case_v1' and
-             p.get('model_id') == 'manufactured_reacting_wet_prescribed_slab_v1', 'unsupported schema/model', 'unsupported_model')
-    for pointer, names in _KEYS.items():
+             p.get('model_id') in ('manufactured_reacting_wet_prescribed_slab_v1', _FREE_MODEL), 'unsupported schema/model', 'unsupported_model')
+    free = p['model_id'] == _FREE_MODEL
+    keys = dict(_KEYS)
+    if free:
+        keys['mechanics'] = _FREE_MECHANICS
+        keys['numerics/integration'] += ' stretch_absolute_tolerance stretch_scale'
+    for pointer, names in keys.items():
         try:
             value = _at(p, pointer)
         except (KeyError, TypeError) as exc:
@@ -180,26 +199,39 @@ def _validate(p: dict[str, Any]) -> None:
     _require(_number(rx['activation_energy_j_mol'], 'activation energy') == 0, 'thermal activation not included in this verification case', 'unsupported_model')
     rt = _range(rx['temperature_range_k'], 'reaction T')
     mech = p['mechanics']
-    knots = _range(mech['knot_times_s'], 'motion knots')
     stretch = _range(mech['stretch_range'], 'stretch bounds')
     _require(stretch[0] > 0, 'positive stretch range')
-    for key in ('normal_stretches_at_knots', 'tangential_stretches_at_knots'):
-        _require(type(mech[key]) is list and len(mech[key]) == 2, 'two motion stretches required')
-        for value in mech[key]:
-            _require(stretch[0] <= _number(value, key, positive=True) <= stretch[1], 'motion outside stretch range')
-    for key in ('bulk_modulus_pa', 'shear_modulus_pa', 'composition_offset', 'maximum_absolute_log_rate_per_s'):
-        _number(mech[key], key, positive=True)
-    for key in ('normal_stretches_at_knots', 'tangential_stretches_at_knots'):
-        left, right = map(float, mech[key])
-        log_rate_enclosure = 1.5*abs(right-left)/((knots[1]-knots[0])*min(left, right))
-        _require(log_rate_enclosure <= mech['maximum_absolute_log_rate_per_s'], 'declared log rate does not cover motion')
-    for key in ('viscosity_pa_s', 'interface_energy_j_m2', 'micro_interface_area_density_m2_m3', 'additional_bulk_volume_error_m3', 'additional_mechanical_energy_error_j'):
-        _number(mech[key], key, nonnegative=True)
+    if free:
+        normals=mech['initial_parent_normal_stretches']
+        _require(type(normals) is list and len(normals)==2,'two parent normal stretches required')
+        for value in normals+[mech['initial_tangential_stretch']]:
+            _require(stretch[0]<=_number(value,'initial stretch',positive=True)<=stretch[1],'initial stretch outside domain')
+        _number(mech['external_pressure_pa'],'external pressure',nonnegative=True)
+        for key in ('bulk_modulus_pa','shear_modulus_pa','composition_offset','maximum_absolute_log_rate_per_s','viscosity_pa_s'):
+            _number(mech[key],key,positive=True)
+        for key in ('interface_energy_j_m2','micro_interface_area_density_m2_m3','parent_additional_bulk_volume_error_m3','parent_additional_mechanical_energy_error_j'):
+            _number(mech[key],key,nonnegative=True)
+    else:
+        knots = _range(mech['knot_times_s'], 'motion knots')
+        stretch = _range(mech['stretch_range'], 'stretch bounds')
+        _require(stretch[0] > 0, 'positive stretch range')
+        for key in ('normal_stretches_at_knots', 'tangential_stretches_at_knots'):
+            _require(type(mech[key]) is list and len(mech[key]) == 2, 'two motion stretches required')
+            for value in mech[key]:
+                _require(stretch[0] <= _number(value, key, positive=True) <= stretch[1], 'motion outside stretch range')
+        for key in ('bulk_modulus_pa', 'shear_modulus_pa', 'composition_offset', 'maximum_absolute_log_rate_per_s'):
+            _number(mech[key], key, positive=True)
+        for key in ('normal_stretches_at_knots', 'tangential_stretches_at_knots'):
+            left, right = map(float, mech[key])
+            log_rate_enclosure = 1.5*abs(right-left)/((knots[1]-knots[0])*min(left, right))
+            _require(log_rate_enclosure <= mech['maximum_absolute_log_rate_per_s'], 'declared log rate does not cover motion')
+        for key in ('viscosity_pa_s', 'interface_energy_j_m2', 'micro_interface_area_density_m2_m3', 'additional_bulk_volume_error_m3', 'additional_mechanical_energy_error_j'):
+            _number(mech[key], key, nonnegative=True)
     for value in mech['composition_beta_m3_mol'].values():
         _number(value, 'composition beta', nonnegative=True)
     transport = p['transport']
     for key in ('coupled_conductivity_w_m_k', 'coupled_water_diffusivity_m2_s', 'phase_coefficient_density_mol_s_pa_m3', 'viscosity_pa_s'):
-        _number(transport[key], key, positive=True)
+        _number(transport[key], key, positive=not (free and key=='phase_coefficient_density_mol_s_pa_m3'), nonnegative=free and key=='phase_coefficient_density_mol_s_pa_m3')
     for key in ('control_conductivity_w_m_k', 'control_water_diffusivity_m2_s', 'carrier_diffusivity_m2_s', 'permeability_m2'):
         _require(_number(transport[key], key) == 0, 'unsupported nonzero transport branch: '+key, 'unsupported_model')
     _require(_number(transport['relative_permeability'], 'relative permeability') == 1, 'relative permeability must be1')
@@ -212,7 +244,7 @@ def _validate(p: dict[str, Any]) -> None:
         _require(type(row) is list and len(row) == 5, 'five species required')
         for index, value in enumerate(row):
             _number(value, 'initial inventory', nonnegative=True)
-            _require(index == 1 or value > 0, 'positive initial A/water/carrier required')
+            _require((index in (1,2,3) if free else index == 1) or value > 0, 'positive initial A/water/carrier required')
         _require(row[1] == 0, 'initial B must be zero for this verification reference')
         volume = sum(Fraction(float(row[i]))*Fraction(float(solid[name]['molar_volume_m3_mol'])) for i, name in ((0, 'A'), (1, 'B')))
         _require(volume < Fraction(.0001), 'solid inventory exceeds parent bulk volume')
@@ -222,7 +254,7 @@ def _validate(p: dict[str, Any]) -> None:
     for value in initial['parent_temperatures_k']:
         _require(bracket[0] <= _number(value, 'initial T') <= bracket[1], 'initial T outside declared domains')
     start, end = _number(numerics['start_s'], 'start'), _number(numerics['end_s'], 'end')
-    _require(knots[0] <= start < end <= knots[1], 'time outside motion range')
+    _require(start < end if free else knots[0] <= start < end <= knots[1], 'invalid time domain')
     for group in ('pressure_policy', 'inverse_policy', 'integration'):
         for key, value in numerics[group].items():
             if key in ('maximum_iterations', 'maximum_steps', 'maximum_rejections'):
@@ -310,6 +342,9 @@ def _make_model(case: CaseDefinition, water_dir: Path, cells: int) -> tuple[Any,
     from .reacting_skeleton_energy import ManufacturedReactingSkeletonEnergy
     from .deforming_solid_storage import DeformingSolidStorage, DeformationErrorBounds, solid_provider_identity
     from .deforming_solid_heat import DeformingSolidHeat
+    from .current_solid_storage import CurrentSolidStorage
+    from .dynamic_solid_storage import DynamicStorageErrorBounds
+    from .free_solid_slab import FreeSolidSlab
     from .water_phase_transfer import WaterPhaseTransfer
 
     p = case.payload
@@ -387,10 +422,12 @@ def _make_model(case: CaseDefinition, water_dir: Path, cells: int) -> tuple[Any,
                           solid_reactions=config, liquid_transport=tr['liquid_transport'])
     m = p['mechanics']
     reference = ReferenceSlab(grid['half_thickness_m'], grid['reference_face_area_m2'], cells)
-    motion = PrescribedSlabMotion(reference=reference, knot_times_s=tuple(m['knot_times_s']),
-        normal_stretches_at_knots=tuple((value,)*cells for value in m['normal_stretches_at_knots']),
-        tangential_stretches_at_knots=tuple(m['tangential_stretches_at_knots']), motion_id=source[0]+':motion',
-        version='1', classification=m['classification'], source_ids=source, source_asset_sha256=assets)
+    free = p['model_id'] == _FREE_MODEL
+    if not free:
+        motion = PrescribedSlabMotion(reference=reference, knot_times_s=tuple(m['knot_times_s']),
+            normal_stretches_at_knots=tuple((value,)*cells for value in m['normal_stretches_at_knots']),
+            tangential_stretches_at_knots=tuple(m['tangential_stretches_at_knots']), motion_id=source[0]+':motion',
+            version='1', classification=m['classification'], source_ids=source, source_asset_sha256=assets)
     parent_rows = [list(row) for row in p['initial']['parent_amounts_mol']]
     parent_t = list(p['initial']['parent_temperatures_k'])
     if p['profile'] == 'uniform':
@@ -411,14 +448,27 @@ def _make_model(case: CaseDefinition, water_dir: Path, cells: int) -> tuple[Any,
         skeleton = ManufacturedReactingSkeletonEnergy(reference_model=reference_skeleton,
             composition_offset=m['composition_offset'], composition_weights_per_mol=tuple((name, m['composition_beta_m3_mol'][name]/volume) for name in ('A', 'B')),
             model_id=source[0]+':reacting-skeleton', version='1', classification=m['classification'], allow_manufactured=True)
-        points.append(DeformingSolidStorage(template=template, motion=motion, skeleton=skeleton,
-            error_bounds=DeformationErrorBounds(tuple(m['knot_times_s']), m['additional_bulk_volume_error_m3'],
-                m['additional_mechanical_energy_error_j'], source, 'conditional_declared_not_material_admission'),
-            model_id=source[0]+':point', version='1', allow_manufactured=True))
-    host = DeformingSolidHeat(base_model=base, point_storages=tuple(points),
-        mechanical_regime='prescribed_cellwise_quasistatic_incompressible_skeleton',
-        transport_regime='manufactured_relative_moving_faces', model_id=source[0]+':host', version='1',
-        source_ids=source, allow_manufactured=True, solid_inventory_regime='reacting_manufactured')
+        if free:
+            points.append(CurrentSolidStorage(template=template,skeleton=skeleton,
+                error_bounds=DynamicStorageErrorBounds(tuple(m['stretch_range']),tuple(m['stretch_range']),
+                    m['parent_additional_bulk_volume_error_m3']*scale,m['parent_additional_mechanical_energy_error_j']*scale,
+                    source,'conditional_declared_not_material_admission'),
+                model_id=source[0]+':point',version='1',allow_manufactured=True,solid_inventory_regime='reacting_manufactured'))
+        else:
+            points.append(DeformingSolidStorage(template=template, motion=motion, skeleton=skeleton,
+                error_bounds=DeformationErrorBounds(tuple(m['knot_times_s']), m['additional_bulk_volume_error_m3'],
+                    m['additional_mechanical_energy_error_j'], source, 'conditional_declared_not_material_admission'),
+                model_id=source[0]+':point', version='1', allow_manufactured=True))
+    if free:
+        host=FreeSolidSlab(base_model=base,point_storages=tuple(points),external_pressure_pa=m['external_pressure_pa'],
+            mechanical_regime='reduced_common_tangent_quasistatic_reacting_manufactured',
+            transport_regime='manufactured_relative_moving_faces',model_id=source[0]+':host',version='1',
+            source_ids=source,allow_manufactured=True,solid_inventory_regime='reacting_manufactured')
+    else:
+        host = DeformingSolidHeat(base_model=base, point_storages=tuple(points),
+            mechanical_regime='prescribed_cellwise_quasistatic_incompressible_skeleton',
+            transport_regime='manufactured_relative_moving_faces', model_id=source[0]+':host', version='1',
+            source_ids=source, allow_manufactured=True, solid_inventory_regime='reacting_manufactured')
     operator = WaterPhaseTransfer(base_model=host, chemical=chemical,
         coefficients_mol_s_pa=(tr['phase_coefficient_density_mol_s_pa_m3']*volume,)*cells,
         coefficient_set_id=source[0]+':interface', coefficient_version='1', coefficient_classification='manufactured_test_fixture',
@@ -426,13 +476,17 @@ def _make_model(case: CaseDefinition, water_dir: Path, cells: int) -> tuple[Any,
     return operator, rows, temperatures
 
 
-def _forward(operator: Any, rows: list[list[float]], temperatures: list[float], start: float) -> tuple[Any, list[dict[str, Any]]]:
+def _forward(operator: Any, rows: list[list[float]], temperatures: list[float], start: float, payload: dict[str, Any]) -> tuple[Any, list[dict[str, Any]]]:
     host = operator.base_model
-    state = host.state_from_temperatures(rows, temperatures, time_s=start)
+    if payload['model_id']==_FREE_MODEL:
+        geometry=dict(normal_stretches=_free_normals(payload,len(rows)),tangential_stretch=payload['mechanics']['initial_tangential_stretch'])
+    else:
+        geometry=dict(time_s=start)
+    state = host.state_from_temperatures(rows, temperatures, **geometry)
     layout = host.base_model.inventory_layout
     records = []
     for index, (row, temperature) in enumerate(zip(rows, temperatures)):
-        point = host.point_storages[index].forward(temperature, time_s=start,
+        point = host.point_storages[index].forward(temperature, **geometry,
             liquid_mol=row[layout.liquid_index], gas_mol=layout.gas_inventory(row), solid_mol=layout.solid_inventory(row))
         _require(point.total_energy_j == state.internal_energy_j[index], 'forward initialization is not reproducible')
         records.append(dict(temperature_k=temperature, total_energy_j=point.total_energy_j,
@@ -454,15 +508,16 @@ def build_case(case: CaseDefinition, water_dir: str | Path) -> BuiltCase:
     p = case.payload
     cells, start, end = p['grid']['cells'], p['numerics']['start_s'], p['numerics']['end_s']
     operator, rows, temperatures = _make_model(case, Path(water_dir), cells)
-    forward_state, fine = _forward(operator, rows, temperatures, start)
+    forward_state, fine = _forward(operator, rows, temperatures, start,p)
     if cells == 2:
         parent, coarse = forward_state, fine
     else:
         parent_operator, parent_rows, parent_temperatures = _make_model(case, Path(water_dir), 2)
-        parent, coarse = _forward(parent_operator, parent_rows, parent_temperatures, start)
+        parent, coarse = _forward(parent_operator, parent_rows, parent_temperatures, start,p)
     factor = cells//2
     initial = ConservedState(rows, [float(parent.internal_energy_j[index//factor])/factor for index in range(cells)],
-                             energy_model_identity=operator.base_model.energy_model_identity)
+                             energy_model_identity=operator.base_model.energy_model_identity,
+                             mechanical_stretches=forward_state.mechanical_stretches)
     checks = []
     for parent_index in range(2):
         indexes = range(parent_index*factor, (parent_index+1)*factor)
@@ -522,7 +577,7 @@ def snapshot(built: BuiltCase, state: Any, time_s: float) -> dict[str, Any]:
         pressure_pa=[item.mechanical.pressure_pa for item in base.storage_states],
         inverse_temperature_error_k=[item.temperature_error_bound_k for item in base.total_inverses],
         rates=out.rates, base_rates=base.rates, transfers=out.cell_transfers, gas_states=base.gas_states,
-        cells=cells, motion=base.motion, internal_faces=faces, face_area_m2=transport.face_area_m2,
+        cells=cells, internal_faces=faces, face_area_m2=transport.face_area_m2,
         cell_widths_m=transport.cell_widths_m, conductivities_w_m_k=transport.conductivities_w_m_k,
         diffusivities_m2_s=transport.effective_diffusivities_m2_s,
         gas_constant_j_mol_k=transport.storages[0].mechanical.gas_constant_j_mol_k,
@@ -531,6 +586,10 @@ def snapshot(built: BuiltCase, state: Any, time_s: float) -> dict[str, Any]:
         implementation=json.loads(operator.chemical.water.implementation.canonical_json),
         water_source_asset_sha256=operator.chemical.source_asset_sha256,
         qualification='manufactured verification; repeated face algebra is audit sampling, not independent thermodynamics'))
+    if built.case.payload['model_id']==_FREE_MODEL:
+        result.update(geometry=encode(base.geometry),free=encode(base.free))
+    else:
+        result['motion']=encode(base.motion)
     if time_s == built.start_s and result['state'] == encode(built.initial):
         initial_checks = []
         factor = len(cells)//2

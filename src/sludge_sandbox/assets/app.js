@@ -79,8 +79,29 @@ async function refresh() {
   }
   renderPlots();
 }
+function traceQuantity(quantity) {
+  return ['normal_stretch','tangential_stretch'].includes(quantity)?'mechanical_stretches':quantity;
+}
+function mechanicalSeries(id,integration,quantity) {
+  const states=integration.states,times=integration.times_s;
+  if(!Array.isArray(states)||!states.length||!Array.isArray(times)||times.length!==states.length||
+     times.some((time,index)=>!Number.isFinite(time)||(index>0&&time<=times[index-1])))return [];
+  const cells=states[0]?.amounts_mol?.length;
+  if(!Number.isInteger(cells)||cells<1)return [];
+  if(states.some(state=>!Array.isArray(state?.amounts_mol)||state.amounts_mol.length!==cells||
+    !Array.isArray(state.internal_energy_j)||state.internal_energy_j.length!==cells||
+    !Array.isArray(state.mechanical_stretches)||state.mechanical_stretches.length!==cells+1||
+    state.mechanical_stretches.some(value=>!Number.isFinite(value)||value<=0)))return [];
+  const tangent=quantity==='tangential_stretch';
+  return Array.from({length:tangent?1:cells},(_,index)=>({
+    name:id.slice(0,8)+(tangent?' / 公共切向伸长':' / 单元 '+(index+1)+' 法向伸长'),
+    points:states.map((state,k)=>[times[k],state.mechanical_stretches[tangent?cells:index]]),
+    cell:tangent?null:index,thermal:false,global:tangent,
+  }));
+}
 function seriesFor(id,result,quantity) {
   const integration=result?.integration;if(!integration?.states?.length)return [];
+  if(['normal_stretch','tangential_stretch'].includes(quantity))return mechanicalSeries(id,integration,quantity);
   let states=integration.states, times=integration.times_s;
   const thermal=['temperature_k','pressure_pa'].includes(quantity);
   if(thermal) {
@@ -113,18 +134,20 @@ function draw(svg,series,xlabel,connect=true) {
 }
 function renderPlots() {
   const quantity=$('quantity').value;let all=[];const spatial=[];
-  for(const id of compared){const item=results.get(id);const series=seriesFor(id,item?.result,quantity);all.push(...series);if(series.length)spatial.push({name:id.slice(0,8),points:series.map(s=>[s.cell+1,s.points.at(-1)[1]]),thermal:false});}
+  for(const id of compared){const item=results.get(id);const series=seriesFor(id,item?.result,quantity);all.push(...series);if(series.length&&!series[0].global)spatial.push({name:id.slice(0,8),points:series.map(s=>[s.cell+1,s.points.at(-1)[1]]),thermal:false});}
   draw($('time-chart'),all,'保存的物理时间（s）');draw($('space-chart'),spatial,'厚度单元编号（非实际距离）');
   $('legend').replaceChildren();for(let i=0;i<all.length;i++){const span=document.createElement('span');span.className='legend-item';span.style.borderColor=colors[i%colors.length];span.textContent=all[i].name;$('legend').append(span);}
   $('space-legend').replaceChildren();for(let i=0;i<spatial.length;i++){const span=document.createElement('span');span.className='legend-item';span.style.borderColor=colors[i%colors.length];span.textContent='空间图 / '+spatial[i].name;$('space-legend').append(span);}
   $('plot-note').textContent=['temperature_k','pressure_pa'].includes(quantity)?'温度和压力仅展示已保存的初态、成功终态点，不补造中间曲线。空间图按单元编号展示。':'折线连接已接受的离散状态，不代表连续解。各单元库存与能量是广延量；不同网格不能直接当作同体积比较。';
+  if(quantity==='normal_stretch')$('plot-note').textContent=all.length?'法向伸长无量纲；每个单元一条已接受状态曲线。空间图使用单元编号。':'法向伸长不可用：保存状态缺失、非有限或形状不匹配。';
+  if(quantity==='tangential_stretch')$('plot-note').textContent=all.length?'公共切向伸长无量纲；每个运行只有一个全局自由度，不展示切向空间曲线。':'公共切向伸长不可用：保存状态缺失、非有限或形状不匹配。';
 }
 $('quantity').onchange=()=>{renderPlots();clearTrace();};
 function clearTrace() { traceSequence++;artifactSequence++;$('export-panel').hidden=true;$('export-report').value=''; $('sources').replaceChildren();$('trace-detail').textContent='';$('trace-status').textContent='';$('artifact').hidden=true; }
 $('trace').onclick=handle(async()=>{
   if(!selected){message('先选择一条运行。',true);return;}
   clearTrace();const generation=traceSequence;
-  const id=selected,quantity=$('quantity').value;const trace=await api(`/jobs/${id}/trace?quantity=${encodeURIComponent(quantity)}`);
+  const id=selected,quantity=$('quantity').value;const trace=await api(`/jobs/${id}/trace?quantity=${encodeURIComponent(traceQuantity(quantity))}`);
   if(generation!==traceSequence||id!==selected||quantity!==$('quantity').value)return;
   $('trace-detail').textContent=JSON.stringify(trace,null,2);$('trace-status').textContent=`任务 ${id.slice(0,8)} · ${quantity}：已校验保存的文件清单，以下是该结果的来源节点。`;
   const graph=trace.dependency_graph;

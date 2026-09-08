@@ -1,0 +1,11 @@
+# Free case and application integration evidence
+
+Distinct free case schema, source-bound initialization, current geometry snapshot, model-specific equation catalog/run/replay/resume/trace, and mechanical UI display. All physical coefficients except the cited water/constants remain explicitly manufactured or virtual. Source evidence is not material applicability.
+
+Native initial build/snapshot passed in 2.45 s. Shared service run completed 2 accepted steps / 15 evaluations in 16.59 s with reaction, evaporation in BOTH cells, vapor diffusion, heat and free mechanics. Seven trace quantities resolved with no missing source assets. AUDIT.md and audit-metrics.json contain independent Fraction prefix and artifact checks.
+
+Replay produced identical states and ledgers. First cancel test correctly cancelled before any accepted step; the test assertion failed because it expected one step. Original failure preserved. The second callback schedule was derived from actual guard locations (callback19); it cancelled after one accepted step and resumed to completion with the original prefix unchanged. Physics, tolerance and case inputs did not change. lifecycle02 total19.33s, service cancellation9.59s/resume9.52s.
+
+Installed tests: 93 passed, 22 socket setup errors under restricted sandbox. Those 22 local-loopback tests were rerun with authorized loopback access and all passed2.60s. Do not represent the first XML as green. Installed UI Node tests8 passed; actual61 Python modules and both catalogs plus JS/HTML matched source. Native EOS trajectories were not repeated after installation. No browser rendering test performed.
+
+raw-evidence.zip retains candidates, fail-first tests, baseline bytes, native full run/replay/cancel/resume bundles, selected snapshots, source hashes, all reviews and raw test output. The nonzero-B test initially violated the initial-B-zero schema; fixed by evaluating a later A1.5/B0.5 state while leaving initial schema unchanged. No gate was relaxed. q/area/error partition tests are not spatial trajectory convergence. The native case is very short, has no liquid face flux or depletion and does not cover full firing/cooling or raw-sludge material qualification.

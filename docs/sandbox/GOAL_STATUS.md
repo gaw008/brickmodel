@@ -5,6 +5,15 @@
 ## 当前恢复入口（后续详细历史保留）
 
 
+7f3d24b后实际完成free case应用接入：独立严格schema/current储能+反应自由主机/全机械初态及快照、2/4格beta/V0/界面/父误差缩放；独立20方程7root目录，run/replay/resume/trace真实模型选择与自由锚点；UI逐格n/全局t分开、溯源完整向量。说明FREE_CASE_APPLICATION.md，证据research/free-case-app-v1。
+
+真实水应用2steps15eval16.59s通过；独立逐prefix全物种9.89e-17mol/局部E2.33e-11J/全局外功1.46e-11J，反应/两格蒸发/水蒸气扩散/热/自由形变真实共同活动，7trace无缺来源。重放逐位相同；首次callback3取消零前缀的测试失败保留，按实际guard位置callback19后取消1step+续算成功、原prefix不变，合计19.33s。91971/12781/56117均已终态；无活动EOS，不重复成功native。
+
+安装93计算服务测试通过；22localapp因沙盒socket错误，获准loopback重测22通过2.60s；8Node UI测试通过。61安装模块前后与源相同，2catalog+JS/HTML逐字相同；1848/13200均终态，未重复原生EOS。案例/目录/服务code-review与TS UI review通过。尚无本阶段浏览器渲染或空间轨迹收敛证据。
+
+下一实际空间研究由program_knot_review仅在/private/tmp/brick-free-spatial-study准备：现free schema2/4，研究自由分支8格准入与原实际案例2/4/8的网格/时间细化、统一物理量比较和实测资源预算。未repo应用/未运行，恢复从实际PLAN继续。原污泥材料、三机制公开留出、完整湿坯烧成冷却和联合所有输运仍必需，Goal active；本回合属progress。
+
+
 ae5bf54 后实际完成动态炉程自由主机接入：当前几何表面热交换、完整机械率/分项功、程序内容身份及受控非法修改错误保留前缀。原生水 attempt01 130.70s 完成，3/7步、22/50eval、两个节点精确命中；独立170源码hash及Fraction逐prefix审计通过，最大水1.86e-16mol/局部E1.75e-10J/含边界热全局E6.30e-11J。源码34dry+1native通过，安装42dry10.27s通过，61实际模块前后逐字匹配。37884/65002已exit0，无活动EOS；不重复native。全部原始失败/JSON/XML/审计与身份见research/programmed-free-slab-v1，说明PROGRAMMED_FREE_SLAB.md。仍为短时制造材料、无物质面流/反应/耗尽，不是完整烧成。
 
 下一实际候选由reacting_skeleton_provider仅在/private/tmp/brick-free-case-integration-candidate构建独立free schema、CurrentSolidStorage/FreeSolidSlab反应主机、完整初态与真实快照和2/4格广延参数缩放；未repo应用/未EOS。program_knot_review只读设计free catalog及run/replay/resume/UI接入，路径/private/tmp/brick-free-app-seam。恢复读取真实候选/审查后继续，不能把应用设计当已实现。原污泥材料及三机制公开留出、全湿烧成冷却、空间收敛仍全部必需，Goal active。

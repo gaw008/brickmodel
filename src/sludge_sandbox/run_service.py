@@ -145,7 +145,7 @@ def run_case(case_path: str | Path, water_directory: str | Path, output: str | P
         for source in sorted(Path(__file__).parent.glob('*.py')):
             (output/'implementation'/source.name).write_bytes(source.read_bytes())
         from .run_provenance import catalog_bytes, evidence_paths, build_graph
-        catalog_raw = catalog_bytes()
+        catalog_raw = catalog_bytes(case.payload['model_id'])
         (output/'equation_catalog.json').write_bytes(catalog_raw)
         catalog = json.loads(catalog_raw)
         if evidence_directory is not None:
@@ -232,6 +232,7 @@ def run_case(case_path: str | Path, water_directory: str | Path, output: str | P
 
 
 _QUANTITIES = {'amounts_mol', 'internal_energy_j', 'temperature_k', 'pressure_pa'}
+_FREE_QUANTITIES = _QUANTITIES | {'mechanical_stretches', 'geometry', 'free'}
 _EQUATIONS = [
     ('integration.py', 'integrate', 'Conservative cell inventory and energy balance; accepted SSPRK2 quadrature.'),
     ('deforming_solid_storage.py', 'DeformingSolidStorage.temperature_from_total_energy', 'Invert thermal plus skeleton stored energy for temperature; shared pressure closure.'),
@@ -239,6 +240,14 @@ _EQUATIONS = [
     ('solid_reactions.py', 'SolidReactionConfig.evaluate_cell', 'Stoichiometric sources from declared Arrhenius concentration kinetics.'),
     ('water_phase_transfer.py', 'WaterPhaseTransfer.evaluate', 'Existing-liquid phase transfer using chemical-potential driving force.'),
     ('reacting_skeleton_energy.py', 'ManufacturedReactingSkeletonEnergy.evaluate', 'Manufactured composition-dependent skeleton energy and its derivatives.'),
+]
+
+_FREE_EQUATIONS = [
+    _EQUATIONS[0],
+    ('current_solid_storage.py', 'CurrentSolidStorage.temperature_from_total_energy', 'Invert current-composition thermal plus recoverable energy at actual free geometry.'),
+    ('free_solid_slab.py', 'FreeSolidSlab.evaluate', 'Decode current cells and jointly assemble transport, free mechanics and local constraint power.'),
+    ('free_slab_rates.py', 'solve_free_slab_rates', 'Solve cell normal rates and common tangent rate with current composition-scaled viscosity; preserve local constraint power.'),
+    *_EQUATIONS[3:],
 ]
 
 
@@ -255,12 +264,21 @@ def _leaves(value, pointer=''):
 
 def trace_run(directory: str | Path, quantity: str) -> dict[str, Any]:
     """Frozen dependencies with selected equation navigation anchors."""
-    if quantity not in _QUANTITIES:
+    if quantity not in _FREE_QUANTITIES:
         raise RunError('unsupported_quantity')
     result, manifest = read_run(directory)
     directory = Path(directory)
     case = json.loads((directory/'case.json').read_bytes())
-    if quantity in ('amounts_mol', 'internal_energy_j'):
+    model = case.get('model_id') if isinstance(case, dict) else None
+    if model == 'manufactured_reacting_wet_prescribed_slab_v1':
+        anchors = _EQUATIONS
+        if quantity not in _QUANTITIES:
+            raise RunError('unsupported_quantity')
+    elif model == 'manufactured_reacting_wet_free_slab_v1':
+        anchors = _FREE_EQUATIONS
+    else:
+        raise RunError('unsupported_trace_model')
+    if quantity in ('amounts_mol', 'internal_energy_j', 'mechanical_stretches'):
         try:
             value = result['integration']['states'][-1][quantity]
         except (KeyError, IndexError) as exc:
@@ -273,7 +291,7 @@ def trace_run(directory: str | Path, quantity: str) -> dict[str, Any]:
             raise RunError('quantity_unavailable') from exc
         location = '/final_snapshot/'+quantity
     equations = []
-    for filename, symbol, meaning in _EQUATIONS:
+    for filename, symbol, meaning in anchors:
         artifact = 'implementation/'+filename
         if artifact not in manifest['files']:
             raise RunError('equation_artifact_missing')
@@ -325,10 +343,11 @@ def resume_run(directory: str | Path, output: str | Path, *,
     for name, digest in current['modules'].items():
         if manifest['files'].get('implementation/'+name) != digest:
             raise RunError('resume_implementation_binding_mismatch')
-    catalog_sha = current['catalogs'].get('wet-slab-equations-v1.json')
-    if manifest['files'].get('equation_catalog.json') != catalog_sha:
-        raise RunError('resume_catalog_binding_mismatch')
     case = read_case(directory/'case.json')
+    from .run_provenance import catalog_filename
+    catalog_sha = current['catalogs'].get(catalog_filename(case.payload['model_id']))
+    if catalog_sha is None or manifest['files'].get('equation_catalog.json') != catalog_sha:
+        raise RunError('resume_catalog_binding_mismatch')
     if case.sha256 != result['case_sha256'] or case.case_id != result.get('case_id'):
         raise RunError('resume_case_binding_mismatch')
     try:

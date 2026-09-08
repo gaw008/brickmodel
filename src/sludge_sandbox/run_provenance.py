@@ -79,13 +79,33 @@ def _anchor(directory: Path, entry: dict[str, str]) -> dict[str, Any]:
     return {**entry, 'sha256': _sha(raw), 'start_line': found.lineno, 'end_line': found.end_lineno}
 
 
-def load_catalog() -> dict[str, Any]:
+LEGACY_MODEL_ID = 'manufactured_reacting_wet_prescribed_slab_v1'
+
+
+def catalog_filename(model_id: str = LEGACY_MODEL_ID) -> str:
+    """Resolve only explicitly supported models to fixed packaged filenames."""
+    names = {
+        LEGACY_MODEL_ID: 'wet-slab-equations-v1.json',
+        'manufactured_reacting_wet_free_slab_v1': 'free-wet-slab-equations-v1.json',
+    }
+    _require(isinstance(model_id, str) and model_id in names, 'unsupported_catalog_model')
+    return names[model_id]
+
+
+def load_catalog(model_id: str = LEGACY_MODEL_ID) -> dict[str, Any]:
     """Installed package resource, kept independent of the working directory."""
-    return json.loads((Path(__file__).parent/'catalogs/wet-slab-equations-v1.json').read_bytes())
+    return json.loads(catalog_bytes(model_id))
 
 
-def catalog_bytes() -> bytes:
-    return (Path(__file__).parent/'catalogs/wet-slab-equations-v1.json').read_bytes()
+def catalog_bytes(model_id: str = LEGACY_MODEL_ID) -> bytes:
+    raw = (Path(__file__).parent/'catalogs'/catalog_filename(model_id)).read_bytes()
+    try:
+        payload = json.loads(raw)
+    except (ValueError, UnicodeDecodeError) as exc:
+        raise ProvenanceError('invalid_catalog_json') from exc
+    _require(isinstance(payload, dict) and payload.get('model_id') == model_id,
+             'catalog_model_mismatch')
+    return raw
 
 
 def evidence_paths(catalog: dict[str, Any]) -> list[str]:
