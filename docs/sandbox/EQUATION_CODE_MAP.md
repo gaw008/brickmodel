@@ -243,3 +243,5 @@ HEOS共存数值政策 `NUM-HEOS-COEXISTENCE-BACKTRACK-1`：固定T的F=(Δp,Δg
 `mass_wet_transport.WetPair.interfaces/with_depleted_cells` → 显式已耗尽且禁止成核的计算模式，不是材料定律或耗尽根证书；同湿储能零液分支、实际气压假想液相平衡诊断、严格再凝结DomainExit及不变库存。默认全湿完整parity、混合湿干及失败前缀测试见research/mass-wet-depletion-host-v1。尚无事件写回许可。
 
 `mass_wet_exact_stage.try_step_doubling` → 精确时间局部中点一步/两半步比较、分离kg/mol/U与T/P/time门槛；全二次面板检查和未提交末端尝试证据。`pressure_radius`对dry及显式常数液体制造模型传播完整T/V区间，generic wet缺证据拒绝。独立制造DOP853及原压力/末端失败RED见research/mass-wet-exact-stage-v1；无事件、全局提交或材料验证许可。
+
+`mass_wet_writeback.project_mixed_depletion` → 完整kg/mol/U终态重算、原修正门槛与额外原初本格fraction限制下的等量液→气投影；不更改固体或总U，失败不返回修正状态。research/mass-wet-writeback-v1保存独立单位/累计预算反例和源码/安装结果。实际样本认证、根排序及全事件准入仍由后续控制器负责。

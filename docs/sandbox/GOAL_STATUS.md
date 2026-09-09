@@ -4,6 +4,10 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新writeback已应用ceb76234/test66ae28a7；52源码8.97s、52安装8.79s通过，92实际模块匹配，独立28项及应用核验通过。证据research/mass-wet-writeback-v1。sessions83016/19861终态，不重poll。exact_stage已提交c2b9d98；Carson继续tmp exact_terminal实际样本→根证据→全分量账本连接器，未准入。
+
+Root真实水区间研究已接显式public/native质量比（原源M相差1ULP），原单位scale版本保留；16原fine端点纯数学区间通过，但独审发现result01的combined radius8项Decimal向下舍入，RED保留review-radius-rounding01。study02已改Interval.hi并冻结source/所有实现SHA，唯一session24604待终态复核；原source/材料包络和10秒预算不变，没有新native轨迹。不得把局部根/条件原误差包络当stable相认证或材料误差证书。
+
 最新：exact_stage已应用9bd9ffd5/de4ae1d9/guards3b11612c；48源码15.52s、48安装15.90s通过，91实际模块匹配，独立28项及应用审查通过；原HIGH/MEDIUM/RED完整保存在research/mass-wet-exact-stage-v1。它拒绝缺全温P包络的generic wet，不具原生湿事件/续算许可。tests sessions22469/28361均终态，不重poll。
 
 真实水区间研究位于/private/tmp/brick-water-pressure-interval-v1，interval_eos28bcfac0数学原语已独审；新coupled_rectangle通过全T/V矩形面符号和导数正性包围局部P，2pure0.147s，原窄括区失败保留。尚待coupled独审，未作stable液相/实际native误差衔接或生产准入。mixed_writeback ceb76234/test66ae28a7已有独立28pure0.32s通过，尚未应用。
