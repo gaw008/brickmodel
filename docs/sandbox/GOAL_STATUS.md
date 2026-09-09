@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新精确时间/积分检查点（基线5462deb）：新增 exact_event_clock（规范单Fraction时间/区间、严格codec、独立显示误差）、exact_boundary_program（已校验程序的精确节点/权重、显式全schedule平移）、exact_integration（独立exact SSPRK2/ledger/result；回调和实际求积端点均精确）。原程序/积分器未改；旧kernel/program/checkpoint明确拒绝新时间，未准入新事件/续算/服务。源码185项7.22s、安装132项6.98s通过；原语先前源码/安装64项各.11s通过。当前70实际安装模块匹配源码，三个模块及测试已获代码/数值审查。
+
+所有actual stage/endpoints保持Fraction，未来名义步长明确向下量化以阻止有理分母爆长；原30s失败及修复保留。非整数倍终点的短尾用合法剩余区间二分规划，未丢尾/降min；185初轮仅root新boundary regex把实际invalid_evaluation_time写错，保RED后修正，生产行为未改。此轮无EOS；17389/4565源码安装测试均已终态，后续候选工作由子代理在tmp继续。原四格FAILED依然有效；不得把新制造积分路径当已通过湿耗尽。
+
+下一具体动作：Carson已在 `/private/tmp/brick-exact-affine-depletion-v1` 冻结精确仿射根/逐项积分绑定/原writeback预算候选及真实保存cell2样本测试，待独立审核；未repo准入。Averroes已完成 `/private/tmp/brick-exact-native-host-v1/PLAN.md`：实际direct WPT→FreeSolidSlab的time只作数值检查，可提取共享state-only评估，再接显式exacttyped入口，不用float sentinel；programmed宿主仍需精确forcing装配。恢复先核实际候选/审查，再接完整有序事件比较/原子提交及新record/resume。证据 `research/exact-integration-v1/README.md`。原污泥材料闭合、三机制公开留出、全湿烧冷却、空间收敛、完整CLI/UI仍必需未完成，Goal active，本轮progress。
+
 最新失败诊断检查点（基线599efe0）：有序仿射writeback异常现在在原refinement.comparison_details中保存不可变完整初/raw/clock/gross/积分/先前未提交帧；保留原异常、default/success语义和0额外物性回调。源码114相关测试37.09s通过，安装65项3.13s通过，67模块与源码逐字一致，代码/数值审查通过。永久4项测试包含真实短面板拒绝、完整算术重建、成功/default和诊断捕获错误对照。
 
 同原case/policy的实际诊断session17279已终态exit0/39.039s，仍FAILED correction_exceeds_evaporation_fraction，13步132eval15attempt0event/packet；完整数值结果除wall及新诊断外与旧结果完全相同。case/initial/allpolicies/final/interfaces逐字相等，原512步/800s及外部840s未改。失败cell2在未提交cell3之后，h=8.452095690003603e-10s；delta5.673486681192076e-20mol/gross1.5641070214850036e-12mol=3.6273008197389976e-8，超过原1e-8约3.63倍。独立全失败panel算术显示clock残余5.673486686333683e-20mol，raw与其差仅−5.14160749e-29mol，已定位绝对时钟向下取整主导；不是材料物理不可行。13已提交prefix原账本复算通过。证据 `research/ordered-packet-failure-evidence-v1/README.md`；当前无EOS/测试进程。
