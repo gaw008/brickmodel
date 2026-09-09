@@ -4,6 +4,13 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+精确数值恢复已应用（基线447649b）：exact_projection_restore6c5ec48f/test75dfbe4f，固定数值白名单、fresh外部实际绑定、完整pack不变、committed terminal ledger与accepted step同对象恢复；历史Observation明确EvidenceNode无伪inverse。27源码22.15s/8安装10.22s通过，83实际非editable模块逐字匹配；独立代码审及8pure通过。35成员完整证据见research/exact-projection-restore-v1。
+
+唯一actual restore session30141已终态exit0/reaped，原supervisor3.436563125s：原strict30steps/2packets/2aliases完整恢复，重编码4,192,254bytes全等ac03be01；actual82/old78严格四verifier新增allowlist与原所有模块/非模块字段一致，input/runtime前后保持。独立结果审查已完成。没有integrate/resume，之后83安装身份另存，不能把只读兼容作为跨版本续算许可。root无EOS或测试在运行，不重poll30141/47040/89005。
+
+下一实际实现正在/tmp/brick-exact-continuation-v1/core由Averroes准备：同新版本权威parentbytes/hash、原initial/start/end/policies与实际runtime绑定，fresh四审计+restore，seed全prefix/histories/corrections/schema/costs/cumulativewall；纯取消/反复续算/资源用尽零物理callback及未提交细化成本测试。尚未repo准入、未宣称续算已完成。Carson准备NATIVE_PLAN，只在候选审查/安装后执行同版本新parent→resume，不复用原78执行身份。原Goal§11完整材料/公开3机制留出/全湿烧冷却/空间/多代/CLIUI仍必需未完成；本轮有效progress，Goal active。
+
+
 终端/比较/资源三个exact审计已应用（基线d00a89a）：proof ff991e94/test8af128、comparison 1cef63c3/testf4064bb、resource c1bfaabb/testef45b0f6；独立代码审查关闭粗解锚HIGH及3个resource低报HIGH。原RED/修复前源码/实际测试与95成员证据见research/exact-record-gates-v1。31+13源码相关测试通过；最终37安装34.83s通过，82实际非editable模块全部匹配源码。安装检查器首次漏传输出参数IndexError，随后按原接口提供路径成功；不是模块不匹配。
 
 实际宿主proof唯一运行exit0/2.10263s，2terminals/2candidates/1exclusion；comparison唯一运行exit1（runner误断言1packet），函数实际已返回2packets/6compare/24cert/24endpoint，原8refs独立重数一致，后续仅数据核查，不覆盖原FAILED或重跑。两者实际79与原78严格只读singleton兼容及全部input/runtime前后不变，完整独立结果审查已保存；不冒称最终82曾运行该native。资源纯原记录审计.25273s pass：原累计79charged/433remaining/100remainingreject，原elapsed完整保留，无EOS。root无活动EOS或测试，不重poll22182/12409/14366/25825。
