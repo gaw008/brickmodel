@@ -182,3 +182,5 @@ HEOS共存数值政策 `NUM-HEOS-COEXISTENCE-BACKTRACK-1`：固定T的F=(Δp,Δg
 | 局部约束功C_i与当前面传热共同推进E | `free_solid_slab.FreeSolidSlab` | 独立DOP853干态两格，漏C_i仍全局守恒的负对照；真实水两档固定相态短轨迹 |
 
 `NUM-ORDERED-AFFINE-PACKET-1` → `depletion_integration.py`：共同采样的逐湿格仿射库存根区间严格排序、实际 mixed-mode 重算、完整逐事件及共同终点细化、整段原子提交。`test_depletion_ordered_packet.py` 的14项制造测试与 `test_ordered_packet_record_boundary.py` 的7项旧记录/服务拒绝测试；源码323项及安装61项回归通过。实际四格实验因 `correction_exceeds_evaporation_fraction` 失败，0事件提交，不能声称原生有序事件通过。详见 `research/ordered-packet-v1/README.md`。该项仅为数值政策，不是材料本构或真实非线性根的严格证书。
+
+其失败证据合同 `ordered_affine_writeback_failure_v1` → `depletion_integration._snapshot_failure_diagnostic` 和两个失败 refinement 入口：`test_depletion_failure_evidence.py` 以真实制造短面板拒绝验证 raw/clock/gross/完整积分重建、不可变性、成功及默认对照、捕获错误不遮蔽原拒绝。相关源码114项、安装65项通过；同条件原生诊断完整数值结果与旧失败相同，原门槛未改。见 `research/ordered-packet-failure-evidence-v1/README.md`；这是未提交试算的诊断，不是通过的比较或检查点。

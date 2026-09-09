@@ -11,3 +11,5 @@
 核心返回独立 `OrderedPacketResult`，包含 `packets` 和 `packet_schema`。旧 `event_record`、案例服务及续算尚未支持这个结果合同，均明确拒绝；不得把研究结果去掉字段后冒充旧 v1/v2 记录。完整 packet 编解码、独立审计、续算、CLI/UI 接入仍是必需待办。
 
 测试、审查、实际运行及其限度统一记录在 [ordered-packet-v1](research/ordered-packet-v1/README.md)。这项开发不提供原污泥材料参数或整砖现实验证，原空间收敛失败也不会因事件路径实现而自动消失。
+
+有序仿射末端 writeback 拒绝时，失败 refinement 的 `comparison_details.writeback_failure` 保存已计算的完整快照和先前未提交帧；不额外调用物性、不接受失败分支。捕获自身失败时记录 `available=false`，原拒绝原因不变。该数据不是通过的比较或可续算的检查点。同条件四格诊断与实际比例超限见 [failure-evidence-v1](research/ordered-packet-failure-evidence-v1/README.md)。

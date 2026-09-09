@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新失败诊断检查点（基线599efe0）：有序仿射writeback异常现在在原refinement.comparison_details中保存不可变完整初/raw/clock/gross/积分/先前未提交帧；保留原异常、default/success语义和0额外物性回调。源码114相关测试37.09s通过，安装65项3.13s通过，67模块与源码逐字一致，代码/数值审查通过。永久4项测试包含真实短面板拒绝、完整算术重建、成功/default和诊断捕获错误对照。
+
+同原case/policy的实际诊断session17279已终态exit0/39.039s，仍FAILED correction_exceeds_evaporation_fraction，13步132eval15attempt0event/packet；完整数值结果除wall及新诊断外与旧结果完全相同。case/initial/allpolicies/final/interfaces逐字相等，原512步/800s及外部840s未改。失败cell2在未提交cell3之后，h=8.452095690003603e-10s；delta5.673486681192076e-20mol/gross1.5641070214850036e-12mol=3.6273008197389976e-8，超过原1e-8约3.63倍。独立全失败panel算术显示clock残余5.673486686333683e-20mol，raw与其差仅−5.14160749e-29mol，已定位绝对时钟向下取整主导；不是材料物理不可行。13已提交prefix原账本复算通过。证据 `research/ordered-packet-failure-evidence-v1/README.md`；当前无EOS/测试进程。
+
+下一实际动作是完整一致的局部/精确事件时间路径，不能只替换root定位器：stage/query时间、所有ledger积分端点、program节点、事件比较与record/resume必须同一语义。Carson已完成仅保存仿射样本的算术原型 `/private/tmp/brick-ordered-local-clock-prototype-v1`，不是新耦合轨迹；下一有界canonical clock及精确program插值候选正在 `/private/tmp/brick-exact-event-clock-v1` 准备，仅tmp、未准入。恢复检查其实际产物/测试再审核；原完整Goal所有材料、三机制留出、全湿烧冷却、空间收敛和应用验收继续未完成，Goal active，本轮为progress。
+
 有序耗尽核心检查点（基线cd89a46）：显式 `ordered_affine_packet_v1`、完整逐事件细化和原子提交已实现；legacy记录/restore/audit/service及续算明确拒绝新packet合同。源码323项回归通过792.65s，安装61项通过3.00s，67实际模块与源码一致。默认真实水测试保存passed，但仍是制造固体。两项核心审查和记录边界审查通过，证据 `research/ordered-packet-v1/README.md`。
 
 实际四格运行session47684已终态exit0/39.018s（仅表示捕获成功）。核心FAILED `correction_exceeds_evaporation_fraction`，13普通步、132评估、15尝试、末时刻.500262030378867，目标.50032未到、0packet/0event；原512步/800s、物理参数和全部科学门槛未改，外部840s监督。独立13prefix N/E/stretch/component账本通过，全局E+peΔV最大6.166889743e-11J，C绝对累计1.854993883e-20J，通过原2e-8J。当前无活动EOS/测试进程。

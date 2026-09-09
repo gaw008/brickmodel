@@ -1,5 +1,5 @@
 """Bounded wet-to-dry event integration, with explicit terminal-panel accounting."""
-from dataclasses import dataclass,replace,field,fields
+from dataclasses import dataclass,replace,field,fields,is_dataclass
 from fractions import Fraction
 import math
 import time
@@ -53,6 +53,22 @@ def _freeze_diagnostic(value):
     if isinstance(value,np.ndarray):
         return _freeze_diagnostic(value.tolist())
     return value
+
+
+def _snapshot_failure_diagnostic(value):
+    """Detach already computed data without importing runtime builders."""
+    if isinstance(value,Fraction):
+        return MappingProxyType({'numerator':value.numerator,'denominator':value.denominator})
+    if is_dataclass(value) and not isinstance(value,type):
+        return MappingProxyType({item.name:_snapshot_failure_diagnostic(getattr(value,item.name))
+                                 for item in fields(value)})
+    if isinstance(value,Mapping):
+        return MappingProxyType({key:_snapshot_failure_diagnostic(item) for key,item in value.items()})
+    if isinstance(value,np.ndarray):return _snapshot_failure_diagnostic(value.tolist())
+    if isinstance(value,np.generic):return _snapshot_failure_diagnostic(value.item())
+    if isinstance(value,(list,tuple)):return tuple(_snapshot_failure_diagnostic(item) for item in value)
+    if value is None or type(value) in (str,int,float,bool):return value
+    raise DepletionIntegrationError('unsupported_failure_diagnostic_type')
 
 
 def _quadratic_inventory_minimum(n, a, b, h):
@@ -706,10 +722,34 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         if Fraction(evap)>gross:evap=math.nextafter(evap,-math.inf)
         record=None
         if raw.amounts_mol[cell,li]>0:
-            raw,record,path.totals=depletion_writeback(raw,cell_index=cell,liquid_index=li,vapor_index=vi,
-                panel_liquid_start_mol=float(state.amounts_mol[cell,li]),
-                panel_liquid_terms_mol=(float(fn[cell,li]),-float(fn[cell+1,li]),float(rn[cell,li])),
-                positive_evaporated_mol=evap,policy=ep.roundoff_policy,totals=path.totals,clock_evidence=clock)
+            try:
+                raw,record,path.totals=depletion_writeback(raw,cell_index=cell,liquid_index=li,vapor_index=vi,
+                    panel_liquid_start_mol=float(state.amounts_mol[cell,li]),
+                    panel_liquid_terms_mol=(float(fn[cell,li]),-float(fn[cell+1,li]),float(rn[cell,li])),
+                    positive_evaporated_mol=evap,policy=ep.roundoff_policy,totals=path.totals,clock_evidence=clock)
+            except DepletionRoundoffError as exc:
+                if ordered:
+                    # Data already evaluated on this speculative branch; no provider
+                    # or validation callback is invoked to manufacture diagnostics.
+                    try:
+                        exc.ordered_failure_evidence=_snapshot_failure_diagnostic({
+                        'schema':'ordered_affine_writeback_failure_v1',
+                        'qualification':'uncommitted_numerical_terminal_diagnostic',
+                        'reason':str(exc),'cell_index':cell,'liquid_index':li,'vapor_index':vi,
+                        'initial_state':state,'raw_state':raw,'clock':clock,
+                        'midpoint_state':predictor,'initial_observation':obs,'midpoint_observation':middle,
+                        'signed_liquid_terms_mol':(float(fn[cell,li]),-float(fn[cell+1,li]),float(rn[cell,li])),
+                        'integrated_fields':dict(zip(('face_species_mol','face_energy_j','reaction_species_mol','cell_work_j'),fields)),
+                        'exact_positive_evaporated_mol':gross,'positive_evaporated_mol':evap,
+                        'stretch_increment':stretch_increment,'stretch_quadrature_roundoff':stretch_rounding,
+                        'roundoff_policy':ep.roundoff_policy,'totals_before':path.totals,
+                        'root_order':path.pending_order,'previous_uncommitted_frames':tuple(path.packet_frames),
+                        'process_local_source_binding':binding})
+                    except (DepletionIntegrationError,TypeError,ValueError,OverflowError,RecursionError) as capture_error:
+                        exc.ordered_failure_evidence=MappingProxyType({
+                            'schema':'ordered_affine_writeback_failure_v1','available':False,
+                            'reason':str(exc),'capture_error':type(capture_error).__name__+': '+str(capture_error)})
+                raise
         components=rounding=None
         if obs.rates.cell_power_components_w is not None:
             components={};rounding={}
@@ -1118,6 +1158,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                         except (_Failure,IntegrationError,DomainExit,DepletionRoundoffError,ValueError,OverflowError) as exc:
                             refinements.append(DepletionRefinement(t,level,cap,tc,None,None,
                                 getattr(exc,'reason',str(exc)),evaluations-level_evaluations,time.monotonic()-level_start,
+                                comparison_details=({'writeback_failure':exc.ordered_failure_evidence} if hasattr(exc,'ordered_failure_evidence') else {}),
                                 phase_costs=frozen_costs(before_cost),approach_role='terminal_refinement' if nested else 'legacy',
                                 approach_cap_s=approach_cap,approach_safe_inventory_fraction=ep.safe_inventory_fraction if nested else None))
                             raise
@@ -1185,6 +1226,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                                             refinements.append(DepletionRefinement(t,level,cap,tc,None,None,
                                                 getattr(exc,'reason',str(exc)),evaluations-independent_evaluations,
                                                 time.monotonic()-independent_start,phase_costs=frozen_costs(independent_cost),
+                                                comparison_details=({'writeback_failure':exc.ordered_failure_evidence} if hasattr(exc,'ordered_failure_evidence') else {}),
                                                 approach_role='independent_halved_controls',approach_cap_s=fine_cap,
                                                 approach_safe_inventory_fraction=fine_safe))
                                         raise
