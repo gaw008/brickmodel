@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新：完整mixed exact controller已按7e9bd6d3/mainbe021e80/helperbc05a282应用；源码77项77.65s、实际安装77项76.75s通过，XML零失败/错误/跳过，94实际模块匹配。独审7+9及应用核验通过。research/mass-wet-exact-controller-v1保存31成员及原失败，逐成员SHA解包核实。sessions30695/66749均终态；当前root无运行中的测试或EOS，不重poll。制造解析液体两次耗尽及干态尾完整通过；整个请求区间一个原子packet，尚无mixed codec/service/resume。
+
+真实水数学共存/连接研究已归档research/water-coexistence-connection-v1（119成员），原3/6与加权5/6共存盒、所有原失败、不可变绑定修复、源码/原始HEOS JSON/许可及独立复算保留。connected session47230已终态：T300±1e-7K、31次/16正导数叶完整覆盖，tube1.099692s/15s，whole1.208409s；独立Fraction复算通过，原歧义带后压力余量>1007161.7809Pa。温度是声明研究扰动，非U inverse误差；global phase/native error均未准入。
+
+下一实际工作：Carson仅tmp exact_controller_record实现混合单位运行记录/导出/离线审计候选；Tesla在tmp native_correspondence_plan推导实际inverse T与原生provider误差衔接条件。候选未审核、未应用；完整材料域、全湿坯到烧冷、三个公开机制留出、空间/多代和统一界面仍按原合同未完成。当前回合有实际实现与测试证据，属于progress，Goal保持active。
+
 最新exact_terminal已应用4f186cfb/test7d0242c4；63源码11.13s、63安装11.27s通过，93实际模块匹配，独立13项及应用核验通过，research/mass-wet-exact-terminal-v1归档逐成员SHA重读。sessions26269/97809均终态，不重poll。所有root原生EOS/测试已结束。
 
 Carson在/tmp/brick-mass-wet-integration-v1/exact_controller继续完整两格湿湿→干湿→干干控制器（两连续pass+独立halfapproach、全六gate、模式lineage与原累计totals不重置、原子packet）；尚未freeze/准入。Tesla在/tmp/brick-water-pressure-interval-v1/coexistence_candidate实现参数T的两log密度共存残差/Jacobian及Krawczyk数学候选，纯解析无EOS。来源接口依据已保存research/water-pressure-interval-v1/phase-admission，核读原IAPWS/HEOS，辅助饱和式只作初值不代证书；整个295..310K稳定分支还未求证。

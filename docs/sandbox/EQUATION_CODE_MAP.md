@@ -6,6 +6,7 @@
 
 | 关系或数值合同 | 实现与验证入口 | 已证实范围 |
 |---|---|---|
+| kg/mol分离的两次耗尽、模式切换与原子提交；逐事件及共同终点六门槛、两连续细化与独立approach | `mass_wet_exact_controller.integrate_mixed_exact`、`audit_prefix`；`test_mass_wet_exact_controller.py`与独立DOP853辅助实现 | 明确制造解析液体的完整两格湿湿→干湿→干干数值闭环；[实际证据](research/mass-wet-exact-controller-v1/README.md)，不授予真实原料或原生水准入 |
 | 固体kg/流体mol共同总U反解、有限O2反应及无重复化学热 | `mass_storage_bridge.MixedStorage`、`MixedCell`、`integrate_closed` | [混合桥证据](research/mass-storage-bridge-v1/README.md)：68源码/68安装相关测试，86模块一致；制造单格干态，非全周期材料准入 |
 | 同研究干固体产率×干固体LHV | `data/sandbox/research/gnest-char-energy-v1/evidence_registry.json`；`units.convert` | [来源及独立复算](research/gnest-char-energy-v1/README.md)：4节点实际安装追溯；燃料能量库存，不是反应热 |
 | 质量基准 `Bᵀh₀=q`、逐反应质量/元素配平、循环一致性和可辨识输出 | `reaction_reference.ReactionReferenceNetwork.solve`；`test_reaction_reference.py` | [质量参考证据](research/mass-reaction-reference-v1/README.md)：16源码/16安装及独立18测试；保留完整network和未知量，仅名义代数，不授予材料资格 |
