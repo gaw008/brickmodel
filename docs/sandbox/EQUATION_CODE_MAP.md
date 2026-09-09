@@ -231,3 +231,7 @@ HEOS共存数值政策 `NUM-HEOS-COEXISTENCE-BACKTRACK-1`：固定T的F=(Δp,Δg
 ## 固体kg与气体mol的共同面传输
 
 `mass_transport_bridge.MixedPair.evaluate` → 当前MixedCell总U反解、`gas_transport.face_exchange`质量修正扩散/Darcy、`exchanges.conduction_rate_w`半格热阻。同一气体参考焓分别在面温度和供体温度评价；`integrate_pair`一次面账本/相反符号更新与失败前缀保留。`test_mass_transport_bridge.py` 独立DOP853全轨迹、元素参考变换、每接受前缀守恒；research/mass-transport-bridge-v1 保存实际源码/安装结果。制造干态验证，不是新增真实污泥本构。
+
+## 同质量基准湿态储能
+
+`mass_wet_storage.WetMixedStorage` → 固体kg参考内能与实际RigidStorage液/气共同储能；真实gas_volume由液占积闭合，固体体积表示误差通过全局/局部压力域与Nl|du/dp|入U。`WetMixedState`在浮点转换时拒绝负原始库存和非零下溢，`WaterElementConvention`绑定CIAAW事实且禁止水化学生成/消耗。制造液响应及独立非零du/dp包络测试见research/mass-wet-storage-v1；实际HEOS一点、原失败与独立Brent数据审计见research/mass-wet-native-v1。仅储能层，不是时间相变/湿干事件或材料准入。

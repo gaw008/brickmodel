@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+湿质量储能A现已实际应用：mass_wet_storage60f6ec5d、test481e2378；库存负数/非零下溢HIGH已修、6RED保留，来源聚合RED修复。14正式+独立23通过，46源码7.43s/46安装7.49s通过，89实际模块一致。证据research/mass-wet-storage-v1。
+
+实际HEOS一点v1因1000Pa不稳定液相正确拒绝，原失败完整保留；经独审在新v2仅把压力下界收紧为10000Pa（原温度/库存/容差/90s保持），真实前向/反解与独立Brent/能量对照通过，runner4.080275834s、supervisor4.301904792s exit0/reaped。全89runtime及输入前后不变，独立保存数据14样本/全部Fraction门槛复核通过，见research/mass-wet-native-v1。native sessions43298(失败)/9452(完成)均终态，无EOS仍运行。
+
+下步B候选 `/private/tmp/brick-mass-wet-integration-v1/transport` 已冻结source7b56d8f5/testb825af0c，作者7tests6.86s通过，正在wet_storage_review独立审查，尚未repo应用。它在同一kg湿储能上实现两格有限O2/相变/3气体传输，仍仅正液短轨迹；审过后应用/实际验证，继续C单位分离的耗尽/干态共同终点/记录审计。Goal原材料/全周期/三机制公开留出/空间/多代要求全部保持未完成。
+
 同质量基准湿态接入正在实现：候选 `/private/tmp/brick-mass-wet-integration-v1/candidate/mass_wet_storage.py`，尚未repo准入或原生执行。新增可追查水元素名义约定 data/sandbox/research/water-element-convention-v1，CIAAW2024原H/O值实际核读，Fraction分数672/6005和5333/6005、有限摘录SHA均独立复核；不替换实际EOS M、不宣称同位素测定，水化学计量必须0。独审和接口设计见research/water-element-convention-v1。湿态需完整传播固体占积→压力→液体能量误差，旧干公式不可照搬。原生一点前向/反解计划在/private/tmp/brick-mass-wet-native-v1，代码/纯测审查及正式安装完成后才允许运行；原90秒和能量门槛保持。
 
 两格质量传输现已接入：mass_transport_bridge d9d532c2、test04673c96，32源码7.34s/32安装7.23s通过；88实际模块一致，独立原8项及应用复核通过。共同面传质/焓流/导热、有限O2与共同总U反解实际耦合，参考能量同时输运；证据research/mass-transport-bridge-v1。仍是制造刚性干态，湿态和全周期未完成。
