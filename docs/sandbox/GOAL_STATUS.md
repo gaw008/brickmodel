@@ -4,6 +4,10 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新：writeback提交b671032；源码/安装92模块验证已完成。Root压力区间研究已保存research/water-pressure-interval-v1，全部成员SHA解包核实；actual study02 session24604终态exit0，16端点1.413235750s/原10s内，全16 Fraction复核通过，原8项下舍入RED保留。当前无EOS/测试进程，勿重poll45617/63760/24604。源码数学原语尚仅研究归档，不宣称stable/native误差认证。
+
+下一连接层exact_terminal4f186cfb/test7d0242c4在tmp，11pure2.58s通过，Tesla正独审；内部actual两callback→严格全根排序→全kg/mol/U积分→原writeback，不切mode/不提交。Python审查者在/tmp/brick-water-pressure-interval-v1/phase-admission核读原来源，推进实际WaterProperties稳定分支和误差接口。原Goal完整材料/全湿烧冷却/公开三机制留出/空间/多代仍未完成。
+
 最新writeback已应用ceb76234/test66ae28a7；52源码8.97s、52安装8.79s通过，92实际模块匹配，独立28项及应用核验通过。证据research/mass-wet-writeback-v1。sessions83016/19861终态，不重poll。exact_stage已提交c2b9d98；Carson继续tmp exact_terminal实际样本→根证据→全分量账本连接器，未准入。
 
 Root真实水区间研究已接显式public/native质量比（原源M相差1ULP），原单位scale版本保留；16原fine端点纯数学区间通过，但独审发现result01的combined radius8项Decimal向下舍入，RED保留review-radius-rounding01。study02已改Interval.hi并冻结source/所有实现SHA，唯一session24604待终态复核；原source/材料包络和10秒预算不变，没有新native轨迹。不得把局部根/条件原误差包络当stable相认证或材料误差证书。
