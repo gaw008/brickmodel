@@ -1,8 +1,17 @@
 # 物理沙盒 Goal 进度
 
-更新时间：2026-09-08 UTC。完整任务合同：[GOAL_BRICK_PHYSICS_SANDBOX.md](../GOAL_BRICK_PHYSICS_SANDBOX.md)。最新状态以当前恢复入口及其实际产物为准，较早段落保留当时状态。
+更新时间：2026-09-09 UTC。完整任务合同：[GOAL_BRICK_PHYSICS_SANDBOX.md](../GOAL_BRICK_PHYSICS_SANDBOX.md)。最新状态以当前恢复入口及其实际产物为准，较早段落保留当时状态。
 
 ## 当前恢复入口（后续详细历史保留）
+
+0c2191d 之后实际进度（2026-09-09 UTC）：修复 v2 resume preflight 的构造顺序；保留实际完整盒/来源/前缀审计。源码与冻结安装 43 项通过、65 模块一致。真实 service start/session48184 cancelled 7steps；resume/session99452 completed30steps/2events至原0.50032，原前缀和累计预算保持；replay/session19128 exit0，353.89s、30steps/2events/592eval，times/states/steps/events/corrections与resume逐项相同。三会话均终态，不再poll/重跑。325成员完整证据 research/paired-service-lifecycle-v1。
+
+真实取消T来源查询曾 quantity_unavailable，失败保留。随后修复合法量无final_snapshot时保来源图、value/pointer null及明确原因，未知量仍拒绝。永久RED14fail→GREEN32pass，实际安装32pass/65模块一致，真实取消7查询通过、完整7查询逐项不变、原封存不变；research/partial-run-trace-v1。源码查询修复在生命周期运行之后，二者runtimeSHA不同，不冒称新源码已重跑native。独立代码审查均通过。当前无活动EOS/测试。
+
+空间保存数据独立诊断通过原六封存输入、parent N/E映射及初态几何通量核算，支持内部初始阶跃尚未解析；原空间收敛FAIL保持。0.391µm是水扩散尺度，粗估热尺度12.35µm，均远小于最细2500µm网格；不能把估算当完整耦合定理。research/spatial-jump-diagnosis-v1 另附 PERFORMANCE_PLAN.md，仅设计、未运行profile。
+
+下一可执行步骤：按该有界计划先测真实已接受wet state的最多2次host evaluate（40s监督、source/输入绑定、原误差门槛；串行且保留实际profile），用实测调用成本确定原空间问题可解析尺度/时长策略。并继续原污泥材料闭合、三组公开机制及留出验证、完整湿坯烧成冷却与气液联合耦合。现仅制造材料短湿轨迹/事件与软件生命周期进度，不是完整Goal验收。Goal active，全部原§11范围保持。
+
 
 3e04fce之后实际progress：新增pressure_comparison完整typed策略/codec/双路径实际host及数据审计；depletion只在opt-in捕获当次total inverses，event/common全格比较、before/after guard与累计attempt/completed；event_record v2/旧v1兼容及source/state/observations/成本/续算审计；case显式v2假设避免sourcehash自引用，真实build派生box并beforeforward验证；service允许v2续算形状后仍严格audit。
 

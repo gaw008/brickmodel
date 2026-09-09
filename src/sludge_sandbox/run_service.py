@@ -385,7 +385,14 @@ def trace_run(directory: str | Path, quantity: str) -> dict[str, Any]:
                        ('depletion_roundoff.py','depletion_writeback','Paired depletion correction and exact storage-roundoff evidence.'),*_FREE_EQUATIONS[1:]]
     else:
         raise RunError('unsupported_trace_model')
-    if quantity in ('amounts_mol', 'internal_energy_j', 'mechanical_stretches'):
+    availability = None
+    if not isinstance(result.get('final_snapshot'), dict):
+        value = None
+        location = None
+        availability = {'status': 'unavailable', 'reason': 'final_snapshot_unavailable',
+                        'run_reason': result.get('reason'),
+                        'semantics': 'No final result value is reported; initial or accepted-prefix values are not substituted.'}
+    elif quantity in ('amounts_mol', 'internal_energy_j', 'mechanical_stretches'):
         try:
             value = result['integration']['states'][-1][quantity]
         except (KeyError, IndexError) as exc:
@@ -413,6 +420,8 @@ def trace_run(directory: str | Path, quantity: str) -> dict[str, Any]:
             'implementation_artifacts': {k: v for k, v in manifest['files'].items() if k.startswith('implementation/')},
             'evidence_artifacts': {k: v for k, v in manifest['files'].items() if k.startswith('water/')},
             'material_evidence': 'A/B solids, kinetics, carrier, transport and skeleton are manufactured; raw sludge is not admitted.'}
+    if availability is not None:
+        trace['value_availability'] = availability
     if 'provenance.json' in manifest['files']:
         from .run_provenance import query_graph
         graph = json.loads((directory/'provenance.json').read_bytes())
@@ -462,6 +471,25 @@ def replay_run(directory: str | Path, output: str | Path, *,
                     evidence_directory=Path(directory)/'evidence', _event_replay=event_binding)
 
 
+def _validate_event_resume_policy(case_record, saved_policy):
+    """Preflight scalar settings before the actual model can bind source boxes.
+
+    The freshly built complete policy is still compared in _run_event before
+    restoration or integration. This check cannot certify a saved box identity.
+    """
+    from .verification_case import _build_depletion_policy, encode
+    expected = encode(_build_depletion_policy(case_record, validation_only=True))
+    if type(saved_policy) is not dict:
+        raise RunError('resume_case_event_policy_mismatch')
+    scalar = dict(saved_policy)
+    if case_record['schema'] == 'sandbox_depletion_policy_v2':
+        from .pressure_comparison import restore_pressure_comparison_policy
+        typed = scalar.pop('pressure_comparison', None)
+        restore_pressure_comparison_policy(typed)
+    if scalar != expected:
+        raise RunError('resume_case_event_policy_mismatch')
+
+
 def resume_run(directory: str | Path, output: str | Path, *,
                cancel: Callable[[], bool] | None = None) -> dict[str, Any]:
     """Continue a verified cancelled accepted prefix using the current installed model."""
@@ -494,10 +522,8 @@ def resume_run(directory: str | Path, output: str | Path, *,
         if encode(IntegrationPolicy(**result['policy'])) != encode(policy):
             raise RunError('resume_case_policy_mismatch')
         if case.payload['schema']==_EVENT_SCHEMA:
-            from .verification_case import _build_depletion_policy
             _event_cancelled(result)
-            if result.get('depletion_policy') != encode(_build_depletion_policy(case.payload['numerics']['depletion'])):
-                raise RunError('resume_case_event_policy_mismatch')
+            _validate_event_resume_policy(case.payload['numerics']['depletion'],result.get('depletion_policy'))
         else:
             validate_cancelled(result, policy, start_s=case.payload['numerics']['start_s'],
                                end_s=case.payload['numerics']['end_s'])
