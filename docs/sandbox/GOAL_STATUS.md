@@ -4,6 +4,16 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新：exact_stage已应用9bd9ffd5/de4ae1d9/guards3b11612c；48源码15.52s、48安装15.90s通过，91实际模块匹配，独立28项及应用审查通过；原HIGH/MEDIUM/RED完整保存在research/mass-wet-exact-stage-v1。它拒绝缺全温P包络的generic wet，不具原生湿事件/续算许可。tests sessions22469/28361均终态，不重poll。
+
+真实水区间研究位于/private/tmp/brick-water-pressure-interval-v1，interval_eos28bcfac0数学原语已独审；新coupled_rectangle通过全T/V矩形面符号和导数正性包围局部P，2pure0.147s，原窄括区失败保留。尚待coupled独审，未作stable液相/实际native误差衔接或生产准入。mixed_writeback ceb76234/test66ae28a7已有独立28pure0.32s通过，尚未应用。
+
+恢复优先：HEAD f45a32a（C host），前提交0559fd7（B native）。当前无原生EOS或测试在运行；B sessions68137/89156与C tests92136/20084均已终态，不重poll。实际安装90模块对应C f12bd910。
+
+exact_stage旧freeze467658a3/test3296082b仅tmp，独审发现HIGH：fixed-T pressure_error不能当同U反解压力总包络；MEDIUM：endpoint回调失败缺已计算new/ledger直接证据。原17测试5.96s及独立5测试2.14s、RED与CODE_REVIEW保留。Carson正在修复：dry解析理想气体传播T区间；wet无全域体积依据明确拒绝，只允许完整绑定且明确制造常数液体契约的纯测试，不把HEOS伪装成常数水；补全未提交attempt证据。新freeze尚待复审，不得应用旧版。
+
+Tesla在/private/tmp/brick-mass-wet-integration-v1/mixed_writeback实现kg/mol分离的局部耗尽投影与原修正门槛，只有临时候选，无根定位或整事件许可；新增显式本格原初库存fraction<=1e-8是额外数值限制，不谎称旧字段。两名实现者仅tmp，Python审查者待复审；不改原材料/完整Goal验收范围。
+
 最新C host已应用f12bd910/test2906f43e，源码41项14.89s、安装41项14.79s通过，90实际模块匹配；独立15项及应用核验通过。research/mass-wet-depletion-host-v1保存原失败/完整审核/测试并逐成员SHA核实。默认wet保parity，显式dry仅精确0液，strict再凝结/未知域拒绝；没有自动耗尽或写回许可。B已提交0559fd7且原生两档全部终态，旧90原生freeze仍完整归档，不跨新C版本续算。
 
 下一：Carson的exact_stage临时候选正在纯测试，尚未审查准入；必须保持kg/mol/U/T/P/time各门槛并检查全二次面板，ordinary wet严格正液、dry恒0。Goal第11节全部完整范围仍未完成。
