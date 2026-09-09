@@ -206,7 +206,7 @@ class WaterPhaseTransfer:
     def source_ids(self):
         return tuple(sorted(set(self.base_model.source_ids+self.chemical.source_ids+self.coefficient_source_ids)))
 
-    def evaluate(self,state:ConservedState,time_s:float)->WaterTransferEvaluation:
+    def _check_interface_state(self,state:ConservedState)->None:
         self.base_model._check_state(state)
         for row,k,mode in zip(state.amounts_mol,self.coefficients_mol_s_pa,self.interfaces):
             if mode=='depleted_no_nucleation':
@@ -214,7 +214,21 @@ class WaterPhaseTransfer:
                 continue
             if k>0 and row[self._liquid_index]==0:
                 raise DomainExit('no_existing_liquid_interface_nucleation_not_modelled')
+
+    def evaluate(self,state:ConservedState,time_s:float)->WaterTransferEvaluation:
+        self._check_interface_state(state)
         base=self.base_model.evaluate(state,time_s)
+        return self._assemble_transfer(state,base)
+
+    def evaluate_autonomous(self,state:ConservedState)->WaterTransferEvaluation:
+        """Only a direct reviewed free slab has this state-only contract."""
+        if type(self) is not WaterPhaseTransfer or type(self.base_model) is not FreeSolidSlab:
+            raise WaterPhaseTransferError('explicit_direct_free_slab_transfer_required')
+        self._check_interface_state(state)
+        base=self.base_model.evaluate_autonomous(state)
+        return self._assemble_transfer(state,base)
+
+    def _assemble_transfer(self,state,base)->WaterTransferEvaluation:
         water_index=self.species_order.index('H2O')
         reactions=np.array(base.rates.reaction_species_mol_s)
         diagnostics=[]

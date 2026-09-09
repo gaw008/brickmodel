@@ -134,6 +134,16 @@ class FreeSolidSlab:
 
     def evaluate(self,state: ConservedState,time_s: float) -> FreeSolidSlabEvaluation:
         self._check_state(state);_num(time_s,'time')
+        return self._evaluate_current_state(state)
+
+    def evaluate_autonomous(self,state: ConservedState) -> FreeSolidSlabEvaluation:
+        """State-only evaluation for the explicitly autonomous direct slab."""
+        if type(self) is not FreeSolidSlab:
+            raise IntegrationError('explicit_direct_free_slab_required')
+        self._check_state(state)
+        return self._evaluate_current_state(state)
+
+    def _evaluate_current_state(self,state: ConservedState) -> FreeSolidSlabEvaluation:
         base=self.base_model;layout=self.inventory_layout
         normals=tuple(map(float,state.mechanical_stretches[:-1]));tangent=float(state.mechanical_stretches[-1])
         brackets=tuple(base.dry_temperature_brackets_k[i] if row[layout.liquid_index]==0 and base.dry_temperature_brackets_k is not None

@@ -4,6 +4,10 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新宿主接线（基线1717de9）：FreeSolidSlab/WPT共享原评估body并提供explicit autonomous exact入口，原float顺序/公式保留。初审发现thermal独立water实现漏绑，actual RED4fail后修复全部provider槽/type/fullimplementation；38源码2.94s、38安装3.01s通过，72实际模块匹配。45s监督native01已exit1/1.91s（旧encode不支持嵌套HEOSCandidate，exact尚未调用），修研究捕获保留全部数值字段后native02/session9900已exit0/2.2378s，runner1.9258s：原四格case/initial相同，legacy与exact自主时间10^12+10^-10的完整1,079,815 bytes输出逐字相同，runtime/source绑定未变。两个native已终态无root EOS运行。见research/exact-native-host-v1；此为真实water+制造solid点对照，不关闭四格event失败或材料验证。
+
+下一具体动作：TMP /private/tmp/brick-exact-terminal-panel-v1 已完成full-state affine panel及5puretests、code review；N/E局部门槛是represented ledger残差，不是exact affine quadrature总误差，midpoint/source真实性由调用方保证。/private/tmp/brick-exact-root-order-v1 Carson正构建全wet-cell严格根顺序候选。先核这两候选实际文件与审查，再整合actual exact observe、terminal writeback/mode、原全状态比较和packet原子提交；不要停在原语。精确单格已提交1717de9、时间积分0c53982。原污泥完整材料、三机制公开留出、全湿烧冷却、空间收敛及最终使用仍为必需未完成，Goal active，本轮progress。
+
 精确单格耗尽核算增量（基线0c53982）：exact_affine_depletion源码冻结8448d319，已移植并获代码/数值独立审查。93源码4.97s、54安装.18s通过，71实际模块匹配。保存cell2旧时钟仍拒绝；新26级有理区间满足原1e-8修正比例，未改物理或科学门槛。本次无EOS；完整panel、根排序、mode切换/packet比较与record尚未接入。见research/exact-affine-depletion-v1。宿主exact入口的热学独立水provider绑定缺口已在tmp修复待复审；whole-state panel候选由Averroes在tmp开发。Goal完整范围仍未完成。
 
 最新精确时间/积分检查点（基线5462deb）：新增 exact_event_clock（规范单Fraction时间/区间、严格codec、独立显示误差）、exact_boundary_program（已校验程序的精确节点/权重、显式全schedule平移）、exact_integration（独立exact SSPRK2/ledger/result；回调和实际求积端点均精确）。原程序/积分器未改；旧kernel/program/checkpoint明确拒绝新时间，未准入新事件/续算/服务。源码185项7.22s、安装132项6.98s通过；原语先前源码/安装64项各.11s通过。当前70实际安装模块匹配源码，三个模块及测试已获代码/数值审查。
