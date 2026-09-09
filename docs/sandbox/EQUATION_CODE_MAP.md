@@ -1,5 +1,7 @@
 # 方程—代码—验证映射 v0.1
 
+`exact_affine_depletion`：对同一三项signed速率的仿射积分建立有界dyadic根区间，逐项绑定一次舍入积分和向下舍入的蒸发正部；复用原修正/累计预算。93源码、54安装测试通过，仅数值原语，未准入实际事件。见[证据](research/exact-affine-depletion-v1/README.md)。
+
 ## 联合耗尽库存写回
 
 `depletion_group_roundoff.writeback_exact_group` 将首个精确同根组、每格三项仿射液体积分与同一个已提供面板绑定，复用原逐格修正及累计预算；任一失败不提交部分结果，exactzero 保持 None。新模块20项、相关源码116项及安装52项通过。真实四格短推进仍未分离原候选门槛；完整模式切换/事件记录未接入。见 [联合核算研究](research/depletion-group-roundoff-v1/README.md)。

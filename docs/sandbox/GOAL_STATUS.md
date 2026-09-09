@@ -4,6 +4,8 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+精确单格耗尽核算增量（基线0c53982）：exact_affine_depletion源码冻结8448d319，已移植并获代码/数值独立审查。93源码4.97s、54安装.18s通过，71实际模块匹配。保存cell2旧时钟仍拒绝；新26级有理区间满足原1e-8修正比例，未改物理或科学门槛。本次无EOS；完整panel、根排序、mode切换/packet比较与record尚未接入。见research/exact-affine-depletion-v1。宿主exact入口的热学独立水provider绑定缺口已在tmp修复待复审；whole-state panel候选由Averroes在tmp开发。Goal完整范围仍未完成。
+
 最新精确时间/积分检查点（基线5462deb）：新增 exact_event_clock（规范单Fraction时间/区间、严格codec、独立显示误差）、exact_boundary_program（已校验程序的精确节点/权重、显式全schedule平移）、exact_integration（独立exact SSPRK2/ledger/result；回调和实际求积端点均精确）。原程序/积分器未改；旧kernel/program/checkpoint明确拒绝新时间，未准入新事件/续算/服务。源码185项7.22s、安装132项6.98s通过；原语先前源码/安装64项各.11s通过。当前70实际安装模块匹配源码，三个模块及测试已获代码/数值审查。
 
 所有actual stage/endpoints保持Fraction，未来名义步长明确向下量化以阻止有理分母爆长；原30s失败及修复保留。非整数倍终点的短尾用合法剩余区间二分规划，未丢尾/降min；185初轮仅root新boundary regex把实际invalid_evaluation_time写错，保RED后修正，生产行为未改。此轮无EOS；17389/4565源码安装测试均已终态，后续候选工作由子代理在tmp继续。原四格FAILED依然有效；不得把新制造积分路径当已通过湿耗尽。
