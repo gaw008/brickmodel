@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+有序耗尽核心检查点（基线cd89a46）：显式 `ordered_affine_packet_v1`、完整逐事件细化和原子提交已实现；legacy记录/restore/audit/service及续算明确拒绝新packet合同。源码323项回归通过792.65s，安装61项通过3.00s，67实际模块与源码一致。默认真实水测试保存passed，但仍是制造固体。两项核心审查和记录边界审查通过，证据 `research/ordered-packet-v1/README.md`。
+
+实际四格运行session47684已终态exit0/39.018s（仅表示捕获成功）。核心FAILED `correction_exceeds_evaporation_fraction`，13普通步、132评估、15尝试、末时刻.500262030378867，目标.50032未到、0packet/0event；原512步/800s、物理参数和全部科学门槛未改，外部840s监督。独立13prefix N/E/stretch/component账本通过，全局E+peΔV最大6.166889743e-11J，C绝对累计1.854993883e-20J，通过原2e-8J。当前无活动EOS/测试进程。
+
+下一具体动作：在writeback失败边界保留已计算的cell/初值/raw/积分项/clock/gross及未提交frame，保持原拒绝和回滚、不增加EOS观察；经测试/审查/冻结安装后再做同一有界四格诊断。当前记录缺少失败数值，不能把短面板时钟ULP假设称为实际根因。只读Fraction机制例子在 `/private/tmp/brick-ordered-packet-next-v1`，Averroes/Tesla审计均建议先补诊断。完整packet记录/独立审计/续算/CLI/UI接入仍待完成。原污泥材料闭合、三机制公开对照与留出、完整湿烧成冷却、空间收敛仍为必需未完成项；Goal active。本Goal续轮已产生回归/真实失败与审计证据，属于progress。
+
 f9d57c0 后实际进展：新增 depletion_group_roundoff 原子精确同根记账，逐cell仿射三分量/真实面板/完整rawstate绑定、每member原grossfraction及累计预算、zero None、失败不返回局部结果。初审两HIGH已通过实际RED反例并修复，旧代码和失败保留；20专属/116源码回归通过，冻结非editable安装52通过、67模块一致。仅核算已给共享panel，非完整group轨迹/模式切换。
 
 另实际66模块四格短探针session32911已exit0/4.384s：原初态/精度，推进2^-14s，一个accepted step8stage+2observation；候选gap0→3.371786427888473e-10仍小于原1e-8。独立所有prefixN/E/stretch及global E+peΔV核算通过原门槛，global1.20454e-11J。无活动native/tests，不再poll。证据research/depletion-group-roundoff-v1。新67安装未native复跑，不混称source身份。

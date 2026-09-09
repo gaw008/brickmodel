@@ -125,7 +125,14 @@ def encode_depletion_result(run,*,original_interfaces):
     canonical(data)
     return data
 
+def _legacy_record_fields(record):
+    names={f.name for f in fields(DepletionResult)}-{'operator'}
+    require(type(record) is dict and set(record)==names|{'schema','final_interfaces','original_interfaces','operator_binding'},'exact_result_fields')
+    require(record['schema'] in ('sandbox_depletion_result_v1','sandbox_depletion_result_v2'),'unsupported_record_schema')
+    return names
+
 def restore_final_operator(original_operator,record):
+    _legacy_record_fields(record)
     initial=state(record['states'][0]);require(binding(original_operator,initial)==record['operator_binding'],'operator_binding_mismatch')
     original=tuple(record['original_interfaces']);final=tuple(record['final_interfaces'])
     require(tuple(original_operator.interfaces)==original,'original_modes_mismatch')
@@ -137,9 +144,7 @@ def restore_final_operator(original_operator,record):
     return original_operator.with_depleted_cells(state(record['states'][-1]),cells)
 
 def decode_result(record,operator):
-    names={f.name for f in fields(DepletionResult)}-{'operator'}
-    require(type(record) is dict and set(record)==names|{'schema','final_interfaces','original_interfaces','operator_binding'},'exact_result_fields')
-    require(record['schema'] in ('sandbox_depletion_result_v1','sandbox_depletion_result_v2'),'unsupported_record_schema')
+    names=_legacy_record_fields(record)
     require(tuple(operator.interfaces)==tuple(record['final_interfaces']),'final_modes_mismatch')
     require(binding(operator,state(record['states'][0]))==record['operator_binding'],'operator_binding_mismatch')
     d={k:record[k] for k in names};d['operator']=operator;d['states']=tuple(state(v) for v in d['states']);d['steps']=tuple(numeric_record(StepLedger,v) for v in d['steps']);d['events']=tuple(event(v) for v in d['events']);d['corrections']=tuple(correction(v) for v in d['corrections'])
@@ -185,6 +190,7 @@ def audit_depletion_record(record,original_initial,original_integration_policy,o
 
 
 def _audit(record,initial,p,ep,original_interfaces,operator,start,end):
+    require(getattr(ep,'ordered_event_policy',None) is None,'ordered_packet_record_audit_unavailable')
     canonical(record);require(record['original_interfaces']==list(original_interfaces),'original_modes_mismatch')
     r=decode_result(record,operator);require(encode(r.states[0])==encode(initial),'original_initial_mismatch')
     paired=ep.pressure_comparison is not None

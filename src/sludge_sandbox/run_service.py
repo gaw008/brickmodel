@@ -113,6 +113,8 @@ def _run_event(built, result: dict[str, Any], parent: dict[str, Any] | None,
     event_policy = built.depletion_policy
     if event_policy is None:
         raise RunError('event_case_requires_explicit_policy')
+    if getattr(event_policy, 'ordered_event_policy', None) is not None:
+        raise RunError('ordered_packet_service_codec_unavailable')
     result['depletion_policy'] = encode(event_policy)
     initial, start, operator = built.initial, built.start_s, built.operator
     original_interfaces = tuple(operator.interfaces)

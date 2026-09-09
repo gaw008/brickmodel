@@ -1,5 +1,5 @@
 """Bounded wet-to-dry event integration, with explicit terminal-panel accounting."""
-from dataclasses import dataclass,replace,field
+from dataclasses import dataclass,replace,field,fields
 from fractions import Fraction
 import math
 import time
@@ -102,6 +102,7 @@ class DepletionPolicy:
     nested_approach: NestedApproachPolicy | None = None
     terminal_method: str = 'euler'
     pressure_comparison: object = field(default=None,metadata={'omit_when_none':True})
+    ordered_event_policy: str | None = field(default=None,metadata={'omit_when_none':True})
 
     def __post_init__(self):
         for n in ('time_absolute_s','amount_absolute_mol','energy_absolute_j','temperature_absolute_k',
@@ -117,6 +118,10 @@ class DepletionPolicy:
             raise DepletionIntegrationError('explicit_nested_approach_policy_required')
         if type(self.terminal_method) is not str or self.terminal_method not in ('euler','affine_midpoint'):
             raise DepletionIntegrationError('unsupported_terminal_method')
+        if self.ordered_event_policy is not None:
+            if (type(self.ordered_event_policy) is not str or self.ordered_event_policy!='ordered_affine_packet_v1'
+                    or self.terminal_method!='affine_midpoint' or self.nested_approach is None):
+                raise DepletionIntegrationError('ordered_packet_requires_affine_and_independent_approach')
         if self.pressure_comparison is not None:
             from .pressure_comparison import PressureComparisonPolicy
             if type(self.pressure_comparison) is not PressureComparisonPolicy:
@@ -262,10 +267,28 @@ class _Failure(Exception):
     def __init__(self,status,reason):self.status=status;self.reason=reason
 
 
+class _PacketReplan(Exception):
+    """Abort an unaccepted RK trial and retain its accepted local prefix."""
+
+
 class _ReduceCommonTime(Exception):
     def __init__(self, common_time_s, event_time_s):
         self.common_time_s=common_time_s
         self.event_time_s=event_time_s
+
+
+@dataclass(frozen=True)
+class OrderedEventFrame:
+    event: DepletionEvent
+    state: ConservedState
+    observation: DepletionEvaluation
+    root_order: Mapping
+
+
+@dataclass(frozen=True)
+class OrderedPacketResult(DepletionResult):
+    packets: tuple = ()
+    packet_schema: str = 'sandbox_ordered_affine_packet_core_v1'
 
 
 @dataclass
@@ -280,6 +303,9 @@ class _Path:
     event_observation: object = None
     event_pressure_snapshot: object = None
     approach_grid: tuple = ()
+    packet_frames: list = field(default_factory=list)
+    packet_snapshots: list = field(default_factory=list)
+    pending_order: object = None
 
 
 @dataclass
@@ -372,6 +398,10 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         raise DepletionIntegrationError('roundoff_water_molar_mass_mismatch')
     policy=integration_policy;ep=event_policy;begin=time.monotonic()
     nested=ep.nested_approach
+    ordered=ep.ordered_event_policy is not None
+    committed_packets=[]
+    if ordered and continuation is not None:
+        raise DepletionIntegrationError('ordered_packet_continuation_not_admitted')
     if (nested is not None and nested.reuse_ordinary_spine
             and type(operator) is ManufacturedDepletionAdapter and not operator.deterministic_contract):
         raise DepletionIntegrationError('ordinary_reuse_requires_deterministic_adapter_contract')
@@ -524,7 +554,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             try:
                 observed=observe(op,stage,at,phase)
                 stage_check(stage,at,observed)
-            except (_ReduceCommonTime,_Failure) as exc:
+            except (_ReduceCommonTime,_Failure,_PacketReplan) as exc:
                 pending=exc
                 # Return through integrate's normal error boundary so its
                 # already attempted evaluations/panels/rejections are retained.
@@ -536,6 +566,9 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             evaluations+=run.evaluations;costs[phase]['evaluations']+=run.evaluations
         rejected+=run.rejected_trials;attempted+=len(run.steps)
         costs[phase]['rejections']+=run.rejected_trials;costs[phase]['panels']+=len(run.steps)
+        if isinstance(pending,_PacketReplan):
+            attempted+=1;costs[phase]['panels']+=1
+            pending.accepted_prefix=run
         if pending is not None:raise pending
         return run
 
@@ -555,7 +588,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                 options.append((Fraction(n)/-rate,i))
         if not options:return None
         options.sort()
-        if len(options)>1 and abs(options[1][0]-options[0][0])<=Fraction(ep.time_absolute_s):
+        if not ordered and len(options)>1 and abs(options[1][0]-options[0][0])<=Fraction(ep.time_absolute_s):
             raise _Failure('unsupported','simultaneous_events_not_separated')
         return options[0]
 
@@ -611,6 +644,40 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             r=observed.rates
             return (float(r.face_species_mol_s[cell,li]),-float(r.face_species_mol_s[cell+1,li]),
                     float(r.reaction_species_mol_s[cell,li]))
+        if ordered:
+            from .depletion_group_clock import AffineInventory
+            candidates=[];proof=[]
+            for index,mode in enumerate(path.op.interfaces):
+                if mode!='existing_liquid':continue
+                def terms(observed):
+                    r=observed.rates
+                    return (float(r.face_species_mol_s[index,li]),-float(r.face_species_mol_s[index+1,li]),
+                            float(r.reaction_species_mol_s[index,li]))
+                left,right=terms(obs),terms(middle)
+                rate=sum(map(Fraction,left),Fraction())
+                acceleration=(sum(map(Fraction,right),Fraction())-rate)/hm
+                model=AffineInventory(index,Fraction(float(state.amounts_mol[index,li])),rate,acceleration)
+                row={'cell_index':index,'initial_mol':model.initial_mol,'rate_mol_s':rate,
+                     'acceleration_mol_s2':acceleration,'upper_elapsed_s':Fraction(upper)-Fraction(t)}
+                if model.minimum(Fraction(upper)-Fraction(t))>0:
+                    row['root_interval_s']=None
+                else:
+                    located=locate_affine_depletion_clock(t,midpoint,float(state.amounts_mol[index,li]),
+                        left,right,upper,ep.time_absolute_s)
+                    lo=Fraction(located.end_s)
+                    hi=lo+located.event_time_rounding_s
+                    row['root_interval_s']=(lo,hi)
+                    candidates.append((lo,hi,index))
+                proof.append(row)
+            if not candidates:raise _Failure('unsupported','ordered_packet_no_affine_root')
+            candidates.sort()
+            lo,hi,selected=candidates[0]
+            if len(candidates)>1 and not hi<candidates[1][0]:
+                raise _Failure('unsupported','ordered_packet_roots_not_strictly_separated')
+            cell=selected
+            binding=spine_binding(path.op,state,t,tc,0.,0.,cell)
+            path.pending_order=_freeze_diagnostic({'qualification':'numerical_affine_surrogate_order_not_true_rhs_certificate',
+                'start_s':t,'midpoint_s':midpoint,'selected_cell':cell,'roots':proof})
         clock=locate_affine_depletion_clock(t,midpoint,float(state.amounts_mol[cell,li]),
             liquid_rates(obs),liquid_rates(middle),upper,ep.time_absolute_s)
         endpoint=clock.end_s
@@ -670,6 +737,9 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             raise DepletionIntegrationError('affine_terminal_source_binding_changed')
         path.event=DepletionEvent(cell,endpoint,endpoint,endpoint,endpoint,0.,0.,0.,0.,0.,panel,record,
             clock.event_time_rounding_s,evap,terminal_evidence=AffineTerminalEvidence(clock,predictor,obs,middle))
+        if ordered:
+            path.packet_frames.append(OrderedEventFrame(path.event,path.event_state,path.event_observation,path.pending_order))
+            path.packet_snapshots.append(path.event_pressure_snapshot)
 
     def terminal(path,obs,tau,cell,tc):
         nonlocal attempted
@@ -722,6 +792,38 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         if snapshot:path.event_pressure_snapshot=snapshot[0]
         path.event=DepletionEvent(cell,endpoint,endpoint,endpoint,endpoint,0.,0.,0.,0.,0.,panel,record,
             exact-Fraction(endpoint),evap)
+
+    def continue_packet(path,tc,cap,ordinary_cap,safe):
+        force_terminal=False
+        while path.times[-1]<tc:
+            guard();at=path.times[-1];current=path.states[-1]
+            obs=observe(path.op,current,at,'dry');other=candidate(path.op,current,obs)
+            if force_terminal and (other is None or Fraction(at)+other[0]>=Fraction(tc)):
+                raise _Failure('unsupported','ordered_packet_stage_replan_without_localizable_root')
+            if other is not None and (force_terminal or other[0]<=Fraction(cap)) and Fraction(at)+other[0]<Fraction(tc):
+                terminal(path,obs,*other,tc)
+                force_terminal=False
+                continue
+            desired=min(ordinary_cap,tc-at,safe*float(other[0]) if other else ordinary_cap)
+            finish=_ordinary_program_endpoint(at,tc,min(tc,at+desired),ordinary_cap,
+                Fraction(safe)*other[0] if other else None)
+            def check_stage(stage,when,observed):
+                choice=candidate(path.op,stage,observed)
+                if choice is not None and Fraction(when)+choice[0]<=Fraction(finish):
+                    raise _PacketReplan('ordered_packet_stage_replan')
+            try:
+                segment=normal(path.op,current,at,finish,ordinary_cap,
+                    check_stage if any(mode=='existing_liquid' for mode in path.op.interfaces) else None,phase='dry')
+            except _PacketReplan as exc:
+                segment=exc.accepted_prefix
+                path.times.extend(segment.times_s[1:]);path.states.extend(segment.states[1:]);path.steps.extend(segment.steps)
+                force_terminal=True
+                continue
+            extend(path,segment)
+            if segment.status!='completed':raise _Failure(segment.status,segment.reason)
+        first=path.packet_frames[0]
+        path.event,path.event_state,path.event_observation=first.event,first.state,first.observation
+        path.event_pressure_snapshot=path.packet_snapshots[0]
 
     def continue_after_event(path,tc):
         # Replan at ordinary RK stages as well as accepted panel boundaries:
@@ -793,7 +895,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             else:
                 obs=observe(path.op,current,at,'approach')
             choice=candidate(path.op,current,obs)
-            if choice is not None and event_cell is not None and choice[1]!=event_cell:
+            if not ordered and choice is not None and event_cell is not None and choice[1]!=event_cell:
                 raise _Failure('unsupported','event_identity_not_separated')
             if node is None and spine is not None:
                 spine.observations[at]=(current,obs)
@@ -803,7 +905,8 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                     path.approach_grid=tuple(path.times)
                     terminal(path,obs,tau,cell,tc)
                     if path.times[-1]>=tc:raise _Failure('unsupported','no_common_post_event_time')
-                    continue_after_event(path,tc)
+                    if ordered:continue_packet(path,tc,cap,ordinary_cap,safe)
+                    else:continue_after_event(path,tc)
                     return path
             desired=min(ordinary_cap,tc-at,safe*float(choice[0]) if choice else ordinary_cap)
             finish=min(tc,at+desired)
@@ -822,7 +925,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         path.approach_grid=tuple(path.times)
         return path
 
-    def comparison(a,b,tc):
+    def single_comparison(a,b,tc):
         if a.event is None or b.event is None:raise _Failure('unsupported','event_node_order_not_separated')
         if a.event.cell_index!=b.event.cell_index:raise _Failure('unsupported','event_identity_not_separated')
         snapshots_a=[];snapshots_b=[]
@@ -893,10 +996,30 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                 common_stretches=difference_record(a.states[-1].mechanical_stretches,b.states[-1].mechanical_stretches)))
         return passed,((dtime,dn,du,dt,dp,ds) if mechanical else (dtime,dn,du,dt,dp)),details
 
+    def comparison(a,b,tc):
+        if not ordered:return single_comparison(a,b,tc)
+        if (tuple(f.event.cell_index for f in a.packet_frames)!=tuple(f.event.cell_index for f in b.packet_frames)
+                or a.op.interfaces!=b.op.interfaces):
+            raise _Failure('unsupported','ordered_packet_refinement_order_or_modes_changed')
+        results=[]
+        for index,(left,right) in enumerate(zip(a.packet_frames,b.packet_frames)):
+            aa=replace(a,event=left.event,event_state=left.state,event_observation=left.observation,
+                       event_pressure_snapshot=a.packet_snapshots[index])
+            bb=replace(b,event=right.event,event_state=right.state,event_observation=right.observation,
+                       event_pressure_snapshot=b.packet_snapshots[index])
+            results.append(single_comparison(aa,bb,tc))
+        if not results:raise _Failure('unsupported','empty_ordered_packet')
+        diffs=tuple(max(row[1][i] for row in results) for i in range(len(results[0][1])))
+        details=dict(results[0][2]);details['ordered_packet_comparisons']=tuple(row[2] for row in results)
+        return all(row[0] for row in results),diffs,_freeze_diagnostic(details)
+
     def commit(path):
         nonlocal cumulative_n,cumulative_u,totals,operator,component_residual_totals
         nonlocal cumulative_stretch,cumulative_stretch_exact,cumulative_stretch_roundoff
         event=path.event
+        packet_events=tuple(f.event for f in path.packet_frames) if ordered else (() if event is None else (event,))
+        panel_events={id(e.terminal_panel):e for e in packet_events}
+        if len(panel_events)!=len(packet_events):raise DepletionIntegrationError('duplicate_packet_terminal_panel')
         cn=list(cumulative_n);cu=list(cumulative_u);component_totals=list(component_residual_totals)
         cs=list(cumulative_stretch);ce=list(cumulative_stretch_exact);cr=list(cumulative_stretch_roundoff)
         for j,step in enumerate(path.steps):
@@ -905,6 +1028,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                                   zip(component_totals,step.component_sum_residual_j)]
                 if any(v>Fraction(policy.energy_absolute_tolerance_j) for v in component_totals):
                     raise _Failure('failed','cross_segment_component_sum_roundoff')
+            event=panel_events.get(id(step))
             after=path.states[j+1]
             before=path.states[j]
             if (after.energy_model_identity!=energy_binding or before.energy_model_identity!=energy_binding
@@ -943,9 +1067,10 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         cumulative_stretch=cs;cumulative_stretch_exact=ce;cumulative_stretch_roundoff=cr
         times.extend(path.times[1:]);states.extend(path.states[1:]);steps.extend(path.steps)
         operator=path.op;totals=path.totals
-        if event is not None:
+        for event in packet_events:
             events.append(event)
             if event.correction is not None:corrections.append(event.correction)
+        if ordered and path.packet_frames:committed_packets.append(tuple(path.packet_frames))
 
     status='completed';reason=None
     try:
@@ -958,7 +1083,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                     raise _Failure('unsupported','event_node_order_not_separated')
                 if choice is not None and choice[0]<=Fraction(ep.terminal_window_s) and Fraction(t)+choice[0]<=Fraction(tb):
                     tc=min(tb,t+max(ep.common_time_horizon_s,2*ep.terminal_window_s))
-                    previous=None;successes=0;first_time=None
+                    previous=None;successes=0;first_time=None;first_frame_times=None
                     level=0;horizon_restarts=0
                     approach_cap=(min(nested.maximum_step_s,policy.maximum_step_s) if nested else None)
                     root_binding=(spine_binding(operator,state,t,tc,approach_cap,ep.safe_inventory_fraction,choice[1])
@@ -997,7 +1122,9 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                                 approach_cap_s=approach_cap,approach_safe_inventory_fraction=ep.safe_inventory_fraction if nested else None))
                             raise
                         if path.event is None:raise _Failure('unsupported','event_node_order_not_separated')
-                        if first_time is None:first_time=path.event.time_s
+                        if first_time is None:
+                            first_time=path.event.time_s
+                            if ordered:first_frame_times=tuple(f.event.time_s for f in path.packet_frames)
                         if previous is not None:
                             passed,diffs,details=comparison(previous,path,tc)
                             successes=successes+1 if passed else 0
@@ -1072,6 +1199,15 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
                                     if root_binding!=spine_binding(operator,state,t,tc,approach_cap,
                                             ep.safe_inventory_fraction,choice[1]):
                                         raise DepletionIntegrationError('ordinary_spine_binding_changed')
+                                if ordered:
+                                    for index,frame in enumerate(path.packet_frames):
+                                        annotated=replace(frame.event,coarse_time_s=first_frame_times[index],
+                                            previous_time_s=previous.packet_frames[index].event.time_s,common_time_s=tc,
+                                            event_time_difference_s=diffs[0],common_amount_difference_mol=diffs[1],
+                                            common_energy_difference_j=diffs[2],common_temperature_difference_k=diffs[3],
+                                            common_pressure_difference_pa=diffs[4],stretch_difference=diffs[5] if mechanical else None)
+                                        path.packet_frames[index]=replace(frame,event=annotated)
+                                    path.event=path.packet_frames[0].event
                                 commit(path);break
                         else:
                             refinements.append(DepletionRefinement(t,level,cap,tc,path.event.time_s,None,'coarse_reference',
@@ -1092,7 +1228,11 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
     except _Failure as exc:status=exc.status;reason=exc.reason
     except DomainExit as exc:status='domain_exit';reason=str(exc)
     except (IntegrationError,DepletionRoundoffError,ValueError,OverflowError) as exc:status='failed';reason=str(exc)
-    return DepletionResult(status,reason,tuple(times),tuple(states),tuple(steps),tuple(events),tuple(corrections),operator,
+    result=DepletionResult(status,reason,tuple(times),tuple(states),tuple(steps),tuple(events),tuple(corrections),operator,
         totals,tuple(cumulative_n),tuple(cumulative_u),evaluations,rejected,attempted,elapsed(),tuple(refinements),ep.safe_inventory_fraction,
         tuple(component_residual_totals) if component_schema not in (...,None) else None,
         frozen_costs(),MappingProxyType(dict(reused)),nested.strategy_id if nested else 'legacy',ep.terminal_method)
+
+    if ordered:
+        return OrderedPacketResult(**{f.name:getattr(result,f.name) for f in fields(DepletionResult)},packets=tuple(committed_packets))
+    return result

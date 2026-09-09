@@ -2,6 +2,8 @@
 
 状态：`pending` 未实现或证据不足，`in_progress` 正在实现，`verified` 有相应范围实证，`gap` 已识别证据缺口。不得将本表条目被记录等同于通过。
 
+有序耗尽增量（`research/ordered-packet-v1`）：显式 packet 核心、逐事件完整细化及原子提交、旧记录/服务拒绝已通过源码323项和安装61项回归。保持原物理条件的实际四格实验触发 `correction_exceeds_evaporation_fraction`，13个普通前缀步、0个事件提交；未解决全湿态空间收敛。P04/P16/V04/V05和应用条目不因此升级为verified。完整材料、三机制公开验证、全烧成冷却范围继续保留。
+
 | ID | 合同要求 | 应有实现/证据 | 当前状态 |
 |---|---|---|---|
 | G00 | 完整合同、分支、WIP保护 | 合同、Git基线、BASELINE_AUDIT | verified（仅初始化） |
