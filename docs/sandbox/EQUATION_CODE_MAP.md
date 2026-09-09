@@ -227,3 +227,7 @@ HEOS共存数值政策 `NUM-HEOS-COEXISTENCE-BACKTRACK-1`：固定T的F=(Δp,Δg
 `free-wet-exact-event-slab-equations-v1.json`：27方程、7结果根；18原物理条目保持，新增精确时间/耗尽/记录审计均列为数值策略。`exact_run_service.py` 接入严格记录、四审计、终态快照与完整导出；`run_service.py` 的续算保持原初态、政策和父历史一次。`test_exact_run_service.py` 与真实水取消/续算/重放证据见 research/exact-service-native-v1。
 
 `assets/app.js` 的时间元数据验证与有理时刻排序检查仅用于显示，未知显式schema拒绝，浮点时间不作为续算输入；实际浏览器比较、溯源、导出见 research/exact-ui-v1。不构成新增材料本构或完整周期验证。
+
+## 固体kg与气体mol的共同面传输
+
+`mass_transport_bridge.MixedPair.evaluate` → 当前MixedCell总U反解、`gas_transport.face_exchange`质量修正扩散/Darcy、`exchanges.conduction_rate_w`半格热阻。同一气体参考焓分别在面温度和供体温度评价；`integrate_pair`一次面账本/相反符号更新与失败前缀保留。`test_mass_transport_bridge.py` 独立DOP853全轨迹、元素参考变换、每接受前缀守恒；research/mass-transport-bridge-v1 保存实际源码/安装结果。制造干态验证，不是新增真实污泥本构。

@@ -4,6 +4,10 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+两格质量传输现已接入：mass_transport_bridge d9d532c2、test04673c96，32源码7.34s/32安装7.23s通过；88实际模块一致，独立原8项及应用复核通过。共同面传质/焓流/导热、有限O2与共同总U反解实际耦合，参考能量同时输运；证据research/mass-transport-bridge-v1。仍是制造刚性干态，湿态和全周期未完成。
+
+旧87模块UI进程89834/session60913已核身份后SIGINT关闭，终态130/KeyboardInterrupt发生在空闲serve_forever；两个原计算子任务此前均已回收，非模拟失败。随后才安装88模块，当前无旧UI监听承诺。下一工作正在/private/tmp/brick-mass-wet-integration-v1设计同一kg基准的液相库存/占积/储能/蒸发接入，不能把现有mol固体湿态直接冒充质量桥接。
+
 最新精确服务及界面已实际应用：exact_run_service 643511f3、run_service 4ae72fef、app.js 6a05da78。源码/安装服务各76通过，前端各16通过，独立服务20/前端22通过，87实际安装模块一致。构建前取消及未知时间schema两缺陷已修复，RED保留。永久证据 research/exact-service-v1、exact-service-native-v1、exact-ui-v1 均有逐成员核验归档。
 
 真实水服务取消1步→续算30步/2事件→重放30步/2事件全部完成且回收；续算/重放全部非墙钟核心字段一致，19处耗时差异保留。实际浏览器另取消13步→续算30步，比较/来源展开/完整导出通过；5,766,261字节可见报告中的5,035,493字节规范记录与磁盘逐字节一致。所有EOS子任务终态；本地UI监听8767（工具session60913）仍供查看，不是公开部署。完整操作见 EXACT_EVENT_APPLICATION.md。
