@@ -1,5 +1,20 @@
 # 方程—代码—验证映射 v0.1
 
+## 当前新增映射
+
+以下条目反映最新实现；后续历史阶段条目保留各自当时的验证范围。
+
+| 关系或数值合同 | 实现与验证入口 | 已证实范围 |
+|---|---|---|
+| 精确时间的有序耗尽与全状态仿射交换 | `exact_depletion_integration.integrate_exact_depletion`；`test_exact_depletion_integration.py` | 真实水物性＋制造固体的2/4/8单元短时事件运行；[八格证据](research/exact-eight-cell-v1/README.md)，不是空间收敛或真实原泥材料验证 |
+| 原始初态的累计N/E、共享面、分项功与精确机械增量账本；选定事件写回 | `exact_record_audit.audit_exact_run`；`test_exact_record_audit.py` | [原记录实审](research/exact-record-audit-v1/README.md)；不重置原预算，仍不包含全部续算验收条件 |
+| `ARLABOSSE2005_DRY_CP_EQ2`: 干基Cp=1434+3.29T_C | `arlabosse_caloric.ArlabosseDryCaloric.cp`；`test_arlabosse_caloric.py` | 同来源样品35–105°C的公开拟合计算；源元数据`data/sandbox/research/arlabosse2005/source.json`及原Eq2/单位图均核读 |
+| `ARLABOSSE2005_DRY_SENSIBLE_ENTHALPY_DIFF`: 对上述Cp解析积分 | `arlabosse_caloric.ArlabosseDryCaloric.delta_h`、`registry_payload` | [两节点追溯与实际安装例子](research/arlabosse-caloric-v1/README.md)；无绝对形成焓、Cv或摩尔材料准入 |
+
+`exact_record`提供严格版本化数值记录、输入/来源绑定和状态—账本—事件关联；它本身不是物理方程，也不自动授权续算。见[实际原生记录验证](research/exact-record-native-v1/README.md)。
+
+## 历史阶段映射
+
 `exact_terminal_executor.execute_exact_terminal`：实际三观测、精确Euler中点、全root/panel/原writeback及仅选定mode变化；保存未提交阶段与成本。final58源码/58安装；修复前e324原四格失败初态fresh3EOS终端通过，两个版本均75模块且身份分开。非完整packet。见[证据](research/exact-terminal-native-v1/README.md)。
 
 `exact_terminal_panel` 与 `exact_root_order`：同一共享仿射采样的全状态积分、区间最小值及全wet根排序；完整保存四格失败panel回放并真实water mixed端点通过。68源码/36安装，74模块。原多pass事件接受及全物理验证未完成。见[证据](research/exact-full-panel-replay-v1/README.md)。

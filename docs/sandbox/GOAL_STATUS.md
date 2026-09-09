@@ -4,6 +4,13 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+原始exact前缀审计已应用（基线0fdc06f）：exact_record_audit fb8e9a23/testca0ff0ba，fresh规范字节和外部原initial/time/policies/实际host绑定；全prefix N/E/sharedface/components/stretch及已选terminal写回、累计预算重算。40源码23.98s、26实际安装23.83s通过，79实际非editable模块逐字匹配。审查/原RED/32成员完整证据见research/exact-record-audit-v1。
+
+安装前实际原78宿主审计已exit0（session64876，监督2.1953s，audit0.5147s），没有重复原77s积分；30prefix/2events通过，六项Fraction最大残差与独立原prefix审计完全一致。78原运行+单独hash绑定tmpaudit与后续79安装身份分别保存。仍resume_authorized=false。
+
+当前继续工作：terminal proof ff991候选已独立审查，Averroes在/tmp/brick-exact-proof-native-v1按严格78→79只读兼容检查准备实际原record复核，不执行积分或续算。比较候选在/tmp/brick-exact-record-comparison-audit-v1发现首coarse标签绕过原步长HIGH，Carson修复中；资源候选在/tmp/brick-exact-resource-audit-v1发现refinement/committed不重叠工作漏计HIGH，root修复中，均未repo准入。完整续算仍待全部门禁和累计资源、原前缀一次拼接。原泥材料、公开三机制留出、全湿烧冷却、空间收敛与逐代/CLIUI全部保持必需未完成；Goal active，当前实际progress。
+
+
 严格record与来源比热应用检查点（基线23a2ba4）：exact_record18fc9628/teste5c0993，保留源快照/完整schema数值projection、immutable arrays、strict类型/shape/每已commit state-ledger-mode-correction关联、fresh live binding返回；真实WaterState闭包、合法int1policy与全部HIGH攻击已修，原RED保留。89源码18.21s/39安装12.39s通过，78实际非editable模块与源码匹配。ArlabosseDryCaloric42e828/testf606bd同包应用，真实已核Eq2+kg干基+35–105°C、精确Cp与Δh两节点来源trace，实际安装例子已存；仍无formationH/Cv/摩尔材料准入，不冒全周期参数包。
 
 新strictcodec native2cell session95900已terminal exit0/supervisor79.516s：原2cellcase/初态/政策保持，显式ordered，core77.250s completed30steps2packets2events1→0；685eval/8terminal/24pairedendpoint。strictrecord4,192,254bytes encode/read/消费freshchecked source绑定成功0.690s，78runtime保持。原prefix/energy审计无字节修改实际pass，global9.99353e-11J/constraint1.26425e-20J均原2e-8J。完整比较审计与独立结果复核已pass：8refs/6compare/24cert/24endpoint，strict全部accepted times/states/ledgers与fallback独立对齐；证据research/exact-record-native-v1。无root native/测试进程，不重poll95900/61695。
