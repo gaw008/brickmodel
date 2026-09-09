@@ -235,3 +235,7 @@ HEOS共存数值政策 `NUM-HEOS-COEXISTENCE-BACKTRACK-1`：固定T的F=(Δp,Δg
 ## 同质量基准湿态储能
 
 `mass_wet_storage.WetMixedStorage` → 固体kg参考内能与实际RigidStorage液/气共同储能；真实gas_volume由液占积闭合，固体体积表示误差通过全局/局部压力域与Nl|du/dp|入U。`WetMixedState`在浮点转换时拒绝负原始库存和非零下溢，`WaterElementConvention`绑定CIAAW事实且禁止水化学生成/消耗。制造液响应及独立非零du/dp包络测试见research/mass-wet-storage-v1；实际HEOS一点、原失败与独立Brent数据审计见research/mass-wet-native-v1。仅储能层，不是时间相变/湿干事件或材料准入。
+
+## 同质量基准正液量动态
+
+`mass_wet_transport.WetPair.evaluate` → 同一湿储能反解当前T/P与液气占积，有限O2质量反应、来源绑定水化学势相变、三组分共同面扩散/Darcy焓流与导热。`integrate_wet_pair` → 固定中点、一次共同面账本、kg固体/mol水与气体/总U分量更新及失败前缀保留。相变和反应热通过共同储能体现，不另加热源。制造液响应下独立DOP853与守恒测试见research/mass-wet-transport-v1；真实HEOS两格4/8步短轨迹及逐前缀审计见research/mass-wet-transport-native-v1。固体、动力学及传输系数为明确制造测试值，非真实污泥预测；两档差异不证明收敛阶或空间验证。

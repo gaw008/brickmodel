@@ -4,6 +4,14 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新：B原生4/8步均已终态exit0并回收（sessions68137/89156，不重poll）。同freeze3f144dee、90安装模块、原输入及150s内/180s外预算不变；积分64.535696667/130.575182458s，4/8接受步、12/24完成回调，各接受前缀九项原守恒门槛通过，全局U精确差0。coarse/fine均已独立保存数据复核通过；163成员归档见research/mass-wet-transport-native-v1，逐成员SHA重读核实。未宣称时间阶或空间收敛。下列“正在运行”是历史记录。
+
+C host候选f12bd910/test2906f43e已独立15项9.98s通过，尚未应用；必须等B全部结果复核与归档后才改变安装。Carson在/private/tmp/brick-mass-wet-integration-v1/exact_stage继续kg/mol分离的精确试步候选，尚未冻结或准入。完整材料/湿干事件/全周期仍未完成。
+
+B两格正液动态已应用原审source7b56d8f5/testb825af0c，37源码14.10s/37安装13.98s通过，90实际模块一致，独立11测试通过；纯测证据research/mass-wet-transport-v1。真实水两档实验位于/private/tmp/brick-mass-wet-transport-native-v1，freeze3f144dee（原90runtime/16water/案例与全部脚本），4步coarse正在工具session68137执行，尚无完成结论。必须同handle等待，不重启；终态核全prefix后才允许同freeze8步fine。原.01s、每档180外/150内预算固定，跨两档不可改source/安装。
+
+下一C host候选由Carson在/private/tmp/brick-mass-wet-integration-v1/depletion_host准备，Python审查者等待freeze：是B的明确diff，默认全wet保parity，新增逐格精确零液dry与strict再凝结域退出，不授event/writeback许可；尚未repo应用。真正湿湿→干湿→干干同一kg事件积分与全部原门槛仍需实现。
+
 湿质量储能A现已实际应用：mass_wet_storage60f6ec5d、test481e2378；库存负数/非零下溢HIGH已修、6RED保留，来源聚合RED修复。14正式+独立23通过，46源码7.43s/46安装7.49s通过，89实际模块一致。证据research/mass-wet-storage-v1。
 
 实际HEOS一点v1因1000Pa不稳定液相正确拒绝，原失败完整保留；经独审在新v2仅把压力下界收紧为10000Pa（原温度/库存/容差/90s保持），真实前向/反解与独立Brent/能量对照通过，runner4.080275834s、supervisor4.301904792s exit0/reaped。全89runtime及输入前后不变，独立保存数据14样本/全部Fraction门槛复核通过，见research/mass-wet-native-v1。native sessions43298(失败)/9452(完成)均终态，无EOS仍运行。
