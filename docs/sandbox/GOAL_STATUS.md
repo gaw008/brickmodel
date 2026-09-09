@@ -4,6 +4,8 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+已有诊断失败测试合同已修复：保留accepted末状态原值的直接检查，同时最终trace在无final_snapshot时返回unknown。生产逻辑和门槛未变；47测试通过，独立审查通过，原baseline失败及GREEN XML见 `research/diagnostic-trace-contract-v1`。Mixed候选d09暂不准入：独立元素交换负控发现可把named O2错误声明为C但仍过内部配平，已交作者修复。精确service候选冻结643511f3/目录04da3c78，正在root overlay回归；尚未repo应用或原生安装验证。
+
 质量参考原语现已实际应用：`reaction_reference.py` 52511676、正式测试 efbf0109，16源码/16安装通过，独立最终18测试通过。原不可变network完整保留，未知热不填零，anchor温压/相态严格绑定；实际安装85模块一致，制造例子验证依赖反应热−30且未知组分焓拒绝。证据 `research/mass-reaction-reference-v1` 含24成员归档及逐成员核验。此增量尚不是实时热学provider或真实材料闭合。
 
 下一工作已有实际候选：`/private/tmp/brick-mass-storage-bridge-v1/candidate` 的固体kg/流体mol同总U反解与有限O2短时耦合正在补负控及复审；`/private/tmp/brick-exact-service-v1/candidate` 的精确运行/续算/重放/追溯正在补完整raw导出再冻结审查。后者旧诊断测试失败已在基线独立复现，不可隐藏。尚未应用这些候选或宣称CLI/UI完成。原Goal§11实际材料、三个机制公开留出、全湿烧冷却、空间验证、多代实验和完整使用交付仍未完成，Goal active。

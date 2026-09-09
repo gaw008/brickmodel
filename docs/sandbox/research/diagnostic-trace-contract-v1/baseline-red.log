@@ -1,0 +1,46 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________ test_diagnostic_failure_retains_accepted_solver_states ____________
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-222/test_diagnostic_failure_retain0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x106952150>
+
+    def test_diagnostic_failure_retains_accepted_solver_states(tmp_path, monkeypatch):
+        import numpy as np
+        from sludge_sandbox import verification_case
+        from sludge_sandbox.integration import ConservedState, IntegrationPolicy, Rates
+        from sludge_sandbox.run_service import run_case
+    
+        class ZeroOperator:
+            def __call__(self, state, time):
+                return Rates(np.zeros((3, 5)), np.zeros(3), np.zeros((2, 5)), np.zeros(2))
+    
+            def breakpoints_s(self, start, end):
+                return ()
+    
+        built = SimpleNamespace(initial=ConservedState(np.ones((2, 5)), np.ones(2)),
+            operator=ZeroOperator(), start_s=0., end_s=.125, initialization={},
+            policy=IntegrationPolicy(.125, .125, 1e-12, 1e-7, 1e-12, 1e-8, 1., 1., 10, 10, 10.))
+        monkeypatch.setattr(verification_case, 'build_case', lambda *a: built)
+    
+        def fail_snapshot(*a):
+            if a[-1] == 0.:
+                return {'status': 'initial_checked'}
+            raise ValueError('diagnostic_failure')
+    
+        monkeypatch.setattr(verification_case, 'snapshot', fail_snapshot)
+        water = tmp_path/'water'
+        water.mkdir()
+        result = run_case(CASE, water, tmp_path/'run')
+        assert result['status'] == 'failed'
+        assert result['integration']['status'] == 'completed'
+        assert result['integration']['times_s'][-1] == .125
+        assert result['integration']['steps']
+        read_run(tmp_path/'run')
+>       assert trace_run(tmp_path/'run', 'amounts_mol')['value'] == [[1.]*5]*2
+E       assert None == ([[1.0, 1.0, 1.0, 1.0, 1.0]] * 2)
+
+tests/sandbox/test_run_service.py:132: AssertionError
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_run_service.py::test_diagnostic_failure_retains_accepted_solver_states
+1 failed in 0.26s

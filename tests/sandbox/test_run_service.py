@@ -129,7 +129,11 @@ def test_diagnostic_failure_retains_accepted_solver_states(tmp_path, monkeypatch
     assert result['integration']['times_s'][-1] == .125
     assert result['integration']['steps']
     read_run(tmp_path/'run')
-    assert trace_run(tmp_path/'run', 'amounts_mol')['value'] == [[1.]*5]*2
+    assert result['integration']['states'][-1]['amounts_mol'] == [[1.]*5]*2
+    trace = trace_run(tmp_path/'run', 'amounts_mol')
+    assert trace['value'] is None
+    assert trace['result_pointer'] is None
+    assert trace['value_availability']['reason'] == 'final_snapshot_unavailable'
 
 
 @pytest.mark.parametrize('mutation,code', [
