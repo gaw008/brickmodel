@@ -4,6 +4,8 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+同质量基准湿态接入正在实现：候选 `/private/tmp/brick-mass-wet-integration-v1/candidate/mass_wet_storage.py`，尚未repo准入或原生执行。新增可追查水元素名义约定 data/sandbox/research/water-element-convention-v1，CIAAW2024原H/O值实际核读，Fraction分数672/6005和5333/6005、有限摘录SHA均独立复核；不替换实际EOS M、不宣称同位素测定，水化学计量必须0。独审和接口设计见research/water-element-convention-v1。湿态需完整传播固体占积→压力→液体能量误差，旧干公式不可照搬。原生一点前向/反解计划在/private/tmp/brick-mass-wet-native-v1，代码/纯测审查及正式安装完成后才允许运行；原90秒和能量门槛保持。
+
 两格质量传输现已接入：mass_transport_bridge d9d532c2、test04673c96，32源码7.34s/32安装7.23s通过；88实际模块一致，独立原8项及应用复核通过。共同面传质/焓流/导热、有限O2与共同总U反解实际耦合，参考能量同时输运；证据research/mass-transport-bridge-v1。仍是制造刚性干态，湿态和全周期未完成。
 
 旧87模块UI进程89834/session60913已核身份后SIGINT关闭，终态130/KeyboardInterrupt发生在空闲serve_forever；两个原计算子任务此前均已回收，非模拟失败。随后才安装88模块，当前无旧UI监听承诺。下一工作正在/private/tmp/brick-mass-wet-integration-v1设计同一kg基准的液相库存/占积/储能/蒸发接入，不能把现有mol固体湿态直接冒充质量桥接。
