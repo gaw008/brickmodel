@@ -1,0 +1,9 @@
+# Comparison audit code review — APPROVE within saved-data scope
+
+Reviewed audit_comparisons.py SHA256 78d1471c91a61ce86dbc99d60190802e418469bc15e7ff93b192786d4e7e37e4. Read-only cross-review; reviewer did not invoke EOS or rerun this script.
+
+No blocking arithmetic/association defect found. Actual event and common states/observation vectors are tied to each comparison row, mode transitions and committed terminal panels. Six maxima and original thresholds are recomputed; exact semantic time differences include the recorded affine root width unless exact polynomial zero. Selected pressure is recomputed using the existing pure pressure auditor, with original independent pressure retained and actual saved observation bounds tied per cell. This is not a separately implemented pressure theorem proof.
+
+The actual pre-first-event approach grid is reconstructed from saved path times. Consecutive terminal passes and independently halved cap/safe controls are checked, with packet metadata and committed states/ledgers matched. Physical boxes/domains/reference/backend/operator/base identities are bound to the saved original canonical input. The script explicitly discloses that complete source-label hash reconstruction and live thermal inverse reconstruction are outside its scope.
+
+Limitations: this is an audit of this successful research capture, not a hostile-record decoder. Fraction inputs are not strictly type validated; root bracket construction/whole-panel positivity is not independently proved here. It uses original binary64 differences for the non-clock gates, matching the core's recorded numerical contract. Full cumulative ledgers and global pressure-work balance are separate audits. Exceptions before the final summary do not write a structured failed summary; raw execution failure must remain archived by the caller. No new scientific acceptance threshold was introduced.

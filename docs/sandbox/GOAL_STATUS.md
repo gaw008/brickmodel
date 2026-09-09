@@ -4,6 +4,13 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新完整exact packet检查点（基线be2f48d）：新exact_depletion_integration sourcebe323c82/test3e96e5a5，实际完整ordinary→terminal→mixed continuation→每event/common六gate→连续2pass+独立pre-first-grid→原初全prefix→原子commit已实现，代码/数值审查通过。明确新independent_halved_controls_no_spine_reuse策略，所有计算计费，不冒称旧cache使用。76源码11.33s、46安装6.59s通过，76实际模块匹配。
+
+原四格case/initial/policies保持，attempt01/session39872已终态exit0：supervisor172.1024s/runner171.7776s/core170.1767s，completed，32接受steps/2packets/4events，顺序3→2→1→0，exact .50032目标到达、全部depleted_no_nucleation。717evaluations/71ordinarytrials/16terminal/120pairedendpoint，原512panel/800s及全部科学gate未改。旧失败作为历史保留；本次完成显式新精确数值路径，不再停留在单terminal探针。prefix和comparison独立审计已pass，另行32prefix闭合E+peΔV独立审计pass，最大6.16683e-11J、累计abs constraint2.31071e-20J，均原2e-8J；外boundary/body全0实际核查，不由账本恒等式推得。
+
+证据research/exact-packet-native-v1。root当前无EOS/测试进程。新的record候选在/tmp/brick-exact-record-v1由Averroes准备，仅严格版本化numerical record及source/state/policy绑定，不冒称旧服务/续算已准入。恢复先核候选与独立审计结论。后续严格record/audit/restore/resume/CLI接入、原污泥完整材料闭合、三机制公开留出、全湿烧冷却、空间收敛和最终应用全部必需未完成。Goal active，本轮实际progress。
+
+
 本阶段最终分类修复：native e324成功后发现DomainExit被写为failed，d004b1b7现保留domain_exit（同reason的IntegrationError仍failed）。实际RED1fail12pass→GREEN13；58源码.66s/58安装.75s、75finalmodules匹配；独立复审成功路径未变，不重复EOS。native证据仍绑定e324，before-domain-fix日志/身份及失败审计历史均保留，未混称finald004实际运行。原生完整账本独立Fraction审计通过，ratio3.11236609e-9<原1e-8；只speculative终端，不是packet。
 
 最新实际终端执行器（基线b4d48c7）：exact_terminal_executor sourcee3246434/testa771，完整actual初/mid/endpoint三观测→root/panel/writeback→候选mode；12pure seamtests及57源码.66s/57安装.73s通过，75实际模块匹配，独立代码审查通过。原mass/source/energy/mode内容约束保持，失败/cancel/wall保存阶段/尝试成本，明确不提交原state/op/totals。
