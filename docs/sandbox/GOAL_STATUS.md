@@ -4,6 +4,15 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+c5ddeb1之后实际progress：同原湿态10ms pilot session9698 exit0/67.54s，34steps2events620eval74attempts，原prefix审计通过，globalmax2.509e-10J。真实保存dry终态profile77466 exit0/1.410s，两output和saved base_rates精确同；unprofiled.01719s，仅单位成本样本。四格一次initialWPT51175 exit0/1.790s，首两N/(-net)候选Fraction gap0，满足当前selector拒绝条件；未运行四格integrator/未证明真实同时事件。
+
+按实测资源推进同湿态2格elapsed.625s：coarse79355 exit0/119.00s，349steps389attempt2825eval2events end1.125；fine80816 exit0/173.67s，669steps709attempt5065eval2events，同end。fine仅id/refinement1(ordinaryinitial/max半)/maxsteps1024事前资源预算改，其他physical/所有原gates/800s保持；原512不足640dry+events，不是accuracy放宽。两组原audit_prefix SHA287bc实际exit0，globalmax1.18122e-9/4.07154e-10J<2e-8。全部65运行源码身份一致，无活动EOS/测试，不再poll上述会话。
+
+标准库比较已补独立审核指出的原audit实际SHA及完整case->policy绑定，原脚本/原已通过report也保留；新比较exit0、独立最终review通过。两mesh实际不同，原初态N/E/stretch相同而case关联identity不同明确记录；eventtime差exact0。终态max N1.3982e-10mol/E1.26136e-7J/stretch4.09054e-9/T1.30858e-8K/P9.87175e-4Pa，T/P低于点误差界，不宣称两级收敛阶或全时间误差证明。证据research/thermal-timescale-v1，说明THERMAL_TIMESCALE_STUDY.md，三可运行新case已保存。
+
+下一具体实现合同research/thermal-timescale-v1/NEXT_GROUP_PLAN.md：初始tau相等不是root同刻，保原单事件默认；先纯解析affine多root区间/正库存/ordering/union证书，再完整group correction/全cell六gate/模式切换/共同panel账本及record/resume接入。没有timing-displacement或ordered分支界不能直接zero所有tie。4/8完整空间矩阵尚未准入，原15us空间FAIL保持。真实原污泥材料、三组公开机制留出、完整湿烧成冷却与最终使用验证仍必需，Goal active。
+
+
 f619433之后实际实现progress：PressurePolicy显式endpoint策略及不可变trialledger，defaultNone公开encode/原二分数字序列保留；case可选strategy严格唯一值并真实转发。新dataclass身份改变不冒称旧model字节相同。源码66/安装66通过，65模块一致；独立审查通过。原始RED/中间测试失败保留。见PRESSURE_ENDPOINT_STRATEGY.md及research/pressure-endpoint-strategy-v1。
 
 实际同accepted wetstate1点比较session30911已exit0：baseline.80005s、新.13375s，两格最终root38→3，T/P原界通过；同物理N/E/stretch显式新数值身份重绑不是旧checkpoint恢复。实际单次新case service session83456已exit0/67.896s监督（service67.69s），30steps2events592eval70panels24endpoint、原.50032终点通过，事件时刻与旧记录相同。原6组×6gate经独立核查；原audit_prefix.py SHA287bc逐prefix实际exit0：N5.58085e-16mol/E7.62952e-11J/stretch4.21229e-16、全局外压功max9.99274e-11J/C累积绝对2.13932e-20J均过原门槛。当前无活动EOS/测试，不再poll30911/83456。新case data/sandbox/cases/reacting-wet-free-paired-events-endpoint-root-v1.json SHA9d930a6c6d60cf328e5abe2e61dc6a5f9f0cf06d9453827b84d0f0b56e5746f4。
