@@ -6,6 +6,8 @@
 
 | 关系或数值合同 | 实现与验证入口 | 已证实范围 |
 |---|---|---|
+| 固体kg/流体mol共同总U反解、有限O2反应及无重复化学热 | `mass_storage_bridge.MixedStorage`、`MixedCell`、`integrate_closed` | [混合桥证据](research/mass-storage-bridge-v1/README.md)：68源码/68安装相关测试，86模块一致；制造单格干态，非全周期材料准入 |
+| 同研究干固体产率×干固体LHV | `data/sandbox/research/gnest-char-energy-v1/evidence_registry.json`；`units.convert` | [来源及独立复算](research/gnest-char-energy-v1/README.md)：4节点实际安装追溯；燃料能量库存，不是反应热 |
 | 质量基准 `Bᵀh₀=q`、逐反应质量/元素配平、循环一致性和可辨识输出 | `reaction_reference.ReactionReferenceNetwork.solve`；`test_reaction_reference.py` | [质量参考证据](research/mass-reaction-reference-v1/README.md)：16源码/16安装及独立18测试；保留完整network和未知量，仅名义代数，不授予材料资格 |
 | 精确时间的有序耗尽与全状态仿射交换 | `exact_depletion_integration.integrate_exact_depletion`；`test_exact_depletion_integration.py` | 真实水物性＋制造固体的2/4/8单元短时事件运行；[八格证据](research/exact-eight-cell-v1/README.md)，不是空间收敛或真实原泥材料验证 |
 | 原始初态的累计N/E、共享面、分项功与精确机械增量账本；选定事件写回 | `exact_record_audit.audit_exact_run`；`test_exact_record_audit.py` | [原记录实审](research/exact-record-audit-v1/README.md)；不重置原预算，仍不包含全部续算验收条件 |

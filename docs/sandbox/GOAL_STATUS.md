@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+混合质量热桥已实际应用：source cc98bc97 / portable test 5a612eec，三审查HIGH均修复并保留RED；68源码3.05s/68安装3.01s通过，86实际安装模块一致。实际kg固体/mol流体、有限O2、共同总U反解T/P；无双计反应热。证据 `research/mass-storage-bridge-v1`。仍是制造固定单格干态，非完整材料。
+
+同研究GNEST干固体燃料库存来源链已落 `data/sandbox/research/gnest-char-energy-v1`，4节点实际安装trace、原全文及Fraction独立复核通过；热值保留真实MJ/kg并显式转J/kg。端点5.376063/2.951553 MJ/kg干进料不冒称反应热，完整原泥准入仍不满足。证据 `research/gnest-char-energy-v1`。
+
+服务候选独立70测试37.72s通过后，代码审查发现exact续算在build前取消时误继承parent presentation而没有child canonical记录；仍tmp未准入，正在修复并保留RED。下一步继续服务修复/独立审查及实际安装生命周期，随后推进湿态/输运与真实材料闭合；Goal全部§11范围保持未完成。
+
 已有诊断失败测试合同已修复：保留accepted末状态原值的直接检查，同时最终trace在无final_snapshot时返回unknown。生产逻辑和门槛未变；47测试通过，独立审查通过，原baseline失败及GREEN XML见 `research/diagnostic-trace-contract-v1`。Mixed候选d09暂不准入：独立元素交换负控发现可把named O2错误声明为C但仍过内部配平，已交作者修复。精确service候选冻结643511f3/目录04da3c78，正在root overlay回归；尚未repo应用或原生安装验证。
 
 质量参考原语现已实际应用：`reaction_reference.py` 52511676、正式测试 efbf0109，16源码/16安装通过，独立最终18测试通过。原不可变network完整保留，未知热不填零，anchor温压/相态严格绑定；实际安装85模块一致，制造例子验证依赖反应热−30且未知组分焓拒绝。证据 `research/mass-reaction-reference-v1` 含24成员归档及逐成员核验。此增量尚不是实时热学provider或真实材料闭合。

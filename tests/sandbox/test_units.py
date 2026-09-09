@@ -15,6 +15,15 @@ def test_basis_changing_conversion_is_refused():
         convert(100, "J/mol", "J/kg")
 
 
+def test_reported_mass_heating_value_keeps_its_physical_unit():
+    assert convert(7.77, "MJ/kg", "J/kg") == pytest.approx(7770000)
+    assert convert(5190000, "J/kg", "MJ/kg") == pytest.approx(5.19)
+    with pytest.raises(UnitError):
+        convert(7.77, "MJ/kg", "1")
+    with pytest.raises(UnitError):
+        convert(7.77, "MJ/kg", "J/mol")
+
+
 @pytest.mark.parametrize("value", [float("nan"), float("inf"), True, "2", 10**1000])
 def test_nonfinite_or_coerced_values_are_rejected(value):
     with pytest.raises(UnitError):
