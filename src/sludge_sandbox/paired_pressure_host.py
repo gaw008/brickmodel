@@ -162,11 +162,14 @@ def _point(host, state, inverse, cell):
 
 def prepare_paired_pressure(operator, state_a, inverse_a, state_b, inverse_b, *,
                             cell_index: int, shared_constant_parameters: SharedConstantParameterBox | None = None,
-                            endpoint_observer: Callable | None = None) -> PreparedPair | PairedPressureUnavailable:
+                            endpoint_observer: Callable | None = None,
+                            before_endpoint: Callable[[], None] | None = None) -> PreparedPair | PairedPressureUnavailable:
     """Prepare <=4 endpoint calls for one actual cell and B's original root box.
 
     Opt-in is a new explicit manufactured parameter-box hypothesis, not inferred
     correlation of arbitrary declared pointwise errors. Unsupported hosts fail.
+    before_endpoint runs immediately before each attempted water call and may
+    raise to cancel. endpoint_observer runs only after a successful return.
     """
     if shared_constant_parameters is None:
         errors=None
@@ -219,6 +222,7 @@ def prepare_paired_pressure(operator, state_a, inverse_a, state_b, inverse_b, *,
         for endpoint in b.root_interval_pa:
             represented = float(endpoint)
             require(F(represented) == endpoint, 'endpoint_pressure_not_binary64_representable')
+            if before_endpoint is not None:before_endpoint()
             actual = water.state_tp(float(state.temperature_k), represented, phase='liquid')
             if endpoint_observer is not None:endpoint_observer(actual)
             endpoint_calls += 1

@@ -1,8 +1,8 @@
 # 方程—代码—验证映射 v0.1
 
-## 条件成对压力比较（未接服务）
+## 条件成对压力比较与显式事件策略
 
-`paired_pressure.certify_paired_pressure`：B根区间残差差/正顺应性下界与独立根距离界；`paired_pressure_host.prepare_paired_pressure`：实际两状态及端点来源绑定。详细假设、19纯核+12主机检查和四实际保存证书见 [PAIRED_PRESSURE.md](PAIRED_PRESSURE.md)。只准入显式制造共享常数假设、固定报告温度，不含完整温度反解误差tube，不替代事件接受或材料验证。
+`paired_pressure.certify_paired_pressure`：B根区间残差差/正顺应性下界与独立根距离界；`paired_pressure_host.prepare_paired_pressure`：实际两状态及端点来源绑定。详细假设、19纯核+12主机检查和四实际保存证书见 [PAIRED_PRESSURE.md](PAIRED_PRESSURE.md)。只准入显式制造共享常数假设、固定报告温度，不含完整温度反解误差tube，默认不替代原事件接受或材料验证。显式v2策略现经 `pressure_comparison.compare_pressure_pair` 接入 `depletion_integration`；`event_record.audit_paired_refinement` 绑定事件/共同终点全部单元与保存观察和提交状态。来源与实际验证范围见 [PAIRED_EVENT_COMPARISON.md](PAIRED_EVENT_COMPARISON.md)。
 
 ## 自由形变耗尽事件映射
 

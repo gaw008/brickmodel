@@ -12,7 +12,9 @@
 
 自由案例增加显式耗尽事件与完整累计续算语义，见 [FREE_EVENT_APPLICATION.md](FREE_EVENT_APPLICATION.md)。耗尽后只切换实际对应单元的界面模式，浮点修正单独记账；精确归零可以没有修正。保存记录的审计不重建未保存的试探阶段，也不证明真实材料参数有效。
 
-原生自由耦合耗尽实验的最新结果为未通过，压力比较误差包络阻止事件接受；现有已接受前缀守恒通过并不关闭该缺项，见 [FREE_NATIVE_EVENT_FAILURE.md](FREE_NATIVE_EVENT_FAILURE.md)。
+原独立误差族的原生自由耦合耗尽实验未通过，压力比较误差包络阻止事件接受；新显式共享常数族的两事件结果另见 PAIRED_EVENT_COMPARISON，不改写此旧结果。原记录见 [FREE_NATIVE_EVENT_FAILURE.md](FREE_NATIVE_EVENT_FAILURE.md)。
+
+新增显式共享常数误差族的事件比较，见 [PAIRED_EVENT_COMPARISON.md](PAIRED_EVENT_COMPARISON.md)。旧默认仍独立点误差；新策略条件于报告温度，不能称为联合温压证书。它不修改物理输入或旧失败记录，实际验证状态以最新运行证据为准。
 
 ## 空间、库存与初态
 

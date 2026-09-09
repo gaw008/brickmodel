@@ -101,6 +101,7 @@ class DepletionPolicy:
     safe_inventory_fraction: float = .25
     nested_approach: NestedApproachPolicy | None = None
     terminal_method: str = 'euler'
+    pressure_comparison: object = field(default=None,metadata={'omit_when_none':True})
 
     def __post_init__(self):
         for n in ('time_absolute_s','amount_absolute_mol','energy_absolute_j','temperature_absolute_k',
@@ -116,6 +117,10 @@ class DepletionPolicy:
             raise DepletionIntegrationError('explicit_nested_approach_policy_required')
         if type(self.terminal_method) is not str or self.terminal_method not in ('euler','affine_midpoint'):
             raise DepletionIntegrationError('unsupported_terminal_method')
+        if self.pressure_comparison is not None:
+            from .pressure_comparison import PressureComparisonPolicy
+            if type(self.pressure_comparison) is not PressureComparisonPolicy:
+                raise DepletionIntegrationError('explicit_pressure_comparison_policy_required')
 
 
 @dataclass(frozen=True)
@@ -273,6 +278,7 @@ class _Path:
     event: object = None
     event_state: object = None
     event_observation: object = None
+    event_pressure_snapshot: object = None
     approach_grid: tuple = ()
 
 
@@ -320,9 +326,12 @@ def _restore_continuation(continuation, operator, initial, start, end, policy, e
     # for an object constructed directly rather than through the audit factory.
     previous = continuation.restore_result(operator)
     original = json.loads(continuation.original_policy_json)
+    # Legacy policies predate this optional comparison family.
+    if isinstance(original.get('event_policy'),dict):
+        original['event_policy'].setdefault('pressure_comparison',None)
     if (set(original) != {'integration_policy','event_policy','start_s','end_s'}
             or original['integration_policy'] != encode(policy)
-            or original['event_policy'] != encode(event_policy)
+            or original['event_policy'] != dict(encode(event_policy),pressure_comparison=encode(event_policy.pressure_comparison))
             or original['end_s'] != end):
         raise DepletionIntegrationError('continuation_original_policy_mismatch')
     if (type(previous) is not DepletionResult or previous.status != 'cancelled'
@@ -381,6 +390,14 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
     costs={name:{'evaluations':0,'panels':0,'rejections':0}
            for name in ('ordinary','approach','terminal','dry','comparison')}
     reused={'observations':0,'panels':0}
+    if ep.pressure_comparison is not None:
+        from .pressure_comparison import pressure_comparison_binding
+        declared=pressure_comparison_binding(operator)  # No EOS before admission.
+        if ep.pressure_comparison.to_record()['cell_boxes']!=declared['boxes']:
+            raise DepletionIntegrationError('pressure_comparison_original_box_binding')
+        if len(ep.pressure_comparison.cell_boxes)!=len(operator.interfaces):
+            raise DepletionIntegrationError('pressure_comparison_cell_count')
+        costs['comparison'].update(endpoint_attempts=0,endpoint_completed=0)
 
     elapsed_before = 0.0
     if continuation is not None:
@@ -441,7 +458,7 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         if attempted>=policy.maximum_steps:raise _Failure('resource_limit','global_accepted_trial_panel_limit')
         if rejected>=policy.maximum_rejections:raise _Failure('resource_limit','total_rejection_limit')
 
-    def observe(op,state,t,phase='ordinary'):
+    def observe(op,state,t,phase='ordinary',pressure_snapshot=None):
         nonlocal evaluations
         guard();evaluations+=1;costs[phase]['evaluations']+=1
         if state.energy_model_identity!=energy_binding:raise DepletionIntegrationError(
@@ -470,7 +487,10 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         for seq in (result.evaporation_mol_s,result.temperatures_k,result.temperature_errors_k,result.pressures_pa,result.pressure_errors_pa):
             if len(seq)!=count or any(not math.isfinite(v) for v in seq):raise DepletionIntegrationError('finite_complete_observations_required')
         if any(v<0 for v in result.temperature_errors_k+result.pressure_errors_pa):raise DepletionIntegrationError('negative_observation_error')
-        guard();return result
+        guard()
+        if pressure_snapshot is not None and ep.pressure_comparison is not None:
+            pressure_snapshot.append((op,state,tuple(raw.base_evaluation.total_inverses)))
+        return result
 
     def normal(op,state,t,finish,maxstep,stage_check=None,phase='ordinary'):
         nonlocal evaluations,rejected,attempted
@@ -643,7 +663,9 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
         if binding!=spine_binding(original_op,state,t,tc,0.,0.,cell):
             raise DepletionIntegrationError('affine_terminal_source_binding_changed')
         path.times.append(endpoint);path.states.append(raw);path.steps.append(panel)
-        path.event_state=raw;path.event_observation=observe(path.op,raw,endpoint,'terminal')
+        snapshot=[]
+        path.event_state=raw;path.event_observation=observe(path.op,raw,endpoint,'terminal',snapshot)
+        if snapshot:path.event_pressure_snapshot=snapshot[0]
         if binding!=spine_binding(original_op,state,t,tc,0.,0.,cell):
             raise DepletionIntegrationError('affine_terminal_source_binding_changed')
         path.event=DepletionEvent(cell,endpoint,endpoint,endpoint,endpoint,0.,0.,0.,0.,0.,panel,record,
@@ -695,7 +717,9 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             stretch_increment=stretch_increment,stretch_quadrature_roundoff=stretch_rounding);attempted+=1;costs['terminal']['panels']+=1
         path.op=path.op.with_depleted_cells(raw,(cell,))
         path.times.append(endpoint);path.states.append(raw);path.steps.append(panel)
-        path.event_state=raw;path.event_observation=observe(path.op,raw,endpoint,'terminal')
+        snapshot=[]
+        path.event_state=raw;path.event_observation=observe(path.op,raw,endpoint,'terminal',snapshot)
+        if snapshot:path.event_pressure_snapshot=snapshot[0]
         path.event=DepletionEvent(cell,endpoint,endpoint,endpoint,endpoint,0.,0.,0.,0.,0.,panel,record,
             exact-Fraction(endpoint),evap)
 
@@ -801,7 +825,9 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
     def comparison(a,b,tc):
         if a.event is None or b.event is None:raise _Failure('unsupported','event_node_order_not_separated')
         if a.event.cell_index!=b.event.cell_index:raise _Failure('unsupported','event_identity_not_separated')
-        ao=observe(a.op,a.states[-1],tc,'comparison');bo=observe(b.op,b.states[-1],tc,'comparison')
+        snapshots_a=[];snapshots_b=[]
+        ao=observe(a.op,a.states[-1],tc,'comparison',snapshots_a)
+        bo=observe(b.op,b.states[-1],tc,'comparison',snapshots_b)
         def delta(x,y):return float(np.max(np.abs(np.asarray(x)-np.asarray(y))))
         dn=max(delta(a.event_state.amounts_mol,b.event_state.amounts_mol),delta(a.states[-1].amounts_mol,b.states[-1].amounts_mol))
         du=max(delta(a.event_state.internal_energy_j,b.event_state.internal_energy_j),delta(a.states[-1].internal_energy_j,b.states[-1].internal_energy_j))
@@ -809,6 +835,28 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             delta(a.event_observation.temperatures_k,b.event_observation.temperatures_k)+max(a.event_observation.temperature_errors_k)+max(b.event_observation.temperature_errors_k))
         dp=max(delta(ao.pressures_pa,bo.pressures_pa)+max(ao.pressure_errors_pa)+max(bo.pressure_errors_pa),
             delta(a.event_observation.pressures_pa,b.event_observation.pressures_pa)+max(a.event_observation.pressure_errors_pa)+max(b.event_observation.pressure_errors_pa))
+        paired_details=None
+        if ep.pressure_comparison is not None:
+            from .pressure_comparison import compare_pressure_pair
+            original_dp=dp
+            def before_endpoint():
+                guard()
+                costs['comparison']['endpoint_attempts']+=1
+            def after_endpoint(actual):
+                costs['comparison']['endpoint_completed']+=1
+                guard()
+            paired={}
+            for where,left,right in (('event',a.event_pressure_snapshot,b.event_pressure_snapshot),
+                                     ('common',snapshots_a[0],snapshots_b[0])):
+                if left is None or right is None:
+                    raise DepletionIntegrationError('pressure_comparison_snapshot_missing')
+                value=compare_pressure_pair(*left,*right,policy=ep.pressure_comparison,
+                    before_endpoint=before_endpoint,after_endpoint=after_endpoint)
+                paired[where]=value.to_record()
+            dp=max(paired['event']['bound_pa'],paired['common']['bound_pa'])
+            paired_details={'schema':ep.pressure_comparison.schema,
+                'original_independent_pressure_difference_pa':original_dp,
+                'selected_pressure_difference_pa':dp,'pairs':paired}
         dtime=abs(a.event.time_s-b.event.time_s)+float(a.event.event_time_rounding_s+b.event.event_time_rounding_s)
         passed=(dtime<=ep.time_absolute_s and dn<=ep.amount_absolute_mol and du<=ep.energy_absolute_j
                 and dt<=ep.temperature_absolute_k and dp<=ep.pressure_absolute_pa)
@@ -837,6 +885,8 @@ def integrate_depletion(initial,operator,*,start_s,end_s,integration_policy,even
             'terminal_start_a_s':a.event.terminal_panel.start_s,'terminal_start_b_s':b.event.terminal_panel.start_s,
             'terminal_end_a_s':a.event.time_s,'terminal_end_b_s':b.event.time_s,
             'approach_grid_a_s':a.approach_grid,'approach_grid_b_s':b.approach_grid})
+        if paired_details is not None:
+            details=MappingProxyType(dict(details,pressure_comparison=paired_details))
         if mechanical:
             details=MappingProxyType(dict(details,
                 event_stretches=difference_record(a.event_state.mechanical_stretches,b.event_state.mechanical_stretches),

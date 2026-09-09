@@ -119,7 +119,8 @@ def binding(operator,initial):
 def encode_depletion_result(run,*,original_interfaces):
     require(type(run) is DepletionResult,'explicit_depletion_result')
     data={f.name:encode(getattr(run,f.name)) for f in fields(run) if f.name not in ('operator','roundoff_totals')}
-    data.update(schema='sandbox_depletion_result_v1',final_interfaces=list(run.operator.interfaces),
+    schema='sandbox_depletion_result_v2' if 'endpoint_attempts' in run.phase_costs.get('comparison',{}) else 'sandbox_depletion_result_v1'
+    data.update(schema=schema,final_interfaces=list(run.operator.interfaces),
         original_interfaces=list(original_interfaces),operator_binding=binding(run.operator,run.states[0]),roundoff_totals=run.roundoff_totals.to_record())
     canonical(data)
     return data
@@ -138,7 +139,7 @@ def restore_final_operator(original_operator,record):
 def decode_result(record,operator):
     names={f.name for f in fields(DepletionResult)}-{'operator'}
     require(type(record) is dict and set(record)==names|{'schema','final_interfaces','original_interfaces','operator_binding'},'exact_result_fields')
-    require(record['schema']=='sandbox_depletion_result_v1','unsupported_record_schema')
+    require(record['schema'] in ('sandbox_depletion_result_v1','sandbox_depletion_result_v2'),'unsupported_record_schema')
     require(tuple(operator.interfaces)==tuple(record['final_interfaces']),'final_modes_mismatch')
     require(binding(operator,state(record['states'][0]))==record['operator_binding'],'operator_binding_mismatch')
     d={k:record[k] for k in names};d['operator']=operator;d['states']=tuple(state(v) for v in d['states']);d['steps']=tuple(numeric_record(StepLedger,v) for v in d['steps']);d['events']=tuple(event(v) for v in d['events']);d['corrections']=tuple(correction(v) for v in d['corrections'])
@@ -168,6 +169,9 @@ class AuditedDepletionRecord:
         ip=IntegrationPolicy(**policy['integration_policy']);ep=dict(policy['event_policy'])
         ep['roundoff_policy']=DepletionRoundoffPolicy(**ep['roundoff_policy'])
         if ep['nested_approach'] is not None:ep['nested_approach']=NestedApproachPolicy(**ep['nested_approach'])
+        if ep.get('pressure_comparison') is not None:
+            from .pressure_comparison import restore_pressure_comparison_policy
+            ep['pressure_comparison']=restore_pressure_comparison_policy(ep['pressure_comparison'])
         ep=DepletionPolicy(**ep)
         audit_depletion_record(data,state(data['states'][0]),ip,ep,data['original_interfaces'],operator=operator,start_s=policy['start_s'],end_s=policy['end_s'])
         return decode_result(data,operator)
@@ -183,6 +187,13 @@ def audit_depletion_record(record,original_initial,original_integration_policy,o
 def _audit(record,initial,p,ep,original_interfaces,operator,start,end):
     canonical(record);require(record['original_interfaces']==list(original_interfaces),'original_modes_mismatch')
     r=decode_result(record,operator);require(encode(r.states[0])==encode(initial),'original_initial_mismatch')
+    paired=ep.pressure_comparison is not None
+    if paired:
+        from .pressure_comparison import pressure_comparison_binding
+        actual_binding=pressure_comparison_binding(operator)
+        require(ep.pressure_comparison.to_record()['cell_boxes']==actual_binding['boxes'],
+                'original_pressure_box_binding')
+    require(record['schema']==('sandbox_depletion_result_v2' if paired else 'sandbox_depletion_result_v1'),'record_comparison_schema_mismatch')
     require(r.status in ('completed','cancelled','resource_limit','domain_exit','numerical_failure','failed','unsupported'),'invalid_status')
     require(len(r.states)==len(r.times_s)==len(r.steps)+1 and r.times_s[0]==start and start<=r.times_s[-1]<=end,'history_shape')
     if r.status=='completed':require(r.times_s[-1]==end,'incomplete_completed_record')
@@ -190,14 +201,17 @@ def _audit(record,initial,p,ep,original_interfaces,operator,start,end):
     for name in ('evaluations','rejected_trials','attempted_steps'):require(type(getattr(r,name)) is int and getattr(r,name)>=0,'invalid_resource_counter')
     for cost,attr in (('evaluations','evaluations'),('panels','attempted_steps'),('rejections','rejected_trials')):
         require(set(r.phase_costs)=={'ordinary','approach','terminal','dry','comparison'},'phase_cost_schema')
-        for values in r.phase_costs.values():
-            require(set(values)=={'evaluations','panels','rejections'} and all(type(v) is int and v>=0 for v in values.values()),'phase_cost_counter')
+        for phase,values in r.phase_costs.items():
+            expected={'evaluations','panels','rejections'}|({'endpoint_attempts','endpoint_completed'} if paired and phase=='comparison' else set())
+            require(set(values)==expected and all(type(v) is int and v>=0 for v in values.values()),'phase_cost_counter')
         require(sum(v[cost] for v in r.phase_costs.values())==getattr(r,attr),'phase_cost_total')
         saved=[]
         for ref in r.refinements:
-            for values in ref.phase_costs.values():
-                require(set(values)=={'evaluations','panels','rejections'} and all(type(v) is int and v>=0 for v in values.values()),'refinement_cost_counter');saved.append(values[cost])
+            for phase,values in ref.phase_costs.items():
+                expected={'evaluations','panels','rejections'}|({'endpoint_attempts','endpoint_completed'} if paired and phase=='comparison' else set())
+                require(set(values)==expected and all(type(v) is int and v>=0 for v in values.values()),'refinement_cost_counter');saved.append(values[cost])
         require(sum(saved)<=getattr(r,attr),'refinement_cost_total')
+    if paired:audit_endpoint_costs(r.phase_costs['comparison'],[ref.phase_costs['comparison'] for ref in r.refinements])
     require(set(r.reuse_counts)=={'observations','panels'} and all(type(v) is int and v>=0 for v in r.reuse_counts.values()),'reuse_counter')
     require(r.approach_strategy==(ep.nested_approach.strategy_id if ep.nested_approach else 'legacy'),'approach_strategy_mismatch')
     numeric_tree(r.elapsed_seconds);require(r.elapsed_seconds>=0,'negative_elapsed')
@@ -271,11 +285,11 @@ def _audit(record,initial,p,ep,original_interfaces,operator,start,end):
     require(tuple(cn)==r.cumulative_amounts_mol and tuple(cu)==r.cumulative_energy_j,'stored_cumulative_mismatch')
     require(r.cumulative_absolute_component_residual_j is None and schema is None or tuple(ct)==r.cumulative_absolute_component_residual_j,'stored_component_mismatch')
     require(totals==r.roundoff_totals,'stored_roundoff_totals_mismatch')
-    audit_refinements(r,p,ep,mechanical)
+    audit_refinements(r,p,ep,mechanical,operator=operator)
     return AuditedDepletionRecord(canonical(record),canonical({'integration_policy':encode(p),'event_policy':encode(ep),'start_s':start,'end_s':end}))
 
 
-def audit_refinements(result, policy, event_policy, mechanical):
+def audit_refinements(result, policy, event_policy, mechanical, *, operator=None):
     """Check retained comparison diagnostics without rerunning physical providers."""
     limits=(event_policy.time_absolute_s,event_policy.amount_absolute_mol,event_policy.energy_absolute_j,event_policy.temperature_absolute_k,event_policy.pressure_absolute_pa)
     if mechanical:limits+= (policy.stretch_absolute_tolerance,)
@@ -289,13 +303,18 @@ def audit_refinements(result, policy, event_policy, mechanical):
                 for key,item in value.items():
                     require(type(key) is str,'diagnostic_key');diagnostic_numbers(item)
             else:numeric_tree(value)
-        diagnostic_numbers(ref.comparison_details)
+        paired=event_policy.pressure_comparison is not None
+        numeric_details=dict(ref.comparison_details)
+        if paired:numeric_details.pop('pressure_comparison',None)
+        diagnostic_numbers(numeric_details)
         if ref.differences is not None:numeric_tree(ref.differences)
         require(type(ref.level) is int and 0<=ref.level<event_policy.maximum_refinements,'refinement_level')
         require(type(ref.evaluations) is int and 0<=ref.evaluations<=result.evaluations,'refinement_evaluations')
         require(math.isfinite(ref.elapsed_seconds) and 0<=ref.elapsed_seconds<=result.elapsed_seconds,'refinement_elapsed')
         require(ref.start_s<ref.common_time_s and ref.terminal_cap_s>0,'refinement_clock')
-        if ref.differences is None:continue
+        if ref.differences is None:
+            require('pressure_comparison' not in ref.comparison_details,'paired_record_without_comparison')
+            continue
         require(len(ref.differences)==len(limits),'comparison_dimension')
         require(all(math.isfinite(v) and v>=0 for v in ref.differences),'comparison_nonnegative')
         d=ref.comparison_details
@@ -312,6 +331,8 @@ def audit_refinements(result, policy, event_policy, mechanical):
                 require(all(math.isfinite(v) and v>=0 for v in (*a,*b,nominal)),'comparison_point_bounds')
                 vals.append(nominal+max(a)+max(b))
             expected.append(max(vals))
+        if paired:
+            expected[4]=audit_paired_refinement(ref,event_policy.pressure_comparison,operator,expected[4])
         if mechanical:expected.append(max(maximum('event_stretches'),maximum('common_stretches')))
         require(tuple(expected[1:])==tuple(ref.differences[1:]),'comparison_diagnostics_mismatch')
         require(abs(d['terminal_end_a_s']-d['terminal_end_b_s'])<=ref.differences[0],'comparison_clock_difference')
@@ -336,6 +357,7 @@ def audit_refinements(result, policy, event_policy, mechanical):
         actual=(ev.event_time_difference_s,ev.common_amount_difference_mol,ev.common_energy_difference_j,ev.common_temperature_difference_k,ev.common_pressure_difference_pa)
         if mechanical:actual+=(ev.stretch_difference,)
         require(actual==diffs,'event_aggregate_differences_mismatch')
+    if event_policy.pressure_comparison is not None:audit_paired_committed_binding(result)
 
 
 def audit_affine(ev,before,after,li,vi,ep,modes):
@@ -402,3 +424,98 @@ def audit_affine(ev,before,after,li,vi,ep,modes):
     expected=float(gross)
     if F(expected)>gross:expected=math.nextafter(expected,-math.inf)
     require(ev.positive_evaporated_mol==expected,'affine_gross_evaporation_binding')
+
+
+def audit_endpoint_costs(total, refinements):
+    """Charge successful and failed endpoint work without resetting the prefix."""
+    def checked(value):
+        attempts=value['endpoint_attempts'];completed=value['endpoint_completed']
+        require(type(attempts) is int and type(completed) is int and 0<=completed<=attempts,
+                'endpoint_cost_order')
+        return attempts,completed
+    maximum=checked(total);used=[0,0]
+    for row in refinements:
+        costs=checked(row)
+        for i,v in enumerate(costs):used[i]+=v
+    require(all(v<=limit for v,limit in zip(used,maximum)),'endpoint_refinement_cost_exceeds_total')
+
+
+def audit_paired_refinement(ref, comparison_policy, operator, original_pressure):
+    """Bind all paired cells to actual closure content and legacy diagnostics."""
+    from .pressure_comparison import audit_pressure_comparison, pressure_comparison_binding
+    details=ref.comparison_details
+    payload=encode(details.get('pressure_comparison'))
+    require(type(payload) is dict and set(payload)=={'schema','original_independent_pressure_difference_pa',
+            'selected_pressure_difference_pa','pairs'},'paired_refinement_fields')
+    require(payload['schema']==comparison_policy.schema,'paired_refinement_schema')
+    numeric_tree(payload['original_independent_pressure_difference_pa'])
+    require(payload['original_independent_pressure_difference_pa']==original_pressure,'original_pressure_formula_changed')
+    require(type(payload['pairs']) is dict and set(payload['pairs'])=={'event','common'},'complete_event_common_pairs')
+    require(type(operator) is WaterPhaseTransfer,'actual_paired_operator_required')
+    selected=[];cost=0
+    for where in ('event','common'):
+        pair=payload['pairs'][where]
+        require(type(pair) is dict and type(pair.get('states')) is list and len(pair['states'])==2,'paired_states_shape')
+        left,right=map(state,pair['states'])
+        require(left.energy_model_identity==right.energy_model_identity==operator.base_model.energy_model_identity,
+                'paired_state_energy_identity')
+        bindings=[]
+        for label,point_state in (('a',left),('b',right)):
+            saved=pair['bindings_'+label];modes=saved['interfaces']
+            require(type(modes) is list and len(modes)==point_state.amounts_mol.shape[0],'paired_modes_shape')
+            for i,mode in enumerate(modes):
+                amount=point_state.amounts_mol[i,operator.liquid_index]
+                require(mode==('existing_liquid' if amount>0 else 'depleted_no_nucleation'),'paired_interface_inventory_binding')
+            actual=replace(operator,interface_modes=tuple(modes))
+            actual.base_model._check_state(point_state)
+            bindings.append(pressure_comparison_binding(actual))
+        for field,attribute in (('amounts','amounts_mol'),('energy','internal_energy_j'),('stretches','mechanical_stretches')):
+            difference=np.abs(getattr(left,attribute)-getattr(right,attribute))
+            require(encode(difference)==encode(details[where+'_'+field]['absolute_differences']),
+                    'paired_state_difference_binding')
+        bound=audit_pressure_comparison(pair,policy=comparison_policy,state_a=left,state_b=right,
+                                        bindings_a=bindings[0],bindings_b=bindings[1])
+        cells=pair['cells'];obs=details[where+'_observations']
+        for quantity,unit in (('temperature','k'),('pressure','pa')):
+            values=[tuple(float(exact(v)) for v in cell['reported_'+quantity+'s_'+unit]) for cell in cells]
+            require(max(abs(a-b) for a,b in values)==obs[quantity+'_nominal_difference_'+unit],
+                    'paired_reported_observation_difference')
+            key='original_temperature_errors_k' if quantity=='temperature' else 'original_pressure_errors_pa'
+            for j,side in enumerate(('a','b')):
+                errors=[float(exact(cell[key][j])) for cell in cells]
+                require(errors==list(obs[quantity+'_errors_'+side+'_'+unit]),'paired_original_point_error_binding')
+        selected.append(bound);cost+=pair['endpoint_evaluations']
+    numeric_tree(payload['selected_pressure_difference_pa'])
+    require(payload['selected_pressure_difference_pa']==max(selected),'paired_selected_pressure_maximum')
+    require(cost<=ref.phase_costs['comparison']['endpoint_completed'],'paired_completed_cost_underreported')
+    return max(selected)
+
+
+def audit_paired_committed_binding(result):
+    """Anchor retained chosen/finer comparison states to the committed history."""
+    def pairs(ref):return ref.comparison_details['pressure_comparison']['pairs']
+    for index,ref in enumerate(result.refinements):
+        if ref.status not in ('comparison_pass','comparison_fail','independent_approach_pass','independent_approach_fail'):
+            continue
+        require('pressure_comparison' in ref.comparison_details,'missing_paired_refinement')
+        if index and ref.status in ('comparison_pass','comparison_fail'):
+            previous=result.refinements[index-1]
+            if (previous.status in ('comparison_pass','comparison_fail') and previous.start_s==ref.start_s
+                    and previous.common_time_s==ref.common_time_s and previous.level+1==ref.level):
+                for where in ('event','common'):
+                    require(encode(pairs(previous)[where]['states'][1])==encode(pairs(ref)[where]['states'][0]),
+                            'successive_paired_state_binding')
+        if ref.status in ('independent_approach_pass','independent_approach_fail'):
+            require(index>0,'independent_paired_reference_missing')
+            previous=result.refinements[index-1]
+            for where in ('event','common'):
+                require(encode(pairs(previous)[where]['states'][1])==encode(pairs(ref)[where]['states'][0]),
+                        'independent_paired_reference_state')
+    for ev in result.events:
+        refs=[ref for ref in result.refinements if ref.status=='comparison_pass'
+              and ref.event_time_s==ev.time_s and ref.common_time_s==ev.common_time_s]
+        require(bool(refs),'committed_paired_comparison_missing');ref=refs[-1]
+        for where,time in (('event',ev.time_s),('common',ev.common_time_s)):
+            require(time in result.times_s,'committed_paired_clock_missing')
+            actual=result.states[result.times_s.index(time)]
+            require(encode(pairs(ref)[where]['states'][1])==encode(actual),'committed_paired_state_mismatch')

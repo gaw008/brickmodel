@@ -153,6 +153,8 @@ def _validate(p: dict[str, Any]) -> None:
     if event:
         keys['numerics'] += ' depletion'
         keys['numerics/depletion'] = _DEPLETION_KEYS
+        if isinstance(p['numerics']['depletion'],dict) and p['numerics']['depletion'].get('schema')=='sandbox_depletion_policy_v2':
+            keys['numerics/depletion'] += ' pressure_comparison'
         keys['numerics/depletion/roundoff_policy'] = _ROUNDOFF_KEYS
     for pointer, names in keys.items():
         try:
@@ -161,7 +163,7 @@ def _validate(p: dict[str, Any]) -> None:
             raise CaseError('missing object: /'+pointer) from exc
         _require(type(value) is dict and set(value) == set(names.split()), 'exact keys required: /'+pointer)
     if event:
-        _build_depletion_policy(p['numerics']['depletion'])
+        _build_depletion_policy(p['numerics']['depletion'],validation_only=True)
     _require(type(p['case_id']) is str and bool(p['case_id']) and p['case_id'].strip() == p['case_id'], 'nonempty case_id required')
     _require(type(p['scope']) is str and bool(p['scope'].strip()), 'scope required')
     for name, classification in [('solid', 'manufactured_test_fixture'), ('carrier', 'manufactured_test_fixture'),
@@ -290,12 +292,15 @@ def _validate(p: dict[str, Any]) -> None:
     _require(env['gas_cv_lower_j_mol_k']['fixture'] <= cv[0]-r, 'carrier cv lower exceeds constant curve')
 
 
-def _build_depletion_policy(record: dict[str, Any]) -> Any:
+def _build_depletion_policy(record: dict[str, Any], *, operator: Any = None, validation_only: bool = False) -> Any:
     """Construct a fully explicit numerical policy; imports make no EOS calls."""
     from .depletion_integration import DepletionPolicy, NestedApproachPolicy
     from .depletion_roundoff import DepletionRoundoffPolicy
-    _require(type(record) is dict and set(record) == set(_DEPLETION_KEYS.split()), 'exact depletion policy keys required')
-    _require(record['schema'] == 'sandbox_depletion_policy_v1', 'unsupported depletion policy schema')
+    _require(type(record) is dict,'depletion policy object required')
+    paired=record.get('schema')=='sandbox_depletion_policy_v2'
+    expected=set(_DEPLETION_KEYS.split()) | ({'pressure_comparison'} if paired else set())
+    _require(set(record)==expected,'exact depletion policy keys required')
+    _require(record['schema'] in ('sandbox_depletion_policy_v1','sandbox_depletion_policy_v2'), 'unsupported depletion policy schema')
     _require(record['terminal_method'] == 'affine_midpoint', 'event case requires affine_midpoint')
     for key in ('time_absolute_s','amount_absolute_mol','energy_absolute_j','temperature_absolute_k',
                 'pressure_absolute_pa','terminal_window_s','common_time_horizon_s','safe_inventory_fraction'):
@@ -312,6 +317,16 @@ def _build_depletion_policy(record: dict[str, Any]) -> Any:
         _require(type(nested['reuse_ordinary_spine']) is bool and nested['strategy_id']=='nested_wet_ordinary_spine_v1', 'explicit nested approach strategy required')
     try:
         values = {key:value for key,value in record.items() if key not in ('schema','roundoff_policy','nested_approach')}
+        if paired:
+            from .pressure_comparison import PressureComparisonPolicy, SCHEMA
+            from .paired_pressure_host import declare_manufactured_constant_box
+            declaration=record['pressure_comparison']
+            _require(type(declaration) is dict and declaration=={
+                'schema':SCHEMA,'constant_box_declaration':'all_actual_declared_constant_volume_errors_are_shared'},
+                'explicit shared constant parameter declaration required')
+            _require(operator is not None or validation_only,'actual operator required to bind comparison boxes')
+            values['pressure_comparison']=(None if operator is None else PressureComparisonPolicy(tuple(
+                declare_manufactured_constant_box(point) for point in operator.base_model.point_storages)))
         return DepletionPolicy(**values, roundoff_policy=DepletionRoundoffPolicy(**rounding),
             nested_approach=None if nested is None else NestedApproachPolicy(**nested))
     except ValueError as exc:
@@ -353,7 +368,8 @@ def encode(value: Any) -> Any:
     if isinstance(value, Fraction):
         return {'numerator': value.numerator, 'denominator': value.denominator}
     if is_dataclass(value):
-        return {item.name: encode(getattr(value, item.name)) for item in fields(value)}
+        return {item.name: encode(getattr(value, item.name)) for item in fields(value)
+                if not (item.metadata.get('omit_when_none',False) and getattr(value,item.name) is None)}
     if isinstance(value, Mapping):
         return {str(key): encode(item) for key, item in value.items()}
     if isinstance(value, (tuple, list)):
@@ -551,11 +567,15 @@ def build_case(case: CaseDefinition, water_dir: str | Path) -> BuiltCase:
     from .integration import ConservedState, IntegrationPolicy
     p = case.payload
     cells, start, end = p['grid']['cells'], p['numerics']['start_s'], p['numerics']['end_s']
-    depletion = _build_depletion_policy(p['numerics']['depletion']) if p['schema']==_EVENT_SCHEMA else None
     operator, rows, temperatures = _make_model(case, Path(water_dir), cells)
+    depletion = _build_depletion_policy(p['numerics']['depletion'],operator=operator) if p['schema']==_EVENT_SCHEMA else None
     if depletion is not None:
         _require(depletion.roundoff_policy.molar_mass_kg_mol == operator.chemical.reference.molar_mass_kg_mol,
                  'roundoff water molar mass differs from actual source reference')
+        if depletion.pressure_comparison is not None:
+            from .pressure_comparison import pressure_comparison_binding
+            _require(depletion.pressure_comparison.to_record()['cell_boxes']==pressure_comparison_binding(operator)['boxes'],
+                     'declared comparison boxes differ from actual model')
     forward_state, fine = _forward(operator, rows, temperatures, start,p)
     if cells == 2:
         parent, coarse = forward_state, fine

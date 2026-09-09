@@ -83,8 +83,7 @@ def test_prepared_pair_matches_frozen_pure_kernel_api():
  assert certificate.to_record()['temperature_uncertainty_included'] is False
 
 
-@pytest.mark.parametrize('change_implementation', ['none', 'water', 'chemical'])
-def test_last_endpoint_observer_keeps_current_implementation_bound(monkeypatch, change_implementation):
+def _endpoint_sentinel(monkeypatch):
  """Control-flow sentinel only: no source constructor, state solve or EOS.
 
  The physical point preparation is stubbed. The real provider canonicalization
@@ -135,17 +134,60 @@ def test_last_endpoint_observer_keeps_current_implementation_bound(monkeypatch, 
   calls.append(pressure)
   return WaterState(temperature,0.,0.,1.,1.,reference,'sentinel',pressure,phase,1000.,0.,0.,0.,implementation=self.implementation)
  monkeypatch.setattr(HEOSWaterProperties,'state_tp',endpoint)
- def observer(actual):
-  if change_implementation!='none' and len(calls)==4:
-   target=water if change_implementation=='water' else chemical_water
-   object.__setattr__(target,'implementation',changed)
-   assert original_digest(target)==before_digest
  inverse=NS(state=NS(thermal_state=NS(pressure_error_bound_pa=1.)),temperature_error_bound_k=.001)
- def prepare():return m.prepare_paired_pressure(operator,None,inverse,None,inverse,cell_index=0,
-                          shared_constant_parameters=box,endpoint_observer=observer)
+ def prepare(**kwargs):return m.prepare_paired_pressure(operator,None,inverse,None,inverse,cell_index=0,
+                          shared_constant_parameters=box,**kwargs)
+ return NS(prepare=prepare,calls=calls,water=water,chemical_water=chemical_water,original=original,
+           changed=changed,original_digest=original_digest,before_digest=before_digest,endpoint=endpoint,
+           water_type=HEOSWaterProperties)
+
+
+@pytest.mark.parametrize('change_implementation', ['none', 'water', 'chemical'])
+def test_last_endpoint_observer_keeps_current_implementation_bound(monkeypatch, change_implementation):
+ env=_endpoint_sentinel(monkeypatch)
+ def observer(actual):
+  if change_implementation!='none' and len(env.calls)==4:
+   target=env.water if change_implementation=='water' else env.chemical_water
+   object.__setattr__(target,'implementation',env.changed)
+   assert env.original_digest(target)==env.before_digest
  if change_implementation!='none':
-  with pytest.raises(m.PairedPressureHostError,match='provider_changed_during_endpoint_evaluation'):prepare()
+  with pytest.raises(m.PairedPressureHostError,match='provider_changed_during_endpoint_evaluation'):
+   env.prepare(endpoint_observer=observer)
  else:
-  prepared=prepare();assert prepared.endpoint_evaluations==4
-  assert water.implementation==original
- assert len(calls)==4
+  prepared=env.prepare(endpoint_observer=observer);assert prepared.endpoint_evaluations==4
+  assert env.water.implementation==env.original
+ assert len(env.calls)==4
+
+
+def test_before_endpoint_cancel_prevents_water_call(monkeypatch):
+ env=_endpoint_sentinel(monkeypatch);attempts=[];completed=[]
+ def cancel():
+  attempts.append('attempt')
+  raise RuntimeError('cancel-before-water')
+ with pytest.raises(RuntimeError,match='cancel-before-water'):
+  env.prepare(before_endpoint=cancel,endpoint_observer=completed.append)
+ assert attempts==['attempt'] and not env.calls and not completed
+
+
+def test_second_endpoint_failure_charges_attempt_not_completion(monkeypatch):
+ env=_endpoint_sentinel(monkeypatch);attempts=[];completed=[];water_calls=[]
+ def endpoint(self,temperature,pressure,*,phase):
+  water_calls.append(pressure)
+  if len(water_calls)==2:raise RuntimeError('second-water-failed')
+  return env.endpoint(self,temperature,pressure,phase=phase)
+ monkeypatch.setattr(env.water_type,'state_tp',endpoint)
+ with pytest.raises(RuntimeError,match='second-water-failed'):
+  env.prepare(before_endpoint=lambda:attempts.append('attempt'),endpoint_observer=completed.append)
+ assert len(attempts)==2 and len(water_calls)==2 and len(completed)==1
+
+
+def test_four_endpoint_hooks_have_before_water_after_order(monkeypatch):
+ env=_endpoint_sentinel(monkeypatch);order=[]
+ def endpoint(self,temperature,pressure,*,phase):
+  order.append('water')
+  return env.endpoint(self,temperature,pressure,phase=phase)
+ monkeypatch.setattr(env.water_type,'state_tp',endpoint)
+ prepared=env.prepare(before_endpoint=lambda:order.append('before'),
+                      endpoint_observer=lambda actual:order.append('after'))
+ assert order==['before','water','after']*4
+ assert prepared.endpoint_evaluations==4

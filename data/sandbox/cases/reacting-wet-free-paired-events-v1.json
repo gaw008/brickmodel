@@ -1,0 +1,279 @@
+{
+  "carrier": {
+    "classification": "manufactured_test_fixture",
+    "coefficients": [
+      30,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "formation_enthalpy_298_j_mol": 0,
+    "molar_mass_kg_mol": 0.028,
+    "segment_index": 0,
+    "species_id": "fixture",
+    "temperature_range_k": [
+      100,
+      2000
+    ]
+  },
+  "case_id": "reacting-wet-free-slab-v1-paired-pressure-v1",
+  "classification": "manufactured_verification",
+  "constants": {
+    "gas_constant_j_mol_k": 8.31446261815324,
+    "gas_constant_source_id": "nist-codata-2022"
+  },
+  "grid": {
+    "cells": 2,
+    "half_thickness_m": 0.02,
+    "parent_bulk_volume_error_m3": 1e-18,
+    "parent_cells": 2,
+    "reference_face_area_m2": 0.01
+  },
+  "initial": {
+    "energy_initialization": "conservative_parent_prolongation_with_forward_storage_check",
+    "parent_amounts_mol": [
+      [
+        2,
+        0,
+        1e-08,
+        1e-06,
+        0.001
+      ],
+      [
+        2,
+        0,
+        2e-08,
+        1e-06,
+        0.001
+      ]
+    ],
+    "parent_temperatures_k": [
+      300,
+      301
+    ],
+    "species_order": [
+      "A",
+      "B",
+      "H2O",
+      "H2O_liquid",
+      "fixture"
+    ]
+  },
+  "material_qualified": false,
+  "mechanics": {
+    "bulk_modulus_pa": 1000,
+    "classification": "manufactured_test_fixture",
+    "composition_beta_m3_mol": {
+      "A": 0,
+      "B": 0.001
+    },
+    "composition_offset": 1,
+    "external_pressure_pa": 101325.0,
+    "initial_parent_normal_stretches": [
+      1.0,
+      1.0
+    ],
+    "initial_tangential_stretch": 1.0,
+    "interface_energy_j_m2": 100,
+    "maximum_absolute_log_rate_per_s": 2,
+    "micro_interface_area_density_m2_m3": 30,
+    "parent_additional_bulk_volume_error_m3": 0,
+    "parent_additional_mechanical_energy_error_j": 0,
+    "shear_modulus_pa": 400,
+    "stretch_range": [
+      0.5,
+      2
+    ],
+    "viscosity_pa_s": 1000000.0
+  },
+  "model_id": "manufactured_reacting_wet_free_slab_v1",
+  "numerics": {
+    "depletion": {
+      "amount_absolute_mol": 1e-11,
+      "common_time_horizon_s": 1.52587890625e-05,
+      "energy_absolute_j": 1e-07,
+      "maximum_refinements": 14,
+      "nested_approach": {
+        "maximum_step_s": 6.103515625e-05,
+        "reuse_ordinary_spine": true,
+        "strategy_id": "nested_wet_ordinary_spine_v1"
+      },
+      "pressure_absolute_pa": 0.0001,
+      "pressure_comparison": {
+        "constant_box_declaration": "all_actual_declared_constant_volume_errors_are_shared",
+        "schema": "manufactured_shared_constant_reported_temperature_v1"
+      },
+      "roundoff_policy": {
+        "correction_absolute_mol": 1e-15,
+        "correction_fraction_evaporated": 1e-08,
+        "cumulative_correction_absolute_mol": 1e-14,
+        "cumulative_element_absolute_mol": 2e-14,
+        "cumulative_mass_absolute_kg": 1e-15,
+        "cumulative_storage_absolute_mol": 1e-14,
+        "element_absolute_mol": 2e-15,
+        "mass_absolute_kg": 1e-16,
+        "molar_mass_kg_mol": 0.018015267999999997,
+        "storage_absolute_mol": 1e-15
+      },
+      "safe_inventory_fraction": 0.25,
+      "schema": "sandbox_depletion_policy_v2",
+      "temperature_absolute_k": 1e-05,
+      "terminal_method": "affine_midpoint",
+      "terminal_window_s": 7.62939453125e-06,
+      "time_absolute_s": 1e-08
+    },
+    "end_s": 0.50032,
+    "envelope": {
+      "gas_cv_lower_j_mol_k": {
+        "H2O": 20,
+        "fixture": 20
+      },
+      "gas_u_error_j_mol": {
+        "H2O": 1e-09,
+        "fixture": 1e-09
+      },
+      "liquid_abs_du_dp_bound_j_mol_pa": 0.0001,
+      "liquid_u_error_j_mol": 1e-08,
+      "liquid_v_error_m3_mol": 1e-16,
+      "method": "explicit_manufactured_numerical_verification_envelope_not_eos_certificate"
+    },
+    "integration": {
+      "amount_absolute_tolerance_mol": 1e-12,
+      "amount_scale_mol": 0.0001,
+      "energy_absolute_tolerance_j": 1e-08,
+      "energy_scale_j": 1,
+      "initial_step_s": 6.103515625e-05,
+      "maximum_rejections": 100,
+      "maximum_step_s": 6.103515625e-05,
+      "maximum_steps": 512,
+      "maximum_wall_seconds": 800.0,
+      "minimum_step_s": 1e-14,
+      "relative_tolerance": 1e-07,
+      "stretch_absolute_tolerance": 1e-09,
+      "stretch_scale": 1.0
+    },
+    "inverse_policy": {
+      "energy_absolute_j": 1e-06,
+      "maximum_iterations": 120,
+      "temperature_absolute_k": 1e-06
+    },
+    "pressure_policy": {
+      "maximum_iterations": 150,
+      "pressure_absolute_pa": 1e-05,
+      "volume_absolute_m3": 1e-13
+    },
+    "start_s": 0.5,
+    "temperature_bracket_k": [
+      295,
+      310
+    ]
+  },
+  "profile": "gradient",
+  "reaction": {
+    "activation_energy_j_mol": 0,
+    "classification": "manufactured",
+    "concentration_basis": "current_cell_bulk_volume",
+    "concentration_reference_mol_m3": 1,
+    "elements_per_species": {
+      "A": {
+        "C": 1
+      },
+      "B": {
+        "C": 1
+      }
+    },
+    "orders": {
+      "A": 1
+    },
+    "prefactor_mol_m3_s": 0.1,
+    "reaction_id": "A-to-B",
+    "reaction_regime": "oxygen_free_pyrolysis",
+    "stoichiometry": {
+      "A": -1,
+      "B": 1
+    },
+    "temperature_range_k": [
+      295,
+      310
+    ]
+  },
+  "refinement": 0,
+  "schema": "sludge_sandbox_free_event_case_v1",
+  "scope": "Manufactured reacting reduced common-tangent free slab; source-qualified water. No material or full firing-cycle admission.",
+  "solid": {
+    "A": {
+      "coefficients": [
+        5,
+        0,
+        0,
+        0,
+        0,
+        -100,
+        0,
+        -100
+      ],
+      "formation_enthalpy_298_j_mol": -100000,
+      "molar_volume_m3_mol": 2e-05
+    },
+    "B": {
+      "coefficients": [
+        5,
+        0,
+        0,
+        0,
+        0,
+        -100.005,
+        0,
+        -100.005
+      ],
+      "formation_enthalpy_298_j_mol": -100005,
+      "molar_volume_m3_mol": 1e-05
+    },
+    "caloric_temperature_range_k": [
+      290,
+      500
+    ],
+    "classification": "manufactured_test_fixture",
+    "crystal_phase_id": "manufactured_single_phase",
+    "declared_u_error_j_mol": 2e-07,
+    "declared_v_error_m3_mol": 1e-12,
+    "molar_mass_kg_mol": 0.012,
+    "pressure_range_pa": [
+      10000,
+      10000000
+    ],
+    "reference_pressure_pa": 100000
+  },
+  "training_eligible": false,
+  "transport": {
+    "carrier_diffusivity_m2_s": 0,
+    "classification": "manufactured",
+    "control_conductivity_w_m_k": 0,
+    "control_water_diffusivity_m2_s": 0,
+    "coupled_conductivity_w_m_k": 1,
+    "coupled_water_diffusivity_m2_s": 1e-08,
+    "interfaces": "existing_liquid",
+    "liquid_transport": null,
+    "outer_reservoir": null,
+    "outer_surface_temperature_k": null,
+    "permeability_m2": 0,
+    "phase_coefficient_density_mol_s_pa_m3": 0.01,
+    "relative_permeability": 1,
+    "viscosity_pa_s": 1e-05
+  },
+  "transport_mode": "coupled",
+  "water": {
+    "backend": "heos",
+    "classification": "source_qualified",
+    "liquid_pressure_model": "planar_interface_no_capillary_pressure",
+    "manifest": "heos-8.0.0-approved-manifest.json",
+    "pressure_range_pa": [
+      10000,
+      1000000
+    ]
+  }
+}

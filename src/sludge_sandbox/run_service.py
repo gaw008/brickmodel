@@ -94,7 +94,7 @@ def _event_cancelled(parent: dict[str, Any]) -> None:
     record = parent.get('integration')
     if (parent.get('integration_kind') != 'water_depletion_v1'
             or parent.get('status') != 'cancelled' or type(record) is not dict
-            or record.get('schema') != 'sandbox_depletion_result_v1'
+            or record.get('schema') not in ('sandbox_depletion_result_v1','sandbox_depletion_result_v2')
             or record.get('status') != 'cancelled' or record.get('reason') != 'cancel_requested'
             or not record.get('steps')):
         raise RunError('resume_requires_cancelled_event_prefix')

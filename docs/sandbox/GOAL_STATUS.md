@@ -4,6 +4,15 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+3e04fce之后实际progress：新增pressure_comparison完整typed策略/codec/双路径实际host及数据审计；depletion只在opt-in捕获当次total inverses，event/common全格比较、before/after guard与累计attempt/completed；event_record v2/旧v1兼容及source/state/observations/成本/续算审计；case显式v2假设避免sourcehash自引用，真实build派生box并beforeforward验证；service允许v2续算形状后仍严格audit。
+
+独立审核关闭真实WaterState mass序列化错位与bool/string采样漏洞。冻结安装实际140pass8.67s、65模块与源码一致。真实helper两格probe session1078已exit0（3.18093s），8endpoint完成/最大条件界3.7403908677e-5Pa过原1e-4门槛，非event成功声明。文档PAIRED_EVENT_COMPARISON.md。
+
+实际事件session87636已终态exit0：监督352.383s/积分348.660s，completed30steps/2events/592eval/70panels，24endpoint全部完成，到原0.50032。事件cell1在0.5002686445571594、cell0在0.5002848875613792；每event两successive+独立细化通过原六gate。原独立P界仍.005135/.002784Pa>1e-4，只有显式新共享族界（max5.17914e-9Pa）通过，旧failed不改。独立审核的audit_prefix.py实际exit0：所有prefix N5.58089e-16/E7.62853e-11/stretch3.84743e-16，全局E+peΔV−boundary−body max9.99128e-11J、C跨格累计绝对和1.29891e-20J过原2e-8；gross/2correction均独立重算。运行前后water/65源码一致且physicalinputs与旧case逐字段复原相同。无活动EOS/测试，不再poll87636/1078。证据research/paired-event-comparison-v1；新增可复现data/sandbox/cases/reacting-wet-free-paired-events-v1.json。
+
+下一步为新case真实service run/replay/resume及来源/交互核验，以及继续原空间收敛缺口/真实原污泥证据及全烧成耦合；不能把制造300K短湿轨迹当全周期。现数值器可在显式共享误差族完成两耗尽事件；默认独立族旧失败仍成立。原Goal继续active，所有原§11未完成项不缩减。
+
+
 上一Goal回合仅重述提示词，按no-progress处理。本回合恢复实际未提交模块并独立重算四个保存证书exit0，冻结125文件证据包，新增PAIRED_PRESSURE说明，属于progress；完整Goal仍active。
 
 新增paired_pressure/paired_pressure_host及31项专属测试：明确新制造共享常数参数盒，只计算reported-T条件压力差；默认unavailable，保留原点误差。旧版源码/安装相关60项通过、64模块核对；两个两格真实端点探针分别3.2685/3.1109s，非零差3.6015990190e-5Pa、上界3.7279046258e-5/3.7405558044e-5Pa。没有接入事件接受，原failed保持。来源、全部输入、四证书、审核和旧64模块已封存research/paired-pressure-v1/evidence-before-identity-fix.zip及逐文件manifest。
