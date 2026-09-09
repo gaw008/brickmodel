@@ -14,6 +14,8 @@
 | `ARLABOSSE2005_DRY_CP_EQ2`: 干基Cp=1434+3.29T_C | `arlabosse_caloric.ArlabosseDryCaloric.cp`；`test_arlabosse_caloric.py` | 同来源样品35–105°C的公开拟合计算；源元数据`data/sandbox/research/arlabosse2005/source.json`及原Eq2/单位图均核读 |
 | `ARLABOSSE2005_DRY_SENSIBLE_ENTHALPY_DIFF`: 对上述Cp解析积分 | `arlabosse_caloric.ArlabosseDryCaloric.delta_h`、`registry_payload` | [两节点追溯与实际安装例子](research/arlabosse-caloric-v1/README.md)；无绝对形成焓、Cv或摩尔材料准入 |
 
+`exact_continuation_admission` 与 `integrate_exact_depletion(..., continuation=...)` 组合四fresh审计、同版本原始输入和累计预算恢复；[实际取消续算](research/exact-continuation-v1/README.md)达到原终点30步/2事件包。原800秒/512面板预算保持，未接入旧CLI/UI生命周期。
+
 `exact_projection_restore.restore_exact_projection` 按固定数值白名单恢复记录及已提交账本同对象关联；[实际无损恢复](research/exact-projection-restore-v1/README.md)检查30步、2事件包与全字节重编码。历史观察仍是数值证据，不构建实时逆解，不授予续算许可。
 
 `exact_record`提供严格版本化数值记录、输入/来源绑定和状态—账本—事件关联；它本身不是物理方程，也不自动授权续算。见[实际原生记录验证](research/exact-record-native-v1/README.md)。

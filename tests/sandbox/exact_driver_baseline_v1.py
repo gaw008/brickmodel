@@ -101,8 +101,7 @@ class _Path:
         return ExactPacketPath(tuple(self.times),tuple(self.states),tuple(self.steps),tuple(self.frames),self.operator,self.totals,tuple(self.grid))
 
 
-def integrate_exact_depletion(initial,operator,*,start,end,integration_policy,event_policy,cancel=None,continuation=None,on_commit=None):
-    continuation_entry=time.monotonic() if continuation is not None else None
+def integrate_exact_depletion(initial,operator,*,start,end,integration_policy,event_policy,cancel=None):
     p,ep=integration_policy,event_policy
     if type(initial) is not ConservedState or type(operator) is not ExactFreeWaterTransfer or type(p) is not IntegrationPolicy or type(ep) is not DepletionPolicy:
         raise IntegrationError('explicit_exact_packet_inputs_required')
@@ -111,7 +110,6 @@ def integrate_exact_depletion(initial,operator,*,start,end,integration_policy,ev
     if ep.terminal_method!='affine_midpoint' or ep.ordered_event_policy!='ordered_affine_packet_v1' or ep.nested_approach is None:
         raise IntegrationError('explicit_ordered_affine_nested_policy_required')
     if cancel is not None and not callable(cancel):raise IntegrationError('invalid_cancel_callback')
-    if on_commit is not None and not callable(on_commit):raise IntegrationError('invalid_commit_observer')
     if ep.roundoff_policy.molar_mass_kg_mol!=operator.operator.chemical.reference.molar_mass_kg_mol:
         raise IntegrationError('roundoff_water_molar_mass_mismatch')
     energy=operator.energy_model_identity
@@ -124,32 +122,17 @@ def integrate_exact_depletion(initial,operator,*,start,end,integration_policy,ev
         declared=pressure_comparison_binding(operator.operator)
         if len(ep.pressure_comparison.cell_boxes)!=len(initial.amounts_mol) or ep.pressure_comparison.to_record()['cell_boxes']!=declared['boxes']:
             raise IntegrationError('original_pressure_boxes_mismatch')
-    begin=time.monotonic() if continuation_entry is None else continuation_entry;times=[start];states=[initial];steps=[];packets=[];refs=[];attempts=[]
+    begin=time.monotonic();times=[start];states=[initial];steps=[];packets=[];refs=[];attempts=[]
     totals=DepletionRoundoffTotals(ep.roundoff_policy)
     costs={k:0 for k in ('evaluations_attempted','evaluations_completed','ordinary_trials','ordinary_rejected','ordinary_panels','predictor_attempts','terminal_attempts','terminal_panels','endpoint_attempts','endpoint_completed','stage_replans')}
-    prior_elapsed=0.;parent_resource_reason=None
-    if continuation is not None:
-        from sludge_sandbox.exact_continuation_admission import admit
-        parent,credit=admit(continuation,operator,initial,start,end,p,ep)
-        times=list(parent.times_s);states=list(parent.states);steps=list(parent.steps);packets=list(parent.packets)
-        refs=list(parent.refinements);attempts=list(parent.terminal_attempts)
-        totals=parent.roundoff_totals;costs=dict(parent.costs);operator=parent.operator
-        prior_elapsed=parent.elapsed_seconds
-        if parent.status=='resource_limit':parent_resource_reason=parent.reason
-    def elapsed():
-        delta=time.monotonic()-begin
-        if continuation is None:return delta
-        exact=F(prior_elapsed)+F(delta);value=float(exact)
-        return math.nextafter(value,math.inf) if F(value)<exact else value
-    schema=[None if steps and steps[0].cell_work_components_j is None else (tuple(steps[0].cell_work_components_j) if steps else ...)]
-    li=operator.operator.liquid_index
+    schema=[...];li=operator.operator.liquid_index
     def charged_panels():
         # Original ordered driver: accepted ordinary panels, interrupted replans,
         # and terminal attempts. Predictor/trial counts remain independent diagnostics.
         return costs['ordinary_panels']+costs['stage_replans']+costs['terminal_attempts']
     def guard():
         if cancel is not None and cancel():raise _Stop('cancelled','cancel_requested')
-        if elapsed()>=p.maximum_wall_seconds:raise _Stop('resource_limit','wall_time_limit')
+        if time.monotonic()-begin>=p.maximum_wall_seconds:raise _Stop('resource_limit','wall_time_limit')
         if charged_panels()>=p.maximum_steps:
             raise _Stop('resource_limit','global_panel_limit')
         if costs['ordinary_rejected']>=p.maximum_rejections:raise _Stop('resource_limit','global_rejection_limit')
@@ -176,7 +159,7 @@ def integrate_exact_depletion(initial,operator,*,start,end,integration_policy,ev
                 options.append((n/-rate,i))
         return min(options) if options else None
     def remaining_policy(cap):
-        guard();wall=_down(F(p.maximum_wall_seconds)-F(elapsed()))
+        guard();wall=_down(F(p.maximum_wall_seconds)-F(time.monotonic()-begin))
         remaining=p.maximum_steps-charged_panels()
         nominal=_down(min(cap,F(p.maximum_step_s)))
         if wall<=0 or remaining<=0:raise _Stop('resource_limit','remaining_budget_exhausted')
@@ -211,7 +194,7 @@ def integrate_exact_depletion(initial,operator,*,start,end,integration_policy,ev
             raise _Stop('resource_limit','insufficient_terminal_panel_budget')
         # Callee cancellation also enforces the original outer wall deadline.
         def stopped():
-            return (cancel is not None and cancel()) or elapsed()>=p.maximum_wall_seconds
+            return (cancel is not None and cancel()) or time.monotonic()-begin>=p.maximum_wall_seconds
         bounded=remaining_policy(F(p.maximum_step_s))
         attempt=execute_exact_terminal(path.states[-1],path.operator,start=path.times[-1],common_endpoint=common,
             integration_policy=bounded,event_policy=ep,totals=path.totals,cancel=stopped)
@@ -219,7 +202,7 @@ def integrate_exact_depletion(initial,operator,*,start,end,integration_policy,ev
         costs['evaluations_attempted']+=c.evaluation_attempts;costs['evaluations_completed']+=c.evaluation_completed
         costs['predictor_attempts']+=c.predictor_panel_attempts;costs['terminal_attempts']+=c.terminal_panel_attempts;costs['terminal_panels']+=c.terminal_panels
         if attempt.status!='speculative_completed':
-            status='resource_limit' if elapsed()>=p.maximum_wall_seconds else attempt.status
+            status='resource_limit' if time.monotonic()-begin>=p.maximum_wall_seconds else attempt.status
             raise _Stop(status,attempt.reason)
         for obs in attempt.observations:check(obs.evaluation,obs.state)
         path.steps.append(attempt.terminal_panel.ledger);path.times.append(attempt.terminal_panel.ledger.end_s)
@@ -324,16 +307,12 @@ def integrate_exact_depletion(initial,operator,*,start,end,integration_policy,ev
                 if max(abs(local-inc),abs(local-exact),abs(change-cs[i]),abs(change-ce[i]),cr[i])>F(p.stretch_absolute_tolerance):raise IntegrationError('original_stretch_prefix_budget')
         if not allow_stopped_prefix:
             if cancel is not None and cancel():raise _Stop('cancelled','cancel_requested')
-            if elapsed()>=p.maximum_wall_seconds:raise _Stop('resource_limit','wall_time_limit')
+            if time.monotonic()-begin>=p.maximum_wall_seconds:raise _Stop('resource_limit','wall_time_limit')
         path.operator.operator_identity
         times.extend(path.times[1:]);states.extend(path.states[1:]);steps.extend(path.steps)
         if path.frames:packets.append(tuple(path.frames))
         operator=path.operator;totals=path.totals
-        if path.steps and on_commit is not None:
-            try:on_commit((len(steps),len(packets),times[-1]))
-            except Exception as exc:raise _Stop('failed','commit_observer_failed:'+type(exc).__name__+':'+str(exc)) from exc
     try:
-        if parent_resource_reason is not None:raise _Stop('resource_limit',parent_resource_reason)
         while times[-1]<end:
             guard();t=times[-1];state=states[-1];obs=observe(operator,state,t);c=choice(operator,state,obs)
             if c and c[0]<=F(ep.terminal_window_s) and abs(t.shifted(c[0]).elapsed_since(end))<=F(ep.time_absolute_s):
@@ -387,4 +366,4 @@ def integrate_exact_depletion(initial,operator,*,start,end,integration_policy,ev
         status='completed';reason=None
     except (ValueError,TypeError,AttributeError,OverflowError) as exc:
         status=exc.status if isinstance(exc,_Stop) else ('domain_exit' if isinstance(exc,DomainExit) else 'failed');reason=str(exc)
-    return ExactDepletionResult(status,reason,tuple(times),tuple(states),tuple(steps),tuple(packets),operator,totals,tuple(refs),tuple(attempts),MappingProxyType(costs.copy()),elapsed(),p,ep)
+    return ExactDepletionResult(status,reason,tuple(times),tuple(states),tuple(steps),tuple(packets),operator,totals,tuple(refs),tuple(attempts),MappingProxyType(costs.copy()),time.monotonic()-begin,p,ep)

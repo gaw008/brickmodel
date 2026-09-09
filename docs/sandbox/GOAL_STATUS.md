@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+同新版本精确续算已实际完成（基线a8a6aae）：driver5c06f392/admissiona3819fba，portabletestf1753143+baselinebe323；65源码47.41s/25安装15.11s通过，84实际模块一致，代码/数值独立审查通过。原initial/start/end/fullpolicies、全历史/修正/schema/cost与累计wall保持；on_commit仅全局原子提交后通知。四fresh审计+restore实际入场，不从partial报告授许可。证据research/exact-continuation-v1（90成员，含原RED及独立结果复核）。
+
+/tmp/brick-exact-continuation-native-v1实际PhaseA session62924已exit0/reaped：cancelled1step/0packets/9eval，core1.358061333s，parent9b4b6eba18aee151843efd2cc097a3399b864ef37b14f40a1af926b41d3f5a47。PhaseB session25676已exit0/reaped，supervisor84.099186s：completed30steps/2packets/685eval至原end，累计79.548731666s，79charged剩433/100reject，recordf33e5df59b064218d0790b2b372ba68d7d417fe7968412703cad90a4bea11285。父历史一次保留、4audits/reencode/原84runtime前后一致；独立复核旧78与新84网格/状态/账本及全部非wall字段全同，19项elapsed差异保留。root无活动EOS/测试，不重poll62924/25676/18903/80522。冻结202输入未改，不冒称旧78记录被跨版本续算。
+
+质量基准能量参考评估已保存research/material-energy-reference-v1，两个一手来源root核读；允许同材料计量+反应热差+一致参考的质量表示，不能抹掉反应热或混入未桥接NIST零点。新的reaction_reference候选在/tmp/brick-mass-reaction-reference-v1（最终anchor状态绑定source1a043d63/test47bd1b7a，14pure；前版独立100精确系统数学核查通过），仍tmp待最终审查/应用。下一可执行工作：核最后anchor复审与应用该质量参考桥接原语，并继续精确路径服务/CLI/UI父子记录生命周期、长时空间验证及实际材料闭合；不能停留在原语。原Goal§11的材料/3机制公开留出/全湿烧冷却/空间/多代/最终应用完整范围仍必需未完成，Goal active，本轮有效progress。
+
 精确数值恢复已应用（基线447649b）：exact_projection_restore6c5ec48f/test75dfbe4f，固定数值白名单、fresh外部实际绑定、完整pack不变、committed terminal ledger与accepted step同对象恢复；历史Observation明确EvidenceNode无伪inverse。27源码22.15s/8安装10.22s通过，83实际非editable模块逐字匹配；独立代码审及8pure通过。35成员完整证据见research/exact-projection-restore-v1。
 
 唯一actual restore session30141已终态exit0/reaped，原supervisor3.436563125s：原strict30steps/2packets/2aliases完整恢复，重编码4,192,254bytes全等ac03be01；actual82/old78严格四verifier新增allowlist与原所有模块/非模块字段一致，input/runtime前后保持。独立结果审查已完成。没有integrate/resume，之后83安装身份另存，不能把只读兼容作为跨版本续算许可。root无EOS或测试在运行，不重poll30141/47040/89005。

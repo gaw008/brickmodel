@@ -1,0 +1,47 @@
+# Same-new-version actual cancellation and continuation validation
+
+Prepared without execution, source edits, installation or EOS. This is a prospective plan; no successful cancellation count or resumed trajectory is claimed.
+
+## Frozen experiment and mandatory preflight
+
+Use original source case `/private/tmp/brick-exact-record-native-v1/attempt01/case.json`, SHA `9d930a6c6d60cf328e5abe2e61dc6a5f9f0cf06d9453827b84d0f0b56e5746f4`, exact start Fraction(float(.5)), original end Fraction(float(.50032)), original complete integration/event policies including ordered affine packet option. Keep original800s cumulative integrate budget,512panel limit,100rejections and every scientific tolerance. Preserve source integer-versus-float policy values; no normalization to gain an identity match.
+
+Before the first native attempt, fill and freeze a manifest containing: new exact core/continuation/restore/codec/four auditor module SHA256; all installed module and nonmodule runtime metadata; case/initial/policy/operator identities; original water assets; runner/supervisor/observational-wrapper hashes; actual installed-source equality; test/review evidence. Fields currently UNFILLED because reviewed continuation implementation is not yet applied. Both cancellation and continuation run against this identical NEW runtime. No78→new compatibility allowance applies to execution. A module change between these phases invalidates this experiment; retain the parent rather than relabel it.
+
+Use the existing45s-style supervisor implementation SHA939a86f4a8a45a127e49c18009c8fc9f7bd296d79243741bf3f3d2e6fb2f36d1 with explicitly changed perprocess deadlines below. Only one native process at a time; no installation/source edits during either process.
+
+## Cancellation must follow a real global commit
+
+The current pure fixture `tests/sandbox/test_exact_record.py:make` cancels when actual callback count exceeds15 and produces an accepted prefix. This is empirical evidence only for that manufactured fixture, not a justified numerical threshold for this real-water material. Rejections/EOS/domain work make a universal callback-count guarantee impossible. Do not declare count16 guarantees an accepted step here.
+
+Candidate execution seam (final source hash pending freeze): optional on_commit notification, after accepted times/states/ledgers and mode/totals have all been installed. It must not fire for SSPRK stages, a local accepted candidate awaiting commit, speculative terminal paths, discarded refinements or failed commits. The candidate observer receives the immutable tuple (accepted_steps: int, committed_packet_count: int, exact_time: ExactEventTime), with no state/operator exposed. It records the first positive committed prefix and arms a boolean cancellation request when info[0] >= 1. The intended early-ordinary outcome additionally requires info[1] == 0; a first-packet outcome remains real committed evidence but fails that narrower experimental target. The next normal cancellation guard returns true. Observer has no rate/state replacement return, and it does not change physical coefficients or tolerances. Its identity/contract must be frozen with the new implementation before this plan executes.
+
+A separate narrow RHS observation wrapper may count actual delegated evaluate calls, record completed/failed calls and exact semantic times, and return the original result/exception unchanged. It cannot decide “accepted” from call count alone, replace WaterState/Rates, or reinterpret floating display times. No frame-stack inspection or ad hoc skip-one-guard trick is allowed. The candidate hook is currently implemented and undergoing review; freeze its final API/hash before execution. Its return value is ignored; an observer exception produces failed/commit_observer_failed while retaining the already committed prefix. This experiment uses a nonthrowing observer and does not weaken the requirement to a timer/count gamble.
+
+## Phase A — one early cancellation
+
+Outer deadline90s, cleanup0.1s. Rationale: measured original full two-cell trajectory was about77s; one ordinary accepted prefix should precede that, but actual call count/cost must be measured rather than invented. Original800s integration budget remains unchanged. The90s process bound is a safety stop, not proof of early cancellation or permission to resume a killed process.
+
+Build exact original host/initial under frozen NEW runtime, save initialization and original identities. Run from original start with no continuation; arm cancellation at first global committed ordinary prefix. Persist the complete cancelled result, full strict canonical record, actual callback log/counters, before/after runtime and inputs BEFORE assertions. Require status cancelled,0<accepted steps, first prefix at exact time greater than originalstart and less than originalend, no committed packets for the intended early-ordinary test, original wet modes preserved. A different outcome is retained as a failed experiment; no automatic threshold retuning/native retry.
+
+Run prefix, terminal-proof, comparison and resource audits on the actual cancelled record with fresh external original binding. Empty terminal/comparison sets are explicitly empty audits, not evidence that event acceptance was exercised. All original input/policy fields, cumulative wall/panel/rejection counts must survive strict encode/read/reencode. Parent canonical byte SHA and all parent histories are frozen as continuation input. Killed/unsealed/missing terminal results are not resumable parents.
+
+## Phase B — one continuation to original endpoint
+
+Only after Phase A reports exit/reap and all required record gates pass. Separate process outer180s, cleanup0.1s; original integration remaining allowance is800 minus the recorded Phase A elapsed, rounded conservatively as specified by the new continuation core.The180s external bound is more than twice the measured77s full path plus the observed few seconds of rebuild/record/audit overhead. It is deliberately shorter than the declared remaining integration allowance: original800s cumulative policy remains unchanged. A supervisor-killed or unsealed outcome is a retained failed experiment and is not resumable; no automatic retry or budget reset follows.
+
+Rebuild SAME new-version original case/initial/operator, verify full runtime and exact parentSHA, then invoke the audited continuation API using the ORIGINAL initial/start/end/policies. Last accepted state/time/final wet modes and correction totals come only from freshly audited parent bytes. Preserve full earlier refinements/terminal attempts/costs and global component schema. No suffix relabelling, no reset to newzero totals/counters, no double merge of the returned full result. Fresh adaptive-controller restart semantics must be explicit in the result; no claim of bit-identical uninterrupted grids by default.
+
+Save full result/record/runtime/inputs/exception chains before assertions. Require completed at original exactend, original two physical cells both depleted via their actual ordered events, all parent accepted times/states/ledgers exactly preserved as the initial prefix, parent packet/refinement/attempt histories retained once, and recorded cumulative counters/elapsed nondecreasing and within ORIGINAL policy. Check parentSHA linkage, final original modes and totals, and strict read/reencode byte equality. Run ALL FOUR complete audits against the original initial/policies, not the restart state. Their separate scopes must collectively meet the new continuation admission contract; no single partial_audit token substitutes for it.
+
+## Comparison with the historical78-module trajectory
+
+The historical original record remains immutable reference evidence only. First compare physical case/initial/policies exactly and disclose module versions. It is NOT an execution-compatible continuation parent for this experiment. If entire accepted exact grids match, compare complete per-node N/E/T/P/stretch and event histories with existing original thresholds/point errors. If grids differ, do not zip arrays or manufacture interpolation error claims: report grid difference and endpoint/event numerical differences descriptively, alongside the independent original-gate audits. Do not infer convergence order or loosen any gate. A new uninterrupted same-version reference run would be a separate preregistered task, not an automatic third native run.
+
+## Evidence and failure preservation
+
+Per phase: PLAN/frozen input manifest, runner/supervisor/wrapper hashes, actual before/after runtime, call log, initialization, full result, canonical record/reencode, four audit outputs and their inputSHAs, resource breakdown (build/audit/integrate distinct), subprocess status/reap. Final summary distinguishes early-cancel success, continuation success, audit coverage and historical numerical comparison. Preserve the first failed outcome with its exact inputs; no permission or budget is inferred from elapsed time, and no retry occurs automatically.
+
+## Runner telemetry decision before execution
+
+The runner uses no sys.setprofile or RHS wrapper. Cancellation is armed only by on_commit. calls.json explicitly records telemetry_origin=core_cumulative_counters and independent_EOS_journal=false; the resource auditor checks the saved counter relations within its declared scope. There is no independently measured per-EOS call journal or profiled speed claim. Original physical policies,90/180s external limits and all gates are unchanged.
