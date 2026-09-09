@@ -4,6 +4,13 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+f619433之后实际实现progress：PressurePolicy显式endpoint策略及不可变trialledger，defaultNone公开encode/原二分数字序列保留；case可选strategy严格唯一值并真实转发。新dataclass身份改变不冒称旧model字节相同。源码66/安装66通过，65模块一致；独立审查通过。原始RED/中间测试失败保留。见PRESSURE_ENDPOINT_STRATEGY.md及research/pressure-endpoint-strategy-v1。
+
+实际同accepted wetstate1点比较session30911已exit0：baseline.80005s、新.13375s，两格最终root38→3，T/P原界通过；同物理N/E/stretch显式新数值身份重绑不是旧checkpoint恢复。实际单次新case service session83456已exit0/67.896s监督（service67.69s），30steps2events592eval70panels24endpoint、原.50032终点通过，事件时刻与旧记录相同。原6组×6gate经独立核查；原audit_prefix.py SHA287bc逐prefix实际exit0：N5.58085e-16mol/E7.62952e-11J/stretch4.21229e-16、全局外压功max9.99274e-11J/C累积绝对2.13932e-20J均过原门槛。当前无活动EOS/测试，不再poll30911/83456。新case data/sandbox/cases/reacting-wet-free-paired-events-endpoint-root-v1.json SHA9d930a6c6d60cf328e5abe2e61dc6a5f9f0cf06d9453827b84d0f0b56e5746f4。
+
+下一步按实际较长空间pilot设计推进可解析时长与适应步长，用真实取消/续算同时检验新policy服务生命周期；原15us空间FAIL保持，不能改D/k/初始库存阶跃或放宽norm/gate。后续设计已保存research/pressure-endpoint-strategy-v1/LONGER_SPATIAL_PLAN.md：先同湿初态2格到.51的10ms成本pilot，再决定.625s热尺度；10ms不是空间验证。4/8格同父子单元可能触发simultaneous_events_not_separated，须实证分离或联合事件处理，不能扰动初态/改gate。计划未执行。新策略全取消/续算/重放尚未实际复验，不用旧default证据替代。原污泥材料/三机制留出/全湿烧成冷却仍全部必需，Goal active。
+
+
 87b5f78之后实际进展：原accepted wet state1有界host profile已完成。session80931 exit0/3.357s，build1.340s，两个显式evaluate .887659s(profiled)/.805864s(unprofiled)，选定输出逐字相同；runtime/父封存前后一致，仅run_service历史查询修复差异已明确绑定。8 thermalforwards、320 pressuretrials、328 nativeTP；两最终closure均38二分，宽7.2032e-6Pa。_transaction self.711s是剖析归因，不能拆C内部或当656独立TP；digest9次累计.00417s不支持hash主导。独立脚本/结果审核通过，完整证据research/host-profile-v1。无活动EOS/测试，不再poll80931。生产源码未修改，本轮是实测证据进展。
 
 下一实际实现合同research/host-profile-v1/PRESSURE_ROOT_NEXT_PLAN.md：default旧bisection保持；显式新数值策略用端点液体体积生成候选，但每个候选必须真实EOS+sign验证，保原width/residual/单调/guard及trial预算，不足收缩回二分。先独立解析根/假位停滞/浮点/异常测试及review，再原wetstate两次40s实际probe；未实现，不声明加速或事件通过。后续仍需事件/续算/空间收敛原门槛复验，不以点加速代替完整Goal。

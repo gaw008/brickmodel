@@ -147,6 +147,10 @@ def _validate(p: dict[str, Any]) -> None:
              (event and p.get('model_id') == _FREE_MODEL), 'unsupported schema/model', 'unsupported_model')
     free = p['model_id'] == _FREE_MODEL
     keys = dict(_KEYS)
+    numerics_object = p.get('numerics')
+    pressure = numerics_object.get('pressure_policy', {}) if isinstance(numerics_object, dict) else {}
+    if isinstance(pressure, dict) and 'strategy' in pressure:
+        keys['numerics/pressure_policy'] += ' strategy'
     if free:
         keys['mechanics'] = _FREE_MECHANICS
         keys['numerics/integration'] += ' stretch_absolute_tolerance stretch_scale'
@@ -275,7 +279,10 @@ def _validate(p: dict[str, Any]) -> None:
     _require(start < end if free else knots[0] <= start < end <= knots[1], 'invalid time domain')
     for group in ('pressure_policy', 'inverse_policy', 'integration'):
         for key, value in numerics[group].items():
-            if key in ('maximum_iterations', 'maximum_steps', 'maximum_rejections'):
+            if group == 'pressure_policy' and key == 'strategy':
+                _require(type(value) is str and value == 'guarded_liquid_endpoint_interpolation_v1',
+                         'unsupported explicit pressure strategy')
+            elif key in ('maximum_iterations', 'maximum_steps', 'maximum_rejections'):
                 _require(type(value) is int and value > 0, 'positive integer required: '+key)
             else:
                 _number(value, key, positive=True)
@@ -426,7 +433,8 @@ def _make_model(case: CaseDefinition, water_dir: Path, cells: int) -> tuple[Any,
     pressure_policy = n['pressure_policy']
     mechanical = RigidWaterGas(water, ('fixture', 'H2O'), volume, tuple(water_config['pressure_range_pa']),
         water_config['liquid_pressure_model'], PressurePolicy(pressure_policy['volume_absolute_m3'],
-        pressure_policy['pressure_absolute_pa'], pressure_policy['maximum_iterations']))
+        pressure_policy['pressure_absolute_pa'], pressure_policy['maximum_iterations'],
+        strategy=pressure_policy.get('strategy')))
     envelope = DeclaredNumericalEnvelope(tuple(n['temperature_bracket_k']), tuple(water_config['pressure_range_pa']),
         **n['envelope'], source_ids=source)
     fluid = RigidStorage(mechanical=mechanical, gas_phases=gases, envelope=envelope, allow_manufactured=True)

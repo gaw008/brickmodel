@@ -6,7 +6,7 @@ inferred. Liquid water retains its native IAPWS EOS and fitted gas constant.
 """
 from sludge_sandbox.water_properties import is_water_provider
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field, replace
 from fractions import Fraction
 import math
 from numbers import Real
@@ -49,11 +49,27 @@ class PressurePolicy:
     volume_tolerance_m3: float
     pressure_tolerance_pa: float
     maximum_iterations: int
+    strategy: str | None = field(default=None, metadata={"omit_when_none": True})
 
     def __post_init__(self):
+        if self.strategy is not None and (type(self.strategy) is not str or self.strategy != 'guarded_liquid_endpoint_interpolation_v1'):
+            raise RigidClosureDomainError('invalid_pressure_strategy')
         _number(self.volume_tolerance_m3,'volume_tolerance',positive=True)
         _number(self.pressure_tolerance_pa,'pressure_tolerance',positive=True)
         if type(self.maximum_iterations) is not int or self.maximum_iterations<=0:raise RigidClosureDomainError('invalid_iteration_limit')
+
+
+@dataclass(frozen=True)
+class PressureTrialRecord:
+    pressure_pa: float
+    bracket_before_pa: tuple[float, float]
+    residuals_before_m3: tuple[float | None, float | None]
+    kind: str
+    status: str
+    liquid_volume_m3: float | None = None
+    residual_m3: float | None = None
+    bracket_after_pa: tuple[float, float] | None = None
+    failure: str | None = None
 
 
 @dataclass(frozen=True)
@@ -83,6 +99,7 @@ class RigidWaterGasState:
     final_bracket_volume_residuals_m3: tuple[float,float] | None = None
     pressure_solution_path: str = 'not_recorded'
     pressure_bracket_qualification: str = 'not_recorded_legacy_constructor'
+    pressure_trial_ledger: tuple[PressureTrialRecord, ...] | None = field(default=None, metadata={'omit_when_none': True})
 
 
 @dataclass(frozen=True)
@@ -116,6 +133,18 @@ class RigidWaterGas:
         return _finite(n*s.molar_mass_kg_mol/s.density_kg_m3,'liquid_volume',positive=True)
 
     def evaluate_at_temperature(self,temperature_k,liquid_inventory_mol,gas_inventory_mol):
+        ledger = [] if self.policy.strategy is not None else None
+        try:
+            result = self._evaluate_at_temperature(temperature_k,liquid_inventory_mol,gas_inventory_mol,ledger)
+            return result if ledger is None else replace(result,pressure_trial_ledger=tuple(ledger))
+        except Exception as exc:
+            if ledger is not None:
+                if ledger and ledger[-1].status == 'evaluated':
+                    ledger[-1]=replace(ledger[-1],status='failed',failure=type(exc).__name__+':'+str(exc))
+                exc.pressure_trial_ledger = tuple(ledger)
+            raise
+
+    def _evaluate_at_temperature(self,temperature_k,liquid_inventory_mol,gas_inventory_mol,ledger):
         t=_number(temperature_k,'temperature',positive=True)
         nl=_number(liquid_inventory_mol,'liquid_inventory',nonnegative=True)
         if not isinstance(gas_inventory_mol,Mapping) or set(gas_inventory_mol)!=set(self.gas_species_ids):
@@ -130,10 +159,21 @@ class RigidWaterGas:
             raise RigidClosureNumericalError('unresolvable_pressure_precision')
         volume=self.available_pore_volume_m3
 
+        flo=fhi=None
+        trial_kind='initial_endpoint'
         def trial(p):
-            vl=self._liquid_volume(t,p,nl)
-            vg=_finite(nrt/p,'trial_gas_volume',positive=True)
-            f=_sum((vl,vg,-volume))
+            if ledger is not None:
+                ledger.append(PressureTrialRecord(p,(lo,hi),(flo,fhi),trial_kind,'started'))
+            try:
+                vl=self._liquid_volume(t,p,nl)
+                vg=_finite(nrt/p,'trial_gas_volume',positive=True)
+                f=_sum((vl,vg,-volume))
+            except Exception as exc:
+                if ledger is not None:
+                    ledger[-1]=replace(ledger[-1],status='failed',failure=type(exc).__name__+':'+str(exc))
+                raise
+            if ledger is not None:
+                ledger[-1]=replace(ledger[-1],status='evaluated',liquid_volume_m3=vl,residual_m3=f)
             return vl,f
 
         def finish(p,vl,iterations,final_bracket,endpoint_residuals,solution_path):
@@ -181,6 +221,51 @@ class RigidWaterGas:
             if f==0:
                 state=finish(edge,vl,0,(edge,edge),(f,f),'liquid_exact_numerical_endpoint')
                 if state is not None:return state
+        if self.policy.strategy is not None:
+            count=0
+            while count < self.policy.maximum_iterations:
+                start_width=hi-lo
+                proposals=[]
+                if start_width > self.policy.pressure_tolerance_pa:
+                    for liquid,direction in ((vl_hi,-math.inf),(vl_lo,math.inf)):
+                        denominator=Fraction(volume)-Fraction(liquid)
+                        if denominator>0:
+                            try:
+                                candidate=float(Fraction(nrt)/denominator)
+                            except OverflowError:
+                                continue
+                            candidate=math.nextafter(candidate,direction)
+                            if math.isfinite(candidate) and lo<candidate<hi and candidate not in proposals:
+                                proposals.append(candidate)
+                # After at most two proposals, enforce bisection unless they
+                # already halved the bracket. Width-gated finish still uses a
+                # fresh evaluated candidate and the unchanged residual/precision checks.
+                for candidate in proposals+[None]:
+                    if count>=self.policy.maximum_iterations:break
+                    if candidate is None:
+                        if hi-lo<=start_width/2 and hi-lo>self.policy.pressure_tolerance_pa:
+                            continue
+                        candidate=lo+(hi-lo)/2
+                        trial_kind='guarded_midpoint'
+                    else:
+                        trial_kind='liquid_endpoint_proposal'
+                        if not lo<candidate<hi:continue
+                    if candidate in (lo,hi):
+                        raise RigidClosureNumericalError('unresolvable_pressure_bracket')
+                    count+=1
+                    vl,f=trial(candidate)
+                    if not fhi<=f<=flo:
+                        ledger[-1]=replace(ledger[-1],status='failed',failure='nonmonotonic_pressure_evaluation')
+                        raise RigidClosureNumericalError('nonmonotonic_pressure_evaluation')
+                    if hi-lo<=self.policy.pressure_tolerance_pa:
+                        state=finish(candidate,vl,count,(lo,hi),(flo,fhi),'liquid_endpoint_interpolation')
+                        if state is not None:
+                            ledger[-1]=replace(ledger[-1],status='finished',bracket_after_pa=(lo,hi))
+                            return state
+                    if f>0:lo=candidate;flo=f;vl_lo=vl
+                    else:hi=candidate;fhi=f;vl_hi=vl
+                    ledger[-1]=replace(ledger[-1],status='bracket_updated',bracket_after_pa=(lo,hi))
+            raise RigidClosureNumericalError('pressure_iteration_limit')
         for count in range(1,self.policy.maximum_iterations+1):
             middle=lo+(hi-lo)/2
             if middle in (lo,hi):raise RigidClosureNumericalError('unresolvable_pressure_bracket')
