@@ -6,6 +6,7 @@
 
 | 关系或数值合同 | 实现与验证入口 | 已证实范围 |
 |---|---|---|
+| 质量基准 `Bᵀh₀=q`、逐反应质量/元素配平、循环一致性和可辨识输出 | `reaction_reference.ReactionReferenceNetwork.solve`；`test_reaction_reference.py` | [质量参考证据](research/mass-reaction-reference-v1/README.md)：16源码/16安装及独立18测试；保留完整network和未知量，仅名义代数，不授予材料资格 |
 | 精确时间的有序耗尽与全状态仿射交换 | `exact_depletion_integration.integrate_exact_depletion`；`test_exact_depletion_integration.py` | 真实水物性＋制造固体的2/4/8单元短时事件运行；[八格证据](research/exact-eight-cell-v1/README.md)，不是空间收敛或真实原泥材料验证 |
 | 原始初态的累计N/E、共享面、分项功与精确机械增量账本；选定事件写回 | `exact_record_audit.audit_exact_run`；`test_exact_record_audit.py` | [原记录实审](research/exact-record-audit-v1/README.md)；不重置原预算，仍不包含全部续算验收条件 |
 | 已提交终端的全根排序/完整求积/累计写回 | `exact_terminal_proof_audit.audit_committed_terminal_proofs` | [真实宿主保存记录复核](research/exact-record-gates-v1/README.md)；不重新求解全部RHS |
