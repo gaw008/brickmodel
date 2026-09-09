@@ -8,6 +8,9 @@
 |---|---|---|
 | 精确时间的有序耗尽与全状态仿射交换 | `exact_depletion_integration.integrate_exact_depletion`；`test_exact_depletion_integration.py` | 真实水物性＋制造固体的2/4/8单元短时事件运行；[八格证据](research/exact-eight-cell-v1/README.md)，不是空间收敛或真实原泥材料验证 |
 | 原始初态的累计N/E、共享面、分项功与精确机械增量账本；选定事件写回 | `exact_record_audit.audit_exact_run`；`test_exact_record_audit.py` | [原记录实审](research/exact-record-audit-v1/README.md)；不重置原预算，仍不包含全部续算验收条件 |
+| 已提交终端的全根排序/完整求积/累计写回 | `exact_terminal_proof_audit.audit_committed_terminal_proofs` | [真实宿主保存记录复核](research/exact-record-gates-v1/README.md)；不重新求解全部RHS |
+| 原粗网格锚/六项比较/连续与独立细化 | `exact_record_comparison_audit.audit_exact_comparisons` | 同上；实际函数返回已核，外围错误断言失败另行保留 |
+| 原累计资源及已保留计算的去重计费 | `exact_resource_audit.audit_exact_resources` | 同上；原79已用/433剩余，权威历史遥测不能单从状态重建 |
 | `ARLABOSSE2005_DRY_CP_EQ2`: 干基Cp=1434+3.29T_C | `arlabosse_caloric.ArlabosseDryCaloric.cp`；`test_arlabosse_caloric.py` | 同来源样品35–105°C的公开拟合计算；源元数据`data/sandbox/research/arlabosse2005/source.json`及原Eq2/单位图均核读 |
 | `ARLABOSSE2005_DRY_SENSIBLE_ENTHALPY_DIFF`: 对上述Cp解析积分 | `arlabosse_caloric.ArlabosseDryCaloric.delta_h`、`registry_payload` | [两节点追溯与实际安装例子](research/arlabosse-caloric-v1/README.md)；无绝对形成焓、Cv或摩尔材料准入 |
 

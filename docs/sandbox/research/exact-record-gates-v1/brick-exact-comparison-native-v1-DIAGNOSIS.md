@@ -1,0 +1,7 @@
+# Preserved runner failure, actual comparison function completed
+
+One authorized actual host rebuild/read-audit execution took1.855s (supervisor2.183s), then runner exited1 because it incorrectly required one packet rather than the existing two-cell record's two packets. No numerical gate failed. Comparison output was saved before this assertion: recordSHA ac03be01...,2 committed packets,6 comparisons across8refinement records,24pure pressure certificates,24saved endpoint calls. All original78module hashes and nonmodule metadata matched actual79runtime with sole predeclared fb8e9...audit-module addition. Runtime/input before/after are unchanged.
+
+Original run.py/PLAN/preflight/report and supervised failure remain unchanged. The first plan also incorrectly forecast3comparisons; actual function completed6. No retry or revised native success is claimed. verify_saved_outcome.py independently counts the strict saved objects and compares the function output with the earlier source-matched research audit. Its data-only verification passed, saved separately in attempt01/saved-outcome-verification.json. This supports actual native-host comparison-function execution while explicitly retaining the outer runner failure.
+
+This remains a partial comparison audit. It does not establish full prefix/root/resource certification or resume authority, nor does this singlehost reconstruction repeat the trajectory or any physical predictions.

@@ -4,6 +4,13 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+终端/比较/资源三个exact审计已应用（基线d00a89a）：proof ff991e94/test8af128、comparison 1cef63c3/testf4064bb、resource c1bfaabb/testef45b0f6；独立代码审查关闭粗解锚HIGH及3个resource低报HIGH。原RED/修复前源码/实际测试与95成员证据见research/exact-record-gates-v1。31+13源码相关测试通过；最终37安装34.83s通过，82实际非editable模块全部匹配源码。安装检查器首次漏传输出参数IndexError，随后按原接口提供路径成功；不是模块不匹配。
+
+实际宿主proof唯一运行exit0/2.10263s，2terminals/2candidates/1exclusion；comparison唯一运行exit1（runner误断言1packet），函数实际已返回2packets/6compare/24cert/24endpoint，原8refs独立重数一致，后续仅数据核查，不覆盖原FAILED或重跑。两者实际79与原78严格只读singleton兼容及全部input/runtime前后不变，完整独立结果审查已保存；不冒称最终82曾运行该native。资源纯原记录审计.25273s pass：原累计79charged/433remaining/100remainingreject，原elapsed完整保留，无EOS。root无活动EOS或测试，不重poll22182/12409/14366/25825。
+
+下一明确实现：/private/tmp/brick-exact-continuation-v1/exact_projection_restore.py 6c5ec48f/test75dfbe4f候选8pure及独立8pure9.79s通过、CODE_REVIEW批准，仅固定白名单恢复数值对象和actual modes/source，frame terminal ledger与accepted step同一对象修复原id关联陷阱；未repo准入、无续算授权。接下来组合完整审计/原记录恢复、保持原initial/time/policies/全部prefix/corrections与累计资源，实现真实取消续算及一次拼接，保留科学边界。原泥材料闭合、公开3机制留出、全湿烧冷却、空间收敛、逐代与CLIUI全部仍必需未完成；Goal active，本轮实际progress。
+
+
 原始exact前缀审计已应用（基线0fdc06f）：exact_record_audit fb8e9a23/testca0ff0ba，fresh规范字节和外部原initial/time/policies/实际host绑定；全prefix N/E/sharedface/components/stretch及已选terminal写回、累计预算重算。40源码23.98s、26实际安装23.83s通过，79实际非editable模块逐字匹配。审查/原RED/32成员完整证据见research/exact-record-audit-v1。
 
 安装前实际原78宿主审计已exit0（session64876，监督2.1953s，audit0.5147s），没有重复原77s积分；30prefix/2events通过，六项Fraction最大残差与独立原prefix审计完全一致。78原运行+单独hash绑定tmpaudit与后续79安装身份分别保存。仍resume_authorized=false。
