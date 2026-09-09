@@ -239,3 +239,5 @@ HEOS共存数值政策 `NUM-HEOS-COEXISTENCE-BACKTRACK-1`：固定T的F=(Δp,Δg
 ## 同质量基准正液量动态
 
 `mass_wet_transport.WetPair.evaluate` → 同一湿储能反解当前T/P与液气占积，有限O2质量反应、来源绑定水化学势相变、三组分共同面扩散/Darcy焓流与导热。`integrate_wet_pair` → 固定中点、一次共同面账本、kg固体/mol水与气体/总U分量更新及失败前缀保留。相变和反应热通过共同储能体现，不另加热源。制造液响应下独立DOP853与守恒测试见research/mass-wet-transport-v1；真实HEOS两格4/8步短轨迹及逐前缀审计见research/mass-wet-transport-native-v1。固体、动力学及传输系数为明确制造测试值，非真实污泥预测；两档差异不证明收敛阶或空间验证。
+
+`mass_wet_transport.WetPair.interfaces/with_depleted_cells` → 显式已耗尽且禁止成核的计算模式，不是材料定律或耗尽根证书；同湿储能零液分支、实际气压假想液相平衡诊断、严格再凝结DomainExit及不变库存。默认全湿完整parity、混合湿干及失败前缀测试见research/mass-wet-depletion-host-v1。尚无事件写回许可。

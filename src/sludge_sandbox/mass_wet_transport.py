@@ -1,13 +1,15 @@
-"""Two positive-liquid rigid kg/mol cells with source water phase exchange.
+"""Two rigid kg/mol cells with explicit existing-liquid or dry interface modes.
 
-Manufactured solids/kinetics/transport only. This is NOT a dry-event integrator.
+Manufactured solids/kinetics/transport only. Mode changes do not certify an event.
 """
-from dataclasses import dataclass,field
+from dataclasses import dataclass,field,replace
 from fractions import Fraction as F
 import math,time
 from sludge_sandbox.mass_wet_storage import WetMixedStorage,WetMixedState
 from sludge_sandbox.mass_storage_bridge import number,require
 from sludge_sandbox.phase_storage import InversePolicy
+from sludge_sandbox.integration import DomainExit
+from sludge_sandbox.water_properties import WaterDomainError
 from sludge_sandbox.water_chemical_potential import WaterChemicalPotential
 from sludge_sandbox.deforming_solid_storage import _digest
 from sludge_sandbox.gas_transport import ideal_gas_state,face_exchange
@@ -75,8 +77,10 @@ class WetPair:
     coefficient_source_ids: tuple
     face: WetFace
     _identity: str=field(init=False,repr=False)
+    interface_modes: tuple | None=None
 
     def __post_init__(self):
+        require(self.interface_modes is None or (type(self.interface_modes) is tuple and len(self.interface_modes)==2 and all(type(x) is str and x in ('existing_liquid','depleted_no_nucleation') for x in self.interface_modes)),'explicit_wet_dry_modes')
         require(type(self.storages) is tuple and len(self.storages)==2 and all(type(s) is WetMixedStorage for s in self.storages),'two_actual_wet_storages')
         require(type(self.inverse_policies) is tuple and len(self.inverse_policies)==2 and all(type(p) is InversePolicy for p in self.inverse_policies),'two_inverse_policies')
         require(type(self.chemical) is WaterChemicalPotential and type(self.face) is WetFace,'actual_chemical_and_face_required')
@@ -99,21 +103,55 @@ class WetPair:
     def binding(self):
         c=self.chemical
         backends=tuple((type(w).__module__,type(w).__qualname__,w.implementation) for w in (c.water,c.vapor._water))
-        return _digest((tuple(s.binding() for s in self.storages),self.inverse_policies,c,backends,(c.reference_pressure_pa,c.method_id,c.caloric_method_id,c.gas_constant_j_mol_k,c.temperature_range_k),self.rate_constants_per_s,self.oxygen_references_mol,self.transfer_coefficients_mol_s_pa,self.coefficient_source_ids,self.face))
+        base=_digest((tuple(s.binding() for s in self.storages),self.inverse_policies,c,backends,(c.reference_pressure_pa,c.method_id,c.caloric_method_id,c.gas_constant_j_mol_k,c.temperature_range_k),self.rate_constants_per_s,self.oxygen_references_mol,self.transfer_coefficients_mol_s_pa,self.coefficient_source_ids,self.face))
+        return base if self.interface_modes is None else _digest((base,self.interface_modes,'strict_no_nucleation'))
 
-    def evaluate(self,states):
+    @property
+    def interfaces(self):
+        return ('existing_liquid','existing_liquid') if self.interface_modes is None else self.interface_modes
+
+    def with_depleted_cells(self,states,cell_indices):
+        """Switch already-zero cells only; never localize or authorize writeback."""
+        self._check_states(states)
+        require(type(cell_indices) is tuple and bool(cell_indices) and all(type(i) is int and 0<=i<2 for i in cell_indices) and len(set(cell_indices))==len(cell_indices),'explicit_unique_depleted_cells')
+        modes=list(self.interfaces)
+        for i in cell_indices:
+            require(states[i].liquid_water_mol==0,'exact_zero_liquid_required_for_mode_change')
+            require(modes[i]=='existing_liquid','cell_already_depleted')
+            modes[i]='depleted_no_nucleation'
+        return replace(self,interface_modes=tuple(modes))
+
+    def _check_states(self,states):
         require(type(states) is tuple and len(states)==2 and all(type(s) is WetMixedState for s in states),'two_wet_states')
         require(self.binding()==self._identity,'wet_pair_source_changed')
+        for st,state,mode in zip(self.storages,states,self.interfaces):
+            st.check(state)
+            if mode=='depleted_no_nucleation' and state.liquid_water_mol!=0:raise DomainExit('dry_interface_requires_exact_zero_liquid')
+
+    def evaluate(self,states):
+        self._check_states(states)
+        for s,mode in zip(states,self.interfaces):
+            if mode=='depleted_no_nucleation' and s.liquid_water_mol!=0:raise DomainExit('dry_interface_requires_exact_zero_liquid')
+            if mode=='existing_liquid' and s.liquid_water_mol<=0:
+                if self.interface_modes is None:require(False,'positive_liquid_segment_only')
+                raise DomainExit('existing_liquid_interface_requires_positive_inventory')
         rows=[];gases=[]
         for i,(st,s,ip) in enumerate(zip(self.storages,states,self.inverse_policies)):
-            require(s.liquid_water_mol>0,'positive_liquid_segment_only')
+            mode=self.interfaces[i]
             inv=st.invert(s,ip);p=inv.point;t=p.temperature_k
             extent=represented(F(self.rate_constants_per_s[i])*F(s.solid_mass_kg[0])*F(s.gas_amounts_mol[0])/F(self.oxygen_references_mol[i]))
             po=represented(F(s.gas_amounts_mol[2])*F(self.chemical.gas_constant_j_mol_k)*F(t)/F(p.gas_volume_m3))
-            equilibrium=self.chemical.equilibrium_at_liquid_tp(t,p.fluid.mechanical.liquid_pressure_pa)
+            liquid_query_pressure=p.pressure_pa if mode=='depleted_no_nucleation' else p.fluid.mechanical.liquid_pressure_pa
+            try:equilibrium=self.chemical.equilibrium_at_liquid_tp(t,liquid_query_pressure)
+            except WaterDomainError as exc:
+                if mode=='depleted_no_nucleation':raise DomainExit('dry_interface_condensation_drive_unknown: '+str(exc)) from exc
+                raise
             peq=equilibrium.equilibrium_partial_pressure_pa
-            phase=represented(F(self.transfer_coefficients_mol_s_pa[i])*(F(peq)-F(po)))
-            if po==0:mu=entropy=None
+            if mode=='depleted_no_nucleation':
+                if po>peq:raise DomainExit('dry_interface_condensation_requires_unsupported_nucleation')
+                phase=0.
+            else:phase=represented(F(self.transfer_coefficients_mol_s_pa[i])*(F(peq)-F(po)))
+            if mode=='depleted_no_nucleation' or po==0:mu=entropy=None
             else:
                 log=math.log1p((peq-po)/po) if abs(peq-po)<.5*po else math.log(peq)-math.log(po)
                 mu=represented(F(self.chemical.gas_constant_j_mol_k)*F(t)*F(log))
@@ -162,7 +200,7 @@ class WetRun:
 
 
 def integrate_wet_pair(pair,initial,*,duration_s,steps,maximum_wall_seconds=30.,cancel=None):
-    """Bounded fixed midpoint segment before depletion; atomic accepted prefixes."""
+    """Bounded segment at declared modes; no automatic event or writeback."""
     require(type(pair) is WetPair and type(steps) is int and steps>0,'explicit_wet_steps')
     h=F(number(duration_s,positive=True))/steps;wall=number(maximum_wall_seconds,positive=True)
     start=time.monotonic();states=[initial];times=[F()];obs=[];ledgers=[];attempted=completed=0
@@ -182,7 +220,8 @@ def integrate_wet_pair(pair,initial,*,duration_s,steps,maximum_wall_seconds=30.,
             masses=tuple(F(a)+F(b) for a,b in zip(s.solid_mass_kg,l.solid_kg[i]))
             gas=tuple(F(a)+F(b)+sign*F(face)+(F(l.phase_water_mol[i]) if j==2 else 0) for j,(a,b,face) in enumerate(zip(s.gas_amounts_mol,l.chemical_gas_mol[i],l.face_mol)))
             liquid=F(s.liquid_water_mol)-F(l.phase_water_mol[i])
-            require(all(v>=0 for v in (*masses,*gas)) and liquid>0,'positive_liquid_segment_or_inventory_exit')
+            valid_liquid=liquid>0 if pair.interfaces[i]=='existing_liquid' else liquid==0
+            require(all(v>=0 for v in (*masses,*gas)) and valid_liquid,'positive_liquid_segment_or_inventory_exit' if pair.interface_modes is None else 'liquid_mode_or_inventory_exit')
             result.append(st.state(tuple(map(represented,masses)),represented(liquid),tuple(map(represented,gas)),represented(F(s.internal_energy_j)+sign*F(l.face_energy_j))))
         return tuple(result)
     status='completed';reason=None
@@ -191,6 +230,7 @@ def integrate_wet_pair(pair,initial,*,duration_s,steps,maximum_wall_seconds=30.,
             first=evaluate(states[-1]);mid=advance(states[-1],ledger(first,h/2));middle=evaluate(mid)
             l=ledger(middle,h);new=advance(states[-1],l);last=evaluate(new)
             states.append(new);times.append((i+1)*h);obs.append(last);ledgers.append(l)
+    except DomainExit as exc:status='domain_exit';reason=str(exc)
     except InterruptedError as exc:status='cancelled';reason=str(exc)
     except TimeoutError as exc:status='resource_limit';reason=str(exc)
     except (ValueError,OverflowError) as exc:status='failed';reason=str(exc)

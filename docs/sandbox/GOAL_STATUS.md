@@ -4,6 +4,10 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新C host已应用f12bd910/test2906f43e，源码41项14.89s、安装41项14.79s通过，90实际模块匹配；独立15项及应用核验通过。research/mass-wet-depletion-host-v1保存原失败/完整审核/测试并逐成员SHA核实。默认wet保parity，显式dry仅精确0液，strict再凝结/未知域拒绝；没有自动耗尽或写回许可。B已提交0559fd7且原生两档全部终态，旧90原生freeze仍完整归档，不跨新C版本续算。
+
+下一：Carson的exact_stage临时候选正在纯测试，尚未审查准入；必须保持kg/mol/U/T/P/time各门槛并检查全二次面板，ordinary wet严格正液、dry恒0。Goal第11节全部完整范围仍未完成。
+
 最新：B原生4/8步均已终态exit0并回收（sessions68137/89156，不重poll）。同freeze3f144dee、90安装模块、原输入及150s内/180s外预算不变；积分64.535696667/130.575182458s，4/8接受步、12/24完成回调，各接受前缀九项原守恒门槛通过，全局U精确差0。coarse/fine均已独立保存数据复核通过；163成员归档见research/mass-wet-transport-native-v1，逐成员SHA重读核实。未宣称时间阶或空间收敛。下列“正在运行”是历史记录。
 
 C host候选f12bd910/test2906f43e已独立15项9.98s通过，尚未应用；必须等B全部结果复核与归档后才改变安装。Carson在/private/tmp/brick-mass-wet-integration-v1/exact_stage继续kg/mol分离的精确试步候选，尚未冻结或准入。完整材料/湿干事件/全周期仍未完成。
