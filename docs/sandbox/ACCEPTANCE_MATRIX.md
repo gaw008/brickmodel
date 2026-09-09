@@ -13,7 +13,7 @@
 | E04 | 来源文件、hash、日期、许可 | 合法原始缓存与registry | in_progress |
 | E05 | 材料/气氛/温压/几何匹配 | domain gate与域外测试 | in_progress |
 | E06 | unknown传播、无默认补值 | 下游阻断、fixture隔离测试 | in_progress |
-| E07 | 参数相关性与不确定性依据 | 成套材料包及joint约束 | pending |
+| E07 | 参数相关性与不确定性依据 | 新制造共享常数盒的reported-T条件压力差模块、四保存证书及修复后探针（PAIRED_PRESSURE）；尚未接事件，真实材料相关性与联合T/P仍缺 | in_progress |
 | E08 | 任意结果能查询到原始证据 | 原规定形变4量及自由形变7量CLI/Python依赖图已实测；新显式事件目录22方程/7入口通过安装测试及原生湿前缀追溯（FREE_EVENT_APPLICATION）；local-ui-v1已实际打开界面追查来源，事件专用编辑与全周期材料仍缺 | in_progress |
 | M01 | 原污泥与SSA等身份分离 | materials身份类别+测试；真实包仍未核准 | in_progress |
 | M02 | 元素/氧化物/矿相/LOI分离 | MassAnalysis typed类别/基准；phase独立ID，运行资格仍待接入 | in_progress |

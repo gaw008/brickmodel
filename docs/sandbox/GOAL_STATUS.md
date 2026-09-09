@@ -4,6 +4,15 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+上一Goal回合仅重述提示词，按no-progress处理。本回合恢复实际未提交模块并独立重算四个保存证书exit0，冻结125文件证据包，新增PAIRED_PRESSURE说明，属于progress；完整Goal仍active。
+
+新增paired_pressure/paired_pressure_host及31项专属测试：明确新制造共享常数参数盒，只计算reported-T条件压力差；默认unavailable，保留原点误差。旧版源码/安装相关60项通过、64模块核对；两个两格真实端点探针分别3.2685/3.1109s，非零差3.6015990190e-5Pa、上界3.7279046258e-5/3.7405558044e-5Pa。没有接入事件接受，原failed保持。来源、全部输入、四证书、审核和旧64模块已封存research/paired-pressure-v1/evidence-before-identity-fix.zip及逐文件manifest。
+
+最终identity修复已完成独立审查：last observer后复核thermal/chemical两implementation与捕获值，原RED1fail保留，15主机检查通过。非editable安装专属34项通过0.34s、64实际模块匹配；真实两格非零neighbor正常observer补验session28048已exit0，3.40284s探针/3.78762s监督，两个上界及全部端点与旧运行相同。无活动EOS/测试。27项修复/审查/新native/设计证据封存identity-fix-and-adoption.zip；旧125项包不覆盖。原audit只证保存算术及内容一致性，不独立重建所有host误差项/材料物性。
+
+下一实施合同已冻结research/paired-pressure-v1/ADOPTION_PLAN.md：实际旧压力gate也是reported-T条件界，温度误差独立检查，因此不凭新增Ttube要求阻断；新共享常数误差族必须显式opt-in，default原公式/旧记录保持。需新增before-call取消/尝试计费、实际event/common全格inverse快照与两op绑定、记录/审计/续跑版本分支及新案例声明。未接入/未宣称事件通过。完整原污泥材料/三机制公开留出/全周期/空间收敛仍未完成。
+
+
 9121200之后实际原生耗尽attempt01已终态：session90003 exit0但模型failed correction_exceeds_evaporation_fraction，499.457s服务/496.887s积分，13accepted steps/0events/751eval/90attempt。固定end0.50032未到，停于0.5002620305782048。level1–11仅P比较失败，~0.005135Pa点误差包络大于原1e-4Pa门槛；不加refinement或放宽gate重跑。独立每prefix N/E/stretch通过，全局pe功最大2.76765e-11J、C累计绝对抵消9.25615e-21J通过原2e-8目标。单点实际安装诊断session46463已终态2.306s，证明流体项与约2e-12m3体积包络均有贡献。全部失败/审查/账本见FREE_NATIVE_EVENT_FAILURE.md及research/free-native-events-v1。
 
 下一数值修复为有证明的成对压力差包络，而非削减原物性误差。reacting_skeleton_provider在/private/tmp/brick-paired-pressure-design-v1准备共享单调闭合推导（仅设计、未应用、无EOS）；恢复先读其实际最终状态/设计再审核实现。当前无活动EOS/测试。Kim2008定向原文检索仍未取得合法全文，未准入Cp或材料。原完整Goal继续active，原污泥材料/三机制留出/全周期/空间收敛都未完成。

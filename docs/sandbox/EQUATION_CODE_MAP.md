@@ -1,5 +1,9 @@
 # 方程—代码—验证映射 v0.1
 
+## 条件成对压力比较（未接服务）
+
+`paired_pressure.certify_paired_pressure`：B根区间残差差/正顺应性下界与独立根距离界；`paired_pressure_host.prepare_paired_pressure`：实际两状态及端点来源绑定。详细假设、19纯核+12主机检查和四实际保存证书见 [PAIRED_PRESSURE.md](PAIRED_PRESSURE.md)。只准入显式制造共享常数假设、固定报告温度，不含完整温度反解误差tube，不替代事件接受或材料验证。
+
 ## 自由形变耗尽事件映射
 
 显式事件案例使用 `catalogs/free-wet-event-slab-equations-v1.json`，22项方程声明、7个输出入口；普通自由案例和原规定形变目录继续分别保留。`depletion_integration.integrate_depletion`推进完整状态及累计历史，`affine_depletion_clock.locate_affine_depletion_clock`定位仿射末端，`depletion_roundoff.depletion_writeback`量化必要的浮点库存修正，`event_record.audit_depletion_record`复核保存的步骤、事件、比较诊断和原始预算。`run_service`将案例/来源/实际算子与续算绑定，最终快照采用实际耗尽模式。
