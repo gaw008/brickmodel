@@ -4,6 +4,14 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+本阶段最终分类修复：native e324成功后发现DomainExit被写为failed，d004b1b7现保留domain_exit（同reason的IntegrationError仍failed）。实际RED1fail12pass→GREEN13；58源码.66s/58安装.75s、75finalmodules匹配；独立复审成功路径未变，不重复EOS。native证据仍绑定e324，before-domain-fix日志/身份及失败审计历史均保留，未混称finald004实际运行。原生完整账本独立Fraction审计通过，ratio3.11236609e-9<原1e-8；只speculative终端，不是packet。
+
+最新实际终端执行器（基线b4d48c7）：exact_terminal_executor sourcee3246434/testa771，完整actual初/mid/endpoint三观测→root/panel/writeback→候选mode；12pure seamtests及57源码.66s/57安装.73s通过，75实际模块匹配，独立代码审查通过。原mass/source/energy/mode内容约束保持，失败/cancel/wall保存阶段/尝试成本，明确不提交原state/op/totals。
+
+实际native01/session30444已终态exit0：45s监督2.55845s/runner2.22706s/core.814022s，speculative_completed，初始Rates与保存旧样本相同、midpoint重新实际采样，cell2根27级，3observations/1predictor/1terminal/1mode；delta4.86807e-21mol/gross1.56410707e-12mol仍原1e-8门槛。原case/initial/source/runtime75/输入state保持。起点已含未提交cell3，totals1→2均speculative，不能称已提交2events或完整trajectory。root无活动EOS/测试。证据research/exact-terminal-native-v1。
+
+下一实际任务：Averroes正在 /private/tmp/brick-exact-packet-bridge-v1 实现完整exact_depletion_integration driver（PLAN已落），直接接exactordinary和executor，保原common/per-event六gate、连续2pass、独立approach/实际不同网格、pairedP真实operator绑定、全局wall/成本/原初全prefix账本及oncecommit。核实际代码/tests/review再原四格全程。旧record/continuation仍未准入，原四格FAILED未关闭。原污泥材料闭合、三机制公开留出、全湿烧冷却、空间收敛和最终应用验收继续必需；Goal active，本轮progress。
+
 最新完整终端面板检查点（基线a89bf04）：新增exact_terminal_panel（全N/E/face/source/components/stretch一次积分与whole-polynomial minima）及exact_root_order（全wet集合/严格根分离/无根排除）。rootorder验证初版bool/int混同HIGH实际5RED后用逐层exacttype校验修复；source1cc3/testb925，panel2fdf。68源码5.18s、36安装.40s通过，74实际模块匹配。完整原failedpanel安装版重放选cell2、排除0/1、26级，原修正比例9.2264e-9<1e-8；全部积分独立复算。不是新的完整trajectory。
 
 实际native01/session18952已终态exit0：45s监督1.8402s，runner1.5418s。原case/initial身份、replay完整state、exact端点、dry2/3模式，真实water host求值成功；phase率[.0017456959735,.0017457070151,0,0]，来源/runtime74/状态保持。两事件和totals仍属未提交分支，原四格packet FAILED未关闭。root无活动EOS/测试。见research/exact-full-panel-replay-v1及两个模块研究目录。

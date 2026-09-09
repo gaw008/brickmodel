@@ -14,6 +14,8 @@
 
 完整精确面板增量：68源码/36安装及原保存四格panel→根排序→writeback→实际mixed端点通过，74模块匹配。明确未提交事件/未完成packet比较，原空间/材料/完整烧成要求不升级。见research/exact-full-panel-replay-v1。
 
+实际精确终端执行器增量：final58源码/58安装、此前e324原四格保存failed initialstate的fresh3观测终端通过，两个75模块版本证据分开；原政策不变。起点/结果均未提交分支，未通过完整packet/空间/材料/烧成验收。见research/exact-terminal-native-v1。
+
 | ID | 合同要求 | 应有实现/证据 | 当前状态 |
 |---|---|---|---|
 | G00 | 完整合同、分支、WIP保护 | 合同、Git基线、BASELINE_AUDIT | verified（仅初始化） |

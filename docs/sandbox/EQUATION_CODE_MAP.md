@@ -1,5 +1,7 @@
 # 方程—代码—验证映射 v0.1
 
+`exact_terminal_executor.execute_exact_terminal`：实际三观测、精确Euler中点、全root/panel/原writeback及仅选定mode变化；保存未提交阶段与成本。final58源码/58安装；修复前e324原四格失败初态fresh3EOS终端通过，两个版本均75模块且身份分开。非完整packet。见[证据](research/exact-terminal-native-v1/README.md)。
+
 `exact_terminal_panel` 与 `exact_root_order`：同一共享仿射采样的全状态积分、区间最小值及全wet根排序；完整保存四格失败panel回放并真实water mixed端点通过。68源码/36安装，74模块。原多pass事件接受及全物理验证未完成。见[证据](research/exact-full-panel-replay-v1/README.md)。
 
 `exact_free_host.ExactFreeWaterTransfer`：自主direct FreeSolidSlab/WPT共享state-only物性计算，exact时间无投影；全部water backend type/implementation纳入实际来源绑定。38源码/38安装及原四格初态真实water点对照通过，72模块一致；非完整事件或材料验证。见[证据](research/exact-native-host-v1/README.md)。
