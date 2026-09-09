@@ -74,6 +74,7 @@ _KEYS = {
 
 _FREE_MODEL = 'manufactured_reacting_wet_free_slab_v1'
 _EVENT_SCHEMA = 'sludge_sandbox_free_event_case_v1'
+_EXACT_EVENT_SCHEMA = 'sludge_sandbox_free_exact_event_case_v1'
 _DEPLETION_KEYS = 'schema time_absolute_s amount_absolute_mol energy_absolute_j temperature_absolute_k pressure_absolute_pa terminal_window_s maximum_refinements roundoff_policy common_time_horizon_s safe_inventory_fraction nested_approach terminal_method'
 _ROUNDOFF_KEYS = 'correction_absolute_mol correction_fraction_evaporated storage_absolute_mol cumulative_storage_absolute_mol element_absolute_mol cumulative_element_absolute_mol mass_absolute_kg cumulative_mass_absolute_kg cumulative_correction_absolute_mol molar_mass_kg_mol'
 
@@ -127,7 +128,7 @@ def _validate(p: dict[str, Any]) -> None:
     def finite_tree(value: Any, pointer: str = '') -> None:
         if type(value) is bool:
             _require(pointer in ('/material_qualified', '/training_eligible') or
-                     (p.get('schema') == _EVENT_SCHEMA and p.get('model_id') == _FREE_MODEL and
+                     (p.get('schema') in (_EVENT_SCHEMA,_EXACT_EVENT_SCHEMA) and p.get('model_id') == _FREE_MODEL and
                       pointer == '/numerics/depletion/nested_approach/reuse_ordinary_spine'),
                      'boolean is not a physical number: '+pointer)
         elif type(value) in (int, float):
@@ -141,7 +142,7 @@ def _validate(p: dict[str, Any]) -> None:
     finite_tree(p)
     if p.get('classification') != 'manufactured_verification' or p.get('material_qualified') is not False or p.get('training_eligible') is not False:
         raise CaseError('Real material or training eligibility is not evidenced by this verification model', 'evidence_incomplete')
-    event = p.get('schema') == _EVENT_SCHEMA
+    event = p.get('schema') in (_EVENT_SCHEMA,_EXACT_EVENT_SCHEMA)
     _require((p.get('schema') == 'sludge_sandbox_verification_case_v1' and
               p.get('model_id') in ('manufactured_reacting_wet_prescribed_slab_v1', _FREE_MODEL)) or
              (event and p.get('model_id') == _FREE_MODEL), 'unsupported schema/model', 'unsupported_model')
@@ -157,8 +158,13 @@ def _validate(p: dict[str, Any]) -> None:
     if event:
         keys['numerics'] += ' depletion'
         keys['numerics/depletion'] = _DEPLETION_KEYS
-        if isinstance(p['numerics']['depletion'],dict) and p['numerics']['depletion'].get('schema')=='sandbox_depletion_policy_v2':
+        if isinstance(p['numerics']['depletion'],dict) and p['numerics']['depletion'].get('schema') in ('sandbox_depletion_policy_v2','sandbox_exact_depletion_policy_v1'):
             keys['numerics/depletion'] += ' pressure_comparison'
+        if p.get('schema')==_EXACT_EVENT_SCHEMA:
+            keys['numerics/depletion'] += ' ordered_event_policy'
+            _require(p['numerics']['depletion'].get('schema')=='sandbox_exact_depletion_policy_v1','explicit exact depletion policy required')
+        else:
+            _require(p['numerics']['depletion'].get('schema')!='sandbox_exact_depletion_policy_v1','exact policy requires exact case schema')
         keys['numerics/depletion/roundoff_policy'] = _ROUNDOFF_KEYS
     for pointer, names in keys.items():
         try:
@@ -304,10 +310,11 @@ def _build_depletion_policy(record: dict[str, Any], *, operator: Any = None, val
     from .depletion_integration import DepletionPolicy, NestedApproachPolicy
     from .depletion_roundoff import DepletionRoundoffPolicy
     _require(type(record) is dict,'depletion policy object required')
-    paired=record.get('schema')=='sandbox_depletion_policy_v2'
-    expected=set(_DEPLETION_KEYS.split()) | ({'pressure_comparison'} if paired else set())
+    exact=record.get('schema')=='sandbox_exact_depletion_policy_v1'
+    paired=exact or record.get('schema')=='sandbox_depletion_policy_v2'
+    expected=set(_DEPLETION_KEYS.split()) | ({'pressure_comparison'} if paired else set()) | ({'ordered_event_policy'} if exact else set())
     _require(set(record)==expected,'exact depletion policy keys required')
-    _require(record['schema'] in ('sandbox_depletion_policy_v1','sandbox_depletion_policy_v2'), 'unsupported depletion policy schema')
+    _require(record['schema'] in ('sandbox_depletion_policy_v1','sandbox_depletion_policy_v2','sandbox_exact_depletion_policy_v1'), 'unsupported depletion policy schema')
     _require(record['terminal_method'] == 'affine_midpoint', 'event case requires affine_midpoint')
     for key in ('time_absolute_s','amount_absolute_mol','energy_absolute_j','temperature_absolute_k',
                 'pressure_absolute_pa','terminal_window_s','common_time_horizon_s','safe_inventory_fraction'):
@@ -322,9 +329,11 @@ def _build_depletion_policy(record: dict[str, Any], *, operator: Any = None, val
         _require(type(nested) is dict and set(nested) == {'maximum_step_s','reuse_ordinary_spine','strategy_id'}, 'exact nested approach keys required')
         _number(nested['maximum_step_s'], 'nested maximum step', positive=True)
         _require(type(nested['reuse_ordinary_spine']) is bool and nested['strategy_id']=='nested_wet_ordinary_spine_v1', 'explicit nested approach strategy required')
+    if exact:
+        _require(record['ordered_event_policy']=='ordered_affine_packet_v1' and nested is not None and nested['reuse_ordinary_spine'] is False,'explicit exact ordered nested policy required')
     try:
         values = {key:value for key,value in record.items() if key not in ('schema','roundoff_policy','nested_approach')}
-        if paired:
+        if paired and not (exact and record['pressure_comparison'] is None):
             from .pressure_comparison import PressureComparisonPolicy, SCHEMA
             from .paired_pressure_host import declare_manufactured_constant_box
             declaration=record['pressure_comparison']
@@ -576,7 +585,7 @@ def build_case(case: CaseDefinition, water_dir: str | Path) -> BuiltCase:
     p = case.payload
     cells, start, end = p['grid']['cells'], p['numerics']['start_s'], p['numerics']['end_s']
     operator, rows, temperatures = _make_model(case, Path(water_dir), cells)
-    depletion = _build_depletion_policy(p['numerics']['depletion'],operator=operator) if p['schema']==_EVENT_SCHEMA else None
+    depletion = _build_depletion_policy(p['numerics']['depletion'],operator=operator) if p['schema'] in (_EVENT_SCHEMA,_EXACT_EVENT_SCHEMA) else None
     if depletion is not None:
         _require(depletion.roundoff_policy.molar_mass_kg_mol == operator.chemical.reference.molar_mass_kg_mol,
                  'roundoff water molar mass differs from actual source reference')
@@ -629,7 +638,12 @@ def snapshot(built: BuiltCase, state: Any, time_s: float) -> dict[str, Any]:
     _require(type(built) is BuiltCase, 'BuiltCase required')
     _require(read_case(built.case.path).sha256 == built.case.sha256, 'case source changed before evaluation')
     out = built.operator.evaluate(state, time_s)
-    base, operator = out.base_evaluation, built.operator
+    return _snapshot_evaluation(built,state,time_s,out,built.operator)
+
+
+def _snapshot_evaluation(built,state,time_s,out,operator):
+    """Serialize an already evaluated actual operator, without repeating inversion."""
+    base = out.base_evaluation
     current = base.current_host
     transport = current.transport
     faces = []

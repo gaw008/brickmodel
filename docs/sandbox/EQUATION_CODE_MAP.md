@@ -221,3 +221,9 @@ HEOS共存数值政策 `NUM-HEOS-COEXISTENCE-BACKTRACK-1`：固定T的F=(Δp,Δg
 `NUM-EXACT-TIME-1` → `exact_event_clock.py`：单Fraction语义身份、严格时间/区间编码、独立显示投影；`exact_boundary_program.py`：精确节点/权重和声明的完整程序平移。`test_exact_clock.py` 有23项原语测试，连同原边界程序41项在源码/安装各64通过。
 
 `NUM-EXACT-SSPRK2-1` → `exact_integration.py`：精确回调及实际阶段端点、两半步误差估计、N/E/形变/component账本和原子前缀提交。未来名义步长向下量化是明确数值控制选择，不投影实际时间。`test_exact_integration.py` 16项实际制造测试、`test_exact_time_boundaries.py` 两项旧消费者拒绝；相关源码185/安装132通过，70实际模块匹配。见 `research/exact-integration-v1/README.md`。尚未准入原生耗尽事件、旧记录或完整材料过程。
+
+## 精确事件服务与显示接入
+
+`free-wet-exact-event-slab-equations-v1.json`：27方程、7结果根；18原物理条目保持，新增精确时间/耗尽/记录审计均列为数值策略。`exact_run_service.py` 接入严格记录、四审计、终态快照与完整导出；`run_service.py` 的续算保持原初态、政策和父历史一次。`test_exact_run_service.py` 与真实水取消/续算/重放证据见 research/exact-service-native-v1。
+
+`assets/app.js` 的时间元数据验证与有理时刻排序检查仅用于显示，未知显式schema拒绝，浮点时间不作为续算输入；实际浏览器比较、溯源、导出见 research/exact-ui-v1。不构成新增材料本构或完整周期验证。

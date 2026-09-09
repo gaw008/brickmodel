@@ -20,7 +20,13 @@ function supportedGridSizes(model) {
   if(model==='manufactured_reacting_wet_prescribed_slab_v1')return [2,4];
   throw new Error('不支持的案例模型。');
 }
+function materialDescription(model) {
+  const mechanics=model==='manufactured_reacting_wet_free_slab_v1'?'自由牵引、公共切向伸长':
+    model==='manufactured_reacting_wet_prescribed_slab_v1'?'规定变形':'尚未识别的力学模型';
+  return `当前案例使用真实水物性与制造反应，力学设定为${mechanics}。它尚不支持真实原污泥的完整烧制预测，不能用于判定产品合格。`;
+}
 function fillControls() {
+  $('material-description').textContent=materialDescription(caseData.model_id);
   const sizes=supportedGridSizes(caseData.model_id);
   if(!sizes.includes(caseData.grid.cells))throw new Error('该模型不支持此网格数量。');
   $('cells').replaceChildren(...sizes.map(size=>{
@@ -94,10 +100,36 @@ async function refresh() {
 function traceQuantity(quantity) {
   return ['normal_stretch','tangential_stretch'].includes(quantity)?'mechanical_stretches':quantity;
 }
+// Exact absolute clocks stay decimal integer strings; BigInt is only used for ordering checks.
+function timeDescriptor(integration) {
+  const times=integration?.times_s;
+  const invalid={valid:false,kind:'invalid',label:'时间数据不可用',note:'保存时间缺失、语义不明或顺序无效。'};
+  if(!Array.isArray(times)||!times.length||times.some(x=>!Number.isFinite(x)))return invalid;
+  if(integration.schema!=='exact_core_presentation_v1') {
+    if(integration.schema!==undefined)return invalid;
+    if(integration.exact_times!==undefined||integration.time_semantics!==undefined||times.some((x,i)=>i>0&&x<=times[i-1]))return invalid;
+    return {valid:true,kind:'absolute',label:'保存的绝对物理时间（s）',note:'旧格式时间使用保存的绝对物理时间。'};
+  }
+  if(integration.time_semantics!=='display_elapsed_from_original_start_only; exact_times are authoritative rational strings; no sorting or deduplication')return invalid;
+  const exact=integration.exact_times;
+  if(!Array.isArray(exact)||exact.length!==times.length||times[0]!==0||times.some((x,i)=>x<0||(i>0&&x<times[i-1])))return invalid;
+  let previous=null;
+  for(const value of exact) {
+    if(!value||typeof value.numerator!=='string'||typeof value.denominator!=='string'||
+       !/^(0|-?[1-9][0-9]*)$/.test(value.numerator)||! /^[1-9][0-9]*$/.test(value.denominator))return invalid;
+    const n=BigInt(value.numerator),d=BigInt(value.denominator);
+    if(previous&&n*previous.d<=previous.n*d)return invalid;
+    previous={n,d};
+  }
+  const collision=times.some((x,i)=>i>0&&x===times[i-1]);
+  return {valid:true,kind:'elapsed',label:'距各运行原始起点的经过时间（s，显示投影）',
+    note:`原始绝对起点为 ${exact[0].numerator}/${exact[0].denominator} s；精确绝对时刻保留为有理数字符串，可在导出报告 exact_times 查看。显示投影不用于续算。`+
+      (collision?' 不同精确时刻发生显示坐标碰撞，所有保存点仍按原顺序保留，未排序或去重。':'')};
+}
 function mechanicalSeries(id,integration,quantity) {
   const states=integration.states,times=integration.times_s;
   if(!Array.isArray(states)||!states.length||!Array.isArray(times)||times.length!==states.length||
-     times.some((time,index)=>!Number.isFinite(time)||(index>0&&time<=times[index-1])))return [];
+     !timeDescriptor(integration).valid)return [];
   const cells=states[0]?.amounts_mol?.length;
   if(!Number.isInteger(cells)||cells<1)return [];
   if(states.some(state=>!Array.isArray(state?.amounts_mol)||state.amounts_mol.length!==cells||
@@ -112,7 +144,7 @@ function mechanicalSeries(id,integration,quantity) {
   }));
 }
 function seriesFor(id,result,quantity) {
-  const integration=result?.integration;if(!integration?.states?.length)return [];
+  const integration=result?.integration;if(!integration?.states?.length||!timeDescriptor(integration).valid)return [];
   if(['normal_stretch','tangential_stretch'].includes(quantity))return mechanicalSeries(id,integration,quantity);
   let states=integration.states, times=integration.times_s;
   const thermal=['temperature_k','pressure_pa'].includes(quantity);
@@ -145,14 +177,18 @@ function draw(svg,series,xlabel,connect=true) {
   });
 }
 function renderPlots() {
-  const quantity=$('quantity').value;let all=[];const spatial=[];
-  for(const id of compared){const item=results.get(id);const series=seriesFor(id,item?.result,quantity);all.push(...series);if(series.length&&!series[0].global)spatial.push({name:id.slice(0,8),points:series.map(s=>[s.cell+1,s.points.at(-1)[1]]),thermal:false});}
-  draw($('time-chart'),all,'保存的物理时间（s）');draw($('space-chart'),spatial,'厚度单元编号（非实际距离）');
+  const quantity=$('quantity').value;let all=[];const spatial=[];const clocks=[];
+  for(const id of compared){const item=results.get(id);if(item?.result?.integration)clocks.push({id,...timeDescriptor(item.result.integration)});const series=seriesFor(id,item?.result,quantity);all.push(...series);if(series.length&&!series[0].global)spatial.push({name:id.slice(0,8),points:series.map(s=>[s.cell+1,s.points.at(-1)[1]]),thermal:false});}
+  const mixed=new Set(clocks.filter(c=>c.valid).map(c=>c.kind)).size>1;
+  if(mixed)all=[];
+  draw($('time-chart'),all,mixed?'时间语义不同，未合并时间轴':(clocks.find(c=>c.valid)?.label||'时间数据不可用'));draw($('space-chart'),spatial,'厚度单元编号（非实际距离）');
   $('legend').replaceChildren();for(let i=0;i<all.length;i++){const span=document.createElement('span');span.className='legend-item';span.style.borderColor=colors[i%colors.length];span.textContent=all[i].name;$('legend').append(span);}
   $('space-legend').replaceChildren();for(let i=0;i<spatial.length;i++){const span=document.createElement('span');span.className='legend-item';span.style.borderColor=colors[i%colors.length];span.textContent='空间图 / '+spatial[i].name;$('space-legend').append(span);}
   $('plot-note').textContent=['temperature_k','pressure_pa'].includes(quantity)?'温度和压力仅展示已保存的初态、成功终态点，不补造中间曲线。空间图按单元编号展示。':'折线连接已接受的离散状态，不代表连续解。各单元库存与能量是广延量；不同网格不能直接当作同体积比较。';
   if(quantity==='normal_stretch')$('plot-note').textContent=all.length?'法向伸长无量纲；每个单元一条已接受状态曲线。空间图使用单元编号。':'法向伸长不可用：保存状态缺失、非有限或形状不匹配。';
   if(quantity==='tangential_stretch')$('plot-note').textContent=all.length?'公共切向伸长无量纲；每个运行只有一个全局自由度，不展示切向空间曲线。':'公共切向伸长不可用：保存状态缺失、非有限或形状不匹配。';
+  $('plot-note').textContent+=' '+clocks.map(c=>c.id.slice(0,8)+'：'+c.note).join(' ');
+  if(mixed)$('plot-note').textContent+=' 比较记录混用了绝对时间与经过时间，时间图已停用；请单独查看，空间图仍显示各自最后保存状态。';
 }
 $('quantity').onchange=()=>{renderPlots();clearTrace();};
 function clearTrace() { traceSequence++;artifactSequence++;$('export-panel').hidden=true;$('export-report').value=''; $('sources').replaceChildren();$('trace-detail').textContent='';$('trace-status').textContent='';$('artifact').hidden=true; }

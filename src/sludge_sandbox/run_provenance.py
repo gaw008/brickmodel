@@ -84,6 +84,9 @@ LEGACY_MODEL_ID = 'manufactured_reacting_wet_prescribed_slab_v1'
 
 def catalog_filename(model_id: str = LEGACY_MODEL_ID, *, case_schema: str | None = None) -> str:
     """Resolve only explicitly supported models to fixed packaged filenames."""
+    if case_schema == 'sludge_sandbox_free_exact_event_case_v1':
+        _require(model_id == 'manufactured_reacting_wet_free_slab_v1', 'unsupported_catalog_model')
+        return 'free-wet-exact-event-slab-equations-v1.json'
     if case_schema == 'sludge_sandbox_free_event_case_v1':
         _require(model_id == 'manufactured_reacting_wet_free_slab_v1', 'unsupported_catalog_model')
         return 'free-wet-event-slab-equations-v1.json'

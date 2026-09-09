@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新精确服务及界面已实际应用：exact_run_service 643511f3、run_service 4ae72fef、app.js 6a05da78。源码/安装服务各76通过，前端各16通过，独立服务20/前端22通过，87实际安装模块一致。构建前取消及未知时间schema两缺陷已修复，RED保留。永久证据 research/exact-service-v1、exact-service-native-v1、exact-ui-v1 均有逐成员核验归档。
+
+真实水服务取消1步→续算30步/2事件→重放30步/2事件全部完成且回收；续算/重放全部非墙钟核心字段一致，19处耗时差异保留。实际浏览器另取消13步→续算30步，比较/来源展开/完整导出通过；5,766,261字节可见报告中的5,035,493字节规范记录与磁盘逐字节一致。所有EOS子任务终态；本地UI监听8767（工具session60913）仍供查看，不是公开部署。完整操作见 EXACT_EVENT_APPLICATION.md。
+
+下一执行：审查通过的 `/private/tmp/brick-mass-transport-bridge-v1` 两格kg固体/mol流体传输候选（source d9d532c2）尚未应用；核最终冻结后做源码/安装验证并接入，继续湿态、真实材料闭合、空间验证与全周期。Goal第11节全部范围保持，制造固体短时服务成功不等于真实污泥烧成模型完成。以下旧候选状态保留作历史，以此入口为准。
+
 混合质量热桥已实际应用：source cc98bc97 / portable test 5a612eec，三审查HIGH均修复并保留RED；68源码3.05s/68安装3.01s通过，86实际安装模块一致。实际kg固体/mol流体、有限O2、共同总U反解T/P；无双计反应热。证据 `research/mass-storage-bridge-v1`。仍是制造固定单格干态，非完整材料。
 
 同研究GNEST干固体燃料库存来源链已落 `data/sandbox/research/gnest-char-energy-v1`，4节点实际安装trace、原全文及Fraction独立复核通过；热值保留真实MJ/kg并显式转J/kg。端点5.376063/2.951553 MJ/kg干进料不冒称反应热，完整原泥准入仍不满足。证据 `research/gnest-char-energy-v1`。

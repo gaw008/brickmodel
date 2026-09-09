@@ -82,12 +82,31 @@ def read_run(directory: str | Path) -> tuple[dict[str, Any], dict[str, Any]]:
             raise RunError('invalid_run_result')
         if result['case_sha256'] != manifest['files']['case.json']:
             raise RunError('case_binding_mismatch')
+        from .exact_run_service import verify_exact_artifacts
+        verify_exact_artifacts(directory,result,manifest)
         return result, manifest
     except (OSError, KeyError, TypeError, json.JSONDecodeError) as exc:
         raise RunError('invalid_run') from exc
 
 
+def export_run(directory: str | Path) -> dict[str, Any]:
+    """Export verified results; exact canonical JSON stays a lossless text field."""
+    directory=Path(directory)
+    result,manifest=read_run(directory)
+    exported={'result':result,'manifest':manifest}
+    from .exact_run_service import KIND,RECORD
+    if result.get('integration_kind')==KIND and result.get('exact_record') is not None:
+        raw=(directory/RECORD).read_bytes()
+        if _hash(raw)!=manifest['files'][RECORD]:raise RunError('exact_export_changed_after_validation')
+        exported['canonical_exact_record']={'artifact':RECORD,'sha256':_hash(raw),
+            'encoding':'utf-8 JSON text; preserve string without parsing numeric fields','text':raw.decode('utf-8')}
+        exported['export_scope']='Verified canonical numerical record plus result and manifest; referenced input/source files are not bundled. This is not a standalone replay directory.'
+    return exported
+
+
 _EVENT_SCHEMA = 'sludge_sandbox_free_event_case_v1'
+_EXACT_EVENT_SCHEMA = 'sludge_sandbox_free_exact_event_case_v1'
+_EVENT_SCHEMAS = (_EVENT_SCHEMA,_EXACT_EVENT_SCHEMA)
 
 
 def _event_cancelled(parent: dict[str, Any]) -> None:
@@ -167,7 +186,8 @@ def run_case(case_path: str | Path, water_directory: str | Path, output: str | P
              replay_of: dict[str, str] | None = None,
              evidence_directory: str | Path | None = None,
              _resume: ResumePrefix | None = None,
-             _event_replay: ResumePrefix | None = None) -> dict[str, Any]:
+             _event_replay: ResumePrefix | None = None,
+             _exact_on_commit: Callable | None = None) -> dict[str, Any]:
     """Run once in a fresh directory; retain failures and accepted prefixes.
 
     Wall/step budgets are explicit case policy. Cancellation is cooperative
@@ -189,9 +209,13 @@ def run_case(case_path: str | Path, water_directory: str | Path, output: str | P
         case = read_case(output/'case.json')
         result['case_id'] = case.case_id
         result['scope'] = case.payload['scope']
+        if case.payload['schema']==_EXACT_EVENT_SCHEMA:
+            from .exact_run_service import KIND
+            result.update(integration_kind=KIND,integration=None)
         if _event_replay is not None:
             from .checkpoint import ResumePrefix
-            if type(_event_replay) is not ResumePrefix or _resume is not None or case.payload['schema']!=_EVENT_SCHEMA:
+            from .exact_run_service import ExactParent
+            if type(_event_replay) not in (ResumePrefix,ExactParent) or _resume is not None or case.payload['schema'] not in _EVENT_SCHEMAS:
                 raise RunError('invalid_private_event_replay_record')
             replay_parent=_event_replay.result()
             if (replay_parent['case_sha256']!=result['case_sha256'] or
@@ -201,6 +225,9 @@ def run_case(case_path: str | Path, water_directory: str | Path, output: str | P
             (output/'replay_parent').mkdir()
             (output/'replay_parent/result.json').write_bytes(_event_replay.parent_result_raw)
             (output/'replay_parent/manifest.json').write_bytes(_event_replay.parent_manifest_raw)
+            if case.payload['schema']==_EXACT_EVENT_SCHEMA:
+                if type(_event_replay) is not ExactParent:raise RunError('exact_replay_record_required')
+                (output/'replay_parent/exact-run-record.json').write_bytes(_event_replay.parent_exact_raw)
         if _resume is not None:
             from .checkpoint import ResumePrefix
             if not isinstance(_resume, ResumePrefix):
@@ -213,6 +240,10 @@ def run_case(case_path: str | Path, water_directory: str | Path, output: str | P
             (output/'parent').mkdir()
             (output/'parent/result.json').write_bytes(_resume.parent_result_raw)
             (output/'parent/manifest.json').write_bytes(_resume.parent_manifest_raw)
+            if case.payload['schema']==_EXACT_EVENT_SCHEMA:
+                from .exact_run_service import ExactParent
+                if type(_resume) is not ExactParent:raise RunError('exact_resume_record_required')
+                (output/'parent/exact-run-record.json').write_bytes(_resume.parent_exact_raw)
             result['resume_of'] = {
                 'result_sha256': _resume.parent_result_sha256,
                 'manifest_sha256': _resume.parent_manifest_sha256,
@@ -223,7 +254,9 @@ def run_case(case_path: str | Path, water_directory: str | Path, output: str | P
             result['policy'] = parent['policy']
             result['initialization'] = parent.get('initialization')
             result['initial_snapshot'] = parent['initial_snapshot']
-            result['integration'] = parent['integration']
+            # Exact parent history remains historical until a child canonical record exists.
+            result['integration'] = (None if case.payload['schema']==_EXACT_EVENT_SCHEMA
+                                     else parent['integration'])
         (output/'water').mkdir()
         for source in sorted(Path(water_directory).iterdir()):
             if source.is_symlink() or not source.is_file():
@@ -234,7 +267,7 @@ def run_case(case_path: str | Path, water_directory: str | Path, output: str | P
             (output/'implementation'/source.name).write_bytes(source.read_bytes())
         from .run_provenance import catalog_bytes, evidence_paths, build_graph
         catalog_raw = (catalog_bytes(case.payload['model_id'],case_schema=case.payload['schema'])
-            if case.payload['schema']==_EVENT_SCHEMA else catalog_bytes(case.payload['model_id']))
+            if case.payload['schema'] in _EVENT_SCHEMAS else catalog_bytes(case.payload['model_id']))
         (output/'equation_catalog.json').write_bytes(catalog_raw)
         catalog = json.loads(catalog_raw)
         if evidence_directory is not None:
@@ -272,7 +305,10 @@ def run_case(case_path: str | Path, water_directory: str | Path, output: str | P
             built = build_case(case, output/'water')
             result.update(initialization=encode(built.initialization), policy=encode(built.policy))
             _json(output/'result.json', result)
-            if case.payload['schema'] == _EVENT_SCHEMA:
+            if case.payload['schema'] == _EXACT_EVENT_SCHEMA:
+                from .exact_run_service import run_exact_event
+                run_exact_event(built,result,_resume,output,cancel,replay_parent=_event_replay,on_commit=_exact_on_commit)
+            elif case.payload['schema'] == _EVENT_SCHEMA:
                 if _event_replay is not None:
                     from .checkpoint import exact_state_equal
                     from .event_record import state
@@ -382,7 +418,15 @@ def trace_run(directory: str | Path, quantity: str) -> dict[str, Any]:
             raise RunError('unsupported_quantity')
     elif model == 'manufactured_reacting_wet_free_slab_v1':
         anchors = _FREE_EQUATIONS
-        if case.get('schema')==_EVENT_SCHEMA:
+        if case.get('schema')==_EXACT_EVENT_SCHEMA:
+            anchors=[('exact_depletion_integration.py','integrate_exact_depletion','Exact rational stage clocks, original full-history event acceptance and budgets.'),
+                ('exact_terminal_executor.py','execute_exact_terminal','Source-bound exact ordered terminal evaluation and correction.'),
+                ('exact_record_audit.py','audit_exact_run','Original-prefix conservation audit.'),
+                ('exact_terminal_proof_audit.py','audit_committed_terminal_proofs','All-candidate root, panel and correction audit.'),
+                ('exact_record_comparison_audit.py','audit_exact_comparisons','Original six-gate refinement audit.'),
+                ('exact_resource_audit.py','audit_exact_resources','Original cumulative recorded resource audit.'),*_FREE_EQUATIONS[1:]]
+            anchors=[(f,symbol.replace('.evaluate','.evaluate_autonomous') if f in ('free_solid_slab.py','water_phase_transfer.py') else symbol,meaning) for f,symbol,meaning in anchors]
+        elif case.get('schema')==_EVENT_SCHEMA:
             anchors = [('depletion_integration.py','integrate_depletion','Event-aware mechanical continuation with full original-prefix accounting.'),
                        ('depletion_roundoff.py','depletion_writeback','Paired depletion correction and exact storage-roundoff evidence.'),*_FREE_EQUATIONS[1:]]
     else:
@@ -422,6 +466,10 @@ def trace_run(directory: str | Path, quantity: str) -> dict[str, Any]:
             'implementation_artifacts': {k: v for k, v in manifest['files'].items() if k.startswith('implementation/')},
             'evidence_artifacts': {k: v for k, v in manifest['files'].items() if k.startswith('water/')},
             'material_evidence': 'A/B solids, kinetics, carrier, transport and skeleton are manufactured; raw sludge is not admitted.'}
+    if case.get('schema')==_EXACT_EVENT_SCHEMA:
+        trace['canonical_exact_record']=result.get('exact_record')
+        trace['canonical_result_pointer']=(('/result/fields/states/sequence/'+str(len(result['integration']['states'])-1)+'/fields/'+quantity) if location is not None and quantity in ('amounts_mol','internal_energy_j','mechanical_stretches') else None)
+        trace['clock_semantics']='Exact rational clocks retained in canonical record; integration.times_s is display-only elapsed time.'
     if availability is not None:
         trace['value_availability'] = availability
     if 'provenance.json' in manifest['files']:
@@ -443,7 +491,7 @@ def replay_run(directory: str | Path, output: str | Path, *,
     event_binding=None
     from .verification_case import read_case
     saved_case=json.loads((Path(directory)/'case.json').read_bytes())
-    if isinstance(saved_case,dict) and saved_case.get('schema')==_EVENT_SCHEMA:
+    if isinstance(saved_case,dict) and saved_case.get('schema') in _EVENT_SCHEMAS:
         case=read_case(Path(directory)/'case.json')
         from .checkpoint import ResumePrefix
         from .run_provenance import catalog_filename
@@ -461,7 +509,11 @@ def replay_run(directory: str | Path, output: str | Path, *,
         manifest_raw=(Path(directory)/'manifest.json').read_bytes()
         if _hash(result_raw)!=manifest['files']['result.json'] or json.loads(manifest_raw)!=manifest:
             raise RunError('replay_parent_changed_after_validation')
-        event_binding=ResumePrefix(result_raw,manifest_raw,_hash(result_raw),_hash(manifest_raw))
+        if case.payload['schema']==_EXACT_EVENT_SCHEMA:
+            from .exact_run_service import parent_from
+            event_binding=parent_from(directory,result,manifest)
+        else:
+            event_binding=ResumePrefix(result_raw,manifest_raw,_hash(result_raw),_hash(manifest_raw))
     if event_binding is None:
         return run_case(Path(directory)/'case.json', Path(directory)/'water', output,
                         cancel=cancel, replay_of={'case_sha256': result['case_sha256'],
@@ -484,16 +536,18 @@ def _validate_event_resume_policy(case_record, saved_policy):
     if type(saved_policy) is not dict:
         raise RunError('resume_case_event_policy_mismatch')
     scalar = dict(saved_policy)
-    if case_record['schema'] == 'sandbox_depletion_policy_v2':
+    if case_record['schema'] in ('sandbox_depletion_policy_v2','sandbox_exact_depletion_policy_v1'):
         from .pressure_comparison import restore_pressure_comparison_policy
         typed = scalar.pop('pressure_comparison', None)
-        restore_pressure_comparison_policy(typed)
+        if not (case_record['schema']=='sandbox_exact_depletion_policy_v1' and case_record['pressure_comparison'] is None and typed is None):
+            restore_pressure_comparison_policy(typed)
     if scalar != expected:
         raise RunError('resume_case_event_policy_mismatch')
 
 
 def resume_run(directory: str | Path, output: str | Path, *,
-               cancel: Callable[[], bool] | None = None) -> dict[str, Any]:
+               cancel: Callable[[], bool] | None = None,
+               _exact_on_commit: Callable | None = None) -> dict[str, Any]:
     """Continue a verified cancelled accepted prefix using the current installed model."""
     from .checkpoint import ResumePrefix, validate_cancelled
     from .integration import IntegrationPolicy
@@ -510,7 +564,7 @@ def resume_run(directory: str | Path, output: str | Path, *,
     case = read_case(directory/'case.json')
     from .run_provenance import catalog_filename
     catalog_name = (catalog_filename(case.payload['model_id'],case_schema=case.payload['schema'])
-        if case.payload['schema']==_EVENT_SCHEMA else catalog_filename(case.payload['model_id']))
+        if case.payload['schema'] in _EVENT_SCHEMAS else catalog_filename(case.payload['model_id']))
     catalog_sha = current['catalogs'].get(catalog_name)
     if catalog_sha is None or manifest['files'].get('equation_catalog.json') != catalog_sha:
         raise RunError('resume_catalog_binding_mismatch')
@@ -523,7 +577,12 @@ def resume_run(directory: str | Path, output: str | Path, *,
         policy = IntegrationPolicy(**policy_values)
         if encode(IntegrationPolicy(**result['policy'])) != encode(policy):
             raise RunError('resume_case_policy_mismatch')
-        if case.payload['schema']==_EVENT_SCHEMA:
+        if case.payload['schema']==_EXACT_EVENT_SCHEMA:
+            from .exact_run_service import KIND
+            if result.get('integration_kind')!=KIND or result.get('status')!='cancelled' or result.get('core_status')!='cancelled' or not result.get('integration',{}).get('steps'):
+                raise RunError('resume_requires_cancelled_exact_prefix')
+            _validate_event_resume_policy(case.payload['numerics']['depletion'],result.get('depletion_policy'))
+        elif case.payload['schema']==_EVENT_SCHEMA:
             _event_cancelled(result)
             _validate_event_resume_policy(case.payload['numerics']['depletion'],result.get('depletion_policy'))
         else:
@@ -538,6 +597,11 @@ def resume_run(directory: str | Path, output: str | Path, *,
     if (_hash(result_raw) != manifest['files']['result.json'] or
             json.loads(manifest_raw) != manifest):
         raise RunError('resume_parent_changed_after_validation')
-    prefix = ResumePrefix(result_raw, manifest_raw, _hash(result_raw), _hash(manifest_raw))
+    if case.payload['schema']==_EXACT_EVENT_SCHEMA:
+        from .exact_run_service import parent_from
+        prefix=parent_from(directory,result,manifest)
+    else:
+        prefix = ResumePrefix(result_raw, manifest_raw, _hash(result_raw), _hash(manifest_raw))
+    extra={'_exact_on_commit':_exact_on_commit} if case.payload['schema']==_EXACT_EVENT_SCHEMA else {}
     return run_case(directory/'case.json', directory/'water', output, cancel=cancel,
-                    evidence_directory=directory/'evidence', _resume=prefix)
+                    evidence_directory=directory/'evidence', _resume=prefix,**extra)

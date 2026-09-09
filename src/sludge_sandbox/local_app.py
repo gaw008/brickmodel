@@ -20,7 +20,7 @@ from urllib.parse import parse_qs, urlsplit
 import uuid
 
 from .job_supervisor import SupervisionPolicy, read_job, request_cancel, supervise
-from .run_service import read_run, trace_run
+from .run_service import read_run, trace_run, export_run
 from .verification_case import read_case
 
 _MAX_BYTES = 1024*1024
@@ -256,8 +256,7 @@ class JobManager:
     def export(self, identifier: str) -> dict[str, Any]:
         with self._lock:
             directory = self._directory(identifier)
-        result, manifest = read_run(directory/'run')
-        return {'result': result, 'manifest': manifest}
+        return export_run(directory/'run')
 
     def trace(self, identifier: str, quantity: str) -> dict[str, Any]:
         with self._lock:
