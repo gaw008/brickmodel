@@ -1,0 +1,188 @@
+{
+  "cp35": {
+    "value": {
+      "numerator": 30983,
+      "denominator": 20
+    },
+    "unit": "J/(kg*K)",
+    "source_sha256": "2f9caf23689092e548b2b3d7abf7c54d58d177569a7850b47c69df15e74295d6",
+    "input_temperatures_degC": [
+      {
+        "numerator": 35,
+        "denominator": 1
+      }
+    ],
+    "input_policy_id": "exact_values_float_shortest_decimal_readout_v1",
+    "node_id": "ARLABOSSE2005_DRY_CP_EQ2",
+    "basis": "kg dry matter of Arlabosse2005 mixed-feed sample",
+    "fit_error": null,
+    "material_qualified": false,
+    "qualification": "reported_fit_evaluation_not_independent_prediction_or_molar_storage"
+  },
+  "cp105": {
+    "value": {
+      "numerator": 35589,
+      "denominator": 20
+    },
+    "unit": "J/(kg*K)",
+    "source_sha256": "2f9caf23689092e548b2b3d7abf7c54d58d177569a7850b47c69df15e74295d6",
+    "input_temperatures_degC": [
+      {
+        "numerator": 105,
+        "denominator": 1
+      }
+    ],
+    "input_policy_id": "exact_values_float_shortest_decimal_readout_v1",
+    "node_id": "ARLABOSSE2005_DRY_CP_EQ2",
+    "basis": "kg dry matter of Arlabosse2005 mixed-feed sample",
+    "fit_error": null,
+    "material_qualified": false,
+    "qualification": "reported_fit_evaluation_not_independent_prediction_or_molar_storage"
+  },
+  "sensible_enthalpy_difference": {
+    "value": {
+      "numerator": 116501,
+      "denominator": 1
+    },
+    "unit": "J/kg",
+    "source_sha256": "2f9caf23689092e548b2b3d7abf7c54d58d177569a7850b47c69df15e74295d6",
+    "input_temperatures_degC": [
+      {
+        "numerator": 35,
+        "denominator": 1
+      },
+      {
+        "numerator": 105,
+        "denominator": 1
+      }
+    ],
+    "input_policy_id": "exact_values_float_shortest_decimal_readout_v1",
+    "node_id": "ARLABOSSE2005_DRY_SENSIBLE_ENTHALPY_DIFF",
+    "basis": "kg dry matter of Arlabosse2005 mixed-feed sample",
+    "fit_error": null,
+    "material_qualified": false,
+    "qualification": "reported_fit_evaluation_not_independent_prediction_or_molar_storage"
+  },
+  "trace": {
+    "root": "ARLABOSSE2005_DRY_SENSIBLE_ENTHALPY_DIFF",
+    "registry_sha256": "667a24b18b2585cb153f0e4f34ec4fd7eb1d3c83fed78ec557f7ec0d69445222",
+    "nodes": [
+      {
+        "id": "ARLABOSSE2005_DRY_CP_EQ2",
+        "evidence_kind": "literature_constitutive_model",
+        "role": "equation",
+        "basis": "kg dry matter",
+        "unit": "J/(kg*K)",
+        "value": "cp_DM(T_C)=1434+3.29*T_C",
+        "dependencies": [],
+        "citations": [
+          {
+            "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+            "locator": "Specific Heat section Eq2; Nomenclature Cp/T/DM",
+            "support": "equation"
+          }
+        ],
+        "applicability": {
+          "status": "conditional",
+          "rationale": "Only the original mixed-feed dry sample and calorimetric interval; no brick/reaction transfer."
+        },
+        "uncertainty": {
+          "status": "unquantified",
+          "rationale": "No fit residuals or parameter uncertainty reported in inspected source."
+        },
+        "domain": {
+          "temperature_K": [
+            308.15,
+            378.15
+          ],
+          "material_classes": [
+            "unincinerated_activated_sludge_mixed_industrial_municipal_wastewater"
+          ],
+          "notes": "Sample preparation/feed fractions are bound by source metadata hash; dry-mass Cp is not molar Cv or reaction enthalpy."
+        }
+      },
+      {
+        "id": "ARLABOSSE2005_DRY_SENSIBLE_ENTHALPY_DIFF",
+        "evidence_kind": "derived_from_evidence",
+        "role": "equation",
+        "basis": "kg dry matter",
+        "unit": "J/kg",
+        "value": "delta_h(a,b)=1434*(b-a)+(3.29/2)*(b*b-a*a); a,b in degC",
+        "dependencies": [
+          "ARLABOSSE2005_DRY_CP_EQ2"
+        ],
+        "citations": [
+          {
+            "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+            "locator": "Specific Heat section Eq2; Nomenclature Cp/T/DM",
+            "support": "context"
+          }
+        ],
+        "applicability": {
+          "status": "conditional",
+          "rationale": "Only the original mixed-feed dry sample and calorimetric interval; no brick/reaction transfer."
+        },
+        "uncertainty": {
+          "status": "unquantified",
+          "rationale": "No fit residuals or parameter uncertainty reported in inspected source."
+        },
+        "domain": {
+          "temperature_K": [
+            308.15,
+            378.15
+          ],
+          "material_classes": [
+            "unincinerated_activated_sludge_mixed_industrial_municipal_wastewater"
+          ],
+          "notes": "Sample preparation/feed fractions are bound by source metadata hash; dry-mass Cp is not molar Cv or reaction enthalpy."
+        },
+        "derivation": "arlabosse_caloric.py:ArlabosseDryCaloric.delta_h analytically integrates the source dry-mass Cp; no absolute formation enthalpy is assigned."
+      }
+    ],
+    "sources": [
+      {
+        "id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+        "title": "Drying of municipal sewage sludge: from a laboratory scale batch indirect dryer to the paddle dryer",
+        "url": "https://www.scielo.br/j/bjce/a/mxGLvLxqCvys7VX4DpCyNvM/?format=html&lang=en&ilang=en",
+        "authors": [
+          "P. Arlabosse",
+          "S. Chavez",
+          "C. Prevot"
+        ],
+        "year": 2005,
+        "license": "CC BY-NC 4.0 as displayed by publisher",
+        "retrieved_at": "2026-09-07",
+        "read_status": "full_text_checked",
+        "reading_scope": "publisher_HTML_relevant_sections_and_original_Eq2_nomenclature_Table1_images_read",
+        "metadata_sha256": "2f9caf23689092e548b2b3d7abf7c54d58d177569a7850b47c69df15e74295d6",
+        "assets": [
+          {
+            "path": ".tools/source-cache/arlabosse2005/article.html",
+            "sha256": "7dc682647cc70503820e6738b806b052ddccc9f1bc14650178e8813c7e203816",
+            "bytes": 115329,
+            "url": "https://www.scielo.br/j/bjce/a/mxGLvLxqCvys7VX4DpCyNvM/?format=html&lang=en&ilang=en"
+          },
+          {
+            "path": ".tools/source-cache/arlabosse2005/cp-equation.gif",
+            "sha256": "3b406de01f7ac8bbf27c06c3245345a0966aee1d6fcd90e4f00541a06064cf85",
+            "bytes": 1221,
+            "url": "https://minio.scielo.br/documentstore/1678-4383/mxGLvLxqCvys7VX4DpCyNvM/c867df3a38f8d88c44b995b7ff2642dbfb381ae9.gif"
+          },
+          {
+            "path": ".tools/source-cache/arlabosse2005/nomenclature.gif",
+            "sha256": "24c38177563d883c17f343b152746a849db485a25eace21fe6d2efad5021f759",
+            "bytes": 9743,
+            "url": "https://minio.scielo.br/documentstore/1678-4383/mxGLvLxqCvys7VX4DpCyNvM/81672bf918e34a203f7a8e49dd1e458e335dbbdb.gif"
+          },
+          {
+            "path": ".tools/source-cache/arlabosse2005/table1.gif",
+            "sha256": "8db1e49fcd6f3afc1a279bdf7c061d04ce93956c6d1b39f853248c84b138be8e",
+            "bytes": 6086,
+            "url": "https://minio.scielo.br/documentstore/1678-4383/mxGLvLxqCvys7VX4DpCyNvM/d833a01f8e4645a46cef045b7a22eb205dcb34c0.gif"
+          }
+        ]
+      }
+    ],
+    "scope": "declared_source_trace_not_scientific_validation"
+  }
+}

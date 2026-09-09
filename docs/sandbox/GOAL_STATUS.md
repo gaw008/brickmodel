@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+严格record与来源比热应用检查点（基线23a2ba4）：exact_record18fc9628/teste5c0993，保留源快照/完整schema数值projection、immutable arrays、strict类型/shape/每已commit state-ledger-mode-correction关联、fresh live binding返回；真实WaterState闭包、合法int1policy与全部HIGH攻击已修，原RED保留。89源码18.21s/39安装12.39s通过，78实际非editable模块与源码匹配。ArlabosseDryCaloric42e828/testf606bd同包应用，真实已核Eq2+kg干基+35–105°C、精确Cp与Δh两节点来源trace，实际安装例子已存；仍无formationH/Cv/摩尔材料准入，不冒全周期参数包。
+
+新strictcodec native2cell session95900已terminal exit0/supervisor79.516s：原2cellcase/初态/政策保持，显式ordered，core77.250s completed30steps2packets2events1→0；685eval/8terminal/24pairedendpoint。strictrecord4,192,254bytes encode/read/消费freshchecked source绑定成功0.690s，78runtime保持。原prefix/energy审计无字节修改实际pass，global9.99353e-11J/constraint1.26425e-20J均原2e-8J。完整比较审计与独立结果复核已pass：8refs/6compare/24cert/24endpoint，strict全部accepted times/states/ledgers与fallback独立对齐；证据research/exact-record-native-v1。无root native/测试进程，不重poll95900/61695。
+
+下一明确工作：Carson在/tmp/brick-exact-record-audit-v1实现原始全prefix审计候选，外部原initial/start/end/policies/source严格绑定，保存累计N/E/stretch/components/correction预算不重置；尚未repo准入。严格record结构与source复核不授resume许可，后续全numerical/refinement/root审计、恢复实际operator、累计资源和exact前后段一次拼接仍必需。8格短时事件已支持，但长时4/8空间收敛、原泥材料闭合、公开3机制留出、全湿烧冷却、多代/最终CLIUI验收均保持原范围未完成。Goal active，本轮有实际实现/两native/来源组件及独立证据，属于progress。
+
 最新8格实证（基线b49fc57）：同物理parent初态与.5→.50032，grid4→8及4个局部extensive数值量减半显式入新case，原global2e-8J及全部event/source gates保持。session61695已terminal exit0，supervisor395.34s/core392.31s，completed36steps2packets8events顺序7→0，781eval/32terminal/528pairedendpoint。全部76runtime保持；原prefix/energy审计无字节修改实际pass，globalmax9.55378e-11J、constraint1.86335e-20J；8适配comparison审计pass，384purecert/6compare/8refs。证据research/exact-eight-cell-v1。无root native进程，不重poll61695。这是短时8格事件支持，非空间收敛；旧15us FAIL与完整原泥/公开留出/全周期范围均保留。
 
 当前exact_record候选f03abafa修复真实WaterState闭包/嵌套shape/机械字段/六gate类型/immutable bytes与fresh verified return，18纯测和独立代码审通过，数值终审待核；Arlabosse来源绑定Cp与独立积分trace组件42e828已源审，portable tests收尾。均仍tmp，非本次76运行源码。Root新增material-closure-next-v1只读材料缺口与原文图核查，非整包准入。后续推进严格record审计与续算、长时空间矩阵及真实材料/三机制公开验证，不缩Goal。
