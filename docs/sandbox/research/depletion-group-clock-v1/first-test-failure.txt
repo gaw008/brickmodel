@@ -1,0 +1,21 @@
+F...............                                                         [100%]
+=================================== FAILURES ===================================
+_____ test_equal_tangents_different_acceleration_do_not_prove_common_root ______
+
+    def test_equal_tangents_different_acceleration_do_not_prove_common_root():
+        d=domain(model(0,1,-1),model(1,1,-1,-2))
+        roots=isolate_roots(d,F(1,10000))
+        result=group_roots(d,roots,F(1,1000))
+        assert roots[0].cell_index==1
+        assert result.strict_order_edges==((1,0),)
+        assert all(g.status=='ordered' for g in result.groups)
+        # Positive root of t²+t−1 lies between 0.618 and 0.619.
+>       assert F(618,1000)<roots[0].lower_s<=roots[0].upper_s<F(619,1000)
+E       assert Fraction(309, 500) < Fraction(10125, 16384)
+E        +  where Fraction(309, 500) = F(618, 1000)
+E        +  and   Fraction(10125, 16384) = RootInterval(cell_index=1, lower_s=Fraction(10125, 16384), upper_s=Fraction(5063, 8192)).lower_s
+
+tests/sandbox/test_depletion_group_clock.py:27: AssertionError
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_depletion_group_clock.py::test_equal_tangents_different_acceleration_do_not_prove_common_root
+1 failed, 15 passed in 0.05s

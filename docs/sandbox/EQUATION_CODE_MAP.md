@@ -1,5 +1,9 @@
 # 方程—代码—验证映射 v0.1
 
+## 显式仿射多单元根区间
+
+`depletion_group_clock` 对显式 `N(h)=N0+r0*h+a*h²/2` 用有理数隔离首个零点、检查整段最小库存、重验完整单元集合并按区间并集分组。`positive_panel` 包含内部极值；`group_roots` 区分同根与未分离区间；`outward_absolute_times` 仅作外向浮点时间转换。16 项新测试及相关 80 项源码回归通过，安装版 16 项通过。详见 [研究记录](research/depletion-group-clock-v1/README.md)。未接入真实湿态模式切换，不将采样速率视为严格仿射定律。
+
 ## 条件成对压力比较与显式事件策略
 
 `paired_pressure.certify_paired_pressure`：B根区间残差差/正顺应性下界与独立根距离界；`paired_pressure_host.prepare_paired_pressure`：实际两状态及端点来源绑定。详细假设、19纯核+12主机检查和四实际保存证书见 [PAIRED_PRESSURE.md](PAIRED_PRESSURE.md)。只准入显式制造共享常数假设、固定报告温度，不含完整温度反解误差tube，默认不替代原事件接受或材料验证。显式v2策略现经 `pressure_comparison.compare_pressure_pair` 接入 `depletion_integration`；`event_record.audit_paired_refinement` 绑定事件/共同终点全部单元与保存观察和提交状态。来源与实际验证范围见 [PAIRED_EVENT_COMPARISON.md](PAIRED_EVENT_COMPARISON.md)。

@@ -4,6 +4,13 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+38b01fd 后实际进展：新增 depletion_group_clock 显式仿射库存多根原语及 16 项测试，独立代码审查通过；相关源码回归 80 passed/30.10s，非 editable 离线安装后新测试 16 passed，66 实际安装模块与源码一致。原单事件积分器未改；不宣称真实 wet group、状态修正或空间收敛通过。首轮测试断言错误日志保留。研究证据 research/depletion-group-clock-v1。当前无活动测试/EOS。
+
+新材料来源：实际下载并核读 Elsässer 2011 大学论文 pp41–48/117，获得含水样品量热及扣水推导的 14 个干基 Cp 值；逐值复算均值/方差/SD，独立来源审查完成。research/source-elsasser2011 记录源 PDF SHA/定位、数值、统计含义及适用性；未转载许可未明 PDF。低温测量不能补高温 Cp(T)，亦未匹配现构造材料，不作为全周期准入。
+
+下一步：将多根原语用于明确仿射的联合事件测试，建立逐单元库存修正和一次共同账本；真实 wet 接入仍须明确数值终端近似的误差/顺序合同。LOCALIZATION_REVIEW 证实两采样无真实 RHS 余项界，不能将其当真根证书。原污泥身份/热物性高温域、三组公开对照及全周期/空间/最终使用验收继续未完成，Goal active。
+
+
 c5ddeb1之后实际progress：同原湿态10ms pilot session9698 exit0/67.54s，34steps2events620eval74attempts，原prefix审计通过，globalmax2.509e-10J。真实保存dry终态profile77466 exit0/1.410s，两output和saved base_rates精确同；unprofiled.01719s，仅单位成本样本。四格一次initialWPT51175 exit0/1.790s，首两N/(-net)候选Fraction gap0，满足当前selector拒绝条件；未运行四格integrator/未证明真实同时事件。
 
 按实测资源推进同湿态2格elapsed.625s：coarse79355 exit0/119.00s，349steps389attempt2825eval2events end1.125；fine80816 exit0/173.67s，669steps709attempt5065eval2events，同end。fine仅id/refinement1(ordinaryinitial/max半)/maxsteps1024事前资源预算改，其他physical/所有原gates/800s保持；原512不足640dry+events，不是accuracy放宽。两组原audit_prefix SHA287bc实际exit0，globalmax1.18122e-9/4.07154e-10J<2e-8。全部65运行源码身份一致，无活动EOS/测试，不再poll上述会话。
