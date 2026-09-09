@@ -4,6 +4,13 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+87b5f78之后实际进展：原accepted wet state1有界host profile已完成。session80931 exit0/3.357s，build1.340s，两个显式evaluate .887659s(profiled)/.805864s(unprofiled)，选定输出逐字相同；runtime/父封存前后一致，仅run_service历史查询修复差异已明确绑定。8 thermalforwards、320 pressuretrials、328 nativeTP；两最终closure均38二分，宽7.2032e-6Pa。_transaction self.711s是剖析归因，不能拆C内部或当656独立TP；digest9次累计.00417s不支持hash主导。独立脚本/结果审核通过，完整证据research/host-profile-v1。无活动EOS/测试，不再poll80931。生产源码未修改，本轮是实测证据进展。
+
+下一实际实现合同research/host-profile-v1/PRESSURE_ROOT_NEXT_PLAN.md：default旧bisection保持；显式新数值策略用端点液体体积生成候选，但每个候选必须真实EOS+sign验证，保原width/residual/单调/guard及trial预算，不足收缩回二分。先独立解析根/假位停滞/浮点/异常测试及review，再原wetstate两次40s实际probe；未实现，不声明加速或事件通过。后续仍需事件/续算/空间收敛原门槛复验，不以点加速代替完整Goal。
+
+限定新来源检索实际核读Houdkova2007公开PDF，指出PRES2006 Elsäßer热物性原研究，但当前正文Cp只有定性、fig5/6为流变；未取得可准入Cp数据，不补未知值。核查research/source-lead-houdkova2007/REPORT.md；只有网页解析原文，未保存PDF字节，未声称PDFhash。原污泥完整参数、三组机制留出及全烧成冷却仍未完成。Goal active。
+
+
 0c2191d 之后实际进度（2026-09-09 UTC）：修复 v2 resume preflight 的构造顺序；保留实际完整盒/来源/前缀审计。源码与冻结安装 43 项通过、65 模块一致。真实 service start/session48184 cancelled 7steps；resume/session99452 completed30steps/2events至原0.50032，原前缀和累计预算保持；replay/session19128 exit0，353.89s、30steps/2events/592eval，times/states/steps/events/corrections与resume逐项相同。三会话均终态，不再poll/重跑。325成员完整证据 research/paired-service-lifecycle-v1。
 
 真实取消T来源查询曾 quantity_unavailable，失败保留。随后修复合法量无final_snapshot时保来源图、value/pointer null及明确原因，未知量仍拒绝。永久RED14fail→GREEN32pass，实际安装32pass/65模块一致，真实取消7查询通过、完整7查询逐项不变、原封存不变；research/partial-run-trace-v1。源码查询修复在生命周期运行之后，二者runtimeSHA不同，不冒称新源码已重跑native。独立代码审查均通过。当前无活动EOS/测试。
