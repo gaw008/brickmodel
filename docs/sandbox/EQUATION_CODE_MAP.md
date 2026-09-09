@@ -247,3 +247,5 @@ HEOS共存数值政策 `NUM-HEOS-COEXISTENCE-BACKTRACK-1`：固定T的F=(Δp,Δg
 `mass_wet_writeback.project_mixed_depletion` → 完整kg/mol/U终态重算、原修正门槛与额外原初本格fraction限制下的等量液→气投影；不更改固体或总U，失败不返回修正状态。research/mass-wet-writeback-v1保存独立单位/累计预算反例和源码/安装结果。实际样本认证、根排序及全事件准入仍由后续控制器负责。
 
 研究候选 `interval_eos.py` / `coupled_rectangle.py`（research/water-pressure-interval-v1证据包）→ IAPWS Eq6区间求导与局部液气压力根包围，显式public/native摩尔质量尺度；原16端点温度误差区间及守界半径独立重算。仅数学研究，未准入实际稳定分支或原生误差合同，不当材料参数事实。
+
+`mass_wet_exact_terminal.prepare_mixed_terminal` → 实际两宿主样本、全部湿格根严格排序/排除、全kg/mol/U仿射终态与原局部writeback连接；保存失败prepared证据与成本。research/mass-wet-exact-terminal-v1验证近根/同根、分量账本及取消，仍不授六门槛比较或事件提交。

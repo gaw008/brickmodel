@@ -4,6 +4,10 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新exact_terminal已应用4f186cfb/test7d0242c4；63源码11.13s、63安装11.27s通过，93实际模块匹配，独立13项及应用核验通过，research/mass-wet-exact-terminal-v1归档逐成员SHA重读。sessions26269/97809均终态，不重poll。所有root原生EOS/测试已结束。
+
+Carson在/tmp/brick-mass-wet-integration-v1/exact_controller继续完整两格湿湿→干湿→干干控制器（两连续pass+独立halfapproach、全六gate、模式lineage与原累计totals不重置、原子packet）；尚未freeze/准入。Tesla在/tmp/brick-water-pressure-interval-v1/coexistence_candidate实现参数T的两log密度共存残差/Jacobian及Krawczyk数学候选，纯解析无EOS。来源接口依据已保存research/water-pressure-interval-v1/phase-admission，核读原IAPWS/HEOS，辅助饱和式只作初值不代证书；整个295..310K稳定分支还未求证。
+
 最新：writeback提交b671032；源码/安装92模块验证已完成。Root压力区间研究已保存research/water-pressure-interval-v1，全部成员SHA解包核实；actual study02 session24604终态exit0，16端点1.413235750s/原10s内，全16 Fraction复核通过，原8项下舍入RED保留。当前无EOS/测试进程，勿重poll45617/63760/24604。源码数学原语尚仅研究归档，不宣称stable/native误差认证。
 
 下一连接层exact_terminal4f186cfb/test7d0242c4在tmp，11pure2.58s通过，Tesla正独审；内部actual两callback→严格全根排序→全kg/mol/U积分→原writeback，不切mode/不提交。Python审查者在/tmp/brick-water-pressure-interval-v1/phase-admission核读原来源，推进实际WaterProperties稳定分支和误差接口。原Goal完整材料/全湿烧冷却/公开三机制留出/空间/多代仍未完成。
