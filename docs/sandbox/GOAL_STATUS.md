@@ -4,6 +4,13 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+f9d57c0 后实际进展：新增 depletion_group_roundoff 原子精确同根记账，逐cell仿射三分量/真实面板/完整rawstate绑定、每member原grossfraction及累计预算、zero None、失败不返回局部结果。初审两HIGH已通过实际RED反例并修复，旧代码和失败保留；20专属/116源码回归通过，冻结非editable安装52通过、67模块一致。仅核算已给共享panel，非完整group轨迹/模式切换。
+
+另实际66模块四格短探针session32911已exit0/4.384s：原初态/精度，推进2^-14s，一个accepted step8stage+2observation；候选gap0→3.371786427888473e-10仍小于原1e-8。独立所有prefixN/E/stretch及global E+peΔV核算通过原门槛，global1.20454e-11J。无活动native/tests，不再poll。证据research/depletion-group-roundoff-v1。新67安装未native复跑，不混称source身份。
+
+下一实施：按INTEGRATION_NEXT含ordering补充，保旧默认，显式数值策略容许普通正stage推进并在terminal用严格仿射根区间判断先后，实际mixed模式重新估后事件；时间定位最大误差不是最低事件间隔。联合精确同根核算是已具备原语，完整event容器/六gate路径比较/commit/record/resume仍待接入。无需凭空增加true-RHS验证门槛，也不冒称真实根证明。4/8空间矩阵、真实原污泥全参数/三机制留出/湿烧成冷却及最终使用仍未完成，Goal active。
+
+
 38b01fd 后实际进展：新增 depletion_group_clock 显式仿射库存多根原语及 16 项测试，独立代码审查通过；相关源码回归 80 passed/30.10s，非 editable 离线安装后新测试 16 passed，66 实际安装模块与源码一致。原单事件积分器未改；不宣称真实 wet group、状态修正或空间收敛通过。首轮测试断言错误日志保留。研究证据 research/depletion-group-clock-v1。当前无活动测试/EOS。
 
 新材料来源：实际下载并核读 Elsässer 2011 大学论文 pp41–48/117，获得含水样品量热及扣水推导的 14 个干基 Cp 值；逐值复算均值/方差/SD，独立来源审查完成。research/source-elsasser2011 记录源 PDF SHA/定位、数值、统计含义及适用性；未转载许可未明 PDF。低温测量不能补高温 Cp(T)，亦未匹配现构造材料，不作为全周期准入。

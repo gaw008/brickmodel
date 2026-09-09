@@ -1,5 +1,9 @@
 # 方程—代码—验证映射 v0.1
 
+## 联合耗尽库存写回
+
+`depletion_group_roundoff.writeback_exact_group` 将首个精确同根组、每格三项仿射液体积分与同一个已提供面板绑定，复用原逐格修正及累计预算；任一失败不提交部分结果，exactzero 保持 None。新模块20项、相关源码116项及安装52项通过。真实四格短推进仍未分离原候选门槛；完整模式切换/事件记录未接入。见 [联合核算研究](research/depletion-group-roundoff-v1/README.md)。
+
 ## 显式仿射多单元根区间
 
 `depletion_group_clock` 对显式 `N(h)=N0+r0*h+a*h²/2` 用有理数隔离首个零点、检查整段最小库存、重验完整单元集合并按区间并集分组。`positive_panel` 包含内部极值；`group_roots` 区分同根与未分离区间；`outward_absolute_times` 仅作外向浮点时间转换。16 项新测试及相关 80 项源码回归通过，安装版 16 项通过。详见 [研究记录](research/depletion-group-clock-v1/README.md)。未接入真实湿态模式切换，不将采样速率视为严格仿射定律。
