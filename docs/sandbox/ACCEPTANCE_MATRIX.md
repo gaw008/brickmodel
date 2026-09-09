@@ -12,6 +12,8 @@
 
 实际宿主精确入口增量：38源码/38安装及原四格初态双入口完整数值点对照通过，72模块一致；保留首次捕获失败及来源绑定RED。此不升级完整事件、空间、材料或全烧成验收，见research/exact-native-host-v1。
 
+完整精确面板增量：68源码/36安装及原保存四格panel→根排序→writeback→实际mixed端点通过，74模块匹配。明确未提交事件/未完成packet比较，原空间/材料/完整烧成要求不升级。见research/exact-full-panel-replay-v1。
+
 | ID | 合同要求 | 应有实现/证据 | 当前状态 |
 |---|---|---|---|
 | G00 | 完整合同、分支、WIP保护 | 合同、Git基线、BASELINE_AUDIT | verified（仅初始化） |

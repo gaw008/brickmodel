@@ -1,5 +1,7 @@
 # 方程—代码—验证映射 v0.1
 
+`exact_terminal_panel` 与 `exact_root_order`：同一共享仿射采样的全状态积分、区间最小值及全wet根排序；完整保存四格失败panel回放并真实water mixed端点通过。68源码/36安装，74模块。原多pass事件接受及全物理验证未完成。见[证据](research/exact-full-panel-replay-v1/README.md)。
+
 `exact_free_host.ExactFreeWaterTransfer`：自主direct FreeSolidSlab/WPT共享state-only物性计算，exact时间无投影；全部water backend type/implementation纳入实际来源绑定。38源码/38安装及原四格初态真实water点对照通过，72模块一致；非完整事件或材料验证。见[证据](research/exact-native-host-v1/README.md)。
 
 `exact_affine_depletion`：对同一三项signed速率的仿射积分建立有界dyadic根区间，逐项绑定一次舍入积分和向下舍入的蒸发正部；复用原修正/累计预算。93源码、54安装测试通过，仅数值原语，未准入实际事件。见[证据](research/exact-affine-depletion-v1/README.md)。

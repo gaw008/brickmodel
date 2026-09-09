@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新完整终端面板检查点（基线a89bf04）：新增exact_terminal_panel（全N/E/face/source/components/stretch一次积分与whole-polynomial minima）及exact_root_order（全wet集合/严格根分离/无根排除）。rootorder验证初版bool/int混同HIGH实际5RED后用逐层exacttype校验修复；source1cc3/testb925，panel2fdf。68源码5.18s、36安装.40s通过，74实际模块匹配。完整原failedpanel安装版重放选cell2、排除0/1、26级，原修正比例9.2264e-9<1e-8；全部积分独立复算。不是新的完整trajectory。
+
+实际native01/session18952已终态exit0：45s监督1.8402s，runner1.5418s。原case/initial身份、replay完整state、exact端点、dry2/3模式，真实water host求值成功；phase率[.0017456959735,.0017457070151,0,0]，来源/runtime74/状态保持。两事件和totals仍属未提交分支，原四格packet FAILED未关闭。root无活动EOS/测试。见research/exact-full-panel-replay-v1及两个模块研究目录。
+
+下一实际实现：Carson在 /private/tmp/brick-exact-terminal-executor-v1 构建actual initial/midpoint观测→fullrootorder/panel/writeback→mode/endpoint观测的完整speculative执行器，需核实际候选/测试/审查；随后原逐事件与共同端点全部比较、连续两pass及独立approach、全prefix budgets和一次packet提交/record/resume。不可停在原语或端点探针。原污泥完整材料、三机制公开留出、全湿烧冷却、空间收敛及最终CLI/UI验收继续必需未完成；Goal active，本轮progress。
+
 最新宿主接线（基线1717de9）：FreeSolidSlab/WPT共享原评估body并提供explicit autonomous exact入口，原float顺序/公式保留。初审发现thermal独立water实现漏绑，actual RED4fail后修复全部provider槽/type/fullimplementation；38源码2.94s、38安装3.01s通过，72实际模块匹配。45s监督native01已exit1/1.91s（旧encode不支持嵌套HEOSCandidate，exact尚未调用），修研究捕获保留全部数值字段后native02/session9900已exit0/2.2378s，runner1.9258s：原四格case/initial相同，legacy与exact自主时间10^12+10^-10的完整1,079,815 bytes输出逐字相同，runtime/source绑定未变。两个native已终态无root EOS运行。见research/exact-native-host-v1；此为真实water+制造solid点对照，不关闭四格event失败或材料验证。
 
 下一具体动作：TMP /private/tmp/brick-exact-terminal-panel-v1 已完成full-state affine panel及5puretests、code review；N/E局部门槛是represented ledger残差，不是exact affine quadrature总误差，midpoint/source真实性由调用方保证。/private/tmp/brick-exact-root-order-v1 Carson正构建全wet-cell严格根顺序候选。先核这两候选实际文件与审查，再整合actual exact observe、terminal writeback/mode、原全状态比较和packet原子提交；不要停在原语。精确单格已提交1717de9、时间积分0c53982。原污泥完整材料、三机制公开留出、全湿烧冷却、空间收敛及最终使用仍为必需未完成，Goal active，本轮progress。
