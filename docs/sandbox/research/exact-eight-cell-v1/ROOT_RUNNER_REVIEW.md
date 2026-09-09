@@ -1,0 +1,5 @@
+# Root pre-run review
+
+Read complete runner c8dc1fde3856c706aa31b16a9fec26d98360a598edb2f216417612dc60f40387 and preregistered case b77893acf669640a96e54306ce47319c3a70970fb1675365465ff24bfd53c2c6. Original physical case changes only grid and ID; four explicit local extensive integration numbers are halved to retain parent-domain accuracy. Original event/source/physical gates retained. Root separately checked prior integration-policy equals its original case numerics. Initial restriction/source bindings, structured failure capture before live identity recheck, frozen identity projection, final inputs and runtime guard reviewed. Original no-overwrite attempt directory retained. Root fixed one PLAN locator typo before running; no case/runner/scientific changes.
+
+One noneditable actual process, original800-second core wall and840-second external supervision. No new source/installation changes until process terminal. Acceptance requires separate prefix/closed-energy and event comparison audits; runner exit0 only means capture succeeded. Expected source76modules matches four-cell run. New codec/caloric candidates remain temporary and outside this execution.

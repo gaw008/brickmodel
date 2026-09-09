@@ -4,6 +4,10 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新8格实证（基线b49fc57）：同物理parent初态与.5→.50032，grid4→8及4个局部extensive数值量减半显式入新case，原global2e-8J及全部event/source gates保持。session61695已terminal exit0，supervisor395.34s/core392.31s，completed36steps2packets8events顺序7→0，781eval/32terminal/528pairedendpoint。全部76runtime保持；原prefix/energy审计无字节修改实际pass，globalmax9.55378e-11J、constraint1.86335e-20J；8适配comparison审计pass，384purecert/6compare/8refs。证据research/exact-eight-cell-v1。无root native进程，不重poll61695。这是短时8格事件支持，非空间收敛；旧15us FAIL与完整原泥/公开留出/全周期范围均保留。
+
+当前exact_record候选f03abafa修复真实WaterState闭包/嵌套shape/机械字段/六gate类型/immutable bytes与fresh verified return，18纯测和独立代码审通过，数值终审待核；Arlabosse来源绑定Cp与独立积分trace组件42e828已源审，portable tests收尾。均仍tmp，非本次76运行源码。Root新增material-closure-next-v1只读材料缺口与原文图核查，非整包准入。后续推进严格record审计与续算、长时空间矩阵及真实材料/三机制公开验证，不缩Goal。
+
 最新完整exact packet检查点（基线be2f48d）：新exact_depletion_integration sourcebe323c82/test3e96e5a5，实际完整ordinary→terminal→mixed continuation→每event/common六gate→连续2pass+独立pre-first-grid→原初全prefix→原子commit已实现，代码/数值审查通过。明确新independent_halved_controls_no_spine_reuse策略，所有计算计费，不冒称旧cache使用。76源码11.33s、46安装6.59s通过，76实际模块匹配。
 
 原四格case/initial/policies保持，attempt01/session39872已终态exit0：supervisor172.1024s/runner171.7776s/core170.1767s，completed，32接受steps/2packets/4events，顺序3→2→1→0，exact .50032目标到达、全部depleted_no_nucleation。717evaluations/71ordinarytrials/16terminal/120pairedendpoint，原512panel/800s及全部科学gate未改。旧失败作为历史保留；本次完成显式新精确数值路径，不再停留在单terminal探针。prefix和comparison独立审计已pass，另行32prefix闭合E+peΔV独立审计pass，最大6.16683e-11J、累计abs constraint2.31071e-20J，均原2e-8J；外boundary/body全0实际核查，不由账本恒等式推得。
