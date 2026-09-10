@@ -2,6 +2,8 @@
 
 ## 当前新增映射
 
+来源端点误差：`source_endpoint_comparison.measure_source_endpoint_pair` 对全部四类流体与U计算Fraction绝对差，对T/P计算 `|a−b|+ea+eb`；P采用含可用体积误差的 `SourceWetPoint.pressure_error_pa`。`compare_source_trial_endpoints` 检查成功试算并复用 `exact_record` 完整政策重建，N/U/T/报告T处P门槛独立于原归一化D；记录check拒绝修改原值。源码/安装81项及保存端点30检查见[本阶段证据](research/source-endpoint-comparison-v1/REPORT.md)。uP导数到完整反解压力的条件推导仅在研究记录中，不列为已实现方程。
+
 实际来源试算：`exact_integration.advance_exact_euler` 共用原净导数/乘积/状态更新；`source_prefix_trial.evaluate_source_prefix_trial` 真正求值起点、中点、前缀终点并调用原积分器同区间参考。`normalized_prefix_discrepancy` 使用原N/U尺度的直接最大差异，不乘1/3；`SourcePrefixTrial.check` 被动重放原参考速率/DomainExit及完整确定性结果。[安装143项和实际真实水/235项独审证据](research/source-prefix-trial-v1/REPORT.md)限定数值试算，不证明事件时间或材料适用性。
 
 来源数值前缀：`exact_terminal_panel.affine_integral_value/affine_integral/affine_update` 共用 `I=r0*h+(rm-r0)*h²/(2hm)`、分量一次投影及状态一次投影；旧13完整结果保持。`source_net_prefix.build_source_prefix` 构造同面液/气/总U账本、成对相变与全部区间最小值；`audit_source_prefixes` 分别累计已表示及精确积分交换，逐前缀检验残差。它们属于数值策略，原速率的物理来源仍由源面板绑定。安装131项与七个独立数值前缀的818项离线复算见[前缀证据](research/source-net-prefix-v1/REPORT.md)，不授予真实ODE/事件资格。

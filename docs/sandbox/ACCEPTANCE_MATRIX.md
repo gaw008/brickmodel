@@ -2,6 +2,8 @@
 
 状态：`pending` 未实现或证据不足，`in_progress` 正在实现，`verified` 有相应范围实证，`gap` 已识别证据缺口。不得将本表条目被记录等同于通过。
 
+来源端点比较增量：[source-endpoint-comparison-v1](research/source-endpoint-comparison-v1/REPORT.md) 完整绑定原事件政策，按Fraction分别核对N/U/T及报告温度处P；源码/安装各81项、独审及30保存端点核算完成，推进P04/P05/P10/P16、V05/V06的限定数值证据。完整反解压力与事件时间没有因此通过，真实材料、三机制公开对照、全周期/多代和应用必需条目仍未完成；不升级整项verified。
+
 实际来源试算增量：[source-prefix-trial-v1](research/source-prefix-trial-v1/REPORT.md) 真正求值原Euler中点和前缀终点，完成同区间原积分器参考与直接差异门槛，保存全部失败，并被动重放成功参考中的DomainExit拒步/恢复序列。源码/安装143项、一次真实水11求值及235项独立保存数据复算完成，推进P04/P05/P10/P16、V05/V06的限定耦合数值软件部分。事件时间/干界面、完整原泥材料、三机制公开实测留出、全周期/多代与应用完整条目继续未完成，不升级verified。
 
 来源数值前缀增量：[source-net-prefix-v1](research/source-net-prefix-v1/REPORT.md) 实现共享面积分/状态两层投影、完整原政策绑定、局部及累计已表示/精确积分残差检查。13旧完整结果保持，安装131项、七个独立前缀纯回放及818独立复算完成，推进P04/P05/P10/P16与V05/V06的限定算术软件部分。未接受新ODE步或物理事件；真实同材料、三机制公开留出、全周期与应用完整条目不升级verified。
