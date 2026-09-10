@@ -6,6 +6,7 @@
 
 | 关系或数值合同 | 实现与验证入口 | 已证实范围 |
 |---|---|---|
+| Wang D1：u_t=D u_xx，底部无通量、顶部Robin；μ tanμ=Bi的模态平均MR | `research/wang2021-drying-holdout-v1/reproduce/wang_d1.py`；独立高精度、有限体积与实际温度留出；[结果](research/wang2021-drying-holdout-v1/REPORT.md) | 研究脚本未进入生产内核；实际点数学差小于6e-13 MR，但117校准/57留出对照未满足图示一致性，不能授予真实材料参数资格 |
 | 混合单位记录的精确数值编码、原初上下文/模型身份、全路径账本与投影一致性 | `mass_wet_exact_record.capture_binding`、`encode_mixed_run`、`audit_mixed_record` | 新schema保留kg/mol/U区别；离线部分一致性审计，明确不授予完整根/六差值重算、物理认证或续算许可；[证据](research/mass-wet-exact-record-v1/README.md) |
 | kg/mol分离的两次耗尽、模式切换与原子提交；逐事件及共同终点六门槛、两连续细化与独立approach | `mass_wet_exact_controller.integrate_mixed_exact`、`audit_prefix`；`test_mass_wet_exact_controller.py`与独立DOP853辅助实现 | 明确制造解析液体的完整两格湿湿→干湿→干干数值闭环；[实际证据](research/mass-wet-exact-controller-v1/README.md)，不授予真实原料或原生水准入 |
 | 固体kg/流体mol共同总U反解、有限O2反应及无重复化学热 | `mass_storage_bridge.MixedStorage`、`MixedCell`、`integrate_closed` | [混合桥证据](research/mass-storage-bridge-v1/README.md)：68源码/68安装相关测试，86模块一致；制造单格干态，非全周期材料准入 |
