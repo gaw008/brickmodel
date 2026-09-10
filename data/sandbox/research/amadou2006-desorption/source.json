@@ -1,0 +1,91 @@
+{
+  "id": "SRC_AMADOU_2006_DESORPTION",
+  "authors": [
+    "H. Amadou",
+    "J.-B. Poulet",
+    "C. Beck",
+    "A.-G. Sadowski"
+  ],
+  "title": "Experimental study and modelling of the kinetics of drying of urban wastewater treatment plant sludge",
+  "year": 2006,
+  "doi": "10.2495/AFM06014",
+  "url": "https://www.witpress.com/Secure/elibrary/papers/AFM06/AFM06014FU1.pdf",
+  "accessed_at_utc": "2026-09-10T02:19:10.318130+00:00",
+  "read_status": "full_text_relevant_methods_equation_table_and_figures_read; PDF p5 Eq1 Table1 and p6 Figs3-4 visually checked",
+  "license": "WIT Press copyright; publisher marks free open access; no general redistribution license established",
+  "redistribution": "Original PDF retained only in ignored local source cache; metadata and factual coefficients only are distributed.",
+  "assets": [
+    {
+      "path": ".tools/source-cache/amadou2006/sorption.pdf",
+      "sha256": "f293d36948f578a37c2c02e53c2840ce821c26cf994d428be1847d03cffff3c6",
+      "bytes": 398945
+    }
+  ],
+  "material": {
+    "id": "rosheim_urban_biological_sludge_mechanically_dewatered_2006",
+    "class": "unincinerated_municipal_sludge",
+    "origin": "Rosheim urban wastewater treatment plant, 11000 population equivalent",
+    "treatment": "biological treatment; sampled after mechanical dewatering",
+    "initial_dry_mass_fraction": [
+      0.16,
+      0.19
+    ],
+    "locator": "PDF p2 section2.1.1",
+    "same_batch_as_WP060451": null,
+    "match_to_Wang2021": false
+  },
+  "measurement": {
+    "method": "DVS equilibrium weighing, dry endpoint105degC24h",
+    "branch": "desorption",
+    "locator": "PDF pp2-3 sections2.1.2-2.1.3",
+    "temperature_degC": [
+      30,
+      50
+    ],
+    "raw_replicate_data": null
+  },
+  "relation": {
+    "id": "AMADOU2006_OSWIN_DESORPTION",
+    "classification": "literature_constitutive_model",
+    "equation": "Xeq=k*(aw/(1-aw))**n",
+    "basis": "kg water / kg dry solid",
+    "activity_basis": "dimensionless equilibrium relative humidity fraction",
+    "locator": "PDF p5 printed137 Eq1 Table1; p6 Figs3-4",
+    "rows": [
+      {
+        "temperature_degC": 30,
+        "k": "0.112",
+        "n": "0.416",
+        "reported_EQM": "3.50652E-05"
+      },
+      {
+        "temperature_degC": 50,
+        "k": "0.0938",
+        "n": "0.484",
+        "reported_EQM": "2.90608E-04"
+      }
+    ],
+    "printed_domain": "0.10 <= Hr >= 0.80",
+    "interpreted_activity_interval": [
+      "0.10",
+      "0.80"
+    ],
+    "domain_interpretation": "Printed second inequality is not an interval; evaluation restriction0.10..0.80 is explicitly inferred from plotted experimental abscissae in Figs2-4, not silently corrected source text.",
+    "temperature_policy": "Only exactly30 or50degC; no interpolation or temperature derivative authorized.",
+    "parameter_covariance": null,
+    "parameter_uncertainty": null,
+    "EQM_qualification": "Preserved reported fit metric; not a pointwise uncertainty bound or independent prediction error.",
+    "activity_label_interpretation": "Figures2-4 and nomenclature print relative humidity (%), but axis0..1 and Eq1 require a dimensionless fraction; preserve label inconsistency, never divide plotted values by100.",
+    "basis_locator": "PDF p9 printed141 nomenclature X: kg water/kg dry solid"
+  },
+  "qualification": {
+    "allowed": "Source-specific equilibrium desorption fit evaluation and algebraic inverse in stated interval",
+    "not_allowed": [
+      "Generic sludge or clay blend activity",
+      "Wang2021 parameter transfer",
+      "Adsorption or hysteresis prediction",
+      "Continuous temperature relation or sorption enthalpy",
+      "Whole material thermodynamic closure or dynamic drying validation"
+    ]
+  }
+}

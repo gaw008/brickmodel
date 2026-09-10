@@ -1,0 +1,186 @@
+{
+  "python": "3.12.13 (main, Apr 14 2026, 14:33:40) [Clang 22.1.3 ]",
+  "installed_module": "/private/tmp/brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/amadou_desorption.py",
+  "source_and_installed_sha256": "3d7442bb2193f9e31702aaa3c85e996d167c2c42908ed199942f5d53f97c1b22",
+  "forward": {
+    "value": "0.094615885644643594567139537512130336344796521168743290617609824051518050950058368",
+    "quantity": "equilibrium_dry_basis_moisture",
+    "input_value": "2/5",
+    "temperature_degC": 30,
+    "node_id": "AMADOU2006_OSWIN_DESORPTION_30_FORWARD",
+    "basis": "kg water / kg dry solid",
+    "unit": "1",
+    "material_id": "rosheim_urban_biological_sludge_mechanically_dewatered_2006",
+    "source_id": "SRC_AMADOU_2006_DESORPTION",
+    "source_sha256": "8070dddbca2b70863650d936bc11ad0e244c03b674aed677326c573368507c9a",
+    "numerical_policy": "decimal80_half_even_float_shortest_decimal_rounded_endpoint_inverse_v1",
+    "uncertainty": null,
+    "material_qualified": false,
+    "qualification": "source_specific_desorption_fit_not_dynamic_or_full_material_validation"
+  },
+  "inverse": {
+    "value": "0.39999999999999999999999999999999999999999999999999999999999999999999999999999999",
+    "quantity": "water_activity",
+    "input_value": "739186606598778082555777636813518252693722821630806957950076750402484773047331/7812500000000000000000000000000000000000000000000000000000000000000000000000000",
+    "temperature_degC": 30,
+    "node_id": "AMADOU2006_OSWIN_DESORPTION_30_INVERSE",
+    "basis": "equilibrium relative humidity fraction",
+    "unit": "1",
+    "material_id": "rosheim_urban_biological_sludge_mechanically_dewatered_2006",
+    "source_id": "SRC_AMADOU_2006_DESORPTION",
+    "source_sha256": "8070dddbca2b70863650d936bc11ad0e244c03b674aed677326c573368507c9a",
+    "numerical_policy": "decimal80_half_even_float_shortest_decimal_rounded_endpoint_inverse_v1",
+    "uncertainty": null,
+    "material_qualified": false,
+    "qualification": "source_specific_desorption_fit_not_dynamic_or_full_material_validation"
+  },
+  "trace": {
+    "root": "AMADOU2006_OSWIN_DESORPTION_30_INVERSE",
+    "registry_sha256": "b759bde8de2da48cf535307829f50b6d39699981a56d3d6e2af07de64621b6ad",
+    "nodes": [
+      {
+        "basis": "kg water / kg dry solid",
+        "unit": "1",
+        "evidence_kind": "literature_constitutive_model",
+        "applicability": {
+          "status": "conditional",
+          "rationale": "Only original Rosheim desorption sample; no generic sludge transfer."
+        },
+        "uncertainty": {
+          "status": "unquantified",
+          "rationale": "Preserved reported fit metric; not a pointwise uncertainty bound or independent prediction error."
+        },
+        "domain": {
+          "temperature_K": [
+            303.15,
+            303.15
+          ],
+          "material_classes": [
+            "unincinerated_municipal_sludge"
+          ],
+          "notes": "Printed second inequality is not an interval; evaluation restriction0.10..0.80 is explicitly inferred from plotted experimental abscissae in Figs2-4, not silently corrected source text. Only exactly30 or50degC; no interpolation or temperature derivative authorized."
+        },
+        "citations": [
+          {
+            "source_id": "SRC_AMADOU_2006_DESORPTION",
+            "locator": "PDF p5 printed137 Eq1 Table1; p6 Figs3-4",
+            "support": "value"
+          }
+        ],
+        "id": "AMADOU2006_OSWIN_DESORPTION_30_PARAMETERS",
+        "role": "physical_parameter",
+        "value": {
+          "k": 0.112,
+          "n": 0.416
+        },
+        "printed_decimal_values": {
+          "k": "0.112",
+          "n": "0.416"
+        },
+        "dependencies": []
+      },
+      {
+        "basis": "kg water / kg dry solid",
+        "unit": "1",
+        "evidence_kind": "literature_constitutive_model",
+        "applicability": {
+          "status": "conditional",
+          "rationale": "Only original Rosheim desorption sample; no generic sludge transfer."
+        },
+        "uncertainty": {
+          "status": "unquantified",
+          "rationale": "Preserved reported fit metric; not a pointwise uncertainty bound or independent prediction error."
+        },
+        "domain": {
+          "temperature_K": [
+            303.15,
+            303.15
+          ],
+          "material_classes": [
+            "unincinerated_municipal_sludge"
+          ],
+          "notes": "Printed second inequality is not an interval; evaluation restriction0.10..0.80 is explicitly inferred from plotted experimental abscissae in Figs2-4, not silently corrected source text. Only exactly30 or50degC; no interpolation or temperature derivative authorized."
+        },
+        "citations": [
+          {
+            "source_id": "SRC_AMADOU_2006_DESORPTION",
+            "locator": "PDF p5 printed137 Eq1 Table1; p6 Figs3-4",
+            "support": "equation"
+          }
+        ],
+        "id": "AMADOU2006_OSWIN_DESORPTION_30_FORWARD",
+        "role": "equation",
+        "value": "Xeq=k*(aw/(1-aw))**n",
+        "dependencies": [
+          "AMADOU2006_OSWIN_DESORPTION_30_PARAMETERS"
+        ]
+      },
+      {
+        "basis": "equilibrium relative humidity fraction",
+        "unit": "1",
+        "evidence_kind": "derived_from_evidence",
+        "applicability": {
+          "status": "conditional",
+          "rationale": "Only original Rosheim desorption sample; no generic sludge transfer."
+        },
+        "uncertainty": {
+          "status": "unquantified",
+          "rationale": "Preserved reported fit metric; not a pointwise uncertainty bound or independent prediction error."
+        },
+        "domain": {
+          "temperature_K": [
+            303.15,
+            303.15
+          ],
+          "material_classes": [
+            "unincinerated_municipal_sludge"
+          ],
+          "notes": "Printed second inequality is not an interval; evaluation restriction0.10..0.80 is explicitly inferred from plotted experimental abscissae in Figs2-4, not silently corrected source text. Only exactly30 or50degC; no interpolation or temperature derivative authorized."
+        },
+        "citations": [
+          {
+            "source_id": "SRC_AMADOU_2006_DESORPTION",
+            "locator": "PDF p5 printed137 Eq1 Table1; p6 Figs3-4",
+            "support": "value"
+          }
+        ],
+        "id": "AMADOU2006_OSWIN_DESORPTION_30_INVERSE",
+        "role": "equation",
+        "value": "aw=(Xeq/k)**(1/n)/(1+(Xeq/k)**(1/n))",
+        "dependencies": [
+          "AMADOU2006_OSWIN_DESORPTION_30_FORWARD"
+        ],
+        "derivation": "Algebraic inversion of monotone positive-k positive-n Oswin desorption relation; rounded endpoint policy decimal80_half_even_float_shortest_decimal_rounded_endpoint_inverse_v1"
+      }
+    ],
+    "sources": [
+      {
+        "id": "SRC_AMADOU_2006_DESORPTION",
+        "title": "Experimental study and modelling of the kinetics of drying of urban wastewater treatment plant sludge",
+        "url": "https://www.witpress.com/Secure/elibrary/papers/AFM06/AFM06014FU1.pdf",
+        "authors": [
+          "H. Amadou",
+          "J.-B. Poulet",
+          "C. Beck",
+          "A.-G. Sadowski"
+        ],
+        "year": 2006,
+        "license": "WIT Press copyright; publisher marks free open access; no general redistribution license established",
+        "retrieved_at": "2026-09-10",
+        "read_status": "full_text_checked",
+        "reading_scope": "full_text_relevant_methods_equation_table_and_figures_read; PDF p5 Eq1 Table1 and p6 Figs3-4 visually checked",
+        "metadata_sha256": "8070dddbca2b70863650d936bc11ad0e244c03b674aed677326c573368507c9a",
+        "activity_label_interpretation": "Figures2-4 and nomenclature print relative humidity (%), but axis0..1 and Eq1 require a dimensionless fraction; preserve label inconsistency, never divide plotted values by100.",
+        "basis_locator": "PDF p9 printed141 nomenclature X: kg water/kg dry solid",
+        "assets": [
+          {
+            "path": ".tools/source-cache/amadou2006/sorption.pdf",
+            "sha256": "f293d36948f578a37c2c02e53c2840ce821c26cf994d428be1847d03cffff3c6",
+            "bytes": 398945
+          }
+        ]
+      }
+    ],
+    "scope": "declared_source_trace_not_scientific_validation"
+  }
+}
