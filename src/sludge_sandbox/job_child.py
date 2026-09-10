@@ -16,12 +16,13 @@ from .job_supervisor import _cancel_requested, _write_json, read_job
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description='Owned sandbox service child')
-    parser.add_argument('operation', choices=('run', 'replay', 'resume'))
+    parser.add_argument('operation', choices=('run', 'source-run', 'replay', 'resume'))
     parser.add_argument('source', type=Path)
     parser.add_argument('--job-directory', required=True, type=Path)
     parser.add_argument('--job-id', required=True)
     parser.add_argument('--lock-fd', required=True, type=int)
     parser.add_argument('--water-data', type=Path)
+    parser.add_argument('--assets-root', type=Path)
     parser.add_argument('--evidence-data', type=Path)
     args = parser.parse_args(argv)
     started = time.monotonic()
@@ -49,7 +50,12 @@ def main(argv: list[str] | None = None) -> int:
         from .run_service import run_case, replay_run, resume_run
 
         output = args.job_directory/'run'
-        if args.operation == 'run':
+        if args.operation == 'source-run':
+            if args.assets_root is None or args.water_data is not None or args.evidence_data is not None:
+                raise ValueError('source_run_requires_only_assets_root')
+            from .source_run_service import run_source_case
+            result = run_source_case(args.source, args.assets_root, output, cancel=cancelled)
+        elif args.operation == 'run':
             if args.water_data is None:
                 raise ValueError('run_requires_water_directory')
             result = run_case(args.source, args.water_data, output, cancel=cancelled,

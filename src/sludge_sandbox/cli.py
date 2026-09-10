@@ -31,6 +31,13 @@ def main(argv=None):
     run.add_argument('--water-data', required=True, type=Path)
     run.add_argument('--evidence-data', type=Path, help='公开方程证据目录；缺少的来源在图中保持 missing')
     run.add_argument('--output', required=True, type=Path)
+    source_run = commands.add_parser('source-run', help='运行真实水物性/来源热容试算；当前几何与输运仍为数值验证设定')
+    source_run.add_argument('case', type=Path)
+    source_run.add_argument('--assets-root', required=True, type=Path, help='显式本地来源资产根目录；输出副本含不可公开再分发的来源缓存')
+    source_run.add_argument('--output', required=True, type=Path)
+    source_validate = commands.add_parser('source-validate', help='校验来源试算配置及显式资产；不运行物性')
+    source_validate.add_argument('case', type=Path)
+    source_validate.add_argument('--assets-root', type=Path)
     trace = commands.add_parser('trace', help='查询保存结果的实现、参数与来源文件')
     trace.add_argument('run_directory', type=Path)
     trace.add_argument('--quantity', required=True)
@@ -41,10 +48,11 @@ def main(argv=None):
     resume.add_argument('run_directory', type=Path)
     resume.add_argument('--output', required=True, type=Path)
     supervised = commands.add_parser('supervise', help='监督整个运行进程，保存状态并限制总耗时')
-    supervised.add_argument('operation', choices=('run', 'replay', 'resume'))
+    supervised.add_argument('operation', choices=('run', 'source-run', 'replay', 'resume'))
     supervised.add_argument('source', type=Path)
     supervised.add_argument('--job-directory', required=True, type=Path)
     supervised.add_argument('--water-data', type=Path)
+    supervised.add_argument('--assets-root', type=Path)
     supervised.add_argument('--evidence-data', type=Path)
     supervised.add_argument('--wall-seconds', required=True, type=float)
     supervised.add_argument('--grace-seconds', default=5., type=float)
@@ -109,6 +117,26 @@ def main(argv=None):
         command.add_argument('directory', type=Path)
     args = parser.parse_args(argv)
     try:
+        if args.command == 'source-validate':
+            from .source_run_config import load_source_run_config, validate_source_run_assets
+            from .source_run_service import _read
+            config = load_source_run_config(_read(args.case, 1024 * 1024))
+            assets = validate_source_run_assets(config, assets_root=args.assets_root) if args.assets_root else None
+            value = dict(status='schema_valid', config_sha256=config.sha256,
+                asset_manifest_sha256=assets.sha256 if assets else None,
+                source_assets_checked=assets is not None, material_qualified=False)
+            print(json.dumps(value, ensure_ascii=False, indent=2))
+            return 0
+        if args.command == 'source-run':
+            from .source_run_service import run_source_case
+            with _cancellation() as cancel:
+                value = run_source_case(args.case, args.assets_root, args.output, cancel=cancel)
+            summary = {key: value.get(key) for key in ('status', 'reason', 'case_sha256', 'scientific_status',
+                'counts', 'source_record', 'numerical_comparison_completed', 'numerical_event_accepted',
+                'material_qualified', 'full_firing_cycle')}
+            summary['output'] = str(args.output.resolve())
+            print(json.dumps(summary, ensure_ascii=False, allow_nan=False, indent=2))
+            return 0 if value['status'] == 'completed' else 1
         if args.command in ('source-study-import', 'source-study-inspect'):
             from .source_study_service import import_source_study, inspect_source_study
             if args.command == 'source-study-import':
@@ -194,6 +222,7 @@ def main(argv=None):
                 value = supervise(args.operation, args.source, args.job_directory,
                                   SupervisionPolicy(args.wall_seconds, args.grace_seconds),
                                   water_directory=args.water_data,
+                                  assets_root=args.assets_root,
                                   evidence_directory=args.evidence_data, cancel=cancel)
         elif args.command in ('job-status', 'cancel-job'):
             from .job_supervisor import read_job, request_cancel

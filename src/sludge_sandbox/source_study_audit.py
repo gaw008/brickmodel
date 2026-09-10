@@ -174,7 +174,7 @@ def _trial(node,memo,checks,contexts):
                 and node.discrepancy<=1,'source_study_trial_discrepancy')
         checks['completed_reference_replays']+=1
     else:
-        require(node.status in ('numerical_failure','domain_exit','cancelled','resource_limit')
+        require(node.status in ('numerical_failure','domain_exit','cancelled','resource_limit','unsupported')
                 and type(node.reason) is str,'source_study_trial_failure_status')
         checks['preserved_failed_trials']+=1
 
@@ -256,7 +256,7 @@ def _candidate(node,memo,checks,contexts):
     if node.terminal is not None:
         require(_same(node.terminal.seed,node.seed) and node.terminal.policy_binding==node.event_policy_binding,
                 'source_study_candidate_terminal_binding')
-    require(node.status in ('executed_dry_candidate','domain_exit','failed','resource_limit','cancelled'),
+    require(node.status in ('executed_dry_candidate','domain_exit','failed','numerical_failure','resource_limit','cancelled'),
             'source_study_candidate_status')
     captures=reify(node.captures,memo)
     require(type(node.maximum_callbacks) is int and 0<node.maximum_callbacks and len(captures)<=node.maximum_callbacks,

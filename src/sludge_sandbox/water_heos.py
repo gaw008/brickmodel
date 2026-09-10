@@ -1,4 +1,5 @@
 """Explicit hybrid water adapter: verified HEOS real fluid, pinned Python ideal law."""
+from .source_run_observer import emit_source_event, emit_source_failure
 from dataclasses import dataclass,field,replace,asdict
 import hashlib,json,sys,importlib.metadata
 from pathlib import Path
@@ -18,35 +19,46 @@ class HEOSWaterProperties:
     _ideal: object=field(repr=False,compare=False)
 
     def __init__(self,source_directory,manifest):
+        kernel = None
         try:
-            verified_bytes=Path(manifest).read_bytes()
-            if hashlib.sha256(verified_bytes).hexdigest()!='5f9e39bf1d3376b931caaf8fbda478b482cafe4c8b57a490860ac6ed080bf6db':
-                raise WaterSourceError('unreviewed_heos_manifest')
-            verified_manifest=json.loads(verified_bytes)
-            kernel=HEOSCandidate(manifest,source_directory)
-            if json.loads(kernel.descriptor_json)['runtime']!=verified_manifest:
-                raise WaterSourceError('heos_manifest_changed_during_load')
-        except (ImportError,OSError,json.JSONDecodeError,KeyError) as exc:
-            raise WaterSourceError('required_heos_dependencies_or_manifest_unavailable') from exc
-        ideal=WaterProperties(source_directory)
-        if kernel.reference != ideal.reference:
-            raise WaterNumericalError('hybrid_reference_mismatch')
-        payload={'schema':'hybrid_water_v1','real_fluid':json.loads(kernel.descriptor_json),
-            'ideal':'source_verified_python_iapws_1.5.5_ideal_helmholtz',
-            'wrapper_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-            'ideal_adapter_sha256':hashlib.sha256(Path(__file__).with_name('water_properties.py').read_bytes()).hexdigest(),
-            'ideal_dispatch_sha256':hashlib.sha256(Path(__file__).with_name('_water_python_backend.py').read_bytes()).hexdigest(),
-            'descriptor_code_sha256':hashlib.sha256(Path(__file__).with_name('water_implementation.py').read_bytes()).hexdigest(),
-            'hybrid_runtime':{'python':sys.version,'packages':{name:importlib.metadata.version(name) for name in ('iapws','numpy','scipy')}},
-            'public_state_schema':'water_state_optional_implementation_v1',
-            'reference':asdict(kernel.reference),'numerical_limits':asdict(NumericalLimits())}
-        descriptor=WaterImplementation('water_implementation_v1','heos95_python_ideal_hybrid','8.0.0+iapws1.5.5',
-            ('coolprop-8.0.0-heos-water',),json.dumps(payload,sort_keys=True,separators=(',',':')))
-        assets=dict(ideal.source_asset_sha256)
-        assets['water_implementation_v1.json']=descriptor.sha256
-        for name,value in [('reference',kernel.reference),('source_asset_sha256',MappingProxyType(assets)),
-            ('numerical_limits',NumericalLimits()),('implementation',descriptor),('_kernel',kernel),('_ideal',ideal)]:
-            object.__setattr__(self,name,value)
+            emit_source_event('heos_started', source_directory=source_directory, manifest=manifest)
+            try:
+                verified_bytes=Path(manifest).read_bytes()
+                if hashlib.sha256(verified_bytes).hexdigest()!='5f9e39bf1d3376b931caaf8fbda478b482cafe4c8b57a490860ac6ed080bf6db':
+                    raise WaterSourceError('unreviewed_heos_manifest')
+                verified_manifest=json.loads(verified_bytes)
+                kernel=HEOSCandidate(manifest,source_directory)
+            except (ImportError,OSError,json.JSONDecodeError,KeyError) as exc:
+                raise WaterSourceError('required_heos_dependencies_or_manifest_unavailable') from exc
+            emit_source_event('heos_kernel_returned', source_directory=source_directory, manifest=manifest, kernel=kernel)
+            try:
+                if json.loads(kernel.descriptor_json)['runtime']!=verified_manifest:
+                    raise WaterSourceError('heos_manifest_changed_during_load')
+            except (ImportError,OSError,json.JSONDecodeError,KeyError) as exc:
+                raise WaterSourceError('required_heos_dependencies_or_manifest_unavailable') from exc
+            ideal=WaterProperties(source_directory)
+            if kernel.reference != ideal.reference:
+                raise WaterNumericalError('hybrid_reference_mismatch')
+            payload={'schema':'hybrid_water_v1','real_fluid':json.loads(kernel.descriptor_json),
+                'ideal':'source_verified_python_iapws_1.5.5_ideal_helmholtz',
+                'wrapper_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                'ideal_adapter_sha256':hashlib.sha256(Path(__file__).with_name('water_properties.py').read_bytes()).hexdigest(),
+                'ideal_dispatch_sha256':hashlib.sha256(Path(__file__).with_name('_water_python_backend.py').read_bytes()).hexdigest(),
+                'descriptor_code_sha256':hashlib.sha256(Path(__file__).with_name('water_implementation.py').read_bytes()).hexdigest(),
+                'hybrid_runtime':{'python':sys.version,'packages':{name:importlib.metadata.version(name) for name in ('iapws','numpy','scipy')}},
+                'public_state_schema':'water_state_optional_implementation_v1',
+                'reference':asdict(kernel.reference),'numerical_limits':asdict(NumericalLimits())}
+            descriptor=WaterImplementation('water_implementation_v1','heos95_python_ideal_hybrid','8.0.0+iapws1.5.5',
+                ('coolprop-8.0.0-heos-water',),json.dumps(payload,sort_keys=True,separators=(',',':')))
+            assets=dict(ideal.source_asset_sha256)
+            assets['water_implementation_v1.json']=descriptor.sha256
+            for name,value in [('reference',kernel.reference),('source_asset_sha256',MappingProxyType(assets)),
+                ('numerical_limits',NumericalLimits()),('implementation',descriptor),('_kernel',kernel),('_ideal',ideal)]:
+                object.__setattr__(self,name,value)
+            emit_source_event('heos_returned', source_directory=source_directory, manifest=manifest, water=self)
+        except BaseException as exc:
+            emit_source_failure('heos_failed', exc, source_directory=source_directory, manifest=manifest, water=self, kernel=kernel)
+            raise
 
     @property
     def _model(self):

@@ -4,6 +4,7 @@ The only EOS entry is ``collect_source_wet_pressure_pair``. Saved evidence is
 checked passively. Four observations check consistency and root-end signs;
 they do not establish the assumed domain-wide EOS error or liquid stability.
 """
+from .source_run_observer import emit_source_event, emit_source_failure
 from collections.abc import Callable
 from dataclasses import dataclass, fields, replace
 from fractions import Fraction as F
@@ -319,8 +320,12 @@ def collect_source_wet_pressure_pair(a: SourceInversePressure, b: SourceInverseP
     metadata = _water_metadata(shared_volume.storage)
     epsilon = F(shared_volume.storage.fluid_template.envelope.liquid_v_error_m3_mol)
     stage = 'prepare'
+    observer_delivery = False
+    state = None
+    request = None
     try:
         for ordinal, request in enumerate(support.requests):
+            state = None
             stage = 'cancel'
             if cancel is not None:
                 cancelled = cancel()
@@ -332,14 +337,26 @@ def collect_source_wet_pressure_pair(a: SourceInversePressure, b: SourceInverseP
             stage = 'request'
             attempt = WetVolumeObservation(ordinal, *request, *metadata, None, None, None, None, epsilon)
             attempts.append(attempt)
+            state = None
+            observer_delivery = True
+            emit_source_event('wet_started', storage=shared_volume.storage, request=request)
+            observer_delivery = False
+            _require(_inputs(a, b, shared_volume) == binding,
+                     'source_wet_collection_original_binding_changed')
             state = shared_volume.storage.water.state_tp(request[0], request[1], phase=request[2])
             attempts[-1] = replace(attempt, state=state)
+            observer_delivery = True
+            emit_source_event('wet_returned', storage=shared_volume.storage, request=request, state=state)
+            observer_delivery = False
             stage = 'validate_return'
             attempts[-1] = _validate_observation(attempts[-1], ordinal, request, shared_volume.storage)
         stage = 'enclose'
         return enclose_source_wet_pressure_pair(a, b, shared_volume=shared_volume,
                                                evidence=_evidence(support, tuple(attempts), binding))
-    except Exception as exc:
+    except BaseException as exc:
+        emit_source_failure('wet_failed', exc, storage=shared_volume.storage, request=request, state=state)
+        if observer_delivery or not isinstance(exc, Exception):
+            raise
         if attempts and stage in ('request', 'validate_return'):
             attempts[-1] = replace(attempts[-1], failure_type=type(exc).__name__, failure_message=str(exc))
         raise SourceWetPairCollectionError(stage, endpoints, shared_volume, support, tuple(attempts), exc) from exc

@@ -84,6 +84,8 @@ def read_run(directory: str | Path) -> tuple[dict[str, Any], dict[str, Any]]:
             raise RunError('case_binding_mismatch')
         from .exact_run_service import verify_exact_artifacts
         verify_exact_artifacts(directory,result,manifest)
+        from .source_run_service import verify_source_artifacts
+        verify_source_artifacts(directory,result,manifest)
         return result, manifest
     except (OSError, KeyError, TypeError, json.JSONDecodeError) as exc:
         raise RunError('invalid_run') from exc
@@ -101,6 +103,14 @@ def export_run(directory: str | Path) -> dict[str, Any]:
         exported['canonical_exact_record']={'artifact':RECORD,'sha256':_hash(raw),
             'encoding':'utf-8 JSON text; preserve string without parsing numeric fields','text':raw.decode('utf-8')}
         exported['export_scope']='Verified canonical numerical record plus result and manifest; referenced input/source files are not bundled. This is not a standalone replay directory.'
+    from .source_run_service import KIND as SOURCE_KIND, RECORD as SOURCE_RECORD
+    if result.get('integration_kind') == SOURCE_KIND and result.get('source_record') is not None:
+        raw = (directory / SOURCE_RECORD).read_bytes()
+        if _hash(raw) != manifest['files'][SOURCE_RECORD]:
+            raise RunError('source_export_changed_after_validation')
+        exported['canonical_source_record'] = {'artifact': SOURCE_RECORD, 'sha256': _hash(raw),
+            'encoding': 'utf-8 JSON text; preserve exact numeric fields', 'text': raw.decode('utf-8')}
+        exported['export_scope'] = 'Complete passive study plus result and manifest; private assets and event files are not bundled. Not a standalone replay directory.'
     return exported
 
 
@@ -486,6 +496,9 @@ def trace_run(directory: str | Path, quantity: str) -> dict[str, Any]:
 def replay_run(directory: str | Path, output: str | Path, *,
                cancel: Callable[[], bool] | None = None) -> dict[str, Any]:
     result, manifest = read_run(directory)
+    from .source_run_service import KIND as SOURCE_KIND, replay_source_case
+    if result.get('integration_kind') == SOURCE_KIND:
+        return replay_source_case(directory, output, cancel=cancel)
     if result['runtime_before'] != runtime_identity():
         raise RunError('replay_runtime_mismatch')
     event_binding=None
@@ -555,6 +568,9 @@ def resume_run(directory: str | Path, output: str | Path, *,
 
     directory = Path(directory)
     result, manifest = read_run(directory)
+    from .source_run_service import KIND as SOURCE_KIND
+    if result.get('integration_kind') == SOURCE_KIND:
+        raise RunError('source_study_resume_not_implemented_use_explicit_new_replay')
     current = runtime_identity()
     if result.get('runtime_before') != current or result.get('runtime_after') != current:
         raise RunError('resume_runtime_mismatch')

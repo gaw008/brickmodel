@@ -3,6 +3,7 @@
 The original integrator advances dry states. Candidate execution is separate
 from conditional numerical event acceptance and from material qualification.
 """
+from .source_run_observer import emit_source_event
 from dataclasses import dataclass, fields, replace
 from fractions import Fraction as F
 import time
@@ -550,13 +551,16 @@ def evaluate_source_dry_transition(refinement, *, end: T, maximum_callbacks_per_
     _check_shared_volume(refinement,shared_volume)
     _require(refinement.clock is not None, 'source_dry_compared_prior_clock_required')
     _check_shared_wet_volumes(refinement,shared_wet_volumes)
-    candidates=[];pressure_records=[];stage='coarse_candidate'
+    candidates=[];pressure_records=[];stage='coarse_candidate';observer_delivery=False
     try:
         for index,seed in enumerate((refinement.approach.proposal.original_trial,refinement.shifted_trial)):
             candidate=execute_source_dry_candidate(seed,event_policy=refinement.approach.proposal.event_policy,
                 end=end,maximum_callbacks=maximum_callbacks_per_path,cancel=cancel,
                 prior_clock=refinement.clock,root_index=index)
             candidates.append(candidate)
+            observer_delivery=True
+            emit_source_event("candidate_returned", refinement=refinement, candidate=candidate, path_index=len(candidates)-1)
+            observer_delivery=False
             _require(candidate.status=='executed_dry_candidate',candidate.status+':'+str(candidate.reason))
             stage='shifted_candidate'
         wet_pairs=()
@@ -587,7 +591,12 @@ def evaluate_source_dry_transition(refinement, *, end: T, maximum_callbacks_per_
         stage='source_event_comparison'
         result=compare_source_dry_candidates(refinement,tuple(candidates),shared_volume=shared_volume,
                                             wet_pressure_pairs=wet_pairs)
+        observer_delivery=True
+        emit_source_event("transition_returned", refinement=refinement, result=result)
+        observer_delivery=False
         result.check()
         return result
     except Exception as exc:
+        if observer_delivery:
+            raise
         raise SourceDryTransitionError(stage,refinement,candidates,exc,records=pressure_records) from exc

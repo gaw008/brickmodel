@@ -5,6 +5,7 @@ Total U still includes their source caloric term. This connects the existing
 N-cell integrator; it does not admit the mechanical depletion driver or supply
 a transportation-depletion projection or a missing dry-interface law.
 """
+from .source_run_observer import emit_source_event, emit_source_failure, is_source_observer_error
 from dataclasses import dataclass, field
 from fractions import Fraction
 import numpy as np
@@ -92,30 +93,38 @@ class ExactSourceColumn:
         return result
 
     def evaluate(self, state, time):
-        require(type(time) is ExactEventTime, 'exact_source_column_time_required')
-        states = self.unpack(state)
-        output = (self.column.evaluate(states, time) if type(self.column) is ProgrammedSourceWetColumn
-                  else self.column.evaluate(states))
-        n = self.column.cell_count
-        local = np.zeros((n, len(self.species_ids)))
-        for i, cell in enumerate(output.cells):
-            chemistry = cell.chemistry
-            require(type(chemistry) is DisabledChemicalRates
-                    and type(chemistry.solid_kg_s) is tuple
-                    and len(chemistry.solid_kg_s) == len(states[i].solid_mass_kg)
-                    and type(chemistry.gas_mol_s) is tuple
-                    and len(chemistry.gas_mol_s) == len(states[i].gas_amounts_mol)
-                    and all(type(x) is Fraction and x == 0 for x in
-                            (*chemistry.solid_kg_s, *chemistry.gas_mol_s, chemistry.chemical_reference_power_w))
-                    and chemistry.phase_transfer_included is False,
-                    'fixed_source_adapter_cannot_hide_active_chemistry')
-            phase = cell.phase.phase_water_mol_s
-            local[i, self.liquid_index] = -phase
-            local[i, self.vapor_index] = phase
-        rates = Rates(np.array([(getattr(face, 'liquid_mol_s', 0.), *face.gas_mol_s) for face in output.faces]),
-                      np.array([face.energy_w for face in output.faces]), local, np.zeros(n))
-        rates.derivatives(state)
-        return SourceExactEvaluation(time, states, output, rates, self.operator_identity)
+        evaluation = None
+        try:
+            emit_source_event('rhs_started', adapter=self, state=state, time=time)
+            require(type(time) is ExactEventTime, 'exact_source_column_time_required')
+            states = self.unpack(state)
+            output = (self.column.evaluate(states, time) if type(self.column) is ProgrammedSourceWetColumn
+                      else self.column.evaluate(states))
+            n = self.column.cell_count
+            local = np.zeros((n, len(self.species_ids)))
+            for i, cell in enumerate(output.cells):
+                chemistry = cell.chemistry
+                require(type(chemistry) is DisabledChemicalRates
+                        and type(chemistry.solid_kg_s) is tuple
+                        and len(chemistry.solid_kg_s) == len(states[i].solid_mass_kg)
+                        and type(chemistry.gas_mol_s) is tuple
+                        and len(chemistry.gas_mol_s) == len(states[i].gas_amounts_mol)
+                        and all(type(x) is Fraction and x == 0 for x in
+                                (*chemistry.solid_kg_s, *chemistry.gas_mol_s, chemistry.chemical_reference_power_w))
+                        and chemistry.phase_transfer_included is False,
+                        'fixed_source_adapter_cannot_hide_active_chemistry')
+                phase = cell.phase.phase_water_mol_s
+                local[i, self.liquid_index] = -phase
+                local[i, self.vapor_index] = phase
+            rates = Rates(np.array([(getattr(face, 'liquid_mol_s', 0.), *face.gas_mol_s) for face in output.faces]),
+                          np.array([face.energy_w for face in output.faces]), local, np.zeros(n))
+            evaluation = SourceExactEvaluation(time, states, output, rates, self.operator_identity)
+            emit_source_event('rhs_returned', adapter=self, state=state, time=time, evaluation=evaluation)
+            rates.derivatives(state)
+            return evaluation
+        except BaseException as exc:
+            emit_source_failure('rhs_failed', exc, adapter=self, state=state, time=time, evaluation=evaluation)
+            raise
 
     def __call__(self, state, time):
         try:
@@ -124,6 +133,8 @@ class ExactSourceColumn:
             # Preserve explicit DomainExit and other solver classifications.
             raise
         except ValueError as exc:
+            if is_source_observer_error(exc):
+                raise
             # The common integrator retains prefixes for IntegrationError.
             # Unknown source errors remain numerical failures, not domain claims.
             raise IntegrationError('source_column_callback:'+str(exc)) from exc

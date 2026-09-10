@@ -65,7 +65,7 @@ def read_job(job_directory: str | Path) -> dict[str, Any]:
         value = json.loads(path.read_bytes())
         if (type(value) is not dict or value.get('schema') != 'sandbox_job_v1' or
                 str(uuid.UUID(value['job_id'])) != value['job_id'] or
-                value['operation'] not in ('run', 'replay', 'resume')):
+                value['operation'] not in ('run', 'source-run', 'replay', 'resume')):
             raise SupervisionError('invalid_job_record')
     except (OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
         raise SupervisionError('invalid_job_record') from exc
@@ -130,6 +130,7 @@ def _verify_result(directory: Path, returncode: int) -> dict[str, Any]:
 def supervise(operation: str, source: str | Path, job_directory: str | Path,
               policy: SupervisionPolicy, *, water_directory: str | Path | None = None,
               evidence_directory: str | Path | None = None,
+              assets_root: str | Path | None = None,
               cancel: Callable[[], bool] | None = None) -> dict[str, Any]:
     """Own, supervise, terminate if necessary, and reap a fixed service child.
 
@@ -138,12 +139,16 @@ def supervise(operation: str, source: str | Path, job_directory: str | Path,
     needed. Maximum wall plus grace plus polling/reaping scheduling is the
     operational bound, not a real-time guarantee against OS scheduling stalls.
     """
-    if operation not in ('run', 'replay', 'resume') or not isinstance(policy, SupervisionPolicy):
+    if operation not in ('run', 'source-run', 'replay', 'resume') or not isinstance(policy, SupervisionPolicy):
         raise SupervisionError('invalid_supervision_request')
     if cancel is not None and not callable(cancel):
         raise SupervisionError('invalid_cancel_callback')
     if operation == 'run' and water_directory is None:
         raise SupervisionError('run_requires_water_directory')
+    if operation == 'source-run' and assets_root is None:
+        raise SupervisionError('source_run_requires_assets_root')
+    if operation != 'source-run' and assets_root is not None:
+        raise SupervisionError('assets_root_only_for_source_run')
     if operation != 'run' and (water_directory is not None or evidence_directory is not None):
         raise SupervisionError('continuation_uses_frozen_input_directories')
     directory = Path(job_directory).absolute()
@@ -183,6 +188,8 @@ def supervise(operation: str, source: str | Path, job_directory: str | Path,
                 '--lock-fd', str(lock_fd)]
         if water_directory is not None:
             args += ['--water-data', str(Path(water_directory).resolve())]
+        if assets_root is not None:
+            args += ['--assets-root', str(Path(assets_root).resolve())]
         if evidence_directory is not None:
             args += ['--evidence-data', str(Path(evidence_directory).resolve())]
         job['argv'] = args
