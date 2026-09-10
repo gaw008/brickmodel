@@ -265,3 +265,6 @@ HEOS共存数值政策 `NUM-HEOS-COEXISTENCE-BACKTRACK-1`：固定T的F=(Δp,Δg
 
 
 条件性逐查询连接器：`src/sludge_sandbox/mass_wet_pressure_interval.py`绑定实际WetCellRate与完整原T区间，调用上述五原语，检查同一液体密度管及固定native体积差异，按Fraction返回压力半径。`tests/sandbox/test_mass_wet_pressure_interval.py`验证拒绝/快照/预算逻辑；源码与安装64项通过，独立审查见research/water-pressure-consumer-v1。单次native查询与stage/controller六门槛是不同验证层，后者尚未接线。
+
+
+累计原生压力接线（2026-09-09）：`mass_wet_pressure_provider_v2.py`复用原数学求证并保结构化失败；`mass_wet_pressure_seed.py`记录有来源系数的未认证初值迭代；`mass_wet_pressure_session.py`在一次构造生命周期内累计所有seed/proof及caller时间限制。`mass_wet_exact_stage.py` optin传实际full/fine samples并保原六gate，新subtype保原输入/门槛字节和全部proof，旧codec拒绝。对应测试test_mass_wet_pressure_session.py、test_mass_wet_native_stage.py及原stage/数学回归；源码/安装各110项通过。ordinary单次实际比较证据正在独审，controller/event仍未接线。

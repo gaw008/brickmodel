@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新实际进展：session/provider_v2/seed与native stage已应用（stage6ece806a、session7a7e8376、seedf0061733、provider768c4d23），正式源码110项20.23s/安装110项20.07s，104安装模块与源码全等。独审组合46+stage2负控、session13+3负控通过。原stage policy/initial变更两个HIGH实际RED与runner import路径HIGH均已修并保原字节。
+
+唯一ordinary native full/fine实际attempt01完成，root session83328终态exit0/reaped，whole62.257310250s/120、trial60.742858917s/90、外62.378195833s/130无timeout；2initialforward+9host、4freshqueries、seed20/proof16，252source与104membership前后相同。冻结audit_stage.py e7ae独立重算原六gate及逐path原strict全局/局部守恒全部通过，pressure比较0.005876366498482038Pa<1Pa，其余门槛亦保原值。完整原生数学4query保存证据正由Ptolemy复核，尚未终归档；禁止重跑该attempt/native或poll旧handle。actual数据tmp native_stage_study，252原输入副本已保存。
+
+pure证据research/water-pressure-session-v1（20成员22575bytes）与water-native-stage-v1（42成员39309bytes）已逐SHA解包核实，待阶段提交。下一Tesla只在新tmp native_controller_candidate实现共享session贯穿所有事件/独立路径的optin接线，尚未审或应用。完整Goal原材料/全湿烧冷却/空间/三机制留出/多代及使用验证仍必需未完成；当前属于progress，Goal保持active。
+
 最新：新鲜cell0实际查询保存结果已独立Fraction复核PASS，无HIGH。source247/安装101/全部冻结副本、原U与epsilon门槛、共存Krawczyk/机械压力角点/四盒完整tube/固定native体积误差及精确radius均核实。全证据正式归档research/water-fresh-pressure-query-v1，含下一接线方案；所有归档成员逐SHA解包核实。没有重跑EOS。session21184已终态，当前root无native/测试运行。原条件性声明与原完整Goal未完成范围保持。
 
 最新实际增量：fresh_query唯一受监督attempt01完成，session21184终态exit0/reaped，无timeout。全8.374428209s/60，外部8.450848292s/70，host6.480168s完成2initialforward+1pair，seed5，四proof1.344589084s全部完成；tube31求值16叶、fixedquery4。cell0压力Fraction约0.0032806839757006973Pa，原完整T/U/Cp/体积条件保持，247source与101membership前后一致。保存结果正在Ptolemy独立Fraction复核，尚未归档，不能重复native或pol旧handle。原fixedinput副本已存fresh_query/frozen-inputs供归档。

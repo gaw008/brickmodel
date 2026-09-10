@@ -1,0 +1,7 @@
+# 原生压力证明接入普通时间步
+
+源码6ece806a/test6c04d4dd已独审应用。full/fine比较每个湿格使用当次完整states与WetCellRate，共4新查询，保原9host回调和六项门槛。默认路径对原baseline非墙钟数据完全一致；新增结果subtype完整保存proof与累计成本，旧codec明确拒绝，不丢弃附加数据。
+
+原输入/门槛可被回调改变的两个实际RED已保留并修复，只optin增加入口快照和guard。独审46组合及2独立负控通过；正式源码110项20.23s、非editable安装110项20.07s通过。
+
+尚未接入controller事件/全周期或旧codec续算，candidate仍是未提交试算。所有原冻结、RED、审核和测试归档逐成员SHA解包复核。单次实际native full/fine运行另存独立研究目录，不能用纯测试代替。

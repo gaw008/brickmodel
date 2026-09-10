@@ -84,7 +84,9 @@ class ManufacturedConstantLiquidFixture:
 
 
 def pressure_radius(pair: WetPair, state: WetMixedState, inverse, cell: int,
-                    fixture: ManufacturedConstantLiquidFixture | None) -> F:
+                    fixture: ManufacturedConstantLiquidFixture | None, *, states=None, cell_rate=None,
+                    pressure_session=None, query_context=None, caller_guard=None,
+                    remaining_caller_wall=None) -> F:
     """Full inverse-temperature pressure enclosure for supported exact models."""
     st=pair.storages[cell];point=inverse.point
     t=exact(point.temperature_k);eps=exact(inverse.temperature_error_bound_k)
@@ -93,6 +95,9 @@ def pressure_radius(pair: WetPair, state: WetMixedState, inverse, cell: int,
     lo,hi=map(exact,st.temperature_domain_k)
     require(lo<=tlo<=thi<=hi,'inverse_temperature_interval_outside_domain')
     nl=exact(state.liquid_water_mol)
+    if nl and pressure_session is not None:
+        require(fixture is None,'native_pressure_and_fixture_are_exclusive')
+        return _native_pressure_radius(pair,state,inverse,cell,states,cell_rate,pressure_session,query_context,caller_guard,remaining_caller_wall)
     if nl:
         require(type(fixture) is ManufacturedConstantLiquidFixture,'pressure_temperature_envelope_unavailable')
         fixture.check(pair)
@@ -207,6 +212,56 @@ class MixedTrialResult:
     qualification: str='autonomous_local_trials_only_no_global_commit_no_event_admission'
 
 
+@dataclass(frozen=True)
+class NativePressureQueryContext:
+    role: str
+    time: T
+    source_binding: str
+    interfaces: tuple
+    original_initial: tuple
+    stage_start: T
+    stage_end: T
+    stage_policy: MixedStagePolicy
+
+
+@dataclass(frozen=True, kw_only=True)
+class NativePressureMixedTrialResult(MixedTrialResult):
+    """Explicit unsupported-by-legacy-codec local trial with full proof history."""
+    original_stage_policy_json: bytes
+    original_stage_inputs_json: bytes
+    pressure_session_before: object
+    pressure_session_after: object
+    pressure_query_contexts: tuple
+    native_schema: str = 'mixed_native_pressure_trial_v1'
+
+
+def _native_pressure_radius(pair,state,inverse,cell,states,cell_rate,session,context,
+                            caller_guard,remaining_caller_wall):
+    from sludge_sandbox.mass_wet_pressure_session import PressureSession
+    from sludge_sandbox.mass_wet_pressure_interval import encoded
+    from sludge_sandbox.mass_wet_transport import WetCellRate
+    require(type(session) is PressureSession,'explicit_pressure_session')
+    require(type(cell) is int and cell in (0,1),'native_pressure_cell_index')
+    require(type(states) is tuple and len(states)==2 and all(type(s) is WetMixedState for s in states), 'native_pressure_full_states')
+    require(states[cell] is state and type(cell_rate) is WetCellRate and cell_rate.inverse is inverse,'native_pressure_actual_state_inverse')
+    require(type(context) is NativePressureQueryContext,'explicit_native_pressure_context')
+    require(context.role in ('full','fine') and type(context.time) is T and context.time==context.stage_end
+            and type(context.stage_start) is T and context.stage_start<context.stage_end
+            and type(context.stage_policy) is MixedStagePolicy,'native_pressure_comparison_time_role')
+    require(context.source_binding==pair.binding() and context.interfaces==pair.interfaces,'native_pressure_comparison_source_modes')
+    if caller_guard is not None:caller_guard()
+    # Session retains the attempted query and all costs before status is checked.
+    attempt=session.query(pair,states,cell_rate,cell,context=encoded((context,states,cell_rate,cell)),
+                          caller_guard=caller_guard,remaining_caller_wall=remaining_caller_wall)
+    if attempt.status!='proved_conditional_query':
+        reason=attempt.reason or 'native_pressure_unresolved'
+        error={'cancelled':InterruptedError,'resource_limit':TimeoutError,'domain_exit':DomainExit}.get(attempt.failure_kind,ValueError)
+        raise error(reason)
+    require(attempt.failure_kind is None and type(attempt.pressure_radius_pa) is F and attempt.pressure_radius_pa>=0,'proved_exact_native_pressure_radius')
+    if caller_guard is not None:caller_guard()
+    return attempt.pressure_radius_pa
+
+
 def components(r: WetRates) -> tuple:
     require(type(r) is WetRates and len(r.cells)==2,'typed_actual_wet_rates')
     result=[]
@@ -288,14 +343,26 @@ def advance(pair: WetPair, states: tuple, ledger: ExactMixedLedger) -> tuple:
     return tuple(result)
 
 
-def try_step_doubling(pair: WetPair, initial: tuple, *, start: T, end: T, policy: MixedStagePolicy, cancel: Callable[[], bool] | None=None, constant_liquid_fixture: ManufacturedConstantLiquidFixture | None=None) -> MixedTrialResult:
+def try_step_doubling(pair: WetPair, initial: tuple, *, start: T, end: T, policy: MixedStagePolicy, cancel: Callable[[], bool] | None=None, constant_liquid_fixture: ManufacturedConstantLiquidFixture | None=None, pressure_session=None) -> MixedTrialResult:
     """Full-vs-two-half local attempt; returned candidate still is not a commit."""
     require(type(pair) is WetPair and type(policy) is MixedStagePolicy,'typed_mixed_trial_inputs')
     require(type(start) is T and type(end) is T and end>start,'exact_ordered_times')
     require(type(initial) is tuple and len(initial)==2 and all(type(s) is WetMixedState for s in initial),'two_initial_states')
+    session_before=None;pressure_contexts=[];stage_policy_json=None;stage_inputs_json=None
+    if pressure_session is not None:
+        from sludge_sandbox.mass_wet_pressure_session import PressureSession
+        require(type(pressure_session) is PressureSession,'explicit_pressure_session')
+        require(constant_liquid_fixture is None,'native_pressure_and_fixture_are_exclusive')
+        from sludge_sandbox.mass_wet_pressure_interval import encoded
+        stage_policy_json=encoded(policy)
+        stage_inputs_json=encoded((initial,start,end,policy))
+        session_before=pressure_session.snapshot()
     h=end.elapsed_since(start);origin=time.monotonic();attempted=completed=0;samples=[];panels=[];steps=[];predictors=[];endpoint_attempts=[];comparison=();candidate=None
     source=pair.binding();modes=pair.interfaces
     def guard():
+        if pressure_session is not None:
+            require(encoded(policy)==stage_policy_json,'native_original_stage_policy_changed')
+            require(encoded((initial,start,end,policy))==stage_inputs_json,'native_original_stage_inputs_changed')
         require(pair.binding()==source and pair.interfaces==modes,'trial_source_or_mode_changed')
         if constant_liquid_fixture is not None:constant_liquid_fixture.check(pair)
         if cancel is not None and cancel():raise InterruptedError('cancel_requested')
@@ -333,7 +400,18 @@ def try_step_doubling(pair: WetPair, initial: tuple, *, start: T, end: T, policy
         temp=F();pressure=F()
         for i,(a,b) in enumerate(zip(whole.endpoint_sample.rates.cells,half2.endpoint_sample.rates.cells)):
             temp=max(temp,abs(exact(a.inverse.point.temperature_k)-exact(b.inverse.point.temperature_k))+exact(a.inverse.temperature_error_bound_k)+exact(b.inverse.temperature_error_bound_k))
-            pressure=max(pressure,abs(exact(a.inverse.point.pressure_pa)-exact(b.inverse.point.pressure_pa))+pressure_radius(pair,full[i],a.inverse,i,constant_liquid_fixture)+pressure_radius(pair,fine[i],b.inverse,i,constant_liquid_fixture))
+            if pressure_session is None:
+                pressure=max(pressure,abs(exact(a.inverse.point.pressure_pa)-exact(b.inverse.point.pressure_pa))+pressure_radius(pair,full[i],a.inverse,i,constant_liquid_fixture)+pressure_radius(pair,fine[i],b.inverse,i,constant_liquid_fixture))
+            else:
+                radii=[]
+                for role,states,sample,rate in (('full',full,whole.endpoint_sample,a),('fine',fine,half2.endpoint_sample,b)):
+                    require(sample.state is states and sample.rates.cells[i] is rate and sample.time==end,'native_pressure_actual_endpoint_sample')
+                    context=NativePressureQueryContext(role,sample.time,sample.source_binding,sample.interfaces,initial,start,end,policy)
+                    pressure_contexts.append(context)
+                    radii.append(pressure_radius(pair,states[i],rate.inverse,i,None,states=states,cell_rate=rate,
+                        pressure_session=pressure_session,query_context=context,caller_guard=guard,
+                        remaining_caller_wall=lambda:float(policy.maximum_wall_seconds)-(time.monotonic()-origin)))
+                pressure=max(pressure,abs(exact(a.inverse.point.pressure_pa)-exact(b.inverse.point.pressure_pa))+sum(radii,F()))
         time_error=abs(whole.end.elapsed_since(half2.end))
         comparison=tuple(zip(('solid_kg','amount_mol','energy_j','temperature_k','pressure_pa','time_s'),(mass,amount,energy,temp,pressure,time_error)))
         bounds=(policy.solid_mass_absolute_kg,policy.amount_absolute_mol,policy.energy_absolute_j,policy.temperature_absolute_k,policy.pressure_absolute_pa,policy.time_absolute_s)
@@ -344,5 +422,10 @@ def try_step_doubling(pair: WetPair, initial: tuple, *, start: T, end: T, policy
     except InterruptedError as exc:status='cancelled';reason=str(exc)
     except TimeoutError as exc:status='resource_limit';reason=str(exc)
     except (ValueError,OverflowError) as exc:status='failed';reason=str(exc)
-    return MixedTrialResult(status,reason,initial,start,end,candidate,tuple(steps),tuple(samples),tuple(panels),tuple(predictors),tuple(endpoint_attempts),comparison,attempted,completed,time.monotonic()-origin,
-        qualification=('autonomous_local_trials_only_no_global_commit_no_event_admission'+(';manufactured_test_fixture_constant_liquid_only' if constant_liquid_fixture is not None else '')))
+    result=MixedTrialResult(status,reason,initial,start,end,candidate,tuple(steps),tuple(samples),tuple(panels),tuple(predictors),tuple(endpoint_attempts),comparison,attempted,completed,time.monotonic()-origin,
+        qualification=('autonomous_local_trials_only_no_global_commit_no_event_admission'+(';manufactured_test_fixture_constant_liquid_only' if constant_liquid_fixture is not None else '')+(';conditional_native_pressure_proofs_original_material_envelopes' if pressure_session is not None else '')))
+
+    if pressure_session is None:return result
+    return NativePressureMixedTrialResult(**{f.name:getattr(result,f.name) for f in fields(MixedTrialResult)},
+        original_stage_policy_json=stage_policy_json,original_stage_inputs_json=stage_inputs_json,pressure_session_before=session_before,pressure_session_after=pressure_session.snapshot(),
+        pressure_query_contexts=tuple(pressure_contexts))
