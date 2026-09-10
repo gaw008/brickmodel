@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新：新鲜cell0实际查询保存结果已独立Fraction复核PASS，无HIGH。source247/安装101/全部冻结副本、原U与epsilon门槛、共存Krawczyk/机械压力角点/四盒完整tube/固定native体积误差及精确radius均核实。全证据正式归档research/water-fresh-pressure-query-v1，含下一接线方案；所有归档成员逐SHA解包核实。没有重跑EOS。session21184已终态，当前root无native/测试运行。原条件性声明与原完整Goal未完成范围保持。
+
+最新实际增量：fresh_query唯一受监督attempt01完成，session21184终态exit0/reaped，无timeout。全8.374428209s/60，外部8.450848292s/70，host6.480168s完成2initialforward+1pair，seed5，四proof1.344589084s全部完成；tube31求值16叶、fixedquery4。cell0压力Fraction约0.0032806839757006973Pa，原完整T/U/Cp/体积条件保持，247source与101membership前后一致。保存结果正在Ptolemy独立Fraction复核，尚未归档，不能重复native或pol旧handle。原fixedinput副本已存fresh_query/frozen-inputs供归档。
+
+HEAD121f659（pressure consumer），前4f517dd（5数学原语+Capone来源）。Carson已在新tmp pressure_session_candidate实现统一seed/proof/caller累计预算及结构化失败；只候选不改当前安装/旧freeze，尚未审/准入。下一实际acceptance为ordinary full/fine原六gate，通过后才接controller/event，完整原Goal科学与软件范围不变。
+
 最新：conditional pressure provider已按643c6c2a/test44077055应用并非editable安装（101模块）。独审25项0.42s，源码64项1.48s/安装64项1.52s通过，sessions76083/1323终态。MEDIUM失败时丢原始snapshot已修，旧冻结/RED保留research/water-pressure-consumer-v1（36成员41520bytes逐SHA核实）。尚无stage/controller准入。fresh_query当前freeze b810a64c（247文件101模块）已生成，最终runner独审中，尚未执行native。
 
 最新：五个water区间原语正式应用，源码43项1.30s/安装43项1.27s通过，实际100模块成员及字节匹配。独审MEDIUM测试写fixture已修，完整旧失败/映射/许可/审核归档research/water-packaged-primitives-v1（45成员69754bytes，逐成员SHA解包核实）。sessions65059/95436均终态，无root native运行。
