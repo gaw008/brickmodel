@@ -1,5 +1,11 @@
 # 方程—代码—验证映射 v0.1
 
+完整运行保存层更新：`source_study_record/schema/audit.py` 与 `source_study_service.py` 接完整试算、
+原失败返回、阶段/压力门槛和累计账本；`source_dry_transition._audit_balance_fields` 复用原逐格/全域
+N/U、水/元素/质量算式，旧live入口验证及容差不变。对应 `test_source_study_record.py`、
+`test_source_study_cli.py`、旧dry/multicell回归及[实际原N3读回](research/source-study-record-v1/REPORT.md)。
+被动校验不新增物性、本构或材料资格；完整返回中的未知项仍可追查。
+
 来源观测保存层：`source_observation_record.py`/`source_observation_schema.py`复用精确primitive与`source_net_panel._validate`，检查完整来源记录、原n/Vgas库存关联、共享面/供体焓及来源包含链；`source_observation_service.py`与CLI共享文件入口。对应`test_source_observation_record.py`、`test_source_observation_cli.py`及[实际111观测验证](research/source-observation-record-v1/REPORT.md)。这是被动记录校验，不是新物性方程、来源真实性认证或live恢复。湿态共同V的下一推导仍为候选，见同报告。
 
 `source_terminal.build_source_terminal`按全4N唯一首根选择空间k，以实际J_left−J_right−E构建原时钟/前缀与有界写回；新`source_terminal_liquid`复用原Darcy及同供体焓，分别核未投影n*h与已表示Q−J*h，并检查完整仿射面板供体符号。`source_dry_transition._audit_path`从原初态累计每格/全域N/U、水、元素与流体质量，原绝对预算不乘N；新2×N压力记录和selected格旧视图均绑定对应实际storage，任一湿格失败阻止整体接受。见[推导及实际证据](research/source-multicell-transition-v1/DERIVATION.md)；`test_source_multicell_terminal`、`test_source_multicell_transition`与原N1/液体回归覆盖实际液流、符号能量、局部/全域误差、身份与失败保留。没有新材料定律或全连续流向认证。

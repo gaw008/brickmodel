@@ -6,12 +6,10 @@ run, reconstruct providers, attach live parameters or authorize continuation.
 from collections.abc import Mapping
 import hashlib
 import json
-import os
 from pathlib import Path
-import stat
-import tempfile
 
 from .exact_record import _unique
+from .source_record_io import read_record_bytes, publish_record_bytes
 from .source_observation_record import (
     SourceObservationContext,
     decode_source_sample,
@@ -29,18 +27,8 @@ def _require(condition, reason):
 
 
 def _read_bounded(path, limit, reason):
-    path = Path(path)
-    descriptor = os.open(path, os.O_RDONLY | os.O_NONBLOCK)
-    try:
-        opened = os.fstat(descriptor)
-        _require(stat.S_ISREG(opened.st_mode), 'source_observation_regular_file_required')
-        _require(opened.st_size <= limit, reason)
-        with os.fdopen(descriptor, 'rb', closefd=False) as stream:
-            raw = stream.read(limit + 1)
-    finally:
-        os.close(descriptor)
-    _require(len(raw) <= limit, reason)
-    return raw
+    return read_record_bytes(path, limit, size_reason=reason,
+        regular_reason='source_observation_regular_file_required')
 
 
 def _constant(value):
@@ -67,22 +55,11 @@ def _identity(value, *, energy):
 
 def _write_new(path, raw):
     """Publish a fully written file with exclusive creation; never replace output."""
-    path = Path(path)
-    temporary = None
-    try:
-        with tempfile.NamedTemporaryFile(mode='wb', dir=path.parent,
-                                         prefix='.source-observation-', delete=False) as stream:
-            temporary = Path(stream.name)
-            stream.write(raw)
-            stream.flush()
-            os.fsync(stream.fileno())
-        os.link(temporary, path)
-    finally:
-        if temporary is not None:
-            temporary.unlink(missing_ok=True)
+    publish_record_bytes(path, raw, temporary_prefix='.source-observation-')
 
 
-def _summary(record, path, file_bytes, cell_index):
+def describe_source_observation(record, *, cell_index=None):
+    """Describe checked observation values without claiming a separate file exists."""
     sample = record.sample
     count = len(record.context.fixed_dry_mass_kg)
     _require(cell_index is None or (type(cell_index) is int and 0 <= cell_index < count),
@@ -108,10 +85,7 @@ def _summary(record, path, file_bytes, cell_index):
     modes = record.context.interface_modes
     return {
         'status': 'observation_record_valid',
-        'record_path': str(Path(path).resolve()),
         'record_sha256': record.sha256,
-        'file_sha256': hashlib.sha256(file_bytes).hexdigest(),
-        'file_is_canonical': file_bytes == record.canonical_bytes,
         'sample_binding': record.sample_binding,
         'validation_scope': record.validation_scope,
         'provenance': dict(record.provenance),
@@ -129,6 +103,14 @@ def _summary(record, path, file_bytes, cell_index):
         'source_assets_verified': False,
         'full_run_validated': False,
         'scientific_status': 'saved_declared_observation_not_material_validation',
+    }
+
+
+def _summary(record, path, file_bytes, cell_index):
+    return describe_source_observation(record, cell_index=cell_index) | {
+        'record_path': str(Path(path).resolve()),
+        'file_sha256': hashlib.sha256(file_bytes).hexdigest(),
+        'file_is_canonical': file_bytes == record.canonical_bytes,
     }
 
 

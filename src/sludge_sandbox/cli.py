@@ -62,6 +62,18 @@ def main(argv=None):
         help='查看已检验来源观测的状态和来源声明；不证明真实材料有效性')
     source_inspect.add_argument('record', type=Path)
     source_inspect.add_argument('--cell', type=int, help='可选的原空间格索引，从 0 开始')
+    study_import = commands.add_parser('source-study-import',
+        help='导入完整来源试算与事件证据；保留失败，不重跑物性或恢复实时模型')
+    study_import.add_argument('study_file', type=Path)
+    study_import.add_argument('--source-format', default='source_multicell_native_v1')
+    study_import.add_argument('--output', required=True, type=Path)
+    study_inspect = commands.add_parser('source-study-inspect',
+        help='查询完整来源记录的阶段、原观测和校验范围')
+    study_inspect.add_argument('record', type=Path)
+    study_inspect.add_argument('--capture-index', type=int, help='原 captures 顺序中的索引，从 0 开始')
+    study_inspect.add_argument('--cell', type=int, help='指定观测中的原空间格索引')
+    study_inspect.add_argument('--path', dest='value_path',
+        help='保存阶段的字段路径，例如 transition/cell_selected_pressure_gates')
     ui = commands.add_parser('ui', help='启动仅监听本机的中文研究界面')
     ui.add_argument('--case', required=True, type=Path)
     ui.add_argument('--water-data', required=True, type=Path)
@@ -97,6 +109,15 @@ def main(argv=None):
         command.add_argument('directory', type=Path)
     args = parser.parse_args(argv)
     try:
+        if args.command in ('source-study-import', 'source-study-inspect'):
+            from .source_study_service import import_source_study, inspect_source_study
+            if args.command == 'source-study-import':
+                value = import_source_study(args.study_file, args.output, source_format=args.source_format)
+            else:
+                value = inspect_source_study(args.record, capture_index=args.capture_index,
+                    cell_index=args.cell, value_path=args.value_path)
+            print(json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2))
+            return 0
         if args.command in ('source-observation-import', 'source-observation-inspect'):
             from .source_observation_service import import_source_capture, inspect_source_observation
             if args.command == 'source-observation-import':

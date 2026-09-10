@@ -244,20 +244,48 @@ class SourceTransitionBalance:
 
 
 def _audit_path(candidate, ordinary=()):
-    """Retain local and global balances from one origin through the selected event.
-
-    The original absolute budgets gate both local and global residuals; they
-    are not multiplied by the grid count. Event storage roundoff stays local.
-    """
+    """Validate live path connections, then share the exact saved-field audit."""
     seed=candidate.seed; terminal=candidate.terminal
     initial=ordinary[0].initial if ordinary else seed.initial
-    previous=initial; previous_time=ordinary[0].start if ordinary else seed.start
+    start=ordinary[0].start if ordinary else seed.start
+    policy=seed.policy
+
+    def references():
+        previous,previous_time=initial,start
+        for trial in ordinary:
+            trial.check()
+            _require(trial.status=='validated_positive_numerical_trial'
+                     and _same((trial.initial,trial.start,trial.policy),(previous,previous_time,policy)),
+                     'source_transition_ordinary_path_connection_changed')
+            yield trial.reference
+            if trial.reference.steps:
+                previous=trial.reference.states[-1]
+                previous_time=trial.reference.steps[-1].end_s
+        _require(_same((seed.initial,seed.start),(previous,previous_time)),
+                 'source_transition_terminal_connection_changed')
+
+    masses=tuple(g.molar_masses_kg_mol for g in candidate.captures[0].evaluation.source_evaluation.gas_states)
+    return _audit_balance_fields(initial,start,policy,masses,wet_references=references(),
+        terminal_prefix=terminal.prefix,corrected_state=terminal.corrected_state,
+        selected_cell_index=terminal.selected_cell_index,
+        signed_storage_roundoff_mol=terminal.totals.signed_storage_roundoff_mol,
+        dry_reference=candidate.reference)
+
+
+def _audit_balance_fields(initial, start, policy, masses, *, wet_references,
+        terminal_prefix, corrected_state, selected_cell_index,
+        signed_storage_roundoff_mol, dry_reference):
+    """Pure balances for already validated saved states and ledger fields.
+
+    No adapter or provider is accepted. Callers validate reference connections
+    and complete records before supplying this numerical projection. Original
+    local and global absolute budgets are each retained without a grid factor.
+    """
+    previous,previous_time=initial,start
     count=initial.amounts_mol.shape[0]
     exchange=[[F()]*4 for _ in range(count)]; full=[[F()]*4 for _ in range(count)]
     energy=[F()]*count; full_energy=[F()]*count
     correction=[[F()]*4 for _ in range(count)]; storage=[F()]*count; rows=[]
-    masses=tuple(g.molar_masses_kg_mol for g in candidate.captures[0].evaluation.source_evaluation.gas_states)
-    policy=seed.policy
 
     def bounded(nr,fnr,ur,fur):
         _require(all(abs(v)<=F(policy.amount_absolute_tolerance_mol) for v in (*nr,*fnr))
@@ -305,25 +333,20 @@ def _audit_path(candidate, ordinary=()):
         record(state,ledger.end_s,phase)
         previous,previous_time=state,ledger.end_s
 
-    for trial in ordinary:
-        trial.check()
-        _require(trial.status=='validated_positive_numerical_trial'
-                 and _same((trial.initial,trial.start,trial.policy),(previous,previous_time,policy)),
-                 'source_transition_ordinary_path_connection_changed')
-        for state,ledger in zip(trial.reference.states[1:],trial.reference.steps):
+    for reference in wet_references:
+        for state,ledger in zip(reference.states[1:],reference.steps):
             step(state,ledger,'wet_reference')
-    _require(_same((seed.initial,seed.start),(previous,previous_time)), 'source_transition_terminal_connection_changed')
-    pieces={name:values for name,values,_ in terminal.prefix.integrals}
+    pieces={name:values for name,values,_ in terminal_prefix.integrals}
     fn=pieces['face_species_mol_s'];rn=pieces['reaction_species_mol_s']
     exact_n=[[fn[i*4+j]-fn[(i+1)*4+j]+rn[i*4+j] for j in range(4)] for i in range(count)]
     fu=pieces['face_energy_w'];power=pieces['cell_power_w']
     exact_u=[fu[i]-fu[i+1]+power[i] for i in range(count)]
-    step(terminal.prefix.raw_state,terminal.prefix.ledger,'wet_terminal',(exact_n,exact_u))
-    corrected=terminal.corrected_state
+    step(terminal_prefix.raw_state,terminal_prefix.ledger,'wet_terminal',(exact_n,exact_u))
+    corrected=corrected_state
     correction=[[F(float(a))-F(float(b)) for a,b in zip(row_a,row_b)]
                 for row_a,row_b in zip(corrected.amounts_mol,previous.amounts_mol)]
-    selected=terminal.selected_cell_index
-    storage[selected]=terminal.totals.signed_storage_roundoff_mol
+    selected=selected_cell_index
+    storage[selected]=signed_storage_roundoff_mol
     _require(all(sum(row,F())==storage[i] for i,row in enumerate(correction))
              and all(v==0 for i,row in enumerate(correction) if i!=selected for v in row)
              and correction[selected][1]==correction[selected][2]==0
@@ -331,7 +354,7 @@ def _audit_path(candidate, ordinary=()):
              'source_transition_writeback_water_or_energy_changed')
     record(corrected,previous_time,'writeback')
     previous=corrected
-    for state,ledger in zip(candidate.reference.states[1:],candidate.reference.steps):
+    for state,ledger in zip(dry_reference.states[1:],dry_reference.steps):
         step(state,ledger,'dry_reference')
     return tuple(rows)
 
