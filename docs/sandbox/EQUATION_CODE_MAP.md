@@ -251,3 +251,14 @@ HEOS共存数值政策 `NUM-HEOS-COEXISTENCE-BACKTRACK-1`：固定T的F=(Δp,Δg
 研究候选 `interval_eos.py` / `coupled_rectangle.py`（research/water-pressure-interval-v1证据包）→ IAPWS Eq6区间求导与局部液气压力根包围，显式public/native摩尔质量尺度；原16端点温度误差区间及守界半径独立重算。仅数学研究，未准入实际稳定分支或原生误差合同，不当材料参数事实。
 
 `mass_wet_exact_terminal.prepare_mixed_terminal` → 实际两宿主样本、全部湿格根严格排序/排除、全kg/mol/U仿射终态与原局部writeback连接；保存失败prepared证据与成本。research/mass-wet-exact-terminal-v1验证近根/同根、分量账本及取消，仍不授六门槛比较或事件提交。
+
+
+## 正式普通水区间原语（2026-09-09）
+
+- IAPWS95残余Helmholtz与有向区间：`water_interval_eos.py`；`test_water_interval_eos.py`。
+- 全温体积矩形机械根：`water_coupled_rectangle.py`；同名测试。
+- 液汽共存Krawczyk：`water_coexistence.py`；同名测试。
+- 全温正密度导数连接管：`water_density_tube.py`；同名测试。
+- 固定native查询残差/公开摩尔质量体积界：`water_native_output.py`；同名测试与`test_water_volume_scale.py`。
+
+源码均位于src/sludge_sandbox，测试均位于tests/sandbox。来源、旧新映射、完整独审与源码/安装验证见research/water-packaged-primitives-v1。只是已声明局部数学合同的实现，不自动提供全域物性误差或材料准入。

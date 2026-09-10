@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新：五个water区间原语正式应用，源码43项1.30s/安装43项1.27s通过，实际100模块成员及字节匹配。独审MEDIUM测试写fixture已修，完整旧失败/映射/许可/审核归档research/water-packaged-primitives-v1（45成员69754bytes，逐成员SHA解包核实）。sessions65059/95436均终态，无root native运行。
+
+Capone2025公开污泥热预处理原文已核读，Table2干基原值/3节点来源链落data/sandbox/research/capone2025-endpoints-v1，实际安装trace及原100.1%舍入行保留；原文SHA bff7a1e488bdc810a0da0017113c542ef0f0dbb8d6133f68032c57edb8f7b9f0。Fermi热估算/Dulong热值不能作实测反应热；凝液单位/最大值冲突隔离；三次补充材料入口失败已保存。仅同批预处理污泥终态验证候选，未准入材料或完成外部验证。
+
+Carson pressure consumer冻结后独审发现MEDIUM：输入变更失败时丢原始快照，正在tmp修复，尚未应用。Root fresh_query中新300.125/305.25K实际host→cell0压力证书runner/seed候选准备中，whole60/query30/proof20/external70预算事前声明，尚未完整冻结/执行。不要把已保存16 PASS作为新查询准入。Goal全材料/全湿烧冷却/公开三机制留出/空间/多代等仍未完成，保持active。
+
 最新：全16保存端点唯一受监督研究全部通过，内部28.420998/60s、外部28.524549/70s，source前后保持，496tube/64fixed-query求值；独立Fraction逐16复算通过。research/water-all-saved-correspondence-v1保存201成员归档及消费者接口计划，所有成员解包SHA核实。session44010已终态，不重poll；这不是连续轨迹/全局相/全部native误差认证。
 
 mixed exact_record已按8b59ac0b/test7c53a7a1应用，18源码2.70s/18安装2.72s、独立21项4.08s通过；95实际安装模块及全部原测试/水资产清单/字节与前后匹配。两HIGH（全局上下文与普通state能量身份）实际RED保留并已关闭。
