@@ -4,6 +4,14 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新已落地：research/water-saved-output-correspondence-v1归档最大误差端点实际T区间连接和固定native输出数学偏差；两项独审均通过（native7pure及全部保存Fraction复算），原窄根盒/前置绑定失败均保留，全部归档成员SHA解包复核。没有修改生产内核或安装，仍94模块/3c85dce数值实现。当前无root EOS/测试运行；84575终态勿重poll。
+
+Tesla的all_saved_correspondence仅准备全16统一研究runner/事前60s预算及70s外部watchdog计划，尚未运行；Carson的mixed exact_record候选已冻结，待独审及真实完整轨迹导出/离线审计，未应用。完整科学/软件Goal范围保持未完成。下列“待独审”表述是归档前历史，以上两项已完成独审。
+
+当前实际增量：HEAD 3c85dce 后没有改安装/求解器。最大saved inverse epsilon端点step8/cell1已选定并核原T±epsilon/targetU/bracket。actual_inverse_connection/study01原1e-6液log盒严格K包含失败（.455179s），原结果保留；独审允许仅扩大数值根盒到4e-6后study02实际通过1.638728459s，31次tube/16正导数叶覆盖全实际T。session84575已终态，不重poll。新结果在tmp等待保存数据独审与归档，不能用单点冒全部16或native准入。
+
+独立native_output_candidate的step8/cell1保存原生密度固定查询已实际通过：4数学EOS求值，.124s量级，公有mol体积数值误差加实际host舍入约1.62099e-20，小于原1e-16声明；第一次仅runner把gas mapping当scalar的前置失败保留。无新native调用；已交独审。Carson mixed record候选11纯测试1.37s通过，未冻结/未审/未应用。Tesla仅tmp准备全16固定顺序统一研究runner/预算，尚未运行。根源/误差声明与完整Goal科学要求保持不变。
+
 最新：完整mixed exact controller已按7e9bd6d3/mainbe021e80/helperbc05a282应用；源码77项77.65s、实际安装77项76.75s通过，XML零失败/错误/跳过，94实际模块匹配。独审7+9及应用核验通过。research/mass-wet-exact-controller-v1保存31成员及原失败，逐成员SHA解包核实。sessions30695/66749均终态；当前root无运行中的测试或EOS，不重poll。制造解析液体两次耗尽及干态尾完整通过；整个请求区间一个原子packet，尚无mixed codec/service/resume。
 
 真实水数学共存/连接研究已归档research/water-coexistence-connection-v1（119成员），原3/6与加权5/6共存盒、所有原失败、不可变绑定修复、源码/原始HEOS JSON/许可及独立复算保留。connected session47230已终态：T300±1e-7K、31次/16正导数叶完整覆盖，tube1.099692s/15s，whole1.208409s；独立Fraction复算通过，原歧义带后压力余量>1007161.7809Pa。温度是声明研究扰动，非U inverse误差；global phase/native error均未准入。
