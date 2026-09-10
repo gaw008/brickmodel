@@ -1,5 +1,7 @@
 # 方程—代码—验证映射 v0.1
 
+`source_dry_shared_pressure.enclose_source_dry_pressure_pair`使用A=[R(Na La−Nb Hb),R(Na Ha−Nb Lb)]与共同[Vmin,Vmax]的四角构成压力差，再加两端独立流体、投影和全T/V舍入界。`declare_source_shared_dry_volume`绑定实际同对象，`source_dry_transition`显式策略选择joint-only并保留旧独立值与gate。完整域/严格原分解检查和推导见[来源共享体积干压力](research/source-dry-shared-pressure-v1/REPORT.md)及[公式](research/source-dry-shared-pressure-v1/DERIVATION.md)，无新材料本构。
+
 `source_terminal` 将实际来源全4N面板与原精确仿射蒸发/writeback绑定，从先前已用根深度继续；`source_dry_transition` 复用原积分器执行两条湿→干路径，并从共同原始初态核算各前缀。`source_dry_pressure` 对实际纯气体 `P=NgRT/V` 的完整温度/体积箱与原压力误差传播取包络，越域保持未决。实际调用、原政策/来源身份、共享预算及普通账本与精确终端积分的区别见[报告](research/source-dry-transition-v1/REPORT.md)，没有新增材料本构。
 
 当前新增 `source_root_comparison.py`：`compare_source_root_clocks` 将两条实际面板的数值根区间转到共同绝对时钟，距离上界为 max(|LA−UB|, |UA−LB|)，含双方区间宽度并使用各自剩余细化预算；`evaluate_source_common_endpoint` 调用原试算/参考积分器实际推进双方，`_joined_reference_residuals` 从原始初态累计每个前缀N/U，原门槛保持。没有新材料本构或事件准入；[实际验证](research/source-root-comparison-v1/REPORT.md)。以下为既有映射。

@@ -1,5 +1,7 @@
 # Goal 验收矩阵
 
+[来源共享体积干压力](research/source-dry-shared-pressure-v1/REPORT.md)推进P04/P05/P10/P16与V05/V06的限定数值部分：源码/安装各79项，127模块一致；新实际水两条湿→干路径以完整T/V联合压力界通过原门槛，原独立P失败保留。新transition仅条件数值接受，材料false；不将N格运输事件、应用、同材料全周期或现实三个机制验收整体升级verified。
+
 来源单格湿→干执行增量：[source-dry-transition-v1](research/source-dry-transition-v1/REPORT.md)实际连接完整终端账本、原有界液汽写回、显式干态及原积分器续算，两条真实路径在事件端点和同一后续时刻比较。源码/安装各153项，制造闭合与程序边界两例通过条件数值门槛，独立144项保存重算通过；推进P04/P05/P10/P16与V05/V06的限定数值实现。原生运行另列，N格运输耗尽、再润湿、材料/三机制实测、全周期与应用条目仍未整体verified。
 
 来源分区根/共同终点增量：[source-root-comparison-v1](research/source-root-comparison-v1/REPORT.md)提供真实新起点面板、含宽度的绝对根时钟比较、两条实际共同终点参考及从原始初态累计N/U证据。源码/安装各41项和一次38源求值完成，推进P04/P05/P10/P16、V05/V06的限定数值部分；原生P门槛未通过，不升级事件、真实材料、三机制对照、全周期或应用完整条目为verified。

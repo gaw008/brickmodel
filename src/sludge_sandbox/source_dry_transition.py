@@ -17,6 +17,7 @@ from .source_prefix_trial import (SourcePrefixTrial, TrialCapture, _TrialStop,
 from .source_net_prefix import _same
 from .source_terminal import SourceTerminal, build_source_terminal, _require
 from .source_dry_pressure import SourceDryPressure, enclose_source_dry_pressure
+from .source_dry_shared_pressure import SourceSharedDryVolume, enclose_source_dry_pressure_pair
 from .source_root_comparison import SourceRootRefinement
 
 
@@ -264,18 +265,32 @@ class SourceDryTransition:
     status: str
     qualification: str = 'declared_model_numerical_wet_dry_comparison_not_material_validation'
     material_qualified: bool = False
+    shared_volume: SourceSharedDryVolume | None = None
+    shared_pressure_pairs: tuple = ()
+    selected_pressure_bounds_pa: tuple = ()
+    selected_pressure_gates: tuple = ()
+    pressure_strategy: str = 'original_independent_source_pressure'
 
     def check(self):
-        expected=compare_source_dry_candidates(self.refinement,self.candidates)
+        expected=compare_source_dry_candidates(self.refinement,self.candidates,shared_volume=self.shared_volume)
         _require(all(_same(getattr(self,f.name),getattr(expected,f.name)) for f in fields(self)
                      if f.name not in ('refinement','candidates')), 'source_dry_transition_comparison_changed')
 
 
-def compare_source_dry_candidates(refinement, candidates) -> SourceDryTransition:
+def _check_shared_volume(refinement, shared_volume):
+    if shared_volume is not None:
+        _require(type(shared_volume) is SourceSharedDryVolume, 'explicit_source_shared_volume_required')
+        shared_volume.check()
+        storage=refinement.approach.proposal.original_trial.adapter.column.storages[0]
+        _require(shared_volume.storage is storage, 'source_shared_volume_must_belong_to_original_path')
+
+
+def compare_source_dry_candidates(refinement, candidates, *, shared_volume=None) -> SourceDryTransition:
     _require(type(refinement) is SourceRootRefinement and type(candidates) is tuple
              and len(candidates)==2 and all(type(c) is SourceDryCandidate for c in candidates),
              'actual_source_dry_comparison_inputs_required')
     refinement.check()
+    _check_shared_volume(refinement,shared_volume)
     expected=(refinement.approach.proposal.original_trial,refinement.shifted_trial)
     _require(refinement.clock is not None, 'source_dry_compared_prior_clock_required')
     for index,(candidate,seed) in enumerate(zip(candidates,expected)):
@@ -292,7 +307,7 @@ def compare_source_dry_candidates(refinement, candidates) -> SourceDryTransition
     event=a.event_policy
     ca,cb=a.terminal.clock,b.terminal.clock
     distance=max(abs(ca.lower.elapsed_since(cb.upper)),abs(ca.upper.elapsed_since(cb.lower)))
-    differences=[];gates=[];pressure=[];pgates=[]
+    differences=[];gates=[];pressure=[];pgates=[];pairs=[];selected=[];selected_gates=[]
     limits=tuple(map(F,(event.amount_absolute_mol,event.energy_absolute_j,event.temperature_absolute_k,event.pressure_absolute_pa)))
     for k,label in ((0,'event'),(-1,'common')):
         ac,bc=a.captures[k],b.captures[k]
@@ -306,11 +321,23 @@ def compare_source_dry_candidates(refinement, candidates) -> SourceDryTransition
                if pa.continuation.status==pb.continuation.status=='conditional_dry_pressure_enclosure' else None)
         differences.append((label,ac.time,bc.time,row));gates.append(tuple(v<=limit for v,limit in zip(row,limits)))
         pressure.append(bound);pgates.append(bound<=F(event.pressure_absolute_pa) if bound is not None else None)
+        if shared_volume is None:
+            chosen=max(row[3],bound) if bound is not None else None
+        else:
+            pair=enclose_source_dry_pressure_pair(pa,pb,shared_volume=shared_volume)
+            pairs.append(pair)
+            chosen=pair.bound_pa if pair.status=='conditional_shared_dry_pressure_enclosure' else None
+        selected.append(chosen)
+        selected_gates.append(chosen<=F(event.pressure_absolute_pa) if chosen is not None else None)
     balances=(_audit_path(a),_audit_path(b,(refinement.approach.trial,)))
-    accepted=distance<=F(event.time_absolute_s) and all(all(row) for row in gates) and all(v is True for v in pgates)
+    accepted=distance<=F(event.time_absolute_s) and all(all(row[:3]) for row in gates) and all(v is True for v in selected_gates)
     return SourceDryTransition(refinement,candidates,balances,distance,distance<=F(event.time_absolute_s),
         tuple(differences),tuple(gates),tuple(pressure),tuple(pgates),accepted,
-        'conditional_numerical_event_accepted' if accepted else 'candidate_comparison_not_certified')
+        'conditional_numerical_event_accepted' if accepted else 'candidate_comparison_not_certified',
+        shared_volume=shared_volume,shared_pressure_pairs=tuple(pairs),
+        selected_pressure_bounds_pa=tuple(selected),selected_pressure_gates=tuple(selected_gates),
+        pressure_strategy='explicit_shared_source_dry_volume' if shared_volume is not None
+                          else 'original_independent_source_pressure')
 
 
 class SourceDryTransitionError(IntegrationError):
@@ -321,10 +348,11 @@ class SourceDryTransitionError(IntegrationError):
 
 
 def evaluate_source_dry_transition(refinement, *, end: T, maximum_callbacks_per_path: int,
-                                   cancel=None) -> SourceDryTransition:
+                                   cancel=None, shared_volume=None) -> SourceDryTransition:
     """Execute two actual wet/dry paths once; the caller owns outer study limits."""
     _require(type(refinement) is SourceRootRefinement, 'actual_source_root_refinement_required')
     refinement.check()
+    _check_shared_volume(refinement,shared_volume)
     _require(refinement.clock is not None, 'source_dry_compared_prior_clock_required')
     candidates=[];stage='coarse_candidate'
     try:
@@ -336,7 +364,7 @@ def evaluate_source_dry_transition(refinement, *, end: T, maximum_callbacks_per_
             _require(candidate.status=='executed_dry_candidate',candidate.status+':'+str(candidate.reason))
             stage='shifted_candidate'
         stage='source_event_comparison'
-        result=compare_source_dry_candidates(refinement,tuple(candidates))
+        result=compare_source_dry_candidates(refinement,tuple(candidates),shared_volume=shared_volume)
         result.check()
         return result
     except Exception as exc:

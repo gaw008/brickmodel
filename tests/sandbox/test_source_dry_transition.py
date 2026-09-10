@@ -14,7 +14,8 @@ from sludge_sandbox.source_approach import propose_source_approach,evaluate_sour
 from sludge_sandbox.source_root_comparison import evaluate_source_root_refinement
 from sludge_sandbox.source_terminal import build_source_terminal
 from sludge_sandbox.source_dry_transition import (execute_source_dry_candidate,
-    evaluate_source_dry_transition,SourceDryTransitionError)
+    evaluate_source_dry_transition,compare_source_dry_candidates,SourceDryTransitionError)
+from sludge_sandbox.source_dry_shared_pressure import declare_source_shared_dry_volume
 from sludge_sandbox.integration import DomainExit
 from sludge_sandbox.boundary_program import BoundaryProgram,ProgramIdentity
 from sludge_sandbox.exact_boundary_program import ExactProgramView
@@ -221,3 +222,58 @@ def test_programmed_dry_segment_advances_energy_and_resolves_exact_knot(programm
         assert candidate.terminal.seed.adapter.interfaces==('existing_liquid',)
     assert all(abs(row.energy_residual_j)<=F(refinement.approach.trial.policy.energy_absolute_tolerance_j)
                for path in out.balance_paths for row in path)
+
+
+@pytest.fixture(scope='module')
+def shared_programmed(actual):
+    with pytest.MonkeyPatch.context() as patch:
+        column=actual[0].approach.proposal.original_trial.adapter.column
+        # New explicit test case retains a volume error large enough to expose
+        # the distinction between independent and genuinely shared parameters.
+        storage=replace(column.storages[0],volume=replace(column.storages[0].volume,error_m3=1e-12))
+        refinement,end=prepare(patch,base=replace(column,storages=(storage,)))
+        shared=declare_source_shared_dry_volume(storage)
+        yield evaluate_source_dry_transition(refinement,end=end,maximum_callbacks_per_path=32,
+                                             shared_volume=shared)
+
+
+def test_explicit_shared_volume_executes_real_heated_paths_without_rewriting_old_pressure(shared_programmed):
+    out=shared_programmed
+    assert out.pressure_strategy=='explicit_shared_source_dry_volume'
+    assert out.numerical_event_accepted and not out.material_qualified
+    assert all(not row[3] for row in out.endpoint_gates)
+    assert out.conditional_pressure_gates==(False,False)
+    assert out.selected_pressure_gates==(True,True)
+    assert len(out.shared_pressure_pairs)==2
+    for candidate in out.candidates:
+        assert candidate.terminal.dry_adapter.column.storages[0] is out.shared_volume.storage
+        assert T(F(.0002)) in candidate.reference.times_s
+        assert candidate.reference.states[-1].internal_energy_j[0]>candidate.terminal.corrected_state.internal_energy_j[0]
+        assert len(candidate.reference.steps)==2
+        assert candidate.seed.initial.amounts_mol[0,0]>0 and candidate.captures[0].state.amounts_mol[0,0]==0
+
+
+def test_original_and_shared_pressure_assessments_are_separate_passive_records(shared_programmed,monkeypatch):
+    out=shared_programmed
+    monkeypatch.setattr(ExactSourceColumn,'evaluate',lambda *a,**k:pytest.fail('saved assessment called physics'))
+    original=compare_source_dry_candidates(out.refinement,out.candidates)
+    assert original.pressure_strategy=='original_independent_source_pressure'
+    assert not original.numerical_event_accepted and original.shared_volume is None
+    assert original.endpoint_gates==out.endpoint_gates
+    assert original.conditional_pressure_bounds_pa==out.conditional_pressure_bounds_pa
+    assert original.conditional_pressure_gates==out.conditional_pressure_gates
+    original.check();out.check()
+    with pytest.raises(ValueError):replace(out,selected_pressure_bounds_pa=(F(),F())).check()
+    with pytest.raises(ValueError):replace(out,pressure_strategy='original_independent_source_pressure').check()
+    with pytest.raises(ValueError):replace(original,numerical_event_accepted=True).check()
+
+
+def test_equal_independent_storage_cannot_authorize_shared_path_execution(shared_programmed,monkeypatch):
+    out=shared_programmed
+    equal_storage=replace(out.shared_volume.storage)
+    assert equal_storage.model_identity==out.shared_volume.storage.model_identity
+    declaration=declare_source_shared_dry_volume(equal_storage)
+    monkeypatch.setattr(ExactSourceColumn,'evaluate',lambda *a,**k:pytest.fail('unbound declaration called physics'))
+    with pytest.raises(ValueError,match='belong_to_original_path'):
+        evaluate_source_dry_transition(out.refinement,end=out.candidates[0].end,
+            maximum_callbacks_per_path=32,shared_volume=declaration)

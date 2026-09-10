@@ -1,0 +1,20 @@
+# 新原生共享压力结果独立保存审核
+
+输入 SHA256 `a9d2d658a259e72f871e4f96c8d3e0172def2720a2901bc91c06e78e5a97d4dc`。91项数学/全链审核与279项原始观测身份审核，共370项断言通过；耗时分别0.081474s、0.163133s。仅标准库，无新EOS、生产导入或模型check。
+
+32实际callbacks逐一绑定三湿trial与两dry候选，以及原独立初始速率探针。与上一native SHA0a242ef8c239226b68ee085abe51641e1b95165c464f7edb175454555543fa49的32份packed_input/time/evaluation/operator_identity/energy_identity/interface_modes完全相等；未做物理字段归一化或删除。原初态、初始能量点、T、H、原IntegrationPolicy/EventPolicy完全相同。4显式构造锚点、初U1与32预估单列；不宣称所有native内部操作计数。
+
+两路径各1个实际dry接受步，粗3/细4前缀全链N/U/水/元素/流体质量记录独立一致；root prior+extra共用27轮且不超原32，完整绝对根区间原门槛通过。写回rho均0。共享声明顶层与transition以及两pair一致，固定kg/storage身份/原V±1e-12箱一致；runtime记录same_initial_storage_object和same_initial_volume_object均true。离线不能重新证明对象is关系，本审核核对已返回的live准入证据，依已审查源码守卫。
+
+事件/共同端点每端十项误差分解、实际fluid、严格global/extra/total重建、总投影、exact N−fsum、R乘法及完整T/V箱舍入独立重算一致。joint-only两组均8.606093363963303e-6Pa，通过原1e-4Pa门槛；不取旧independent与joint的min。每端完整压力箱受原P/envelope域约束。
+
+原报告P及原独立条件P均false完整保留；新显式共享策略selected两项true，数值事件conditional接受true，material/source资格false。旧native.event=false未改变。这里新增的是同一实际声明参数下的条件比较证据，物理观测没有变化，不能冒称新材料验证。
+
+身份补查初版错误读取顶层shared_volume（真实字段为shared_volume_declaration）触发KeyError，原audit_native_identity01.py与NATIVE_IDENTITY01.log保留；按实际schema修正后279项通过，没有改原JSON或重跑EOS。主91项首轮通过。通用脚本默认结果文件在native运行后即保存为SHARED_NATIVE_RESULT.json，原制造SHARED_SAVED_RESULT.json从其完整stdout原样恢复，制造记录及哈希保留。
+
+## 文件SHA256
+
+- audit_shared_saved.py: `9d83ef25c005930bc66887db9c40808a6ef058a98317c7dc5db0e95ca118da78`
+- SHARED_NATIVE_RESULT.json: `6f1525d5b9f046483abdd512ee6ad4de15381234aaa8e666e116d7ea78b80e73`
+- audit_native_identity.py: `4d8983282bae96c9830ba8736166839acbef506639b440deff437f7dbc25b923`
+- NATIVE_IDENTITY_RESULT.json: `e4f14218c4e04972c461842123fe07e823a9848cb937d87250cf685824e99131`

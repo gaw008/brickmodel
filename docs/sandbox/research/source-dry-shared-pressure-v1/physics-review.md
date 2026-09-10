@@ -1,0 +1,11 @@
+# 当前实现独立数学审查
+
+源码 SHA256 `9788c5677d6ed7d453f8552a045d6eab6910ebad59abd02e4da8cb8dbdc39be1`，只读；等待作者最终冻结通知。无EOS、模型check、测试重跑。
+
+现实现与DERIVATION.md具体合同一致。SourceSharedDryVolume绑定实际storage/volume对象以及当前对象id+完整内容；两端check和same-live-object守卫先行，单独JSON不能重建相关性。严格重算global/extra/total，拒绝任意超额；独立项取实际fluid半径而非下界，保留总投影。N用精确分项和，math.fsum差与R乘法差、全箱T乘法/除V舍入都加入。
+
+joint-only选择正确：旧independent值仅旁列，不以未证明同目标的min替代。两独立T区间及共同V四角含跨零符号；每端原单体T/P域通过后，新增analytic±retained_error还受mechanical/envelope交集约束，越界unresolved。异常非有限/非正常舍入盒拒绝。没有删除原eV或放宽门槛，source/event/material均false。
+
+未发现具体数学缺陷。该审查不等于真实数据执行审核；新shared_programmed/native产物须等终态后独立解析。
+
+作者最终冻结通知的SHA9788c5677d6ed7d453f8552a045d6eab6910ebad59abd02e4da8cb8dbdc39be1与上述完整审查字节相同，故该审查现绑定最终冻结版本；没有必要重跑数学/EOS。作者报告26项测试和保留的旧min反例RED属于其执行证据，本审查不将其计作独立执行。
