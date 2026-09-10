@@ -1,5 +1,7 @@
 # 方程—代码—验证映射 v0.1
 
+来源观测保存层：`source_observation_record.py`/`source_observation_schema.py`复用精确primitive与`source_net_panel._validate`，检查完整来源记录、原n/Vgas库存关联、共享面/供体焓及来源包含链；`source_observation_service.py`与CLI共享文件入口。对应`test_source_observation_record.py`、`test_source_observation_cli.py`及[实际111观测验证](research/source-observation-record-v1/REPORT.md)。这是被动记录校验，不是新物性方程、来源真实性认证或live恢复。湿态共同V的下一推导仍为候选，见同报告。
+
 `source_terminal.build_source_terminal`按全4N唯一首根选择空间k，以实际J_left−J_right−E构建原时钟/前缀与有界写回；新`source_terminal_liquid`复用原Darcy及同供体焓，分别核未投影n*h与已表示Q−J*h，并检查完整仿射面板供体符号。`source_dry_transition._audit_path`从原初态累计每格/全域N/U、水、元素与流体质量，原绝对预算不乘N；新2×N压力记录和selected格旧视图均绑定对应实际storage，任一湿格失败阻止整体接受。见[推导及实际证据](research/source-multicell-transition-v1/DERIVATION.md)；`test_source_multicell_terminal`、`test_source_multicell_transition`与原N1/液体回归覆盖实际液流、符号能量、局部/全域误差、身份与失败保留。没有新材料定律或全连续流向认证。
 
 `source_dry_shared_pressure.enclose_source_dry_pressure_pair`使用A=[R(Na La−Nb Hb),R(Na Ha−Nb Lb)]与共同[Vmin,Vmax]的四角构成压力差，再加两端独立流体、投影和全T/V舍入界。`declare_source_shared_dry_volume`绑定实际同对象，`source_dry_transition`显式策略选择joint-only并保留旧独立值与gate。完整域/严格原分解检查和推导见[来源共享体积干压力](research/source-dry-shared-pressure-v1/REPORT.md)及[公式](research/source-dry-shared-pressure-v1/DERIVATION.md)，无新材料本构。

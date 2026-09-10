@@ -53,6 +53,15 @@ def main(argv=None):
         command = commands.add_parser(name, help=help_text)
         command.add_argument('job_directory', type=Path)
     commands.add_parser('resources', help='显示实现与依赖版本；不调用 EOS')
+    source_import = commands.add_parser('source-observation-import',
+        help='导入一条已保存来源观测；检验完整字段，不重跑物性或恢复整段运行')
+    source_import.add_argument('capture_file', type=Path)
+    source_import.add_argument('--capture-index', required=True, type=int, help='输入 captures 中从 0 开始的索引')
+    source_import.add_argument('--output', required=True, type=Path)
+    source_inspect = commands.add_parser('source-observation-inspect',
+        help='查看已检验来源观测的状态和来源声明；不证明真实材料有效性')
+    source_inspect.add_argument('record', type=Path)
+    source_inspect.add_argument('--cell', type=int, help='可选的原空间格索引，从 0 开始')
     ui = commands.add_parser('ui', help='启动仅监听本机的中文研究界面')
     ui.add_argument('--case', required=True, type=Path)
     ui.add_argument('--water-data', required=True, type=Path)
@@ -88,6 +97,14 @@ def main(argv=None):
         command.add_argument('directory', type=Path)
     args = parser.parse_args(argv)
     try:
+        if args.command in ('source-observation-import', 'source-observation-inspect'):
+            from .source_observation_service import import_source_capture, inspect_source_observation
+            if args.command == 'source-observation-import':
+                value = import_source_capture(args.capture_file, args.output, capture_index=args.capture_index)
+            else:
+                value = inspect_source_observation(args.record, cell_index=args.cell)
+            print(json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2))
+            return 0
         if args.command.startswith('search-'):
             from .search import prepare_search, run_search, read_search
             if args.command == 'search-prepare':

@@ -1,0 +1,35 @@
+"""Original saved wet endpoint pressure/energy budget; stdlib only."""
+import json,math,hashlib,runpy,time
+from pathlib import Path
+from fractions import Fraction as F
+P=Path(__file__).parent;start=time.monotonic();checks=0
+
+def ck(x,label):
+ global checks
+ checks+=1
+ if not x:raise AssertionError(label)
+def directed(x,upper=True):
+ y=float(x)
+ if (F(y)<x if upper else F(y)>x):y=math.nextafter(y,math.inf if upper else -math.inf)
+ return F(y)
+def up(x):return directed(x)
+f=Path('/private/tmp/brick-source-multicell-transition-v1/root/native-result.json');raw=f.read_bytes();sha=hashlib.sha256(raw).hexdigest();ck(sha=='2660d33ec0e832e006d5adcccd8ddcf38cc314ac5e65a17830cdf2f73cbdc51d','input SHA');decode=runpy.run_path('/private/tmp/brick-source-dry-transition-v1/physics/audit_manufactured.py')['dec'];r=decode(json.loads(raw));t=r['transition'];ck(r['numerical_event_accepted'] is False and t['numerical_event_accepted'] is False,'old failure');tol=F(r['event_policy']['pressure_absolute_pa']);ck(tol==F(1e-4),'original pressure threshold');rows=[]
+for idx,k in enumerate((0,-1)):
+ for cell in (0,2):
+  ends=[]
+  for candidate in t['candidates']:
+   bound=candidate['cell_pressure_endpoints'][k][cell];inv=bound['inverse'];state=bound['state'];point=inv['point'];fluid=point['fluid'];me=fluid['mechanical'];env=fluid['envelope'];nl=F(state['liquid_water_mol']);ng=sum(map(F,state['gas_amounts_mol']),F());R=F(me['gas_constant_j_mol_k']);T=F(me['temperature_k']);p=F(me['pressure_pa']);B=F(env['liquid_abs_du_dp_bound_j_mol_pa']);pmax=F(env['pressure_range_pa'][1]);ev=F(point['available_volume_error_m3']);ck(ev==F(1e-12),'original eV')
+   nhat=math.fsum(state['gas_amounts_mol']);tf=float(T);rf=float(R);pf=float(p);nrt=nhat*rf*tf;nrterr=math.fsum((math.ulp(nhat)*rf*tf,math.ulp(nhat*rf)*tf,math.ulp(nrt)));V=point['available_pore_volume_m3'];vl=me['liquid_volume_m3'];vg=math.fsum((V,-vl));ideal=nrt/vg;rp=math.fsum((pf,-ideal));rv=math.fsum((vl,nrt/pf,-V));vr=math.fsum((math.ulp(V),math.ulp(vl),math.ulp(vg),math.ulp(nrt/pf),nrterr/pf));pr=math.fsum((math.ulp(pf),math.ulp(ideal),abs(ideal)*vr/vg));ck([me[x] for x in ('gas_volume_m3','pressure_residual_pa','volume_residual_m3','volume_resolution_m3','pressure_resolution_pa')]==[vg,rp,rv,vr,pr],'original saved closure/resolution arithmetic')
+   compliance=directed(ng*R*T/pmax**2,False);epsf=up(abs(F(me['volume_residual_m3']))+F(me['volume_resolution_m3'])+up(nl*F(env['liquid_v_error_m3_mol'])));nominal=up(epsf/compliance);af=F(fluid['pressure_error_bound_pa']);ck(af>=nominal and bound['initial_bounds_pa'][0]==nominal,'actual fluid vs nominal')
+   g=up(af+up(ev*pmax**2/(ng*R*T)));extra=up(ev*min(pmax,p+g)**2/(ng*R*T));local=up(af+extra);pg,pe,pt=map(F,(point['global_pressure_error_pa'],point['extra_pressure_error_pa'],point['pressure_error_pa']));ck(pg>=g and pe>=extra and pt>=local,'original volume error lower contracts')
+   co=bound['continuation'];eT=F(inv['temperature_error_bound_k']);Lglobal=co['pressure_domain_pa'][1]/co['temperature_domain_k'][0]*(1+nl*B*co['pressure_domain_pa'][1]/(ng*R*co['temperature_domain_k'][0]));globalrad=pt+Lglobal*eT;L=(p+globalrad)/(T-eT)*(1+nl*B*(p+globalrad)/(ng*R*(T-eT)));thermal=L*eT;ck(co['global_radius_pa']==globalrad and co['radius_pa']==pt+thermal,'complete global/bootstrap radius')
+   liquid_u=up(nl*F(env['liquid_u_error_j_mol']));gas_u={key:up(F(n)*F(env['gas_u_error_j_mol'][key])) for key,n in zip(('O2','N2','H2O'),state['gas_amounts_mol'])};rounding=F(fluid['energy_roundoff_j']);liquid_p=up(nl*B*af);fluid_rebuilt=up(liquid_u+sum(gas_u.values(),F())+rounding+liquid_p);afU=F(fluid['energy_error_bound_j']);ck(afU>=fluid_rebuilt,'actual fluid U surplus kept')
+   total_exact=F(fluid['internal_energy_j'])+point['solid_internal_energy_j'];totalU=F(point['total_internal_energy_j']);source_projection=abs(totalU-total_exact);volume_u=nl*B*pe;source_rebuilt=up(afU+source_projection+volume_u);source_actual=F(point['energy_error_j']);ck(source_actual>=source_rebuilt,'source U error reconstructed');residual=totalU-F(inv['target_energy_j']);ck(residual==inv['energy_residual_j'],'source exact inverse residual');eT_expected=up((abs(residual)+source_actual)/F(point['minimum_heat_capacity_j_k']));ck(eT>=eT_expected,'original eT reconstructed')
+   ck(co['status']=='conditional_pressure_enclosure' and bound['source_certified'] is False and co['temperature_domain_k'][0]<=T-eT<=T+eT<=co['temperature_domain_k'][1] and co['pressure_domain_pa'][0]<=p-globalrad<=p+globalrad<=co['pressure_domain_pa'][1],'original full domain conditional qualification')
+   ends.append(dict(time=candidate['captures'][k]['time']['seconds'],P=p,T=T,eT=eT,L=L,L_times_eT=thermal,global_L=Lglobal,global_radius=globalrad,radius=co['radius_pa'],nominal=nominal,actual_fluid=af,fluid_surplus=af-nominal,global_rebuilt=g,global_actual=pg,global_surplus=pg-g,extra_rebuilt=extra,extra_actual=pe,extra_surplus=pe-extra,total_rebuilt=local,total_actual=pt,total_surplus=pt-local,total_sum_projection=local-af-extra,energy=dict(liquid_u=liquid_u,gas_u=gas_u,saved_fluid_rounding=rounding,liquid_pressure=liquid_p,fluid_rebuilt=fluid_rebuilt,fluid_actual=afU,fluid_surplus=afU-fluid_rebuilt,source_projection=source_projection,volume_pressure=volume_u,source_rebuilt=source_rebuilt,source_actual=source_actual,source_surplus=source_actual-source_rebuilt,absolute_inverse_residual=abs(residual),Cmin=F(point['minimum_heat_capacity_j_k']),eT_expected=eT_expected,eT_surplus=eT-eT_expected),domain_status=co['status'],source_certified=bound['source_certified']))
+  a,b=ends;dp=abs(a['P']-b['P']);radius=dp+a['radius']+b['radius'];thermal=a['L_times_eT']+b['L_times_eT'];ck(radius==t['cell_conditional_pressure_bounds_pa'][idx][cell] and radius>tol,'original cell pressure failure reconstructed');reported=dp+a['total_actual']+b['total_actual'];ck(reported==t['cell_endpoint_differences'][idx][cell][3],'original reported pressure')
+  rows.append(dict(kind='event' if idx==0 else 'common',cell=cell,endpoints=ends,nominal_difference=dp,reported_bound=reported,full_bound=radius,original_threshold=tol,thermal_sum=thermal,thermal_sum_exceeds_threshold=thermal>tol,remaining_if_keep_thermal=tol-thermal,scope='retained bound-form budget not actual physical error lower bound'))
+def enc(x):
+ if isinstance(x,F):return {'numerator':x.numerator,'denominator':x.denominator,'decimal':float(x)}
+ raise TypeError(type(x).__name__)
+runner=Path('/Users/wanggaoying/Desktop/brickmodel-github/docs/sandbox/research/source-multicell-transition-v1/run_native.py');rh=hashlib.sha256(runner.read_bytes()).hexdigest();ck(rh==r['runner_sha256'],'actual frozen runner');out={'checks':checks,'elapsed_s':time.monotonic()-start,'input_sha256':sha,'runner_sha256':rh,'rows':rows,'old_event_accepted':False,'new_event_accepted':False,'not_reverified':'native EOS errors, saved constituent fluid energy ULP terms, actual source fit uncertainty and live correlation identity'};(P/'RESULT.json').write_text(json.dumps(out,default=enc,indent=2)+'\n');print(json.dumps(out,default=enc,indent=2))

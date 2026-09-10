@@ -1,0 +1,423 @@
+{
+  "passive_dataclasses": {
+    "sludge_sandbox.source_net_panel.SavedSourceSample": {
+      "state": "<class 'sludge_sandbox.integration.ConservedState'>",
+      "evaluation": "<class 'sludge_sandbox.exact_source_column.SourceExactEvaluation'>",
+      "role": "<class 'str'>"
+    },
+    "sludge_sandbox.integration.ConservedState": {
+      "amounts_mol": "<class 'numpy.ndarray'>",
+      "internal_energy_j": "<class 'numpy.ndarray'>",
+      "energy_model_identity": "tuple[str, tuple[str, ...], tuple[str, ...]]",
+      "mechanical_stretches": "<class 'NoneType'>"
+    },
+    "sludge_sandbox.integration.Rates": {
+      "face_species_mol_s": "<class 'numpy.ndarray'>",
+      "face_energy_w": "<class 'numpy.ndarray'>",
+      "reaction_species_mol_s": "<class 'numpy.ndarray'>",
+      "cell_power_w": "<class 'numpy.ndarray'>",
+      "cell_power_components_w": "<class 'NoneType'>",
+      "component_sum_residual_w": "<class 'NoneType'>",
+      "mechanical_rates_per_s": "<class 'NoneType'>"
+    },
+    "sludge_sandbox.exact_source_column.SourceExactEvaluation": {
+      "time": "<class 'sludge_sandbox.exact_event_clock.ExactEventTime'>",
+      "source_states": "tuple[sludge_sandbox.mass_wet_storage.WetMixedState, ...]",
+      "source_evaluation": "typing.Union[sludge_sandbox.source_wet_column.SourceColumnRates, sludge_sandbox.source_wet_column.LiquidSourceColumnRates, sludge_sandbox.programmed_source_wet_column.ProgrammedSourceRates, sludge_sandbox.programmed_source_wet_column.ProgrammedLiquidSourceRates]",
+      "rates": "<class 'sludge_sandbox.integration.Rates'>",
+      "operator_identity": "tuple[str, str, tuple[str, ...]]",
+      "material_qualified": "<class 'bool'>"
+    },
+    "sludge_sandbox.mass_wet_storage.WetMixedState": {
+      "solid_mass_kg": "tuple[float, ...]",
+      "liquid_water_mol": "<class 'float'>",
+      "gas_amounts_mol": "tuple[float, ...]",
+      "internal_energy_j": "<class 'float'>",
+      "energy_model_identity": "<class 'str'>"
+    },
+    "sludge_sandbox.source_wet_column.SourceColumnRates": {
+      "cells": "tuple[sludge_sandbox.source_wet_column.SourceColumnCell, ...]",
+      "gas_states": "tuple[sludge_sandbox.gas_transport.GasState, ...]",
+      "faces": "tuple[sludge_sandbox.source_wet_column.ColumnFaceRate | sludge_sandbox.source_wet_column.LiquidColumnFaceRate, ...]",
+      "model_identity": "<class 'str'>",
+      "source_ids": "tuple[str, ...]",
+      "material_qualified": "<class 'bool'>"
+    },
+    "sludge_sandbox.source_wet_column.LiquidSourceColumnRates": {
+      "cells": "tuple[sludge_sandbox.source_wet_column.SourceColumnCell, ...]",
+      "gas_states": "tuple[sludge_sandbox.gas_transport.GasState, ...]",
+      "faces": "tuple[sludge_sandbox.source_wet_column.ColumnFaceRate | sludge_sandbox.source_wet_column.LiquidColumnFaceRate, ...]",
+      "model_identity": "<class 'str'>",
+      "source_ids": "tuple[str, ...]",
+      "material_qualified": "<class 'bool'>",
+      "liquid_states": "tuple[sludge_sandbox.liquid_transport.LiquidTransportState, ...]",
+      "liquid_pressure_interval_scope": "<class 'str'>",
+      "full_inverse_liquid_direction_certified": "<class 'bool'>"
+    },
+    "sludge_sandbox.programmed_source_wet_column.ProgrammedSourceRates": {
+      "cells": "tuple[sludge_sandbox.source_wet_column.SourceColumnCell, ...]",
+      "gas_states": "tuple[sludge_sandbox.gas_transport.GasState, ...]",
+      "faces": "tuple[sludge_sandbox.source_wet_column.ColumnFaceRate | sludge_sandbox.source_wet_column.LiquidColumnFaceRate, ...]",
+      "model_identity": "<class 'str'>",
+      "source_ids": "tuple[str, ...]",
+      "material_qualified": "<class 'bool'>",
+      "boundary": "<class 'sludge_sandbox.exact_boundary_program.ExactBoundaryState'>",
+      "reservoir": "<class 'sludge_sandbox.gas_transport.GasState'>",
+      "surface": "<class 'sludge_sandbox.programmed_source_wet_column.SourceSurfaceObservation'>",
+      "closed_base_identity": "<class 'str'>"
+    },
+    "sludge_sandbox.programmed_source_wet_column.ProgrammedLiquidSourceRates": {
+      "cells": "tuple[sludge_sandbox.source_wet_column.SourceColumnCell, ...]",
+      "gas_states": "tuple[sludge_sandbox.gas_transport.GasState, ...]",
+      "faces": "tuple[sludge_sandbox.source_wet_column.ColumnFaceRate | sludge_sandbox.source_wet_column.LiquidColumnFaceRate, ...]",
+      "model_identity": "<class 'str'>",
+      "source_ids": "tuple[str, ...]",
+      "material_qualified": "<class 'bool'>",
+      "boundary": "<class 'sludge_sandbox.exact_boundary_program.ExactBoundaryState'>",
+      "reservoir": "<class 'sludge_sandbox.gas_transport.GasState'>",
+      "surface": "<class 'sludge_sandbox.programmed_source_wet_column.SourceSurfaceObservation'>",
+      "closed_base_identity": "<class 'str'>",
+      "liquid_states": "tuple[sludge_sandbox.liquid_transport.LiquidTransportState, ...]",
+      "liquid_pressure_interval_scope": "<class 'str'>",
+      "full_inverse_liquid_direction_certified": "<class 'bool'>"
+    },
+    "sludge_sandbox.programmed_source_wet_column.SourceSurfaceObservation": {
+      "temperature_k": "<class 'float'>",
+      "heat": "<class 'sludge_sandbox.exchanges.BoundaryHeat'>",
+      "conductive_into_cell_w": "<class 'float'>",
+      "balance_residual_w": "<class 'float'>",
+      "balance_limit_w": "<class 'float'>",
+      "iterations": "<class 'int'>",
+      "status": "<class 'str'>"
+    },
+    "sludge_sandbox.source_wet_column.SourceColumnCell": {
+      "inverse": "<class 'sludge_sandbox.source_wet_storage.SourceWetInverse'>",
+      "phase": "<class 'sludge_sandbox.mass_wet_transport.WetPhaseEvaluation'>",
+      "chemistry": "<class 'sludge_sandbox.source_mass_caloric.DisabledChemicalRates'>"
+    },
+    "sludge_sandbox.source_wet_column.ColumnFaceRate": {
+      "face_id": "<class 'int'>",
+      "left_cell": "int | None",
+      "right_cell": "int | None",
+      "gas_mol_s": "tuple[float, ...]",
+      "energy_w": "<class 'float'>",
+      "conduction_w": "<class 'float'>",
+      "diffusive_enthalpy_w": "tuple[float, ...]",
+      "advective_enthalpy_w": "tuple[float, ...]",
+      "shared_evaluation": "sludge_sandbox.mass_wet_transport.WetFaceEvaluation | None"
+    },
+    "sludge_sandbox.source_wet_column.LiquidColumnFaceRate": {
+      "face_id": "<class 'int'>",
+      "left_cell": "int | None",
+      "right_cell": "int | None",
+      "gas_mol_s": "tuple[float, ...]",
+      "energy_w": "<class 'float'>",
+      "conduction_w": "<class 'float'>",
+      "diffusive_enthalpy_w": "tuple[float, ...]",
+      "advective_enthalpy_w": "tuple[float, ...]",
+      "shared_evaluation": "sludge_sandbox.mass_wet_transport.WetFaceEvaluation | None",
+      "liquid_mol_s": "<class 'float'>",
+      "liquid_enthalpy_w": "<class 'float'>",
+      "liquid_enthalpy_projection_w": "<class 'fractions.Fraction'>",
+      "liquid_exchange": "sludge_sandbox.liquid_transport.LiquidFaceExchange | None"
+    },
+    "sludge_sandbox.source_wet_storage.SourceWetInverse": {
+      "point": "<class 'sludge_sandbox.source_wet_storage.SourceWetPoint'>",
+      "target_energy_j": "<class 'float'>",
+      "energy_residual_j": "<class 'fractions.Fraction'>",
+      "temperature_error_bound_k": "<class 'float'>",
+      "final_temperature_bracket_k": "tuple[float, float]",
+      "iterations": "<class 'int'>"
+    },
+    "sludge_sandbox.source_wet_storage.SourceWetPoint": {
+      "fluid": "<class 'sludge_sandbox.rigid_storage.ClosedStorageState'>",
+      "total_internal_energy_j": "<class 'float'>",
+      "solid_internal_energy_j": "<class 'fractions.Fraction'>",
+      "available_pore_volume_m3": "<class 'float'>",
+      "available_volume_error_m3": "<class 'float'>",
+      "global_pressure_error_pa": "<class 'float'>",
+      "extra_pressure_error_pa": "<class 'float'>",
+      "pressure_error_pa": "<class 'float'>",
+      "energy_error_j": "<class 'float'>",
+      "closed_heat_capacity_j_k": "<class 'float'>",
+      "minimum_heat_capacity_j_k": "<class 'float'>",
+      "model_identity": "<class 'str'>",
+      "source_ids": "tuple[str, ...]",
+      "total_enthalpy_j": "<class 'NoneType'>",
+      "solid_volume_m3": "<class 'NoneType'>",
+      "fit_error": "<class 'NoneType'>",
+      "material_qualified": "<class 'bool'>",
+      "qualification": "<class 'str'>"
+    },
+    "sludge_sandbox.rigid_storage.ClosedStorageState": {
+      "mechanical": "<class 'sludge_sandbox.rigid_water_gas.RigidWaterGasState'>",
+      "internal_energy_j": "<class 'float'>",
+      "enthalpy_j": "<class 'float'>",
+      "closed_heat_capacity_j_k": "<class 'float'>",
+      "minimum_heat_capacity_j_k": "<class 'float'>",
+      "energy_roundoff_j": "<class 'float'>",
+      "pressure_error_bound_pa": "<class 'float'>",
+      "energy_error_bound_j": "<class 'float'>",
+      "source_ids": "tuple[str, ...]",
+      "envelope": "<class 'sludge_sandbox.rigid_storage.DeclaredNumericalEnvelope'>",
+      "qualification": "<class 'str'>",
+      "energy_scope": "<class 'str'>"
+    },
+    "sludge_sandbox.rigid_storage.DeclaredNumericalEnvelope": {
+      "temperature_range_k": "tuple[float, float]",
+      "pressure_range_pa": "tuple[float, float]",
+      "liquid_u_error_j_mol": "<class 'float'>",
+      "liquid_v_error_m3_mol": "<class 'float'>",
+      "liquid_abs_du_dp_bound_j_mol_pa": "<class 'float'>",
+      "gas_u_error_j_mol": "collections.abc.Mapping[str, float]",
+      "gas_cv_lower_j_mol_k": "collections.abc.Mapping[str, float]",
+      "method": "<class 'str'>",
+      "source_ids": "tuple[str, ...]"
+    },
+    "sludge_sandbox.rigid_water_gas.RigidWaterGasState": {
+      "temperature_k": "<class 'float'>",
+      "pressure_pa": "<class 'float'>",
+      "liquid_pressure_pa": "float | None",
+      "liquid_inventory_mol": "<class 'float'>",
+      "gas_inventory_mol": "collections.abc.Mapping[str, float]",
+      "liquid_volume_m3": "<class 'float'>",
+      "gas_volume_m3": "<class 'float'>",
+      "partial_pressures_pa": "collections.abc.Mapping[str, float]",
+      "volume_residual_m3": "<class 'float'>",
+      "pressure_residual_pa": "<class 'float'>",
+      "volume_resolution_m3": "<class 'float'>",
+      "pressure_resolution_pa": "<class 'float'>",
+      "pressure_bracket_pa": "tuple[float, float]",
+      "policy": "<class 'sludge_sandbox.rigid_water_gas.PressurePolicy'>",
+      "iterations": "<class 'int'>",
+      "source_ids": "tuple[str, ...]",
+      "source_asset_sha256": "collections.abc.Mapping[str, str]",
+      "assumption": "<class 'str'>",
+      "qualification": "<class 'str'>",
+      "gas_constant_j_mol_k": "<class 'float'>",
+      "liquid_native_molar_gas_constant_j_mol_k": "<class 'float'>",
+      "final_numerical_pressure_bracket_pa": "tuple[float, float] | None",
+      "final_bracket_volume_residuals_m3": "tuple[float, float] | None",
+      "pressure_solution_path": "<class 'str'>",
+      "pressure_bracket_qualification": "<class 'str'>",
+      "pressure_trial_ledger": "tuple[sludge_sandbox.rigid_water_gas.PressureTrialRecord, ...] | None"
+    },
+    "sludge_sandbox.rigid_water_gas.PressurePolicy": {
+      "volume_tolerance_m3": "<class 'float'>",
+      "pressure_tolerance_pa": "<class 'float'>",
+      "maximum_iterations": "<class 'int'>",
+      "strategy": "str | None"
+    },
+    "sludge_sandbox.rigid_water_gas.PressureTrialRecord": {
+      "pressure_pa": "<class 'float'>",
+      "bracket_before_pa": "tuple[float, float]",
+      "residuals_before_m3": "tuple[float | None, float | None]",
+      "kind": "<class 'str'>",
+      "status": "<class 'str'>",
+      "liquid_volume_m3": "float | None",
+      "residual_m3": "float | None",
+      "bracket_after_pa": "tuple[float, float] | None",
+      "failure": "str | None"
+    },
+    "sludge_sandbox.mass_wet_transport.WetPhaseEvaluation": {
+      "phase_water_mol_s": "<class 'float'>",
+      "water_partial_pressure_pa": "<class 'float'>",
+      "equilibrium": "<class 'sludge_sandbox.water_chemical_potential.WaterPhaseEquilibrium'>",
+      "chemical_driving_force_j_mol": "float | None",
+      "entropy_production_w_k": "float | None"
+    },
+    "sludge_sandbox.mass_wet_transport.WetFaceEvaluation": {
+      "exchange": "<class 'sludge_sandbox.gas_transport.GasFaceExchange'>",
+      "conduction_w": "<class 'float'>",
+      "diffusive_enthalpy_w": "tuple[float, ...]",
+      "advective_enthalpy_w": "tuple[float, ...]",
+      "face_energy_w": "<class 'float'>"
+    },
+    "sludge_sandbox.water_chemical_potential.WaterPhaseEquilibrium": {
+      "equilibrium_partial_pressure_pa": "<class 'float'>",
+      "phase_enthalpy_difference_j_mol": "<class 'float'>",
+      "chemical_potential_residual_j_mol": "<class 'float'>",
+      "liquid": "<class 'sludge_sandbox.water_chemical_potential.WaterLiquidChemicalState'>",
+      "vapor": "<class 'sludge_sandbox.water_chemical_potential.WaterVaporChemicalState'>",
+      "source_ids": "tuple[str, ...]",
+      "method_id": "<class 'str'>",
+      "classification": "<class 'str'>",
+      "qualification": "<class 'str'>"
+    },
+    "sludge_sandbox.water_chemical_potential.WaterLiquidChemicalState": {
+      "state": "<class 'sludge_sandbox.water_properties.WaterState'>",
+      "enthalpy_j_mol": "<class 'float'>",
+      "entropy_j_mol_k": "<class 'float'>",
+      "chemical_potential_j_mol": "<class 'float'>",
+      "source_ids": "tuple[str, ...]",
+      "method_id": "<class 'str'>",
+      "classification": "<class 'str'>",
+      "entropy_reference": "<class 'str'>"
+    },
+    "sludge_sandbox.water_chemical_potential.WaterVaporChemicalState": {
+      "temperature_k": "<class 'float'>",
+      "partial_pressure_pa": "<class 'float'>",
+      "enthalpy_j_mol": "<class 'float'>",
+      "entropy_j_mol_k": "<class 'float'>",
+      "chemical_potential_j_mol": "<class 'float'>",
+      "source_ids": "tuple[str, ...]",
+      "method_id": "<class 'str'>",
+      "classification": "<class 'str'>",
+      "reference_pressure_pa": "<class 'float'>",
+      "entropy_reference": "<class 'str'>",
+      "qualification": "<class 'str'>"
+    },
+    "sludge_sandbox.water_properties.WaterState": {
+      "temperature_k": "<class 'float'>",
+      "native_enthalpy_j_kg": "<class 'float'>",
+      "native_internal_energy_j_kg": "<class 'float'>",
+      "cp_j_kg_k": "<class 'float'>",
+      "cv_j_kg_k": "<class 'float'>",
+      "reference": "<class 'sludge_sandbox.water_properties.WaterReference'>",
+      "method_id": "<class 'str'>",
+      "implementation": "sludge_sandbox.water_implementation.WaterImplementation | None",
+      "pressure_pa": "<class 'float'>",
+      "phase": "typing.Literal['liquid', 'vapor']",
+      "density_kg_m3": "<class 'float'>",
+      "native_entropy_j_kg_k": "<class 'float'>",
+      "pressure_eos_residual_pa": "<class 'float'>",
+      "energy_identity_residual_j_kg": "<class 'float'>"
+    },
+    "sludge_sandbox.water_properties.WaterReference": {
+      "molar_mass_kg_mol": "<class 'float'>",
+      "native_specific_gas_constant_j_kg_k": "<class 'float'>",
+      "native_molar_gas_constant_j_mol_k": "<class 'float'>",
+      "energy_offset_j_mol": "<class 'float'>",
+      "anchor_temperature_k": "<class 'float'>",
+      "ideal_gas_formation_enthalpy_j_mol": "<class 'float'>",
+      "source_ids": "tuple[str, ...]",
+      "native_reference": "<class 'str'>",
+      "energy_reference": "<class 'str'>",
+      "entropy_reference": "<class 'str'>"
+    },
+    "sludge_sandbox.water_implementation.WaterImplementation": {
+      "schema": "<class 'str'>",
+      "provider_id": "<class 'str'>",
+      "provider_version": "<class 'str'>",
+      "source_ids": "tuple[str, ...]",
+      "canonical_descriptor": "<class 'str'>"
+    },
+    "sludge_sandbox.source_mass_caloric.DisabledChemicalRates": {
+      "solid_kg_s": "tuple[fractions.Fraction, ...]",
+      "gas_mol_s": "tuple[fractions.Fraction, ...]",
+      "chemical_reference_power_w": "<class 'fractions.Fraction'>",
+      "phase_transfer_included": "<class 'bool'>"
+    },
+    "sludge_sandbox.gas_transport.GasState": {
+      "temperature_k": "<class 'float'>",
+      "concentrations_mol_m3": "collections.abc.Mapping[str, float]",
+      "molar_masses_kg_mol": "collections.abc.Mapping[str, float]",
+      "gas_constant_j_mol_k": "<class 'float'>",
+      "reservoir_input_mole_fractions": "collections.abc.Mapping[str, float] | None",
+      "pressure_pa": "<class 'float'>",
+      "density_kg_m3": "<class 'float'>",
+      "mean_molar_mass_kg_mol": "<class 'float'>",
+      "mole_fractions": "collections.abc.Mapping[str, float]",
+      "mass_fractions": "collections.abc.Mapping[str, float]",
+      "reservoir_input_fraction_sum": "float | None",
+      "reservoir_max_abs_fraction_correction": "float | None"
+    },
+    "sludge_sandbox.gas_transport.GasFaceExchange": {
+      "net_mol_s": "collections.abc.Mapping[str, float]",
+      "diffusive_mol_s": "collections.abc.Mapping[str, float]",
+      "advective_mol_s": "collections.abc.Mapping[str, float]",
+      "darcy_velocity_m_s": "<class 'float'>",
+      "advective_donor": "str | None",
+      "advective_donor_temperature_k": "float | None",
+      "face_temperature_k": "<class 'float'>",
+      "face_density_kg_m3": "<class 'float'>",
+      "face_input_fraction_sum": "<class 'float'>",
+      "face_max_abs_fraction_correction": "<class 'float'>",
+      "gas_constant_j_mol_k": "<class 'float'>",
+      "diffusion_correction_velocity_m_s": "<class 'float'>",
+      "diffusion_correction_donor": "str | None"
+    },
+    "sludge_sandbox.liquid_transport.LiquidFaceExchange": {
+      "volume_flow_m3_s": "<class 'float'>",
+      "molar_flow_mol_s": "<class 'float'>",
+      "enthalpy_flow_w": "<class 'float'>",
+      "donor": "str | None",
+      "status": "<class 'str'>",
+      "pressure_difference_pa": "<class 'float'>",
+      "pressure_difference_error_pa": "<class 'float'>",
+      "direction_qualification": "<class 'str'>",
+      "left_mobility": "sludge_sandbox.liquid_transport.LiquidMobility | None",
+      "right_mobility": "sludge_sandbox.liquid_transport.LiquidMobility | None",
+      "source_ids": "tuple[str, ...]",
+      "liquid_source_identity": "tuple[sludge_sandbox.phase_storage.PhaseMetadata, str, str, tuple[tuple[str, str], ...]]",
+      "connection": "<class 'sludge_sandbox.liquid_transport.LiquidConnection'>",
+      "pressure_interval_scope": "<class 'str'>",
+      "full_inverse_direction_certified": "<class 'bool'>",
+      "qualification": "<class 'str'>"
+    },
+    "sludge_sandbox.liquid_transport.LiquidMobility": {
+      "permeability_m2": "<class 'float'>",
+      "relative_permeability": "<class 'float'>",
+      "viscosity_pa_s": "<class 'float'>",
+      "model_id": "<class 'str'>",
+      "version": "<class 'str'>",
+      "classification": "<class 'str'>",
+      "source_ids": "tuple[str, ...]",
+      "relation_kind": "<class 'str'>",
+      "source_asset_sha256": "tuple[tuple[str, str], ...]",
+      "temperature_k": "<class 'float'>",
+      "pressure_pa": "<class 'float'>",
+      "saturation": "<class 'float'>",
+      "interpolation_method": "<class 'str'>"
+    },
+    "sludge_sandbox.liquid_transport.LiquidConnection": {
+      "status": "<class 'str'>",
+      "connection_id": "<class 'str'>",
+      "version": "<class 'str'>",
+      "classification": "<class 'str'>",
+      "source_ids": "tuple[str, ...]"
+    },
+    "sludge_sandbox.liquid_transport.LiquidTransportState": {
+      "temperature_k": "<class 'float'>",
+      "pressure_pa": "<class 'float'>",
+      "inventory_mol": "<class 'float'>",
+      "saturation": "<class 'float'>",
+      "pressure_error_pa": "<class 'float'>",
+      "molar_volume_m3_mol": "float | None",
+      "enthalpy_j_mol": "float | None",
+      "metadata": "<class 'sludge_sandbox.phase_storage.PhaseMetadata'>",
+      "provider_id": "<class 'str'>",
+      "provider_version": "<class 'str'>",
+      "source_asset_sha256": "tuple[tuple[str, str], ...]"
+    },
+    "sludge_sandbox.phase_storage.PhaseMetadata": {
+      "species_id": "<class 'str'>",
+      "phase": "<class 'str'>",
+      "molar_mass_kg_mol": "<class 'float'>",
+      "molar_basis_id": "<class 'str'>",
+      "energy_reference_id": "<class 'str'>",
+      "source_ids": "tuple[str, ...]",
+      "classification": "<class 'str'>"
+    },
+    "sludge_sandbox.exact_boundary_program.ExactBoundaryState": {
+      "identity": "<class 'sludge_sandbox.boundary_program.ProgramIdentity'>",
+      "time": "<class 'sludge_sandbox.exact_event_clock.ExactEventTime'>",
+      "gas_temperature_k": "<class 'float'>",
+      "radiation_temperature_k": "<class 'float'>",
+      "total_pressure_pa": "<class 'float'>",
+      "mole_fractions": "collections.abc.Mapping[str, float]"
+    },
+    "sludge_sandbox.boundary_program.ProgramIdentity": {
+      "program_id": "<class 'str'>",
+      "version": "<class 'str'>",
+      "classification": "<class 'str'>",
+      "source_ids": "tuple[str, ...]"
+    },
+    "sludge_sandbox.exchanges.BoundaryHeat": {
+      "convective_in_w": "<class 'float'>",
+      "radiative_in_w": "<class 'float'>"
+    }
+  },
+  "separate_exact_primitive": "sludge_sandbox.exact_event_clock.ExactEventTime",
+  "live_objects_supported": false
+}
