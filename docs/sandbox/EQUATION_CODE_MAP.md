@@ -2,6 +2,8 @@
 
 ## 当前新增映射
 
+来源净库存插值：`source_net_panel.build_source_panel` 从两个完整来源样本的共享面/局部源得到 r0、rm，形成 N0+r0t+(rm−r0)t²/(2hm)，U使用同一总面能量。`SourceAffinePanel.check/minima` 重算绑定派生项并直接调用 `InventoryPolynomial.minimum`。`test_source_net_panel.py` 与 `test_source_net_panel_integration.py` 覆盖非蒸发排水、凝结竞争、N格关联、精确时间和实际来源接线；[安装/原生回放与独立最小值复算](research/source-net-panel-v1/REPORT.md)共保留七个原试步的105多项式和84最小值。此处是数值插值，尚不授权物理轨迹、耗尽根或写回。
+
 来源精确积分映射：`exact_source_column.ExactSourceColumn` 将每格 (Nl,NO2,NN2,Nv) 与含固定干物的总 U 无损放入 `ConservedState`，把原 N+1 面流映入 `Rates`；液水导数为 J_left−J_right−phase，气态水源为 +phase。`SourceExactEvaluation` 保留完整来源反解/面焓/表面分项。`integrate_exact` 复用既有两半步/整步误差和逐步/累计账本；`test_exact_source_column.py` 的14项与[独立/安装证据](research/exact-source-column-v1/REPORT.md)覆盖布局、来源身份、零化学契约、域外与数值失败分类。四列流体布局不等于旧机械耗尽或A/B记录准入；运输耗尽投影与干界面规律仍需实现。
 
 来源液流映射：`liquid_transport_state.decoded_liquid_state` 从已解 T/P/液体积构造共同液流状态，旧 `SolidFluidHeat` 与 `SourceWetColumn` 共用；`liquid_face_exchange` 给出 Q=AΔp/(dL/ML+dR/MR)、J=Q/v_donor 和 E=J·h_donor。`LiquidColumnFaceRate/Integral` 保存液流、焓及 E_float−J_float·h_donor；`_advance` 用左液面减右液面减蒸发量推进液库存，总U只加共同面能量。`ProgrammedLiquidSourceRates` 保留内部面及零外界液流。`test_source_liquid_column.py`、`test_liquid_transport_state_kernel.py` 和[独立/安装/原生证据](research/source-liquid-column-v1/REPORT.md)覆盖压力误差、旧整体结果、供体反向、显式断连及账本。后续较早条目的“源跨格液水尚缺”已由此限定软件增量关闭，事件/完整材料/全周期范围未关闭。

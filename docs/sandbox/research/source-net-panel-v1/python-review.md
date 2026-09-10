@@ -1,0 +1,22 @@
+# Scoped Python correctness review
+
+Reviewed only `src/sludge_sandbox/source_net_panel.py` and `tests/sandbox/test_source_net_panel.py` against baseline `8b6ef80`; related existing classes were read for their contracts. `git diff -- '*.py'` was empty because both targets were untracked, so the actual working files were inspected. Initial hashes and AST results are in `INITIAL_FREEZE.json`. No repository edit, installation, provider construction, EOS call or broad suite was performed. Ruff, mypy, pylint and black are unavailable in the supplied Python environment.
+
+[HIGH] A retained material-qualification field is absent from evidence binding
+File: src/sludge_sandbox/source_net_panel.py:74
+Issue: `_validate()` hashes selected fields of `SourceExactEvaluation` but omits `material_qualified` and does not validate its value. After building a panel, setting the retained evaluation's qualification to `True` still lets `panel.check()` pass. The panel keeps that changed evaluation accessible as evidence. This contradicts the content-binding expectation for the retained source result, even though panel qualification correctly denies stage/event acceptance. The independent executable regression currently fails for this case.
+Fix: Bind `e.material_qualified` in the existing digest, or require its exact allowed value during every validation. For the current source adapter, the actual producer always emits `False`; exact `False` validation is reasonable. Keep the current numerical-only scope and do not infer material qualification from polynomial checks.
+
+Evidence: `INITIAL_TESTS.log` contains one failing regression and two passing independent checks, all executed in 0.007 s. The passing checks cover exact total-water and energy telescoping of both linear and quadratic coefficients with mixed flow/phase signs at a non-half sampling time, and rejection of changed coefficient types or dropped shared history. They do not authenticate physical evaluation or establish trajectory accuracy.
+
+Other review conclusions: represented floats are lifted into exact Fractions before differencing; the quadratic factor `(r_interior-r_first)/(2*elapsed)` is correct for integrating an affine rate interpolant. Each shared face is retained once, local phase transfers cancel between liquid and vapor, and total face energy enters exactly once. Fixed dry kg remain explicit parameters. The existing `InventoryPolynomial` implementation is reused for minima. Reconstruction now covers saved bindings, upper time, all derived histories, inventories and energies, preventing the earlier replace-derived-values defect. No further actionable arithmetic defect was found in this scope.
+
+Root already owns explicit programmed-boundary time validation and exact inactive-chemistry type fixes; those pending changes are not duplicated here. Approval is pending qualification-binding correction and review of the final frozen target files.
+
+## Final repair review
+
+Root added exact `is False` checks for both `SourceExactEvaluation.material_qualified` and raw source qualification. The failing retained-evaluation mutation now raises before any polynomial query. Programmed raw observations now require an actual `ExactBoundaryState` with an actual exact clock equal to the saved evaluation time. Disabled chemistry now requires exact tuple layouts, Fraction zeros for all mass/mol/power entries, and an exact False phase-transfer flag, matching the existing source adapter contract.
+
+Re-executed the three independent cheap regressions: **3 passed in 0.005 s**, recorded in `FINAL_TESTS.log`; no provider or EOS call. Final AST parse and hashes for the implementation and both tests are in `FINAL_FREEZE.json`. The added actual-source test file was also read: it exercises closed three-cell and open one-/three-cell adapter samples, marks its Euler interior state explicitly as numerical input, and installs failure hooks before all panel operations to reject additional physics evaluations. Root owns execution and authoritative results for that ten-case actual-source selection; this review does not claim to have run it.
+
+**Approve the scoped numerical saved-panel implementation.** The concrete high finding is repaired; no remaining actionable numerical or evidence-binding defect was found in the reviewed files. This approval does not establish a physical trajectory, public material validation, event/root authorization, or full Goal completion.
