@@ -13,7 +13,7 @@ from .deforming_solid_storage import _digest
 from .integration import IntegrationError
 from .mass_wet_storage import WetMixedState, wet_fluid_pressure_bounds, lower
 from .mass_storage_bridge import upper, number
-from .rigid_storage import ClosedStorageState, liquid_pressure_error_bound, _directed, _sum_upper, _product_upper
+from .rigid_storage import RigidStorage, ClosedStorageState, liquid_pressure_error_bound, _directed, _sum_upper, _product_upper
 from .rigid_water_gas import RigidWaterGasState, closure_diagnostics
 from .source_wet_storage import SourceWetStorage, SourceWetInverse, SourceWetPoint
 from .source_endpoint_comparison import SourceEndpointComparison
@@ -114,9 +114,12 @@ class SourceInversePressure:
                      for f in fields(self) if f.name!='storage'), 'source_pressure_result_changed')
 
 
-def enclose_source_inverse_pressure(storage: SourceWetStorage, state: WetMixedState,
-        inverse: SourceWetInverse) -> SourceInversePressure:
-    """Bind the conditional algebra to an actual checked source storage record."""
+def _validate_source_inverse_record(storage: SourceWetStorage, state: WetMixedState,
+        inverse: SourceWetInverse) -> tuple[SourceWetPoint, ClosedStorageState, RigidWaterGasState, RigidStorage]:
+    """Check shared source identity and caloric evidence without evaluating an EOS.
+
+    The caller separately validates its liquid regime and pressure closure.
+    """
     _require(type(storage) is SourceWetStorage and type(state) is WetMixedState
              and type(inverse) is SourceWetInverse, 'actual_source_pressure_inputs_required')
     storage.check(state)
@@ -139,10 +142,9 @@ def enclose_source_inverse_pressure(storage: SourceWetStorage, state: WetMixedSt
              and _same(mechanical.policy,template.mechanical.policy)
              and _same(mechanical.pressure_bracket_pa,template.mechanical.pressure_bracket_pa)
              and mechanical.assumption==template.mechanical.assumption
-             and _same(mechanical.gas_constant_j_mol_k,template.mechanical.gas_constant_j_mol_k)
-             and _same(mechanical.liquid_pressure_pa,mechanical.pressure_pa),
+             and _same(mechanical.gas_constant_j_mol_k,template.mechanical.gas_constant_j_mol_k),
              'source_pressure_model_binding')
-    _require(_same(mechanical.liquid_inventory_mol,state.liquid_water_mol) and state.liquid_water_mol>0
+    _require(_same(mechanical.liquid_inventory_mol,state.liquid_water_mol)
              and set(mechanical.gas_inventory_mol)==set(storage.gas_ids)
              and _same(tuple(mechanical.gas_inventory_mol[k] for k in storage.gas_ids),state.gas_amounts_mol)
              and _same(inverse.target_energy_j,state.internal_energy_j)
@@ -183,6 +185,15 @@ def enclose_source_inverse_pressure(storage: SourceWetStorage, state: WetMixedSt
     expected_T=F(upper((abs(inverse.energy_residual_j)+F(point.energy_error_j))
                         /F(point.minimum_heat_capacity_j_k)))
     _require(F(inverse.temperature_error_bound_k)>=expected_T, 'underreported_source_temperature_error')
+    return point,fluid,mechanical,template
+
+
+def enclose_source_inverse_pressure(storage: SourceWetStorage, state: WetMixedState,
+        inverse: SourceWetInverse) -> SourceInversePressure:
+    """Bind the conditional algebra to an actual checked positive-liquid record."""
+    point,fluid,mechanical,template=_validate_source_inverse_record(storage,state,inverse)
+    _require(_same(mechanical.liquid_pressure_pa,mechanical.pressure_pa), 'source_pressure_model_binding')
+    _require(state.liquid_water_mol>0, 'source_pressure_state_binding')
     # Recheck the saved residual/resolution using the original closure arithmetic.
     # The liquid volume's EOS error remains the explicitly declared hypothesis.
     ng=math.fsum(state.gas_amounts_mol);r=mechanical.gas_constant_j_mol_k;t=point.temperature_k

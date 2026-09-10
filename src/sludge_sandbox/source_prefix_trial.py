@@ -66,11 +66,12 @@ def _bounds(evaluation):
 
 
 def _attempt_input(ordinal,role,state,when):
+    _require(type(when) is T and type(when.seconds) is F, 'trial_attempt_exact_time_required')
     _require(type(state) is ConservedState and state.mechanical_stretches is None
              and all(type(a) is np.ndarray and a.dtype==np.float64 and np.all(np.isfinite(a))
                      for a in (state.amounts_mol,state.internal_energy_j)),
              'trial_attempt_binary64_input_required')
-    return (ordinal,role,when,state.energy_model_identity,
+    return (ordinal,role,T(when.seconds),state.energy_model_identity,
             tuple(tuple(map(float,row)) for row in state.amounts_mol),
             tuple(map(float,state.internal_energy_j)))
 
@@ -132,20 +133,8 @@ class SourcePrefixTrial:
         _require(type(self.captures) is tuple and type(self.maximum_callbacks) is int
                  and self.maximum_callbacks>0 and len(self.captures)<=self.maximum_callbacks,
                  'trial_callback_accounting')
-        for i,capture in enumerate(self.captures):
-            _require(type(capture) is TrialCapture and type(capture.ordinal) is int
-                     and capture.ordinal==i+1 and type(capture.time) is T
-                     and self.start<=capture.time<=self.end, 'trial_capture_order')
-            _require(_same(capture.input_binding,_attempt_input(capture.ordinal,capture.role,capture.state,capture.time))
-                     and _same(capture.failure_binding,(capture.failure_kind,capture.failure)), 'trial_attempt_input_failure_binding')
-            _require((capture.binding is not None and capture.evaluation is not None)
-                     or type(capture.failure) is str and capture.failure_kind in ('DomainExit','IntegrationError','TrialStop','UnexpectedException'),
-                     'trial_capture_validation_or_failure_required')
-            if capture.evaluation is not None and capture.binding is not None:
-                _require(capture.time==capture.evaluation.time,'trial_capture_exact_time_binding')
-                binding=_validate(SavedSourceSample(capture.state,capture.evaluation,capture.role),
-                                  self.operator_identity,self.energy_identity,self.fixed_dry_mass_kg)
-                _require(binding==capture.binding, 'trial_capture_source_binding')
+        _check_source_captures(self.captures,start=self.start,end=self.end,
+            operator_identity=self.operator_identity,energy_identity=self.energy_identity,masses=self.fixed_dry_mass_kg)
         if self.captures:
             _require(self.captures[0].time==self.start and self.captures[0].role=='initial'
                      and _same(self.captures[0].state,self.initial),'trial_initial_capture_binding')
@@ -206,13 +195,37 @@ class SourcePrefixTrial:
                  'trial_qualification_changed')
 
 
+def _check_source_captures(captures,*,start,end,operator_identity,energy_identity,masses):
+    """Revalidate saved attempts for one unchanged source operator, without EOS."""
+    for i,capture in enumerate(captures):
+        _require(type(capture) is TrialCapture and type(capture.ordinal) is int
+                 and capture.ordinal==i+1 and type(capture.time) is T
+                 and start<=capture.time<=end, 'trial_capture_order')
+        _require(_same(capture.input_binding,_attempt_input(capture.ordinal,capture.role,capture.state,capture.time))
+                 and _same(capture.failure_binding,(capture.failure_kind,capture.failure)), 'trial_attempt_input_failure_binding')
+        _require((capture.binding is not None and capture.evaluation is not None)
+                 or type(capture.failure) is str and capture.failure_kind in ('DomainExit','IntegrationError','TrialStop','UnexpectedException'),
+                 'trial_capture_validation_or_failure_required')
+        if capture.evaluation is not None and capture.binding is not None:
+            _require(capture.time==capture.evaluation.time,'trial_capture_exact_time_binding')
+            binding=_validate(SavedSourceSample(capture.state,capture.evaluation,capture.role),
+                              operator_identity,energy_identity,masses)
+            _require(binding==capture.binding, 'trial_capture_source_binding')
+
+
 def _replay_reference(trial):
+    return _replay_source_reference(trial.initial,trial.start,trial.end,
+        replace(trial.reference_policy,maximum_wall_seconds=trial.policy.maximum_wall_seconds),
+        trial.captures[3:],trial.reference)
+
+
+def _replay_source_reference(initial, start, end, policy, captures, reference, *, breakpoints=()):
     """Replay retained RHS outputs in the original integrator, with no physics.
 
     All original numerical gates and requested input states/times must match.
     Replay wall duration is not an execution-cost certificate.
     """
-    saved=trial.captures[3:];cursor=0
+    saved=captures;cursor=0
     def callback(state,when):
         nonlocal cursor
         _require(cursor<len(saved),'trial_reference_replay_missing_capture')
@@ -224,9 +237,9 @@ def _replay_reference(trial):
         _require(capture.failure is None and capture.evaluation is not None,
                  'trial_reference_replay_unexpected_failure')
         return capture.evaluation.rates
-    replay=integrate_exact(trial.initial,callback,start_s=trial.start,end_s=trial.end,
-        policy=replace(trial.reference_policy,maximum_wall_seconds=trial.policy.maximum_wall_seconds))
-    _require(cursor==len(saved) and all(_same(getattr(replay,f.name),getattr(trial.reference,f.name))
+    replay=integrate_exact(initial,callback,start_s=start,end_s=end,
+        policy=policy,breakpoints_s=breakpoints)
+    _require(cursor==len(saved) and all(_same(getattr(replay,f.name),getattr(reference,f.name))
              for f in fields(replay) if f.name!='elapsed_seconds'), 'trial_reference_replay_changed')
 
 
@@ -241,6 +254,34 @@ class _TrialStop(Exception):
     def __init__(self,status,reason):
         super().__init__(reason)
         self.status=status
+
+
+def _capture_source_observation(adapter,state,when,role,captures,*,maximum_callbacks,
+        guard,operator_identity,energy_identity,masses):
+    """Save actual attempts and returns before validation or cancellation can fail."""
+    guard()
+    if len(captures)>=maximum_callbacks:raise _TrialStop('resource_limit','trial_callback_limit')
+    ordinal=len(captures)+1
+    captures.append(TrialCapture(ordinal,role,state,when,
+        input_binding=_attempt_input(ordinal,role,state,when)))
+    try:
+        evaluation=adapter.evaluate(state,when)
+        captures[-1]=replace(captures[-1],evaluation=evaluation)
+        value=_validate(SavedSourceSample(state,evaluation,role),operator_identity,energy_identity,masses)
+        captures[-1]=replace(captures[-1],binding=value)
+        guard()
+        return evaluation
+    except (DomainExit,IntegrationError,_TrialStop) as exc:
+        kind='DomainExit' if isinstance(exc,DomainExit) else 'TrialStop' if isinstance(exc,_TrialStop) else 'IntegrationError'
+        captures[-1]=replace(captures[-1],failure=str(exc),failure_kind=kind,failure_binding=(kind,str(exc)))
+        raise
+    except ValueError as exc:
+        captures[-1]=replace(captures[-1],failure=str(exc),failure_kind='IntegrationError',failure_binding=('IntegrationError',str(exc)))
+        raise IntegrationError('source_column_callback:'+str(exc)) from exc
+    except Exception as exc:
+        diagnostic=type(exc).__name__+':'+str(exc)
+        captures[-1]=replace(captures[-1],failure=diagnostic,failure_kind='UnexpectedException',failure_binding=('UnexpectedException',diagnostic))
+        raise IntegrationError('unexpected_source_callback_exception:'+diagnostic) from exc
 
 
 def evaluate_source_prefix_trial(adapter: ExactSourceColumn, initial: ConservedState, *,
@@ -264,29 +305,9 @@ def evaluate_source_prefix_trial(adapter: ExactSourceColumn, initial: ConservedS
         if cancel is not None and cancel():raise _TrialStop('cancelled','cancel_requested')
         if time.monotonic()-begin>=policy.maximum_wall_seconds:raise _TrialStop('resource_limit','trial_total_wall_time_limit')
     def observe(state,when,role):
-        guard()
-        if len(captures)>=maximum_callbacks:raise _TrialStop('resource_limit','trial_callback_limit')
-        ordinal=len(captures)+1
-        captures.append(TrialCapture(ordinal,role,state,when,
-            input_binding=_attempt_input(ordinal,role,state,when)))
-        try:
-            evaluation=adapter.evaluate(state,when)
-            captures[-1]=replace(captures[-1],evaluation=evaluation)
-            value=_validate(SavedSourceSample(state,evaluation,role),operator_identity,energy_identity,masses)
-            captures[-1]=replace(captures[-1],binding=value)
-            guard()
-            return evaluation
-        except (DomainExit,IntegrationError,_TrialStop) as exc:
-            kind='DomainExit' if isinstance(exc,DomainExit) else 'TrialStop' if isinstance(exc,_TrialStop) else 'IntegrationError'
-            captures[-1]=replace(captures[-1],failure=str(exc),failure_kind=kind,failure_binding=(kind,str(exc)))
-            raise
-        except ValueError as exc:
-            captures[-1]=replace(captures[-1],failure=str(exc),failure_kind='IntegrationError',failure_binding=('IntegrationError',str(exc)))
-            raise IntegrationError('source_column_callback:'+str(exc)) from exc
-        except Exception as exc:
-            diagnostic=type(exc).__name__+':'+str(exc)
-            captures[-1]=replace(captures[-1],failure=diagnostic,failure_kind='UnexpectedException',failure_binding=('UnexpectedException',diagnostic))
-            raise IntegrationError('unexpected_source_callback_exception:'+diagnostic) from exc
+        return _capture_source_observation(adapter,state,when,role,captures,
+            maximum_callbacks=maximum_callbacks,guard=guard,operator_identity=operator_identity,
+            energy_identity=energy_identity,masses=masses)
     def callback(state,when):
         nonlocal stop
         try:return observe(state,when,'reference').rates
