@@ -182,3 +182,10 @@ JoinedWaterVapor从原低温500K的h锚积分原高温NIST分段Cp，逐段原h/
 球形几何是公开球形试样的验证域，最终板状砖坯全周期仍为必需目标。`ProgrammedSolidFluidHeat`复用传热主机的外面面积与半壳导热阻力，将对流/灰体辐射和格内温度闭合于同一无独立热容表面；导热流与气体供体焓分别进入原共享面账本。方程、灰体环境定义、退化情况及独立解析极限见[RADIAL_HEAT_GEOMETRY.md](RADIAL_HEAT_GEOMETRY.md)。移动板状主机继续传入当前构形transport，不以参考几何计算边界。
 
 此接线不新增材料参数，不代表Nylen MSJ/CB原泥准入。球形径向液体输运及自由/规定球形变形仍未实现；纯水相变与多孔原泥吸附热的相容性必须单独建立。实际测试与支持范围以阶段报告为准。
+
+
+## 来源质量比热与固定组成能量坐标
+
+`ArlabosseMassCaloric`复用原35–105°C干基Cp与解析Δh。仅在显式恒组成、不可压缩且比容不随温度变化的近似下采用Δu=Δh；刚性容器本身不证明Cp=Cv。`FixedMassCaloricStorage`固定正干质量与域内参考温度，使用相对u(T0)=0，身份绑定质量/参考/来源/无反应选择。不同参考目标必须同步平移，绝不赋予绝对形成焓。反解使用整个源温区的最小名义热容与精确Fraction运算；源拟合和本构近似误差仍未知。float输入是其精确binary64值，Decimal/Fraction可表达精确域端点。
+
+`ReactionDisabled`只表达本阶段不发生化学转化，输出按明确kg固体/mol气体布局的零化学源，不禁用独立液汽相变。此版本只有干物point，无固体质量迁移、湿容积闭合或完整反应网络；真实湿格接线须另保留水液汽参考、机械体积与来源不确定性。具体证据见[source-mass-caloric-v1](research/source-mass-caloric-v1/REPORT.md)。

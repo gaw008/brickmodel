@@ -1,5 +1,8 @@
 # 必需缺项与下一步证据
 
+当前干质量来源Cp point适配器和显式ReactionDisabled已实现并通过安装/独立复核；陈旧水AST断言已以合法host行为回归关闭。仍未关闭真正源湿格接口：需共享现有液气机械储能与质量固体积分、显式无反应cell路径、同材料骨架比容或实际可用流体容积；不能把新point实例当作已有WetPair原泥准入。现有N格面账/耗尽与record布局还需迁移，Arlabosse35–105°C不提供烧成全温域。见[报告](research/source-mass-caloric-v1/REPORT.md)。以下旧缺项文字以本恢复状态为准。
+
+
 最新身份修复已正式应用：精确CurrentSlab七字段数组编码恢复规定变形wrapper构造，不跳过私有缓存、不接受任意ndarray；独审17tmp检查通过。应用后31源码测试通过、1旧水模块AST镜像测试失败（实际水代码与HEAD相同，未修改）；原移动半格/一次逆解测试现已通过。非editable安装13项通过0.48s，107模块匹配。详见[实际身份修复](research/current-slab-identity-v1/REPORT.md)。旧AST测试需按实际分拆后的行为重建回归，失败保留；完整Goal仍未完成。
 
 

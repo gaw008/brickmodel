@@ -1,0 +1,16 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________ test_replaced_provider_must_not_bypass_content_binding ____________
+
+    def test_replaced_provider_must_not_bypass_content_binding():
+     model=storage();before=model.model_identity
+     fake=SimpleNamespace(cp=lambda *a,**k:SimpleNamespace(value=F(99999)),delta_h=lambda *a,**k:SimpleNamespace(value=F(12345)))
+     object.__setattr__(model.caloric,'provider',fake)
+>    with pytest.raises(SourceMassCaloricError):model.evaluate(F('353.15'))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E    Failed: DID NOT RAISE <class 'sludge_sandbox.source_mass_caloric.SourceMassCaloricError'>
+
+/private/tmp/brick-source-mass-caloric-review/test_independent.py:16: Failed
+=========================== short test summary info ============================
+FAILED ../../../../private/tmp/brick-source-mass-caloric-review/test_independent.py::test_replaced_provider_must_not_bypass_content_binding
+1 failed in 0.09s

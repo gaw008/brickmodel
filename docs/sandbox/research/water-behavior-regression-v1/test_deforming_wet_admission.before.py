@@ -153,37 +153,25 @@ def test_old_fixed_path_none_matches_actual_old_evaluate(water):
     assert op.breakpoints_s(0.,1.)==(.25,.75)
 
 
-def test_water_transfer_checks_then_single_base_then_assembly(water,monkeypatch):
-    """Behavior replaces the stale whole-function AST lock; chemistry is tested separately."""
-    from test_water_phase_transfer import transfer,DATA
-    from sludge_sandbox.ideal_water_vapor import IdealWaterVapor
-    from sludge_sandbox.water_chemical_potential import WaterChemicalPotential
-    from sludge_sandbox.water_phase_transfer import WaterPhaseTransfer
-    from sludge_sandbox.rigid_fluid_heat import RigidFluidHeat
-    ingredients=(water,IdealWaterVapor(DATA),WaterChemicalPotential(DATA))
-    op=transfer(ingredients,coefficients_mol_s_pa=(0.,))
-    state=op.base_model.state_from_temperatures([[0.,.01,0.]],[300.])
-    events=[]
-    check=WaterPhaseTransfer._check_interface_state
-    base=RigidFluidHeat.evaluate
-    assemble=WaterPhaseTransfer._assemble_transfer
-    def checked(self,s):
-        events.append('check')
-        return check(self,s)
-    def evaluated(self,s,t):
-        events.append('base')
-        return base(self,s,t)
-    def assembled(self,s,result):
-        events.append('assemble')
-        return assemble(self,s,result)
-    monkeypatch.setattr(WaterPhaseTransfer,'_check_interface_state',checked)
-    monkeypatch.setattr(RigidFluidHeat,'evaluate',evaluated)
-    monkeypatch.setattr(WaterPhaseTransfer,'_assemble_transfer',assembled)
-    result=op.evaluate(state,0.)
-    assert events==['check','base','assemble']
-    assert result.cell_transfers[0].status=='disabled'
-    for name in ('face_species_mol_s','face_energy_w','reaction_species_mol_s','cell_power_w'):
-        np.testing.assert_array_equal(getattr(result.rates,name),getattr(result.base_evaluation.rates,name))
+def test_active_chemical_core_and_dry_policy_match_pre_admission_source():
+    """Static regression complements no-EOS tests; does not simulate active water."""
+    import ast
+    from pathlib import Path
+    root=Path(__file__).resolve().parents[2]
+    import sludge_sandbox.water_phase_transfer as actual_module
+    def cls(path):return next(x for x in ast.parse(path.read_text()).body if isinstance(x,ast.ClassDef) and x.name=='WaterPhaseTransfer')
+    before=cls(root/'docs/sandbox/research/deforming-wet-admission/baseline/water_phase_transfer.py')
+    after=cls(Path(actual_module.__file__))
+    def method(c,name):return next(x for x in c.body if isinstance(x,ast.FunctionDef) and x.name==name)
+    # evaluate and dry chemistry are wholly unchanged: exact AST, including
+    # source direction/zero-vapor/finite chemistry/heat-free component forwarding.
+    for name in ('evaluate','_dry_diagnostic','with_depleted_cells'):
+        assert ast.dump(method(before,name),include_attributes=False)==ast.dump(method(after,name),include_attributes=False)
+    def matching_loop(c):
+        constructor=method(c,'__post_init__')
+        return next(x for x in constructor.body if isinstance(x,ast.For) and isinstance(x.target,ast.Tuple)
+                    and [t.id for t in x.target.elts]==['storage','k','mode'])
+    assert ast.dump(matching_loop(before),include_attributes=False)==ast.dump(matching_loop(after),include_attributes=False)
 
 
 def test_compressed_current_pore_template_is_same_inverse_context(water,monkeypatch):

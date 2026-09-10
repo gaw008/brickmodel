@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新实际实现：`source_mass_caloric.py`将既有Arlabosse来源Cp/Δh用于固定正干质量的恒组成、不可压缩名义储能，明确域内能量坐标与ReactionDisabled，无A/B、氧参考、虚构摩尔质量或体积。完整温区Cp下界用于精确Fraction反解；源fit误差和比容仍未知。独审发现运行时替换provider/caloric可保持身份的HIGH，原RED已保留，修复两层exacttype检查；源19项/独立4项通过。实际安装0.2kg、40→80°C得到13051.2J，反解与7节点溯源已保存。证据：[来源干质量储能](research/source-mass-caloric-v1/REPORT.md)。这只是干物point，尚未接入现有WetMixedStorage/原泥湿格。
+
+旧水AST失败已由合法host行为回归替代，水源码未改；作者15项通过，涵盖原化学/干政策及机械上下文。[行为回归证据](research/water-behavior-regression-v1/REPORT.md)。Root非editable最终33项4.70s通过（19新储能+5水行为+完整9deforming-wet-admission），108安装模块与源匹配，35120终态0，无该批运行进程。上轮2258695/832a012和本轮新实现/实际独立验证均属progress，Goal保持active。
+
+下一必须推进真实湿格软件接口：在保留原WetMixedStorage/WetPair回归的前提下，将已实现来源质量比热与显式无化学反应接入共享fluid storage/cell/face计算；真实骨架比容或可用流体容积仍需同材料证据，缺失时不准入实际材料。温度域不能为迁就旧298.15K扩张；可先做明确制造几何的数值接线验证但不得升级材料资格。随后迁移N格共享面账本与事件/记录。原湿烧冷全流程、反应/烧结材料证据、三机制留出、多代和界面验收仍未完成。以下较旧状态保留历史。
+
 
 最新身份修复已正式应用：精确CurrentSlab七字段数组编码恢复规定变形wrapper构造，不跳过私有缓存、不接受任意ndarray；独审17tmp检查通过。应用后31源码测试通过、1旧水模块AST镜像测试失败（实际水代码与HEAD相同，未修改）；原移动半格/一次逆解测试现已通过。非editable安装13项通过0.48s，107模块匹配。详见[实际身份修复](research/current-slab-identity-v1/REPORT.md)。旧AST测试需按实际分拆后的行为重建回归，失败保留；完整Goal仍未完成。
 

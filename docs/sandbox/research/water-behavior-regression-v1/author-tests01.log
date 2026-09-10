@@ -1,0 +1,51 @@
+..F............                                                          [100%]
+=================================== FAILURES ===================================
+_____ test_active_free_slab_regular_and_autonomous_preserve_actual_context _____
+
+ingredients = (WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=..., 'source_facts.json': '53af498b3974d180d273d7b17a6619d49d9a7d90bbacdd6e0304651f33bd79d6'})), WaterChemicalPotential())
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1042adc40>
+
+    def test_active_free_slab_regular_and_autonomous_preserve_actual_context(ingredients,monkeypatch):
+        op=slab_transfer(ingredients)
+        state=op.base_model.state_from_temperatures([[1.,.01,1e-5,2.],[.5,.008,.001,2.]],
+            [300.,301.],normal_stretches=(.95,1.03),tangential_stretch=.99)
+        events=[]
+        original_check=WaterPhaseTransfer._check_interface_state
+        original_assemble=WaterPhaseTransfer._assemble_transfer
+        original_evaluate=FreeSolidSlab.evaluate
+        original_auto=FreeSolidSlab.evaluate_autonomous
+        def check(self,s):
+            events.append('check')
+            return original_check(self,s)
+        def assemble(self,s,b):
+            events.append('assemble')
+            return original_assemble(self,s,b)
+        def evaluate(self,s,t):
+            events.append('base')
+            return original_evaluate(self,s,t)
+        def autonomous(self,s):
+            events.append('base_autonomous')
+            return original_auto(self,s)
+        monkeypatch.setattr(WaterPhaseTransfer,'_check_interface_state',check)
+        monkeypatch.setattr(WaterPhaseTransfer,'_assemble_transfer',assemble)
+        monkeypatch.setattr(FreeSolidSlab,'evaluate',evaluate)
+        monkeypatch.setattr(FreeSolidSlab,'evaluate_autonomous',autonomous)
+        ordinary=op.evaluate(state,0.)
+        assert events==['check','base','assemble']
+        events.clear()
+        autonomous_out=op.evaluate_autonomous(state)
+        assert events==['check','base_autonomous','assemble']
+        assert ordinary.cell_transfers==autonomous_out.cell_transfers
+        for out in (ordinary,autonomous_out):
+            _assert_unchanged_context(out)
+            assert out.cell_transfers[0].rate_mol_s>0>out.cell_transfers[1].rate_mol_s
+            assert np.any(out.rates.mechanical_rates_per_s!=0)
+            # Assert genuinely dynamic sources exist, so a static-only union fails.
+            dynamic=set(out.base_evaluation.source_ids)-set(op.source_ids)
+>           assert dynamic and dynamic<=set(out.source_ids)
+E           assert (set())
+
+tests/sandbox/test_water_transfer_behavior.py:92: AssertionError
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_water_transfer_behavior.py::test_active_free_slab_regular_and_autonomous_preserve_actual_context
+1 failed, 14 passed in 8.61s

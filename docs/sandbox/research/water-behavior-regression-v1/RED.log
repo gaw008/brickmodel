@@ -1,0 +1,29 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____ test_active_chemical_core_and_dry_policy_match_pre_admission_source ______
+
+    def test_active_chemical_core_and_dry_policy_match_pre_admission_source():
+        """Static regression complements no-EOS tests; does not simulate active water."""
+        import ast
+        from pathlib import Path
+        root=Path(__file__).resolve().parents[2]
+        import sludge_sandbox.water_phase_transfer as actual_module
+        def cls(path):return next(x for x in ast.parse(path.read_text()).body if isinstance(x,ast.ClassDef) and x.name=='WaterPhaseTransfer')
+        before=cls(root/'docs/sandbox/research/deforming-wet-admission/baseline/water_phase_transfer.py')
+        after=cls(Path(actual_module.__file__))
+        def method(c,name):return next(x for x in c.body if isinstance(x,ast.FunctionDef) and x.name==name)
+        # evaluate and dry chemistry are wholly unchanged: exact AST, including
+        # source direction/zero-vapor/finite chemistry/heat-free component forwarding.
+        for name in ('evaluate','_dry_diagnostic','with_depleted_cells'):
+>           assert ast.dump(method(before,name),include_attributes=False)==ast.dump(method(after,name),include_attributes=False)
+E           AssertionError: assert 'FunctionDef(...pe_params=[])' == 'FunctionDef(...pe_params=[])'
+E             
+E             Skipping 290 identical leading characters in diff, use -v to show
+E             - ute(value=Name(id='self', ctx=Load()), attr='_check_interface_state', ctx=Load()), args=[Name(id='state', ctx=Load())], keywords=[])), Assign(targets=[Name(id='base', ctx=Store())], value=Call(func=Attribute(value=Attribute(value=Name(id='self', ctx=Load()), attr='base_model', ctx=Load()), attr='evaluate', ctx=Load()), args=[Name(id='state', ctx=Load()), Name(id='time_s', ctx=Load())], keywords=[])), Return(value=Call(func=Attribute(value=Name(id='self', ctx=Load()), attr='_assemble_transfer', ctx=Load()...
+E             
+E             ...Full output truncated (2 lines hidden), use '-vv' to show
+
+tests/sandbox/test_deforming_wet_admission.py:169: AssertionError
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_deforming_wet_admission.py::test_active_chemical_core_and_dry_policy_match_pre_admission_source
+1 failed in 0.37s
