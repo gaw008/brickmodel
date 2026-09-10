@@ -4,6 +4,14 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新：全16保存端点唯一受监督研究全部通过，内部28.420998/60s、外部28.524549/70s，source前后保持，496tube/64fixed-query求值；独立Fraction逐16复算通过。research/water-all-saved-correspondence-v1保存201成员归档及消费者接口计划，所有成员解包SHA核实。session44010已终态，不重poll；这不是连续轨迹/全局相/全部native误差认证。
+
+mixed exact_record已按8b59ac0b/test7c53a7a1应用，18源码2.70s/18安装2.72s、独立21项4.08s通过；95实际安装模块及全部原测试/水资产清单/字节与前后匹配。两HIGH（全局上下文与普通state能量身份）实际RED保留并已关闭。
+
+唯一实际制造轨迹controller29.812730s完成18面板2事件396回调。原capture在报告pack(MixedReplayAudit)处失败，原record40763391bytes及所有数据已保存；之后仅从原记录离线续审9.590764s通过，export逐字同SHA52bef9f423a93ffa4917966ab9fd67fa14f51ba49670392ce050d1174d1797a8。18accepted/4refs/80checkedpathsteps/8projections，partial_audit明确5unknown与noresume，独立保存数据核验通过。sessions88150/4490及tests71834/9310均终态，勿重启轨迹或poll旧handle。证据research/mass-wet-exact-record-v1；所有原失败保留。
+
+下一Carson仅tmp consumer_candidate实现source-supported普通液水分支的逐query压力证书（完整T/原误差条件/同一tube覆盖native query root）。来源允许显式物理分支假设，不要求所有物相全局唯一性；仍须严格query数学包围，六gate不变。候选未冻结/未审/未应用。mixed完整根/六差值审计、service/resume、原污泥全材料/全周期/公开三个机制留出/空间/多代仍按原Goal必需未完成。当前有实际实现与验证进展，Goal保持active。
+
 最新已落地：research/water-saved-output-correspondence-v1归档最大误差端点实际T区间连接和固定native输出数学偏差；两项独审均通过（native7pure及全部保存Fraction复算），原窄根盒/前置绑定失败均保留，全部归档成员SHA解包复核。没有修改生产内核或安装，仍94模块/3c85dce数值实现。当前无root EOS/测试运行；84575终态勿重poll。
 
 Tesla的all_saved_correspondence仅准备全16统一研究runner/事前60s预算及70s外部watchdog计划，尚未运行；Carson的mixed exact_record候选已冻结，待独审及真实完整轨迹导出/离线审计，未应用。完整科学/软件Goal范围保持未完成。下列“待独审”表述是归档前历史，以上两项已完成独审。
