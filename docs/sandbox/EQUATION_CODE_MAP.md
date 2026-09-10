@@ -2,6 +2,8 @@
 
 ## 当前新增映射
 
+来源单次正库存接近：`source_approach.choose_positive_approach` 在原首根排序剩余预算内细化到正下界，计算 `h=downward_binary64(min(f*lower,maxstep,horizon))` 并检查所有多项式精确最小值及原 minstep。`propose_source_approach` 绑定实际起点/中点和完整政策；`evaluate_source_approach` 复用 `SourcePrefixTrial` 获得新的实际求值与原积分器参考，再保留原端点/条件压力检查。后处理异常附带完整实际 trial，不产生成功资格。源码/安装135项及独立反例见[证据](research/source-approach-v1/REPORT.md)；本层无事件时间方程或干态修正。
+
 来源条件压力延拓：`source_inverse_pressure.propagate_declared_pressure` 实现 `L=Pmax/Tmin*(1+Nl*B*Pmax/(Ng*R*Tmin))`、`eP_full=eP+L*eT`；完整原域围栏通过后，用已建立的小温压矩形再次求 L。`enclose_source_inverse_pressure` 绑定真实 SourceWetStorage/state/inverse 并重核原 `closure_diagnostics`、`liquid_pressure_error_bound`、`wet_fluid_pressure_bounds` 及 caloric 误差。三个提取保留原运算和舍入。`propagate_source_trial_pressure` 添加 `|Pa-Pb|+ePa_full+ePb_full` 的条件门槛，原事件比较不变。方程推导、独立解析根及实际保存端点见[证据](research/source-inverse-pressure-v1/REPORT.md)；条件假设不是来源认证。
 
 来源端点误差：`source_endpoint_comparison.measure_source_endpoint_pair` 对全部四类流体与U计算Fraction绝对差，对T/P计算 `|a−b|+ea+eb`；P采用含可用体积误差的 `SourceWetPoint.pressure_error_pa`。`compare_source_trial_endpoints` 检查成功试算并复用 `exact_record` 完整政策重建，N/U/T/报告T处P门槛独立于原归一化D；记录check拒绝修改原值。源码/安装81项及保存端点30检查见[前阶段证据](research/source-endpoint-comparison-v1/REPORT.md)。其后新增的条件延拓实现见上段，独立全域证书仍缺。

@@ -2,6 +2,8 @@
 
 这是正在实现的规范，完成状态以 `ACCEPTANCE_MATRIX.md` 和实际测试为准。详细推导提案见 `ARCHITECTURE_PROPOSAL.md`；该提案不是实现证明。
 
+来源首根现可通过 `source_approach` 指导一次新的正库存试算：完整 4N 库存竞争，唯一液体下降首根的严格正下界乘原 safe_inventory_fraction，并受原最大/最小步长与炉程限制。排序与取得正下界共用原细化预算，所有库存多项式在新区间严格正；再实际求值新中点、终点及同区间参考。见[本阶段证据](research/source-approach-v1/REPORT.md)。该数值接近不是物理事件时间；原事件误差门槛、条件压力与材料资格各自保留，无归零或干态转换。
+
 来源逆温度压力传播现由 `source_inverse_pressure` 实现：在固定库存、恒定可用流体体积及整个温压域内稳定平滑液相假设下，以全域 |uP| 上界得到 |dP/dT| 界，先建立完整围栏，再收紧区间。入口重核实际来源储能、液气同压、热容/能量误差及原闭合残差/体积误差；完整温度区间或压力延拓余量不足时保持未决。[本阶段证据](research/source-inverse-pressure-v1/REPORT.md)。该结果为条件包络，尚无独立全域 EOS 或材料误差认证。
 
 来源同端点比较继续保存精确 N/U 差及温度/报告温度处压力的差加两端误差，完整绑定调用者原事件政策。[原比较证据](research/source-endpoint-comparison-v1/REPORT.md)支持分别核对四项绝对门槛。新增温度传播后的成对压力界另列 conditional_gate，不覆盖原门槛或 full_inverse_pressure_gate；没有显式政策则为 null。上界超过门槛只表示未能证明满足要求，同坐标差零不证明事件时刻；无事件/材料资格升级。

@@ -2,6 +2,8 @@
 
 状态：`pending` 未实现或证据不足，`in_progress` 正在实现，`verified` 有相应范围实证，`gap` 已识别证据缺口。不得将本表条目被记录等同于通过。
 
+来源单次正库存接近增量：[source-approach-v1](research/source-approach-v1/REPORT.md) 将实际来源首/中点、完整库存根竞争、共享细化预算与原步长约束接到新的实际试算和同区间参考。源码/安装各135项及独立反例验证，推进P04/P05/P10/P16、V05/V06限定数值部分。原事件时间、完整EOS/材料证据、干界面、三机制现实对照、全周期/多代和应用仍未满足，不升级完整条目为verified。
+
 来源条件逆压力增量：[source-inverse-pressure-v1](research/source-inverse-pressure-v1/REPORT.md)绑定源状态、热容/能量误差、闭合残差与可用体积，以全域及收紧围栏传播 eT 到压力；保留全部原事件门槛，新增条件判断不授予资格。推进 P04/P05/P10/P16、V05/V06 的限定数值软件部分；真实全域 EOS/材料证据、事件时间、干界面、三机制公开对照、全周期/多代及完整应用仍未满足，不将完整验收项升级 verified。
 
 来源端点比较增量：[source-endpoint-comparison-v1](research/source-endpoint-comparison-v1/REPORT.md) 完整绑定原事件政策，按Fraction分别核对N/U/T及报告温度处P；源码/安装各81项、独审及30保存端点核算完成，推进P04/P05/P10/P16、V05/V06的限定数值证据。完整反解压力与事件时间没有因此通过，真实材料、三机制公开对照、全周期/多代和应用必需条目仍未完成；不升级整项verified。
