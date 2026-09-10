@@ -268,3 +268,6 @@ HEOS共存数值政策 `NUM-HEOS-COEXISTENCE-BACKTRACK-1`：固定T的F=(Δp,Δg
 
 
 累计原生压力接线（2026-09-09）：`mass_wet_pressure_provider_v2.py`复用原数学求证并保结构化失败；`mass_wet_pressure_seed.py`记录有来源系数的未认证初值迭代；`mass_wet_pressure_session.py`在一次构造生命周期内累计所有seed/proof及caller时间限制。`mass_wet_exact_stage.py` optin传实际full/fine samples并保原六gate，新subtype保原输入/门槛字节和全部proof，旧codec拒绝。对应测试test_mass_wet_pressure_session.py、test_mass_wet_native_stage.py及原stage/数学回归；源码/安装各110项通过。ordinary单次实际比较证据正在独审，controller/event仍未接线。
+
+
+ordinary native实际full/fine已验证：research/water-native-stage-actual-v1包含9回调/4freshproof、原严格逐路径元素/质量/水/能量及六gate独立复算，source252/安装104绑定、全部原失败和运行产物。只是一段0.001s条件性试算；event/controller与完整材料烧成仍未完成。

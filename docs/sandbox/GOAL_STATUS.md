@@ -4,6 +4,8 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新完成：ordinary native full/fine保存证据独审PASS，9callbacks/18cell观测的U/误差、三path原strict守恒及全six比较、4query的Krawczyk/机械角点/全tube/native体积界均复核。源252/安装104成员字节保持；没有重跑native。证据正式归档research/water-native-stage-actual-v1（318成员8079937bytes，全部成员逐SHA解包核实）。原生session83328与tests3803/50006已终态，当前root无运行进程。HEAD726362a已保存正式实现；下一仅tmp native_controller_candidate在实现，未准入。完整科学与软件Goal保持未完成，active。
+
 最新实际进展：session/provider_v2/seed与native stage已应用（stage6ece806a、session7a7e8376、seedf0061733、provider768c4d23），正式源码110项20.23s/安装110项20.07s，104安装模块与源码全等。独审组合46+stage2负控、session13+3负控通过。原stage policy/initial变更两个HIGH实际RED与runner import路径HIGH均已修并保原字节。
 
 唯一ordinary native full/fine实际attempt01完成，root session83328终态exit0/reaped，whole62.257310250s/120、trial60.742858917s/90、外62.378195833s/130无timeout；2initialforward+9host、4freshqueries、seed20/proof16，252source与104membership前后相同。冻结audit_stage.py e7ae独立重算原六gate及逐path原strict全局/局部守恒全部通过，pressure比较0.005876366498482038Pa<1Pa，其余门槛亦保原值。完整原生数学4query保存证据正由Ptolemy复核，尚未终归档；禁止重跑该attempt/native或poll旧handle。actual数据tmp native_stage_study，252原输入副本已保存。

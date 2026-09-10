@@ -1,0 +1,26 @@
+# Independent saved-result review
+
+PASS for the single registered speculative ordinary stage. No repeat native run, controller call or mathematical EOS evaluation was performed in this review. The result does not authorize a global commit, trajectory, event transition or removal of conditional material/error assumptions.
+
+Reviewed execution freeze459fb00170bae695f64a5719d7d676fd753b1c2f81bad3e9af96f4b4eaef00eb; trialdd6bda7bfb1d3184e1f9c98e203ebc8f49a3dfb13289d11b403d436fe29235a0. All252 frozen files were independently rehashed against saved source-after and current bytes. Full directory membership, including104 installed Python modules, matches. Supervisor runner/freeze/self hashes agree; actual exit0, no timeout,62.378195833s<130s. Whole saved elapsed62.257310250s<120s; stage60.742858917s<90s. Session history/configuration/source survived unchanged and elapsed remained within its original90s deadline.
+
+Actual2 initial forward energies bind their virtual300.125/305.25K settings, stored prototypes and initial U; no helper host callback was charged. The stage retains9 actual host samples,3 panels and3 trial steps with original roles and exact0→1/1000s full/half clocks. All18 sample/cell observations independently bind state inventories/model/targetU and reconstruct solid energy terms plus fluid totalU, retained conditional Cp lower/error bounds and original inverse epsilon. No conditional bound was replaced with zero.
+
+The frozen independently written auditor was rerun on raw initial/storage/CASE/trial data, importing no production model. Its output reproduces saved-audit01 after ordinary JSON tuple/list normalization. Independent exact ledgers, separately rounded represented integrals, literal kg/mol/U writeback, full quadratic panel minima and both paths' original global/local strict prefix gates pass. Global energy residual is exactly zero. All six original full/fine comparison gates pass; pressure comparison is exactly4813919435556485126398412116148132579186012379742258877/819200000000000000000000000000000000000000000000000000000Pa, approximately0.005876366498482038Pa<1Pa. This value was recomputed from actual endpoint pressures and fresh proof radii, not adopted from the comparison record.
+
+Four actual query contexts are cell0/full,cell0/fine,cell1/full,cell1/fine. Each query's raw bytes, seed/proof request SHA, original branch/seed policy and current endpoint state/rate/time/source association match. Seed costs5 each accumulate20; proof operations4 each accumulate16. Remaining proof budgets are16/12/8/4 and seed budgets48/43/38/33, without reset.
+
+For EACH query the independent Fraction script reconstructs Krawczyk image enclosure and weighted norm from saved F/J/C/box values; verifies strict image margins and norm<1, positive phase density derivatives and pressure intersection; checks full original inverseT interval, original effective-volume/public-native scale, strict mechanical faces and every gas-pressure corner; reconstructs the entire BFS density union covering coexistence-liquid, mechanical, observed-query and actual observed native-density boxes. Each tube has31 visits and16 adjacent positive leaves, no gap/pending box. Each observed query has4 completed mathematical evaluations: strict residual faces, positive whole-box slope, residual/slope density bound, public/native mass conversion, literal host-volume roundoff and combined original volume-error gate. No successful subset was selected.
+
+| Query | K norm upper | Pressure radius Pa | Combined volume error m3/mol |
+|---|---:|---:|---:|
+| cell0/full |0.2648221965|0.0028804636167215434|1.7497589413e-19|
+| cell0/fine |0.2648222453|0.0029595595316853087|5.6460151435e-19|
+| cell1/full |0.2299573567|0.0016173266782210914|1.0144047060e-20|
+| cell1/fine |0.2299572593|0.001275506291880957|3.7235919651e-19|
+
+Every combined volume bound is below the unchanged original1e-16m3/mol conditional declaration. Each exact pressure radius includes its actual nominal pressure difference to both coupled-root pressure endpoints plus original fixed-T error; original pressure-domain and liquid-branch ambiguity margins pass.
+
+Evidence: review_saved_native.py, finalreview_saved_native03.json and review_saved_native05.log. Earlier independent-review diagnostics are preserved:01.log exposed only tuple-vs-JSON-list representation;03.log exposed the auditor's overly strict zip against all5 reaction-reference enthalpies when computing exactly2 solid terms. Fixes normalize only comparison serialization and explicitly select the2 solid reference entries, respectively. Original trial/results/freeze/frozen audit were never changed. Intermediate successful review01/02 outputs also remain.
+
+Boundary: saved EOS residual/Jacobian/derivative interval values are premises from the previously reviewed and hash-bound directed-interval implementations. Their EOS evaluation was deliberately not repeated here; this review establishes the downstream exact algebra and source association, not a second independently implemented IAPWS solver. Native internal flash counts remain unknown. Stable-liquid model selection and original manufactured solid/reaction/transport plus U/Cp/volume hypotheses remain explicit conditions, not material certification or a global uniqueness theorem.
