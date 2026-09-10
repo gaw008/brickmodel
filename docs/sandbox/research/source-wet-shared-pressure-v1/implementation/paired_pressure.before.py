@@ -9,9 +9,6 @@ import hashlib
 import json
 import math
 
-from .rational_intervals import (interval_difference, interval_sum,
-                                 interval_divide_positive, residual_to_root_bound)
-
 
 class PairedPressureError(ValueError):
     """Missing or inconsistent evidence for a paired pressure bound."""
@@ -186,9 +183,9 @@ def certify_paired_pressure(a: PressureState, b: PressureState, shared: SharedVo
         return (state.liquid_mol*(endpoints.volume_at_upper_m3_mol-endpoints.error_at_upper_m3_mol),
                 state.liquid_mol*(endpoints.volume_at_lower_m3_mol+endpoints.error_at_lower_m3_mol))
     la=liquid_interval(a,liquid_a);lb=liquid_interval(b,liquid_b)
-    liquid=interval_difference(la,lb)
+    liquid=(la[0]-lb[1],la[1]-lb[0])
     gas_numerator=gas_constant_j_mol_k*(a.gas_mol*a.temperature_k-b.gas_mol*b.temperature_k)
-    gas=interval_divide_positive((gas_numerator,gas_numerator),common)
+    gas=tuple(sorted((gas_numerator/common[0],gas_numerator/common[1])))
     dn=tuple(x-y for x,y in zip(a.solid_mol,b.solid_mol))
     solid=sum((n*v for n,v in zip(dn,shared.solid_volume_m3_mol)),Fraction())
     solid_error=sum((abs(n)*e for n,e in zip(dn,shared.solid_error_m3_mol)),Fraction())
@@ -199,11 +196,11 @@ def certify_paired_pressure(a: PressureState, b: PressureState, shared: SharedVo
             ('geometry_nominal',(geometry,geometry)),('shared_solid_error',(-solid_error,solid_error)),
             ('shared_reference_error',(-reference_error,reference_error)),
             ('independent_volume_errors',(-independent_error,independent_error)))
-    residual=interval_sum(tuple(v for _,v in pieces))
+    residual=(sum((v[0] for _,v in pieces),Fraction()),sum((v[1] for _,v in pieces),Fraction()))
     joint=(min(a.root_interval_pa[0],b.root_interval_pa[0]),max(a.root_interval_pa[1],b.root_interval_pa[1]))
     compliance=min(a.gas_mol*a.temperature_k,b.gas_mol*b.temperature_k)*gas_constant_j_mol_k/joint[1]**2
     _require(compliance > 0,'no_positive_gas_compliance')
-    pair_bound=residual_to_root_bound(residual,compliance)
+    pair_bound=max(abs(residual[0]),abs(residual[1]))/compliance
     independent=max(abs(a.root_interval_pa[0]-b.root_interval_pa[1]),abs(a.root_interval_pa[1]-b.root_interval_pa[0]))
     exact=min(pair_bound,independent)
     try:

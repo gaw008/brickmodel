@@ -312,3 +312,7 @@ ordinary native实际full/fine已验证：research/water-native-stage-actual-v1�
 
 
 原生控制器接线（2026-09-09）：mass_wet_controller_pressure.py的显式event/common上下文将实际观测与会话绑定，mass_wet_exact_controller.py同session保拒步/细化/独立路径历史，原全部门槛和原子发布未变；源码14/安装3关键路径实际通过。证据research/water-native-controller-v1。新近事件初态真实水2forward+1pair及独立保存算术见research/water-native-near-event-initial-v1；均不授完整原生controller、材料或全烧成验收。
+
+## 来源湿格共享体积比较（2026-09-10）
+
+`rational_intervals.py` 提取旧纯有理区间算术；`source_wet_shared_pressure.py` 的 `_support` 定义原压力箱的向外 J，`_error_parts` 核根存在、全 J 的 GL/GG/GS/Γ、当前残差到根及完整温度延拓，`enclose_source_wet_pressure_pair` 核 `D = NlA*vA - NlB*vB + R*(NgA*TA-NgB*TB)/p` 及 joint-only 差界。实际液体闭合顺序保留，原 actual fluid/projection 和 max(old,new) 温度斜率均不删减。`collect_source_wet_pressure_pair` 每次请求前复核完整配置、记录完整返回及失败。`source_dry_transition.py` 绑定实际两候选的 2×N 原格/时刻端点，保留旧门槛。对应 `test_paired_pressure_arithmetic.py`、`test_source_wet_shared_pressure.py`、`test_source_wet_transition_pressure.py` 及旧干态/单格/多格回归。数学合同、独立原生保存281项与边界见 [阶段报告](research/source-wet-shared-pressure-v1/REPORT.md)。这不建立新的真实材料参数资格。

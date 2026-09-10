@@ -362,9 +362,11 @@ class SourceDryTransition:
     cell_conditional_pressure_gates: tuple = ()
     cell_selected_pressure_bounds_pa: tuple = ()
     cell_selected_pressure_gates: tuple = ()
+    wet_pressure_pairs: tuple = ()
 
     def check(self):
-        expected=compare_source_dry_candidates(self.refinement,self.candidates,shared_volume=self.shared_volume)
+        expected=compare_source_dry_candidates(self.refinement,self.candidates,
+            shared_volume=self.shared_volume,wet_pressure_pairs=self.wet_pressure_pairs)
         _require(all(_same(getattr(self,f.name),getattr(expected,f.name)) for f in fields(self)
                      if f.name not in ('refinement','candidates')), 'source_dry_transition_comparison_changed')
 
@@ -381,7 +383,8 @@ def _check_shared_volume(refinement, shared_volume):
         _require(shared_volume.storage is storage, 'source_shared_volume_must_belong_to_original_path')
 
 
-def compare_source_dry_candidates(refinement, candidates, *, shared_volume=None) -> SourceDryTransition:
+def compare_source_dry_candidates(refinement, candidates, *, shared_volume=None,
+                                  wet_pressure_pairs=()) -> SourceDryTransition:
     _require(type(refinement) is SourceRootRefinement and type(candidates) is tuple
              and len(candidates)==2 and all(type(c) is SourceDryCandidate for c in candidates),
              'actual_source_dry_comparison_inputs_required')
@@ -400,6 +403,30 @@ def compare_source_dry_candidates(refinement, candidates, *, shared_volume=None)
     a,b=candidates
     selected_cell=a.terminal.selected_cell_index
     count=a.terminal.dry_adapter.column.cell_count
+    _require(type(wet_pressure_pairs) is tuple, 'explicit_source_wet_pressure_grid_required')
+    if wet_pressure_pairs:
+        from .source_wet_shared_pressure import SourceSharedWetPressurePair
+        _require(len(wet_pressure_pairs)==2 and all(type(row) is tuple and len(row)==count
+                 for row in wet_pressure_pairs), 'complete_source_wet_pressure_grid_required')
+        _require(any(pair is not None for row in wet_pressure_pairs for pair in row),
+                 'nonempty_source_wet_pressure_strategy_required')
+        for phase_index,row in enumerate(wet_pressure_pairs):
+            for cell,pair in enumerate(row):
+                if pair is None:
+                    continue
+                _require(type(pair) is SourceSharedWetPressurePair,
+                         'actual_source_shared_wet_pressure_pair_required')
+                _require(type(pair.endpoints) is tuple and len(pair.endpoints)==2,
+                         'two_source_wet_pressure_endpoints_required')
+                pair.check()
+                endpoints=(a.cell_pressure_endpoints[phase_index][cell],
+                           b.cell_pressure_endpoints[phase_index][cell])
+                _require(cell!=selected_cell and all(type(end) is SourceInversePressure for end in endpoints)
+                         and pair.endpoints[0] is endpoints[0] and pair.endpoints[1] is endpoints[1],
+                         'source_wet_pressure_pair_original_cell_and_time_required')
+                storage=refinement.approach.proposal.original_trial.adapter.column.storages[cell]
+                _require(pair.shared_volume.storage is storage,
+                         'source_wet_pressure_volume_original_cell_required')
     _require(a.end==b.end and a.terminal.dry_adapter.operator_identity==b.terminal.dry_adapter.operator_identity
              and selected_cell==b.terminal.selected_cell_index,
              'source_dry_paths_require_same_final_time_and_operator')
@@ -409,7 +436,7 @@ def compare_source_dry_candidates(refinement, candidates, *, shared_volume=None)
     differences=[];gates=[];pressure=[];pgates=[];pairs=[];selected=[];selected_gates=[]
     cell_differences=[];cell_gates=[];cell_pressure=[];cell_pgates=[];cell_selected=[];cell_selected_gates=[]
     limits=tuple(map(F,(event.amount_absolute_mol,event.energy_absolute_j,event.temperature_absolute_k,event.pressure_absolute_pa)))
-    for k,label in ((0,'event'),(-1,'common')):
+    for phase_index,(k,label) in enumerate(((0,'event'),(-1,'common'))):
         ac,bc=a.captures[k],b.captures[k]
         rows=[];original_bounds=[];chosen_bounds=[]
         for i in range(count):
@@ -429,6 +456,10 @@ def compare_source_dry_candidates(refinement, candidates, *, shared_volume=None)
                 pair=enclose_source_dry_pressure_pair(pa,pb,shared_volume=shared_volume)
                 pairs.append(pair)
                 chosen=pair.bound_pa if pair.status=='conditional_shared_dry_pressure_enclosure' else None
+            elif wet_pressure_pairs and wet_pressure_pairs[phase_index][i] is not None:
+                wet_pair=wet_pressure_pairs[phase_index][i]
+                chosen=(wet_pair.bound_pa if wet_pair.status=='conditional_shared_wet_pressure_enclosure'
+                        else None)
             else:
                 chosen=max(row[3],bound) if bound is not None else None
             chosen_bounds.append(chosen)
@@ -452,28 +483,51 @@ def compare_source_dry_candidates(refinement, candidates, *, shared_volume=None)
         'conditional_numerical_event_accepted' if accepted else 'candidate_comparison_not_certified',
         shared_volume=shared_volume,shared_pressure_pairs=tuple(pairs),
         selected_pressure_bounds_pa=tuple(selected),selected_pressure_gates=tuple(selected_gates),
-        pressure_strategy='explicit_shared_source_dry_volume' if shared_volume is not None
+        pressure_strategy=('explicit_shared_source_wet_and_dry_volume' if shared_volume is not None
+                           else 'explicit_shared_source_wet_volume') if wet_pressure_pairs
+                          else 'explicit_shared_source_dry_volume' if shared_volume is not None
                           else 'original_independent_source_pressure',
         selected_cell_index=selected_cell,cell_endpoint_differences=tuple(cell_differences),
         cell_endpoint_gates=tuple(cell_gates),cell_conditional_pressure_bounds_pa=tuple(cell_pressure),
         cell_conditional_pressure_gates=tuple(cell_pgates),cell_selected_pressure_bounds_pa=tuple(cell_selected),
-        cell_selected_pressure_gates=tuple(cell_selected_gates))
+        cell_selected_pressure_gates=tuple(cell_selected_gates),wet_pressure_pairs=wet_pressure_pairs)
 
 class SourceDryTransitionError(IntegrationError):
-    def __init__(self,stage,refinement,candidates,cause):
+    def __init__(self,stage,refinement,candidates,cause,*,records=()):
         self.stage,self.refinement,self.candidates=stage,refinement,tuple(candidates)
+        self.records=tuple(records)
         self.exception_type,self.exception_message=type(cause).__name__,str(cause)
         super().__init__(f'source_dry_transition_failed:{stage}:{type(cause).__name__}:{cause}')
 
 
+def _check_shared_wet_volumes(refinement, shared_wet_volumes):
+    _require(type(shared_wet_volumes) is tuple, 'explicit_source_shared_wet_volumes_required')
+    if not shared_wet_volumes:
+        return
+    from .source_wet_shared_pressure import SourceSharedWetVolume
+    column=refinement.approach.proposal.original_trial.adapter.column
+    selected=refinement.approach.proposal.choice.selected_root.polynomial.cell
+    _require(len(shared_wet_volumes)==column.cell_count and shared_wet_volumes[selected] is None
+             and any(value is not None for value in shared_wet_volumes),
+             'complete_source_shared_wet_cell_declarations_required')
+    for i,declaration in enumerate(shared_wet_volumes):
+        if declaration is not None:
+            _require(type(declaration) is SourceSharedWetVolume,
+                     'actual_source_shared_wet_volume_required')
+            declaration.check()
+            _require(declaration.storage is column.storages[i],
+                     'source_shared_wet_volume_original_cell_required')
+
+
 def evaluate_source_dry_transition(refinement, *, end: T, maximum_callbacks_per_path: int,
-                                   cancel=None, shared_volume=None) -> SourceDryTransition:
+                                   cancel=None, shared_volume=None, shared_wet_volumes=()) -> SourceDryTransition:
     """Execute two actual wet/dry paths once; the caller owns outer study limits."""
     _require(type(refinement) is SourceRootRefinement, 'actual_source_root_refinement_required')
     refinement.check()
     _check_shared_volume(refinement,shared_volume)
     _require(refinement.clock is not None, 'source_dry_compared_prior_clock_required')
-    candidates=[];stage='coarse_candidate'
+    _check_shared_wet_volumes(refinement,shared_wet_volumes)
+    candidates=[];pressure_records=[];stage='coarse_candidate'
     try:
         for index,seed in enumerate((refinement.approach.proposal.original_trial,refinement.shifted_trial)):
             candidate=execute_source_dry_candidate(seed,event_policy=refinement.approach.proposal.event_policy,
@@ -482,9 +536,35 @@ def evaluate_source_dry_transition(refinement, *, end: T, maximum_callbacks_per_
             candidates.append(candidate)
             _require(candidate.status=='executed_dry_candidate',candidate.status+':'+str(candidate.reason))
             stage='shifted_candidate'
+        wet_pairs=()
+        if shared_wet_volumes:
+            from .source_wet_shared_pressure import collect_source_wet_pressure_pair
+            grid=[]
+            for phase_index in range(2):
+                row=[]
+                for cell,declaration in enumerate(shared_wet_volumes):
+                    if declaration is None:
+                        row.append(None)
+                        continue
+                    stage=f'wet_shared_pressure:{phase_index}:{cell}'
+                    record={'phase_index':phase_index,'cell_index':cell}
+                    pressure_records.append(record)
+                    try:
+                        _require(cancel is None or not cancel(), 'source_wet_pressure_collection_cancelled')
+                        endpoints=tuple(c.cell_pressure_endpoints[phase_index][cell] for c in candidates)
+                        pair=collect_source_wet_pressure_pair(*endpoints,shared_volume=declaration,cancel=cancel)
+                        record['pair']=pair
+                        row.append(pair)
+                    except Exception as exc:
+                        record.update(exception_type=type(exc).__name__,exception=str(exc),
+                                      attempts=getattr(exc,'attempts',()))
+                        raise
+                grid.append(tuple(row))
+            wet_pairs=tuple(grid)
         stage='source_event_comparison'
-        result=compare_source_dry_candidates(refinement,tuple(candidates),shared_volume=shared_volume)
+        result=compare_source_dry_candidates(refinement,tuple(candidates),shared_volume=shared_volume,
+                                            wet_pressure_pairs=wet_pairs)
         result.check()
         return result
     except Exception as exc:
-        raise SourceDryTransitionError(stage,refinement,candidates,exc) from exc
+        raise SourceDryTransitionError(stage,refinement,candidates,exc,records=pressure_records) from exc

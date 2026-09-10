@@ -1,0 +1,13 @@
+# New wet evidence and the existing observation codec
+
+The unchanged source_observation_schema.CLASSES whitelist contains 39 passive observation classes. WaterState, WaterReference and WaterImplementation are already supported. Its _project recursively handles only listed classes, mappings, tuples and approved exact primitives; _restore requires the exact registered class and complete typed fields. encode_source_sample additionally requires a SavedSourceSample top-level record.
+
+New SourceSharedWetPressurePair, SourceWetPairEvidence, WetPairSupport, WetVolumeObservation and SourceWetPressureErrorParts are not registered. Neither SourceInversePressure/PressureContinuation nor the live SourceSharedWetVolume storage binding is part of the observation schema. Thus adding a few class names would not make a complete pair a supported observation or safely reconstruct live sharing.
+
+No codec change is necessary for this stage's existing source captures: their complete SavedSourceSample/SourceExactEvaluation hierarchy is unchanged. The new explicit liquid endpoint calls are additional raw WaterState evidence, not complete column observations and should not be fabricated into SavedSourceSample records.
+
+The research runner's separate saved_record recursively serializes dataclasses, exact Fraction/array formats and mappings while omitting storage/adapter live objects. The current new pair structure contains serializable passive fields aside from the deliberately omitted storage. Its JSON can preserve mathematics, original inputs, observation records and object-id snapshots, but it does not authorize reconstruction of those live object identities or pass the installable observation codec. Final frozen serializer compatibility still needs confirmation against the actual new module.
+
+Required delivery clarification: the installed source-observation CLI continues to import/inspect complete source captures; new pressure pair evidence is separately saved research JSON, not a supported full-run/pair resume format. No additional production codec registration is required for this declared scope.
+
+If a future task explicitly requests an installable pair codec, define a separate passive schema for the pair/support/observations/error parts and source/input snapshots. Reuse original observation digests and explicit endpoint associations, preserve exact primitive representation, strict fields, quotas and false material/resume qualifications, and do not treat stored id() values as current-process sharing. That is a separate implementation and validation boundary, not an incidental registration change.

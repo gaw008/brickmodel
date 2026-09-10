@@ -221,3 +221,7 @@ JoinedWaterVapor从原低温500K的h锚积分原高温NIST分段Cp，逐段原h/
 `ArlabosseMassCaloric`复用原35–105°C干基Cp与解析Δh。仅在显式恒组成、不可压缩且比容不随温度变化的近似下采用Δu=Δh；刚性容器本身不证明Cp=Cv。`FixedMassCaloricStorage`固定正干质量与域内参考温度，使用相对u(T0)=0，身份绑定质量/参考/来源/无反应选择。不同参考目标必须同步平移，绝不赋予绝对形成焓。反解使用整个源温区的最小名义热容与精确Fraction运算；源拟合和本构近似误差仍未知。float输入是其精确binary64值，Decimal/Fraction可表达精确域端点。
 
 `ReactionDisabled`只表达本阶段不发生化学转化，输出按明确kg固体/mol气体布局的零化学源，不禁用独立液汽相变。此版本只有干物point，无固体质量迁移、湿容积闭合或完整反应网络；真实湿格接线须另保留水液汽参考、机械体积与来源不确定性。具体证据见[source-mass-caloric-v1](research/source-mass-caloric-v1/REPORT.md)。
+
+## 来源湿干比较的条件性扩展（2026-09-10）
+
+[source-wet-shared-pressure-v1](research/source-wet-shared-pressure-v1/REPORT.md) 为同一实际固定可用体积下的两湿端点提供联合压力差界。全 J 上平滑稳定液体、原 epsilon 对 native m/rho 与平滑体积的误差覆盖，以及原热力学导数界是明确适用条件；四个点不能证明这些条件。原 eV 对温度/能量的不确定性仍保留。当前真实水N3只验证一次极短唯一耗尽数值事件，原几何/输运仍含制造设定，材料资格 false。它不扩大全域物性认证、任意湿干控制器或完整烧成域。
