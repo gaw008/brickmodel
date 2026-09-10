@@ -277,3 +277,22 @@ def test_equal_independent_storage_cannot_authorize_shared_path_execution(shared
     with pytest.raises(ValueError,match='belong_to_original_path'):
         evaluate_source_dry_transition(out.refinement,end=out.candidates[0].end,
             maximum_callbacks_per_path=32,shared_volume=declaration)
+
+
+def test_single_cell_pressure_and_balance_views_keep_original_results(shared_programmed):
+    out=shared_programmed
+    assert out.selected_cell_index==0
+    for candidate in out.candidates:
+        assert tuple(row[0] for row in candidate.cell_pressure_endpoints)==candidate.pressure_endpoints
+    for i in range(2):
+        assert out.cell_endpoint_differences[i]==(out.endpoint_differences[i][3],)
+        assert out.cell_endpoint_gates[i]==(out.endpoint_gates[i],)
+        assert out.cell_selected_pressure_bounds_pa[i]==(out.selected_pressure_bounds_pa[i],)
+        assert out.cell_selected_pressure_gates[i]==(out.selected_pressure_gates[i],)
+    for path in out.balance_paths:
+        for row in path:
+            assert len(row.cell_balances)==1 and row.cell_balances[0].cell_index==0
+            for key in ('inventory_residual_mol','energy_residual_j','full_inventory_residual_mol',
+                        'full_energy_residual_j','water_balance_residual_mol',
+                        'event_water_storage_roundoff_mol','fluid_element_residuals_mol','fluid_mass_residual_kg'):
+                assert getattr(row,key)==getattr(row.cell_balances[0],key)

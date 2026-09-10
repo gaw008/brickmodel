@@ -1,4 +1,4 @@
-"""Execute and compare actual single-cell source wet-to-dry candidates.
+"""Execute and compare source columns across one selected wet-to-dry event.
 
 The original integrator advances dry states. Candidate execution is separate
 from conditional numerical event acceptance and from material qualification.
@@ -17,6 +17,7 @@ from .source_prefix_trial import (SourcePrefixTrial, TrialCapture, _TrialStop,
 from .source_net_prefix import _same
 from .source_terminal import SourceTerminal, build_source_terminal, _require
 from .source_dry_pressure import SourceDryPressure, enclose_source_dry_pressure
+from .source_inverse_pressure import SourceInversePressure, enclose_source_inverse_pressure
 from .source_dry_shared_pressure import SourceSharedDryVolume, enclose_source_dry_pressure_pair
 from .source_root_comparison import SourceRootRefinement
 
@@ -42,6 +43,9 @@ class SourceDryCandidate:
     qualification: str = 'executed_source_candidate_not_event_acceptance_or_material_validation'
     event_admitted: bool = False
     material_qualified: bool = False
+    # Two time rows, each retaining every cell's actual dry or wet enclosure.
+    # pressure_endpoints remains the selected dry cell's two records.
+    cell_pressure_endpoints: tuple = ()
 
     def check(self):
         self.seed.check()
@@ -63,7 +67,8 @@ class SourceDryCandidate:
                 masses=self.seed.fixed_dry_mass_kg)
             _require(all(c.role=='dry_reference' for c in self.captures), 'source_dry_capture_role_changed')
         else:
-            _require(not self.captures and self.reference is None and not self.pressure_endpoints,
+            _require(not self.captures and self.reference is None and not self.pressure_endpoints
+                     and not self.cell_pressure_endpoints,
                      'source_dry_evaluation_without_terminal')
         if self.dry_policy is not None:
             _require(_same(self.dry_policy_binding,_policy_binding(self.dry_policy)),
@@ -77,10 +82,40 @@ class SourceDryCandidate:
             _require(self.dry_policy_binding is None, 'source_dry_policy_binding_without_policy')
         for bound in self.pressure_endpoints:
             _require(type(bound) is SourceDryPressure, 'source_dry_actual_pressure_record_required')
+            _require(self.terminal is not None and bound.storage is
+                     self.terminal.dry_adapter.column.storages[self.terminal.selected_cell_index],
+                     'source_selected_pressure_storage_changed')
             bound.check()
+        _require(type(self.cell_pressure_endpoints) is tuple and len(self.cell_pressure_endpoints)<=2,
+                 'source_cell_pressure_time_rows_required')
+        if self.terminal is not None:
+            selected=self.terminal.selected_cell_index
+            count=view.column.cell_count
+            _require(not self.cell_pressure_endpoints or bool(self.captures),
+                     'source_cell_pressure_without_actual_capture')
+            for capture,row in zip((self.captures[0],self.captures[-1]) if self.captures else (),
+                                   self.cell_pressure_endpoints):
+                _require(type(row) is tuple and len(row)<=count and capture.evaluation is not None,
+                         'source_cell_pressure_row_shape')
+                observation=capture.evaluation
+                for i,bound in enumerate(row):
+                    state=observation.source_states[i]
+                    expected_type=SourceDryPressure if state.liquid_water_mol==0 else SourceInversePressure
+                    _require(type(bound) is expected_type
+                             and bound.storage is view.column.storages[i]
+                             and _same(bound.state,state)
+                             and _same(bound.inverse,observation.source_evaluation.cells[i].inverse),
+                             'source_cell_pressure_binding_changed')
+                    bound.check()
+            _require(_same(self.pressure_endpoints,
+                          tuple(row[selected] for row in self.cell_pressure_endpoints if len(row)>selected)),
+                     'source_selected_pressure_cell_changed')
         if self.status=='executed_dry_candidate':
             _require(self.reason is None and self.terminal is not None and self.dry_policy is not None
-                     and len(self.pressure_endpoints)==2 and bool(self.captures), 'source_dry_success_evidence_missing')
+                     and len(self.pressure_endpoints)==2 and bool(self.captures)
+                     and len(self.cell_pressure_endpoints)==2
+                     and all(len(row)==count for row in self.cell_pressure_endpoints),
+                     'source_dry_success_evidence_missing')
             _complete_reference(self.reference,self.terminal.clock.lower,self.end,self.terminal.corrected_state)
             _require(bool(self.reference.steps) and self.reference.evaluations==len(self.captures)
                      and all((c.evaluation is not None and c.binding is not None and c.failure is None)
@@ -91,8 +126,8 @@ class SourceDryCandidate:
                 self.captures,self.reference,breakpoints=view.breakpoints(self.terminal.clock.lower,self.end))
             for c,bound in zip((self.captures[0],self.captures[-1]),self.pressure_endpoints):
                 _require(c.evaluation is not None and c.failure is None
-                         and _same(bound.state,c.evaluation.source_states[0])
-                         and _same(bound.inverse,c.evaluation.source_evaluation.cells[0].inverse),
+                         and _same(bound.state,c.evaluation.source_states[selected])
+                         and _same(bound.inverse,c.evaluation.source_evaluation.cells[selected].inverse),
                          'source_dry_endpoint_pressure_binding_changed')
         _require(self.qualification=='executed_source_candidate_not_event_acceptance_or_material_validation'
                  and self.event_admitted is False and self.material_qualified is False,
@@ -110,7 +145,7 @@ def execute_source_dry_candidate(seed, *, event_policy, end: T, maximum_callback
     _require(event is not None, 'explicit_source_dry_event_policy_required')
     binding=_event_binding(event); seed.check()
     terminal=dry_policy=dry_policy_binding=reference=None
-    captures=[]; bounds=[]; stop=None
+    captures=[]; bounds=[]; cell_bounds=[]; stop=None
 
     def guard():
         _require(binding==_event_binding(event)
@@ -150,8 +185,14 @@ def execute_source_dry_candidate(seed, *, event_policy, end: T, maximum_callback
         guard()
         for capture in (captures[0],captures[-1]):
             obs=capture.evaluation
-            bounds.append(enclose_source_dry_pressure(terminal.dry_adapter.column.storages[0],
-                obs.source_states[0],obs.source_evaluation.cells[0].inverse))
+            cell_bounds.append(())
+            for i,storage in enumerate(terminal.dry_adapter.column.storages):
+                state=obs.source_states[i]
+                enclose=enclose_source_dry_pressure if state.liquid_water_mol==0 else enclose_source_inverse_pressure
+                bound=enclose(storage,state,obs.source_evaluation.cells[i].inverse)
+                cell_bounds[-1]=(*cell_bounds[-1],bound)
+                if i==terminal.selected_cell_index:
+                    bounds.append(bound)
         status,reason='executed_dry_candidate',None
     except _TrialStop as exc:
         status,reason=exc.status,str(exc)
@@ -160,7 +201,8 @@ def execute_source_dry_candidate(seed, *, event_policy, end: T, maximum_callback
     except Exception as exc:
         status,reason='failed',type(exc).__name__+':'+str(exc)
     result=SourceDryCandidate(seed,event,binding,end,maximum_callbacks,(T(end.seconds),maximum_callbacks),terminal,
-        dry_policy,dry_policy_binding,reference,tuple(captures),tuple(bounds),status,reason,(status,reason),time.monotonic()-begin)
+        dry_policy,dry_policy_binding,reference,tuple(captures),tuple(bounds),status,reason,(status,reason),time.monotonic()-begin,
+        cell_pressure_endpoints=tuple(cell_bounds))
     if status=='executed_dry_candidate':
         try:
             result.check()
@@ -171,6 +213,19 @@ def execute_source_dry_candidate(seed, *, event_policy, end: T, maximum_callback
             reason=type(exc).__name__+':'+str(exc)
             result=replace(result,status='failed',reason=reason,outcome_binding=('failed',reason))
     return replace(result,elapsed_seconds=time.monotonic()-begin)
+
+
+@dataclass(frozen=True)
+class SourceTransitionCellBalance:
+    cell_index: int
+    inventory_residual_mol: tuple
+    energy_residual_j: F
+    full_inventory_residual_mol: tuple
+    full_energy_residual_j: F
+    water_balance_residual_mol: F
+    event_water_storage_roundoff_mol: F
+    fluid_element_residuals_mol: tuple
+    fluid_mass_residual_kg: F
 
 
 @dataclass(frozen=True)
@@ -185,43 +240,68 @@ class SourceTransitionBalance:
     event_water_storage_roundoff_mol: F
     fluid_element_residuals_mol: tuple
     fluid_mass_residual_kg: F
+    cell_balances: tuple[SourceTransitionCellBalance, ...] = ()
 
 
 def _audit_path(candidate, ordinary=()):
-    """All prefixes share one origin; writeback storage error stays explicit."""
+    """Retain local and global balances from one origin through the selected event.
+
+    The original absolute budgets gate both local and global residuals; they
+    are not multiplied by the grid count. Event storage roundoff stays local.
+    """
     seed=candidate.seed; terminal=candidate.terminal
     initial=ordinary[0].initial if ordinary else seed.initial
     previous=initial; previous_time=ordinary[0].start if ordinary else seed.start
-    exchange=[F()]*4; full=[F()]*4; energy=F(); full_energy=F()
-    correction=[F()]*4; storage=F(); rows=[]
-    masses=candidate.captures[0].evaluation.source_evaluation.gas_states[0].molar_masses_kg_mol
+    count=initial.amounts_mol.shape[0]
+    exchange=[[F()]*4 for _ in range(count)]; full=[[F()]*4 for _ in range(count)]
+    energy=[F()]*count; full_energy=[F()]*count
+    correction=[[F()]*4 for _ in range(count)]; storage=[F()]*count; rows=[]
+    masses=tuple(g.molar_masses_kg_mol for g in candidate.captures[0].evaluation.source_evaluation.gas_states)
     policy=seed.policy
 
-    def record(state,when,phase):
-        nr=tuple(F(float(x))-F(float(y))-n-c for x,y,n,c in
-                 zip(state.amounts_mol[0],initial.amounts_mol[0],exchange,correction))
-        fnr=tuple(F(float(x))-F(float(y))-n-c for x,y,n,c in
-                 zip(state.amounts_mol[0],initial.amounts_mol[0],full,correction))
-        ur=F(float(state.internal_energy_j[0]))-F(float(initial.internal_energy_j[0]))-energy
-        fur=F(float(state.internal_energy_j[0]))-F(float(initial.internal_energy_j[0]))-full_energy
+    def bounded(nr,fnr,ur,fur):
         _require(all(abs(v)<=F(policy.amount_absolute_tolerance_mol) for v in (*nr,*fnr))
                  and max(abs(ur),abs(fur))<=F(policy.energy_absolute_tolerance_j),
                  'source_transition_cumulative_original_balance_budget')
-        water=nr[0]+nr[3]+storage
-        elements=(('H',2*water),('O',water+2*nr[1]),('N',2*nr[2]))
-        mass=F(masses['H2O'])*water+F(masses['O2'])*nr[1]+F(masses['N2'])*nr[2]
-        rows.append(SourceTransitionBalance(when,phase,nr,ur,fnr,fur,water,storage,elements,mass))
+
+    def record(state,when,phase):
+        cells=[]
+        for i in range(count):
+            nr=tuple(F(float(x))-F(float(y))-n-c for x,y,n,c in
+                     zip(state.amounts_mol[i],initial.amounts_mol[i],exchange[i],correction[i]))
+            fnr=tuple(F(float(x))-F(float(y))-n-c for x,y,n,c in
+                     zip(state.amounts_mol[i],initial.amounts_mol[i],full[i],correction[i]))
+            ur=F(float(state.internal_energy_j[i]))-F(float(initial.internal_energy_j[i]))-energy[i]
+            fur=F(float(state.internal_energy_j[i]))-F(float(initial.internal_energy_j[i]))-full_energy[i]
+            bounded(nr,fnr,ur,fur)
+            water=nr[0]+nr[3]+storage[i]
+            elements=(('H',2*water),('O',water+2*nr[1]),('N',2*nr[2]))
+            mass=F(masses[i]['H2O'])*water+F(masses[i]['O2'])*nr[1]+F(masses[i]['N2'])*nr[2]
+            cells.append(SourceTransitionCellBalance(i,nr,ur,fnr,fur,water,storage[i],elements,mass))
+        nr=tuple(sum((c.inventory_residual_mol[j] for c in cells),F()) for j in range(4))
+        fnr=tuple(sum((c.full_inventory_residual_mol[j] for c in cells),F()) for j in range(4))
+        ur=sum((c.energy_residual_j for c in cells),F())
+        fur=sum((c.full_energy_residual_j for c in cells),F())
+        bounded(nr,fnr,ur,fur)
+        water=sum((c.water_balance_residual_mol for c in cells),F())
+        elements=tuple((label,sum((dict(c.fluid_element_residuals_mol)[label] for c in cells),F()))
+                       for label in ('H','O','N'))
+        mass=sum((c.fluid_mass_residual_kg for c in cells),F())
+        rows.append(SourceTransitionBalance(when,phase,nr,ur,fnr,fur,water,sum(storage,F()),elements,mass,
+                                            tuple(cells)))
 
     def step(state,ledger,phase,exact=None):
-        nonlocal energy,full_energy,previous,previous_time
+        nonlocal previous,previous_time
         _require(ledger.start_s==previous_time, 'source_transition_ledger_time_gap')
-        n=[F(float(ledger.face_species_mol[0,j]))-F(float(ledger.face_species_mol[1,j]))
-           +F(float(ledger.reaction_species_mol[0,j])) for j in range(4)]
-        u=F(float(ledger.face_energy_j[0]))-F(float(ledger.face_energy_j[1]))+F(float(ledger.cell_work_j[0]))
+        n=[[F(float(ledger.face_species_mol[i,j]))-F(float(ledger.face_species_mol[i+1,j]))
+            +F(float(ledger.reaction_species_mol[i,j])) for j in range(4)] for i in range(count)]
+        u=[F(float(ledger.face_energy_j[i]))-F(float(ledger.face_energy_j[i+1]))
+           +F(float(ledger.cell_work_j[i])) for i in range(count)]
         exact_n,exact_u=(n,u) if exact is None else exact
-        for j in range(4):
-            exchange[j]+=n[j];full[j]+=exact_n[j]
-        energy+=u;full_energy+=exact_u
+        for i in range(count):
+            for j in range(4):
+                exchange[i][j]+=n[i][j];full[i][j]+=exact_n[i][j]
+            energy[i]+=u[i];full_energy[i]+=exact_u[i]
         record(state,ledger.end_s,phase)
         previous,previous_time=state,ledger.end_s
 
@@ -235,20 +315,25 @@ def _audit_path(candidate, ordinary=()):
     _require(_same((seed.initial,seed.start),(previous,previous_time)), 'source_transition_terminal_connection_changed')
     pieces={name:values for name,values,_ in terminal.prefix.integrals}
     fn=pieces['face_species_mol_s'];rn=pieces['reaction_species_mol_s']
-    exact_n=[fn[j]-fn[j+4]+rn[j] for j in range(4)]
+    exact_n=[[fn[i*4+j]-fn[(i+1)*4+j]+rn[i*4+j] for j in range(4)] for i in range(count)]
     fu=pieces['face_energy_w'];power=pieces['cell_power_w']
-    step(terminal.prefix.raw_state,terminal.prefix.ledger,'wet_terminal',(exact_n,fu[0]-fu[1]+power[0]))
+    exact_u=[fu[i]-fu[i+1]+power[i] for i in range(count)]
+    step(terminal.prefix.raw_state,terminal.prefix.ledger,'wet_terminal',(exact_n,exact_u))
     corrected=terminal.corrected_state
-    correction=[F(float(a))-F(float(b)) for a,b in zip(corrected.amounts_mol[0],previous.amounts_mol[0])]
-    storage=terminal.totals.signed_storage_roundoff_mol
-    _require(sum(correction,F())==storage and _same(previous.internal_energy_j,corrected.internal_energy_j),
+    correction=[[F(float(a))-F(float(b)) for a,b in zip(row_a,row_b)]
+                for row_a,row_b in zip(corrected.amounts_mol,previous.amounts_mol)]
+    selected=terminal.selected_cell_index
+    storage[selected]=terminal.totals.signed_storage_roundoff_mol
+    _require(all(sum(row,F())==storage[i] for i,row in enumerate(correction))
+             and all(v==0 for i,row in enumerate(correction) if i!=selected for v in row)
+             and correction[selected][1]==correction[selected][2]==0
+             and _same(previous.internal_energy_j,corrected.internal_energy_j),
              'source_transition_writeback_water_or_energy_changed')
     record(corrected,previous_time,'writeback')
     previous=corrected
     for state,ledger in zip(candidate.reference.states[1:],candidate.reference.steps):
         step(state,ledger,'dry_reference')
     return tuple(rows)
-
 
 @dataclass(frozen=True)
 class SourceDryTransition:
@@ -270,6 +355,13 @@ class SourceDryTransition:
     selected_pressure_bounds_pa: tuple = ()
     selected_pressure_gates: tuple = ()
     pressure_strategy: str = 'original_independent_source_pressure'
+    selected_cell_index: int = 0
+    cell_endpoint_differences: tuple = ()
+    cell_endpoint_gates: tuple = ()
+    cell_conditional_pressure_bounds_pa: tuple = ()
+    cell_conditional_pressure_gates: tuple = ()
+    cell_selected_pressure_bounds_pa: tuple = ()
+    cell_selected_pressure_gates: tuple = ()
 
     def check(self):
         expected=compare_source_dry_candidates(self.refinement,self.candidates,shared_volume=self.shared_volume)
@@ -281,7 +373,11 @@ def _check_shared_volume(refinement, shared_volume):
     if shared_volume is not None:
         _require(type(shared_volume) is SourceSharedDryVolume, 'explicit_source_shared_volume_required')
         shared_volume.check()
-        storage=refinement.approach.proposal.original_trial.adapter.column.storages[0]
+        choice=refinement.approach.proposal.choice
+        _require(choice is not None and choice.selected_root is not None,
+                 'source_shared_volume_requires_selected_liquid_root')
+        selected=choice.selected_root.polynomial.cell
+        storage=refinement.approach.proposal.original_trial.adapter.column.storages[selected]
         _require(shared_volume.storage is storage, 'source_shared_volume_must_belong_to_original_path')
 
 
@@ -302,33 +398,53 @@ def compare_source_dry_candidates(refinement, candidates, *, shared_volume=None)
                  and type(candidate.terminal.root_index) is int and candidate.terminal.root_index==index,
                  'source_dry_comparison_prior_clock_binding_changed')
     a,b=candidates
-    _require(a.end==b.end and a.terminal.dry_adapter.operator_identity==b.terminal.dry_adapter.operator_identity,
+    selected_cell=a.terminal.selected_cell_index
+    count=a.terminal.dry_adapter.column.cell_count
+    _require(a.end==b.end and a.terminal.dry_adapter.operator_identity==b.terminal.dry_adapter.operator_identity
+             and selected_cell==b.terminal.selected_cell_index,
              'source_dry_paths_require_same_final_time_and_operator')
     event=a.event_policy
     ca,cb=a.terminal.clock,b.terminal.clock
     distance=max(abs(ca.lower.elapsed_since(cb.upper)),abs(ca.upper.elapsed_since(cb.lower)))
     differences=[];gates=[];pressure=[];pgates=[];pairs=[];selected=[];selected_gates=[]
+    cell_differences=[];cell_gates=[];cell_pressure=[];cell_pgates=[];cell_selected=[];cell_selected_gates=[]
     limits=tuple(map(F,(event.amount_absolute_mol,event.energy_absolute_j,event.temperature_absolute_k,event.pressure_absolute_pa)))
     for k,label in ((0,'event'),(-1,'common')):
         ac,bc=a.captures[k],b.captures[k]
-        ai,bi=(c.evaluation.source_evaluation.cells[0].inverse for c in (ac,bc))
-        row=(max(abs(F(float(x))-F(float(y))) for x,y in zip(ac.state.amounts_mol.flat,bc.state.amounts_mol.flat)),
-             abs(F(float(ac.state.internal_energy_j[0]))-F(float(bc.state.internal_energy_j[0]))),
-             abs(F(ai.point.temperature_k)-F(bi.point.temperature_k))+F(ai.temperature_error_bound_k)+F(bi.temperature_error_bound_k),
-             abs(F(ai.point.pressure_pa)-F(bi.point.pressure_pa))+F(ai.point.pressure_error_pa)+F(bi.point.pressure_error_pa))
-        pa,pb=a.pressure_endpoints[k],b.pressure_endpoints[k]
-        bound=(abs(F(ai.point.pressure_pa)-F(bi.point.pressure_pa))+pa.continuation.radius_pa+pb.continuation.radius_pa
-               if pa.continuation.status==pb.continuation.status=='conditional_dry_pressure_enclosure' else None)
-        differences.append((label,ac.time,bc.time,row));gates.append(tuple(v<=limit for v,limit in zip(row,limits)))
-        pressure.append(bound);pgates.append(bound<=F(event.pressure_absolute_pa) if bound is not None else None)
-        if shared_volume is None:
-            chosen=max(row[3],bound) if bound is not None else None
-        else:
-            pair=enclose_source_dry_pressure_pair(pa,pb,shared_volume=shared_volume)
-            pairs.append(pair)
-            chosen=pair.bound_pa if pair.status=='conditional_shared_dry_pressure_enclosure' else None
-        selected.append(chosen)
-        selected_gates.append(chosen<=F(event.pressure_absolute_pa) if chosen is not None else None)
+        rows=[];original_bounds=[];chosen_bounds=[]
+        for i in range(count):
+            ai,bi=(c.evaluation.source_evaluation.cells[i].inverse for c in (ac,bc))
+            row=(max(abs(F(float(x))-F(float(y))) for x,y in zip(ac.state.amounts_mol[i],bc.state.amounts_mol[i])),
+                 abs(F(float(ac.state.internal_energy_j[i]))-F(float(bc.state.internal_energy_j[i]))),
+                 abs(F(ai.point.temperature_k)-F(bi.point.temperature_k))+F(ai.temperature_error_bound_k)+F(bi.temperature_error_bound_k),
+                 abs(F(ai.point.pressure_pa)-F(bi.point.pressure_pa))+F(ai.point.pressure_error_pa)+F(bi.point.pressure_error_pa))
+            pa,pb=a.cell_pressure_endpoints[k][i],b.cell_pressure_endpoints[k][i]
+            _require(type(pa) is type(pb), 'source_compared_cell_phase_changed')
+            expected_status=('conditional_dry_pressure_enclosure' if type(pa) is SourceDryPressure
+                             else 'conditional_pressure_enclosure')
+            bound=(abs(F(ai.point.pressure_pa)-F(bi.point.pressure_pa))+pa.continuation.radius_pa+pb.continuation.radius_pa
+                   if pa.continuation.status==pb.continuation.status==expected_status else None)
+            rows.append(row);original_bounds.append(bound)
+            if shared_volume is not None and i==selected_cell:
+                pair=enclose_source_dry_pressure_pair(pa,pb,shared_volume=shared_volume)
+                pairs.append(pair)
+                chosen=pair.bound_pa if pair.status=='conditional_shared_dry_pressure_enclosure' else None
+            else:
+                chosen=max(row[3],bound) if bound is not None else None
+            chosen_bounds.append(chosen)
+        maxima=tuple(max(row[j] for row in rows) for j in range(4))
+        conditional=max(original_bounds) if all(v is not None for v in original_bounds) else None
+        chosen=max(chosen_bounds) if all(v is not None for v in chosen_bounds) else None
+        differences.append((label,ac.time,bc.time,maxima))
+        gates.append(tuple(v<=limit for v,limit in zip(maxima,limits)))
+        pressure.append(conditional);pgates.append(conditional<=limits[3] if conditional is not None else None)
+        selected.append(chosen);selected_gates.append(chosen<=limits[3] if chosen is not None else None)
+        cell_differences.append(tuple(rows))
+        cell_gates.append(tuple(tuple(v<=limit for v,limit in zip(row,limits)) for row in rows))
+        cell_pressure.append(tuple(original_bounds))
+        cell_pgates.append(tuple(v<=limits[3] if v is not None else None for v in original_bounds))
+        cell_selected.append(tuple(chosen_bounds))
+        cell_selected_gates.append(tuple(v<=limits[3] if v is not None else None for v in chosen_bounds))
     balances=(_audit_path(a),_audit_path(b,(refinement.approach.trial,)))
     accepted=distance<=F(event.time_absolute_s) and all(all(row[:3]) for row in gates) and all(v is True for v in selected_gates)
     return SourceDryTransition(refinement,candidates,balances,distance,distance<=F(event.time_absolute_s),
@@ -337,8 +453,11 @@ def compare_source_dry_candidates(refinement, candidates, *, shared_volume=None)
         shared_volume=shared_volume,shared_pressure_pairs=tuple(pairs),
         selected_pressure_bounds_pa=tuple(selected),selected_pressure_gates=tuple(selected_gates),
         pressure_strategy='explicit_shared_source_dry_volume' if shared_volume is not None
-                          else 'original_independent_source_pressure')
-
+                          else 'original_independent_source_pressure',
+        selected_cell_index=selected_cell,cell_endpoint_differences=tuple(cell_differences),
+        cell_endpoint_gates=tuple(cell_gates),cell_conditional_pressure_bounds_pa=tuple(cell_pressure),
+        cell_conditional_pressure_gates=tuple(cell_pgates),cell_selected_pressure_bounds_pa=tuple(cell_selected),
+        cell_selected_pressure_gates=tuple(cell_selected_gates))
 
 class SourceDryTransitionError(IntegrationError):
     def __init__(self,stage,refinement,candidates,cause):

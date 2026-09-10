@@ -1,4 +1,4 @@
-"""Actual N1 source samples, affine evaporation writeback and explicit dry mode.
+"""Actual source samples, selected-cell phase writeback and explicit dry mode.
 
 This constructs a candidate from saved real evaluations. Event-state comparison
 and subsequent actual dry integration belong to source_dry_transition.
@@ -18,6 +18,7 @@ from .source_prefix_trial import SourcePrefixTrial
 from .source_root_comparison import SourceRootClockComparison
 from .exact_source_column import ExactSourceColumn
 from .integration import ConservedState, IntegrationError
+from .source_terminal_liquid import check_source_terminal_liquid
 
 
 def _require(ok, reason):
@@ -81,6 +82,7 @@ class SourceTerminal:
     qualification: str = 'source_evaporation_candidate_requires_actual_dry_and_event_comparison'
     event_admitted: bool = False
     material_qualified: bool = False
+    selected_cell_index: int = 0
 
     def check(self):
         _require(self.policy_binding==_policy_binding(self.event_policy), 'source_terminal_policy_changed')
@@ -104,10 +106,11 @@ def build_source_terminal(seed: SourcePrefixTrial, *, event_policy: DepletionPol
     _require(event.terminal_method=='affine_midpoint' and event.ordered_event_policy is None
              and event.nested_approach is None and event.pressure_comparison is None,
              'explicit_source_single_affine_terminal_policy_required')
-    _require(seed.adapter.column.cell_count==1 and seed.adapter.interfaces==('existing_liquid',)
-             and seed.initial.amounts_mol.shape==(1,4), 'source_single_wet_cell_required')
+    count=seed.adapter.column.cell_count
+    _require(seed.adapter.interfaces==('existing_liquid',)*count
+             and seed.initial.amounts_mol.shape==(count,4), 'source_single_wet_cell_required')
     base=getattr(seed.adapter.column,'base',seed.adapter.column)
-    _require(base.liquid_transport is None, 'source_terminal_dry_liquid_transport_not_supported')
+    _require(count>1 or base.liquid_transport is None, 'source_terminal_dry_liquid_transport_not_supported')
     _require(seed.status not in ('cancelled','resource_limit'), 'stopped_source_seed_requires_explicit_restart')
     _require(not seed.adapter.breakpoints(seed.start,seed.end), 'source_terminal_seed_crosses_program_knot')
     _require(len(seed.captures)>=2, 'source_terminal_actual_samples_missing')
@@ -120,24 +123,29 @@ def build_source_terminal(seed: SourcePrefixTrial, *, event_policy: DepletionPol
         operator_identity=seed.operator_identity,energy_identity=seed.energy_identity,
         fixed_dry_mass_kg=seed.fixed_dry_mass_kg)
     _require(all(p.initial>0 for p in panel.inventories), 'source_terminal_positive_initial_inventory_required')
+    check_source_terminal_liquid(panel,base)
+    roots=order_source_panel_roots(panel,maximum_refinements=min(event.maximum_refinements,256))
+    _require(roots.order.complete and roots.order.status=='ordered'
+             and len(roots.order.earliest_labels)==1
+             and roots.order.earliest_labels[0][0]=='liquid'
+             and roots.order.earliest_labels[0][2]==0, 'source_terminal_unique_liquid_first_root_required')
+    cell=roots.order.earliest_labels[0][1]
+    selected=next(r for r in roots.order.roots if
+        (r.polynomial.family,r.polynomial.cell,r.polynomial.index)==('liquid',cell,0))
     rates=[c.evaluation.rates for c in (first,middle)]
-    evaporation=[c.evaluation.source_evaluation.cells[0].phase.phase_water_mol_s for c in (first,middle)]
-    _require(all(float(r.face_species_mol_s[i,0])==0 for r in rates for i in (0,1)),
-             'source_terminal_transport_depletion_not_supported')
+    evaporation=[c.evaluation.source_evaluation.cells[cell].phase.phase_water_mol_s for c in (first,middle)]
+    if base.liquid_transport is None:
+        _require(all(float(r.face_species_mol_s[i,0])==0 for r in rates for i in (cell,cell+1)),
+                 'source_terminal_transport_depletion_not_supported')
     hm=middle.time.elapsed_since(first.time); h=seed.end.elapsed_since(seed.start)
     e0,em=map(F,evaporation)
     _require(min(e0,e0+(em-e0)*h/hm)>0, 'source_terminal_requires_positive_evaporation_on_full_interval')
     _require(event.roundoff_policy.molar_mass_kg_mol==base.chemical.reference.molar_mass_kg_mol,
              'source_terminal_roundoff_water_molar_mass_mismatch')
-    samples=ExactAffineSamples(first.time,middle.time,seed.end,float(seed.initial.amounts_mol[0,0]),
-        *[tuple((float(r.face_species_mol_s[0,0]),-float(r.face_species_mol_s[1,0]),
-                 float(r.reaction_species_mol_s[0,0]))) for r in rates],
+    samples=ExactAffineSamples(first.time,middle.time,seed.end,float(seed.initial.amounts_mol[cell,0]),
+        *[tuple((float(r.face_species_mol_s[cell,0]),-float(r.face_species_mol_s[cell+1,0]),
+                 float(r.reaction_species_mol_s[cell,0]))) for r in rates],
         *evaporation,('source-operator:'+repr(seed.operator_identity),))
-    roots=order_source_panel_roots(panel,maximum_refinements=min(event.maximum_refinements,256))
-    _require(roots.order.complete and roots.order.status=='ordered'
-             and roots.order.earliest_labels==( ('liquid',0,0), ), 'source_terminal_unique_liquid_first_root_required')
-    selected=next(r for r in roots.order.roots if
-        (r.polynomial.family,r.polynomial.cell,r.polynomial.index)==('liquid',0,0))
     spent=roots.order.refinement_level
     if prior_clock is None:
         _require(root_index is None, 'source_terminal_root_index_without_prior_clock')
@@ -159,19 +167,25 @@ def build_source_terminal(seed: SourcePrefixTrial, *, event_policy: DepletionPol
     clock,extra=_clock_from_order(samples,roots.order,event,selected,spent)
     _require(middle.time<clock.lower and clock.upper.elapsed_since(seed.start)<=F(event.terminal_window_s),
              'source_terminal_outside_original_window_or_after_midpoint_required')
+    _require(all(p.minimum(clock.upper.elapsed_since(seed.start))[0]>0 for p in panel.inventories
+                 if (p.family,p.cell,p.index)!=('liquid',cell,0)),
+             'source_terminal_other_inventory_not_strictly_positive')
     prefix=build_source_prefix(panel,clock.lower,policy=seed.policy)
     ledger=prefix.ledger
-    terms=(float(ledger.face_species_mol[0,0]),-float(ledger.face_species_mol[1,0]),
-           float(ledger.reaction_species_mol[0,0]))
+    terms=(float(ledger.face_species_mol[cell,0]),-float(ledger.face_species_mol[cell+1,0]),
+           float(ledger.reaction_species_mol[cell,0]))
     _require(terms==clock.signed_terms_mol, 'source_terminal_shared_liquid_projection_changed')
-    corrected,correction,totals=exact_depletion_writeback(prefix.raw_state,cell_index=0,liquid_index=0,vapor_index=3,
-        panel_liquid_start_mol=float(seed.initial.amounts_mol[0,0]),panel_liquid_terms_mol=terms,
+    corrected,correction,totals=exact_depletion_writeback(prefix.raw_state,cell_index=cell,liquid_index=0,vapor_index=3,
+        panel_liquid_start_mol=float(seed.initial.amounts_mol[cell,0]),panel_liquid_terms_mol=terms,
         positive_evaporated_mol=clock.positive_evaporated_mol,policy=event.roundoff_policy,
         totals=DepletionRoundoffTotals(event.roundoff_policy),clock_evidence=clock)
-    dry=seed.adapter.with_depleted_cells(corrected,(0,))
-    _require(dry.interfaces==('depleted_no_nucleation',) and dry.energy_model_identity==seed.energy_identity
+    dry=seed.adapter.with_depleted_cells(corrected,(cell,))
+    modes=tuple('depleted_no_nucleation' if i==cell else 'existing_liquid' for i in range(count))
+    _require(dry.interfaces==modes and dry.energy_model_identity==seed.energy_identity
              and dry.operator_identity!=seed.operator_identity
-             and _same(corrected.internal_energy_j,prefix.raw_state.internal_energy_j),
+             and _same(corrected.internal_energy_j,prefix.raw_state.internal_energy_j)
+             and all(_same(corrected.amounts_mol[i,j],prefix.raw_state.amounts_mol[i,j])
+                     for i in range(count) for j in range(4) if (i,j) not in ((cell,0),(cell,3))),
              'source_terminal_mode_or_energy_changed')
     return SourceTerminal(seed,event,_policy_binding(event),panel,roots,prior_clock,root_index,spent,clock,extra,prefix,
-                          corrected,correction,totals,dry)
+                          corrected,correction,totals,dry,selected_cell_index=cell)
