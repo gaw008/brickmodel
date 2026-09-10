@@ -4,6 +4,8 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新：conditional pressure provider已按643c6c2a/test44077055应用并非editable安装（101模块）。独审25项0.42s，源码64项1.48s/安装64项1.52s通过，sessions76083/1323终态。MEDIUM失败时丢原始snapshot已修，旧冻结/RED保留research/water-pressure-consumer-v1（36成员41520bytes逐SHA核实）。尚无stage/controller准入。fresh_query当前freeze b810a64c（247文件101模块）已生成，最终runner独审中，尚未执行native。
+
 最新：五个water区间原语正式应用，源码43项1.30s/安装43项1.27s通过，实际100模块成员及字节匹配。独审MEDIUM测试写fixture已修，完整旧失败/映射/许可/审核归档research/water-packaged-primitives-v1（45成员69754bytes，逐成员SHA解包核实）。sessions65059/95436均终态，无root native运行。
 
 Capone2025公开污泥热预处理原文已核读，Table2干基原值/3节点来源链落data/sandbox/research/capone2025-endpoints-v1，实际安装trace及原100.1%舍入行保留；原文SHA bff7a1e488bdc810a0da0017113c542ef0f0dbb8d6133f68032c57edb8f7b9f0。Fermi热估算/Dulong热值不能作实测反应热；凝液单位/最大值冲突隔离；三次补充材料入口失败已保存。仅同批预处理污泥终态验证候选，未准入材料或完成外部验证。

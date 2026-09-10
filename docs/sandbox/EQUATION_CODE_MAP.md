@@ -262,3 +262,6 @@ HEOS共存数值政策 `NUM-HEOS-COEXISTENCE-BACKTRACK-1`：固定T的F=(Δp,Δg
 - 固定native查询残差/公开摩尔质量体积界：`water_native_output.py`；同名测试与`test_water_volume_scale.py`。
 
 源码均位于src/sludge_sandbox，测试均位于tests/sandbox。来源、旧新映射、完整独审与源码/安装验证见research/water-packaged-primitives-v1。只是已声明局部数学合同的实现，不自动提供全域物性误差或材料准入。
+
+
+条件性逐查询连接器：`src/sludge_sandbox/mass_wet_pressure_interval.py`绑定实际WetCellRate与完整原T区间，调用上述五原语，检查同一液体密度管及固定native体积差异，按Fraction返回压力半径。`tests/sandbox/test_mass_wet_pressure_interval.py`验证拒绝/快照/预算逻辑；源码与安装64项通过，独立审查见research/water-pressure-consumer-v1。单次native查询与stage/controller六门槛是不同验证层，后者尚未接线。
