@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="12" skipped="0" tests="12" time="0.214" timestamp="2026-09-09T21:09:54.028435-10:00" hostname="MacBookPro.lan"><testcase classname="tests.sandbox.test_source_net_panel" name="test_equal_float32_arrays_cannot_replace_bound_binary64_samples[state-amounts_mol-first]" time="0.003"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">role = 'first', owner_name = 'state', field = 'amounts_mol'
+
+    @pytest.mark.parametrize('role', ('first', 'interior'))
+    @pytest.mark.parametrize('owner_name,field', [
+        ('state', 'amounts_mol'), ('state', 'internal_energy_j'),
+        ('rates', 'face_species_mol_s'), ('rates', 'face_energy_w'),
+        ('rates', 'reaction_species_mol_s'), ('rates', 'cell_power_w'),
+    ])
+    def test_equal_float32_arrays_cannot_replace_bound_binary64_samples(role, owner_name, field):
+        first, interior = sample(F()), sample(F(1, 2), role='interior')
+        original = panel(first, interior)
+        target = first if role == 'first' else interior
+        owner = target.state if owner_name == 'state' else target.evaluation.rates
+        object.__setattr__(owner, field, getattr(owner, field).astype(np.float32))
+&gt;       with pytest.raises(ValueError, match='binary64'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests/sandbox/test_source_net_panel.py:152: Failed</failure></testcase><testcase classname="tests.sandbox.test_source_net_panel" name="test_equal_float32_arrays_cannot_replace_bound_binary64_samples[state-amounts_mol-interior]" time="0.002"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">role = 'interior', owner_name = 'state', field = 'amounts_mol'
+
+    @pytest.mark.parametrize('role', ('first', 'interior'))
+    @pytest.mark.parametrize('owner_name,field', [
+        ('state', 'amounts_mol'), ('state', 'internal_energy_j'),
+        ('rates', 'face_species_mol_s'), ('rates', 'face_energy_w'),
+        ('rates', 'reaction_species_mol_s'), ('rates', 'cell_power_w'),
+    ])
+    def test_equal_float32_arrays_cannot_replace_bound_binary64_samples(role, owner_name, field):
+        first, interior = sample(F()), sample(F(1, 2), role='interior')
+        original = panel(first, interior)
+        target = first if role == 'first' else interior
+        owner = target.state if owner_name == 'state' else target.evaluation.rates
+        object.__setattr__(owner, field, getattr(owner, field).astype(np.float32))
+&gt;       with pytest.raises(ValueError, match='binary64'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests/sandbox/test_source_net_panel.py:152: Failed</failure></testcase><testcase classname="tests.sandbox.test_source_net_panel" name="test_equal_float32_arrays_cannot_replace_bound_binary64_samples[state-internal_energy_j-first]" time="0.001"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">role = 'first', owner_name = 'state', field = 'internal_energy_j'
+
+    @pytest.mark.parametrize('role', ('first', 'interior'))
+    @pytest.mark.parametrize('owner_name,field', [
+        ('state', 'amounts_mol'), ('state', 'internal_energy_j'),
+        ('rates', 'face_species_mol_s'), ('rates', 'face_energy_w'),
+        ('rates', 'reaction_species_mol_s'), ('rates', 'cell_power_w'),
+    ])
+    def test_equal_float32_arrays_cannot_replace_bound_binary64_samples(role, owner_name, field):
+        first, interior = sample(F()), sample(F(1, 2), role='interior')
+        original = panel(first, interior)
+        target = first if role == 'first' else interior
+        owner = target.state if owner_name == 'state' else target.evaluation.rates
+        object.__setattr__(owner, field, getattr(owner, field).astype(np.float32))
+&gt;       with pytest.raises(ValueError, match='binary64'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests/sandbox/test_source_net_panel.py:152: Failed</failure></testcase><testcase classname="tests.sandbox.test_source_net_panel" name="test_equal_float32_arrays_cannot_replace_bound_binary64_samples[state-internal_energy_j-interior]" time="0.001"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">role = 'interior', owner_name = 'state', field = 'internal_energy_j'
+
+    @pytest.mark.parametrize('role', ('first', 'interior'))
+    @pytest.mark.parametrize('owner_name,field', [
+        ('state', 'amounts_mol'), ('state', 'internal_energy_j'),
+        ('rates', 'face_species_mol_s'), ('rates', 'face_energy_w'),
+        ('rates', 'reaction_species_mol_s'), ('rates', 'cell_power_w'),
+    ])
+    def test_equal_float32_arrays_cannot_replace_bound_binary64_samples(role, owner_name, field):
+        first, interior = sample(F()), sample(F(1, 2), role='interior')
+        original = panel(first, interior)
+        target = first if role == 'first' else interior
+        owner = target.state if owner_name == 'state' else target.evaluation.rates
+        object.__setattr__(owner, field, getattr(owner, field).astype(np.float32))
+&gt;       with pytest.raises(ValueError, match='binary64'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests/sandbox/test_source_net_panel.py:152: Failed</failure></testcase><testcase classname="tests.sandbox.test_source_net_panel" name="test_equal_float32_arrays_cannot_replace_bound_binary64_samples[rates-face_species_mol_s-first]" time="0.002"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">role = 'first', owner_name = 'rates', field = 'face_species_mol_s'
+
+    @pytest.mark.parametrize('role', ('first', 'interior'))
+    @pytest.mark.parametrize('owner_name,field', [
+        ('state', 'amounts_mol'), ('state', 'internal_energy_j'),
+        ('rates', 'face_species_mol_s'), ('rates', 'face_energy_w'),
+        ('rates', 'reaction_species_mol_s'), ('rates', 'cell_power_w'),
+    ])
+    def test_equal_float32_arrays_cannot_replace_bound_binary64_samples(role, owner_name, field):
+        first, interior = sample(F()), sample(F(1, 2), role='interior')
+        original = panel(first, interior)
+        target = first if role == 'first' else interior
+        owner = target.state if owner_name == 'state' else target.evaluation.rates
+        object.__setattr__(owner, field, getattr(owner, field).astype(np.float32))
+&gt;       with pytest.raises(ValueError, match='binary64'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests/sandbox/test_source_net_panel.py:152: Failed</failure></testcase><testcase classname="tests.sandbox.test_source_net_panel" name="test_equal_float32_arrays_cannot_replace_bound_binary64_samples[rates-face_species_mol_s-interior]" time="0.001"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">role = 'interior', owner_name = 'rates', field = 'face_species_mol_s'
+
+    @pytest.mark.parametrize('role', ('first', 'interior'))
+    @pytest.mark.parametrize('owner_name,field', [
+        ('state', 'amounts_mol'), ('state', 'internal_energy_j'),
+        ('rates', 'face_species_mol_s'), ('rates', 'face_energy_w'),
+        ('rates', 'reaction_species_mol_s'), ('rates', 'cell_power_w'),
+    ])
+    def test_equal_float32_arrays_cannot_replace_bound_binary64_samples(role, owner_name, field):
+        first, interior = sample(F()), sample(F(1, 2), role='interior')
+        original = panel(first, interior)
+        target = first if role == 'first' else interior
+        owner = target.state if owner_name == 'state' else target.evaluation.rates
+        object.__setattr__(owner, field, getattr(owner, field).astype(np.float32))
+&gt;       with pytest.raises(ValueError, match='binary64'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests/sandbox/test_source_net_panel.py:152: Failed</failure></testcase><testcase classname="tests.sandbox.test_source_net_panel" name="test_equal_float32_arrays_cannot_replace_bound_binary64_samples[rates-face_energy_w-first]" time="0.001"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">role = 'first', owner_name = 'rates', field = 'face_energy_w'
+
+    @pytest.mark.parametrize('role', ('first', 'interior'))
+    @pytest.mark.parametrize('owner_name,field', [
+        ('state', 'amounts_mol'), ('state', 'internal_energy_j'),
+        ('rates', 'face_species_mol_s'), ('rates', 'face_energy_w'),
+        ('rates', 'reaction_species_mol_s'), ('rates', 'cell_power_w'),
+    ])
+    def test_equal_float32_arrays_cannot_replace_bound_binary64_samples(role, owner_name, field):
+        first, interior = sample(F()), sample(F(1, 2), role='interior')
+        original = panel(first, interior)
+        target = first if role == 'first' else interior
+        owner = target.state if owner_name == 'state' else target.evaluation.rates
+        object.__setattr__(owner, field, getattr(owner, field).astype(np.float32))
+&gt;       with pytest.raises(ValueError, match='binary64'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests/sandbox/test_source_net_panel.py:152: Failed</failure></testcase><testcase classname="tests.sandbox.test_source_net_panel" name="test_equal_float32_arrays_cannot_replace_bound_binary64_samples[rates-face_energy_w-interior]" time="0.002"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">role = 'interior', owner_name = 'rates', field = 'face_energy_w'
+
+    @pytest.mark.parametrize('role', ('first', 'interior'))
+    @pytest.mark.parametrize('owner_name,field', [
+        ('state', 'amounts_mol'), ('state', 'internal_energy_j'),
+        ('rates', 'face_species_mol_s'), ('rates', 'face_energy_w'),
+        ('rates', 'reaction_species_mol_s'), ('rates', 'cell_power_w'),
+    ])
+    def test_equal_float32_arrays_cannot_replace_bound_binary64_samples(role, owner_name, field):
+        first, interior = sample(F()), sample(F(1, 2), role='interior')
+        original = panel(first, interior)
+        target = first if role == 'first' else interior
+        owner = target.state if owner_name == 'state' else target.evaluation.rates
+        object.__setattr__(owner, field, getattr(owner, field).astype(np.float32))
+&gt;       with pytest.raises(ValueError, match='binary64'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests/sandbox/test_source_net_panel.py:152: Failed</failure></testcase><testcase classname="tests.sandbox.test_source_net_panel" name="test_equal_float32_arrays_cannot_replace_bound_binary64_samples[rates-reaction_species_mol_s-first]" time="0.001"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">role = 'first', owner_name = 'rates', field = 'reaction_species_mol_s'
+
+    @pytest.mark.parametrize('role', ('first', 'interior'))
+    @pytest.mark.parametrize('owner_name,field', [
+        ('state', 'amounts_mol'), ('state', 'internal_energy_j'),
+        ('rates', 'face_species_mol_s'), ('rates', 'face_energy_w'),
+        ('rates', 'reaction_species_mol_s'), ('rates', 'cell_power_w'),
+    ])
+    def test_equal_float32_arrays_cannot_replace_bound_binary64_samples(role, owner_name, field):
+        first, interior = sample(F()), sample(F(1, 2), role='interior')
+        original = panel(first, interior)
+        target = first if role == 'first' else interior
+        owner = target.state if owner_name == 'state' else target.evaluation.rates
+        object.__setattr__(owner, field, getattr(owner, field).astype(np.float32))
+&gt;       with pytest.raises(ValueError, match='binary64'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests/sandbox/test_source_net_panel.py:152: Failed</failure></testcase><testcase classname="tests.sandbox.test_source_net_panel" name="test_equal_float32_arrays_cannot_replace_bound_binary64_samples[rates-reaction_species_mol_s-interior]" time="0.002"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">role = 'interior', owner_name = 'rates', field = 'reaction_species_mol_s'
+
+    @pytest.mark.parametrize('role', ('first', 'interior'))
+    @pytest.mark.parametrize('owner_name,field', [
+        ('state', 'amounts_mol'), ('state', 'internal_energy_j'),
+        ('rates', 'face_species_mol_s'), ('rates', 'face_energy_w'),
+        ('rates', 'reaction_species_mol_s'), ('rates', 'cell_power_w'),
+    ])
+    def test_equal_float32_arrays_cannot_replace_bound_binary64_samples(role, owner_name, field):
+        first, interior = sample(F()), sample(F(1, 2), role='interior')
+        original = panel(first, interior)
+        target = first if role == 'first' else interior
+        owner = target.state if owner_name == 'state' else target.evaluation.rates
+        object.__setattr__(owner, field, getattr(owner, field).astype(np.float32))
+&gt;       with pytest.raises(ValueError, match='binary64'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests/sandbox/test_source_net_panel.py:152: Failed</failure></testcase><testcase classname="tests.sandbox.test_source_net_panel" name="test_equal_float32_arrays_cannot_replace_bound_binary64_samples[rates-cell_power_w-first]" time="0.002"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">role = 'first', owner_name = 'rates', field = 'cell_power_w'
+
+    @pytest.mark.parametrize('role', ('first', 'interior'))
+    @pytest.mark.parametrize('owner_name,field', [
+        ('state', 'amounts_mol'), ('state', 'internal_energy_j'),
+        ('rates', 'face_species_mol_s'), ('rates', 'face_energy_w'),
+        ('rates', 'reaction_species_mol_s'), ('rates', 'cell_power_w'),
+    ])
+    def test_equal_float32_arrays_cannot_replace_bound_binary64_samples(role, owner_name, field):
+        first, interior = sample(F()), sample(F(1, 2), role='interior')
+        original = panel(first, interior)
+        target = first if role == 'first' else interior
+        owner = target.state if owner_name == 'state' else target.evaluation.rates
+        object.__setattr__(owner, field, getattr(owner, field).astype(np.float32))
+&gt;       with pytest.raises(ValueError, match='binary64'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests/sandbox/test_source_net_panel.py:152: Failed</failure></testcase><testcase classname="tests.sandbox.test_source_net_panel" name="test_equal_float32_arrays_cannot_replace_bound_binary64_samples[rates-cell_power_w-interior]" time="0.002"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">role = 'interior', owner_name = 'rates', field = 'cell_power_w'
+
+    @pytest.mark.parametrize('role', ('first', 'interior'))
+    @pytest.mark.parametrize('owner_name,field', [
+        ('state', 'amounts_mol'), ('state', 'internal_energy_j'),
+        ('rates', 'face_species_mol_s'), ('rates', 'face_energy_w'),
+        ('rates', 'reaction_species_mol_s'), ('rates', 'cell_power_w'),
+    ])
+    def test_equal_float32_arrays_cannot_replace_bound_binary64_samples(role, owner_name, field):
+        first, interior = sample(F()), sample(F(1, 2), role='interior')
+        original = panel(first, interior)
+        target = first if role == 'first' else interior
+        owner = target.state if owner_name == 'state' else target.evaluation.rates
+        object.__setattr__(owner, field, getattr(owner, field).astype(np.float32))
+&gt;       with pytest.raises(ValueError, match='binary64'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests/sandbox/test_source_net_panel.py:152: Failed</failure></testcase></testsuite></testsuites>

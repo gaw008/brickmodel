@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from fractions import Fraction as F
 import math
 import numpy as np
-from sludge_sandbox.integration import ConservedState, Rates, IntegrationPolicy, IntegrationError
+from sludge_sandbox.integration import ConservedState, Rates, IntegrationPolicy, IntegrationError, _scalar
 from sludge_sandbox.exact_event_clock import ExactEventTime
 from sludge_sandbox.exact_integration import ExactStepLedger
 
@@ -31,6 +31,51 @@ def rounded(value: F) -> float:
     if not math.isfinite(result) or (value and result==0):
         raise IntegrationError('affine_unrepresentable_integral')
     return result
+
+
+def affine_integral_value(initial: F, interior: F, duration: F, sample_duration: F) -> F:
+    """Integrate one exact linear rate history, including rational diagnostics."""
+    if (any(type(v) is not F for v in (initial, interior, duration, sample_duration))
+            or duration <= 0 or sample_duration <= 0):
+        raise IntegrationError('exact_affine_integral_values_required')
+    return initial*duration+(interior-initial)*duration*duration/(2*sample_duration)
+
+
+def affine_integral(a: np.ndarray, b: np.ndarray, duration: F, sample_duration: F
+                    ) -> tuple[np.ndarray, tuple[F, ...]]:
+    """Project each exact integral once; return exact entries in flat order."""
+    if (any(type(v) is not np.ndarray or v.dtype != np.float64 or not v.size
+            or not np.all(np.isfinite(v)) for v in (a, b)) or a.shape != b.shape):
+        raise IntegrationError('finite_matching_affine_arrays_required')
+    exact=tuple(affine_integral_value(F(float(x)), F(float(y)), duration, sample_duration)
+                for x,y in zip(a.flat,b.flat))
+    return np.array([rounded(v) for v in exact]).reshape(a.shape),exact
+
+
+def affine_update(before: np.ndarray, terms: tuple[np.ndarray, ...], tolerance: float
+                  ) -> tuple[np.ndarray, tuple[F, ...]]:
+    """Sum represented terms exactly, then project state and expose residuals.
+
+    This original state-only gate does not bound prior integral projections.
+    Callers applying additional integral/full-residual contracts do so separately.
+    """
+    _scalar(tolerance, 'affine_state_tolerance', positive=True)
+    if (type(terms) is not tuple or not terms or
+            any(type(v) is not np.ndarray or v.dtype != np.float64 or not v.size
+                or not np.all(np.isfinite(v)) for v in (before, *terms)) or
+            any(v.shape != before.shape for v in terms)):
+        raise IntegrationError('finite_matching_affine_update_arrays_required')
+    out=np.empty_like(before)
+    residuals=[]
+    for idx in np.ndindex(before.shape):
+        delta=sum((F(float(t[idx])) for t in terms),F())
+        value=F(float(before[idx]))+delta
+        out[idx]=rounded(value) if value else 0.
+        residual=F(float(out[idx]))-value
+        if abs(residual)>F(tolerance):
+            raise IntegrationError('affine_state_roundoff_budget')
+        residuals.append(residual)
+    return out,tuple(residuals)
 
 
 def build_exact_affine_panel(state: ConservedState, first: Rates, midpoint_rates: Rates, *,
@@ -66,10 +111,7 @@ def build_exact_affine_panel(state: ConservedState, first: Rates, midpoint_rates
     if (parts0 is None)!=(parts1 is None) or (parts0 is not None and set(parts0)!=set(parts1)):
         raise IntegrationError('affine_component_schema_changed')
     h=end.elapsed_since(start);hm=midpoint.elapsed_since(start)
-    def integral(a,b):
-        exact=tuple(F(float(x))*h+(F(float(y))-F(float(x)))*h*h/(2*hm) for x,y in zip(a.flat,b.flat))
-        return np.array([rounded(v) for v in exact]).reshape(a.shape),exact
-    fields=[integral(getattr(first,name),getattr(midpoint_rates,name))[0] for name in names]
+    fields=[affine_integral(getattr(first,name),getattr(midpoint_rates,name),h,hm)[0] for name in names]
     fn,fu,rn,work=fields
     for i,j in np.ndindex(state.amounts_mol.shape):
         def net(r):return F(float(r.face_species_mol_s[i,j]))-F(float(r.face_species_mol_s[i+1,j]))+F(float(r.reaction_species_mol_s[i,j]))
@@ -78,24 +120,15 @@ def build_exact_affine_panel(state: ConservedState, first: Rates, midpoint_rates
         strict=j==liquid_index and i in wet_cells and i!=selected_cell
         if value<0 or (strict and value==0):
             raise IntegrationError('affine_inventory_polynomial_not_admissible')
-    def update(before, terms, tolerance):
-        out=np.empty_like(before)
-        for idx in np.ndindex(before.shape):
-            delta=sum((F(float(t[idx])) for t in terms),F())
-            value=F(float(before[idx]))+delta
-            out[idx]=rounded(value) if value else 0.
-            if abs(F(float(out[idx]))-value)>F(tolerance):
-                raise IntegrationError('affine_state_roundoff_budget')
-        return out
-    amounts=update(state.amounts_mol,(fn[:-1],-fn[1:],rn),policy.amount_absolute_tolerance_mol)
-    energy=update(state.internal_energy_j,(fu[:-1],-fu[1:],work),policy.energy_absolute_tolerance_j)
+    amounts=affine_update(state.amounts_mol,(fn[:-1],-fn[1:],rn),policy.amount_absolute_tolerance_mol)[0]
+    energy=affine_update(state.internal_energy_j,(fu[:-1],-fu[1:],work),policy.energy_absolute_tolerance_j)[0]
     stretch=None;increment=None;roundoff=None
     if mechanical:
         for n,r,m in zip(state.mechanical_stretches,first.mechanical_rates_per_s,midpoint_rates.mechanical_rates_per_s):
             if minimum(F(float(n)),F(float(r)),(F(float(m))-F(float(r)))/hm,h)<=0:
                 raise IntegrationError('affine_stretch_polynomial_not_positive')
-        increment,exact=integral(first.mechanical_rates_per_s,midpoint_rates.mechanical_rates_per_s)
-        stretch=update(state.mechanical_stretches,(increment,),policy.stretch_absolute_tolerance)
+        increment,exact=affine_integral(first.mechanical_rates_per_s,midpoint_rates.mechanical_rates_per_s,h,hm)
+        stretch=affine_update(state.mechanical_stretches,(increment,),policy.stretch_absolute_tolerance)[0]
         roundoff=tuple(F(float(v))-x for v,x in zip(increment,exact))
         if any(abs(F(float(v))-F(float(n))-x)>F(policy.stretch_absolute_tolerance) or abs(e)>F(policy.stretch_absolute_tolerance) for v,n,x,e in zip(stretch,state.mechanical_stretches,exact,roundoff)):
             raise IntegrationError('affine_stretch_quadrature_budget')
@@ -103,7 +136,7 @@ def build_exact_affine_panel(state: ConservedState, first: Rates, midpoint_rates
     if parts0 is not None:
         components={};component_roundoff={}
         for key in parts0:
-            values,exact=integral(parts0[key],parts1[key]);components[key]=values
+            values,exact=affine_integral(parts0[key],parts1[key],h,hm);components[key]=values
             component_roundoff[key]=tuple(F(float(v))-x for v,x in zip(values,exact))
     raw=ConservedState(amounts,energy,state.energy_model_identity,mechanical_stretches=stretch)
     ledger=ExactStepLedger(start,end,*fields,components,component_roundoff,stretch_increment=increment,stretch_quadrature_roundoff=roundoff)

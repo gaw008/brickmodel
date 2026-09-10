@@ -2,6 +2,8 @@
 
 ## 当前新增映射
 
+来源数值前缀：`exact_terminal_panel.affine_integral_value/affine_integral/affine_update` 共用 `I=r0*h+(rm-r0)*h²/(2hm)`、分量一次投影及状态一次投影；旧13完整结果保持。`source_net_prefix.build_source_prefix` 构造同面液/气/总U账本、成对相变与全部区间最小值；`audit_source_prefixes` 分别累计已表示及精确积分交换，逐前缀检验残差。它们属于数值策略，原速率的物理来源仍由源面板绑定。安装131项与七个独立数值前缀的818项离线复算见[前缀证据](research/source-net-prefix-v1/REPORT.md)，不授予真实ODE/事件资格。
+
 来源数值首根：`source_net_roots.isolate_first_root/refine_first_root/same_first_root` 对 `n+r*t+q*t²` 的首下降分支建立有理包络，以原 `InventoryPolynomial.minimum` 排除严格正库存；`rational_polynomial` 供新旧两层共用中点/GCD算术。`order_source_panel_roots` 从完整来源面板验证全部4N流体竞争、精确时刻与源绑定，返回有序/同时/无根/未决/零初始不完整状态。新三组测试与17旧完整冻结结果、最终安装123项及原七试步纯回放见[本阶段证据](research/source-net-roots-v1/REPORT.md)。没有新增物理本构或事件写回许可。
 
 来源净库存插值：`source_net_panel.build_source_panel` 从两个完整来源样本的共享面/局部源得到 r0、rm，形成 N0+r0t+(rm−r0)t²/(2hm)，U使用同一总面能量。`SourceAffinePanel.check/minima` 重算绑定派生项并直接调用 `InventoryPolynomial.minimum`。`test_source_net_panel.py` 与 `test_source_net_panel_integration.py` 覆盖非蒸发排水、凝结竞争、N格关联、精确时间和实际来源接线；[安装/原生回放与独立最小值复算](research/source-net-panel-v1/REPORT.md)共保留七个原试步的105多项式和84最小值。此处是数值插值，尚不授权物理轨迹、耗尽根或写回。

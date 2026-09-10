@@ -31,6 +31,8 @@ def _validate(sample, operator_identity, energy_identity, fixed_kg):
             and type(sample.evaluation) is SourceExactEvaluation, 'actual_saved_source_sample')
     require(type(sample.role) is str and bool(sample.role.strip()), 'explicit_stage_role')
     s, e = sample.state, sample.evaluation
+    require(all(type(a) is np.ndarray and a.dtype == np.float64 and np.all(np.isfinite(a))
+                for a in (s.amounts_mol, s.internal_energy_j)), 'source_state_binary64_arrays_required')
     require(type(e.time) is T, 'exact_saved_time')
     require(e.material_qualified is False, 'source_sample_not_material_qualified')
     require(e.operator_identity == operator_identity and s.energy_model_identity == energy_identity,
@@ -56,6 +58,9 @@ def _validate(sample, operator_identity, energy_identity, fixed_kg):
     require(type(e.rates) is Rates and e.rates.mechanical_rates_per_s is None
             and e.rates.cell_power_components_w is None, 'fixed_source_rate_schema')
     r=e.rates
+    require(all(type(a) is np.ndarray and a.dtype == np.float64 and np.all(np.isfinite(a))
+                for a in (r.face_species_mol_s, r.face_energy_w,
+                          r.reaction_species_mol_s, r.cell_power_w)), 'source_rate_binary64_arrays_required')
     require(r.face_species_mol_s.shape==(n+1,4) and r.face_energy_w.shape==(n+1,)
             and r.reaction_species_mol_s.shape==(n,4) and r.cell_power_w.shape==(n,), 'source_rate_shape')
     require(np.all(r.cell_power_w==0), 'no_extra_energy_source')
@@ -76,8 +81,12 @@ def _validate(sample, operator_identity, energy_identity, fixed_kg):
         phase=cell.phase.phase_water_mol_s
         require(tuple(r.reaction_species_mol_s[i])==(-phase,0.,0.,phase),'actual_phase_rate_mapping')
     for i,face in enumerate(raw.faces):
-        require(face.face_id==i and face.left_cell==(i-1 if i else None)
-                and face.right_cell==(i if i<n else None), 'shared_face_incidence')
+        left_cell=i-1 if i else None
+        right_cell=i if i<n else None
+        require(type(face.face_id) is int and face.face_id==i
+                and type(face.left_cell) is type(left_cell) and face.left_cell==left_cell
+                and type(face.right_cell) is type(right_cell) and face.right_cell==right_cell,
+                'shared_face_incidence')
         require(tuple(r.face_species_mol_s[i])==(getattr(face,'liquid_mol_s',0.),*face.gas_mol_s)
                 and r.face_energy_w[i]==face.energy_w,'actual_face_rate_mapping')
     require(r.face_species_mol_s[0,0]==r.face_species_mol_s[-1,0]==0.,'source_liquid_boundary_no_flux')

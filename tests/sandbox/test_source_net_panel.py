@@ -3,6 +3,7 @@ from dataclasses import replace
 from fractions import Fraction as F
 import unittest
 import numpy as np
+import pytest
 from sludge_sandbox.source_net_panel import SavedSourceSample,build_source_panel
 from sludge_sandbox.exact_event_clock import ExactEventTime as T
 from sludge_sandbox.exact_source_column import SourceExactEvaluation
@@ -118,6 +119,40 @@ class SourcePanelTests(unittest.TestCase):
                     p.check()
                 with self.assertRaisesRegex(ValueError, 'not_material_qualified'):
                     p.minima()
+
+
+@pytest.mark.parametrize('face_index,field,value', [
+    (1, 'face_id', True), (0, 'face_id', 0.),
+    (1, 'left_cell', False), (1, 'left_cell', 0.),
+    (1, 'right_cell', True), (0, 'right_cell', False),
+])
+def test_face_incidence_rejects_equal_values_with_wrong_types(face_index, field, value):
+    first = sample(F())
+    raw = first.evaluation.source_evaluation
+    faces = list(raw.faces)
+    faces[face_index] = replace(faces[face_index], **{field: value})
+    bad = replace(first, evaluation=replace(first.evaluation,
+                  source_evaluation=replace(raw, faces=tuple(faces))))
+    with pytest.raises(ValueError, match='shared_face_incidence'):
+        panel(bad)
+
+
+@pytest.mark.parametrize('role', ('first', 'interior'))
+@pytest.mark.parametrize('owner_name,field', [
+    ('state', 'amounts_mol'), ('state', 'internal_energy_j'),
+    ('rates', 'face_species_mol_s'), ('rates', 'face_energy_w'),
+    ('rates', 'reaction_species_mol_s'), ('rates', 'cell_power_w'),
+])
+def test_equal_float32_arrays_cannot_replace_bound_binary64_samples(role, owner_name, field):
+    first, interior = sample(F()), sample(F(1, 2), role='interior')
+    original = panel(first, interior)
+    target = first if role == 'first' else interior
+    owner = target.state if owner_name == 'state' else target.evaluation.rates
+    object.__setattr__(owner, field, getattr(owner, field).astype(np.float32))
+    with pytest.raises(ValueError, match='binary64'):
+        original.check()
+    with pytest.raises(ValueError, match='binary64'):
+        panel(first, interior)
 
 
 if __name__=='__main__':unittest.main()
