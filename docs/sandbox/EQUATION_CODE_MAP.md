@@ -1,5 +1,7 @@
 # 方程—代码—验证映射 v0.1
 
+当前新增 `source_root_comparison.py`：`compare_source_root_clocks` 将两条实际面板的数值根区间转到共同绝对时钟，距离上界为 max(|LA−UB|, |UA−LB|)，含双方区间宽度并使用各自剩余细化预算；`evaluate_source_common_endpoint` 调用原试算/参考积分器实际推进双方，`_joined_reference_residuals` 从原始初态累计每个前缀N/U，原门槛保持。没有新材料本构或事件准入；[实际验证](research/source-root-comparison-v1/REPORT.md)。以下为既有映射。
+
 ## 当前新增映射
 
 来源单次正库存接近：`source_approach.choose_positive_approach` 在原首根排序剩余预算内细化到正下界，计算 `h=downward_binary64(min(f*lower,maxstep,horizon))` 并检查所有多项式精确最小值及原 minstep。`propose_source_approach` 绑定实际起点/中点和完整政策；`evaluate_source_approach` 复用 `SourcePrefixTrial` 获得新的实际求值与原积分器参考，再保留原端点/条件压力检查。后处理异常附带完整实际 trial，不产生成功资格。源码/安装135项及独立反例见[证据](research/source-approach-v1/REPORT.md)；本层无事件时间方程或干态修正。
