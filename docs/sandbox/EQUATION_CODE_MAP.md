@@ -6,6 +6,7 @@
 
 | 关系或数值合同 | 实现与验证入口 | 已证实范围 |
 |---|---|---|
+| 球形 G(Ts−Tc)=4πR²[h(Tg−Ts)+εσ(Trad⁴−Ts⁴)]；Bi=1特征μ=π/2 | `ProgrammedSolidFluidHeat._surface`调用所选transport外面/热阻；[结果](research/sphere-surface-v1/REPORT.md) | 固定球形实际Robin空间/时间验证与升温冷却；移动旧版身份缺陷单列，不授予材料资格 |
 | 固定球壳 V=4π(rb³−ra³)/3；串联热阻积分 dr/(4πkr²)，中心零通量 | `spherical_geometry.FixedSphericalShells`、`RigidFluidHeat._conduction`、`SolidFluidHeat.evaluate`；[推导](RADIAL_HEAT_GEOMETRY.md) | 既有积分器4/8/16格制造解析模态收敛；真实材料/运动/球形程序边界尚未准入 |
 | Rosheim解吸Xeq=k[aw/(1−aw)]^n及代数逆；仅30/50°C、图示支持aw0.1..0.8 | `amadou_desorption.AmadouDesorption`；[实际安装/独立复核](research/amadou2006-desorption-v1/REPORT.md) | 原作者表1拟合关系，16实验符号重建；源/安装28项、独立3负控，不提供连续T/吸附热或动态材料资格 |
 | Wang D1：u_t=D u_xx，底部无通量、顶部Robin；μ tanμ=Bi的模态平均MR | `research/wang2021-drying-holdout-v1/reproduce/wang_d1.py`；独立高精度、有限体积与实际温度留出；[结果](research/wang2021-drying-holdout-v1/REPORT.md) | 研究脚本未进入生产内核；实际点数学差小于6e-13 MR，但117校准/57留出对照未满足图示一致性，不能授予真实材料参数资格 |

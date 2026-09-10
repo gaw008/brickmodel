@@ -12,7 +12,7 @@ import numpy as np
 from .deforming_solid_storage import _digest,DeformingStorageError
 from .boundary_program import BoundaryProgram,BoundaryProgramError,BoundaryState
 from .gas_transport import GasState,GasTransportError,ideal_gas_reservoir
-from .exchanges import BoundaryHeat,ExchangeError,boundary_heat
+from .exchanges import BoundaryHeat,ExchangeError,boundary_heat,conduction_rate_w
 from .integration import ConservedState,DomainExit,IntegrationError,Rates
 from .programmed_gas_heat import SurfacePolicy,_number,_label
 from .solid_fluid_heat import SolidFluidHeat,SolidFluidHeatEvaluation,_failure
@@ -68,6 +68,8 @@ class ProgrammedSolidFluidHeat:
             raise ProgrammedSolidFluidHeatError('explicit_solid_fluid_and_program_required')
         if type(self.surface_policy) is not SurfacePolicy:raise ProgrammedSolidFluidHeatError('explicit_surface_policy_required')
         base=self._configuration_host;transport=base.transport
+        if transport.spherical_geometry is not None:
+            raise ProgrammedSolidFluidHeatError('spherical_programmed_boundary_not_supported')
         if transport.outer_reservoir is not None or transport.outer_surface_temperature_k is not None:
             raise ProgrammedSolidFluidHeatError('existing_outer_boundary_would_be_duplicated')
         if base.gas_species_order!=self.program.species_order:
@@ -138,17 +140,19 @@ class ProgrammedSolidFluidHeat:
     def _surface(self, cell_temperature, boundary, *, transport=None):
         base = self.transport if transport is None else transport
         policy = self.surface_policy
-        last = len(base.storages) - 1
-        area = base._face_metric(last, None)[0]
 
         def balance(surface):
             heat = boundary_heat(
                 surface_temperature_k=surface, gas_temperature_k=boundary.gas_temperature_k,
-                radiation_temperature_k=boundary.radiation_temperature_k, area_m2=area,
+                radiation_temperature_k=boundary.radiation_temperature_k, area_m2=base.face_area_m2,
                 convection_w_m2_k=self.convection_w_m2_k, emissivity=self.emissivity,
                 stefan_boltzmann_w_m2_k4=self.stefan_boltzmann_w_m2_k4)
-            # Shared slab or spherical outer resistance, directed surface -> cell.
-            into = base._conduction(surface, cell_temperature, last, None)
+            # Identical half-cell resistance as base model, with reversed sign.
+            into = conduction_rate_w(
+                surface, cell_temperature, area_m2=base.face_area_m2,
+                left_distance_m=base.cell_widths_m[-1]/4, right_distance_m=base.cell_widths_m[-1]/4,
+                left_conductivity_w_m_k=base.conductivities_w_m_k[-1],
+                right_conductivity_w_m_k=base.conductivities_w_m_k[-1])
             residual = math.fsum((into, -heat.convective_in_w, -heat.radiative_in_w))
             scale = max(abs(into), abs(heat.convective_in_w), abs(heat.radiative_in_w))
             limit = policy.absolute_residual_w + policy.relative_residual*scale

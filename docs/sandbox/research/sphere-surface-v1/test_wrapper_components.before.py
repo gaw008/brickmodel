@@ -1,17 +1,14 @@
 """Explicit manufactured wiring instrumentation, not EOS/material validation.
 
-The water-only instrumentation uses controlled collaborators. The programmed
-case constructs an admitted manufactured host and instruments only its power
-terms, preserving all production identity and configuration checks.
+Constructors are deliberately not invoked here; actual evaluate methods run on
+controlled collaborators. Production type/source admission is not changed.
 """
 from types import SimpleNamespace as NS
-from dataclasses import replace
 import numpy as np
 import pytest
 from sludge_sandbox.integration import ConservedState,Rates
 from sludge_sandbox.water_phase_transfer import WaterPhaseTransfer
 from sludge_sandbox.programmed_solid_fluid_heat import ProgrammedSolidFluidHeat
-from test_programmed_solid_fluid_heat import wrapped, program, ingredients
 
 
 def instance(cls,**fields):
@@ -41,28 +38,21 @@ def test_water_real_evaluate_keeps_power_while_adding_phase_inventory(parts):
 
 
 @pytest.mark.parametrize('parts',[None,{'body':[3.]}])
-def test_program_real_evaluate_keeps_power_and_distinct_face_enthalpy(monkeypatch,parts,ingredients):
-    op=wrapped(ingredients,program=program(total_pressure_pa=(4e5,)*4))
-    host=replace(op.base_model,transport=replace(op.transport,permeability_m2=(1e-15,)))
-    op=replace(op,base_model=host)
-    state=host.state_from_temperatures([[2.,0.,0.,.01]],[300.])
-    original=type(host).evaluate
-    observed=[]
-    def with_power(self,state,time_s):
-        base=original(self,state,time_s)
-        rates=replace(base.rates,cell_power_w=np.array([3.]),cell_power_components_w=parts)
-        result=replace(base,rates=rates)
-        observed.append(result)
-        return result
-    monkeypatch.setattr(type(host),'evaluate',with_power)
-    out=op.evaluate(state,.05)
-    assert len(observed)==1 and out.base_evaluation is observed[0]
-    gas_index=op.species_order.index('fixture')
-    gas_flux=out.rates.face_species_mol_s[-1,gas_index]
-    assert gas_flux<0 and out.conductive_into_cell_w>0
-    # Independent constant-Cp gas fixture: h(T)=30*T, donor is 310 K.
-    assert out.rates.face_energy_w[-1]==pytest.approx(
-        gas_flux*30*310-out.conductive_into_cell_w,rel=0,abs=1e-9)
+def test_program_real_evaluate_keeps_power_and_distinct_face_enthalpy(monkeypatch,parts):
+    r=Rates([[0,0],[0,0]],[0,0],[[0,0]],[3],parts)
+    b=NS(rates=r,gas_states=(NS(temperature_k=300.),))
+    template=NS(gas_phases={'H2O':NS(metadata=NS(molar_mass_kg_mol=.018))},
+                mechanical=NS(gas_constant_j_mol_k=8.))
+    transport=NS(_face=lambda *args:NS(net_mol_s={'H2O':.25}),_enthalpy=lambda exchange:7.)
+    base=NS(evaluate=lambda s,t:b,storages=(NS(fluid_template=template),),transport=transport,
+            gas_species_order=('H2O',),species_order=('liquid','H2O'))
+    boundary=NS(total_pressure_pa=1e5,gas_temperature_k=400.,mole_fractions={'H2O':1.})
+    op=instance(ProgrammedSolidFluidHeat,base_model=base,program=NS(at=lambda t:boundary))
+    monkeypatch.setattr(ProgrammedSolidFluidHeat,'_surface',lambda *args:(350.,None,2.,0.,0.,0,'fixture'))
+    out=op.evaluate(ConservedState([[1,0]],[1]),0.)
+    assert out.base_evaluation is b
+    assert out.rates.face_species_mol_s[-1,1]==.25
+    assert out.rates.face_energy_w[-1]==5
     assert out.rates.cell_power_w[0]==3
     assert (out.rates.cell_power_components_w is None)==(parts is None)
     if parts:assert out.rates.cell_power_components_w['body'][0]==3

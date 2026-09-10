@@ -183,29 +183,6 @@ def test_solid_host_uses_same_shell_volumes_faces_and_energy(water):
         replace(host,liquid_transport=object())
 
 
-def test_unsupported_programmed_boundary_rejects_sphere(water):
-    from sludge_sandbox.solid_fluid_heat import SolidFluidHeat, InventoryLayout
-    from sludge_sandbox.solid_fluid_storage import SolidFluidStorage
-    from sludge_sandbox.programmed_solid_fluid_heat import ProgrammedSolidFluidHeat, ProgrammedSolidFluidHeatError
-    from test_programmed_solid_fluid_heat import program as source_program
-    from sludge_sandbox.programmed_gas_heat import SurfacePolicy
-    from test_incompressible_solid import phase
-    op=sphere(water,1)
-    storage=SolidFluidStorage(fluid_template=op.storages[0],solid_phases={'fixture_solid':phase()},
-        bulk_volume_m3=op.cell_bulk_volume_m3(0),bulk_volume_error_m3=1e-18,geometry_id='manufactured:sphere',
-        geometry_version='1',geometry_classification='manufactured_test_fixture',
-        geometry_source_ids=('manufactured:radial-mesh',),allow_manufactured=True)
-    host=SolidFluidHeat(storages=(storage,),transport=op,inventory_layout=InventoryLayout(
-        species_order=('liquid','fixture','fixture_solid'),liquid_column_id='liquid',
-        gas_species_order=('fixture',),solid_species_order=('fixture_solid',)))
-    program=source_program(species_order=('fixture',),mole_fractions=((1.,),)*4)
-    with pytest.raises(ProgrammedSolidFluidHeatError,match='spherical_programmed'):
-        ProgrammedSolidFluidHeat(base_model=host,program=program,convection_w_m2_k=1.,emissivity=0.,
-            stefan_boltzmann_w_m2_k4=5.67e-8,coefficient_set_id='test',coefficient_version='1',
-            coefficient_classification='manufactured',coefficient_source_ids=('test',),
-            surface_policy=SurfacePolicy(absolute_residual_w=1e-10,relative_residual=1e-12,maximum_iterations=100),allow_manufactured=True)
-
-
 def test_radial_gas_face_uses_integrated_resistance_and_physical_area(water):
     from sludge_sandbox.gas_transport import ideal_gas_reservoir
     op=replace(sphere(water,2),permeability_m2=(2e-15,5e-15))

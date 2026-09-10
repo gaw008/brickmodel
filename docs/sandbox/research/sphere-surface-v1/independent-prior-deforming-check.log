@@ -1,0 +1,39 @@
+Traceback (most recent call last):
+  File "/private/tmp/brick-sphere-surface-review/check_prior_deforming.py", line 8, in <module>
+    try:tests.wrapped(load_water_properties(DATA))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/tests/sandbox/test_deforming_wet_admission.py", line 21, in wrapped
+    return ProgrammedSolidFluidHeat(base_model=base,program=boundary,convection_w_m2_k=20.,emissivity=0.,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 14, in __init__
+  File "/private/tmp/brick-sphere-surface-review/prior_programmed_solid_fluid_heat.py", line 95, in __post_init__
+    object.__setattr__(self,'_content_digest',self._current_content_digest())
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/brick-sphere-surface-review/prior_programmed_solid_fluid_heat.py", line 98, in _current_content_digest
+    return _digest((self.base_model,self.program,self.convection_w_m2_k,self.emissivity,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/deforming_solid_storage.py", line 63, in _digest
+    def _digest(x):return hashlib.sha256(json.dumps(_canonical(x),sort_keys=True,separators=(',',':')).encode()).hexdigest()
+                                                    ^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/deforming_solid_storage.py", line 58, in _canonical
+    if isinstance(x,(tuple,list)):return [_canonical(v) for v in x]
+                                          ^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/deforming_solid_storage.py", line 59, in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/deforming_solid_storage.py", line 58, in _canonical
+    if isinstance(x,(tuple,list)):return [_canonical(v) for v in x]
+                                          ^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/deforming_solid_storage.py", line 59, in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/deforming_solid_storage.py", line 59, in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/deforming_solid_storage.py", line 59, in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/deforming_solid_storage.py", line 60, in _canonical
+    raise DeformingStorageError('unsupported_identity_type:'+type(x).__name__)
+sludge_sandbox.deforming_solid_storage.DeformingStorageError: unsupported_identity_type:ndarray
+Confirmed same preexisting construction failure with frozen priorHEAD wrapper.

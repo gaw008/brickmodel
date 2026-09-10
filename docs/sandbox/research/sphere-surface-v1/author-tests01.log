@@ -1,0 +1,33 @@
+........F
+=================================== FAILURES ===================================
+______ test_multicell_sphere_robin_mode_spatial_and_temporal_convergence _______
+
+water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+
+    def test_multicell_sphere_robin_mode_spatial_and_temporal_convergence(water):
+        # Preregistered numerical criteria: 4/8/16cells, factor>3 reduction,
+        # finest midpoint RMS<.005K; timestep-halving maxdelta<finesterror/20.
+        # Bi=hR/k=1 gives mu=pi/2 exactly (mu*cot(mu)=1-Bi).
+        radius=.02;conductivity=.5;capacity_per_volume=100*(30-R)+10*50
+        alpha=conductivity/capacity_per_volume;end=.05*radius**2/alpha
+        mu=math.pi/2;errors=[];fine=[]
+        for cells,dt in ((4,.001),(8,.001),(16,.001),(16,.0005)):
+            op=programmed_sphere(water,cells=cells,conductivity=conductivity,h=conductivity/radius,
+                                 knots=(0.,end),gas_temperatures=(300.,300.))
+            geom=op.base_model.transport.spherical_geometry
+            shape=np.sinc(mu*np.asarray(geom.centers_m)/(math.pi*radius))
+            amounts=[[0.,100*v,10*v] for v in geom.volumes_m3]
+            state=op.base_model.state_from_temperatures(amounts,(300+4*shape).tolist())
+            run=integrate(state,op,start_s=0.,end_s=end,policy=integration_policy(dt),
+                          breakpoints_s=op.breakpoints_s(0.,end))
+>           assert run.status=='completed',(run.status,run.reason)
+E           AssertionError: ('resource_limit', 'wall_time_limit')
+E           assert 'resource_limit' == 'completed'
+E             
+E             - completed
+E             + resource_limit
+
+tests/sandbox/test_spherical_programmed_heat.py:171: AssertionError
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_spherical_programmed_heat.py::test_multicell_sphere_robin_mode_spatial_and_temporal_convergence
+1 failed, 8 passed in 70.45s (0:01:10)

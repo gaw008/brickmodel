@@ -4,6 +4,10 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+当前增量：ProgrammedSolidFluidHeat球形对流/辐射已复用实际外面积与半壳阻力，源19项79.04s通过，Bi=1解析模态4/8/16格RMS0.01337399/0.00330482/0.000815453K、半dt最大差1.64533e-8K。首轮30s/格资源失败已保留，仅按实测将该验证预算升至90s，误差门槛不变。独审28旧平板golden逐位一致、3独立物理检查通过。安装扩展检查初29通过2陈旧fixture失败，已保留旧版同失败并修为真实构造主机，4项wrapper专测通过1.12s；107实际安装模块匹配。报告：[球形程序边界](research/sphere-surface-v1/REPORT.md)。65244/52866/25491均终态，无该批运行进程。
+
+新发现既有软件缺陷：ProgrammedSolidFluidHeat包装规定变形主机时，motion._reference_state的CurrentSlab七数组无法被身份编码；旧HEAD同样失败，未进入surface。修复候选只在/private/tmp/brick-current-slab-identity-candidate，13tmp测试通过、独审中，尚未应用。下一先修复此实际阻塞，再按已保存[质量基内核审计](research/sphere-surface-v1/next-AUDIT.md)实现来源Cp适配与显式ReactionDisabled；不能靠虚构A/B和域外298.15K填补原泥储能。完整材料、全湿烧冷、三机制实测留出、多代和使用验收仍未完成。上一回合提交6d05c43属progress，本回合实现/验证/缺陷定位同属progress，Goal保持active。下文旧状态保留历史。
+
 最新实际增量：Nylen2024 Figure8已提取43个明确可辨内部温度符号，独立SciPy连通域/Fraction坐标复核通过；不可辨平台保留缺项，读图界不是实验标准差，全部为development数据。固定球壳体积/面积/半壳阻力已接入原RigidFluidHeat/SolidFluidHeat和既有integrate；4/8/16格解析模态RMS约0.0493323/0.0122302/0.00302994 K，最细时间步减半差3.44535e-6 K。非editable实际安装四组相关测试55项34.20s通过，107模块源/安装字节核实，session85588已终态0。证据见[球形传热与温度读数](research/nylen2024-radial-v1/REPORT.md)。这是制造物性的数值验证，未完成Nylen材料预测、原泥湿烧冷全流程或原Goal验收。
 
 下一具体实现为共享表面对流/辐射求解的球形半壳阻力接线；当前球形程序边界/液体输运/平板变形明确拒绝。MSJ/CB同材料Cp/k/湿输运/实际热边界与收缩仍缺，不能拼接Rosheim/Arlabosse参数。上一说明prompt回合没有新增实现；本回合实际审核/安装验证/证据落盘属于progress，Goal保持active。以下为历史状态。
