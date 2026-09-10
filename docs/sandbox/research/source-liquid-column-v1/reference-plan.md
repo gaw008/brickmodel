@@ -1,0 +1,7 @@
+# Predeclared manufactured-liquid trajectory oracle
+
+N=3 closed cells, source dry Cp and the existing explicit artificial liquid u=75T-300000 J/mol, v=1.8e-5 m3/mol. Initial states and nonuniform widths from test_source_liquid_column.setup. Duration .25 s, midpoint 2/4/8 steps. Liquid permeability1e-15 m2, viscosity .001 Pa s, saturation-dependent kr=.25+.5*S (table endpoints S=0,1), all connections explicitly manufactured connected. No coefficients or conditions selected from observed residuals.
+
+Reference reuses source gas caloric, chemical equilibrium and gas face primitive, but manually assembles liquid Darcy resistance, donor molar volume/enthalpy, source sensible U polynomial, artificial liquid closure and brentq T inverse. It must not call liquid_face_exchange or decoded_liquid_state as reference. DOP853 rtol2e-12, atol inventories1e-13 mol and U1e-8 J, maxstep duration/2. Printed-polynomial temperature brentq xtol1e-11, rtol1e-14.
+
+Pass: completed 2/4/8 runs; strictly decreasing maximum U and inventory differences, each consecutive refinement ratio between3 and5; per-cell liquid/total water/U exact signed projection balances; global liquid change=-phase+rounding, global total water/U internal cancellation; explicit liquid donor-enthalpy component in energy decomposition. All checks use original thresholds; failures saved. One experiment, hard45s total, per-production-run18s. Changes to reviewed files during execution invalidate unchanged-code claim. No EOS/native run or material qualification.

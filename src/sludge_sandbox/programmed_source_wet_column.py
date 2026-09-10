@@ -19,7 +19,7 @@ from .integration import DomainExit
 from .mass_storage_bridge import require
 from .mass_wet_transport import WetFace, evaluate_wet_face, represented
 from .programmed_gas_heat import SurfacePolicy
-from .source_wet_column import ColumnFaceRate, ColumnStepLedger, SourceColumnRates, SourceWetColumn
+from .source_wet_column import ColumnFaceRate, ColumnStepLedger, SourceColumnRates, SourceWetColumn, LiquidSourceColumnRates
 from .source_wet_storage import _binary
 from .surface_balance import solve_surface_balance
 
@@ -41,6 +41,13 @@ class ProgrammedSourceRates(SourceColumnRates):
     reservoir: GasState
     surface: SourceSurfaceObservation
     closed_base_identity: str
+
+
+@dataclass(frozen=True, kw_only=True)
+class ProgrammedLiquidSourceRates(ProgrammedSourceRates):
+    liquid_states: tuple
+    liquid_pressure_interval_scope: str = 'fixed_decoded_temperature'
+    full_inverse_liquid_direction_certified: bool = False
 
 
 @dataclass(frozen=True)
@@ -182,10 +189,12 @@ class ProgrammedSourceWetColumn:
             tuple(exchange.exchange.net_mol_s[k] for k in self.gas_ids), outward_energy, outward_heat,
             exchange.diffusive_enthalpy_w, exchange.advective_enthalpy_w, exchange)
         self._check()
-        return ProgrammedSourceRates(cells=base.cells, gas_states=base.gas_states,
+        kind, extra = ((ProgrammedLiquidSourceRates, {'liquid_states': base.liquid_states})
+                       if type(base) is LiquidSourceColumnRates else (ProgrammedSourceRates, {}))
+        return kind(cells=base.cells, gas_states=base.gas_states,
             faces=(*base.faces[:-1], outer), model_identity=self._identity,
             source_ids=tuple(sorted(set(base.source_ids+self.program.program.identity.source_ids+self.coefficient_source_ids))),
-            boundary=boundary, reservoir=reservoir, surface=surface, closed_base_identity=base.model_identity)
+            boundary=boundary, reservoir=reservoir, surface=surface, closed_base_identity=base.model_identity, **extra)
 
     def step_ledger(self, duration, faces, phase, error, predictor_error, midpoint, middle):
         surface = middle.surface

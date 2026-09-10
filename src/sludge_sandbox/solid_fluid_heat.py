@@ -233,26 +233,16 @@ class SolidFluidHeat:
 
     def _liquid_faces(self,decoded):
         if self.liquid_transport is None:return ()
-        from .liquid_transport import LiquidTransportState,liquid_face_exchange,LiquidTransportError,LiquidTransportDomainError
-        from .phase_storage import LiquidWaterPhase
+        from .liquid_transport import liquid_face_exchange,LiquidTransportError,LiquidTransportDomainError
+        from .liquid_transport_state import decoded_liquid_state
         states=[]
         try:
             for closed,storage in zip(decoded,self.storages):
                 mechanical=closed.mechanical
                 water=storage.fluid_template.mechanical.water
-                volume=enthalpy=None
-                if mechanical.liquid_inventory_mol>0:
-                    point=water.state_tp(mechanical.temperature_k,mechanical.liquid_pressure_pa,phase='liquid')
-                    volume=point.molar_mass_kg_mol/point.density_kg_m3
-                    enthalpy=point.enthalpy_j_mol
-                states.append(LiquidTransportState(temperature_k=mechanical.temperature_k,
-                    pressure_pa=mechanical.pressure_pa,inventory_mol=mechanical.liquid_inventory_mol,
-                    saturation=mechanical.liquid_volume_m3/closed.available_pore_volume_m3,
-                    pressure_error_pa=closed.pressure_error_bound_pa,molar_volume_m3_mol=volume,
-                    enthalpy_j_mol=enthalpy,metadata=LiquidWaterPhase(water).metadata,
-                    provider_id=('iapws95_real_fluid_helmholtz' if water.implementation is None else water.implementation.provider_id),
-                    provider_version=('1.5.5' if water.implementation is None else water.implementation.provider_version),
-                    source_asset_sha256=tuple(sorted(water.source_asset_sha256.items()))))
+                states.append(decoded_liquid_state(mechanical,water,
+                    available_pore_volume_m3=closed.available_pore_volume_m3,
+                    pressure_error_pa=closed.pressure_error_bound_pa))
             config=self.liquid_transport
             return tuple(liquid_face_exchange(states[i],states[i+1],left_relation=config.relations[i],
                 right_relation=config.relations[i+1],connection=connection,area_m2=self.transport.face_area_m2,

@@ -2,6 +2,8 @@
 
 ## 当前新增映射
 
+来源液流映射：`liquid_transport_state.decoded_liquid_state` 从已解 T/P/液体积构造共同液流状态，旧 `SolidFluidHeat` 与 `SourceWetColumn` 共用；`liquid_face_exchange` 给出 Q=AΔp/(dL/ML+dR/MR)、J=Q/v_donor 和 E=J·h_donor。`LiquidColumnFaceRate/Integral` 保存液流、焓及 E_float−J_float·h_donor；`_advance` 用左液面减右液面减蒸发量推进液库存，总U只加共同面能量。`ProgrammedLiquidSourceRates` 保留内部面及零外界液流。`test_source_liquid_column.py`、`test_liquid_transport_state_kernel.py` 和[独立/安装/原生证据](research/source-liquid-column-v1/REPORT.md)覆盖压力误差、旧整体结果、供体反向、显式断连及账本。后续较早条目的“源跨格液水尚缺”已由此限定软件增量关闭，事件/完整材料/全周期范围未关闭。
+
 来源开放映射：`surface_balance.solve_surface_balance` 共享旧 programmed solid/fluid 的半格传热—膜/辐射平衡；`programmed_source_wet_column.ProgrammedSourceWetColumn.evaluate` 接规定气体库和 gas-only face，右端总能流为气体焓减入格热。原 `integrate_source_column` 合并 ExactProgramView 节点并保存 `ProgrammedColumnStepLedger.boundary_integral`。新 `test_programmed_source_wet_column.py`、`test_surface_balance_kernel.py` 和[实际独立/安装/native证据](research/programmed-source-column-v1/REPORT.md)覆盖时间、符号、无重复热与守恒。来源开放软件已接通，原泥本构、跨格液水和全事件/应用仍缺。
 
 来源多格映射：`mass_wet_transport.evaluate_wet_phase/evaluate_wet_face` 由旧 WetPair 与新 `source_wet_column.SourceWetColumn.evaluate` 共用；`integrate_source_column` 使用 N+1 面与等摩尔相变积分、一次 binary64 投影及显式舍入账本。正式 `test_mass_wet_exchange_kernel.py`、`test_source_wet_column.py` 和[独立/原生证据](research/source-wet-column-v1/REPORT.md)覆盖旧结果保持、N=1/2/3/4、局部/全局守恒、失败前缀及限定时间收敛。源 N 格现已接入固定闭域分支；下表旧“源 N 格未接”保留为此前储能增量的范围，开放炉程/事件/完整材料仍缺。

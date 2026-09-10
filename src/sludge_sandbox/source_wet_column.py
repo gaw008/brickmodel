@@ -6,6 +6,7 @@ Solid mass stays fixed; no A/B network or separate latent heat is introduced.
 """
 from dataclasses import dataclass, field, replace
 from fractions import Fraction as F
+import math
 import time
 
 from .deforming_solid_storage import _digest
@@ -19,6 +20,9 @@ from .mass_wet_transport import (
 from .phase_storage import InversePolicy
 from .source_wet_storage import SourceWetStorage, _binary
 from .water_chemical_potential import WaterChemicalPotential
+from .solid_fluid_heat import LiquidTransportConfig
+from .liquid_transport import LiquidTransportDomainError, liquid_face_exchange
+from .liquid_transport_state import decoded_liquid_state
 
 
 @dataclass(frozen=True)
@@ -41,6 +45,14 @@ class ColumnFaceRate:
     shared_evaluation: object | None
 
 
+@dataclass(frozen=True, kw_only=True)
+class LiquidColumnFaceRate(ColumnFaceRate):
+    liquid_mol_s: float
+    liquid_enthalpy_w: float
+    liquid_enthalpy_projection_w: F
+    liquid_exchange: object
+
+
 @dataclass(frozen=True)
 class SourceColumnRates:
     cells: tuple
@@ -49,6 +61,13 @@ class SourceColumnRates:
     model_identity: str
     source_ids: tuple
     material_qualified: bool = False
+
+
+@dataclass(frozen=True, kw_only=True)
+class LiquidSourceColumnRates(SourceColumnRates):
+    liquid_states: tuple
+    liquid_pressure_interval_scope: str = 'fixed_decoded_temperature'
+    full_inverse_liquid_direction_certified: bool = False
 
 
 @dataclass(frozen=True)
@@ -64,6 +83,7 @@ class SourceWetColumn:
     coefficient_source_ids: tuple
     boundary_conditions: tuple = ('closed_no_flux', 'closed_no_flux')
     transport_classification: str = 'manufactured_test_fixture'
+    liquid_transport: LiquidTransportConfig | None = None
     _identity: str = field(init=False, repr=False)
 
     def __post_init__(self):
@@ -118,11 +138,21 @@ class SourceWetColumn:
         c = self.chemical
         backends = tuple((type(w).__module__, type(w).__qualname__, w.implementation)
                          for w in (c.water, c.vapor._water))
-        return _digest(('source_wet_closed_column_v1', tuple(s.binding() for s in self.storages),
+        content = ('source_wet_closed_column_v1', tuple(s.binding() for s in self.storages),
             self.inverse_policies, c, backends, (c.reference_pressure_pa, c.method_id, c.caloric_method_id,
             c.gas_constant_j_mol_k, c.temperature_range_k), self.transfer_coefficients_mol_s_pa,
             self.faces, self.cell_widths_m, self.face_area_m2, self.interface_modes,
-            self.coefficient_source_ids, self.boundary_conditions, self.transport_classification))
+            self.coefficient_source_ids, self.boundary_conditions, self.transport_classification)
+        if self.liquid_transport is not None:
+            config = self.liquid_transport
+            require(type(config) is LiquidTransportConfig, 'actual_liquid_transport_configuration')
+            config.__post_init__()
+            require(len(config.relations) == n and len(config.connections) == n-1,
+                    'per_cell_liquid_relations_and_internal_connections')
+            require(config.allow_manufactured and all(v.classification == 'manufactured_test_fixture'
+                    for v in (*config.relations, *config.connections)), 'source_liquid_material_not_admitted')
+            content = (content, 'explicit_internal_liquid_transport_v1', config)
+        return _digest(content)
 
     def _check(self):
         require(self.binding() == self._identity, 'source_column_content_changed')
@@ -172,27 +202,66 @@ class SourceWetColumn:
                 gas_constant_j_mol_k=self.chemical.gas_constant_j_mol_k))
             sources.update(point.source_ids)
             sources.update(phase.equilibrium.source_ids)
+        liquids = ()
+        if self.liquid_transport is not None:
+            liquids = tuple(decoded_liquid_state(cell.inverse.point.fluid.mechanical, storage.water,
+                available_pore_volume_m3=cell.inverse.point.available_pore_volume_m3,
+                pressure_error_pa=cell.inverse.point.pressure_error_pa)
+                for cell, storage in zip(cells, self.storages))
+            sources.update(self.liquid_transport.source_ids)
         zeros = (0.,)*len(self.gas_ids)
         faces = [ColumnFaceRate(0, None, 0, zeros, 0., 0., zeros, zeros, None)]
         for i, face in enumerate(self.faces, 1):
             shared = evaluate_wet_face(face, (gases[i-1], gases[i]), self.gas_ids,
                                        self.storages[0].fluid_template.gas_phases)
-            faces.append(ColumnFaceRate(i, i-1, i, tuple(shared.exchange.net_mol_s[k] for k in self.gas_ids),
-                shared.face_energy_w, shared.conduction_w, shared.diffusive_enthalpy_w,
-                shared.advective_enthalpy_w, shared))
+            if self.liquid_transport is None:
+                faces.append(ColumnFaceRate(i, i-1, i, tuple(shared.exchange.net_mol_s[k] for k in self.gas_ids),
+                    shared.face_energy_w, shared.conduction_w, shared.diffusive_enthalpy_w,
+                    shared.advective_enthalpy_w, shared))
+            else:
+                config = self.liquid_transport
+                try:
+                    liquid = liquid_face_exchange(liquids[i-1], liquids[i],
+                        left_relation=config.relations[i-1], right_relation=config.relations[i],
+                        connection=config.connections[i-1], area_m2=face.area_m2,
+                        left_distance_m=face.half_widths_m[0], right_distance_m=face.half_widths_m[1],
+                        allow_manufactured=config.allow_manufactured)
+                except LiquidTransportDomainError as exc:
+                    raise DomainExit(str(exc)) from exc
+                donor = liquids[i-1] if liquid.donor == 'left' else liquids[i] if liquid.donor == 'right' else None
+                projection = (F(liquid.enthalpy_flow_w)-F(liquid.molar_flow_mol_s)*F(donor.enthalpy_j_mol)
+                              if donor is not None else F())
+                total = represented(math.fsum((shared.conduction_w, *shared.diffusive_enthalpy_w,
+                                               *shared.advective_enthalpy_w, liquid.enthalpy_flow_w)))
+                faces.append(LiquidColumnFaceRate(face_id=i, left_cell=i-1, right_cell=i,
+                    gas_mol_s=tuple(shared.exchange.net_mol_s[k] for k in self.gas_ids), energy_w=total,
+                    conduction_w=shared.conduction_w, diffusive_enthalpy_w=shared.diffusive_enthalpy_w,
+                    advective_enthalpy_w=shared.advective_enthalpy_w, shared_evaluation=shared,
+                    liquid_mol_s=liquid.molar_flow_mol_s, liquid_enthalpy_w=liquid.enthalpy_flow_w,
+                    liquid_enthalpy_projection_w=projection, liquid_exchange=liquid))
+                sources.update(liquid.source_ids)
             sources.update(face.source_ids)
         faces.append(ColumnFaceRate(self.cell_count, self.cell_count-1, None, zeros, 0., 0., zeros, zeros, None))
         self._check_states(states)
-        return SourceColumnRates(tuple(cells), tuple(gases), tuple(faces), self._identity, tuple(sorted(sources)))
+        if self.liquid_transport is None:
+            return SourceColumnRates(tuple(cells), tuple(gases), tuple(faces), self._identity, tuple(sorted(sources)))
+        return LiquidSourceColumnRates(cells=tuple(cells), gas_states=tuple(gases), faces=tuple(faces),
+            model_identity=self._identity, source_ids=tuple(sorted(sources)), liquid_states=liquids)
 
     def provenance(self):
         self._check()
-        return {'schema': 'source_wet_column_v1', 'model_identity': self._identity,
+        result = {'schema': 'source_wet_column_v1', 'model_identity': self._identity,
             'cells': tuple(s.provenance() for s in self.storages),
             'boundary_conditions': self.boundary_conditions, 'cell_widths_m': self.cell_widths_m,
             'face_area_m2': self.face_area_m2, 'internal_face_adjacency': tuple((i, i-1, i) for i in range(1, self.cell_count)),
             'transport_classification': self.transport_classification, 'coefficient_source_ids': self.coefficient_source_ids,
             'material_qualified': False, 'scope': 'fixed source mass, fixed slab, closed boundaries; no exact event or furnace boundary admission'}
+        if self.liquid_transport is not None:
+            result.update(liquid_transport=self.liquid_transport, liquid_boundary_conditions=('no_flux', 'no_flux'),
+                liquid_saturation_definition='liquid_volume / available_liquid_plus_gas_volume',
+                liquid_pressure_interval_scope='fixed_decoded_temperature', full_inverse_liquid_direction_certified=False,
+                liquid_property_and_saturation_uncertainty_propagated=False)
+        return result
 
 
 @dataclass(frozen=True)
@@ -204,6 +273,21 @@ class ColumnFaceIntegral:
     diffusive_enthalpy_j: tuple
     advective_enthalpy_j: tuple
     energy_decomposition_roundoff_j: F
+
+
+@dataclass(frozen=True, kw_only=True)
+class LiquidColumnFaceIntegral(ColumnFaceIntegral):
+    liquid_mol: F
+    liquid_enthalpy_j: F
+    liquid_enthalpy_projection_j: F
+
+
+def _liquid_integral(face):
+    return face.liquid_mol if type(face) is LiquidColumnFaceIntegral else F()
+
+
+def _liquid_energy_projection(face):
+    return face.liquid_enthalpy_projection_j if type(face) is LiquidColumnFaceIntegral else F()
 
 
 @dataclass(frozen=True)
@@ -257,8 +341,17 @@ def _integrals(rates, duration):
         conduction = duration*F(face.conduction_w)
         diff = tuple(duration*F(x) for x in face.diffusive_enthalpy_w)
         adv = tuple(duration*F(x) for x in face.advective_enthalpy_w)
-        faces.append(ColumnFaceIntegral(face.face_id, tuple(duration*F(x) for x in face.gas_mol_s),
-                     q, conduction, diff, adv, q-conduction-sum(diff, F())-sum(adv, F())))
+        gas = tuple(duration*F(x) for x in face.gas_mol_s)
+        decomposition = q-conduction-sum(diff, F())-sum(adv, F())
+        if type(face) is LiquidColumnFaceRate:
+            liquid_h = duration*F(face.liquid_enthalpy_w)
+            faces.append(LiquidColumnFaceIntegral(face_id=face.face_id, gas_mol=gas, energy_j=q,
+                conduction_j=conduction, diffusive_enthalpy_j=diff, advective_enthalpy_j=adv,
+                energy_decomposition_roundoff_j=decomposition-liquid_h,
+                liquid_mol=duration*F(face.liquid_mol_s), liquid_enthalpy_j=liquid_h,
+                liquid_enthalpy_projection_j=duration*face.liquid_enthalpy_projection_w))
+        else:
+            faces.append(ColumnFaceIntegral(face.face_id, gas, q, conduction, diff, adv, decomposition))
     return tuple(faces), tuple(duration*F(c.phase.phase_water_mol_s) for c in rates.cells)
 
 
@@ -266,7 +359,7 @@ def _advance(column, old, faces, phase):
     """One exact aggregation and one binary64 projection per cell quantity."""
     result, liquid_errors, gas_errors, energy_errors = [], [], [], []
     for i, (storage, state, mode) in enumerate(zip(column.storages, old, column.interface_modes)):
-        liquid = F(state.liquid_water_mol)-phase[i]
+        liquid = F(state.liquid_water_mol)+_liquid_integral(faces[i])-_liquid_integral(faces[i+1])-phase[i]
         gas = tuple(F(value)+faces[i].gas_mol[k]-faces[i+1].gas_mol[k]+(phase[i] if k == 2 else 0)
                     for k, value in enumerate(state.gas_amounts_mol))
         energy = F(state.internal_energy_j)+faces[i].energy_j-faces[i+1].energy_j
@@ -351,6 +444,7 @@ def integrate_source_column(column, initial, *, duration_s, steps, maximum_wall_
             new, error = _advance(column, states[-1], faces, phase)
             candidate_energy = used_energy+error.absolute_energy_j+predictor_error.absolute_energy_j
             candidate_energy += sum((abs(f.energy_decomposition_roundoff_j) for f in (*predictor_faces, *faces)), F())
+            candidate_energy += sum((abs(_liquid_energy_projection(f)) for f in (*predictor_faces, *faces)), F())
             candidate_inventory = used_inventory+error.absolute_inventory_mol+predictor_error.absolute_inventory_mol
             require(candidate_energy <= F(energy_budget), 'column_energy_roundoff_budget_exceeded')
             require(candidate_inventory <= F(inventory_budget), 'column_inventory_roundoff_budget_exceeded')
