@@ -2,6 +2,8 @@
 
 ## 当前新增映射
 
+来源多格映射：`mass_wet_transport.evaluate_wet_phase/evaluate_wet_face` 由旧 WetPair 与新 `source_wet_column.SourceWetColumn.evaluate` 共用；`integrate_source_column` 使用 N+1 面与等摩尔相变积分、一次 binary64 投影及显式舍入账本。正式 `test_mass_wet_exchange_kernel.py`、`test_source_wet_column.py` 和[独立/原生证据](research/source-wet-column-v1/REPORT.md)覆盖旧结果保持、N=1/2/3/4、局部/全局守恒、失败前缀及限定时间收敛。源 N 格现已接入固定闭域分支；下表旧“源 N 格未接”保留为此前储能增量的范围，开放炉程/事件/完整材料仍缺。
+
 以下条目反映最新实现；后续历史阶段条目保留各自当时的验证范围。
 
 | 关系或数值合同 | 实现与验证入口 | 已证实范围 |

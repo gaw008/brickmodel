@@ -7,12 +7,17 @@ from fractions import Fraction as F
 import math,time
 from sludge_sandbox.mass_wet_storage import WetMixedStorage,WetMixedState
 from sludge_sandbox.mass_storage_bridge import number,require
-from sludge_sandbox.phase_storage import InversePolicy
+from sludge_sandbox.phase_storage import InversePolicy,IdealGasPhase
+from sludge_sandbox.thermochemistry import ShomateGas,ShomateSegment
+from sludge_sandbox.continuous_caloric import ContinuousShomateGas,ContinuousSegment
+from sludge_sandbox.ideal_water_vapor import IdealWaterVapor
+from sludge_sandbox.joined_water_vapor import JoinedWaterVapor
+from sludge_sandbox.water_properties import is_water_provider
 from sludge_sandbox.integration import DomainExit
 from sludge_sandbox.water_properties import WaterDomainError
 from sludge_sandbox.water_chemical_potential import WaterChemicalPotential
 from sludge_sandbox.deforming_solid_storage import _digest
-from sludge_sandbox.gas_transport import ideal_gas_state,face_exchange
+from sludge_sandbox.gas_transport import GasState,ideal_gas_state,face_exchange
 from sludge_sandbox.exchanges import conduction_rate_w
 
 
@@ -39,6 +44,128 @@ class WetFace:
             for v in row:require(number(v,positive=positive)>=0 and v>=0 and (v==0 or represented(v)!=0),'negative_face_coefficient')
         require(represented(self.permeability_m2)>=0 and self.permeability_m2>=0,'negative_permeability')
         require(type(self.source_ids) is tuple and self.source_ids and all(type(v) is str and v for v in self.source_ids),'face_sources')
+
+
+@dataclass(frozen=True)
+class WetPhaseEvaluation:
+    phase_water_mol_s: float
+    water_partial_pressure_pa: float
+    equilibrium: object
+    chemical_driving_force_j_mol: float | None
+    entropy_production_w_k: float | None
+
+
+def evaluate_wet_phase(chemical: WaterChemicalPotential, inverse_point: object,
+                       water_vapor_mol: float, transfer_coefficient: float,
+                       mode: str) -> WetPhaseEvaluation:
+    """Existing-liquid transfer or strict dry no-nucleation observation.
+
+    Consumes the actual inverse point, without any solid/reaction model.
+    No latent source is introduced. EOS state quantities must be exactly
+    binary64-representable and the vapor argument must match that point.
+    """
+    require(type(chemical) is WaterChemicalPotential,'actual_chemical_required')
+    require(type(mode) is str and mode in ('existing_liquid','depleted_no_nucleation'),'explicit_wet_dry_mode')
+    p=inverse_point;t=p.temperature_k
+    mechanical=p.fluid.mechanical
+    liquid=mechanical.liquid_inventory_mol
+    for value in (water_vapor_mol,liquid):
+        require(number(value)>=0,'negative_phase_inventory')
+        require(F(value)==F(float(value)),'phase_input_not_exact_binary64')
+    for value in (t,p.gas_volume_m3,p.pressure_pa):
+        number(value,positive=True)
+        require(F(value)==F(float(value)),'phase_input_not_exact_binary64')
+    require(F(water_vapor_mol)==F(mechanical.gas_inventory_mol['H2O']),'phase_vapor_inventory_mismatch')
+    require(number(transfer_coefficient)>=0 and transfer_coefficient>=0 and (transfer_coefficient==0 or represented(transfer_coefficient)!=0),'negative_rate_coefficient')
+    if mode=='depleted_no_nucleation' and liquid!=0:
+        raise DomainExit('dry_interface_requires_exact_zero_liquid')
+    if mode=='existing_liquid' and liquid<=0:
+        raise DomainExit('existing_liquid_interface_requires_positive_inventory')
+    if mode=='existing_liquid':
+        number(mechanical.liquid_pressure_pa,positive=True)
+        require(F(mechanical.liquid_pressure_pa)==F(float(mechanical.liquid_pressure_pa)),'phase_input_not_exact_binary64')
+    po=represented(F(water_vapor_mol)*F(chemical.gas_constant_j_mol_k)*F(t)/F(p.gas_volume_m3))
+    liquid_query_pressure=p.pressure_pa if mode=='depleted_no_nucleation' else p.fluid.mechanical.liquid_pressure_pa
+    try:equilibrium=chemical.equilibrium_at_liquid_tp(t,liquid_query_pressure)
+    except WaterDomainError as exc:
+        if mode=='depleted_no_nucleation':raise DomainExit('dry_interface_condensation_drive_unknown: '+str(exc)) from exc
+        raise
+    peq=equilibrium.equilibrium_partial_pressure_pa
+    if mode=='depleted_no_nucleation':
+        if po>peq:raise DomainExit('dry_interface_condensation_requires_unsupported_nucleation')
+        phase=0.
+    else:phase=represented(F(transfer_coefficient)*(F(peq)-F(po)))
+    if mode=='depleted_no_nucleation' or po==0:mu=entropy=None
+    else:
+        log=math.log1p((peq-po)/po) if abs(peq-po)<.5*po else math.log(peq)-math.log(po)
+        mu=represented(F(chemical.gas_constant_j_mol_k)*F(t)*F(log))
+        require(peq==po or mu!=0,'chemical_drive_unresolvable')
+        entropy=represented(F(phase)*F(mu)/F(t));require(entropy>=0,'phase_direction_entropy')
+    return WetPhaseEvaluation(phase,po,equilibrium,mu,entropy)
+
+
+@dataclass(frozen=True)
+class WetFaceEvaluation:
+    exchange: object
+    conduction_w: float
+    diffusive_enthalpy_w: tuple[float, ...]
+    advective_enthalpy_w: tuple[float, ...]
+    face_energy_w: float
+
+
+def _check_face_caloric_leaf(phase: IdealGasPhase) -> None:
+    """Reject unsupported adapters before metadata or caloric callbacks."""
+    require(type(phase) is IdealGasPhase,'actual_face_gas_phase_required')
+    caloric=phase.caloric
+    require(type(caloric) in (ShomateGas,ContinuousShomateGas,IdealWaterVapor,JoinedWaterVapor),'actual_face_caloric_required')
+    if type(caloric) in (ShomateGas,ContinuousShomateGas,JoinedWaterVapor):
+        source=caloric if type(caloric) is ShomateGas else caloric.source_gas
+        require(type(source) is ShomateGas and type(source.segments) is tuple and bool(source.segments) and all(type(s) is ShomateSegment for s in source.segments),'actual_face_shomate_leaves_required')
+        if type(caloric) is not ShomateGas:
+            require(type(caloric.segments) is tuple and len(caloric.segments)==len(source.segments) and all(type(s) is ContinuousSegment and type(s.source_segment) is ShomateSegment and s.source_segment==original for s,original in zip(caloric.segments,source.segments)),'actual_face_continuous_leaves_required')
+    if type(caloric) in (IdealWaterVapor,JoinedWaterVapor):
+        low=caloric if type(caloric) is IdealWaterVapor else caloric.low_model
+        require(type(low) is IdealWaterVapor and is_water_provider(low._water),'actual_face_water_leaf_required')
+    # Reapply the adapter's original selection and molar-identity contract.
+    phase.__post_init__()
+
+
+def evaluate_wet_face(face: WetFace, gas_states: tuple[GasState, GasState],
+                      gas_ids: tuple[str, ...], gas_phases: object) -> WetFaceEvaluation:
+    """One shared signed face exchange with the existing enthalpy policy.
+
+    All supplied gas curves are checked against both actual GasState objects
+    before any enthalpy call. The caller must additionally bind both storages'
+    full caloric sources and energy origins; GasState carries no energy datum.
+    """
+    require(type(face) is WetFace,'actual_wet_face_required')
+    require(type(gas_states) is tuple and len(gas_states)==2 and all(type(g) is GasState for g in gas_states),'two_actual_gas_states')
+    require(type(gas_ids) is tuple and len(gas_ids)==len(face.diffusivities_m2_s) and len(set(gas_ids))==len(gas_ids),'explicit_face_gas_layout')
+    require(all(set(g.concentrations_mol_m3)==set(gas_ids) for g in gas_states) and set(gas_phases)==set(gas_ids),'common_face_gas_species')
+    for key in gas_ids:
+        _check_face_caloric_leaf(gas_phases[key])
+    for key in gas_ids:
+        phase=gas_phases[key];metadata=phase.metadata
+        require(metadata.species_id==key and metadata.phase=='gas','face_caloric_species_mismatch')
+        require(metadata.molar_basis_id=='mol_of_declared_species' and metadata.energy_reference_id=='nist_298.15K_element_standard_formation','face_energy_or_molar_basis_mismatch')
+        require(all(metadata.molar_mass_kg_mol==g.molar_masses_kg_mol[key] and phase.molar_mass_kg_mol==g.molar_masses_kg_mol[key] for g in gas_states),'face_molar_mass_mismatch')
+        require(all(phase._curve.gas_constant_j_mol_k==g.gas_constant_j_mol_k for g in gas_states),'face_gas_constant_mismatch')
+    f=face;dl,dr=f.half_widths_m;names=gas_ids;gases=gas_states
+    ex=face_exchange(*gases,area_m2=f.area_m2,distance_m=dl+dr,face_left_weight=dr/(dl+dr),effective_diffusivities_m2_s=dict(zip(names,f.diffusivities_m2_s)),permeability_m2=f.permeability_m2,relative_permeability=1.,viscosity_pa_s=f.viscosity_pa_s)
+    phases=gas_phases
+    diff=tuple(ex.diffusive_mol_s[k]*phases[k]._curve.enthalpy_j_mol(ex.face_temperature_k) for k in names)
+    adv=tuple(0. if ex.advective_mol_s[k]==0 else ex.advective_mol_s[k]*phases[k]._curve.enthalpy_j_mol(ex.advective_donor_temperature_k) for k in names)
+    heat=conduction_rate_w(gases[0].temperature_k,gases[1].temperature_k,area_m2=f.area_m2,left_distance_m=dl,right_distance_m=dr,left_conductivity_w_m_k=f.conductivities_w_m_k[0],right_conductivity_w_m_k=f.conductivities_w_m_k[1])
+    power=number(math.fsum((heat,*diff,*adv)))
+    return WetFaceEvaluation(ex,heat,diff,adv,power)
+
+
+def check_thermal_chemical_sources(storage: object, chemical: WaterChemicalPotential) -> None:
+    """Preserve the shared thermal/chemical reference and backend guards."""
+    w=storage.water;c=chemical
+    require(c.reference==w.reference and c.source_asset_sha256==w.source_asset_sha256 and c.gas_constant_j_mol_k==storage.fluid_template.mechanical.gas_constant_j_mol_k,'thermal_chemical_source_mismatch')
+    for cw in (c.water,c.vapor._water):
+        require(type(cw) is type(w) and cw.implementation==w.implementation,'thermal_chemical_backend_mismatch')
 
 
 @dataclass(frozen=True)
@@ -94,10 +221,7 @@ class WetPair:
         for st in self.storages:
             net=st.reference.network
             require(st.solid_ids==('A','B') and len(net.reactions)==1 and net.reactions[0].mass_change_kg_per_kg_extent==(-1,2,-1,0,0),'explicit_AB_finite_oxygen_reaction')
-            w=st.water;c=self.chemical
-            require(c.reference==w.reference and c.source_asset_sha256==w.source_asset_sha256 and c.gas_constant_j_mol_k==st.fluid_template.mechanical.gas_constant_j_mol_k,'thermal_chemical_source_mismatch')
-            for cw in (c.water,c.vapor._water):
-                require(type(cw) is type(w) and cw.implementation==w.implementation,'thermal_chemical_backend_mismatch')
+            check_thermal_chemical_sources(st,self.chemical)
         object.__setattr__(self,'_identity',self.binding())
 
     def binding(self):
@@ -140,35 +264,16 @@ class WetPair:
             mode=self.interfaces[i]
             inv=st.invert(s,ip);p=inv.point;t=p.temperature_k
             extent=represented(F(self.rate_constants_per_s[i])*F(s.solid_mass_kg[0])*F(s.gas_amounts_mol[0])/F(self.oxygen_references_mol[i]))
-            po=represented(F(s.gas_amounts_mol[2])*F(self.chemical.gas_constant_j_mol_k)*F(t)/F(p.gas_volume_m3))
-            liquid_query_pressure=p.pressure_pa if mode=='depleted_no_nucleation' else p.fluid.mechanical.liquid_pressure_pa
-            try:equilibrium=self.chemical.equilibrium_at_liquid_tp(t,liquid_query_pressure)
-            except WaterDomainError as exc:
-                if mode=='depleted_no_nucleation':raise DomainExit('dry_interface_condensation_drive_unknown: '+str(exc)) from exc
-                raise
-            peq=equilibrium.equilibrium_partial_pressure_pa
-            if mode=='depleted_no_nucleation':
-                if po>peq:raise DomainExit('dry_interface_condensation_requires_unsupported_nucleation')
-                phase=0.
-            else:phase=represented(F(self.transfer_coefficients_mol_s_pa[i])*(F(peq)-F(po)))
-            if mode=='depleted_no_nucleation' or po==0:mu=entropy=None
-            else:
-                log=math.log1p((peq-po)/po) if abs(peq-po)<.5*po else math.log(peq)-math.log(po)
-                mu=represented(F(self.chemical.gas_constant_j_mol_k)*F(t)*F(log))
-                require(peq==po or mu!=0,'chemical_drive_unresolvable')
-                entropy=represented(F(phase)*F(mu)/F(t));require(entropy>=0,'phase_direction_entropy')
+            phase_out=evaluate_wet_phase(self.chemical,p,s.gas_amounts_mol[2],self.transfer_coefficients_mol_s_pa[i],mode)
+            phase=phase_out.phase_water_mol_s;po=phase_out.water_partial_pressure_pa
+            equilibrium=phase_out.equilibrium;mu=phase_out.chemical_driving_force_j_mol;entropy=phase_out.entropy_production_w_k
             mo=st.fluid_template.gas_phases['O2'].molar_mass_kg_mol
             q=st.reference.identified_value(st.reference.network.reactions[0].mass_change_kg_per_kg_extent)
             rows.append(WetCellRate(inv,extent,phase,po,equilibrium,mu,entropy,(-extent,represented(2*F(extent))),(-represented(F(extent)/F(mo)),0.,0.),represented(q*F(extent))))
             masses={k:st.fluid_template.gas_phases[k].molar_mass_kg_mol for k in st.gas_ids}
             gases.append(ideal_gas_state(dict(zip(st.gas_ids,s.gas_amounts_mol)),temperature_k=t,gas_volume_m3=p.gas_volume_m3,molar_masses_kg_mol=masses,gas_constant_j_mol_k=self.chemical.gas_constant_j_mol_k))
-        f=self.face;dl,dr=f.half_widths_m;names=self.storages[0].gas_ids
-        ex=face_exchange(*gases,area_m2=f.area_m2,distance_m=dl+dr,face_left_weight=dr/(dl+dr),effective_diffusivities_m2_s=dict(zip(names,f.diffusivities_m2_s)),permeability_m2=f.permeability_m2,relative_permeability=1.,viscosity_pa_s=f.viscosity_pa_s)
-        phases=self.storages[0].fluid_template.gas_phases
-        diff=tuple(ex.diffusive_mol_s[k]*phases[k]._curve.enthalpy_j_mol(ex.face_temperature_k) for k in names)
-        adv=tuple(0. if ex.advective_mol_s[k]==0 else ex.advective_mol_s[k]*phases[k]._curve.enthalpy_j_mol(ex.advective_donor_temperature_k) for k in names)
-        heat=conduction_rate_w(gases[0].temperature_k,gases[1].temperature_k,area_m2=f.area_m2,left_distance_m=dl,right_distance_m=dr,left_conductivity_w_m_k=f.conductivities_w_m_k[0],right_conductivity_w_m_k=f.conductivities_w_m_k[1])
-        power=number(math.fsum((heat,*diff,*adv)))
+        face_out=evaluate_wet_face(self.face,tuple(gases),self.storages[0].gas_ids,self.storages[0].fluid_template.gas_phases)
+        ex=face_out.exchange;heat=face_out.conduction_w;diff=face_out.diffusive_enthalpy_w;adv=face_out.advective_enthalpy_w;power=face_out.face_energy_w
         require(self.binding()==self._identity,'wet_pair_source_changed')
         return WetRates(tuple(rows),tuple(gases),ex,heat,diff,adv,power)
 
