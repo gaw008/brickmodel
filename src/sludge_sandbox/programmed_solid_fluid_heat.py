@@ -6,13 +6,13 @@ are then added to the same outward face ledger without changing stored energy.
 from .free_solid_slab import FreeSolidSlab,FreeSolidSlabEvaluation
 from .deforming_solid_heat import DeformingSolidHeat,DeformingSolidHeatEvaluation
 from dataclasses import dataclass,field
-import math
 import numpy as np
 
 from .deforming_solid_storage import _digest,DeformingStorageError
 from .boundary_program import BoundaryProgram,BoundaryProgramError,BoundaryState
 from .gas_transport import GasState,GasTransportError,ideal_gas_reservoir
-from .exchanges import BoundaryHeat,ExchangeError,boundary_heat
+from .exchanges import BoundaryHeat,ExchangeError
+from .surface_balance import solve_surface_balance
 from .integration import ConservedState,DomainExit,IntegrationError,Rates
 from .programmed_gas_heat import SurfacePolicy,_number,_label
 from .solid_fluid_heat import SolidFluidHeat,SolidFluidHeatEvaluation,_failure
@@ -137,46 +137,19 @@ class ProgrammedSolidFluidHeat:
 
     def _surface(self, cell_temperature, boundary, *, transport=None):
         base = self.transport if transport is None else transport
-        policy = self.surface_policy
         last = len(base.storages) - 1
         area = base._face_metric(last, None)[0]
-
-        def balance(surface):
-            heat = boundary_heat(
-                surface_temperature_k=surface, gas_temperature_k=boundary.gas_temperature_k,
-                radiation_temperature_k=boundary.radiation_temperature_k, area_m2=area,
-                convection_w_m2_k=self.convection_w_m2_k, emissivity=self.emissivity,
-                stefan_boltzmann_w_m2_k4=self.stefan_boltzmann_w_m2_k4)
-            # Shared slab or spherical outer resistance, directed surface -> cell.
-            into = base._conduction(surface, cell_temperature, last, None)
-            residual = math.fsum((into, -heat.convective_in_w, -heat.radiative_in_w))
-            scale = max(abs(into), abs(heat.convective_in_w), abs(heat.radiative_in_w))
-            limit = policy.absolute_residual_w + policy.relative_residual*scale
-            if not math.isfinite(residual) or not math.isfinite(limit):
-                raise ProgrammedSolidFluidHeatError('nonfinite_surface_balance')
-            return heat, into, residual, limit
-
-        if self.convection_w_m2_k == 0 and self.emissivity == 0:
-            return cell_temperature, *balance(cell_temperature), 0, (
-                'insulated_surface_undetermined' if base.conductivities_w_m_k[-1] == 0 else 'adiabatic')
-        low = min(cell_temperature, boundary.gas_temperature_k, boundary.radiation_temperature_k)
-        high = max(cell_temperature, boundary.gas_temperature_k, boundary.radiation_temperature_k)
-        for endpoint in (low, high):
-            values = balance(endpoint)
-            if abs(values[2]) <= values[3]:
-                return endpoint, *values, 0, 'balanced'
-        for iteration in range(1, policy.maximum_iterations+1):
-            middle = low/2 + high/2
-            if middle == low or middle == high:
-                raise ProgrammedSolidFluidHeatError('surface_root_unresolvable_in_float')
-            values = balance(middle)
-            if abs(values[2]) <= values[3]:
-                return middle, *values, iteration, 'balanced'
-            if values[2] < 0:
-                low = middle
-            else:
-                high = middle
-        raise ProgrammedSolidFluidHeatError('surface_iteration_limit')
+        return solve_surface_balance(
+            cell_temperature_k=cell_temperature,
+            gas_temperature_k=boundary.gas_temperature_k,
+            radiation_temperature_k=boundary.radiation_temperature_k,
+            area_m2=area, convection_w_m2_k=self.convection_w_m2_k,
+            emissivity=self.emissivity,
+            stefan_boltzmann_w_m2_k4=self.stefan_boltzmann_w_m2_k4,
+            policy=self.surface_policy,
+            conductive_into_cell=lambda surface: base._conduction(surface, cell_temperature, last, None),
+            zero_conductivity=base.conductivities_w_m_k[-1] == 0,
+            error_type=ProgrammedSolidFluidHeatError)
 
     def evaluate(self,state:ConservedState,time_s:float)->ProgrammedSolidFluidEvaluation:
         self._check_content()

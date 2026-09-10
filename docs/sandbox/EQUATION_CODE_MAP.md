@@ -2,6 +2,8 @@
 
 ## 当前新增映射
 
+来源开放映射：`surface_balance.solve_surface_balance` 共享旧 programmed solid/fluid 的半格传热—膜/辐射平衡；`programmed_source_wet_column.ProgrammedSourceWetColumn.evaluate` 接规定气体库和 gas-only face，右端总能流为气体焓减入格热。原 `integrate_source_column` 合并 ExactProgramView 节点并保存 `ProgrammedColumnStepLedger.boundary_integral`。新 `test_programmed_source_wet_column.py`、`test_surface_balance_kernel.py` 和[实际独立/安装/native证据](research/programmed-source-column-v1/REPORT.md)覆盖时间、符号、无重复热与守恒。来源开放软件已接通，原泥本构、跨格液水和全事件/应用仍缺。
+
 来源多格映射：`mass_wet_transport.evaluate_wet_phase/evaluate_wet_face` 由旧 WetPair 与新 `source_wet_column.SourceWetColumn.evaluate` 共用；`integrate_source_column` 使用 N+1 面与等摩尔相变积分、一次 binary64 投影及显式舍入账本。正式 `test_mass_wet_exchange_kernel.py`、`test_source_wet_column.py` 和[独立/原生证据](research/source-wet-column-v1/REPORT.md)覆盖旧结果保持、N=1/2/3/4、局部/全局守恒、失败前缀及限定时间收敛。源 N 格现已接入固定闭域分支；下表旧“源 N 格未接”保留为此前储能增量的范围，开放炉程/事件/完整材料仍缺。
 
 以下条目反映最新实现；后续历史阶段条目保留各自当时的验证范围。

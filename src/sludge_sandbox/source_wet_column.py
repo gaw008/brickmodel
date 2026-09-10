@@ -285,14 +285,23 @@ def _advance(column, old, faces, phase):
 
 
 def integrate_source_column(column, initial, *, duration_s, steps, maximum_wall_seconds=30.,
-                            energy_roundoff_budget_j=1e-8, inventory_roundoff_budget_mol=1e-12, cancel=None):
+                            energy_roundoff_budget_j=1e-8, inventory_roundoff_budget_mol=1e-12, cancel=None,
+                            start_time=None):
     """Bounded midpoint segment; accepted ledger excludes predictor exchanges.
 
     Budgets bound accumulated projection/decomposition arithmetic, not temporal
     truncation, inverse propagation or physical fit error. Predictor roundoff
     is recorded separately and never added to conserved-inventory balances.
+    Exact program knots split nominal steps; accepted ledger count can exceed
+    ``steps``. No float conversion is used for stage times or knot ordering.
     """
-    require(type(column) is SourceWetColumn and type(steps) is int and steps > 0, 'explicit_column_steps')
+    from .exact_event_clock import ExactEventTime
+    from .programmed_source_wet_column import ProgrammedSourceWetColumn
+    require(type(column) in (SourceWetColumn, ProgrammedSourceWetColumn)
+            and type(steps) is int and steps > 0, 'explicit_column_steps')
+    require(start_time is None or type(start_time) is ExactEventTime, 'explicit_exact_column_start_time')
+    origin = F() if start_time is None else start_time.seconds
+    programmed = type(column) is ProgrammedSourceWetColumn
     duration = F(_binary(duration_s, positive=True))
     h = duration/steps
     wall = _binary(maximum_wall_seconds, positive=True)
@@ -300,18 +309,18 @@ def integrate_source_column(column, initial, *, duration_s, steps, maximum_wall_
     inventory_budget = _binary(inventory_roundoff_budget_mol, positive=True)
     identity = column.model_identity
     start = time.monotonic()
-    states, times, observations, ledgers = [initial], [F()], [], []
+    states, times, observations, ledgers = [initial], [origin], [], []
     attempted = completed = 0
     used_energy = used_inventory = F()
 
-    def evaluate(state):
+    def evaluate(state, when):
         nonlocal attempted, completed
         if cancel is not None and cancel():
             raise InterruptedError('cancel_requested')
         if time.monotonic()-start > wall:
             raise TimeoutError('wall_budget_exceeded')
         attempted += 1
-        output = column.evaluate(state)
+        output = column.evaluate(state, ExactEventTime(when)) if programmed else column.evaluate(state)
         completed += 1
         if time.monotonic()-start > wall:
             raise TimeoutError('wall_budget_exceeded')
@@ -319,12 +328,25 @@ def integrate_source_column(column, initial, *, duration_s, steps, maximum_wall_
 
     status, reason = 'completed', None
     try:
-        for i in range(steps):
-            first = evaluate(states[-1])
-            predictor_faces, predictor_phase = _integrals(first, h/2)
+        knots = (tuple(t.seconds for t in column.breakpoints(ExactEventTime(origin), ExactEventTime(origin+duration)))
+                 if programmed else ())
+        def endpoints():
+            position = 0
+            for i in range(steps):
+                target = origin+(i+1)*h
+                while position < len(knots) and knots[position] < target:
+                    yield knots[position]
+                    position += 1
+                if position < len(knots) and knots[position] == target:
+                    position += 1
+                yield target
+        for endpoint in endpoints():
+            delta = endpoint-times[-1]
+            first = evaluate(states[-1], times[-1])
+            predictor_faces, predictor_phase = _integrals(first, delta/2)
             midpoint, predictor_error = _advance(column, states[-1], predictor_faces, predictor_phase)
-            middle = evaluate(midpoint)
-            faces, phase = _integrals(middle, h)
+            middle = evaluate(midpoint, times[-1]+delta/2)
+            faces, phase = _integrals(middle, delta)
             # Full step always starts from the prior accepted state.
             new, error = _advance(column, states[-1], faces, phase)
             candidate_energy = used_energy+error.absolute_energy_j+predictor_error.absolute_energy_j
@@ -332,10 +354,11 @@ def integrate_source_column(column, initial, *, duration_s, steps, maximum_wall_
             candidate_inventory = used_inventory+error.absolute_inventory_mol+predictor_error.absolute_inventory_mol
             require(candidate_energy <= F(energy_budget), 'column_energy_roundoff_budget_exceeded')
             require(candidate_inventory <= F(inventory_budget), 'column_inventory_roundoff_budget_exceeded')
-            last = evaluate(new)
-            ledger = ColumnStepLedger(h, faces, phase, error, predictor_error, midpoint)
+            last = evaluate(new, endpoint)
+            ledger = (column.step_ledger(delta, faces, phase, error, predictor_error, midpoint, middle) if programmed
+                      else ColumnStepLedger(delta, faces, phase, error, predictor_error, midpoint))
             states.append(new)
-            times.append((i+1)*h)
+            times.append(endpoint)
             observations.append(last)
             ledgers.append(ledger)
             used_energy, used_inventory = candidate_energy, candidate_inventory

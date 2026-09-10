@@ -1,0 +1,9 @@
+# Frozen bounded open-boundary oracle plan
+
+Before the run: N=1 artificial-liquid fixture; duration 0.125 s; programme knots 0, 0.0625, 0.125 s; gas T 330,340,335 K; radiation T 340,345,338 K; pressure 1.4e6,1.6e6,1.3e6 Pa; O2/N2/H2O fractions (.25,.6875,.0625),(.3125,.625,.0625),(.1875,.71875,.09375). These keep bulk advection inflowing while changing heat, pressure and composition. Source Cp and artificial liquid remain as the reviewed fixture; phase coefficient1e-9, gas transport test coefficients unchanged. Emissivity .5; other boundary coefficients unchanged.
+
+Independent reference: handwritten source polynomial and artificial-liquid U/v, brentq temperature inverse xtol1e-11 and rtol1e-14; direct chemical equilibrium and gas transport primitives; hand-combined gas enthalpies; independent brentq convection/radiation/surface root xtol1e-11. No new wrapper, storage evaluator/inverter or surface helper calls for oracle. Manually interpolate programme rather than call ExactProgramView as oracle. DOP853 separate solves on each programme segment, rtol2e-12, inventory atol1e-13 mol, energy atol1e-8 J, max step segment/2.
+
+Production midpoint 2/4/8 steps at this fixed interval; per-run wall cap12s, overall hard55s. Predeclared pass criteria: all runs completed, energy and inventory max errors strictly decrease, both refinement ratios lie between3 and5; exact accepted open U/O2/N2/water ledger equalities; surface conduction represented once and its declared signed balance defect retained. If any criterion fails, save actual failure without loosening tolerances or rerunning to select a better case. Freeze reviewed file hashes before/after; changes invalidate an unchanged-code statement.
+
+This is a manufactured-liquid numerical coupling test, not native EOS or independent reality-matched material validation.

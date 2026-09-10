@@ -1,0 +1,9 @@
+# Native example read-only review
+
+Read run_native.py and NATIVE_PLAN.md, without executing EOS. Construction reuses previously reviewed closed-column example, which in turn constructs actual source caloric/NIST gas/HEOS water and chemical providers. No artificial liquid fixture or ReactionReference path added. Program and coefficient sources explicitly identify virtual design/manufactured inputs. Serializer reuses the previously reviewed recursive dataclass/mapping/Fraction serializer; run and full model provenance are recorded.
+
+Audit arithmetic has correct outward-right signs: cell delta U equals left minus right face energy plus signed projection error; global O2/N2 and total water include left minus right external gas, with internal faces canceling. Phase redistribution is liquid loss/vapor gain with no extra energy source. Boundary inward conduction is negative outward conduction; exact component defect and reported residual/tolerance remain separate. Three-cell accepted step executes 25 Fraction/account assertions.
+
+NATIVE_PLAN explicitly requires completed status, one accepted ledger/endpoint, three successful evaluations, nonzero thermal/gas exchange and actual midpoint boundary. The script deliberately serializes failure prefixes and can exit zero without a successful step; main does not independently enforce these success gates. Parent/controller must inspect serialized run fields and counts, as planned. An empty audit loop is zero checks, never trajectory proof. Outer probe20s and installed full45s/outer60s limits are execution-plan gates, not physical accuracy certificates.
+
+No substantive issue identified in this bounded example contract. Hashes frozen in NATIVE_REVIEW_FREEZE.json. Approval is code read-through only; no actual native completion or material validation claimed by reviewer.

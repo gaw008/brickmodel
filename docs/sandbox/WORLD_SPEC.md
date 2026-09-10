@@ -2,6 +2,8 @@
 
 这是正在实现的规范，完成状态以 `ACCEPTANCE_MATRIX.md` 和实际测试为准。详细推导提案见 `ARCHITECTURE_PROPOSAL.md`；该提案不是实现证明。
 
+来源 N 格的开放扩展为 `ProgrammedSourceWetColumn`：中心闭合、右端规定无限气库，所有阶段查询 ExactProgramView，内部炉程节点细分名义步。右端正向外能流等于扩散/平流气体焓流减表面入格导热；对流/辐射只用于求该表面导热并另存诊断，不再加热一次。气体面温度插值与固体表面温度明确分开；灰表面面对有效黑体环境的原辐射近似保持。实际中点边界和表面差额进入接受步账本，固定闭域默认行为保持；材料、精确耗尽及全周期限制见[开放来源报告](research/programmed-source-column-v1/REPORT.md)。
+
 来源固定质量的 N 格分支为 `source_wet_column.SourceWetColumn`：每格共用来源 Cp 与真实水气的总 U 反解，显式关闭固体化学反应；内部共享面方向从左到右，每格更新为左面减右面，液汽相变等摩尔成对且不额外加潜热。固定中点的预测舍入和接受步舍入分开记账，失败只保留完整步。当前两端只准入 `closed_no_flux`，体积/输运保持制造测试分类；跨格液态水、开放炉程、源路径事件和来源完整材料仍待接入。数值范围与真实水短轨迹见[来源多格报告](research/source-wet-column-v1/REPORT.md)。
 
 来源干物湿态储能入口现为 `source_wet_storage.SourceWetStorage`：固定原Arlabosse干质量与域内相对能量零点，使用同一 `evaluate_wet_fluid` 聚合实际水/气压力与储能，显式关闭化学转化。液汽重新分配通过共同总U反解温度，不增加第二份潜热。点Cp与全温区导数下界分开；总U舍入和可用体积误差引起的液水压力能误差单独计入数值界。该入口只接受明确的测试用恒定可用流体体积，真实同材料体积与拟合误差仍未知；没有bulk/固体体积就不输出材料总焓。严格binary64输入、材料边界和实际例子见[来源湿态储能报告](research/source-wet-storage-v1/REPORT.md)。这不表示旧两格反应/耗尽主机或全周期已经准入来源材料。
