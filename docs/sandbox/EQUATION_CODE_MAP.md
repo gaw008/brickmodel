@@ -271,3 +271,6 @@ HEOS共存数值政策 `NUM-HEOS-COEXISTENCE-BACKTRACK-1`：固定T的F=(Δp,Δg
 
 
 ordinary native实际full/fine已验证：research/water-native-stage-actual-v1包含9回调/4freshproof、原严格逐路径元素/质量/水/能量及六gate独立复算，source252/安装104绑定、全部原失败和运行产物。只是一段0.001s条件性试算；event/controller与完整材料烧成仍未完成。
+
+
+原生控制器接线（2026-09-09）：mass_wet_controller_pressure.py的显式event/common上下文将实际观测与会话绑定，mass_wet_exact_controller.py同session保拒步/细化/独立路径历史，原全部门槛和原子发布未变；源码14/安装3关键路径实际通过。证据research/water-native-controller-v1。新近事件初态真实水2forward+1pair及独立保存算术见research/water-native-near-event-initial-v1；均不授完整原生controller、材料或全烧成验收。

@@ -1,5 +1,5 @@
 """Unit-separated autonomous exact wet-to-dry packet research controller."""
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, replace, fields
 from fractions import Fraction as F
 import time
 from sludge_sandbox.mass_storage_bridge import require
@@ -115,6 +115,16 @@ class MixedControllerResult:
     qualification: str='autonomous_research_single_atomic_packet_no_native_wet_certificate_no_codec_service_or_resume'
 
 
+@dataclass(frozen=True, kw_only=True)
+class NativePressureMixedControllerResult(MixedControllerResult):
+    """Versioned research result; intentionally unsupported by legacy codec."""
+    original_controller_inputs_json: bytes
+    pressure_session_before: object
+    pressure_session_after: object
+    pressure_comparison_contexts: tuple
+    native_schema: str = 'mixed_native_pressure_controller_v1'
+
+
 class Stop(ValueError):
     def __init__(self,status,reason):
         super().__init__(reason);self.status=status
@@ -124,22 +134,37 @@ def integrate_mixed_exact(pair: WetPair, initial: tuple, *, start: T, end: T,
         stage_policy: MixedStagePolicy, roundoff_policy: DepletionRoundoffPolicy,
         original_liquid_fraction_limit: F, controller_policy: MixedControllerPolicy,
         constant_liquid_fixture: ManufacturedConstantLiquidFixture | None=None,
-        cancel=None) -> MixedControllerResult:
+        cancel=None, pressure_session=None) -> MixedControllerResult:
     require(type(pair) is WetPair and type(initial) is tuple and len(initial)==2,'typed_original_mixed_host_state')
     require(type(start) is T and type(end) is T and start<end,'original_exact_interval')
     require(type(stage_policy) is MixedStagePolicy and type(roundoff_policy) is DepletionRoundoffPolicy and type(controller_policy) is MixedControllerPolicy,'explicit_original_policies')
     controller_policy.__post_init__();stage_policy.__post_init__()
+    session_before=None;native_inputs_json=None;pressure_contexts=[];comparison_progress=()
+    if pressure_session is not None:
+        from sludge_sandbox.mass_wet_pressure_session import PressureSession
+        from sludge_sandbox.mass_wet_pressure_interval import encoded
+        from sludge_sandbox.mass_wet_controller_pressure import ControllerPressureQueryContext,controller_pressure_radius
+        require(type(pressure_session) is PressureSession,'explicit_controller_pressure_session')
+        require(constant_liquid_fixture is None,'native_controller_pressure_and_fixture_are_exclusive')
+        session_before=pressure_session.snapshot()
     cp=controller_policy;sp=stage_policy
     require(cp.approach_cap_s<=F(sp.maximum_step_s),'approach_within_original_step_domain')
     original_binding=pair.binding()
     context=MixedWritebackContext(initial,start,original_binding,source_labels(pair),pair.storages[0].water.reference.molar_mass_kg_mol,roundoff_policy,original_liquid_fraction_limit)
     empty=MixedWritebackTotals.empty(context)
     original_digest=_digest((initial,start,end,sp,roundoff_policy,original_liquid_fraction_limit,cp,context))
+    if pressure_session is not None:
+        native_inputs_json=encoded((initial,start,end,sp,roundoff_policy,original_liquid_fraction_limit,cp,context,original_binding,
+            session_before.original_configuration_json,session_before.original_physics_json,session_before.source_before))
     begun=time.monotonic();refs=[];accepted=None;observation_journal=[]
     costs={k:0 for k in ('evaluations_attempted','evaluations_completed','ordinary_trials','ordinary_rejected','terminal_attempts','panel_attempts','observation_attempts','observation_completed')}
 
     def elapsed():return time.monotonic()-begun
     def guard():
+        if pressure_session is not None:
+            snapshot=pressure_session.snapshot()
+            require(encoded((initial,start,end,sp,roundoff_policy,original_liquid_fraction_limit,cp,context,original_binding,
+                snapshot.original_configuration_json,snapshot.original_physics_json,snapshot.source_before))==native_inputs_json,'native_original_controller_inputs_changed')
         require(pair.binding()==original_binding and _digest((initial,start,end,sp,roundoff_policy,original_liquid_fraction_limit,cp,context))==original_digest,'original_binding_or_policy_changed')
         if constant_liquid_fixture is not None:constant_liquid_fixture.check(pair)
         if cancel is not None and cancel():raise Stop('cancelled','cancel_requested')
@@ -147,6 +172,17 @@ def integrate_mixed_exact(pair: WetPair, initial: tuple, *, start: T, end: T,
         if costs['evaluations_attempted']>cp.maximum_evaluations or costs['panel_attempts']>cp.maximum_panel_attempts:raise Stop('resource_limit','original_cumulative_work_budget')
     def remaining_wall():
         guard();return max(0.,cp.maximum_wall_seconds-elapsed())
+    def native_guard():
+        # Session/stage classify actual exception types, never reason strings.
+        try:guard()
+        except Stop as exc:
+            if exc.status=='cancelled':raise InterruptedError(str(exc)) from exc
+            if exc.status=='resource_limit':raise TimeoutError(str(exc)) from exc
+            raise
+    def native_cancel():
+        native_guard();return False
+    def native_remaining_wall():
+        native_guard();return max(0.,cp.maximum_wall_seconds-elapsed())
     def fixture_for(op):
         if constant_liquid_fixture is None:return None
         require(op.storages==pair.storages and op.face==pair.face and op.rate_constants_per_s==pair.rate_constants_per_s and op.transfer_coefficients_mol_s_pa==pair.transfer_coefficients_mol_s_pa,'mode_change_only_physics_binding')
@@ -212,7 +248,10 @@ def integrate_mixed_exact(pair: WetPair, initial: tuple, *, start: T, end: T,
                 while True:
                     reserve_panels(3);costs['ordinary_trials']+=1
                     policy=replace(sp,maximum_evaluations=min(sp.maximum_evaluations,max(0,cp.maximum_evaluations-costs['evaluations_attempted'])),maximum_wall_seconds=min(sp.maximum_wall_seconds,remaining_wall()))
-                    trial=try_step_doubling(op,state,start=now,end=now.shifted(duration),policy=policy,constant_liquid_fixture=fixture_for(op),cancel=cancel)
+                    if pressure_session is None:
+                        trial=try_step_doubling(op,state,start=now,end=now.shifted(duration),policy=policy,constant_liquid_fixture=fixture_for(op),cancel=cancel)
+                    else:
+                        trial=try_step_doubling(op,state,start=now,end=now.shifted(duration),policy=policy,pressure_session=pressure_session,cancel=native_cancel)
                     attempts.append(('ordinary',trial));account(trial)
                     if trial.status=='rejected':
                         costs['ordinary_rejected']+=1;duration/=2
@@ -231,7 +270,7 @@ def integrate_mixed_exact(pair: WetPair, initial: tuple, *, start: T, end: T,
         except (ValueError,OverflowError) as exc:status='failed';reason=str(exc)
         return MixedPath(status,reason,tuple(times),tuple(states),tuple(steps),tuple(frames),op,total,tuple(grid),tuple(attempts),last)
 
-    def differences(a,b,op_a,op_b,obs_a,obs_b,ta,tb,width_a=F(),width_b=F()):
+    def differences(a,b,op_a,op_b,obs_a,obs_b,ta,tb,width_a=F(),width_b=F(),*,comparison_kind=None,comparison_level=None,comparison_role=None,event_index=None,selected_cell=None):
         mass=max(abs(F(x)-F(y)) for s,t in zip(a,b) for x,y in zip(s.solid_mass_kg,t.solid_mass_kg))
         mol=max(abs(F(x)-F(y)) for s,t in zip(a,b) for x,y in zip((s.liquid_water_mol,*s.gas_amounts_mol),(t.liquid_water_mol,*t.gas_amounts_mol)))
         energy=max(abs(F(s.internal_energy_j)-F(t.internal_energy_j)) for s,t in zip(a,b))
@@ -239,18 +278,36 @@ def integrate_mixed_exact(pair: WetPair, initial: tuple, *, start: T, end: T,
         for i,(ca,cb) in enumerate(zip(obs_a.rates.cells,obs_b.rates.cells)):
             va,vb=ca.inverse,cb.inverse
             temp=max(temp,abs(F(va.point.temperature_k)-F(vb.point.temperature_k))+F(va.temperature_error_bound_k)+F(vb.temperature_error_bound_k))
-            pressure=max(pressure,abs(F(va.point.pressure_pa)-F(vb.point.pressure_pa))+pressure_radius(op_a,a[i],va,i,fixture_for(op_a))+pressure_radius(op_b,b[i],vb,i,fixture_for(op_b)))
+            if pressure_session is None:
+                pressure=max(pressure,abs(F(va.point.pressure_pa)-F(vb.point.pressure_pa))+pressure_radius(op_a,a[i],va,i,fixture_for(op_a))+pressure_radius(op_b,b[i],vb,i,fixture_for(op_b)))
+            else:
+                radii=[]
+                for side,op,states,obs,at in (('reference',op_a,a,obs_a,ta),('candidate',op_b,b,obs_b,tb)):
+                    ctx=ControllerPressureQueryContext(comparison_kind,side,comparison_level,comparison_role,event_index,selected_cell,i,at,op.binding(),op.interfaces,native_inputs_json)
+                    pressure_contexts.append(ctx)
+                    try:
+                        radius=controller_pressure_radius(op,states,obs,i,pressure_session=pressure_session,context=ctx,
+                            caller_guard=native_guard,remaining_caller_wall=native_remaining_wall)
+                    except InterruptedError as exc:raise Stop('cancelled',str(exc)) from exc
+                    except TimeoutError as exc:raise Stop('resource_limit',str(exc)) from exc
+                    except DomainExit as exc:raise Stop('domain_exit',str(exc)) from exc
+                    radii.append(radius)
+                pressure=max(pressure,abs(F(va.point.pressure_pa)-F(vb.point.pressure_pa))+sum(radii,F()))
         return mass,mol,energy,temp,pressure,abs(ta.elapsed_since(tb))+width_a+width_b
-    def compare(a,b):
+    def compare(a,b,comparison_level,comparison_role):
+        nonlocal comparison_progress
+        if pressure_session is not None:comparison_progress=()
         require(a.status==b.status=='completed','completed_comparison_paths')
         require(tuple(f.terminal.root_order.selected_cell for f in a.frames)==tuple(f.terminal.root_order.selected_cell for f in b.frames) and a.operator.interfaces==b.operator.interfaces and a.frames,'matching_complete_event_sequence')
         rows=[]
-        for fa,fb in zip(a.frames,b.frames):
+        for event_index,(fa,fb) in enumerate(zip(a.frames,b.frames)):
             require(fa.modes_before==fb.modes_before and fa.modes_after==fb.modes_after,'per_event_mode_alignment')
             ea,eb=fa.terminal.evidence.clock,fb.terminal.evidence.clock
-            values=differences(fa.state,fb.state,fa.operator,fb.operator,fa.observation,fb.observation,fa.time,fb.time,ea.upper.elapsed_since(ea.lower),eb.upper.elapsed_since(eb.lower))
+            values=differences(fa.state,fb.state,fa.operator,fb.operator,fa.observation,fb.observation,fa.time,fb.time,ea.upper.elapsed_since(ea.lower),eb.upper.elapsed_since(eb.lower),comparison_kind='event',comparison_level=comparison_level,comparison_role=comparison_role,event_index=event_index,selected_cell=fa.terminal.root_order.selected_cell)
             rows.append(('event',fa.terminal.root_order.selected_cell,values))
-        rows.append(('common',None,differences(a.states[-1],b.states[-1],a.operator,b.operator,a.final_observation,b.final_observation,a.times[-1],b.times[-1])))
+            if pressure_session is not None:comparison_progress=tuple(rows)
+        rows.append(('common',None,differences(a.states[-1],b.states[-1],a.operator,b.operator,a.final_observation,b.final_observation,a.times[-1],b.times[-1],comparison_kind='common',comparison_level=comparison_level,comparison_role=comparison_role)))
+        if pressure_session is not None:comparison_progress=tuple(rows)
         bounds=tuple(map(F,(sp.solid_mass_absolute_kg,sp.amount_absolute_mol,sp.energy_absolute_j,sp.temperature_absolute_k,sp.pressure_absolute_pa,sp.time_absolute_s)))
         return all(all(v<=bound for v,bound in zip(row[2],bounds)) for row in rows),tuple(rows)
 
@@ -264,21 +321,23 @@ def integrate_mixed_exact(pair: WetPair, initial: tuple, *, start: T, end: T,
                 refs.append(MixedRefinement(level,'terminal',window,cp.approach_cap_s,cp.safe_inventory_fraction,path.status,path,(),tuple((k,costs[k]-before[k]) for k in costs)))
                 raise Stop(path.status,path.reason)
             try:
-                ok,comparison=(False,()) if previous is None else compare(previous,path)
+                ok,comparison=(False,()) if previous is None else compare(previous,path,level,'terminal')
             except (ValueError,OverflowError) as exc:
-                refs.append(MixedRefinement(level,'terminal',window,cp.approach_cap_s,cp.safe_inventory_fraction,'comparison_error:'+str(exc),path,(),tuple((k,costs[k]-before[k]) for k in costs)))
+                refs.append(MixedRefinement(level,'terminal',window,cp.approach_cap_s,cp.safe_inventory_fraction,'comparison_error:'+str(exc),path,comparison_progress if pressure_session is not None else (),tuple((k,costs[k]-before[k]) for k in costs)))
                 raise
             label='coarse_reference' if previous is None else 'comparison_pass' if ok else 'comparison_fail'
             refs.append(MixedRefinement(level,'terminal',window,cp.approach_cap_s,cp.safe_inventory_fraction,label,path,comparison,tuple((k,costs[k]-before[k]) for k in costs)))
             passes=passes+1 if ok else 0
             if passes>=2:
+                if pressure_session is not None:comparison_progress=()
                 before=costs.copy();fine=proposal(window,cp.approach_cap_s/2,cp.safe_inventory_fraction/2)
                 detail=();ok=False
                 try:
                     if fine.status!='completed':raise Stop(fine.status,fine.reason)
                     require(path.approach_grid and fine.approach_grid and path.approach_grid!=fine.approach_grid,'independent_pre_first_approach_grid_uninformative')
-                    ok,detail=compare(path,fine)
+                    ok,detail=compare(path,fine,level,'independent')
                 finally:
+                    if pressure_session is not None and not detail:detail=comparison_progress
                     refs.append(MixedRefinement(level,'independent',window,cp.approach_cap_s/2,cp.safe_inventory_fraction/2,'comparison_pass' if ok else 'comparison_fail',fine,detail,tuple((k,costs[k]-before[k]) for k in costs)))
                 if not ok:raise Stop('failed','independent_approach_comparison_failed')
                 audit_prefix(path,initial,sp)
@@ -287,7 +346,13 @@ def integrate_mixed_exact(pair: WetPair, initial: tuple, *, start: T, end: T,
         else:raise Stop('failed','original_refinement_budget_exhausted')
     except Stop as exc:status=exc.status;reason=str(exc)
     except (ValueError,OverflowError) as exc:status='failed';reason=str(exc)
-    return MixedControllerResult(status,reason,accepted.times if accepted else (start,),accepted.states if accepted else (initial,),accepted.steps if accepted else (), (accepted.frames,) if accepted else (),accepted.operator if accepted else pair,accepted.totals if accepted else empty,tuple(refs),tuple(observation_journal),tuple(costs.items()),elapsed(),initial,start,end,sp,roundoff_policy,original_liquid_fraction_limit,cp)
+    result=MixedControllerResult(status,reason,accepted.times if accepted else (start,),accepted.states if accepted else (initial,),accepted.steps if accepted else (), (accepted.frames,) if accepted else (),accepted.operator if accepted else pair,accepted.totals if accepted else empty,tuple(refs),tuple(observation_journal),tuple(costs.items()),elapsed(),initial,start,end,sp,roundoff_policy,original_liquid_fraction_limit,cp)
+
+    if pressure_session is None:return result
+    return NativePressureMixedControllerResult(**{f.name:getattr(result,f.name) for f in fields(MixedControllerResult) if f.name!='qualification'},
+        qualification='autonomous_research_single_atomic_packet_conditional_native_pressure_no_codec_service_or_resume',
+        original_controller_inputs_json=native_inputs_json,pressure_session_before=session_before,
+        pressure_session_after=pressure_session.snapshot(),pressure_comparison_contexts=tuple(pressure_contexts))
 
 
 def audit_prefix(path: MixedPath, initial: tuple, policy: MixedStagePolicy) -> None:

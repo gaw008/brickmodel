@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新正式实现：native controller51325b50/helper1a7f13d2/test22d0ee81已应用；独立14+2测试及默认parity通过，正式source14项127.33s（98355终态0），安装3关键集成项41.90s（72337终态0），105模块源码/实际安装全等。证据research/water-native-controller-v1已逐成员归档。仅编排测试使用instrumented session，完整原生controller尚未执行；新codec/service/resume未准入。
+
+最新原生测量：新tiny-positive库存制造案例2forward+1pair完成（73780终态0，whole6.920674/external7.045134s），254源/104旧安装身份前后相同，独立保存结果审计通过，全部254输入副本已保。research/water-native-near-event-initial-v1（310成员7342863bytes，ff85aed3）归档逐成员核实；两tau约0.0001998285/0.0003998356仅诊断，未定位事件。旧104执行冻结不能拿新105安装继续跑。当前root无运行进程。
+
+下一实际工作：Wang2021真实干燥温度留出检验正在/private/tmp/brick-wang-drying-holdout-v1/candidate实现；source_review核允许有限一维MR假设，numerical_review独立数学审查中。固定40/60°C校准、50°C留出，尚无数据拟合/预测/解锁heldout；PREREGISTRATION_DRAFT定义三参数Robin扩散、原图读数/未知实验误差分开及固定120s训练预算。root仅为独立高精度oracle在隔离环境新增BSD mpmath1.3.0，其余既有依赖未动。须先审查冻结数值实现与源/参数/训练计划，再实际拟合并锁参数、最后单次留出。完整材料/全湿烧冷/三机制公开对照/空间/多代/应用验收保持原合同未完成；本轮属于progress，Goal active。
+
 继续进度（证据提交d3d25d3之后）：native_controller_candidate仍只在tmp，尚未应用/安装/原生运行。作者已复现并修复比较失败时丢失先前完整比较行的RED；ref/path本身原已保存（Stop继承ValueError，已更正初判）。新pure测试与冻结待完成，之后交Ptolemy独审。Carson只读保存轨迹计数：原四路径共396host/36ordinary/8terminal/116chargedpanels；同网格native压力预计98query/392proof，实测外推约40.6分钟而非上界。因此先设计并冻结新正液库存短时耗尽制造案例，只测初态forward+一次pair observation；尚未批准或运行新native，不直接放大全controller预算。成本与审查合同在tmp native_controller_cost_review、native_controller_review；完整Goal仍active且未完成。
 
 最新完成：ordinary native full/fine保存证据独审PASS，9callbacks/18cell观测的U/误差、三path原strict守恒及全six比较、4query的Krawczyk/机械角点/全tube/native体积界均复核。源252/安装104成员字节保持；没有重跑native。证据正式归档research/water-native-stage-actual-v1（318成员8079937bytes，全部成员逐SHA解包核实）。原生session83328与tests3803/50006已终态，当前root无运行进程。HEAD726362a已保存正式实现；下一仅tmp native_controller_candidate在实现，未准入。完整科学与软件Goal保持未完成，active。
