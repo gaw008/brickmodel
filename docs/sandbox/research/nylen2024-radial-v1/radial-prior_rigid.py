@@ -11,7 +11,6 @@ from types import MappingProxyType
 
 import numpy as np
 
-from .spherical_geometry import FixedSphericalShells
 from .exchanges import ExchangeError, conduction_rate_w
 from .gas_heat_model import _mobility, _serial_coefficient, GasHeatModelError
 from .gas_transport import GasState, GasTransportError, face_exchange, ideal_gas_state
@@ -126,7 +125,6 @@ class RigidFluidHeat:
     outer_reservoir_source_ids: tuple[str,...] = ()
     outer_surface_temperature_k: float | None = None
     outer_heat_source_ids: tuple[str,...] = ()
-    spherical_geometry: FixedSphericalShells | None = None
 
     def __post_init__(self):
         if (not isinstance(self.storages,(tuple,list)) or not self.storages
@@ -173,17 +171,8 @@ class RigidFluidHeat:
                 positive=name in ('cell_widths_m','viscosity_pa_s')))
         if any(v>1 for v in self.relative_permeability):
             raise RigidFluidHeatError('relative_permeability_exceeds_one')
-        geometry=self.spherical_geometry
-        if geometry is not None:
-            if type(geometry) is not FixedSphericalShells or geometry.cells!=count:
-                raise RigidFluidHeatError('explicit_matching_spherical_geometry_required')
-            def same(a,b):return abs(a-b)<=2*max(math.ulp(a),math.ulp(b))
-            if not same(area,geometry.areas_m2[-1]):
-                raise RigidFluidHeatError('spherical_outer_area_mismatch')
-            if any(not same(a,b) for a,b in zip(self.cell_widths_m,geometry.widths_m)):
-                raise RigidFluidHeatError('spherical_widths_mismatch')
-        for i,(storage,width) in enumerate(zip(self.storages,self.cell_widths_m)):
-            if width/4==0 or storage.mechanical.available_pore_volume_m3>_num(self.cell_bulk_volume_m3(i),'bulk_volume',positive=True):
+        for storage,width in zip(self.storages,self.cell_widths_m):
+            if width/4==0 or storage.mechanical.available_pore_volume_m3>_num(area*width,'bulk_volume',positive=True):
                 raise RigidFluidHeatError('cell_available_volume_exceeds_bulk_or_unresolvable_width')
         diffusion=self.effective_diffusivities_m2_s
         if not isinstance(diffusion,Mapping) or set(diffusion)!=set(names):
@@ -234,7 +223,6 @@ class RigidFluidHeat:
     @property
     def source_ids(self):
         sources=set(self.coefficient_source_ids+self.outer_heat_source_ids+self.outer_reservoir_source_ids)
-        if self.spherical_geometry is not None:sources.update(self.spherical_geometry.source_ids)
         for storage in self.storages:
             sources.update(storage.envelope.source_ids)
             sources.update(storage.mechanical.water.source_ids)
@@ -274,36 +262,9 @@ class RigidFluidHeat:
                              self.storages,state.amounts_mol,state.internal_energy_j,self.temperature_brackets_k))
         except _FAILURES as exc:_raise_failure(exc)
 
-    def cell_bulk_volume_m3(self,index: int) -> float:
-        return (self.face_area_m2*self.cell_widths_m[index] if self.spherical_geometry is None
-                else self.spherical_geometry.volumes_m3[index])
-
-    def _face_metric(self,left_index,right_index):
-        if self.spherical_geometry is not None:
-            if right_index is not None and right_index!=left_index+1:
-                raise RigidFluidHeatError('adjacent_spherical_cells_required')
-            if right_index is None and left_index!=len(self.storages)-1:
-                raise RigidFluidHeatError('outer_spherical_face_required')
-            return self.spherical_geometry.face_metric(left_index+1)
-        return (self.face_area_m2,self.cell_widths_m[left_index]/2,
-                self.cell_widths_m[right_index]/2 if right_index is not None else 0.)
-
-    def _conduction(self,left_temperature,right_temperature,left_index,right_index):
-        if self.spherical_geometry is None:
-            # Preserve the original slab floating arithmetic, including boundary quarters.
-            dl=self.cell_widths_m[left_index]/2 if right_index is not None else self.cell_widths_m[left_index]/4
-            dr=self.cell_widths_m[right_index]/2 if right_index is not None else self.cell_widths_m[left_index]/4
-            area=self.face_area_m2
-        else:
-            area,dl,dr=self._face_metric(left_index,right_index)
-            if right_index is None:dl,dr=dl/2,dl/2
-        return conduction_rate_w(left_temperature,right_temperature,area_m2=area,
-            left_distance_m=dl,right_distance_m=dr,
-            left_conductivity_w_m_k=self.conductivities_w_m_k[left_index],
-            right_conductivity_w_m_k=self.conductivities_w_m_k[right_index if right_index is not None else left_index])
-
     def _face(self,left,right,left_index,right_index):
-        area,dl,dr=self._face_metric(left_index,right_index)
+        dl=self.cell_widths_m[left_index]/2
+        dr=self.cell_widths_m[right_index]/2 if right_index is not None else 0.
         mobility=_mobility(self.permeability_m2[left_index],self.relative_permeability[left_index],self.viscosity_pa_s[left_index])
         viscosity=self.viscosity_pa_s[left_index]
         diffusion={n:v[left_index] for n,v in self.effective_diffusivities_m2_s.items()}
@@ -316,7 +277,7 @@ class RigidFluidHeat:
                        for n,v in self.effective_diffusivities_m2_s.items()}
         permeability=_num(mobility*viscosity,'assembled_permeability',nonnegative=True)
         if mobility and permeability==0:raise RigidFluidHeatError('unresolvable_mobility_factorization')
-        return face_exchange(left,right,area_m2=area,distance_m=dl+dr,
+        return face_exchange(left,right,area_m2=self.face_area_m2,distance_m=dl+dr,
             face_left_weight=dr/(dl+dr),effective_diffusivities_m2_s=diffusion,
             permeability_m2=permeability,relative_permeability=1.,viscosity_pa_s=viscosity)
 
@@ -346,14 +307,22 @@ class RigidFluidHeat:
                 left,right=face-1,face
                 exchange=self._face(gases[left],gases[right],left,right)
                 fn[face,1:]=[exchange.net_mol_s[n] for n in names]
-                heat=self._conduction(gases[left].temperature_k,gases[right].temperature_k,left,right)
+                heat=conduction_rate_w(gases[left].temperature_k,gases[right].temperature_k,
+                    area_m2=self.face_area_m2,left_distance_m=self.cell_widths_m[left]/2,
+                    right_distance_m=self.cell_widths_m[right]/2,
+                    left_conductivity_w_m_k=self.conductivities_w_m_k[left],
+                    right_conductivity_w_m_k=self.conductivities_w_m_k[right])
                 fe[face]=_sum((heat,self._enthalpy(exchange)))
             if self.outer_reservoir is not None:
                 exchange=self._face(gases[-1],self.outer_reservoir,count-1,None)
                 fn[-1,1:]=[exchange.net_mol_s[n] for n in names]
                 fe[-1]=self._enthalpy(exchange)
             if self.outer_surface_temperature_k is not None:
-                heat=self._conduction(gases[-1].temperature_k,self.outer_surface_temperature_k,count-1,None)
+                heat=conduction_rate_w(gases[-1].temperature_k,self.outer_surface_temperature_k,
+                    area_m2=self.face_area_m2,left_distance_m=self.cell_widths_m[-1]/4,
+                    right_distance_m=self.cell_widths_m[-1]/4,
+                    left_conductivity_w_m_k=self.conductivities_w_m_k[-1],
+                    right_conductivity_w_m_k=self.conductivities_w_m_k[-1])
                 fe[-1]=_sum((fe[-1],heat))
         except _FAILURES as exc:_raise_failure(exc)
         return FluidHeatEvaluation(Rates(fn,fe,np.zeros_like(state.amounts_mol),np.zeros(count)),decoded,gases,inverses)

@@ -274,7 +274,7 @@ class RigidFluidHeat:
                              self.storages,state.amounts_mol,state.internal_energy_j,self.temperature_brackets_k))
         except _FAILURES as exc:_raise_failure(exc)
 
-    def cell_bulk_volume_m3(self,index: int) -> float:
+    def cell_bulk_volume_m3(self,index):
         return (self.face_area_m2*self.cell_widths_m[index] if self.spherical_geometry is None
                 else self.spherical_geometry.volumes_m3[index])
 

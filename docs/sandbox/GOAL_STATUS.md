@@ -4,6 +4,10 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+最新实际增量：Nylen2024 Figure8已提取43个明确可辨内部温度符号，独立SciPy连通域/Fraction坐标复核通过；不可辨平台保留缺项，读图界不是实验标准差，全部为development数据。固定球壳体积/面积/半壳阻力已接入原RigidFluidHeat/SolidFluidHeat和既有integrate；4/8/16格解析模态RMS约0.0493323/0.0122302/0.00302994 K，最细时间步减半差3.44535e-6 K。非editable实际安装四组相关测试55项34.20s通过，107模块源/安装字节核实，session85588已终态0。证据见[球形传热与温度读数](research/nylen2024-radial-v1/REPORT.md)。这是制造物性的数值验证，未完成Nylen材料预测、原泥湿烧冷全流程或原Goal验收。
+
+下一具体实现为共享表面对流/辐射求解的球形半壳阻力接线；当前球形程序边界/液体输运/平板变形明确拒绝。MSJ/CB同材料Cp/k/湿输运/实际热边界与收缩仍缺，不能拼接Rosheim/Arlabosse参数。上一说明prompt回合没有新增实现；本回合实际审核/安装验证/证据落盘属于progress，Goal保持active。以下为历史状态。
+
 当前实际进展：Amadou2006 Rosheim原污泥的Oswin解吸关系已正式实现`amadou_desorption.py`，原始k/n与两个温度点独立核读，打印域不等号/百分号冲突显式保留。源28、独立28+3、安装28项均通过；实际安装aw0.4/30°C得到Xeq0.09461588564kg/kg并输出三节点追溯。16个原实验符号用SVG重建并经独立Fraction/mpmath复核，全部打印拟合落入保守图示包络；这是原作者拟合重建，不是新留出。报告见[解吸实现](research/amadou2006-desorption-v1/REPORT.md)。原PDF/SVG仅忽略缓存，元数据8070dddb固定，未改既有水资产或接入整体U。
 
 新公开证据：Nylen2024合法全文已取得并核读，data/sandbox/research/nylen2024-drying/source.json保存Table2十组条件，独立审计通过；首行编号为空、run1为本项目行序ID，22内部温度/22质量试验分开，18表面温度记录不额外算独立试验。已隔离摘要工艺/气速冲突、未定义MR、Figure3/4缺原料身份、Table3直径缩率矛盾。下一具体工作以明确MSJ/CB的Figure8/9温度场对照为目标，事前定义新条件划分并取得同域热湿本构；不能把Rosheim/Wang/Nylen参数拼成同材料。解吸热/连续T/动力学仍缺，完整原Goal保持active。本轮属progress；所有root安装/测试已终态，无运行进程。

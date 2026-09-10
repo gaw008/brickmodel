@@ -55,6 +55,8 @@ class FreeSolidSlab:
         if (type(base) is not SolidFluidHeat or type(points) is not tuple or not points
                 or len(points)!=len(base.storages) or any(type(p) is not CurrentSolidStorage for p in points)):
             raise IntegrationError('explicit_complete_current_solid_points_required')
+        if base.transport.spherical_geometry is not None:
+            raise IntegrationError('spherical_slab_motion_not_supported')
         if self.solid_inventory_regime not in ('fixed_solid','reacting_manufactured'):
             raise IntegrationError('explicit_solid_inventory_regime_required')
         reacting=self.solid_inventory_regime=='reacting_manufactured'

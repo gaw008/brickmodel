@@ -5,6 +5,7 @@ import numpy as np
 from .integration import ConservedState,DomainExit,IntegrationError,Rates
 from .rigid_fluid_heat import RigidFluidHeat,_num,_column,_FAILURES,_raise_failure,_sum
 from .gas_transport import ideal_gas_state
+from .exchanges import conduction_rate_w
 
 
 class SolidFluidHeatError(IntegrationError):

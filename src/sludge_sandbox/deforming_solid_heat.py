@@ -63,6 +63,8 @@ class DeformingSolidHeat:
         base=self.base_model
         if type(base) is not SolidFluidHeat or not isinstance(self.point_storages,tuple) or not self.point_storages:
             raise DeformingSolidHeatError('explicit_solid_base_and_points_required')
+        if base.transport.spherical_geometry is not None:
+            raise DeformingSolidHeatError('spherical_slab_motion_not_supported')
         if len(self.point_storages)!=len(base.storages) or any(type(p) is not DeformingSolidStorage for p in self.point_storages):
             raise DeformingSolidHeatError('complete_point_storages_required')
         if self.solid_inventory_regime not in ('fixed_solid','reacting_manufactured'):

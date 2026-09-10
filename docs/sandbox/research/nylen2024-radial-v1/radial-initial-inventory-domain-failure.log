@@ -1,0 +1,139 @@
+F..                                                                      [100%]
+=================================== FAILURES ===================================
+_____________________ test_prior_slab_full_rate_bit_parity _____________________
+
+self = RigidFluidHeat(storages=(RigidStorage(mechanical=RigidWaterGas(water=WaterProperties(reference=WaterReference(molar_ma...ne, outer_reservoir_source_ids=(), outer_surface_temperature_k=None, outer_heat_source_ids=(), spherical_geometry=None)
+amounts_mol = [[0.0, 0.03], [0.0, 0.08]], temperatures_k = [300.0, 305.0]
+
+    def state_from_temperatures(self,amounts_mol,temperatures_k):
+        state=ConservedState(amounts_mol,np.zeros(len(self.storages)))
+        self._check_state(state)
+        temperatures=_column(temperatures_k,len(self.storages),'temperatures',positive=True)
+        try:
+>           energies=[storage.evaluate_at_temperature(t,float(row[0]),self._gas_inventory(row)).internal_energy_j
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                      for storage,t,row in zip(self.storages,temperatures,state.amounts_mol)]
+
+src/sludge_sandbox/rigid_fluid_heat.py:261: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/rigid_storage.py:170: in evaluate_at_temperature
+    state = self.mechanical.evaluate_at_temperature(t, liquid_mol, gas_mol)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/rigid_water_gas.py:138: in evaluate_at_temperature
+    result = self._evaluate_at_temperature(temperature_k,liquid_inventory_mol,gas_inventory_mol,ledger)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = RigidWaterGas(water=WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_g..., policy=PressurePolicy(volume_tolerance_m3=1e-13, pressure_tolerance_pa=1e-05, maximum_iterations=150, strategy=None))
+temperature_k = 305.0, liquid_inventory_mol = 0.0
+gas_inventory_mol = {'fixture': 0.08}, ledger = None
+
+    def _evaluate_at_temperature(self,temperature_k,liquid_inventory_mol,gas_inventory_mol,ledger):
+        t=_number(temperature_k,'temperature',positive=True)
+        nl=_number(liquid_inventory_mol,'liquid_inventory',nonnegative=True)
+        if not isinstance(gas_inventory_mol,Mapping) or set(gas_inventory_mol)!=set(self.gas_species_ids):
+            raise RigidClosureDomainError('complete_gas_inventory_keys_required')
+        gas={key:_number(gas_inventory_mol[key],'gas_inventory',nonnegative=True) for key in self.gas_species_ids}
+        ng=_sum(gas.values())
+        if ng<=0:raise RigidClosureDomainError('positive_total_gas_inventory_required')
+        nrt=_finite(ng*_R*t,'gas_inventory_RT',positive=True)
+        nrt_resolution=_sum((math.ulp(ng)*_R*t,math.ulp(ng*_R)*t,math.ulp(nrt)))
+        lo,hi=self.pressure_bracket_pa
+        if max(math.ulp(lo),math.ulp(hi))>self.policy.pressure_tolerance_pa:
+            raise RigidClosureNumericalError('unresolvable_pressure_precision')
+        volume=self.available_pore_volume_m3
+    
+        flo=fhi=None
+        trial_kind='initial_endpoint'
+        def trial(p):
+            if ledger is not None:
+                ledger.append(PressureTrialRecord(p,(lo,hi),(flo,fhi),trial_kind,'started'))
+            try:
+                vl=self._liquid_volume(t,p,nl)
+                vg=_finite(nrt/p,'trial_gas_volume',positive=True)
+                f=_sum((vl,vg,-volume))
+            except Exception as exc:
+                if ledger is not None:
+                    ledger[-1]=replace(ledger[-1],status='failed',failure=type(exc).__name__+':'+str(exc))
+                raise
+            if ledger is not None:
+                ledger[-1]=replace(ledger[-1],status='evaluated',liquid_volume_m3=vl,residual_m3=f)
+            return vl,f
+    
+        def finish(p,vl,iterations,final_bracket,endpoint_residuals,solution_path):
+            vg=_finite(_sum((volume,-vl)),'open_gas_volume',positive=True)
+            ideal_p=_finite(nrt/vg,'gas_pressure',positive=True)
+            residual_p=_sum((p,-ideal_p))
+            residual_v=_sum((vl,nrt/p,-volume))
+            # Preserve representability of the two large volumes even when
+            # their difference leaves a very small open gas volume.
+            vr=_sum((math.ulp(volume),math.ulp(vl),math.ulp(vg),math.ulp(nrt/p),nrt_resolution/p))
+            pr=_sum((math.ulp(p),math.ulp(ideal_p),abs(ideal_p)*vr/vg))
+            if vr>self.policy.volume_tolerance_m3 or pr>self.policy.pressure_tolerance_pa:
+                raise RigidClosureNumericalError('unresolvable_volume_pressure_precision')
+            if abs(residual_v)>self.policy.volume_tolerance_m3 or abs(residual_p)>self.policy.pressure_tolerance_pa:
+                return None
+            # Form the ratio-product exactly from represented inputs: n/ng can
+            # underflow even when n*p/ng is representable.
+            partial={key:_finite(float(Fraction(n)*Fraction(p)/Fraction(ng)),
+                       'partial_pressure',positive=n>0) for key,n in gas.items()}
+            if abs(_sum(partial.values())-p)>self.policy.pressure_tolerance_pa:
+                raise RigidClosureNumericalError('partial_pressure_sum_residual')
+            return RigidWaterGasState(t,p,p if nl else None,nl,MappingProxyType(gas),vl,vg,
+                MappingProxyType(partial),residual_v,residual_p,vr,pr,self.pressure_bracket_pa,
+                self.policy,iterations,self.water.source_ids+self.constant_source_ids,
+                self.water.source_asset_sha256,liquid_native_molar_gas_constant_j_mol_k=self.water.reference.native_molar_gas_constant_j_mol_k,
+                final_numerical_pressure_bracket_pa=final_bracket,
+                final_bracket_volume_residuals_m3=endpoint_residuals,
+                pressure_solution_path=solution_path,
+                pressure_bracket_qualification='numerical_forward_function_only_excludes_eos_error')
+    
+        if not nl:
+            p=_finite(nrt/volume,'gas_pressure',positive=True)
+>           if not lo<=p<=hi:raise RigidClosureDomainError('pure_gas_pressure_out_of_explicit_bracket')
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           sludge_sandbox.rigid_water_gas.RigidClosureDomainError: pure_gas_pressure_out_of_explicit_bracket
+
+src/sludge_sandbox/rigid_water_gas.py:209: RigidClosureDomainError
+
+The above exception was the direct cause of the following exception:
+
+water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+
+    def test_prior_slab_full_rate_bit_parity(water):
+        spec=importlib.util.spec_from_file_location('sludge_sandbox._review_prior_rigid','/private/tmp/brick-radial-host-review/prior_rigid.py')
+        module=importlib.util.module_from_spec(spec)
+        import sys
+        sys.modules[spec.name]=module;spec.loader.exec_module(module)
+        op=operator(water)
+        prior=module.RigidFluidHeat(**{f.name:getattr(op,f.name) for f in fields(module.RigidFluidHeat)})
+        for temp in ([300.,305.],[306.,299.],[303.,303.]):
+>           state=op.state_from_temperatures([[0.,.03],[0.,.08]],temp)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/private/tmp/brick-radial-host-review/test_independent.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/rigid_fluid_heat.py:263: in state_from_temperatures
+    except _FAILURES as exc:_raise_failure(exc)
+                            ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+exc = RigidClosureDomainError('pure_gas_pressure_out_of_explicit_bracket')
+
+    def _raise_failure(exc):
+        reason=str(exc)
+        domain_reasons={
+            'temperature_outside_error_envelope','energy_outside_closed_temperature_bracket',
+            'temperature_out_of_domain','temperature_out_of_phase_domain',
+            'positive_total_gas_inventory_required','pure_gas_pressure_out_of_explicit_bracket',
+            'no_root_in_stable_pressure_bracket_or_insufficient_volume',
+        }
+        if (isinstance(exc,WaterDomainError) or reason in domain_reasons
+                or reason.startswith('unstable_liquid_pressure_bracket_or_water_domain:')):
+>           raise DomainExit(reason) from exc
+E           sludge_sandbox.integration.DomainExit: pure_gas_pressure_out_of_explicit_bracket
+
+src/sludge_sandbox/rigid_fluid_heat.py:88: DomainExit
+=========================== short test summary info ============================
+FAILED ../../../../private/tmp/brick-radial-host-review/test_independent.py::test_prior_slab_full_rate_bit_parity
+1 failed, 2 passed in 0.34s

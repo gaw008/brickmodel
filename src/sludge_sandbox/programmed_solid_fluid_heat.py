@@ -68,6 +68,8 @@ class ProgrammedSolidFluidHeat:
             raise ProgrammedSolidFluidHeatError('explicit_solid_fluid_and_program_required')
         if type(self.surface_policy) is not SurfacePolicy:raise ProgrammedSolidFluidHeatError('explicit_surface_policy_required')
         base=self._configuration_host;transport=base.transport
+        if transport.spherical_geometry is not None:
+            raise ProgrammedSolidFluidHeatError('spherical_programmed_boundary_not_supported')
         if transport.outer_reservoir is not None or transport.outer_surface_temperature_k is not None:
             raise ProgrammedSolidFluidHeatError('existing_outer_boundary_would_be_duplicated')
         if base.gas_species_order!=self.program.species_order:
