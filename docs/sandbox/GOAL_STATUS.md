@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+本轮实际完成来源干物湿态储能连接：`SourceWetStorage`使用原Arlabosse Cp积分、固定干质量和显式ReactionDisabled，与旧`WetMixedStorage`共享新提取的真实水气机械/储能内核。没有A/B或形成能网络，没有虚构固体体积/材料总焓。来源材料体积仍缺，当前只接受明确测试用恒定流体容积，fit误差保持unknown。独审实际发现公开helper非binary Fraction库存与EOS转换不一致导致压力界偏小，已按无损表示契约修复，原代码/RED/误差值保留；三组旧完整point和identity不变。[本轮报告](research/source-wet-storage-v1/REPORT.md)。
+
+实际源码59项8.02s、独立代码45项1.45s、独立物理13项均通过；非editable安装59项8.23s、XML零失败/错误/跳过，109实际模块与源一致，5独审文件hash保持。真实水+公开O2/N2的安装算例5.37203s完成：331.25K原态，固定U将1/1024mol液水转气后331.1392713338K，水总量精确不变；独立温度根差约2.20e-8K在其声明数值界内。源/安装产物除耗时外全等。33917/48126/36461/2155均终态0，无本轮待跑进程。上一回合caf7777阶段提交属progress，本轮代码/独立与安装验证也属progress，完整Goal保持active。
+
+下一具体代码工作：从`mass_wet_transport.WetPair.evaluate`提取原共享相变/cell和face计算，保留旧A/B回归；明确源固定质量/关闭化学反应分支，随后接N格拓扑、单次共享面账本与逐格边界源。当前旧`WetPair`/exact stage/controller/record仍未准入SourceWetStorage，不能只放宽type/len检查。源湿输运/吸附/真实体积、反应烧结冷却、三机制公开留出、完整周期、多代与应用验收全部仍必需未完成。以下为较旧恢复状态，不应重复运行历史已结束的实验。
+
 最新实际实现：`source_mass_caloric.py`将既有Arlabosse来源Cp/Δh用于固定正干质量的恒组成、不可压缩名义储能，明确域内能量坐标与ReactionDisabled，无A/B、氧参考、虚构摩尔质量或体积。完整温区Cp下界用于精确Fraction反解；源fit误差和比容仍未知。独审发现运行时替换provider/caloric可保持身份的HIGH，原RED已保留，修复两层exacttype检查；源19项/独立4项通过。实际安装0.2kg、40→80°C得到13051.2J，反解与7节点溯源已保存。证据：[来源干质量储能](research/source-mass-caloric-v1/REPORT.md)。这只是干物point，尚未接入现有WetMixedStorage/原泥湿格。
 
 旧水AST失败已由合法host行为回归替代，水源码未改；作者15项通过，涵盖原化学/干政策及机械上下文。[行为回归证据](research/water-behavior-regression-v1/REPORT.md)。Root非editable最终33项4.70s通过（19新储能+5水行为+完整9deforming-wet-admission），108安装模块与源匹配，35120终态0，无该批运行进程。上轮2258695/832a012和本轮新实现/实际独立验证均属progress，Goal保持active。

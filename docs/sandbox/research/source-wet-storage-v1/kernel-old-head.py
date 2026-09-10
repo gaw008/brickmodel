@@ -32,71 +32,6 @@ def inventories(values):
 
 
 @dataclass(frozen=True)
-class WetFluidEvaluation:
-    """Actual fluid closure and outward-rounded volume-induced pressure bounds."""
-    fluid_template: RigidStorage
-    point: ClosedStorageState
-    global_pressure_error_pa: F
-    extra_pressure_error_pa: F
-    pressure_error_pa: float
-
-
-def evaluate_wet_fluid(
-    template: RigidStorage, gas_ids: tuple[str, ...], liquid_mol: float,
-    gas_amounts: tuple[float, ...], temperature_k: float,
-    nominal_available_m3: float, available_error_m3: F,
-) -> WetFluidEvaluation:
-    """Close a prescribed available volume without changing solid accounting.
-
-    The caller supplies its nominal volume and exact nonnegative error, and
-    certifies the positive-volume interval. No solid law or material admission
-    is inferred here. Global then local gas-compliance bounds retain the
-    existing outward rounding, including the zero-volume-error case. All EOS
-    quantities must be exactly representable as binary64; lossy conversion is
-    rejected so closure and compliance use the same represented state. The
-    volume error remains an exact Fraction, independent of this restriction.
-    """
-    require(type(template) is RigidStorage, 'explicit_fluid_template')
-    require(type(gas_ids) is tuple and gas_ids == tuple(template.mechanical.gas_species_ids), 'fluid_gas_order')
-    require(type(gas_amounts) is tuple and len(gas_amounts) == len(gas_ids), 'fluid_inventory_shape')
-    liquid=inventory(liquid_mol)
-    gases=inventories(gas_amounts)
-    t=number(temperature_k,positive=True)
-    nominal=number(nominal_available_m3,positive=True)
-    require(all(F(raw)==F(converted) for raw,converted in (
-        (liquid_mol,liquid),(temperature_k,t),(nominal_available_m3,nominal),
-        *zip(gas_amounts,gases))), 'wet_fluid_input_not_exact_binary64')
-    liquid_mol=liquid;gas_amounts=gases;nominal_available_m3=nominal
-    number(available_error_m3)
-    require(F(available_error_m3)>=0, 'negative_available_volume_error')
-    available_error_m3=F(available_error_m3)
-    fluid=replace(template,mechanical=replace(template.mechanical,available_pore_volume_m3=nominal_available_m3))
-    out=fluid.evaluate_at_temperature(t,liquid_mol,dict(zip(gas_ids,gas_amounts)))
-    p=F(out.mechanical.pressure_pa);ng=sum(map(F,gas_amounts),F());rt=F(fluid.mechanical.gas_constant_j_mol_k)*F(t)
-    require(ng>0,'no_positive_gas_compliance')
-    extra=F(upper(available_error_m3/(ng*rt/F(fluid.envelope.pressure_range_pa[1])**2)))
-    global_error=F(upper(F(out.pressure_error_bound_pa)+extra))
-    plo,phi=map(F,fluid.mechanical.pressure_bracket_pa)
-    require(plo<=p-global_error<=p+global_error<=phi,'global_pressure_uncertainty_outside_domain')
-    certified_upper=min(F(fluid.envelope.pressure_range_pa[1]),p+global_error)
-    extra=F(upper(available_error_m3/(ng*rt/certified_upper**2)))
-    pressure_error=upper(F(out.pressure_error_bound_pa)+extra)
-    require(plo<=p-F(pressure_error)<=p+F(pressure_error)<=phi,'local_pressure_uncertainty_outside_domain')
-    return WetFluidEvaluation(fluid,out,global_error,extra,pressure_error)
-
-
-def check_wet_water(fluid_template: RigidStorage, water_element_convention: "WaterElementConvention") -> None:
-    """Require the existing shared liquid/vapor source, mass, and R convention."""
-    vapor=fluid_template.gas_phases['H2O'].caloric
-    require(type(vapor) is IdealWaterVapor,'source_bound_low_water_bridge_required')
-    w=fluid_template.mechanical.water;vw=vapor._water
-    require(vapor.reference==w.reference and vapor.source_asset_sha256==w.source_asset_sha256,'same_liquid_vapor_water_source')
-    require(type(vw) is type(w) and vw.implementation==w.implementation,'same_actual_water_backend')
-    require(vapor.molar_mass_kg_mol==w.reference.molar_mass_kg_mol and vapor.gas_constant_j_mol_k==fluid_template.mechanical.gas_constant_j_mol_k,'same_water_molar_and_R')
-    require(type(water_element_convention) is WaterElementConvention,'explicit_water_element_convention')
-
-
-@dataclass(frozen=True)
 class WetMixedState:
     solid_mass_kg: tuple
     liquid_water_mol: float
@@ -203,7 +138,13 @@ class WetMixedStorage:
     def water(self):return self.fluid_template.mechanical.water
 
     def check_water(self):
-        check_wet_water(self.fluid_template,self.water_element_convention)
+        vapor=self.fluid_template.gas_phases['H2O'].caloric
+        require(type(vapor) is IdealWaterVapor,'source_bound_low_water_bridge_required')
+        w=self.water;vw=vapor._water
+        require(vapor.reference==w.reference and vapor.source_asset_sha256==w.source_asset_sha256,'same_liquid_vapor_water_source')
+        require(type(vw) is type(w) and vw.implementation==w.implementation,'same_actual_water_backend')
+        require(vapor.molar_mass_kg_mol==w.reference.molar_mass_kg_mol and vapor.gas_constant_j_mol_k==self.fluid_template.mechanical.gas_constant_j_mol_k,'same_water_molar_and_R')
+        require(type(self.water_element_convention) is WaterElementConvention,'explicit_water_element_convention')
 
     def binding(self):
         self.water_element_convention.check()
@@ -234,10 +175,18 @@ class WetMixedStorage:
         nominal=number(available,positive=True)
         error_v=F(self.bulk_volume_error_m3)+abs(F(nominal)-available)
         require(error_v<available,'volume_uncertainty_excludes_positive_domain')
-        evaluation=evaluate_wet_fluid(self.fluid_template,self.gas_ids,state.liquid_water_mol,state.gas_amounts_mol,t,nominal,error_v)
-        fluid=evaluation.fluid_template;out=evaluation.point
-        p=F(out.mechanical.pressure_pa)
-        global_error=evaluation.global_pressure_error_pa;extra=evaluation.extra_pressure_error_pa;pressure_error=evaluation.pressure_error_pa
+        fluid=replace(self.fluid_template,mechanical=replace(self.fluid_template.mechanical,available_pore_volume_m3=nominal))
+        out=fluid.evaluate_at_temperature(t,state.liquid_water_mol,dict(zip(self.gas_ids,state.gas_amounts_mol)))
+        p=F(out.mechanical.pressure_pa);ng=sum(map(F,state.gas_amounts_mol),F());rt=F(fluid.mechanical.gas_constant_j_mol_k)*F(t)
+        require(ng>0,'no_positive_gas_compliance')
+        extra=F(upper(error_v/(ng*rt/F(fluid.envelope.pressure_range_pa[1])**2)))
+        global_error=F(upper(F(out.pressure_error_bound_pa)+extra))
+        plo,phi=map(F,fluid.mechanical.pressure_bracket_pa)
+        require(plo<=p-global_error<=p+global_error<=phi,'global_pressure_uncertainty_outside_domain')
+        certified_upper=min(F(fluid.envelope.pressure_range_pa[1]),p+global_error)
+        extra=F(upper(error_v/(ng*rt/certified_upper**2)))
+        pressure_error=upper(F(out.pressure_error_bound_pa)+extra)
+        require(plo<=p-F(pressure_error)<=p+F(pressure_error)<=phi,'local_pressure_uncertainty_outside_domain')
         net=self.reference.network;tref=net.reference_temperature_k;pref=net.reference_pressure_pa
         terms=tuple(F(m)*(h+F(s.cp_j_kg_k)*(F(t)-tref)-pref*F(s.volume_m3_kg)) for m,s,h in zip(state.solid_mass_kg,self.solids,self.reference.particular_h0_j_kg))
         total=F(out.internal_energy_j)+sum(terms,F());energy=number(total)

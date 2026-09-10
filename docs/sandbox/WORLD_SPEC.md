@@ -2,6 +2,8 @@
 
 这是正在实现的规范，完成状态以 `ACCEPTANCE_MATRIX.md` 和实际测试为准。详细推导提案见 `ARCHITECTURE_PROPOSAL.md`；该提案不是实现证明。
 
+来源干物湿态储能入口现为 `source_wet_storage.SourceWetStorage`：固定原Arlabosse干质量与域内相对能量零点，使用同一 `evaluate_wet_fluid` 聚合实际水/气压力与储能，显式关闭化学转化。液汽重新分配通过共同总U反解温度，不增加第二份潜热。点Cp与全温区导数下界分开；总U舍入和可用体积误差引起的液水压力能误差单独计入数值界。该入口只接受明确的测试用恒定可用流体体积，真实同材料体积与拟合误差仍未知；没有bulk/固体体积就不输出材料总焓。严格binary64输入、材料边界和实际例子见[来源湿态储能报告](research/source-wet-storage-v1/REPORT.md)。这不表示旧两格反应/耗尽主机或全周期已经准入来源材料。
+
 新增明确的制造反应自由形变模式见[REACTING_FREE_SLAB.md](REACTING_FREE_SLAB.md)：当前组成同时控制恢复能、有效黏度及固体/气体占据体积；反应与当前存储绑定，总能量只接收实际面流和外部/约束交换功，不重复加入组成热。它是数值耦合验证域，不是原污泥参数准入。
 
 动态炉程已接入当前自由几何与机械功，程序内容具有独立运行身份；实际短时水相变联合验证及适用限制见 [PROGRAMMED_FREE_SLAB.md](PROGRAMMED_FREE_SLAB.md)。

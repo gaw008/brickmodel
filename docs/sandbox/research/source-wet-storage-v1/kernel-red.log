@@ -1,0 +1,280 @@
+...FFFFFFFFFFFFF                                                         [100%]
+=================================== FAILURES ===================================
+_______ test_shared_kernel_exact_error_propagation_and_single_evaluation _______
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x108119190>
+
+    def test_shared_kernel_exact_error_propagation_and_single_evaluation(monkeypatch):
+        st, state, _ = setup(monkeypatch)
+        original = module.RigidStorage.evaluate_at_temperature
+        calls = []
+        def observed(self, *args, **kwargs):
+            calls.append(self)
+            return original(self, *args, **kwargs)
+        monkeypatch.setattr(module.RigidStorage, 'evaluate_at_temperature', observed)
+        args = arguments(st, state)
+>       result = module.evaluate_wet_fluid(**args)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'sludge_sandbox.mass_wet_storage' has no attribute 'evaluate_wet_fluid'
+
+tests/sandbox/test_mass_wet_fluid_kernel.py:51: AttributeError
+_____________________ test_invalid_kernel_inputs[changes0] _____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1081c4e30>
+changes = {'gas_ids': ('H2O', 'N2', 'O2')}
+
+    @pytest.mark.parametrize('changes', [
+        {'gas_ids': ('H2O', 'N2', 'O2')}, {'gas_amounts': (.2, .2)},
+        {'available_error_m3': -1.}, {'available_error_m3': True},
+        {'available_error_m3': float('nan')}, {'nominal_available_m3': 0.},
+        {'temperature_k': float('inf')}, {'liquid_mol': True},
+        {'gas_amounts': (.2, -.2, .001)}, {'template': object()},
+    ])
+    def test_invalid_kernel_inputs(monkeypatch, changes):
+        st, state, _ = setup(monkeypatch)
+        args = arguments(st, state)
+        args.update(changes)
+        with pytest.raises(ValueError):
+>           module.evaluate_wet_fluid(**args)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'sludge_sandbox.mass_wet_storage' has no attribute 'evaluate_wet_fluid'
+
+tests/sandbox/test_mass_wet_fluid_kernel.py:82: AttributeError
+_____________________ test_invalid_kernel_inputs[changes1] _____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109b00bc0>
+changes = {'gas_amounts': (0.2, 0.2)}
+
+    @pytest.mark.parametrize('changes', [
+        {'gas_ids': ('H2O', 'N2', 'O2')}, {'gas_amounts': (.2, .2)},
+        {'available_error_m3': -1.}, {'available_error_m3': True},
+        {'available_error_m3': float('nan')}, {'nominal_available_m3': 0.},
+        {'temperature_k': float('inf')}, {'liquid_mol': True},
+        {'gas_amounts': (.2, -.2, .001)}, {'template': object()},
+    ])
+    def test_invalid_kernel_inputs(monkeypatch, changes):
+        st, state, _ = setup(monkeypatch)
+        args = arguments(st, state)
+        args.update(changes)
+        with pytest.raises(ValueError):
+>           module.evaluate_wet_fluid(**args)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'sludge_sandbox.mass_wet_storage' has no attribute 'evaluate_wet_fluid'
+
+tests/sandbox/test_mass_wet_fluid_kernel.py:82: AttributeError
+_____________________ test_invalid_kernel_inputs[changes2] _____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109b02150>
+changes = {'available_error_m3': -1.0}
+
+    @pytest.mark.parametrize('changes', [
+        {'gas_ids': ('H2O', 'N2', 'O2')}, {'gas_amounts': (.2, .2)},
+        {'available_error_m3': -1.}, {'available_error_m3': True},
+        {'available_error_m3': float('nan')}, {'nominal_available_m3': 0.},
+        {'temperature_k': float('inf')}, {'liquid_mol': True},
+        {'gas_amounts': (.2, -.2, .001)}, {'template': object()},
+    ])
+    def test_invalid_kernel_inputs(monkeypatch, changes):
+        st, state, _ = setup(monkeypatch)
+        args = arguments(st, state)
+        args.update(changes)
+        with pytest.raises(ValueError):
+>           module.evaluate_wet_fluid(**args)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'sludge_sandbox.mass_wet_storage' has no attribute 'evaluate_wet_fluid'
+
+tests/sandbox/test_mass_wet_fluid_kernel.py:82: AttributeError
+_____________________ test_invalid_kernel_inputs[changes3] _____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109b3ec00>
+changes = {'available_error_m3': True}
+
+    @pytest.mark.parametrize('changes', [
+        {'gas_ids': ('H2O', 'N2', 'O2')}, {'gas_amounts': (.2, .2)},
+        {'available_error_m3': -1.}, {'available_error_m3': True},
+        {'available_error_m3': float('nan')}, {'nominal_available_m3': 0.},
+        {'temperature_k': float('inf')}, {'liquid_mol': True},
+        {'gas_amounts': (.2, -.2, .001)}, {'template': object()},
+    ])
+    def test_invalid_kernel_inputs(monkeypatch, changes):
+        st, state, _ = setup(monkeypatch)
+        args = arguments(st, state)
+        args.update(changes)
+        with pytest.raises(ValueError):
+>           module.evaluate_wet_fluid(**args)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'sludge_sandbox.mass_wet_storage' has no attribute 'evaluate_wet_fluid'
+
+tests/sandbox/test_mass_wet_fluid_kernel.py:82: AttributeError
+_____________________ test_invalid_kernel_inputs[changes4] _____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109b3e780>
+changes = {'available_error_m3': nan}
+
+    @pytest.mark.parametrize('changes', [
+        {'gas_ids': ('H2O', 'N2', 'O2')}, {'gas_amounts': (.2, .2)},
+        {'available_error_m3': -1.}, {'available_error_m3': True},
+        {'available_error_m3': float('nan')}, {'nominal_available_m3': 0.},
+        {'temperature_k': float('inf')}, {'liquid_mol': True},
+        {'gas_amounts': (.2, -.2, .001)}, {'template': object()},
+    ])
+    def test_invalid_kernel_inputs(monkeypatch, changes):
+        st, state, _ = setup(monkeypatch)
+        args = arguments(st, state)
+        args.update(changes)
+        with pytest.raises(ValueError):
+>           module.evaluate_wet_fluid(**args)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'sludge_sandbox.mass_wet_storage' has no attribute 'evaluate_wet_fluid'
+
+tests/sandbox/test_mass_wet_fluid_kernel.py:82: AttributeError
+_____________________ test_invalid_kernel_inputs[changes5] _____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109b3f7d0>
+changes = {'nominal_available_m3': 0.0}
+
+    @pytest.mark.parametrize('changes', [
+        {'gas_ids': ('H2O', 'N2', 'O2')}, {'gas_amounts': (.2, .2)},
+        {'available_error_m3': -1.}, {'available_error_m3': True},
+        {'available_error_m3': float('nan')}, {'nominal_available_m3': 0.},
+        {'temperature_k': float('inf')}, {'liquid_mol': True},
+        {'gas_amounts': (.2, -.2, .001)}, {'template': object()},
+    ])
+    def test_invalid_kernel_inputs(monkeypatch, changes):
+        st, state, _ = setup(monkeypatch)
+        args = arguments(st, state)
+        args.update(changes)
+        with pytest.raises(ValueError):
+>           module.evaluate_wet_fluid(**args)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'sludge_sandbox.mass_wet_storage' has no attribute 'evaluate_wet_fluid'
+
+tests/sandbox/test_mass_wet_fluid_kernel.py:82: AttributeError
+_____________________ test_invalid_kernel_inputs[changes6] _____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109b03200>
+changes = {'temperature_k': inf}
+
+    @pytest.mark.parametrize('changes', [
+        {'gas_ids': ('H2O', 'N2', 'O2')}, {'gas_amounts': (.2, .2)},
+        {'available_error_m3': -1.}, {'available_error_m3': True},
+        {'available_error_m3': float('nan')}, {'nominal_available_m3': 0.},
+        {'temperature_k': float('inf')}, {'liquid_mol': True},
+        {'gas_amounts': (.2, -.2, .001)}, {'template': object()},
+    ])
+    def test_invalid_kernel_inputs(monkeypatch, changes):
+        st, state, _ = setup(monkeypatch)
+        args = arguments(st, state)
+        args.update(changes)
+        with pytest.raises(ValueError):
+>           module.evaluate_wet_fluid(**args)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'sludge_sandbox.mass_wet_storage' has no attribute 'evaluate_wet_fluid'
+
+tests/sandbox/test_mass_wet_fluid_kernel.py:82: AttributeError
+_____________________ test_invalid_kernel_inputs[changes7] _____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109b001d0>
+changes = {'liquid_mol': True}
+
+    @pytest.mark.parametrize('changes', [
+        {'gas_ids': ('H2O', 'N2', 'O2')}, {'gas_amounts': (.2, .2)},
+        {'available_error_m3': -1.}, {'available_error_m3': True},
+        {'available_error_m3': float('nan')}, {'nominal_available_m3': 0.},
+        {'temperature_k': float('inf')}, {'liquid_mol': True},
+        {'gas_amounts': (.2, -.2, .001)}, {'template': object()},
+    ])
+    def test_invalid_kernel_inputs(monkeypatch, changes):
+        st, state, _ = setup(monkeypatch)
+        args = arguments(st, state)
+        args.update(changes)
+        with pytest.raises(ValueError):
+>           module.evaluate_wet_fluid(**args)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'sludge_sandbox.mass_wet_storage' has no attribute 'evaluate_wet_fluid'
+
+tests/sandbox/test_mass_wet_fluid_kernel.py:82: AttributeError
+_____________________ test_invalid_kernel_inputs[changes8] _____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109b5c350>
+changes = {'gas_amounts': (0.2, -0.2, 0.001)}
+
+    @pytest.mark.parametrize('changes', [
+        {'gas_ids': ('H2O', 'N2', 'O2')}, {'gas_amounts': (.2, .2)},
+        {'available_error_m3': -1.}, {'available_error_m3': True},
+        {'available_error_m3': float('nan')}, {'nominal_available_m3': 0.},
+        {'temperature_k': float('inf')}, {'liquid_mol': True},
+        {'gas_amounts': (.2, -.2, .001)}, {'template': object()},
+    ])
+    def test_invalid_kernel_inputs(monkeypatch, changes):
+        st, state, _ = setup(monkeypatch)
+        args = arguments(st, state)
+        args.update(changes)
+        with pytest.raises(ValueError):
+>           module.evaluate_wet_fluid(**args)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'sludge_sandbox.mass_wet_storage' has no attribute 'evaluate_wet_fluid'
+
+tests/sandbox/test_mass_wet_fluid_kernel.py:82: AttributeError
+_____________________ test_invalid_kernel_inputs[changes9] _____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109b795e0>
+changes = {'template': <object object at 0x100241610>}
+
+    @pytest.mark.parametrize('changes', [
+        {'gas_ids': ('H2O', 'N2', 'O2')}, {'gas_amounts': (.2, .2)},
+        {'available_error_m3': -1.}, {'available_error_m3': True},
+        {'available_error_m3': float('nan')}, {'nominal_available_m3': 0.},
+        {'temperature_k': float('inf')}, {'liquid_mol': True},
+        {'gas_amounts': (.2, -.2, .001)}, {'template': object()},
+    ])
+    def test_invalid_kernel_inputs(monkeypatch, changes):
+        st, state, _ = setup(monkeypatch)
+        args = arguments(st, state)
+        args.update(changes)
+        with pytest.raises(ValueError):
+>           module.evaluate_wet_fluid(**args)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'sludge_sandbox.mass_wet_storage' has no attribute 'evaluate_wet_fluid'
+
+tests/sandbox/test_mass_wet_fluid_kernel.py:82: AttributeError
+_______________ test_global_domain_and_backend_failure_propagate _______________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109ab7620>
+
+    def test_global_domain_and_backend_failure_propagate(monkeypatch):
+        st, state, _ = setup(monkeypatch)
+        args = arguments(st, state)
+        with pytest.raises(ValueError, match='global_pressure_uncertainty_outside_domain'):
+>           module.evaluate_wet_fluid(**dict(args, available_error_m3=F(1e-4)))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'sludge_sandbox.mass_wet_storage' has no attribute 'evaluate_wet_fluid'
+
+tests/sandbox/test_mass_wet_fluid_kernel.py:89: AttributeError
+_______________ test_storage_uses_shared_water_and_fluid_checks ________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109ab7320>
+
+    def test_storage_uses_shared_water_and_fluid_checks(monkeypatch):
+        st, state, _ = setup(monkeypatch)
+        fluid_calls, water_calls = [], []
+>       fluid, water = module.evaluate_wet_fluid, module.check_wet_water
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'sludge_sandbox.mass_wet_storage' has no attribute 'evaluate_wet_fluid'
+
+tests/sandbox/test_mass_wet_fluid_kernel.py:100: AttributeError
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_mass_wet_fluid_kernel.py::test_shared_kernel_exact_error_propagation_and_single_evaluation
+FAILED tests/sandbox/test_mass_wet_fluid_kernel.py::test_invalid_kernel_inputs[changes0]
+FAILED tests/sandbox/test_mass_wet_fluid_kernel.py::test_invalid_kernel_inputs[changes1]
+FAILED tests/sandbox/test_mass_wet_fluid_kernel.py::test_invalid_kernel_inputs[changes2]
+FAILED tests/sandbox/test_mass_wet_fluid_kernel.py::test_invalid_kernel_inputs[changes3]
+FAILED tests/sandbox/test_mass_wet_fluid_kernel.py::test_invalid_kernel_inputs[changes4]
+FAILED tests/sandbox/test_mass_wet_fluid_kernel.py::test_invalid_kernel_inputs[changes5]
+FAILED tests/sandbox/test_mass_wet_fluid_kernel.py::test_invalid_kernel_inputs[changes6]
+FAILED tests/sandbox/test_mass_wet_fluid_kernel.py::test_invalid_kernel_inputs[changes7]
+FAILED tests/sandbox/test_mass_wet_fluid_kernel.py::test_invalid_kernel_inputs[changes8]
+FAILED tests/sandbox/test_mass_wet_fluid_kernel.py::test_invalid_kernel_inputs[changes9]
+FAILED tests/sandbox/test_mass_wet_fluid_kernel.py::test_global_domain_and_backend_failure_propagate
+FAILED tests/sandbox/test_mass_wet_fluid_kernel.py::test_storage_uses_shared_water_and_fluid_checks
+13 failed, 3 passed in 0.48s

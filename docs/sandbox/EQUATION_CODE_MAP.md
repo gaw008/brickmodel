@@ -6,6 +6,7 @@
 
 | 关系或数值合同 | 实现与验证入口 | 已证实范围 |
 |---|---|---|
+| U=U_fluid(T,Nl,Ng,Vavailable)+m∫Cp_source dT；体积误差→压力界→液水U误差；全域Cmin反解 | `source_wet_storage.SourceWetStorage`、`mass_wet_storage.evaluate_wet_fluid`；[实际报告](research/source-wet-storage-v1/REPORT.md) | 来源干物与原真实水气储能共享计算；明确测试几何、固定质量与关闭化学反应，无材料总焓/未知固体体积声明；未接源N格和全周期 |
 | 固定干质量 U=m∫Cp dT；全域Cmin=m Cp(Tlo)；域内参考平移与显式零化学源 | `source_mass_caloric.ArlabosseMassCaloric`、`FixedMassCaloricStorage`、`ReactionDisabled`；[实际结果](research/source-mass-caloric-v1/REPORT.md) | 原Arlabosse样品名义拟合+显式不可压恒组成假设；精确数值反解及7节点溯源，未知fit/比容，不授予湿格或反应资格 |
 | 球形 G(Ts−Tc)=4πR²[h(Tg−Ts)+εσ(Trad⁴−Ts⁴)]；Bi=1特征μ=π/2 | `ProgrammedSolidFluidHeat._surface`调用所选transport外面/热阻；[结果](research/sphere-surface-v1/REPORT.md) | 固定球形实际Robin空间/时间验证与升温冷却；移动旧版身份缺陷单列，不授予材料资格 |
 | 固定球壳 V=4π(rb³−ra³)/3；串联热阻积分 dr/(4πkr²)，中心零通量 | `spherical_geometry.FixedSphericalShells`、`RigidFluidHeat._conduction`、`SolidFluidHeat.evaluate`；[推导](RADIAL_HEAT_GEOMETRY.md) | 既有积分器4/8/16格制造解析模态收敛；真实材料/运动/球形程序边界尚未准入 |

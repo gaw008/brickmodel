@@ -51,22 +51,15 @@ def evaluate_wet_fluid(
     The caller supplies its nominal volume and exact nonnegative error, and
     certifies the positive-volume interval. No solid law or material admission
     is inferred here. Global then local gas-compliance bounds retain the
-    existing outward rounding, including the zero-volume-error case. All EOS
-    quantities must be exactly representable as binary64; lossy conversion is
-    rejected so closure and compliance use the same represented state. The
-    volume error remains an exact Fraction, independent of this restriction.
+    existing outward rounding, including the zero-volume-error case.
     """
     require(type(template) is RigidStorage, 'explicit_fluid_template')
     require(type(gas_ids) is tuple and gas_ids == tuple(template.mechanical.gas_species_ids), 'fluid_gas_order')
     require(type(gas_amounts) is tuple and len(gas_amounts) == len(gas_ids), 'fluid_inventory_shape')
-    liquid=inventory(liquid_mol)
-    gases=inventories(gas_amounts)
+    inventory(liquid_mol)
+    inventories(gas_amounts)
     t=number(temperature_k,positive=True)
-    nominal=number(nominal_available_m3,positive=True)
-    require(all(F(raw)==F(converted) for raw,converted in (
-        (liquid_mol,liquid),(temperature_k,t),(nominal_available_m3,nominal),
-        *zip(gas_amounts,gases))), 'wet_fluid_input_not_exact_binary64')
-    liquid_mol=liquid;gas_amounts=gases;nominal_available_m3=nominal
+    number(nominal_available_m3,positive=True)
     number(available_error_m3)
     require(F(available_error_m3)>=0, 'negative_available_volume_error')
     available_error_m3=F(available_error_m3)

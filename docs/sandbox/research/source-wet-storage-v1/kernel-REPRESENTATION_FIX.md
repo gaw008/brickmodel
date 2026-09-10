@@ -1,0 +1,5 @@
+Public kernel representation fix after independent review. The prior implementation accepted nonbinary Fraction inventories; fluid closure rounded these while the compliance denominator kept the raw Fraction. The reviewer demonstrated a local pressure bound deficit of 1.9928451705542003e-21 Pa. Prior source/test and independent-review probe remain preserved.
+
+EOS liquid/gas/temperature/nominal volume inputs now require exact binary64 representability before evaluation, then consistently use those represented values. Fraction volume uncertainty remains exact and is not subject to representability rejection. No implicit input uncertainty is invented. Existing floats, identities and all three frozen whole-point goldens are unchanged.
+
+New RED: four nonbinary input cases reach forbidden closure plus reviewer underbound input fails to reject; exact representable Fraction positive case passes (5 failed, 1 passed). RED command wall 0.487s. Final new+existing targeted tests: 36 passed in 0.64s (command wall 0.725s). No native liquid EOS, install or commit.

@@ -1,0 +1,52 @@
+# Source dry-mass caloric storage coupled to the existing water/gas kernel
+
+`SourceWetStorage` now aggregates the original Arlabosse dry-mass sensible energy with the existing `RigidStorage` liquid-water/gas pressure and energy calculation. No A/B solid, solid molecular mass, oxygen reaction reference, or `ReactionReferenceNetwork` is constructed. The former `WetMixedStorage` still uses its original manufactured reactive material contract; both paths call the same extracted `evaluate_wet_fluid` and water-source compatibility checks.
+
+## Physical and representation contract
+
+The dry mass is fixed and its source identity is unchanged. Under the previously declared constant-composition, incompressible, temperature-independent-volume approximation, its relative energy is `m integral(T0,T,Cp(s)ds)`. Its zero lies inside the source's 35–105°C interval, independently of the unchanged common liquid/vapor reference. Zero chemical rates express the chosen fixed-composition stage; liquid/vapor redistribution remains possible. No additional latent or reaction heat is added to the total energy.
+
+Actual same-material skeletal volume and available fluid volume remain missing. This implementation therefore admits only an explicitly named `ManufacturedFixedFluidVolume`, with a positive constant available liquid-plus-gas volume and explicit error. It refuses a null volume or a relabelled measured-volume object. This numerical coupling case is not admitted as a real wet-material prediction. Available fluid volume alone does not supply bulk volume or solid occupied volume; total material enthalpy and solid volume are consequently null. The water/gas subsystem's enthalpy remains available in its own scope.
+
+All host mass, inventory, temperature and target-energy inputs have exact represented binary64 semantics. A float `.2` means its binary64 value. A Fraction or Decimal that cannot be converted without changing its value is rejected, not silently rounded; callers must choose the represented host input explicitly. This is an interface representation limit, not a claim that decimal quantities are physically invalid. The source receives `Fraction(T_host)` so that fluid and solid terms use the same temperature. The state factory keeps the fixed solid mass; a changed mass, energy identity or provider content is rejected before a fluid query.
+
+Total U is rounded once after exact rational dry-solid integration and combination with the returned fluid energy. Its numerical error includes the fluid envelope, the actual final rounding difference, and liquid inventory times the declared liquid `|du/dp|` bound times additional pressure uncertainty from available-volume error. This numerical envelope is conditional, not an experimental error bar or an independent certificate for every native EOS query. The dry source's physical fit and approximation errors remain unknown.
+
+The point heat capacity uses source Cp at the actual temperature. The inverse denominator instead uses the source minimum over the full explicit host temperature domain, added to the existing fluid derivative lower bound and rounded downward. The old wet host's energy-bracket sign, residual-plus-error, temperature-bound and representation rejection principles are preserved. The source interval is not extrapolated to 298.15 K. Source IDs returned dynamically by the actual fluid calculation are retained in each new point.
+
+## Actual first implementation and real-water example
+
+The first new test run failed at collection because the source-wet module did not yet exist (`RED.log`). The initial implementation then passed all 15 new tests in 1.15 seconds. These tests deliberately use the previously declared analytic liquid seam, while retaining the actual shared mechanical closure, source dry Cp and ideal-water functions. They cover independent printed-polynomial integration, reference-coordinate shifts, inverse gates, fixed mass, unavailable material fields, volume-error propagation, and liquid-to-vapor redistribution without extra latent energy. A later test explicitly verifies dynamic fluid-source forwarding.
+
+The source-checkout native example completed in 5.42693 seconds. It directly constructs the approved HEOS water backend, the existing NIST O2/N2 gas functions and source-bound ideal water vapor. It uses dry mass float `.2` kg, liquid water `.25` mol, gas amounts `(.125, .25, .00390625)` mol, a 310–350 K host interval and manufactured available volume `.001 ± 1e-12` m³. The declared numerical envelope is explicitly a conditional test policy, not measured material uncertainty.
+
+At 331.25 K the total U is −66683.25064047937 J in the declared mixed coordinate, pressure is 1048366.2303916845 Pa, closed heat capacity is 351.8252909040792 J/K, and the full-domain lower bound is 318.625425 J/K. The negative energy is a coordinate value, not negative heat content relative to an absolute physical zero. The inverse returns 331.25 K after five iterations. Moving exactly `1/1024` mol from liquid to vapor at unchanged U and exact total water gives 331.13927133381367 K after 29 iterations; no latent-energy source is supplied. These are storage consistency checks, not a drying time trajectory or external material experiment.
+
+The actual source run and structured result are preserved as `source-native.log` and `source-native-example.json`. The reusable `run_native.py` takes repository root and output JSON arguments. Independent review and final installed evidence are recorded below when complete; the first run is not relabelled as installed verification.
+
+## Independent review, repaired failure and final installed verification
+
+Independent code review found a real representation defect in the newly extracted public fluid helper: a nonbinary Fraction gas inventory was rounded inside the fluid closure but retained unrounded in the compliance denominator. The reported additional pressure-error bound was smaller than the corresponding expression using the actual decoded gas by about 1.99284517e-21 Pa. Both existing host callers used binary64 values, so their old results were unaffected. The probe, pre-fix source, and actual five-failure representation RED are retained. The helper now rejects lossy nominal quantities before calling the fluid backend and uses the same represented quantities in both calculations. Its volume-error input remains an exact Fraction. Old wet/dry/volume-error full points, identities and liquid-call counts remain unchanged.
+
+Final author helper/old-storage tests: 36 passed in 0.64 seconds. Final root source selection: **59 passed in 8.02 seconds**, including all 16 source-wet tests, 22 helper tests, 14 old wet-storage tests and seven old two-cell wet-transport tests. Independent code review ran its own seven tests plus the final helper and source-wet files: 45 passed in 1.45 seconds. `review-REVIEW.md` and `review-FINAL_FREEZE.json` identify the five reviewed Python files. These selected tests use explicitly artificial liquid fixtures; no full-repository test claim is made.
+
+Independent physical calculation used a separate scipy pressure root, direct water/gas primitive functions and hand-integrated printed dry Cp, without calling either storage evaluator/inverse or the extracted fluid helper. All 13 checks passed. Its initial pressure/energy differ by approximately 3.54e-6 Pa and 5.82e-11 J, inside the reported numerical errors. Two local energy differences agree with the point heat capacity. Its independently solved phase-shift temperature is 331.1392713118579 K, approximately 2.20e-8 K from the production result, inside the reported 2.4454682928812732e-8 K conditional bound. This is independent aggregation/root arithmetic using common primitive thermodynamics, not independent experimental or EOS-library validation. See `physics-PHYSICS_REVIEW.md`, `physics-INDEPENDENT_RESULT.json` and the actual log/script. Earlier exact-1/5 proposal arithmetic is clearly retained as historical, not substituted for the actual binary64 mass case.
+
+After a noneditable offline reinstall, the same 59-test selection ran from `/private/tmp` with no PYTHONPATH: **59 passed in 8.23 seconds**, zero failures/errors/skips. Session33917 ended with exit0; XML counts were read and checked. All 109 actual installed `sludge_sandbox` Python modules match the source bytes. All five independently reviewed file hashes still match. The current root source/native processes are terminal; none needs to be polled or restarted.
+
+The final installed native example completed in 5.37203 seconds, with supervisor elapsed 5.601565 seconds under a 40-second hard limit (session48126 exit0). Every saved field except elapsed time equals the source-checkout example. No physical or inverse acceptance tolerance was changed. `installed-tests.xml`, `installed-tests.log`, `installed-identity.json`, `installed-native.log` and `installed-native-example.json` are the authoritative installed evidence. Hash equality establishes identity, not physical validity.
+
+The actual example command on the verified local runtime is:
+
+```sh
+env -u PYTHONPATH /private/tmp/brick-water-backend-probe/venv/bin/python \
+  /Users/wanggaoying/Desktop/brickmodel-github/docs/sandbox/research/source-wet-storage-v1/run_native.py \
+  /Users/wanggaoying/Desktop/brickmodel-github \
+  /private/tmp/source-wet-example.json
+```
+
+This requires the installed package, approved water backend/runtime and original source cache already used in the recorded verification. It is not a claim that the remaining full application has passed clean-machine acceptance. The independent script's recorded temporary `run_native` import location can be reconstructed by copying this unchanged `run_native.py` to `/private/tmp/brick-source-wet-storage-v1/`; its saved numerical checks did not call the tested aggregation methods.
+
+## Remaining original Goal requirements
+
+This closes the software barrier that previously prevented source dry-mass Cp from sharing actual wet fluid storage. It does not admit the new storage into the old A/B `WetPair`, exact-stage/controller/record or N-cell hosts. Next, extract the common phase/cell and face exchange calculations while retaining old two-cell behavior, then introduce an explicit no-reaction source path and N-cell face ledgers. Same-material volume, sorption/transport, reaction/sintering/cooling evidence, three public mechanism comparisons, full-cycle/multigeneration operation and application acceptance remain required. The complete original Goal stays active.
