@@ -1,5 +1,11 @@
 # 方程—代码—验证映射 v0.1
 
+来源普通段的数值设置：`source_trajectory.SourceOrdinaryStepSizes` 只替换新段 initial/max step，
+保留原参考政策供累计账本检查；`exact_integration_checkpoint_codec.py` 保存既有精确控制器并被动重核。
+对应 `test_source_ordinary_step_sizes.py`、`test_source_nonstationary_trajectory.py`、
+`test_exact_integration_checkpoint_codec.py` 及[实际测试/原生失败与修正证据](research/source-dynamic-continuation-v1/REPORT.md)。
+没有新增物性定律；V2 两个求解精度的理由与原压力界分项见该阶段预登记和 failure-diagnostic。
+
 完整运行保存层更新：`source_study_record/schema/audit.py` 与 `source_study_service.py` 接完整试算、
 原失败返回、阶段/压力门槛和累计账本；`source_dry_transition._audit_balance_fields` 复用原逐格/全域
 N/U、水/元素/质量算式，旧live入口验证及容差不变。对应 `test_source_study_record.py`、

@@ -1,0 +1,1 @@
+Same-plant follow-up to GNEST2021, not evidence of the same feed batch. See source-location.json for full-text access and page locators. quantitative-record.json preserves printed strings, separately allocated ash/water and recovery adjustments. Original copyrighted source assets remain private. No parameters were fitted or admitted.

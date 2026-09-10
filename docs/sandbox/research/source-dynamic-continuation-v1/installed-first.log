@@ -1,0 +1,105 @@
+........................................................................ [ 48%]
+........................................................................ [ 97%]
+...F                                                                     [100%]
+=================================== FAILURES ===================================
+______ test_nonstationary_continuous_and_paused_source_trajectories_agree ______
+
+self = SourceStudyNode(kind='sludge_sandbox.source_wet_storage.SourceWetPoint', values=mappingproxy({'fluid': SourceStudyNode...': False, 'qualification': 'source_dry_caloric_with_test_volume_and_conditional_fluid_bounds_not_material_admission'}))
+name = 'temperature_k'
+
+    def __getattr__(self, name: str) -> object:
+        try:
+>           return self.values[name]
+                   ^^^^^^^^^^^^^^^^^
+E           KeyError: 'temperature_k'
+
+brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/source_study_schema.py:58: KeyError
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-343/test_nonstationary_continuous_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10b3fcbc0>
+
+    def test_nonstationary_continuous_and_paused_source_trajectories_agree(tmp_path, monkeypatch):
+        # Same pressure-root precision derived for the old artificial-liquid seam;
+        # the real HEOS case and all acceptance/error envelopes remain unchanged.
+        values = json.loads(DYNAMIC_CASE.read_bytes())
+        values['pressure_policy']['pressure_tolerance_pa'] = 1e-7
+        case = tmp_path/'manufactured-seam-case.json'
+        case.write_text(json.dumps(values))
+        liquid_seam(monkeypatch)
+        parent, sessions = None, []
+        began = time.monotonic()
+        def cancel():
+            if time.monotonic()-began >= values['resources']['outer_seconds']:
+                return True
+            if parent is None:
+                return False
+            return any(parent['counts'][key]+sum(s.recorder.counts[key]-parent['counts'][key]
+                       for s in sessions) >= values['resources'][limit]
+                       for key,limit in (('rhs_started','total_callback_cap'), ('wet_started','wet_pressure_request_cap')))
+        parent = run_source_case(case, REPOSITORY, tmp_path/'parent', cancel=cancel)
+        assert parent['status'] == 'completed' and parent['numerical_event_accepted'], parent
+        _, _, record = read_run_with_source_record(tmp_path/'parent')
+        start = record.roots['transition'].candidates[1].end
+        end = T(start.seconds+F(3,64))
+        sizes = SourceOrdinaryStepSizes(1/64, 1/64, RATIONALE)
+        continuous = open_source_trajectory(tmp_path/'parent', tmp_path/'continuous', end=end, step_sizes=sizes, cancel=cancel)
+        sessions.append(continuous)
+        baseline = continuous.advance()
+        assert baseline.status == 'completed', (baseline.status, baseline.reason)
+        paused = open_source_trajectory(tmp_path/'parent', tmp_path/'paused', end=end, step_sizes=sizes, cancel=cancel)
+        sessions.append(paused)
+        assert paused.step_sizes is not sizes  # Caller-owned input was snapshotted.
+        first = paused.advance(pause_after_steps=1)
+        assert first.status == 'paused' and len(first.execution.result.steps) == 1
+        original_sizes = paused.step_sizes
+        original_count = paused.recorder.counts['rhs_started']
+        paused.step_sizes = replace(original_sizes, maximum_step_s=1/32)
+        with pytest.raises(IntegrationError, match='definition_changed'):
+            paused.advance()
+        assert paused.recorder.counts['rhs_started'] == original_count
+        paused.step_sizes = original_sizes
+        finished = paused.advance()
+        assert finished.status == 'completed', (finished.status, finished.reason)
+        assert _same(replace(baseline.execution.result, elapsed_seconds=0.),
+                     replace(finished.execution.result, elapsed_seconds=0.))
+        assert _same(baseline.execution.observations, finished.execution.observations)
+        assert _same(first.execution.result.steps, finished.execution.result.steps[:1])
+        assert baseline.balances == finished.balances
+        numerical = finished.execution.result
+        assert len(numerical.steps) == 3 and numerical.evaluations == 22
+        assert numerical.times_s[0] == start and numerical.times_s[-1] == end
+        assert any(np.any(step.face_energy_j[1:-1]) for step in numerical.steps)
+        assert np.any(numerical.states[-1].internal_energy_j != numerical.states[0].internal_energy_j)
+        assert all(np.array_equal(s.amounts_mol, numerical.states[0].amounts_mol) for s in numerical.states)
+        before = paused.recorder.captures[0]['evaluation'].source_evaluation.cells
+        after = paused.recorder.captures[-1]['evaluation'].source_evaluation.cells
+        assert paused.recorder.captures[-1]['time'] == end
+        assert _same(reify(paused.recorder.captures[-1]['packed_input']), numerical.states[-1])
+>       assert any(abs(F(b.inverse.point.temperature_k)-F(a.inverse.point.temperature_k)) >
+                   F(a.inverse.temperature_error_bound_k)+F(b.inverse.temperature_error_bound_k)
+                   for a,b in zip(before,after))
+
+/Users/wanggaoying/Desktop/brickmodel-github/tests/sandbox/test_source_nonstationary_trajectory.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/wanggaoying/Desktop/brickmodel-github/tests/sandbox/test_source_nonstationary_trajectory.py:91: in <genexpr>
+    assert any(abs(F(b.inverse.point.temperature_k)-F(a.inverse.point.temperature_k)) >
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SourceStudyNode(kind='sludge_sandbox.source_wet_storage.SourceWetPoint', values=mappingproxy({'fluid': SourceStudyNode...': False, 'qualification': 'source_dry_caloric_with_test_volume_and_conditional_fluid_bounds_not_material_admission'}))
+name = 'temperature_k'
+
+    def __getattr__(self, name: str) -> object:
+        try:
+            return self.values[name]
+        except KeyError as exc:
+>           raise AttributeError(name) from exc
+E           AttributeError: temperature_k
+
+brick-water-backend-probe/venv/lib/python3.12/site-packages/sludge_sandbox/source_study_schema.py:60: AttributeError
+- generated xml file: /private/tmp/brick-source-dynamic-continuation-v1/installed.xml -
+=========================== short test summary info ============================
+FAILED ../../Users/wanggaoying/Desktop/brickmodel-github/tests/sandbox/test_source_nonstationary_trajectory.py::test_nonstationary_continuous_and_paused_source_trajectories_agree
+1 failed, 147 passed in 187.90s (0:03:07)

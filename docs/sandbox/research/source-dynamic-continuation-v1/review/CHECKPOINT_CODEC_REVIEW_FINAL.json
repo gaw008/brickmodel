@@ -1,0 +1,68 @@
+{
+  "verdict": "APPROVE",
+  "scope": "new closed ordinary-checkpoint codec, its test and unchanged core compatibility",
+  "files": {
+    "src/sludge_sandbox/exact_integration_checkpoint_codec.py": "f819ef98b2d7e36858c9579c8cb59cdd0829ac5f2b70b4c29848491fc7538d7e",
+    "tests/sandbox/test_exact_integration_checkpoint_codec.py": "5f04d77425507b4aa2460e356d7a442d63785151f240cf965724c8077e255b08",
+    "src/sludge_sandbox/exact_integration.py": "99626ff1776ebdfe258552e67db66aaf804d7688cd7046fc46f31216e6b66a61",
+    "src/sludge_sandbox/exact_integration_checkpoint.py": "dc3d8ee3ccd70d66807bf06c82ad6478b5878b0ce2f83a31111168976936b0e8"
+  },
+  "author_test_xml": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "50",
+    "time": "1.158",
+    "timestamp": "2026-09-10T07:05:41.138259-10:00",
+    "hostname": "MacBookPro.lan"
+  },
+  "independent": {
+    "checks": 7,
+    "elapsed_seconds": 0.031026999989990145,
+    "native_eos_calls": 0,
+    "cases": [
+      {
+        "name": "genuine_manufactured_control",
+        "status": "pass",
+        "observations": 8
+      },
+      {
+        "name": "bool_as_policy_real",
+        "status": "rejected",
+        "reason": "checkpoint_codec_field_type:IntegrationPolicy.energy_scale_j"
+      },
+      {
+        "name": "wrong_known_record_class",
+        "status": "rejected",
+        "reason": "checkpoint_codec_field_type:ExactIntegrationProblem.initial"
+      },
+      {
+        "name": "oversized_energy_identity",
+        "status": "rejected",
+        "reason": "checkpoint_codec_string_limit"
+      },
+      {
+        "name": "negative_zero_fraction_denominator",
+        "status": "rejected",
+        "reason": "checkpoint_codec_canonical_fraction"
+      },
+      {
+        "name": "extra_array_dtype_tag",
+        "status": "rejected",
+        "reason": "checkpoint_codec_array_fields"
+      },
+      {
+        "name": "no_new_operator_calls_during_codec",
+        "status": "pass",
+        "additional_calls": 0
+      }
+    ]
+  },
+  "unresolved_findings": [],
+  "not_verified": [
+    "No source session durable resume authority",
+    "No native EOS or installed test execution",
+    "No source authenticity or historical wall truth certification"
+  ]
+}

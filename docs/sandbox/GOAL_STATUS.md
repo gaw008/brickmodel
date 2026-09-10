@@ -4,6 +4,44 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+当前从92e5b85继续，上一轮属于实际progress（续算源码、355安装测试及原生静止路径证据已提交）。
+本轮新增显式普通段步长选择，只改initial/max两字段，原误差、最小步与资源限额保持；
+新N3测试案例仅改变导热与初温，并准备真实连续/暂停两路径比较到原末时+3/64s。
+普通数值检查点codec已实现，作者50纯测试与独审7检查通过；它不授予源会话跨进程恢复。
+步骤和资格见[当前预登记](research/source-dynamic-continuation-v1/NATIVE_PLAN.md)。
+全部src已冻结并非editable安装；8个相关文件收集148项。安装测试**54116已终态1**：
+147通过/1失败187.90s，失败仅为验收代码读取保存节点上不存在的temperature_k便捷属性。
+动态两路径/状态/账本一致和U变化已执行通过；原日志被动核对三格温度变化均超过保存数值界。
+已改为该property原定义的point.fluid.mechanical.temperature_k，生产源码未改/无需重装；
+原失败日志/XML/完整动态包(除assets)/旧test与runner已冻结。受影响2项**12975已终态0**：
+2项通过80.15s；两轮覆盖148唯一相关用例，不冒称单轮148全绿。146模块/153包文件与源码一致。
+最终脚本修正已独审。首个原生比较**44020已终态1**，真实产物
+`/private/tmp/brick-source-dynamic-continuation-v1/native01`，监督`supervised-native01`；
+整次97RHS/16wet/510s共同守卫和570s监督限额。父研究completed206.958639s、32RHS/4HEOS/3初U/8wet，
+但numerical_event_accepted=false，因此两普通段未启动。监督208.279593s、输入不变、子进程已回收。
+不得再轮询或直接重跑44020。独立原字段诊断已定位湿cell2的选用压力界约4.65e-4Pa，超过原1e-4Pa；
+N/U/T/时间通过，主要压力求根与逆温度残差均须改善。零新EOS分项推导和原255项失败范围审计保留。
+已另建V2案例，只收紧压力求根1e-7Pa与逆解能量1e-6J；其余物理、误差和资源全保留。
+[第二次预登记](research/source-dynamic-continuation-v1/NATIVE_PLAN_V2.md)与独立driver不覆盖V1；
+installed配置入口被动检查通过，最初checker误将冻结tuple与JSON list相比的失败也保留。
+V2独审通过后的一次监督原生计算**38382已终态1**，产物native02/supervised-native02。
+父研究261.228973s、32RHS/4HEOS/3初U/8wet，全部原数值门槛通过；随后continuous触发原单段
+180s wall_time_limit，paused/普通检查点/ACCEPTANCE均未产生。主driver451.495800s，监督452.805136s，
+累计53/53RHS、8/8HEOS、3初U、8wet；输入未变且进程已回收。不是共同510s守卫触发，也不能报两路径成功。
+新父六选用P界独审全过；普通段独审515项0.2164s：2接受/3尝试，接受末时0.03125099380522851s，
+三个实际accepted逆温变化均超过保存条件数值界，导热/U非零且原N/U预算过。第三trial后6回调未被接受。
+185.5462s是含admission/重建/被动检查的实际会话计费，不能都称物理求值耗时。
+两审均0新EOS/完整study decode。38382不再轮询、不重试或增加预算。
+下一步按[本轮NEXT_STEP](research/source-dynamic-continuation-v1/NEXT_STEP.md)定位实际续算开销，
+再推进跨进程恢复与完整应用；当前纯数值codec仍不授予来源恢复。
+本轮[报告与原证据](research/source-dynamic-continuation-v1/REPORT.md)已整理，1,056成员8,607,883B归档逐项重开核SHA，
+无出版商原assets；旧失败、两次数值配置、实际部分结果和审查均保留。当前阶段有实际progress，完整Goal保持active。
+原record SHA bd137a827789ae701eaeb5accb5986da61ad26dc51551c4ad49f961e49cda7ca。
+同阶段已取得GNEST同作者/同厂2019一手专著的实际产物回收数据，原料同批unknown，
+打印表checker两项原反例已修复并通过独审，原数据未改；不升级材料资格。完整Goal保持active，合同未改。
+
+### 前一同会话来源续算阶段（已提交，保留历史）
+
 本轮从9d7beff继续实现来源普通段与同会话已提交边界恢复，入口为
 `source_trajectory.open_source_trajectory`及`integrate_exact_checkpointed`。
 代码/审查及前两次制造夹具失败见[本轮证据](research/source-continuation-v1/REPORT.md)。

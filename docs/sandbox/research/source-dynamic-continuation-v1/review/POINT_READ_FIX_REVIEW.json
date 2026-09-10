@@ -1,0 +1,29 @@
+{
+  "verdict": "APPROVE_POINT_READ_FIX_PENDING_TARGETED_TEST",
+  "files": {
+    "src/sludge_sandbox/source_trajectory.py": "0461c006edd621f36c8cc7bd46b5d799ef21470264fd135ce8b40f783795eec5",
+    "tests/sandbox/test_source_ordinary_step_sizes.py": "a99338152b739eafdb78846ae596e6d8a9594ca3ebbbffd43eba63f6eafb2d6c",
+    "tests/sandbox/test_source_nonstationary_trajectory.py": "d02a7196fa1cdcda7728b9a3b9f925ca58136ae7b60207b365dea4c1d28f91bc",
+    "docs/sandbox/research/source-dynamic-continuation-v1/run_native.py": "21dac378d123bf5a70459b391f7e1821567a201428b063e17d159b249b08ef2b",
+    "data/sandbox/cases/source-nonstationary-heos-v1.json": "86df9489bfe6de7c2306cf480aecd88f5ff741623093adc1177a26b78d3a68b1"
+  },
+  "change_scope": "Exactly one property-read expression in each new dynamic test and native runner; no production or codec change",
+  "reason": "SourceStudyNode stores fields only. SourceWetPoint.temperature_k is a property that returns fluid.mechanical.temperature_k. The replacement reads the same saved physical value without reification or new evaluation.",
+  "original_failure": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "1",
+    "skipped": "0",
+    "tests": "148",
+    "time": "187.896",
+    "timestamp": "2026-09-10T07:11:59.036581-10:00",
+    "hostname": "MacBookPro.lan"
+  },
+  "failure_type": "AttributeError: temperature_k",
+  "diagnosis_sha256": "0979a4444481a7d6eb19806ce25f3f6edb36db3bf24b279e9d68111f256071d8",
+  "diagnosis_three_temperature_changes_exceed_paired_bounds": true,
+  "models_or_tests_rerun": false,
+  "eos_calls": 0,
+  "unresolved_findings": [],
+  "condition": "Single targeted installed rerun must pass before native; existing full first 148 batch remains 147 passed and 1 failed."
+}

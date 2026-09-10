@@ -1,0 +1,11 @@
+# Independent audit of the failed dynamic native attempt
+
+255 saved-data checks passed in 0.176286 seconds. This means the failure record is internally consistent, not that dynamic native continuation passed. Supervisor status is failed/returncode1 after 208.279593 seconds; the original leader was reaped and frozen inputs are recorded unchanged. Parent study completed after 206.958639 seconds but numerical_event_accepted is false. The runner then raised AssertionError at its admission requirement.
+
+The only actual source work is the parent: 32 RHS start/return pairs, four HEOS start/kernel-return/return sequences, three initial-energy start/return pairs and eight wet-water start/return pairs. Each paired RHS state/time agrees; each paired wet request agrees. Event ordinals are complete. The saved case equals the original registered nonstationary case (SHA86df9489bfe6de7c2306cf480aecd88f5ff741623093adc1177a26b78d3a68b1). Parent study bytes hash to bd137a827789ae701eaeb5accb5986da61ad26dc51551c4ad49f961e49cda7ca. Runtime before/after agree and all material/training/resume/full-cycle qualifications remain false.
+
+No continuous or paused directory, no ordinary-checkpoint.json and no ACCEPTANCE.json exists. No ordinary-segment return or source-trajectory reconstruction event occurred. Consequently this attempt supplies no real-water ordinary-segment temperature increase, heat-transport continuation, pause equivalence or checkpoint evidence. The planned 76 RHS/12 HEOS totals were not executed; actual totals remain 32/4. Detailed failed-gate diagnosis is separately owned by the other reviewer and is not duplicated here.
+
+The earlier PREP_RESULT.json/PREP01.log retain 520 checks on the frozen artificial-liquid experiment, including nonzero energy change and three-step uninterrupted/paused equality. Those are explicitly manufactured preparation, not evidence of real-water dynamic success. They are not overwritten by this failed native attempt.
+
+The audit used only standard-library JSON/Fraction expansion of raw journal projections, summary/status reading and a byte hash of the parent study. No production source-study decoder, EOS, model reconstruction or integration was executed. NATIVE_FAILURE_RESULT.json pins all inspected parent event bytes; audit_native_failure.py and NATIVE_FAILURE01.log preserve the actual successful audit run.

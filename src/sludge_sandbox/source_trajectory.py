@@ -4,14 +4,14 @@ This is a new ordinary segment after an admitted numerical transition. Its
 accepted-boundary checkpoint is local to this live session; it does not restore
 the historical study controller or authorize archived source-run resume.
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from fractions import Fraction as F
 import math
 from pathlib import Path
 import time
 
 from .exact_event_clock import ExactEventTime as T
-from .integration import IntegrationError
+from .integration import IntegrationError, IntegrationPolicy
 from .run_service import RunError, read_run_with_source_record, runtime_identity
 from .source_dry_transition import _audit_balance_fields
 from .source_net_prefix import _same
@@ -30,6 +30,45 @@ def _require(condition, reason):
 def _upper_float(value):
     result = float(value)
     return math.nextafter(result, math.inf) if F(result) < value else result
+
+
+@dataclass(frozen=True)
+class SourceOrdinaryStepSizes:
+    """Explicit time-step selection for a new segment, never a resumed prefix.
+
+    Event localization can require much shorter steps than subsequent ordinary
+    transport. This selection changes only the initial/maximum step; all error,
+    minimum-step and resource policies of the accepted source reference remain.
+    """
+    initial_step_s: float
+    maximum_step_s: float
+    rationale: str
+    classification: str = 'numerical_policy'
+
+    def __post_init__(self):
+        self.check()
+
+    def check(self):
+        _require(type(self) is SourceOrdinaryStepSizes and
+                 all(type(x) is float and math.isfinite(x) and x > 0
+                     for x in (self.initial_step_s, self.maximum_step_s)) and
+                 self.initial_step_s <= self.maximum_step_s,
+                 'source_ordinary_finite_positive_step_sizes')
+        _require(type(self.rationale) is str and bool(self.rationale.strip()) and
+                 type(self.classification) is str and
+                 self.classification == 'numerical_policy',
+                 'source_ordinary_explicit_numerical_rationale_required')
+
+    def binding(self):
+        self.check()
+        return (self.initial_step_s, self.maximum_step_s, self.rationale, self.classification)
+
+    def apply(self, reference: IntegrationPolicy) -> IntegrationPolicy:
+        self.check()
+        _require(type(reference) is IntegrationPolicy, 'source_ordinary_original_policy_required')
+        reference.__post_init__()
+        return replace(reference, initial_step_s=self.initial_step_s,
+                       maximum_step_s=self.maximum_step_s)
 
 
 @dataclass(frozen=True)
@@ -63,7 +102,8 @@ class SourceTrajectorySession:
             self.policy, self.adapter.operator_identity, self.adapter.energy_model_identity,
             self.adapter.interfaces, self.parent_counts, self.parent_elapsed_seconds,
             self.built.config.sha256, self.built.assets.sha256, self.selected_candidate_index,
-            self.begin, self.recorder.begin))
+            self.begin, self.recorder.begin, self.reference_policy,
+            None if self.step_sizes is None else self.step_sizes.binding()))
 
     def _check(self):
         _require(self.checkpoint is self._continuation_state[0]
@@ -94,7 +134,7 @@ class SourceTrajectorySession:
                  'source_trajectory_original_segment_connection_changed')
         masses = tuple(g.molar_masses_kg_mol
             for g in reify(candidate.captures[0].evaluation).source_evaluation.gas_states)
-        return _audit_balance_fields(reify(first.initial), first.start, self.policy, masses,
+        return _audit_balance_fields(reify(first.initial), first.start, self.reference_policy, masses,
             wet_references=(reify(first.reference),), terminal_prefix=reify(terminal.prefix),
             corrected_state=reify(terminal.corrected_state),
             selected_cell_index=terminal.selected_cell_index,
@@ -177,18 +217,27 @@ class SourceTrajectorySession:
         return result
 
 
-def open_source_trajectory(directory, output, *, end: T, cancel=None):
+def open_source_trajectory(directory, output, *, end: T, cancel=None,
+                           step_sizes: SourceOrdinaryStepSizes | None = None):
     """Read a same-version frozen source run and reconstruct its live dry view.
 
     Only candidate 1 of a numerically accepted transition is currently admitted.
     The historical source study stays passive. New provider constructors execute
     under the observer, and their real cost is charged before any new RHS call.
     Raw events are durable; this API does not yet serialize a resume controller.
+    Optional ``step_sizes`` declares only the new segment's initial/maximum
+    steps. Original tolerances and resource limits remain; later pauses cannot
+    replace the selected policy.
     """
     begin = time.monotonic()
     _require(type(end) is T and type(end.seconds) is F,
              'source_trajectory_exact_end_required')
     _require(cancel is None or callable(cancel), 'source_trajectory_cancel_callback_required')
+    _require(step_sizes is None or type(step_sizes) is SourceOrdinaryStepSizes,
+             'source_trajectory_explicit_step_sizes_required')
+    if step_sizes is not None:
+        step_sizes.check()
+        step_sizes = replace(step_sizes)
     directory = Path(directory)
     summary, _, record = read_run_with_source_record(directory)
     if summary.get('integration_kind') != KIND or summary.get('status') != 'completed':
@@ -201,6 +250,8 @@ def open_source_trajectory(directory, output, *, end: T, cancel=None):
     _require(transition.numerical_event_accepted is True and transition.material_qualified is False,
              'source_trajectory_accepted_numerical_transition_required')
     candidate = transition.candidates[1]
+    reference_policy = reify(candidate.seed.policy)
+    policy = reference_policy if step_sizes is None else step_sizes.apply(reference_policy)
     initial, start = reify(candidate.reference.states[-1]), candidate.reference.times_s[-1]
     _require(start < end, 'source_trajectory_end_must_follow_original_study')
     config = load_source_run_config(_read(directory / 'case.json', 1024 * 1024))
@@ -259,6 +310,8 @@ def open_source_trajectory(directory, output, *, end: T, cancel=None):
                 parent_study_sha256=record.sha256, runtime=runtime, original_counts=original_counts,
                 original_elapsed_wall_seconds=prior_wall, selected_candidate_index=1,
                 start=start, end=end, adapter_provenance=adapter.provenance(),
+                original_reference_policy=reference_policy, ordinary_policy=policy,
+                step_sizes=step_sizes,
                 scope='new_ordinary_segment_not_historical_controller_resume'))
             recorder.guard()
     except BaseException as exc:
@@ -273,7 +326,7 @@ def open_source_trajectory(directory, output, *, end: T, cancel=None):
     session = SourceTrajectorySession()
     session.record, session.built, session.adapter = record, built, adapter
     session.initial, session.start, session.end = initial, start, end
-    session.policy = reify(candidate.seed.policy)
+    session.policy, session.reference_policy, session.step_sizes = policy, reference_policy, step_sizes
     session.parent_elapsed_seconds, session.parent_counts = prior_wall, tuple(sorted(original_counts.items()))
     session.runtime, session.begin, session.recorder = runtime, begin, recorder
     session.constructor_counts = tuple(sorted((key, value) for key, value in recorder.counts.items()

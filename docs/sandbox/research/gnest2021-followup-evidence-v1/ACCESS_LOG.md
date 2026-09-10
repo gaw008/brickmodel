@@ -1,0 +1,10 @@
+# Actual access and read log — 2026-09-10 session
+
+1. Read previously saved GNEST accepted manuscript reference45 and related methodology. No repeated download or TG digitization.
+2. Web queries: exact Spanish book title + pdf; Mendoza/Salitre/pyrolysis/condensate. Publisher OpenAccess PDF identified.
+3. Initial sandbox curl failed DNS (curl6); subsequent pdftotext failed because no file existed. No source bytes were inferred from that failure. Authorized network escalation downloaded the same publisher URL successfully (3,233 KiB, curl0); local pdftotext succeeded.
+4. Read chapter3 characterization, sections4.2.1/4.3.1 recovery, chapter5.1 results, bibliography61 and same-origin discussion. Rendered and visually inspected PDF81,82,83. Private assets reside in /private/tmp/brick-source-dynamic-continuation-v1/material/.
+5. Second candidate query: exact title “Catalytic Cracking of Tars Produced” + Mendoza +2015. Further bounded searches site:etaflorence.it Mendoza2015tars and site:eubce.com catalyticcracking sludge yielded no matching primary full text. The surfaced request-full-text page was not used for numerical claims. Stopped at these two candidates.
+6. Saved new factual records and independently exact printed-sum calculations. No EOS/model/fitting/old-source edits. The access outcome is specific to this run, not a claim that no public full text exists anywhere.
+
+7. Independent checker review found two actual negative controls incorrectly passing: a reversed Table5-1 basis-column order and a changed recorded HHV while the check retained a hard-coded original HHV. Original script and reviewer failures were preserved privately. The checker now validates explicit table columns/units/basis and reads the recorded HHV and printed LHV; their Eq3-1 consistency is checked within the printed two-decimal rounding interval. This interval is not experimental uncertainty. Original quantitative data are unchanged; CHECK02 is the actual successful normal run after this correction.
