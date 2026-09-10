@@ -1,0 +1,9 @@
+# Pure saved native root replay static review
+
+Read replay_native_roots.py and parsed AST, without importing/executing it or running EOS. Actual fixed helper hash matches previously reviewed35-class decoder0b7b12500a0ad2bcce7ae69c4d539efe86b839212072a28d9ff23b8d92e94df1. Helper import path is fixed under repository and content hash checked before execution; saved class names never drive imports. Both native/audit bytes retain pinned helper constants and audit input binding.
+
+Each of seven trials retains original dictionary/status, exact start/end and capture_start/+3 stage inputs. Full capture encode/decode roundtrip remains mandatory before panel construction; existing record constructors validate derived fields. Physics evaluate/inverse/TP/equilibrium entry points are patched to fail while decoding/building/ordering. Pure source root order/check is recomputed;12strict-positive exclusions/no roots/no zero-initial inventory are a tested expected outcome, not a fabricated success or substitution for missing samples. Unexpected roots fail and retain completed replay prefix.
+
+30s soft checks before every trial and after loop,45s outer alarm, error JSON and nonzero exit preserve bounded execution. Writes are not atomic, so catastrophic external kill cannot guarantee last JSON validity; no contrary claim. Outputs include exact order/exclusions and unchanged qualification, explicitly false material and physical/event admission. This is a saved affine-panel result, not new native dynamics or a physical no-depletion certificate.
+
+No substantive blocker identified. Approve reviewed hash fb806f7acbdb10f3ae909eb65b0c5396094d0ad7f5b34ec1c677806678148488 for execution after parent verification/installation gates. No replay execution or numerical result is claimed by this static review.

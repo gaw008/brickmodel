@@ -2,6 +2,8 @@
 
 ## 当前新增映射
 
+来源数值首根：`source_net_roots.isolate_first_root/refine_first_root/same_first_root` 对 `n+r*t+q*t²` 的首下降分支建立有理包络，以原 `InventoryPolynomial.minimum` 排除严格正库存；`rational_polynomial` 供新旧两层共用中点/GCD算术。`order_source_panel_roots` 从完整来源面板验证全部4N流体竞争、精确时刻与源绑定，返回有序/同时/无根/未决/零初始不完整状态。新三组测试与17旧完整冻结结果、最终安装123项及原七试步纯回放见[本阶段证据](research/source-net-roots-v1/REPORT.md)。没有新增物理本构或事件写回许可。
+
 来源净库存插值：`source_net_panel.build_source_panel` 从两个完整来源样本的共享面/局部源得到 r0、rm，形成 N0+r0t+(rm−r0)t²/(2hm)，U使用同一总面能量。`SourceAffinePanel.check/minima` 重算绑定派生项并直接调用 `InventoryPolynomial.minimum`。`test_source_net_panel.py` 与 `test_source_net_panel_integration.py` 覆盖非蒸发排水、凝结竞争、N格关联、精确时间和实际来源接线；[安装/原生回放与独立最小值复算](research/source-net-panel-v1/REPORT.md)共保留七个原试步的105多项式和84最小值。此处是数值插值，尚不授权物理轨迹、耗尽根或写回。
 
 来源精确积分映射：`exact_source_column.ExactSourceColumn` 将每格 (Nl,NO2,NN2,Nv) 与含固定干物的总 U 无损放入 `ConservedState`，把原 N+1 面流映入 `Rates`；液水导数为 J_left−J_right−phase，气态水源为 +phase。`SourceExactEvaluation` 保留完整来源反解/面焓/表面分项。`integrate_exact` 复用既有两半步/整步误差和逐步/累计账本；`test_exact_source_column.py` 的14项与[独立/安装证据](research/exact-source-column-v1/REPORT.md)覆盖布局、来源身份、零化学契约、域外与数值失败分类。四列流体布局不等于旧机械耗尽或A/B记录准入；运输耗尽投影与干界面规律仍需实现。

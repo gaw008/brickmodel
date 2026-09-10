@@ -1,0 +1,7 @@
+# Final mathematical review
+
+Earlier independent factor construction supplied 117 exact rational polynomial/domain cases; the executed implementation comparison passed 1,152 checks. Those original files and hashes remain unchanged. Coverage included convex dip and recovery, second root at the upper endpoint, tangent/endpoint precedence, concave initial gain, shared later roots that are not a first-root tie, true earliest competitors, incomplete zero-initial ordering, refinement budget exhaustion and forged records. No scientific or numerical defect was found in those cases.
+
+Final source_net_roots.py SHA is 022912c0a26c4fba15fe1071880b5cc9b2e41c3cf3e0a50f190e87fb063ee6f2. Independently removing exactly six return annotations reproduces the frozen pre-annotation source SHA c0389459f403d9d298e02808ec8432ad377c824283af68c02f071930af05b215 byte for byte. Thus this final delta contains no executable arithmetic change. The previously noted SourcePanelRootOrder.check missing type guard is present in the final source; it explicitly requires an actual InventoryRootOrder before field access. The unchanged 117-case suite was not rerun.
+
+The final saved native replay additionally passed 450 offline checks over seven trials / 84 strictly positive inventory quadratics; see NATIVE_AUDIT.md and NATIVE_AUDIT.json. This adds actual saved-data no-root evidence, not an event driver, physical writeback, or real-material validation. The next-route-review.md preserves every zero-initial inventory as unsupported in the next bounded prefix step.

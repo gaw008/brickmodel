@@ -5,6 +5,7 @@ import math
 import numpy as np
 from sludge_sandbox.exact_event_clock import ExactEventTime
 from sludge_sandbox.integration import ConservedState
+from sludge_sandbox.rational_polynomial import refine_descending_bracket
 from sludge_sandbox.depletion_roundoff import (DepletionRoundoffError,DepletionRoundoffPolicy,
     DepletionRoundoffTotals,_number,_check_budgets,_half_neighbor_spacing)
 
@@ -134,10 +135,11 @@ def locate_exact_affine(samples,*,time_absolute_s,policy,maximum_refinements=256
     if type(maximum_refinements) is not int or not 1<=maximum_refinements<=256:
         raise DepletionRoundoffError('bounded_refinement_required')
     low=Fraction();high=samples.upper.elapsed_since(samples.start)
+    coefficients=(Fraction(samples.start_inventory_mol),
+                  sum(map(Fraction,samples.liquid_rates_start_mol_s),Fraction()),
+                  sum(samples.accelerations,Fraction())/2)
     for count in range(1,maximum_refinements+1):
-        mid=(low+high)/2
-        if samples.inventory(mid)>=0:low=mid
-        else:high=mid
+        low,high=refine_descending_bracket(coefficients,low,high)
         try:
             return ExactAffineEvidence(samples,samples.start.shifted(low),samples.start.shifted(high),count,time_absolute_s,policy)
         except DepletionRoundoffError as exc:

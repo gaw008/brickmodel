@@ -8,6 +8,7 @@ from sludge_sandbox.integration import ConservedState,Rates,IntegrationError
 from sludge_sandbox.exact_event_clock import ExactEventTime
 from sludge_sandbox.exact_affine_depletion import ExactAffineSamples,ExactAffineEvidence
 from sludge_sandbox.depletion_roundoff import DepletionRoundoffPolicy,DepletionRoundoffError,_number
+from sludge_sandbox.rational_polynomial import polynomial_gcd,refine_descending_bracket
 
 
 class ExactRootOrderError(ValueError):
@@ -35,17 +36,7 @@ def _minimum(n,r,a,h):
 
 def _same_first_root(left,right,h):
     """Exact polynomial gcd; both inputs already strictly decreasing here."""
-    def trim(p):
-        while p and p[-1]==0:p.pop()
-        return p
-    a=trim(list(left));b=trim(list(right))
-    while b:
-        r=list(a)
-        while r and len(r)>=len(b):
-            offset=len(r)-len(b);factor=r[-1]/b[-1]
-            for i,x in enumerate(b):r[offset+i]-=factor*x
-            trim(r)
-        a,b=b,r
+    a=polynomial_gcd(left,right)
     if len(a)==3:return True  # Proportional quadratics with the same domain root.
     if len(a)==2:return 0<-a[0]/a[1]<=h
     return False
@@ -132,8 +123,7 @@ def order_exact_affine_roots(state,first,midpoint_rates,*,start,midpoint,upper,l
     bounds={i:(F(),h) for i in samples}
     for level in range(1,maximum_refinements+1):
         for i,sample in samples.items():
-            lo,hi=bounds[i];m=(lo+hi)/2
-            bounds[i]=(m,hi) if sample.inventory(m)>=0 else (lo,m)
+            bounds[i]=refine_descending_bracket(polynomials[i],*bounds[i])
         ordered=sorted(bounds,key=lambda i:(bounds[i][0],i))
         first_cell=ordered[0]
         if all(bounds[first_cell][1]<bounds[i][0] for i in ordered[1:]):
