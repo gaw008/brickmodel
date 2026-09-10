@@ -1,0 +1,72 @@
+{
+  "verdict": "APPROVE",
+  "baseline": "9d7beffeeb7c1c18f357f2b3ab5ce690bca35181",
+  "production_read_only": true,
+  "open_findings": [],
+  "files": [
+    {
+      "path": "src/sludge_sandbox/exact_integration.py",
+      "bytes": 28380,
+      "sha256": "99626ff1776ebdfe258552e67db66aaf804d7688cd7046fc46f31216e6b66a61"
+    },
+    {
+      "path": "src/sludge_sandbox/exact_integration_checkpoint.py",
+      "bytes": 19887,
+      "sha256": "dc3d8ee3ccd70d66807bf06c82ad6478b5878b0ce2f83a31111168976936b0e8"
+    },
+    {
+      "path": "tests/sandbox/test_exact_integration_checkpoint.py",
+      "bytes": 19504,
+      "sha256": "3b62c6749c876dacf923cecdf0cdc48a406fe22ff9f386f3bda05ddf9f13dd2f"
+    }
+  ],
+  "reviewed": [
+    "Full opt-in checkpoint module and original exact driver diff/call sites",
+    "Existing state/rates/policy/ledger construction and new test file",
+    "Passive numeric replay and rejected callback linkage",
+    "Original adaptive h/knots/component schema and cumulative N/U/component/stretch debt",
+    "Commit observer failure, cancellation/resource exits and occurred invalid Rates preservation"
+  ],
+  "closed_findings": [
+    {
+      "id": "postcommit_wall_and_cancel",
+      "severity": "HIGH",
+      "red": "../integration/final-guards-red.xml and postcommit-cancel-red.xml",
+      "green": "checkpoint-final/RESULT.json",
+      "issue": "A completed observer/pause callback could consume wall budget or request cancellation yet leave success/resumable pause"
+    },
+    {
+      "id": "postcommit_cancel_exception_reclassified_as_trial_rejection",
+      "severity": "HIGH",
+      "red": "postcommit-domain-cancel-red/RESULT.json",
+      "green": "postcommit-domain-cancel-green/RESULT.json",
+      "issue": "Actual cancellation DomainExit after a committed step returned completed with attempted1/accepted1/rejected1; final preserves original failure and accepted evidence with rejected0"
+    }
+  ],
+  "author_evidence_verified": {
+    "tests": 61,
+    "failures": 0,
+    "errors": 0,
+    "xml_seconds": "5.843",
+    "xml": "../integration/final04.xml",
+    "note": "Read existing author outputs; reviewer did not rerun this suite. Includes 17 unchanged legacy checks plus 44 checkpoint tests."
+  },
+  "independent_execution": {
+    "checks": 9,
+    "seconds": 0.03384679200826213,
+    "same_red_green": true,
+    "models_or_EOS": 0,
+    "probe": "checkpoint-final/probe.py",
+    "results": "checkpoint-final/RESULT.json"
+  },
+  "scope_limits": [
+    "In-memory ordinary exact segment continuation only; not a persistent codec or archived study/live-provider restoration",
+    "Passive replay validates the saved arithmetic, not authenticity or physical truth of caller-provided observations/wall times",
+    "Source run/config/provider/cumulative lifetime admission is the parent-owned layer and separately reviewed",
+    "No native/backend construction, installation or old numerical suite rerun by reviewer"
+  ],
+  "additional_author_closed_items": [
+    "Rates constructor-derived component residual binding",
+    "Original constructor component mapping order binding"
+  ]
+}

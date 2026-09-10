@@ -4,6 +4,27 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+本轮从9d7beff继续实现来源普通段与同会话已提交边界恢复，入口为
+`source_trajectory.open_source_trajectory`及`integrate_exact_checkpointed`。
+代码/审查及前两次制造夹具失败见[本轮证据](research/source-continuation-v1/REPORT.md)。
+核心61项、来源入口15项100.05s、纯累计账本9项已通过；核心独审9项通过。
+原泥材料、全流程及持久化恢复均未升级。所有src已冻结并非editable安装，145模块与源码一致。
+安装回归 **92225已终态0：355项通过327.16s，0失败/错误/跳过**，cwd=/private/tmp、无PYTHONPATH。
+145模块/152包文件与源码逐字一致，日志/XML/身份已复制到本轮证据目录。
+唯一原生续算 **43522已终态0**：主runner112.123291s，监督113.447125s，原case/门槛/预算不变。
+实际4+4次HEOS构造、初U仍3次、原32+新29=61次RHS；暂停1步后累计4接受/0拒步到
+4.375038506232283e-6s。**新段所有状态静止**，只验证静止解与续算生命周期，不证明新材料动态。
+保存结果独审745项0.227126s通过、0新EOS；原失败审计及修正也保留。
+真实产物在`/private/tmp/brick-source-continuation-v1/native01`；公开证据不含原始publisher assets。
+1204成员证据归档已逐项重开核对，9,182,060B；长度和SHA见本轮RAW_MANIFEST.json。
+旧运行13898/31168/68551及本轮11777/44517/90866/92225/43522均已终态，不再轮询或重跑。
+同阶段[GNEST基准审计](research/gnest2021-basis-audit-v1/REPORT.md)明确扣灰差值氧、差值凝液及
+25°C热值推断的基准；10元素/温度行独立算术核查通过，未配平或准入完整反应网络。
+下一实际入口见[NEXT_STEP](research/source-continuation-v1/NEXT_STEP.md)：先验证有状态变化的来源续算，
+再补跨进程恢复和共享应用入口；同时补同材料计量/热效应证据。完整Goal保持active。
+
+### 前一来源运行服务阶段（已提交，保留历史）
+
 [来源试算正式运行入口](research/source-run-service-v1/REPORT.md)已实际完成：闭合配置、17来源资产、
 真实HEOS/来源热容直接构造、初U和真实probe推导H、试算/事件比较、取消与进程监督、完整原返回/失败保存，
 以及read/export/replay/CLI查询。原数字/政策不变，manufactured几何/输运与material=false保持；resume明确尚未实现。

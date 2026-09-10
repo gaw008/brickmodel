@@ -275,7 +275,7 @@ def _audit_path(candidate, ordinary=()):
 
 def _audit_balance_fields(initial, start, policy, masses, *, wet_references,
         terminal_prefix, corrected_state, selected_cell_index,
-        signed_storage_roundoff_mol, dry_reference):
+        signed_storage_roundoff_mol, dry_reference, post_dry_references=()):
     """Pure balances for already validated saved states and ledger fields.
 
     No adapter or provider is accepted. Callers validate reference connections
@@ -357,6 +357,13 @@ def _audit_balance_fields(initial, start, policy, masses, *, wet_references,
     previous=corrected
     for state,ledger in zip(dry_reference.states[1:],dry_reference.steps):
         step(state,ledger,'dry_reference')
+    for reference in post_dry_references:
+        _require(len(reference.states)==len(reference.times_s)==len(reference.steps)+1
+                 and _same(reference.states[0],previous)
+                 and reference.times_s[0]==previous_time,
+                 'source_transition_post_dry_connection_changed')
+        for state,ledger in zip(reference.states[1:],reference.steps):
+            step(state,ledger,'post_dry_reference')
     return tuple(rows)
 
 @dataclass(frozen=True)

@@ -392,7 +392,10 @@ def verify_source_artifacts(directory, result, manifest):
         return
     if reference != {'path': RECORD, 'sha256': manifest['files'].get(RECORD)}:
         raise RunError('source_run_record_binding_changed')
-    record = decode_source_study(_read(Path(directory) / RECORD))
+    record_bytes = _read(Path(directory) / RECORD)
+    if hashlib.sha256(record_bytes).hexdigest() != reference['sha256']:
+        raise RunError('source_run_record_changed_after_validation')
+    record = decode_source_study(record_bytes)
     if (record.metadata['case_sha256'] != result['case_sha256']
             or record.metadata['counts'] != result['counts']
             or record.metadata['status'] != result['execution_status']
@@ -410,6 +413,7 @@ def verify_source_artifacts(directory, result, manifest):
                 or transition.status != result.get('transition_status')
                 or float(transition.candidates[0].end.seconds) != result.get('physical_end_seconds')):
             raise RunError('source_run_transition_summary_changed')
+    return record
 
 
 def replay_source_case(directory, output, *, cancel=None):

@@ -55,6 +55,12 @@ def _seal(directory):
 
 def read_run(directory: str | Path) -> tuple[dict[str, Any], dict[str, Any]]:
     """Verify every recorded artifact before returning the saved result."""
+    result, manifest, _ = read_run_with_source_record(directory)
+    return result, manifest
+
+
+def read_run_with_source_record(directory: str | Path):
+    """Return the source record from the same validation pass, when present."""
     directory = Path(directory)
     try:
         manifest = json.loads((directory/'manifest.json').read_bytes())
@@ -77,7 +83,10 @@ def read_run(directory: str | Path) -> tuple[dict[str, Any], dict[str, Any]]:
             raise RunError('unrecorded_run_artifacts')
         if not {'case.json', 'result.json'} <= set(manifest['files']):
             raise RunError('invalid_run_required_artifacts')
-        result = json.loads((directory/'result.json').read_bytes())
+        result_bytes = (directory/'result.json').read_bytes()
+        if _hash(result_bytes) != manifest['files'].get('result.json'):
+            raise RunError('result_changed_after_validation')
+        result = json.loads(result_bytes)
         if not isinstance(result, dict):
             raise RunError('invalid_run_result')
         if result['case_sha256'] != manifest['files']['case.json']:
@@ -85,8 +94,8 @@ def read_run(directory: str | Path) -> tuple[dict[str, Any], dict[str, Any]]:
         from .exact_run_service import verify_exact_artifacts
         verify_exact_artifacts(directory,result,manifest)
         from .source_run_service import verify_source_artifacts
-        verify_source_artifacts(directory,result,manifest)
-        return result, manifest
+        source_record = verify_source_artifacts(directory,result,manifest)
+        return result, manifest, source_record
     except (OSError, KeyError, TypeError, json.JSONDecodeError) as exc:
         raise RunError('invalid_run') from exc
 

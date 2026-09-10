@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from collections.abc import Mapping
 from fractions import Fraction
 from types import MappingProxyType
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 import math
 import time
 import numpy as np
@@ -11,6 +11,9 @@ from numpy.typing import NDArray
 from sludge_sandbox.exact_event_clock import ExactEventTime
 from sludge_sandbox.integration import (ConservedState, Rates, IntegrationPolicy, IntegrationError,
     DomainExit, _Reject, _Stop, _array, _components, _scalar, _updated, _sum_arrays, _check_update)
+
+if TYPE_CHECKING:
+    from .exact_integration_checkpoint import ExactIntegrationCheckpoint, ExactCheckpointRun
 
 
 def _scaled(duration: Fraction, values: NDArray[np.float64]) -> NDArray[np.float64]:
@@ -151,6 +154,34 @@ def integrate_exact(initial: ConservedState, operator: Callable[[ConservedState,
     intervals below minimum_step_s are refused, including breakpoint remainders.
     No legacy checkpoint/codec or depletion-packet admission is provided.
     """
+    return _integrate_exact(initial, operator, start_s=start_s, end_s=end_s, policy=policy,
+                            breakpoints_s=breakpoints_s, cancel=cancel)
+
+
+def integrate_exact_checkpointed(initial: ConservedState,
+              operator: Callable[[ConservedState, ExactEventTime], Rates], *,
+              start_s: ExactEventTime, end_s: ExactEventTime, policy: IntegrationPolicy,
+              breakpoints_s: tuple[ExactEventTime, ...] = (),
+              cancel: Callable[[], bool] | None = None,
+              continuation: 'ExactIntegrationCheckpoint | None' = None,
+              pause_after_commit: 'Callable[[ExactIntegrationCheckpoint], bool] | None' = None,
+              on_commit: 'Callable[[ExactIntegrationCheckpoint], None] | None' = None,
+              admission_elapsed_seconds: float = 0.0) -> 'ExactCheckpointRun':
+    """Opt-in accepted-boundary pause/continuation; the old result stays unchanged.
+
+    Checkpoint and observation types live in exact_integration_checkpoint.
+    Immediate mid-trial cancellation does not grant a resumable checkpoint.
+    """
+    from .exact_integration_checkpoint import run_checkpointed
+    return run_checkpointed(initial, operator, start_s=start_s, end_s=end_s,
+        policy=policy, breakpoints_s=breakpoints_s, cancel=cancel, continuation=continuation,
+        pause_after_commit=pause_after_commit, on_commit=on_commit,
+        admission_elapsed_seconds=admission_elapsed_seconds)
+
+
+def _integrate_exact(initial, operator, *, start_s, end_s, policy,
+                     breakpoints_s=(), cancel=None, _tracking=None):
+    """One arithmetic loop for both original and opt-in checkpoint entry points."""
     if not isinstance(initial, ConservedState) or not isinstance(policy, IntegrationPolicy):
         raise IntegrationError("validated_initial_state_and_policy_required")
     if initial.mechanical_stretches is not None:
@@ -184,6 +215,19 @@ def integrate_exact(initial: ConservedState, operator: Callable[[ConservedState,
     cumulative_stretch = [Fraction() for _ in initial.mechanical_stretches] if mechanical else None
     cumulative_stretch_exact = list(cumulative_stretch) if mechanical else None
     cumulative_stretch_roundoff = list(cumulative_stretch) if mechanical else None
+    resumed = None if _tracking is None else _tracking.continuation
+    if resumed is not None:
+        prior = resumed.result
+        times = [stamp.seconds for stamp in prior.times_s]
+        states, ledgers = list(prior.states), list(prior.steps)
+        evaluations, rejected, attempted = prior.evaluations, prior.rejected_trials, prior.attempted_trials
+        knot_index, component_schema = resumed.knot_index, resumed.component_schema
+        cumulative_n, cumulative_u = list(resumed.cumulative_n), list(resumed.cumulative_u)
+        cumulative_components = list(resumed.cumulative_components)
+        if mechanical:
+            cumulative_stretch = list(resumed.cumulative_stretch)
+            cumulative_stretch_exact = list(resumed.cumulative_stretch_exact)
+            cumulative_stretch_roundoff = list(resumed.cumulative_stretch_roundoff)
 
     def accumulated_exchange(previous, before, after, terms, tolerance, name):
         # Exact binary-float sums avoid building a second drifting float ledger.
@@ -198,43 +242,62 @@ def integrate_exact(initial: ConservedState, operator: Callable[[ConservedState,
         return proposed
 
     def finish(status, reason=None):
-        return ExactIntegrationResult(status, reason, tuple(ExactEventTime(t) for t in times), tuple(states), tuple(ledgers),
-                                 evaluations, rejected, time.monotonic()-begin, attempted,
+        result = ExactIntegrationResult(status, reason, tuple(ExactEventTime(t) for t in times), tuple(states), tuple(ledgers),
+                                 evaluations, rejected, elapsed(), attempted,
                                  tuple(cumulative_components) if component_schema not in (..., None) else None)
+        if _tracking is not None:
+            _tracking.finish(result)
+        return result
+
+    def elapsed():
+        return time.monotonic()-begin if _tracking is None else _tracking.elapsed()
 
     def guard():
         if cancel is not None and cancel():
             raise _Stop("cancelled", "cancel_requested")
-        if time.monotonic()-begin >= policy.maximum_wall_seconds:
+        if elapsed() >= policy.maximum_wall_seconds:
             raise _Stop("resource_limit", "wall_time_limit")
 
     def smaller_step(at, endpoint, desired):
         return _duration_control(desired if desired < endpoint-at else (endpoint-at)/2)
 
-    def evaluate(state, at):
+    def evaluate(state, at, role):
         nonlocal evaluations, component_schema
         guard()
         evaluations += 1
-        rates = operator(state, ExactEventTime(at))
-        guard()
-        if not isinstance(rates, Rates):
-            raise IntegrationError("operator_must_return_rates")
-        rates.derivatives(state)
-        schema = None if rates.cell_power_components_w is None else tuple(rates.cell_power_components_w)
-        if component_schema is ...:
-            component_schema = schema
-        elif schema != component_schema:
-            raise IntegrationError("component_work_schema_changed")
+        if _tracking is not None:
+            _tracking.started(state, ExactEventTime(at), evaluations, attempted, role)
+        try:
+            rates = operator(state, ExactEventTime(at))
+            if _tracking is not None:
+                _tracking.returned(rates)
+            guard()
+            if not isinstance(rates, Rates):
+                raise IntegrationError("operator_must_return_rates")
+            if _tracking is not None and type(rates) is not Rates:
+                raise IntegrationError('checkpoint_requires_exact_rates')
+            rates.derivatives(state)
+            schema = None if rates.cell_power_components_w is None else tuple(rates.cell_power_components_w)
+            if component_schema is ...:
+                component_schema = schema
+            elif schema != component_schema:
+                raise IntegrationError("component_work_schema_changed")
+        except BaseException as exc:
+            if _tracking is not None:
+                _tracking.failed(exc)
+            raise
+        if _tracking is not None:
+            _tracking.validated()
         return rates
 
     def advance(state, rates, step):
         return advance_exact_euler(state, rates, step, policy)
 
-    def rk2(state, at, endpoint):
+    def rk2(state, at, endpoint, role):
         step = endpoint-at
-        first = evaluate(state, at)
+        first = evaluate(state, at, role+'_first')
         stage = advance(state, first, step)
-        second = evaluate(stage, endpoint)
+        second = evaluate(stage, endpoint, role+'_second')
         # Validate the second Euler stage before forming its SSP convex average.
         advance(stage, second, step)
         fields = [_sum_arrays(_scaled(step/2,getattr(first, name)), _scaled(step/2,getattr(second, name))) for name in (
@@ -266,17 +329,25 @@ def integrate_exact(initial: ConservedState, operator: Callable[[ConservedState,
                                          for x, y in zip(a, b))
         return result, fields, parts, exact_parts, stretch_increment, exact_stretch
 
-    h = Fraction(policy.initial_step_s)
+    h = Fraction(policy.initial_step_s) if resumed is None else resumed.next_step_s
     last_domain = None
     try:
         # Initial domain failure is not a reason to try infinitesimal time steps.
-        evaluate(initial, start)
+        if resumed is None:
+            evaluate(initial, start, 'initial')
+        else:
+            guard()
     except DomainExit as exc:
         return finish("domain_exit", str(exc))
     except IntegrationError as exc:
         return finish("numerical_failure", str(exc))
     except _Stop as exc:
         return finish(exc.status, exc.reason)
+    except Exception as exc:
+        if _tracking is None:
+            raise
+        _tracking.failure = exc
+        return finish('failed', type(exc).__name__+':'+str(exc))
     while times[-1] < end:
         if len(ledgers) >= policy.maximum_steps:
             return finish("resource_limit", "accepted_step_limit")
@@ -304,9 +375,9 @@ def integrate_exact(initial: ConservedState, operator: Callable[[ConservedState,
             left_step, right_step = midpoint-at, next_time-midpoint
             if (not at < midpoint < next_time or left_step/2 == 0 or right_step/2 == 0):
                 raise IntegrationError("unresolvable_stage_time")
-            full, _, _, _, _, _ = rk2(state, at, next_time)
-            half, first_fields, first_parts, first_exact, first_stretch, first_stretch_exact = rk2(state, at, midpoint)
-            accepted, second_fields, second_parts, second_exact, second_stretch, second_stretch_exact = rk2(half, midpoint, next_time)
+            full, _, _, _, _, _ = rk2(state, at, next_time, 'full')
+            half, first_fields, first_parts, first_exact, first_stretch, first_stretch_exact = rk2(state, at, midpoint, 'left')
+            accepted, second_fields, second_parts, second_exact, second_stretch, second_stretch_exact = rk2(half, midpoint, next_time, 'right')
             nscale = policy.amount_absolute_tolerance_mol+policy.relative_tolerance*policy.amount_scale_mol
             uscale = policy.energy_absolute_tolerance_j+policy.relative_tolerance*policy.energy_scale_j
             # Leading local SSPRK2 error is C*h^3. For the two actual substeps,
@@ -331,7 +402,7 @@ def integrate_exact(initial: ConservedState, operator: Callable[[ConservedState,
                 last_domain = None
                 continue
             # Validate the accepted combination in the actual physical operator.
-            evaluate(accepted, next_time)
+            evaluate(accepted, next_time, 'accepted')
             fields = [_sum_arrays(a, b) for a, b in zip(first_fields, second_fields)]
             faces_n, faces_u, sources, work = fields
             _check_update(state.amounts_mol, accepted.amounts_mol,
@@ -390,6 +461,14 @@ def integrate_exact(initial: ConservedState, operator: Callable[[ConservedState,
             times.append(next_time)
             h = max(Fraction(policy.minimum_step_s), _duration_control(min(Fraction(policy.maximum_step_s), step*Fraction(2 if error == 0 else min(2, max(0.2, 0.9*error**(-1/3)))))))
             last_domain = None
+            if _tracking is not None:
+                checkpoint_result = ExactIntegrationResult('running', None,
+                    tuple(ExactEventTime(t) for t in times), tuple(states), tuple(ledgers),
+                    evaluations, rejected, elapsed(), attempted,
+                    tuple(cumulative_components) if component_schema is not None else None)
+                _tracking.committed(checkpoint_result, h, knot_index, component_schema,
+                    cumulative_n, cumulative_u, cumulative_components,
+                    cumulative_stretch, cumulative_stretch_exact, cumulative_stretch_roundoff, guard)
         except (DomainExit, _Reject) as exc:
             rejected += 1
             h = smaller_step(at, next_time, step/2)
@@ -398,4 +477,9 @@ def integrate_exact(initial: ConservedState, operator: Callable[[ConservedState,
             return finish("numerical_failure", str(exc))
         except _Stop as exc:
             return finish(exc.status, exc.reason)
+        except Exception as exc:
+            if _tracking is None:
+                raise
+            _tracking.failure = exc
+            return finish('failed', type(exc).__name__+':'+str(exc))
     return finish("completed")
