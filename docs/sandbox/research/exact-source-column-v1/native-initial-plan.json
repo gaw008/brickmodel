@@ -1,0 +1,33 @@
+{
+  "status": "prepared_not_executed",
+  "native_eos_executed": false,
+  "run_once": "installed full example only, no extra probe",
+  "reuse": "docs/sandbox/research/source-liquid-column-v1/run_native.py::construct",
+  "duration_s": {
+    "numerator": 1,
+    "denominator": 1024
+  },
+  "method": "existing integrate_exact full + two-half SSPRK2 Heun; not old midpoint",
+  "expected_callbacks_if_one_accepted_no_rejection": 8,
+  "callback_retention": "ordinal + packed state + exact time + actual SourceExactEvaluation; never collapse repeated times",
+  "policy": {
+    "initial_step_s": 0.0009765625,
+    "maximum_step_s": 0.0009765625,
+    "minimum_step_s": 6.103515625e-05,
+    "relative_tolerance": 1e-08,
+    "amount_absolute_tolerance_mol": 1e-07,
+    "energy_absolute_tolerance_j": 0.001,
+    "amount_scale_mol": 1.0,
+    "energy_scale_j": 100000.0,
+    "maximum_steps": 4,
+    "maximum_rejections": 4,
+    "maximum_wall_seconds": 75.0
+  },
+  "outer_wall_seconds": 90.0,
+  "budget_basis": "parent measured ~22s per 3 existing source callbacks; 8 calls plus build/serialization margin",
+  "material_qualified": false,
+  "runner_sha256": "60d1329d0473281c722169cad75690f9b409b4d4788931c7f7e69d48f5bcf9e4",
+  "validation": "stdlib ast.parse only; no EOS, import, installation or execution",
+  "prior_runner_sha256": "77023abd30e7582cbccb8b659db289ad67fcb817252231e409a3ac1efee12fde",
+  "error_boundary": "DomainExit and IntegrationError preserved; other ValueError becomes IntegrationError source_column_callback; exactly one evaluate call"
+}

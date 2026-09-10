@@ -4,6 +4,14 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+来源固定干质量已通过 `ExactSourceColumn` 接入既有 `ConservedState/Rates/integrate_exact`：动态数组只含液水/O2/N2/H2O四类真实摩尔库存，固定干 kg 与原来源 Cp 仍在总 U/储能身份中。完整来源求值、共同液/气/能量面及显式关闭化学反应契约保持。实际修复了化学元数据被丢弃与来源异常越过结构化失败的两个接口缺口。[本阶段报告](research/exact-source-column-v1/REPORT.md)。
+
+最终非editable安装39项通过13.308s，XML零失败/错误/跳过，114模块/121包文件与最终源码一致。首次原生运行因首步误差拒绝后触及75s内预算而失败，12captures/0accepted，独立272检查解释原始失败。仅把资源调整为450/510s后，同完整1/1024s案例实际completed：4接受、3拒绝、47评价，积分448.601522s、总墙钟450.468822s，所有原误差/步长/步数门槛未动。独立1215项离线检查重构全部7试步、接受四阶段两级舍入及局部/全局/累计账本；前12原始捕获与首轮完全相同。成功JSON SHA033dccd09ed268eeb2ce9570a37d52f66d4eb5da18b68f2f44a89bd01054c4f2。7031及本阶段既有58221/61057等root进程均终态，无本阶段待跑EOS。首次失败、审计器运算顺序修正和全部原证据已保存。属于实际progress，完整Goal保持active。
+
+下一实际工作：来源 N 格净液库存 affine panel，逐格使用 J_left−J_right−phase，复用既有 InventoryPolynomial；之后才可接运输/蒸发耗尽、独立成对液体/焓数值修正、干界面与保存/恢复。临时候选 `/private/tmp/brick-source-net-panel-candidate` 及独审 `/private/tmp/brick-source-net-panel-review` 尚未应用；实际9作者测试、12项独审组合通过，派生多项式可被替换而不受check核对的HIGH已有真实RED并修复。恢复先读取最终候选/审查，再补实际来源求值接线验证，不把人工记录当作真实轨迹。固定来源低温域、同材料体积/吸附/输运、原泥完整反应与烧结冷却、三机制公开留出、全周期/多代与应用验收仍全部必需未完成。
+
+### 前一来源液流阶段（已完成，保留历史）
+
 来源 N 格跨格液水及供体焓已实际接入：共享 `decoded_liquid_state` 复用原 T/P、全体积影响压力误差与原液水参考，旧 SolidFluidHeat 完整结果保持；SourceWetColumn 的内部面新增液流/焓/投影，开放包装保持内部液流、外界液流为零。完整源/安装测试和实际水短步均通过，材料资格仍false。[本阶段报告](research/source-liquid-column-v1/REPORT.md)。
 
 最终源码26项28.777s、共享提取41项0.58s、独立代码33+2项通过；非editable安装72项47.009s，XML零失败/错误/跳过，113模块/120包文件一致。独立人工液体三格2/4/8步参考误差比约4，事前3..5判据通过；真实水源码probe completed3.953s、安装开放三格单步completed积分22.167228s，总墙钟23.676868s，3评价/80检查。原JSON SHA9644aa69ee7ddc150184f91b35961df8bd8d1988afc44acf2a12c49b4b9ccca3。66790/81138/60188/18128均终态0，无本批待跑测试或EOS。上一提示词答复保留了初次8项通过证据；本回合完成新增验证、实际安装/原生运行与证据保存，属于progress，Goal保持active。

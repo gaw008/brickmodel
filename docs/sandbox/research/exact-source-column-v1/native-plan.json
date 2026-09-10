@@ -1,0 +1,64 @@
+{
+  "status": "prepared_not_executed",
+  "native_eos_executed": false,
+  "run_once": "installed full example only, no extra probe",
+  "reuse": "docs/sandbox/research/source-liquid-column-v1/run_native.py::construct",
+  "duration_s": {
+    "numerator": 1,
+    "denominator": 1024
+  },
+  "method": "existing integrate_exact full + two-half SSPRK2 Heun; not old midpoint",
+  "expected_callbacks_if_one_accepted_no_rejection": 8,
+  "callback_retention": "ordinal + packed state + exact time + actual SourceExactEvaluation; never collapse repeated times",
+  "policy": {
+    "initial_step_s": 0.0009765625,
+    "maximum_step_s": 0.0009765625,
+    "minimum_step_s": 6.103515625e-05,
+    "relative_tolerance": 1e-08,
+    "amount_absolute_tolerance_mol": 1e-07,
+    "energy_absolute_tolerance_j": 0.001,
+    "amount_scale_mol": 1.0,
+    "energy_scale_j": 100000.0,
+    "maximum_steps": 4,
+    "maximum_rejections": 4,
+    "maximum_wall_seconds": 450.0
+  },
+  "outer_wall_seconds": 510.0,
+  "budget_basis": "Original observed 82.158861s / 12 captures (~6.85s/call). Conservative original max4 accepted + max4 rejected allowance: at most 57 callbacks, about390s plus margin. Physics offline audit reported272 passed, cell2 U full/fine difference .04345047037350014 J, normalized error7.241745062250023, exact step shrink reproduced. 450s inner /510s outer is resource-only, not a success guarantee.",
+  "material_qualified": false,
+  "runner_sha256": "b0b873960bdc8bc9f2299fc3d0d008fd5fa5a9d3f7a972eb0f080ec3a2d39ab5",
+  "validation": "stdlib ast.parse only; no EOS, import, installation or execution",
+  "prior_runner_sha256": "60d1329d0473281c722169cad75690f9b409b4d4788931c7f7e69d48f5bcf9e4",
+  "error_boundary": "DomainExit and IntegrationError preserved; other ValueError becomes IntegrationError source_column_callback; exactly one evaluate call",
+  "original_failure": {
+    "path": "/private/tmp/brick-source-column-event-v1/native/runtime.json",
+    "sha256": "c9485fc029de2593183f2db5ecaeca1faba3d7c4561691ede9398521c5b85a48",
+    "integrator_elapsed_seconds": 82.158861,
+    "completed_captures": 12,
+    "accepted_steps": 0,
+    "first_step_rejected": true
+  },
+  "explicit_differences": {
+    "maximum_wall_seconds": {
+      "old": 75.0,
+      "new": 450.0
+    },
+    "outer_wall_seconds": {
+      "old": 90.0,
+      "new": 510.0
+    },
+    "outer_timeout_message": {
+      "old": "outer_90s_budget_exceeded",
+      "new": "outer_510s_budget_exceeded"
+    }
+  },
+  "unchanged": "same archived source construct, interval 1/1024, all initial/max/min step values, relative/amount/U tolerances and scales, max4 steps/rejections, original classification and all audits/callback behavior",
+  "prior_prepared_candidate": {
+    "status": "prepared_only_never_executed",
+    "runner": "run_native.prepared-only-300-330.py",
+    "plan": "PLAN.prepared-only-300-330.json",
+    "sha256": "d3a93bc8a9a8f72a1a166363df942cacbe0b1b73e1ae3d937094f92dcfcfb3f0",
+    "inner_seconds": 300.0,
+    "outer_seconds": 330.0
+  }
+}
