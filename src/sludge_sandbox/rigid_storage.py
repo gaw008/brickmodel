@@ -129,6 +129,19 @@ class ClosedStorageInverse:
     policy: InversePolicy
 
 
+def liquid_pressure_error_bound(state: RigidWaterGasState,
+                               envelope: DeclaredNumericalEnvelope,
+                               gas_constant: float) -> float:
+    """Original residual/compliance bound on the declared stable wet branch."""
+    total_n = sum((Fraction(n) for n in state.gas_inventory_mol.values()), Fraction())
+    bmin = _num(_directed(total_n * Fraction(gas_constant) * Fraction(state.temperature_k)
+                          / Fraction(envelope.pressure_range_pa[1])**2,
+                          upper=False), 'pressure_slope_lower_bound', positive=True)
+    eps_f = _sum_upper((abs(state.volume_residual_m3), state.volume_resolution_m3,
+                        _product_upper(state.liquid_inventory_mol, envelope.liquid_v_error_m3_mol)))
+    return _directed(Fraction(eps_f) / Fraction(bmin), upper=True)
+
+
 @dataclass(frozen=True)
 class RigidStorage:
     mechanical: RigidWaterGas
@@ -212,14 +225,8 @@ class RigidStorage:
         cmin = _num(_directed(sum(lower, Fraction()), upper=False),
                     'representable_heat_capacity_lower_bound', positive=True)
         # This lower derivative bound is analytic for the gas volume term.
-        p_hi = self.envelope.pressure_range_pa[1]
         if nl:
-            total_n = sum((Fraction(n) for n in state.gas_inventory_mol.values()), Fraction())
-            bmin = _num(_directed(total_n * Fraction(r) * Fraction(t) / Fraction(p_hi)**2,
-                                  upper=False), 'pressure_slope_lower_bound', positive=True)
-            eps_f = _sum_upper((abs(state.volume_residual_m3), state.volume_resolution_m3,
-                                _product_upper(nl, self.envelope.liquid_v_error_m3_mol)))
-            eps_p = _directed(Fraction(eps_f) / Fraction(bmin), upper=True)
+            eps_p = liquid_pressure_error_bound(state, self.envelope, r)
         else:
             eps_p = _sum_upper((state.pressure_resolution_pa, abs(state.pressure_residual_pa)))
         # The error envelope applies only while the full uncertainty interval stays in domain.

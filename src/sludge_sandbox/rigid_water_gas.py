@@ -102,6 +102,18 @@ class RigidWaterGasState:
     pressure_trial_ledger: tuple[PressureTrialRecord, ...] | None = field(default=None, metadata={'omit_when_none': True})
 
 
+def closure_diagnostics(volume: float, vl: float, p: float, nrt: float,
+                        nrt_resolution: float) -> tuple[float, float, float, float, float, float]:
+    """Original represented closure residuals and resolution, without an EOS."""
+    vg=_finite(_sum((volume,-vl)),'open_gas_volume',positive=True)
+    ideal_p=_finite(nrt/vg,'gas_pressure',positive=True)
+    residual_p=_sum((p,-ideal_p))
+    residual_v=_sum((vl,nrt/p,-volume))
+    vr=_sum((math.ulp(volume),math.ulp(vl),math.ulp(vg),math.ulp(nrt/p),nrt_resolution/p))
+    pr=_sum((math.ulp(p),math.ulp(ideal_p),abs(ideal_p)*vr/vg))
+    return vg,ideal_p,residual_p,residual_v,vr,pr
+
+
 @dataclass(frozen=True)
 class RigidWaterGas:
     water: WaterProperties
@@ -177,14 +189,9 @@ class RigidWaterGas:
             return vl,f
 
         def finish(p,vl,iterations,final_bracket,endpoint_residuals,solution_path):
-            vg=_finite(_sum((volume,-vl)),'open_gas_volume',positive=True)
-            ideal_p=_finite(nrt/vg,'gas_pressure',positive=True)
-            residual_p=_sum((p,-ideal_p))
-            residual_v=_sum((vl,nrt/p,-volume))
             # Preserve representability of the two large volumes even when
             # their difference leaves a very small open gas volume.
-            vr=_sum((math.ulp(volume),math.ulp(vl),math.ulp(vg),math.ulp(nrt/p),nrt_resolution/p))
-            pr=_sum((math.ulp(p),math.ulp(ideal_p),abs(ideal_p)*vr/vg))
+            vg,ideal_p,residual_p,residual_v,vr,pr=closure_diagnostics(volume,vl,p,nrt,nrt_resolution)
             if vr>self.policy.volume_tolerance_m3 or pr>self.policy.pressure_tolerance_pa:
                 raise RigidClosureNumericalError('unresolvable_volume_pressure_precision')
             if abs(residual_v)>self.policy.volume_tolerance_m3 or abs(residual_p)>self.policy.pressure_tolerance_pa:

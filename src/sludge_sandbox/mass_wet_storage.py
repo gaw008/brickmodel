@@ -72,6 +72,16 @@ def evaluate_wet_fluid(
     available_error_m3=F(available_error_m3)
     fluid=replace(template,mechanical=replace(template.mechanical,available_pore_volume_m3=nominal_available_m3))
     out=fluid.evaluate_at_temperature(t,liquid_mol,dict(zip(gas_ids,gas_amounts)))
+    global_error,extra,pressure_error=wet_fluid_pressure_bounds(fluid,out,gas_amounts,t,available_error_m3)
+    return WetFluidEvaluation(fluid,out,global_error,extra,pressure_error)
+
+
+def wet_fluid_pressure_bounds(fluid: RigidStorage, out: ClosedStorageState,
+        gas_amounts: tuple, t: float, available_error_m3: F) -> tuple[F, F, float]:
+    """Original global-then-local volume error arithmetic; no EOS evaluation.
+
+    Callers establish the fluid/state/input binding before using this helper.
+    """
     p=F(out.mechanical.pressure_pa);ng=sum(map(F,gas_amounts),F());rt=F(fluid.mechanical.gas_constant_j_mol_k)*F(t)
     require(ng>0,'no_positive_gas_compliance')
     extra=F(upper(available_error_m3/(ng*rt/F(fluid.envelope.pressure_range_pa[1])**2)))
@@ -82,7 +92,7 @@ def evaluate_wet_fluid(
     extra=F(upper(available_error_m3/(ng*rt/certified_upper**2)))
     pressure_error=upper(F(out.pressure_error_bound_pa)+extra)
     require(plo<=p-F(pressure_error)<=p+F(pressure_error)<=phi,'local_pressure_uncertainty_outside_domain')
-    return WetFluidEvaluation(fluid,out,global_error,extra,pressure_error)
+    return global_error,extra,pressure_error
 
 
 def check_wet_water(fluid_template: RigidStorage, water_element_convention: "WaterElementConvention") -> None:
