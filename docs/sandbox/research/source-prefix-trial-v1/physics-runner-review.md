@@ -1,0 +1,9 @@
+# Prepared native runner, read-only review
+
+Reviewed run_native.py SHAc23bc0fb5e41986d61cf82fd64961b160090cb0ea89af8f7c6f61e79d6395edd and native-plan.json; no HEOS execution. Original numerical settings1/1024 initial/max,1/16384 minimum; exact interval1/16384; relative1e-8,amount atol1e-7 mol,U atol1e-3 J,scales1 mol/1e5 J remain explicit. Only wrapper resource180 s differs from original long run; whole-run210 s includes constructor cost and callback serialization. Cap32 shared trial/reference calls;11 is an estimate for one successful reference step, not a forced passing count.
+
+Constructor helpers are pinned before construction. Every attempted callback writes state/time before physics and its output/failure afterward; returned trial fields are persisted before retained-record checking. Adapter provenance separately represents the omitted live adapter. Failures preserve partial captures rather than silently replacing them with a completed trial. An outer timeout may be caught by callback handling first, but deadline/callback guards remain active; no rerun or threshold change is authorized. The wrapper's internal numerical-only retained-reference replay does not add physical callbacks.
+
+Ready for a single bounded native run only after the separately required final source/code reviews and installed-byte checks. This review does not waive those prerequisites or claim success in advance.
+
+Amendment: reviewed final runner SHAcd194586d9ffd8455b26ac54e94656c6d0b1a1a719de4d3312ee027b8b690c78. Its own SIGALRM now records outer_timeout_requested and maps the top artifact to resource_limit while preserving nested raw exception diagnostics. This changes resource classification only; numerical science, constructor pins and180/210/32 budgets remain unchanged. Static approval retained. The prepared offline audit.py was syntax-checked only; no in-progress native result was read.

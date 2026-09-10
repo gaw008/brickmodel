@@ -1,0 +1,9 @@
+# Final frozen-source physics/numerical review
+
+The one authorized final rerun passed56 checks in6.55137 s: all54 preregistered manufactured-source assertions plus expected-source-hash and before/after-identity checks. Source SHA remained d092a37fe69be5e5cae968f7c7967233ea8cdd4837428bf6236ddbed3c204b99 throughout. The actual N3 trial used11 physical callbacks, of which8 belong to the completed reference. Independent direct discrepancy remained4194304/8311365009850575 =5.046468293750712e-10. All predictor, prefix, same-endpoint, total-pressure-with-volume-error and remaining-resource checks passed unchanged. No HEOS ran.
+
+Final artifacts: check_manufactured.py, MANUFACTURED_FINAL.log, MANUFACTURED.json. Previous WIP source/log/result retained as check_manufactured_WIP.py, MANUFACTURED01.log, MANUFACTURED_WIP.json; earlier review remains a historical WIP finding and is superseded only for frozen-byte approval by this report.
+
+Physics/numerical approval is limited to this positive-source numerical trial, its direct comparison gate, actual endpoint evaluation and retained uncertainty/resource accounting. Independent nonlinear discrepancy_algebra.py demonstrates why the cross-method difference must not be divided by3. No source event-time accuracy, dry writeback, real-material qualification or general trajectory claim follows.
+
+The unchanged prepared native runner c23bc0fb5e41986d61cf82fd64961b160090cb0ea89af8f7c6f61e79d6395edd retains the bounded static approval in NATIVE_RUNNER_REVIEW.md: original numerical science,180 s trial/210 s total,32 callbacks, one execution after parent's installed/code prerequisites. No guaranteed11-call/success assumption and no automatic rerun. Native offline-audit expectations are prepared in native-review/PLAN.md; no in-progress result has been read.

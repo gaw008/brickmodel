@@ -1,0 +1,21 @@
+# Narrow review of source comparison / positive-approach route
+
+Reviewed the provider's next-route.md and current DepletionPolicy/source storage interfaces, read-only. The proposed order is sound: compare existing actually evaluated endpoints first, retain reported-temperature pressure scope, and use an all-inventory root result only to propose a new strictly positive interval. No new EOS or audit rerun was performed for this review.
+
+Concrete constraints and clarifications:
+
+1. Original event amount/U/T/reported-P gates are distinct from D_NU<=1. Bind and revalidate the complete caller-declared DepletionPolicy, including its nested configuration. If none was declared for source use, retain an explicit missing-policy result; do not borrow a newly convenient tolerance. Comparing two observations at the same exact time yields zero time-coordinate mismatch, not event-time convergence evidence.
+
+2. Exact Fraction absolute differences plus both recorded error bounds provide conservative interval-separation upper bounds. If an upper bound exceeds tolerance, the comparison fails to certify the requested tolerance; that does not prove the unknown physical states differ by more than tolerance. Preserve this distinction in status text. A small reported-T pressure bound likewise cannot certify pressure at the unknown inverse temperature.
+
+3. The pressure statement is correct. SourceWetPoint.temperature_k/pressure_pa delegate to fluid.mechanical, where pressure closure is prescribed-temperature. SourceWetInverse carries a separate temperature error bound. Current point.pressure_error_pa includes the available-volume contribution but does not bound pressure changes over the entire inverse-temperature interval. Full-inverse pressure certification therefore remains unresolved for nonzero temperature uncertainty until a source-compatible whole-domain derivative bound or validated interval closure is supplied. Two sampled pressures or observed local monotonicity are insufficient. The T interval and resulting pressure enclosure must stay within all declared source/caloric/fluid/volume domains; no extrapolated bound is admissible.
+
+4. For a unique earliest liquid crossing with positive certified lower offset L, a concrete safe proposal is h=min(original step cap, exact remaining/knot cap, Fraction(safe_inventory_fraction)*L), subject to the original minimum step and h>0. This is below the first root of the saved numerical surrogate; it is not a guaranteed physical safety margin for the true RHS. Re-evaluation, whole-prefix positivity and same-endpoint reference comparison remain necessary. Keep all4N competitors, gas-first cases, ties, tangencies, unresolved brackets and every zero-initial component explicit. Never infer that a safe target from the liquid root alone is safe against gas depletion.
+
+5. A failed whole-prefix check may validly retain a first/midpoint pair for numerical root inspection only if both observations are complete, source-bound and individually valid; a callback error or missing source observation is not a usable panel. Retain the original attempted upper bound and failure status. New approach samples remain separately identified, not retroactively substituted into the failed attempt.
+
+6. Physical liquid drainage correction remains unavailable. A future correction must conserve the paired neighboring liquid transfer and donor energy across its actual shared face, under original inventory/U budgets and source pressure/mobility/donor assumptions. Existing evaporation fraction/ULP allowances and mechanical executor type gates cannot authorize it.
+
+Historical qualifier update: the provider route says the current native independent physics audit is pending. That statement is now superseded by the completed native-review/REVIEW.md:235 saved-data checks passed, input SHA7c0907af104450ffc42cf142e3e3aebefaf21c597eb6806f09b7bdbe6d6d3505;11 actual calls, one accepted reference step, no rejection; directD0.001086768806259706. Provider route was not edited. These facts support a zero-new-callback saved-endpoint comparison, not dry transition or material qualification.
+
+The complete material cycle and application remain the parent Goal. This route addresses one missing numerical/source-pressure interface without narrowing that scope.

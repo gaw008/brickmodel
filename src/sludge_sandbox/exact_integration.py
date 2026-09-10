@@ -41,6 +41,37 @@ def _duration_control(desired: Fraction) -> Fraction:
     return Fraction(value)
 
 
+def advance_exact_euler(state: ConservedState, rates: Rates, duration: Fraction,
+                        policy: IntegrationPolicy) -> ConservedState:
+    """Original represented Euler predictor; no new acceptance or error estimator.
+
+    Exact duration multiplies each represented net derivative before the state
+    update. Preserve the driver's product underflow and trial-rejection behavior;
+    this is not the affine panel's exact shared-face quadrature.
+    """
+    if (not isinstance(state, ConservedState) or not isinstance(rates, Rates)
+            or not isinstance(policy, IntegrationPolicy)):
+        raise IntegrationError('validated_euler_state_rates_policy_required')
+    if type(duration) is not Fraction or duration <= 0:
+        raise IntegrationError('exact_positive_euler_duration_required')
+    IntegrationPolicy.__post_init__(policy)
+    if state.mechanical_stretches is not None and policy.stretch_absolute_tolerance is None:
+        raise IntegrationError('explicit_stretch_scales_required')
+    dn, du = rates.derivatives(state)
+    n = _updated(state.amounts_mol, _scaled(duration,dn), policy.amount_absolute_tolerance_mol, "amount")
+    u = _updated(state.internal_energy_j, _scaled(duration,du), policy.energy_absolute_tolerance_j, "energy")
+    if np.any(n < 0) or not np.all(np.isfinite(n)) or not np.all(np.isfinite(u)):
+        raise _Reject("trial_inventory_or_energy_invalid")
+    stretches = None
+    if state.mechanical_stretches is not None:
+        stretches = _updated(state.mechanical_stretches, _scaled(duration,rates.mechanical_rates_per_s),
+                             policy.stretch_absolute_tolerance, "stretch")
+        if np.any(stretches <= 0):
+            raise _Reject("trial_stretch_not_positive")
+    return ConservedState(n, u, energy_model_identity=state.energy_model_identity,
+                          mechanical_stretches=stretches)
+
+
 @dataclass(frozen=True)
 class ExactStepLedger:
     """Accepted quadrature, including optional power-component decomposition.
@@ -197,19 +228,7 @@ def integrate_exact(initial: ConservedState, operator: Callable[[ConservedState,
         return rates
 
     def advance(state, rates, step):
-        dn, du = rates.derivatives(state)
-        n = _updated(state.amounts_mol, _scaled(step,dn), policy.amount_absolute_tolerance_mol, "amount")
-        u = _updated(state.internal_energy_j, _scaled(step,du), policy.energy_absolute_tolerance_j, "energy")
-        if np.any(n < 0) or not np.all(np.isfinite(n)) or not np.all(np.isfinite(u)):
-            raise _Reject("trial_inventory_or_energy_invalid")
-        stretches = None
-        if mechanical:
-            stretches = _updated(state.mechanical_stretches, _scaled(step,rates.mechanical_rates_per_s),
-                                 policy.stretch_absolute_tolerance, "stretch")
-            if np.any(stretches <= 0):
-                raise _Reject("trial_stretch_not_positive")
-        return ConservedState(n, u, energy_model_identity=state.energy_model_identity,
-                              mechanical_stretches=stretches)
+        return advance_exact_euler(state, rates, step, policy)
 
     def rk2(state, at, endpoint):
         step = endpoint-at

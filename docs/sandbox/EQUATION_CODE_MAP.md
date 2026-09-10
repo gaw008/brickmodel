@@ -2,6 +2,8 @@
 
 ## 当前新增映射
 
+实际来源试算：`exact_integration.advance_exact_euler` 共用原净导数/乘积/状态更新；`source_prefix_trial.evaluate_source_prefix_trial` 真正求值起点、中点、前缀终点并调用原积分器同区间参考。`normalized_prefix_discrepancy` 使用原N/U尺度的直接最大差异，不乘1/3；`SourcePrefixTrial.check` 被动重放原参考速率/DomainExit及完整确定性结果。[安装143项和实际真实水/235项独审证据](research/source-prefix-trial-v1/REPORT.md)限定数值试算，不证明事件时间或材料适用性。
+
 来源数值前缀：`exact_terminal_panel.affine_integral_value/affine_integral/affine_update` 共用 `I=r0*h+(rm-r0)*h²/(2hm)`、分量一次投影及状态一次投影；旧13完整结果保持。`source_net_prefix.build_source_prefix` 构造同面液/气/总U账本、成对相变与全部区间最小值；`audit_source_prefixes` 分别累计已表示及精确积分交换，逐前缀检验残差。它们属于数值策略，原速率的物理来源仍由源面板绑定。安装131项与七个独立数值前缀的818项离线复算见[前缀证据](research/source-net-prefix-v1/REPORT.md)，不授予真实ODE/事件资格。
 
 来源数值首根：`source_net_roots.isolate_first_root/refine_first_root/same_first_root` 对 `n+r*t+q*t²` 的首下降分支建立有理包络，以原 `InventoryPolynomial.minimum` 排除严格正库存；`rational_polynomial` 供新旧两层共用中点/GCD算术。`order_source_panel_roots` 从完整来源面板验证全部4N流体竞争、精确时刻与源绑定，返回有序/同时/无根/未决/零初始不完整状态。新三组测试与17旧完整冻结结果、最终安装123项及原七试步纯回放见[本阶段证据](research/source-net-roots-v1/REPORT.md)。没有新增物理本构或事件写回许可。
