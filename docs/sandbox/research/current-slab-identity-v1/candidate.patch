@@ -1,0 +1,38 @@
+--- a/src/sludge_sandbox/deforming_solid_storage.py
++++ b/src/sludge_sandbox/deforming_solid_storage.py
+@@ -4,6 +4,8 @@
+ from fractions import Fraction
+ from collections.abc import Mapping
+ import hashlib,json,math
++import numpy as np
++from sludge_sandbox.geometry import CurrentSlab
+ from sludge_sandbox.solid_fluid_storage import SolidFluidStorage, SolidFluidStorageError
+ from sludge_sandbox.incompressible_solid import IncompressibleSolidPhase
+ from sludge_sandbox.skeleton_energy import DiagonalSkeletonEnergy
+@@ -56,6 +58,26 @@
+         return ['source_gated_water',_canonical(x.reference),_canonical(x.source_asset_sha256),_canonical(x.numerical_limits)]
+     if isinstance(x,Mapping):return ['mapping',[[k,_canonical(v)] for k,v in sorted(x.items())]]
+     if isinstance(x,(tuple,list)):return [_canonical(v) for v in x]
++    if type(x) is CurrentSlab:
++        # Admit only the complete geometric record, never arbitrary ndarrays.
++        # This is identity serialization, not a replacement geometry validator.
++        names=('widths_m','faces_m','centers_m','face_areas_m2',
++               'reference_volumes_m3','volumes_m3','volume_ratios')
++        if tuple(f.name for f in fields(x))!=names:
++            raise DeformingStorageError('unsupported_current_slab_identity_fields')
++        widths=x.widths_m
++        if type(widths) is not np.ndarray or widths.ndim!=1 or len(widths)==0:
++            raise DeformingStorageError('invalid_current_slab_identity_shape:widths_m')
++        cells=len(widths);encoded=[]
++        for name in names:
++            value=getattr(x,name)
++            expected=cells+1 if name in ('faces_m','face_areas_m2') else cells
++            if (type(value) is not np.ndarray or value.dtype!=np.dtype('float64')
++                    or value.shape!=(expected,) or not np.all(np.isfinite(value))):
++                raise DeformingStorageError('invalid_current_slab_identity_array:'+name)
++            encoded.append([name,['numpy_float64_1d',list(value.shape),
++                                  [float(v).hex() for v in value]]])
++        return [type(x).__module__,type(x).__qualname__,encoded]
+     if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+     raise DeformingStorageError('unsupported_identity_type:'+type(x).__name__)
+ 

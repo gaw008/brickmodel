@@ -1,0 +1,69 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__________________ test_original_current_halfcell_regression ___________________
+
+water = WaterProperties(reference=WaterReference(molar_mass_kg_mol=0.018015267999999997, native_specific_gas_constant_j_kg_k=4...ric_absolute_j_kg=0.002, heat_capacity_absolute_j_kg_k=1e-05, gibbs_absolute_j_kg=0.001, temperature_absolute_k=1e-09))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10bab4230>
+
+    def test_original_current_halfcell_regression(water,monkeypatch):
+        # Environment explicitly selects tmp-only harness patch for GREEN.
+        if os.environ.get('CURRENT_SLAB_IDENTITY_CANDIDATE')=='1':monkeypatch.setattr(actual,'_canonical',CANDIDATE._canonical)
+>       original_halfcell_test(water,monkeypatch)
+
+/private/tmp/brick-current-slab-identity-candidate/test_candidate.py:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/sandbox/test_deforming_wet_admission.py:28: in test_actual_current_halfcell_surface_single_inverse_and_original_errors
+    op=wrapped(water)
+       ^^^^^^^^^^^^^^
+tests/sandbox/test_deforming_wet_admission.py:21: in wrapped
+    return ProgrammedSolidFluidHeat(base_model=base,program=boundary,convection_w_m2_k=20.,emissivity=0.,
+<string>:14: in __init__
+    ???
+src/sludge_sandbox/programmed_solid_fluid_heat.py:93: in __post_init__
+    object.__setattr__(self,'_content_digest',self._current_content_digest())
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/programmed_solid_fluid_heat.py:96: in _current_content_digest
+    return _digest((self.base_model,self.program,self.convection_w_m2_k,self.emissivity,
+src/sludge_sandbox/deforming_solid_storage.py:63: in _digest
+    def _digest(x):return hashlib.sha256(json.dumps(_canonical(x),sort_keys=True,separators=(',',':')).encode()).hexdigest()
+                                                    ^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if isinstance(x,(tuple,list)):return [_canonical(v) for v in x]
+                                          ^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:59: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:58: in _canonical
+    if isinstance(x,(tuple,list)):return [_canonical(v) for v in x]
+                                          ^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:59: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:59: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/deforming_solid_storage.py:59: in _canonical
+    if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+x = array([0.01])
+
+    def _canonical(x):
+        if x is None or type(x) in (str,bool,int):return x
+        if type(x) is Fraction:return ['fraction',x.numerator,x.denominator]
+        if type(x) is float:
+            if not math.isfinite(x):raise DeformingStorageError('nonfinite_identity')
+            return ['float',x.hex()]
+        if is_water_provider(x):
+            return ['source_gated_water',_canonical(x.reference),_canonical(x.source_asset_sha256),_canonical(x.numerical_limits)]
+        if isinstance(x,Mapping):return ['mapping',[[k,_canonical(v)] for k,v in sorted(x.items())]]
+        if isinstance(x,(tuple,list)):return [_canonical(v) for v in x]
+        if is_dataclass(x):return [type(x).__module__,type(x).__qualname__,[[f.name,_canonical(getattr(x,f.name))] for f in fields(x)]]
+>       raise DeformingStorageError('unsupported_identity_type:'+type(x).__name__)
+E       sludge_sandbox.deforming_solid_storage.DeformingStorageError: unsupported_identity_type:ndarray
+
+src/sludge_sandbox/deforming_solid_storage.py:60: DeformingStorageError
+=========================== short test summary info ============================
+FAILED ../../../../private/tmp/brick-current-slab-identity-candidate/test_candidate.py::test_original_current_halfcell_regression
+1 failed in 0.39s

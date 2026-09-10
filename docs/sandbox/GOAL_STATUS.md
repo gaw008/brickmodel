@@ -4,6 +4,11 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+
+最新身份修复已正式应用：精确CurrentSlab七字段数组编码恢复规定变形wrapper构造，不跳过私有缓存、不接受任意ndarray；独审17tmp检查通过。应用后31源码测试通过、1旧水模块AST镜像测试失败（实际水代码与HEAD相同，未修改）；原移动半格/一次逆解测试现已通过。非editable安装13项通过0.48s，107模块匹配。详见[实际身份修复](research/current-slab-identity-v1/REPORT.md)。旧AST测试需按实际分拆后的行为重建回归，失败保留；完整Goal仍未完成。
+
+下一具体工作：修复上述陈旧水回归断言并保持真实化学/耗尽行为覆盖；随后按sphere-surface-v1/next-AUDIT.md推进kg固体来源Cp与显式关闭反应。旧身份候选未应用的段落为历史。全部本轮root数值/测试进程已终态，Goal active。
+
 当前增量：ProgrammedSolidFluidHeat球形对流/辐射已复用实际外面积与半壳阻力，源19项79.04s通过，Bi=1解析模态4/8/16格RMS0.01337399/0.00330482/0.000815453K、半dt最大差1.64533e-8K。首轮30s/格资源失败已保留，仅按实测将该验证预算升至90s，误差门槛不变。独审28旧平板golden逐位一致、3独立物理检查通过。安装扩展检查初29通过2陈旧fixture失败，已保留旧版同失败并修为真实构造主机，4项wrapper专测通过1.12s；107实际安装模块匹配。报告：[球形程序边界](research/sphere-surface-v1/REPORT.md)。65244/52866/25491均终态，无该批运行进程。
 
 新发现既有软件缺陷：ProgrammedSolidFluidHeat包装规定变形主机时，motion._reference_state的CurrentSlab七数组无法被身份编码；旧HEAD同样失败，未进入surface。修复候选只在/private/tmp/brick-current-slab-identity-candidate，13tmp测试通过、独审中，尚未应用。下一先修复此实际阻塞，再按已保存[质量基内核审计](research/sphere-surface-v1/next-AUDIT.md)实现来源Cp适配与显式ReactionDisabled；不能靠虚构A/B和域外298.15K填补原泥储能。完整材料、全湿烧冷、三机制实测留出、多代和使用验收仍未完成。上一回合提交6d05c43属progress，本回合实现/验证/缺陷定位同属progress，Goal保持active。下文旧状态保留历史。
