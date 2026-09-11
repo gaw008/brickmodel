@@ -1,0 +1,77 @@
+........................FF..                                             [100%]
+=================================== FAILURES ===================================
+____ test_foreign_column_and_instance_callback_rejected_before_call[False] _____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10afcf500>
+actual_class = False
+
+    @pytest.mark.parametrize('actual_class', [False, True])
+    def test_foreign_column_and_instance_callback_rejected_before_call(monkeypatch, actual_class):
+        from sludge_sandbox.exact_source_column import ExactSourceColumn
+        from sludge_sandbox.source_wet_column import SourceWetColumn
+        column = shell(SourceWetColumn) if actual_class else SimpleNamespace()
+        object.__setattr__(column, 'evaluate', lambda *a: pytest.fail('foreign callback invoked'))
+        adapter = shell(ExactSourceColumn, column=column)
+        with pytest.raises(WaterSourceError, match='instance_override|closed_class'):
+>           scope._closed_graph(adapter)
+
+tests/sandbox/test_heos_rhs_scope.py:243: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/_heos_rhs_scope.py:64: in _closed_graph
+    from .water_heos import HEOSWaterProperties
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Explicit hybrid water adapter: verified HEOS real fluid, pinned Python ideal law."""
+    from .source_run_observer import emit_source_event, emit_source_failure
+    from dataclasses import dataclass,field,replace,asdict
+    import hashlib,json,sys,importlib.metadata
+    from pathlib import Path
+    from types import MappingProxyType
+    from .water_properties import WaterProperties,WaterState,WaterResponse,SaturationPair,NumericalLimits,WaterNumericalError,WaterSourceError
+    from .water_implementation import WaterImplementation
+    from ._heos_kernel import HEOSCandidate
+    from ._heos_kernel_v1 import HEOSCandidate as LegacyHEOSCandidate
+>   from .heos_runtime_registry import RHS_MANIFEST_ASSET
+E   ModuleNotFoundError: No module named 'sludge_sandbox.heos_runtime_registry'
+
+src/sludge_sandbox/water_heos.py:11: ModuleNotFoundError
+_____ test_foreign_column_and_instance_callback_rejected_before_call[True] _____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10b1151c0>
+actual_class = True
+
+    @pytest.mark.parametrize('actual_class', [False, True])
+    def test_foreign_column_and_instance_callback_rejected_before_call(monkeypatch, actual_class):
+        from sludge_sandbox.exact_source_column import ExactSourceColumn
+        from sludge_sandbox.source_wet_column import SourceWetColumn
+        column = shell(SourceWetColumn) if actual_class else SimpleNamespace()
+        object.__setattr__(column, 'evaluate', lambda *a: pytest.fail('foreign callback invoked'))
+        adapter = shell(ExactSourceColumn, column=column)
+        with pytest.raises(WaterSourceError, match='instance_override|closed_class'):
+>           scope._closed_graph(adapter)
+
+tests/sandbox/test_heos_rhs_scope.py:243: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/_heos_rhs_scope.py:64: in _closed_graph
+    from .water_heos import HEOSWaterProperties
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Explicit hybrid water adapter: verified HEOS real fluid, pinned Python ideal law."""
+    from .source_run_observer import emit_source_event, emit_source_failure
+    from dataclasses import dataclass,field,replace,asdict
+    import hashlib,json,sys,importlib.metadata
+    from pathlib import Path
+    from types import MappingProxyType
+    from .water_properties import WaterProperties,WaterState,WaterResponse,SaturationPair,NumericalLimits,WaterNumericalError,WaterSourceError
+    from .water_implementation import WaterImplementation
+    from ._heos_kernel import HEOSCandidate
+    from ._heos_kernel_v1 import HEOSCandidate as LegacyHEOSCandidate
+>   from .heos_runtime_registry import RHS_MANIFEST_ASSET
+E   ModuleNotFoundError: No module named 'sludge_sandbox.heos_runtime_registry'
+
+src/sludge_sandbox/water_heos.py:11: ModuleNotFoundError
+- generated xml file: /private/tmp/brick-source-performance-v1/managed-implementation/second02.xml -
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_heos_rhs_scope.py::test_foreign_column_and_instance_callback_rejected_before_call[False]
+FAILED tests/sandbox/test_heos_rhs_scope.py::test_foreign_column_and_instance_callback_rejected_before_call[True]
+2 failed, 26 passed in 0.26s

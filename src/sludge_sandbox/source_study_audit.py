@@ -10,7 +10,7 @@ import numpy as np
 from .exact_event_clock import ExactEventTime as T
 from .integration import ConservedState, IntegrationPolicy
 from .source_net_panel import SavedSourceSample
-from .source_observation_record import (SourceObservationContext, encode_source_sample, decode_source_sample)
+from .source_observation_record import (SourceObservationContext, create_source_sample_record)
 from .source_prefix_trial import (_check_source_captures, _attempt_input, _policy_binding,
     _complete_reference, _replay_source_reference, normalized_prefix_discrepancy, _bounds)
 from .source_endpoint_comparison import _policy_binding as event_binding
@@ -76,7 +76,7 @@ def _context_for(state,evaluation,contexts,modes=None):
 def _sample_record(state,evaluation,role,contexts,modes=None):
     context=_context_for(state,evaluation,contexts,modes)
     sample=SavedSourceSample(state,evaluation,role)
-    return decode_source_sample(encode_source_sample(sample,context=context))
+    return create_source_sample_record(sample,context=context)
 
 
 def _reference_shape(reference,policy):

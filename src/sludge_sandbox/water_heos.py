@@ -7,6 +7,8 @@ from types import MappingProxyType
 from .water_properties import WaterProperties,WaterState,WaterResponse,SaturationPair,NumericalLimits,WaterNumericalError,WaterSourceError
 from .water_implementation import WaterImplementation
 from ._heos_kernel import HEOSCandidate
+from ._heos_kernel_v1 import HEOSCandidate as LegacyHEOSCandidate
+from .heos_runtime_registry import RHS_MANIFEST_ASSET
 
 
 @dataclass(frozen=True,init=False)
@@ -24,10 +26,19 @@ class HEOSWaterProperties:
             emit_source_event('heos_started', source_directory=source_directory, manifest=manifest)
             try:
                 verified_bytes=Path(manifest).read_bytes()
-                if hashlib.sha256(verified_bytes).hexdigest()!='5f9e39bf1d3376b931caaf8fbda478b482cafe4c8b57a490860ac6ed080bf6db':
+                manifest_sha = hashlib.sha256(verified_bytes).hexdigest()
+                if manifest_sha not in ('5f9e39bf1d3376b931caaf8fbda478b482cafe4c8b57a490860ac6ed080bf6db',
+                                         RHS_MANIFEST_ASSET[2]):
                     raise WaterSourceError('unreviewed_heos_manifest')
                 verified_manifest=json.loads(verified_bytes)
-                kernel=HEOSCandidate(manifest,source_directory)
+                candidate_type = HEOSCandidate if manifest_sha == RHS_MANIFEST_ASSET[2] else LegacyHEOSCandidate
+                if candidate_type is HEOSCandidate:
+                    for name, expected in verified_manifest['execution_sources'].items():
+                        if Path(name).name != name or not name.endswith('.py'):
+                            raise WaterSourceError('heos_execution_source_path')
+                        if hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest() != expected:
+                            raise WaterSourceError('heos_execution_source_changed:' + name)
+                kernel=candidate_type(manifest,source_directory)
             except (ImportError,OSError,json.JSONDecodeError,KeyError) as exc:
                 raise WaterSourceError('required_heos_dependencies_or_manifest_unavailable') from exc
             emit_source_event('heos_kernel_returned', source_directory=source_directory, manifest=manifest, kernel=kernel)

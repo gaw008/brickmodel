@@ -187,9 +187,14 @@ class SourceObservationRecord:
             raise SourceObservationRecordError('invalid_source_observation:' + str(exc)) from exc
 
 
-def encode_source_sample(sample: SavedSourceSample, *, context: SourceObservationContext,
-                         provenance: Mapping[str, str] | None = None) -> bytes:
-    """Snapshot one complete observation; caller provenance does not certify it."""
+def create_source_sample_record(sample: SavedSourceSample, *, context: SourceObservationContext,
+                                provenance: Mapping[str, str] | None = None) -> SourceObservationRecord:
+    """Return the fully decoded, validated snapshot from one encoding pass.
+
+    The decoder owns the returned passive fields. Reusing this result avoids
+    decoding the same newly encoded bytes twice; it does not skip validation
+    or cache a caller's mutable sample/context across operations.
+    """
     try:
         _context_check(context)
         projected = _project(sample)
@@ -200,12 +205,17 @@ def encode_source_sample(sample: SavedSourceSample, *, context: SourceObservatio
             sample=pack(projected), sample_binding=binding, provenance=pack(_provenance(provenance)),
             material_qualified=False, resume_authorized=False)
         raw = canonical(data)
-        decode_source_sample(raw, expected_context=context)
-        return raw
+        return decode_source_sample(raw, expected_context=context)
     except SourceObservationRecordError:
         raise
     except (ValueError, TypeError, AttributeError, KeyError, OverflowError, RecursionError) as exc:
         raise SourceObservationRecordError('invalid_source_observation:' + str(exc)) from exc
+
+
+def encode_source_sample(sample: SavedSourceSample, *, context: SourceObservationContext,
+                         provenance: Mapping[str, str] | None = None) -> bytes:
+    """Snapshot one complete observation; caller provenance does not certify it."""
+    return create_source_sample_record(sample, context=context, provenance=provenance).canonical_bytes
 
 
 def decode_source_sample(raw: bytes, *,

@@ -1,0 +1,9 @@
+# Final retort basis evidence
+
+[Independent final approval](review/MATERIAL_REVIEW_FINAL.md) binds checker SHA256 `2cffe8cfcd25c39e2f583414985190486554533da5c532cad9983c56f1d229fd`. Its [JSON](review/MATERIAL_REVIEW_FINAL.json) identifies the six reviewed delivery files. All hashes were checked before packaging. The original facts, source locations, report and numerical outputs remain unchanged.
+
+[Independent arithmetic](review/INDEPENDENT_ARITHMETIC.json) records 66 successful assertions. The initial six isolated cases, including two actual RED results, remain in [PROBE_RESULTS.json](review/PROBE_RESULTS.json) and their case directories. The [focused final three-case run](review/GREEN_RESULTS.json) took 0.079138208 seconds: normal output unchanged, invalid 120% moisture rejected, and a true material qualification flag rejected. The repair only enforces positive charge, printed-string input types, moisture in [0,100] and the original false qualification. It does not change experimental facts. No tests were rerun for this packaging step.
+
+Read the scientific [report](REPORT.md) with the data: actual retort moisture is 2.8%, distinct from the printed ad basis9.9%; 45.18%daf is only conditional inversion of a presumed positive5.17%daf tar correction. Raw recovery, same-batch identity, material qualification and direct reaction heat are not established.
+
+[Historical first delivery](history/DELIVERY_INITIAL.json) is retained as history, superseded for current file identification by DELIVERY_FINAL.json. The reviewer scripts and stdout/stderr are original audit evidence; their historical temporary paths are preserved, not instructions to rerun or fabricate unavailable private sources. No publisher PDF, extracted manuscript or page image is included. Stage commit remains the parent task's responsibility.

@@ -124,19 +124,21 @@ class HEOSCandidate:
 
     @contextmanager
     def _transaction(self):
+        from ._heos_rhs_scope import _active_for_kernel
+        scoped = _active_for_kernel(self)
         with self._lock:
-            if json.dumps(json.loads(self._cp.get_config_as_json_string()),sort_keys=True) != self._config:
+            if not scoped and json.dumps(json.loads(self._cp.get_config_as_json_string()),sort_keys=True) != self._config:
                 raise WaterSourceError('heos_runtime_config_changed')
-            if hashlib.sha256(self._cp.get_fluid_param_string('Water','JSON').encode()).hexdigest() != self._fluid_digest:
+            if not scoped and hashlib.sha256(self._cp.get_fluid_param_string('Water','JSON').encode()).hexdigest() != self._fluid_digest:
                 raise WaterSourceError('heos_runtime_fluid_changed')
             with warnings.catch_warnings(record=True) as emitted:
                 warnings.simplefilter('always')
                 yield
             if emitted:
                 raise WaterNumericalError('heos_native_warning:'+str(emitted[0].message))
-            if hashlib.sha256(self._cp.get_fluid_param_string('Water','JSON').encode()).hexdigest() != self._fluid_digest:
+            if not scoped and hashlib.sha256(self._cp.get_fluid_param_string('Water','JSON').encode()).hexdigest() != self._fluid_digest:
                 raise WaterSourceError('heos_runtime_fluid_changed')
-            if json.dumps(json.loads(self._cp.get_config_as_json_string()),sort_keys=True) != self._config:
+            if not scoped and json.dumps(json.loads(self._cp.get_config_as_json_string()),sort_keys=True) != self._config:
                 raise WaterSourceError('heos_runtime_config_changed')
 
     @staticmethod

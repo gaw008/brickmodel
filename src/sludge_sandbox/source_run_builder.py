@@ -24,7 +24,7 @@ from .rigid_storage import DeclaredNumericalEnvelope, RigidStorage
 from .rigid_water_gas import PressurePolicy, RigidWaterGas
 from .source_mass_caloric import ArlabosseMassCaloric, ReactionDisabled
 from .source_run_config import (SourceRunAssets, SourceRunConfig, SourceRunConfigError,
-                                exact_config_fraction)
+                                exact_config_fraction, required_source_assets, source_heos_manifest)
 from .solid_fluid_heat import LiquidTransportConfig
 from .source_wet_column import SourceWetColumn
 from .source_wet_storage import ManufacturedFixedFluidVolume, SourceWetStorage
@@ -73,6 +73,7 @@ class BuiltSourceRun:
         self.config.check()
         self.assets.check()
         _require(self.assets.config_sha256 == self.config.sha256 and
+                 self.assets.files == required_source_assets(self.config.values['profile']) and
                  type(self.storages) is tuple and len(self.storages) == 3 and
                  all(type(storage) is SourceWetStorage for storage in self.storages),
                  'source_run_build_storage_types')
@@ -92,7 +93,7 @@ def _fluid(config: SourceRunConfig, assets: SourceRunAssets) -> RigidStorage:
     root = assets.root
     water_directory = root / 'data/sandbox/water'
     selection = {'backend': 'heos', 'backend_manifest':
-                 water_directory / 'heos-8.0.0-approved-manifest.json'}
+                 water_directory / source_heos_manifest(config)}
     water = load_water_properties(water_directory, **selection)
     vapor = IdealWaterVapor(water_directory, **selection)
     thermochemistry = load_thermochemistry(root / 'data/sandbox/thermochemistry/nist_gases_v1.json')
@@ -127,7 +128,8 @@ def build_source_run(config: SourceRunConfig, assets: SourceRunAssets) -> BuiltS
              'source_run_explicit_config_and_assets')
     config.check()
     assets.check()
-    _require(assets.config_sha256 == config.sha256, 'source_run_asset_config_binding')
+    _require(assets.config_sha256 == config.sha256 and
+             assets.files == required_source_assets(config.values['profile']), 'source_run_asset_config_binding')
     values, root = config.values, assets.root
     storage = values['storage']
     fluid = _fluid(config, assets)
@@ -142,7 +144,7 @@ def build_source_run(config: SourceRunConfig, assets: SourceRunAssets) -> BuiltS
         storage['temperature_domain_k'], disabled, convention) for _ in range(3))
     water_directory = root / 'data/sandbox/water'
     chemical = WaterChemicalPotential(water_directory, backend='heos',
-        backend_manifest=water_directory / 'heos-8.0.0-approved-manifest.json')
+        backend_manifest=water_directory / source_heos_manifest(config))
     grid = values['grid']
     widths = grid['cell_widths_m']
     faces = tuple(WetFace(grid['face_area_m2'], (widths[i] / 2, widths[i + 1] / 2),

@@ -14,10 +14,12 @@ from pathlib import Path
 from types import MappingProxyType
 
 from .source_record_io import read_record_bytes
+from .heos_runtime_registry import RHS_MANIFEST_ASSET
 
 CONFIG_BYTE_LIMIT = 65536
 SCHEMA = 'source_run_config_v1'
 PROFILE = 'source_multicell_wet_to_dry_heos_v1'
+RHS_PROFILE = 'source_multicell_wet_to_dry_heos_rhs_v2'
 
 _SHAPE = {'schema': 'str',
  'profile': 'str',
@@ -174,6 +176,21 @@ class SourceRunConfigError(ValueError):
     """A configuration or its required source bundle is not admissible."""
 
 
+def required_source_assets(profile):
+    """Select a complete pinned bundle; historical manifests remain unchanged."""
+    if profile == PROFILE:
+        return REQUIRED_ASSETS
+    if profile == RHS_PROFILE:
+        return tuple(RHS_MANIFEST_ASSET if row[0].endswith('/heos-8.0.0-approved-manifest.json')
+                     else row for row in REQUIRED_ASSETS)
+    raise SourceRunConfigError('source_run_config_profile')
+
+
+def source_heos_manifest(config):
+    return (RHS_MANIFEST_ASSET[0].rsplit('/', 1)[-1] if config.values['profile'] == RHS_PROFILE
+            else 'heos-8.0.0-approved-manifest.json')
+
+
 def _require(condition: bool, reason: str) -> None:
     if not condition:
         raise SourceRunConfigError(reason)
@@ -264,10 +281,11 @@ def _validate(values: dict) -> None:
     _require(type(values) is dict and set(values) == set(_SHAPE) | {'assets'},
              'source_run_config_fields:root')
     _shape({key: values[key] for key in _SHAPE}, _SHAPE, '')
-    expected = [{'path': p, 'bytes': n, 'sha256': h} for p, n, h in REQUIRED_ASSETS]
+    expected = [{'path': p, 'bytes': n, 'sha256': h}
+                for p, n, h in required_source_assets(values['profile'])]
     _require(type(values['assets']) is list and _canonical(values['assets']) == _canonical(expected),
              'source_run_config_pinned_assets')
-    _require(values['schema'] == SCHEMA and values['profile'] == PROFILE and
+    _require(values['schema'] == SCHEMA and values['profile'] in (PROFILE, RHS_PROFILE) and
              values['classification'] == 'manufactured_test_fixture', 'source_run_config_profile')
     s, e, grid, liquid, initial = (values[name] for name in
                                   ('storage', 'envelope', 'grid', 'liquid_transport', 'initial'))
@@ -392,7 +410,8 @@ class SourceRunAssets:
 
     def check(self) -> None:
         _require(type(self.root) is type(Path()) and self.root == self.root.resolve() and
-                 type(self.files) is tuple and self.files == REQUIRED_ASSETS and
+                 type(self.files) is tuple and self.files in
+                 (REQUIRED_ASSETS, required_source_assets(RHS_PROFILE)) and
                  all(type(row) is tuple and len(row) == 3 and type(row[0]) is str and
                      type(row[1]) is int and type(row[2]) is str for row in self.files) and
                  type(self.config_sha256) is str and len(self.config_sha256) == 64,
@@ -416,7 +435,8 @@ def validate_source_run_assets(config: SourceRunConfig, *, assets_root: Path) ->
     _require(type(config) is SourceRunConfig, 'source_run_config_required')
     config.check()
     root = Path(assets_root).resolve()
-    result = SourceRunAssets(root, REQUIRED_ASSETS,
-                             hashlib.sha256(_canonical(REQUIRED_ASSETS)).hexdigest(), config.sha256)
+    files = required_source_assets(config.values['profile'])
+    result = SourceRunAssets(root, files,
+                             hashlib.sha256(_canonical(files)).hexdigest(), config.sha256)
     result.check()
     return result

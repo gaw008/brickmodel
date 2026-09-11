@@ -1,0 +1,1 @@
+DELIVERY_INITIAL.json records the historical first delivery before the domain/qualification guard repair. It is not the current checker manifest. Review originals and RED cases are retained under ../review; current byte identities are in ../DELIVERY_FINAL.json.

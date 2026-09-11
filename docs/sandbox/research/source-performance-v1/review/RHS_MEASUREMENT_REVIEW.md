@@ -1,0 +1,7 @@
+# Completed single-RHS measurement review
+
+Approved as a completed diagnostic sample. Standard-library review independently compared the full first `rhs_returned` raw payload to native02/continuous: exactly equal. Actual new journal has four HEOS starts/kernel returns/wrapper returns, one reconstruction, one RHS start and return. No initial-energy, wet-support or accepted-integrator event occurred. Supervisor exit 0, declared inputs unchanged, all 146 recorded runtime modules identical before/after.
+
+Admission took 6.034868 s, profiled RHS 6.382242 s, script total 12.427665 s, supervisor total 13.727477 s. These are different scopes, with profiling overhead included. Pstats has 3,695,265 calls and 6.354862 s total self time. `_transaction` has 4,090 generator resumptions for 2,045 kernel state calls, not 4,090 complete transactions; self time 4.374293 s and cumulative 4.612766 s. The `_source` reader has 1,086 calls, cumulative 0.732032 s. These nested cumulative costs must not be added to the outer evaluation time.
+
+The profile identifies transaction checks as a measured optimization candidate for this single query. It does not establish their redundancy under concurrent/global mutation, authorize a weaker boundary contract, or prove end-to-end completion within the old 180 s segment budget. The reviewer performed no physical calls or whole-study decode. Hashes and exact counters are in RHS_MEASUREMENT_REVIEW.json.

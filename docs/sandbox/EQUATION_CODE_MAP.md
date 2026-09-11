@@ -328,3 +328,7 @@ ordinary native实际full/fine已验证：research/water-native-stage-actual-v1�
 ## 来源湿格共享体积比较（2026-09-10）
 
 `rational_intervals.py` 提取旧纯有理区间算术；`source_wet_shared_pressure.py` 的 `_support` 定义原压力箱的向外 J，`_error_parts` 核根存在、全 J 的 GL/GG/GS/Γ、当前残差到根及完整温度延拓，`enclose_source_wet_pressure_pair` 核 `D = NlA*vA - NlB*vB + R*(NgA*TA-NgB*TB)/p` 及 joint-only 差界。实际液体闭合顺序保留，原 actual fluid/projection 和 max(old,new) 温度斜率均不删减。`collect_source_wet_pressure_pair` 每次请求前复核完整配置、记录完整返回及失败。`source_dry_transition.py` 绑定实际两候选的 2×N 原格/时刻端点，保留旧门槛。对应 `test_paired_pressure_arithmetic.py`、`test_source_wet_shared_pressure.py`、`test_source_wet_transition_pressure.py` 及旧干态/单格/多格回归。数学合同、独立原生保存281项与边界见 [阶段报告](research/source-wet-shared-pressure-v1/REPORT.md)。这不建立新的真实材料参数资格。
+
+## 来源核查的执行策略（2026-09-11）
+
+`_heos_rhs_scope.py` 与 `exact_source_column.py` 将完整配置/水定义核查限定到受管理单 RHS 的入口和出口；`_heos_kernel.py` 仅在该闭合范围中省去重复全局读取，原数值方程 AST 未变。`_heos_kernel_v1.py` 保存原内核，`water_heos.py`/`heos_runtime_registry.py`/`source_run_config.py` 显式选择版本。`source_managed_worker.py` 是仅收数据的隔离入口，不是普通段或恢复控制器。对应 `test_heos_rhs_scope.py`、`test_source_managed_worker.py`、`test_source_rhs_runtime_selection.py` 与原 source/config/record 回归；安装后 228 项通过。原/新版实际单查询、全部来源身份变化及失败记录见 [source-performance-v1](research/source-performance-v1/REPORT.md)。

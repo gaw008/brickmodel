@@ -1,8 +1,39 @@
 # 物理沙盒 Goal 进度
 
-更新时间：2026-09-10 UTC。完整任务合同：[GOAL_BRICK_PHYSICS_SANDBOX.md](../GOAL_BRICK_PHYSICS_SANDBOX.md)。最新状态以当前恢复入口及其实际产物为准，较早段落保留当时状态。
+更新时间：2026-09-11 UTC。完整任务合同：[GOAL_BRICK_PHYSICS_SANDBOX.md](../GOAL_BRICK_PHYSICS_SANDBOX.md)。最新状态以当前恢复入口及其实际产物为准，较早段落保留当时状态。
 
 ## 当前恢复入口（后续详细历史保留）
+
+本轮起点86d9733，上一轮有源码/测试/材料记录/真实前缀和阶段提交，属于实际progress。
+本轮先定位实际性能，再处理来源恢复，完整合同不变。原native01/02与38382均已终态，不重跑。
+已在原installed146模块对native02/parent完成一次带禁物理钩子的cProfile被动read：
+11643终态0，13.1510495s（含profiler开销），0现场物理调用；主要是63 sample的63encode/126decode。
+这只是读档成本，不等于普通段185s瓶颈。scratch=/private/tmp/brick-source-performance-v1。
+一次原父实际重建+单RHS性能采样2438已终态0：监督13.727477s，输入不变/子进程回收；
+重建6.034868s，带profiler单RHS6.382242s，4新HEOS构造/1新RHS，0初U/0湿补查/0接受步。
+完整原rhs_returned payload逐项相等且已独审。2045次state_tp对应4090次transaction generator恢复，
+其中4.613s为事务核查；独立32+32 getter测量中Water JSON getter占单侧核查93.3%。
+重复decode已提取create_source_sample_record，6项2.03s及独立25项0.576s（保存实际观测，0EOS）通过。
+专用单RHS进程入口及受管理scope已实现/独审，原逐点核查kernel按原字节保留为v1，
+新manifest SHA4bded924...与新profile明确绑定实现及执行范围，不沿用旧身份。
+相关被动回归14018终态0：93项40.45s。非editable安装150模块/157包文件与源码逐字相同，
+安装回归71774终态0：228项49.41s；独立36项scope纯测试及worker三个实际反例修复审核通过。
+新被动profile68354终态0：7.73105375s vs原13.15104954s，decode从126降为63，原study SHA相等，0EOS。
+唯一受监督新版真实RHS62206终态0：监督4.34255729s，输入未变/child reaped；
+worker3.23324179s，重建1.46146108s、同区间profiled RHS1.719229833s；4HEOS/1RHS/0初U/0wet/0接受步。
+scope closed=true，2045实际物性operation与原相同，4入口+4出口完整核查通过。
+另一次旧manifest公开API的9个真实TP邻域点通过0.96s，属于独立兼容回归，不混入上述单RHS计数。
+完整返回图独审final04通过0.012843s/0EOS：200 nodes、229 refs、6 arrays、456 binary64、
+24 Fractions、41资格字段保持；仅18处明确metadata差异，派生身份全部独立重算。
+压力1ULP变化/资格升级/伪能量身份三反例均拒绝；审查脚本自己的原case字段漏算失败保留。
+阶段报告见[本轮证据](research/source-performance-v1/REPORT.md)，
+下一步[接入完整来源执行并通过原三步两路径门槛](research/source-performance-v1/NEXT_STEP.md)。
+本轮有实际源码、材料核查、安装回归和性能证据progress。完整Goal保持active，
+不能据单RHS宣布普通段/三步两路径、完整循环或材料验证成功。
+同阶段retort材料基准checker已独审APPROVE，2项真实反例修复，最终3项0.079s通过；
+34.32g实际装料的2.8%水分不同于打印ad表9.90%，不混用基准、不授予反应热或完整材料资格。
+
+### 上一非静止续算阶段（已提交86d9733，保留历史）
 
 当前从92e5b85继续，上一轮属于实际progress（续算源码、355安装测试及原生静止路径证据已提交）。
 本轮新增显式普通段步长选择，只改initial/max两字段，原误差、最小步与资源限额保持；
