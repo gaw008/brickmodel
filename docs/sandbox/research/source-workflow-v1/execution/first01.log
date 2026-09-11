@@ -1,0 +1,50 @@
+F..............................F.....                                    [100%]
+=================================== FAILURES ===================================
+____________________ test_original_three_step_data_request _____________________
+
+    def test_original_three_step_data_request():
+        value = request()
+>       assert worker._load_request(json.dumps(value).encode()) == value
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_workflow_worker.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_workflow_worker.py:34: in _load_request
+    _shape(value, shape, 'source_workflow_request')
+src/sludge_sandbox/source_run_config.py:244: in _shape
+    _shape(value[key], child, path + '/' + key)
+src/sludge_sandbox/source_run_config.py:255: in _shape
+    _require(bool(value.strip()) and value == value.strip(), 'source_run_config_label:' + path)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False
+reason = 'source_run_config_label:source_workflow_request/cancel_file'
+
+    def _require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceRunConfigError(reason)
+E           sludge_sandbox.source_run_config.SourceRunConfigError: source_run_config_label:source_workflow_request/cancel_file
+
+src/sludge_sandbox/source_run_config.py:197: SourceRunConfigError
+_________ test_current_workflow_manifest_sources_and_native_constants __________
+
+    def test_current_workflow_manifest_sources_and_native_constants():
+        from sludge_sandbox.heos_runtime_registry import WORKFLOW_MANIFEST_ASSET, RHS_MANIFEST_ASSET
+        root = Path(__file__).resolve().parents[2]
+        raw = (root / WORKFLOW_MANIFEST_ASSET[0]).read_bytes()
+        assert (len(raw), hashlib.sha256(raw).hexdigest()) == WORKFLOW_MANIFEST_ASSET[1:]
+        new = json.loads(raw)
+        old = json.loads((root / RHS_MANIFEST_ASSET[0]).read_bytes())
+        for name, sha in new.pop('execution_sources').items():
+>           assert hashlib.sha256((root / 'src/sludge_sandbox' / name).read_bytes()).hexdigest() == sha
+E           AssertionError: assert '757008d2b1c2...5ee447c406551' == '69533567d237...7ac3684ccfed2'
+E             
+E             - 69533567d23739d7b5175063f003f2787ee029be11fc45b2d427ac3684ccfed2
+E             + 757008d2b1c277d201e38be4d401aba0e96374a5f015141fde25ee447c406551
+
+tests/sandbox/test_source_workflow_worker.py:184: AssertionError
+-- generated xml file: /private/tmp/brick-source-workflow-v1/root/first01.xml --
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_source_workflow_worker.py::test_original_three_step_data_request
+FAILED tests/sandbox/test_source_workflow_worker.py::test_current_workflow_manifest_sources_and_native_constants
+2 failed, 35 passed in 0.36s

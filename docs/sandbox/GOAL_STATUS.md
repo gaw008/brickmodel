@@ -4,6 +4,26 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+本阶段从9544ec9继续，完整Goal保持active；已有实际源码、回归和原三步两路径成功运行progress。
+唯一原生尝试92317已终态0；原510s总/180s普通/97RHS/16wet/570s监督和三步门槛均保持。
+worker116.22751054s，监督117.36645858s，全部输入前后未变，child reaped。
+父研究completed且numerical_event_accepted=true（48.12504550s，32RHS/4HEOS/3初U/8wet）。
+连续三步与暂停一步再续算到三步，数值状态/观察/账本逐项相等；每路径22RHS/0拒步。
+总76RHS/12HEOS/3初U/8wet；四lease32/22/8/14个RHS全部关闭/verified。
+三格实际ΔT约5.70e-6/-1.10e-6/-4.61e-6K，均超过两端inverse数值界之和；逐步全U残差约1e-11J。
+终点0.04687599380522851s，仍是制造几何/输运与来源水/干物质比热验证，不能称全烧成或材料资格。
+源码79项服务/续算/config回归通过109.55s（47399终态0），151模块/158包文件非editable安装一致；
+安装292项通过48.01s（59710终态0）；lifecycle及独立控制/源码审查通过。
+证据：[本阶段报告](research/source-workflow-v1/REPORT.md)；原始396文件以可核对归档保存，17来源assets不再分发。
+新workflow v3 profile/manifest定义实际执行身份；旧v2源/清单/案例留存，不冒用历史身份。
+原ACCEPTANCE.case_sha256字段实际指canonical config SHA；raw case SHA已在父/监督正确保存，
+独立派生报告已将两者明确分列；原文件不覆盖，下一出版版本修字段命名。
+独立native审查已终态通过（0.246s，0应用导入/0EOS）：236事件、完整两路径与检查点字段、逐格逐步能量、324监督输入均核对；唯一已知MEDIUM哈希误名已分列保留。无运行中的实验。scratch=/private/tmp/brick-source-workflow-v1。
+下一个具体工作：[来源持久化恢复与应用](research/source-workflow-v1/NEXT_STEP.md)，不重跑不变的本次实验。
+原泥同材料能量/反应/烧结冷却、三机制留出、全周期、时空收敛、多代和最终使用验收仍全部必需未完成。
+
+### 上一性能阶段（已提交9544ec9）
+
 本轮起点86d9733，上一轮有源码/测试/材料记录/真实前缀和阶段提交，属于实际progress。
 本轮先定位实际性能，再处理来源恢复，完整合同不变。原native01/02与38382均已终态，不重跑。
 已在原installed146模块对native02/parent完成一次带禁物理钩子的cProfile被动read：

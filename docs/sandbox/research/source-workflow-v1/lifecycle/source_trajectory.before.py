@@ -4,7 +4,6 @@ This is a new ordinary segment after an admitted numerical transition. Its
 accepted-boundary checkpoint is local to this live session; it does not restore
 the historical study controller or authorize archived source-run resume.
 """
-from copy import deepcopy
 from dataclasses import dataclass, replace
 from fractions import Fraction as F
 import math
@@ -19,7 +18,7 @@ from .source_net_prefix import _same
 from .source_run_builder import _snapshot, build_source_run
 from .source_run_config import load_source_run_config, validate_source_run_assets
 from .source_run_observer import observer_scope
-from .source_run_service import KIND, _Recorder, _read, _managed_request, _managed_operation
+from .source_run_service import KIND, _Recorder, _read
 from .source_study_schema import reify
 
 
@@ -87,8 +86,6 @@ class SourceTrajectoryResult:
     full_firing_cycle: bool = False
     archived_resume_authorized: bool = False
     qualification: str = 'ordinary_source_segment_with_original_transition_balance_not_material_validation'
-    managed_execution: bool = False
-    managed_audits: tuple = ()
 
 
 class SourceTrajectorySession:
@@ -106,7 +103,7 @@ class SourceTrajectorySession:
             self.adapter.interfaces, self.parent_counts, self.parent_elapsed_seconds,
             self.built.config.sha256, self.built.assets.sha256, self.selected_candidate_index,
             self.begin, self.recorder.begin, self.reference_policy,
-            None if self.step_sizes is None else self.step_sizes.binding(), self.managed_execution))
+            None if self.step_sizes is None else self.step_sizes.binding()))
 
     def _check(self):
         _require(self.checkpoint is self._continuation_state[0]
@@ -160,8 +157,6 @@ class SourceTrajectorySession:
         self._check()
         _require(tuple(sorted(self.recorder.counts.items())) == self.last_counts,
                  'source_trajectory_prior_costs_changed')
-        _require(_snapshot(tuple(self.recorder.managed_audits)) == self._last_managed_audits,
-                 'source_trajectory_managed_audit_changed')
         checkpoint = self.checkpoint
         previous_steps = 0 if checkpoint is None else len(checkpoint.result.steps)
         prior_segment_wall = F() if checkpoint is None else F(checkpoint.result.elapsed_seconds)
@@ -175,37 +170,22 @@ class SourceTrajectorySession:
         def pause(frame):
             return pause_after_steps is not None and len(frame.result.steps) - previous_steps >= pause_after_steps
 
-        execution = None
         try:
             with observer_scope(self.recorder):
                 self.recorder.phase = 'ordinary_source_segment'
-                with _managed_operation(self.recorder, self.adapter, enabled=self.managed_execution,
-                        deadline_monotonic=self.begin + self.recorder.limits['outer_seconds']
-                                           - self.parent_elapsed_seconds):
-                    if self.managed_execution:
-                        extra = F(time.monotonic() - self.begin) - prior_segment_wall
-                        _require(extra >= 0, 'source_trajectory_wall_accounting_changed')
-                    execution = integrate_exact_checkpointed(self.initial, self.adapter,
-                        start_s=self.start, end_s=self.end, policy=self.policy,
-                        breakpoints_s=self.adapter.breakpoints(self.start, self.end),
-                        cancel=self.recorder.cancelled, continuation=checkpoint,
-                        admission_elapsed_seconds=_upper_float(extra),
-                        on_commit=committed, pause_after_commit=pause)
-                    self.last_execution = execution
-                if self.managed_execution:
-                    self.recorder.cancelled()
-                    if (self.recorder.stop_status is None and
-                            time.monotonic() - self.begin >= self.policy.maximum_wall_seconds):
-                        self.recorder.stop_status = 'resource_limit'
-                        self.recorder.stop_reason = 'source_trajectory_original_segment_wall_limit'
+                execution = integrate_exact_checkpointed(self.initial, self.adapter,
+                    start_s=self.start, end_s=self.end, policy=self.policy,
+                    breakpoints_s=self.adapter.breakpoints(self.start, self.end),
+                    cancel=self.recorder.cancelled, continuation=checkpoint,
+                    admission_elapsed_seconds=_upper_float(extra),
+                    on_commit=committed, pause_after_commit=pause)
         except BaseException as exc:
             self.last_failure = exc
             self.checkpoint, self.closed = None, True
             self._continuation_state = (self.checkpoint, self.last_result, self.closed)
             try:
                 self.recorder.journal.append('ordinary_segment_failed', dict(
-                    exception=exc, counts=self.recorder.counts, execution=execution,
-                    managed_audits=tuple(self.recorder.managed_audits)))
+                    exception=exc, counts=self.recorder.counts))
             except BaseException as notification_error:
                 exc.add_note('source trajectory failure journal also failed: '
                              + type(notification_error).__name__)
@@ -223,12 +203,9 @@ class SourceTrajectorySession:
         elapsed = _upper_float(F(self.parent_elapsed_seconds) + F(time.monotonic() - self.begin))
         result = SourceTrajectoryResult(execution, self.balances,
             tuple(sorted(self.recorder.counts.items())), elapsed, self.record.sha256,
-            self.selected_candidate_index, self.recorder.journal.count, status, reason,
-            managed_execution=self.managed_execution,
-            managed_audits=tuple(deepcopy(self.recorder.managed_audits)))
+            self.selected_candidate_index, self.recorder.journal.count, status, reason)
         self.last_result = result
         self.last_counts = tuple(sorted(self.recorder.counts.items()))
-        self._last_managed_audits = _snapshot(tuple(self.recorder.managed_audits))
         self._continuation_state = (self.checkpoint, self.last_result, self.closed)
         try:
             self.recorder.journal.append('ordinary_segment_returned', result)
@@ -241,8 +218,7 @@ class SourceTrajectorySession:
 
 
 def open_source_trajectory(directory, output, *, end: T, cancel=None,
-                           step_sizes: SourceOrdinaryStepSizes | None = None,
-                           managed_execution: bool = False):
+                           step_sizes: SourceOrdinaryStepSizes | None = None):
     """Read a same-version frozen source run and reconstruct its live dry view.
 
     Only candidate 1 of a numerically accepted transition is currently admitted.
@@ -252,10 +228,7 @@ def open_source_trajectory(directory, output, *, end: T, cancel=None,
     Optional ``step_sizes`` declares only the new segment's initial/maximum
     steps. Original tolerances and resource limits remain; later pauses cannot
     replace the selected policy.
-    ``managed_execution`` admits a fresh lease only inside each ``advance``;
-    reconstruction, saved checkpoints and paused sessions never carry a lease.
     """
-    _managed_request(managed_execution)
     begin = time.monotonic()
     _require(type(end) is T and type(end.seconds) is F,
              'source_trajectory_exact_end_required')
@@ -282,7 +255,6 @@ def open_source_trajectory(directory, output, *, end: T, cancel=None,
     initial, start = reify(candidate.reference.states[-1]), candidate.reference.times_s[-1]
     _require(start < end, 'source_trajectory_end_must_follow_original_study')
     config = load_source_run_config(_read(directory / 'case.json', 1024 * 1024))
-    _managed_request(managed_execution, config)
     _require(config.sha256 == record.metadata['config_sha256'] == summary['config_sha256'],
              'source_trajectory_original_config_changed')
     assets = validate_source_run_assets(config, assets_root=directory / 'assets')
@@ -353,9 +325,6 @@ def open_source_trajectory(directory, output, *, end: T, cancel=None,
         raise
     session = SourceTrajectorySession()
     session.record, session.built, session.adapter = record, built, adapter
-    session.managed_execution = managed_execution
-    session.last_execution = None
-    session._last_managed_audits = _snapshot(())
     session.initial, session.start, session.end = initial, start, end
     session.policy, session.reference_policy, session.step_sizes = policy, reference_policy, step_sizes
     session.parent_elapsed_seconds, session.parent_counts = prior_wall, tuple(sorted(original_counts.items()))

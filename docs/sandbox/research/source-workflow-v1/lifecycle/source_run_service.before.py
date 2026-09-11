@@ -3,9 +3,6 @@
 The current profile is a manufactured geometry/transport verification case.
 It exercises real source providers; it is not a complete sludge firing cycle.
 """
-from collections.abc import Iterator
-from contextlib import contextmanager
-from copy import deepcopy
 from dataclasses import replace
 from fractions import Fraction
 import hashlib
@@ -31,10 +28,6 @@ class _RunStop(IntegrationError):
     pass
 
 
-class _SourceWorkflowBudgetStop(IntegrationError):
-    """Private closed-worker signal for the original cumulative run budget."""
-
-
 def _read(path, limit=64 * 1024 * 1024):
     return read_record_bytes(path, limit, size_reason='source_run_input_byte_limit',
                              regular_reason='source_run_regular_input_required')
@@ -58,7 +51,6 @@ class _Recorder:
         self.effective = None
         self.undurable_returns = []
         self.notification_failures = []
-        self.managed_audits = []
         self.counts = dict(heos_started=0, heos_kernel_returned=0, heos_returned=0,
                            initial_energy_started=0, initial_energy_returned=0,
                            rhs_started=0, rhs_returned=0, wet_started=0, wet_returned=0)
@@ -73,9 +65,6 @@ class _Recorder:
             requested = self.cancel_callback() if self.cancel_callback is not None else False
             if type(requested) is not bool:
                 raise ValueError('source_run_cancel_must_return_bool')
-        except _SourceWorkflowBudgetStop as exc:
-            self.stop_status, self.stop_reason = 'resource_limit', str(exc)
-            return True
         except Exception as exc:
             self.cancel_error = exc
             self.stop_status, self.stop_reason = 'failed', 'cancel_callback_failed:' + str(exc)
@@ -193,74 +182,6 @@ def _require(ok, reason):
         raise IntegrationError(reason)
 
 
-def _managed_request(enabled: bool, config=None) -> None:
-    """Reject opt-in misuse before constructing providers or opening a lease."""
-    _require(type(enabled) is bool, 'source_managed_execution_must_be_bool')
-    if enabled:
-        from ._heos_rhs_scope import _require_workflow_entry
-        _require_workflow_entry()
-        if config is not None:
-            from .source_run_config import WORKFLOW_PROFILE
-            _require(config.values['profile'] == WORKFLOW_PROFILE,
-                     'source_managed_workflow_profile_required')
-
-
-@contextmanager
-def _managed_operation(recorder: _Recorder, adapter: object, *, enabled: bool,
-                       deadline_monotonic: float) -> Iterator[None]:
-    """Own one operation's lease; individual RHS bodies own native scopes.
-
-    Closing and retaining the owned audit precede publication. A secondary close
-    or journal error never replaces the operation's original exception.
-    """
-    if not enabled:
-        yield
-        return
-    from ._heos_rhs_scope import _admit_workflow_worker, _close_worker, _worker_audit
-    lease, primary = None, None
-    entry = dict(ordinal=len(recorder.managed_audits) + 1, phase=recorder.phase,
-                 status='admitting', audit=None, primary_error=None, secondary_errors=[])
-    recorder.managed_audits.append(entry)
-    started = time.monotonic()
-    errors = []
-    try:
-        recorder.journal.append('managed_lease_started', entry)
-        lease = _admit_workflow_worker(adapter, deadline_monotonic=deadline_monotonic)
-        entry['status'] = 'active'
-        yield
-    except BaseException as exc:
-        primary = exc
-        entry['primary_error'] = dict(type=type(exc).__name__, reason=str(exc))
-        raise
-    finally:
-        if lease is not None:
-            try:
-                _close_worker(lease)
-            except BaseException as exc:
-                errors.append(('close', exc))
-            try:
-                entry['audit'] = _worker_audit(lease)
-            except BaseException as exc:
-                errors.append(('audit', exc))
-        entry['status'] = 'closed' if primary is None and not errors else 'failed'
-        entry['elapsed_seconds'] = time.monotonic() - started
-        for stage, exc in errors:
-            entry['secondary_errors'].append(dict(stage=stage, type=type(exc).__name__, reason=str(exc)))
-        try:
-            recorder.journal.append('managed_lease_closed', entry)
-        except BaseException as exc:
-            errors.append(('journal', exc))
-            entry['status'] = 'failed'
-            entry['secondary_errors'].append(dict(stage='journal', type=type(exc).__name__, reason=str(exc)))
-        if primary is not None:
-            for stage, exc in errors:
-                primary.add_note('source managed ' + stage + ' also failed: ' + type(exc).__name__)
-        elif errors:
-            for stage, exc in errors[1:]:
-                errors[0][1].add_note('source managed ' + stage + ' also failed: ' + type(exc).__name__)
-            raise errors[0][1]
-
-
 def _execute(built, recorder, config):
     from .source_run_builder import build_source_controls
     from .source_prefix_trial import evaluate_source_prefix_trial
@@ -341,17 +262,11 @@ def _execute(built, recorder, config):
     return effective, transition
 
 
-def run_source_case(case_path, assets_root, output, *, cancel=None, replay_of=None,
-                    managed_execution: bool = False):
-    """Run installed providers from an explicit validated local asset tree.
-
-    ``managed_execution`` additionally requires the closed workflow worker and
-    its explicitly versioned profile; default callers retain per-call checks.
-    """
+def run_source_case(case_path, assets_root, output, *, cancel=None, replay_of=None):
+    """Run real installed providers from an explicit validated local asset tree."""
     from .source_run_config import load_source_run_config, validate_source_run_assets
     from .source_run_builder import build_source_run
     from .source_run_observer import observer_scope
-    _managed_request(managed_execution)
     directory = Path(output).absolute()
     directory.mkdir(parents=True, exist_ok=False)
     begin = time.monotonic()
@@ -371,7 +286,6 @@ def run_source_case(case_path, assets_root, output, *, cancel=None, replay_of=No
         result['original_case_available'] = True
         _json(directory / 'result.json', result)
         config = load_source_run_config(raw)
-        _managed_request(managed_execution, config)
         result['config_sha256'] = config.sha256
         _publish(directory / 'config.json', config.canonical_bytes)
         recorder.limits = config.values['resources']
@@ -396,11 +310,7 @@ def run_source_case(case_path, assets_root, output, *, cancel=None, replay_of=No
             built = build_source_run(config, frozen)
             recorder.journal.append('builder_returned', built.adapter.provenance())
             recorder.guard()
-            with _managed_operation(recorder, built.adapter, enabled=managed_execution,
-                    deadline_monotonic=begin + recorder.limits['outer_seconds']):
-                effective, transition = _execute(built, recorder, config)
-            if managed_execution:
-                recorder.guard()
+            effective, transition = _execute(built, recorder, config)
         result.update(status='completed', numerical_comparison_completed=True,
             numerical_event_accepted=transition.numerical_event_accepted,
             transition_status=transition.status, physical_end_seconds=float(transition.candidates[0].end.seconds))
@@ -433,10 +343,6 @@ def run_source_case(case_path, assets_root, output, *, cancel=None, replay_of=No
             undurable_returns=raw_projection(tuple(recorder.undurable_returns)),
             notification_failures=tuple(recorder.notification_failures),
             returned_candidates=tuple(recorder.candidates), config_sha256=result.get('config_sha256'))
-        if managed_execution:
-            audits = deepcopy(recorder.managed_audits)
-            result.update(managed_execution=True, managed_audits=audits)
-            metadata.update(managed_execution=True, managed_audits=audits)
         try:
             raw = encode_source_study(recorder.roots, contexts=tuple(recorder.contexts),
                 captures=tuple(recorder.captures), metadata=metadata,
@@ -490,10 +396,6 @@ def verify_source_artifacts(directory, result, manifest):
     if hashlib.sha256(record_bytes).hexdigest() != reference['sha256']:
         raise RunError('source_run_record_changed_after_validation')
     record = decode_source_study(record_bytes)
-    managed = result.get('managed_execution', False)
-    if (type(managed) is not bool or managed is not record.metadata.get('managed_execution', False)
-            or _snapshot(result.get('managed_audits', ())) != record.metadata.get('managed_audits', ())):
-        raise RunError('source_run_managed_audit_binding_changed')
     if (record.metadata['case_sha256'] != result['case_sha256']
             or record.metadata['counts'] != result['counts']
             or record.metadata['status'] != result['execution_status']

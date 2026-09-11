@@ -211,7 +211,6 @@ class _ActiveRHS:
 
 _worker: _WorkerAdmission | None = None
 _active: _ActiveRHS | None = None
-_workflow_deadline: float | None = None
 
 
 def _owner(lease: _WorkerAdmission) -> None:
@@ -220,53 +219,14 @@ def _owner(lease: _WorkerAdmission) -> None:
              and _task() is None, 'worker_owner_changed')
 
 
-def _require_entry(names: tuple[str, ...]) -> None:
+def _require_worker_entry() -> None:
     entry = sys.modules.get('__main__')
     spec = getattr(entry, '__spec__', None)
-    name = getattr(spec, 'name', None)
     _require(sys.flags.isolated and type(entry) is ModuleType
-             and name in names
+             and getattr(spec, 'name', None) == 'sludge_sandbox.source_managed_worker'
              and type(getattr(entry, '__file__', None)) is str
-             and Path(entry.__file__).resolve() == Path(__file__).with_name(name.rsplit('.', 1)[-1] + '.py').resolve(),
+             and Path(entry.__file__).resolve() == Path(__file__).with_name('source_managed_worker.py').resolve(),
              'dedicated_isolated_worker_required')
-
-
-def _require_worker_entry() -> None:
-    _require_entry(('sludge_sandbox.source_managed_worker', 'sludge_sandbox.source_workflow_worker'))
-
-
-def _configure_workflow_deadline(deadline_monotonic: float) -> None:
-    """The closed worker fixes one whole-operation deadline before construction."""
-    global _workflow_deadline
-    _require_entry(('sludge_sandbox.source_workflow_worker',))
-    _require(_worker is None and _active is None and _workflow_deadline is None,
-             'workflow_already_configured')
-    _require(current_thread() is main_thread() and _task() is None, 'synchronous_main_thread')
-    _require(type(deadline_monotonic) is float and math.isfinite(deadline_monotonic)
-             and monotonic() < deadline_monotonic, 'finite_future_deadline')
-    _workflow_deadline = deadline_monotonic
-
-
-def _require_workflow_entry() -> None:
-    _require_entry(('sludge_sandbox.source_workflow_worker',))
-    _require(current_thread() is main_thread() and _task() is None, 'synchronous_main_thread')
-    _require(type(_workflow_deadline) is float and monotonic() < _workflow_deadline,
-             'workflow_deadline_unavailable_or_exhausted')
-
-
-def _admit_workflow_worker(adapter: object, *, deadline_monotonic: float) -> _WorkerAdmission:
-    _require_workflow_entry()
-    _require(type(deadline_monotonic) is float and math.isfinite(deadline_monotonic),
-             'finite_future_deadline')
-    return _admit_worker(adapter, supervisor_pid=os.getppid(),
-                         deadline_monotonic=min(deadline_monotonic, _workflow_deadline))
-
-
-def _clear_workflow_deadline() -> None:
-    global _workflow_deadline
-    _require_entry(('sludge_sandbox.source_workflow_worker',))
-    _require(_worker is None and _active is None, 'cannot_clear_active_workflow')
-    _workflow_deadline = None
 
 
 def _admit_worker(adapter: object, *, supervisor_pid: int,

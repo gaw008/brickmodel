@@ -1,0 +1,73 @@
+........F.F.........                                                     [100%]
+=================================== FAILURES ===================================
+__________ test_managed_entry_rejected_before_case_io_or_construction __________
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-349/test_managed_entry_rejected_be0')
+
+    def test_managed_entry_rejected_before_case_io_or_construction(tmp_path):
+        with pytest.raises(Exception, match='dedicated_isolated_workflow_worker_required'):
+>           run_source_case(tmp_path / 'missing', tmp_path, tmp_path / 'out', managed_execution=True)
+
+tests/sandbox/test_source_managed_lifecycle.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_run_service.py:350: in run_source_case
+    _managed_request(managed_execution)
+src/sludge_sandbox/source_run_service.py:201: in _managed_request
+    _require_workflow_entry()
+src/sludge_sandbox/_heos_rhs_scope.py:251: in _require_workflow_entry
+    _require_entry(('sludge_sandbox.source_workflow_worker',))
+src/sludge_sandbox/_heos_rhs_scope.py:227: in _require_entry
+    _require(sys.flags.isolated and type(entry) is ModuleType
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = 0, reason = 'dedicated_isolated_worker_required'
+
+    def _require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise WaterSourceError('heos_rhs_' + reason)
+E           sludge_sandbox.water_properties.WaterSourceError: heos_rhs_dedicated_isolated_worker_required
+
+src/sludge_sandbox/_heos_rhs_scope.py:28: WaterSourceError
+
+During handling of the above exception, another exception occurred:
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-349/test_managed_entry_rejected_be0')
+
+    def test_managed_entry_rejected_before_case_io_or_construction(tmp_path):
+>       with pytest.raises(Exception, match='dedicated_isolated_workflow_worker_required'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E        Regex: 'dedicated_isolated_workflow_worker_required'
+E        Input: 'heos_rhs_dedicated_isolated_worker_required'
+
+tests/sandbox/test_source_managed_lifecycle.py:30: AssertionError
+_______________________ test_managed_profile_is_explicit _______________________
+
+lease_seam = {'active': None, 'admission_cost': 0.0, 'admission_error': None, 'audit_error': None, ...}
+
+    def test_managed_profile_is_explicit(lease_seam):
+        with pytest.raises(IntegrationError, match='workflow_profile_required'):
+>           _managed_request(True, SimpleNamespace(values={'profile': 'source_multicell_wet_to_dry_heos_v1'}))
+
+tests/sandbox/test_source_managed_lifecycle.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True
+config = namespace(values={'profile': 'source_multicell_wet_to_dry_heos_v1'})
+
+    def _managed_request(enabled: bool, config=None) -> None:
+        """Reject opt-in misuse before constructing providers or opening a lease."""
+        _require(type(enabled) is bool, 'source_managed_execution_must_be_bool')
+        if enabled:
+            from ._heos_rhs_scope import _require_workflow_entry
+            _require_workflow_entry()
+            if config is not None:
+>               from .source_run_config import WORKFLOW_PROFILE
+E               ImportError: cannot import name 'WORKFLOW_PROFILE' from 'sludge_sandbox.source_run_config' (/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/source_run_config.py)
+
+src/sludge_sandbox/source_run_service.py:203: ImportError
+- generated xml file: /private/tmp/brick-source-managed-workflow-v1/lifecycle/green01.xml -
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_source_managed_lifecycle.py::test_managed_entry_rejected_before_case_io_or_construction
+FAILED tests/sandbox/test_source_managed_lifecycle.py::test_managed_profile_is_explicit
+2 failed, 18 passed in 0.33s

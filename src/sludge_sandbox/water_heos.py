@@ -8,7 +8,7 @@ from .water_properties import WaterProperties,WaterState,WaterResponse,Saturatio
 from .water_implementation import WaterImplementation
 from ._heos_kernel import HEOSCandidate
 from ._heos_kernel_v1 import HEOSCandidate as LegacyHEOSCandidate
-from .heos_runtime_registry import RHS_MANIFEST_ASSET
+from .heos_runtime_registry import RHS_MANIFEST_ASSET, WORKFLOW_MANIFEST_ASSET
 
 
 @dataclass(frozen=True,init=False)
@@ -28,10 +28,10 @@ class HEOSWaterProperties:
                 verified_bytes=Path(manifest).read_bytes()
                 manifest_sha = hashlib.sha256(verified_bytes).hexdigest()
                 if manifest_sha not in ('5f9e39bf1d3376b931caaf8fbda478b482cafe4c8b57a490860ac6ed080bf6db',
-                                         RHS_MANIFEST_ASSET[2]):
+                                         RHS_MANIFEST_ASSET[2], WORKFLOW_MANIFEST_ASSET[2]):
                     raise WaterSourceError('unreviewed_heos_manifest')
                 verified_manifest=json.loads(verified_bytes)
-                candidate_type = HEOSCandidate if manifest_sha == RHS_MANIFEST_ASSET[2] else LegacyHEOSCandidate
+                candidate_type = HEOSCandidate if manifest_sha in (RHS_MANIFEST_ASSET[2], WORKFLOW_MANIFEST_ASSET[2]) else LegacyHEOSCandidate
                 if candidate_type is HEOSCandidate:
                     for name, expected in verified_manifest['execution_sources'].items():
                         if Path(name).name != name or not name.endswith('.py'):
