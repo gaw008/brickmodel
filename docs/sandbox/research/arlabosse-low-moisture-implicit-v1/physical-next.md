@@ -1,0 +1,9 @@
+# 去掉任意相变 K 的下一物理步骤
+
+2026-09-12；只读，无 EOS／测试／网络／生产修改。**先实现有界单胞局部平衡 flash，取消该支路的 Kph。** 这是可执行的闭合选择，尚不能验证材料干燥时间；manufactured Kph=1e−10 和 500 s 成本／域探针不能升格为材料证据。
+
+**闭合与第一步。** 固定总水 Nt=Nc+Nv、载气、刚性几何和完整 U*，求 `U(Nc,Nv,T)=U*`，由原机械闭合求 P／Vg；正库存时要求 `Nv·R·T/Vg=aw(T,M·Nc/md)·peq_pure(T,P)`。每个试探 Nc 复用 [LowMoistureSorptionStorage.evaluate](/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/arlabosse_low_moisture_storage.py)、[invert_low_moisture_safeguarded](/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/low_moisture_fast_inverse.py)，以及 `ArlabosseLowMoisture.evaluate`、`WaterChemicalPotential.equilibrium_at_liquid_tp`、`RigidWaterGas.evaluate_at_temperature`、`check_low_moisture_point`。保留干端 excess 常数，水内部分配不额外加 latent。求根须有界并确认根存在；不预设单调，零端用解析极限。首个实际试验：同一源绑定 Nt／载气／U*，构造蒸发侧、凝结侧初态，检查是否抵达同一域内平衡态，保存组成／原 U 残差及压力门；找不到可接受根即留失败。
+
+**出处与最小未知。** “局部相变远快于传输”登记 `virtual_design_choice`，时间尺度分离误差 `unknown`。原件 `.tools/source-cache/arlabosse2005/article.html:1135` 说因生物活性难等热平衡，改用快速瞬态测量；Ferrasse & Lecomte 2004 印刷 pp.1368–1369、Eqs.21–24／§3.2 是动态测量及传递假设。**已读记录没有可确认的孔内瞬时平衡论证或可匹配局部 K。** `docs/sandbox/research/arlabosse-wet-thermo-v1/THERMODYNAMIC_DESIGN_REVIEW.md` §3 已将 aw×纯水 peq 登记为条件标准态桥。有限动力学另一条路线需同材料、实际 T/P/湿度、界面面积及速率／工况记录；Arlabosse 2005 Eq.3／Table 2（原 HTML:1232；`docs/sandbox/research/arlabosse-granular-drying-v1/SOURCE_FINDINGS.md`）只有设备接触面积归一化 F=34.38W+4.58、W=.05–.32，料温／气相不全，不能换成孔内 K。
+
+**D 与开放边界。** Mäkelä D=8.56e−9 m²/s 是总失水反推量（PDF pp.7–8 Eqs.1–4、p.22 Table 1；`docs/sandbox/research/arlabosse-internal-coupling-v1/SOURCE_REPORT.md`），已分配凝聚水迁移；不能再将同一拟合独立计作相变／蒸气通道。路径分配、温度／跨材料误差仍 unknown。`src/sludge_sandbox/controlled_vapor_column.py:186` 只交换水汽。干端 P=Ncarrier·R·T/Vpore，湿端气容更小且含 Nv；90–110 kPa 要求干端载气下限与湿端上限有交集，充分湿时可能不相容。下一边界须显式交换载气／水汽、记各组分携焓，并给出储库压力、组成、受控流量或有来源传质律；另一选择是含体积功的力学边界，不能覆盖实际 P。上述工作与独立质量／温度观测对应 `docs/GOAL_BRICK_PHYSICS_SANDBOX.md` §6.2／§8，尚不完成升温反应、烧结、冷却。

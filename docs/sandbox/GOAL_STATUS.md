@@ -4,6 +4,8 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+已完成[低W隐式局部排湿与热湿输运](research/arlabosse-low-moisture-implicit-v1/REPORT.md)。36叶子/5主机及独立代码、数学、失败回归通过；184包文件/177模块冻结，46安装测试39.446s通过。唯一短程三档2/4/8steps共31RHS、826原门通过，两个可分辨主输出一阶比值约1.9303；唯一长程500s/5steps/11RHS、299原门通过，积分21.462s/监督27.827s，排出初始总水约0.478718%，2786输入未变。两次保存独审132/56分组检查通过，exec11663与70350均终态0回收，无活动native/UI。局部Kph仍manufactured，无长程/全场/空间/材料资格。阶段代码与原证据已归档待本地提交；下一已在/private/tmp/arlabosse-equilibrium-flash-v1设计并实现独立同Nt/载气/V/fullU局部相平衡，不重复制造系数长跑。完整原泥全周期、三机制现实、多代与完整应用继续必需未完成；面板最近paused，不改旧失败/门槛。
+
 从cfd291c完成[显式快速full-U反解](research/arlabosse-low-moisture-fast-inverse-v1/REPORT.md)：默认列身份/provenance与旧对象一致，新策略显式绑定，原物理/状态身份与U/T/资源门不变；源码32项78.31s、安装23项51.87s，182文件/175模块冻结一致。唯一native01原232项全过，积分9.99039154s vs保存旧25.09240875s，监督16.53868s、2782输入未变，exec96106已终态0回收。仅单例性能改善，无材料/收敛资格提升。下一直接实现/private/tmp/arlabosse-low-moisture-implicit-v1中正库存局部隐式排湿与内部k/D/热浴分步耦合，验证可行长程T/P与时间空间收敛，然后继续原泥高温组成/反应/烧结冷却、三机制实测及实验应用链。Goal§11未完成；本轮实际Goal面板状态paused，未自行更改。
 
 本地基线20039f4后完成[低含水/再润湿/受控排汽](research/arlabosse-low-moisture-v1/REPORT.md)：保留同一Nc/U及有限干h0/s0，低W D/k、可逆phase与选择性蒸气/独立热浴实际耦合；所有扩展/跨材料误差unknown。原干液压、未知mode、源区极近W的µ塌缩与Witness位置参数问题已关闭，原RED和诊断保留。181包文件/174模块冻结及非editable安装一致，安装213相关回归146.94s通过。唯一native01/.05s/两格/2steps/6RHS通过232原门，25.09240875s积分/31.60763675s监督、2780输入不变；原U/T/算术/资源门不变，exec81323与36809均终态回收，无活动native/UI。干格Nc从0→6.55708597e-8mol，外排蒸气1.45981691e-7mol；保存独审578项通过，原01的k坐标审核6失败保留且02按实际float(W)属性修正，0新EOS。两阶段实际见证与TRACE6行/FACE4行完整；212成员6,179,932B证据包逐成员重开核验，归档SHA eac252780ae0070cf39daa60176ffe3701417248dab5dad612227bd1ce285967。scratch=/private/tmp/arlabosse-low-moisture-v1；阶段本地提交收尾。下一步明确接入/private/tmp/arlabosse-low-moisture-fast-inverse-v1中16制造测试、代码/数学独审已过的快速full-U草稿，并实际比较，不静默切换原算法；其后处理刚性排汽时间尺度与长程压力路径。完整材料、长期干燥收敛、高温原泥反应/烧结冷却、三机制现实与多代/应用验收继续，Goal active。
