@@ -1,5 +1,7 @@
 # 方程—代码—验证映射 v0.1
 
+2026-09-12来源接触干燥：`arlabosse_granular_drying.ArlabosseGranularFlux`实现Arlabosse2005 Eq3 `F=aW+b`及守恒推导的含b解析时钟；`run_isothermal_drying`将每段q热量与签名流出水汽焓累积到总H，调用同源湿热反解。`test_arlabosse_granular_drying.py`覆盖独立Decimal时间/热量、尺度变换、输出采样、取消/截止、来源失败、下溢/溢出与数值接受；安装实际13点另以原有理数q节点、独立同参考水和60位Decimal核对，见[实际报告](research/arlabosse-granular-drying-v1/REPORT.md)。原Eq6缺b争议保留，实验/工况迁移误差未知，尚无砖内传输或留出实验升级。
+
 2026-09-12同源湿热：`arlabosse_wet_thermo.ArlabosseWetThermodynamics`采用Arlabosse2005 Eq1/2及Fig1/2的已审核节点，分别对ln(aw)和q_total线性插值并解析积分。以零过量Cp构造相容G/H，水的偏比焓为hl+L95−q95，q(T,W)=hv−偏比焓；定压H→T采用有界单调反解。实现、方程/参考定义与未知项见[模型说明](research/arlabosse-wet-thermo-v1/IMPLEMENTATION.md)和机器定义`data/sandbox/research/arlabosse-wet-thermo-v1/model.json`。`test_arlabosse_wet_thermo.py`核制造公式、边界、反解和参考；`test_arlabosse_wet_cli.py`核命令路由；安装后实际物性路径使用独立原有理数q积分/干Cp和相同来源水参考检查热账。源节点复现是构造数据检查，不是留出实验预测。
 
 2026-09-12纯矿物热化学：`calcite_thermochemistry.calculate_calcite_thermochemistry`直接采用USGS2131 p2的Cp=A1+A2T+A3/T²+A4/√T+A5T²，以解析积分加298.15 K形成焓构造同参考h；ΔrH=Σνh、ΔrCp=ΣνCp、Δm=νξM。p15/25给参考焓，p47/55给原系数。`test_calcite_thermochemistry`使用独立求积、参考反应热、元素/质量守恒、域外/文件拒绝及CLI/Python一致性验证；[来源与实际实现](research/calcite-thermochemistry-v1/IMPLEMENTATION.md)。原体积未被变成高温本构，未引入反应时间方程。
