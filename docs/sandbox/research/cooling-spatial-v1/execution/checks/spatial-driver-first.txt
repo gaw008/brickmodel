@@ -1,0 +1,62 @@
+.................FFF..........                                           [100%]
+=================================== FAILURES ===================================
+_____________ test_fake_accepted_steps_samples_schema_and_counters _____________
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-378/test_fake_accepted_steps_sampl0')
+
+    def test_fake_accepted_steps_samples_schema_and_counters(tmp_path):
+        system = d.SpatialSystem(16)
+        report = d.run_policy(system,np.full(16,302.),'coarse',tmp_path/'case',lambda:None,
+                              solver_factory=ConstantFakeBDF)
+>       assert report['status'] == 'completed'
+E       AssertionError: assert 'failed' == 'completed'
+E         
+E         - completed
+E         + failed
+
+docs/sandbox/research/cooling-spatial-v1/test_spatial_driver.py:183: AssertionError
+____________ test_fake_failure_preserves_confirmed_accepted_prefix _____________
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-378/test_fake_failure_preserves_co0')
+
+    def test_fake_failure_preserves_confirmed_accepted_prefix(tmp_path):
+        class Failing(ConstantFakeBDF):
+            def step(self):
+                if self.index == 1:
+                    raise RuntimeError('injected_step_failure')
+                return super().step()
+        report = d.run_policy(d.SpatialSystem(16),np.full(16,302.),'fine',tmp_path/'case',lambda:None,
+                              solver_factory=Failing)
+        assert report['status'] == 'failed'
+>       assert report['failure']['message'] == 'injected_step_failure'
+E       AssertionError: assert 'Object of ty... serializable' == 'injected_step_failure'
+E         
+E         - injected_step_failure
+E         + Object of type bool is not JSON serializable
+
+docs/sandbox/research/cooling-spatial-v1/test_spatial_driver.py:209: AssertionError
+______________ test_fake_dense_failure_is_saved_and_not_accepted _______________
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-378/test_fake_dense_failure_is_sav0')
+
+    def test_fake_dense_failure_is_saved_and_not_accepted(tmp_path):
+        class Overshoot(ConstantFakeBDF):
+            def dense_output(self):
+                dense = make_dense(self.t_old,self.t,self.y,order=2)
+                dense.D[2,:16] = -80.
+                return dense
+        report = d.run_policy(d.SpatialSystem(16),np.full(16,302.),'coarse',tmp_path/'case',lambda:None,
+                              solver_factory=Overshoot)
+>       assert report['failure']['message'] == 'unresolved_dense_domain'
+E       AssertionError: assert 'Object of ty... serializable' == 'unresolved_dense_domain'
+E         
+E         - unresolved_dense_domain
+E         + Object of type bool is not JSON serializable
+
+docs/sandbox/research/cooling-spatial-v1/test_spatial_driver.py:224: AssertionError
+- generated xml file: /private/tmp/brick-cooling-thermoelastic-v1/spatial-driver-first.xml -
+=========================== short test summary info ============================
+FAILED docs/sandbox/research/cooling-spatial-v1/test_spatial_driver.py::test_fake_accepted_steps_samples_schema_and_counters
+FAILED docs/sandbox/research/cooling-spatial-v1/test_spatial_driver.py::test_fake_failure_preserves_confirmed_accepted_prefix
+FAILED docs/sandbox/research/cooling-spatial-v1/test_spatial_driver.py::test_fake_dense_failure_is_saved_and_not_accepted
+3 failed, 27 passed in 0.38s

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="30" time="0.380" timestamp="2026-09-12T03:42:58.883493-07:00" hostname="Ws-MacBook-Pro.local"><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_initial_exact_cell_average_and_energy_projection[16]" time="0.001" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_initial_exact_cell_average_and_energy_projection[32]" time="0.001" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_initial_exact_cell_average_and_energy_projection[64]" time="0.001" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_machin_reference_against_independent_literal_pi" time="0.002" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_full_analytic_jacobian_directions_and_half_difference[False-16]" time="0.002" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_full_analytic_jacobian_directions_and_half_difference[False-32]" time="0.004" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_full_analytic_jacobian_directions_and_half_difference[False-64]" time="0.003" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_full_analytic_jacobian_directions_and_half_difference[True-16]" time="0.001" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_full_analytic_jacobian_directions_and_half_difference[True-32]" time="0.002" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_full_analytic_jacobian_directions_and_half_difference[True-64]" time="0.002" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_stage_independent_ledger_and_candidate_actual_stress" time="0.001" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_integral_gates_detect_wrong_heat_work_or_entropy[16-2e-06-local_energy]" time="0.000" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_integral_gates_detect_wrong_heat_work_or_entropy[32-2e-06-local_energy]" time="0.000" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_integral_gates_detect_wrong_heat_work_or_entropy[-1-1e-08-entropy]" time="0.000" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_interval_envelope_covers_scipy_polynomial_every_sample" time="0.000" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_dense_middle_overshoot_is_detected_despite_valid_endpoints" time="0.000" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_dense_domain_margin_and_malformed_structure_rejected" time="0.000" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_fake_accepted_steps_samples_schema_and_counters" time="0.003"><failure message="AssertionError: assert 'failed' == 'completed'&#10;  &#10;  - completed&#10;  + failed">tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-378/test_fake_accepted_steps_sampl0')
+
+    def test_fake_accepted_steps_samples_schema_and_counters(tmp_path):
+        system = d.SpatialSystem(16)
+        report = d.run_policy(system,np.full(16,302.),'coarse',tmp_path/'case',lambda:None,
+                              solver_factory=ConstantFakeBDF)
+&gt;       assert report['status'] == 'completed'
+E       AssertionError: assert 'failed' == 'completed'
+E         
+E         - completed
+E         + failed
+
+docs/sandbox/research/cooling-spatial-v1/test_spatial_driver.py:183: AssertionError</failure></testcase><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_fake_failure_preserves_confirmed_accepted_prefix" time="0.002"><failure message="AssertionError: assert 'Object of ty... serializable' == 'injected_step_failure'&#10;  &#10;  - injected_step_failure&#10;  + Object of type bool is not JSON serializable">tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-378/test_fake_failure_preserves_co0')
+
+    def test_fake_failure_preserves_confirmed_accepted_prefix(tmp_path):
+        class Failing(ConstantFakeBDF):
+            def step(self):
+                if self.index == 1:
+                    raise RuntimeError('injected_step_failure')
+                return super().step()
+        report = d.run_policy(d.SpatialSystem(16),np.full(16,302.),'fine',tmp_path/'case',lambda:None,
+                              solver_factory=Failing)
+        assert report['status'] == 'failed'
+&gt;       assert report['failure']['message'] == 'injected_step_failure'
+E       AssertionError: assert 'Object of ty... serializable' == 'injected_step_failure'
+E         
+E         - injected_step_failure
+E         + Object of type bool is not JSON serializable
+
+docs/sandbox/research/cooling-spatial-v1/test_spatial_driver.py:209: AssertionError</failure></testcase><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_fake_dense_failure_is_saved_and_not_accepted" time="0.002"><failure message="AssertionError: assert 'Object of ty... serializable' == 'unresolved_dense_domain'&#10;  &#10;  - unresolved_dense_domain&#10;  + Object of type bool is not JSON serializable">tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-378/test_fake_dense_failure_is_sav0')
+
+    def test_fake_dense_failure_is_saved_and_not_accepted(tmp_path):
+        class Overshoot(ConstantFakeBDF):
+            def dense_output(self):
+                dense = make_dense(self.t_old,self.t,self.y,order=2)
+                dense.D[2,:16] = -80.
+                return dense
+        report = d.run_policy(d.SpatialSystem(16),np.full(16,302.),'coarse',tmp_path/'case',lambda:None,
+                              solver_factory=Overshoot)
+&gt;       assert report['failure']['message'] == 'unresolved_dense_domain'
+E       AssertionError: assert 'Object of ty... serializable' == 'unresolved_dense_domain'
+E         
+E         - unresolved_dense_domain
+E         + Object of type bool is not JSON serializable
+
+docs/sandbox/research/cooling-spatial-v1/test_spatial_driver.py:224: AssertionError</failure></testcase><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_guard_failure_and_nonfinite_input_keep_errors" time="0.001" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_unregistered_grid_rejected[True]" time="0.000" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_unregistered_grid_rejected[8]" time="0.000" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_unregistered_grid_rejected[128]" time="0.000" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_unregistered_grid_rejected[16.0]" time="0.000" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_unregistered_grid_rejected[None]" time="0.000" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_protocol_and_installed_runtime_identity_without_integration" time="0.001" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_prefix_parser_does_not_repair_truncated_tail" time="0.001" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_supervisor_shared_timeout_and_partial_preservation" time="0.002" /><testcase classname="docs.sandbox.research.cooling-spatial-v1.test_spatial_driver" name="test_supervisor_completed_child_and_output_collision" time="0.001" /></testsuite></testsuites>
