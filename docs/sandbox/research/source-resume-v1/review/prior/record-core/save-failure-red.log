@@ -1,0 +1,42 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____________ test_manifest_cleanup_cannot_mask_primary_save_error _____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x106041400>
+tmp_path = PosixPath('/private/tmp/brick-source-resume-v1/review/record-core/save-failure-red/test_manifest_cleanup_cannot_m0')
+
+    def test_manifest_cleanup_cannot_mask_primary_save_error(monkeypatch,tmp_path):
+        session=object.__new__(module.SourceTrajectorySession)
+        session._check=lambda:None
+        cp=object()
+        execution=SimpleNamespace(checkpoint=cp,failure=None)
+        session.last_result=SimpleNamespace(status='paused',execution=execution,counts=())
+        session.checkpoint=cp;session.last_execution=execution;session.closed=False
+        session.parent_directory=tmp_path/'parent'
+        session.begin=module.time.monotonic()
+        session.last_counts=()
+        session.recorder=SimpleNamespace(stop_status=None,undurable_returns=[],notification_failures=[],
+            counts={},journal=SimpleNamespace(directory=tmp_path/'original/events'))
+        primary=OSError('primary save publication error')
+        secondary=OSError('secondary manifest cleanup error')
+        def publish(path,value):
+            if path.name==module.FINALIZING:raise primary
+        original_unlink=Path.unlink
+        def unlink(path,*a,**kw):
+            if path.name=='manifest.json':raise secondary
+            return original_unlink(path,*a,**kw)
+        monkeypatch.setattr(module,'_json',publish)
+        monkeypatch.setattr(Path,'unlink',unlink)
+        actual=None
+        try:module.save_source_trajectory(session,tmp_path/'packet')
+        except Exception as exc:actual=exc
+        (tmp_path/'RESULT.txt').write_text('primary='+repr(primary)+'\nactual='+repr(actual)+'\n')
+>       assert session.closed and session.checkpoint is None
+E       assert (False)
+E        +  where False = <sludge_sandbox.source_trajectory.SourceTrajectorySession object at 0x10c1ff620>.closed
+
+/private/tmp/brick-source-resume-v1/review/record-core/test_save_failure.py:34: AssertionError
+- generated xml file: /private/tmp/brick-source-resume-v1/review/record-core/save-failure-red.xml -
+=========================== short test summary info ============================
+FAILED ../../../../private/tmp/brick-source-resume-v1/review/record-core/test_save_failure.py::test_manifest_cleanup_cannot_mask_primary_save_error
+1 failed in 0.23s

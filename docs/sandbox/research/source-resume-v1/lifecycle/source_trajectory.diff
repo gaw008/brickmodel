@@ -1,0 +1,149 @@
+diff --git a/src/sludge_sandbox/source_trajectory.py b/src/sludge_sandbox/source_trajectory.py
+index 592423c..4bbd900 100644
+--- a/src/sludge_sandbox/source_trajectory.py
++++ b/src/sludge_sandbox/source_trajectory.py
+@@ -33,6 +33,24 @@ def _upper_float(value):
+     return math.nextafter(result, math.inf) if F(result) < value else result
+ 
+ 
++def _audit_trajectory_balance(record, candidate_index, reference, initial, start, policy):
++    """Pure full-chain audit, shared by a live session and persisted evidence."""
++    transition = record.roots['transition']
++    candidate = transition.candidates[candidate_index]
++    first = transition.refinement.approach.trial
++    terminal = candidate.terminal
++    _require(_same(reference.states[0], initial) and reference.times_s[0] == start,
++             'source_trajectory_original_segment_connection_changed')
++    masses = tuple(g.molar_masses_kg_mol
++        for g in reify(candidate.captures[0].evaluation).source_evaluation.gas_states)
++    return _audit_balance_fields(reify(first.initial), first.start, policy, masses,
++        wet_references=(reify(first.reference),), terminal_prefix=reify(terminal.prefix),
++        corrected_state=reify(terminal.corrected_state),
++        selected_cell_index=terminal.selected_cell_index,
++        signed_storage_roundoff_mol=terminal.totals.signed_storage_roundoff_mol,
++        dry_reference=reify(candidate.reference), post_dry_references=(reference,))
++
++
+ @dataclass(frozen=True)
+ class SourceOrdinaryStepSizes:
+     """Explicit time-step selection for a new segment, never a resumed prefix.
+@@ -129,20 +147,8 @@ class SourceTrajectorySession:
+                  'source_trajectory_actual_costs_changed')
+ 
+     def _audit(self, reference):
+-        transition = self.record.roots['transition']
+-        candidate = transition.candidates[self.selected_candidate_index]
+-        first = transition.refinement.approach.trial
+-        terminal = candidate.terminal
+-        _require(_same(reference.states[0], self.initial) and reference.times_s[0] == self.start,
+-                 'source_trajectory_original_segment_connection_changed')
+-        masses = tuple(g.molar_masses_kg_mol
+-            for g in reify(candidate.captures[0].evaluation).source_evaluation.gas_states)
+-        return _audit_balance_fields(reify(first.initial), first.start, self.reference_policy, masses,
+-            wet_references=(reify(first.reference),), terminal_prefix=reify(terminal.prefix),
+-            corrected_state=reify(terminal.corrected_state),
+-            selected_cell_index=terminal.selected_cell_index,
+-            signed_storage_roundoff_mol=terminal.totals.signed_storage_roundoff_mol,
+-            dry_reference=reify(candidate.reference), post_dry_references=(reference,))
++        return _audit_trajectory_balance(self.record, self.selected_candidate_index,
++            reference, self.initial, self.start, self.reference_policy)
+ 
+     def advance(self, *, pause_after_steps=None):
+         """Advance, or continue this session's last clean committed checkpoint.
+@@ -255,8 +261,15 @@ def open_source_trajectory(directory, output, *, end: T, cancel=None,
+     ``managed_execution`` admits a fresh lease only inside each ``advance``;
+     reconstruction, saved checkpoints and paused sessions never carry a lease.
+     """
++    return _open_source_trajectory(directory, output, end=end, cancel=cancel,
++        step_sizes=step_sizes, managed_execution=managed_execution)
++
++
++def _open_source_trajectory(directory, output, *, end, cancel=None, step_sizes=None,
++                            managed_execution=False, resume=None):
++    """One reconstruction path; resume is a separately audited passive packet."""
+     _managed_request(managed_execution)
+-    begin = time.monotonic()
++    begin = time.monotonic() if resume is None else resume.begin
+     _require(type(end) is T and type(end.seconds) is F,
+              'source_trajectory_exact_end_required')
+     _require(cancel is None or callable(cancel), 'source_trajectory_cancel_callback_required')
+@@ -266,7 +279,10 @@ def open_source_trajectory(directory, output, *, end: T, cancel=None,
+         step_sizes.check()
+         step_sizes = replace(step_sizes)
+     directory = Path(directory)
+-    summary, _, record = read_run_with_source_record(directory)
++    if resume is None:
++        summary, _, record = read_run_with_source_record(directory)
++    else:
++        summary, record = resume.parent_summary, resume.parent_record
+     if summary.get('integration_kind') != KIND or summary.get('status') != 'completed':
+         raise RunError('source_trajectory_completed_source_study_required')
+     runtime = runtime_identity()
+@@ -281,11 +297,13 @@ def open_source_trajectory(directory, output, *, end: T, cancel=None,
+     policy = reference_policy if step_sizes is None else step_sizes.apply(reference_policy)
+     initial, start = reify(candidate.reference.states[-1]), candidate.reference.times_s[-1]
+     _require(start < end, 'source_trajectory_end_must_follow_original_study')
+-    config = load_source_run_config(_read(directory / 'case.json', 1024 * 1024))
++    config = (load_source_run_config(_read(directory / 'case.json', 1024 * 1024))
++              if resume is None else resume.config)
+     _managed_request(managed_execution, config)
+     _require(config.sha256 == record.metadata['config_sha256'] == summary['config_sha256'],
+              'source_trajectory_original_config_changed')
+-    assets = validate_source_run_assets(config, assets_root=directory / 'assets')
++    assets = (validate_source_run_assets(config, assets_root=directory / 'assets')
++              if resume is None else resume.assets)
+     _require(assets.sha256 == summary['asset_manifest_sha256'], 'source_trajectory_original_assets_changed')
+     prior_wall = summary['elapsed_wall_seconds']
+     _require(type(prior_wall) is float and math.isfinite(prior_wall) and prior_wall >= 0,
+@@ -307,13 +325,19 @@ def open_source_trajectory(directory, output, *, end: T, cancel=None,
+         return False
+ 
+     output = Path(output).absolute()
+-    output.mkdir(parents=True, exist_ok=False)
++    if resume is None:
++        output.mkdir(parents=True, exist_ok=False)
+     recorder = _Recorder(output, cancellation, begin)
+     recorder.limits, recorder.counts = limits, original_counts.copy()
++    if resume is not None:
++        resume.load_recorder(recorder)
+     try:
+         with observer_scope(recorder):
+             recorder.phase = 'source_trajectory_reconstruction'
+             recorder.guard()
++            if resume is not None and time.monotonic() - begin >= policy.maximum_wall_seconds:
++                recorder.stop_status, recorder.stop_reason = 'resource_limit', 'source_trajectory_original_segment_wall_limit'
++                recorder.guard()
+             built = build_source_run(config, assets)
+             recorder.built = built
+             recorder.guard()
+@@ -333,6 +357,8 @@ def open_source_trajectory(directory, output, *, end: T, cancel=None,
+                      'source_trajectory_original_dry_operator_changed')
+             _require(adapter.energy_model_identity == initial.energy_model_identity,
+                      'source_trajectory_mode_change_redefined_energy')
++            if resume is not None:
++                adapter.unpack(resume.checkpoint.result.states[-1])
+             recorder.context(adapter)
+             recorder.journal.append('source_trajectory_reconstructed', dict(
+                 parent_study_sha256=record.sha256, runtime=runtime, original_counts=original_counts,
+@@ -353,6 +379,8 @@ def open_source_trajectory(directory, output, *, end: T, cancel=None,
+         raise
+     session = SourceTrajectorySession()
+     session.record, session.built, session.adapter = record, built, adapter
++    session.parent_directory = directory.absolute()
++    session.offline_history = () if resume is None else resume.offline_history
+     session.managed_execution = managed_execution
+     session.last_execution = None
+     session._last_managed_audits = _snapshot(())
+@@ -365,6 +393,12 @@ def open_source_trajectory(directory, output, *, end: T, cancel=None,
+     session.last_counts = tuple(sorted(recorder.counts.items()))
+     session.selected_candidate_index = 1
+     session.checkpoint, session.last_result, session.closed, session.balances = None, None, False, ()
++    if resume is not None:
++        session.checkpoint = resume.checkpoint
++        session.last_result = resume.last_result
++        session.last_execution = resume.last_result.execution
++        session.balances = resume.balances
++        session._last_managed_audits = _snapshot(tuple(recorder.managed_audits))
+     session._continuation_state = (session.checkpoint, session.last_result, session.closed)
+     session.original_binding = session._binding()
+     session._check()

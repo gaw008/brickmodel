@@ -1,8 +1,22 @@
 # 物理沙盒 Goal 进度
 
-更新时间：2026-09-11 UTC。完整任务合同：[GOAL_BRICK_PHYSICS_SANDBOX.md](../GOAL_BRICK_PHYSICS_SANDBOX.md)。最新状态以当前恢复入口及其实际产物为准，较早段落保留当时状态。
+更新时间：2026-09-12 UTC。完整任务合同：[GOAL_BRICK_PHYSICS_SANDBOX.md](../GOAL_BRICK_PHYSICS_SANDBOX.md)。最新状态以当前恢复入口及其实际产物为准，较早段落保留当时状态。
 
 ## 当前恢复入口（后续详细历史保留）
+
+本阶段从45287fe继续。用户于2026-09-12再次明确授权完成全部剩余任务；查询时无活动Goal，现已按原完整合同重新建立，未设token预算，§11条件不变。
+普通来源轨迹保存/恢复源码已冻结，153模块与SOURCE_FREEZE逐字一致；read/save/restore共享原控制器、原初态/精确时钟/观察/计数与完整累计账本，旧父研究历史controller恢复资格仍false。
+计费为S+A，离线D仅诊断；保存关闭旧live会话、FINALIZING防未完成发布、一次性claim防旧点免费重试。独立审查发现的事件次序、raw类型、共享DAG成本、保存后取消/预算、资源状态与主异常问题均已修复，原RED保留。
+作者原19项85.23s与受影响3项0.26s通过；root185项源回归全过1.517s。最终独立7探针0.322s通过，最终record SHA74197217…直接审查通过。
+新v4 manifest为5524B / 83a815b7cb7be0c1e0c32ea1726840e9849246401f2b1055284b5d3bb1896bf1，9个execution sources；原case物理/政策不变，仅profile与第10号manifest资产换版。
+安装01因离线build cache缺依赖失败、02受网络DNS限制失败；03在已授权隔离环境安装成功（仅模型包重装）。153模块/160包文件noneditable安装逐字一致，安装集成83151已终态0，240项通过216.89s。
+唯一预登记native23658已终态0：driver123.549081833s、监督124.649336250s，四独立进程共76RHS/16HEOS/3初U/8wet；恢复新增14RHS/4构造。完整连续/恢复数值状态、观察及七行累计账本一致，原三步/510s共同/180s普通/97RHS/16wet门槛保持。监督输入未变、leader回收。773文件归档排除34私有asset副本；[阶段报告](research/source-resume-v1/REPORT.md)。独立保存产物审查通过0.460413s、0EOS：249去重事件、329监督输入、四实际PID、全历史逐格账本与原前缀一致；原审计器读取失败保留。无运行中的native实验。
+材料新取得并核读2016博士论文与ION2026；低温Cp/残炭HHV不等于热解反应热。energy-source-check-v1独审APPROVE，unknown质量基准守卫已修。AppendixB保留299原数/32行算术及3打印差异，不由修正产物比或氮缺项推算反应热。
+本阶段scratch=/private/tmp/brick-source-resume-v1。下一步独审/阶段提交，然后优先真实物理与材料闭合：MIA3明确同配方的冷态收缩留出基线，以及现有SolidFluidStorage/SolidReactionConfig内核上的纯矿物热化学来源。制造A/B反应、有限氧和占积反馈已存在，不重复实现；Arlabosse低温Cp不能变成MIA3反应参数。全材料、三机制留出、全周期、多代与完整应用仍未完成。
+
+材料并行增量：[MIA3原Table6](research/material-closure-next-v1/AREIAS2025_MIA3_TABLE6.json)取得16观测/16原±，同配方70/15/5/10的经石灰处理污泥不是灰、也不是未经处理原泥。[冷态收缩基线](research/mia3-closure-options-v1/REPORT.md)先登记两点线性形式与1150/1170训练、1160/1180检查，再实际执行；误差+0.305/+0.155百分点，MAE0.23。独立原页/算术/脚本审核通过，无科学通过门槛、非盲、无烧结机理升级。纯矿物下一步原USGS2131已正常下载并核原页，三者同参考CaCO3/CaO/CO2的名义298.15K反应焓178.8kJ/mol、温变Cp有原式；正在制作来源热化学Python/CLI，未知高温体积与速率不补默认。
+
+### 上一同会话执行阶段（已提交45287fe）
 
 本阶段从9544ec9继续，完整Goal保持active；已有实际源码、回归和原三步两路径成功运行progress。
 唯一原生尝试92317已终态0；原510s总/180s普通/97RHS/16wet/570s监督和三步门槛均保持。

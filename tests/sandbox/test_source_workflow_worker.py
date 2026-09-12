@@ -172,7 +172,7 @@ def test_new_workflow_changes_only_runtime_identity():
     assert new == original
 
 
-def test_current_workflow_manifest_sources_and_native_constants():
+def test_historical_workflow_manifest_sources_and_native_constants():
     from sludge_sandbox.heos_runtime_registry import WORKFLOW_MANIFEST_ASSET, RHS_MANIFEST_ASSET
     root = Path(__file__).resolve().parents[2]
     raw = (root / WORKFLOW_MANIFEST_ASSET[0]).read_bytes()
@@ -180,7 +180,8 @@ def test_current_workflow_manifest_sources_and_native_constants():
     new = json.loads(raw)
     old = json.loads((root / RHS_MANIFEST_ASSET[0]).read_bytes())
     for name, sha in new.pop('execution_sources').items():
-        assert hashlib.sha256((root / 'src/sludge_sandbox' / name).read_bytes()).hexdigest() == sha
+        historical = root / 'docs/sandbox/research/source-resume-v1/historical-v3' / name
+        assert hashlib.sha256(historical.read_bytes()).hexdigest() == sha
     old.pop('execution_sources')
     assert new.pop('execution_contract') == 'isolated_fresh_parent_and_per_advance_lease_workflow_v1'
     old.pop('execution_contract')

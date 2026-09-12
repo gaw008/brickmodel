@@ -1,0 +1,46 @@
+..F......                                                                [100%]
+=================================== FAILURES ===================================
+__ test_rehashed_derived_evidence_is_rejected_before_provider[capture_order] ___
+
+packet = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-366/test_rehashed_derived_evidence1/packet')
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-366/test_rehashed_derived_evidence1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x108127d10>
+mutation = 'capture_order'
+
+    @pytest.mark.parametrize('mutation', ['counter', 'capture_order', 'balance'])
+    def test_rehashed_derived_evidence_is_rejected_before_provider(packet, tmp_path, monkeypatch, mutation):
+        import sludge_sandbox.source_trajectory as trajectory
+        def change(captures, metadata):
+            if mutation == 'counter':
+                metadata['counts']['rhs_started'] -= 1
+            elif mutation == 'capture_order':
+                captures[0], captures[1] = captures[1], captures[0]
+                for i, capture in enumerate(captures, 1):
+                    capture['ordinal'] = i
+            else:
+                metadata['balances'] = ()
+        mutate_observations(packet, change)
+        monkeypatch.setattr(trajectory, 'build_source_run', lambda *a: pytest.fail('new provider before passive rejection'))
+        with pytest.raises(ValueError):
+>           restore_source_trajectory(packet, tmp_path / 'failed')
+
+tests/sandbox/test_source_trajectory_record.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_trajectory_record.py:474: in restore_source_trajectory
+    session = _open_source_trajectory(directory / 'parent', output,
+src/sludge_sandbox/source_trajectory.py:341: in _open_source_trajectory
+    built = build_source_run(config, assets)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+a = (SourceRunConfig(canonical_bytes=b'{"assets":[{"bytes":115329,"path":".tools/source-cache/arlabosse2005/article.html",...e57ab84e1cbd23b9495098287797b86153', config_sha256='f9aad779ff050ad4be37bebe10db6de22df38e9dc91fb38591d4a09c7a0c72f1'))
+
+>   monkeypatch.setattr(trajectory, 'build_source_run', lambda *a: pytest.fail('new provider before passive rejection'))
+                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: new provider before passive rejection
+
+tests/sandbox/test_source_trajectory_record.py:165: Failed
+- generated xml file: /private/tmp/brick-source-resume-v1/lifecycle/adverse02.xml -
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_source_trajectory_record.py::test_rehashed_derived_evidence_is_rejected_before_provider[capture_order]
+1 failed, 8 passed, 1 deselected in 19.44s

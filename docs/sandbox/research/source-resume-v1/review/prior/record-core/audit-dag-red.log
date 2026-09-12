@@ -1,0 +1,33 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____ test_managed_metadata_copy_retains_shared_dag_without_exponential_walk ____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109cab7a0>
+tmp_path = PosixPath('/private/tmp/brick-source-resume-v1/review/record-core/audit-dag-red/test_managed_metadata_copy_ret0')
+
+    def test_managed_metadata_copy_retains_shared_dag_without_exponential_walk(monkeypatch,tmp_path):
+        item=MappingProxyType({'status':'verified'})
+        for _ in range(22):item=(item,item)
+        metadata=MappingProxyType({'status':'closed','primary_error':None,'secondary_errors':(),
+            'audit':MappingProxyType({'closed':True,'rhs':item})})
+        calls=[0];original=module._require
+        class ReviewCeiling(Exception):pass
+        def guard(ok,reason):
+            calls[0]+=1
+            if calls[0]>100000:raise ReviewCeiling('stop unchecked metadata expansion')
+            return original(ok,reason)
+        monkeypatch.setattr(module,'_require',guard)
+        error=None
+        try:module._owned_audit(metadata)
+        except Exception as exc:error=exc
+        (tmp_path/'RESULT.json').write_text(json.dumps(dict(guard_calls=calls[0],
+            error=None if error is None else repr(error),review_ceiling=isinstance(error,ReviewCeiling)),indent=2)+'\n')
+>       assert not isinstance(error,ReviewCeiling)
+E       AssertionError: assert not True
+E        +  where True = isinstance(ReviewCeiling('stop unchecked metadata expansion'), <class 'test_owned_audit.test_managed_metadata_copy_retains_shared_dag_without_exponential_walk.<locals>.ReviewCeiling'>)
+
+/private/tmp/brick-source-resume-v1/review/record-core/test_owned_audit.py:24: AssertionError
+- generated xml file: /private/tmp/brick-source-resume-v1/review/record-core/audit-dag-red.xml -
+=========================== short test summary info ============================
+FAILED ../../../../private/tmp/brick-source-resume-v1/review/record-core/test_owned_audit.py::test_managed_metadata_copy_retains_shared_dag_without_exponential_walk
+1 failed in 0.36s

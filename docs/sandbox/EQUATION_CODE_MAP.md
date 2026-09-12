@@ -1,5 +1,7 @@
 # 方程—代码—验证映射 v0.1
 
+2026-09-12运行恢复增量：`source_trajectory_record.save_source_trajectory/restore_source_trajectory` 保留原数值检查点、来源观察及原始事件，复用 `source_trajectory` 的共同重建与原积分器；`source_execution_worker` 执行独立进程运行/推进/恢复和共同额度。保存累计S与新活动A计费，离线D仅诊断。无新增物性方程。对应 `test_source_trajectory_record`、`test_source_execution_worker/publication/result_status` 和[240项安装及真实四进程对照](research/source-resume-v1/REPORT.md)；完整材料/烧成未由此验证。
+
 来源普通段的数值设置：`source_trajectory.SourceOrdinaryStepSizes` 只替换新段 initial/max step，
 保留原参考政策供累计账本检查；`exact_integration_checkpoint_codec.py` 保存既有精确控制器并被动重核。
 对应 `test_source_ordinary_step_sizes.py`、`test_source_nonstationary_trajectory.py`、

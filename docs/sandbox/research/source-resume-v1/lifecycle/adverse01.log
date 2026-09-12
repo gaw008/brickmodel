@@ -1,0 +1,129 @@
+.FFF.....                                                                [100%]
+=================================== FAILURES ===================================
+_____ test_rehashed_derived_evidence_is_rejected_before_provider[counter] ______
+
+packet = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-364/test_rehashed_derived_evidence0/packet')
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-364/test_rehashed_derived_evidence0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109ee17f0>
+mutation = 'counter'
+
+    @pytest.mark.parametrize('mutation', ['counter', 'capture_order', 'balance'])
+    def test_rehashed_derived_evidence_is_rejected_before_provider(packet, tmp_path, monkeypatch, mutation):
+        import sludge_sandbox.source_trajectory as trajectory
+        def change(captures, metadata):
+            if mutation == 'counter':
+                metadata['counts']['rhs_started'] -= 1
+            elif mutation == 'capture_order':
+                captures[0], captures[1] = captures[1], captures[0]
+                for i, capture in enumerate(captures, 1):
+                    capture['ordinal'] = i
+            else:
+                metadata['balances'] = ()
+>       mutate_observations(packet, change)
+
+tests/sandbox/test_source_trajectory_record.py:163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/sandbox/test_source_trajectory_record.py:145: in mutate_observations
+    change(captures, metadata)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+captures = [mappingproxy({'energy_identity': ('source_column_fixed_dry_energy_v1', ('900f67e4aee812775b54525fc9727facc53055ddaeec...), 'time': ExactEventTime(seconds=Fraction(373338368278972457857522580801, 3531639600296053746274876109357056))}), ...]
+metadata = mappingproxy({'balances': (SourceTransitionBalance(time=ExactEventTime(seconds=Fraction(650016999843473, 7378697629483...nufactured_test_runtime': True}), 'schema': 'source_trajectory_checkpoint_v1', 'status': 'paused', 'step_sizes': None})
+
+    def change(captures, metadata):
+        if mutation == 'counter':
+>           metadata['counts']['rhs_started'] -= 1
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           TypeError: 'mappingproxy' object does not support item assignment
+
+tests/sandbox/test_source_trajectory_record.py:156: TypeError
+__ test_rehashed_derived_evidence_is_rejected_before_provider[capture_order] ___
+
+packet = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-364/test_rehashed_derived_evidence1/packet')
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-364/test_rehashed_derived_evidence1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a167140>
+mutation = 'capture_order'
+
+    @pytest.mark.parametrize('mutation', ['counter', 'capture_order', 'balance'])
+    def test_rehashed_derived_evidence_is_rejected_before_provider(packet, tmp_path, monkeypatch, mutation):
+        import sludge_sandbox.source_trajectory as trajectory
+        def change(captures, metadata):
+            if mutation == 'counter':
+                metadata['counts']['rhs_started'] -= 1
+            elif mutation == 'capture_order':
+                captures[0], captures[1] = captures[1], captures[0]
+                for i, capture in enumerate(captures, 1):
+                    capture['ordinal'] = i
+            else:
+                metadata['balances'] = ()
+>       mutate_observations(packet, change)
+
+tests/sandbox/test_source_trajectory_record.py:163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/sandbox/test_source_trajectory_record.py:145: in mutate_observations
+    change(captures, metadata)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+captures = [mappingproxy({'energy_identity': ('source_column_fixed_dry_energy_v1', ('900f67e4aee812775b54525fc9727facc53055ddaeec...), 'time': ExactEventTime(seconds=Fraction(373338368278972457857522580801, 3531639600296053746274876109357056))}), ...]
+metadata = mappingproxy({'balances': (SourceTransitionBalance(time=ExactEventTime(seconds=Fraction(650016999843473, 7378697629483...nufactured_test_runtime': True}), 'schema': 'source_trajectory_checkpoint_v1', 'status': 'paused', 'step_sizes': None})
+
+    def change(captures, metadata):
+        if mutation == 'counter':
+            metadata['counts']['rhs_started'] -= 1
+        elif mutation == 'capture_order':
+            captures[0], captures[1] = captures[1], captures[0]
+            for i, capture in enumerate(captures, 1):
+>               capture['ordinal'] = i
+                ^^^^^^^^^^^^^^^^^^
+E               TypeError: 'mappingproxy' object does not support item assignment
+
+tests/sandbox/test_source_trajectory_record.py:160: TypeError
+_____ test_rehashed_derived_evidence_is_rejected_before_provider[balance] ______
+
+packet = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-364/test_rehashed_derived_evidence2/packet')
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-364/test_rehashed_derived_evidence2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a0bf290>
+mutation = 'balance'
+
+    @pytest.mark.parametrize('mutation', ['counter', 'capture_order', 'balance'])
+    def test_rehashed_derived_evidence_is_rejected_before_provider(packet, tmp_path, monkeypatch, mutation):
+        import sludge_sandbox.source_trajectory as trajectory
+        def change(captures, metadata):
+            if mutation == 'counter':
+                metadata['counts']['rhs_started'] -= 1
+            elif mutation == 'capture_order':
+                captures[0], captures[1] = captures[1], captures[0]
+                for i, capture in enumerate(captures, 1):
+                    capture['ordinal'] = i
+            else:
+                metadata['balances'] = ()
+>       mutate_observations(packet, change)
+
+tests/sandbox/test_source_trajectory_record.py:163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/sandbox/test_source_trajectory_record.py:145: in mutate_observations
+    change(captures, metadata)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+captures = [mappingproxy({'energy_identity': ('source_column_fixed_dry_energy_v1', ('900f67e4aee812775b54525fc9727facc53055ddaeec...), 'time': ExactEventTime(seconds=Fraction(373338368278972457857522580801, 3531639600296053746274876109357056))}), ...]
+metadata = mappingproxy({'balances': (SourceTransitionBalance(time=ExactEventTime(seconds=Fraction(650016999843473, 7378697629483...nufactured_test_runtime': True}), 'schema': 'source_trajectory_checkpoint_v1', 'status': 'paused', 'step_sizes': None})
+
+    def change(captures, metadata):
+        if mutation == 'counter':
+            metadata['counts']['rhs_started'] -= 1
+        elif mutation == 'capture_order':
+            captures[0], captures[1] = captures[1], captures[0]
+            for i, capture in enumerate(captures, 1):
+                capture['ordinal'] = i
+        else:
+>           metadata['balances'] = ()
+            ^^^^^^^^^^^^^^^^^^^^
+E           TypeError: 'mappingproxy' object does not support item assignment
+
+tests/sandbox/test_source_trajectory_record.py:162: TypeError
+- generated xml file: /private/tmp/brick-source-resume-v1/lifecycle/adverse01.xml -
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_source_trajectory_record.py::test_rehashed_derived_evidence_is_rejected_before_provider[counter]
+FAILED tests/sandbox/test_source_trajectory_record.py::test_rehashed_derived_evidence_is_rejected_before_provider[capture_order]
+FAILED tests/sandbox/test_source_trajectory_record.py::test_rehashed_derived_evidence_is_rejected_before_provider[balance]
+3 failed, 6 passed, 1 deselected in 10.17s

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="9" time="19.440" timestamp="2026-09-11T03:11:44.883146-07:00" hostname="Ws-MacBook-Pro.local"><testcase classname="tests.sandbox.test_source_trajectory_record" name="test_unknown_session_cannot_issue_a_source_restore_point" time="0.002" /><testcase classname="tests.sandbox.test_source_trajectory_record" name="test_rehashed_derived_evidence_is_rejected_before_provider[counter]" time="3.446" /><testcase classname="tests.sandbox.test_source_trajectory_record" name="test_rehashed_derived_evidence_is_rejected_before_provider[capture_order]" time="3.489"><failure message="Failed: new provider before passive rejection">packet = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-366/test_rehashed_derived_evidence1/packet')
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-366/test_rehashed_derived_evidence1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x108127d10&gt;
+mutation = 'capture_order'
+
+    @pytest.mark.parametrize('mutation', ['counter', 'capture_order', 'balance'])
+    def test_rehashed_derived_evidence_is_rejected_before_provider(packet, tmp_path, monkeypatch, mutation):
+        import sludge_sandbox.source_trajectory as trajectory
+        def change(captures, metadata):
+            if mutation == 'counter':
+                metadata['counts']['rhs_started'] -= 1
+            elif mutation == 'capture_order':
+                captures[0], captures[1] = captures[1], captures[0]
+                for i, capture in enumerate(captures, 1):
+                    capture['ordinal'] = i
+            else:
+                metadata['balances'] = ()
+        mutate_observations(packet, change)
+        monkeypatch.setattr(trajectory, 'build_source_run', lambda *a: pytest.fail('new provider before passive rejection'))
+        with pytest.raises(ValueError):
+&gt;           restore_source_trajectory(packet, tmp_path / 'failed')
+
+tests/sandbox/test_source_trajectory_record.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_trajectory_record.py:474: in restore_source_trajectory
+    session = _open_source_trajectory(directory / 'parent', output,
+src/sludge_sandbox/source_trajectory.py:341: in _open_source_trajectory
+    built = build_source_run(config, assets)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+a = (SourceRunConfig(canonical_bytes=b'{"assets":[{"bytes":115329,"path":".tools/source-cache/arlabosse2005/article.html",...e57ab84e1cbd23b9495098287797b86153', config_sha256='f9aad779ff050ad4be37bebe10db6de22df38e9dc91fb38591d4a09c7a0c72f1'))
+
+&gt;   monkeypatch.setattr(trajectory, 'build_source_run', lambda *a: pytest.fail('new provider before passive rejection'))
+                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: new provider before passive rejection
+
+tests/sandbox/test_source_trajectory_record.py:165: Failed</failure></testcase><testcase classname="tests.sandbox.test_source_trajectory_record" name="test_rehashed_derived_evidence_is_rejected_before_provider[balance]" time="3.464" /><testcase classname="tests.sandbox.test_source_trajectory_record" name="test_unfinished_finalizer_is_rejected_even_with_valid_manifest" time="0.072" /><testcase classname="tests.sandbox.test_source_trajectory_record" name="test_missing_source_asset_cannot_be_replaced_by_numeric_checkpoint" time="0.105" /><testcase classname="tests.sandbox.test_source_trajectory_record" name="test_offline_wall_only_changes_diagnostic_not_charged_debit[86400000000000]" time="2.854" /><testcase classname="tests.sandbox.test_source_trajectory_record" name="test_offline_wall_only_changes_diagnostic_not_charged_debit[-86400000000000]" time="2.865" /><testcase classname="tests.sandbox.test_source_trajectory_record" name="test_exhausted_original_time_is_not_reset_by_restore" time="2.849" /></testsuite></testsuites>

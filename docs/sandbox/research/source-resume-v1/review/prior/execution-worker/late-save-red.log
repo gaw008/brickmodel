@@ -1,0 +1,139 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_____________ test_save_does_not_bypass_original_common_stop[wall] _____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107886fc0>
+tmp_path = PosixPath('/private/tmp/brick-source-resume-v1/review/execution-worker/late-save-red/test_save_does_not_bypass_orig0')
+late = 'wall'
+
+    @pytest.mark.parametrize('late',['wall','cancel'])
+    def test_save_does_not_bypass_original_common_stop(monkeypatch,tmp_path,late):
+        clock=[100.]
+        monkeypatch.setattr(worker,'time',SimpleNamespace(monotonic=lambda:clock[0]))
+        monkeypatch.setattr(worker,'_require_isolated_entry',lambda:None)
+        monkeypatch.setattr(worker,'_require_idle_scope',lambda:None)
+        monkeypatch.setattr(scope,'_configure_workflow_deadline',lambda t:None)
+        monkeypatch.setattr(scope,'_clear_workflow_deadline',lambda:None)
+        monkeypatch.setattr(runs,'runtime_identity',lambda:{'pure_seam':True})
+        limits=dict(outer_seconds=510.,total_callback_cap=97,wet_pressure_request_cap=16)
+        monkeypatch.setattr(config,'load_source_run_config',lambda raw:SimpleNamespace(
+            values={'profile':config.RESUME_PROFILE,'resources':limits},sha256='c'*64))
+        source=tmp_path/'source';source.mkdir();(source/'case.json').write_text('{}')
+        cancel=tmp_path/'cancel'
+        counts=dict.fromkeys(worker.COUNTERS,0)
+        counts.update(heos_started=8,heos_kernel_returned=8,heos_returned=8,
+                      initial_energy_started=3,initial_energy_returned=3,
+                      rhs_started=40,rhs_returned=40,wet_started=8,wet_returned=8)
+        session=SimpleNamespace(closed=False)
+    
+        def opening(parent,out,**kw):
+            out.mkdir()
+            recorder=_Recorder(out,kw['cancel'],100.);recorder.limits=limits;recorder.counts=dict(counts)
+            session.recorder=recorder
+            with observer_scope(recorder):
+                assert kw['cancel']() is False
+            session.advance=lambda **kw:SimpleNamespace(status='paused',reason=None,counts=tuple(counts.items()),
+                parent_study_sha256='p'*64,execution=SimpleNamespace(result=SimpleNamespace(steps=(1,)),observations=tuple(range(8))))
+            return session
+    
+        def saving(session,out):
+            # Save's own original segment/source budget can remain valid while the
+            # externally declared other-branch allowance is exhausted during copy.
+            out.mkdir();(out/'manifest.json').write_text('{}')
+            session.closed=True
+            if late=='wall':clock[0]=102.
+            else:cancel.touch()
+            return {'source_resume_authorized':True,'directory':str(out)}
+    
+        monkeypatch.setattr(trajectory,'open_source_trajectory',opening)
+        monkeypatch.setattr(records,'save_source_trajectory',saving)
+        request=dict(schema='source_execution_request_v1',operation='source-advance',source=str(source),
+            output=str(tmp_path/'output'),cancel_file=str(cancel),end={'numerator':3,'denominator':64},
+            step_sizes={'initial_step_s':1/64,'maximum_step_s':1/64,'rationale':'pure lifecycle seam'},pause_after_steps=1,
+            shared_budget={'other_counts':dict.fromkeys(worker.COUNTERS,0),'outer_remaining_seconds':1.,
+                           'total_callback_cap':97,'wet_pressure_request_cap':16})
+        path=tmp_path/'request.json';path.write_text(json.dumps(request))
+        error=None
+        try:worker._execute_request(path)
+        except Exception as exc:error=exc
+        output=Path(request['output'])
+        observed={'error':None if error is None else repr(error),
+                  'outcome':json.loads((output/'OUTCOME.json').read_bytes()) if (output/'OUTCOME.json').exists() else None,
+                  'failure':json.loads((output/'FAILURE.json').read_bytes()) if (output/'FAILURE.json').exists() else None}
+        (tmp_path/'OBSERVED.json').write_text(json.dumps(observed,indent=2)+'\n')
+>       assert error is not None, 'worker published paused success after actual late '+late
+E       AssertionError: worker published paused success after actual late wall
+E       assert None is not None
+
+/private/tmp/brick-source-resume-v1/review/execution-worker/test_late_save.py:71: AssertionError
+____________ test_save_does_not_bypass_original_common_stop[cancel] ____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107887b30>
+tmp_path = PosixPath('/private/tmp/brick-source-resume-v1/review/execution-worker/late-save-red/test_save_does_not_bypass_orig1')
+late = 'cancel'
+
+    @pytest.mark.parametrize('late',['wall','cancel'])
+    def test_save_does_not_bypass_original_common_stop(monkeypatch,tmp_path,late):
+        clock=[100.]
+        monkeypatch.setattr(worker,'time',SimpleNamespace(monotonic=lambda:clock[0]))
+        monkeypatch.setattr(worker,'_require_isolated_entry',lambda:None)
+        monkeypatch.setattr(worker,'_require_idle_scope',lambda:None)
+        monkeypatch.setattr(scope,'_configure_workflow_deadline',lambda t:None)
+        monkeypatch.setattr(scope,'_clear_workflow_deadline',lambda:None)
+        monkeypatch.setattr(runs,'runtime_identity',lambda:{'pure_seam':True})
+        limits=dict(outer_seconds=510.,total_callback_cap=97,wet_pressure_request_cap=16)
+        monkeypatch.setattr(config,'load_source_run_config',lambda raw:SimpleNamespace(
+            values={'profile':config.RESUME_PROFILE,'resources':limits},sha256='c'*64))
+        source=tmp_path/'source';source.mkdir();(source/'case.json').write_text('{}')
+        cancel=tmp_path/'cancel'
+        counts=dict.fromkeys(worker.COUNTERS,0)
+        counts.update(heos_started=8,heos_kernel_returned=8,heos_returned=8,
+                      initial_energy_started=3,initial_energy_returned=3,
+                      rhs_started=40,rhs_returned=40,wet_started=8,wet_returned=8)
+        session=SimpleNamespace(closed=False)
+    
+        def opening(parent,out,**kw):
+            out.mkdir()
+            recorder=_Recorder(out,kw['cancel'],100.);recorder.limits=limits;recorder.counts=dict(counts)
+            session.recorder=recorder
+            with observer_scope(recorder):
+                assert kw['cancel']() is False
+            session.advance=lambda **kw:SimpleNamespace(status='paused',reason=None,counts=tuple(counts.items()),
+                parent_study_sha256='p'*64,execution=SimpleNamespace(result=SimpleNamespace(steps=(1,)),observations=tuple(range(8))))
+            return session
+    
+        def saving(session,out):
+            # Save's own original segment/source budget can remain valid while the
+            # externally declared other-branch allowance is exhausted during copy.
+            out.mkdir();(out/'manifest.json').write_text('{}')
+            session.closed=True
+            if late=='wall':clock[0]=102.
+            else:cancel.touch()
+            return {'source_resume_authorized':True,'directory':str(out)}
+    
+        monkeypatch.setattr(trajectory,'open_source_trajectory',opening)
+        monkeypatch.setattr(records,'save_source_trajectory',saving)
+        request=dict(schema='source_execution_request_v1',operation='source-advance',source=str(source),
+            output=str(tmp_path/'output'),cancel_file=str(cancel),end={'numerator':3,'denominator':64},
+            step_sizes={'initial_step_s':1/64,'maximum_step_s':1/64,'rationale':'pure lifecycle seam'},pause_after_steps=1,
+            shared_budget={'other_counts':dict.fromkeys(worker.COUNTERS,0),'outer_remaining_seconds':1.,
+                           'total_callback_cap':97,'wet_pressure_request_cap':16})
+        path=tmp_path/'request.json';path.write_text(json.dumps(request))
+        error=None
+        try:worker._execute_request(path)
+        except Exception as exc:error=exc
+        output=Path(request['output'])
+        observed={'error':None if error is None else repr(error),
+                  'outcome':json.loads((output/'OUTCOME.json').read_bytes()) if (output/'OUTCOME.json').exists() else None,
+                  'failure':json.loads((output/'FAILURE.json').read_bytes()) if (output/'FAILURE.json').exists() else None}
+        (tmp_path/'OBSERVED.json').write_text(json.dumps(observed,indent=2)+'\n')
+>       assert error is not None, 'worker published paused success after actual late '+late
+E       AssertionError: worker published paused success after actual late cancel
+E       assert None is not None
+
+/private/tmp/brick-source-resume-v1/review/execution-worker/test_late_save.py:71: AssertionError
+- generated xml file: /private/tmp/brick-source-resume-v1/review/execution-worker/late-save-red.xml -
+=========================== short test summary info ============================
+FAILED ../../../../private/tmp/brick-source-resume-v1/review/execution-worker/test_late_save.py::test_save_does_not_bypass_original_common_stop[wall]
+FAILED ../../../../private/tmp/brick-source-resume-v1/review/execution-worker/test_late_save.py::test_save_does_not_bypass_original_common_stop[cancel]
+2 failed in 0.25s
