@@ -31,6 +31,15 @@ def main(argv=None):
     desorption.add_argument('--temperature', required=True, help='原95°C等温线对应的显式温度')
     desorption.add_argument('--unit', required=True, choices=('K', 'degC'))
     desorption.add_argument('--trace', action='store_true', help='附三项输出的来源依赖注册表')
+    wet = commands.add_parser('arlabosse-wet', help='同源湿态定压热力学近似与焓反解；模型误差未知，不预测干燥时间')
+    wet.add_argument('--assets-root', required=True, type=Path, help='包含已登记来源与湿态模型定义的本地根目录')
+    wet.add_argument('--water-data', required=True, type=Path, help='已核对的水来源目录')
+    wet.add_argument('--moisture', required=True, type=float, help='kg水/kg干物；仅0.15至0.8')
+    wet_mode = wet.add_mutually_exclusive_group(required=True)
+    wet_mode.add_argument('--temperature-k', type=float, help='定压状态温度，308.15至368.15 K')
+    wet_mode.add_argument('--enthalpy-j', type=float, help='给定含水率及干质量的总焓目标，J')
+    wet.add_argument('--dry-mass-kg', type=float, help='仅焓反解必填；干物质量kg')
+    wet.add_argument('--trace', action='store_true', help='附模型假设、原读数、来源与未量化误差')
     calcite = commands.add_parser('calcite-thermochemistry', help='按USGS原式计算纯方解石分解的温变反应焓和指定进度产气量')
     calcite.add_argument('--source-data', required=True, type=Path, help='含已核读facts.json与source.json的目录')
     calcite.add_argument('--temperature-k', required=True, help='显式开尔文温度，298.15至1200 K')
@@ -184,6 +193,22 @@ def main(argv=None):
                                   'scope': value.get('export_scope')}, ensure_ascii=False))
             else:
                 print(text, end='')
+            return 0
+        if args.command == 'arlabosse-wet':
+            if args.enthalpy_j is not None and args.dry_mass_kg is None:
+                raise ValueError('dry_mass_required_for_enthalpy_inverse')
+            if args.temperature_k is not None and args.dry_mass_kg is not None:
+                raise ValueError('dry_mass_only_for_enthalpy_inverse')
+            from .arlabosse_wet_thermo import ArlabosseWetThermodynamics
+            model = ArlabosseWetThermodynamics(args.assets_root, args.water_data)
+            result = (model.evaluate(args.temperature_k, args.moisture)
+                      if args.temperature_k is not None else
+                      model.inverse_enthalpy(args.enthalpy_j,
+                          dry_mass_kg=args.dry_mass_kg, moisture=args.moisture))
+            value = {'result': result.to_record()}
+            if args.trace:
+                value['trace'] = model.definition()
+            print(json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2))
             return 0
         if args.command == 'arlabosse95':
             from fractions import Fraction

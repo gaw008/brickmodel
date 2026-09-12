@@ -4,6 +4,9 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+本轮在da59890上完成[Arlabosse同源湿态热力学](research/arlabosse-wet-thermo-v1/REPORT.md)：1bar、35–95°C、W=.15–.8的条件G/H/Cp与水偏比焓、总焓反解和CLI已实现，原源q缺项保持null、各模型/实验误差unknown。来源/代码独审已通过，170包文件冻结/非editable安装一致，安装120项回归通过0.45s。唯一物性native01已终态0、exec83799回收：driver1.203729958s/监督6.319788125s、376输入不变；受控升温→95°C去水→冷却实际反解，全程精确保存重算残差1.52472e−7J<原1e−5J。独立保存审核341项通过，原审核脚本浮点顺序FAIL保留；CLI三调用0/0/预期1、344输入不变，exec43135已回收。73成员894213B原证据归档逐成员重开核验，归档SHA5c6edf46…847a。当前无活动native/UI，scratch=/private/tmp/arlabosse-wet-thermo-v1，本地阶段提交收尾。下一步继续同源干燥速率/边界核查与动态质量—能量接线；新定压H不能直接用作原变孔压U。无干燥时间轴/1D传输/反应/烧结或完整材料资格，Goal仍active。
+
+
 当前本地基线4a8504d。后续[来源执行应用适配](research/source-execution-app-v1/REPORT.md)代码/两项独审已通过，169包文件冻结与非editable安装一致；安装196项相关回归通过10.79s。source-execute沿用原隔离worker/监督器，检查点有效性与一次性恢复权限、完成/失败及材料资格分开；共享图展开、暂停计数、数组比较、资产绑定和请求符号链接问题均已关闭，原RED保留。首实际native01因隔离环境缺iapws1.5.5构造失败，worker9269退出1回收，0RHS；原失败未覆盖。从原登记wheel补装后，新编号native02已终态0，exec35118已回收，不再轮询或重跑。三worker10132/10269/10345均0退出回收；54RHS/12HEOS/3初U/8wet、3接受步/22观察、精确3/64秒，原暂停前缀保留，重复恢复在第四worker启动前拒绝。driver125.067110958s、外监督135.341294084s、517输入不变；原阈值/预算不变，材料/训练/全周期仍false。scratch=/private/tmp/source-execution-app-v1，当前无活动native或UI服务器；保存结果独审112项通过23.441s，203个原失败文件不变；1057成员36,218,818B归档已逐成员重开核SHA。本地阶段提交收尾中。下一实际物理工作须优先同源湿态能量闭合，文献近似误差unknown与真实材料资格分开，不继续衍生单温展示接口。
 
 48568d3后本阶段已完成[Arlabosse95°C离散解吸物性](research/arlabosse95/README.md)和[保存来源运行Python/CLI/中文视图](research/source-view-v1/REPORT.md)。9点aw/6点q_total/相对RTlnaw可追查；3项热量unknown保持，未做连续路径热量或湿储能。来源与代码独审通过，所有实际RED及修复证据保留。安装163项相关测试通过15.92s，167包文件冻结/源码/非editable安装前后均相同。

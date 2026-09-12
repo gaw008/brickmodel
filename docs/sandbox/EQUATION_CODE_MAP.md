@@ -1,5 +1,7 @@
 # 方程—代码—验证映射 v0.1
 
+2026-09-12同源湿热：`arlabosse_wet_thermo.ArlabosseWetThermodynamics`采用Arlabosse2005 Eq1/2及Fig1/2的已审核节点，分别对ln(aw)和q_total线性插值并解析积分。以零过量Cp构造相容G/H，水的偏比焓为hl+L95−q95，q(T,W)=hv−偏比焓；定压H→T采用有界单调反解。实现、方程/参考定义与未知项见[模型说明](research/arlabosse-wet-thermo-v1/IMPLEMENTATION.md)和机器定义`data/sandbox/research/arlabosse-wet-thermo-v1/model.json`。`test_arlabosse_wet_thermo.py`核制造公式、边界、反解和参考；`test_arlabosse_wet_cli.py`核命令路由；安装后实际物性路径使用独立原有理数q积分/干Cp和相同来源水参考检查热账。源节点复现是构造数据检查，不是留出实验预测。
+
 2026-09-12纯矿物热化学：`calcite_thermochemistry.calculate_calcite_thermochemistry`直接采用USGS2131 p2的Cp=A1+A2T+A3/T²+A4/√T+A5T²，以解析积分加298.15 K形成焓构造同参考h；ΔrH=Σνh、ΔrCp=ΣνCp、Δm=νξM。p15/25给参考焓，p47/55给原系数。`test_calcite_thermochemistry`使用独立求积、参考反应热、元素/质量守恒、域外/文件拒绝及CLI/Python一致性验证；[来源与实际实现](research/calcite-thermochemistry-v1/IMPLEMENTATION.md)。原体积未被变成高温本构，未引入反应时间方程。
 
 2026-09-12运行恢复增量：`source_trajectory_record.save_source_trajectory/restore_source_trajectory` 保留原数值检查点、来源观察及原始事件，复用 `source_trajectory` 的共同重建与原积分器；`source_execution_worker` 执行独立进程运行/推进/恢复和共同额度。保存累计S与新活动A计费，离线D仅诊断。无新增物性方程。对应 `test_source_trajectory_record`、`test_source_execution_worker/publication/result_status` 和[240项安装及真实四进程对照](research/source-resume-v1/REPORT.md)；完整材料/烧成未由此验证。

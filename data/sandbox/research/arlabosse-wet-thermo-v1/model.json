@@ -1,0 +1,80 @@
+{
+  "schema": "arlabosse_wet_thermodynamics_model_v1",
+  "model_id": "ARLABOSSE2005_CONDITIONAL_WET_GIBBS_V1",
+  "classification": "derived_from_evidence",
+  "qualification": "conditional_exploration_not_validated_wet_material",
+  "material_identity": "Arlabosse2005 characterized unincinerated activated sludge, industrial85%/municipal15% wastewater feed, flotation/centrifugation; not MIA3; same aliquot unknown",
+  "upstream": [
+    {
+      "path": "data/sandbox/research/arlabosse2005/source.json",
+      "sha256": "2f9caf23689092e548b2b3d7abf7c54d58d177569a7850b47c69df15e74295d6"
+    },
+    {
+      "path": "data/sandbox/research/arlabosse95/source.json",
+      "sha256": "d533f156e287a6772c10e8cea6e686449c2c47bcfb66f4cc26df6b4920349d94"
+    }
+  ],
+  "assets": [
+    {
+      "path": ".tools/source-cache/arlabosse2005/wet-cp-equation.gif",
+      "sha256": "03f66a006455b6681146d6feaf484d9fd175717a230578659757cea5065e30e7",
+      "url": "https://minio.scielo.br/documentstore/1678-4383/mxGLvLxqCvys7VX4DpCyNvM/69e3a7166f60671728c02ac0abd77995433d39ff.gif",
+      "locator": "Arlabosse2005 Specific Heat Eq1",
+      "reading_status": "original_equation_image_viewed",
+      "license": "publisher CC BY-NC4.0 per existing source record; original retained privately"
+    }
+  ],
+  "literature_relations": [
+    {
+      "id": "ARLABOSSE2005_WET_CP_EQ1",
+      "equation": "cp_wet=(cp_dry+W*cp_water)/(1+W)",
+      "unit": "J/(kg wet material K)",
+      "doi": "10.1590/S0104-66322005000200009",
+      "locator": "Specific Heat Eq1",
+      "classification": "literature_constitutive_model",
+      "model_error": null
+    }
+  ],
+  "design_domain": {
+    "temperature_K": [
+      308.15,
+      368.15
+    ],
+    "fixed_liquid_pressure_Pa": 100000.0,
+    "moisture_kg_water_per_kg_dry": [
+      0.15,
+      0.8
+    ],
+    "reference_temperature_K": 368.15,
+    "reference_moisture": 0.8,
+    "classification": "virtual_design_choice",
+    "rationale": "Nonreacting fixed-pressure conditional domain within dry-Cp source interval and readable curve hull; not a measured wet-property validity interval"
+  },
+  "construction": {
+    "activity": "piecewise linear ln(aw) over reviewed activity nodes in the domain",
+    "heat": "piecewise linear nominal q_total over its six readable nodes; missing observed q at .5 and .6 remains unknown",
+    "reference": "m0=Rs*T0*ln(aw0); b0=(h_v_ideal(T0)-h_l(T0,P))-q0; integrate m0,b0 from W*=.8 to get Gex0,Hex0",
+    "gibbs": "Gex(T,W)=Hex0-T*(Hex0-Gex0)/T0",
+    "enthalpy": "H=h_dry(T)+W*h_liquid(T,P)+Hex0(W), J/kg dry matter",
+    "chemical_potential": "mu_water=g_liquid(T,P)+(T/T0)*m0(W)+(1-T/T0)*b0(W), J/kg water",
+    "heat_capacity": "Cp_per_kg_dry=cp_dry+W*cp_liquid(T,P)",
+    "desorption_heat": "q(T,W)=h_v_ideal(T)-h_liquid(T,P)-b0(W), J/kg removed water; already includes vaporization",
+    "water_bridge": "Existing WaterChemicalPotential real liquid plus ideal vapor; same molar mass, energy/entropy reference and fixed mixture R. aw is relative to this model pure-water equilibrium pressure, not certified native psat",
+    "water_reference_model_error": null,
+    "interpolation_model_error": null,
+    "temperature_extension_model_error": null,
+    "experimental_uncertainty": null,
+    "numerical_policy": "Finite binary64 point calculations; inversion has explicit numerical tolerances, not experimental uncertainty"
+  },
+  "exclusions": [
+    "reaction kinetics and reaction heat",
+    "drying clock or mass-transfer prediction",
+    "bulk/pore volume or pressure prediction",
+    "absolute dry-sludge formation reference",
+    "sintering/cooling mechanics",
+    "material validation or full firing cycle"
+  ],
+  "material_qualified": false,
+  "training_eligible": false,
+  "full_firing_cycle": false
+}
