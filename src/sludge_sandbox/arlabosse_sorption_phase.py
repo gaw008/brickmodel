@@ -33,21 +33,14 @@ class SorptionEquilibrium:
     training_eligible: bool = False
 
 
-def evaluate_sorption_phase(storage, chemical, point, water_vapor_mol,
-                             transfer_coefficient, mode):
-    """Exchange the SAME water between condensed and vapor inventories.
-
-    U already includes both phase energies and the sorption excess. No latent
-    or desorption source is added to the conserved-energy rate a second time.
-    """
+def check_sorption_point(storage, chemical, point):
+    """Check represented sorption quantities against their actual source model; no EOS."""
     require(type(storage) is ArlabosseSorptionStorage, 'actual_sorption_storage_required')
     require(type(chemical) is WaterChemicalPotential, 'actual_sorption_chemical_provider_required')
     storage._check()
     require(type(point) is ArlabosseSorptionPoint, 'actual_sorption_point_required')
     require(point.model_identity == storage.model_identity, 'sorption_point_identity_mismatch')
     check_thermal_chemical_sources(storage, chemical)
-    require(mode == 'existing_liquid', 'sorption_dry_interface_not_supported')
-    require(_binary(transfer_coefficient) >= 0, 'nonnegative_sorption_transfer_coefficient')
     # A public frozen dataclass can still be copied with dataclasses.replace.
     # Recheck the quantities used by this leaf before any water EOS callback.
     t = _binary(point.temperature_k, positive=True)
@@ -72,6 +65,19 @@ def evaluate_sorption_phase(storage, chemical, point, water_vapor_mol,
             point.excess_chemical_potential_j_mol == float(F(mu_ex)*mass) and
             point.excess_partial_water_enthalpy_j_mol == float(expected_partial_h),
             'sorption_phase_excess_model_mismatch')
+
+
+def evaluate_sorption_phase(storage, chemical, point, water_vapor_mol,
+                             transfer_coefficient, mode):
+    """Exchange the SAME water between condensed and vapor inventories.
+
+    U already includes both phase energies and the sorption excess. No latent
+    or desorption source is added to the conserved-energy rate a second time.
+    """
+    require(mode == 'existing_liquid', 'sorption_dry_interface_not_supported')
+    require(_binary(transfer_coefficient) >= 0, 'nonnegative_sorption_transfer_coefficient')
+    check_sorption_point(storage, chemical, point)
+    t = point.temperature_k
     # Reuse its provider/inventory checks and equilibrium at actual pore
     # pressure. A zero coefficient avoids evaluating an unused pure-water rate
     # which can overflow even when the corrected sorption drive is zero.

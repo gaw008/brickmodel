@@ -1,0 +1,73 @@
+{
+  "schema": "makela_condensed_moisture_face_model_v1",
+  "model_id": "MAKELA2016_CONDITIONAL_SORPTION_MOISTURE_FACE_V1",
+  "classification": "derived_from_evidence",
+  "usage_scope": "conditional_cross_material_transport_with_declared_input_states_not_material_admission",
+  "upstream": {
+    "source_facts_sha256": "b4f77618270d5e21977eada439af7a55197527b3947c02c79173161dde52c5df",
+    "original_pdf_sha256": "f4200d99c4fa8f3f6585fde9ec2e15455bfa78644a953e52b7311c1df25cba91"
+  },
+  "D_m2_s": "8.56e-9",
+  "exploration_domain": {
+    "temperature_k": [
+      308.15,
+      368.15
+    ],
+    "moisture_kg_kg_dry": [
+      0.3,
+      0.8
+    ],
+    "pressure_pa": [
+      90000.0,
+      110000.0
+    ]
+  },
+  "equations": {
+    "rho_d": "md_left/Vtotal_left=md_right/Vtotal_right",
+    "G_mu": "A*rho_d*D/(M*distance*Gamma)",
+    "T_face": "(T_left+T_right)/2",
+    "L_m": "T_face*G_mu",
+    "h_face": "(h_left+h_right)/2",
+    "X_T": "1/T_right-1/T_left",
+    "X_mu": "mu_left/T_left-mu_right/T_right",
+    "Y": "X_mu+h_face*X_T",
+    "n_left_to_right": "L_m*Y",
+    "H_left_to_right": "h_face*n_left_to_right",
+    "moisture_entropy": "L_m*Y^2"
+  },
+  "input_classifications": {
+    "D_inferred_from_donor_total_loss": "derived_from_evidence",
+    "temperature_and_moisture_freezing": "virtual_design_choice",
+    "cross_material_use": "virtual_design_choice",
+    "arithmetic_face_T_and_h": "virtual_design_choice",
+    "zero_Q_n_cross_coefficients": "virtual_design_choice",
+    "fixed_total_geometry": "virtual_design_choice",
+    "Gamma_and_state_reference": "virtual_design_choice",
+    "binary64_projection": "numerical_policy",
+    "total_uncertainty": "unknown"
+  },
+  "assumptions": [
+    "D frozen across 35-95 degC and admitted W; no measured D(T,W) law",
+    "uniform dry mass per controlled total geometric volume on the two sides",
+    "Gamma is positive and corresponds to the arithmetic face temperature and actual W interval; source derivation belongs to host adapter",
+    "mu and h are complete condensed-water molar values at each actual T/P in one common energy reference",
+    "arithmetic face enthalpy; zero cross coefficients in heat-flux/moisture-flux representation are assumed, not measured absence of Soret",
+    "H is carried energy only; conduction Q is computed separately and no latent/desorption volume source is added",
+    "first host stage disables parallel gas-to-gas water transport when using total-loss apparent D; local phase exchange remains separate"
+  ],
+  "numerical_policy": "exact rational algebra on declared finite input values, then reject nonzero-to-zero or nonfinite binary64 projections; retain exact/projected rates and exact projection residuals",
+  "entropy_scope": "instantaneous nominal face production plus actual rounded-rate balance; not a proof of full discrete step entropy increase",
+  "source_state_binding": "pure leaf checks record correspondence only; no actual storage/chemical identity authentication",
+  "errors": {
+    "D_experimental_uncertainty": null,
+    "temperature_extension": null,
+    "moisture_extension": null,
+    "pressure_extension": null,
+    "cross_material_transfer": null,
+    "cross_effect_model": null,
+    "total_model_uncertainty": null
+  },
+  "material_qualified": false,
+  "training_eligible": false,
+  "full_firing_cycle": false
+}
