@@ -4,6 +4,8 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+`5ecf503`之后完成[Cedrone 2024 TG/DSC公开锚点](research/cedrone2024-joint-thermal-v1/REPORT.md)：原图许可/署名、12目标11可读1unknown、完整RGB/仿射包围与初筛记录入库；17项独立源/提取核对及输出入口独审通过。公开脚本真实重算与独立原结果除脚本SHA外完全一致，无拟合/EOS/模型验证升级。19成员145,699 B原记录压缩30,455 B并重开逐项核验，源PDF保存忽略目录。完整§11仍未完成。同1s平衡输运2/4步唯一运行已各通过189/299原检查；监督68.180607/107.158254s退出0、exec32485终态0回收，当前正作保存结果独审，尚未归档该比较阶段。
+
 `10325ba`之后已完成[一维低W平衡输运主机](research/arlabosse-equilibrium-transport-v1/REPORT.md)的实现、独审与安装：186文件/179模块一致，12安装回归0.24s通过。唯一原生1s/1步通过128原门，init19.109686s、积分21.509186s、驱动42.802158s、监督48.086837s，2792输入未变，exec82056终态0回收。排出水量为初始湿格蒸气池的3.11018倍，原Nt/U/载气/完整μ和所有投影费用通过；整体平衡证书与材料资格仍unknown/false。原记录171项保存独审通过，65成员/2,092,854 B原证据已归档并逐个重开核验，阶段本地提交收尾。恢复目录/private/tmp/arlabosse-equilibrium-transport-v1；同1s的2/4步时间比较正在按实测成本准备，尚未执行。另已取得Cedrone原泥同批不同aliquot的TG/DSC，12锚点中11可读/1unknown，待独立源/代码复核，不能把含脱水的DSC面积当反应焓。完整§11仍未完成，Goal面板最近paused，不标记complete。
 
 `be6ac3c`之后已完成有界单胞[局部平衡核心](research/arlabosse-equilibrium-flash-v1/REPORT.md)，正式src/test已迁移，185包文件/178模块离线安装一致，24安装回归通过。源/代码/局部热力学审查通过；瞬时平衡为明确假设，平衡曲线温度证书与材料误差仍unknown。原载气.00034的native01五T扫描失败，3.245s/64provider，原输出保持；另登记.00032的native02通过18原门，T332.960369736K/P105380.314231Pa，9.678s/200provider、监督14.893s。exec74356/73946分别终态1/0回收，2596/2597输入未变。合并保存独审175项通过，0新EOS。examples/sandbox/run_low_moisture_equilibrium.py独审及真实CLI smoke均完成：2,106,035 B输出、19项保存检查、监督14.855s、2599输入未变，exec81018终态0回收。代码、来源定位与原失败/成功/CLI证据已归档（84成员，1,105,746 B）并本地提交10325ba；恢复目录/private/tmp/arlabosse-equilibrium-flash-v1。下一阶段在/private/tmp/arlabosse-equilibrium-transport-v1推进守恒总水/总U→flash→给定组成反解的一维耦合，避免先从微小Nv池扣出口；新主机正在实现，设计与native_case静态复核通过，NATIVE_PLAN01已登记1s/1步、原门及40/40/80/100s预算，尚未运行。并行核读ION附录发现炭HHV图表对应不明与气体未合计100%，仍不拿来填GNEST缺额；新一手材料资料检索继续。完整材料/高温反应/烧结冷却、三机制实测和全周期多代全部必需未完成。Goal面板最近paused，不标记complete、不改旧门。

@@ -10,6 +10,8 @@
 
 新增[单胞水分平衡示例](docs/sandbox/research/arlabosse-equilibrium-flash-v1/REPORT.md#本地运行入口)：在给定总水、载气、体积和完整内能下，计算低含水区液汽分配及温度，并保存逐次物性与来源记录。已完成实际命令行试验；瞬时平衡是明确的建模假设，材料适用性及达到平衡的时间仍未验证。
 
+[Cedrone 2024 原污泥 TG/DSC 数据](data/sandbox/research/cedrone2024-joint-thermal-v1/README.md)提供有许可的原图、12 个有限锚点及实际复现脚本。11 个点可读、1 个保留未知；读图包围与实验误差分开记录，含水吸热峰不直接作为化学反应焓。
+
 | 模块 | 内容 | 状态 |
 | --- | --- | --- |
 | [公开材料研究](experiments/material_design_v2/artifacts/DIRECTION_REPORT.md) | DTU 污泥焚烧灰数据重算、基料依赖、吸水与收缩折衷 | 独立审核通过，仅 Stage1 研究 |

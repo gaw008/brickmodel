@@ -1,0 +1,122 @@
+{
+  "dataset_id": "cedrone2024_joint_thermal_figure3_anchors_v1",
+  "classification": "derived_from_evidence",
+  "material_identity": {
+    "local_reference_id": "CEDRONE2024_CENTRAL_ITALY_HOMOGENIZED_DIGESTED_SLUDGE",
+    "identity_scope": "Within-study homogenized sludge, different TG/DSC aliquots; source-assigned batch identifier not supplied",
+    "plant_name": null,
+    "sampling_date": null,
+    "preparation": {
+      "source_pdf_page": 4,
+      "oven_temperature_degC": 105,
+      "oven_duration_h": 24,
+      "homogenized_reference_mass_g": 500,
+      "mill_sieve_mm": 0.5,
+      "reported_remaining_or_resorbed_moisture_wt_percent": 2.4,
+      "printed_moisture_plus_minus_percentage_points": 0.6,
+      "moisture_location": "PDF page 8, Table 4",
+      "aliquot_specific_water_inventory": null
+    },
+    "cross_material_mapping_to_arlabosse_or_gnest": null
+  },
+  "publication": {
+    "id": "cedrone_2024_central_italy_digestate",
+    "title": "Optimization of Pyrolysis Parameters by Design of Experiment for the Production of Biochar from Sewage Sludge",
+    "authors": [
+      "Giacomo Cedrone",
+      "Maria Paola Bracciale",
+      "Lorenzo Cafiero",
+      "Michela Langone",
+      "Davide Mattioli",
+      "Marco Scarsella",
+      "Riccardo Tuffi"
+    ],
+    "doi": "10.3390/environments11100210",
+    "published": "2024-09-24"
+  },
+  "source_location": {
+    "pdf_page": 9,
+    "figure": "3(a) and 3(b)",
+    "method_pages": [
+      4,
+      8,
+      9
+    ],
+    "raw_pdf_sha256": "7b7e7fc7a0e2c41971b90cd12f30ac483ae9681f3d7e458b4a005db502f0ae32",
+    "local_pdf_cache": "runs/sandbox/source-cache/cedrone2024/cedrone2024.pdf",
+    "institutional_record": "https://iris.enea.it/handle/20.500.12079/80707",
+    "license": "CC-BY-4.0",
+    "attribution": "source/ATTRIBUTION.md"
+  },
+  "inputs": {
+    "figure3-000.png": {
+      "path": "source/figure3-000.png",
+      "sha256": "112af34fd17a14abaa6c1069d8cd88af1581d276164670f92bfc86791c27a613"
+    },
+    "figure3-001.jpg": {
+      "path": "source/figure3-001.jpg",
+      "sha256": "6da1e51045b44daf30e44bd9ccadad3a46a414b6580f399e2cd583d9b4982231"
+    }
+  },
+  "derivation": {
+    "kind": "Conditional raster digitization; no interpolation, integration or fit",
+    "protocol": "PROTOCOL.md",
+    "script": "extraction/extract_anchors.py",
+    "readings": "extraction/ANCHORS.json",
+    "table": "observations.csv",
+    "grid_classification": "numerical_policy",
+    "analyst_label_center_half_width_px": 2,
+    "analyst_curve_extent_padding_px": 1.5,
+    "envelope_interpretation": "Analyst conditional pixel geometry, not experimental uncertainty",
+    "original_scratch_script_sha256": "d28f1aeff7c21829028f657e73706e0790e2f2d0099790690bb0152e595644b4"
+  },
+  "experimental_programs": {
+    "TG": {
+      "temperature_range_degC": [
+        25,
+        900
+      ],
+      "heating_rate_degC_min": 10,
+      "sample_mass_mg": 10.0,
+      "printed_sample_mass_plus_minus_mg": 0.1,
+      "nitrogen_flow_ml_min": 60,
+      "value_basis": "wt percent of initial TG aliquot"
+    },
+    "DSC": {
+      "temperature_range_degC": [
+        50,
+        600
+      ],
+      "heating_rate_degC_min": 10,
+      "sample_mass_mg": 10.0,
+      "printed_sample_mass_plus_minus_mg": 0.1,
+      "nitrogen_flow_ml_min": 50,
+      "value_basis": "W/g initial DSC aliquot, plotted endothermic down"
+    }
+  },
+  "qualification": {
+    "anchor_count": 12,
+    "readable_count": 11,
+    "unknowns": [
+      {
+        "panel": "DSC",
+        "target_temperature_degC": 575,
+        "reason": "No selected curve pixel in at least one feasible column where red curve crosses dark baseline"
+      }
+    ],
+    "experimental_uncertainty": null,
+    "instrument_baseline_uncertainty": null,
+    "aliquot_and_flow_transfer_uncertainty": null,
+    "dry_basis_conversion": null,
+    "independent_holdout": false,
+    "model_prediction_validation": false,
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "interpretation": "TG and DSC constrain the recorded experimental response. The low-temperature DSC peak includes dehydration; DSC offsets/areas do not directly supply dry-sludge chemical reaction enthalpy.",
+  "upstream_source_read_record": {
+    "archive": "docs/sandbox/research/arlabosse-equilibrium-transport-v1/evidence.tar.gz",
+    "member": "high-t-sources/SOURCE_RECORDS.json",
+    "sha256": "2fecc1837b4b2f62d257172709b8df59e6e61acf6115f360b8035926e586389f"
+  }
+}
