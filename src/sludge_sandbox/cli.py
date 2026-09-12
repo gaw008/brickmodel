@@ -22,8 +22,12 @@ def _cancellation():
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description='烧结砖物理沙盒；当前入口仅支持明确标记的数值验证案例。')
+    parser = argparse.ArgumentParser(description='烧结砖物理沙盒；来源热化学计算与明确标记的数值验证案例。')
     commands = parser.add_subparsers(dest='command', required=True)
+    calcite = commands.add_parser('calcite-thermochemistry', help='按USGS原式计算纯方解石分解的温变反应焓和指定进度产气量')
+    calcite.add_argument('--source-data', required=True, type=Path, help='含已核读facts.json与source.json的目录')
+    calcite.add_argument('--temperature-k', required=True, help='显式开尔文温度，298.15至1200 K')
+    calcite.add_argument('--extent-mol', default='1', help='指定消耗CaCO3的摩尔数；不代表模型预测的分解进度')
     validate = commands.add_parser('validate', help='校验案例结构；不调用 EOS，不证明材料有效性')
     validate.add_argument('case', type=Path)
     run = commands.add_parser('run', help='运行案例并保存原始输入与求解账本')
@@ -117,6 +121,12 @@ def main(argv=None):
         command.add_argument('directory', type=Path)
     args = parser.parse_args(argv)
     try:
+        if args.command == 'calcite-thermochemistry':
+            from .calcite_thermochemistry import calculate_calcite_thermochemistry
+            value = calculate_calcite_thermochemistry(args.source_data,
+                temperature_k=args.temperature_k, extent_mol=args.extent_mol)
+            print(json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2))
+            return 0
         if args.command == 'source-validate':
             from .source_run_config import load_source_run_config, validate_source_run_assets
             from .source_run_service import _read
