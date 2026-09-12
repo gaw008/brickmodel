@@ -1,0 +1,56 @@
+FF........                                                               [100%]
+=================================== FAILURES ===================================
+_____ test_single_cell_positive_ce_retains_uniform_mode_and_compatibility ______
+
+    def test_single_cell_positive_ce_retains_uniform_mode_and_compatibility():
+        op = plate(reference=ReferenceSlab(.02, .01, 1), biaxial_modulus_pa=1.,
+            stress_free_heat_capacity_j_m3_k=1., linear_expansion_per_k=math.sqrt((1-1e-12)/600),
+            temperature_bounds_k=(299., 300.), strain_bounds=(-.1, .1),
+            outer_temperature_k=299., outer_boundary='fixed_temperature')
+        out = op.evaluate([300.])
+        assert out.points[0].fixed_strain_heat_capacity_j_m3_k > 0
+        expected = out.cell_heat_in_w[0]/out.reference_cell_volumes_m3[0]
+>       assert out.temperature_rates_k_s[0] == pytest.approx(expected, rel=1e-12)
+E       assert -5000.158116811015 == -5000.0 ± 5.0e-09
+E         
+E         comparison failed
+E         Obtained: -5000.158116811015
+E         Expected: -5000.0 ± 5.0e-09
+
+docs/sandbox/research/cooling-stress-v1/review/code/test_independent_points.py:45: AssertionError
+_____ test_adiabatic_zero_flux_does_not_evaluate_inactive_reservoir_ratio ______
+
+    def test_adiabatic_zero_flux_does_not_evaluate_inactive_reservoir_ratio():
+        op = plate(reference=ReferenceSlab(.02, .01, 1), biaxial_modulus_pa=1.,
+            stress_free_heat_capacity_j_m3_k=1., linear_expansion_per_k=0.,
+            reference_temperature_k=1e-100, conductivity_w_m_k=0.,
+            temperature_bounds_k=(5e-101, 2e-100), strain_bounds=(-.1, .1),
+            outer_temperature_k=1e308)
+>       out = op.evaluate([1e-100])
+              ^^^^^^^^^^^^^^^^^^^^^
+
+docs/sandbox/research/cooling-stress-v1/review/code/test_independent_points.py:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+docs/sandbox/research/cooling-stress-v1/review/code/plate-before-cancellation-fix.py:247: in evaluate
+    face_entropy.append(_number(outer * ((temperatures[-1] - self.outer_temperature_k) / temperatures[-1]) / self.outer_temperature_k, "boundary_entropy_production", nonnegative=True))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = nan, name = 'boundary_entropy_production'
+
+    def _number(value, name, *, positive=False, nonnegative=False):
+        try:
+            valid = isinstance(value, Real) and not isinstance(value, bool)
+            value = float(value) if valid else math.nan
+        except (ValueError, OverflowError) as exc:
+            raise ThermoelasticPlateError(f"invalid_{name}") from exc
+        if not math.isfinite(value) or (positive and value <= 0.) or (nonnegative and value < 0.):
+>           raise ThermoelasticPlateError(f"invalid_{name}")
+E           sludge_sandbox.independent_review_plate.ThermoelasticPlateError: invalid_boundary_entropy_production
+
+docs/sandbox/research/cooling-stress-v1/review/code/plate-before-cancellation-fix.py:27: ThermoelasticPlateError
+- generated xml file: /Users/wanggaoying/Desktop/brickmodel-github/docs/sandbox/research/cooling-stress-v1/review/code/implementation-red.xml -
+=========================== short test summary info ============================
+FAILED docs/sandbox/research/cooling-stress-v1/review/code/test_independent_points.py::test_single_cell_positive_ce_retains_uniform_mode_and_compatibility
+FAILED docs/sandbox/research/cooling-stress-v1/review/code/test_independent_points.py::test_adiabatic_zero_flux_does_not_evaluate_inactive_reservoir_ratio
+2 failed, 8 passed in 0.12s

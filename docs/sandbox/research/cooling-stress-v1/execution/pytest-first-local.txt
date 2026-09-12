@@ -1,0 +1,27 @@
+....F..................................                                  [100%]
+=================================== FAILURES ===================================
+_____________ test_fraction_two_cell_rates_local_work_and_entropy ______________
+
+    def test_fraction_two_cell_rates_local_work_and_entropy():
+        op = plate()
+        out = op.evaluate([304., 300.])
+        F = Fraction
+        c, b, volume = F(100000), F(10), F(1, 10000)
+        t = [F(304), F(300)]
+        q = [-F(4) / volume, F(4) / volume]
+        ce = [c - 2 * b * v for v in t]
+        mean_rate = sum((qq / dd for qq, dd in zip(q, ce)), F()) / (2 + sum((2 * b * tt / dd for tt, dd in zip(t, ce)), F()))
+        td = [(qq - 2 * b * tt * mean_rate) / dd for tt, qq, dd in zip(t, q, ce)]
+        np.testing.assert_allclose(out.temperature_rates_k_s, [float(x) for x in td], rtol=1e-14)
+        assert out.face_heat_outward_w == (0., 4., 0.)
+        assert out.cell_heat_in_w == (-4., 4.)
+        assert out.points[0].stress_pa < 0. < out.points[1].stress_pa
+>       assert max(abs(p) for p in out.cell_mechanical_power_w) > 1e-6
+E       assert 6.811409110259581e-07 > 1e-06
+E        +  where 6.811409110259581e-07 = max(<generator object test_fraction_two_cell_rates_local_work_and_entropy.<locals>.<genexpr> at 0x10bea4860>)
+
+tests/sandbox/test_cooling_thermoelastic_plate.py:78: AssertionError
+- generated xml file: /private/tmp/brick-cooling-thermoelastic-v1/pytest-first-local.xml -
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_cooling_thermoelastic_plate.py::test_fraction_two_cell_rates_local_work_and_entropy
+1 failed, 38 passed in 0.86s
