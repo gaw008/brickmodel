@@ -1,5 +1,16 @@
 # 沙盒统一入口
 
+## 单胞低含水相平衡示例
+
+已安装本项目及water依赖，并具有合法本地来源缓存时，从仓库根目录运行：
+
+```sh
+python examples/sandbox/run_low_moisture_equilibrium.py \
+  --source-root "$PWD" --output /tmp/new-equilibrium.json
+```
+
+输出路径须不存在。示例在给定总水、载气、体积和完整内能下求液汽分配及温度，保存实际物性试探、来源和失败记录。默认载气为0.00032 mol，可用`--carrier-mol`显式修改；其余示例设定与原适用域均写入结果。这是独立示例，输出JSON不属于下文`run/replay/resume`运行目录协议。[实际运行与限定范围](research/arlabosse-equilibrium-flash-v1/REPORT.md)：低W局部瞬时平衡、无材料资格，不预测干燥时间。
+
 ## 保存来源运行与95°C离散物性
 
 已安装环境可直接使用以下入口。RUN为既有完整来源运行目录，ROOT为合法私有来源缓存对应的项目根；输出文件须不存在。

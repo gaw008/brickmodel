@@ -4,6 +4,8 @@
 
 独立局部相平衡：`low_moisture_equilibrium.flash` / `_Engine.pressure_interval` 使用 `P(V−Nc·vl)=(Na+Nt−Nc)RT` 及允许压力端点反算组成候选带；`_Engine.composition` 用实际 `μl+μex−μv` 和 `aw·peq,pure−pv` 求根；`_Engine.run` 解同一完整储能U的温度根。两层采用有括区割线与间歇二分，近根两侧实际求值；结果只含名义括区，未认证内层组成误差或整个平衡曲线温度界。原生失败/通过及具体来源见[证据](research/arlabosse-equilibrium-flash-v1/REPORT.md)。
 
+一维平衡投影：`equilibrium_transport._Runner.project` 以共享面求Nt*/U*，由flash的精确Nc构造同一J，再用`source_wet_column._advance`作一次最终投影；`_Runner.check_rates`核给定组成U/T界并保存实际pv处的完整μ复核；`initialize_equilibrium`/`integrate_equilibrium_transport`保留初始相分配、历史费用与接受前缀。全列能量按外面`energy_j`闭合，Q/H展示另扣外面分解残差。见[1s实际证据](research/arlabosse-equilibrium-transport-v1/REPORT.md)。
+
 2026-09-12来源接触干燥：`arlabosse_granular_drying.ArlabosseGranularFlux`实现Arlabosse2005 Eq3 `F=aW+b`及守恒推导的含b解析时钟；`run_isothermal_drying`将每段q热量与签名流出水汽焓累积到总H，调用同源湿热反解。`test_arlabosse_granular_drying.py`覆盖独立Decimal时间/热量、尺度变换、输出采样、取消/截止、来源失败、下溢/溢出与数值接受；安装实际13点另以原有理数q节点、独立同参考水和60位Decimal核对，见[实际报告](research/arlabosse-granular-drying-v1/REPORT.md)。原Eq6缺b争议保留，实验/工况迁移误差未知，尚无砖内传输或留出实验升级。
 
 2026-09-12同源湿热：`arlabosse_wet_thermo.ArlabosseWetThermodynamics`采用Arlabosse2005 Eq1/2及Fig1/2的已审核节点，分别对ln(aw)和q_total线性插值并解析积分。以零过量Cp构造相容G/H，水的偏比焓为hl+L95−q95，q(T,W)=hv−偏比焓；定压H→T采用有界单调反解。实现、方程/参考定义与未知项见[模型说明](research/arlabosse-wet-thermo-v1/IMPLEMENTATION.md)和机器定义`data/sandbox/research/arlabosse-wet-thermo-v1/model.json`。`test_arlabosse_wet_thermo.py`核制造公式、边界、反解和参考；`test_arlabosse_wet_cli.py`核命令路由；安装后实际物性路径使用独立原有理数q积分/干Cp和相同来源水参考检查热账。源节点复现是构造数据检查，不是留出实验预测。

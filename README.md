@@ -8,6 +8,8 @@
 
 [CLI/Python入口](docs/sandbox/CLI.md)支持限定湿态验证案例、保存及重放；[保存来源运行视图](docs/sandbox/research/source-view-v1/IMPLEMENTATION.md)提供`inspect`、`export`及`ui --view-source-run`，可按原观测与空间单元追查来源。当前资格、检查和应用边界见 [Goal进度](docs/sandbox/GOAL_STATUS.md) 与 [验收矩阵](docs/sandbox/ACCEPTANCE_MATRIX.md)。下文`sludge-vme`仍属于早期synthetic原型，不能作为新沙盒全流程入口。
 
+新增[单胞水分平衡示例](docs/sandbox/research/arlabosse-equilibrium-flash-v1/REPORT.md#本地运行入口)：在给定总水、载气、体积和完整内能下，计算低含水区液汽分配及温度，并保存逐次物性与来源记录。已完成实际命令行试验；瞬时平衡是明确的建模假设，材料适用性及达到平衡的时间仍未验证。
+
 | 模块 | 内容 | 状态 |
 | --- | --- | --- |
 | [公开材料研究](experiments/material_design_v2/artifacts/DIRECTION_REPORT.md) | DTU 污泥焚烧灰数据重算、基料依赖、吸水与收缩折衷 | 独立审核通过，仅 Stage1 研究 |
