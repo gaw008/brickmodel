@@ -163,7 +163,7 @@ env -u PYTHONPATH /private/tmp/brick-sandbox-g1-install-20260907/bin/python \
 
 ## 对现实的验证状态
 
-已提取 Wang 2021 的12干燥条件/186图中实验符号读数；40/60°C拟合、50°C留出的计划已登记，但尚未执行内核预测对照。Nowicki和Mohajerani的参数/条件/语义问题仍隔离。三个机制组的独立预测对照、完整原污泥材料域与整砖耦合验证均未完成。
+Wang 2021 已提取12干燥条件，共174个非初始图示符号读数及12个t=0归一化定义值。D1已执行40/60°C拟合、锁参后的50°C留出，未通过原限定一致性门槛；见上文2026-09-09条目及[完整失败报告](research/wang2021-drying-holdout-v1/REPORT.md)。后续模型使用50°C数据必须披露此前已查看，不能称新独立盲留出。Nowicki和Mohajerani的参数/条件/语义问题仍隔离。三个机制组的完整预测验证、完整原污泥材料域与整砖耦合验证均未完成。
 
 `software_status=implementation_in_progress`；`scientific_status=partial_sources_no_complete_raw_sludge_domain`；`deployment_status=offline_research_only`。本 Goal 保持 active。
 

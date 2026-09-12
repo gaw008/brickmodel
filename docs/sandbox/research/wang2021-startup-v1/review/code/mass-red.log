@@ -1,0 +1,29 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________ test_grid_agreement_does_not_admit_known_mass_balance_failure _________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10bd0fe00>
+tmp_path = PosixPath('/Users/wanggaoying/Desktop/brickmodel-github/docs/sandbox/research/wang2021-startup-v1/review/code/mass-red-probes/test_grid_agreement_does_not_a0')
+
+    def test_grid_agreement_does_not_admit_known_mass_balance_failure(monkeypatch, tmp_path):
+        curves = {(40, 30): [dict(observed=.9, time_s=60.)]}
+    
+        def corrupted_output(p, t, h, times, **kwargs):
+            return np.ones(len(times)), dict(mass_balance_max_abs=.125,
+                cell_min=1., cell_max=1., mean_max_increase=0., max_mean_increase=0.)
+    
+        monkeypatch.setattr(support, 'startup_curve', corrupted_output)
+        try:
+            result, _ = support.refinement(curves, support.D1_SEED, 600., 64, lambda: None)
+        except ValueError:
+            return
+        (tmp_path/'BAD_MASS_GATE.json').write_text(json.dumps(result, indent=2)+'\n')
+>       assert not result['accepted'], 'grid agreement must not override a reported 0.125 mass defect'
+E       AssertionError: grid agreement must not override a reported 0.125 mass defect
+E       assert not True
+
+docs/sandbox/research/wang2021-startup-v1/review/code/test_support_review.py:74: AssertionError
+- generated xml file: /Users/wanggaoying/Desktop/brickmodel-github/docs/sandbox/research/wang2021-startup-v1/review/code/mass-red.xml -
+=========================== short test summary info ============================
+FAILED docs/sandbox/research/wang2021-startup-v1/review/code/test_support_review.py::test_grid_agreement_does_not_admit_known_mass_balance_failure
+1 failed, 5 deselected in 0.31s

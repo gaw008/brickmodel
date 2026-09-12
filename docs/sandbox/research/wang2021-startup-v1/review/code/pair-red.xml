@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.374" timestamp="2026-09-12T02:20:34.423861-07:00" hostname="Ws-MacBook-Pro.local"><testcase classname="docs.sandbox.research.wang2021-startup-v1.review.code.test_support_review" name="test_jacobian_error_uses_all_three_pairs" time="0.002"><failure message="assert False&#10; +  where False = &lt;built-in function isclose&gt;(0.04500000000009774, 0.09000000000019537, rel_tol=1e-12)&#10; +    where &lt;built-in function isclose&gt; = math.isclose">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x10b7a8a40&gt;
+tmp_path = PosixPath('/Users/wanggaoying/Desktop/brickmodel-github/docs/sandbox/research/wang2021-startup-v1/review/code/pair-red-probes/test_jacobian_error_uses_all_t0')
+
+    def test_jacobian_error_uses_all_three_pairs(monkeypatch, tmp_path):
+        curves = {(40, 30): [dict(observed=0.) for _ in range(4)]}
+        calls = 0
+    
+        def predict(curves, x, tau, cells, guard, **kwargs):
+            nonlocal calls
+            group = calls // 8
+            calls += 1
+            # Three manufactured numerical response approximations with errors
+            # in the same direction; their endpoint difference is the largest.
+            scale = np.array([100., 100., 100., 1. + .09*group])
+            return scale*np.r_[x, math.log(tau)], []
+    
+        monkeypatch.setattr(support, 'predictions', predict)
+        result = support.sensitivities(curves, np.array([-20., -14., .8]), 300., 32, lambda: None)
+        matrices = [np.array(item['jacobian']) for item in result['comparisons']]
+        all_pairs = max(float(np.linalg.norm(matrices[i]-matrices[j], ord=2))
+                        for i in range(3) for j in range(i))
+        (tmp_path/'PAIRWISE_ERROR.json').write_text(json.dumps(dict(result=result, all_pairs=all_pairs), indent=2)+'\n')
+&gt;       assert math.isclose(result['observed_jacobian_error'], all_pairs, rel_tol=1e-12)
+E       assert False
+E        +  where False = &lt;built-in function isclose&gt;(0.04500000000009774, 0.09000000000019537, rel_tol=1e-12)
+E        +    where &lt;built-in function isclose&gt; = math.isclose
+
+docs/sandbox/research/wang2021-startup-v1/review/code/test_support_review.py:120: AssertionError</failure></testcase></testsuite></testsuites>

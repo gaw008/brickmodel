@@ -1,0 +1,43 @@
+.FF                                                                      [100%]
+=================================== FAILURES ===================================
+____________ test_weighting_is_per_curve_equal_not_per_point_equal _____________
+
+    def test_weighting_is_per_curve_equal_not_per_point_equal():
+        curves = {(40, 30): [dict(observed=0.)],
+                  (60, 30): [dict(observed=0.) for _ in range(3)]}
+        residual = support.weighted_residual(curves, np.array([1., 2., 3., 4.]))
+>       assert np.dot(residual, residual) == .5*(1.+(4.+9.+16.)/3.)
+E       assert np.float64(5.333333333333334) == (0.5 * (1.0 + (((4.0 + 9.0) + 16.0) / 3.0)))
+E        +  where np.float64(5.333333333333334) = <function dot at 0x10b8612b0>(array([0.70710678, 0.81649658, 1.22474487, 1.63299316]), array([0.70710678, 0.81649658, 1.22474487, 1.63299316]))
+E        +    where <function dot at 0x10b8612b0> = np.dot
+
+docs/sandbox/research/wang2021-startup-v1/review/code/test_support_review.py:41: AssertionError
+_____ test_column_normalization_does_not_pass_unresolvable_weak_direction ______
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10e4e7a40>
+tmp_path = PosixPath('/Users/wanggaoying/Desktop/brickmodel-github/docs/sandbox/research/wang2021-startup-v1/review/code/red-probes/test_column_normalization_does0')
+
+    def test_column_normalization_does_not_pass_unresolvable_weak_direction(monkeypatch, tmp_path):
+        # This is a manufactured local response map, not a drying model or data fit.
+        curves = {(40, 30): [dict(observed=0.) for _ in range(4)]}
+        scales = np.array([1., 1., 1., 1e-12])
+    
+        def predict(curves, x, tau, cells, guard, **kwargs):
+            return scales*np.r_[x, math.log(tau)], []
+    
+        monkeypatch.setattr(support, 'predictions', predict)
+        result = support.sensitivities(curves, np.array([-20., -14., .8]), 300., 32, lambda: None)
+        singular = result['comparisons'][0]['scaled_singular_values']
+        observed = dict(accepted=result['accepted'], raw_condition=singular[0]/singular[-1],
+                        result=result)
+        (tmp_path/'WEAK_DIRECTION.json').write_text(json.dumps(observed, indent=2)+'\n')
+>       assert not result['accepted'], 'normalized columns hide a raw condition number of approximately 1e12'
+E       AssertionError: normalized columns hide a raw condition number of approximately 1e12
+E       assert not True
+
+docs/sandbox/research/wang2021-startup-v1/review/code/test_support_review.py:58: AssertionError
+- generated xml file: /Users/wanggaoying/Desktop/brickmodel-github/docs/sandbox/research/wang2021-startup-v1/review/code/red.xml -
+=========================== short test summary info ============================
+FAILED docs/sandbox/research/wang2021-startup-v1/review/code/test_support_review.py::test_weighting_is_per_curve_equal_not_per_point_equal
+FAILED docs/sandbox/research/wang2021-startup-v1/review/code/test_support_review.py::test_column_normalization_does_not_pass_unresolvable_weak_direction
+2 failed, 1 passed in 0.34s

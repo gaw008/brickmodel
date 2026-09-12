@@ -4,7 +4,9 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
-最新物理增量从096b428继续：[同USGS纯方解石反应热化学](research/calcite-thermochemistry-v1/IMPLEMENTATION.md)已实现Python/CLI。原PDF实读11页、独审9页，CaCO3/CaO/CO2同参考Cp解析积分与形成焓、指定进度质量/元素守恒及可解析来源链均已接入。共同域298.15–1200 K；高温体积/动力学/平衡/真实MIA3库存仍unknown。源码/安装各68项通过2.20/2.26s，154模块/161包文件逐字一致；独立代码6项及来源审核通过。安装后两CLI实例0.048/0.046s，反应热178800J/mol(298.15 K)、173414.756906J/mol(800 K)。scratch=/private/tmp/brick-mineral-thermo-v1；此段代码准备阶段提交，下一具体工作是核查已有Wang干燥留出并选择尚未完成的真实预测，避免重复制造模型。完整Goal仍active。
+最新物理增量已提交afd3981：[同USGS纯方解石反应热化学](research/calcite-thermochemistry-v1/IMPLEMENTATION.md)已实现Python/CLI。原PDF实读11页、独审9页，CaCO3/CaO/CO2同参考Cp解析积分与形成焓、指定进度质量/元素守恒及可解析来源链均已接入。共同域298.15–1200 K；高温体积/动力学/平衡/真实MIA3库存仍unknown。源码/安装各68项通过2.20/2.26s，154模块/161包文件逐字一致；独立代码6项及来源审核通过。安装后两CLI实例0.048/0.046s，反应热178800J/mol(298.15 K)、173414.756906J/mol(800 K)。scratch=/private/tmp/brick-mineral-thermo-v1。原PDF已另存runs/sandbox/source-cache/usgs2131-20260912/usgs-b2131.pdf并核同SHA，不改冻结来源记录。完整Goal仍active。
+
+已实际完成[Wang干燥S1候选](research/wang2021-startup-v1/REPORT.md)：38制造测试0.72s与独立18项审查通过；唯一exec92717已终态0，监督163.564s/内部163.241s，原600s/1500残差限额不变，391残差全部完成。N512优化、256/512/1024复核；七τ+第二起点+联合九拟合全部收敛且数值检查通过。joint τ729.168s/Ea150000触原边界，状态joint_unresolved_no_freeze；RMSE0.099318→0.093526，仍96/117点超原界，未锁参/未读50°C/未执行joint最终敏感度。600s局部秩通过不能升级联合解可辨识。15原始文件已归档，所有失败保留；原D1失败及174观测+12定义入口已纠正。当前转向[Nowicki氧化温度插值](research/nowicki2011-oxygen-interpolation-v1/PREREGISTRATION.md)：450/550°C作者拟合ks定参、500°C原Fig2(a)实线八达时独立提取；只比较alpha_plot，Eq1方向争议、绝对质量/氧耗/反应热未知保持。提取和独审进行中，尚未运行500°C预测。原泥完整材料、全周期耦合、三机制验证、多代与最终应用仍必需未完成。
 
 ### 已完成的来源恢复与MIA3对照阶段（096b428）
 

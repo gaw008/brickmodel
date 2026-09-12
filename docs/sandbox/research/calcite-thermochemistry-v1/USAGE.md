@@ -31,4 +31,6 @@ print(result["trace"]["reaction.enthalpy_j_mol_extent"])
 
 运行只需要本目录的`facts.json`和`source.json`，不下载资料、不调用水EOS、不执行元数据中的文件路径。变更任一已核读提取文件、非普通文件、非有限输入、负进度及域外温度会被拒绝。数值运算使用固定80位十进制上下文；这些计算小数位不是实测精度，也没有被当作高温物性误差。
 
+已核读原PDF另保存在本地忽略目录`runs/sandbox/source-cache/usgs2131-20260912/usgs-b2131.pdf`，SHA256为`ca89fc07fd110a0441f3bc01d5fe67d749a944da2e7f2537520dbaf367f49dd8`；它与来源记录中的原下载件字节相同。该缓存不随Git分发，原来源记录保留获取时路径。
+
 `uncertainty.reaction_enthalpy_uncertainty_j_mol`保持null，因为跨物种协方差与高温拟合误差未获依据。298.15 K的固相体积保留为原始信息，不作为高温体积定律。动力学、平衡、MIA3矿物库存和全周期资格分别保留未完成。

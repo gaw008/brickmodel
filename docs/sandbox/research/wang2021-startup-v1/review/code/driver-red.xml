@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="2" time="0.387" timestamp="2026-09-12T02:20:34.409660-07:00" hostname="Ws-MacBook-Pro.local"><testcase classname="docs.sandbox.research.wang2021-startup-v1.review.code.test_driver_review" name="test_failed_numerical_check_cannot_publish_qualified_readout" time="0.259" /><testcase classname="docs.sandbox.research.wang2021-startup-v1.review.code.test_driver_review" name="test_missing_input_after_child_exit_preserves_terminal_record" time="0.008"><failure message="AssertionError: actual child terminal status must survive a post-run input binding failure&#10;assert False&#10; +  where False = exists()&#10; +    where exists = PosixPath('/Users/wanggaoying/Desktop/brickmodel-github/docs/sandbox/research/wang2021-startup-v1/review/code/driver-red-probes/test_missing_input_after_child0/supervised/supervisor-end.json').exists">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x10b04f3e0&gt;
+tmp_path = PosixPath('/Users/wanggaoying/Desktop/brickmodel-github/docs/sandbox/research/wang2021-startup-v1/review/code/driver-red-probes/test_missing_input_after_child0')
+
+    def test_missing_input_after_child_exit_preserves_terminal_record(monkeypatch, tmp_path):
+        target = Path(os.environ.get('SUPERVISE_REVIEW_TARGET', str(REPRODUCE/'supervise.py')))
+        module = load('review_supervise', target)
+        # Keep production path resolution but replace child execution completely.
+        module.__file__ = str(REPRODUCE/'supervise.py')
+        csv = tmp_path/'manufactured.csv'
+        csv.write_text('not read by any data loader\n')
+        output = tmp_path/'supervised'
+    
+        def fake_child(*args, **kwargs):
+            csv.unlink()
+            return SimpleNamespace(returncode=7)
+    
+        monkeypatch.setattr(module.subprocess, 'run', fake_child)
+        monkeypatch.setattr(sys, 'argv', ['supervise', '--csv', str(csv), '--output', str(output)])
+        try:
+            result = module.main()
+        except FileNotFoundError:
+            result = None
+        path = output/'supervisor-end.json'
+&gt;       assert path.exists(), 'actual child terminal status must survive a post-run input binding failure'
+E       AssertionError: actual child terminal status must survive a post-run input binding failure
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/Users/wanggaoying/Desktop/brickmodel-github/docs/sandbox/research/wang2021-startup-v1/review/code/driver-red-probes/test_missing_input_after_child0/supervised/supervisor-end.json').exists
+
+docs/sandbox/research/wang2021-startup-v1/review/code/test_driver_review.py:77: AssertionError</failure></testcase></testsuite></testsuites>

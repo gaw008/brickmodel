@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.310" timestamp="2026-09-12T02:13:51.538674-07:00" hostname="Ws-MacBook-Pro.local"><testcase classname="docs.sandbox.research.wang2021-startup-v1.review.code.test_support_review" name="test_grid_agreement_does_not_admit_known_mass_balance_failure" time="0.001"><failure message="AssertionError: grid agreement must not override a reported 0.125 mass defect&#10;assert not True">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x10bd0fe00&gt;
+tmp_path = PosixPath('/Users/wanggaoying/Desktop/brickmodel-github/docs/sandbox/research/wang2021-startup-v1/review/code/mass-red-probes/test_grid_agreement_does_not_a0')
+
+    def test_grid_agreement_does_not_admit_known_mass_balance_failure(monkeypatch, tmp_path):
+        curves = {(40, 30): [dict(observed=.9, time_s=60.)]}
+    
+        def corrupted_output(p, t, h, times, **kwargs):
+            return np.ones(len(times)), dict(mass_balance_max_abs=.125,
+                cell_min=1., cell_max=1., mean_max_increase=0., max_mean_increase=0.)
+    
+        monkeypatch.setattr(support, 'startup_curve', corrupted_output)
+        try:
+            result, _ = support.refinement(curves, support.D1_SEED, 600., 64, lambda: None)
+        except ValueError:
+            return
+        (tmp_path/'BAD_MASS_GATE.json').write_text(json.dumps(result, indent=2)+'\n')
+&gt;       assert not result['accepted'], 'grid agreement must not override a reported 0.125 mass defect'
+E       AssertionError: grid agreement must not override a reported 0.125 mass defect
+E       assert not True
+
+docs/sandbox/research/wang2021-startup-v1/review/code/test_support_review.py:74: AssertionError</failure></testcase></testsuite></testsuites>

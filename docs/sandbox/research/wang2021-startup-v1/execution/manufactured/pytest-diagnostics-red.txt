@@ -1,0 +1,81 @@
+...F.F.........F.....................F                                   [100%]
+=================================== FAILURES ===================================
+__________ test_integrated_outflow_and_accepted_states_conserve_mass ___________
+
+    def test_integrated_outflow_and_accepted_states_conserve_mass():
+        prediction, info = startup_curve(P, 50., .45, TIMES, tau_s=600., cells=31)
+        outflow = np.array(info["cumulative_outflow_at_times"])
+        assert outflow[0] == 0.
+        assert outflow[-1] > .9
+        np.testing.assert_allclose(prediction + outflow, 1., rtol=0., atol=2e-12)
+        assert info["mass_balance_max_abs"] < 2e-12
+        assert -1e-10 <= info["cell_min"] <= info["cell_max"] <= 1. + 1e-10
+        assert np.all(np.diff(prediction) <= 1e-10)
+>       assert info["mean_increase_max"] <= 1e-10
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'mean_increase_max'
+
+docs/sandbox/research/wang2021-startup-v1/reproduce/test_startup_model.py:72: KeyError
+_____ test_duplicate_times_preserve_order_and_initial_only_needs_no_solver _____
+
+    def test_duplicate_times_preserve_order_and_initial_only_needs_no_solver():
+        repeated, info = startup_curve(
+            P, np.float64(50.), np.float64(.45), np.array([0., 0., 30., 30., 60.]),
+            tau_s=np.float64(600.), cells=np.int64(4),
+        )
+        assert repeated[0] == repeated[1] == 1.
+        assert repeated[2] == repeated[3]
+        assert len(info["cumulative_outflow_at_times"]) == 5
+        initial, initial_info = startup_curve(P, 50., .45, [0., 0.], tau_s=0., cells=1)
+        np.testing.assert_array_equal(initial, [1., 1.])
+        assert initial_info["nfev"] == initial_info["njev"] == initial_info["nlu"] == 0
+        assert initial_info["accepted_steps"] == 0
+>       assert initial_info["mean_increase_max"] == 0.
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'mean_increase_max'
+
+docs/sandbox/research/wang2021-startup-v1/reproduce/test_startup_model.py:108: KeyError
+________________ test_invalid_time_vectors_are_rejected[times9] ________________
+
+times = [0.0, True]
+
+    @pytest.mark.parametrize("times", [
+        [], [0., -1.], [2., 1.], [math.nan], [math.inf], [[1.]], 1., [True], ["1"],
+        [0., True],
+    ])
+    def test_invalid_time_vectors_are_rejected(times):
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+docs/sandbox/research/wang2021-startup-v1/reproduce/test_startup_model.py:117: Failed
+_____ test_mean_increase_uses_sorted_union_of_accepted_and_requested_times _____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1092ea780>
+
+    def test_mean_increase_uses_sorted_union_of_accepted_and_requested_times(monkeypatch):
+        # Accepted-only MR rises by .025; requested-only MR rises by .05. The
+        # sorted union reveals the .125 rise from requested t=600 to accepted 900.
+        accepted_mean = np.array([1., .9, .925, .85])
+        sampled_mean = np.array([1., .8, .85])
+        result = SimpleNamespace(
+            success=True, message="manufactured diagnostic fixture", status=0,
+            t=np.array([0., 300., 900., 1200.]),
+            y=np.vstack((accepted_mean, accepted_mean, [0., .1, .075, .15])),
+            sol=lambda times: np.vstack((sampled_mean, sampled_mean, [0., .2, .15])),
+            nfev=10, njev=1, nlu=2,
+        )
+        monkeypatch.setattr(startup_model, "solve_ivp", lambda *args, **kwargs: result)
+        _, info = startup_curve(P, 50., .45, [0., 600., 1200.], tau_s=600., cells=2)
+>       assert info["mean_increase_max"] == pytest.approx(.125, abs=1e-15)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'mean_increase_max'
+
+docs/sandbox/research/wang2021-startup-v1/reproduce/test_startup_model.py:198: KeyError
+- generated xml file: /private/tmp/brick-wang-startup-v1/pytest-diagnostics-red.xml -
+=========================== short test summary info ============================
+FAILED docs/sandbox/research/wang2021-startup-v1/reproduce/test_startup_model.py::test_integrated_outflow_and_accepted_states_conserve_mass
+FAILED docs/sandbox/research/wang2021-startup-v1/reproduce/test_startup_model.py::test_duplicate_times_preserve_order_and_initial_only_needs_no_solver
+FAILED docs/sandbox/research/wang2021-startup-v1/reproduce/test_startup_model.py::test_invalid_time_vectors_are_rejected[times9]
+FAILED docs/sandbox/research/wang2021-startup-v1/reproduce/test_startup_model.py::test_mean_increase_uses_sorted_union_of_accepted_and_requested_times
+4 failed, 34 passed in 0.74s
