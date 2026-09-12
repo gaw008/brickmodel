@@ -23,6 +23,8 @@ from .phase_storage import InversePolicy
 from .source_wet_storage import SourceWetStorage, _binary
 from .arlabosse_rigid_sorption import ArlabosseSorptionStorage
 from .arlabosse_sorption_phase import evaluate_sorption_phase
+from .arlabosse_low_moisture_storage import LowMoistureSorptionStorage
+from .low_moisture_phase import evaluate_low_moisture_phase
 from .septien_conductivity import SeptienConductivity
 from .source_sorption_moisture import MakelaMoistureTransport, SourceMoistureWitness, condensed_water_point
 from .water_chemical_potential import WaterChemicalPotential
@@ -135,25 +137,34 @@ class SourceWetColumn:
 
     def binding(self):
         require(type(self.storages) is tuple and bool(self.storages) and
-                all(type(s) in (SourceWetStorage, ArlabosseSorptionStorage) for s in self.storages),
+                all(type(s) in (SourceWetStorage, ArlabosseSorptionStorage, LowMoistureSorptionStorage)
+                    for s in self.storages),
                 'actual_source_wet_storages')
-        sorption = type(self.storages[0]) is ArlabosseSorptionStorage
-        require(sorption == (type(self) is ArlabosseSorptionColumn),
+        low = type(self.storages[0]) is LowMoistureSorptionStorage
+        sorption = type(self.storages[0]) in (ArlabosseSorptionStorage, LowMoistureSorptionStorage)
+        expected_host = (LowMoistureSorptionColumn if low else
+                         ArlabosseSorptionColumn if sorption else SourceWetColumn)
+        require(type(self) is expected_host,
                 'explicit_sorption_column_type_required')
         require(all(type(s) is type(self.storages[0]) for s in self.storages),
                 'common_source_storage_model_required')
         thermal = self.thermal_provider if sorption else None
         moisture = self.moisture_transport if sorption else None
+        if low and (thermal is not None or moisture is not None):
+            from .low_moisture_transport import LowMoistureConductivity, LowMoistureTransport
         if moisture is not None:
-            require(type(moisture) is MakelaMoistureTransport, 'actual_source_moisture_transport_required')
+            require(type(moisture) is (LowMoistureTransport if low else MakelaMoistureTransport),
+                    'actual_source_moisture_transport_required')
             require(thermal is not None, 'moisture_requires_source_conductivity')
             moisture.binding()
         if thermal is not None:
-            require(type(thermal) is SeptienConductivity, 'actual_source_conductivity_required')
+            require(type(thermal) is (LowMoistureConductivity if low else SeptienConductivity),
+                    'actual_source_conductivity_required')
             thermal.binding()
         if sorption:
             require(self.liquid_transport is None, 'sorption_liquid_transport_not_supported')
-            require(all(mode == 'existing_liquid' for mode in self.interface_modes),
+            require(all(mode == ('reversible_sorption' if low else 'existing_liquid')
+                        for mode in self.interface_modes),
                     'sorption_dry_interface_not_supported')
         require(type(self.chemical) is WaterChemicalPotential, 'actual_water_chemical_provider')
         n = len(self.storages)
@@ -169,7 +180,8 @@ class SourceWetColumn:
         area = _binary(self.face_area_m2, positive=True)
         widths = tuple(_binary(v, positive=True) for v in self.cell_widths_m)
         require(type(self.interface_modes) is tuple and len(self.interface_modes) == n and
-                all(type(v) is str and v in ('existing_liquid', 'depleted_no_nucleation') for v in self.interface_modes),
+                all(type(v) is str and v in (('reversible_sorption',) if low else
+                    ('existing_liquid', 'depleted_no_nucleation')) for v in self.interface_modes),
                 'per_cell_interface_modes')
         require(self.boundary_conditions == ('closed_no_flux', 'closed_no_flux'), 'only_explicit_closed_boundaries')
         expected_classification = ('mixed_source_exploratory' if thermal is not None
@@ -209,16 +221,19 @@ class SourceWetColumn:
         c = self.chemical
         backends = tuple((type(w).__module__, type(w).__qualname__, w.implementation)
                          for w in (c.water, c.vapor._water))
-        model_kind = 'arlabosse_sorption_closed_column_v1' if sorption else 'source_wet_closed_column_v1'
+        model_kind = ('arlabosse_low_moisture_closed_column_v1' if low else
+            'arlabosse_sorption_closed_column_v1' if sorption else 'source_wet_closed_column_v1')
         content = (model_kind, tuple(s.binding() for s in self.storages),
             self.inverse_policies, c, backends, (c.reference_pressure_pa, c.method_id, c.caloric_method_id,
             c.gas_constant_j_mol_k, c.temperature_range_k), self.transfer_coefficients_mol_s_pa,
             self.faces, self.cell_widths_m, self.face_area_m2, self.interface_modes,
             self.coefficient_source_ids, self.boundary_conditions, self.transport_classification)
         if thermal is not None:
-            content = (content, 'dynamic_septien_conductivity_v1', thermal.binding())
+            content = (content, 'dynamic_low_moisture_conductivity_v1' if low else
+                       'dynamic_septien_conductivity_v1', thermal.binding())
         if moisture is not None:
-            content = (content, 'dynamic_makela_moisture_v1', moisture.binding())
+            content = (content, 'dynamic_low_moisture_transport_v1' if low else
+                       'dynamic_makela_moisture_v1', moisture.binding())
         if self.liquid_transport is not None:
             config = self.liquid_transport
             require(type(config) is LiquidTransportConfig, 'actual_liquid_transport_configuration')
@@ -269,7 +284,10 @@ class SourceWetColumn:
             inverse = storage.invert(state, policy)
             point = inverse.point
             chemistry = storage.chemistry.evaluate(state.solid_mass_kg, state.gas_amounts_mol)
-            if type(storage) is ArlabosseSorptionStorage:
+            if type(storage) is LowMoistureSorptionStorage:
+                phase = evaluate_low_moisture_phase(storage, self.chemical, point,
+                    state.gas_amounts_mol[2], self.transfer_coefficients_mol_s_pa[i])
+            elif type(storage) is ArlabosseSorptionStorage:
                 phase = evaluate_sorption_phase(storage, self.chemical, point,
                     state.gas_amounts_mol[2], self.transfer_coefficients_mol_s_pa[i], self.interface_modes[i])
             else:
@@ -283,11 +301,16 @@ class SourceWetColumn:
             sources.update(point.source_ids)
             sources.update(phase.equilibrium.source_ids)
         liquids = ()
-        thermal = self.thermal_provider if type(self) is ArlabosseSorptionColumn else None
-        moisture = self.moisture_transport if type(self) is ArlabosseSorptionColumn else None
+        sorption = type(self) in (ArlabosseSorptionColumn, LowMoistureSorptionColumn)
+        thermal = self.thermal_provider if sorption else None
+        moisture = self.moisture_transport if sorption else None
         moisture_points = ()
         if moisture is not None:
-            moisture_points = tuple(condensed_water_point(storage,self.chemical,state,cell.inverse,cell.phase)
+            decode_moisture = condensed_water_point
+            if type(self) is LowMoistureSorptionColumn:
+                from .low_moisture_transport import low_moisture_water_point
+                decode_moisture = low_moisture_water_point
+            moisture_points = tuple(decode_moisture(storage,self.chemical,state,cell.inverse,cell.phase)
                 for storage,state,cell in zip(self.storages,states,cells))
             sources.update(moisture.source_ids)
         conductivity_points = ()
@@ -395,16 +418,21 @@ class SourceWetColumn:
             'face_area_m2': self.face_area_m2, 'internal_face_adjacency': tuple((i, i-1, i) for i in range(1, self.cell_count)),
             'transport_classification': self.transport_classification, 'coefficient_source_ids': self.coefficient_source_ids,
             'material_qualified': False, 'scope': 'fixed source mass, fixed slab, closed boundaries; no exact event or furnace boundary admission'}
-        if type(self) is ArlabosseSorptionColumn and self.thermal_provider is not None:
+        if type(self) in (ArlabosseSorptionColumn, LowMoistureSorptionColumn) and self.thermal_provider is not None:
             result.update(thermal_provider=self.thermal_provider.definition(),
                 thermal_policy='evaluate every decoded cell at every operator call; no static conduction contribution',
                 remaining_transport_classification='manufactured_test_fixture',
                 midpoint_thermal_witness='retained on each accepted conductivity face integral')
-        if type(self) is ArlabosseSorptionColumn and self.moisture_transport is not None:
+        if type(self) in (ArlabosseSorptionColumn, LowMoistureSorptionColumn) and self.moisture_transport is not None:
             result.update(moisture_transport=self.moisture_transport.definition(),
                 gas_face_transport='disabled for this apparent total-loss moisture allocation',
                 midpoint_moisture_witness='actual points, factor and exchange retained on each accepted face',
                 remaining_transport_classification='local phase coefficient and geometry are manufactured_test_fixture')
+        if type(self) is LowMoistureSorptionColumn:
+            result.update(schema='low_moisture_sorption_column_v1',
+                interface_modes=self.interface_modes,
+                zero_inventory_policy='reversible adsorption; analytic dry excess reference retained; reject negative inventory without clipping',
+                dryout_time='asymptotic vacuum limit, no finite depletion event asserted')
         if self.liquid_transport is not None:
             result.update(liquid_transport=self.liquid_transport, liquid_boundary_conditions=('no_flux', 'no_flux'),
                 liquid_saturation_definition='liquid_volume / available_liquid_plus_gas_volume',
@@ -422,6 +450,13 @@ class ArlabosseSorptionColumn(SourceWetColumn):
     """
     thermal_provider: SeptienConductivity | None = field(default=None, kw_only=True)
     moisture_transport: MakelaMoistureTransport | None = field(default=None, kw_only=True)
+
+
+@dataclass(frozen=True)
+class LowMoistureSorptionColumn(SourceWetColumn):
+    """Separately admitted reversible low-W storage/phase and transport semantics."""
+    thermal_provider: object | None = field(default=None, kw_only=True)
+    moisture_transport: object | None = field(default=None, kw_only=True)
 
 
 @dataclass(frozen=True)
@@ -513,6 +548,7 @@ class SourceColumnRun:
 
 
 def _integrals(rates, duration):
+    from .controlled_vapor_column import ControlledVaporFaceRate, ControlledVaporFaceIntegral
     faces = []
     for face in rates.faces:
         q = duration*F(face.energy_w)
@@ -521,7 +557,14 @@ def _integrals(rates, duration):
         adv = tuple(duration*F(x) for x in face.advective_enthalpy_w)
         gas = tuple(duration*F(x) for x in face.gas_mol_s)
         decomposition = q-conduction-sum(diff, F())-sum(adv, F())
-        if type(face) is SorptionMoistureColumnFaceRate:
+        if type(face) is ControlledVaporFaceRate:
+            faces.append(ControlledVaporFaceIntegral(face_id=face.face_id,gas_mol=gas,
+                energy_j=q,conduction_j=conduction,diffusive_enthalpy_j=diff,advective_enthalpy_j=adv,
+                energy_decomposition_roundoff_j=decomposition,
+                vapor_molar_projection_mol=gas[2]-duration*face.exact_water_mol_s,
+                vapor_enthalpy_projection_j=diff[2]-duration*face.exact_carried_energy_w,
+                heat_projection_j=-conduction-duration*face.exact_heat_into_cell_w,boundary=face.boundary))
+        elif type(face) is SorptionMoistureColumnFaceRate:
             exchange = face.moisture_witness.exchange
             water = duration*F(exchange.molar_flow_mol_s)
             carried = duration*F(exchange.carried_energy_w)
@@ -553,13 +596,17 @@ def _advance(column, old, faces, phase):
     """One exact aggregation and one binary64 projection per cell quantity."""
     result, liquid_errors, gas_errors, energy_errors = [], [], [], []
     for i, (storage, state, mode) in enumerate(zip(column.storages, old, column.interface_modes)):
+        require(mode in ('reversible_sorption', 'existing_liquid', 'depleted_no_nucleation'),
+                'unsupported_column_interface_mode')
         liquid = F(state.liquid_water_mol)+_liquid_integral(faces[i])-_liquid_integral(faces[i+1])-phase[i]
         gas = tuple(F(value)+faces[i].gas_mol[k]-faces[i+1].gas_mol[k]+(phase[i] if k == 2 else 0)
                     for k, value in enumerate(state.gas_amounts_mol))
         energy = F(state.internal_energy_j)+faces[i].energy_j-faces[i+1].energy_j
         if not all(v >= 0 for v in (liquid, *gas)):
             raise DomainExit('column_inventory_domain_exit')
-        if not (liquid > 0 if mode == 'existing_liquid' else liquid == 0):
+        admitted = {'reversible_sorption': liquid >= 0, 'existing_liquid': liquid > 0,
+                    'depleted_no_nucleation': liquid == 0}
+        if not admitted[mode]:
             raise DomainExit('column_liquid_mode_exit_no_event_localization')
         liquid_float = represented(liquid)
         gas_float = tuple(map(represented, gas))
@@ -584,11 +631,14 @@ def integrate_source_column(column, initial, *, duration_s, steps, maximum_wall_
     """
     from .exact_event_clock import ExactEventTime
     from .programmed_source_wet_column import ProgrammedSourceWetColumn
-    require(type(column) in (SourceWetColumn, ArlabosseSorptionColumn, ProgrammedSourceWetColumn)
+    from .controlled_vapor_column import ControlledVaporColumn, ControlledVaporFaceIntegral
+    require(type(column) in (SourceWetColumn, ArlabosseSorptionColumn, LowMoistureSorptionColumn,
+                            ProgrammedSourceWetColumn, ControlledVaporColumn)
             and type(steps) is int and steps > 0, 'explicit_column_steps')
     require(start_time is None or type(start_time) is ExactEventTime, 'explicit_exact_column_start_time')
     origin = F() if start_time is None else start_time.seconds
     programmed = type(column) is ProgrammedSourceWetColumn
+    controlled = type(column) is ControlledVaporColumn
     duration = F(_binary(duration_s, positive=True))
     h = duration/steps
     wall = _binary(maximum_wall_seconds, positive=True)
@@ -642,11 +692,20 @@ def integrate_source_column(column, initial, *, duration_s, steps, maximum_wall_
             candidate_inventory = used_inventory+error.absolute_inventory_mol+predictor_error.absolute_inventory_mol
             candidate_inventory += sum((abs(f.moisture_molar_projection_mol)
                 for f in (*predictor_faces,*faces) if type(f) is SorptionMoistureColumnFaceIntegral), F())
+            for face in (*predictor_faces,*faces):
+                if type(face) is ControlledVaporFaceIntegral:
+                    candidate_inventory += abs(face.vapor_molar_projection_mol)
+                    candidate_energy += abs(face.vapor_enthalpy_projection_j)+abs(face.heat_projection_j)
             require(candidate_energy <= F(energy_budget), 'column_energy_roundoff_budget_exceeded')
             require(candidate_inventory <= F(inventory_budget), 'column_inventory_roundoff_budget_exceeded')
             last = evaluate(new, endpoint)
-            ledger = (column.step_ledger(delta, faces, phase, error, predictor_error, midpoint, middle) if programmed
-                      else ColumnStepLedger(delta, faces, phase, error, predictor_error, midpoint))
+            if controlled:
+                ledger = column.step_ledger(delta,faces,phase,error,predictor_error,midpoint,middle,
+                    predictor_rates=first,predictor_faces=predictor_faces,predictor_phase=predictor_phase)
+            elif programmed:
+                ledger = column.step_ledger(delta,faces,phase,error,predictor_error,midpoint,middle)
+            else:
+                ledger = ColumnStepLedger(delta,faces,phase,error,predictor_error,midpoint)
             states.append(new)
             times.append(endpoint)
             observations.append(last)

@@ -1,0 +1,84 @@
+{
+  "schema": "arlabosse_low_moisture_excess_v1",
+  "model_id": "ARLABOSSE2005_LOW_MOISTURE_EXCESS_V1",
+  "classification": "derived_from_evidence",
+  "usage_scope": "source_joined_virtual_low_moisture_free_energy_extension",
+  "upstream": [
+    {
+      "path": "data/sandbox/research/arlabosse95/facts.json",
+      "sha256": "543d55918db7df6d0cc0f695c5dceadbdebda82b83f4fdde206266bcd12f2f16",
+      "doi": "10.1590/S0104-66322005000200009",
+      "locator": "Fig.1 activity and Fig.2 total desorption heat; reviewed .15 join nodes"
+    },
+    {
+      "path": "data/sandbox/research/arlabosse-wet-thermo-v1/model.json",
+      "sha256": "bfc82cb377158d83e0b7eb25289f34db467611f5de137fdfc24c76a1d162edaa"
+    },
+    {
+      "path": "src/sludge_sandbox/arlabosse_wet_thermo.py",
+      "sha256": "31e6dd7354ac704a8685fcf7e51f1c93a0a71960292ef84a93f96a5164217694",
+      "locator": "_W_NODES, _Q_NODES and the actual represented _m/_q curves and latent reference"
+    }
+  ],
+  "domain": {
+    "temperature_k": [308.15, 368.15],
+    "moisture_kg_water_per_kg_dry": [0.0, 0.8],
+    "join_moisture_kg_water_per_kg_dry": 0.15,
+    "reference_temperature_k": 368.15,
+    "reference_moisture_kg_water_per_kg_dry": 0.8,
+    "classification": "virtual_design_choice",
+    "representation": "temperature endpoints and source W nodes are the existing binary64 values; exact rational W input is retained without projection"
+  },
+  "construction": {
+    "basis": "excess h,s,f per kg dry matter; partial quantities and Gamma already per mol condensed water; only condensed water enters W",
+    "join": "mj=m0(Wj); bj=L0-q0(Wj); hj=L0*(Wj-.8)-integral(q0,.8,Wj); sj=(hj-integral(m0,.8,Wj))/T0; cj=(bj-mj)/T0",
+    "positive_low_moisture": "psi=W*ln(W/Wj)-W+Wj; h=hj+bj*(W-Wj); s=sj+cj*(W-Wj)-(R/M)*psi; f=h-T*s",
+    "partials": "mu_ex=M*(bj-T*cj)+R*T*ln(W/Wj); partial_h_ex=M*bj; Gamma=R*T/W; aw=aw_join(T)*W/Wj",
+    "upper_branch": "exact integration and interpolation of the same represented m0/q0 nodes as the wet model; no refitting or additional observed nodes",
+    "zero_inventory": "xlogx(0)=0; h0=hj-bj*Wj; s0=sj-cj*Wj-(R/M)*Wj; f0=h0-T*s0; aw=0; mu and Gamma have explicit infinite-limit labels and null values",
+    "reference": "preserve generally nonzero h0/s0; no global reference shift, no formation-enthalpy claim and no permission to discard the dry endpoint excess",
+    "excess_heat_capacity_j_kg_dry_k": 0,
+    "excess_volume_m3_kg_dry": 0,
+    "gamma_join": "distinct left R*T/Wj and right represented-source derivative; not a smooth join"
+  },
+  "assumptions": [
+    "Below .15 hold q0 equal to the .15 heat node; this is not a measured low-moisture heat curve",
+    "Ideal-dilution activity shape below .15, no adsorption/desorption hysteresis, and no nucleation barrier",
+    "Temperature-independent excess h/s and zero excess volume; unknown temperature and pressure extension errors",
+    "Fixed dry mass and existing water reference; reaction or dry-mass change requires a separate reference audit"
+  ],
+  "held_out": {
+    "moisture_kg_water_per_kg_dry": 0.1,
+    "locator": "same Arlabosse2005 Fig.1 curve, source facts observation; Fig.2 heat remains unknown",
+    "used_for_fitting": false,
+    "independent_validation": false,
+    "scope": "same-curve holdout can constrain near-join shape; shared calibration and no low-W multi-temperature evidence"
+  },
+  "input_classifications": {
+    "underlying_published_curve": "measured_public_data",
+    "digitized_curve_nodes": "derived_from_evidence",
+    "represented_node_integration_and_join": "derived_from_evidence",
+    "low_moisture_shape_and_constant_q": "virtual_design_choice",
+    "temperature_domain_and_zero_excess_volume": "virtual_design_choice",
+    "exact_rational_algebra_and_float_readouts": "numerical_policy",
+    "logarithm_and_exponential_error": "unknown",
+    "total_material_uncertainty": "unknown"
+  },
+  "numerical_policy": {
+    "h": "exact rational algebra of represented source nodes and exact input W",
+    "s_f": "exact rational algebra on upper branch and analytical zero; on positive lower branch exact algebra conditional on the nominal math.log/log1p result",
+    "gas_constant": "one actual molar R and mass M; molar logarithm term is R*T*log(W/Wj); no second rounded specific-R constant",
+    "readout_difference": "old wet interpolation/integration and Rs=R/M were rounded in binary64; exact represented-node arithmetic may differ by small roundoff, not evidence of changed source measurements",
+    "logarithm": "log1p near join, log of positive represented W away from join; numerical log error is unquantified",
+    "positive_nonrepresentable": "reject overflow or nonzero-to-zero float projection; never silently classify positive W as dry",
+    "identity": "nominal f=h-T*s is exact algebra, not a certified bound on transcendental or physical model error"
+  },
+  "model_error": null,
+  "log_numerical_error": null,
+  "activity_numerical_error": null,
+  "experimental_uncertainty": null,
+  "material_qualified": false,
+  "training_eligible": false,
+  "full_firing_cycle": false,
+  "exclusions": ["EOS evaluation", "transport or phase rate prediction", "vapor outlet", "reaction or sintering", "actual low-moisture material validation"]
+}

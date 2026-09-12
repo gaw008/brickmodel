@@ -1,0 +1,35 @@
+{
+  "schema": "arlabosse_low_moisture_transport_v1",
+  "model_id": "ARLABOSSE_LOW_MOISTURE_TRANSPORT_V1",
+  "conductivity_id": "SEPTIEN_LOW_MOISTURE_CONSTANT_EXTENSION_V1",
+  "classification": "derived_from_evidence",
+  "usage_scope": "explicit exploratory continuation of mixed-source donor transport to zero condensed inventory",
+  "upstream": [
+    {"path": "data/sandbox/research/arlabosse-low-moisture-v1/model.json", "sha256": "906f2a8a7b1d97c30f38edd51d019f874b14c9caf178b7aeb0f3797adb7b4a3f"},
+    {"path": "data/sandbox/research/makela-moisture-v1/model.json", "sha256": "118bf0ec21a5989e20cb3761d0833afb08b4503107219f441b19385f27abb0fe"},
+    {"path": "data/sandbox/research/septien-conductivity-v1/model.json", "sha256": "c5d36c30be29b8f9aea569dde355ad0580b6c5d8474a0f85cc4a036c6976cb15"}
+  ],
+  "source_reading_scope": "Original Makela PDF and Septien JATS table were read in prior registered source reviews; original providers reverify those bytes and their facts/models at public use. No new source measurements are created here.",
+  "domain": {"temperature_k": [308.15,368.15], "moisture_kg_water_per_kg_dry": [0.0,0.8], "pressure_pa": [90000,110000], "classification": "virtual_design_choice"},
+  "diffusivity": {"value_m2_s": "8.56e-9", "original_classification": "derived_from_evidence", "extension_classification": "virtual_design_choice", "scope": "Makela untreated paper-mill sludge apparent effective total-loss diffusivity, assigned to this single condensed inventory; below .30 and across 35-95 C frozen with unknown transfer error; no parallel gas/Darcy moisture path", "error": null},
+  "conductivity": {"below_join": "k(W<.30)=original Septien provider k(.30)", "above_join": "original source provider k(W)", "classification": "virtual_design_choice", "measurement_temperature_k": null, "error": null, "source_90_percent_intervals_are_total_bounds": false},
+  "closure": {
+    "geometry": "rho_d=md/(area*cell_width), exact and equal on both sides; ell=(width_left+width_right)/2; volume is total controlled slab volume, not pore fluid volume",
+    "positive_low_low": "K=A*rho_d*D/(M*ell); Llog=(WL-WR)/ln(WL/WR), equal-W limit W; C=join_muL/TL-join_muR/TR+hface*(1/TR-1/TL); n=K*((WL-WR)+Llog*C/R); H=hface*n",
+    "positive_cross_join_or_source": "Gamma is the positive secant of complete excess molar mu at exact arithmetic Tface; every traversed represented m/q segment must be positive; n=Tface*K/Gamma*(muL/TL-muR/TR+hface*(1/TR-1/TL))",
+    "same_W_join": "positive low-side RT/Wj and positive source-side derivative averaged explicitly; no false smooth Gamma claim",
+    "single_zero": "analytic n=K*(WL-WR), H=hface*n; chemical drive and positive-infinite instantaneous entropy use null with named limit",
+    "double_zero": "n=H=0 and no_exchange; no finite chemical potential or unique two-variable entropy limit asserted",
+    "heat": "hface is arithmetic full molar condensed-water enthalpy in a common actual water reference; independent conduction remains outside this face; no extra latent source"
+  },
+  "numerical_policy": {"exact": "represented input/source algebra with exact rational W and arithmetic Tface", "log": "log1p near equal positive W, log difference otherwise; numerical log error unknown", "low_low_readout": "stable analytic drive retained separately from complete nominal mu readout drive; difference and actual rounded n/H entropy balance recorded", "finite_rates": "reject nonzero-to-zero and overflow projections; reject negative or unresolved positive rounded entropy", "source_resolution": "same-T/P positive source/cross-join states with nonzero dW require dmu*dW>0; preserve independent dmu-Gamma*dW residual; stable double-low-W drive is unchanged", "scope": "instantaneous nominal face and shared rounded-rate checks, not full-step entropy or continuum convergence proof"},
+  "input_classifications": {"original_D": "derived_from_evidence", "original_k_measurements": "measured_public_data", "new_low_W_D_and_k": "virtual_design_choice", "geometry": "manufactured_test_fixture", "no_cross_effects": "virtual_design_choice", "arithmetic_and_limits": "numerical_policy", "total_uncertainty": "unknown"},
+  "runtime_binding": "Exact LowMoistureSorptionStorage/point/inverse/phase classes, common actual WaterChemicalPotential reference, inventory correspondence, actual phase pure-liquid state and h/mu readouts. In-process correspondence, not authentication of arbitrary serialized objects.",
+  "zero_reference": "Pure liquid at a dry state's T/P is a hypothetical standard state with no liquid inventory or volume",
+  "model_error": null,
+  "log_numerical_error": null,
+  "cross_material_transfer_error": null,
+  "material_qualified": false,
+  "training_eligible": false,
+  "full_firing_cycle": false
+}
