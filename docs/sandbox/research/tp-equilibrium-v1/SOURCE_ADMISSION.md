@@ -1,0 +1,50 @@
+# CHONS TP product thermochemistry: bounded admission
+
+2026-09-12. **Proceed with a declared, restricted ideal-gas + graphite equilibrium model at 800–1200 K and exactly 100000 Pa.** Sulfur and condensed carbon are both covered. A concrete reference-pressure correction is needed in the *derived configuration* to preserve the NASA source meaning. This review did not install Cantera, evaluate an EOS, run equilibrium, or edit production files. It does not admit Cedrone initial enthalpy, real-char thermodynamics, complete sludge chemistry, or kinetics.
+
+## Frozen official candidates and original evidence
+
+Use [Cantera v3.2.0 nasa_gas.yaml](https://github.com/Cantera/cantera/blob/v3.2.0/data/nasa_gas.yaml) and [graphite.yaml](https://github.com/Cantera/cantera/blob/v3.2.0/data/graphite.yaml), release commit `4a8358eb80cfeb50474386b5f9ec0b3a83519889`. The gas file contains species records, not a ready phase; construct one explicit reactionless ideal-gas phase. Graphite is a separate fixed-stoichiometry phase, species `C(gr)`, composition C:1, constant-volume density 2.16 g/cm³. Its 300 K / 101325 Pa initial state is neither the requested calculation condition nor a statement that its original fitted standard pressure was 1 atm.
+
+The derived configuration is a fixed allowlist of exactly these two frozen files and the 18 gas records plus C(gr), with no dynamic extensions, arbitrary cross-file imports, unlisted species, or unrecorded coefficient edits. The new ideal-gas phase and explicit reference-pressure fields are declared construction choices, not a general-purpose loader.
+
+The files cite McBride, Gordon & Reno, NASA TM-4513 (October 1993), *Coefficients for Calculating Thermodynamic and Transport Properties of Individual Species*. The [official NASA PDF](https://ntrs.nasa.gov/api/citations/19940013151/downloads/19940013151.pdf) and [NTRS metadata](https://ntrs.nasa.gov/api/citations/19940013151) were actually retrieved. Read: printed pp1–4 for methods/reference states; actual page images p2, p33 (H2S), p39 (N2), p55 (graphite). Those three table rows were visually compared with the distributed records; this is **not** a claim that every coefficient of all 18 species was independently revalidated against every original page. The graphite header additionally cites NASA SP-273 (1971); that report was not retrieved. TM-4513 p55 itself contains the selected graphite polynomial and attributes it to McBride (1993) and TRC 4/83 sheets.
+
+Minimum explicit gas candidate, with exact canonical names and original note codes:
+
+| Gas species | NASA7 ranges, K | Notes, in the same order |
+|---|---|---|
+| H2, H2O, CO, CO2, CH4, O2 | 200 / 1000 / 6000 | TPIS78; L 8/89; TPIS79; L 7/88; L 8/88; TPIS89 |
+| N2, NH3, HCN, NO, NO2, N2O | 200 / 1000 / 6000 | TPIS78; TPIS89; L 7/88; TPIS89; L 7/88; L 7/88 |
+| H2S, SO2, SO3, COS, CS2, S2 | 300 / 1000 / 5000 | J 6/77; J 6/61; J 9/65; J 3/61; J12/76; J 9/77 |
+| C(gr), separate condensed phase | 200 / 1000 / 5000 | No YAML note; TM-4513 p55: X 4/83 |
+
+All cover the whole requested interval without extrapolation; 1000 K is a polynomial join, not a phase-transition claim. The [actual v3.2.0 NasaPoly2 source](https://github.com/Cantera/cantera/blob/v3.2.0/include/cantera/thermo/NasaPoly2.h#L95) selects the **low** polynomial when T <= Tmid in both update methods, hence exactly 1000 K belongs to the low segment; only T > 1000 K uses the high segment. YAML lists low then high, whereas low-level reported coefficient arrays are Tmid, high seven, low seven. Do not reuse the existing Shomate high-segment join rule. In TM-4513 p4, J identifies JANAF/Chase 1985 with individual sheet dates; TPIS identifies Gurvich compilations; L is a NASA Lewis fit or combination of references. These underlying compilations were not independently read. Fit ranges do not establish fit covariance, species-exclusion error, or sludge accuracy. Keep the original notes and all 14 coefficients. Do not add a separate formation enthalpy: it is already included in the NASA7 integration constant (TM-4513 pp1,3).
+
+The existing repository NIST pack has only O2, N2, H2O and CO2; their intervals cover 800–1200 K, but they do not close sulfur, reduced carbon/hydrogen, or condensed carbon. `thermochemistry.py` currently exposes h/u/Cp/Cv, not entropy or chemical potential. Its G coefficient being stored does not make that API a Gibbs provider. The first calculation should use one NASA family and explicit pressure interpretation, rather than silently mixing it with NIST Shomate/reference conventions.
+
+## Reference pressure is a real admission correction
+
+The [Cantera 3.2 species specification](https://cantera.org/3.2/yaml/species.html#species-thermo-models) defaults an omitted `thermo.reference-pressure` to 1 atm. Both frozen candidate files omit it. **TM-4513 p1 explicitly says the data were adjusted from 1 atm to 1 bar; p2 defines gas and pure condensed standard states at 100000 Pa.** The sampled N2/H2S entropy constants and graphite coefficients remain the printed source values. For example, low/high NASA7 entropy constants are N2 2.96747468 / 5.87189252; H2S 2.3157905 / 8.0546745; graphite 1.11382953 / −8.52583033. There is no change of the entropy constant visible in those samples that would encode a conversion to 1 atm.
+
+Recommended branch: retain original files byte-for-byte; create a clearly identified derived configuration with `reference-pressure: 100000 Pa` in **each of the 18 gas thermo records and C(gr)**, leaving all coefficients untouched. This is a source-supported metadata interpretation, not an upstream-file claim or a fitted correction. Test the instantiated reference pressures later. Retain the as-distributed 101325 Pa interpretation as a documented difference; do not call it identical to the original NASA 1-bar convention.
+
+For molar quantities, gas chemical potential is
+
+`mu_i = g_i^ref(T) + R T ln(y_i P / p_ref)`.
+
+Cantera's *current-pressure* standard Gibbs values already include the P/p_ref part: add only the mixing term to those. The [fixed-stoichiometry model](https://cantera.org/3.2/cxx/d3/d50/classCantera_1_1StoichSubstance.html) gives graphite `g(T,P)=g_ref(T)+V_m(P-p_ref)`; the derived 1-bar state makes this correction zero. A genuine change of reference from 1 bar to 1 atm would instead require gas `s_ref,new=s_ref,old−R ln(101325/100000)` and graphite `h_ref,new=h_ref,old+V_m(101325−100000)`. Merely changing the reference label while claiming the old interpretation was preserved would be incorrect.
+
+NASA7 yields dimensionless Cp/R, h/(RT), s/R. Cantera molar property APIs use J/kmol and J/kmol/K; repository interfaces use J/mol. Convert amounts and properties consistently. TM-4513 used historical R=8.314510 J/(mol K); a future Cantera run must record its actual R and atomic weights instead of claiming exact reproduction of all historical dimensional values. No new reaction energy is inferred from this unit conversion.
+
+## Scope, permission, and smallest real calculation
+
+The 18-gas set is a chosen product space, not the complete stable CHONS species set. The same database also contains CS, H2SO4, S, SH, SN, SO, S2O and S8, plus many CHON molecules/radicals. Their exclusion error is unknown. Do not automatically admit every neutral CHONS record: the inventory even contains a Jet-A pseudocomponent. Keep other liquids/solids, ions, mineral/sulfide/sulfate phases, tar, nonideal gas effects and carbon surface physics outside the declared model. A graphite amount is not a measured char yield. Keep Cl, Br, mineral elements and ash explicitly outside this *CHONS subsystem*, rather than renormalizing a whole-sludge feed to pretend they were absent. S must remain in the selected elemental constraints.
+
+The [v3.2.0 repository license](https://github.com/Cantera/cantera/blob/v3.2.0/License.txt) permits redistribution/modification subject to retained notices/conditions/disclaimer and no endorsement; selected data and a derived configuration should carry that license and source attribution. NTRS metadata labels this NASA report PUBLIC and GOV_PUBLIC_USE_PERMITTED. This is not a blanket CC0/CC-BY grant for every underlying JANAF/TPIS/TRC volume. No source PDF has been put in Git. Graphite's 2.16 g/cm³ has a distributed-file locator, but its primary density experiment, temperature dependence and uncertainty were not identified here.
+
+Next authorized implementation can take one explicit five-element molar pool at 1000 K, 100000 Pa; use the 18 gases and optional zero-amount graphite phase; minimize total G under all five atom balances and n≥0. The basis H2/O2/N2/S2/C(gr) provides a feasible allocation for nonnegative element pools (b_H/2, b_O/2, b_N/2, b_S/2, b_C); this seed is bookkeeping, not the original feed composition. Check actual loaded species/ranges/reference pressures, NASA7 joins, nonnegative amounts, independent five-element balances, finite Gibbs values, and equilibrium/KKT residuals including graphite phase appearance. Compare alternative feasible initial allocations. A later species-set comparison including the omitted sulfur family is useful before interpreting sulfur partition physically; numerical convergence within the 18-species model does not quantify that omission.
+
+This advances a real high-temperature **conditional terminal-composition calculation** without Arrhenius parameters or source-feed entropy. Fixed TP does not require Cedrone initial H; HP/UV temperature prediction, heat duty, reaction rates, and whole-sludge mineral closure still do. None was certified here.
+
+Artifacts: `CANDIDATE.json` carries names/coefficients-as-strings/domain decisions; `SELECTED_SOURCE_BLOCKS.txt` preserves exact selected source blocks; `CHONS_INVENTORY.json` is a non-admitted inventory; `SOURCE_RECORD.json` records actual retrieval/read states and hashes. Main raw SHAs: gas `4de6199d65d2d3db782e30573720c723130953707336add59713b02d8667e4db`; graphite `6074b6dd691785403dee1eeebf8e583b747681c34a148746bab2256282939cbd`; NASA PDF `6b274fb921918f938b01d4525d8a7b7e8dff50b9990a496886db32354e2c4947`.

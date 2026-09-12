@@ -4,6 +4,16 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+`d84deb9`后已完成[受限CHONS高温平衡与论文条件池](research/tp-equilibrium-v1/REPORT.md)：最终VCS模块da382eea…14849c，187包文件/180模块非editable安装全等，20正式安装回归0.100s通过。原Gibbs首点五元素失败原样保留；新显式VCS四点1000/1000异初猜/800/1200全部原门通过，独审81组+608物性比较，最大末态元素残差3.76910e−16mol、双初猜最大物种差3.57909e−11mol。exec88172终态0回收，驱动17.58784725s、监督22.660594208s，1218运行前后输入相同。VCS传入rtol不被TP实现消费，内置tol与请求值分列；原外部门未变。
+
+同阶段Cedrone报告基准的0.704kg CHONS池已唯一800K/1bar运行通过：exec62632终态0回收，solve4.750353791s、driver4.813073958s、监督9.901485750s，1228运行前后输入相同；独审29组+152物性比较通过。模型质量残差1.025449881e−16kg、石墨21.715153895mol/.260820713435kg，不是char产率或完整污泥热耗。运行后公开README增加报告链接，其原字节和审计01/02差异保留；source/src/installed未改。198成员9,049,035B证据压缩2,208,635B，逐项重开核验；原NASA PDF在忽略缓存。当前无运行中native，低温环境未更新。
+
+下一具体物理步为同池有限外加O2/N2比较：/private/tmp/sludge-tp-equilibrium-v1/finite-oxygen-design已有只读Fraction设计，D=bC+bH/4+bS−bO/2=36.5225395092mol作为CO2/H2O/SO2/N2的计量对照；21/79是虚拟混合选择，λ0复用已保存源池，拟λ1/4与1两个新点、恒800K/1bar、原全部门。尚未执行这两个点，不能以计量向量冒充平衡或强制石墨消失。下一恢复先审小算术设计，再薄驱动/独审/唯一监督运行，不重跑已过5个VCS点。完整§11未完成，Goal面板最近paused，不标complete。
+
+`d84deb9`之后正在推进受限CHONS高温TP平衡。官方Cantera3.2.0/NASA来源、18气体+纯石墨、显式1bar派生标准态和独立NASA7三温点数学参考已核；最终候选02模块SHA8f051abe…ce964f已独审，187包文件/180模块非editable安装一致，15正式安装测试通过0.102s。两个快照边界及薄driver两个保存/计时边界均有原RED与有限GREEN，不声称发生过旧native物性错误。唯一原生`root-execution/native01`已终止：exec99576退出1回收，监督9.884995792s，1218输入前后不变；首1000K/element_basis求解正常返回、source properties与G条件通过，但五元素残差超过原门，状态postcheck_failed，后3个点未启动。原4点计划保持失败，正在只读诊断Gibbs约束漂移，不能重试覆盖/裁库存/放宽门或把此单点称完整验收。scratch=/private/tmp/sludge-tp-equilibrium-v1，低温旧环境不改。
+
+同阶段已新增[论文报告基准的条件元素池](../../data/sandbox/research/cedrone2024-element-pool-v1/README.md)：Cedrone原文p4/p8 Table4独立目视核对，C/H/O/N/S合计0.704kg/1kg报告样品；O为差减、严格干湿基未知，灰/Cl/Br外置及0.0035kg打印闭合差保留，不重复加残水。公开JSON与原提案科学字段一致；800K与TG对照条件说明和薄源池执行脚本正在准备，须等待受限virtual系列真正通过，尚未运行源池。完整§11未完成，Goal面板最近paused，不标complete。
+
 `5cd7479`后完成[两格平衡排湿中文CLI](research/arlabosse-equilibrium-drying-cli-v1/REPORT.md)：examples/sandbox/run_equilibrium_drying.py以必需source-root/output及steps1/2/4运行固定1s，物理/初态原常量不改。作者9项非EOS及唯一资源守卫修复回归通过，代码/薄监督独审通过。唯一真实入口生成36,984,272 B完整JSON、监督49.296135s、exec64431终态0回收；保存独审19组通过，八个完整物理对象与原单步相同，仅3处执行耗时不同，2795输入和186/179安装冻结一致。31成员38,271,968 B原记录压缩2,063,340 B并重开逐项核验。当前无运行中原生轨迹。下一具体物理任务为sludge-tp-equilibrium-v1：官方Cantera/NASA限定CHONS+凝聚碳产品TP平衡，来源与最小设计正在核对；标准态不能混淆1bar与缺省1atm。不改低温安装/既有输入，不以缺动力学为理由停止所有高温组成计算。原§11未完成，Goal面板最近paused，不标complete。
 
 `62ddf31`后完成[Cedrone联合观测推导](research/cedrone2024-joint-thermal-v1/joint-observable/JOINT_OBSERVABLE_DESIGN.md)：TG/DSC起温25/50°C、各自初始质量及气流差异保持；5个TG区间精确净失重/平均变化率和500°C负Cp捷径诊断已实际派生，ROOT按公开锚点复算7组关系通过。原稿与公开数据仅来源路径/SHA映射不同，不增加锚点/拟合或高温RHS。[Hossain2009同一文献取得核查](research/sludge-products-thermal-2009-v1/REVIEW.md)未取得合法全文，708/730/1180kJ/kg仅摘要过程需热线索，不准入反应焓；访问/开放版本登记已保存。下一高温方向为明确CHONS元素子系统的固定TP限定产物平衡，正在核官方热化学/相集与最小实现，不否定该无需A/E的路径，也不授予原泥能量初态资格。两格中文CLI唯一真实执行已完成、49.296135s监督退出0、exec64431回收，保存比对独审正在进行。原§11未完成。

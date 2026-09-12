@@ -1,5 +1,26 @@
 # 沙盒统一入口
 
+## 高温CHONS平衡示例
+
+安装项目的`equilibrium` extra后，从仓库根目录运行：
+
+```sh
+python -I examples/sandbox/run_tp_equilibrium.py --source-root . \
+  --output /tmp/new-tp-result.json --temperature-k 1000 --solver vcs \
+  --carbon-mol 1 --hydrogen-mol 1.6 --oxygen-mol .6 \
+  --nitrogen-mol .1 --sulfur-mol .01 --basis-id virtual_CHONS_C1_mol
+```
+
+五个输入是mol原子，必须显式给出；这个例子不是1 kg真实原料。温域800–1200 K、
+固定100000 Pa、18种气体及纯石墨，输出包含完整来源、库存和名义数值检查。
+文件须不存在，失败返回非零并保存已经返回的数据。`vcs`是默认显式算法；
+`gibbs`保留用于研究，原试验的元素守恒失败没有删除。没有自动算法回退。
+
+[实际四点与论文条件池结果](research/tp-equilibrium-v1/REPORT.md)及
+[来源包](../../data/sandbox/research/tp-equilibrium-v1/README.md)可追查物性和
+标准态处理。请求rtol不等于VCS实际原生容差，结果中分别记录，外部检查仍强制。
+此独立示例没有接入动态`run/replay/resume`协议，不具有材料产率或完整烧成资格。
+
 ## 两格平衡排湿示例
 
 使用下文说明的已验证安装环境及本地原件缓存，从仓库根目录运行：

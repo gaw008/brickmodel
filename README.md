@@ -14,6 +14,8 @@
 
 [Cedrone 2024 原污泥 TG/DSC 数据](data/sandbox/research/cedrone2024-joint-thermal-v1/README.md)提供有许可的原图、12 个有限锚点及实际复现脚本。11 个点可读、1 个保留未知；读图包围与实验误差分开记录，含水吸热峰不直接作为化学反应焓。
 
+[高温CHONS平衡模块](docs/sandbox/research/tp-equilibrium-v1/REPORT.md)已通过四个虚拟池案例，并实际接入Cedrone论文的条件元素池。采用可追查的NASA7气体/石墨物性和显式VCS求解，保留原Gibbs算法的元素守恒失败；结果限于800–1200 K、1 bar的终态组成，灰分矿物、动力学及完整烧成热耗仍未闭合。
+
 | 模块 | 内容 | 状态 |
 | --- | --- | --- |
 | [公开材料研究](experiments/material_design_v2/artifacts/DIRECTION_REPORT.md) | DTU 污泥焚烧灰数据重算、基料依赖、吸水与收缩折衷 | 独立审核通过，仅 Stage1 研究 |
