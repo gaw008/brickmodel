@@ -1,0 +1,60 @@
+................................F...                                     [100%]
+=================================== FAILURES ===================================
+_________ test_trace_and_json_record_include_only_actual_dependencies __________
+
+model = ArlabosseDesorption95(source_path=PosixPath('/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/arlabosse95/source.json'), repository_root=PosixPath('/Users/wanggaoying/Desktop/brickmodel-github'))
+
+    def test_trace_and_json_record_include_only_actual_dependencies(model):
+        point = model.at_moisture(.15, temperature=Decimal('368.15'), unit='K')
+        record = point.to_record()
+        assert record['activity']['value']['numerator'] == '1941'
+        assert json.loads(json.dumps(record)) == record
+>       trace = EvidenceRegistry.from_dict(model.registry_payload()).trace(MU_NODE_ID)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_arlabosse_desorption95.py:90: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/evidence.py:130: in from_dict
+    return cls(payload)
+           ^^^^^^^^^^^^
+src/sludge_sandbox/evidence.py:126: in __init__
+    self._validate()
+src/sludge_sandbox/evidence.py:181: in _validate
+    self._validate_node(node)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <sludge_sandbox.evidence.EvidenceRegistry object at 0x10945db50>
+node = {'applicability': {'rationale': 'Dynamic-method derived activity; relative chemical shift uses its own standard state....tor': 'Figure1,95degC', 'source_id': 'SRC_ARLABOSSE_2005_CONTACT_DRYING', 'support': 'data'}], 'dependencies': [], ...}
+
+    def _validate_node(self, node: dict) -> None:
+        kind, role = node.get("evidence_kind"), node.get("role")
+        _choice(kind, KINDS, "evidence kind")
+        _choice(role, ROLES, "role")
+        if kind == "virtual_design_choice" and role != "design_input":
+            raise EvidenceError("virtual_design_choice requires design_input role")
+        if kind == "numerical_policy" and role != "numerical_setting":
+            raise EvidenceError("numerical_policy requires numerical_setting role")
+        _text(node.get("basis"), "node.basis")
+        try:
+            require_unit(node.get("unit"))
+        except UnitError as exc:
+            raise EvidenceError(str(exc)) from exc
+        if "value" not in node or (kind == "unknown" and node["value"] is not None):
+            raise EvidenceError("Unknown values must be explicit null")
+        if role in ("physical_parameter", "design_input", "numerical_setting") and kind != "unknown":
+            _numeric_data(node["value"])
+        if role == "equation" and kind != "unknown":
+            _text(node["value"], "equation.value")
+        dependencies = node.get("dependencies")
+        if not isinstance(dependencies, list) or any(not isinstance(i, str) for i in dependencies):
+            raise EvidenceError("dependencies must be a list of ids")
+        if len(dependencies) != len(set(dependencies)):
+            raise EvidenceError("Duplicate dependency")
+        if kind == "derived_from_evidence" and not dependencies:
+>           raise EvidenceError("Derived node requires upstream dependencies")
+E           sludge_sandbox.evidence.EvidenceError: Derived node requires upstream dependencies
+
+src/sludge_sandbox/evidence.py:210: EvidenceError
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_arlabosse_desorption95.py::test_trace_and_json_record_include_only_actual_dependencies
+1 failed, 35 passed in 0.25s

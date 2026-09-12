@@ -2,6 +2,9 @@
 
 ## 当前新增能力及边界
 
+- [保存来源运行视图](research/source-view-v1/REPORT.md)：标准来源包的Python/CLI/中文只读查看、原索引/失败/精确时钟、来源文本与规范报告导出；不执行物理、不授予恢复权限或材料资格。
+
+- [Arlabosse95°C离散解吸物性](research/arlabosse95/README.md)：同论文原污泥9个含水率节点的活动度、6个总解吸热及相对摩尔化学势可由Python/CLI查询和追查。3项遮挡热量保持unknown；明确干基含水率和J/kg移除水/J/mol水的区别。原图像素范围与数值误差分列，实验不确定性未知。只在95°C及已提取节点；不提供连续插值、路径热量、动力学、绝对水参考或湿储能准入。
 - [对称自由平板热弹性](research/cooling-stress-v1/REPORT.md)：常系数、参考几何、小应变、零膜力，已实现热应力及能量/熵双向反馈；两格解析松弛与外冷却通过限定数值门。[cooling-spatial-v1](research/cooling-spatial-v1/REPORT.md)在固定平滑绝热问题取得16/32/64格二阶证据；[原生能量宿主](research/cooling-energy-host-v1/REPORT.md)已实现全局E反演和实际接受热/局部功账，V2两档通过原门，V1时钟失败保留。参数仍制造分类，固定mol库存仅记账，不授予真实组成、厚度收缩/强度/开裂或相变资格；极端不可解域明确拒绝。
 - [Nowicki预制污泥焦](research/nowicki2011-oxygen-interpolation-v1/REPORT.md)：450–550°C、固定10vol.%O2/Ar、原制焦条件下的alpha_plot=0.1–0.8达时插值可由Python/CLI追查到原表/式；500°C实际图示对照存在偏差。没有质量库存、有限氧、反应热、砖内焦或全流程资格。
 - [USGS纯方解石反应热化学](research/calcite-thermochemistry-v1/IMPLEMENTATION.md)：298.15–1200K同参考Cp/形成焓和指定进度的质量/元素账；不预测实际分解速率、高温体积或MIA3矿物库存。

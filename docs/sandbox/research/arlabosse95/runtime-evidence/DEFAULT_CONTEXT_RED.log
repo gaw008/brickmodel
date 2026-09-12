@@ -1,0 +1,46 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______________ test_decimal_default_context_cannot_change_result _______________
+
+model = ArlabosseDesorption95(source_path=PosixPath('/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/arlabosse95/source.json'), repository_root=PosixPath('/Users/wanggaoying/Desktop/brickmodel-github'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x102dfba70>
+
+    def test_decimal_default_context_cannot_change_result(model, monkeypatch):
+        from decimal import DefaultContext, ROUND_UP, Rounded
+        expected = model.at_moisture(.15, temperature=95, unit='degC')
+        monkeypatch.setattr(DefaultContext, 'rounding', ROUND_UP)
+        monkeypatch.setattr(DefaultContext, 'Emin', -1)
+        monkeypatch.setattr(DefaultContext, 'Emax', 1)
+        monkeypatch.setattr(DefaultContext, 'clamp', 1)
+        monkeypatch.setitem(DefaultContext.traps, Inexact, True)
+        monkeypatch.setitem(DefaultContext.traps, Rounded, True)
+>       assert model.at_moisture(.15, temperature=95, unit='degC') == expected
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_arlabosse_desorption95.py:114: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/arlabosse_desorption95.py:173: in at_moisture
+    nominal, lo, hi = _log_enclosure(aw.value)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+x = Fraction(1941, 3743)
+
+    def _log_enclosure(x: Fraction) -> tuple[Fraction, Fraction, Fraction]:
+        """Correctly rounded decimal logs bracketed before exact subtraction.
+    
+        Integer Decimal construction is exact. Each correctly rounded ln is within
+        its adjacent representable decimals; subtraction/product then use rational
+        arithmetic. No rounded division is performed on the source activity.
+        """
+        if x <= 0:
+            raise DesorptionError('positive_activity_required')
+        with localcontext(Context(prec=50)):
+>           a = Decimal(x.numerator).ln()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           decimal.Inexact: [<class 'decimal.Inexact'>, <class 'decimal.Rounded'>]
+
+src/sludge_sandbox/arlabosse_desorption95.py:61: Inexact
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_arlabosse_desorption95.py::test_decimal_default_context_cannot_change_result
+1 failed, 36 deselected in 0.06s

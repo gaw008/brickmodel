@@ -1,0 +1,369 @@
+FFFFFFFFFFF                                                              [100%]
+=================================== FAILURES ===================================
+__________ test_dag_byte_budget_refuses_before_large_json_allocation ___________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1089445c0>
+
+    def test_dag_byte_budget_refuses_before_large_json_allocation(monkeypatch):
+        from sludge_sandbox import source_run_view as view
+        graph = {'schema': 'source_run_raw_projection_v1', 'root': {'ref': 'root'}, 'nodes': {
+            'root': {'values': [{'ref': 'shared'} for _ in range(256)]},
+            'shared': {'fields': {'text': 'x'*65536}}}}
+        original = json.dumps
+        allocated = []
+        def measured(*args, **kwargs):
+            text = original(*args, **kwargs)
+            allocated.append(len(text.encode()))
+            return text
+        monkeypatch.setattr(view.json, 'dumps', measured)
+        with pytest.raises(ValueError, match='source_view_response_limit'):
+            view.project_builder_path(graph, ())
+>       assert max(allocated, default=0) <= view.MAX_RESPONSE_BYTES
+E       AssertionError: assert 16780800 <= 1048576
+E        +  where 16780800 = max([16780800], default=0)
+E        +  and   1048576 = <module 'sludge_sandbox.source_run_view' from '/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/source_run_view.py'>.MAX_RESPONSE_BYTES
+
+tests/sandbox/test_source_run_view.py:196: AssertionError
+_ test_browser_budget_counts_keys_escaping_utf8_and_large_scalar_before_encoding[value0] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109acfb00>
+value = {'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00': 'small'}
+
+    @pytest.mark.parametrize('value', [ {'\x00'*40: 'small'}, {'text': '\n'*80}, ['é'*40]*3,
+                                        {'numerator': 10**1000, 'denominator': 1} ])
+    def test_browser_budget_counts_keys_escaping_utf8_and_large_scalar_before_encoding(monkeypatch, value):
+        from sludge_sandbox import source_run_view as view
+        monkeypatch.setattr(view, 'MAX_RESPONSE_BYTES', 128)
+        original = json.dumps
+        allocated = []
+        def measured(*args, **kwargs):
+            text = original(*args, **kwargs)
+            allocated.append(len(text.encode()))
+            return text
+        monkeypatch.setattr(view.json, 'dumps', measured)
+        with pytest.raises(ValueError, match='source_view_response_limit'):
+            view.browser_value(value)
+>       assert max(allocated, default=0) <= 128
+E       assert 253 <= 128
+E        +  where 253 = max([253], default=0)
+
+tests/sandbox/test_source_run_view.py:213: AssertionError
+_ test_browser_budget_counts_keys_escaping_utf8_and_large_scalar_before_encoding[value1] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109acfb60>
+value = {'text': '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'}
+
+    @pytest.mark.parametrize('value', [ {'\x00'*40: 'small'}, {'text': '\n'*80}, ['é'*40]*3,
+                                        {'numerator': 10**1000, 'denominator': 1} ])
+    def test_browser_budget_counts_keys_escaping_utf8_and_large_scalar_before_encoding(monkeypatch, value):
+        from sludge_sandbox import source_run_view as view
+        monkeypatch.setattr(view, 'MAX_RESPONSE_BYTES', 128)
+        original = json.dumps
+        allocated = []
+        def measured(*args, **kwargs):
+            text = original(*args, **kwargs)
+            allocated.append(len(text.encode()))
+            return text
+        monkeypatch.setattr(view.json, 'dumps', measured)
+        with pytest.raises(ValueError, match='source_view_response_limit'):
+            view.browser_value(value)
+>       assert max(allocated, default=0) <= 128
+E       assert 172 <= 128
+E        +  where 172 = max([172], default=0)
+
+tests/sandbox/test_source_run_view.py:213: AssertionError
+_ test_browser_budget_counts_keys_escaping_utf8_and_large_scalar_before_encoding[value2] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109b7c740>
+value = ['éééééééééééééééééééééééééééééééééééééééé', 'éééééééééééééééééééééééééééééééééééééééé', 'éééééééééééééééééééééééééééééééééééééééé']
+
+    @pytest.mark.parametrize('value', [ {'\x00'*40: 'small'}, {'text': '\n'*80}, ['é'*40]*3,
+                                        {'numerator': 10**1000, 'denominator': 1} ])
+    def test_browser_budget_counts_keys_escaping_utf8_and_large_scalar_before_encoding(monkeypatch, value):
+        from sludge_sandbox import source_run_view as view
+        monkeypatch.setattr(view, 'MAX_RESPONSE_BYTES', 128)
+        original = json.dumps
+        allocated = []
+        def measured(*args, **kwargs):
+            text = original(*args, **kwargs)
+            allocated.append(len(text.encode()))
+            return text
+        monkeypatch.setattr(view.json, 'dumps', measured)
+        with pytest.raises(ValueError, match='source_view_response_limit'):
+            view.browser_value(value)
+>       assert max(allocated, default=0) <= 128
+E       assert 252 <= 128
+E        +  where 252 = max([252], default=0)
+
+tests/sandbox/test_source_run_view.py:213: AssertionError
+_ test_browser_budget_counts_keys_escaping_utf8_and_large_scalar_before_encoding[value3] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109b7cb00>
+value = {'denominator': 1, 'numerator': 100000000000000000...0000000000000000000}
+
+    @pytest.mark.parametrize('value', [ {'\x00'*40: 'small'}, {'text': '\n'*80}, ['é'*40]*3,
+                                        {'numerator': 10**1000, 'denominator': 1} ])
+    def test_browser_budget_counts_keys_escaping_utf8_and_large_scalar_before_encoding(monkeypatch, value):
+        from sludge_sandbox import source_run_view as view
+        monkeypatch.setattr(view, 'MAX_RESPONSE_BYTES', 128)
+        original = json.dumps
+        allocated = []
+        def measured(*args, **kwargs):
+            text = original(*args, **kwargs)
+            allocated.append(len(text.encode()))
+            return text
+        monkeypatch.setattr(view.json, 'dumps', measured)
+        with pytest.raises(ValueError, match='source_view_response_limit'):
+            view.browser_value(value)
+>       assert max(allocated, default=0) <= 128
+E       assert 1038 <= 128
+E        +  where 1038 = max([1038], default=0)
+
+tests/sandbox/test_source_run_view.py:213: AssertionError
+___________ test_malformed_projection_is_controlled_run_error[node0] ___________
+
+node = {'fields': []}
+
+    @pytest.mark.parametrize('node', [{'fields': []}, {'fields': 7}, {'values': {}}, {'fraction': [1]},
+                                     {'fraction': '1/3'}, {'binary64': []}])
+    def test_malformed_projection_is_controlled_run_error(node):
+        from sludge_sandbox.source_run_view import project_builder_path
+        from sludge_sandbox.run_service import RunError
+        graph = {'schema': 'source_run_raw_projection_v1', 'root': {'ref': '0'}, 'nodes': {'0': node}}
+        with pytest.raises(RunError, match='source_view_projection'):
+>           project_builder_path(graph, ())
+
+tests/sandbox/test_source_run_view.py:223: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_run_view.py:164: in project_builder_path
+    return browser_value(expand(value, set()))
+                         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+item = {'fields': []}, active = {'0'}, depth = 0
+
+    def expand(item, active, depth=0):
+        nonlocal visits
+        visits += 1
+        _require(visits <= 10000 and depth <= 48, 'source_view_projection_expansion_limit')
+        item, identifier = unwrap(item)
+        if identifier is not None:
+            _require(identifier not in active, 'source_view_projection_cycle')
+            active = active | {identifier}
+        if item is None or type(item) in (str, int, bool):
+            return item
+        _require(type(item) is dict, 'source_view_projection_unsupported_value')
+        if set(item) == {'binary64'}:
+            value = float.fromhex(item['binary64'])
+            _require(math.isfinite(value), 'source_view_projection_nonfinite')
+            return value
+        if set(item) == {'fraction'}:
+            a, b = item['fraction']
+            _require(type(a) is int and type(b) is int and b != 0, 'source_view_projection_fraction')
+            return {'numerator': str(a), 'denominator': str(b)}
+        if 'fields' in item:
+>           return {key: expand(child, active, depth+1) for key, child in item['fields'].items()}
+                                                                          ^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'list' object has no attribute 'items'
+
+src/sludge_sandbox/source_run_view.py:160: AttributeError
+___________ test_malformed_projection_is_controlled_run_error[node1] ___________
+
+node = {'fields': 7}
+
+    @pytest.mark.parametrize('node', [{'fields': []}, {'fields': 7}, {'values': {}}, {'fraction': [1]},
+                                     {'fraction': '1/3'}, {'binary64': []}])
+    def test_malformed_projection_is_controlled_run_error(node):
+        from sludge_sandbox.source_run_view import project_builder_path
+        from sludge_sandbox.run_service import RunError
+        graph = {'schema': 'source_run_raw_projection_v1', 'root': {'ref': '0'}, 'nodes': {'0': node}}
+        with pytest.raises(RunError, match='source_view_projection'):
+>           project_builder_path(graph, ())
+
+tests/sandbox/test_source_run_view.py:223: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_run_view.py:164: in project_builder_path
+    return browser_value(expand(value, set()))
+                         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+item = {'fields': 7}, active = {'0'}, depth = 0
+
+    def expand(item, active, depth=0):
+        nonlocal visits
+        visits += 1
+        _require(visits <= 10000 and depth <= 48, 'source_view_projection_expansion_limit')
+        item, identifier = unwrap(item)
+        if identifier is not None:
+            _require(identifier not in active, 'source_view_projection_cycle')
+            active = active | {identifier}
+        if item is None or type(item) in (str, int, bool):
+            return item
+        _require(type(item) is dict, 'source_view_projection_unsupported_value')
+        if set(item) == {'binary64'}:
+            value = float.fromhex(item['binary64'])
+            _require(math.isfinite(value), 'source_view_projection_nonfinite')
+            return value
+        if set(item) == {'fraction'}:
+            a, b = item['fraction']
+            _require(type(a) is int and type(b) is int and b != 0, 'source_view_projection_fraction')
+            return {'numerator': str(a), 'denominator': str(b)}
+        if 'fields' in item:
+>           return {key: expand(child, active, depth+1) for key, child in item['fields'].items()}
+                                                                          ^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'int' object has no attribute 'items'
+
+src/sludge_sandbox/source_run_view.py:160: AttributeError
+___________ test_malformed_projection_is_controlled_run_error[node2] ___________
+
+node = {'values': {}}
+
+    @pytest.mark.parametrize('node', [{'fields': []}, {'fields': 7}, {'values': {}}, {'fraction': [1]},
+                                     {'fraction': '1/3'}, {'binary64': []}])
+    def test_malformed_projection_is_controlled_run_error(node):
+        from sludge_sandbox.source_run_view import project_builder_path
+        from sludge_sandbox.run_service import RunError
+        graph = {'schema': 'source_run_raw_projection_v1', 'root': {'ref': '0'}, 'nodes': {'0': node}}
+>       with pytest.raises(RunError, match='source_view_projection'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'sludge_sandbox.run_service.RunError'>
+
+tests/sandbox/test_source_run_view.py:222: Failed
+___________ test_malformed_projection_is_controlled_run_error[node3] ___________
+
+node = {'fraction': [1]}
+
+    @pytest.mark.parametrize('node', [{'fields': []}, {'fields': 7}, {'values': {}}, {'fraction': [1]},
+                                     {'fraction': '1/3'}, {'binary64': []}])
+    def test_malformed_projection_is_controlled_run_error(node):
+        from sludge_sandbox.source_run_view import project_builder_path
+        from sludge_sandbox.run_service import RunError
+        graph = {'schema': 'source_run_raw_projection_v1', 'root': {'ref': '0'}, 'nodes': {'0': node}}
+        with pytest.raises(RunError, match='source_view_projection'):
+>           project_builder_path(graph, ())
+
+tests/sandbox/test_source_run_view.py:223: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_run_view.py:164: in project_builder_path
+    return browser_value(expand(value, set()))
+                         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+item = {'fraction': [1]}, active = {'0'}, depth = 0
+
+    def expand(item, active, depth=0):
+        nonlocal visits
+        visits += 1
+        _require(visits <= 10000 and depth <= 48, 'source_view_projection_expansion_limit')
+        item, identifier = unwrap(item)
+        if identifier is not None:
+            _require(identifier not in active, 'source_view_projection_cycle')
+            active = active | {identifier}
+        if item is None or type(item) in (str, int, bool):
+            return item
+        _require(type(item) is dict, 'source_view_projection_unsupported_value')
+        if set(item) == {'binary64'}:
+            value = float.fromhex(item['binary64'])
+            _require(math.isfinite(value), 'source_view_projection_nonfinite')
+            return value
+        if set(item) == {'fraction'}:
+>           a, b = item['fraction']
+            ^^^^
+E           ValueError: not enough values to unpack (expected 2, got 1)
+
+src/sludge_sandbox/source_run_view.py:156: ValueError
+___________ test_malformed_projection_is_controlled_run_error[node4] ___________
+
+node = {'fraction': '1/3'}
+
+    @pytest.mark.parametrize('node', [{'fields': []}, {'fields': 7}, {'values': {}}, {'fraction': [1]},
+                                     {'fraction': '1/3'}, {'binary64': []}])
+    def test_malformed_projection_is_controlled_run_error(node):
+        from sludge_sandbox.source_run_view import project_builder_path
+        from sludge_sandbox.run_service import RunError
+        graph = {'schema': 'source_run_raw_projection_v1', 'root': {'ref': '0'}, 'nodes': {'0': node}}
+        with pytest.raises(RunError, match='source_view_projection'):
+>           project_builder_path(graph, ())
+
+tests/sandbox/test_source_run_view.py:223: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_run_view.py:164: in project_builder_path
+    return browser_value(expand(value, set()))
+                         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+item = {'fraction': '1/3'}, active = {'0'}, depth = 0
+
+    def expand(item, active, depth=0):
+        nonlocal visits
+        visits += 1
+        _require(visits <= 10000 and depth <= 48, 'source_view_projection_expansion_limit')
+        item, identifier = unwrap(item)
+        if identifier is not None:
+            _require(identifier not in active, 'source_view_projection_cycle')
+            active = active | {identifier}
+        if item is None or type(item) in (str, int, bool):
+            return item
+        _require(type(item) is dict, 'source_view_projection_unsupported_value')
+        if set(item) == {'binary64'}:
+            value = float.fromhex(item['binary64'])
+            _require(math.isfinite(value), 'source_view_projection_nonfinite')
+            return value
+        if set(item) == {'fraction'}:
+>           a, b = item['fraction']
+            ^^^^
+E           ValueError: too many values to unpack (expected 2)
+
+src/sludge_sandbox/source_run_view.py:156: ValueError
+___________ test_malformed_projection_is_controlled_run_error[node5] ___________
+
+node = {'binary64': []}
+
+    @pytest.mark.parametrize('node', [{'fields': []}, {'fields': 7}, {'values': {}}, {'fraction': [1]},
+                                     {'fraction': '1/3'}, {'binary64': []}])
+    def test_malformed_projection_is_controlled_run_error(node):
+        from sludge_sandbox.source_run_view import project_builder_path
+        from sludge_sandbox.run_service import RunError
+        graph = {'schema': 'source_run_raw_projection_v1', 'root': {'ref': '0'}, 'nodes': {'0': node}}
+        with pytest.raises(RunError, match='source_view_projection'):
+>           project_builder_path(graph, ())
+
+tests/sandbox/test_source_run_view.py:223: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_run_view.py:164: in project_builder_path
+    return browser_value(expand(value, set()))
+                         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+item = {'binary64': []}, active = {'0'}, depth = 0
+
+    def expand(item, active, depth=0):
+        nonlocal visits
+        visits += 1
+        _require(visits <= 10000 and depth <= 48, 'source_view_projection_expansion_limit')
+        item, identifier = unwrap(item)
+        if identifier is not None:
+            _require(identifier not in active, 'source_view_projection_cycle')
+            active = active | {identifier}
+        if item is None or type(item) in (str, int, bool):
+            return item
+        _require(type(item) is dict, 'source_view_projection_unsupported_value')
+        if set(item) == {'binary64'}:
+>           value = float.fromhex(item['binary64'])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           TypeError: bad argument type for built-in operation
+
+src/sludge_sandbox/source_run_view.py:152: TypeError
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_source_run_view.py::test_dag_byte_budget_refuses_before_large_json_allocation
+FAILED tests/sandbox/test_source_run_view.py::test_browser_budget_counts_keys_escaping_utf8_and_large_scalar_before_encoding[value0]
+FAILED tests/sandbox/test_source_run_view.py::test_browser_budget_counts_keys_escaping_utf8_and_large_scalar_before_encoding[value1]
+FAILED tests/sandbox/test_source_run_view.py::test_browser_budget_counts_keys_escaping_utf8_and_large_scalar_before_encoding[value2]
+FAILED tests/sandbox/test_source_run_view.py::test_browser_budget_counts_keys_escaping_utf8_and_large_scalar_before_encoding[value3]
+FAILED tests/sandbox/test_source_run_view.py::test_malformed_projection_is_controlled_run_error[node0]
+FAILED tests/sandbox/test_source_run_view.py::test_malformed_projection_is_controlled_run_error[node1]
+FAILED tests/sandbox/test_source_run_view.py::test_malformed_projection_is_controlled_run_error[node2]
+FAILED tests/sandbox/test_source_run_view.py::test_malformed_projection_is_controlled_run_error[node3]
+FAILED tests/sandbox/test_source_run_view.py::test_malformed_projection_is_controlled_run_error[node4]
+FAILED tests/sandbox/test_source_run_view.py::test_malformed_projection_is_controlled_run_error[node5]
+11 failed, 17 deselected in 0.36s

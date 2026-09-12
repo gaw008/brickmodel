@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="4" time="0.464" timestamp="2026-09-12T05:46:48.345054-07:00" hostname="Ws-MacBook-Pro.local"><testcase classname="test_independent_boundaries" name="test_read_only_manager_cannot_cancel_an_existing_persisted_job" time="0.016"><failure message="Failed: DID NOT RAISE &lt;class 'sludge_sandbox.local_app.LocalAppError'&gt;">tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-398/test_read_only_manager_cannot_0')
+
+    def test_read_only_manager_cannot_cancel_an_existing_persisted_job(tmp_path):
+        manager=app.JobManager(case_path=None,water_directory=None,evidence_directory=None,
+            storage_directory=tmp_path/'storage',maximum_jobs=2,view_source_run=tmp_path/'unused-mount')
+        identifier=str(uuid.uuid4())
+        directory=manager.jobs_directory/identifier
+        directory.mkdir()
+        (directory/'job.json').write_text(json.dumps({'schema':'sandbox_job_v1','job_id':identifier,'operation':'source-run'}))
+        try:
+&gt;           with pytest.raises(app.LocalAppError):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE &lt;class 'sludge_sandbox.local_app.LocalAppError'&gt;
+
+/private/tmp/source-view-v1/python-code-review/test_independent_boundaries.py:22: Failed</failure></testcase><testcase classname="test_independent_boundaries" name="test_response_budget_stops_before_serializing_repeated_large_text" time="0.001"><failure message="Failed: whole amplified DAG reached JSON serialization before response budget">def test_response_budget_stops_before_serializing_repeated_large_text():
+        graph={'schema':'source_run_raw_projection_v1','root':{'ref':'root'},'nodes':{
+            'root':{'values':[{'ref':'shared'} for _ in range(256)]},
+            'shared':{'fields':{'text':'x'*65536}}}}
+        real=json.dumps
+        def bounded_dumps(value,*args,**kwargs):
+            # Fixture list is 16 MiB if encoded whole; leaf serialization is fine.
+            if type(value) is list and len(value)==256:
+                pytest.fail('whole amplified DAG reached JSON serialization before response budget')
+            return real(value,*args,**kwargs)
+        with patch.object(view.json,'dumps',bounded_dumps):
+            with pytest.raises(ValueError):
+&gt;               view.project_builder_path(graph,())
+
+/private/tmp/source-view-v1/python-code-review/test_independent_boundaries.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_run_view.py:164: in project_builder_path
+    return browser_value(expand(value, set()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_run_view.py:52: in browser_value
+    _require(len(json.dumps(result, ensure_ascii=False, allow_nan=False).encode()) &lt;= MAX_RESPONSE_BYTES,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = [{'text': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'}, ...]
+args = (), kwargs = {'allow_nan': False, 'ensure_ascii': False}
+
+    def bounded_dumps(value,*args,**kwargs):
+        # Fixture list is 16 MiB if encoded whole; leaf serialization is fine.
+        if type(value) is list and len(value)==256:
+&gt;           pytest.fail('whole amplified DAG reached JSON serialization before response budget')
+E           Failed: whole amplified DAG reached JSON serialization before response budget
+
+/private/tmp/source-view-v1/python-code-review/test_independent_boundaries.py:37: Failed</failure></testcase><testcase classname="test_independent_boundaries" name="test_malformed_builder_cell_is_a_controlled_data_error" time="0.000"><failure message="AttributeError: 'list' object has no attribute 'items'">def test_malformed_builder_cell_is_a_controlled_data_error():
+        graph={'schema':'source_run_raw_projection_v1','root':{'ref':'r'},'nodes':{'r':{'fields':[]}}}
+        with pytest.raises(ValueError):
+&gt;           view.project_builder_path(graph,())
+
+/private/tmp/source-view-v1/python-code-review/test_independent_boundaries.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_run_view.py:164: in project_builder_path
+    return browser_value(expand(value, set()))
+                         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+item = {'fields': []}, active = {'r'}, depth = 0
+
+    def expand(item, active, depth=0):
+        nonlocal visits
+        visits += 1
+        _require(visits &lt;= 10000 and depth &lt;= 48, 'source_view_projection_expansion_limit')
+        item, identifier = unwrap(item)
+        if identifier is not None:
+            _require(identifier not in active, 'source_view_projection_cycle')
+            active = active | {identifier}
+        if item is None or type(item) in (str, int, bool):
+            return item
+        _require(type(item) is dict, 'source_view_projection_unsupported_value')
+        if set(item) == {'binary64'}:
+            value = float.fromhex(item['binary64'])
+            _require(math.isfinite(value), 'source_view_projection_nonfinite')
+            return value
+        if set(item) == {'fraction'}:
+            a, b = item['fraction']
+            _require(type(a) is int and type(b) is int and b != 0, 'source_view_projection_fraction')
+            return {'numerator': str(a), 'denominator': str(b)}
+        if 'fields' in item:
+&gt;           return {key: expand(child, active, depth+1) for key, child in item['fields'].items()}
+                                                                          ^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'list' object has no attribute 'items'
+
+src/sludge_sandbox/source_run_view.py:160: AttributeError</failure></testcase><testcase classname="test_independent_boundaries" name="test_replaced_asset_bytes_after_complete_verification_are_not_returned" time="0.206" /></testsuite></testsuites>

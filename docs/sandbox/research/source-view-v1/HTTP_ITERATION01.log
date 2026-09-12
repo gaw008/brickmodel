@@ -1,0 +1,676 @@
+EEEEEEEEEEEEEE......................                                     [100%]
+==================================== ERRORS ====================================
+_______ ERROR at setup of test_view_only_startup_needs_no_case_or_water ________
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-387/test_view_only_startup_needs_n0')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+19, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:369: in import_saved_source_study
+    return decode_source_study(encode_source_study(roots,contexts=tuple(contexts),captures=captures,
+src/sludge_sandbox/source_study_record.py:311: in encode_source_study
+    decode_source_study(raw,expected_contexts=contexts)
+src/sludge_sandbox/source_study_record.py:337: in decode_source_study
+    observations,audit=audit_study(roots,contexts,captures,metadata)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_audit.py:753: in audit_study
+    require(evaluation is not None,'source_study_capture_missing_failure')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_capture_missing_failure'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_capture_missing_failure
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+_______ ERROR at setup of test_http_export_and_asset_retain_source_bytes _______
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-387/test_http_export_and_asset_ret0')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+19, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:369: in import_saved_source_study
+    return decode_source_study(encode_source_study(roots,contexts=tuple(contexts),captures=captures,
+src/sludge_sandbox/source_study_record.py:311: in encode_source_study
+    decode_source_study(raw,expected_contexts=contexts)
+src/sludge_sandbox/source_study_record.py:337: in decode_source_study
+    observations,audit=audit_study(roots,contexts,captures,metadata)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_audit.py:753: in audit_study
+    require(evaluation is not None,'source_study_capture_missing_failure')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_capture_missing_failure'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_capture_missing_failure
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+_ ERROR at setup of test_browser_cannot_supply_paths_or_unbounded_selectors[/api/source-run?path=/etc/passwd] _
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-387/test_browser_cannot_supply_pat0')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+19, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:369: in import_saved_source_study
+    return decode_source_study(encode_source_study(roots,contexts=tuple(contexts),captures=captures,
+src/sludge_sandbox/source_study_record.py:311: in encode_source_study
+    decode_source_study(raw,expected_contexts=contexts)
+src/sludge_sandbox/source_study_record.py:337: in decode_source_study
+    observations,audit=audit_study(roots,contexts,captures,metadata)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_audit.py:753: in audit_study
+    require(evaluation is not None,'source_study_capture_missing_failure')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_capture_missing_failure'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_capture_missing_failure
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+_ ERROR at setup of test_browser_cannot_supply_paths_or_unbounded_selectors[/api/source-run/asset?path=../../case.json] _
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-387/test_browser_cannot_supply_pat1')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+19, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:369: in import_saved_source_study
+    return decode_source_study(encode_source_study(roots,contexts=tuple(contexts),captures=captures,
+src/sludge_sandbox/source_study_record.py:311: in encode_source_study
+    decode_source_study(raw,expected_contexts=contexts)
+src/sludge_sandbox/source_study_record.py:337: in decode_source_study
+    observations,audit=audit_study(roots,contexts,captures,metadata)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_audit.py:753: in audit_study
+    require(evaluation is not None,'source_study_capture_missing_failure')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_capture_missing_failure'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_capture_missing_failure
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+_ ERROR at setup of test_browser_cannot_supply_paths_or_unbounded_selectors[/api/source-run/asset?id=../case.json] _
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-387/test_browser_cannot_supply_pat2')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+19, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:369: in import_saved_source_study
+    return decode_source_study(encode_source_study(roots,contexts=tuple(contexts),captures=captures,
+src/sludge_sandbox/source_study_record.py:311: in encode_source_study
+    decode_source_study(raw,expected_contexts=contexts)
+src/sludge_sandbox/source_study_record.py:337: in decode_source_study
+    observations,audit=audit_study(roots,contexts,captures,metadata)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_audit.py:753: in audit_study
+    require(evaluation is not None,'source_study_capture_missing_failure')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_capture_missing_failure'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_capture_missing_failure
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+_ ERROR at setup of test_browser_cannot_supply_paths_or_unbounded_selectors[/api/source-run/study?capture_index=0&capture_index=1] _
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-387/test_browser_cannot_supply_pat3')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+19, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:369: in import_saved_source_study
+    return decode_source_study(encode_source_study(roots,contexts=tuple(contexts),captures=captures,
+src/sludge_sandbox/source_study_record.py:311: in encode_source_study
+    decode_source_study(raw,expected_contexts=contexts)
+src/sludge_sandbox/source_study_record.py:337: in decode_source_study
+    observations,audit=audit_study(roots,contexts,captures,metadata)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_audit.py:753: in audit_study
+    require(evaluation is not None,'source_study_capture_missing_failure')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_capture_missing_failure'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_capture_missing_failure
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+_ ERROR at setup of test_browser_cannot_supply_paths_or_unbounded_selectors[/api/source-run/study?limit=51] _
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-387/test_browser_cannot_supply_pat4')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+19, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:369: in import_saved_source_study
+    return decode_source_study(encode_source_study(roots,contexts=tuple(contexts),captures=captures,
+src/sludge_sandbox/source_study_record.py:311: in encode_source_study
+    decode_source_study(raw,expected_contexts=contexts)
+src/sludge_sandbox/source_study_record.py:337: in decode_source_study
+    observations,audit=audit_study(roots,contexts,captures,metadata)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_audit.py:753: in audit_study
+    require(evaluation is not None,'source_study_capture_missing_failure')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_capture_missing_failure'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_capture_missing_failure
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+_ ERROR at setup of test_browser_cannot_supply_paths_or_unbounded_selectors[/api/source-run/study?cell=0] _
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-387/test_browser_cannot_supply_pat5')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+19, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:369: in import_saved_source_study
+    return decode_source_study(encode_source_study(roots,contexts=tuple(contexts),captures=captures,
+src/sludge_sandbox/source_study_record.py:311: in encode_source_study
+    decode_source_study(raw,expected_contexts=contexts)
+src/sludge_sandbox/source_study_record.py:337: in decode_source_study
+    observations,audit=audit_study(roots,contexts,captures,metadata)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_audit.py:753: in audit_study
+    require(evaluation is not None,'source_study_capture_missing_failure')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_capture_missing_failure'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_capture_missing_failure
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+_ ERROR at setup of test_browser_cannot_supply_paths_or_unbounded_selectors[/api/source-run/study?path=../../case.json] _
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-387/test_browser_cannot_supply_pat6')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+19, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:369: in import_saved_source_study
+    return decode_source_study(encode_source_study(roots,contexts=tuple(contexts),captures=captures,
+src/sludge_sandbox/source_study_record.py:311: in encode_source_study
+    decode_source_study(raw,expected_contexts=contexts)
+src/sludge_sandbox/source_study_record.py:337: in decode_source_study
+    observations,audit=audit_study(roots,contexts,captures,metadata)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_audit.py:753: in audit_study
+    require(evaluation is not None,'source_study_capture_missing_failure')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_capture_missing_failure'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_capture_missing_failure
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+_ ERROR at setup of test_browser_cannot_supply_paths_or_unbounded_selectors[/api/source-run/study?capture_index=-1] _
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-387/test_browser_cannot_supply_pat7')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+19, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:369: in import_saved_source_study
+    return decode_source_study(encode_source_study(roots,contexts=tuple(contexts),captures=captures,
+src/sludge_sandbox/source_study_record.py:311: in encode_source_study
+    decode_source_study(raw,expected_contexts=contexts)
+src/sludge_sandbox/source_study_record.py:337: in decode_source_study
+    observations,audit=audit_study(roots,contexts,captures,metadata)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_audit.py:753: in audit_study
+    require(evaluation is not None,'source_study_capture_missing_failure')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_capture_missing_failure'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_capture_missing_failure
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+_ ERROR at setup of test_browser_mutations_stay_unavailable_for_view_only_startup _
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-387/test_browser_mutations_stay_un0')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+19, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:369: in import_saved_source_study
+    return decode_source_study(encode_source_study(roots,contexts=tuple(contexts),captures=captures,
+src/sludge_sandbox/source_study_record.py:311: in encode_source_study
+    decode_source_study(raw,expected_contexts=contexts)
+src/sludge_sandbox/source_study_record.py:337: in decode_source_study
+    observations,audit=audit_study(roots,contexts,captures,metadata)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_audit.py:753: in audit_study
+    require(evaluation is not None,'source_study_capture_missing_failure')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_capture_missing_failure'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_capture_missing_failure
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+________ ERROR at setup of test_asset_tamper_is_visible_on_next_request ________
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-387/test_asset_tamper_is_visible_o0')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+19, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:369: in import_saved_source_study
+    return decode_source_study(encode_source_study(roots,contexts=tuple(contexts),captures=captures,
+src/sludge_sandbox/source_study_record.py:311: in encode_source_study
+    decode_source_study(raw,expected_contexts=contexts)
+src/sludge_sandbox/source_study_record.py:337: in decode_source_study
+    observations,audit=audit_study(roots,contexts,captures,metadata)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_audit.py:753: in audit_study
+    require(evaluation is not None,'source_study_capture_missing_failure')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_capture_missing_failure'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_capture_missing_failure
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+____ ERROR at setup of test_existing_case_gui_can_coexist_with_source_mount ____
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-387/test_existing_case_gui_can_coe0')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+19, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:369: in import_saved_source_study
+    return decode_source_study(encode_source_study(roots,contexts=tuple(contexts),captures=captures,
+src/sludge_sandbox/source_study_record.py:311: in encode_source_study
+    decode_source_study(raw,expected_contexts=contexts)
+src/sludge_sandbox/source_study_record.py:337: in decode_source_study
+    observations,audit=audit_study(roots,contexts,captures,metadata)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_audit.py:753: in audit_study
+    require(evaluation is not None,'source_study_capture_missing_failure')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_capture_missing_failure'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_capture_missing_failure
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+_ ERROR at setup of test_cli_view_only_startup_passes_trusted_mount_without_fake_inputs _
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-387/test_cli_view_only_startup_pas0')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+19, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:369: in import_saved_source_study
+    return decode_source_study(encode_source_study(roots,contexts=tuple(contexts),captures=captures,
+src/sludge_sandbox/source_study_record.py:311: in encode_source_study
+    decode_source_study(raw,expected_contexts=contexts)
+src/sludge_sandbox/source_study_record.py:337: in decode_source_study
+    observations,audit=audit_study(roots,contexts,captures,metadata)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_audit.py:753: in audit_study
+    require(evaluation is not None,'source_study_capture_missing_failure')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_capture_missing_failure'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_capture_missing_failure
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+=========================== short test summary info ============================
+ERROR tests/sandbox/test_source_run_view_http.py::test_view_only_startup_needs_no_case_or_water
+ERROR tests/sandbox/test_source_run_view_http.py::test_http_export_and_asset_retain_source_bytes
+ERROR tests/sandbox/test_source_run_view_http.py::test_browser_cannot_supply_paths_or_unbounded_selectors[/api/source-run?path=/etc/passwd]
+ERROR tests/sandbox/test_source_run_view_http.py::test_browser_cannot_supply_paths_or_unbounded_selectors[/api/source-run/asset?path=../../case.json]
+ERROR tests/sandbox/test_source_run_view_http.py::test_browser_cannot_supply_paths_or_unbounded_selectors[/api/source-run/asset?id=../case.json]
+ERROR tests/sandbox/test_source_run_view_http.py::test_browser_cannot_supply_paths_or_unbounded_selectors[/api/source-run/study?capture_index=0&capture_index=1]
+ERROR tests/sandbox/test_source_run_view_http.py::test_browser_cannot_supply_paths_or_unbounded_selectors[/api/source-run/study?limit=51]
+ERROR tests/sandbox/test_source_run_view_http.py::test_browser_cannot_supply_paths_or_unbounded_selectors[/api/source-run/study?cell=0]
+ERROR tests/sandbox/test_source_run_view_http.py::test_browser_cannot_supply_paths_or_unbounded_selectors[/api/source-run/study?path=../../case.json]
+ERROR tests/sandbox/test_source_run_view_http.py::test_browser_cannot_supply_paths_or_unbounded_selectors[/api/source-run/study?capture_index=-1]
+ERROR tests/sandbox/test_source_run_view_http.py::test_browser_mutations_stay_unavailable_for_view_only_startup
+ERROR tests/sandbox/test_source_run_view_http.py::test_asset_tamper_is_visible_on_next_request
+ERROR tests/sandbox/test_source_run_view_http.py::test_existing_case_gui_can_coexist_with_source_mount
+ERROR tests/sandbox/test_source_run_view_http.py::test_cli_view_only_startup_passes_trusted_mount_without_fake_inputs
+22 passed, 14 errors in 4.20s

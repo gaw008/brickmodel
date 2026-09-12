@@ -195,6 +195,23 @@ def _summary(record, path, raw, *, capture_index=None, cell_index=None, value_pa
     return result
 
 
+
+def describe_decoded_source_study(record, *, artifact_path, file_sha256,
+                                  capture_index=None, cell_index=None, value_path=None):
+    """Format a record already admitted by the containing run's validation pass.
+
+    The supplied file digest is the verified outer manifest binding. Comparing
+    it to the canonical record digest keeps original-file canonicality separate
+    without rereading or decoding a second time. This does not verify sources.
+    """
+    result = _summary(record, artifact_path, record.canonical_bytes,
+                      capture_index=capture_index, cell_index=cell_index, value_path=value_path)
+    result['record_path'] = str(artifact_path)
+    result['file_sha256'] = file_sha256
+    result['file_is_canonical'] = file_sha256 == hashlib.sha256(record.canonical_bytes).hexdigest()
+    return result
+
+
 def inspect_source_study(path, *, capture_index=None, cell_index=None, value_path=None):
     from .source_study_record import decode_source_study
     raw = read_record_bytes(path, MAX_RECORD_BYTES, size_reason='source_study_file_limit',

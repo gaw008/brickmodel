@@ -1,10 +1,12 @@
 # 污泥烧结砖：第一性原理研究与反向原料设计
 
-本仓库从 Hermes 的 `research/material-dynamics-v2b2` 分支导入，保留完整的 10 个原始提交；最新模型提交为 `3b501c5`。上传不会改变模型的科学验收状态。
+本仓库从 Hermes 的 `research/material-dynamics-v2b2` 分支导入，保留完整的 10 个原始提交；导入时的模型提交为 `3b501c5`。后续实现与验收以当前分支及下列进度记录为准。
 
 **目前没有砖厂可用的污泥成分窗口，也没有完成完整 virtual world model。所有模型结果只用于研究。**
 
-当前正在按 [完整 Goal 合同](docs/GOAL_BRICK_PHYSICS_SANDBOX.md) 构建独立的 `sludge_sandbox` 物理沙盒。已实现来源/材料账目、热化学、水物性、守恒输运与反应、规定变形储能、耗尽积分及独立账本检查。新增 [统一案例与 CLI/Python 入口](docs/sandbox/CLI.md) 支持明确标记的湿态数值验证案例、保存结果、来源导航和冻结输入重放；仍不具备原污泥全流程准入。完整材料证据、自由烧结与冷却、公开实验和留出验证、完整来源依赖图、批量搜索与界面仍未完成。最新范围和实际验证见 [Goal 进度](docs/sandbox/GOAL_STATUS.md) 与 [验收矩阵](docs/sandbox/ACCEPTANCE_MATRIX.md)。下文 `sludge-vme` 命令仍属于已有 synthetic 原型，不能当作新沙盒全流程入口。
+当前按 [完整 Goal 合同](docs/GOAL_BRICK_PHYSICS_SANDBOX.md) 构建独立的 `sludge_sandbox` 物理沙盒。已实现来源/材料账目、热化学、水物性、守恒输运与反应、规定变形储能、耗尽积分及独立账本检查；[原生冷却能量接口](docs/sandbox/research/cooling-energy-host-v1/REPORT.md)通过限定制造半板验证。真实材料查询包括[原污泥95°C离散解吸物性](docs/sandbox/research/arlabosse95/README.md)、低温干基比热和同来源纯方解石热化学。完整原污泥材料、湿坯至冷却耦合及三机制公开实验验证仍未完成。
+
+[CLI/Python入口](docs/sandbox/CLI.md)支持限定湿态验证案例、保存及重放；[保存来源运行视图](docs/sandbox/research/source-view-v1/IMPLEMENTATION.md)提供`inspect`、`export`及`ui --view-source-run`，可按原观测与空间单元追查来源。当前资格、检查和应用边界见 [Goal进度](docs/sandbox/GOAL_STATUS.md) 与 [验收矩阵](docs/sandbox/ACCEPTANCE_MATRIX.md)。下文`sludge-vme`仍属于早期synthetic原型，不能作为新沙盒全流程入口。
 
 | 模块 | 内容 | 状态 |
 | --- | --- | --- |

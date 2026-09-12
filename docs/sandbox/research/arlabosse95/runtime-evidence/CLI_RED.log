@@ -1,0 +1,346 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+____________ test_cli_exact_query_and_controlled_errors[3/20-95-0] _____________
+
+self = ArgumentParser(prog='__main__.py', usage=None, description='烧结砖物理沙盒；来源热化学计算与明确标记的数值验证案例。', formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)
+args = ['arlabosse95', '--source', '/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/arlabosse95/source.json', '--assets-root', '/Users/wanggaoying/Desktop/brickmodel-github', '--moisture', ...]
+namespace = Namespace(command=None), intermixed = False
+
+    def _parse_known_args2(self, args, namespace, intermixed):
+        if args is None:
+            # args default to the system args
+            args = _sys.argv[1:]
+        else:
+            # make sure that args are mutable
+            args = list(args)
+    
+        # default Namespace built from parser defaults
+        if namespace is None:
+            namespace = Namespace()
+    
+        # add any action defaults that aren't present
+        for action in self._actions:
+            if action.dest is not SUPPRESS:
+                if not hasattr(namespace, action.dest):
+                    if action.default is not SUPPRESS:
+                        setattr(namespace, action.dest, action.default)
+    
+        # add any parser defaults that aren't present
+        for dest in self._defaults:
+            if not hasattr(namespace, dest):
+                setattr(namespace, dest, self._defaults[dest])
+    
+        # parse the arguments and exit if there are any errors
+        if self.exit_on_error:
+            try:
+>               namespace, args = self._parse_known_args(args, namespace, intermixed)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:1943: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2165: in _parse_known_args
+    positionals_end_index = consume_positionals(start_index)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2141: in consume_positionals
+    take_action(action, args)
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2003: in take_action
+    argument_values = self._get_values(action, argument_strings)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2523: in _get_values
+    self._check_value(action, value[0])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = ArgumentParser(prog='__main__.py', usage=None, description='烧结砖物理沙盒；来源热化学计算与明确标记的数值验证案例。', formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)
+action = _SubParsersAction(option_strings=[], dest='command', nargs='A...', const=None, default=None, type=None, choices={'calc...ss=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)}, required=True, help=None, metavar=None)
+value = 'arlabosse95'
+
+    def _check_value(self, action, value):
+        # converted value must be one of the choices (if specified)
+        choices = action.choices
+        if choices is not None:
+            if isinstance(choices, str):
+                choices = iter(choices)
+            if value not in choices:
+                args = {'value': str(value),
+                        'choices': ', '.join(map(str, action.choices))}
+                msg = _('invalid choice: %(value)r (choose from %(choices)s)')
+>               raise ArgumentError(action, msg % args)
+E               argparse.ArgumentError: argument command: invalid choice: 'arlabosse95' (choose from calcite-thermochemistry, char-oxidation-times, validate, run, source-run, source-validate, inspect, export, trace, replay, resume, supervise, job-status, cancel-job, resources, source-observation-import, source-observation-inspect, source-study-import, source-study-inspect, ui, experiment-prepare, experiment-run, experiment-status, experiment-cancel, experiment-compare, sensitivity-prepare, sensitivity-analyze, search-prepare, search-run, search-status)
+
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2573: ArgumentError
+
+During handling of the above exception, another exception occurred:
+
+capsys = <_pytest.capture.CaptureFixture object at 0x106e2e780>
+moisture = '3/20', temperature = '95', expected = 0
+
+    @pytest.mark.parametrize('moisture,temperature,expected', [('3/20', '95', 0), ('0.15', '96', 1), ('1/0', '95', 1)])
+    def test_cli_exact_query_and_controlled_errors(capsys, moisture, temperature, expected):
+        from sludge_sandbox.cli import main
+>       code = main(['arlabosse95', '--source', str(SOURCE), '--assets-root', str(ROOT),
+                     '--moisture', moisture, '--temperature', temperature, '--unit', 'degC', '--trace'])
+
+tests/sandbox/test_arlabosse_desorption95.py:143: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/cli.py:137: in main
+    args = parser.parse_args(argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:1904: in parse_args
+    args, argv = self.parse_known_args(args, namespace)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:1914: in parse_known_args
+    return self._parse_known_args2(args, namespace, intermixed=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:1945: in _parse_known_args2
+    self.error(str(err))
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2650: in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = ArgumentParser(prog='__main__.py', usage=None, description='烧结砖物理沙盒；来源热化学计算与明确标记的数值验证案例。', formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)
+status = 2
+message = "__main__.py: error: argument command: invalid choice: 'arlabosse95' (choose from calcite-thermochemistry, char-oxidat...ent-cancel, experiment-compare, sensitivity-prepare, sensitivity-analyze, search-prepare, search-run, search-status)\n"
+
+    def exit(self, status=0, message=None):
+        if message:
+            self._print_message(message, _sys.stderr)
+>       _sys.exit(status)
+E       SystemExit: 2
+
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2637: SystemExit
+----------------------------- Captured stderr call -----------------------------
+usage: __main__.py [-h]
+                   {calcite-thermochemistry,char-oxidation-times,validate,run,source-run,source-validate,inspect,export,trace,replay,resume,supervise,job-status,cancel-job,resources,source-observation-import,source-observation-inspect,source-study-import,source-study-inspect,ui,experiment-prepare,experiment-run,experiment-status,experiment-cancel,experiment-compare,sensitivity-prepare,sensitivity-analyze,search-prepare,search-run,search-status}
+                   ...
+__main__.py: error: argument command: invalid choice: 'arlabosse95' (choose from calcite-thermochemistry, char-oxidation-times, validate, run, source-run, source-validate, inspect, export, trace, replay, resume, supervise, job-status, cancel-job, resources, source-observation-import, source-observation-inspect, source-study-import, source-study-inspect, ui, experiment-prepare, experiment-run, experiment-status, experiment-cancel, experiment-compare, sensitivity-prepare, sensitivity-analyze, search-prepare, search-run, search-status)
+____________ test_cli_exact_query_and_controlled_errors[0.15-96-1] _____________
+
+self = ArgumentParser(prog='__main__.py', usage=None, description='烧结砖物理沙盒；来源热化学计算与明确标记的数值验证案例。', formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)
+args = ['arlabosse95', '--source', '/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/arlabosse95/source.json', '--assets-root', '/Users/wanggaoying/Desktop/brickmodel-github', '--moisture', ...]
+namespace = Namespace(command=None), intermixed = False
+
+    def _parse_known_args2(self, args, namespace, intermixed):
+        if args is None:
+            # args default to the system args
+            args = _sys.argv[1:]
+        else:
+            # make sure that args are mutable
+            args = list(args)
+    
+        # default Namespace built from parser defaults
+        if namespace is None:
+            namespace = Namespace()
+    
+        # add any action defaults that aren't present
+        for action in self._actions:
+            if action.dest is not SUPPRESS:
+                if not hasattr(namespace, action.dest):
+                    if action.default is not SUPPRESS:
+                        setattr(namespace, action.dest, action.default)
+    
+        # add any parser defaults that aren't present
+        for dest in self._defaults:
+            if not hasattr(namespace, dest):
+                setattr(namespace, dest, self._defaults[dest])
+    
+        # parse the arguments and exit if there are any errors
+        if self.exit_on_error:
+            try:
+>               namespace, args = self._parse_known_args(args, namespace, intermixed)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:1943: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2165: in _parse_known_args
+    positionals_end_index = consume_positionals(start_index)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2141: in consume_positionals
+    take_action(action, args)
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2003: in take_action
+    argument_values = self._get_values(action, argument_strings)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2523: in _get_values
+    self._check_value(action, value[0])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = ArgumentParser(prog='__main__.py', usage=None, description='烧结砖物理沙盒；来源热化学计算与明确标记的数值验证案例。', formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)
+action = _SubParsersAction(option_strings=[], dest='command', nargs='A...', const=None, default=None, type=None, choices={'calc...ss=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)}, required=True, help=None, metavar=None)
+value = 'arlabosse95'
+
+    def _check_value(self, action, value):
+        # converted value must be one of the choices (if specified)
+        choices = action.choices
+        if choices is not None:
+            if isinstance(choices, str):
+                choices = iter(choices)
+            if value not in choices:
+                args = {'value': str(value),
+                        'choices': ', '.join(map(str, action.choices))}
+                msg = _('invalid choice: %(value)r (choose from %(choices)s)')
+>               raise ArgumentError(action, msg % args)
+E               argparse.ArgumentError: argument command: invalid choice: 'arlabosse95' (choose from calcite-thermochemistry, char-oxidation-times, validate, run, source-run, source-validate, inspect, export, trace, replay, resume, supervise, job-status, cancel-job, resources, source-observation-import, source-observation-inspect, source-study-import, source-study-inspect, ui, experiment-prepare, experiment-run, experiment-status, experiment-cancel, experiment-compare, sensitivity-prepare, sensitivity-analyze, search-prepare, search-run, search-status)
+
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2573: ArgumentError
+
+During handling of the above exception, another exception occurred:
+
+capsys = <_pytest.capture.CaptureFixture object at 0x10706d880>
+moisture = '0.15', temperature = '96', expected = 1
+
+    @pytest.mark.parametrize('moisture,temperature,expected', [('3/20', '95', 0), ('0.15', '96', 1), ('1/0', '95', 1)])
+    def test_cli_exact_query_and_controlled_errors(capsys, moisture, temperature, expected):
+        from sludge_sandbox.cli import main
+>       code = main(['arlabosse95', '--source', str(SOURCE), '--assets-root', str(ROOT),
+                     '--moisture', moisture, '--temperature', temperature, '--unit', 'degC', '--trace'])
+
+tests/sandbox/test_arlabosse_desorption95.py:143: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/cli.py:137: in main
+    args = parser.parse_args(argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:1904: in parse_args
+    args, argv = self.parse_known_args(args, namespace)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:1914: in parse_known_args
+    return self._parse_known_args2(args, namespace, intermixed=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:1945: in _parse_known_args2
+    self.error(str(err))
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2650: in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = ArgumentParser(prog='__main__.py', usage=None, description='烧结砖物理沙盒；来源热化学计算与明确标记的数值验证案例。', formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)
+status = 2
+message = "__main__.py: error: argument command: invalid choice: 'arlabosse95' (choose from calcite-thermochemistry, char-oxidat...ent-cancel, experiment-compare, sensitivity-prepare, sensitivity-analyze, search-prepare, search-run, search-status)\n"
+
+    def exit(self, status=0, message=None):
+        if message:
+            self._print_message(message, _sys.stderr)
+>       _sys.exit(status)
+E       SystemExit: 2
+
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2637: SystemExit
+----------------------------- Captured stderr call -----------------------------
+usage: __main__.py [-h]
+                   {calcite-thermochemistry,char-oxidation-times,validate,run,source-run,source-validate,inspect,export,trace,replay,resume,supervise,job-status,cancel-job,resources,source-observation-import,source-observation-inspect,source-study-import,source-study-inspect,ui,experiment-prepare,experiment-run,experiment-status,experiment-cancel,experiment-compare,sensitivity-prepare,sensitivity-analyze,search-prepare,search-run,search-status}
+                   ...
+__main__.py: error: argument command: invalid choice: 'arlabosse95' (choose from calcite-thermochemistry, char-oxidation-times, validate, run, source-run, source-validate, inspect, export, trace, replay, resume, supervise, job-status, cancel-job, resources, source-observation-import, source-observation-inspect, source-study-import, source-study-inspect, ui, experiment-prepare, experiment-run, experiment-status, experiment-cancel, experiment-compare, sensitivity-prepare, sensitivity-analyze, search-prepare, search-run, search-status)
+_____________ test_cli_exact_query_and_controlled_errors[1/0-95-1] _____________
+
+self = ArgumentParser(prog='__main__.py', usage=None, description='烧结砖物理沙盒；来源热化学计算与明确标记的数值验证案例。', formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)
+args = ['arlabosse95', '--source', '/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/arlabosse95/source.json', '--assets-root', '/Users/wanggaoying/Desktop/brickmodel-github', '--moisture', ...]
+namespace = Namespace(command=None), intermixed = False
+
+    def _parse_known_args2(self, args, namespace, intermixed):
+        if args is None:
+            # args default to the system args
+            args = _sys.argv[1:]
+        else:
+            # make sure that args are mutable
+            args = list(args)
+    
+        # default Namespace built from parser defaults
+        if namespace is None:
+            namespace = Namespace()
+    
+        # add any action defaults that aren't present
+        for action in self._actions:
+            if action.dest is not SUPPRESS:
+                if not hasattr(namespace, action.dest):
+                    if action.default is not SUPPRESS:
+                        setattr(namespace, action.dest, action.default)
+    
+        # add any parser defaults that aren't present
+        for dest in self._defaults:
+            if not hasattr(namespace, dest):
+                setattr(namespace, dest, self._defaults[dest])
+    
+        # parse the arguments and exit if there are any errors
+        if self.exit_on_error:
+            try:
+>               namespace, args = self._parse_known_args(args, namespace, intermixed)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:1943: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2165: in _parse_known_args
+    positionals_end_index = consume_positionals(start_index)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2141: in consume_positionals
+    take_action(action, args)
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2003: in take_action
+    argument_values = self._get_values(action, argument_strings)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2523: in _get_values
+    self._check_value(action, value[0])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = ArgumentParser(prog='__main__.py', usage=None, description='烧结砖物理沙盒；来源热化学计算与明确标记的数值验证案例。', formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)
+action = _SubParsersAction(option_strings=[], dest='command', nargs='A...', const=None, default=None, type=None, choices={'calc...ss=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)}, required=True, help=None, metavar=None)
+value = 'arlabosse95'
+
+    def _check_value(self, action, value):
+        # converted value must be one of the choices (if specified)
+        choices = action.choices
+        if choices is not None:
+            if isinstance(choices, str):
+                choices = iter(choices)
+            if value not in choices:
+                args = {'value': str(value),
+                        'choices': ', '.join(map(str, action.choices))}
+                msg = _('invalid choice: %(value)r (choose from %(choices)s)')
+>               raise ArgumentError(action, msg % args)
+E               argparse.ArgumentError: argument command: invalid choice: 'arlabosse95' (choose from calcite-thermochemistry, char-oxidation-times, validate, run, source-run, source-validate, inspect, export, trace, replay, resume, supervise, job-status, cancel-job, resources, source-observation-import, source-observation-inspect, source-study-import, source-study-inspect, ui, experiment-prepare, experiment-run, experiment-status, experiment-cancel, experiment-compare, sensitivity-prepare, sensitivity-analyze, search-prepare, search-run, search-status)
+
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2573: ArgumentError
+
+During handling of the above exception, another exception occurred:
+
+capsys = <_pytest.capture.CaptureFixture object at 0x10706cda0>
+moisture = '1/0', temperature = '95', expected = 1
+
+    @pytest.mark.parametrize('moisture,temperature,expected', [('3/20', '95', 0), ('0.15', '96', 1), ('1/0', '95', 1)])
+    def test_cli_exact_query_and_controlled_errors(capsys, moisture, temperature, expected):
+        from sludge_sandbox.cli import main
+>       code = main(['arlabosse95', '--source', str(SOURCE), '--assets-root', str(ROOT),
+                     '--moisture', moisture, '--temperature', temperature, '--unit', 'degC', '--trace'])
+
+tests/sandbox/test_arlabosse_desorption95.py:143: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/cli.py:137: in main
+    args = parser.parse_args(argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:1904: in parse_args
+    args, argv = self.parse_known_args(args, namespace)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:1914: in parse_known_args
+    return self._parse_known_args2(args, namespace, intermixed=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:1945: in _parse_known_args2
+    self.error(str(err))
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2650: in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = ArgumentParser(prog='__main__.py', usage=None, description='烧结砖物理沙盒；来源热化学计算与明确标记的数值验证案例。', formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)
+status = 2
+message = "__main__.py: error: argument command: invalid choice: 'arlabosse95' (choose from calcite-thermochemistry, char-oxidat...ent-cancel, experiment-compare, sensitivity-prepare, sensitivity-analyze, search-prepare, search-run, search-status)\n"
+
+    def exit(self, status=0, message=None):
+        if message:
+            self._print_message(message, _sys.stderr)
+>       _sys.exit(status)
+E       SystemExit: 2
+
+../../.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/argparse.py:2637: SystemExit
+----------------------------- Captured stderr call -----------------------------
+usage: __main__.py [-h]
+                   {calcite-thermochemistry,char-oxidation-times,validate,run,source-run,source-validate,inspect,export,trace,replay,resume,supervise,job-status,cancel-job,resources,source-observation-import,source-observation-inspect,source-study-import,source-study-inspect,ui,experiment-prepare,experiment-run,experiment-status,experiment-cancel,experiment-compare,sensitivity-prepare,sensitivity-analyze,search-prepare,search-run,search-status}
+                   ...
+__main__.py: error: argument command: invalid choice: 'arlabosse95' (choose from calcite-thermochemistry, char-oxidation-times, validate, run, source-run, source-validate, inspect, export, trace, replay, resume, supervise, job-status, cancel-job, resources, source-observation-import, source-observation-inspect, source-study-import, source-study-inspect, ui, experiment-prepare, experiment-run, experiment-status, experiment-cancel, experiment-compare, sensitivity-prepare, sensitivity-analyze, search-prepare, search-run, search-status)
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_arlabosse_desorption95.py::test_cli_exact_query_and_controlled_errors[3/20-95-0]
+FAILED tests/sandbox/test_arlabosse_desorption95.py::test_cli_exact_query_and_controlled_errors[0.15-96-1]
+FAILED tests/sandbox/test_arlabosse_desorption95.py::test_cli_exact_query_and_controlled_errors[1/0-95-1]
+3 failed, 37 deselected in 0.30s

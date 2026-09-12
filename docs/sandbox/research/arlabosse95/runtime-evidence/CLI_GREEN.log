@@ -1,0 +1,52 @@
+......................................FF                                 [100%]
+=================================== FAILURES ===================================
+____________ test_cli_exact_query_and_controlled_errors[0.15-96-1] _____________
+
+capsys = <_pytest.capture.CaptureFixture object at 0x106de4c50>
+moisture = '0.15', temperature = '96', expected = 1
+
+    @pytest.mark.parametrize('moisture,temperature,expected', [('3/20', '95', 0), ('0.15', '96', 1), ('1/0', '95', 1)])
+    def test_cli_exact_query_and_controlled_errors(capsys, moisture, temperature, expected):
+        from sludge_sandbox.cli import main
+        code = main(['arlabosse95', '--source', str(SOURCE), '--assets-root', str(ROOT),
+                     '--moisture', moisture, '--temperature', temperature, '--unit', 'degC', '--trace'])
+        result = json.loads(capsys.readouterr().out)
+        assert code == expected
+        if expected == 0:
+            assert result['point']['activity']['value']['numerator'] == '1941'
+            assert result['trace']['nodes']
+        else:
+>           assert result['status'] == 'error'
+E           AssertionError: assert 'failed' == 'error'
+E             
+E             - error
+E             + failed
+
+tests/sandbox/test_arlabosse_desorption95.py:151: AssertionError
+_____________ test_cli_exact_query_and_controlled_errors[1/0-95-1] _____________
+
+capsys = <_pytest.capture.CaptureFixture object at 0x106ec0200>
+moisture = '1/0', temperature = '95', expected = 1
+
+    @pytest.mark.parametrize('moisture,temperature,expected', [('3/20', '95', 0), ('0.15', '96', 1), ('1/0', '95', 1)])
+    def test_cli_exact_query_and_controlled_errors(capsys, moisture, temperature, expected):
+        from sludge_sandbox.cli import main
+        code = main(['arlabosse95', '--source', str(SOURCE), '--assets-root', str(ROOT),
+                     '--moisture', moisture, '--temperature', temperature, '--unit', 'degC', '--trace'])
+        result = json.loads(capsys.readouterr().out)
+        assert code == expected
+        if expected == 0:
+            assert result['point']['activity']['value']['numerator'] == '1941'
+            assert result['trace']['nodes']
+        else:
+>           assert result['status'] == 'error'
+E           AssertionError: assert 'failed' == 'error'
+E             
+E             - error
+E             + failed
+
+tests/sandbox/test_arlabosse_desorption95.py:151: AssertionError
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_arlabosse_desorption95.py::test_cli_exact_query_and_controlled_errors[0.15-96-1]
+FAILED tests/sandbox/test_arlabosse_desorption95.py::test_cli_exact_query_and_controlled_errors[1/0-95-1]
+2 failed, 38 passed in 0.25s

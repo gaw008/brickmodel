@@ -1,0 +1,60 @@
+................................F...                                     [100%]
+=================================== FAILURES ===================================
+_________ test_trace_and_json_record_include_only_actual_dependencies __________
+
+model = ArlabosseDesorption95(source_path=PosixPath('/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/arlabosse95/source.json'), repository_root=PosixPath('/Users/wanggaoying/Desktop/brickmodel-github'))
+
+    def test_trace_and_json_record_include_only_actual_dependencies(model):
+        point = model.at_moisture(.15, temperature=Decimal('368.15'), unit='K')
+        record = point.to_record()
+        assert record['activity']['value']['numerator'] == '1941'
+        assert json.loads(json.dumps(record)) == record
+>       trace = EvidenceRegistry.from_dict(model.registry_payload()).trace(MU_NODE_ID)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_arlabosse_desorption95.py:90: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/evidence.py:130: in from_dict
+    return cls(payload)
+           ^^^^^^^^^^^^
+src/sludge_sandbox/evidence.py:126: in __init__
+    self._validate()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <sludge_sandbox.evidence.EvidenceRegistry object at 0x10b7add90>
+
+    def _validate(self) -> None:
+        p = self._payload
+        if not isinstance(p, dict) or p.get("schema_version") != "1.0":
+            raise EvidenceError("Unsupported registry schema")
+        _finite(p)
+        for field, destination in (("sources", self._sources), ("nodes", self._nodes)):
+            records = p.get(field)
+            if not isinstance(records, list):
+                raise EvidenceError(f"{field} must be a list")
+            for record in records:
+                if not isinstance(record, dict):
+                    raise EvidenceError(f"{field} entries must be objects")
+                identifier = record.get("id")
+                if not isinstance(identifier, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]*", identifier):
+                    raise EvidenceError("Invalid record id")
+                if identifier in destination:
+                    raise EvidenceError(f"Duplicate id: {identifier}")
+                destination[identifier] = record
+        for source in self._sources.values():
+            for key in ("title", "url", "license", "retrieved_at"):
+                _text(source.get(key), f"source.{key}")
+            if urlparse(source["url"]).scheme not in ("https", "http") or not urlparse(source["url"]).netloc:
+                raise EvidenceError("Source URL must be an HTTP(S) location")
+            if not isinstance(source.get("authors"), list) or not source["authors"]:
+                raise EvidenceError("Source authors are required")
+            for author in source["authors"]:
+                _text(author, "author")
+            if type(source.get("year")) is not int or source["year"] < 1:
+>               raise EvidenceError("Source year is required")
+E               sludge_sandbox.evidence.EvidenceError: Source year is required
+
+src/sludge_sandbox/evidence.py:174: EvidenceError
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_arlabosse_desorption95.py::test_trace_and_json_record_include_only_actual_dependencies
+1 failed, 35 passed in 0.26s

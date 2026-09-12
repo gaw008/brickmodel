@@ -24,6 +24,13 @@ def _cancellation():
 def main(argv=None):
     parser = argparse.ArgumentParser(description='烧结砖物理沙盒；来源热化学计算与明确标记的数值验证案例。')
     commands = parser.add_subparsers(dest='command', required=True)
+    desorption = commands.add_parser('arlabosse95', help='查询95°C原污泥离散活动度、总解吸热及相对摩尔化学势；无插值或动态模拟')
+    desorption.add_argument('--source', required=True, type=Path, help='已审核arlabosse95/source.json')
+    desorption.add_argument('--assets-root', required=True, type=Path, help='包含原图和来源记录的显式本地根目录')
+    desorption.add_argument('--moisture', required=True, help='kg水/kg干物的已提取节点；十进制或分数')
+    desorption.add_argument('--temperature', required=True, help='原95°C等温线对应的显式温度')
+    desorption.add_argument('--unit', required=True, choices=('K', 'degC'))
+    desorption.add_argument('--trace', action='store_true', help='附三项输出的来源依赖注册表')
     calcite = commands.add_parser('calcite-thermochemistry', help='按USGS原式计算纯方解石分解的温变反应焓和指定进度产气量')
     calcite.add_argument('--source-data', required=True, type=Path, help='含已核读facts.json与source.json的目录')
     calcite.add_argument('--temperature-k', required=True, help='显式开尔文温度，298.15至1200 K')
@@ -46,6 +53,16 @@ def main(argv=None):
     source_validate = commands.add_parser('source-validate', help='校验来源试算配置及显式资产；不运行物性')
     source_validate.add_argument('case', type=Path)
     source_validate.add_argument('--assets-root', type=Path)
+    inspect = commands.add_parser('inspect', help='只读检查标准来源运行包；保留原观测与失败身份')
+    inspect.add_argument('run_directory', type=Path)
+    inspect.add_argument('--capture-index', type=int)
+    inspect.add_argument('--cell', type=int)
+    inspect.add_argument('--path', dest='value_path')
+    inspect.add_argument('--capture-offset', type=int, default=0)
+    inspect.add_argument('--capture-limit', type=int, default=50)
+    export = commands.add_parser('export', help='导出标准来源运行包的原始规范记录；不含来源文件，不可单独重放')
+    export.add_argument('run_directory', type=Path)
+    export.add_argument('--output', type=Path, help='新文件；省略则输出到标准输出')
     trace = commands.add_parser('trace', help='查询保存结果的实现、参数与来源文件')
     trace.add_argument('run_directory', type=Path)
     trace.add_argument('--quantity', required=True)
@@ -91,8 +108,9 @@ def main(argv=None):
     study_inspect.add_argument('--path', dest='value_path',
         help='保存阶段的字段路径，例如 transition/cell_selected_pressure_gates')
     ui = commands.add_parser('ui', help='启动仅监听本机的中文研究界面')
-    ui.add_argument('--case', required=True, type=Path)
-    ui.add_argument('--water-data', required=True, type=Path)
+    ui.add_argument('--case', type=Path)
+    ui.add_argument('--water-data', type=Path)
+    ui.add_argument('--view-source-run', type=Path, help='由启动者挂载一个已有标准来源运行包；浏览器仅可读')
     ui.add_argument('--evidence-data', type=Path)
     ui.add_argument('--storage', required=True, type=Path)
     ui.add_argument('--port', type=int, default=8765)
@@ -125,6 +143,37 @@ def main(argv=None):
         command.add_argument('directory', type=Path)
     args = parser.parse_args(argv)
     try:
+        if args.command in ('inspect', 'export'):
+            from .source_run_view import inspect_source_run, export_source_run
+            if args.command == 'inspect':
+                value = inspect_source_run(args.run_directory, capture_index=args.capture_index,
+                    cell_index=args.cell, value_path=args.value_path,
+                    capture_offset=args.capture_offset, capture_limit=args.capture_limit)
+            else:
+                value = export_source_run(args.run_directory)
+            text = json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2)+'\n'
+            if args.command == 'export' and args.output is not None:
+                with args.output.open('x', encoding='utf-8') as stream:
+                    stream.write(text)
+                print(json.dumps({'status': 'exported', 'path': str(args.output),
+                                  'scope': value.get('export_scope')}, ensure_ascii=False))
+            else:
+                print(text, end='')
+            return 0
+        if args.command == 'arlabosse95':
+            from fractions import Fraction
+            from .arlabosse_desorption95 import ArlabosseDesorption95, DesorptionError
+            try:
+                moisture, temperature = Fraction(args.moisture), Fraction(args.temperature)
+            except (ValueError, ZeroDivisionError) as exc:
+                raise DesorptionError('finite_decimal_or_fraction_input_required') from exc
+            model = ArlabosseDesorption95(args.source, args.assets_root)
+            point = model.at_moisture(moisture, temperature=temperature, unit=args.unit)
+            value = {'point': point.to_record()}
+            if args.trace:
+                value['trace'] = model.registry_payload()
+            print(json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2))
+            return 0
         if args.command == 'char-oxidation-times':
             from .nowicki_oxidation import calculate_nowicki_oxygen_times
             options = {'conversion_levels': args.alpha_plot} if args.alpha_plot is not None else {}
@@ -200,7 +249,7 @@ def main(argv=None):
             from .local_app import serve_local
             serve_local(case_path=args.case, water_directory=args.water_data,
                         evidence_directory=args.evidence_data, storage_directory=args.storage,
-                        port=args.port, maximum_jobs=args.maximum_jobs)
+                        port=args.port, maximum_jobs=args.maximum_jobs, view_source_run=args.view_source_run)
             return 0
         if args.command.startswith('experiment-'):
             from .experiments import (prepare_experiment, run_experiment, read_experiment,

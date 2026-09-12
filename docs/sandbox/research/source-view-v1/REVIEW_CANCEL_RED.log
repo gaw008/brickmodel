@@ -1,0 +1,22 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________ test_view_only_cannot_cancel_preexisting_job_or_write_any_file ________
+
+view_server = <sludge_sandbox.local_app.LocalServer object at 0x10b563f50>
+
+    def test_view_only_cannot_cancel_preexisting_job_or_write_any_file(view_server):
+        import uuid
+        identifier = str(uuid.uuid4())
+        job = view_server.manager.jobs_directory/identifier
+        job.mkdir()
+        (job/'job.json').write_text(json.dumps({'schema':'sandbox_job_v1','job_id':identifier,'operation':'source-run'}))
+        before = {p.relative_to(job): p.read_bytes() for p in job.rglob('*') if p.is_file()}
+        code, response = request(view_server, f'/api/jobs/{identifier}/cancel', {})
+        after = {p.relative_to(job): p.read_bytes() for p in job.rglob('*') if p.is_file()}
+>       assert code == 409 and response['reason'] == 'saved_source_view_is_read_only'
+E       assert (200 == 409)
+
+tests/sandbox/test_source_run_view_http.py:97: AssertionError
+=========================== short test summary info ============================
+FAILED tests/sandbox/test_source_run_view_http.py::test_view_only_cannot_cancel_preexisting_job_or_write_any_file
+1 failed in 0.54s

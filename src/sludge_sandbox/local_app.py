@@ -85,13 +85,18 @@ class _OwnedWorker:
 
 
 class JobManager:
-    def __init__(self, *, case_path: str | Path, water_directory: str | Path,
+    def __init__(self, *, case_path: str | Path | None, water_directory: str | Path | None,
                  evidence_directory: str | Path | None, storage_directory: str | Path,
-                 maximum_jobs: int) -> None:
+                 maximum_jobs: int, view_source_run: str | Path | None = None) -> None:
         if type(maximum_jobs) is not int or maximum_jobs < 1:
             raise LocalAppError('invalid_maximum_jobs')
-        self.case = read_case(case_path)
-        self.water_directory = Path(water_directory).resolve()
+        if case_path is None and view_source_run is None:
+            raise LocalAppError('case_or_saved_source_run_required')
+        if (case_path is None) != (water_directory is None):
+            raise LocalAppError('case_and_water_data_must_be_supplied_together')
+        self.case = None if case_path is None else read_case(case_path)
+        self.water_directory = None if water_directory is None else Path(water_directory).resolve()
+        self.view_source_run = None if view_source_run is None else Path(view_source_run).resolve()
         self.evidence_directory = None if evidence_directory is None else Path(evidence_directory).resolve()
         self.storage_directory = Path(storage_directory).resolve()
         self.storage_directory.mkdir(parents=True, exist_ok=True)
@@ -107,9 +112,12 @@ class JobManager:
         self._closing = False
 
     def config(self) -> dict[str, Any]:
-        return {'case': self.case.payload, 'case_sha256': self.case.sha256,
-                'scientific_status': 'manufactured_verification_only',
-                'material_qualified': False, 'unknowns': list(_UNKNOWN),
+        return {'case': self.case.payload if self.case else None, 'case_sha256': self.case.sha256 if self.case else None,
+                'launch_enabled': self.case is not None, 'source_run_mounted': self.view_source_run is not None,
+                'scientific_status': 'manufactured_verification_only' if self.case else 'saved_source_evidence_only',
+                'material_qualified': False, 'unknowns': list(_UNKNOWN) if self.case else [
+                    '来源记录仅供离线查看，观测列表含试探、失败与未返回调用，并非接受轨迹。',
+                    '文件校验不代表材料适用性；本入口不启动来源计算、不恢复检查点，也不接入冷却证据。'],
                 'maximum_jobs': self.maximum_jobs}
 
     def _ids(self) -> list[str]:
@@ -160,6 +168,8 @@ class JobManager:
         return result
 
     def _save_case(self, payload: Any, *, retain: bool) -> tuple[Path, str]:
+        if self.case is None:
+            raise LocalAppError('saved_source_view_is_read_only', 409)
         if type(payload) is not dict:
             raise LocalAppError('case_object_required')
         path = self.cases_directory/(str(uuid.uuid4())+'.json')
@@ -207,6 +217,8 @@ class JobManager:
             return self._launch(operation, directory/'run', SupervisionPolicy(120, 5))
 
     def _available(self) -> None:
+        if self.case is None:
+            raise LocalAppError('saved_source_view_is_read_only', 409)
         if self._closing:
             raise LocalAppError('server_shutting_down', 503)
         if any(worker.thread and worker.thread.is_alive() for worker in self._workers.values()):
@@ -239,6 +251,8 @@ class JobManager:
         return {'id': identifier}
 
     def cancel_job(self, identifier: str) -> dict[str, Any]:
+        if self.case is None:
+            raise LocalAppError('saved_source_view_is_read_only', 409)
         with self._lock:
             directory = self._directory(identifier)
             worker = self._workers.get(identifier)
@@ -288,6 +302,30 @@ class JobManager:
         except UnicodeDecodeError as exc:
             raise LocalAppError('artifact_is_not_utf8_text', 415) from exc
         return {'path': name, 'text': text, 'sha256': digest}
+
+    def source_view(self, action: str, query: dict[str, list[str]]) -> dict[str, Any]:
+        if self.view_source_run is None:
+            raise LocalAppError('source_run_not_mounted', 404)
+        from .source_run_view import inspect_source_run, read_source_run_asset, export_source_run
+        if action == 'export' and not query:
+            return export_source_run(self.view_source_run)
+        if action == 'asset' and set(query) == {'id'} and len(query['id']) == 1:
+            return read_source_run_asset(self.view_source_run, query['id'][0])
+        if action not in ('summary', 'study'):
+            raise LocalAppError('invalid_source_view_query')
+        allowed = {'capture_index', 'cell', 'path', 'offset', 'limit'} if action == 'study' else set()
+        if not set(query) <= allowed or any(len(values) != 1 for values in query.values()):
+            raise LocalAppError('invalid_source_view_query')
+        options: dict[str, Any] = {}
+        for name, values in query.items():
+            if name == 'path':
+                options['value_path'] = values[0]
+            else:
+                value = values[0]
+                if len(value) > 9 or not value.isascii() or not value.isdecimal():
+                    raise LocalAppError('invalid_source_view_index')
+                options[{'cell': 'cell_index', 'offset': 'capture_offset', 'limit': 'capture_limit'}.get(name, name)] = int(value)
+        return inspect_source_run(self.view_source_run, **options)
 
     def close(self) -> None:
         with self._lock:
@@ -413,11 +451,14 @@ class _Handler(BaseHTTPRequestHandler):
                 raw = raw.replace(b'__APP_TOKEN__', self.server.token.encode())
             self._send(200, raw, content_type)
             return
-        query = parse_qs(parsed.query, keep_blank_values=True, strict_parsing=True)
+        query = parse_qs(parsed.query, keep_blank_values=True, strict_parsing=True, max_num_fields=8)
         manager = self.server.manager
         body = self._body() if method == 'POST' else None
         if path == '/api/config' and method == 'GET' and not query:
             value = manager.config()
+        elif path in ('/api/source-run', '/api/source-run/study', '/api/source-run/asset', '/api/source-run/export') and method == 'GET':
+            action = 'summary' if path == '/api/source-run' else path.rsplit('/', 1)[-1]
+            value = manager.source_view(action, query)
         elif path == '/api/jobs' and method == 'GET' and not query:
             value = manager.list_jobs()
         elif path == '/api/validate' and method == 'POST' and not query:
@@ -462,14 +503,14 @@ class _Handler(BaseHTTPRequestHandler):
         self._handle('POST')
 
 
-def make_server(*, case_path: str | Path, water_directory: str | Path,
+def make_server(*, case_path: str | Path | None = None, water_directory: str | Path | None = None,
                 storage_directory: str | Path, evidence_directory: str | Path | None = None,
-                port: int = 0, maximum_jobs: int = 20) -> LocalServer:
+                port: int = 0, maximum_jobs: int = 20, view_source_run: str | Path | None = None) -> LocalServer:
     if type(port) is not int or not 0 <= port <= 65535:
         raise LocalAppError('invalid_port')
     manager = JobManager(case_path=case_path, water_directory=water_directory,
                          evidence_directory=evidence_directory, storage_directory=storage_directory,
-                         maximum_jobs=maximum_jobs)
+                         maximum_jobs=maximum_jobs, view_source_run=view_source_run)
     server = LocalServer(('127.0.0.1', port), _Handler)
     server.manager = manager
     server.token = secrets.token_hex(32)

@@ -1,0 +1,830 @@
+..EEEEEEEEEEEEEE.                                                        [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_shared_view_decodes_once_and_keeps_trial_failed_unreturned_identity _
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-384/test_shared_view_decodes_once_0')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+17, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:351: in import_saved_source_study
+    converted=_legacy(data)
+              ^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in _legacy
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in <genexpr>
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                        ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:151: in _legacy
+    seconds=_legacy(body['seconds'],depth+1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:142: in _legacy
+    require(type(n) is type(d) is int and d>0 and math.gcd(n,d)==1,'source_study_canonical_fraction')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_canonical_fraction'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_canonical_fraction
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+__ ERROR at setup of test_asset_and_canonical_export_preserve_original_bytes ___
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-384/test_asset_and_canonical_expor0')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+17, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:351: in import_saved_source_study
+    converted=_legacy(data)
+              ^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in _legacy
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in <genexpr>
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                        ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:151: in _legacy
+    seconds=_legacy(body['seconds'],depth+1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:142: in _legacy
+    require(type(n) is type(d) is int and d>0 and math.gcd(n,d)==1,'source_study_canonical_fraction')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_canonical_fraction'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_canonical_fraction
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+____ ERROR at setup of test_selection_bounds_refuse_unknown_paths[options0] ____
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-384/test_selection_bounds_refuse_u0')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+17, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:351: in import_saved_source_study
+    converted=_legacy(data)
+              ^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in _legacy
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in <genexpr>
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                        ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:151: in _legacy
+    seconds=_legacy(body['seconds'],depth+1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:142: in _legacy
+    require(type(n) is type(d) is int and d>0 and math.gcd(n,d)==1,'source_study_canonical_fraction')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_canonical_fraction'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_canonical_fraction
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+____ ERROR at setup of test_selection_bounds_refuse_unknown_paths[options1] ____
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-384/test_selection_bounds_refuse_u1')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+17, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:351: in import_saved_source_study
+    converted=_legacy(data)
+              ^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in _legacy
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in <genexpr>
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                        ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:151: in _legacy
+    seconds=_legacy(body['seconds'],depth+1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:142: in _legacy
+    require(type(n) is type(d) is int and d>0 and math.gcd(n,d)==1,'source_study_canonical_fraction')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_canonical_fraction'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_canonical_fraction
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+____ ERROR at setup of test_selection_bounds_refuse_unknown_paths[options2] ____
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-384/test_selection_bounds_refuse_u2')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+17, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:351: in import_saved_source_study
+    converted=_legacy(data)
+              ^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in _legacy
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in <genexpr>
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                        ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:151: in _legacy
+    seconds=_legacy(body['seconds'],depth+1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:142: in _legacy
+    require(type(n) is type(d) is int and d>0 and math.gcd(n,d)==1,'source_study_canonical_fraction')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_canonical_fraction'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_canonical_fraction
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+____ ERROR at setup of test_selection_bounds_refuse_unknown_paths[options3] ____
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-384/test_selection_bounds_refuse_u3')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+17, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:351: in import_saved_source_study
+    converted=_legacy(data)
+              ^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in _legacy
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in <genexpr>
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                        ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:151: in _legacy
+    seconds=_legacy(body['seconds'],depth+1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:142: in _legacy
+    require(type(n) is type(d) is int and d>0 and math.gcd(n,d)==1,'source_study_canonical_fraction')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_canonical_fraction'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_canonical_fraction
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+____ ERROR at setup of test_selection_bounds_refuse_unknown_paths[options4] ____
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-384/test_selection_bounds_refuse_u4')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+17, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:351: in import_saved_source_study
+    converted=_legacy(data)
+              ^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in _legacy
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in <genexpr>
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                        ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:151: in _legacy
+    seconds=_legacy(body['seconds'],depth+1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:142: in _legacy
+    require(type(n) is type(d) is int and d>0 and math.gcd(n,d)==1,'source_study_canonical_fraction')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_canonical_fraction'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_canonical_fraction
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+____ ERROR at setup of test_selection_bounds_refuse_unknown_paths[options5] ____
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-384/test_selection_bounds_refuse_u5')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+17, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:351: in import_saved_source_study
+    converted=_legacy(data)
+              ^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in _legacy
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in <genexpr>
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                        ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:151: in _legacy
+    seconds=_legacy(body['seconds'],depth+1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:142: in _legacy
+    require(type(n) is type(d) is int and d>0 and math.gcd(n,d)==1,'source_study_canonical_fraction')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_canonical_fraction'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_canonical_fraction
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+____ ERROR at setup of test_selection_bounds_refuse_unknown_paths[options6] ____
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-384/test_selection_bounds_refuse_u6')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+17, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:351: in import_saved_source_study
+    converted=_legacy(data)
+              ^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in _legacy
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in <genexpr>
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                        ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:151: in _legacy
+    seconds=_legacy(body['seconds'],depth+1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:142: in _legacy
+    require(type(n) is type(d) is int and d>0 and math.gcd(n,d)==1,'source_study_canonical_fraction')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_canonical_fraction'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_canonical_fraction
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+____ ERROR at setup of test_selection_bounds_refuse_unknown_paths[options7] ____
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-384/test_selection_bounds_refuse_u7')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+17, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:351: in import_saved_source_study
+    converted=_legacy(data)
+              ^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in _legacy
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in <genexpr>
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                        ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:151: in _legacy
+    seconds=_legacy(body['seconds'],depth+1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:142: in _legacy
+    require(type(n) is type(d) is int and d>0 and math.gcd(n,d)==1,'source_study_canonical_fraction')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_canonical_fraction'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_canonical_fraction
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+______ ERROR at setup of test_path_traversal_and_unknown_asset_id_refused ______
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-384/test_path_traversal_and_unknow0')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+17, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:351: in import_saved_source_study
+    converted=_legacy(data)
+              ^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in _legacy
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in <genexpr>
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                        ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:151: in _legacy
+    seconds=_legacy(body['seconds'],depth+1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:142: in _legacy
+    require(type(n) is type(d) is int and d>0 and math.gcd(n,d)==1,'source_study_canonical_fraction')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_canonical_fraction'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_canonical_fraction
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+_ ERROR at setup of test_tampered_bytes_or_qualifications_refused_by_inspect_and_export[source_bytes] _
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-384/test_tampered_bytes_or_qualifi0')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+17, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:351: in import_saved_source_study
+    converted=_legacy(data)
+              ^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in _legacy
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in <genexpr>
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                        ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:151: in _legacy
+    seconds=_legacy(body['seconds'],depth+1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:142: in _legacy
+    require(type(n) is type(d) is int and d>0 and math.gcd(n,d)==1,'source_study_canonical_fraction')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_canonical_fraction'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_canonical_fraction
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+_ ERROR at setup of test_tampered_bytes_or_qualifications_refused_by_inspect_and_export[scope_resealed] _
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-384/test_tampered_bytes_or_qualifi1')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+17, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:351: in import_saved_source_study
+    converted=_legacy(data)
+              ^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in _legacy
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in <genexpr>
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                        ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:151: in _legacy
+    seconds=_legacy(body['seconds'],depth+1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:142: in _legacy
+    require(type(n) is type(d) is int and d>0 and math.gcd(n,d)==1,'source_study_canonical_fraction')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_canonical_fraction'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_canonical_fraction
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+_ ERROR at setup of test_cli_inspect_and_export_share_verified_python_boundary _
+
+tmp_path = PosixPath('/private/var/folders/rs/k20kkfj95cq_ph554v_g_g480000gn/T/pytest-of-wanggaoying/pytest-384/test_cli_inspect_and_export_sh0')
+
+    @pytest.fixture
+    def source_bundle(tmp_path):
+        from test_source_study_record import minimal_saved_study
+        from sludge_sandbox.source_study_record import import_saved_source_study, encode_source_study
+        from sludge_sandbox.source_run_journal import SourceRunJournal
+        from sludge_sandbox.run_service import _seal
+        root = tmp_path/'source-run'
+        root.mkdir()
+        case = b'{"test_only":true}'
+        (root/'case.json').write_bytes(case)
+        case_sha = hashlib.sha256(case).hexdigest()
+        original = json.loads(minimal_saved_study())
+        clock = {'numerator': 2**80+17, 'denominator': 3}
+        original['captures'][0]['time']['fields']['seconds'] = clock
+        original['captures'][0]['evaluation']['fields']['time']['fields']['seconds'] = clock
+        failed = copy.deepcopy(original['captures'][0]); failed['ordinal'] = 2
+        failed.pop('evaluation'); failed['failure'] = 'test_only_saved_failure'; failed['failure_kind'] = 'operator_failed'
+        unreturned = copy.deepcopy(original['captures'][0]); unreturned['ordinal'] = 3; unreturned.pop('evaluation')
+        original['captures'].extend((failed, unreturned))
+>       record = import_saved_source_study(json.dumps(original).encode())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/sandbox/test_source_run_view.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/sludge_sandbox/source_study_record.py:351: in import_saved_source_study
+    converted=_legacy(data)
+              ^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in _legacy
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:138: in <genexpr>
+    if type(value) is list:return tuple(_legacy(v,depth+1) for v in value)
+                                        ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:165: in _legacy
+    return MappingProxyType({k:_legacy(v,depth+1) for k,v in value.items()})
+                               ^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:151: in _legacy
+    seconds=_legacy(body['seconds'],depth+1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/sludge_sandbox/source_study_record.py:142: in _legacy
+    require(type(n) is type(d) is int and d>0 and math.gcd(n,d)==1,'source_study_canonical_fraction')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, reason = 'source_study_canonical_fraction'
+
+    def require(condition: bool, reason: str) -> None:
+        if not condition:
+>           raise SourceStudyRecordError(reason)
+E           sludge_sandbox.source_study_schema.SourceStudyRecordError: source_study_canonical_fraction
+
+src/sludge_sandbox/source_study_schema.py:47: SourceStudyRecordError
+=========================== short test summary info ============================
+ERROR tests/sandbox/test_source_run_view.py::test_shared_view_decodes_once_and_keeps_trial_failed_unreturned_identity
+ERROR tests/sandbox/test_source_run_view.py::test_asset_and_canonical_export_preserve_original_bytes
+ERROR tests/sandbox/test_source_run_view.py::test_selection_bounds_refuse_unknown_paths[options0]
+ERROR tests/sandbox/test_source_run_view.py::test_selection_bounds_refuse_unknown_paths[options1]
+ERROR tests/sandbox/test_source_run_view.py::test_selection_bounds_refuse_unknown_paths[options2]
+ERROR tests/sandbox/test_source_run_view.py::test_selection_bounds_refuse_unknown_paths[options3]
+ERROR tests/sandbox/test_source_run_view.py::test_selection_bounds_refuse_unknown_paths[options4]
+ERROR tests/sandbox/test_source_run_view.py::test_selection_bounds_refuse_unknown_paths[options5]
+ERROR tests/sandbox/test_source_run_view.py::test_selection_bounds_refuse_unknown_paths[options6]
+ERROR tests/sandbox/test_source_run_view.py::test_selection_bounds_refuse_unknown_paths[options7]
+ERROR tests/sandbox/test_source_run_view.py::test_path_traversal_and_unknown_asset_id_refused
+ERROR tests/sandbox/test_source_run_view.py::test_tampered_bytes_or_qualifications_refused_by_inspect_and_export[source_bytes]
+ERROR tests/sandbox/test_source_run_view.py::test_tampered_bytes_or_qualifications_refused_by_inspect_and_export[scope_resealed]
+ERROR tests/sandbox/test_source_run_view.py::test_cli_inspect_and_export_share_verified_python_boundary
+3 passed, 14 errors in 3.32s

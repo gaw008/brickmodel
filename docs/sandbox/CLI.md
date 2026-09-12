@@ -1,5 +1,19 @@
 # 沙盒统一入口
 
+## 保存来源运行与95°C离散物性
+
+已安装环境可直接使用以下入口。RUN为既有完整来源运行目录，ROOT为合法私有来源缓存对应的项目根；输出文件须不存在。
+
+```sh
+python -m sludge_sandbox inspect RUN --capture-index 0 --cell 0 --path temperature_k
+python -m sludge_sandbox export RUN --output /tmp/new-source-report.json
+python -m sludge_sandbox ui --view-source-run RUN --storage /tmp/source-view --port 8765
+python -m sludge_sandbox arlabosse95 --source data/sandbox/research/arlabosse95/source.json --assets-root ROOT --moisture 3/20 --temperature 95 --unit degC --trace
+```
+
+来源视图无需case/water配置，只读查看且不运行EOS；浏览器导出在文本框生成规范报告，不含私有来源资产，不能单独恢复。95°C接口仅支持原提取的九个离散含水率，三项缺失热量保持unknown，范围与实际安装验收见[阶段报告](research/source-view-v1/REPORT.md)。
+
+
 显式精确耗尽案例现已接入相同运行、查询、续算、重放和界面导出服务。精确时间显示及原始记录语义见 [精确事件使用说明](EXACT_EVENT_APPLICATION.md)；制造材料边界保持。
 
 当前入口调用 `sludge_sandbox` 物理内核，包含制造的湿态反应—规定形变及自由形变模型；规定形变支持 2/4 格，自由形变支持 2/4/8 格。自由模型可显式选择耗尽事件及共享常数误差族，见 [PAIRED_EVENT_COMPARISON.md](PAIRED_EVENT_COMPARISON.md)。A/B 固体、载气、反应、输运和骨架参数仍是制造输入，水物性另有实际来源检查；不等于原污泥材料模型或完整烧制周期。
