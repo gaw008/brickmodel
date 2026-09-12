@@ -1,5 +1,7 @@
 # Goal 验收矩阵
 
+[局部平衡单胞](research/arlabosse-equilibrium-flash-v1/REPORT.md)推进§6.2/§6.4的同Nt/载气/V/fullU局部闭合及§8的条件数值验证；24安装测试和新工况18原门通过，原工况失败保留，175项保存独审通过。温度与组成误差证书unknown、材料false，一维全周期与完整Goal状态不升级。
+
 [隐式排湿阶段](research/arlabosse-low-moisture-implicit-v1/REPORT.md)：局部BE相变/排汽与来源k/D/热浴分步、原费用和取消/失败前缀已实现。46安装测试、826短程原门及299长程原门通过；两项短程输出一阶细化比约1.9303。推进§6.2/§6.4/§8的条件数值部分，不升级材料、长程/全场/空间收敛、真实干燥时间、全周期或§11完成状态。
 
 [显式快速full-U反解](research/arlabosse-low-moisture-fast-inverse-v1/REPORT.md)推进数值性能：同一真实水短例原232项通过，原U/T/算术/资源门不变，默认语义与身份兼容；安装23项及源码32项分别通过。仅单例耗时改善，不将时间空间收敛、材料/三机制现实、全周期或完整应用升级verified。
