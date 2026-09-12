@@ -280,3 +280,39 @@ def test_cli_vcs_solver_selection_is_saved_and_passed(tmp_path,monkeypatch,speci
     expected=specified or 'vcs'
     assert json.loads(output.read_text())['request']['solver']==expected
     assert calls[0]['policy'].solver==expected
+
+
+def test_block_yaml_preserves_full_source_structure_order_and_binary64_values():
+    from ruamel.yaml import YAML
+    from sludge_sandbox.tp_equilibrium import _phase_input_yaml
+
+    derived = _load_pack(ROOT)['derived']
+    restored = YAML(typ='safe', pure=True).load(_phase_input_yaml(derived))
+
+    def identical(original, readback):
+        assert type(readback) is type(original)
+        if isinstance(original, dict):
+            assert tuple(original) == tuple(readback)
+            for key in original:
+                identical(original[key], readback[key])
+        elif isinstance(original, list):
+            assert len(original) == len(readback)
+            for a, b in zip(original, readback, strict=True):
+                identical(a, b)
+        elif isinstance(original, float):
+            assert original.hex() == readback.hex()
+        else:
+            assert original == readback
+
+    identical(derived, restored)
+    # A signed zero is not in the source pack, but its serialization must not
+    # silently become another bit pattern if a future admitted pack uses it.
+    identical({'negative_zero': -0.0, 'name': 'NO'},
+              YAML(typ='safe', pure=True).load(_phase_input_yaml({'negative_zero': -0.0, 'name': 'NO'})))
+
+
+@pytest.mark.parametrize('invalid', [math.nan, math.inf, -math.inf])
+def test_block_yaml_keeps_nonfinite_rejection(invalid):
+    from sludge_sandbox.tp_equilibrium import _phase_input_yaml
+    with pytest.raises(ValueError):
+        _phase_input_yaml({'nested': [invalid]})

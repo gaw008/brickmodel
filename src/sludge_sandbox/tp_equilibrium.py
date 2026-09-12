@@ -10,6 +10,7 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass, fields
 from fractions import Fraction as F
 import hashlib
+import io
 import json
 import math
 from pathlib import Path
@@ -337,16 +338,36 @@ def _property_check(pack: dict, point: Mapping) -> dict:
             "join_policy": "T <= midpoint uses low coefficients", "reference_pressure_pa": 100000.0}
 
 
+def _phase_input_yaml(derived: dict) -> str:
+    """Keep the full pinned input and its ordering; only change text layout."""
+    from ruamel.yaml import YAML
+
+    # Safe YAML can represent infinities: retain the original JSON rejection.
+    json.dumps(derived, allow_nan=False)
+    writer = YAML(typ="safe", pure=True)
+    writer.default_flow_style = False
+    writer.sort_base_mapping_type_on_output = False
+    stream = io.StringIO()
+    writer.dump(derived, stream)
+    return stream.getvalue()
+
+
 class _CanteraBackend:
     """Fresh mutable native objects contained inside one call; never returned."""
     def __init__(self, pack: dict) -> None:
         import cantera as ct
+        import ruamel.yaml
         if ct.__version__ != "3.2.0":
             raise ValueError("cantera_version_mismatch")
         self.ct, self.pack = ct, pack
         self.identity = {"kind": "actual_cantera", "version": ct.__version__,
                          "gas_constant_j_mol_k": float(ct.gas_constant / 1000),
-                         "reference_branch": pack["model"]["reference_branch"]}
+                         "reference_branch": pack["model"]["reference_branch"],
+                         "construction_input_representation": "ruamel_block_yaml_full_derived_v1",
+                         "yaml_serializer": "ruamel.yaml",
+                         "yaml_serializer_version": ruamel.yaml.__version__,
+                         "yaml_serializer_settings": {"type": "safe", "pure": True,
+                                                      "flow_style": False, "sort_mapping_keys": False}}
         self.partial = {}
 
     def _loaded(self) -> dict:
@@ -377,16 +398,26 @@ class _CanteraBackend:
                      map(float, self.gas.atomic_weights))), "carbon_density_kg_m3": float(self.carbon.density)}
 
     def prepare(self, pool: TPPool, seed: Mapping) -> dict:
-        text = json.dumps(self.pack["derived"], allow_nan=False)
+        started = time.monotonic()
+        self.construction_timings_s = {}
+        self.partial["construction_timings_s"] = self.construction_timings_s
+        text = _phase_input_yaml(self.pack["derived"])
+        self.construction_timings_s["serialize"] = time.monotonic() - started
+        started = time.monotonic()
         self.gas = self.ct.Solution(yaml=text, name="gas")
+        self.construction_timings_s["gas_solution"] = time.monotonic() - started
         self.partial["gas_constructed"] = {"species": tuple(self.gas.species_names)}
+        started = time.monotonic()
         self.carbon = self.ct.Solution(yaml=text, name="graphite")
+        self.construction_timings_s["graphite_solution"] = time.monotonic() - started
         self.partial["graphite_constructed"] = {"species": tuple(self.carbon.species_names)}
         self.loaded = self._loaded()
         self.partial["loaded_definition"] = self.loaded
+        started = time.monotonic()
         self.mix = self.ct.Mixture([(self.gas, 1.0), (self.carbon, 0.0)])
         self.mix.T, self.mix.P = pool.temperature_k, pool.pressure_pa
         self.mix.species_moles = seed["supplied_amounts_kmol"]
+        self.construction_timings_s["mixture_and_initial_state"] = time.monotonic() - started
         return self.snapshot()
 
     def snapshot(self) -> dict:
@@ -408,6 +439,8 @@ class _CanteraBackend:
         raw["phase_snapshot_state_policy"] = "explicit_readback_TP_and_gas_amount_ratios; absolute_kmol_unmodified"
         r = float(self.ct.gas_constant / 1000)
         raw.update({"gas_constant_j_mol_k": r, "loaded_definition": self.loaded})
+        if hasattr(self, "construction_timings_s"):
+            raw["construction_timings_s"] = dict(self.construction_timings_s)
         self.partial["partial_snapshot"] = raw.copy()
         for key, attribute, factor in (("standard_h_j_mol", "standard_enthalpies_RT", r*temperature),
                                       ("standard_s_j_mol_k", "standard_entropies_R", r),

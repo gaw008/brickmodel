@@ -1,5 +1,24 @@
 # 沙盒统一入口
 
+## 论文样本的有限供氧单点
+
+安装本项目的`equilibrium` extra后，从仓库根目录运行：
+
+```sh
+python -I examples/sandbox/run_cedrone_oxygen.py \
+  --source-root . --output-dir /tmp/new-cedrone-oxygen --lambda 1/4
+```
+
+`--lambda`必选`0`、`1/4`或`1`，每次只求指定点；固定800K、1bar及原论文报告
+样本基准。新目录内`calculation/`保存本次原子量/加料/来源、原结果、19种产物
+和质量账，父`STATUS.json`及`supervision/`保存进程结果。默认监督40秒加5秒
+清理，worker30秒、模块10秒；失败非零退出并保留已经写入的结果。
+
+[唯一真实入口及验证](research/cedrone-oxygen-cli-v1/REPORT.md)已完成，初末库存
+和物性与旧同条件点一致。入口无需旧临时结果或PDF缓存。供氧比是形式计量
+设计，石墨不是实测char；材料、热耗及完整烧成资格仍未取得。目录不属于
+下文动态`run/replay/resume`协议。
+
 ## 高温CHONS平衡示例
 
 安装项目的`equilibrium` extra后，从仓库根目录运行：

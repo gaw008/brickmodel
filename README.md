@@ -16,6 +16,8 @@
 
 [高温CHONS平衡模块](docs/sandbox/research/tp-equilibrium-v1/REPORT.md)已通过四个虚拟池案例，并实际接入Cedrone论文的条件元素池。采用可追查的NASA7气体/石墨物性和显式VCS求解，保留原Gibbs算法的元素守恒失败；结果限于800–1200 K、1 bar的终态组成，灰分矿物、动力学及完整烧成热耗仍未闭合。
 
+[论文样本有限供氧入口](docs/sandbox/CLI.md#论文样本的有限供氧单点)可直接选择`λ=0、1/4、1`并运行一个条件组成点，保存本次原子量、全部产物、守恒检查及来源。真实入口和同条件结果比较已完成；[三点报告](docs/sandbox/research/finite-oxygen-equilibrium-v1/REPORT.md)中的石墨变化不能作为真实砖坯燃尽证明。
+
 | 模块 | 内容 | 状态 |
 | --- | --- | --- |
 | [公开材料研究](experiments/material_design_v2/artifacts/DIRECTION_REPORT.md) | DTU 污泥焚烧灰数据重算、基料依赖、吸水与收缩折衷 | 独立审核通过，仅 Stage1 研究 |

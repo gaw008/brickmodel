@@ -1,6 +1,6 @@
 # 必需缺项与下一步证据
 
-[受限TP平衡](research/tp-equilibrium-v1/REPORT.md)及[同池有限O₂/N₂](research/finite-oxygen-equilibrium-v1/REPORT.md)已经实际运行并通过原名义门，关闭此前“尚未选择最终相并执行”的限定缺项。两新增供氧量采用同一报告基准元素池，并不提供实际燃尽时间、灰矿物或炉热耗。[Hess能量关系](research/finite-oxygen-equilibrium-v1/FEED_ENERGY.md)已明确HHV如何约束整体原料焓，剩余量热校正/基准/燃烧终态仍未知，没有把它们填零。[Cedrone联合TG/DSC](research/cedrone2024-joint-thermal-v1/joint-observable/JOINT_OBSERVABLE_DESIGN.md)只有有限可识别组合；Hossain2009未取得全文的边界保持。下一推进可直接运行的用户入口和已实测构相成本，完整原泥材料、全周期耦合与三机制现实验收仍未满足。
+[受限TP平衡](research/tp-equilibrium-v1/REPORT.md)及[同池有限O₂/N₂](research/finite-oxygen-equilibrium-v1/REPORT.md)已经实际运行并通过原名义门，关闭此前“尚未选择最终相并执行”的限定缺项。两新增供氧量采用同一报告基准元素池，并不提供实际燃尽时间、灰矿物或炉热耗。[Hess能量关系](research/finite-oxygen-equilibrium-v1/FEED_ENERGY.md)已明确HHV如何约束整体原料焓，剩余量热校正/基准/燃烧终态仍未知，没有把它们填零。[Cedrone联合TG/DSC](research/cedrone2024-joint-thermal-v1/joint-observable/JOINT_OBSERVABLE_DESIGN.md)只有有限可识别组合；Hossain2009未取得全文的边界保持。[有限氧公开入口](research/cedrone-oxygen-cli-v1/REPORT.md)现已实际验收，关闭这一限定可用性缺项；构造排版修改未取得明显加速。下一提取同一原料初态抵消后的条件供热差，完整原泥材料、全周期耦合与三机制现实验收仍未满足。
 
 [平衡排湿时间比较](research/arlabosse-equilibrium-time-refinement-v1/REPORT.md)补上原1s案例的2/4步实际结果与相邻差分。多数指标接近一阶，但干格Nv/P分辨不足，整体平衡误差未知；尚不能关闭全场时间、空间或长程干燥验证。继续高温材料闭合及可运行入口，避免重复不变的短例。
 
