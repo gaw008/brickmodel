@@ -1,5 +1,7 @@
 # 必需缺项与下一步证据
 
+[平衡排湿时间比较](research/arlabosse-equilibrium-time-refinement-v1/REPORT.md)补上原1s案例的2/4步实际结果与相邻差分。多数指标接近一阶，但干格Nv/P分辨不足，整体平衡误差未知；尚不能关闭全场时间、空间或长程干燥验证。继续高温材料闭合及可运行入口，避免重复不变的短例。
+
 [Cedrone 2024 TG/DSC](research/cedrone2024-joint-thermal-v1/REPORT.md)已提供同一均化原污泥不同试样的有限真实锚点及可复现读图，关闭该来源“仅有原文、没有数字读取”的缺项。DSC基线/显热/含水峰拆分、跨试样差异、气液产物及反应能量仍不完整；下一步明确质量与表观热流的联合观测算子和可识别组合，不由稀疏单速率曲线补齐未知反应路径。
 
 [局部平衡单胞](research/arlabosse-equilibrium-flash-v1/REPORT.md)已消除这一独立闭合计算对任意Kph的依赖；瞬时平衡时间尺度误差仍unknown。原载气工况未在扫描预算内找到合法根，新载气工况通过名义门；不授予原工况通过或完整温度证书。新[一维主机](research/arlabosse-equilibrium-transport-v1/REPORT.md)已完成1s/1步开放热湿推进及128原检查，关闭“完全未接入”缺项；时间/空间/长程与材料验证仍缺。完整原泥材料、高温与烧结冷却、现实验证和全周期实验仍缺。
