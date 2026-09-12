@@ -1,5 +1,7 @@
 # 必需缺项与下一步证据
 
+[Cedrone观测推导](research/cedrone2024-joint-thermal-v1/joint-observable/JOINT_OBSERVABLE_DESIGN.md)已明确TG称盘质量与DSC差示功率的不同投影，提供5个实际区间质量约束。基线/产物/共同能量仍未知，单速率稀疏点不能同时确定自由反应函数、A/E和热效应。[Hossain2009](research/sludge-products-thermal-2009-v1/REVIEW.md)全文本次未取得，不能断言论文无数据，也不能用摘要热量补齐。下一可独立推进的是指定TP的限定产品Gibbs组成计算；其不需初料A/E或参考熵，但仍需核最终相G和元素集合，不能自动取得动态能量或完整原污泥资格。
+
 [平衡排湿时间比较](research/arlabosse-equilibrium-time-refinement-v1/REPORT.md)补上原1s案例的2/4步实际结果与相邻差分。多数指标接近一阶，但干格Nv/P分辨不足，整体平衡误差未知；尚不能关闭全场时间、空间或长程干燥验证。继续高温材料闭合及可运行入口，避免重复不变的短例。
 
 [Cedrone 2024 TG/DSC](research/cedrone2024-joint-thermal-v1/REPORT.md)已提供同一均化原污泥不同试样的有限真实锚点及可复现读图，关闭该来源“仅有原文、没有数字读取”的缺项。DSC基线/显热/含水峰拆分、跨试样差异、气液产物及反应能量仍不完整；下一步明确质量与表观热流的联合观测算子和可识别组合，不由稀疏单速率曲线补齐未知反应路径。

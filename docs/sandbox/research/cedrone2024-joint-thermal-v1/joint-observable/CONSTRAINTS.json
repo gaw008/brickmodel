@@ -1,0 +1,602 @@
+{
+  "purpose": "Exact rational combinations of existing raster anchors; no new material parameters or runtime reaction RHS",
+  "primary_source": {
+    "doi": "10.3390/environments11100210",
+    "locator": "PDF p4 methods; p9 Fig3a/3b",
+    "anchor_file": "../extraction/ANCHORS.json",
+    "anchor_file_sha256": "5c6f4cdb8ad4b1ecf48338790803200a3ded5d6f6f2c035b682ad921986f2b28",
+    "new_anchors_added": 0
+  },
+  "clocks": {
+    "reported_heating_rate_K_s": {
+      "fraction": "1/6",
+      "decimal_preview": 0.16666666666666666
+    },
+    "TG_start_C": 25,
+    "DSC_start_C": 50,
+    "TG_time_s": "6*(T_C-25)",
+    "DSC_time_s": "6*(T_C-50)",
+    "TG_25_to50C_history_s": 150,
+    "DSC_pre50C_history": "unknown",
+    "same_complete_thermal_history": false,
+    "aligned_temperature_is_not_identical_state_or_clock": true,
+    "conditions": "Different aliquots, N2 flows60/50mL/min, same homogenized feed; times use reported program and leave sample temperature lag unknown"
+  },
+  "normalization": {
+    "mass_denominator": "initial TG sample mass, not current residue or absolute dry matter",
+    "DSC_denominator": "initial separately weighed DSC sample mass interpretation; not the TG current mass",
+    "residual_water_wt_percent": "2.4 +/- 0.6 measured on characterized feed; not exact per-aliquot free water inventory",
+    "absolute_sample_mass_used": false
+  },
+  "bound_contract": {
+    "type": "conditional analyst read outer envelope",
+    "derivation": "loss nominal=(Ya-Yb)/100; loss outer=[La-Ub, Ua-Lb]/100; retained change is negative loss; time=(Tb-Ta)/beta; rate divides by this positive nominal program duration",
+    "shared_axis_calibration": "same TG axes; endpoint interval subtraction is an outer bound, not an independent statistical-error assumption",
+    "experimental_confidence_interval": false,
+    "instrument_or_sample_lag_error": null,
+    "aliquot_transfer_error": null,
+    "all_rate_bounds_conditional_on_reported_program": true
+  },
+  "TG_adjacent_intervals": [
+    {
+      "id": "TG_100_to_225C",
+      "source_anchors": [
+        {
+          "panel": "TG",
+          "target_temperature_C": 100,
+          "nominal_value_fraction": "2030100/20873",
+          "analyst_read_envelope_fraction": [
+            "2780/29",
+            "22940/231"
+          ],
+          "nominal_pixel": [
+            144,
+            "93"
+          ]
+        },
+        {
+          "panel": "TG",
+          "target_temperature_C": 225,
+          "nominal_value_fraction": "1896900/20873",
+          "analyst_read_envelope_fraction": [
+            "2580/29",
+            "21580/231"
+          ],
+          "nominal_pixel": [
+            217,
+            "223/2"
+          ]
+        }
+      ],
+      "TG_time_from_reported_25C_start_s": [
+        {
+          "fraction": "450",
+          "decimal_preview": 450.0
+        },
+        {
+          "fraction": "1200",
+          "decimal_preview": 1200.0
+        }
+      ],
+      "duration_s": {
+        "fraction": "750",
+        "decimal_preview": 750.0
+      },
+      "interval_fully_inside_reported_DSC_50_to600C_range": true,
+      "net_loss_kg_per_initial_TG_kg": {
+        "fraction": "1332/20873",
+        "decimal_preview": 0.06381449719733627
+      },
+      "net_loss_analyst_outer_bounds_kg_per_initial_TG_kg": {
+        "lower": {
+          "fraction": "818/33495",
+          "decimal_preview": 0.024421555456038215
+        },
+        "upper": {
+          "fraction": "3464/33495",
+          "decimal_preview": 0.10341842065979998
+        }
+      },
+      "net_retained_mass_change_kg_per_initial_TG_kg": {
+        "fraction": "-1332/20873",
+        "decimal_preview": -0.06381449719733627
+      },
+      "net_retained_mass_change_analyst_outer_bounds_kg_per_initial_TG_kg": {
+        "lower": {
+          "fraction": "-3464/33495",
+          "decimal_preview": -0.10341842065979998
+        },
+        "upper": {
+          "fraction": "-818/33495",
+          "decimal_preview": -0.024421555456038215
+        }
+      },
+      "interval_mean_retained_mass_change_rate_kg_per_initial_TG_kg_s": {
+        "fraction": "-222/2609125",
+        "decimal_preview": -8.508599626311503e-05
+      },
+      "interval_mean_retained_mass_change_rate_analyst_outer_bounds_kg_per_initial_TG_kg_s": {
+        "lower": {
+          "fraction": "-1732/12560625",
+          "decimal_preview": -0.00013789122754639995
+        },
+        "upper": {
+          "fraction": "-409/12560625",
+          "decimal_preview": -3.256207394138428e-05
+        }
+      },
+      "interval_mean_net_loss_rate_kg_per_initial_TG_kg_s": {
+        "fraction": "222/2609125",
+        "decimal_preview": 8.508599626311503e-05
+      },
+      "interval_mean_net_loss_rate_analyst_outer_bounds_kg_per_initial_TG_kg_s": {
+        "lower": {
+          "fraction": "409/12560625",
+          "decimal_preview": 3.256207394138428e-05
+        },
+        "upper": {
+          "fraction": "1732/12560625",
+          "decimal_preview": 0.00013789122754639995
+        }
+      },
+      "interpretation": "integrated net mass change of retained weighed sample; interval mean only, not instantaneous kinetics or a speciated gas emission"
+    },
+    {
+      "id": "TG_225_to_319C",
+      "source_anchors": [
+        {
+          "panel": "TG",
+          "target_temperature_C": 225,
+          "nominal_value_fraction": "1896900/20873",
+          "analyst_read_envelope_fraction": [
+            "2580/29",
+            "21580/231"
+          ],
+          "nominal_pixel": [
+            217,
+            "223/2"
+          ]
+        },
+        {
+          "panel": "TG",
+          "target_temperature_C": 319,
+          "nominal_value_fraction": "1504500/20873",
+          "analyst_read_envelope_fraction": [
+            "70",
+            "17260/231"
+          ],
+          "nominal_pixel": [
+            272,
+            "166"
+          ]
+        }
+      ],
+      "TG_time_from_reported_25C_start_s": [
+        {
+          "fraction": "1200",
+          "decimal_preview": 1200.0
+        },
+        {
+          "fraction": "1764",
+          "decimal_preview": 1764.0
+        }
+      ],
+      "duration_s": {
+        "fraction": "564",
+        "decimal_preview": 564.0
+      },
+      "interval_fully_inside_reported_DSC_50_to600C_range": true,
+      "net_loss_kg_per_initial_TG_kg": {
+        "fraction": "3924/20873",
+        "decimal_preview": 0.18799405931107172
+      },
+      "net_loss_analyst_outer_bounds_kg_per_initial_TG_kg": {
+        "lower": {
+          "fraction": "4772/33495",
+          "decimal_preview": 0.14246902522764593
+        },
+        "upper": {
+          "fraction": "541/2310",
+          "decimal_preview": 0.2341991341991342
+        }
+      },
+      "net_retained_mass_change_kg_per_initial_TG_kg": {
+        "fraction": "-3924/20873",
+        "decimal_preview": -0.18799405931107172
+      },
+      "net_retained_mass_change_analyst_outer_bounds_kg_per_initial_TG_kg": {
+        "lower": {
+          "fraction": "-541/2310",
+          "decimal_preview": -0.2341991341991342
+        },
+        "upper": {
+          "fraction": "-4772/33495",
+          "decimal_preview": -0.14246902522764593
+        }
+      },
+      "interval_mean_retained_mass_change_rate_kg_per_initial_TG_kg_s": {
+        "fraction": "-327/981031",
+        "decimal_preview": -0.00033332280019693567
+      },
+      "interval_mean_retained_mass_change_rate_analyst_outer_bounds_kg_per_initial_TG_kg_s": {
+        "lower": {
+          "fraction": "-541/1302840",
+          "decimal_preview": -0.0004152466918424365
+        },
+        "upper": {
+          "fraction": "-1193/4722795",
+          "decimal_preview": -0.00025260465465894665
+        }
+      },
+      "interval_mean_net_loss_rate_kg_per_initial_TG_kg_s": {
+        "fraction": "327/981031",
+        "decimal_preview": 0.00033332280019693567
+      },
+      "interval_mean_net_loss_rate_analyst_outer_bounds_kg_per_initial_TG_kg_s": {
+        "lower": {
+          "fraction": "1193/4722795",
+          "decimal_preview": 0.00025260465465894665
+        },
+        "upper": {
+          "fraction": "541/1302840",
+          "decimal_preview": 0.0004152466918424365
+        }
+      },
+      "interpretation": "integrated net mass change of retained weighed sample; interval mean only, not instantaneous kinetics or a speciated gas emission"
+    },
+    {
+      "id": "TG_319_to_421C",
+      "source_anchors": [
+        {
+          "panel": "TG",
+          "target_temperature_C": 319,
+          "nominal_value_fraction": "1504500/20873",
+          "analyst_read_envelope_fraction": [
+            "70",
+            "17260/231"
+          ],
+          "nominal_pixel": [
+            272,
+            "166"
+          ]
+        },
+        {
+          "panel": "TG",
+          "target_temperature_C": 421,
+          "nominal_value_fraction": "1176900/20873",
+          "analyst_read_envelope_fraction": [
+            "19020/347",
+            "4500/77"
+          ],
+          "nominal_pixel": [
+            331,
+            "423/2"
+          ]
+        }
+      ],
+      "TG_time_from_reported_25C_start_s": [
+        {
+          "fraction": "1764",
+          "decimal_preview": 1764.0
+        },
+        {
+          "fraction": "2376",
+          "decimal_preview": 2376.0
+        }
+      ],
+      "duration_s": {
+        "fraction": "612",
+        "decimal_preview": 612.0
+      },
+      "interval_fully_inside_reported_DSC_50_to600C_range": true,
+      "net_loss_kg_per_initial_TG_kg": {
+        "fraction": "3276/20873",
+        "decimal_preview": 0.15694916878263787
+      },
+      "net_loss_analyst_outer_bounds_kg_per_initial_TG_kg": {
+        "lower": {
+          "fraction": "89/770",
+          "decimal_preview": 0.11558441558441558
+        },
+        "upper": {
+          "fraction": "15956/80157",
+          "decimal_preview": 0.19905934603340944
+        }
+      },
+      "net_retained_mass_change_kg_per_initial_TG_kg": {
+        "fraction": "-3276/20873",
+        "decimal_preview": -0.15694916878263787
+      },
+      "net_retained_mass_change_analyst_outer_bounds_kg_per_initial_TG_kg": {
+        "lower": {
+          "fraction": "-15956/80157",
+          "decimal_preview": -0.19905934603340944
+        },
+        "upper": {
+          "fraction": "-89/770",
+          "decimal_preview": -0.11558441558441558
+        }
+      },
+      "interval_mean_retained_mass_change_rate_kg_per_initial_TG_kg_s": {
+        "fraction": "-91/354841",
+        "decimal_preview": -0.0002564528901677089
+      },
+      "interval_mean_retained_mass_change_rate_analyst_outer_bounds_kg_per_initial_TG_kg_s": {
+        "lower": {
+          "fraction": "-3989/12264021",
+          "decimal_preview": -0.0003252603693356363
+        },
+        "upper": {
+          "fraction": "-89/471240",
+          "decimal_preview": -0.0001888634241575418
+        }
+      },
+      "interval_mean_net_loss_rate_kg_per_initial_TG_kg_s": {
+        "fraction": "91/354841",
+        "decimal_preview": 0.0002564528901677089
+      },
+      "interval_mean_net_loss_rate_analyst_outer_bounds_kg_per_initial_TG_kg_s": {
+        "lower": {
+          "fraction": "89/471240",
+          "decimal_preview": 0.0001888634241575418
+        },
+        "upper": {
+          "fraction": "3989/12264021",
+          "decimal_preview": 0.0003252603693356363
+        }
+      },
+      "interpretation": "integrated net mass change of retained weighed sample; interval mean only, not instantaneous kinetics or a speciated gas emission"
+    },
+    {
+      "id": "TG_421_to_590C",
+      "source_anchors": [
+        {
+          "panel": "TG",
+          "target_temperature_C": 421,
+          "nominal_value_fraction": "1176900/20873",
+          "analyst_read_envelope_fraction": [
+            "19020/347",
+            "4500/77"
+          ],
+          "nominal_pixel": [
+            331,
+            "423/2"
+          ]
+        },
+        {
+          "panel": "TG",
+          "target_temperature_C": 590,
+          "nominal_value_fraction": "989700/20873",
+          "analyst_read_envelope_fraction": [
+            "15900/347",
+            "540/11"
+          ],
+          "nominal_pixel": [
+            429,
+            "475/2"
+          ]
+        }
+      ],
+      "TG_time_from_reported_25C_start_s": [
+        {
+          "fraction": "2376",
+          "decimal_preview": 2376.0
+        },
+        {
+          "fraction": "3390",
+          "decimal_preview": 3390.0
+        }
+      ],
+      "duration_s": {
+        "fraction": "1014",
+        "decimal_preview": 1014.0
+      },
+      "interval_fully_inside_reported_DSC_50_to600C_range": true,
+      "net_loss_kg_per_initial_TG_kg": {
+        "fraction": "1872/20873",
+        "decimal_preview": 0.08968523930436449
+      },
+      "net_loss_analyst_outer_bounds_kg_per_initial_TG_kg": {
+        "lower": {
+          "fraction": "1092/19085",
+          "decimal_preview": 0.057217710243646844
+        },
+        "upper": {
+          "fraction": "3372/26719",
+          "decimal_preview": 0.12620232793143457
+        }
+      },
+      "net_retained_mass_change_kg_per_initial_TG_kg": {
+        "fraction": "-1872/20873",
+        "decimal_preview": -0.08968523930436449
+      },
+      "net_retained_mass_change_analyst_outer_bounds_kg_per_initial_TG_kg": {
+        "lower": {
+          "fraction": "-3372/26719",
+          "decimal_preview": -0.12620232793143457
+        },
+        "upper": {
+          "fraction": "-1092/19085",
+          "decimal_preview": -0.057217710243646844
+        }
+      },
+      "interval_mean_retained_mass_change_rate_kg_per_initial_TG_kg_s": {
+        "fraction": "-24/271349",
+        "decimal_preview": -8.844698156248964e-05
+      },
+      "interval_mean_retained_mass_change_rate_analyst_outer_bounds_kg_per_initial_TG_kg_s": {
+        "lower": {
+          "fraction": "-562/4515511",
+          "decimal_preview": -0.0001244598894787323
+        },
+        "upper": {
+          "fraction": "-14/248105",
+          "decimal_preview": -5.642772213377401e-05
+        }
+      },
+      "interval_mean_net_loss_rate_kg_per_initial_TG_kg_s": {
+        "fraction": "24/271349",
+        "decimal_preview": 8.844698156248964e-05
+      },
+      "interval_mean_net_loss_rate_analyst_outer_bounds_kg_per_initial_TG_kg_s": {
+        "lower": {
+          "fraction": "14/248105",
+          "decimal_preview": 5.642772213377401e-05
+        },
+        "upper": {
+          "fraction": "562/4515511",
+          "decimal_preview": 0.0001244598894787323
+        }
+      },
+      "interpretation": "integrated net mass change of retained weighed sample; interval mean only, not instantaneous kinetics or a speciated gas emission"
+    },
+    {
+      "id": "TG_590_to_825C",
+      "source_anchors": [
+        {
+          "panel": "TG",
+          "target_temperature_C": 590,
+          "nominal_value_fraction": "989700/20873",
+          "analyst_read_envelope_fraction": [
+            "15900/347",
+            "540/11"
+          ],
+          "nominal_pixel": [
+            429,
+            "475/2"
+          ]
+        },
+        {
+          "panel": "TG",
+          "target_temperature_C": 825,
+          "nominal_value_fraction": "856500/20873",
+          "analyst_read_envelope_fraction": [
+            "13620/347",
+            "9820/231"
+          ],
+          "nominal_pixel": [
+            566,
+            "256"
+          ]
+        }
+      ],
+      "TG_time_from_reported_25C_start_s": [
+        {
+          "fraction": "3390",
+          "decimal_preview": 3390.0
+        },
+        {
+          "fraction": "4800",
+          "decimal_preview": 4800.0
+        }
+      ],
+      "duration_s": {
+        "fraction": "1410",
+        "decimal_preview": 1410.0
+      },
+      "interval_fully_inside_reported_DSC_50_to600C_range": false,
+      "net_loss_kg_per_initial_TG_kg": {
+        "fraction": "1332/20873",
+        "decimal_preview": 0.06381449719733627
+      },
+      "net_loss_analyst_outer_bounds_kg_per_initial_TG_kg": {
+        "lower": {
+          "fraction": "13268/400785",
+          "decimal_preview": 0.03310503137592475
+        },
+        "upper": {
+          "fraction": "1878/19085",
+          "decimal_preview": 0.0984018862981399
+        }
+      },
+      "net_retained_mass_change_kg_per_initial_TG_kg": {
+        "fraction": "-1332/20873",
+        "decimal_preview": -0.06381449719733627
+      },
+      "net_retained_mass_change_analyst_outer_bounds_kg_per_initial_TG_kg": {
+        "lower": {
+          "fraction": "-1878/19085",
+          "decimal_preview": -0.0984018862981399
+        },
+        "upper": {
+          "fraction": "-13268/400785",
+          "decimal_preview": -0.03310503137592475
+        }
+      },
+      "interval_mean_retained_mass_change_rate_kg_per_initial_TG_kg_s": {
+        "fraction": "-222/4905155",
+        "decimal_preview": -4.52585086505931e-05
+      },
+      "interval_mean_retained_mass_change_rate_analyst_outer_bounds_kg_per_initial_TG_kg_s": {
+        "lower": {
+          "fraction": "-313/4484975",
+          "decimal_preview": -6.978857184265242e-05
+        },
+        "upper": {
+          "fraction": "-6634/282553425",
+          "decimal_preview": -2.347874565668422e-05
+        }
+      },
+      "interval_mean_net_loss_rate_kg_per_initial_TG_kg_s": {
+        "fraction": "222/4905155",
+        "decimal_preview": 4.52585086505931e-05
+      },
+      "interval_mean_net_loss_rate_analyst_outer_bounds_kg_per_initial_TG_kg_s": {
+        "lower": {
+          "fraction": "6634/282553425",
+          "decimal_preview": 2.347874565668422e-05
+        },
+        "upper": {
+          "fraction": "313/4484975",
+          "decimal_preview": 6.978857184265242e-05
+        }
+      },
+      "interpretation": "integrated net mass change of retained weighed sample; interval mean only, not instantaneous kinetics or a speciated gas emission"
+    }
+  ],
+  "DSC500_forbidden_Cp_shortcut": {
+    "source_anchor": {
+      "panel": "DSC",
+      "target_temperature_C": 500,
+      "nominal_value_fraction": "1409/56020",
+      "analyst_read_envelope_fraction": [
+        "5/268",
+        "22/665"
+      ],
+      "nominal_pixel": [
+        794,
+        "177/2"
+      ]
+    },
+    "formula": "diagnostic=-1000*phi_plot_W_per_g / beta_K_per_s",
+    "diagnostic_unit": "J/(initial DSC kg K)",
+    "nominal": {
+      "fraction": "-422700/2801",
+      "decimal_preview": -150.9103891467333
+    },
+    "analyst_outer_bounds": {
+      "lower": {
+        "fraction": "-26400/133",
+        "decimal_preview": -198.49624060150376
+      },
+      "upper": {
+        "fraction": "-7500/67",
+        "decimal_preview": -111.94029850746269
+      }
+    },
+    "all_read_bounds_negative": true,
+    "allowed_use": "dimensional/sign diagnostic prohibiting use of raw DSC/ramp as a positive fixed-composition storage derivative",
+    "not_a_material_Cp": true,
+    "not_a_reaction_enthalpy": true,
+    "baseline_or_instrument_corrected": false
+  },
+  "limits": [
+    "No interpolation within intervals",
+    "No instantaneous mass-loss rate inferred",
+    "No water/oil/gas partition",
+    "No A or E fit",
+    "No heat integration",
+    "No joint matching of anchors at different temperatures",
+    "No material or full-cycle qualification"
+  ]
+}

@@ -4,6 +4,8 @@ Cedrone等2024，DOI[10.3390/environments11100210](https://doi.org/10.3390/envir
 
 这是公开实验的有限数字化数据，不是材料参数包。TG保留初始试样质量百分比，DSC保留原图W/g与吸热向下的负号。初始试样仍有残留或再吸附水，未换算为绝干基。12个锚点中11个可读，DSC575°C因曲线与基线重叠保留unknown；TG825°C超出DSC温域。不同温度的锚点不能视为同一时刻的成对观测。
 
+[区间净失重约束](derived/CONSTRAINTS.json)给出5个相邻TG区间的原锚点差值、名义程序时长和平均净失重率，保留精确有理数及分析员外包围。它们不提供瞬时反应速率或气体种类。TG从25°C开始、DSC从50°C开始；两者具有相同升温率，但完整热历史不同。
+
 `extraction/ANCHORS.json`保存实际RGB像素、校准顶点和分析员读图包围，`observations.csv`便于查看。完整方法见[PROTOCOL.md](PROTOCOL.md)，原图许可与署名见[source/ATTRIBUTION.md](source/ATTRIBUTION.md)。±2px标签定位及±1.5px曲线余量均为本次分析员设定；仪器误差、基线和试样差异仍为unknown。
 
 安装Pillow后，可从仓库根目录重新提取至一个不存在的输出文件：
