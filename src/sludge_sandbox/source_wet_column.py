@@ -19,6 +19,8 @@ from .mass_wet_transport import (
 )
 from .phase_storage import InversePolicy
 from .source_wet_storage import SourceWetStorage, _binary
+from .arlabosse_rigid_sorption import ArlabosseSorptionStorage
+from .arlabosse_sorption_phase import evaluate_sorption_phase
 from .water_chemical_potential import WaterChemicalPotential
 from .solid_fluid_heat import LiquidTransportConfig
 from .liquid_transport import LiquidTransportDomainError, liquid_face_exchange
@@ -99,7 +101,17 @@ class SourceWetColumn:
 
     def binding(self):
         require(type(self.storages) is tuple and bool(self.storages) and
-                all(type(s) is SourceWetStorage for s in self.storages), 'actual_source_wet_storages')
+                all(type(s) in (SourceWetStorage, ArlabosseSorptionStorage) for s in self.storages),
+                'actual_source_wet_storages')
+        sorption = type(self.storages[0]) is ArlabosseSorptionStorage
+        require(sorption == (type(self) is ArlabosseSorptionColumn),
+                'explicit_sorption_column_type_required')
+        require(all(type(s) is type(self.storages[0]) for s in self.storages),
+                'common_source_storage_model_required')
+        if sorption:
+            require(self.liquid_transport is None, 'sorption_liquid_transport_not_supported')
+            require(all(mode == 'existing_liquid' for mode in self.interface_modes),
+                    'sorption_dry_interface_not_supported')
         require(type(self.chemical) is WaterChemicalPotential, 'actual_water_chemical_provider')
         n = len(self.storages)
         require(type(self.inverse_policies) is tuple and len(self.inverse_policies) == n and
@@ -138,7 +150,8 @@ class SourceWetColumn:
         c = self.chemical
         backends = tuple((type(w).__module__, type(w).__qualname__, w.implementation)
                          for w in (c.water, c.vapor._water))
-        content = ('source_wet_closed_column_v1', tuple(s.binding() for s in self.storages),
+        model_kind = 'arlabosse_sorption_closed_column_v1' if sorption else 'source_wet_closed_column_v1'
+        content = (model_kind, tuple(s.binding() for s in self.storages),
             self.inverse_policies, c, backends, (c.reference_pressure_pa, c.method_id, c.caloric_method_id,
             c.gas_constant_j_mol_k, c.temperature_range_k), self.transfer_coefficients_mol_s_pa,
             self.faces, self.cell_widths_m, self.face_area_m2, self.interface_modes,
@@ -193,8 +206,12 @@ class SourceWetColumn:
             inverse = storage.invert(state, policy)
             point = inverse.point
             chemistry = storage.chemistry.evaluate(state.solid_mass_kg, state.gas_amounts_mol)
-            phase = evaluate_wet_phase(self.chemical, point, state.gas_amounts_mol[2],
-                                      self.transfer_coefficients_mol_s_pa[i], self.interface_modes[i])
+            if type(storage) is ArlabosseSorptionStorage:
+                phase = evaluate_sorption_phase(storage, self.chemical, point,
+                    state.gas_amounts_mol[2], self.transfer_coefficients_mol_s_pa[i], self.interface_modes[i])
+            else:
+                phase = evaluate_wet_phase(self.chemical, point, state.gas_amounts_mol[2],
+                    self.transfer_coefficients_mol_s_pa[i], self.interface_modes[i])
             cells.append(SourceColumnCell(inverse, phase, chemistry))
             gases.append(ideal_gas_state(dict(zip(self.gas_ids, state.gas_amounts_mol)),
                 temperature_k=point.temperature_k, gas_volume_m3=point.gas_volume_m3,
@@ -262,6 +279,15 @@ class SourceWetColumn:
                 liquid_pressure_interval_scope='fixed_decoded_temperature', full_inverse_liquid_direction_certified=False,
                 liquid_property_and_saturation_uncertainty_propagated=False)
         return result
+
+
+@dataclass(frozen=True)
+class ArlabosseSorptionColumn(SourceWetColumn):
+    """Explicit new energy/phase semantics, outside old saved/exact protocols.
+
+    Only the direct midpoint integrator currently admits this conditional
+    branch. The original exact class guards reject it before record creation.
+    """
 
 
 @dataclass(frozen=True)
@@ -390,7 +416,7 @@ def integrate_source_column(column, initial, *, duration_s, steps, maximum_wall_
     """
     from .exact_event_clock import ExactEventTime
     from .programmed_source_wet_column import ProgrammedSourceWetColumn
-    require(type(column) in (SourceWetColumn, ProgrammedSourceWetColumn)
+    require(type(column) in (SourceWetColumn, ArlabosseSorptionColumn, ProgrammedSourceWetColumn)
             and type(steps) is int and steps > 0, 'explicit_column_steps')
     require(start_time is None or type(start_time) is ExactEventTime, 'explicit_exact_column_start_time')
     origin = F() if start_time is None else start_time.seconds
