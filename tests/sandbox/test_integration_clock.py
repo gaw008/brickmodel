@@ -62,3 +62,44 @@ def test_binary_interval_remainder_is_fully_integrated():
     assert r.times_s[-1]==.2 and len(r.steps)==5
     total=sum((Fraction(float(s.cell_work_j[0])) for s in r.steps),Fraction())
     assert abs(total-3*(Fraction(.2)-Fraction(.15)))<=Fraction(1e-15)
+
+
+@pytest.mark.parametrize('step,panels',[(.005,20),(.0025,40)])
+def test_separately_rounded_knot_receives_full_time_dependent_heat_and_work(step,panels):
+    start,end=.2,math.nextafter(.3,math.inf)
+    def feed(state,t):
+        return Rates([[t],[0.]],[10*t,0.],[[0.]],[3*t],
+            cell_power_components_w={'mechanical_constraint':[3*t]})
+    r=integrate(ConservedState([[0.]],[0.]),feed,start_s=start,end_s=end,
+        policy=policy(initial_step_s=step,maximum_step_s=step,maximum_steps=panels+1))
+    assert r.status=='completed',(r.reason,r.times_s)
+    assert r.times_s[-1]==end and len(r.steps)<=panels+1
+    amount,heat,work=Fraction(),Fraction(),Fraction()
+    for ledger,state in zip(r.steps,r.states[1:]):
+        assert ledger.start_s<ledger.end_s
+        assert ledger.end_s-ledger.start_s<=step+math.ulp(ledger.start_s)+math.ulp(ledger.end_s)
+        amount+=Fraction(float(ledger.face_species_mol[0,0]))
+        heat+=Fraction(float(ledger.face_energy_j[0]))
+        work+=Fraction(float(ledger.cell_work_components_j['mechanical_constraint'][0]))
+        expected=(Fraction(ledger.end_s)**2-Fraction(start)**2)/2
+        assert abs(amount-expected)<=Fraction(1e-14)
+        assert abs(heat-10*expected)<=Fraction(1e-13)
+        assert abs(work-3*expected)<=Fraction(1e-14)
+        assert abs(Fraction(float(state.internal_energy_j[0]))-heat-work)<=Fraction(1e-13)
+        assert abs(Fraction(float(state.amounts_mol[0,0]))-amount)<=Fraction(1e-14)
+
+
+def test_intentionally_adjacent_forcing_knots_are_not_merged():
+    first=.3
+    second=math.nextafter(first,math.inf)
+    seen=[]
+    def feed(state,t):
+        seen.append(t)
+        return Rates([[1.],[0.]],[10.,0.],[[0.]],[0.])
+    r=integrate(ConservedState([[0.]],[0.]),feed,start_s=.29,end_s=.31,
+        breakpoints_s=(first,second),
+        policy=policy(initial_step_s=.005,maximum_step_s=.005,maximum_steps=10))
+    assert r.status=='numerical_failure' and r.reason=='unresolvable_stage_time'
+    assert r.times_s[-1]==first
+    assert all(t<=first for t in seen)
+    assert all(ledger.end_s<=first for ledger in r.steps)

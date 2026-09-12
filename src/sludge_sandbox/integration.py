@@ -384,6 +384,13 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
             return math.nextafter(endpoint, at)-at
         return desired
 
+    def stage_midpoint(at, endpoint):
+        midpoint = at+(endpoint-at)/2
+        if (not at < midpoint < endpoint or
+                (midpoint-at)/2 == 0 or (endpoint-midpoint)/2 == 0):
+            return None
+        return midpoint
+
     def evaluate(state, at):
         nonlocal evaluations, component_schema
         guard()
@@ -481,6 +488,17 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
         # can differ from a separately rounded interval endpoint by one ULP.
         if 0 < target-next_time <= min(math.ulp(target), 32*math.ulp(min(h, target-at))):
             next_time = target
+        if at < next_time < target and stage_midpoint(next_time, target) is None:
+            # A separately rounded knot can leave an unresolvable tail. Split
+            # the whole remaining interval BEFORE committing this panel; all
+            # stages and exchange weights use the new actual endpoints. Never
+            # lengthen the candidate, move an accepted state, or skip a knot.
+            split = stage_midpoint(at, target)
+            if (split is not None and split < next_time and
+                    stage_midpoint(at, split) is not None and
+                    stage_midpoint(split, target) is not None):
+                next_time = split
+                proposed_clock = Fraction(split)
         if next_time == target:
             proposed_clock = Fraction(target)
         step = next_time-at
@@ -488,12 +506,12 @@ def integrate(initial: ConservedState, operator: Callable[[ConservedState, float
             return finish("domain_exit" if last_domain else "numerical_failure",
                           last_domain or "minimum_time_step")
         try:
-            midpoint = at+step/2
+            midpoint = stage_midpoint(at, next_time)
             # Rounded absolute times need not divide into exactly equal halves.
             # Every stage uses its actual endpoint difference, including weights.
-            left_step, right_step = midpoint-at, next_time-midpoint
-            if (not at < midpoint < next_time or left_step/2 == 0 or right_step/2 == 0):
+            if midpoint is None:
                 raise IntegrationError("unresolvable_stage_time")
+            left_step, right_step = midpoint-at, next_time-midpoint
             full, _, _, _, _, _ = rk2(state, at, next_time)
             half, first_fields, first_parts, first_exact, first_stretch, first_stretch_exact = rk2(state, at, midpoint)
             accepted, second_fields, second_parts, second_exact, second_stretch, second_stretch_exact = rk2(half, midpoint, next_time)

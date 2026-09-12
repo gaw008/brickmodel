@@ -2,7 +2,7 @@
 
 ## 当前新增能力及边界
 
-- [对称自由平板热弹性](research/cooling-stress-v1/REPORT.md)：常系数、参考几何、小应变、零膜力、半板T状态下已实现热应力及能量/熵双向反馈；两格解析松弛与外冷却实跑通过限定数值门槛。参数仅制造分类，不能输出真实砖厚度收缩/强度/开裂，[cooling-spatial-v1](research/cooling-spatial-v1/REPORT.md)仅在固定平滑绝热问题上取得16/32/64格二阶证据；尚无相变或旧总能量主机接入，极端数值不可解域明确拒绝。
+- [对称自由平板热弹性](research/cooling-stress-v1/REPORT.md)：常系数、参考几何、小应变、零膜力，已实现热应力及能量/熵双向反馈；两格解析松弛与外冷却通过限定数值门。[cooling-spatial-v1](research/cooling-spatial-v1/REPORT.md)在固定平滑绝热问题取得16/32/64格二阶证据；[原生能量宿主](research/cooling-energy-host-v1/REPORT.md)已实现全局E反演和实际接受热/局部功账，V2两档通过原门，V1时钟失败保留。参数仍制造分类，固定mol库存仅记账，不授予真实组成、厚度收缩/强度/开裂或相变资格；极端不可解域明确拒绝。
 - [Nowicki预制污泥焦](research/nowicki2011-oxygen-interpolation-v1/REPORT.md)：450–550°C、固定10vol.%O2/Ar、原制焦条件下的alpha_plot=0.1–0.8达时插值可由Python/CLI追查到原表/式；500°C实际图示对照存在偏差。没有质量库存、有限氧、反应热、砖内焦或全流程资格。
 - [USGS纯方解石反应热化学](research/calcite-thermochemistry-v1/IMPLEMENTATION.md)：298.15–1200K同参考Cp/形成焓和指定进度的质量/元素账；不预测实际分解速率、高温体积或MIA3矿物库存。
 - [Wang S1](research/wang2021-startup-v1/REPORT.md)只检验新瞬态表面交换假设；联合拟合触原边界，无冻结参数/新50°C预测，不提供合格干燥材料包。
