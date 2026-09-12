@@ -4,6 +4,8 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+`5cd7479`后完成[两格平衡排湿中文CLI](research/arlabosse-equilibrium-drying-cli-v1/REPORT.md)：examples/sandbox/run_equilibrium_drying.py以必需source-root/output及steps1/2/4运行固定1s，物理/初态原常量不改。作者9项非EOS及唯一资源守卫修复回归通过，代码/薄监督独审通过。唯一真实入口生成36,984,272 B完整JSON、监督49.296135s、exec64431终态0回收；保存独审19组通过，八个完整物理对象与原单步相同，仅3处执行耗时不同，2795输入和186/179安装冻结一致。31成员38,271,968 B原记录压缩2,063,340 B并重开逐项核验。当前无运行中原生轨迹。下一具体物理任务为sludge-tp-equilibrium-v1：官方Cantera/NASA限定CHONS+凝聚碳产品TP平衡，来源与最小设计正在核对；标准态不能混淆1bar与缺省1atm。不改低温安装/既有输入，不以缺动力学为理由停止所有高温组成计算。原§11未完成，Goal面板最近paused，不标complete。
+
 `62ddf31`后完成[Cedrone联合观测推导](research/cedrone2024-joint-thermal-v1/joint-observable/JOINT_OBSERVABLE_DESIGN.md)：TG/DSC起温25/50°C、各自初始质量及气流差异保持；5个TG区间精确净失重/平均变化率和500°C负Cp捷径诊断已实际派生，ROOT按公开锚点复算7组关系通过。原稿与公开数据仅来源路径/SHA映射不同，不增加锚点/拟合或高温RHS。[Hossain2009同一文献取得核查](research/sludge-products-thermal-2009-v1/REVIEW.md)未取得合法全文，708/730/1180kJ/kg仅摘要过程需热线索，不准入反应焓；访问/开放版本登记已保存。下一高温方向为明确CHONS元素子系统的固定TP限定产物平衡，正在核官方热化学/相集与最小实现，不否定该无需A/E的路径，也不授予原泥能量初态资格。两格中文CLI唯一真实执行已完成、49.296135s监督退出0、exec64431回收，保存比对独审正在进行。原§11未完成。
 
 `9281c5d`之后完成[平衡排湿1/2/4步比较](research/arlabosse-equilibrium-time-refinement-v1/REPORT.md)：新增2/4步唯一运行均完成，189/299原检查通过；初始化19.165161/19.145860s、积分40.889897/79.454921s、监督68.180607/107.158254s，exec32485退出0回收。各2807输入未变、186/179安装字节保持。11主输出9个可报告描述性阶数，排水p1.0104182，干格Nv/P分辨不足保留null；不授予全平衡/全场时间或材料资格。保存结果独审660项通过、0新EOS；60成员112,488,159 B归档6,193,654 B已重开核对。下一为真实两格中文CLI，目录/private/tmp/arlabosse-equilibrium-transport-v1/cli；另在核Cedrone各自TG/DSC温程的可识别组合，未新增高温RHS。完整§11未完成，Goal最近paused，不标complete。
