@@ -4,6 +4,8 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+当前本地基线4a8504d。后续[来源执行应用适配](research/source-execution-app-v1/REPORT.md)代码/两项独审已通过，169包文件冻结与非editable安装一致；安装196项相关回归通过10.79s。source-execute沿用原隔离worker/监督器，检查点有效性与一次性恢复权限、完成/失败及材料资格分开；共享图展开、暂停计数、数组比较、资产绑定和请求符号链接问题均已关闭，原RED保留。首实际native01因隔离环境缺iapws1.5.5构造失败，worker9269退出1回收，0RHS；原失败未覆盖。从原登记wheel补装后，新编号native02已终态0，exec35118已回收，不再轮询或重跑。三worker10132/10269/10345均0退出回收；54RHS/12HEOS/3初U/8wet、3接受步/22观察、精确3/64秒，原暂停前缀保留，重复恢复在第四worker启动前拒绝。driver125.067110958s、外监督135.341294084s、517输入不变；原阈值/预算不变，材料/训练/全周期仍false。scratch=/private/tmp/source-execution-app-v1，当前无活动native或UI服务器；保存结果独审112项通过23.441s，203个原失败文件不变；1057成员36,218,818B归档已逐成员重开核SHA。本地阶段提交收尾中。下一实际物理工作须优先同源湿态能量闭合，文献近似误差unknown与真实材料资格分开，不继续衍生单温展示接口。
+
 48568d3后本阶段已完成[Arlabosse95°C离散解吸物性](research/arlabosse95/README.md)和[保存来源运行Python/CLI/中文视图](research/source-view-v1/REPORT.md)。9点aw/6点q_total/相对RTlnaw可追查；3项热量unknown保持，未做连续路径热量或湿储能。来源与代码独审通过，所有实际RED及修复证据保留。安装163项相关测试通过15.92s，167包文件冻结/源码/非editable安装前后均相同。
 
 实际安装浏览器完成大整数时钟、失败/no_saved_return、文件篡改撤销旧结论、原干基Cp/DOI追查和规范记录导出。真实记录824,498B逐字节一致，原试算与未知关联如实显示；工具超时/截断测试问题单列，未重复物理。最后loopback会话42297已Ctrl-C退出130并回收，本阶段无活动服务器/native。scratch=/private/tmp/source-view-v1。下一步最小来源执行/暂停/一次性恢复应用适配，沿用现有worker及监督器；完成后的终段验证不能冒用暂停codec。原材料、三机制现实资格、全周期和多代全部必需项仍未完成，Goal保持active。

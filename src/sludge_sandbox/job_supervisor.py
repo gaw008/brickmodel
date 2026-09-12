@@ -21,6 +21,8 @@ import time
 from typing import Any, Callable
 import uuid
 
+_OPERATIONS = ('run', 'source-run', 'source-execute', 'replay', 'resume')
+
 
 class SupervisionError(ValueError):
     """An invalid job request or persisted observation."""
@@ -65,7 +67,7 @@ def read_job(job_directory: str | Path) -> dict[str, Any]:
         value = json.loads(path.read_bytes())
         if (type(value) is not dict or value.get('schema') != 'sandbox_job_v1' or
                 str(uuid.UUID(value['job_id'])) != value['job_id'] or
-                value['operation'] not in ('run', 'source-run', 'replay', 'resume')):
+                value['operation'] not in _OPERATIONS):
             raise SupervisionError('invalid_job_record')
     except (OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
         raise SupervisionError('invalid_job_record') from exc
@@ -105,6 +107,16 @@ def _signal_owned(process: subprocess.Popen[bytes], signum: int) -> None:
         pass
 
 
+def _publish_source_cancel(directory: Path, job_id: str, cause: str) -> None:
+    """Publish only after this supervisor admits a cancellation for its child."""
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, 'O_NOFOLLOW', 0)
+    descriptor = os.open(directory/'source-cancel', flags, 0o600)
+    with os.fdopen(descriptor, 'w', encoding='utf-8') as stream:
+        json.dump({'schema': 'source_worker_cancel_v1', 'job_id': job_id,
+                   'cause': cause}, stream)
+        stream.write('\n')
+
+
 def _verify_result(directory: Path, returncode: int) -> dict[str, Any]:
     from .run_service import read_run
 
@@ -139,7 +151,7 @@ def supervise(operation: str, source: str | Path, job_directory: str | Path,
     needed. Maximum wall plus grace plus polling/reaping scheduling is the
     operational bound, not a real-time guarantee against OS scheduling stalls.
     """
-    if operation not in ('run', 'source-run', 'replay', 'resume') or not isinstance(policy, SupervisionPolicy):
+    if operation not in _OPERATIONS or not isinstance(policy, SupervisionPolicy):
         raise SupervisionError('invalid_supervision_request')
     if cancel is not None and not callable(cancel):
         raise SupervisionError('invalid_cancel_callback')
@@ -157,10 +169,12 @@ def supervise(operation: str, source: str | Path, job_directory: str | Path,
     begin = time.monotonic()
     job: dict[str, Any] = {
         'schema': 'sandbox_job_v1', 'job_id': str(uuid.uuid4()), 'operation': operation,
-        'source': str(Path(source).resolve()), 'status': 'preparing', 'reason': None,
+        'source': str(Path(source).absolute() if operation == 'source-execute' else Path(source).resolve()),
+        'status': 'preparing', 'reason': None,
         'started_at': _timestamp(), 'policy': asdict(policy),
         'lock_scope': str(directory.parent), 'lock_scope_meaning': 'one active child per resolved job parent directory',
-        'run_directory': 'run', 'pid': None, 'pid_meaning': 'informational only; never used by saved-job cancellation',
+        'run_directory': None if operation == 'source-execute' else 'run',
+        'pid': None, 'pid_meaning': 'informational only; never used by saved-job cancellation',
         'returncode': None, 'child_reaped': False, 'termination_cause': None,
         'metrics': {'availability': 'unknown_until_clean_child_exit'},
         'wall_bound_scope': 'maximum_wall_seconds + cancel_grace_seconds + polling/reaping scheduling; whole child, not only integrate()'}
@@ -168,6 +182,9 @@ def supervise(operation: str, source: str | Path, job_directory: str | Path,
     lock_fd: int | None = None
     termination_started: float | None = None
     hard_killed = False
+    if operation == 'source-execute':
+        job.update(execution_directory='execution', preparation_seconds=None,
+                   result_verification_seconds=None)
 
     def persist() -> None:
         job['elapsed_wall_seconds'] = time.monotonic()-begin
@@ -183,9 +200,22 @@ def supervise(operation: str, source: str | Path, job_directory: str | Path,
         except BlockingIOError:
             job.update(status='refused', reason='native_child_lock_busy')
             return job
-        args = [sys.executable, '-m', 'sludge_sandbox.job_child', operation,
-                job['source'], '--job-directory', str(directory), '--job-id', job['job_id'],
-                '--lock-fd', str(lock_fd)]
+        if operation == 'source-execute':
+            from .source_execution_service import prepare_source_execution
+            preparation_begin = time.monotonic()
+            try:
+                binding = prepare_source_execution(Path(job['source']), directory)
+            finally:
+                job['preparation_seconds'] = time.monotonic()-preparation_begin
+            job['input_binding'] = binding
+            if binding['operation'] == 'source-run':
+                job['run_directory'] = 'execution/run'
+            args = [sys.executable, '-I', '-m', 'sludge_sandbox.source_execution_worker',
+                    str(directory/'request.json')]
+        else:
+            args = [sys.executable, '-m', 'sludge_sandbox.job_child', operation,
+                    job['source'], '--job-directory', str(directory), '--job-id', job['job_id'],
+                    '--lock-fd', str(lock_fd)]
         if water_directory is not None:
             args += ['--water-data', str(Path(water_directory).resolve())]
         if assets_root is not None:
@@ -195,6 +225,9 @@ def supervise(operation: str, source: str | Path, job_directory: str | Path,
         job['argv'] = args
         if (cancel is not None and cancel()) or _cancel_requested(directory, job['job_id']):
             job.update(status='cancelled', reason='cancelled_before_launch', termination_cause='user_cancel')
+            return job
+        if time.monotonic()-begin >= policy.maximum_wall_seconds:
+            job.update(status='timed_out', reason='wall_timeout_before_launch', termination_cause='wall_timeout')
             return job
         with (directory/'stdout.log').open('wb') as stdout, (directory/'stderr.log').open('wb') as stderr:
             process = subprocess.Popen(args, stdout=stdout, stderr=stderr, stdin=subprocess.DEVNULL,
@@ -213,6 +246,8 @@ def supervise(operation: str, source: str | Path, job_directory: str | Path,
                         termination_started = now
                         job.update(status='terminating', termination_cause=cause,
                                    cancellation_sent_at=_timestamp())
+                        if operation == 'source-execute':
+                            _publish_source_cancel(directory, job['job_id'], cause)
                         _signal_owned(process, signal.SIGINT)
                         persist()
                 if termination_started is not None and now-termination_started >= policy.cancel_grace_seconds:
@@ -228,7 +263,17 @@ def supervise(operation: str, source: str | Path, job_directory: str | Path,
         if job['termination_cause'] is None and time.monotonic()-begin >= policy.maximum_wall_seconds:
             job['termination_cause'] = 'wall_timeout'
             job['deadline_observation'] = 'Child termination was not observed before the deadline; no claim about an unobserved earlier exit time.'
-        verification = _verify_result(directory, job['returncode'])
+        if operation == 'source-execute':
+            from .source_execution_service import inspect_source_execution
+            verification_begin = time.monotonic()
+            try:
+                verification = inspect_source_execution(directory, returncode=job['returncode'],
+                                                        termination_cause=job['termination_cause'])
+                _write_json(directory/'RESULT_VERIFICATION.json', verification)
+            finally:
+                job['result_verification_seconds'] = time.monotonic()-verification_begin
+        else:
+            verification = _verify_result(directory, job['returncode'])
         job['result_verification'] = verification
         cause = job['termination_cause']
         if cause is not None:

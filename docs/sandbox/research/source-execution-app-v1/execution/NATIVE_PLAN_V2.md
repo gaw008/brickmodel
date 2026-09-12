@@ -1,0 +1,9 @@
+# Application native02: corrected missing installed dependency
+
+Before this attempt: native01 failed at required_fixed_water_sources_unavailable, with saved original cause ModuleNotFoundError: iapws. Worker9269 exited1 and was reaped; driver elapsed1.740900375s, outer supervisor12.010731209s including cleanup. Counts1 HEOS started/0 kernel returned/0 HEOS returned/0 RHS/0 initial energy/0 wet. No native01 acceptance or pause/resume exists. Original files are preserved, never re-run or altered.
+
+Only environment correction: install existing pinned local iapws1.5.5 wheel SHA97810dca5155cce1e2ec964dd254fc9e4858fbb1c9967da6c4f817adaf3a818e into the same isolated Python. Passive original _verify_sources now verifies all declared source and installed wheel bytes, without constructing EOS. CoolProp8.0.0, NumPy2.5.2, SciPy1.18.1 unchanged. All169 package files still equal the original freeze.
+
+Execute exactly the original NATIVE_PLAN.md physical journey, thresholds and budgets in fresh native02/supervised-native02. Driver differs only by output directory. Wrapper differs only by numbered driver/protocol/output paths plus fingerprinting both installed scientific dependency directories and the passive dependency validation. This is a single explicitly diagnosed attempt after the dependency correction; no automatic retries, continuous fourth branch, new physics parameters or modified runtime identities.
+
+All original acceptance statements apply: three actual workers reaped,54 RHS/12 HEOS/3 initial U/8 wet,3 accepted steps/22 observations,3/64 exact duration, original pause prefix retained and repeated restore refused before any fourth worker. All material/training/full-cycle qualifications remain false. Failure stays failure. The original supervisor process-group containment limitation remains.

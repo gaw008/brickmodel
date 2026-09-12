@@ -53,6 +53,15 @@ def main(argv=None):
     source_validate = commands.add_parser('source-validate', help='校验来源试算配置及显式资产；不运行物性')
     source_validate.add_argument('case', type=Path)
     source_validate.add_argument('--assets-root', type=Path)
+    source_execute = commands.add_parser('source-execute', help='按冻结请求监督来源运行、暂停或一次性恢复；沿用原累计预算')
+    source_execute.add_argument('request', type=Path)
+    source_execute.add_argument('--job-directory', required=True, type=Path)
+    source_execute.add_argument('--wall-seconds', required=True, type=float)
+    source_execute.add_argument('--grace-seconds', default=5., type=float)
+    for name, help_text in [('source-execution-inspect', '被动校验来源执行结果；保存状态不证明进程存活'),
+                            ('source-checkpoint-inspect', '被动检查来源暂停包及剩余恢复权限；不恢复或调用物性')]:
+        command = commands.add_parser(name, help=help_text)
+        command.add_argument('directory', type=Path)
     inspect = commands.add_parser('inspect', help='只读检查标准来源运行包；保留原观测与失败身份')
     inspect.add_argument('run_directory', type=Path)
     inspect.add_argument('--capture-index', type=int)
@@ -143,6 +152,22 @@ def main(argv=None):
         command.add_argument('directory', type=Path)
     args = parser.parse_args(argv)
     try:
+        if args.command == 'source-execute':
+            from .job_supervisor import supervise, SupervisionPolicy
+            with _cancellation() as cancel:
+                value = supervise('source-execute', args.request, args.job_directory,
+                                  SupervisionPolicy(args.wall_seconds, args.grace_seconds), cancel=cancel)
+            print(json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2))
+            return 0 if value.get('status') in ('completed', 'paused') else 1
+        if args.command in ('source-execution-inspect', 'source-checkpoint-inspect'):
+            from .source_execution_service import inspect_source_execution, inspect_source_checkpoint
+            operation = (inspect_source_execution if args.command == 'source-execution-inspect'
+                         else inspect_source_checkpoint)
+            value = operation(args.directory)
+            print(json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2))
+            if args.command == 'source-checkpoint-inspect':
+                return 0 if value.get('record_valid') is True else 1
+            return 0 if value.get('status') in ('completed', 'paused') else 1
         if args.command in ('inspect', 'export'):
             from .source_run_view import inspect_source_run, export_source_run
             if args.command == 'inspect':
