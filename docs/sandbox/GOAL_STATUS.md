@@ -4,11 +4,11 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
-`d84deb9`后已完成[受限CHONS高温平衡与论文条件池](research/tp-equilibrium-v1/REPORT.md)：最终VCS模块da382eea…14849c，187包文件/180模块非editable安装全等，20正式安装回归0.100s通过。原Gibbs首点五元素失败原样保留；新显式VCS四点1000/1000异初猜/800/1200全部原门通过，独审81组+608物性比较，最大末态元素残差3.76910e−16mol、双初猜最大物种差3.57909e−11mol。exec88172终态0回收，驱动17.58784725s、监督22.660594208s，1218运行前后输入相同。VCS传入rtol不被TP实现消费，内置tol与请求值分列；原外部门未变。
+`359813c`后已完成[同池有限O₂/N₂比较及Hess约束](research/finite-oxygen-equilibrium-v1/REPORT.md)。λ0复用原Cedrone源池，新增λ1/4、1在800K/1bar全部原门通过：exec31021终态0回收，2次solve、driver9.031816709s/监督14.102075250s，1227输入运行前后相同。保存独审首轮51组+304独立标准物性比较通过；Cgr分别.181191338409kg、0kg，原基线.260820713435kg，均非实际char/燃尽资格。原Gibbs失败、全部源/物理/数值政策保留，core仍da382eea…14849c、安装187文件/180模块未改。400成员18,622,229B原记录压缩4,492,613B，逐项重开核验，SHA621c594a…543ff。当前无native运行。
 
-同阶段Cedrone报告基准的0.704kg CHONS池已唯一800K/1bar运行通过：exec62632终态0回收，solve4.750353791s、driver4.813073958s、监督9.901485750s，1228运行前后输入相同；独审29组+152物性比较通过。模型质量残差1.025449881e−16kg、石墨21.715153895mol/.260820713435kg，不是char产率或完整污泥热耗。运行后公开README增加报告链接，其原字节和审计01/02差异保留；source/src/installed未改。198成员9,049,035B证据压缩2,208,635B，逐项重开核验；原NASA PDF在忽略缓存。当前无运行中native，低温环境未更新。
+同阶段源HHV已写成带明确剩余校正的Hess关系：Hfeed=Hproducts−Hoxidant+κHHV−CU−Δ(pV)。五项独立算术与代码审查通过，指定298.15K理想气体计量项−10.254241kJ不等于完整量热修正，未合成Hfeed，方法无引文后停止延伸检索。原泥高温能量/矿物/有限速率及完整材料资格仍未闭合。
 
-下一具体物理步为同池有限外加O2/N2比较：/private/tmp/sludge-tp-equilibrium-v1/finite-oxygen-design已有只读Fraction设计，D=bC+bH/4+bS−bO/2=36.5225395092mol作为CO2/H2O/SO2/N2的计量对照；21/79是虚拟混合选择，λ0复用已保存源池，拟λ1/4与1两个新点、恒800K/1bar、原全部门。尚未执行这两个点，不能以计量向量冒充平衡或强制石墨消失。下一恢复先审小算术设计，再薄驱动/独审/唯一监督运行，不重跑已过5个VCS点。完整§11未完成，Goal面板最近paused，不标complete。
+下一具体工作：用户可运行的Cedrone有限氧中文CLI，静态设计已确认Cantera独立Element.weight接口；作者拥有cedrone_oxygen.py、新example/test，正在实现，尚未native。入口不依赖scratch基线、同次Element读数必须与实际phase A一致。首新增点同次profile已定位prepare4.727445s/solve4.779134s，equilibrate仅.000404s；当前未细分内部构造。/private/tmp/sludge-tp-equilibrium-v1/construction-design已有仅改完整映射为block YAML的静态方案，待ROOT实施/审查；不缓存可变相，不改源/model/门槛，与新CLI原计划唯一smoke合并验证，不能提前报性能改进。完整§11仍未完成；本次get_goal已再核面板paused，不自行标complete或恢复。
 
 `d84deb9`之后正在推进受限CHONS高温TP平衡。官方Cantera3.2.0/NASA来源、18气体+纯石墨、显式1bar派生标准态和独立NASA7三温点数学参考已核；最终候选02模块SHA8f051abe…ce964f已独审，187包文件/180模块非editable安装一致，15正式安装测试通过0.102s。两个快照边界及薄driver两个保存/计时边界均有原RED与有限GREEN，不声称发生过旧native物性错误。唯一原生`root-execution/native01`已终止：exec99576退出1回收，监督9.884995792s，1218输入前后不变；首1000K/element_basis求解正常返回、source properties与G条件通过，但五元素残差超过原门，状态postcheck_failed，后3个点未启动。原4点计划保持失败，正在只读诊断Gibbs约束漂移，不能重试覆盖/裁库存/放宽门或把此单点称完整验收。scratch=/private/tmp/sludge-tp-equilibrium-v1，低温旧环境不改。
 

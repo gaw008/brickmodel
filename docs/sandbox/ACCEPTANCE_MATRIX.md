@@ -1,5 +1,7 @@
 # Goal 验收矩阵
 
+[受限CHONS平衡](research/tp-equilibrium-v1/REPORT.md)与[有限供氧比较](research/finite-oxygen-equilibrium-v1/REPORT.md)推进P08/P09及V02/V03的条件组成部分：原Gibbs元素失败保留，显式VCS四个虚拟点、一个报告样本池及两个供氧点均有实际结果和原门检查。供氧两点独审51组/304物性通过；固定TP、限定物种和跨相库存不等于有限时间、矿物或整体烧成能量。HHV的符号Hess约束已有实际算术，校正/基准/终态仍未知。M04/P06/P11、三机制现实、全周期多代与§11不能因此改为verified。
+
 [两格中文排湿入口](research/arlabosse-equilibrium-drying-cli-v1/REPORT.md)推进§9的限定可用性：显式来源目录/独占结果/1、2、4步，固定1s、保存全部原初与动态对象；一次真实入口完成，19组保存独审通过，物理对象对应既有原门。此JSON不属于统一恢复目录，跨平台干净安装、完整循环CLI/UI及§11仍未完成。
 
 [同1s平衡排湿时间比较](research/arlabosse-equilibrium-time-refinement-v1/REPORT.md)推进§8的条件数值证据：原1步保持，新2/4步全部488原检查及保存独审660项通过。11主输出中的9项可报告描述性阶数；干格Nv/P分辨不足保留null。没有全平衡误差充分界，不升级全场时间/空间收敛、材料验证或§11。
