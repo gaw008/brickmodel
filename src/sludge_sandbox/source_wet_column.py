@@ -150,6 +150,11 @@ class SourceWetColumn:
                 'common_source_storage_model_required')
         thermal = self.thermal_provider if sorption else None
         moisture = self.moisture_transport if sorption else None
+        if low:
+            from .low_moisture_fast_inverse import NUMERICAL_POLICY_ID
+            require(type(self.inverse_strategy) is str and self.inverse_strategy in
+                    ('full_U_bisection_v1', NUMERICAL_POLICY_ID),
+                    'explicit_low_moisture_inverse_strategy')
         if low and (thermal is not None or moisture is not None):
             from .low_moisture_transport import LowMoistureConductivity, LowMoistureTransport
         if moisture is not None:
@@ -234,6 +239,9 @@ class SourceWetColumn:
         if moisture is not None:
             content = (content, 'dynamic_low_moisture_transport_v1' if low else
                        'dynamic_makela_moisture_v1', moisture.binding())
+        if low and self.inverse_strategy != 'full_U_bisection_v1':
+            from .low_moisture_fast_inverse import strategy_definition
+            content = (content, 'explicit_inverse_strategy', strategy_definition())
         if self.liquid_transport is not None:
             config = self.liquid_transport
             require(type(config) is LiquidTransportConfig, 'actual_liquid_transport_configuration')
@@ -281,7 +289,11 @@ class SourceWetColumn:
         cells, gases = [], []
         sources = set(self.coefficient_source_ids+self.chemical.source_ids)
         for i, (storage, state, policy) in enumerate(zip(self.storages, states, self.inverse_policies)):
-            inverse = storage.invert(state, policy)
+            if type(self) is LowMoistureSorptionColumn and self.inverse_strategy != 'full_U_bisection_v1':
+                from .low_moisture_fast_inverse import invert_low_moisture_safeguarded
+                inverse = invert_low_moisture_safeguarded(storage, state, policy)
+            else:
+                inverse = storage.invert(state, policy)
             point = inverse.point
             chemistry = storage.chemistry.evaluate(state.solid_mass_kg, state.gas_amounts_mol)
             if type(storage) is LowMoistureSorptionStorage:
@@ -433,6 +445,9 @@ class SourceWetColumn:
                 interface_modes=self.interface_modes,
                 zero_inventory_policy='reversible adsorption; analytic dry excess reference retained; reject negative inventory without clipping',
                 dryout_time='asymptotic vacuum limit, no finite depletion event asserted')
+            if self.inverse_strategy != 'full_U_bisection_v1':
+                from .low_moisture_fast_inverse import strategy_definition
+                result['inverse_strategy'] = strategy_definition()
         if self.liquid_transport is not None:
             result.update(liquid_transport=self.liquid_transport, liquid_boundary_conditions=('no_flux', 'no_flux'),
                 liquid_saturation_definition='liquid_volume / available_liquid_plus_gas_volume',
@@ -457,6 +472,7 @@ class LowMoistureSorptionColumn(SourceWetColumn):
     """Separately admitted reversible low-W storage/phase and transport semantics."""
     thermal_provider: object | None = field(default=None, kw_only=True)
     moisture_transport: object | None = field(default=None, kw_only=True)
+    inverse_strategy: str = field(default='full_U_bisection_v1', kw_only=True)
 
 
 @dataclass(frozen=True)
