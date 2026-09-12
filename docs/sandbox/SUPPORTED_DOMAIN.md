@@ -2,6 +2,9 @@
 
 ## 当前新增能力及边界
 
+- [Nowicki预制污泥焦](research/nowicki2011-oxygen-interpolation-v1/REPORT.md)：450–550°C、固定10vol.%O2/Ar、原制焦条件下的alpha_plot=0.1–0.8达时插值可由Python/CLI追查到原表/式；500°C实际图示对照存在偏差。没有质量库存、有限氧、反应热、砖内焦或全流程资格。
+- [USGS纯方解石反应热化学](research/calcite-thermochemistry-v1/IMPLEMENTATION.md)：298.15–1200K同参考Cp/形成焓和指定进度的质量/元素账；不预测实际分解速率、高温体积或MIA3矿物库存。
+- [Wang S1](research/wang2021-startup-v1/REPORT.md)只检验新瞬态表面交换假设；联合拟合触原边界，无冻结参数/新50°C预测，不提供合格干燥材料包。
 - 精确有序事件内核已完成2/4/8单元原生短时运行和原门槛审计；范围仍为真实水EOS配制造固体/输运。长时空间收敛与原污泥全周期未由这些运行验证。
 - 严格运行记录可实际保存并重新校验真实两单元事件结果；原始全前缀及选定写回审计已实现。完整已提交终端证明、事件比较及资源审计现已分别实现并有[保存记录实证](research/exact-record-gates-v1/README.md)；组合门禁、数值恢复和同版本核心续算现有[实际取消后30步/2事件包完成证据](research/exact-continuation-v1/README.md)；旧CLI/UI精确生命周期仍需接入。单独审计报告本身仍不授权续算。
 - Arlabosse2005同样品的kg干物Cp与显热差关系可执行并逐层追到源Eq2；只在35–105°C，不含反应、生成焓、Cv或摩尔储能。拟合误差仍unknown，不是当前原污泥全材料包。详见[来源组件](research/arlabosse-caloric-v1/README.md)。

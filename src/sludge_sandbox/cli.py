@@ -28,6 +28,10 @@ def main(argv=None):
     calcite.add_argument('--source-data', required=True, type=Path, help='含已核读facts.json与source.json的目录')
     calcite.add_argument('--temperature-k', required=True, help='显式开尔文温度，298.15至1200 K')
     calcite.add_argument('--extent-mol', default='1', help='指定消耗CaCO3的摩尔数；不代表模型预测的分解进度')
+    char = commands.add_parser('char-oxidation-times', help='原文10%氧气条件下污泥预制焦的图示进度达时；不计算热量或氧耗')
+    char.add_argument('--source-data', required=True, type=Path, help='含已核读training.json与source_metadata.json的目录')
+    char.add_argument('--temperature-c', default='500', help='450至550°C的等温标签；内部温度未求解')
+    char.add_argument('--alpha-plot', nargs='+', help='0.1至0.8的图示进度；默认八个预登记水平')
     validate = commands.add_parser('validate', help='校验案例结构；不调用 EOS，不证明材料有效性')
     validate.add_argument('case', type=Path)
     run = commands.add_parser('run', help='运行案例并保存原始输入与求解账本')
@@ -121,6 +125,13 @@ def main(argv=None):
         command.add_argument('directory', type=Path)
     args = parser.parse_args(argv)
     try:
+        if args.command == 'char-oxidation-times':
+            from .nowicki_oxidation import calculate_nowicki_oxygen_times
+            options = {'conversion_levels': args.alpha_plot} if args.alpha_plot is not None else {}
+            value = calculate_nowicki_oxygen_times(args.source_data,
+                temperature_c=args.temperature_c, **options)
+            print(json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2))
+            return 0
         if args.command == 'calcite-thermochemistry':
             from .calcite_thermochemistry import calculate_calcite_thermochemistry
             value = calculate_calcite_thermochemistry(args.source_data,

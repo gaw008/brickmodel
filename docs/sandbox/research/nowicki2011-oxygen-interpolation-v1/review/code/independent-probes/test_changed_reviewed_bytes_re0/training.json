@@ -1,0 +1,59 @@
+{
+  "schema": "nowicki_oxygen_training_v1",
+  "source_id": "SRC_NOWICKI_2011_CHAR",
+  "material_id": "lodz_digested_sludge_char_1000C",
+  "classification": "derived_from_evidence",
+  "meaning": "author-fitted slopes at the reference oxygen condition; not raw time-series measurements",
+  "gas": {
+    "oxygen_mole_fraction": "0.1",
+    "argon_mole_fraction": "0.9",
+    "pressure": "atmospheric",
+    "flow_cm3_min": "50"
+  },
+  "rows": [
+    {
+      "temperature_c": "450",
+      "temperature_k": "723.15",
+      "ks_s_inv": "0.00007044",
+      "locator": "PDF p6 / journal p698 / Table 2 / O2 / 450 C"
+    },
+    {
+      "temperature_c": "550",
+      "temperature_k": "823.15",
+      "ks_s_inv": "0.00070611",
+      "locator": "PDF p6 / journal p698 / Table 2 / O2 / 550 C"
+    }
+  ],
+  "equation": {
+    "id": "nowicki2011_eq6_shrinking_core",
+    "phi": "1-(1-alpha_plot)^(1/3)",
+    "time": "phi/ks",
+    "rate": "3*ks*(1-alpha_plot)^(2/3)",
+    "locator": "PDF p4 / journal p696 / Eq 6"
+  },
+  "interpolation": {
+    "id": "nowicki_two_endpoint_inverse_temperature_log_rate_v1",
+    "classification": "derived_from_evidence",
+    "formula": "log(k(T))=(1-w)*log(k450)+w*log(k550); w=(1/T-1/723.15)/(1/823.15-1/723.15)",
+    "temperature_domain_c": [
+      "450",
+      "550"
+    ],
+    "experimental_validation_completed": false
+  },
+  "response": {
+    "name": "alpha_plot",
+    "meaning": "increasing coordinate drawn in Fig 2 and used in Eq 6; Eq 1 printed normalization conflicts",
+    "selected_domain": [
+      "0.1",
+      "0.8"
+    ],
+    "higher_conversion_qualification": false,
+    "mass_or_molar_conversion_admitted": false
+  },
+  "upstream_table_csv": {
+    "path": "data/sandbox/research/nowicki_table2_rates.csv",
+    "sha256": "42741937d41c3a4a0b6ef0d9440eca327ed103d7f87e5c691779765346e9dd1f"
+  }
+}
+ 

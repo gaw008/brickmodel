@@ -1,5 +1,7 @@
 # 实际验证报告：G0/G1 基础与G2有界模块
 
+2026-09-12最新物理对照：[Nowicki预制污泥焦](research/nowicki2011-oxygen-interpolation-v1/REPORT.md)已用450/550°C定参并实际预测500°C原Fig2(a)八达时；MAE133.651609s、RMSE141.558992s，全部偏早，仅三点落入事前保守读界。没有材料通过阈值、无重新拟合，原alpha方向冲突和未知能量/氧库存保持。源码/安装90项通过，155模块/162包文件一致；源图、数值和保存结果独立审查通过。[Wang S1](research/wang2021-startup-v1/REPORT.md)实际九次拟合完成，joint仍触原Ea边界，96/117点超读界，未锁参/未读50°C。以上均是实际实验偏差记录，不能因软件测试通过改称科学通过。
+
 最新[非静止续算与普通检查点](research/source-dynamic-continuation-v1/REPORT.md)：
 非editable安装8文件148项首轮147通过/1保存字段读取失败，改test/driver而未改生产源码后，
 受影响2项通过80.15s；148唯一相关用例最新通过，146模块/153包文件与源码一致。
