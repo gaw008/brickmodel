@@ -1,0 +1,67 @@
+{
+  "schema": "septien_conductivity_model_definition_v1",
+  "model_id": "SEPTIEN2020_TWO_NODE_CONDITIONAL_CONDUCTIVITY_V1",
+  "classification": "derived_from_evidence",
+  "upstream": {
+    "source_facts_path": "data/sandbox/research/septien-conductivity-v1/source.json",
+    "source_facts_sha256": "5d68c9d8e4d2c2b263270b66af62d6f7b6d1dbd141bbdb9db53fa0d61cd16abd",
+    "original_xml_sha256": "cda0a7fba9cea9dc3b20d8a4b68f36ad571dcaf22deaec7386f323dd95714a0f"
+  },
+  "parameter_derivation": {
+    "moisture_coordinate": "W = y/(1-y), y = original percent wet basis/100",
+    "nominal_nodes": [
+      [
+        "23/77",
+        "0.056"
+      ],
+      [
+        "47/53",
+        "0.062"
+      ]
+    ],
+    "conductivity_unit": "W/(m K)"
+  },
+  "equation": "k(W)=k1+(k2-k1)*(W-W1)/(W2-W1)",
+  "model_choices": {
+    "interpolation": "linear between two nominal measured nodes on the same 30% MIR preparation branch",
+    "temperature_dependence": "constant at given W across declared temperature domain; assumption because original measurement temperature and k(T) are unknown",
+    "pressure_dependence": "no pressure coordinate; no pressure-dependent constitutive response is supplied",
+    "material_transfer": "VIP faecal donor measurements applied conditionally to the Arlabosse wet-storage hybrid"
+  },
+  "exploration_domain": {
+    "moisture_kg_water_per_kg_dry": [
+      0.3,
+      0.8
+    ],
+    "temperature_k": [
+      308.15,
+      368.15
+    ],
+    "outside": "reject, no clipping or extrapolation",
+    "scope": "nominal-coordinate interpolation only; source moisture uncertainty does not certify coverage of true node positions"
+  },
+  "numerical_policy": "exact rational interpolation of printed source numbers and input values; float inputs and float domain endpoints mean represented binary64 values; final float projection reported separately",
+  "uncertainty_policy": {
+    "source_confidence_intervals": "preserve the two original 90% moisture/conductivity intervals without reinterpreting them as interpolated or cross-material bounds",
+    "interpolated_conductivity_confidence_interval": null,
+    "interpolation_model_error": null,
+    "temperature_extension_model_error": null,
+    "pressure_extension_model_error": null,
+    "cross_material_transfer_error": null,
+    "total_model_uncertainty": null
+  },
+  "material_qualified": false,
+  "training_eligible": false,
+  "full_firing_cycle": false,
+  "usage_scope": "hybrid_exploratory_donor_transport",
+  "input_classifications": {
+    "source_table_readings": "measured_public_data",
+    "wet_to_dry_conversion": "derived_from_evidence",
+    "nominal_interpolation": "derived_from_evidence",
+    "temperature_independence": "virtual_design_choice",
+    "exploration_domain": "virtual_design_choice",
+    "cross_material_use": "virtual_design_choice",
+    "numerical_representation": "numerical_policy",
+    "total_model_uncertainty": "unknown"
+  }
+}

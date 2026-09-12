@@ -92,6 +92,6 @@ def test_sorption_condensation_and_liquid_transport_rejection(monkeypatch):
 
 def test_plain_column_refuses_new_storage_semantics(monkeypatch):
     column, _ = setup(monkeypatch)
-    values = {f.name: getattr(column, f.name) for f in fields(column) if f.init}
+    values = {f.name: getattr(column, f.name) for f in fields(SourceWetColumn) if f.init}
     with pytest.raises(ValueError, match='explicit_sorption_column_type_required'):
         SourceWetColumn(**values)

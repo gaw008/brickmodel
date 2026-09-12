@@ -1,7 +1,8 @@
 """N-cell fixed source-mass wet column using shared phase and face kernels.
 
-This path currently has two explicit closed boundaries and manufactured
-transport/geometry. It is not an exact-event host or a qualified sludge model.
+This path has two explicit closed boundaries and manufactured geometry and
+transport, with an explicit optional donor-conductivity branch. It is not an
+exact-event host or a qualified sludge model.
 Solid mass stays fixed; no A/B network or separate latent heat is introduced.
 """
 from dataclasses import dataclass, field, replace
@@ -21,6 +22,7 @@ from .phase_storage import InversePolicy
 from .source_wet_storage import SourceWetStorage, _binary
 from .arlabosse_rigid_sorption import ArlabosseSorptionStorage
 from .arlabosse_sorption_phase import evaluate_sorption_phase
+from .septien_conductivity import SeptienConductivity
 from .water_chemical_potential import WaterChemicalPotential
 from .solid_fluid_heat import LiquidTransportConfig
 from .liquid_transport import LiquidTransportDomainError, liquid_face_exchange
@@ -56,6 +58,21 @@ class LiquidColumnFaceRate(ColumnFaceRate):
 
 
 @dataclass(frozen=True)
+class ConductivityFaceWitness:
+    conductivity_points: tuple
+    conductance_w_k: float
+    conduction_w: float
+    conduction_arithmetic_residual_w: F
+    entropy_production_w_k: float
+    material_qualified: bool = False
+
+
+@dataclass(frozen=True, kw_only=True)
+class ConductivityColumnFaceRate(ColumnFaceRate):
+    conductivity_witness: ConductivityFaceWitness
+
+
+@dataclass(frozen=True)
 class SourceColumnRates:
     cells: tuple
     gas_states: tuple
@@ -70,6 +87,11 @@ class LiquidSourceColumnRates(SourceColumnRates):
     liquid_states: tuple
     liquid_pressure_interval_scope: str = 'fixed_decoded_temperature'
     full_inverse_liquid_direction_certified: bool = False
+
+
+@dataclass(frozen=True, kw_only=True)
+class ConductivitySourceColumnRates(SourceColumnRates):
+    conductivity_points: tuple
 
 
 @dataclass(frozen=True)
@@ -108,6 +130,10 @@ class SourceWetColumn:
                 'explicit_sorption_column_type_required')
         require(all(type(s) is type(self.storages[0]) for s in self.storages),
                 'common_source_storage_model_required')
+        thermal = self.thermal_provider if sorption else None
+        if thermal is not None:
+            require(type(thermal) is SeptienConductivity, 'actual_source_conductivity_required')
+            thermal.binding()
         if sorption:
             require(self.liquid_transport is None, 'sorption_liquid_transport_not_supported')
             require(all(mode == 'existing_liquid' for mode in self.interface_modes),
@@ -129,13 +155,19 @@ class SourceWetColumn:
                 all(type(v) is str and v in ('existing_liquid', 'depleted_no_nucleation') for v in self.interface_modes),
                 'per_cell_interface_modes')
         require(self.boundary_conditions == ('closed_no_flux', 'closed_no_flux'), 'only_explicit_closed_boundaries')
-        require(self.transport_classification == 'manufactured_test_fixture', 'source_transport_not_yet_admitted')
+        expected_classification = ('mixed_source_exploratory' if thermal is not None
+                                   else 'manufactured_test_fixture')
+        require(self.transport_classification == expected_classification,
+                'explicit_transport_classification')
         require(type(self.coefficient_source_ids) is tuple and bool(self.coefficient_source_ids) and
                 all(type(s) is str and bool(s.strip()) for s in self.coefficient_source_ids), 'transport_sources')
         for i, face in enumerate(self.faces):
             require(F(face.area_m2) == F(area) and type(face.half_widths_m) is tuple and
                     tuple(map(F, face.half_widths_m)) == (F(widths[i])/2, F(widths[i+1])/2),
                     'face_geometry_mismatch')
+            if thermal is not None:
+                require(face.conductivities_w_m_k == (0., 0.),
+                        'static_conduction_must_be_disabled')
         first = self.storages[0]
         for i, storage in enumerate(self.storages):
             storage._check()
@@ -156,6 +188,8 @@ class SourceWetColumn:
             c.gas_constant_j_mol_k, c.temperature_range_k), self.transfer_coefficients_mol_s_pa,
             self.faces, self.cell_widths_m, self.face_area_m2, self.interface_modes,
             self.coefficient_source_ids, self.boundary_conditions, self.transport_classification)
+        if thermal is not None:
+            content = (content, 'dynamic_septien_conductivity_v1', thermal.binding())
         if self.liquid_transport is not None:
             config = self.liquid_transport
             require(type(config) is LiquidTransportConfig, 'actual_liquid_transport_configuration')
@@ -220,6 +254,13 @@ class SourceWetColumn:
             sources.update(point.source_ids)
             sources.update(phase.equilibrium.source_ids)
         liquids = ()
+        thermal = self.thermal_provider if type(self) is ArlabosseSorptionColumn else None
+        conductivity_points = ()
+        if thermal is not None:
+            # Validate every decoded cell even for N=1, which has no faces.
+            conductivity_points = tuple(thermal.evaluate(cell.inverse.point.temperature_k,
+                cell.inverse.point.moisture_kg_water_per_kg_dry) for cell in cells)
+            sources.update(thermal.source_ids)
         if self.liquid_transport is not None:
             liquids = tuple(decoded_liquid_state(cell.inverse.point.fluid.mechanical, storage.water,
                 available_pore_volume_m3=cell.inverse.point.available_pore_volume_m3,
@@ -229,9 +270,33 @@ class SourceWetColumn:
         zeros = (0.,)*len(self.gas_ids)
         faces = [ColumnFaceRate(0, None, 0, zeros, 0., 0., zeros, zeros, None)]
         for i, face in enumerate(self.faces, 1):
-            shared = evaluate_wet_face(face, (gases[i-1], gases[i]), self.gas_ids,
+            actual_face = face
+            if thermal is not None:
+                pair = conductivity_points[i-1:i+1]
+                actual_face = replace(face, conductivities_w_m_k=tuple(p.k_w_m_k for p in pair),
+                    source_ids=tuple(sorted(set(face.source_ids+thermal.source_ids))))
+            shared = evaluate_wet_face(actual_face, (gases[i-1], gases[i]), self.gas_ids,
                                        self.storages[0].fluid_template.gas_phases)
-            if self.liquid_transport is None:
+            if thermal is not None:
+                tl, tr = (F(p.temperature_k) for p in pair)
+                kl, kr = (F(p.k_w_m_k) for p in pair)
+                resistance = F(face.half_widths_m[0])/kl+F(face.half_widths_m[1])/kr
+                conductance = F(face.area_m2)/resistance
+                exact_heat = conductance*(tl-tr)
+                require(shared.conduction_w != 0 or exact_heat == 0,
+                        'nonzero_source_conduction_underflow')
+                entropy = F(shared.conduction_w)*(1/tr-1/tl)
+                require(entropy >= 0, 'negative_conduction_entropy')
+                witness = ConductivityFaceWitness(pair, represented(conductance),
+                    shared.conduction_w, F(shared.conduction_w)-exact_heat,
+                    represented(entropy))
+                faces.append(ConductivityColumnFaceRate(face_id=i, left_cell=i-1, right_cell=i,
+                    gas_mol_s=tuple(shared.exchange.net_mol_s[k] for k in self.gas_ids),
+                    energy_w=shared.face_energy_w, conduction_w=shared.conduction_w,
+                    diffusive_enthalpy_w=shared.diffusive_enthalpy_w,
+                    advective_enthalpy_w=shared.advective_enthalpy_w, shared_evaluation=shared,
+                    conductivity_witness=witness))
+            elif self.liquid_transport is None:
                 faces.append(ColumnFaceRate(i, i-1, i, tuple(shared.exchange.net_mol_s[k] for k in self.gas_ids),
                     shared.face_energy_w, shared.conduction_w, shared.diffusive_enthalpy_w,
                     shared.advective_enthalpy_w, shared))
@@ -260,6 +325,10 @@ class SourceWetColumn:
             sources.update(face.source_ids)
         faces.append(ColumnFaceRate(self.cell_count, self.cell_count-1, None, zeros, 0., 0., zeros, zeros, None))
         self._check_states(states)
+        if thermal is not None:
+            return ConductivitySourceColumnRates(cells=tuple(cells), gas_states=tuple(gases),
+                faces=tuple(faces), model_identity=self._identity, source_ids=tuple(sorted(sources)),
+                conductivity_points=conductivity_points)
         if self.liquid_transport is None:
             return SourceColumnRates(tuple(cells), tuple(gases), tuple(faces), self._identity, tuple(sorted(sources)))
         return LiquidSourceColumnRates(cells=tuple(cells), gas_states=tuple(gases), faces=tuple(faces),
@@ -273,6 +342,11 @@ class SourceWetColumn:
             'face_area_m2': self.face_area_m2, 'internal_face_adjacency': tuple((i, i-1, i) for i in range(1, self.cell_count)),
             'transport_classification': self.transport_classification, 'coefficient_source_ids': self.coefficient_source_ids,
             'material_qualified': False, 'scope': 'fixed source mass, fixed slab, closed boundaries; no exact event or furnace boundary admission'}
+        if type(self) is ArlabosseSorptionColumn and self.thermal_provider is not None:
+            result.update(thermal_provider=self.thermal_provider.definition(),
+                thermal_policy='evaluate every decoded cell at every operator call; no static conduction contribution',
+                remaining_transport_classification='manufactured_test_fixture',
+                midpoint_thermal_witness='retained on each accepted conductivity face integral')
         if self.liquid_transport is not None:
             result.update(liquid_transport=self.liquid_transport, liquid_boundary_conditions=('no_flux', 'no_flux'),
                 liquid_saturation_definition='liquid_volume / available_liquid_plus_gas_volume',
@@ -288,6 +362,7 @@ class ArlabosseSorptionColumn(SourceWetColumn):
     Only the direct midpoint integrator currently admits this conditional
     branch. The original exact class guards reject it before record creation.
     """
+    thermal_provider: SeptienConductivity | None = field(default=None, kw_only=True)
 
 
 @dataclass(frozen=True)
@@ -306,6 +381,11 @@ class LiquidColumnFaceIntegral(ColumnFaceIntegral):
     liquid_mol: F
     liquid_enthalpy_j: F
     liquid_enthalpy_projection_j: F
+
+
+@dataclass(frozen=True, kw_only=True)
+class ConductivityColumnFaceIntegral(ColumnFaceIntegral):
+    conductivity_witness: ConductivityFaceWitness
 
 
 def _liquid_integral(face):
@@ -369,7 +449,12 @@ def _integrals(rates, duration):
         adv = tuple(duration*F(x) for x in face.advective_enthalpy_w)
         gas = tuple(duration*F(x) for x in face.gas_mol_s)
         decomposition = q-conduction-sum(diff, F())-sum(adv, F())
-        if type(face) is LiquidColumnFaceRate:
+        if type(face) is ConductivityColumnFaceRate:
+            faces.append(ConductivityColumnFaceIntegral(face_id=face.face_id, gas_mol=gas,
+                energy_j=q, conduction_j=conduction, diffusive_enthalpy_j=diff,
+                advective_enthalpy_j=adv, energy_decomposition_roundoff_j=decomposition,
+                conductivity_witness=face.conductivity_witness))
+        elif type(face) is LiquidColumnFaceRate:
             liquid_h = duration*F(face.liquid_enthalpy_w)
             faces.append(LiquidColumnFaceIntegral(face_id=face.face_id, gas_mol=gas, energy_j=q,
                 conduction_j=conduction, diffusive_enthalpy_j=diff, advective_enthalpy_j=adv,
