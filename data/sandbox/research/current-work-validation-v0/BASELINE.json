@@ -1,0 +1,2105 @@
+{
+  "stage": "V0",
+  "window": "V0-W1",
+  "started_at_utc": "2026-09-13T06:30:31Z",
+  "time_limit_seconds": 7200,
+  "audited_git_commit": "1f088d006b505fc900dbf8701450ff1b6ee0f214",
+  "initial_worktree_status": "clean",
+  "branch": "codex/physics-sandbox-v1",
+  "scope": "current sludge_sandbox modules and claimed results; untouched legacy VME retained as historical scope",
+  "goal_counters_at_creation": {
+    "tokensUsed": 0,
+    "timeUsedSeconds": 0
+  },
+  "numeric_token_budget": null,
+  "source_modules": [
+    {
+      "path": "src/sludge_sandbox/__init__.py",
+      "sha256": "93f8de70bb05581ea0c5b5cb1d940fe11ded378f340af29b41ad6d8cf9b5cb38",
+      "lines": 3,
+      "description": "Evidence-constrained brick research tools, separate from legacy synthetic VME.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/__main__.py",
+      "sha256": "bd045ddd5242d002f692dac452be9afba38deef5cde541a5fc074bfef5987b91",
+      "lines": 4,
+      "description": "",
+      "dependencies": [
+        "cli"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/_heos_kernel.py",
+      "sha256": "373d9e30bf48407fa3ef09725cf25b3541ea08f4dad4acbdde2252fa6dfe0520",
+      "lines": 358,
+      "description": "Isolated native-SI HEOS experiment, not a registered WaterProperties provider.",
+      "dependencies": [
+        "_heos_rhs_scope"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/_heos_kernel_v1.py",
+      "sha256": "c1ecb59c702382c78891f4fcf6b6ac5eb8c68cc57869b1e261ec8a3a4a796b12",
+      "lines": 356,
+      "description": "Isolated native-SI HEOS experiment, not a registered WaterProperties provider.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/_heos_rhs_scope.py",
+      "sha256": "3e26fb0ddde43a6f244d72e94dad3b472d8dbcb06d308288779d7d589fef34e1",
+      "lines": 407,
+      "description": "Private single-worker RHS verification; default water calls remain per-point.",
+      "dependencies": [
+        "_heos_kernel",
+        "arlabosse_caloric",
+        "deforming_solid_storage",
+        "exact_source_column",
+        "ideal_water_vapor",
+        "liquid_transport",
+        "mass_wet_storage",
+        "mass_wet_transport",
+        "phase_storage",
+        "rigid_storage",
+        "rigid_water_gas",
+        "solid_fluid_heat",
+        "source_mass_caloric",
+        "source_wet_column",
+        "source_wet_storage",
+        "thermochemistry",
+        "water_chemical_potential",
+        "water_heos",
+        "water_properties"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/_water_python_backend.py",
+      "sha256": "f5bad219d665b18ba9b307110a02054590a24866a5d60314944c66b3bbd28171",
+      "lines": 33,
+      "description": "Native-unit calls to the already source-verified Python IAPWS-95 backend.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/affine_depletion_clock.py",
+      "sha256": "0475e625120811a457dd4bb21e03c262d7fcf9986ecfe7afc28683ac765f242a",
+      "lines": 172,
+      "description": "Exact arithmetic certificate for a sampled affine liquid-depletion clock.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/amadou_desorption.py",
+      "sha256": "3d7442bb2193f9e31702aaa3c85e996d167c2c42908ed199942f5d53f97c1b22",
+      "lines": 182,
+      "description": "Amadou2006 source-specific equilibrium desorption, not drying/energy closure.",
+      "dependencies": [
+        "evidence"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/arlabosse_caloric.py",
+      "sha256": "42e828e640bdc10d69dd7195cba7440e5851096e23a9a933e080e98211ab6ca3",
+      "lines": 129,
+      "description": "Source-specific dry-mass Cp and sensible enthalpy difference, never molar U.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/arlabosse_desorption95.py",
+      "sha256": "a197a22c095c87f4e388b86c648b7cdcd18cbf75eed34575e10ca09f347137f8",
+      "lines": 240,
+      "description": "Reviewed discrete Arlabosse95°C readings and relative molar chemical potential.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/arlabosse_granular_drying.py",
+      "sha256": "f1ec79c0b606ebcc58029f24162ac25eb75825b4944aca86c693716b3d274b7a",
+      "lines": 264,
+      "description": "Source granular contact-drying law with an explicit isothermal heat budget.",
+      "dependencies": [
+        "arlabosse_wet_thermo"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/arlabosse_low_moisture.py",
+      "sha256": "b49f8246a01e119dfe3c865113b2d2cb7d98a963ba8186ac25783797d1801095",
+      "lines": 286,
+      "description": "Source-joined, explicitly virtual low-water Helmholtz/Gibbs excess.",
+      "dependencies": [
+        "arlabosse_wet_thermo"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/arlabosse_low_moisture_storage.py",
+      "sha256": "7589525d415f7f9eaeb751c035aabdc12f130a11986bad42740b5022b8bb8c57",
+      "lines": 104,
+      "description": "Explicit low-water/zero-inventory extension retaining the dry excess reference.",
+      "dependencies": [
+        "arlabosse_low_moisture",
+        "arlabosse_rigid_sorption",
+        "arlabosse_wet_thermo",
+        "deforming_solid_storage",
+        "mass_storage_bridge",
+        "source_wet_storage"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/arlabosse_rigid_sorption.py",
+      "sha256": "abcfe0d3fab764deddf21d0716a3b11dbdd15090b91cd86ac77363af169613d6",
+      "lines": 281,
+      "description": "Conditional sorption Helmholtz excess on the existing rigid wet storage.",
+      "dependencies": [
+        "arlabosse_wet_thermo",
+        "deforming_solid_storage",
+        "mass_storage_bridge",
+        "mass_wet_storage",
+        "phase_storage",
+        "rigid_storage",
+        "source_mass_caloric",
+        "source_wet_storage",
+        "water_properties"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/arlabosse_sorption_phase.py",
+      "sha256": "25beee27ad64106b095bfcda425703b03e487010ac3f5a225551db522f80d9f5",
+      "lines": 112,
+      "description": "Local nonideal water exchange paired with the rigid sorption energy model.",
+      "dependencies": [
+        "arlabosse_rigid_sorption",
+        "arlabosse_wet_thermo",
+        "mass_storage_bridge",
+        "mass_wet_transport",
+        "source_wet_storage",
+        "water_chemical_potential"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/arlabosse_wet_thermo.py",
+      "sha256": "31e6dd7354ac704a8685fcf7e51f1c93a0a71960292ef84a93f96a5164217694",
+      "lines": 497,
+      "description": "Conditional fixed-pressure wet Gibbs model, not validated sludge thermodynamics.",
+      "dependencies": [
+        "arlabosse_caloric",
+        "arlabosse_desorption95",
+        "water_chemical_potential",
+        "water_properties"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/boundary_program.py",
+      "sha256": "fcf6736c699aea3bb759472d48358dc76d1bce1e9e4cd61a823f3e0e1b378319",
+      "lines": 188,
+      "description": "Immutable continuous boundary designs in SI, without material defaults.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/calcite_thermochemistry.py",
+      "sha256": "04c798663f31e2cd5314f34d0ee7904a81643f0cc4c1164759fb6a829533bf33",
+      "lines": 197,
+      "description": "USGS nominal pure-phase reaction enthalpy, without a kinetic or volume law.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/cedrone_heat.py",
+      "sha256": "4d2b9e4df035b5d6c48feb388ae60bc0ae4a028c3b21bb8511943aa47f0a52b1",
+      "lines": 193,
+      "description": "Offline conditional isobaric heat differences from two saved TP value records.",
+      "dependencies": [
+        "cedrone_oxygen",
+        "tp_equilibrium"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/cedrone_oxygen.py",
+      "sha256": "c85971c9e03351e86dbe84fde16daadceda106b49e6a6f32ae83a5cc220fc882",
+      "lines": 161,
+      "description": "Cedrone Table 4 with finite virtual O2/N2: bookkeeping, not new thermochemistry.",
+      "dependencies": [
+        "tp_equilibrium"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/checkpoint.py",
+      "sha256": "12498b6858643700a4b769ea1df6b10bbe3a455bae8ae6c16cd90fd67fa40b03",
+      "lines": 325,
+      "description": "Validated accepted-prefix checkpoints; saved JSON never executes code.",
+      "dependencies": [
+        "integration",
+        "verification_case"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/cli.py",
+      "sha256": "41e305b7cc61e7a10407395e3580f675ca778e98d3fdf3e78cf2526d7f3da558",
+      "lines": 365,
+      "description": "JSON CLI backed by the same application service as Python clients.",
+      "dependencies": [
+        "arlabosse_desorption95",
+        "arlabosse_wet_thermo",
+        "calcite_thermochemistry",
+        "experiments",
+        "job_supervisor",
+        "local_app",
+        "nowicki_oxidation",
+        "run_service",
+        "search",
+        "sensitivity",
+        "source_execution_service",
+        "source_observation_service",
+        "source_run_config",
+        "source_run_service",
+        "source_run_view",
+        "source_study_service",
+        "verification_case"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/conservation.py",
+      "sha256": "e787ae71be271bfbfbdedca96bc9b7f4b20bd9aa61f730ca0bdc4e35e5904cdc",
+      "lines": 409,
+      "description": "Independent accepted-trajectory ledger audit, without solving the model again.",
+      "dependencies": [
+        "integration"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/continuous_caloric.py",
+      "sha256": "f3a6009df0514bfbe73c5db728e46a3515baa0e81d03f2eb2f8076df3e04e8de",
+      "lines": 250,
+      "description": "Explicit derived caloric model: integrate original adjacent Shomate Cp fits.",
+      "dependencies": [
+        "thermochemistry"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/controlled_vapor_column.py",
+      "sha256": "a336458669e067a3939775f34677c4168bc8a0dbcde1865ba8506adf9ce6ef5a",
+      "lines": 190,
+      "description": "Controlled vapor contact and a separate heat bath for the low-W column.",
+      "dependencies": [
+        "deforming_solid_storage",
+        "mass_storage_bridge",
+        "sorption_moisture_face",
+        "source_wet_column",
+        "source_wet_storage"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/cooling_thermoelastic_plate.py",
+      "sha256": "33851857946f16b560529ad8a9d3ab1bc4fec6c1a18ae63bb9897d77a03746d7",
+      "lines": 312,
+      "description": "Manufactured constant-coefficient thermoelastic half-plate in reference geometry.",
+      "dependencies": [
+        "exchanges",
+        "geometry"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/current_solid_storage.py",
+      "sha256": "08fc0752d4910835fa31a67c17e2ec9a8507a08b387768f536f98ec7dbe4917d",
+      "lines": 194,
+      "description": "Current global-geometry fixed-solid thermodynamics without a mechanical closure.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/deformation_program.py",
+      "sha256": "bed652b4c5b1670cd7122d08d331fd7b15f970b0f12fcba2eff37095249253dd",
+      "lines": 218,
+      "description": "Prescribed C1 slab motion; not a sintering constitutive law.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/deforming_gas_heat.py",
+      "sha256": "22cf6b78eaab05f6090059b27332f53bd4747f4195dd46165f68121be5ddce5b",
+      "lines": 132,
+      "description": "Prescribed compatible gas chambers with explicit pressure-matched actuator work.",
+      "dependencies": [
+        "deformation_program",
+        "gas_heat_model",
+        "integration"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/deforming_solid_heat.py",
+      "sha256": "3f4fe50ffd313811ba22e3d71aeac5e828b1abc348f015609b4258f68a30df9e",
+      "lines": 187,
+      "description": "Prescribed solid mechanics, total energy, relative moving fluid faces.",
+      "dependencies": [
+        "deformation_program",
+        "deforming_solid_storage",
+        "integration",
+        "reacting_skeleton_energy",
+        "rigid_fluid_heat",
+        "skeleton_energy",
+        "solid_fluid_heat",
+        "solid_fluid_storage"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/deforming_solid_storage.py",
+      "sha256": "794d4f0f6465335f7575e12a61268e513972519110491c4e1b4a635b1ccee598",
+      "lines": 245,
+      "description": "Total-energy point storage with explicit fixed or manufactured reacting solids.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/depletion_group_clock.py",
+      "sha256": "20b30a55c08a3c4155b4af9b2c03b858f35f7f61863406d038fcdfc0108d353b",
+      "lines": 196,
+      "description": "Exact affine-inventory certificates; no physical host or mode-switch admission.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/depletion_group_roundoff.py",
+      "sha256": "ec092b36ab69cea2cd6bae139a55c77522d85217ce246dc9b74ea4076f6e5a13",
+      "lines": 172,
+      "description": "Atomic accounting for explicit exact-common-root affine terminal panels only.",
+      "dependencies": [
+        "depletion_group_clock",
+        "depletion_roundoff",
+        "integration"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/depletion_integration.py",
+      "sha256": "a2cdd548419c1f1129dbfa33c10051c230daed0313f39d3c574c1a44dc0dbb31",
+      "lines": 1280,
+      "description": "Bounded wet-to-dry event integration, with explicit terminal-panel accounting.",
+      "dependencies": [
+        "affine_depletion_clock",
+        "depletion_group_clock",
+        "depletion_roundoff",
+        "event_record",
+        "integration",
+        "pressure_comparison",
+        "verification_case",
+        "water_phase_transfer"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/depletion_roundoff.py",
+      "sha256": "aa37d04a5eaabb467029cc959713c0620d3cb466e0a28972b420ee4083bb2de1",
+      "lines": 264,
+      "description": "Audited event-only water write-back; does not locate a depletion event.",
+      "dependencies": [
+        "affine_depletion_clock",
+        "integration"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/dynamic_solid_storage.py",
+      "sha256": "c6f34071aa759479a498d93bdc9b0d67896b0b4fe2668efbbc08d73a638f5d9a",
+      "lines": 222,
+      "description": "Candidate current-state storage: no prescribed trajectory or synthetic clock.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/equilibrium_transport.py",
+      "sha256": "f26eebf51c59988fce1f0b12d1f14c3cffa97e368e9f5525b9810f1a980aff07",
+      "lines": 430,
+      "description": "Conservative total-water/full-U transport followed by nominal equilibrium.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/event_record.py",
+      "sha256": "b3e2c8dca11ab3c50e75aed4606e3716ef51e26a563a8a9c54eae29dad89f787",
+      "lines": 527,
+      "description": "Data-only explicit depletion records; no dynamic class/provider loading.",
+      "dependencies": [
+        "pressure_comparison"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/evidence.py",
+      "sha256": "616249bd154490ffcb663bfff67bcf1788c78be94e81c7a28c89c6d235cd1a50",
+      "lines": 365,
+      "description": "Validate and trace evidence dependencies before a physical model is evaluated.",
+      "dependencies": [
+        "units"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/exact_affine_depletion.py",
+      "sha256": "b76498440ccf6fc6140b6587ab86593a81e6a016fb57b799d3648c9fd0a44adc",
+      "lines": 251,
+      "description": "Exact rational affine terminal clocks; explicitly not a coupled event solver.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/exact_boundary_program.py",
+      "sha256": "1904c9cb168555512df5855dbffad34161c49a63345edc89d7ba75ea83e33727",
+      "lines": 73,
+      "description": "Opt-in exact query/knots for existing validated binary64 boundary programs.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/exact_continuation_admission.py",
+      "sha256": "a3819fba56f7bdf8009be1f8c7a06449f7e6c2750e663c2063ecbf56103c7432",
+      "lines": 50,
+      "description": "Fresh exact-continuation admission; no partial audit token acceptance.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/exact_depletion_integration.py",
+      "sha256": "5c06f392fa8415a8b6d57e9605e04074052cc9a2e04225a5df9ec35b8a2028a2",
+      "lines": 390,
+      "description": "Exact autonomous ordered packets; separate research core, no legacy resume codec.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/exact_event_clock.py",
+      "sha256": "1b8a9961aa3123b188ebd56cf922a031a7466f3b966d6ebfb5e5072ce706ba36",
+      "lines": 103,
+      "description": "Explicit rational numerical times; no implicit float conversion or solver admission.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/exact_free_host.py",
+      "sha256": "1153884bad187c94d156c351a85aacb11983d9bff346c02ceba4d64277bb3918",
+      "lines": 82,
+      "description": "Explicit exact-time adapter for the reviewed autonomous free-slab transfer.",
+      "dependencies": [
+        "deforming_solid_storage",
+        "exact_event_clock",
+        "free_solid_slab",
+        "integration",
+        "water_phase_transfer",
+        "water_properties"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/exact_integration.py",
+      "sha256": "99626ff1776ebdfe258552e67db66aaf804d7688cd7046fc46f31216e6b66a61",
+      "lines": 485,
+      "description": "Exact-time SSPRK2 candidate: explicit separate types, no legacy time casts.",
+      "dependencies": [
+        "exact_integration_checkpoint"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/exact_integration_checkpoint.py",
+      "sha256": "dc3d8ee3ccd70d66807bf06c82ad6478b5878b0ce2f83a31111168976936b0e8",
+      "lines": 397,
+      "description": "Opt-in live accepted-prefix checkpoints for the ordinary exact RK driver.",
+      "dependencies": [
+        "exact_event_clock",
+        "exact_integration",
+        "integration"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/exact_integration_checkpoint_codec.py",
+      "sha256": "f819ef98b2d7e36858c9579c8cb59cdd0829ac5f2b70b4c29848491fc7538d7e",
+      "lines": 347,
+      "description": "Versioned, closed pure-data codec for ordinary accepted-prefix checkpoints.",
+      "dependencies": [
+        "exact_event_clock",
+        "exact_integration",
+        "exact_integration_checkpoint",
+        "integration"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/exact_projection_restore.py",
+      "sha256": "6c5ec48fda6c2600ca9000bd9b4c87c2f09a8cfa58d83e4c8e73abc0cd9e6d25",
+      "lines": 109,
+      "description": "Restore a numerical projection; no continuation or audit authorization.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/exact_record.py",
+      "sha256": "18fc962896b26a786620880e6190b882358af001f215fa602a50eea96b85118f",
+      "lines": 337,
+      "description": "Strict numerical-evidence codec. No provider restoration or resume authority.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/exact_record_audit.py",
+      "sha256": "fb8e9a235592ad3e225fab538cb3425fdf9d6af5acf0bed30056fe786bc057a6",
+      "lines": 148,
+      "description": "Original-prefix arithmetic audit; deliberately not exact-record resume authority.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/exact_record_comparison_audit.py",
+      "sha256": "1cef63c34c9cf77c51a62078df0b696dae2c33096140b079f8b0d8c79b988368",
+      "lines": 297,
+      "description": "Original six-gate record comparison audit, without resume authority.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/exact_resource_audit.py",
+      "sha256": "c1bfaabb1a3325b26a40cf3fa925e9abaf18aa10278823690cbec5a317285ce0",
+      "lines": 128,
+      "description": "Original resource telemetry checks; no new budgets or resume authority.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/exact_root_order.py",
+      "sha256": "65a09a7af6382df1e25054a1222106227e3d0e3771137c558b68cc819c476745",
+      "lines": 161,
+      "description": "Complete shared-panel numerical affine root ordering, not a true RHS certificate.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/exact_run_service.py",
+      "sha256": "643511f3bedf95cc5fe4cd01b9949ad8bda454b10ac66b23abff4d86b9d4eeca",
+      "lines": 175,
+      "description": "Explicit exact service adapter. Canonical records, never display clocks, resume.",
+      "dependencies": [
+        "checkpoint",
+        "exact_continuation_admission",
+        "exact_depletion_integration",
+        "exact_event_clock",
+        "exact_free_host",
+        "exact_record",
+        "exact_record_audit",
+        "exact_record_comparison_audit",
+        "exact_resource_audit",
+        "exact_terminal_proof_audit",
+        "run_service",
+        "verification_case"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/exact_source_column.py",
+      "sha256": "ac5aee085d833e5df49abfbbd7f67c7d76287fe8da3a5eb6a01bc7fbb1839628",
+      "lines": 162,
+      "description": "Exact-time fluid-inventory adapter for a fixed-dry-mass source column.",
+      "dependencies": [
+        "_heos_rhs_scope",
+        "exact_event_clock",
+        "integration",
+        "mass_storage_bridge",
+        "programmed_source_wet_column",
+        "source_mass_caloric",
+        "source_run_observer",
+        "source_wet_column"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/exact_terminal_executor.py",
+      "sha256": "d004b1b750375df9ec79996929f70ccfc249440bfc7bbd39eb02e5edc9ea42fa",
+      "lines": 155,
+      "description": "One source-bound speculative exact terminal; never packet acceptance.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/exact_terminal_panel.py",
+      "sha256": "fa4323a190d91b47509458c7c1e46145dd6d8363bb4d883c5b23becc27afe932",
+      "lines": 145,
+      "description": "Full-state numerical affine quadrature; no event acceptance or mode change.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/exact_terminal_proof_audit.py",
+      "sha256": "ff991e946c72953c1e8a844cfc7c42165cd52b94ddeded9bb43ef2d49fc2ef7b",
+      "lines": 155,
+      "description": "Recompute committed affine terminal arithmetic; no EOS or resume authority.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/exchanges.py",
+      "sha256": "09f148ff097ac6467e38905b36da6de1e6093209b8ff598ff8fcf2befde4d983",
+      "lines": 138,
+      "description": "One face's heat and species enthalpy rates for conservative assembly.",
+      "dependencies": [
+        "gas_transport",
+        "thermochemistry"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/experiments.py",
+      "sha256": "0544f009cbef455bc43423a92113aed913300d45314c7cde5fa519656305f3a3",
+      "lines": 521,
+      "description": "Bounded sequential manufactured experiments over the shared job service.",
+      "dependencies": [
+        "job_supervisor",
+        "run_provenance",
+        "run_service",
+        "verification_case"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/free_skeleton_rates.py",
+      "sha256": "33d3607642ce304fe4cd4bf9a52ec956ff3b8152ca43b79653bc8f8bab366e43",
+      "lines": 172,
+      "description": "Manufactured single-cell diagonal free-traction instantaneous rate solve.",
+      "dependencies": [
+        "skeleton_energy"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/free_slab_rates.py",
+      "sha256": "7fd60eb038f916c5f872705da6e10c79e359cfdbb72b003e729b1d1d185b0857",
+      "lines": 168,
+      "description": "Reduced common-tangent slab mechanics with explicit local constraint work.",
+      "dependencies": [
+        "free_skeleton_rates",
+        "reacting_skeleton_energy",
+        "skeleton_energy"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/free_solid_cell.py",
+      "sha256": "05fa24a43abb234c071e8be116a037f6dc743bb2dbaad7898e68d716fe8a2992",
+      "lines": 149,
+      "description": "Closed single-cell free mechanics and total-energy stage operator.",
+      "dependencies": [
+        "deforming_solid_storage",
+        "dynamic_solid_storage",
+        "geometry",
+        "integration",
+        "phase_storage",
+        "rigid_fluid_heat",
+        "skeleton_energy",
+        "solid_fluid_heat",
+        "solid_fluid_storage"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/free_solid_slab.py",
+      "sha256": "2cbb86191ead1b27e2962835bed3226af7f6b59c3ff0b49d3dcc7596fa53829d",
+      "lines": 185,
+      "description": "Manufactured reduced common-tangent slab with actual current transport.",
+      "dependencies": [
+        "current_solid_storage",
+        "deforming_solid_storage",
+        "free_skeleton_rates",
+        "free_slab_rates",
+        "geometry",
+        "integration",
+        "rigid_fluid_heat",
+        "skeleton_energy",
+        "solid_fluid_heat",
+        "solid_fluid_storage"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/gas_heat_model.py",
+      "sha256": "3851c0dbf505279cad6e67923cb5bb1c6e72534a7d48ece8a16c78738a8c1d65",
+      "lines": 360,
+      "description": "Rigid gas-only multi-cell coupling for operator integration validation.",
+      "dependencies": [
+        "exchanges",
+        "gas_transport",
+        "integration",
+        "reactions",
+        "thermochemistry"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/gas_transport.py",
+      "sha256": "12cd37bca0c21d5ad4489389f5587d2191382f42e34b43e78d934a3e7a51346f",
+      "lines": 256,
+      "description": "Ideal-gas pore states and one shared, signed gas exchange per current face.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/geometry.py",
+      "sha256": "384d35d67ed7aa043991d69e795169bafddb8e1466c1d1f0b072521c10a72312",
+      "lines": 121,
+      "description": "Compatible one-dimensional slab kinematics, independent of a shrinkage constitutive law.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/heos_runtime_registry.py",
+      "sha256": "7f6b34bf65c4590b4ae063c9a62ba4fa9d3b314a292e7330f8354f35cf189086",
+      "lines": 4,
+      "description": "Pinned runtime variants; v2 requires its separately recorded execution review.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/ideal_water_vapor.py",
+      "sha256": "e30b7470e50942f56fffe3fec79dde61e347fc1ac40dd62f3fd2bb66425e86b5",
+      "lines": 118,
+      "description": "Explicit ideal-water caloric bridge to the registered mixture gas constant.",
+      "dependencies": [
+        "water_properties"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/implicit_local_moisture.py",
+      "sha256": "14498567279698b677da131bac019767a8ee024bde5d5fa5106292f09f570e72",
+      "lines": 247,
+      "description": "Exact represented-coefficient backward Euler for a frozen two-pool system.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/incompressible_solid.py",
+      "sha256": "b20d369a15892dd5b8284a1ede26d11bc29397f83137e033f15632b0f0111066",
+      "lines": 210,
+      "description": "Single-branch solid caloric curve and explicit constant-volume approximation.",
+      "dependencies": [
+        "phase_storage"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/integration.py",
+      "sha256": "784d21f65c616bb435ec04ed35a67c6083d362ad9a8115a8a7705a2ebf4848d1",
+      "lines": 612,
+      "description": "Adaptive conservative SSPRK2 with accepted-step exchange ledgers.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/job_child.py",
+      "sha256": "b2ab06c039d4818fced2e18093a0b772cd2e76ed977e9f928e0a23d5804c6062",
+      "lines": 94,
+      "description": "Fixed service entrypoint for the owning job supervisor; never executes saved code.",
+      "dependencies": [
+        "job_supervisor",
+        "run_service",
+        "source_run_service"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/job_supervisor.py",
+      "sha256": "54ae1e5ca6ecb83c2cde6d87df9f8a2669ffc07b39c760244f46b1dc5ed6a980",
+      "lines": 314,
+      "description": "Synchronous ownership of one bounded child, with persisted job observations.",
+      "dependencies": [
+        "run_service",
+        "source_execution_service"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/joined_water_vapor.py",
+      "sha256": "f91f690cd9cc13bdcc4fd72a64902e2ebdab322f1231a0389dd46c337c5f9df0",
+      "lines": 187,
+      "description": "Source-gated ideal vapor h/Cp join, with no liquid or chemical domain award.",
+      "dependencies": [
+        "continuous_caloric",
+        "ideal_water_vapor",
+        "thermochemistry"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/liquid_transport.py",
+      "sha256": "8cac540401fff281d8b5857ce7ad8096d346249fb9bfe5ff0f90f770f8eb00e3",
+      "lines": 248,
+      "description": "Source-labelled, connected-liquid, horizontal upwind Darcy face.",
+      "dependencies": [
+        "incompressible_solid",
+        "phase_storage"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/liquid_transport_state.py",
+      "sha256": "37c9da6e7f5ac49ac6341bb61ee90512bb491469574923f2da05fe92a3c82f97",
+      "lines": 73,
+      "description": "Adapt an already decoded planar mechanical state to liquid face transport.",
+      "dependencies": [
+        "liquid_transport",
+        "phase_storage",
+        "rigid_water_gas",
+        "water_properties"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/local_app.py",
+      "sha256": "975acc603d2055ece020c893ee096d67dcb9a833ef0f7b18145fd3cba938e89f",
+      "lines": 531,
+      "description": "Loopback-only browser boundary over the shared, bounded job supervisor.",
+      "dependencies": [
+        "job_supervisor",
+        "run_service",
+        "source_run_view",
+        "verification_case"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/low_moisture_equilibrium.py",
+      "sha256": "26f329aeb9203986701e1c43dffde48394516f5234eda6324f22a3cfd34f5ded",
+      "lines": 489,
+      "description": "Bounded nominal low-water flash on the actual source storage and chemical API.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/low_moisture_fast_inverse.py",
+      "sha256": "56fb7df8aee1ed868611916fce503a1fc2535da61691264685dd15dd94bb0fc8",
+      "lines": 128,
+      "description": "Explicit safeguarded full-U inverse draft, with the original acceptance gates.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/low_moisture_phase.py",
+      "sha256": "4237c4ff3797e9283ec48c7522ad85fb7984249bc2fbd61ee28ee61050e6ed8a",
+      "lines": 130,
+      "description": "Reversible low-water sorption, including explicit ideal dry/vacuum limits.",
+      "dependencies": [
+        "arlabosse_low_moisture_storage",
+        "mass_storage_bridge",
+        "mass_wet_transport",
+        "source_wet_storage",
+        "water_chemical_potential"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/low_moisture_split_column.py",
+      "sha256": "fa6a195b693ab99bb0d7fadb28ee5bf3ced37616d002fe0d6a75eef2f844d808",
+      "lines": 257,
+      "description": "Explicit first-order local-BE / internal-transport split for low moisture.",
+      "dependencies": [
+        "arlabosse_wet_thermo",
+        "controlled_vapor_column",
+        "deforming_solid_storage",
+        "implicit_local_moisture",
+        "integration",
+        "low_moisture_transport",
+        "mass_storage_bridge",
+        "source_wet_column",
+        "source_wet_storage"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/low_moisture_transport.py",
+      "sha256": "618486941301106095623ca6175b4ab7f3801ce05fb4feea55604e97cb68a3e0",
+      "lines": 441,
+      "description": "Explicit low-W donor transport with actual storage/phase correspondence.",
+      "dependencies": [
+        "arlabosse_low_moisture",
+        "arlabosse_low_moisture_storage",
+        "arlabosse_wet_thermo",
+        "deforming_solid_storage",
+        "low_moisture_phase",
+        "septien_conductivity",
+        "sorption_moisture_face",
+        "source_sorption_moisture",
+        "source_wet_storage"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/mass_storage_bridge.py",
+      "sha256": "cc98bc97bde59f425e55633bd877d6d212ef1ecf9f8a5afdbb3dda0744911aa7",
+      "lines": 278,
+      "description": "Closed manufactured kg-solid / mol-gas thermal reaction bridge.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/mass_transport_bridge.py",
+      "sha256": "d9d532c2758ccd3bf16577343f54163b68c133822937689b8b1a0c666041c4ce",
+      "lines": 139,
+      "description": "Two rigid dry manufactured cells; kg solids, mol gases, shared total-U flux.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/mass_wet_controller_pressure.py",
+      "sha256": "1a7f13d201d627e277852d4895c15f700b2d861a6d31066c4e6ed735e1ab76d2",
+      "lines": 70,
+      "description": "Explicit event/common sample contexts; no extra native query or commit.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/mass_wet_exact_controller.py",
+      "sha256": "51325b507a6a835a3c7230d02c423483bcb6a290fb252a1429913eb690c20ed8",
+      "lines": 395,
+      "description": "Unit-separated autonomous exact wet-to-dry packet research controller.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/mass_wet_exact_record.py",
+      "sha256": "8b59ac0b5c1aadf4a71883b511ea69f29eb1add73d44ceef419310bc980e0c75",
+      "lines": 404,
+      "description": "Versioned mixed kg/mol data record and offline consistency audit; no resume.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/mass_wet_exact_stage.py",
+      "sha256": "6ece806a406ae5f627d8eb3df9a835de98cf369d58df7d6376eb960df6b22c3e",
+      "lines": 431,
+      "description": "Unit-separated autonomous exact-time trials; no global commit or event switch.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/mass_wet_exact_terminal.py",
+      "sha256": "4f186cfbf8a7bb5b8ed58d011edfc8a35ff8acb3c53ea8aa00a272c396518b1b",
+      "lines": 183,
+      "description": "Actual autonomous mixed samples to speculative exact terminal projection.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/mass_wet_pressure_interval.py",
+      "sha256": "643c6c2ab630adb0c55c5b9edfcf6eeb859e13cff37c70b5d109447cdddae0e2",
+      "lines": 482,
+      "description": "Explicit conditional single-query ordinary-liquid pressure research proof.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/mass_wet_pressure_provider_v2.py",
+      "sha256": "768c4d23af9f32516ff492ea38a688a31ea81ab89efa1440fbb765831c06ed65",
+      "lines": 134,
+      "description": "V2 structured-failure wrapper; existing proof equations and gates unchanged.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/mass_wet_pressure_seed.py",
+      "sha256": "f00617338672892aa0f70516c432cba5f809c42a992bcb89c6f67ca2203e5779",
+      "lines": 145,
+      "description": "Bounded source-bound numerical proposals, never pressure certificates.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/mass_wet_pressure_session.py",
+      "sha256": "7a7e837662c808974b7775fafb160272680b52cefcc004a9cd88a639205a750e",
+      "lines": 206,
+      "description": "Single-owner cumulative mathematical pressure session, no native calls.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/mass_wet_storage.py",
+      "sha256": "dc9bead1cb0993953ad9c154dea6c8be5c4a8fbf1cefbdec3998d2d3d33e79fd",
+      "lines": 309,
+      "description": "Explicit kg-solid/mol-liquid/mol-gas rigid wet storage, manufactured solids.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/mass_wet_transport.py",
+      "sha256": "4d2dc3518ad9d52a38029a72e032210a284da3cc25da2e99c54f204c17ab7503",
+      "lines": 342,
+      "description": "Two rigid kg/mol cells with explicit existing-liquid or dry interface modes.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/mass_wet_writeback.py",
+      "sha256": "ceb76234a142960a56ea540cea9a27a3820e4c04f0aafb4bf32925aa1bc6a96f",
+      "lines": 179,
+      "description": "Local mixed-state projection with caller-bound exact affine evidence.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/materials.py",
+      "sha256": "4fd1ea01d49f345b3cd4745f4a3e44da747ee7ebd2bcc16e6ed4d7f3e833e591",
+      "lines": 203,
+      "description": "Explicit material identities, separate mass analyses, and green-batch bookkeeping.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/nowicki_oxidation.py",
+      "sha256": "0a0456f90e685d58302f627d57e3f5eee7bfbb53051d2610ce1fcc2fc1c66af5",
+      "lines": 123,
+      "description": "Source-condition shrinking-core times for a preformed municipal-sludge char.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/paired_pressure.py",
+      "sha256": "f8cd522a2cab5292993b54c785b5dbdde7763eef7fd7b1baf69107ad46cea75f",
+      "lines": 224,
+      "description": "Exact common-root-interval pressure comparison at reported temperatures.",
+      "dependencies": [
+        "rational_intervals"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/paired_pressure_host.py",
+      "sha256": "e1240ee5c5d88669922759ae13cd1993b28d31f5cab1fc71c3256f0dc223f993",
+      "lines": 248,
+      "description": "Explicit manufactured free-slab adapter; no change to existing point bounds.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/phase_storage.py",
+      "sha256": "02c9d39f136b724d99bfa2966b6ecde5d52164038cccd851a77a342def413b75",
+      "lines": 322,
+      "description": "Species thermal storage at prescribed phase pressures and fixed mol inventories.",
+      "dependencies": [
+        "continuous_caloric",
+        "ideal_water_vapor",
+        "joined_water_vapor",
+        "thermochemistry",
+        "water_properties"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/pressure_comparison.py",
+      "sha256": "052815ce1e06fad5f353a9de793e539d21db70d8f2c9529b5dd7a058f65b6fcf",
+      "lines": 302,
+      "description": "Explicit reported-temperature pressure comparisons; no implicit correlation.",
+      "dependencies": [
+        "deforming_solid_storage",
+        "free_solid_slab",
+        "geometry",
+        "integration",
+        "paired_pressure",
+        "paired_pressure_host",
+        "verification_case",
+        "water_phase_transfer",
+        "water_properties"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/programmed_gas_heat.py",
+      "sha256": "4f249494d434ce9bbc26a850fea37d3eaa2172fbf4811939b917273d4667d74c",
+      "lines": 200,
+      "description": "Dynamic reservoir and series surface-film boundary for the rigid gas model.",
+      "dependencies": [
+        "boundary_program",
+        "exchanges",
+        "gas_heat_model",
+        "gas_transport",
+        "integration"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/programmed_solid_fluid_heat.py",
+      "sha256": "17e2853edf7a5bcfe79ebbb1938f04b2ca27be23f39b1d7cd8d8959ec524127b",
+      "lines": 194,
+      "description": "Actual solid/fluid inverse coupled to programmed reservoir and surface film.",
+      "dependencies": [
+        "boundary_program",
+        "deforming_solid_heat",
+        "deforming_solid_storage",
+        "exchanges",
+        "free_solid_slab",
+        "gas_transport",
+        "integration",
+        "programmed_gas_heat",
+        "rigid_fluid_heat",
+        "solid_fluid_heat",
+        "surface_balance"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/programmed_source_wet_column.py",
+      "sha256": "4785776a917b66d48d79fdf116751d51bcb6cfeb9339634f6db33f4c47f00b51",
+      "lines": 221,
+      "description": "Exact furnace program on a fixed source-mass column's outward boundary.",
+      "dependencies": [
+        "boundary_program",
+        "deforming_solid_storage",
+        "exact_boundary_program",
+        "exact_event_clock",
+        "exchanges",
+        "gas_transport",
+        "integration",
+        "mass_storage_bridge",
+        "mass_wet_transport",
+        "programmed_gas_heat",
+        "source_wet_column",
+        "source_wet_storage",
+        "surface_balance"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/rational_intervals.py",
+      "sha256": "69efd3ce96609f8ef5fe56664299cddaf9bc36ca993998bea0d61f7047b22ffa",
+      "lines": 54,
+      "description": "Exact signed interval algebra; caller supplies every physical hypothesis.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/rational_polynomial.py",
+      "sha256": "20783e681388e9fa529bc583de35f20a39c54b5d84c7c2f2e44982c23c5c2a48",
+      "lines": 52,
+      "description": "Rational polynomial arithmetic; no physical event or correction permission.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/reacting_skeleton_energy.py",
+      "sha256": "8a2c25764d8e47a232f5298b27f54204ad630afdefd63cc346144e6907a93ba7",
+      "lines": 132,
+      "description": "Explicit manufactured, temperature-independent composition-scaled skeleton.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/reaction_reference.py",
+      "sha256": "525116769f7b26e28ae2410ad7a9994fcaf351ae06e70075fa6a62c6d5a0c318",
+      "lines": 180,
+      "description": "Exact nominal mass-basis reaction-reference algebra; no material qualification.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/reactions.py",
+      "sha256": "ae6ca26681d03190095e774691fa99761da07f45f4bea498eeb36d7afc8e17b0",
+      "lines": 391,
+      "description": "Explicit, irreversible single-cell reaction sources; no invented mechanism.",
+      "dependencies": [
+        "materials"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/rigid_fluid_heat.py",
+      "sha256": "c99a6e88cb0a1094ef3e190efab7108c74895efbaf30a04e23812e03afd309b6",
+      "lines": 362,
+      "description": "Shared gas/heat faces with actual per-cell liquid/gas mechanical caloric decode.",
+      "dependencies": [
+        "exchanges",
+        "gas_heat_model",
+        "gas_transport",
+        "ideal_water_vapor",
+        "integration",
+        "phase_storage",
+        "rigid_storage",
+        "rigid_water_gas",
+        "spherical_geometry",
+        "thermochemistry",
+        "water_properties"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/rigid_storage.py",
+      "sha256": "bbfcb815d5918a93ec6a193f41c0779079019f02c9c89286fd65a24b8aee23e7",
+      "lines": 288,
+      "description": "Fixed-inventory fluid storage along actual planar mechanical closure.",
+      "dependencies": [
+        "joined_water_vapor",
+        "phase_storage",
+        "rigid_water_gas"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/rigid_water_gas.py",
+      "sha256": "9247db9712ef881995c57a836b12adb7dbbf73c69bcdc036f02b99a15e1d5662",
+      "lines": 286,
+      "description": "Rigid available pore volume: planar liquid water plus complete ideal-gas inventory.",
+      "dependencies": [
+        "water_properties"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/run_provenance.py",
+      "sha256": "56d7f444c983af4c18aa352305d3fd297e14b6a3b3c88745e988f39ad9fdbe40",
+      "lines": 296,
+      "description": "Instantiate equation declarations against frozen run inputs and source code.",
+      "dependencies": [
+        "evidence"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/run_service.py",
+      "sha256": "cd1e5fb645a0ead8fdaa5204f9bac40388feb6bf9fdcd1a619d896797ada2057",
+      "lines": 632,
+      "description": "Shared application boundary for explicitly manufactured verification cases.",
+      "dependencies": [
+        "checkpoint",
+        "depletion_integration",
+        "event_record",
+        "exact_run_service",
+        "integration",
+        "pressure_comparison",
+        "run_provenance",
+        "source_run_service",
+        "verification_case"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/search.py",
+      "sha256": "8c596e593a59ed1a3ab0aad3df53cd0ddd6fc8939400a81bc60a7e5ecff701c6",
+      "lines": 446,
+      "description": "Bounded deterministic coordinate search within a manufactured fixture.",
+      "dependencies": [
+        "",
+        "experiments",
+        "run_provenance",
+        "run_service",
+        "sensitivity"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/sensitivity.py",
+      "sha256": "216936ba30a27274b96cbac04ff59f835a2734d0a3c1f590504635383c62aa06",
+      "lines": 296,
+      "description": "Deterministic two-level manufactured designs and saved-result contrasts.",
+      "dependencies": [
+        "",
+        "experiments"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/septien_conductivity.py",
+      "sha256": "d12b1670ebdb45849e9aa662eb5133a5663bb3c592f2fb7566201e9322512df5",
+      "lines": 286,
+      "description": "Pinned Septien donor measurements with a declared two-node k(W) extension.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/skeleton_energy.py",
+      "sha256": "d6bd0b76ba5dd8629229ac7747d6ae8545d56c25859748ef34b66fb0161fafe7",
+      "lines": 214,
+      "description": "Manufactured diagonal skeleton energy; not a material admission.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/solid_fluid_heat.py",
+      "sha256": "23e0c9b807ea09e4f90314a3f6c1460db25ee539020c18557b7c2e4a47052d15",
+      "lines": 329,
+      "description": "Fixed solid inventories with actual solid/fluid storage and shared gas faces.",
+      "dependencies": [
+        "gas_transport",
+        "integration",
+        "liquid_transport",
+        "liquid_transport_state",
+        "rigid_fluid_heat",
+        "solid_fluid_storage",
+        "solid_reactions"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/solid_fluid_storage.py",
+      "sha256": "67e407cdce28a159902f292d53d4076b507a2bb43c6fb2989b8699423f8580e6",
+      "lines": 230,
+      "description": "Fixed bulk-volume solid inventories coupled to actual water/gas closure.",
+      "dependencies": [
+        "incompressible_solid",
+        "phase_storage",
+        "rigid_storage",
+        "rigid_water_gas"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/solid_reactions.py",
+      "sha256": "b159bd9d10281f2bf6d8c8458eb5be7761566d67b728f09d6fa7fd4754e6af3a",
+      "lines": 155,
+      "description": "Explicit balanced-network aliases bound to real full-storage phase providers.",
+      "dependencies": [
+        "incompressible_solid",
+        "joined_water_vapor",
+        "phase_storage",
+        "reactions",
+        "rigid_fluid_heat",
+        "solid_fluid_heat",
+        "solid_fluid_storage"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/sorption_moisture_face.py",
+      "sha256": "556441ea92ce3574916a4e16d7154f4c24670bdb78c24d118ea9792924d9c854",
+      "lines": 313,
+      "description": "Declared-input condensed-water transport leaf, without a physical host.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/source_approach.py",
+      "sha256": "5364e5dd471523d6f47e512924c884aff1329938632779cbe051795c3139c007",
+      "lines": 260,
+      "description": "One root-guided positive source trial using the existing integration path.",
+      "dependencies": [
+        "depletion_integration",
+        "exact_event_clock",
+        "exact_integration",
+        "integration",
+        "source_endpoint_comparison",
+        "source_inverse_pressure",
+        "source_net_panel",
+        "source_net_prefix",
+        "source_net_roots",
+        "source_prefix_trial"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_dry_pressure.py",
+      "sha256": "1404797b0f9e4d7f8154d8d5937d745f9754b3e512b57833185f581152be33d8",
+      "lines": 194,
+      "description": "Conditional pure-gas pressure bounds for source states with exactly no liquid.",
+      "dependencies": [
+        "deforming_solid_storage",
+        "mass_wet_storage",
+        "rigid_storage",
+        "rigid_water_gas",
+        "source_inverse_pressure",
+        "source_net_prefix",
+        "source_wet_storage",
+        "water_properties"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_dry_shared_pressure.py",
+      "sha256": "9788c5677d6ed7d453f8552a045d6eab6910ebad59abd02e4da8cb8dbdc39be1",
+      "lines": 222,
+      "description": "Full-temperature dry pressure differences for one explicit live volume parameter.",
+      "dependencies": [
+        "deforming_solid_storage",
+        "mass_storage_bridge",
+        "mass_wet_storage",
+        "source_dry_pressure",
+        "source_inverse_pressure",
+        "source_net_prefix",
+        "source_wet_storage"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_dry_transition.py",
+      "sha256": "4090b9a96e98c676f369515b3d9d502a9f75100200ff3b61f986fdc4fc346ca0",
+      "lines": 609,
+      "description": "Execute and compare source columns across one selected wet-to-dry event.",
+      "dependencies": [
+        "exact_event_clock",
+        "exact_integration",
+        "integration",
+        "source_dry_pressure",
+        "source_dry_shared_pressure",
+        "source_endpoint_comparison",
+        "source_inverse_pressure",
+        "source_net_prefix",
+        "source_prefix_trial",
+        "source_root_comparison",
+        "source_run_observer",
+        "source_terminal",
+        "source_wet_shared_pressure"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_endpoint_comparison.py",
+      "sha256": "a4927606c0c7392cde4b93c2e972ea9c02ba461d459caae1530a78c3aea90d77",
+      "lines": 147,
+      "description": "Source endpoint error accounting, without event execution or fresh physics.",
+      "dependencies": [
+        "depletion_integration",
+        "exact_record",
+        "integration",
+        "source_net_panel",
+        "source_net_prefix",
+        "source_prefix_trial"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_execution_service.py",
+      "sha256": "5d8c720d226705502da2ab270ab1e8d33c4e547316af8b9f15f7af2a63555c74",
+      "lines": 620,
+      "description": "Bounded application admission and passive inspection of source workers.",
+      "dependencies": [
+        "exact_integration_checkpoint",
+        "run_service",
+        "source_execution_worker",
+        "source_record_io",
+        "source_run_config",
+        "source_terminal_record",
+        "source_trajectory_record"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_execution_worker.py",
+      "sha256": "ef251ad0dbacd8750ddff85364c0457e17f386344e10383f5a42e8cbdc99f7d3",
+      "lines": 265,
+      "description": "Isolated data-only source execution, including persisted ordinary resume.",
+      "dependencies": [
+        "",
+        "_heos_rhs_scope",
+        "exact_event_clock",
+        "run_service",
+        "source_record_io",
+        "source_run_config",
+        "source_run_observer",
+        "source_run_service",
+        "source_trajectory",
+        "source_trajectory_record"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_inverse_pressure.py",
+      "sha256": "27b90389a8b6ad6055cbe5cb4310122059ea605990ec84c41bd64f4022f949b1",
+      "lines": 275,
+      "description": "Conditional inverse-temperature pressure bounds for fixed source wet states.",
+      "dependencies": [
+        "deforming_solid_storage",
+        "integration",
+        "mass_storage_bridge",
+        "mass_wet_storage",
+        "rigid_storage",
+        "rigid_water_gas",
+        "source_endpoint_comparison",
+        "source_net_prefix",
+        "source_wet_storage",
+        "water_properties"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_managed_worker.py",
+      "sha256": "186dbbb28c9d64c0207b6e8d5e28f49edb90adee924b4f5a9b7259cd7c5bb278",
+      "lines": 216,
+      "description": "Dedicated data-only process for one source RHS comparison, never a resume.",
+      "dependencies": [
+        "_heos_rhs_scope",
+        "exact_event_clock",
+        "run_service",
+        "source_record_io",
+        "source_run_builder",
+        "source_run_config",
+        "source_run_observer",
+        "source_run_service"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_mass_caloric.py",
+      "sha256": "5c922d6bde3f91b466448532deed400e1c4fc32056bbdbe51f4f6a4f89c588c4",
+      "lines": 287,
+      "description": "Source-specific fixed dry-mass sensible storage, without invented chemistry.",
+      "dependencies": [
+        "arlabosse_caloric",
+        "deforming_solid_storage",
+        "phase_storage"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_net_panel.py",
+      "sha256": "c728f0749252bc9a565612cb1b7601139108e88fccecd43af7df699873300918",
+      "lines": 169,
+      "description": "Source-column numerical affine inventory evidence, not event authorization.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/source_net_prefix.py",
+      "sha256": "8bcaef378eef0c35a08bdcf39f01b06ded8bf9283981f251935e89504d51d5e0",
+      "lines": 231,
+      "description": "Checked affine source-prefix arithmetic; no physical stage/event permission.",
+      "dependencies": [
+        "exact_event_clock",
+        "exact_integration",
+        "exact_terminal_panel",
+        "integration",
+        "source_net_panel",
+        "source_wet_column"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_net_roots.py",
+      "sha256": "022912c0a26c4fba15fe1071880b5cc9b2e41c3cf3e0a50f190e87fb063ee6f2",
+      "lines": 260,
+      "description": "Pure first zeros of saved source inventory quadratics; no event permission.",
+      "dependencies": [
+        "exact_event_clock",
+        "mass_wet_exact_stage",
+        "rational_polynomial",
+        "source_net_panel"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_observation_record.py",
+      "sha256": "6355c57dff18c10e1cebdf110db5b3134907fd03fb2414d464ee8df423f3b5c5",
+      "lines": 323,
+      "description": "Installable passive codec for complete source observations, without resume.",
+      "dependencies": [
+        "exact_event_clock",
+        "exact_record",
+        "source_net_panel",
+        "source_observation_schema"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_observation_schema.py",
+      "sha256": "60c0440a8c9c868db1153646ad1f17ce109d4d37cbb4c6ac3e24cad9c9566f8d",
+      "lines": 310,
+      "description": "Closed passive source-observation types; never instantiate a live provider.",
+      "dependencies": [
+        "boundary_program",
+        "exact_boundary_program",
+        "exact_event_clock",
+        "exact_source_column",
+        "exchanges",
+        "gas_transport",
+        "integration",
+        "liquid_transport",
+        "mass_wet_storage",
+        "mass_wet_transport",
+        "phase_storage",
+        "programmed_source_wet_column",
+        "rigid_storage",
+        "rigid_water_gas",
+        "source_mass_caloric",
+        "source_net_panel",
+        "source_wet_column",
+        "source_wet_storage",
+        "water_chemical_potential",
+        "water_implementation",
+        "water_properties"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_observation_service.py",
+      "sha256": "c070a58e124ea23333391bd6351b1dbd4ec9a6475e3438aeaab014a645b19cf9",
+      "lines": 183,
+      "description": "File and display boundary for one complete, passively checked source observation.",
+      "dependencies": [
+        "exact_record",
+        "source_observation_record",
+        "source_record_io"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_prefix_trial.py",
+      "sha256": "0c4460dc1adef1a1d73a5fe95fd5b94f48b7d76f91a3b3c8e3ce63e04546999c",
+      "lines": 364,
+      "description": "Actually evaluated positive source prefix, not a physical event executor.",
+      "dependencies": [
+        "exact_event_clock",
+        "exact_integration",
+        "exact_source_column",
+        "integration",
+        "source_net_panel",
+        "source_net_prefix",
+        "source_wet_storage"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_record_io.py",
+      "sha256": "2546d8e74a5b1bbdce6ab47fa203e5b2761f09db6f5bc815331b3785d02982d4",
+      "lines": 40,
+      "description": "Shared bounded file reads and exclusive publication for source evidence.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/source_root_comparison.py",
+      "sha256": "b9328c5620d6bf27e6b7cbd75430aaf7a7bba136c7760ad9c6cb6843ba3c1c87",
+      "lines": 326,
+      "description": "Actual partitioned source paths and surrogate-root comparison.",
+      "dependencies": [
+        "exact_event_clock",
+        "exact_integration",
+        "integration",
+        "source_approach",
+        "source_endpoint_comparison",
+        "source_inverse_pressure",
+        "source_net_panel",
+        "source_net_prefix",
+        "source_net_roots",
+        "source_prefix_trial"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_run_builder.py",
+      "sha256": "35b385f2fec8309d2a8563cf85352f15810e04dbf5eb33fa54d8e381e39a557d",
+      "lines": 217,
+      "description": "Assemble the real HEOS/source-Cp N3 model from explicit, verified inputs.",
+      "dependencies": [
+        "arlabosse_caloric",
+        "depletion_integration",
+        "depletion_roundoff",
+        "exact_record",
+        "exact_source_column",
+        "ideal_water_vapor",
+        "integration",
+        "liquid_transport",
+        "mass_wet_storage",
+        "mass_wet_transport",
+        "phase_storage",
+        "rigid_storage",
+        "rigid_water_gas",
+        "solid_fluid_heat",
+        "source_mass_caloric",
+        "source_run_config",
+        "source_wet_column",
+        "source_wet_storage",
+        "thermochemistry",
+        "water_chemical_potential",
+        "water_properties"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_run_config.py",
+      "sha256": "04d1e9cc998969f0928c6083f8606832b36f3c20cae2c91b26bdfa42fde0453f",
+      "lines": 445,
+      "description": "Closed, bounded configuration for an explicitly virtual three-cell source run.",
+      "dependencies": [
+        "heos_runtime_registry",
+        "integration",
+        "liquid_transport",
+        "phase_storage",
+        "rigid_water_gas",
+        "source_record_io"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_run_journal.py",
+      "sha256": "faa1c50e323b737c46673af954ab3c0a3645c03c3763ab1514aa6cc64391b78c",
+      "lines": 110,
+      "description": "Durable, bounded raw evidence before source-study validation.",
+      "dependencies": [
+        "source_record_io"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_run_observer.py",
+      "sha256": "00bbbb892a124d3d566526629b68eaf0ed6b458d9d14ae982162cb874965b857",
+      "lines": 52,
+      "description": "Task-local, synchronous observation of actual source-run lifecycle events.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/source_run_service.py",
+      "sha256": "30a5d05d62b1ad9e0db6e04fdf88ac05bb302cf6e4b171ff987040c055790932",
+      "lines": 527,
+      "description": "Execute a declared HEOS/source-caloric wet-to-dry study with durable evidence.",
+      "dependencies": [
+        "_heos_rhs_scope",
+        "exact_event_clock",
+        "integration",
+        "run_service",
+        "source_approach",
+        "source_dry_shared_pressure",
+        "source_dry_transition",
+        "source_observation_record",
+        "source_prefix_trial",
+        "source_record_io",
+        "source_root_comparison",
+        "source_run_builder",
+        "source_run_config",
+        "source_run_journal",
+        "source_run_observer",
+        "source_study_record",
+        "source_study_schema",
+        "source_wet_shared_pressure"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_run_view.py",
+      "sha256": "17caee81e5b1d82f7fd322a27ce440f7fcd5171289e29b0975dc81a272e36a29",
+      "lines": 402,
+      "description": "Bounded passive source-run presentation; no providers, replay or restoration.",
+      "dependencies": [
+        "run_service",
+        "source_study_service"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_sorption_moisture.py",
+      "sha256": "b0da48cbd12a53f17b3af6420fa2e156b545be7eda2bb553b95e2fe5241c3177",
+      "lines": 188,
+      "description": "Runtime binding of conditional moisture transport to the actual sorption host.",
+      "dependencies": [
+        "arlabosse_rigid_sorption",
+        "arlabosse_sorption_phase",
+        "arlabosse_wet_thermo",
+        "deforming_solid_storage",
+        "mass_storage_bridge",
+        "mass_wet_transport",
+        "sorption_moisture_face",
+        "source_wet_storage"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_study_audit.py",
+      "sha256": "67ceca176d16fc82f2c77079739f3837b038980b7c539d303b6551c6042da5bb",
+      "lines": 793,
+      "description": "Declared passive association/arithmetic audit, without provider reconstruction.",
+      "dependencies": [
+        "deforming_solid_storage",
+        "depletion_roundoff",
+        "exact_affine_depletion",
+        "exact_event_clock",
+        "exact_integration",
+        "integration",
+        "rational_intervals",
+        "source_approach",
+        "source_dry_transition",
+        "source_endpoint_comparison",
+        "source_net_panel",
+        "source_observation_record",
+        "source_prefix_trial",
+        "source_root_comparison",
+        "source_study_schema",
+        "source_terminal"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_study_record.py",
+      "sha256": "dedb8c82a403d8301b5e4aa84658c13beec7ea28cdf3bc7c906f47a966c20352",
+      "lines": 373,
+      "description": "Complete bounded source-study evidence DAG; passive read/write, never resume.",
+      "dependencies": [
+        "exact_event_clock",
+        "exact_record",
+        "exact_source_column",
+        "source_observation_record",
+        "source_observation_schema",
+        "source_study_audit",
+        "source_study_schema",
+        "source_wet_storage"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_study_schema.py",
+      "sha256": "e2ef0325767a823799958e286ff4daab6600d7c25e37e86c991da5ecf15d8b05",
+      "lines": 281,
+      "description": "Closed passive source-study types; no JSON-selected imports or live objects.",
+      "dependencies": [
+        "",
+        "liquid_transport",
+        "mass_wet_exact_stage",
+        "paired_pressure_host",
+        "pressure_comparison",
+        "solid_fluid_heat",
+        "source_net_prefix",
+        "source_wet_storage"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_study_service.py",
+      "sha256": "468128d311d9b3059bb6562d4ad0713dfc134f4b565b7c98222fc621d41d766d",
+      "lines": 235,
+      "description": "File and query interface for complete passive source-study evidence.",
+      "dependencies": [
+        "exact_event_clock",
+        "exact_record",
+        "source_observation_service",
+        "source_record_io",
+        "source_study_record",
+        "source_study_schema"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_terminal.py",
+      "sha256": "9f7a7f5f8d4b1b825f95105a1d2be10b1068d09cb7e8ce0ad4ed0492ca19e9b6",
+      "lines": 191,
+      "description": "Actual source samples, selected-cell phase writeback and explicit dry mode.",
+      "dependencies": [
+        "depletion_integration",
+        "depletion_roundoff",
+        "exact_affine_depletion",
+        "exact_source_column",
+        "integration",
+        "rational_polynomial",
+        "source_endpoint_comparison",
+        "source_net_panel",
+        "source_net_prefix",
+        "source_net_roots",
+        "source_prefix_trial",
+        "source_root_comparison",
+        "source_terminal_liquid"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_terminal_liquid.py",
+      "sha256": "5f96e0e67c873ce709562aef5ecf821b3198322c5a334019136c32d9fa4b3305",
+      "lines": 113,
+      "description": "Passive checks of actual source liquid-face samples used by one terminal.",
+      "dependencies": [
+        "integration",
+        "liquid_transport",
+        "phase_storage",
+        "source_inverse_pressure",
+        "source_net_panel",
+        "source_net_prefix",
+        "source_wet_column"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_terminal_record.py",
+      "sha256": "0a39f7a4efcbba5ffe05c33cd217d5dd6547ec5302b1378d8a76cb3ba302ee9b",
+      "lines": 766,
+      "description": "Bounded passive reading of the existing ordinary source terminal journal.",
+      "dependencies": [
+        "exact_event_clock",
+        "exact_integration",
+        "exact_integration_checkpoint",
+        "exact_integration_checkpoint_codec",
+        "integration",
+        "run_service",
+        "source_execution_worker",
+        "source_net_panel",
+        "source_observation_record",
+        "source_observation_schema",
+        "source_run_config",
+        "source_run_journal",
+        "source_study_schema",
+        "source_trajectory",
+        "source_trajectory_record"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_trajectory.py",
+      "sha256": "f2b2c5b23defeb87d13e2416119bf0056bd8a18d2b14794cb58b53a035948462",
+      "lines": 405,
+      "description": "Advance a selected source-study endpoint with a real reconstructed column.",
+      "dependencies": [
+        "exact_event_clock",
+        "exact_integration",
+        "integration",
+        "run_service",
+        "source_dry_transition",
+        "source_net_prefix",
+        "source_run_builder",
+        "source_run_config",
+        "source_run_observer",
+        "source_run_service",
+        "source_study_schema"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_trajectory_record.py",
+      "sha256": "74197217f740f807fe3f6e7327c46de88cc4b15c3b100115eee71ecb0640df95",
+      "lines": 556,
+      "description": "Local single-use ordinary source checkpoints, with real reconstruction.",
+      "dependencies": [
+        "",
+        "exact_integration_checkpoint",
+        "exact_integration_checkpoint_codec",
+        "run_service",
+        "source_observation_schema",
+        "source_record_io",
+        "source_run_config",
+        "source_run_journal",
+        "source_run_service",
+        "source_study_record",
+        "source_study_schema",
+        "source_trajectory"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_wet_column.py",
+      "sha256": "010948959810ef51a3a6509e687d52c2c3de787f72687e061ae154273e1eb07f",
+      "lines": 740,
+      "description": "N-cell fixed source-mass wet column using shared phase and face kernels.",
+      "dependencies": [
+        "arlabosse_low_moisture_storage",
+        "arlabosse_rigid_sorption",
+        "arlabosse_sorption_phase",
+        "controlled_vapor_column",
+        "deforming_solid_storage",
+        "exact_event_clock",
+        "gas_transport",
+        "integration",
+        "liquid_transport",
+        "liquid_transport_state",
+        "low_moisture_fast_inverse",
+        "low_moisture_phase",
+        "low_moisture_transport",
+        "mass_storage_bridge",
+        "mass_wet_storage",
+        "mass_wet_transport",
+        "phase_storage",
+        "programmed_source_wet_column",
+        "septien_conductivity",
+        "solid_fluid_heat",
+        "source_sorption_moisture",
+        "source_wet_storage",
+        "water_chemical_potential"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_wet_shared_pressure.py",
+      "sha256": "8e64bd49c8778d26f06a396f5f1d21534d0e90e22a22b34f52873d67b2134fd8",
+      "lines": 497,
+      "description": "Conditional smooth-liquid root differences for one explicit live volume.",
+      "dependencies": [
+        "deforming_solid_storage",
+        "mass_storage_bridge",
+        "mass_wet_storage",
+        "rational_intervals",
+        "source_inverse_pressure",
+        "source_net_prefix",
+        "source_run_observer",
+        "source_wet_storage",
+        "water_properties"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_wet_storage.py",
+      "sha256": "e0184e4d6ba0a5bb8a1891d84806e3e8be45f7d62a633d152d98746249f17547",
+      "lines": 272,
+      "description": "Fixed source dry mass coupled to the existing rigid water/gas storage.",
+      "dependencies": [
+        "deforming_solid_storage",
+        "mass_storage_bridge",
+        "mass_wet_storage",
+        "phase_storage",
+        "rigid_storage",
+        "source_mass_caloric"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/source_workflow_worker.py",
+      "sha256": "5601733a287f89fb8fb517e0b5b9ec7627c0d108354109c547e3bb6023e22608",
+      "lines": 327,
+      "description": "Closed installed worker for the original three-step source continuation gate.",
+      "dependencies": [
+        "",
+        "_heos_rhs_scope",
+        "exact_event_clock",
+        "exact_integration_checkpoint",
+        "exact_integration_checkpoint_codec",
+        "run_service",
+        "source_record_io",
+        "source_run_config",
+        "source_run_service",
+        "source_study_schema",
+        "source_trajectory"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/spherical_geometry.py",
+      "sha256": "0bbd18f0c403ebda7dbd0c47e489fbfc10ffb517a64fd436df10ac488653692a",
+      "lines": 102,
+      "description": "Static spherical finite-volume geometry; no radial mechanics or material law.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/surface_balance.py",
+      "sha256": "cedbdc5587d9621d2386a1fba10052ed3b4bf6987f1b7a96237240cb8afb2e93",
+      "lines": 60,
+      "description": "Shared numerical film/radiation surface balance; no material coefficients.",
+      "dependencies": [
+        "exchanges",
+        "programmed_gas_heat"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/thermochemistry.py",
+      "sha256": "d2934853eb9b720dc1beeaf16334cf7b8a5f0c0c918b5cea374e5b6a5467bdef",
+      "lines": 430,
+      "description": "Source-labelled ideal-gas caloric properties with honest fit discontinuities.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/thermoelastic_energy_host.py",
+      "sha256": "3f23da5d4612004cdb5baa1b490fbd249c8e2f2554337dcddb14a8677953c8c9",
+      "lines": 129,
+      "description": "Fixed-inventory dry reference plate using the native extensive-energy state.",
+      "dependencies": [
+        "thermoelastic_energy_storage"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/thermoelastic_energy_storage.py",
+      "sha256": "d98d6dccff4e31895da642ffa170ecd208c60e6e55b27ac5e314c36ace3f4579",
+      "lines": 446,
+      "description": "Pure constant-coefficient reference-plate energy map and global inverse.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/tp_equilibrium.py",
+      "sha256": "c7b5914070fa55cd0dbf0e0c18230b7b708ddcdbcd57ff80009c00798e184376",
+      "lines": 543,
+      "description": "Restricted, closed CHONS TP equilibrium; nominal checks, no sludge qualification.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/units.py",
+      "sha256": "325087ae0217c24692f9b66c25119a33e5b3f2be515ecafd386ae8a8627c42cf",
+      "lines": 68,
+      "description": "Explicit SI conversions; changing material or inventory basis is not a unit conversion.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/verification_case.py",
+      "sha256": "8081d357a12c9bc7503709340f1397d0d686b337cf5f0b05e2be5eec3335495b",
+      "lines": 699,
+      "description": "Explicit manufactured verification cases; parsing never imports an EOS.",
+      "dependencies": [
+        "current_solid_storage",
+        "deformation_program",
+        "deforming_solid_heat",
+        "deforming_solid_storage",
+        "depletion_integration",
+        "depletion_roundoff",
+        "dynamic_solid_storage",
+        "free_solid_slab",
+        "geometry",
+        "ideal_water_vapor",
+        "incompressible_solid",
+        "integration",
+        "paired_pressure_host",
+        "phase_storage",
+        "pressure_comparison",
+        "reacting_skeleton_energy",
+        "reactions",
+        "rigid_fluid_heat",
+        "rigid_storage",
+        "rigid_water_gas",
+        "skeleton_energy",
+        "solid_fluid_heat",
+        "solid_fluid_storage",
+        "solid_reactions",
+        "thermochemistry",
+        "water_chemical_potential",
+        "water_phase_transfer",
+        "water_properties"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/water_chemical_potential.py",
+      "sha256": "2683bb786ad5e5b6648c02a3d5e9b9671f595820ab4a781e29808c3a95f80767",
+      "lines": 182,
+      "description": "Explicit real-pure-liquid / ideal-water-vapor chemical potential approximation.",
+      "dependencies": [
+        "ideal_water_vapor",
+        "water_properties"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/water_coexistence.py",
+      "sha256": "0ed817e98bbbbc50b6273ce804b8d43c3a7a5ddce377d74cb68d10b6a3de7826",
+      "lines": 131,
+      "description": "Research parametric coexistence enclosures; no native or phase admission.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/water_coupled_rectangle.py",
+      "sha256": "b214102b545e1c6a54b0d4d2af91bedb673c2aff9208639fe20dcc56ef63d117",
+      "lines": 67,
+      "description": "Local mathematical liquid/gas root certificate, not phase admission.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/water_density_tube.py",
+      "sha256": "92f54fa6280d9d799e5500c90948a624b9548dddb39554b7667923bdf1b8723d",
+      "lines": 110,
+      "description": "Full-temperature local monotonicity tube. No stable-phase admission.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/water_heos.py",
+      "sha256": "30c8234f6f43cbf92034b3d6457e6f616947a5cba785c475ee5d48a07b4a03cf",
+      "lines": 115,
+      "description": "Explicit hybrid water adapter: verified HEOS real fluid, pinned Python ideal law.",
+      "dependencies": [
+        "_heos_kernel",
+        "_heos_kernel_v1",
+        "heos_runtime_registry",
+        "source_run_observer",
+        "water_implementation",
+        "water_properties"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/water_implementation.py",
+      "sha256": "b759a97c111aeb8588fc6a22b4088a83b7f766debfbf2a7761f7329b690b1a7c",
+      "lines": 35,
+      "description": "Implementation provenance is separate from physical water reference states.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/water_interval_eos.py",
+      "sha256": "28bcfac0829a4d7cf55a58a71a5ddf9383687872808525841f3f1395a90cedc0",
+      "lines": 199,
+      "description": "Research interval evaluation of pinned HEOS Water Helmholtz coefficients.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/water_native_output.py",
+      "sha256": "38d9309ec3ae1f37e829a424c8f57d4ffa4f86fdbbbd6cc914dc266e9cace1ea",
+      "lines": 73,
+      "description": "Observed-output a posteriori mathematical discrepancy, not native certification.",
+      "dependencies": []
+    },
+    {
+      "path": "src/sludge_sandbox/water_phase_transfer.py",
+      "sha256": "650dc159355b299f53d0c6a98a08a5d68cfc60a81f3d2379225335066c63b48e",
+      "lines": 314,
+      "description": "Explicit finite-rate liquid/ideal-water transfer at an existing interface.",
+      "dependencies": [
+        "deforming_solid_heat",
+        "free_solid_cell",
+        "free_solid_slab",
+        "ideal_water_vapor",
+        "integration",
+        "joined_water_vapor",
+        "programmed_solid_fluid_heat",
+        "rigid_fluid_heat",
+        "solid_fluid_heat",
+        "water_chemical_potential",
+        "water_properties"
+      ]
+    },
+    {
+      "path": "src/sludge_sandbox/water_properties.py",
+      "sha256": "b374ea87873815a4d8959823a3323d29ce70d6c5ce0b706ba1a81f2b9437d8b6",
+      "lines": 501,
+      "description": "Source-gated pure-water IAPWS-95 properties, with a common NIST energy offset.",
+      "dependencies": [
+        "_water_python_backend",
+        "water_heos",
+        "water_implementation"
+      ]
+    }
+  ],
+  "module_count": 182,
+  "review_status": "inventory_only_not_validated"
+}
