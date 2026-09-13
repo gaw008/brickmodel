@@ -4,6 +4,12 @@
 
 ## 当前恢复入口（后续详细历史保留）
 
+`2e3bedc`后完成[同原料条件相对供热API/CLI](research/cedrone-relative-heat-v1/REPORT.md)：只读公开原RESULT，复用原来源物性/初末库存/后验门，固定SI R，按19项H与800K O₂/N₂入口焓计算ΔQ。沙盒189文件/182模块非editable安装一致（另核早期VME34文件），21项安装测试0.32s通过；唯一λ1/4离线入口exit0回收，CLI0.047682208s/子进程0.088612083s，10秒外限保持，0EOS/新平衡。实际H、入口焓、ΔQ、19物种项和5元素余量与前独立Fraction计算逐项相等。原初库存/R翻倍两项RED已修复，原候选及2独立GREEN保留。59成员434,774B压缩106,784B，重开逐项核验，SHA7623d21b…428eb；当前无运行中实验。
+
+[完整材料闭合核查](FULL_CYCLE_BLOCKERS.md)确认现有Arlabosse、Cedrone、MIA3等均不能无补造关键输入完成同材料1D全周期。不是宣称全球无公开数据；已核资料缺同配方库存/体积、热湿适用性、产物/速率/热量联合关系、动态烧结/连通/冷却关系及相容独立热历史。Wang失败、Nowicki/MIA3实际偏差与空间收敛失败保持，条件热差的已知量也不再误报unknown。software_status=partial；scientific_status=evidence_incomplete；deployment_status=offline_research_only。§11未满足，Goal面板最近paused，未标complete。
+
+下一必须推进的是相容同配方的定量进料/产物、量热基准和独立热历史，之后接入现有共享库存/能量主机；独立可继续的宿主工作是全湿到干的载气/水汽共同交换边界及整段时空收敛。该整段工作尚未完成，不能以更多独立TP点代替，也不能声称全部剩余任务已经交付。
+
 `c0eb242`后完成[论文样本有限氧中文入口](research/cedrone-oxygen-cli-v1/REPORT.md)：公开源表、同次Element原子量和实际初末相严格绑定，显式λ0/1/4/1每次仅一点，不依赖scratch旧结果。188包文件/181模块非editable安装一致，34相关安装测试0.22s通过；唯一λ1/4实际入口exec59200终态0回收，module4.759636083s/worker4.870027833s/监督9.920950916s。保存独审28组+152原NASA比较通过，2076标量比对仅7处计时/构造元数据改变，完整物理结果与旧同条件点逐值相同。新完整block YAML表示、ruamel直接依赖及完成阶段计时已实证；gas2.609732s/graphite2.125999s，**没有明显性能改善**，不追加性能试跑。原10/30/40+5限额、失败和源定义保持。112成员1,034,134B压缩243,078B已逐项重开核验，SHA36a333b3…55070。当前无native运行；完整§11未完成，Goal最近面板paused。
 
 下一具体物理量是同一未知原料初态抵消后的条件供热差：三点已有库存与800K入口O₂/N₂焓可形成ΔQ，不能把seed当原料H、漏计入口N₂或将结果叫实际窑热耗。/private/tmp/sludge-tp-equilibrium-v1/relative-heat-design已完成零新EOS推导/精确算术，待独立复核及可运行入口；矿物、有限速率与全周期材料证据缺项保持。

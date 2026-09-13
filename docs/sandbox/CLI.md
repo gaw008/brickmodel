@@ -1,5 +1,21 @@
 # 沙盒统一入口
 
+## 同一原料的条件供热比较
+
+安装本项目后，可直接离线重算仓库保存结果，不需要启动Cantera：
+
+```sh
+python -I examples/sandbox/compare_cedrone_heat.py \
+  --source-root . \
+  --baseline-result data/sandbox/research/cedrone-relative-heat-v1/lambda0-result.json \
+  --candidate-result data/sandbox/research/cedrone-relative-heat-v1/lambda-quarter-result.json \
+  --lambda 1/4 --output-dir /tmp/new-cedrone-heat
+```
+
+输出目录必须是新的；`INPUT.json`保存读取文件身份，`RESULT.json`提供19项物种焓、O₂/N₂入口焓、相对热差、公式条件与来源，`STATUS.json`记录完成或失败。Python API为`sludge_sandbox.cedrone_heat.compare_cedrone_heat`。
+
+[安装与实际入口验证](research/cedrone-relative-heat-v1/REPORT.md)已完成。比较固定同一原料初态、800K/1bar和800K预热气，绝对热耗、自热与实际窑炉节能仍未知；它不执行反应时间或完整烧砖流程。
+
 ## 论文样本的有限供氧单点
 
 安装本项目的`equilibrium` extra后，从仓库根目录运行：

@@ -1,6 +1,10 @@
 # 必需缺项与下一步证据
 
-[受限TP平衡](research/tp-equilibrium-v1/REPORT.md)及[同池有限O₂/N₂](research/finite-oxygen-equilibrium-v1/REPORT.md)已经实际运行并通过原名义门，关闭此前“尚未选择最终相并执行”的限定缺项。两新增供氧量采用同一报告基准元素池，并不提供实际燃尽时间、灰矿物或炉热耗。[Hess能量关系](research/finite-oxygen-equilibrium-v1/FEED_ENERGY.md)已明确HHV如何约束整体原料焓，剩余量热校正/基准/燃烧终态仍未知，没有把它们填零。[Cedrone联合TG/DSC](research/cedrone2024-joint-thermal-v1/joint-observable/JOINT_OBSERVABLE_DESIGN.md)只有有限可识别组合；Hossain2009未取得全文的边界保持。[有限氧公开入口](research/cedrone-oxygen-cli-v1/REPORT.md)现已实际验收，关闭这一限定可用性缺项；构造排版修改未取得明显加速。下一提取同一原料初态抵消后的条件供热差，完整原泥材料、全周期耦合与三机制现实验收仍未满足。
+[最新闭合判断](FULL_CYCLE_BLOCKERS.md)：已核资料仍不能支撑任一明确原污泥砖配方的1D全周期。五组缺口区分了数据已有但未接线、当前缺证据，以及实际失败/偏差；还需整段干燥、共同状态的跨阶段耦合、全周期收敛和实际材料验证。当前文件不足以自主补齐这些材料关系。
+
+[条件相对热差](research/cedrone-relative-heat-v1/REPORT.md)现已提供可运行API/CLI、21安装测试和一次实际离线验收，关闭“只在scratch有推导”的限定缺项。相同原料初态及外置状态条件下，λ1/4与1相对λ0分别为−3.38404/−14.97760MJ/原kg，包含两入口气焓；不能再统称所有热量比较未知。绝对炉热耗、有限反应时间和高温材料闭合仍缺。
+
+[受限TP平衡](research/tp-equilibrium-v1/REPORT.md)及[同池有限O₂/N₂](research/finite-oxygen-equilibrium-v1/REPORT.md)已经实际运行并通过原名义门，关闭此前“尚未选择最终相并执行”的限定缺项。两新增供氧量采用同一报告基准元素池，并不提供实际燃尽时间、灰矿物或炉热耗。[Hess能量关系](research/finite-oxygen-equilibrium-v1/FEED_ENERGY.md)已明确HHV如何约束整体原料焓，剩余量热校正/基准/燃烧终态仍未知，没有把它们填零。[Cedrone联合TG/DSC](research/cedrone2024-joint-thermal-v1/joint-observable/JOINT_OBSERVABLE_DESIGN.md)只有有限可识别组合；Hossain2009未取得全文的边界保持。[有限氧公开入口](research/cedrone-oxygen-cli-v1/REPORT.md)现已实际验收，关闭这一限定可用性缺项；构造排版修改未取得明显加速。该条件供热差现已完成，完整原泥材料、全周期耦合与三机制现实验收仍未满足。
 
 [平衡排湿时间比较](research/arlabosse-equilibrium-time-refinement-v1/REPORT.md)补上原1s案例的2/4步实际结果与相邻差分。多数指标接近一阶，但干格Nv/P分辨不足，整体平衡误差未知；尚不能关闭全场时间、空间或长程干燥验证。继续高温材料闭合及可运行入口，避免重复不变的短例。
 

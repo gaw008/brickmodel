@@ -18,6 +18,8 @@
 
 [论文样本有限供氧入口](docs/sandbox/CLI.md#论文样本的有限供氧单点)可直接选择`λ=0、1/4、1`并运行一个条件组成点，保存本次原子量、全部产物、守恒检查及来源。真实入口和同条件结果比较已完成；[三点报告](docs/sandbox/research/finite-oxygen-equilibrium-v1/REPORT.md)中的石墨变化不能作为真实砖坯燃尽证明。
 
+[相对供热比较](docs/sandbox/CLI.md#同一原料的条件供热比较)已能离线读取同一来源的两份结果，逐项追查产物与入口气焓。公开保存数据、21项安装测试与一次实际命令均完成；[完整模型的五项缺口](docs/sandbox/FULL_CYCLE_BLOCKERS.md)说明同材料全周期仍受哪些证据与验证问题限制。
+
 | 模块 | 内容 | 状态 |
 | --- | --- | --- |
 | [公开材料研究](experiments/material_design_v2/artifacts/DIRECTION_REPORT.md) | DTU 污泥焚烧灰数据重算、基料依赖、吸水与收缩折衷 | 独立审核通过，仅 Stage1 研究 |
