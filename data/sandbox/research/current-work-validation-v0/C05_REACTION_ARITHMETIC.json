@@ -1,0 +1,235 @@
+{
+  "stage": "V0-C05",
+  "classification": "independent_arithmetic_on_saved_states_and_published_coefficients",
+  "method": {
+    "decimal_precision": 90,
+    "model_imported": false,
+    "new_model_trajectory": false,
+    "tests_executed": false,
+    "checksum_operations": false,
+    "source_inputs": [
+      "docs/sandbox/research/solid_reaction_analytic_candidate_attempt_002.csv",
+      "docs/sandbox/research/solid_reaction_analytic_reference.json",
+      "docs/sandbox/research/SOLID_REACTION_ANALYTIC_PLAN.md",
+      "docs/sandbox/research/nowicki2011-oxygen-interpolation-v1/execution/installed-execution01/comparison.json",
+      "data/sandbox/research/nowicki2011-oxygen-interpolation-v1/training.json"
+    ],
+    "binary_input_policy": "Trajectory CSV decoded to original binary64 then Decimal.from_float; Shomate F read from saved exact-binary reference. Nowicki uses printed decimal coefficients.",
+    "limitations": "Nominal arithmetic, not interval certification, independent runtime replication, archive authentication or material acceptance."
+  },
+  "manufactured": {
+    "formula": "Ns=N0 exp(-t); Nx=N0-Ns; U0=constant; T=(U0-sum(N*b))/sum(N*Cv); P=(Nx+Ncarrier)RT/(Vbulk-Ns*vs)",
+    "inputs": {
+      "n0_mol": "0.01000000000000000020816681711721685132943093776702880859375",
+      "R_j_mol_k": "8.314462618153239503726581460796296596527099609375",
+      "Vbulk_m3": "0.000100000000000000004792173602385929598312941379845142364501953125",
+      "solid_v_m3_mol": "0.000010000000000000000818030539140313095458623138256371021270751953125",
+      "p0_pa": "100000",
+      "Cp_s_j_mol_k": "50",
+      "Cp_g_j_mol_k": "30",
+      "F_s_kj_mol": "-14.907499999999998863131622783839702606201171875",
+      "F_product_kj_mol": "-9.9444999999999996731503415503539144992828369140625",
+      "F_carrier_kj_mol": "-8.9444999999999996731503415503539144992828369140625",
+      "solid_and_product_molar_mass_kg_mol": "0.0120000000000000002498001805406602215953171253204345703125",
+      "carrier_molar_mass_kg_mol": "0.0280000000000000005828670879282071837224066257476806640625"
+    },
+    "initial_analytic_U_j": "-23.4733878544597043634554619255466164116381482695758557674439002337035205512389958405414237",
+    "levels": [
+      {
+        "dt_s": "0.0625",
+        "rows": 33,
+        "saved_time_start_s": "0.0",
+        "saved_time_end_s": "2.0",
+        "uniform_saved_grid": true,
+        "max_abs_residuals": {
+          "solid_mol": "6.1302202427356619159404177796420413372067013285147465932803147212626831975402771104503E-7",
+          "product_mol": "6.1302202427443355333203018151141009596136608622061528432803147212626831975402771104503E-7",
+          "carrier_mol": "0",
+          "temperature_k": "0.005742031439705358454130793238150740472902380482590302707387821230376640525185526354751",
+          "pressure_pa": "25.408816957803800248168770541388760890163564399419353845057875065977242221880779064509",
+          "stored_U_vs_analytic_j": "1.0737379444709988533492566271210491442325560997662964794487610041594585763E-15",
+          "stored_U_drift_j": "0",
+          "carbon_mol": "1.73472347597680709441192448139190673828125E-18",
+          "nitrogen_mol": "0",
+          "mass_kg": "2.08166817117216855662773312638309477969700370816086466710728708484623439289862290024757385E-20",
+          "state_reconstructed_U_vs_stored_j": "2.98980027725693233961591019414931785145737113469313699296608285053359365361E-14"
+        }
+      },
+      {
+        "dt_s": "0.03125",
+        "rows": 65,
+        "saved_time_start_s": "0.0",
+        "saved_time_end_s": "2.0",
+        "uniform_saved_grid": true,
+        "max_abs_residuals": {
+          "solid_mol": "1.5145879413808096643556583646602235105780163309561528432803147212626831975402771104503E-7",
+          "product_mol": "1.5145879414068305164953104710764023777988949320303715932803147212626831975402771104503E-7",
+          "carrier_mol": "0",
+          "temperature_k": "0.001418679790287030729569698000418806879152380482590302707387821230376640525185526354751",
+          "pressure_pa": "6.277736760808046453260246981818448390163564399419353845057875065977242221880779064509",
+          "stored_U_vs_analytic_j": "1.0737379444709988533492566271210491442325560997662964794487610041594585763E-15",
+          "stored_U_drift_j": "0",
+          "carbon_mol": "5.204170427930421283235773444175720214843750E-18",
+          "nitrogen_mol": "0",
+          "mass_kg": "6.24500451351650566988319937914928433909101112448259400132186125453870317869586870074272156E-20",
+          "state_reconstructed_U_vs_stored_j": "3.21172375173976629109029852930913660224909292546438330368625514536390441970E-14"
+        }
+      },
+      {
+        "dt_s": "0.015625",
+        "rows": 129,
+        "saved_time_start_s": "0.0",
+        "saved_time_end_s": "2.0",
+        "uniform_saved_grid": true,
+        "max_abs_residuals": {
+          "solid_mol": "3.764278298713352273807603384954859805253544352041997182803147212626831975402771104503E-8",
+          "product_mol": "3.764278299363873577298906045359331485775509378897465932803147212626831975402771104503E-8",
+          "carrier_mol": "0",
+          "temperature_k": "0.000352616961941931625036448788243828192145013470480113998084230021334048107842454904828",
+          "pressure_pa": "1.560257652471842095523657642485997350958324638464095134514226478115825315930146837240",
+          "stored_U_vs_analytic_j": "1.0737379444709988533492566271210491442325560997662964794487610041594585763E-15",
+          "stored_U_drift_j": "0",
+          "carbon_mol": "6.72205346941012749084620736539363861083984375E-18",
+          "nitrogen_mol": "0",
+          "mass_kg": "8.06646416329215315693246586473449227132588936912335058504073745377915827248216373845934868E-20",
+          "state_reconstructed_U_vs_stored_j": "3.21770752292335982192021661637362175828842933147666265313461494651531021816E-14"
+        }
+      }
+    ],
+    "solid_error_refinement_ratios": [
+      "4.04745084471417531130916798632534327816626325435598899731422111476190097700484371286629899",
+      "4.02358120519012323088994735153465783922737689764146930336240891791610127696007084105141507"
+    ],
+    "original_saved_state_gate_comparisons": {
+      "finest_solid_error_le_1e_minus6_mol": true,
+      "finest_temperature_error_le_0_02_k": true,
+      "finest_pressure_error_le_100_pa": true,
+      "ratios_ge_2_8": true,
+      "all_saved_grid_uniform": true,
+      "all_saved_U_drift_le_1e_minus7_j": true,
+      "all_saved_carbon_and_nitrogen_within_original_absolute_tolerance": true,
+      "all_saved_mass_within_original_absolute_tolerance": true
+    },
+    "qualification": "Manufactured first-order constant rate, constant Cp, dry rigid closed cell only; saved grids do not prove candidate implementation unchanged or general stiff/nonisothermal convergence."
+  },
+  "nowicki": {
+    "formula": "log(k) affine in 1/T; t=(1-(1-alpha_plot)^(1/3))/k",
+    "inputs": {
+      "T_low_k": "723.15",
+      "T_high_k": "823.15",
+      "T_k": "773.15",
+      "k_low_s_inv": "0.00007044",
+      "k_high_s_inv": "0.00070611"
+    },
+    "weight": "0.532335251891612235659315786069973485093448877966759361055422621742223371920067257323934538",
+    "rate_s_inv": "0.000240278634983434323796805688337473707194307845418413594906736739052888965408614137477758857",
+    "points": [
+      {
+        "alpha_plot": "0.1",
+        "predicted_time_s": "143.627482305072727360104534161424037820432399780524729565539503244547769146070827008358497",
+        "saved_observed_center_s": "216",
+        "original_reading_interval_s": [
+          "107",
+          "326"
+        ],
+        "residual_s": "-72.372517694927272639895465838575962179567600219475270434460496755452230853929172991641503",
+        "inside_original_reading_interval": true,
+        "saved_prediction_difference_s": "5.2142943229844009277230832790405524729565539503244547769146070827008358497E-14"
+      },
+      {
+        "alpha_plot": "0.2",
+        "predicted_time_s": "298.329617539180099653727373376498813329115761970432493339748921564246256226434885839496549",
+        "saved_observed_center_s": "395",
+        "original_reading_interval_s": [
+          "283",
+          "506"
+        ],
+        "residual_s": "-96.670382460819900346272626623501186670884238029567506660251078435753743773565114160503451",
+        "inside_original_reading_interval": true,
+        "saved_prediction_difference_s": "1.64460921658471236819920912636970432493339748921564246256226434885839496549E-13"
+      },
+      {
+        "alpha_plot": "0.3",
+        "predicted_time_s": "466.525033593301352897739009562445235747577892085065455944157934685858792956266683439477993",
+        "saved_observed_center_s": "575",
+        "original_reading_interval_s": [
+          "464",
+          "686"
+        ],
+        "residual_s": "-108.474966406698647102260990437554764252422107914934544055842065314141207043733316560522007",
+        "inside_original_reading_interval": true,
+        "saved_prediction_difference_s": "2.07268654806170178008574726329585065455944157934685858792956266683439477993E-13"
+      },
+      {
+        "alpha_plot": "0.4",
+        "predicted_time_s": "651.607392014046834509455455320630123543398322772481577785035509727632185777224958169047557",
+        "saved_observed_center_s": "772",
+        "original_reading_interval_s": [
+          "655",
+          "870"
+        ],
+        "residual_s": "-120.392607985953165490544544679369876456601677227518422214964490272367814222775041830952443",
+        "inside_original_reading_interval": false,
+        "saved_prediction_difference_s": "2.52901910660641942074226992072772481577785035509727632185777224958169047557E-13"
+      },
+      {
+        "alpha_plot": "0.5",
+        "predicted_time_s": "858.584343256833021577936447065721667660845567579616073464869134088834181426503335789155966",
+        "saved_observed_center_s": "991",
+        "original_reading_interval_s": [
+          "875",
+          "1105"
+        ],
+        "residual_s": "-132.415656743166978422063552934278332339154432420383926535130865911165818573496664210844034",
+        "inside_original_reading_interval": false,
+        "saved_prediction_difference_s": "4.81841002906512867129696978380079616073464869134088834181426503335789155966E-13"
+      },
+      {
+        "alpha_plot": "0.6",
+        "predicted_time_s": "1095.36871761431557301439793271946299943237627155962314667236639773186992893406714775153601",
+        "saved_observed_center_s": "1231",
+        "original_reading_interval_s": [
+          "1114",
+          "1354"
+        ],
+        "residual_s": "-135.63128238568442698560206728053700056762372844037685332763360226813007106593285224846399",
+        "inside_original_reading_interval": false,
+        "saved_prediction_difference_s": "4.9935370666397737849625854814655962314667236639773186992893406714775153601E-13"
+      },
+      {
+        "alpha_plot": "0.7",
+        "predicted_time_s": "1375.76547303350946485586722514849780168652323191725559702222060295087322215727809535851794",
+        "saved_observed_center_s": "1544",
+        "original_reading_interval_s": [
+          "1400",
+          "1660"
+        ],
+        "residual_s": "-168.23452696649053514413277485150219831347676808274440297777939704912677784272190464148206",
+        "inside_original_reading_interval": false,
+        "saved_prediction_difference_s": "5.6779533882758837817278027323191725559702222060295087322215727809535851794E-13"
+      },
+      {
+        "alpha_plot": "0.8",
+        "predicted_time_s": "1727.97907057384410672911256271912622750159171060158384272474769234146776771488576013765876",
+        "saved_observed_center_s": "1963",
+        "original_reading_interval_s": [
+          "1820",
+          "2100"
+        ],
+        "residual_s": "-235.02092942615589327088743728087377249840828939841615727525230765853223228511423986234124",
+        "inside_original_reading_interval": false,
+        "saved_prediction_difference_s": "6.0590481664705588388741370108560158384272474769234146776771488576013765876E-13"
+      }
+    ],
+    "metrics": {
+      "mae_s": "133.651608758737102425207432490774136659767355216677135435164287958083736957658538313343841",
+      "rmse_s": "141.558992473765166409475073568683135120925480722237811508878974916780795869769147862826099",
+      "bias_s": "-133.651608758737102425207432490774136659767355216677135435164287958083736957658538313343841",
+      "max_abs_s": "235.02092942615589327088743728087377249840828939841615727525230765853223228511423986234124",
+      "inside_original_reading_intervals": 3,
+      "author_500C_relative_difference": "0.08184887430632293469971043825967450335122848004688696491101638474961263128597090264637036"
+    },
+    "material_acceptance_threshold": null,
+    "qualification": "Same source figure coordinates; not independent replicates or new blind holdout; no mass/oxygen/energy qualification; original figure extraction not repeated."
+  }
+}
