@@ -1,0 +1,100 @@
+{
+  "stage": "F0-D",
+  "baseline_commit": "5a96b0a",
+  "source_id": "SILVA2018",
+  "material_id": "silva2018_cincera_compensator07_clay",
+  "condition": "70C",
+  "source_record_url": "https://dspace.sti.ufcg.edu.br/handle/riufcg/7173",
+  "source_pdf_url": "https://dspace.sti.ufcg.edu.br/bitstream/riufcg/7173/3/ANDERSON%20MELCHIADES%20VASCONCELOS%20DA%20SILVA%20-%20TESE%20%28PPGEP%29%20CCT%202018.pdf",
+  "local_source_cache": ".tools/source-cache/f0c-drying-candidates/silva2018.pdf",
+  "locators": [
+    "Fig3.16-3.18 PDF65",
+    "Eq3.7(a-g) PDF67-68",
+    "Eq3.8/Table3.1 PDF68",
+    "C.3 PDF163-164",
+    "C.4 PDF165-166"
+  ],
+  "source_review_status": "pending_V0R-D",
+  "dimension_semantics": {
+    "A_table_vs_H_equation": "C.4 calls height A; Eq3.7a uses H.2020Eq6 uses A. Kept A_mm_as_printed, interpreted as same height for reconstruction.",
+    "C": "Table C=300mm initially; literal equation uses C as hole extrusion depth, which fails to reproduce published volume.",
+    "L": "Table L=200mm initially; using L as hole extrusion depth reproduces volume after inferred pi rounding. This is a reconstruction hypothesis, not a silently changed source.",
+    "CF_LF": "Per-hole-family cross-section lengths in mm. Orientation labels may rotate between hole families; product determines rectangular area. Measurement averaging across individual holes not established.",
+    "time": "min;2.430 and3.870 interpreted2430/3870 based on two24h processing steps."
+  },
+  "hole_families": [
+    {
+      "shape": "circle",
+      "count": 4,
+      "diameter_field": "D_mm"
+    },
+    {
+      "shape": "rectangle",
+      "count": 12,
+      "length_fields": [
+        "CF1_mm",
+        "LF1_mm"
+      ]
+    },
+    {
+      "shape": "rectangle",
+      "count": 2,
+      "length_fields": [
+        "CF2_mm",
+        "LF2_mm"
+      ]
+    },
+    {
+      "shape": "rectangle",
+      "count": 4,
+      "length_fields": [
+        "CF3_mm",
+        "LF3_mm"
+      ]
+    },
+    {
+      "shape": "rectangle",
+      "count": 1,
+      "length_fields": [
+        "CF4_mm",
+        "LF4_mm"
+      ]
+    }
+  ],
+  "equations": {
+    "hole_cross_section_S": "4*pi*D^2/4 +12*CF1*LF1 +2*CF2*LF2 +4*CF3*LF3 +CF4*LF4",
+    "envelope_volume": "A*C*L",
+    "as_printed_net_volume": "A*C*L -C*S",
+    "reconstruction_hypothesis": "A*C*L -L*S",
+    "pi_reference": "Python math.pi, converted from its decimal representation; not arbitrary-precision pi. Extra saved digits are arithmetic provenance, not physical accuracy.",
+    "author_rounding_hypothesis": "pi=3.14 gives all33published volumes to nearest1mm3. This value is diagnostic only, not a physical parameter or implementation default.",
+    "specific_area_as_printed": "A0*=(1-epsilon)*a_p/V_p; dimensionL^-1 if a_p isarea andV_p isvolume; not an absolute area."
+  },
+  "volume_interpretation": {
+    "author_volume": "Calculated from dimensions; not an independent measured3Dvolume.",
+    "net_volume": "Outer envelope minus23macroscopic channels; still includes unresolved pores inside the clay matrix.",
+    "macroscopic_hole_fraction": "V_channels/V_envelope, not matrix porosity or total accessible pore space.",
+    "VF_symbol_overload": "Eq3.7 VF means holevolume; Table3.1 V_F means final productvolume.70C final matches990min, not2430or3870min."
+  },
+  "measurement_point": {
+    "source": "Fig3.18 PDF65; methodp64",
+    "diagram_description": "T marker at upper-right exterior corner of the depicted perforated section, near the upper-right circular hole.",
+    "measurement": "Infrared surface measurement after sample removal.",
+    "exact_xyz_mm": null,
+    "actual_face_normal": null,
+    "spot_size_mm": null,
+    "emissivity": null,
+    "removal_to_read_delay_s": null,
+    "prohibited_interpretation": "Not center temperature; do not assign a precise corner coordinate from an unscaled schematic."
+  },
+  "geometry_limits": [
+    "Hole counts and family sizes do not specify individual hole centers, wall thickness distribution or completeCAD.",
+    "Straight uniform channels and identical holes within a family are author geometric idealizations, not independently measured alongdepth.",
+    "Tabulated fluctuations preserved; no monotone smoothing or shrinkage law fitted.",
+    "Measured geometry imposed on a future model would be an input, not independent predicted shrinkage.",
+    "No area, boundary transfer coefficient or microscopic porosity inferred from macro voidfraction."
+  ],
+  "material_qualified": false,
+  "training_eligible": false,
+  "D1_admitted": false
+}

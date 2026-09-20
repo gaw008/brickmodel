@@ -1,0 +1,116 @@
+{
+  "scope": "Input requirements for a conditional drying benchmark, not runtime parameters",
+  "candidate": "Silva2018 Compensator07 70C",
+  "proposed_minimum_outputs": [
+    "total specimen mass over main drying",
+    "IR surface measurement under documented observation operator"
+  ],
+  "not_automatically_predicted": [
+    "shrinkage if observed geometry is prescribed",
+    "interior temperature from a single surface reading",
+    "sintering chemistry or final brick strength"
+  ],
+  "law_level": "Conservation relations and positive-dissipation requirements are universal constraints; material closures and actualboundaryconditions remain unqualified.",
+  "no_parameters_filled_by_default": true,
+  "inputs": [
+    {
+      "id": "geometry",
+      "status": "partial",
+      "available": "33timepoints of12dimensions;23channelcounts; authorvolume convention reconstructed.",
+      "required": "Individual hole positions, wall thicknesses, length-axis mapping confirmation and accessible/support-contact faces.",
+      "source_locator": "C.3/C.4, Fig3.18, Eq3.7; geometry_definition.json",
+      "acquisition_or_decision": "Obtain dimensioned original drawing and identify which face was supported/ventilated; do not invent a CAD mesh."
+    },
+    {
+      "id": "geometry_motion",
+      "status": "observed_input_only",
+      "available": "Tabulated dimensions at33times, including twoconditioningsteps.",
+      "required": "A complete compatible deformation map F(X,t) and interpolation error if using a movingdomain; independent shrinkage law if claiming prediction.",
+      "source_locator": "C.3/C.4",
+      "acquisition_or_decision": "Choose explicitly between prescribing observed geometry and predicting deformation. Neither is implemented; prescribed observed geometry cannot be used to claim independent shrinkage prediction."
+    },
+    {
+      "id": "initial_total_mass",
+      "status": "documented_unit_interpretation",
+      "available": "Initial7.316kg and operational drymass6.252kg from nomenclature/C.1; previous source review applies.",
+      "required": "Dry-solid mass stability and operational100C reference versus physically boundwater; initial moisture distribution.",
+      "source_locator": "C.1; methodp64; F0-C/V0R-C",
+      "acquisition_or_decision": "Keep rawmass and dryreference protocol. Ask for preparation/history/distribution information; no homogeneous field by default."
+    },
+    {
+      "id": "initial_temperature",
+      "status": "surface_observation_only",
+      "available": "29.8C initial IRsurfacepoint.",
+      "required": "Internal initial temperature distribution or evidence that uniforminitialT approximation satisfies targeterror.",
+      "source_locator": "C.2; Fig3.18",
+      "acquisition_or_decision": "Request storage/equilibration history and internalT measurements if available; no centerT substitution."
+    },
+    {
+      "id": "thermal_boundary",
+      "status": "nominal_and_author_calculation",
+      "available": "70C setpoint,1.0m/s reportedwind,7.72% RH fromexternalmeans viaCATT.",
+      "required": "Time/spatial ovenT,humidity,velocity,direction,pressure; removal/reinsertion chronology; support/convection/radiation exposure.",
+      "source_locator": "Table3.1; methods3.1.2.2/3.1.2.3",
+      "acquisition_or_decision": "Request same-run logs and chamber/sampleplacement. Tablemeans are not measuredboundaryhistories."
+    },
+    {
+      "id": "wet_energy_storage",
+      "status": "not_established",
+      "available": "Mass and surfaceT observations only; general waterreference available elsewhere cannot substitute claymatrix/boundwater properties.",
+      "required": "Same-material sensible and binding/phasechangeenergy asfunctionofT,w; common energyreference and uncertainty.",
+      "source_locator": "No applicable samebatch closure established in this stage.",
+      "acquisition_or_decision": "Identify independent same-material calorimetry/source and validitydomain before choosing U(T,w)."
+    },
+    {
+      "id": "thermal_conduction",
+      "status": "not_established",
+      "available": "No independently qualified k(T,w) established.",
+      "required": "Same-material conductivity tensor or justifiedscalarclosure, anisotropy, porosity dependence and measurementuncertainty.",
+      "source_locator": "No applicable closure established in this stage.",
+      "acquisition_or_decision": "Find existing samebatch conductivity measurement; otherwise make this a specific materialcharacterization request."
+    },
+    {
+      "id": "moisture_constitutive_laws",
+      "status": "not_established",
+      "available": "Dimensional mass trajectory; authorM_e has a different formula from ordinary endpointdrybasis.",
+      "required": "A thermodynamically consistent total-water or liquid/vaporflux closure; sorption/capillarity and transport coefficients with domains and independentcalibration.",
+      "source_locator": "Eq3.3newaddendum; prior review of M/Mstar",
+      "acquisition_or_decision": "Specify required potential/flux model before acquiring parameters. Fitted sourcecoefficients or reportedM_e cannot self-validate."
+    },
+    {
+      "id": "interface_transfer",
+      "status": "not_established",
+      "available": "Perforated shape andnominalairvelocity.",
+      "required": "Separate exterior/channel heat/moisturetransfer or resolvedairdomain; radiative properties and contacts where relevant.",
+      "source_locator": "Fig3.16-3.18; Eq3.8",
+      "acquisition_or_decision": "Do not turn A0* with unit1/length into anarea or substitute macrovoidfraction for epsilon. Request floworientation/exposedsurface information."
+    },
+    {
+      "id": "measurement_operator",
+      "status": "partial",
+      "available": "Upper-right exteriorcornermarker, IRtemperature aftersample removal.",
+      "required": "Exact spot/face, emissivity, spot-size, delay andcalibration; mappingfrommodeledTfieldtoreportedreading.",
+      "source_locator": "Fig3.18/p64",
+      "acquisition_or_decision": "Request pointdefinition and measurement protocol before selecting a simulatednode."
+    },
+    {
+      "id": "observation_uncertainty",
+      "status": "not_established",
+      "available": "Published measurementtables and instrumentdescriptions; no complete errorbudget.",
+      "required": "Calibration, correlations, rounding, repeats and batchvariability.",
+      "source_locator": "Methods equipment; V0R-C",
+      "acquisition_or_decision": "Preserve decimalprecision separately frommeasurementuncertainty; do not assign anexperimentalaccuracythreshold from numericalrounding."
+    },
+    {
+      "id": "independent_validation",
+      "status": "not_admitted",
+      "available": "70Cobservations exposed duringcandidatechoice; no modelrun orfit.",
+      "required": "Predeclared outputs/domain/error metrics and independent conditions/specimens for validation aftermodelchoices.",
+      "source_locator": "F0-C/V0R-C exposure record",
+      "acquisition_or_decision": "Freeze a justified validation protocol before prediction; do not call these source-consistency matches materialvalidation."
+    }
+  ],
+  "material_qualified": false,
+  "training_eligible": false,
+  "D1_admitted": false
+}

@@ -1,5 +1,13 @@
 # 物理沙盒 Goal 进度
 
+## 2026-09-20 UTC F0-D：同试件几何交付，体积约定获数值解释
+
+- [合同](../GOAL_F0D_SILVA2018_GEOMETRY.md)承接`5a96b0a`，只处理Silva2018同一70°C试件；[报告](research/f0d-silva2018-geometry-v1/REPORT.md)移录C.3/C.4的33时刻、12项尺寸并定位Fig3.18表面测点，未重审旧79行或运行模型。
+- [几何与计算](../../data/sandbox/research/f0d-silva2018-geometry-v1/geometry_definition.json)保留23孔原计数及原式失败：原文用C作孔深不能复现体积；用L和π=3.14能在整数取整范围内复现全部33行，最大差0.4652mm³。这是作者计算约定的推断，不是实验误差或物理精度；数学π结果并列保存。Table3.1最终体积对应990min，非最后100°C处理端点。
+- 新核读Eq3.3可解释原Mₑ的数值来源，但其左右符号不一致且不等于通常端点干基含水率；Eq3.6与温度表的归一化方向相反。[补充证据](../../data/sandbox/research/f0d-silva2018-geometry-v1/formula_addendum.json)保留原式/数值，旧包未改。新结论待V0R-D，不授予材料/训练/D1资格。
+- [12组必要输入](../../data/sandbox/research/f0d-silva2018-geometry-v1/input_requirements.json)区分尺寸/测点、真实边界、内部初态、储能/导热/输运、本构与测量误差；只提出条件守恒关系，不填默认物性。下一独立V0R-D复核本轮尺寸、体积解释与公式补充，不泛搜或重审旧范围。
+- 首次计时06:09:00 UTC，Goal于06:09:27创建，20分钟上限包含Git交付，不自动续期；未执行/新增测试、SHA操作、模型拟合、护栏、依赖或对外联系。提交推送与Goal结束以实际回执为准。
+
 ## 2026-09-20 UTC V0R-C：79行来源/移录限定通过，D1仍不准入
 
 - [合同](../GOAL_V0RC_DRYING_CANDIDATES_REVIEW.md)固定审查`ebbed3f`的F0-C包；[报告](research/v0rc-drying-candidates-review-v1/REPORT.md)重新核读两份原PDF，人工读回79个时刻的237个核心数字，与CSV一致。辅助文字字段及页码/原词元再读一致；文字层共有OCR的限度明列，不声称第三方认证。
