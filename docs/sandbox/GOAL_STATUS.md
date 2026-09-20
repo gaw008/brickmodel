@@ -1,5 +1,15 @@
 # 物理沙盒 Goal 进度
 
+## 2026-09-20 UTC F0-A：固定同材料干燥证据对象，D1仍不准入
+
+- 按用户“继续下一步”及原阶段顺序执行[F0-A合同](../GOAL_F0_DRYING_EVIDENCE.md)。本轮 `get_goal` 返回 null 后创建独立 F0-A；未恢复旧完整建设目标，没有子代理或后台任务。
+- [报告](research/f0-drying-benchmark-v1/REPORT.md)选定 Nylén MSJ、138°C、2.4m/s、2/4cm：20个已有中心温度点、两组终态直径及25项输入证据。核读原文方法并目视Table2/Table3/Figure8；CB与其他污泥系数不混入。
+- [SI观测](../../data/sandbox/research/f0-drying-benchmark-v1/observations_si.csv)保留原行号、selection_id、像素和读取界；[算术](../../data/sandbox/research/f0-drying-benchmark-v1/arithmetic.json)用有理数独立换算，旧保存值最大差约5e−10（对应s或K），属于舍入差，不是物理精度。
+- 原图只有部分可分辨点，两组均为已暴露开发证据，实验温度不确定度未知；初态、热风湿度、同材本构及动态收缩尚不足。证据包是离线研究数据，不是可运行材料配置，未授予训练或D1准入。
+- F0-A完成范围仅为“对象、工况和可用观测冻结”；下一独立V0R-A核验本证据包。它不能代替真实材料准确性验证，也不启动连续干燥实现。
+- 本段从2026-09-19 23:59:29 UTC起算，40分钟投入上限包含检索与交付；应用Goal于00:04:00 UTC创建，面板计数不包含此前检索，不等于项目历史总消耗。最终用时/Goal结束和Git推送以实际回执为准。
+- 未修改物理内核、执行/新增测试、拟合或生成新轨迹、生成/比对SHA。按已有授权提交并推送当前GitHub分支。
+
 ## 2026-09-19 V0审查完成：准确性分项结论已交付，D1不准入
 
 - [最终报告C09](CURRENT_WORK_VALIDATION.md#c09-final)与[覆盖表](../../data/sandbox/research/current-work-validation-v0/MODULE_COVERAGE.csv)覆盖182个项目模块的声明范围，另核两项前端输出文件。C06–C08补完此前147项剩余范围；`reviewed_limited`不是所有代码/物理/材料通过，未验证的外部系数认证、EOS/组成误差和现实准确性逐项保留。
