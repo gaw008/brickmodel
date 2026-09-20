@@ -1,5 +1,13 @@
 # 物理沙盒 Goal 进度
 
+## 2026-09-20 UTC V0R-C：79行来源/移录限定通过，D1仍不准入
+
+- [合同](../GOAL_V0RC_DRYING_CANDIDATES_REVIEW.md)固定审查`ebbed3f`的F0-C包；[报告](research/v0rc-drying-candidates-review-v1/REPORT.md)重新核读两份原PDF，人工读回79个时刻的237个核心数字，与CSV一致。辅助文字字段及页码/原词元再读一致；文字层共有OCR的限度明列，不声称第三方认证。
+- [算术](../../data/sandbox/research/v0rc-drying-candidates-review-v1/arithmetic_review.json)以精确有理数复算两组8个表达式，原保存值最大差约3.52e−29，仅是十进制表示误差。单位解释、两次24h处理和2018最后100°C测干质量阶段获方法支持；表面温度仍不能代替中心/炉温。
+- [逐项判断](../../data/sandbox/research/v0rc-drying-candidates-review-v1/review.json)区分九项登记中的数值/符号差异、书目纠错、协议缺项和不同日期字段。原79行无需修复，F0-C包未改；实际边界、测量误差及同材本构未闭合，材料/训练/D1不升级。
+- 下一独立F0-D只整理已定位的Silva2018同一70°C试件C.3/C.4几何和Fig3.18测点，核初末尺寸/体积及必要输入清单；不重做79行复核、MSJ泛搜或全项目审查。未运行/新增测试、模型、SHA操作、护栏或对外联系。
+- 首次计时04:31:08 UTC，Goal于04:31:36创建，20分钟上限不自动续期；提交、推送与Goal结束以实际回执为准。
+
 ## 2026-09-20 UTC F0-C：取得两组原始砖坯附录；优先候选等待V0R-C
 
 - [合同](../GOAL_F0C_DRYING_CANDIDATES.md)承接`f45cda2`，限定三个候选家族。找到Silva2009、Silva2018两份公开原论文的数值附录；[报告](research/f0c-drying-candidates-v1/REPORT.md)推荐2018工业Compensator07为下一来源复核对象，2009空心砖为备选。LeMire2025只取得摘要/数据需索取声明，未声称全文核读。
