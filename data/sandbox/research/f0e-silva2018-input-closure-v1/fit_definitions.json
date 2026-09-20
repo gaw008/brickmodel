@@ -1,0 +1,59 @@
+{
+  "source_id": "SILVA2018",
+  "source_packet_baseline": "bec97f6",
+  "table_rows": {
+    "drying": 6,
+    "temperature": 6,
+    "shrinkage": 6
+  },
+  "fitted_coefficients": 84,
+  "source_fit_statistics": 54,
+  "transcription_method": "Fresh pdftotext -layout plus visual reading of all three table pages. Coefficients and printed R/R2/loss retained, no new regression.",
+  "fits": [
+    {
+      "id": "drying",
+      "equation": "(Mbar-Me)/(M0-Me)=A1*exp(-K1*t)+A2*exp(-K2*t)+A3*exp(-K3*t)",
+      "locators": [
+        "Eq3.9 p69",
+        "Eq3.36/3.37 p76",
+        "Table4.15 p109"
+      ],
+      "file": "drying_fit.csv",
+      "parameter_meaning": "Dimensionless amplitudes and inverse-minute rates of an empirical trajectory; not diffusivity, permeability or kinetic reaction constants.",
+      "observation_role": "Fitted on the source experiment moisture observations for each nominal50-100C condition; normalization uses source Me with previously recorded issue.",
+      "initial_constraint": "Sum Ai is not constrained to1 in printed values. 60/70C include Ki<0, Ai>0, so unbounded long-time extrapolation.",
+      "fit_rows_weights_resampling": "Not completely specified. p69 discusses uniform sampling; exact fitted rows/weights and use of post24h rows need fit project.",
+      "independent_validation": false
+    },
+    {
+      "id": "temperature",
+      "equation": "theta_star=A1+A2*log2(t^K1+A3)",
+      "locators": [
+        "Eq3.10 p70",
+        "Table4.16 p112"
+      ],
+      "file": "temperature_fit.csv",
+      "parameter_meaning": "Empirical normalized surface-temperature fit in source numerical time convention. Log argument requires an explicit dimensionless time convention before reuse; no automatic unit substitution.",
+      "observation_role": "Fit to measured surface-temperature series; exact theta_star normalization must be reconciled with Eq3.6/table conflict.",
+      "long_time_behavior": "Printed positive A2 and K1 cause unbounded logarithmic growth, not a finite thermal equilibrium law.",
+      "independent_validation": false
+    },
+    {
+      "id": "shrinkage",
+      "equation": "V/V0=B1*Mbar^3+B2*Mbar^2+B3*Mbar+B4",
+      "locators": [
+        "Eq3.11/3.12 p70",
+        "Table4.17 p116"
+      ],
+      "file": "shrinkage_fit.csv",
+      "parameter_meaning": "Polynomial of the dimensionless dry-mass water ratio, not moisture in percent; coefficients are tied to that numeric convention.",
+      "observation_role": "Fit to volume computed from the same specimen dimensions and moisture, not independent constitutive mechanics or shrinkage validation.",
+      "independent_validation": false
+    }
+  ],
+  "optimizer": "Source uses Hooke-Jeeves/quasi-Newton in Statistica, convergence criterion0.000099. Numerical optimizer criterion is not experimental accuracy.",
+  "source_domain": "Six nominal oven temperatures50,60,70,80,90,100C; not an independently validated continuous temperature/humidity/material domain.",
+  "material_qualified": false,
+  "training_eligible": false,
+  "D1_admitted": false
+}

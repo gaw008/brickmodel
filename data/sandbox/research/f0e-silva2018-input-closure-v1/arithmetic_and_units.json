@@ -1,0 +1,137 @@
+{
+  "kind": "Source coefficient arithmetic and dimensional analysis; no new fit, integration or physical-model trajectory.",
+  "source": "Eq3.9/3.36 and Table4.15",
+  "time_basis": "t in min from nomenclature PDF22 and Fig4.24; K therefore min^-1; conversion to s^-1 divides by60.",
+  "drying_initial_conditions": [
+    {
+      "condition_C": "50",
+      "sum_A_exact": "101499/100000",
+      "sum_A_decimal": "1.01499",
+      "initial_normalization_required": "1",
+      "initial_difference": "0.01499",
+      "initial_difference_percent": "1.499",
+      "initial_slope_per_min": "-0.003645073756",
+      "positive_amplitude_negative_rate_terms": [],
+      "long_time_limit": "0"
+    },
+    {
+      "condition_C": "60",
+      "sum_A_exact": "207073/200000",
+      "sum_A_decimal": "1.035365",
+      "initial_normalization_required": "1",
+      "initial_difference": "0.035365",
+      "initial_difference_percent": "3.5365",
+      "initial_slope_per_min": "-0.004637258476",
+      "positive_amplitude_negative_rate_terms": [
+        3
+      ],
+      "long_time_limit": "positive infinity"
+    },
+    {
+      "condition_C": "70",
+      "sum_A_exact": "520219/500000",
+      "sum_A_decimal": "1.040438",
+      "initial_normalization_required": "1",
+      "initial_difference": "0.040438",
+      "initial_difference_percent": "4.0438",
+      "initial_slope_per_min": "-0.005032858287",
+      "positive_amplitude_negative_rate_terms": [
+        3
+      ],
+      "long_time_limit": "positive infinity"
+    },
+    {
+      "condition_C": "80",
+      "sum_A_exact": "991003/1000000",
+      "sum_A_decimal": "0.991003",
+      "initial_normalization_required": "1",
+      "initial_difference": "-0.008997",
+      "initial_difference_percent": "-0.8997",
+      "initial_slope_per_min": "-0.001735474774",
+      "positive_amplitude_negative_rate_terms": [],
+      "long_time_limit": "0"
+    },
+    {
+      "condition_C": "90",
+      "sum_A_exact": "263789/250000",
+      "sum_A_decimal": "1.055156",
+      "initial_normalization_required": "1",
+      "initial_difference": "0.055156",
+      "initial_difference_percent": "5.5156",
+      "initial_slope_per_min": "-0.006058864333",
+      "positive_amplitude_negative_rate_terms": [],
+      "long_time_limit": "0"
+    },
+    {
+      "condition_C": "100",
+      "sum_A_exact": "42743/40000",
+      "sum_A_decimal": "1.068575",
+      "initial_normalization_required": "1",
+      "initial_difference": "0.068575",
+      "initial_difference_percent": "6.8575",
+      "initial_slope_per_min": "-0.007750413091",
+      "positive_amplitude_negative_rate_terms": [],
+      "long_time_limit": "0"
+    }
+  ],
+  "scales": {
+    "1_kJ_in_J": 1000,
+    "1_min_in_s": 60,
+    "1_h_in_s": 3600,
+    "1_kWh_in_J": 3600000,
+    "1_mm_in_m": "0.001"
+  },
+  "unit_findings": [
+    {
+      "id": "specific_area",
+      "source": "Eq3.39 p77 vs nomenclature PDF21",
+      "formula": "A0*(1-epsilon)/VP",
+      "dimension": "m^2/m^3 = m^-1",
+      "printed_value": "40.34",
+      "nomenclature_unit": "m^2",
+      "decision": "Use as bed-specific interfacial area only when bed definitions apply; not absolute area."
+    },
+    {
+      "id": "epsilon",
+      "source": "Eq3.40 p77 vs nomenclature PDF23",
+      "formula": "1 - Ntj*Vt/Vvag",
+      "printed_value": "0.864401",
+      "interpretation": "Bed loading void fraction per explicit equation and subsection, not clay matrix porosity. Nomenclature calls it product porosity; preserve wording discrepancy."
+    },
+    {
+      "id": "gas_constant",
+      "source": "p78; Eq3.43; NIST CODATA 2022 unit reference",
+      "printed_value": "8314.34",
+      "printed_unit": "J/kg degC",
+      "required_basis": "For rho=P*Ma/(R*Tabs), a molar R and Ma must use matching mol/kmol bases. Numerical magnitude suggests J/(kmol K), not a confirmed source correction. Absolute temperature is K.",
+      "decision": "Preserve original; do not load as mass-specific R or silently replace numeric value."
+    },
+    {
+      "id": "fluid_heat_capacity",
+      "source": "Eq3.41/3.46/3.47",
+      "printed_unit": "kJ/(kg K)",
+      "solid_cp_unit": "J/(kg K)",
+      "decision": "Convert to one energy unit before addition; source transcription alone does not prove author code used wrong units."
+    },
+    {
+      "id": "time_and_length",
+      "source": "nomenclature PDF21-22; Eq3.48-3.52",
+      "decision": "Time is min, speeds m/s, h W/(m^2 K), Dh nomenclature mm; use consistent seconds/metres for transport/Re/h. No author executable code inspected."
+    },
+    {
+      "id": "relative_humidity",
+      "source": "Eq3.45 p79; nomenclature PDF22",
+      "formula": "Patm*x/((x+0.622)*Pvs)",
+      "result_basis": "fraction",
+      "nomenclature_unit": "percent",
+      "decision": "Multiply by100 only for percent display; confirm boundary data basis."
+    },
+    {
+      "id": "energy_performance",
+      "source": "Silva2020 Eq13-19 pp8-9",
+      "decision": "ET labelled J; SMR kg/kWh requires ET/3600000, SEC kJ/kg requires ET/1000; QT W needs seconds, MR kg/h needs hours. Printed equations suppress conversions; this is an implementation requirement, not proof published numbers are wrong."
+    }
+  ],
+  "material_validation": false,
+  "D1_admitted": false
+}

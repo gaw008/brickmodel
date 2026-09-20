@@ -1,5 +1,13 @@
 # 物理沙盒 Goal 进度
 
+## 2026-09-20 UTC F0-E：参数来源和最小补资料清单已交付
+
+- [合同](../GOAL_F0E_SILVA2018_INPUT_CLOSURE.md)承接`bec97f6`，只核同源物性/拟合/边界；[报告](research/f0e-silva2018-input-closure-v1/REPORT.md)交付29项参数/公式/设置，以及三表18行、84系数和54项作者拟合统计。没有改物理内核或旧资料。
+- [来源清单](../../data/sandbox/research/f0e-silva2018-input-closure-v1/parameter_inventory.json)将1673J/(kg·K)、1985.8kg/m³辨为Nascimento2002借用值，第一手测量仍未取得；Eq3.39/3.40明确40.34m²/m³和ε=0.864401为床层相关量，非单砖面积/基体孔隙率。73m工业干燥器的七区边界不能移作70°C烘箱实测边界。
+- [系数算术与单位](../../data/sandbox/research/f0e-silva2018-input-closure-v1/arithmetic_and_units.json)指出70°C拟合初值1.040438且60/70°C有负衰减系数，长期外推无界；R²不能自证物理定律。R、J/kJ、分钟/秒、毫米/米和RH比例/百分数的区别明确保留，未声称原作者程序已证错误。
+- [12组输入映射](../../data/sandbox/research/f0e-silva2018-input-closure-v1/input_closure.json)及[未发送资料草稿](research/f0e-silva2018-input-closure-v1/DATA_REQUEST_DRAFT.md)给出七组具体已有记录请求和必要时的针对性表征方向。本次文献收集结束；下一独立V0R-E只复核新增资料/推导，尚未创建，D1/材料/训练不准入。
+- 首次计时20:30:08 UTC，Goal于20:30:39创建，25分钟上限含Git交付。没有测试、模型运行/拟合、SHA操作、护栏/依赖或对外联系；提交推送和Goal结束以实际回执为准。
+
 ## 2026-09-20 UTC V0R-D：几何与算术限定通过，条件守恒范围明确
 
 - [合同](../GOAL_V0RD_SILVA2018_GEOMETRY_REVIEW.md)固定复核`e78fb29`的F0-D包；[报告](research/v0rd-silva2018-geometry-review-v1/REPORT.md)重新核读原PDF，396项尺寸及99项作者体积/比例字段一致，旧包未改。
