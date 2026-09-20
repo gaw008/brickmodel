@@ -1,0 +1,97 @@
+{
+  "review_id": "V0RA_F0A_MSJ_EVIDENCE_V1",
+  "reviewed_commit": "ffde59f",
+  "review_date_utc": "2026-09-20",
+  "source_parent_csv": "data/sandbox/research/nylen2024-drying/figure8/observations.csv",
+  "reviewed_csv": "data/sandbox/research/f0-drying-benchmark-v1/observations_si.csv",
+  "method": "50-digit Decimal; analytic monotone interval bounds; native Figure 8 axes, not prior corner-enumeration implementation",
+  "axes": {
+    "time": {
+      "pixel_0min": 133,
+      "pixel_160min": 1125
+    },
+    "temperature": {
+      "pixel_0degC": 843,
+      "pixel_140degC": 49
+    },
+    "native_image_width_px": 1303,
+    "native_image_height_px": 1050
+  },
+  "formulas": {
+    "time_s": "(x-133)*300/31",
+    "temperature_K": "273.15+(843-y)*70/397",
+    "time_halfwidth_s": "(hx+axis_halfwidth)*300/31",
+    "temperature_halfwidth_K": "(hy+axis_halfwidth)*70/397"
+  },
+  "formula_domain": "Both axis endpoints share the same halfwidth; center and its interval strictly interior to uncertain endpoints. No extrapolation cases.",
+  "selected_rows": 20,
+  "unique_ids": 20,
+  "condition_counts": {
+    "MSJ-138-2cm-2.4": 8,
+    "MSJ-138-4cm-2.4": 12
+  },
+  "missing_parent_ids": [],
+  "unexpected_ids": [],
+  "metadata_mismatches": [],
+  "all_20_monotonicity_preconditions_satisfied": true,
+  "max_absolute_saved_minus_reference": {
+    "time_s": 6.451612903225807e-13,
+    "time_readout_lower_s": 9.354838709677419e-13,
+    "time_readout_upper_s": 6.451612903225807e-13,
+    "temperature_K": 4.937027707808564e-13,
+    "temperature_readout_lower_K": 4.634760705289672e-13,
+    "temperature_readout_upper_K": 4.962216624685139e-13
+  },
+  "all_values_within_display_representation_bound": true,
+  "representation_bound": "0.5e-12 plus half a binary64 ULP for that value; describes serialization, not physics or experimental accuracy",
+  "unknown_temperature_sd_rows": 20,
+  "unknown_temperature_measurement_uncertainty_rows": 20,
+  "endpoint_geometry": [
+    {
+      "condition_id": "MSJ-138-2cm-2.4",
+      "source_locator": "Table 3 p2049, PDF page 7",
+      "source_initial_diameter_cm": "2",
+      "source_final_diameter_cm": "1.42",
+      "source_sd_cm": "0.045",
+      "source_shrinkage_percent": "29.2",
+      "SI_transcription_differences": {
+        "diameter_initial_m": "0.00",
+        "diameter_final_m": "0.0000",
+        "reported_diameter_sd_m": "0.00000",
+        "reported_mean_shrinkage_fraction": "0.000"
+      },
+      "diameter_ratio": "0.71",
+      "area_ratio_if_spherical_isotropic": "0.5041",
+      "volume_ratio_if_spherical_isotropic": "0.357911",
+      "shrinkage_from_rounded_diameters_percent": "29.00",
+      "source_reported_shrinkage_minus_rounded_diameter_result_percentage_points": "0.20"
+    },
+    {
+      "condition_id": "MSJ-138-4cm-2.4",
+      "source_locator": "Table 3 p2049, PDF page 7",
+      "source_initial_diameter_cm": "4",
+      "source_final_diameter_cm": "3.31",
+      "source_sd_cm": "0.010",
+      "source_shrinkage_percent": "17.4",
+      "SI_transcription_differences": {
+        "diameter_initial_m": "0.00",
+        "diameter_final_m": "0.0000",
+        "reported_diameter_sd_m": "0.0000",
+        "reported_mean_shrinkage_fraction": "0.000"
+      },
+      "diameter_ratio": "0.8275",
+      "area_ratio_if_spherical_isotropic": "0.68475625",
+      "volume_ratio_if_spherical_isotropic": "0.566635796875",
+      "shrinkage_from_rounded_diameters_percent": "17.2500",
+      "source_reported_shrinkage_minus_rounded_diameter_result_percentage_points": "0.1500"
+    }
+  ],
+  "scope_limitations": [
+    "Same assistant, separate source/derivation workflow; not external third-party review",
+    "Visual series/axis review; pixel halfwidths not independently calibrated",
+    "No fresh blind holdout",
+    "No physical trajectory, parameter fit, tests or checksum operations",
+    "No new material accuracy qualification"
+  ],
+  "expected_MSJ_parent_rows": 20
+}
