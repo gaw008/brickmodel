@@ -1,0 +1,190 @@
+{
+  "accessed_utc_date": "2026-09-20",
+  "scope": "Bounded source and repository checks, not an exhaustive proof that unpublished or unindexed data do not exist. Initial unrendered RDA web template was not counted as a search result.",
+  "entries": [
+    {
+      "id": "publisher",
+      "url": "https://www.tandfonline.com/doi/suppl/10.1080/07373937.2024.2407959",
+      "method": "web open",
+      "result": "Tool returned Internal Error; access failure is not evidence of no supplement."
+    },
+    {
+      "id": "figshare-doi-search",
+      "url": "https://api.figshare.com/v2/articles/search",
+      "method": "POST",
+      "body": {
+        "search_for": "10.1080/07373937.2024.2407959",
+        "limit": 20
+      },
+      "returned_records": 1,
+      "result": "One matching supplement record: 27117118.",
+      "local_cache": ".tools/source-cache/f0b-nylen2024/figshare-doi-search.json"
+    },
+    {
+      "id": "figshare-author-search",
+      "url": "https://api.figshare.com/v2/articles/search",
+      "method": "POST",
+      "body": {
+        "search_for": "Nylen biosolids",
+        "limit": 100
+      },
+      "returned_records": 0,
+      "result": "Zero records for this search string; search semantics and indexing limit the conclusion.",
+      "local_cache": ".tools/source-cache/f0b-nylen2024/figshare-author-search.json"
+    },
+    {
+      "id": "figshare-name-search",
+      "url": "https://api.figshare.com/v2/articles/search",
+      "method": "POST",
+      "body": {
+        "search_for": "Nylen",
+        "limit": 100
+      },
+      "returned_records": 100,
+      "result": "First 100 records only, not exhaustive. The biosolids/convective-drying title hit in this inspected page was the known supplement 27117118.",
+      "local_cache": ".tools/source-cache/f0b-nylen2024/figshare-name-search.json"
+    },
+    {
+      "id": "figshare-item",
+      "url": "https://api.figshare.com/v2/articles/27117118",
+      "method": "GET",
+      "result": "One file; documentary DOI relationship and version recorded in source.json.",
+      "item_id": 27117118
+    },
+    {
+      "id": "figshare-download",
+      "url": "https://ndownloader.figshare.com/files/49438366",
+      "method": "GET with redirects",
+      "result": "Downloaded and opened DOCX, document XML, relationships and two images.",
+      "archived_path": "data/sandbox/research/f0b-drying-inputs-v1/ldrt_a_2407959_sm2592.docx"
+    },
+    {
+      "id": "jcu-article",
+      "url": "https://researchonline.jcu.edu.au/83798/",
+      "method": "web open",
+      "result": "Institutional article record and published-paper access; no raw repeat dataset acquired."
+    },
+    {
+      "id": "jcu-author",
+      "url": "https://researchonline.jcu.edu.au/view/jcu/1FC1ECD5DD7EDCFD4123A888D45193C8.html",
+      "method": "web open",
+      "result": "Public author publication list showed three entries: target 2024 paper, 2023 biosolids review and 2021 lead-concentrate work; no matching raw-data record linked in inspected list. Not a claim of complete author output."
+    },
+    {
+      "id": "jcu-guide",
+      "url": "https://www.jcu.edu.au/rdim/research-data-jcu-platform",
+      "method": "web open",
+      "result": "Official guide links Research Data JCU."
+    },
+    {
+      "id": "jcu-data-home",
+      "url": "https://researchdata.jcu.edu.au/",
+      "method": "web open then GET",
+      "result": "Web tool reported 520; curl obtained homepage. Public collections link points to Research Data Australia; researcher home redirects to institutional AAF sign-in. No login attempted.",
+      "local_cache": ".tools/source-cache/f0b-nylen2024/jcu-data-home.html"
+    },
+    {
+      "id": "ardc-widget-method",
+      "url": "https://documentation.ardc.edu.au/rda/rda-registry-search-widget",
+      "method": "web open and read linked public JavaScript",
+      "result": "Official widget documents anonymous api_key=public; script supplies public JSONP search endpoint. No registered key or institutional credentials used.",
+      "script_url": "https://researchdata.edu.au/apps/assets/registry_widget/js/registry_widget_v2.js"
+    },
+    {
+      "id": "ardc-nylen",
+      "url": "https://researchdata.edu.au/api/v2.0/registry.jsonp/search/",
+      "method": "GET",
+      "public_query": {
+        "api_key": "public",
+        "q": "Nylen",
+        "callback": "f0b"
+      },
+      "response_status": 0,
+      "num_found": 0,
+      "start": 0,
+      "returned_records": 0,
+      "result": "No indexed records for this name string.",
+      "local_cache": ".tools/source-cache/f0b-nylen2024/ardc-nylen.jsonp"
+    },
+    {
+      "id": "ardc-biosolids",
+      "url": "https://researchdata.edu.au/api/v2.0/registry.jsonp/search/",
+      "method": "GET",
+      "public_query": {
+        "api_key": "public",
+        "q": "biosolids",
+        "callback": "f0b"
+      },
+      "response_status": 0,
+      "num_found": 25,
+      "start": 0,
+      "returned_records": 15,
+      "result": "Broad search: only first 15 of 25 records inspected; not exhaustive. Narrowed to institution next.",
+      "local_cache": ".tools/source-cache/f0b-nylen2024/ardc-biosolids.jsonp"
+    },
+    {
+      "id": "ardc-biosolids-jcu",
+      "url": "https://researchdata.edu.au/api/v2.0/registry.jsonp/search/",
+      "method": "GET",
+      "public_query": {
+        "api_key": "public",
+        "q": "biosolids AND \"James Cook\"",
+        "callback": "f0b"
+      },
+      "response_status": 0,
+      "num_found": 1,
+      "start": 0,
+      "returned_records": 1,
+      "result": "One result: 1710435, Algal biochar: effects and applications data. Description concerns freshwater/saltwater macroalgal biochar and plant growth; excluded as different material and experiment.",
+      "local_cache": ".tools/source-cache/f0b-nylen2024/ardc-biosolids-jcu.jsonp"
+    },
+    {
+      "id": "ardc-doi",
+      "url": "https://researchdata.edu.au/api/v2.0/registry.jsonp/search/",
+      "method": "GET",
+      "public_query": {
+        "api_key": "public",
+        "q": "10.1080/07373937.2024.2407959",
+        "callback": "f0b"
+      },
+      "response_status": 0,
+      "num_found": 6026,
+      "start": 0,
+      "returned_records": 15,
+      "result": "Unquoted DOI was tokenized/broad: 6026 results. Not interpreted as exact DOI evidence; replaced by quoted phrase query.",
+      "local_cache": ".tools/source-cache/f0b-nylen2024/ardc-doi.jsonp"
+    },
+    {
+      "id": "ardc-doi-quoted",
+      "url": "https://researchdata.edu.au/api/v2.0/registry.jsonp/search/",
+      "method": "GET",
+      "public_query": {
+        "api_key": "public",
+        "q": "\"10.1080/07373937.2024.2407959\"",
+        "callback": "f0b"
+      },
+      "response_status": 0,
+      "num_found": 0,
+      "start": 0,
+      "returned_records": 0,
+      "result": "No indexed records for quoted DOI.",
+      "local_cache": ".tools/source-cache/f0b-nylen2024/ardc-doi-quoted.jsonp"
+    },
+    {
+      "id": "ardc-title",
+      "url": "https://researchdata.edu.au/api/v2.0/registry.jsonp/search/",
+      "method": "GET",
+      "public_query": {
+        "api_key": "public",
+        "q": "\"Internal and surface temperature profiles\"",
+        "callback": "f0b"
+      },
+      "response_status": 0,
+      "num_found": 0,
+      "start": 0,
+      "returned_records": 0,
+      "result": "No indexed records for quoted title phrase.",
+      "local_cache": ".tools/source-cache/f0b-nylen2024/ardc-title.jsonp"
+    }
+  ]
+}
