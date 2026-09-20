@@ -1,5 +1,13 @@
 # 物理沙盒 Goal 进度
 
+## 2026-09-20 UTC V0R-D：几何与算术限定通过，条件守恒范围明确
+
+- [合同](../GOAL_V0RD_SILVA2018_GEOMETRY_REVIEW.md)固定复核`e78fb29`的F0-D包；[报告](research/v0rd-silva2018-geometry-review-v1/REPORT.md)重新核读原PDF，396项尺寸及99项作者体积/比例字段一致，旧包未改。
+- [独立有理数复算](../../data/sandbox/research/v0rd-silva2018-geometry-review-v1/arithmetic_review.json)核对330项保存计算：297项精确相等，33个孔道体积分数仅十进制表示差，最大约4.99521e−29。L孔深/π=3.14解释全部33个取整体积；C原式失败、主段990min终体积及相邻公式冲突确认。这些是来源算术，不是物理精度。
+- [逐项审查](../../data/sandbox/research/v0rd-silva2018-geometry-review-v1/review.json)确认23孔/表面测点的有限解释；从控制体推得总水守恒在干固体守恒、可逆形变、无化学水源等条件下成立。能量/熵及12组必要输入仍未闭合，不授予材料、训练或D1资格。
+- 下一独立F0-E只核已定位同源本构/边界及经验拟合来源，交付参数适用性表和未发送的最小资料请求草稿；不足时明确补资料需求并结束收集，不再泛搜或重复已通过33行。尚未创建下一Goal。
+- 首次计时19:33:16 UTC，Goal于19:33:39创建，20分钟上限含Git交付。没有测试、模型拟合、SHA操作、护栏/依赖或对外联系；提交推送与Goal结束以实际回执为准。
+
 ## 2026-09-20 UTC F0-D：同试件几何交付，体积约定获数值解释
 
 - [合同](../GOAL_F0D_SILVA2018_GEOMETRY.md)承接`5a96b0a`，只处理Silva2018同一70°C试件；[报告](research/f0d-silva2018-geometry-v1/REPORT.md)移录C.3/C.4的33时刻、12项尺寸并定位Fig3.18表面测点，未重审旧79行或运行模型。

@@ -1,0 +1,238 @@
+{
+  "stage": "V0R-D",
+  "reviewed_commit": "e78fb29",
+  "source_packet_unchanged": true,
+  "reviewer_independence": "Same assistant, separately derived rational arithmetic and fresh extraction/visual reading; not a third-party certification.",
+  "primary_source": {
+    "record": "https://dspace.sti.ufcg.edu.br/handle/riufcg/7173",
+    "cache": ".tools/source-cache/f0c-drying-candidates/silva2018.pdf",
+    "new_visual_pages": [
+      65,
+      66,
+      67,
+      68,
+      163,
+      164,
+      165,
+      166
+    ],
+    "additional_fresh_text_pages": [
+      64,
+      143,
+      144,
+      159,
+      160,
+      161,
+      162
+    ]
+  },
+  "secondary_geometry_source": {
+    "doi": "10.3390/en13112834",
+    "cache": ".tools/source-cache/f0c-drying-candidates/silva2020.pdf",
+    "fresh_text_page": 8,
+    "scope": "A height label and C depth in Eq6/8-12; not independent observations.",
+    "fresh_visual_page": 8
+  },
+  "continuum_reference": {
+    "url": "https://archive.nptel.ac.in/content/storage2/courses/112103167/module3/lec19.pdf",
+    "title": "NPTEL Continuum Mechanics, Lecture 19: Area and Volume Transformation",
+    "pages": [
+      2,
+      3,
+      4
+    ],
+    "equations": "5-10",
+    "retrieved_utc_date": "2026-09-20",
+    "used_for": "Nanson area transform and volume Jacobian; source does not supply clay properties."
+  },
+  "hole_count_readback": {
+    "circle": 4,
+    "F1": 12,
+    "F2": 2,
+    "F3": 4,
+    "F4": 1,
+    "total": 23
+  },
+  "findings": [
+    {
+      "id": "dimensions",
+      "status": "limited_pass",
+      "source_locator": "C.3/C.4 pp163-166",
+      "decision": "396尺寸、99作者计算字段、时间及页码/行号读回一致。"
+    },
+    {
+      "id": "hole_count",
+      "status": "limited_pass",
+      "source_locator": "Fig3.16-3.18 p65",
+      "decision": "4+12+2+4+1=23；各族尺寸非逐孔/全深度测量。"
+    },
+    {
+      "id": "depth_pi",
+      "status": "inferred_convention_confirmed_numerically",
+      "source_locator": "Eq3.7 pp67-68; C.4",
+      "decision": "L与3.14复现33个取整体积，原C结果保留；未证明真实轴向或作者原意。"
+    },
+    {
+      "id": "final_volume",
+      "status": "limited_pass",
+      "source_locator": "Table3.1 p68; C.4 p166; methods p64",
+      "decision": "3682082/3109589对应0/990min，非2430/3870min。"
+    },
+    {
+      "id": "volume_area_meaning",
+      "status": "limited_pass",
+      "source_locator": "Eq3.7/3.8 pp67-68",
+      "decision": "净几何体积仍含基体孔隙，宏观孔道率非材料孔隙率；a_p/V_p量纲为长度倒数。"
+    },
+    {
+      "id": "temperature_location",
+      "status": "partial",
+      "source_locator": "Fig3.18 p65; methods p64",
+      "decision": "T为右上外缘表面位置，精确测量算子未知。"
+    },
+    {
+      "id": "Me_formula",
+      "status": "conflict_preserved",
+      "source_locator": "Eq3.3 p66; A.1 pp143-144; C.1 pp159-160",
+      "decision": "左支解释作者数值，右支相反，不等于普通端点干基含水率。"
+    },
+    {
+      "id": "Tstar_formula",
+      "status": "conflict_preserved",
+      "source_locator": "Eq3.6 p67; C.2 pp161-162",
+      "decision": "原式端点1/0，表格0/1；无替换归一化序列。"
+    },
+    {
+      "id": "total_water_balance",
+      "status": "conditional_pass",
+      "source_locator": "REPORT.md control-volume derivation; NPTEL lecture19",
+      "decision": "干固体守恒、J>0、无净化学水源、相对固体总水通量等前提下成立。"
+    },
+    {
+      "id": "energy_and_entropy",
+      "status": "incomplete",
+      "source_locator": "F0-D proposed principles; REPORT.md",
+      "decision": "第一定律记账方向合理，具体储能/通量/功和熵产生未闭合；不声称完整耦合方程组正确。"
+    },
+    {
+      "id": "material_accuracy",
+      "status": "not_verified",
+      "source_locator": "No physical model run in this stage",
+      "decision": "本阶段仅源数据与定义审查，不授予材料/训练/D1资格。"
+    }
+  ],
+  "input_reviews": [
+    {
+      "id": "geometry",
+      "status": "partial",
+      "decision": "23孔及尺寸可用作来源证据；C/L轴向、孔位/壁厚/支承面仍需明确。"
+    },
+    {
+      "id": "geometry_motion",
+      "status": "observed_input_only",
+      "decision": "12项逐时尺寸不能唯一确定F(X,t)；外加观测几何不能验证收缩预测。"
+    },
+    {
+      "id": "initial_total_mass",
+      "status": "partial",
+      "decision": "原初质量及操作干质量有据，干固体稳定、束缚水基准和内部初始水分未验证。"
+    },
+    {
+      "id": "initial_temperature",
+      "status": "surface_only",
+      "decision": "29.8°C是表面初值，不能默认全体内部初温。"
+    },
+    {
+      "id": "thermal_boundary",
+      "status": "partial",
+      "decision": "名义设定及作者计算RH不是时空边界日志，取出/放回与支承交换未知。"
+    },
+    {
+      "id": "wet_energy_storage",
+      "status": "not_established",
+      "decision": "需同材储能、相/束缚水及统一能量参考；不能由总质量和单点温度反推唯一储能。"
+    },
+    {
+      "id": "thermal_conduction",
+      "status": "not_established",
+      "decision": "k(T,w)与适用域尚未在该候选建立；不是声明所有来源均不存在。"
+    },
+    {
+      "id": "moisture_constitutive_laws",
+      "status": "not_established",
+      "decision": "Eq3.3量不能当吸附本构；总水守恒不确定液汽/结合水通量。"
+    },
+    {
+      "id": "interface_transfer",
+      "status": "not_established",
+      "decision": "外表面与孔道、辐射/支承接触需一致定义；比面积不是面积。"
+    },
+    {
+      "id": "measurement_operator",
+      "status": "partial",
+      "decision": "图中表面角部标记可辨，尚无完整坐标/光斑/发射率/延时映射。"
+    },
+    {
+      "id": "observation_uncertainty",
+      "status": "not_established",
+      "decision": "小数舍入和仪器量程不能替代校准/重复/相关误差预算。"
+    },
+    {
+      "id": "independent_validation",
+      "status": "not_admitted",
+      "decision": "已用于候选选择与建模判断的70°C记录不能事后称盲留出；无模型预测。"
+    }
+  ],
+  "water_balance": {
+    "equation": "rho_d0 * partial_t w = -Div_X(J * F^-1 * j_w)",
+    "premises": [
+      "Smooth invertible solid-following mapping with J>0",
+      "Conserved dry-solid mass, rho_d0=J*rho_d",
+      "w counts all included water phases per conserved dry-solid mass",
+      "j_w is water mass flux relative to the solid per current area",
+      "No net chemical production or destruction of the counted water inventory"
+    ],
+    "units_both_sides": "kg m^-3 s^-1",
+    "phase_change_internal_source": "cancels in total-water sum",
+    "full_firing_applicability": "not established"
+  },
+  "next_stage": {
+    "id": "F0-E",
+    "native_goal_created": false,
+    "scope": "One bounded same-source constitutive and boundary availability audit; no new candidate search.",
+    "primary_locators": [
+      "Silva2018 section3.2 pp69-81",
+      "Silva2018 Table4.15 p109",
+      "Silva2018 Table4.16 p112",
+      "Silva2018 Table4.17 p116",
+      "Silva2020 section2.4 property references only"
+    ],
+    "deliverables": [
+      "Parameter provenance/applicability table, distinguishing measurements, borrowed values and fitting on exposed observations",
+      "Minimum remaining data request draft, kept local and unsent",
+      "Specific dependent revalidation decision"
+    ],
+    "stop_condition": "If existing sources cannot close necessary inputs, deliver exact missing records/targeted characterization needs and stop literature collection; do not widen scope or fabricate values."
+  },
+  "execution_note": {
+    "first_temporary_arithmetic_script": "SyntaxError from one missing closing parenthesis; no result produced. Corrected once, then complete rational result obtained.",
+    "tests_run": false,
+    "tests_added": false,
+    "hash_operations": false,
+    "model_run": false,
+    "authors_contacted": false,
+    "staged_whitespace_check": "First staged check flagged CSV CRLF line endings; converted only the two new CSVs to LF before final check."
+  },
+  "material_qualified": false,
+  "training_eligible": false,
+  "D1_admitted": false,
+  "file_checks": {
+    "json_files_readable": 3,
+    "csv_files": 2,
+    "rows_per_csv": 33,
+    "unique_times_per_csv": 33,
+    "malformed_csv_rows": 0,
+    "new_document_missing_local_links": [],
+    "original_GOAL_STATUS_no_final_newline_preserved": true
+  }
+}
