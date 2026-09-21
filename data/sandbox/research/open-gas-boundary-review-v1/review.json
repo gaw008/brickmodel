@@ -1,0 +1,45 @@
+{
+  "stage": "V-B1",
+  "baseline_commit": "da5774b",
+  "analysis_attempts": [
+    {
+      "attempt": 1,
+      "result": "postprocessing_error",
+      "error": "TypeError: unsupported operand type(s) for *: float and decimal.Decimal",
+      "cause": "Independent arithmetic converted integer reservoir temperature to a binary float via division before combining it with Decimal coefficients.",
+      "affected": "Temporary independent arithmetic script only; no model code or saved trajectories modified.",
+      "resolution": "Explicit Decimal conversion for source temperature and reservoir pressure; reran full analysis."
+    },
+    {
+      "attempt": 2,
+      "result": "completed",
+      "accepted_steps": 550,
+      "nonzero_corrected_balances": 0
+    }
+  ],
+  "execution_scope": {
+    "pure_gas_actual_runs": 5,
+    "wet_host_construction_or_run": false,
+    "wet_adapter_static_read": true,
+    "tests_written_or_run": false,
+    "sha_generated_or_compared": false,
+    "model_code_changed_during_review": false
+  },
+  "reviewer_independence": "Same assistant, separate Goal and frozen development commit; new source reading and independent Decimal/Fraction calculations, not third-party certification.",
+  "delivery_file_checks": {
+    "json_files_readable": [
+      "pointwise_entropy.json",
+      "source_readback.json",
+      "arithmetic_review.json",
+      "review.json"
+    ],
+    "jsonl_records": {
+      "vb1-inward-medium.jsonl": 103,
+      "vb1-outward-fine.jsonl": 203,
+      "vb1-outward-coarse.jsonl": 53,
+      "vb1-equal-medium.jsonl": 103
+    },
+    "new_document_missing_links": [],
+    "GOAL_STATUS_final_newline": false
+  }
+}
