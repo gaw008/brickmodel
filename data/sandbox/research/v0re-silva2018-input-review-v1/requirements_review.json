@@ -1,0 +1,139 @@
+{
+  "review_of": "F0-E input_closure.json and DATA_REQUEST_DRAFT.md; originals preserved",
+  "minimality_or_sufficiency_proved": false,
+  "reason": "Necessary evidence depends on chosen states, constitutive closures, outputs, identifiability and accuracy target;12 groups are a planning inventory, not a proof that every listed acquisition is indispensable or sufficient.",
+  "request_groups": [
+    {
+      "id": "identity_raw_data",
+      "priority": "required_evidence",
+      "decision": "试件/批次身份、可追溯数值序列、时间和干基定义。仪器原文件优先；定义和误差足够的已发表数值表也可以使用，不强制每项取得电子原始日志。"
+    },
+    {
+      "id": "geometry_placement",
+      "priority": "required_for_selected_boundary",
+      "decision": "目标几何、支承/暴露面及尺寸演变的使用方式。预测收缩才需要相应形变闭合；已知几何作输入应明确不是收缩预测。"
+    },
+    {
+      "id": "same_run_boundary",
+      "priority": "required_or_bounded_equivalent",
+      "decision": "与实际工况对应的热/湿/流动和取放过程证据；可以是足够记录或误差目标内有依据的界限/简化，不能默认每个场都必须全面实测。"
+    },
+    {
+      "id": "initial_measurement",
+      "priority": "required_or_justified_reduction",
+      "decision": "初态和测量到模型输出的对应。内部均匀初态或集中参数近似需要依据；不能仅从表面值推定。"
+    },
+    {
+      "id": "properties_references",
+      "priority": "required_for_selected_closures",
+      "decision": "所选储能/导热/水迁移/吸附及界面关系的可溯源有效域和误差。相同批次最佳；可证明适用的同类材料来源可评估，不一律强制新增实验。"
+    },
+    {
+      "id": "fit_project",
+      "priority": "optional_author_reproduction",
+      "decision": "Statistica工程、拟合点/权重和作者床层装载计算，仅在复现对应经验拟合或工业床层场景时需要；不作为独立单砖机理模型的通用前置条件。"
+    },
+    {
+      "id": "uncertainty_validation",
+      "priority": "required_for_accuracy_claim",
+      "decision": "定义误差目标、观测不确定度、参数识别与独立验证角色；已经查看的数据不能重新宣称盲留出。实际所需独立记录取决于目标和可辨识性。"
+    }
+  ],
+  "input_groups": [
+    {
+      "id": "geometry",
+      "reviewed_request_groups": [
+        "geometry_placement"
+      ],
+      "decision": "几何来源部分已有，完整边界几何/摆放仍未闭合。"
+    },
+    {
+      "id": "geometry_motion",
+      "reviewed_request_groups": [
+        "geometry_placement",
+        "properties_references"
+      ],
+      "decision": "按是否预测收缩决定；拟合工程不提供必需的唯一形变映射。"
+    },
+    {
+      "id": "initial_total_mass",
+      "reviewed_request_groups": [
+        "identity_raw_data",
+        "initial_measurement"
+      ],
+      "decision": "已有总量记录，内部水状态和干基定义需与闭合匹配。"
+    },
+    {
+      "id": "initial_temperature",
+      "reviewed_request_groups": [
+        "initial_measurement"
+      ],
+      "decision": "内部初态或可证明的简化仍缺。"
+    },
+    {
+      "id": "thermal_boundary",
+      "reviewed_request_groups": [
+        "same_run_boundary"
+      ],
+      "decision": "工业区段设置不能移作该试件实测历史。"
+    },
+    {
+      "id": "wet_energy_storage",
+      "reviewed_request_groups": [
+        "properties_references"
+      ],
+      "decision": "借用cp不能独自关闭湿态储能和结合水项。"
+    },
+    {
+      "id": "thermal_conduction",
+      "reviewed_request_groups": [
+        "properties_references"
+      ],
+      "decision": "空气ka/h不等于固体导热；需求取决于空间分辨目标。"
+    },
+    {
+      "id": "moisture_constitutive_laws",
+      "reviewed_request_groups": [
+        "properties_references"
+      ],
+      "decision": "经验时间拟合不是输运本构；复现它才需要fit_project。"
+    },
+    {
+      "id": "interface_transfer",
+      "reviewed_request_groups": [
+        "geometry_placement",
+        "same_run_boundary",
+        "properties_references"
+      ],
+      "decision": "几何/流动/传递关系或误差有依据的等效处理。"
+    },
+    {
+      "id": "measurement_operator",
+      "reviewed_request_groups": [
+        "initial_measurement"
+      ],
+      "decision": "需要观测量定义及位置/处理到模型输出的映射。"
+    },
+    {
+      "id": "observation_uncertainty",
+      "reviewed_request_groups": [
+        "uncertainty_validation"
+      ],
+      "decision": "R2和优化停止阈值不是观测不确定度。"
+    },
+    {
+      "id": "independent_validation",
+      "reviewed_request_groups": [
+        "uncertainty_validation"
+      ],
+      "decision": "作者拟合工程不是取得独立验证记录的通用条件。"
+    }
+  ],
+  "requests_sent": false,
+  "experiments_arranged": false,
+  "next_automatic_goal": null,
+  "next_action_condition": "Resume a bounded implementation decision only after useful existing evidence arrives or user explicitly changes the claimed deliverable; no automatic F0-F or D1.",
+  "material_qualified": false,
+  "training_eligible": false,
+  "D1_admitted": false
+}
