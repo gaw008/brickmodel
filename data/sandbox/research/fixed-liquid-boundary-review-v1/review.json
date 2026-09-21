@@ -1,0 +1,100 @@
+{
+  "baseline_commit": "a4b0ba9",
+  "status": "bounded_verification_complete",
+  "accepted_steps": 110,
+  "source_ideal_coefficient_readback": [
+    {
+      "field": "n1",
+      "difference": "0E-13"
+    },
+    {
+      "field": "n2",
+      "difference": "0E-13"
+    },
+    {
+      "field": "n3",
+      "difference": "0.00000"
+    },
+    {
+      "field": "n4_to_n8/0",
+      "difference": "0.000000"
+    },
+    {
+      "field": "n4_to_n8/1",
+      "difference": "0.00000"
+    },
+    {
+      "field": "n4_to_n8/2",
+      "difference": "0.00000"
+    },
+    {
+      "field": "n4_to_n8/3",
+      "difference": "0.00000"
+    },
+    {
+      "field": "n4_to_n8/4",
+      "difference": "0.00000"
+    },
+    {
+      "field": "gamma4_to_gamma8/0",
+      "difference": "0E-8"
+    },
+    {
+      "field": "gamma4_to_gamma8/1",
+      "difference": "0E-8"
+    },
+    {
+      "field": "gamma4_to_gamma8/2",
+      "difference": "0E-8"
+    },
+    {
+      "field": "gamma4_to_gamma8/3",
+      "difference": "0E-8"
+    },
+    {
+      "field": "gamma4_to_gamma8/4",
+      "difference": "0E-7"
+    }
+  ],
+  "parameter_changes": [
+    {
+      "path": "/sources/water_mass/scope",
+      "before": "same liquid and vapor mole-to-mass convention, not rounded NIST water molecular weight",
+      "after": "explicit implementation molar convention for both phases, not rounded NIST water molecular weight; binary conversion of g/mol to kg/mol differs from the JSON literal by one last-bit rounding"
+    },
+    {
+      "path": "/sources/water_mass/locator",
+      "before": "IAPWS R6-95(2018) section2",
+      "after": "iapws 1.5.5, iapws/_iapws.py line48 M=18.015268 g/mol; IAPWS R6-95(2018) section2 explains molar conversion but does not print that M value"
+    }
+  ],
+  "physical_numeric_inputs_unchanged": true,
+  "corrected_balance_nonzero_count": 0,
+  "donor_mismatch_count": 0,
+  "nominal_entropy_negative_nodes": 0,
+  "min_nominal_entropy_w_k": "0.000020115209279051545741450946190126859562732742660050",
+  "actual_eos_runtime_version": "1.5.5",
+  "published_water_state_calculations": 3,
+  "published_water_quantities_compared": 13,
+  "scope": "fixed liquid inventory with common gas boundary only",
+  "phase_change_validated": false,
+  "legacy_wet_column_executed": false,
+  "material_qualified": false,
+  "training_eligible": false,
+  "independent_real_brick_comparison": false,
+  "formal_tests_added_or_run": false,
+  "sha_operations_performed": false,
+  "validation_physics_code_changes": false,
+  "limitations": [
+    "Liquid EOS record arithmetic uses saved values; only three published states additionally compared.",
+    "Arlabosse dry Cp is borrowed, and artificial phase separator is a model constraint.",
+    "No full-domain or discrete entropy proof; no spatial or experimental error bound.",
+    "No byte-level source attestation.",
+    "Water exact NIST anchor inherited, not freshly read online in V-B2."
+  ],
+  "access_notes": [
+    "Arlabosse webpage open failed; local original Cp image and HTML read.",
+    "NIST initial Units URLs failed; simple O2/N2 URLs subsequently read.",
+    "CoolProp absent; no alternate EOS installation/comparison."
+  ]
+}
