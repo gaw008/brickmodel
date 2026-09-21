@@ -271,6 +271,10 @@ class WaterProperties:
 
     def __init__(self, source_directory):
         backend, facts = _verify_sources(source_directory)
+        self._initialize(backend, facts, _ASSET_HASHES, NumericalLimits())
+
+    def _initialize(self, backend, facts, asset_hashes, numerical_limits):
+        """Shared physical initialization; source acquisition belongs to the caller."""
         model = PythonIAPWS95Calls.solve(backend)
         mass = float(model.M) / 1000
         r_specific = float(model.R) * 1000
@@ -283,8 +287,8 @@ class WaterProperties:
         anchor_native_h = r_specific * anchor_t * (1 + _CRITICAL_T / anchor_t * phi["fiot"])
         reference = WaterReference(mass, r_specific, r_molar, float(anchor_h - mass * anchor_native_h), anchor_t, anchor_h)
         object.__setattr__(self, "reference", reference)
-        object.__setattr__(self, "source_asset_sha256", MappingProxyType(dict(_ASSET_HASHES)))
-        object.__setattr__(self, "numerical_limits", NumericalLimits())
+        object.__setattr__(self, "source_asset_sha256", MappingProxyType(dict(asset_hashes)))
+        object.__setattr__(self, "numerical_limits", numerical_limits)
         object.__setattr__(self, "_backend", backend)
         object.__setattr__(self, "_model", model)
         object.__setattr__(self, "_saturation_cache", None)

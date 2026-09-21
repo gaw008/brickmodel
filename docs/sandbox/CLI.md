@@ -1,5 +1,15 @@
 # 沙盒统一入口
 
+## 固定液态水库存的低温湿单元
+
+```sh
+.venv/bin/python -I examples/sandbox/run_fixed_liquid_boundary.py \
+  --parameters parameters.fixed_liquid_boundary.json --case outward \
+  --resolution medium --output /tmp/new-fixed-liquid.jsonl
+```
+
+需要本地既有numpy/scipy/iapws依赖。`case`选outward/inward/humid_inward，`resolution`选coarse/medium/fine，对应根参数的1秒10/20/40步。液水参与体积和储能，但相间传质固定为零；这是受约束的基础接线算例，不能作为干燥曲线。来源及运行版本明确记录，不执行SHA，不认证文件字节。[开发说明](research/fixed-liquid-boundary-v1/REPORT.md)。
+
 ## 载气与水汽共同交换示例
 
 从项目根目录执行：
