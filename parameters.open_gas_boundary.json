@@ -1,0 +1,49 @@
+{
+  "schema": "open_gas_boundary_example_v1",
+  "classification": "conditional_gas_volume_example_not_brick_material_data",
+  "thermochemistry_file": "data/sandbox/thermochemistry/nist_gases_v1.json",
+  "molar_masses_kg_mol": {"O2": 0.0319988, "N2": 0.0280134, "H2O": 0.0180153},
+  "cell_volume_m3": 0.00001,
+  "transfer": {
+    "area_m2": 0.001,
+    "cell_distance_m": 0.005,
+    "reservoir_distance_m": 0.005,
+    "cell_conductivity_w_m_k": 0.1,
+    "reservoir_conductivity_w_m_k": 0.1,
+    "effective_diffusivities_m2_s": {"O2": 0.00001, "N2": 0.00001, "H2O": 0.000015},
+    "permeability_m2": 0.00000000000001,
+    "relative_permeability": 1.0,
+    "viscosity_pa_s": 0.00002
+  },
+  "numerics": {
+    "duration_s": "1",
+    "steps": {"coarse": 50, "medium": 100, "fine": 200},
+    "inverse": {"energy_tolerance_j": 1e-9, "temperature_tolerance_k": 1e-8, "max_iterations": 100}
+  },
+  "cases": {
+    "outward": {
+      "cell": {"pressure_pa": 102000, "temperature_k": 560, "mole_fractions": {"O2": 0.18, "N2": 0.67, "H2O": 0.15}},
+      "reservoir": {"pressure_pa": 100000, "temperature_k": 550, "mole_fractions": {"O2": 0.2079, "N2": 0.7821, "H2O": 0.01}}
+    },
+    "inward": {
+      "cell": {"pressure_pa": 98000, "temperature_k": 540, "mole_fractions": {"O2": 0.18, "N2": 0.67, "H2O": 0.15}},
+      "reservoir": {"pressure_pa": 100000, "temperature_k": 550, "mole_fractions": {"O2": 0.2079, "N2": 0.7821, "H2O": 0.01}}
+    },
+    "equal_initial_pressure_temperature": {
+      "cell": {"pressure_pa": 100000, "temperature_k": 550, "mole_fractions": {"O2": 0.18, "N2": 0.67, "H2O": 0.15}},
+      "reservoir": {"pressure_pa": 100000, "temperature_k": 550, "mole_fractions": {"O2": 0.2079, "N2": 0.7821, "H2O": 0.01}}
+    }
+  },
+  "sources": {
+    "molar_masses": {
+      "O2": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7782447&Mask=1",
+      "N2": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7727379&Mask=1",
+      "H2O": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Mask=1",
+      "interpretation": "NIST rounded molecular weights numerically converted g/mol to kg/mol; nominal gas example, not wet-host water convention"
+    },
+    "transport_form": "https://www.cantera.org/stable/reference/onedim/governing-equations.html#diffusive-fluxes",
+    "transport_values": "All transfer coefficients and geometry here are explicit virtual choices, not measured clay properties; the correction-drift upwind discretization is a repository choice.",
+    "cases": "All initial/reservoir states are explicit virtual conditions within the bundled water-vapor Shomate domain; not an oven dataset.",
+    "numerics": "Explicit analysis settings; inverse tolerances and step counts are not material error bounds."
+  }
+}

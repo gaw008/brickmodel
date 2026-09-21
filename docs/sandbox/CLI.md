@@ -1,5 +1,17 @@
 # 沙盒统一入口
 
+## 载气与水汽共同交换示例
+
+从项目根目录执行：
+
+```sh
+.venv/bin/python -I examples/sandbox/run_open_gas_boundary.py \
+  --parameters parameters.open_gas_boundary.json --case outward \
+  --resolution medium --output /tmp/new-open-gas.jsonl
+```
+
+该离线入口直接使用当前项目源码，根参数显式配置虚拟条件及NIST气体物性来源。输出JSONL保留组分/U/T/P、扩散/平流携焓及每步投影差。它运行纯气体体积共同交换，未运行低温湿砖主机；原参数有效域和材料资格不提升。实现及实际记录见[D-B1报告](research/open-gas-boundary-v1/REPORT.md)。
+
 ## 同一原料的条件供热比较
 
 安装本项目后，可直接离线重算仓库保存结果，不需要启动Cantera：

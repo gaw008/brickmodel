@@ -648,13 +648,14 @@ def integrate_source_column(column, initial, *, duration_s, steps, maximum_wall_
     from .exact_event_clock import ExactEventTime
     from .programmed_source_wet_column import ProgrammedSourceWetColumn
     from .controlled_vapor_column import ControlledVaporColumn, ControlledVaporFaceIntegral
+    from .open_gas_column import OpenGasColumn
     require(type(column) in (SourceWetColumn, ArlabosseSorptionColumn, LowMoistureSorptionColumn,
-                            ProgrammedSourceWetColumn, ControlledVaporColumn)
+                            ProgrammedSourceWetColumn, ControlledVaporColumn, OpenGasColumn)
             and type(steps) is int and steps > 0, 'explicit_column_steps')
     require(start_time is None or type(start_time) is ExactEventTime, 'explicit_exact_column_start_time')
     origin = F() if start_time is None else start_time.seconds
     programmed = type(column) is ProgrammedSourceWetColumn
-    controlled = type(column) is ControlledVaporColumn
+    controlled = type(column) in (ControlledVaporColumn, OpenGasColumn)
     duration = F(_binary(duration_s, positive=True))
     h = duration/steps
     wall = _binary(maximum_wall_seconds, positive=True)
