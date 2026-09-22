@@ -28,6 +28,8 @@ def main():
     parser.add_argument('--stop-at', help='Name of an explicit root-parameter stop point')
     parser.add_argument('--dense-policy', type=Path,
                         help='Root parameter file requesting reproducible dense polynomials')
+    parser.add_argument('--initial-step-policy', type=Path,
+                        help='Explicit segment initial-step policy; otherwise SciPy selects it')
     parser.add_argument('--output', required=True, type=Path)
     args = parser.parse_args()
     if args.parameters and (args.mesh is None or args.tolerance is None):
@@ -67,6 +69,8 @@ def run(args, source_directory):
     order = config['boundary_program']['values']['species_order']
     width = len(order)+1
     policy = config['numerics']['implicit']
+    initial_step_policy = (json.loads(args.initial_step_policy.read_text())
+                           if args.initial_step_policy else None)
     factor = 1. if args.tolerance == 'base' else policy['refinement_tolerance_factor']
     atol = np.tile([policy['inventory_absolute_tolerance_mol']]*len(order)+[
         policy['energy_absolute_tolerance_j']], n+1)*factor
@@ -135,6 +139,7 @@ def run(args, source_directory):
               'cell_fluid_volume_m3': model.volume, 'mesh': args.mesh, 'tolerance': args.tolerance,
               'relative_tolerance': policy['relative_tolerance']*factor, 'absolute_tolerances': atol.tolist(),
               'method': 'BDF; knot-aligned segments; conserved state and exterior flux quadrature',
+              'phase_partition_algorithm': host.fluid.partition_algorithm,
               'water_source': model.water.source_record, 'solid_source_facts': model.solid,
               'thermochemistry': (header['thermochemistry'] if args.resume_from else
                   json.loads((args.parameters.resolve().parent/config['thermochemistry_file']).read_text())),
@@ -144,6 +149,7 @@ def run(args, source_directory):
             stream.flush()
             emit({'kind': 'resume', 'parent_trajectory': str(args.resume_from), 'time_s': start_time,
                   'source_input': 'Original header JSON snapshots restored; no source files reread.',
+                  'phase_partition_algorithm': host.fluid.partition_algorithm,
                   'integrator_history': 'New BDF history; conserved state and exterior integrals retained.'})
         else:
             emit(header)
@@ -153,6 +159,10 @@ def run(args, source_directory):
                   'scipy_version': scipy.__version__,
                   'representation': 'D0 + sum_k Dk product_j<k((t-shift_j)/denominator_j)',
                   'source': 'scipy.integrate._ivp.bdf.BdfDenseOutput; recorded numeric coefficients'})
+        if initial_step_policy is not None:
+            emit({'kind': 'initial_step_policy', 'time_s': start_time,
+                  'settings': initial_step_policy,
+                  'scope': 'This invocation only; resume requires explicitly selecting this policy again.'})
         statistics = checkpoint['solver_statistics'].copy() if args.resume_from else []
         samples = checkpoint['samples'] if args.resume_from else 0
         events = checkpoint['phase_events'].copy() if args.resume_from else []
@@ -165,7 +175,9 @@ def run(args, source_directory):
             segment_start = max(left, start_time)
             solver = {'BDF': BDF}[policy['method']](rhs, segment_start, y, right,
                 rtol=policy['relative_tolerance']*factor, atol=atol,
-                max_step=policy['maximum_step_s'], jac_sparsity=sparsity.tocsr())
+                max_step=policy['maximum_step_s'], jac_sparsity=sparsity.tocsr(),
+                first_step=(min(initial_step_policy['first_step_s'], right-segment_start)
+                            if initial_step_policy is not None else None))
             times = np.arange(left+policy['observation_interval_s'], right, policy['observation_interval_s'])
             times = np.append(times, right)
             times = times[times > segment_start]

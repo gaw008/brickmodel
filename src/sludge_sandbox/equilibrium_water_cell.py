@@ -7,12 +7,14 @@ Inputs are total species inventories (H2O includes both phases) and total U.
 There is no solid, capillarity, sorption, dissolved air, or phase kinetic law.
 
 The supplied domain must keep incipient liquid stable at all evaluated T/P,
-with a positive carrier inventory and available gas volume. Root brackets are
+with positive carrier inventory, available gas volume, and N_total*v_liquid<V
+throughout the pressure bracket (the admitted dilute branch). Root brackets are
 explicit caller inputs; root and source-domain errors propagate unchanged.
 """
 from dataclasses import dataclass
 from functools import cache
 import math
+from typing import ClassVar
 
 from scipy.optimize import brentq
 
@@ -21,6 +23,7 @@ from .gas_transport import ideal_gas_state
 
 @dataclass(frozen=True)
 class EquilibriumWaterCell:
+    partition_algorithm: ClassVar[str] = 'pressure_root_analytic_water_inventory_v1'
     water: object
     thermochemistry: object
     molar_masses_kg_mol: dict
@@ -65,8 +68,8 @@ class EquilibriumWaterCell:
         s_standard = self.vapor_standard_entropy_j_mol_k(temperature_k)
         mu_standard = h_vapor-temperature_k*s_standard
 
-        # Exact pressures recur in the nested brackets. This cache lives only
-        # for this single fixed-T/inventory evaluation; no rounding or EOS
+        # Exact pressures recur at phase endpoints and in the root solve.
+        # This cache lives only for this fixed-T/inventory evaluation; no rounding or EOS
         # interpolation is introduced.
         @cache
         def liquid_at(pressure):
@@ -86,36 +89,29 @@ class EquilibriumWaterCell:
             liquid_mol = 0.
             phase = 'all_vapor'
         else:
-            all_vapor = (pressure, liquid, molar_volume, mu_liquid, equilibrium_pressure)
+            def coexistence_at(p):
+                liquid, vl, mu, pe = liquid_at(p)
+                # Eliminate vapor inventory using Nv*RT = pe*(V-Nl*vl).
+                # This uses the same chemical and volume equations as the
+                # nested inventory/pressure solves, with one scalar root.
+                nl = (total_water*rt/volume-pe)*volume/(rt-pe*vl)
+                return nl, liquid, vl, mu, pe
 
-            def partition_at(nl):
-                if nl == 0:
-                    return all_vapor
+            def pressure_residual(p):
+                nl, _, vl, _, pe = coexistence_at(p)
+                return p-pe-carrier*rt/(volume-nl*vl)
 
-                def pressure_residual(p):
-                    _, vl, _, _ = liquid_at(p)
-                    return p-(carrier+total_water-nl)*rt/(volume-nl*vl)
-
-                setting = self.numerics['pressure_inverse']
-                p = brentq(pressure_residual, *setting['bracket_pa'],
-                           xtol=setting['absolute_tolerance_pa'],
-                           rtol=setting['relative_tolerance'],
-                           maxiter=setting['max_iterations'])
-                return p, *liquid_at(p)
-
-            def phase_residual(nl):
-                _, _, vl, _, pe = partition_at(nl)
-                return (total_water-nl)*rt/(volume-nl*vl)-pe
-
-            # Solve the actual inventory in its physical interval. Recovering
-            # it by subtracting near-equal pressures can produce negative Nl
-            # at a phase endpoint, even when that pressure root has converged.
-            setting = self.numerics['liquid_inverse']
-            liquid_mol = brentq(phase_residual, 0., total_water,
-                               xtol=setting['absolute_tolerance_mol'],
-                               rtol=setting['relative_tolerance'],
-                               maxiter=setting['max_iterations'])
-            pressure, liquid, molar_volume, mu_liquid, equilibrium_pressure = partition_at(liquid_mol)
+            # Carrier-only and all-vapor pressures bound the admitted dilute
+            # gas/liquid branch. Intersect numerical root brackets, not state
+            # inventories; no phase mass is clipped or supplied afterward.
+            setting = self.numerics['pressure_inverse']
+            lower = max(setting['bracket_pa'][0], carrier*rt/volume)
+            upper = min(setting['bracket_pa'][1], pressure)
+            pressure = brentq(pressure_residual, lower, upper,
+                              xtol=setting['absolute_tolerance_pa'],
+                              rtol=setting['relative_tolerance'],
+                              maxiter=setting['max_iterations'])
+            liquid_mol, liquid, molar_volume, mu_liquid, equilibrium_pressure = coexistence_at(pressure)
             phase = 'liquid_vapor' if liquid_mol > 0 else 'all_vapor'
 
         amounts = {**inventories_mol, 'H2O': total_water-liquid_mol}
@@ -131,6 +127,7 @@ class EquilibriumWaterCell:
         mu_vapor = (mu_standard+rt*math.log(vapor_pressure/self.reference_pressure_pa)
                     if vapor_pressure > 0 else None)
         point = {
+            'phase_partition_algorithm': self.partition_algorithm,
             'temperature_k': temperature_k, 'pressure_pa': gas.pressure_pa,
             'liquid_pressure_pa': pressure, 'phase': phase,
             'inventories_mol': dict(inventories_mol), 'amounts_mol': amounts,

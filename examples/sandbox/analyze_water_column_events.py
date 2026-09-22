@@ -59,9 +59,13 @@ def main():
         identities_match = [e['transition'] for e in a] == [e['transition'] for e in b]
         differences = [abs(x['time_s']-y['time_s']) for x, y in zip(a, b, strict=True)] if identities_match else []
         budget = config['event_comparison_budgets_s'][item['kind']]
+        observed_events_within_budget = (identities_match and bool(differences)
+                                        and all(d <= budget for d in differences))
         pair.update(event_identities_match=identities_match, column_event_time_differences_s=differences,
             phase_event_comparison_budget_s=budget,
-            phase_events_within_comparison_budget=identities_match and bool(differences) and all(d<=budget for d in differences))
+            observed_phase_events_within_comparison_budget=observed_events_within_budget,
+            phase_events_within_comparison_budget=(pair['complete_trajectories_compared']
+                                                  and observed_events_within_budget))
         comparisons.append(pair)
     result = {'settings': config, 'runs': runs, 'comparisons': comparisons,
               'material_qualified': False, 'qualification': 'numerical evidence for the specified conditional channel only'}

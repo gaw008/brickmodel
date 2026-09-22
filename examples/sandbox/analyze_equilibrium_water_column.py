@@ -2,7 +2,8 @@
 
 Shared packets are audited with exact rational arithmetic. Surface observations
 are reconstructed independently with a Brent root of the film/radiation balance.
-Comparisons use complete time traces and restrict fine cells by volume averaging.
+Comparisons use the shared recorded interval and restrict fine cells by volume
+averaging. Partial records cannot establish a complete-trajectory comparison.
 """
 import argparse
 from fractions import Fraction
@@ -74,9 +75,13 @@ def analyze_implicit(path):
         liquids.append(sum(p['liquid_water_mol'] for p in points))
         surfaces.append(ts)
     event = next((i for i, amount in enumerate(liquids) if amount == 0), None)
+    summary = rows[-1] if rows[-1]['kind'] == 'summary' else None
+    checkpoint = next((r for r in reversed(rows) if r['kind'] == 'checkpoint'), None)
     return {'file': path.name, 'completed': rows[-1]['kind'] == 'summary' and rows[-1]['status'] == 'completed', 'cells': n,
-            'samples': len(times)-1, 'elapsed_s': rows[-1]['elapsed_s'],
-            'solver_statistics': rows[-1]['solver_statistics'],
+            'run_status': summary['status'] if summary is not None else 'no_completion_summary',
+            'samples': len(times)-1, 'elapsed_s': summary['elapsed_s'] if summary is not None else None,
+            'solver_statistics': (summary['solver_statistics'] if summary is not None else
+                checkpoint['solver_statistics'] if checkpoint is not None else None),
             'global_balance_observations': len(times)*len(balances),
             'max_absolute_residuals': {'global_inventory_mol': max(balances[:-1]),
                 'global_energy_j': balances[-1], 'phase_water_mol': phases, 'inverse_energy_j': inverse,
@@ -177,28 +182,36 @@ def analyze(path):
 
 
 def compare(coarse, fine, kind):
-    times = coarse['time_s']
+    indices = [i for i,t in enumerate(coarse['time_s']) if fine['time_s'][0] <= t <= fine['time_s'][-1]]
+    times = [coarse['time_s'][i] for i in indices]
     nc, nf = coarse['cells'], fine['cells']
     fine_profiles = np.asarray(fine['temperature_profiles_k'])
     # Meshes in this study divide one another. Compare the same coarse volumes.
     restricted = fine_profiles.reshape(len(fine_profiles), nc, nf//nc).mean(axis=2)
     errors = [abs(np.interp(times, fine['time_s'], restricted[:, i])-
-                  np.asarray(coarse['temperature_profiles_k'])[:, i]) for i in range(nc)]
+                  np.asarray(coarse['temperature_profiles_k'])[indices, i]) for i in range(nc)]
     t_error = float(np.max(errors))
     surface_error = float(np.max(np.abs(np.interp(times, fine['time_s'], fine['surface_temperature_k'])-
-                                        np.asarray(coarse['surface_temperature_k']))))
+                                        np.asarray(coarse['surface_temperature_k'])[indices])))
     water_error = float(np.max(np.abs(np.interp(times, fine['time_s'], fine['total_water_mol'])-
-                                      np.asarray(coarse['total_water_mol']))))
+                                      np.asarray(coarse['total_water_mol'])[indices])))
     budgets = coarse['budgets']
+    complete = (coarse['completed'] and fine['completed'] and
+                coarse['time_s'][0] == fine['time_s'][0] and coarse['time_s'][-1] == fine['time_s'][-1])
+    within = (max(t_error, surface_error)<=budgets[kind+'_temperature_k'] and
+              water_error<=budgets[kind+'_total_water_mol'])
     return {'kind': kind, 'coarse': coarse['file'], 'fine': fine['file'],
             'comparison_time_nodes': len(times),
+            'comparison_time_interval_s': [times[0], times[-1]],
+            'complete_trajectories_compared': complete,
             'interpolated_comparison_nodes': sum(t not in set(fine['time_s']) for t in times),
             'max_cell_volume_temperature_difference_k': t_error,
             'max_surface_temperature_difference_k': surface_error,
             'max_total_water_difference_mol': water_error,
-            'within_declared_comparison_budget': max(t_error, surface_error)<=budgets[kind+'_temperature_k']
-                 and water_error<=budgets[kind+'_total_water_mol'],
-            'qualification': 'complete-trace sampled refinement difference, not a rigorous error bound'}
+            'shared_interval_within_budget': within,
+            'within_declared_comparison_budget': complete and within,
+            'qualification': ('complete-trace' if complete else 'partial shared-interval')+
+                 ' sampled difference, not a rigorous error bound'}
 
 
 def main():
