@@ -80,7 +80,8 @@ class EquilibriumWaterCell:
 
         pressure = (carrier+total_water)*rt/volume
         liquid, molar_volume, mu_liquid, equilibrium_pressure = liquid_at(pressure)
-        if total_water*rt/volume <= equilibrium_pressure:
+        all_vapor_pressure_departure = total_water*rt/volume-equilibrium_pressure
+        if all_vapor_pressure_departure <= 0:
             # Undersaturated or exactly on the dry endpoint: no liquid remains.
             liquid_mol = 0.
             phase = 'all_vapor'
@@ -146,6 +147,10 @@ class EquilibriumWaterCell:
             'water_partial_pressure_pa': vapor_pressure,
             'equilibrium_partial_pressure_pa': equilibrium_pressure,
             'water_pressure_departure_pa': vapor_pressure-equilibrium_pressure,
+            # Signed incipient-liquid criterion using ALL water in the full
+            # fluid volume. Actual wet-state vapor departure is near zero
+            # throughout coexistence and cannot locate phase transitions.
+            'all_vapor_pressure_departure_pa': all_vapor_pressure_departure,
             'liquid_chemical_potential_j_mol': mu_liquid,
             'vapor_chemical_potential_j_mol': mu_vapor,
             'vapor_minus_liquid_chemical_potential_j_mol': (

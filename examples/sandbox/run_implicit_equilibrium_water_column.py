@@ -28,6 +28,7 @@ def main():
     sys.path.insert(0, str(root/'examples'/'sandbox'))
     from equilibrium_water_column_setup import build_column
     from run_open_gas_boundary import json_value
+    from sludge_sandbox.water_phase_events import locate_crossings, phase_scores
 
     start = time.monotonic()
     n = config['numerics']['meshes'][args.mesh]
@@ -101,6 +102,9 @@ def main():
         emit({'kind': 'initial', 'time_s': knots[0], 'states': initial, 'exterior_integrals': [0.]*width})
         statistics = []
         samples = 0
+        events = []
+        event_policy = config['numerics']['phase_events']
+        previous_scores = phase_scores(initial)
         for segment, (left, right) in enumerate(zip(knots[:-1], knots[1:], strict=True)):
             solver = {'BDF': BDF}[policy['method']](rhs, left, y, right,
                 rtol=policy['relative_tolerance']*factor, atol=atol,
@@ -109,14 +113,41 @@ def main():
             times = np.append(times, right)
             next_sample, accepted = 0, 0
             while solver.status == 'running':
+                previous_time = float(solver.t)
                 message = solver.step()
                 if solver.status == 'failed':
                     raise RuntimeError(message)
                 accepted += 1
                 emit({'kind': 'accepted', 'segment': segment, 'time_s': float(solver.t),
                       'step_s': float(solver.step_size), 'rhs_evaluations': solver.nfev,
-                      'jacobian_evaluations': solver.njev, 'linear_factorizations': solver.nlu})
+                      'jacobian_evaluations': solver.njev, 'linear_factorizations': solver.nlu,
+                      'conserved_state': solver.y.tolist()})
                 interpolant = solver.dense_output()
+                def event_points(at_time):
+                    return decode(interpolant(at_time))[1]
+
+                scan_times = np.linspace(previous_time, float(solver.t),
+                    event_policy['scan_subintervals_per_accepted_step']+1)
+                for a, b in zip(scan_times[:-1], scan_times[1:], strict=True):
+                    next_scores = phase_scores(event_points(float(b)))
+                    located = locate_crossings(event_points, float(a), float(b),
+                                               previous_scores, next_scores, event_policy)
+                    for event in located:
+                        value = interpolant(event['time_s'])
+                        gases, points = decode(value)
+                        _, _, boundary, surface = model.rates(gases, event['time_s'])
+                        indices = range(n) if event['scope'] == 'column' else [event['cell_index']]
+                        bracket_states = []
+                        for endpoint in event['time_bracket_s']:
+                            endpoint_points = event_points(endpoint)
+                            bracket_states.append({'time_s': endpoint, 'cells': [
+                                {'cell_index': i, 'state': endpoint_points[i]} for i in indices]})
+                        emit({'kind': 'phase_event', **event, 'states': points,
+                              'bracket_states': bracket_states,
+                              'exterior_integrals': value[n*width:].tolist(),
+                              'boundary': boundary, 'surface': surface})
+                        events.append(event)
+                    previous_scores = next_scores
                 while next_sample < len(times) and times[next_sample] <= solver.t:
                     t = float(times[next_sample])
                     value = interpolant(t)
@@ -140,7 +171,8 @@ def main():
             print(json.dumps({'segment_completed': segment, 'cells': n, **statistics[-1],
                               'elapsed_s': time.monotonic()-start}), flush=True)
         emit({'kind': 'summary', 'status': 'completed', 'samples': samples, 'final': points,
-              'solver_statistics': statistics, 'elapsed_s': time.monotonic()-start,
+              'solver_statistics': statistics, 'phase_events': events,
+              'elapsed_s': time.monotonic()-start,
               'equilibrium_cache': equilibrium_from_conserved_state.cache_info()._asdict(),
               'material_qualified': False, 'training_eligible': False})
     print(json.dumps({'status': 'completed', 'cells': n, 'elapsed_s': time.monotonic()-start}), flush=True)

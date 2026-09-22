@@ -90,6 +90,12 @@
       "refinement_tolerance_factor": 0.1,
       "progress_every_accepted_steps": 10,
       "equilibrium_cache_entries": 512
+    },
+    "phase_events": {
+      "scan_subintervals_per_accepted_step": 1,
+      "absolute_time_tolerance_s": 1e-06,
+      "maximum_iterations": 60,
+      "definition": "Bisection of signed all-vapor incipient-liquid criterion along BDF dense output; finite scanning does not guarantee all roots."
     }
   },
   "schema": "equilibrium_water_column_v1",
@@ -238,9 +244,12 @@
       "time_temperature_k": 0.02,
       "time_total_water_mol": 1e-07,
       "space_temperature_k": 0.2,
-      "space_total_water_mol": 1e-06
+      "space_total_water_mol": 1e-06,
+      "time_phase_event_s": 0.001,
+      "space_phase_event_s": 0.02
     },
-    "budget_basis": "Numerical research comparison targets chosen before execution, not source uncertainties or brick accuracy."
+    "budget_basis": "Numerical research comparison targets chosen before execution, not source uncertainties or brick accuracy.",
+    "phase_event_definition": "Per-cell and column liquid depletion/appearance, independent of observation sampling. Not a dry-brick endpoint."
   },
   "liquid_evaluation": {
     "method": "direct",
