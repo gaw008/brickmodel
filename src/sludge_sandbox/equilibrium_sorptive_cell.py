@@ -23,9 +23,12 @@ class EquilibriumSorptiveCell:
 
     def pure_liquid(self, temperature_k, pressure_pa):
         liquid = self.fluid.water.state_tp(temperature_k, pressure_pa, phase='liquid')
+        standard = self.fluid.gas_enthalpy_j_mol('H2O', temperature_k)-temperature_k*self.fluid.vapor_standard_entropy_j_mol_k(temperature_k)
+        return self.liquid_standard(liquid,temperature_k,standard)
+
+    def liquid_standard(self,liquid,temperature_k,standard):
         mass = liquid.molar_mass_kg_mol
         mu = liquid.enthalpy_j_mol-temperature_k*liquid.native_entropy_j_kg_k*mass
-        standard = self.fluid.gas_enthalpy_j_mol('H2O', temperature_k)-temperature_k*self.fluid.vapor_standard_entropy_j_mol_k(temperature_k)
         rt = self.fluid.thermochemistry.gas_constant_j_mol_k*temperature_k
         pressure = self.fluid.reference_pressure_pa*math.exp((mu-standard)/rt)
         return liquid, mass/liquid.density_kg_m3, mu, standard, pressure
@@ -46,12 +49,14 @@ class EquilibriumSorptiveCell:
         nw = inventories_mol['H2O']
         carrier = math.fsum(value for key, value in inventories_mol.items() if key != 'H2O')
         mass = self.excess.record['water_molar_mass_kg_mol']
+        liquid_at_pressure = self.fluid.water.liquid_at_temperature(temperature_k)
+        standard = self.fluid.gas_enthalpy_j_mol('H2O',temperature_k)-temperature_k*self.fluid.vapor_standard_entropy_j_mol_k(temperature_k)
 
         @cache
         def partition(pressure):
-            liquid, vl, mu, standard, pure_pressure = self.pure_liquid(temperature_k, pressure)
+            liquid, vl, mu, vapor_standard, pure_pressure = self.liquid_standard(liquid_at_pressure(pressure),temperature_k,standard)
             condensed, vapor_pressure = self.partition_amounts(nw, temperature_k, vl, pure_pressure)
-            return condensed, liquid, vl, mu, standard, pure_pressure, vapor_pressure
+            return condensed, liquid, vl, mu, vapor_standard, pure_pressure, vapor_pressure
 
         def residual(pressure):
             nc, _, vl, _, _, _, pv = partition(pressure)
@@ -124,6 +129,13 @@ class EquilibriumSourceSorptiveCell(EquilibriumSorptiveCell):
         mass = self.excess.record['water_molar_mass_kg_mol']
         rt = self.fluid.thermochemistry.gas_constant_j_mol_k*temperature_k
         volume = self.fluid.available_fluid_volume_m3
+        low_nc,low_pv = super().partition_amounts(total_water_mol,temperature_k,liquid_volume_m3_mol,pure_pressure_pa)
+        join_nc = self.dry_mass_kg*self.excess.record['join']['moisture_kg_kg']/mass
+        # The low branch is linear in Nc and its inventory root is analytic.
+        # Its root is at/below the join iff the common join residual is >=0.
+        # Otherwise the monotone source-branch root is above that same join.
+        if low_nc <= join_nc:
+            return low_nc,low_pv
         max_w = self.excess.record['model_domain']['moisture_kg_kg'][1]
         upper = min(total_water_mol, self.dry_mass_kg*max_w/mass)
 
@@ -134,6 +146,6 @@ class EquilibriumSourceSorptiveCell(EquilibriumSorptiveCell):
             return nc+vapor_pressure(nc)*(volume-nc*liquid_volume_m3_mol)/rt-total_water_mol
 
         policy = self.fluid.numerics['condensed_inventory_inverse']
-        nc = brentq(residual,0.,upper,xtol=policy['absolute_tolerance_mol'],
+        nc = brentq(residual,join_nc,upper,xtol=policy['absolute_tolerance_mol'],
                     rtol=policy['relative_tolerance'],maxiter=policy['max_iterations'])
         return nc, vapor_pressure(nc)

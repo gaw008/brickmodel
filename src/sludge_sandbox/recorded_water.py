@@ -28,3 +28,6 @@ class RecordedWaterProperties(WaterProperties):
             'source_policy': 'explicit_local_record_no_content_attestation',
             'asset_identity_verified': False,
         })
+
+    def liquid_at_temperature(self,temperature_k):
+        return lambda pressure_pa:self.state_tp(temperature_k,pressure_pa,phase='liquid')

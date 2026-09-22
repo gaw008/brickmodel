@@ -6,7 +6,7 @@ an explicitly approximate IAPWS representation, never a measured material law.
 from dataclasses import dataclass
 
 import numpy as np
-from numpy.polynomial.chebyshev import chebder, chebval2d
+from numpy.polynomial.chebyshev import chebder, chebval, chebval2d
 
 
 @dataclass(frozen=True)
@@ -37,13 +37,21 @@ class GibbsWaterTable:
     def ideal_vapor(self, temperature_k):
         return self.direct_water.ideal_vapor(temperature_k)
 
-    def gibbs_properties(self, temperature_k, pressure_pa):
+    def coordinates(self, temperature_k, pressure_pa):
         values = np.array([temperature_k, pressure_pa])
         if np.any(values < self.bounds[:, 0]) or np.any(values > self.bounds[:, 1]):
             raise ValueError('state outside the declared liquid Gibbs-table domain')
         x, y = (values-self.centers)/self.scales
+        return x,y
+
+    def first_derivatives(self, temperature_k, pressure_pa):
+        x,y = self.coordinates(temperature_k,pressure_pa)
         g = float(chebval2d(x, y, self.coefficients))+self.table['native_gibbs_offset_j_mol']
         gt, gp = float(chebval2d(x, y, self.dt)), float(chebval2d(x, y, self.dp))
+        return g,gt,gp,x,y
+
+    def gibbs_properties(self, temperature_k, pressure_pa):
+        g,gt,gp,x,y = self.first_derivatives(temperature_k,pressure_pa)
         gtt = float(chebval2d(x, y, self.dtt))
         gtp, gpp = float(chebval2d(x, y, self.dtp)), float(chebval2d(x, y, self.dpp))
         enthalpy = g-temperature_k*gt+self.reference.energy_offset_j_mol
@@ -57,7 +65,26 @@ class GibbsWaterTable:
     def state_tp(self, temperature_k, pressure_pa, *, phase):
         if phase != 'liquid':
             raise ValueError('Gibbs table represents only stable pure liquid')
-        p = self.gibbs_properties(temperature_k, pressure_pa)
+        # State reconstruction only needs g, g_T and g_P. Heat capacities and
+        # response coefficients remain available through gibbs_properties.
+        g,gt,gp,_,_ = self.first_derivatives(temperature_k,pressure_pa)
+        h = g-temperature_k*gt+self.reference.energy_offset_j_mol
         mass = self.reference.molar_mass_kg_mol
-        return LiquidFromGibbs(mass, mass/p['molar_volume_m3_mol'], p['enthalpy_j_mol'],
-                              p['internal_energy_j_mol'], p['entropy_j_mol_k']/mass)
+        return LiquidFromGibbs(mass, mass/gp, h,h-pressure_pa*gp,-gt/mass)
+
+    def liquid_at_temperature(self,temperature_k):
+        """Evaluate the same tensor polynomial with its T projection shared.
+
+        Pressure roots reuse these exact-temperature coefficients locally;
+        temperatures/pressures are neither rounded nor extrapolated.
+        """
+        x=(temperature_k-self.centers[0])/self.scales[0]
+        coefficients=[chebval(x,p) for p in (self.coefficients,self.dt,self.dp)]
+        def at_pressure(pressure_pa):
+            _,y=self.coordinates(temperature_k,pressure_pa)
+            g,gt,gp=(float(chebval(y,p,tensor=False)) for p in coefficients)
+            g+=self.table['native_gibbs_offset_j_mol']
+            h=g-temperature_k*gt+self.reference.energy_offset_j_mol
+            mass=self.reference.molar_mass_kg_mol
+            return LiquidFromGibbs(mass,mass/gp,h,h-pressure_pa*gp,-gt/mass)
+        return at_pressure

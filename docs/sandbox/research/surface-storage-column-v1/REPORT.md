@@ -42,6 +42,6 @@
 
 数据在`data/sandbox/research/surface-storage-column-v1/`。主要文件为`condensation-grid-time-review.json`、`drying-grid-time-review.json`、`capacity-and-retention-review.json`、`accepted-state-balances.json`、`pressure-domain-review.json`及来源/熵审查JSON。
 
-22条完整原记录已压缩，共132444180B：20条完成，2条主动检查点停止；逐字节解压往返一致，无SHA。状态、原参数和来源快照在`archive-manifest.json`，解压`compressed/*.jsonl.gz`到本目录后可用根`parameters.surface_storage_*_review.json`和现有分析入口复算。没有新增或运行软件测试。
+22条原记录已压缩，共132444180B：20条完成，2条主动检查点停止；逐字节解压往返一致，无SHA。原参数和来源快照位于各轨迹输入头，状态位于轨迹记录；`archive-manifest.json`登记路径、数量、实际终态和存储核对。解压`compressed/*.jsonl.gz`到本目录后可用根`parameters.surface_storage_*_review.json`和现有分析入口复算。没有新增或运行软件测试。
 
 物性来源为既有IAPWS/NIST包；几何/输运/辐射参数与腔内均匀近似仍属虚拟设置。毛细、吸附、液体迁移、真实砖验证和高温过程不由本阶段获得资格。
