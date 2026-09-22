@@ -1,0 +1,282 @@
+{
+  "water_facts_file": "data/sandbox/water/source_facts.json",
+  "thermochemistry_file": "data/sandbox/thermochemistry/nist_gases_v1.json",
+  "molar_masses_kg_mol": {
+    "O2": 0.0319988,
+    "N2": 0.0280134,
+    "H2O": 0.018015268
+  },
+  "numerics": {
+    "temperature_inverse": {
+      "bracket_k": [
+        300,
+        345
+      ],
+      "absolute_tolerance_k": 1e-09,
+      "relative_tolerance": 1e-12,
+      "max_iterations": 100
+    },
+    "pressure_inverse": {
+      "bracket_pa": [
+        50000,
+        180000
+      ],
+      "absolute_tolerance_pa": 1e-06,
+      "relative_tolerance": 1e-12,
+      "max_iterations": 100
+    },
+    "water": {
+      "pressure_relative": 2e-08,
+      "pressure_absolute_pa": 0.01,
+      "energy_identity_absolute_j_kg": 1e-06,
+      "eos_caloric_absolute_j_kg": 0.002,
+      "heat_capacity_absolute_j_kg_k": 1e-05,
+      "gibbs_absolute_j_kg": 0.001,
+      "temperature_absolute_k": 1e-09
+    },
+    "liquid_inverse": {
+      "absolute_tolerance_mol": 1e-18,
+      "relative_tolerance": 1e-12,
+      "max_iterations": 100
+    },
+    "meshes": {
+      "bulk_two": 3,
+      "bulk_four": 5,
+      "bulk_eight": 9,
+      "bulk_fifteen": 16,
+      "bulk_sixteen": 17,
+      "bulk_thirty_two": 33,
+      "bulk_sixty_four": 65
+    },
+    "steps_per_segment": {
+      "coarse": [
+        8,
+        72,
+        20,
+        60
+      ],
+      "fine": [
+        16,
+        144,
+        40,
+        120
+      ],
+      "refined": [
+        32,
+        288,
+        80,
+        240
+      ]
+    },
+    "warm_temperature_inverse": {
+      "seed_increment_k": 0.001,
+      "absolute_tolerance_k": 1e-09,
+      "relative_tolerance": 1e-12,
+      "max_iterations": 30
+    },
+    "surface_balance": {
+      "absolute_residual_w": 1e-11,
+      "relative_residual": 1e-10,
+      "maximum_iterations": 100
+    },
+    "implicit": {
+      "method": "BDF",
+      "relative_tolerance": 1e-07,
+      "inventory_absolute_tolerance_mol": 1e-13,
+      "energy_absolute_tolerance_j": 1e-08,
+      "maximum_step_s": 1.0,
+      "observation_interval_s": 0.125,
+      "method_comparison_mesh": "four",
+      "refinement_tolerance_factor": 0.1,
+      "progress_every_accepted_steps": 10,
+      "equilibrium_cache_entries": 512
+    },
+    "phase_events": {
+      "scan_subintervals_per_accepted_step": 1,
+      "absolute_time_tolerance_s": 1e-06,
+      "maximum_iterations": 60,
+      "definition": "Bisection of signed all-vapor incipient-liquid criterion along BDF dense output; finite scanning does not guarantee all roots."
+    }
+  },
+  "schema": "fixed_surface_storage_column_v1",
+  "classification": "virtual_1d_channel_with_rigid_surface_retention_compartment_not_brick",
+  "solid_facts_file": "data/sandbox/solids/quartz/facts.json",
+  "reference_pressure_pa": 100000,
+  "geometry": {
+    "area_m2": 0.001,
+    "length_m": 0.009375,
+    "definition": "Internal channel only. Separate fixed-volume surface chamber and transfer resistances are explicitly declared; chamber capacity does not shrink with internal mesh."
+  },
+  "solid": {
+    "total_mol": 0.01875,
+    "segment_index": 0,
+    "reference_temperature_k": 330,
+    "classification": "virtual_amount_with_sourced_quartz_caloric_curve",
+    "model": "Incompressible fixed thermal ballast, no expansion/reaction; standard enthalpy differences used as internal energy differences. This is a constitutive approximation, not validated quartz apparatus or clay."
+  },
+  "initial": {
+    "temperature_k": 330,
+    "total_concentrations_mol_m3": {
+      "O2": 6.657,
+      "N2": 25.043,
+      "H2O": 8.0
+    }
+  },
+  "transfer": {
+    "conductivity_w_m_k": 0.1,
+    "external_conductivity_w_m_k": 0.1,
+    "external_distance_m": 0.005,
+    "gas": {
+      "effective_diffusivities_m2_s": {
+        "O2": 1e-05,
+        "N2": 1e-05,
+        "H2O": 1.5e-05
+      },
+      "permeability_m2": 1e-16,
+      "relative_permeability": 1.0,
+      "viscosity_pa_s": 2e-05
+    }
+  },
+  "radiation": {
+    "effective_emissivity": 0.8,
+    "stefan_boltzmann_w_m2_k4": 5.670374419e-08,
+    "classification": "sigma physical constant; emissivity explicit virtual boundary choice, not measured quartz emissivity",
+    "source_url": "https://physics.nist.gov/cuu/Constants/Table/allascii.txt"
+  },
+  "boundary_program": {
+    "identity": {
+      "program_id": "wet-fluid-heating-hold-cooling",
+      "version": "1",
+      "classification": "virtual_design_choice",
+      "source_ids": [
+        "root-equilibrium-water-column-v1"
+      ]
+    },
+    "values": {
+      "knot_times_s": [
+        0,
+        2,
+        20,
+        25,
+        40
+      ],
+      "gas_temperature_k": [
+        330,
+        335,
+        335,
+        315,
+        315
+      ],
+      "radiation_temperature_k": [
+        330,
+        335,
+        335,
+        315,
+        315
+      ],
+      "total_pressure_pa": [
+        100000,
+        100000,
+        100000,
+        100000,
+        100000
+      ],
+      "species_order": [
+        "O2",
+        "N2",
+        "H2O"
+      ],
+      "mole_fractions": [
+        [
+          0.2079,
+          0.7821,
+          0.01
+        ],
+        [
+          0.2079,
+          0.7821,
+          0.01
+        ],
+        [
+          0.2079,
+          0.7821,
+          0.01
+        ],
+        [
+          0.2079,
+          0.7821,
+          0.01
+        ],
+        [
+          0.2079,
+          0.7821,
+          0.01
+        ]
+      ]
+    }
+  },
+  "sources": {
+    "water": {
+      "url": "https://iapws.org/technical-guidance/release/IAPWS-95",
+      "local_document": "data/sandbox/water/IAPWS95-2018.pdf",
+      "locator": "R6-95(2018) Eq4-6, Tables1-3; thermodynamic properties derived from Helmholtz energy",
+      "scope": "pure water; existing adapter limited to 293-500K and stable phases; wet pressure inverse bracket 50-180kPa. Column temperature inverse uses warm secant, not the retained cold Brent bracket; actual evaluated temperatures are reported separately. Pure liquid uses the separately reviewed Gibbs polynomial over 300-345K and 50-180kPa; ideal vapor still uses direct IAPWS ideal coefficients. This is a controlled numerical representation, not an exact IAPWS evaluation."
+    },
+    "water_vapor": {
+      "derivation": "IAPWS ideal enthalpy with existing common energy offset. Standard ideal entropy from Eq5 and Table3 at fixed 1bar; pressure entropy -R_mix ln(p/p_ref); u=h-R_mix*T. Native fitted R is retained inside IAPWS, with the small fixed-R bridge explicitly approximate.",
+      "reference_pressure": "1bar fixed convention matching the existing chemical model; changing it without transforming standard entropy changes the approximate model."
+    },
+    "solid": {
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C14808607&Mask=2",
+      "locator": "Solid Phase Heat Capacity, Shomate, 298-847 K column; all eight coefficients read online 2026-09-22 UTC",
+      "scope": "pure quartz caloric data only; not clay composition or temperature-independent solid density"
+    },
+    "transport": "Virtual, explicitly supplied Fourier/two-resistance heat and mixture diffusion/Darcy coefficients. No brick/material coefficient admission. Boundary permeability differs from D-B3 and is recorded as a new design choice.",
+    "phase": "Liquid remains locally retained; only gas water moves between cells. Local instantaneous phase equilibrium; no capillary or adsorbed water.",
+    "solid_volume": "External fixed quartz ballast: internal total_mol plus surface_storage.solid_mol. Neither amount occupies the declared fluid volume.",
+    "radiation": "Gray diffuse surface facing an effective isothermal blackbody enclosure. Surface temperature is solved by half-cell Fourier conduction = film convection + radiation; sigma from NIST CODATA, emissivity and external film explicit virtual choices. Gas transport keeps the registered mixture face approximation.",
+    "numerical": "Explicit midpoint on conserved inventories/U. Every boundary-program knot is an integration endpoint. Secant inversion seeded from preceding state; no hidden solver fallback or inventory clipping. Implicit BDF alternative evolves the identical conserved inventories/U and cumulative exterior flux; adaptive steps restart at each program knot. BDF tolerances were fixed before its first run. The local pure-liquid EOS memo uses exact pressure keys within one fixed-temperature evaluation only; no interpolation, pressure rounding or persistent cache. The BDF driver caches at most 512 complete equilibrium states per run, keyed by host identity (fixed fluid volume and quartz amount) plus exact conserved inventories and energy, with no interpolation or rounding.",
+    "spatial_storage": {
+      "control_volume_source": "https://cantera.org/stable/reference/reactors/controlreactor.html",
+      "finite_volume_source": "https://pages.nist.gov/fipy/en/latest/numerical/discret.html",
+      "definition": "Derived conservation and declared fixed chamber with independent N/U/V/solid amount. Pure-water and gas sources unchanged; this is a different physical model from the original uniform continuum."
+    }
+  },
+  "observation": {
+    "liquid_endpoint_total_mol": 0,
+    "definition": "Whole-domain liquid events include internal channel and fixed surface chamber; no claim of a real-brick dryness endpoint.",
+    "comparison_budgets": {
+      "time_temperature_k": 0.02,
+      "time_total_water_mol": 1e-07,
+      "space_temperature_k": 0.2,
+      "space_total_water_mol": 1e-06,
+      "time_phase_event_s": 0.001,
+      "space_phase_event_s": 0.02
+    },
+    "budget_basis": "Numerical research comparison targets chosen before execution, not source uncertainties or brick accuracy.",
+    "phase_event_definition": "Per-cell and column liquid depletion/appearance, independent of observation sampling. Not a dry-brick endpoint."
+  },
+  "liquid_evaluation": {
+    "method": "gibbs_table",
+    "table_file": "data/sandbox/research/liquid-gibbs-table-v1/table.json",
+    "definition": "Explicit choice; no automatic fallback or extrapolation. Gibbs table must be qualified separately from direct IAPWS."
+  },
+  "execution": {
+    "stop_points_s": {
+      "wet": 2.9,
+      "dry": 10.0,
+      "program_knot": 20.0
+    },
+    "checkpoint_definition": "Every completed accepted-step output transaction. Resume retains original source JSON and cumulative exterior integrals, restarting BDF history."
+  },
+  "surface_storage": {
+    "fluid_volume_m3": 6.25e-07,
+    "solid_mol": 0.00125,
+    "contact_distance_m": 0.0003125,
+    "wall_distance_m": 0.0003125,
+    "conductivity_w_m_k": 0.1,
+    "classification": "specified_virtual_apparatus_geometry_and_transfer_not_measured_brick",
+    "model": "Rigid gas/liquid retention chamber with one T/P and local phase equilibrium. Connection resistance is quasisteady; internal chamber circulation, capillarity and liquid drainage unresolved.",
+    "baseline_equivalence": "15 internal cells plus chamber reproduce the old16-cell geometry, total10mL fluid and0.02mol quartz; refining internal count keeps chamber volume and solid amount fixed."
+  }
+}

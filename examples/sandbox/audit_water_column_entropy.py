@@ -25,12 +25,14 @@ from analyze_equilibrium_water_column import surface_temperature
 from equilibrium_water_column_setup import build_column
 from review_equilibrium_water_column import reconstruct_face_rates
 from water_column_checkpoint import restore_sources
+from column_review_geometry import review_geometry
 
 
 class SourceEntropy:
     def __init__(self, header, settings):
         self.header, self.settings = header, settings
         self.config, self.thermo = header['parameters'], header['thermochemistry']
+        self.geometry = review_geometry(self.config, header['cell_count'])
         self.facts = header['water_source']['facts']
         self.r = self.thermo['gas_constant']['value_j_mol_k']
         self.mass = IAPWS95.M/1000
@@ -70,7 +72,7 @@ class SourceEntropy:
         a,b,c,d,e,_,_,_ = map(float,self.solid_coefficients)
         q = self.settings['solid_entropy_quadrature']
         values = []
-        for p in states:
+        for index, p in enumerate(states):
             t = p['temperature_k']
             gas = math.fsum(n*(self.ideal(k,t)[1]-self.r*math.log(n*self.r*t/p['gas_volume_m3']/self.pref))
                             for k,n in p['amounts_mol'].items())
@@ -80,7 +82,7 @@ class SourceEntropy:
             solid,_ = quad(lambda temp: (a+b*(temp/1000)+c*(temp/1000)**2+d*(temp/1000)**3+e/(temp/1000)**2)/temp,
                 self.config['solid']['reference_temperature_k'],t,
                 epsabs=q['absolute_tolerance_j_mol_k'],epsrel=q['relative_tolerance'],limit=q['maximum_subintervals'])
-            values.append(gas+liquid+solid*self.config['solid']['total_mol']/len(states))
+            values.append(gas+liquid+solid*self.geometry['solid_amounts_mol'][index])
         return math.fsum(values)
 
     def fluxes(self, t, states):
@@ -141,7 +143,7 @@ def main():
                 nonlocal inverse_error
                 points=[]
                 for i,cell in enumerate(vector[:n*width].reshape(n,width)):
-                    _,point=model.host.decode(dict(zip(order,map(float,cell[:-1]),strict=True)),float(cell[-1]),seeds[i])
+                    _,point=model.host_for_cell(i).decode(dict(zip(order,map(float,cell[:-1]),strict=True)),float(cell[-1]),seeds[i])
                     seeds[i]=point['temperature_k'];points.append(point)
                     inverse_error=max(inverse_error,abs(point['energy_inverse_residual_j']))
                 return points

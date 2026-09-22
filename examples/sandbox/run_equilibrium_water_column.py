@@ -25,13 +25,13 @@ def main():
     start = time.monotonic()
     count = config['numerics']['meshes'][args.mesh]
     model = build_column(root, config, count)
-    host, volume, rates = model.host, model.volume, model.rates
+    rates = model.rates
     water, solid = model.water, model.solid
     steps_each_segment = config['numerics']['steps_per_segment'][args.resolution]
 
     def decode(updates, previous):
-        values = [host.decode(item['inventories_mol'], item['internal_energy_j'], point['temperature_k'])
-                  for item, point in zip(updates, previous, strict=True)]
+        values = [model.host_for_cell(i).decode(item['inventories_mol'], item['internal_energy_j'], point['temperature_k'])
+                  for i, (item, point) in enumerate(zip(updates, previous, strict=True))]
         return [item[0] for item in values], [item[1] for item in values]
 
     with args.output.open('x') as stream:
@@ -40,15 +40,17 @@ def main():
             stream.flush()
 
         emit({'kind': 'input', 'parameters': config, 'mesh': args.mesh, 'resolution': args.resolution,
-              'cell_count': count, 'cell_fluid_volume_m3': volume, 'water_source': water.source_record,
+              'cell_count': count,
+              **({'cell_fluid_volume_m3': model.volumes[0]} if config['schema'] == 'equilibrium_water_column_v1' else {}),
+              'spatial_geometry': model.record_geometry(), 'water_source': water.source_record,
               'solid_source_facts': solid, 'thermochemistry': json.loads((root/config['thermochemistry_file']).read_text()),
               'method': 'shared-face explicit midpoint, knot-aligned steps, warm secant equilibrium decode',
               'material_qualified': False, 'training_eligible': False})
         initial = config['initial']
-        inventories = {k: value*volume for k, value in initial['total_concentrations_mol_m3'].items()}
         gases, points = [], []
-        for _ in range(count):
-            gas, point = host.at_temperature(inventories, initial['temperature_k'])
+        for i in range(count):
+            inventories = {k: value*model.volumes[i] for k, value in initial['total_concentrations_mol_m3'].items()}
+            gas, point = model.host_for_cell(i).at_temperature(inventories, initial['temperature_k'])
             point.update(internal_energy_j=point['constitutive_internal_energy_j'], energy_inverse_residual_j=0.)
             gases.append(gas)
             points.append(point)

@@ -11,13 +11,18 @@ from pathlib import Path
 from iapws import IAPWS95
 from scipy.integrate import quad
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from column_review_geometry import review_geometry
+
 
 def reconstruct_face_rates(config, states, boundary, surface, ideal_properties, gas_constant):
     """Independent scalar reconstruction of the registered face equations."""
     masses = config['molar_masses_kg_mol']
     transport = config['transfer']
     gas_settings = transport['gas']
-    area, dx = config['geometry']['area_m2'], config['geometry']['length_m']/len(states)
+    area = config['geometry']['area_m2']
+    geometry = review_geometry(config, len(states))
     gases = [{'t': p['temperature_k'], 'p': p['pressure_pa'],
               'x': {k: v/math.fsum(p['amounts_mol'].values()) for k, v in p['amounts_mol'].items()}}
              for p in states]
@@ -28,8 +33,9 @@ def reconstruct_face_rates(config, states, boundary, surface, ideal_properties, 
         g['y'] = {k: g['x'][k]*m/mean_mass for k, m in masses.items()}
     faces = []
     for i, (left, right) in enumerate(zip(gases[:-1], gases[1:], strict=True)):
-        dr = transport['external_distance_m'] if i == len(states)-1 else dx/2
-        distance, weight = dx/2+dr, dr/(dx/2+dr)
+        link = geometry['links'][i]
+        dl, dr = link['left_distance_m'], link['right_distance_m']
+        distance, weight = dl+dr, dr/(dl+dr)
         tf = weight*left['t']+(1-weight)*right['t']
         pf = weight*left['p']+(1-weight)*right['p']
         xf = {k: weight*left['x'][k]+(1-weight)*right['x'][k] for k in masses}
@@ -47,7 +53,7 @@ def reconstruct_face_rates(config, states, boundary, surface, ideal_properties, 
         donor = left if velocity > 0 else right
         advection = {k: area*rho*donor['y'][k]*velocity/m for k, m in masses.items()}
         heat = (-surface['convective_in_w'] if i == len(states)-1 else
-                transport['conductivity_w_m_k']*area*(left['t']-right['t'])/distance)
+                area*(left['t']-right['t'])/(dl/link['left_conductivity_w_m_k']+dr/link['right_conductivity_w_m_k']))
         energy = heat+math.fsum(diffusion[k]*ideal_properties(k, tf)[0]+
             advection[k]*ideal_properties(k, donor['t'])[0] for k in masses)
         faces.append({'energy_out_w': energy,
@@ -67,6 +73,7 @@ def main():
     rows = [json.loads(line) for line in args.trajectory.read_text().splitlines()]
     header = rows[0]
     config, thermo = header['parameters'], header['thermochemistry']
+    geometry = review_geometry(config, header['cell_count'])
     facts = header['water_source']['facts']
     constants, coefficients = facts['iapws_constants'], facts['ideal_formula_constants']
     gas_constant = thermo['gas_constant']['value_j_mol_k']
@@ -126,10 +133,10 @@ def main():
             us, error = quad(cp, config['solid']['reference_temperature_k'], t,
                 epsabs=quadrature['absolute_tolerance_j_mol'], epsrel=quadrature['relative_tolerance'],
                 limit=quadrature['maximum_subintervals'])
-            us *= config['solid']['total_mol']/header['cell_count']
+            us *= geometry['solid_amounts_mol'][index]
             ug = math.fsum(n*(ideal_properties(k, t)[0]-gas_constant*t) for k, n in p['amounts_mol'].items())
             u = ug+p['liquid_water_mol']*ul+us
-            vg = header['cell_fluid_volume_m3']-p['liquid_water_mol']*mass/liquid.rho
+            vg = geometry['volumes_m3'][index]-p['liquid_water_mol']*mass/liquid.rho
             pressure = math.fsum(p['amounts_mol'].values())*gas_constant*t/vg
             vapor_pressure = p['amounts_mol']['H2O']*gas_constant*t/vg
             h0, s0 = ideal_properties('H2O', t)
@@ -138,15 +145,15 @@ def main():
             reconstructions.append({'point': label, 'cell': index, 'phase': p['phase'],
                 'temperature_k': t, 'solid_cp_j_mol_k': cp(t),
                 'solid_energy_difference_j': us-p['solid_internal_energy_j'],
-                'quadrature_estimated_absolute_error_j': error*config['solid']['total_mol']/header['cell_count'],
+                'quadrature_estimated_absolute_error_j': error*geometry['solid_amounts_mol'][index],
                 'total_energy_residual_j': u-p['internal_energy_j'],
                 'pressure_residual_pa': pressure-p['pressure_pa'],
                 'vapor_minus_liquid_chemical_potential_j_mol': mu_vapor-mu_liquid,
                 'phase_condition': 'equality' if p['liquid_water_mol'] > 0 else 'vapor_not_above_liquid'})
 
-    def phase_criterion(p):
+    def phase_criterion(p, index):
         t = p['temperature_k']
-        v = header['cell_fluid_volume_m3']
+        v = geometry['volumes_m3'][index]
         all_vapor_pressure = math.fsum(p['inventories_mol'].values())*gas_constant*t/v
         candidate_liquid = IAPWS95(T=t, P=all_vapor_pressure/1e6)
         h0, s0 = ideal_properties('H2O', t)
@@ -158,7 +165,7 @@ def main():
     for row in rows:
         if row['kind'] != 'phase_event':
             continue
-        ends = [max(phase_criterion(cell['state']) for cell in endpoint['cells'])
+        ends = [max(phase_criterion(cell['state'], cell['cell_index']) for cell in endpoint['cells'])
                 for endpoint in row['bracket_states']]
         expected_wet = [True, False] if row['transition'] == 'liquid_depleted' else [False, True]
         event_reconstructions.append({'scope': row['scope'], 'cell_index': row['cell_index'],

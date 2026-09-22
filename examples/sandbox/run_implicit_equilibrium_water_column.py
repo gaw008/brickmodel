@@ -65,7 +65,7 @@ def run(args, source_directory):
         config = json.loads(args.parameters.read_text())
         n = config['numerics']['meshes'][args.mesh]
         model = build_column(args.parameters.resolve().parent, config, n)
-    host = model.host
+    host = model.hosts[0]
     order = config['boundary_program']['values']['species_order']
     width = len(order)+1
     policy = config['numerics']['implicit']
@@ -75,10 +75,10 @@ def run(args, source_directory):
     atol = np.tile([policy['inventory_absolute_tolerance_mol']]*len(order)+[
         policy['energy_absolute_tolerance_j']], n+1)*factor
     seed = [config['initial']['temperature_k']]*n
-    inventories = {k: v*model.volume for k, v in config['initial']['total_concentrations_mol_m3'].items()}
     initial = []
-    for _ in range(n):
-        _, point = host.at_temperature(inventories, seed[0])
+    for i in range(n):
+        inventories = {k: v*model.volumes[i] for k, v in config['initial']['total_concentrations_mol_m3'].items()}
+        _, point = model.host_for_cell(i).at_temperature(inventories, seed[i])
         point.update(internal_energy_j=point['constitutive_internal_energy_j'], energy_inverse_residual_j=0.)
         initial.append(point)
     y = np.array([[p['inventories_mol'][k] for k in order]+[p['internal_energy_j']]
@@ -96,18 +96,19 @@ def run(args, source_directory):
     inverse_seed = [seed[0]]
 
     @lru_cache(maxsize=policy['equilibrium_cache_entries'])
-    def equilibrium_from_conserved_state(state):
-        # A fixed N/U state has one admitted equilibrium. The seed only starts
+    def equilibrium_from_conserved_state(host_index, state):
+        # A fixed host identity and N/U state have one admitted equilibrium.
+        # Host identity includes volume and thermal ballast. The seed only starts
         # its numerical inverse; reuse requires exact conserved float inputs.
         # The cache is private to this run and its frozen material/numerics.
-        return host.decode(dict(zip(order, state[:-1], strict=True)), state[-1], inverse_seed[0])
+        return model.hosts[host_index].decode(dict(zip(order, state[:-1], strict=True)), state[-1], inverse_seed[0])
 
     def decode(vector):
         values = vector[:n*width].reshape(n, width)
         gases, points = [], []
         for i, cell in enumerate(values):
             inverse_seed[0] = seed[i]
-            gas, point = equilibrium_from_conserved_state(tuple(map(float, cell)))
+            gas, point = equilibrium_from_conserved_state(model.host_indices[i], tuple(map(float, cell)))
             seed[i] = point['temperature_k']
             gases.append(gas)
             points.append(point)
@@ -136,7 +137,8 @@ def run(args, source_directory):
             stream.flush()
 
         header = {'kind': 'input', 'parameters': config, 'cell_count': n,
-              'cell_fluid_volume_m3': model.volume, 'mesh': args.mesh, 'tolerance': args.tolerance,
+              **({'cell_fluid_volume_m3': model.volumes[0]} if config['schema'] == 'equilibrium_water_column_v1' else {}),
+              'spatial_geometry': model.record_geometry(), 'mesh': args.mesh, 'tolerance': args.tolerance,
               'relative_tolerance': policy['relative_tolerance']*factor, 'absolute_tolerances': atol.tolist(),
               'method': 'BDF; knot-aligned segments; conserved state and exterior flux quadrature',
               'phase_partition_algorithm': host.fluid.partition_algorithm,
@@ -206,7 +208,7 @@ def run(args, source_directory):
                 def event_cell(at_time, index):
                     cell = interpolant(at_time)[index*width:(index+1)*width]
                     inverse_seed[0] = seed[index]
-                    return equilibrium_from_conserved_state(tuple(map(float, cell)))[1]
+                    return equilibrium_from_conserved_state(model.host_indices[index], tuple(map(float, cell)))[1]
 
                 def event_score(at_time, index):
                     if index == n:

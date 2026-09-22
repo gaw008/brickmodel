@@ -13,6 +13,10 @@ from pathlib import Path
 import numpy as np
 from scipy.optimize import brentq
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from column_review_geometry import review_geometry
+
 
 def exact(value):
     return (Fraction(value['numerator'], value['denominator'])
@@ -22,10 +26,10 @@ def exact(value):
 def surface_temperature(c, count, t, temperature):
     program, geometry = c['boundary_program']['values'], c['geometry']
     transfer, radiation = c['transfer'], c['radiation']
-    dx = geometry['length_m']/count
+    spatial = review_geometry(c, count)
     tg = float(np.interp(t, program['knot_times_s'], program['gas_temperature_k']))
     tr = float(np.interp(t, program['knot_times_s'], program['radiation_temperature_k']))
-    conductance = transfer['conductivity_w_m_k']*geometry['area_m2']/(dx/2)
+    conductance = spatial['wall_conductivity_w_m_k']*geometry['area_m2']/spatial['wall_distance_m']
     film = transfer['external_conductivity_w_m_k']*geometry['area_m2']/transfer['external_distance_m']
     factor = radiation['effective_emissivity']*radiation['stefan_boltzmann_w_m2_k4']*geometry['area_m2']
 
@@ -78,6 +82,7 @@ def analyze_implicit(path):
     summary = rows[-1] if rows[-1]['kind'] == 'summary' else None
     checkpoint = next((r for r in reversed(rows) if r['kind'] == 'checkpoint'), None)
     return {'file': path.name, 'completed': rows[-1]['kind'] == 'summary' and rows[-1]['status'] == 'completed', 'cells': n,
+            'spatial_model': c['schema'], 'geometry': review_geometry(c, n),
             'run_status': summary['status'] if summary is not None else 'no_completion_summary',
             'samples': len(times)-1, 'elapsed_s': summary['elapsed_s'] if summary is not None else None,
             'solver_statistics': (summary['solver_statistics'] if summary is not None else
@@ -169,6 +174,7 @@ def analyze(path):
 
     event = next((i for i, amount in enumerate(liquids) if amount == 0), None)
     return {'file': path.name, 'completed': rows[-1]['kind'] == 'summary', 'cells': n,
+            'spatial_model': c['schema'], 'geometry': review_geometry(c, n),
             'steps': len(times)-1, 'elapsed_s': rows[-1]['elapsed_s'],
             'corrected_balance_count': (len(times)-1)*(n+1)*4,
             'max_absolute_residuals': maxima,
@@ -186,11 +192,29 @@ def compare(coarse, fine, kind):
     times = [coarse['time_s'][i] for i in indices]
     nc, nf = coarse['cells'], fine['cells']
     fine_profiles = np.asarray(fine['temperature_profiles_k'])
-    # Meshes in this study divide one another. Compare the same coarse volumes.
-    restricted = fine_profiles.reshape(len(fine_profiles), nc, nf//nc).mean(axis=2)
+    chamber_error = None
+    if (coarse['spatial_model'] == 'fixed_surface_storage_column_v1' and
+            fine['spatial_model'] == 'fixed_surface_storage_column_v1'):
+        # Only the bulk is refined; the last control volume is a fixed chamber.
+        # Overlap averaging also handles non-nested bulk grids. Temperatures are
+        # geometric observations, not reconstructed thermodynamic mixed states.
+        cg, fg = coarse['geometry'], fine['geometry']
+        cb, fb = cg['bulk_cells'], fg['bulk_cells']
+        ce = np.linspace(0., 1., cb+1)
+        fe = np.linspace(0., 1., fb+1)
+        overlap = np.maximum(0., np.minimum(ce[1:, None], fe[None, 1:])-
+                             np.maximum(ce[:-1, None], fe[None, :-1]))
+        restricted_bulk = fine_profiles[:, :fb]@(overlap*cb).T
+        restricted = np.column_stack((restricted_bulk, fine_profiles[:, -1]))
+        chamber_error = float(np.max(np.abs(np.interp(times, fine['time_s'], fine_profiles[:, -1])-
+                                          np.asarray(coarse['temperature_profiles_k'])[indices, -1])))
+    else:
+        # Original uniform meshes in this study divide one another.
+        restricted = fine_profiles.reshape(len(fine_profiles), nc, nf//nc).mean(axis=2)
     errors = [abs(np.interp(times, fine['time_s'], restricted[:, i])-
                   np.asarray(coarse['temperature_profiles_k'])[indices, i]) for i in range(nc)]
     t_error = float(np.max(errors))
+    bulk_error = float(np.max(errors[:-1])) if chamber_error is not None else t_error
     surface_error = float(np.max(np.abs(np.interp(times, fine['time_s'], fine['surface_temperature_k'])-
                                         np.asarray(coarse['surface_temperature_k'])[indices])))
     water_error = float(np.max(np.abs(np.interp(times, fine['time_s'], fine['total_water_mol'])-
@@ -206,6 +230,8 @@ def compare(coarse, fine, kind):
             'complete_trajectories_compared': complete,
             'interpolated_comparison_nodes': sum(t not in set(fine['time_s']) for t in times),
             'max_cell_volume_temperature_difference_k': t_error,
+            'max_bulk_volume_temperature_difference_k': bulk_error,
+            'max_fixed_chamber_temperature_difference_k': chamber_error,
             'max_surface_temperature_difference_k': surface_error,
             'max_total_water_difference_mol': water_error,
             'shared_interval_within_budget': within,

@@ -8,6 +8,9 @@ import argparse
 import json
 import math
 from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from column_review_geometry import review_geometry
 
 import numpy as np
 from numpy.polynomial.chebyshev import chebder
@@ -32,6 +35,7 @@ def main():
             radius = math.fsum(abs(float(v)) for v in coefficients.flat)-abs(center)
             volume_bound = [center-radius, center+radius]
             count = header['cell_count']
+            volumes = review_geometry(header['parameters'], count)['volumes_m3']
             order = header['parameters']['boundary_program']['values']['species_order']
             width = len(order)+1
             maximum = None
@@ -43,7 +47,7 @@ def main():
                     continue
                 for i in range(count):
                     amounts = row['conserved_state'][i*width:i*width+len(order)]
-                    ratio = math.fsum(amounts)*volume_bound[1]/header['cell_fluid_volume_m3']
+                    ratio = math.fsum(amounts)*volume_bound[1]/volumes[i]
                     carrier = math.fsum(n for k, n in zip(order, amounts, strict=True) if k != 'H2O')
                     minimum_carrier = min(minimum_carrier, carrier)
                     if maximum is None or ratio > maximum['ratio']:

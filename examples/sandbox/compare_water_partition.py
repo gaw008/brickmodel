@@ -33,8 +33,8 @@ def main():
                 if row['kind'] not in settings['record_kinds']:
                     continue
                 for i,old in enumerate(row['states']):
-                    _,new=model.host.at_temperature(old['inventories_mol'],old['temperature_k'])
-                    liquid_volume_per_mol = model.host.fluid.molar_masses_kg_mol['H2O']/new['liquid_density_kg_m3']
+                    _,new=model.host_for_cell(i).at_temperature(old['inventories_mol'],old['temperature_k'])
+                    liquid_volume_per_mol = model.host_for_cell(i).fluid.molar_masses_kg_mol['H2O']/new['liquid_density_kg_m3']
                     differences.append({'kind':row['kind'],'time_s':row['time_s'],'cell':i,
                         'old_phase':old['phase'],'new_phase':new['phase'],
                         'new_liquid_mol':new['liquid_water_mol'],
@@ -44,7 +44,7 @@ def main():
                         'new_pressure_closure_residual_pa':new['pressure_closure_residual_pa'],
                         'new_water_pressure_departure_pa':new['water_pressure_departure_pa'],
                         'total_inventory_liquid_volume_ratio':sum(old['inventories_mol'].values())*
-                            liquid_volume_per_mol/model.volume,
+                            liquid_volume_per_mol/model.volumes[i],
                         'equilibrium_pressure_volume_over_rt':new['equilibrium_partial_pressure_pa']*
                             liquid_volume_per_mol/(model.thermochemistry.gas_constant_j_mol_k*old['temperature_k'])})
         maxima={key:max(abs(p[key]) for p in differences) for key in settings['comparison_budgets']}
