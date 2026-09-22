@@ -1,5 +1,7 @@
 # 独立阶段 Goal 顺序
 
+**2026-09-22 UTC最新：** 用户已授权按依赖连续推进剩余阶段。现完成V-B3、D-B4及V-B4的限定范围，见[一维液汽通道报告](research/equilibrium-water-column-v1/REPORT.md)和[剩余依赖](research/equilibrium-water-column-v1/NEXT_PHASES.md)。时间/空间采样比较与来源/守恒核验通过指定目标，真实材料资格仍未取得。原生M1 Goal仍blocked，无替代全项目Goal；不是全部剩余阶段已完成。以下“下一V-B3”等文字保留历史语境。
+
 **2026-09-22 UTC最新工作顺序：** 用户在发送M1资料请求后允许先推进其他可独立开发部分，本轮完成[D-B3液汽平衡/可变载气单元](research/equilibrium-water-boundary-v1/REPORT.md)开发及科学自查，下一独立V-B3尚未完成。M1材料准入仍阻塞；本轮不是M1替代Goal，没有新建原生Goal。以下“不自动回到D-B3”等表述是本次用户调整之前的历史决定。
 
 **2026-09-22 UTC M1已启动：** 用户授权执行，当前完成一次有界输入判定；Silva首选及一个新增备选家族均未闭合准确性合同，A→B未准入。见[M1报告](research/real-clay-drying-m1/REPORT.md)。保留未知、未发送资料草稿和开发未完成状态；不新增第三候选或虚拟参数替代，不自动回到旧D-B3建议。以下为规划及历史记录。

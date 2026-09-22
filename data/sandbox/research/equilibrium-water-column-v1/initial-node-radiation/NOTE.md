@@ -1,0 +1,1 @@
+Development records using outer cell temperature for radiation, before resolving surface conduction plus convection/radiation. These trajectories retain conservation but use a coarser boundary-temperature approximation. They are not mixed into the final mesh/time comparisons.
