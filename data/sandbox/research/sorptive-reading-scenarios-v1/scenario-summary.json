@@ -1,0 +1,111 @@
+{
+  "settings": {
+    "nominal_parameters_file": "parameters.source_sorptive_gas_cell.json",
+    "source_facts_file": "data/sandbox/research/arlabosse95/facts.json",
+    "scenarios": [
+      {
+        "name": "lower_activity_higher_heat",
+        "activity_endpoint": 0,
+        "heat_endpoint": 1
+      },
+      {
+        "name": "higher_activity_lower_heat",
+        "activity_endpoint": 1,
+        "heat_endpoint": 0
+      }
+    ],
+    "output_directory": "data/sandbox/research/sorptive-reading-scenarios-v1",
+    "output_parameters_prefix": "parameters.sorptive_reading_",
+    "scope": "Two coherent digitization-endpoint scenarios, not extremal trajectory bounds, new measurements, fitted materials or probabilities. Same virtual apparatus T/P/W and transport; initial equilibrium gas inventories and energy follow each scenario.",
+    "nominal_trajectory": "data/sandbox/research/source-sorptive-gas-cell-v1/drying-base.jsonl"
+  },
+  "nominal": {
+    "path": "/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/source-sorptive-gas-cell-v1/drying-base.jsonl",
+    "completed": true,
+    "initial_inventories_mol": {
+      "O2": 6.822762988635746e-06,
+      "N2": 2.5666584576296378e-05,
+      "H2O": 0.0001703712090801459
+    },
+    "initial_energy_j": -47.62196757527973,
+    "moisture_event_times_s": [
+      488.0056566949442
+    ],
+    "final_temperature_k": 332.3480686458687,
+    "final_moisture_kg_kg": 0.02346890701613919,
+    "minimum_saved_temperature_k": 320.2873555549052
+  },
+  "scenarios": [
+    {
+      "path": "/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/sorptive-reading-scenarios-v1/lower_activity_higher_heat-base.jsonl",
+      "completed": true,
+      "initial_inventories_mol": {
+        "O2": 6.833567455533082e-06,
+        "N2": 2.570722995176731e-05,
+        "H2O": 0.00017031975923777765
+      },
+      "initial_energy_j": -47.54889803639515,
+      "moisture_event_times_s": [
+        503.32450119686854
+      ],
+      "final_temperature_k": 332.2514621039629,
+      "final_moisture_kg_kg": 0.025185395189722206,
+      "minimum_saved_temperature_k": 320.4086189003017,
+      "scenario": {
+        "name": "lower_activity_higher_heat",
+        "activity_endpoint": 0,
+        "heat_endpoint": 1
+      },
+      "event_shift_from_nominal_s": 15.318844501924332,
+      "reference_activity_holdout": {
+        "moisture_kg_kg": 0.1,
+        "model_activity": 0.34056224899598386,
+        "source_activity": 0.364680737376436,
+        "source_digitization_bounds": [
+          0.3421686746987952,
+          0.3870192307692308
+        ],
+        "qualification": "Same published curve, not independent experiment; heat at this point remains unknown."
+      },
+      "within_same_curve_holdout_reading_interval": false,
+      "physical_qualification": "conditional endpoint scenario, not a validated source-consistent material"
+    },
+    {
+      "path": "/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/sorptive-reading-scenarios-v1/higher_activity_lower_heat-base.jsonl",
+      "completed": true,
+      "initial_inventories_mol": {
+        "O2": 6.811750357526645e-06,
+        "N2": 2.5625156106885952e-05,
+        "H2O": 0.00017042365018066542
+      },
+      "initial_energy_j": -47.6955355068354,
+      "moisture_event_times_s": [
+        473.333180539736
+      ],
+      "final_temperature_k": 332.43730732790084,
+      "final_moisture_kg_kg": 0.021907625846478578,
+      "minimum_saved_temperature_k": 320.1632182510731,
+      "scenario": {
+        "name": "higher_activity_lower_heat",
+        "activity_endpoint": 1,
+        "heat_endpoint": 0
+      },
+      "event_shift_from_nominal_s": -14.672476155208187,
+      "reference_activity_holdout": {
+        "moisture_kg_kg": 0.1,
+        "model_activity": 0.35096153846153855,
+        "source_activity": 0.364680737376436,
+        "source_digitization_bounds": [
+          0.3421686746987952,
+          0.3870192307692308
+        ],
+        "qualification": "Same published curve, not independent experiment; heat at this point remains unknown."
+      },
+      "within_same_curve_holdout_reading_interval": true,
+      "physical_qualification": "conditional endpoint scenario, not a validated source-consistent material"
+    }
+  ],
+  "scope": "T/P/W initial design is fixed, while equilibrium initial gas inventory/U follow each scenario. Reading-interval consistency is distinct from thermodynamic identity and numerical budget checks. These two selected trajectories are not extrema, confidence limits or material predictions.",
+  "material_qualified": false,
+  "training_eligible": false
+}

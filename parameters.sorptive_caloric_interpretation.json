@@ -1,0 +1,31 @@
+{
+  "classification": "explicit_interpretation_of_existing_conditional_storage_not_new_measurement",
+  "applies_to": "RecordedLowMoisture dry_energy_difference_j_kg / dry_entropy_difference_j_kg_k and EquilibriumSorptiveCell fixed dry mass",
+  "source_relation": "Arlabosse2005 Eq2 cp_DM(T_C)=1434+3.29*T_C J/(kg dry K), measured relation 35-105 C",
+  "runtime_closure": {
+    "delta_u_dry_j_kg": "integral(cp_source(T), T_ref, T)",
+    "delta_s_dry_j_kg_k": "integral(cp_source(T)/T, T_ref, T)",
+    "dry_phase_mechanical_model": "fixed-volume, no dry-solid thermal expansion/compression work; same function adopted as storage coefficient",
+    "source_cp_is_measured_cv": false,
+    "model_error_j_kg_k": null,
+    "absolute_dry_formation_enthalpy_j_kg": null
+  },
+  "general_thermodynamic_identity": "cp-cv=T*alpha_v^2/(rho*kappa_T) for the stated simple compressible material; rho, alpha_v and kappa_T are not supplied for this dry sludge",
+  "references": [
+    {
+      "url": "https://www.iapws.org/relguide/Supercooled.pdf",
+      "locator": "G12-15 p6 Eq16",
+      "role": "thermodynamic identity only; no supercooled-water parameter transferred to sludge",
+      "access": "search-indexed primary text read; direct PDF open failed"
+    },
+    {
+      "url": "https://cantera.org/3.2/cxx/d3/d50/classCantera_1_1StoichSubstance.html",
+      "role": "constant-volume incompressible-substance caloric construction; not evidence of sludge incompressibility"
+    }
+  ],
+  "reference_scope": "With fixed dry mass, arbitrary dry energy/entropy additive references cancel. Dry mass or chemistry changes require a new compatible reference audit.",
+  "changes_existing_numerical_parameters": false,
+  "retroactively_alters_frozen_trajectory_headers": false,
+  "material_qualified": false,
+  "training_eligible": false
+}

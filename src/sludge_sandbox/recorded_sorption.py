@@ -37,6 +37,12 @@ class RecordedLowMoisture:
                 'activity': activity_join*w/wj, 'activity_at_join': activity_join}
 
     def dry_energy_difference_j_kg(self, temperature_k, reference_k):
+        """Use source Cp as a fixed-volume dry-storage coefficient.
+
+        This is the declared incompressible/nonexpanding dry-phase model,
+        not a measured sludge Cv or an absolute formation-energy reference.
+        See parameters.sorptive_caloric_interpretation.json.
+        """
         cp = self.record['dry_caloric_relation']
         offset = self.record['celsius_zero_k']
         a, b = reference_k-offset, temperature_k-offset
