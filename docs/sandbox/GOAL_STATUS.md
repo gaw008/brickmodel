@@ -1,5 +1,9 @@
 # 物理沙盒 Goal 进度
 
+## 2026-09-22 UTC M1资料请求已授权并发送
+
+用户明确允许后，于04:17:12 UTC向Ebru Mancuhan发送[资料请求原文](research/real-clay-drying-m1/DATA_REQUEST_DRAFT.md)；Gmail已发送记录核对收件人和主题。M1因连续资料阻塞已标记blocked，本次发送不代表取得资料或通过A准入，尚未确认收件/回复。不自动追问、监控或安排实验。以下是发送前历史记录。
+
 ## 2026-09-22 UTC M1启动：A输入关口未准入开发
 
 用户授权执行[M1](../../plans/M1_REAL_CLAY_DRYING.md)，Goal于02:54:38 UTC创建，起点0bebd05。首选Silva2018；实际取得Özen2014原论文并核读同家族Mancuhan2016作者公开文本。新增备选改善在线观测证据，但温度观测位置、同次边界/记录身份及适用材料识别尚未闭合。见[报告](research/real-clay-drying-m1/REPORT.md)及[未发送请求](research/real-clay-drying-m1/DATA_REQUEST_DRAFT.md)。工程误差目标保留，运行物性不填默认值，B/C/D/E未执行；M1未完成，不因交付本报告获得材料/预测/训练资格。Goal实际状态以工具为准，本轮未联系作者。

@@ -1,6 +1,6 @@
 # 备选研究资料请求草稿
 
-状态：仅本地文件，未在邮箱创建草稿、未发送、未安排实验。可先询问现有记录，不要求作者进行新实验或完整补齐全部物性。
+状态：用户明确授权后，已于2026-09-22 04:17:12 UTC通过Gmail发送下方原文；元数据读回确认SENT、收件人和主题。未确认对方收到、阅读或回复，未安排实验。本文件保留原草稿文件名以便追溯；只询问现有记录，不要求作者进行新实验或完整补齐全部物性。
 
 候选收件人：Ebru Mancuhan，`emancuhan@marmara.edu.tr`。地址来自2016论文作者公开全文中的通讯作者字段；未验证当前投递有效性。[作者公开页](https://www.researchgate.net/publication/309114326_Experimental_investigation_of_green_brick_shrinkage_behavior_with_Bigot%27s_curves)。
 
