@@ -1,0 +1,198 @@
+{
+  "schema": "equilibrium_water_boundary_v1",
+  "classification": "virtual_pure_water_carrier_equilibrium_not_brick_drying",
+  "water_facts_file": "data/sandbox/water/source_facts.json",
+  "thermochemistry_file": "data/sandbox/thermochemistry/nist_gases_v1.json",
+  "molar_masses_kg_mol": {
+    "O2": 0.0319988,
+    "N2": 0.0280134,
+    "H2O": 0.018015268
+  },
+  "storage": {
+    "available_fluid_volume_m3": 1e-05,
+    "reference_pressure_pa": 100000
+  },
+  "transfer": {
+    "area_m2": 0.001,
+    "cell_distance_m": 0.005,
+    "reservoir_distance_m": 0.005,
+    "cell_conductivity_w_m_k": 0.1,
+    "reservoir_conductivity_w_m_k": 0.1,
+    "effective_diffusivities_m2_s": {
+      "O2": 1e-05,
+      "N2": 1e-05,
+      "H2O": 1.5e-05
+    },
+    "permeability_m2": 1e-14,
+    "relative_permeability": 1.0,
+    "viscosity_pa_s": 2e-05
+  },
+  "numerics": {
+    "steps": {
+      "coarse": 10,
+      "medium": 20,
+      "fine": 40,
+      "refined": 80
+    },
+    "temperature_inverse": {
+      "bracket_k": [
+        300,
+        345
+      ],
+      "absolute_tolerance_k": 1e-09,
+      "relative_tolerance": 1e-12,
+      "max_iterations": 100
+    },
+    "pressure_inverse": {
+      "bracket_pa": [
+        50000,
+        180000
+      ],
+      "absolute_tolerance_pa": 1e-06,
+      "relative_tolerance": 1e-12,
+      "max_iterations": 100
+    },
+    "water": {
+      "pressure_relative": 2e-08,
+      "pressure_absolute_pa": 0.01,
+      "energy_identity_absolute_j_kg": 1e-06,
+      "eos_caloric_absolute_j_kg": 0.002,
+      "heat_capacity_absolute_j_kg_k": 1e-05,
+      "gibbs_absolute_j_kg": 0.001,
+      "temperature_absolute_k": 1e-09
+    },
+    "liquid_inverse": {
+      "absolute_tolerance_mol": 1e-18,
+      "relative_tolerance": 1e-12,
+      "max_iterations": 100
+    }
+  },
+  "cases": {
+    "evaporation": {
+      "duration_s": "1",
+      "cell": {
+        "temperature_k": 330,
+        "inventories_mol": {
+          "O2": 6.657e-05,
+          "N2": 0.00025043,
+          "H2O": 0.00012
+        }
+      },
+      "reservoir": {
+        "temperature_k": 335,
+        "pressure_pa": 100000,
+        "mole_fractions": {
+          "O2": 0.2079,
+          "N2": 0.7821,
+          "H2O": 0.01
+        }
+      }
+    },
+    "liquid_depletion": {
+      "duration_s": "10",
+      "cell": {
+        "temperature_k": 330,
+        "inventories_mol": {
+          "O2": 6.657e-05,
+          "N2": 0.00025043,
+          "H2O": 8e-05
+        }
+      },
+      "reservoir": {
+        "temperature_k": 335,
+        "pressure_pa": 100000,
+        "mole_fractions": {
+          "O2": 0.2079,
+          "N2": 0.7821,
+          "H2O": 0.01
+        }
+      }
+    },
+    "humid_inward": {
+      "duration_s": "1",
+      "cell": {
+        "temperature_k": 330,
+        "inventories_mol": {
+          "O2": 6.657e-05,
+          "N2": 0.00025043,
+          "H2O": 0.00012
+        }
+      },
+      "reservoir": {
+        "temperature_k": 335,
+        "pressure_pa": 105000,
+        "mole_fractions": {
+          "O2": 0.168,
+          "N2": 0.632,
+          "H2O": 0.2
+        }
+      }
+    },
+    "condensation": {
+      "duration_s": "1",
+      "cell": {
+        "temperature_k": 330,
+        "inventories_mol": {
+          "O2": 6.657e-05,
+          "N2": 0.00025043,
+          "H2O": 0.00012
+        }
+      },
+      "reservoir": {
+        "temperature_k": 315,
+        "pressure_pa": 100000,
+        "mole_fractions": {
+          "O2": 0.1995,
+          "N2": 0.7505,
+          "H2O": 0.05
+        }
+      }
+    }
+  },
+  "sources": {
+    "water": {
+      "url": "https://iapws.org/technical-guidance/release/IAPWS-95",
+      "local_document": "data/sandbox/water/IAPWS95-2018.pdf",
+      "locator": "R6-95(2018) Eq4-6, Tables1-3; thermodynamic properties derived from Helmholtz energy",
+      "scope": "pure water; existing adapter limited to 293-500K and stable phases; current pressure bracket 90-110kPa"
+    },
+    "water_vapor": {
+      "derivation": "IAPWS ideal enthalpy with existing common energy offset. Standard ideal entropy from Eq5 and Table3 at fixed 1bar; pressure entropy -R_mix ln(p/p_ref); u=h-R_mix*T. Native fitted R is retained inside IAPWS, with the small fixed-R bridge explicitly approximate.",
+      "reference_pressure": "1bar fixed convention matching the existing chemical model; changing it without transforming standard entropy changes the approximate model."
+    },
+    "water_mass": {
+      "value_kg_mol": 0.018015268,
+      "locator": "iapws 1.5.5, iapws/_iapws.py line48 M=18.015268 g/mol; IAPWS R6-95(2018) section2 explains molar conversion but does not print that M value",
+      "scope": "explicit implementation molar convention for both phases, not rounded NIST water molecular weight; binary conversion of g/mol to kg/mol differs from the JSON literal by one last-bit rounding"
+    },
+    "carrier_caloric": "Bundled NIST O2/N2 Shomate ranges and reference constants; see thermochemistry_file",
+    "geometry_and_transport": "Explicit virtual geometry and boundary coefficients from D-B2, chosen only for a fluid-cell computation. No solid or borrowed material Cp is used. These coefficients are not measured for brick, water-filled pores, or a real apparatus.",
+    "phase_constraint": "Local instantaneous phase equilibrium: mu_l(T,P_total)=mu_v_ideal(T,p_water) when liquid exists; all-vapor states satisfy mu_v<=mu_l. Flat pure-water interface with no dissolved gas, curvature, capillary or sorption term; not a kinetic law or an exact IAPWS humid-air mixture. Carrier must remain positive; incipient liquid TP must remain on the stable compressed-liquid domain over all inverse evaluations.",
+    "numerics": "Root-file analyst choices. Total-water/carrier/U explicit midpoint, then phase equilibrium decode at fixed total U. No extra latent-heat source, clipping, hidden timestep adaptation, or inferred real-material accuracy. Prescribed brackets define this demonstration domain.",
+    "source_identity": "Local metadata and runtime version are recorded; source bytes are not attested. No SHA generation/comparison and no legacy host digest construction.",
+    "phase_balance_derivation": "Conserve W=Nl+Nv and Vg=V-Nl*M/rho_l(T,P), solve P=(Nc+Nv)*R*T/Vg and pv=peq(T,P) on Nl in [0,W]. Classify the all-vapor candidate using pv<=peq first. Total U=sum(Ngas*u_gas)+Nl*u_l, with u_gas=h_gas-R_mix*T."
+  },
+  "verification": {
+    "relative_step_ratios": [
+      2,
+      2
+    ],
+    "source_reference_temperatures_k": [
+      300,
+      330,
+      340
+    ],
+    "closed_cell_temperature_k": 330,
+    "closed_cell_heat_inputs_j": [
+      -0.05,
+      0,
+      0.05,
+      0.8
+    ],
+    "phase_boundary_relative_water_offsets": [
+      -1e-06,
+      0,
+      1e-06
+    ]
+  }
+}
