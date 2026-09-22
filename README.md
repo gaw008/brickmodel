@@ -6,6 +6,8 @@
 
 项目按 [总规范](docs/BRICK_PHYSICS_PROJECT_SPEC.md) 建设独立的 `sludge_sandbox` 物理沙盒；[V0已有成果审查](docs/GOAL_BRICK_PHYSICS_SANDBOX.md)已完成限定范围，继续采用 [开发与验证分开的阶段 Goal](docs/sandbox/STAGED_GOALS.md)。已实现来源/材料账目、热化学、水物性、守恒输运与反应、规定变形储能、耗尽积分及独立账本检查；[原生冷却能量接口](docs/sandbox/research/cooling-energy-host-v1/REPORT.md)通过限定制造半板验证。真实材料查询包括[原污泥95°C离散解吸物性](docs/sandbox/research/arlabosse95/README.md)、低温干基比热和同来源纯方解石热化学。完整原污泥材料、湿坯至冷却耦合及三机制公开实验验证仍未完成。
 
+2026-09-22两小时连续开发新增[相变时刻、来源快照续算、完整熵账及等价压力根](docs/sandbox/research/water-column-events-v1/REPORT.md)，并补充[ENEA热解产物证据与离线算术](docs/sandbox/research/enea-pyrolysis-products-v1/REPORT.md)。干燥事件网格比较达到限定目标；冷凝空间精度仍未通过，边界液水集中问题已记录。真实材料与完整烧砖模型资格不变。
+
 2026-09-22新增[一维液汽/载气通道与石英储热体](docs/sandbox/research/equilibrium-water-column-v1/REPORT.md)：实际模拟40s升温、局部蒸发、液水耗尽后通气和低温冷却，11组完整轨迹保留来源与收支。8→16格及时间精度比较达到预设数值目标，快速水物性表示单独复核；这是条件通道研究，M1真实砖干燥及[剩余材料阶段](docs/sandbox/research/equilibrium-water-column-v1/NEXT_PHASES.md)仍受资料和现实验证限制。
 
 [CLI/Python入口](docs/sandbox/CLI.md)支持限定湿态验证案例、保存及重放；[保存来源运行视图](docs/sandbox/research/source-view-v1/IMPLEMENTATION.md)提供`inspect`、`export`及`ui --view-source-run`，可按原观测与空间单元追查来源。当前资格、检查和应用边界见 [Goal进度](docs/sandbox/GOAL_STATUS.md) 与 [验收矩阵](docs/sandbox/ACCEPTANCE_MATRIX.md)。下文`sludge-vme`仍属于早期synthetic原型，不能作为新沙盒全流程入口。

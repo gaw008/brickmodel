@@ -1,5 +1,7 @@
 # 同一材料一维全周期闭合判断
 
+**2026-09-22两小时窗口增量：** [相变/续算/熵账](research/water-column-events-v1/REPORT.md)提升通用低温核及其可追查性；冷凝空间比较和边界液体库存定义仍有未解决问题。新增[ENEA官方2024热解产物](research/enea-pyrolysis-products-v1/REPORT.md)提供四炉温的炭、油、水相、气体产率及油CHONS，缩小终态组成未知；它不改变下文Cedrone原实验未收集气液的事实，也不能自动证明两报告每个试样相同。仍缺配对热历史、全产物定量组成、供氧速率和相容量热参考，不能据此放行有限时间反应或MIA3全周期。当前[材料任务记录](research/water-column-events-v1/MATERIAL_DEPENDENCIES.md)保留这些区别。
+
 **2026-09-22更新：** [纯水/载气通道和外置石英储热体](research/equilibrium-water-column-v1/REPORT.md)已实际完成低温相变、共同气流、储热及程序化边界的空间耦合，并通过限定时间/空间比较。它推进下文第2/5项的通用数值基础，但不提供Arlabosse、黏土或MIA3的缺失材料关系。真实同材料全周期仍未闭合，当前剩余阶段见[依赖表](research/equilibrium-water-column-v1/NEXT_PHASES.md)。以下原判断及失败证据保留。
 
 2026-09-12。有限只读核查 Goal §§6/8/11、§4 的近似许可、当前 KNOWN_GAPS/ACCEPTANCE_MATRIX、SOURCE_COVERAGE，以及下列阶段报告。未检索、下载、拟合或运行物性；核查原稿保存于本阶段证据中。“缺公开证据”指已取得并核读的公开资料中缺少，不是断言全球不存在。

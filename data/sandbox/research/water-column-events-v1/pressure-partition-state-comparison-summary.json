@@ -1,0 +1,63 @@
+{
+  "settings": {
+    "trajectories": {
+      "drying64": "data/sandbox/research/water-column-events-v1/sixty-four-local-events.jsonl",
+      "condensation16": "data/sandbox/research/water-column-events-v1/condensation-extended-sixteen-base.jsonl"
+    },
+    "record_kinds": [
+      "initial",
+      "sample",
+      "phase_event"
+    ],
+    "comparison_budgets": {
+      "liquid_difference_mol": 1e-12,
+      "pressure_difference_pa": 0.001,
+      "energy_difference_j": 1e-07,
+      "new_pressure_closure_residual_pa": 0.001
+    },
+    "basis": "Pre-run numerical comparison with saved nested-root states; retain source reconstruction scales and inventory target. No coefficient or physical-law fitting."
+  },
+  "results": [
+    {
+      "name": "drying64",
+      "trajectory": "data/sandbox/research/water-column-events-v1/sixty-four-local-events.jsonl",
+      "states_compared": 24704,
+      "maximum_absolute_differences": {
+        "liquid_difference_mol": 1.4134862307306137e-19,
+        "pressure_difference_pa": 2.473825588822365e-09,
+        "energy_difference_j": 5.662137425588298e-15,
+        "new_pressure_closure_residual_pa": 2.6934139896184206e-07
+      },
+      "within_numerical_budgets": {
+        "liquid_difference_mol": true,
+        "pressure_difference_pa": true,
+        "energy_difference_j": true,
+        "new_pressure_closure_residual_pa": true
+      },
+      "phase_classification_differences": 0,
+      "minimum_new_liquid_mol": 0.0
+    },
+    {
+      "name": "condensation16",
+      "trajectory": "data/sandbox/research/water-column-events-v1/condensation-extended-sixteen-base.jsonl",
+      "states_compared": 9520,
+      "maximum_absolute_differences": {
+        "liquid_difference_mol": 6.2511031507367365e-19,
+        "pressure_difference_pa": 2.7066562324762344e-09,
+        "energy_difference_j": 2.4868995751603507e-14,
+        "new_pressure_closure_residual_pa": 2.661545295268297e-07
+      },
+      "within_numerical_budgets": {
+        "liquid_difference_mol": true,
+        "pressure_difference_pa": true,
+        "energy_difference_j": true,
+        "new_pressure_closure_residual_pa": true
+      },
+      "phase_classification_differences": 0,
+      "minimum_new_liquid_mol": 0.0
+    }
+  ],
+  "elapsed_s": 9.368850875180215,
+  "qualification": "Same recorded sources and states, two algebraic phase algorithms. Not independent material validation.",
+  "detailed_results_archive": "compressed/pressure-partition-state-comparison.json.gz"
+}

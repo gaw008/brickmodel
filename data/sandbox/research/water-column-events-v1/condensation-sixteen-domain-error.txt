@@ -1,0 +1,59 @@
+Traceback (most recent call last):
+  File "<repository>/examples/sandbox/run_implicit_equilibrium_water_column.py", line 279, in <module>
+    main()
+  File "<repository>/examples/sandbox/run_implicit_equilibrium_water_column.py", line 38, in main
+    run(args, Path(source_directory))
+  File "<repository>/examples/sandbox/run_implicit_equilibrium_water_column.py", line 175, in run
+    message = solver.step()
+              ^^^^^^^^^^^^^
+  File "<repository>/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/base.py", line 201, in step
+    success, message = self._step_impl()
+                       ^^^^^^^^^^^^^^^^^
+  File "<repository>/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/bdf.py", line 371, in _step_impl
+    converged, n_iter, y_new, d = solve_bdf_system(
+                                  ^^^^^^^^^^^^^^^^^
+  File "<repository>/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/bdf.py", line 43, in solve_bdf_system
+    f = fun(t_new, y)
+        ^^^^^^^^^^^^^
+  File "<repository>/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/base.py", line 158, in fun
+    return self.fun_single(t, y)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "<repository>/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/base.py", line 24, in fun_wrapped
+    return np.asarray(fun(t, y), dtype=dtype)
+                      ^^^^^^^^^
+  File "<repository>/examples/sandbox/run_implicit_equilibrium_water_column.py", line 113, in rhs
+    gases, _ = decode(vector)
+               ^^^^^^^^^^^^^^
+  File "<repository>/examples/sandbox/run_implicit_equilibrium_water_column.py", line 106, in decode
+    gas, point = equilibrium_from_conserved_state(tuple(map(float, cell)))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repository>/examples/sandbox/run_implicit_equilibrium_water_column.py", line 99, in equilibrium_from_conserved_state
+    return host.decode(dict(zip(order, state[:-1], strict=True)), state[-1], inverse_seed[0])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repository>/src/sludge_sandbox/equilibrium_water_column.py", line 55, in decode
+    result = root_scalar(residual, method='secant', x0=temperature_seed_k,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repository>/.venv/lib/python3.12/site-packages/scipy/optimize/_root_scalar.py", line 304, in root_scalar
+    r, sol = methodc(f, x0, args=args, fprime=None, fprime2=None,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repository>/.venv/lib/python3.12/site-packages/scipy/optimize/_zeros_py.py", line 370, in newton
+    q0 = func(p0, *args)
+         ^^^^^^^^^^^^^^^
+  File "<repository>/src/sludge_sandbox/equilibrium_water_column.py", line 50, in residual
+    return self.at_temperature(inventories_mol, float(temperature))[1][
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repository>/src/sludge_sandbox/equilibrium_water_column.py", line 39, in at_temperature
+    gas, point = self.fluid.at_temperature(inventories_mol, temperature_k)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repository>/src/sludge_sandbox/equilibrium_water_cell.py", line 82, in at_temperature
+    liquid, molar_volume, mu_liquid, equilibrium_pressure = liquid_at(pressure)
+                                                            ^^^^^^^^^^^^^^^^^^^
+  File "<repository>/src/sludge_sandbox/equilibrium_water_cell.py", line 73, in liquid_at
+    liquid = self.water.state_tp(temperature_k, pressure, phase='liquid')
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repository>/src/sludge_sandbox/gibbs_water_table.py", line 60, in state_tp
+    p = self.gibbs_properties(temperature_k, pressure_pa)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repository>/src/sludge_sandbox/gibbs_water_table.py", line 43, in gibbs_properties
+    raise ValueError('state outside the declared liquid Gibbs-table domain')
+ValueError: state outside the declared liquid Gibbs-table domain

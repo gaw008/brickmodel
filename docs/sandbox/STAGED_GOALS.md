@@ -1,5 +1,7 @@
 # 独立阶段 Goal 顺序
 
+**2026-09-22 UTC两小时窗口更新：** 已按开发→科学核算推进[相变事件、检查点续算、熵账及相平衡求解](research/water-column-events-v1/REPORT.md)，原误差目标保留。干燥事件网格比较推进到64格；冷凝空间目标仍未通过，并发现边界库存集中迹象。下一通用开发需先明确表面液水/体输运的物理边界，再选离散方案；不能只扩表或细化根容差。新增[ENEA产物终态](research/enea-pyrolysis-products-v1/REPORT.md)尚不放行有限时间化学。原生M1仍blocked，真实全周期阶段仍待材料闭合；本窗口没有创建完整替代Goal。
+
 **2026-09-22 UTC最新：** 用户已授权按依赖连续推进剩余阶段。现完成V-B3、D-B4及V-B4的限定范围，见[一维液汽通道报告](research/equilibrium-water-column-v1/REPORT.md)和[剩余依赖](research/equilibrium-water-column-v1/NEXT_PHASES.md)。时间/空间采样比较与来源/守恒核验通过指定目标，真实材料资格仍未取得。原生M1 Goal仍blocked，无替代全项目Goal；不是全部剩余阶段已完成。以下“下一V-B3”等文字保留历史语境。
 
 **2026-09-22 UTC最新工作顺序：** 用户在发送M1资料请求后允许先推进其他可独立开发部分，本轮完成[D-B3液汽平衡/可变载气单元](research/equilibrium-water-boundary-v1/REPORT.md)开发及科学自查，下一独立V-B3尚未完成。M1材料准入仍阻塞；本轮不是M1替代Goal，没有新建原生Goal。以下“不自动回到D-B3”等表述是本次用户调整之前的历史决定。
