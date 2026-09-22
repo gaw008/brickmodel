@@ -8,8 +8,9 @@
 - `archive-manifest.json`给出每个成员名称、压缩/原始字节数、记录类别计数、末次状态和检查点；`archive-manifest-initial.json`是最后64格续算仍运行时的首次封存记录。压缩件实际读回并解析JSON，没有SHA。
 - `pressure-partition-state-comparison*-summary.json`是两次34,224状态比较摘要；逐状态差值位于相应`compressed/*.json.gz`。v2追加稀薄分支/分母量级指标，不改变旧结果。
 - `event-convergence-matrix-v2.json`保存原干燥8/16/32/64格及积分/扫描细化；v1保留旧分析字段。`pressure-root-full-trajectory-comparison.json`比较相平衡算法变更前后完整轨迹。
-- `condensation-convergence-matrix.json`是至32格的比较；64格最终比较独立保存，不能用旧结果冒充新运行通过。`condensation-boundary-profiles.json`记录准确34s快照，包括原64格失败前缀。
+- `condensation-convergence-matrix.json`是至32格的比较；64格最终比较见`condensation-convergence-matrix-v2.json`，不能用旧结果冒充新运行通过。`condensation-boundary-profiles.json`记录准确34s快照，包括原64格失败前缀。
 - `*-entropy*.json`为BDF多项式上的2/4点积分核算；`*-source*.json`为直接IAPWS/独立表达式重建。两个工作流的独立性和共享部分见主报告。
+- `pressure-root-domain-review.json`把两条64格轨迹全部458,368个接受库存与各自Gibbs矩形的摩尔体积系数界配对，核对单压力根的稀薄支路前提；不含未保存的迭代试探。
 - `execution-notes.json`和两份`*-error.txt`记录失败、主动停止、修复依据和未实施任务。早期无检查点的中断记录仅作失败证据，不能使用续算命令。
 
 没有打包私人通信、原文PDF/图片或依赖环境。物性快照在轨迹头保存；新增ENEA来源数值位于相邻独立目录。
