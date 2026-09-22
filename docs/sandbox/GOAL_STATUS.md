@@ -1,5 +1,9 @@
 # 物理沙盒 Goal 进度
 
+## 2026-09-22 UTC M1启动：A输入关口未准入开发
+
+用户授权执行[M1](../../plans/M1_REAL_CLAY_DRYING.md)，Goal于02:54:38 UTC创建，起点0bebd05。首选Silva2018；实际取得Özen2014原论文并核读同家族Mancuhan2016作者公开文本。新增备选改善在线观测证据，但温度观测位置、同次边界/记录身份及适用材料识别尚未闭合。见[报告](research/real-clay-drying-m1/REPORT.md)及[未发送请求](research/real-clay-drying-m1/DATA_REQUEST_DRAFT.md)。工程误差目标保留，运行物性不填默认值，B/C/D/E未执行；M1未完成，不因交付本报告获得材料/预测/训练资格。Goal实际状态以工具为准，本轮未联系作者。
+
 ## 2026-09-21 UTC V-B2：低温固定液水湿单元限定验证完成
 
 - 开发a4b0ba9已推送并结束D-B2；另立[V-B2](research/fixed-liquid-boundary-review-v1/REPORT.md)，完成五次/110步、770个扣舍入收支等式及气液V/P/U复算。最大独立能量反演残差约8.20e−10J，三档步长温压差缩小比约4.103。
