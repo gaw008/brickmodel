@@ -25,9 +25,17 @@ def main():
     parser.add_argument('--parameters',type=Path,required=True)
     parser.add_argument('--trajectory',type=Path,required=True)
     parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--local-balance-parameters',type=Path)
     args=parser.parse_args();settings=json.loads(args.parameters.read_text());started=time.monotonic()
-    rows=[json.loads(line) for line in args.trajectory.read_text().splitlines()]
-    header=rows[0];config=header['parameters'];n=header['cell_count']
+    local_policy=json.loads(args.local_balance_parameters.read_text()) if args.local_balance_parameters else None
+    def read_rows():
+        with args.trajectory.open() as stream:
+            for line in stream:
+                yield json.loads(line)
+    def accepted_rows():
+        return (row for row in read_rows() if row['kind']=='accepted')
+    records=read_rows();header=next(records);initial=next(records);records.close()
+    config=header['parameters'];n=header['cell_count']
     species=config['boundary_program']['values']['species_order'];width=len(species)+1
     single=deepcopy(header);single['parameters']=deepcopy(config)
     for key in ('available_fluid_volume_m3','dry_mass_kg'):
@@ -54,12 +62,12 @@ def main():
         return [source.between_states(a,b,internal) for a,b in zip(states[:-1],states[1:],strict=True)]+[
             source.fluxes(at_time,states[-1])]
 
-    initial=rows[1];accepted=[row for row in rows if row['kind']=='accepted']
     baseline=[sum(Fraction(initial['conserved_state'][i*width+k]) for i in range(n)) for k in range(width)]
     maxima={'energy_j':0.,'pressure_pa':0.,'mu_j_mol':0.};worst={}
     balances=[0.]*width;count=0;faces_count=0;face_n=face_u=0.;min_production=None
     entropy_by_time={};branch_counts={'source':0,'low':0}
-    for row in rows:
+    for row in read_rows():
+        terminal=row
         if row['kind'] not in settings['source_state_kinds']:
             continue
         v=row['conserved_state']
@@ -96,7 +104,9 @@ def main():
             nodes,weights=leggauss(degree);seeds=[p['temperature_k'] for p in initial['states']]
             s0=entropy_by_time[('initial',initial['time_s'])];previous_s=s0
             external=production=0.;max_residual=0.;minimum_step=None;minimum_rate=None;steps=[]
-            for row in accepted:
+            local_integrals=np.zeros((n,width));local_maxima=np.zeros(width)
+            local_initial=np.array(initial['conserved_state'][:n*width]).reshape(n,width)
+            for row in accepted_rows():
                 dense=row['dense_output'];left,right=dense['start_time_s'],dense['end_time_s']
                 half_step=(right-left)/2;center=(left+right)/2;previous_external=external
                 for node,weight in zip(nodes,weights,strict=True):
@@ -105,6 +115,12 @@ def main():
                         _,p=host.decode(dict(zip(species,map(float,cell[:-1]),strict=True)),float(cell[-1]),seeds[i])
                         seeds[i]=p['temperature_k'];states.append(p)
                     rates=faces(at_time,states);scale=float(half_step*weight)
+                    if local_policy is not None:
+                        for i,rate in enumerate(rates):
+                            outward=np.array([rate['net_mol_s'][k] for k in species]+[rate['energy_out_w']])
+                            local_integrals[i]-=scale*outward
+                            if i+1<n:
+                                local_integrals[i+1]+=scale*outward
                     external+=scale*rates[-1]['external_entropy_w_k']
                     production+=scale*math.fsum(p['production_w_k'] for p in rates)
                     local=min(p['production_w_k'] for p in rates)
@@ -116,17 +132,36 @@ def main():
                 steps.append({'time_s':right,'entropy_balance_residual_j_k':residual,
                     'system_entropy_j_k':entropy,'external_entropy_integral_j_k':external,
                     'all_faces_production_integral_j_k':production,'step_total_entropy_change_j_k':step_change})
+                if local_policy is not None:
+                    local_now=np.array(row['conserved_state'][:n*width]).reshape(n,width)
+                    residuals=local_now-local_initial-local_integrals
+                    local_maxima=np.maximum(local_maxima,np.max(np.abs(residuals),axis=0))
+                    steps[-1]['local_integrals']=local_integrals.tolist()
             result={'quadrature_order':degree,'maximum_entropy_balance_residual_j_k':max_residual,
                 'minimum_step_total_entropy_change_j_k':minimum_step,'minimum_face_production_w_k':minimum_rate,
                 'final_total_entropy_change_j_k':previous_s-s0+external,'steps':steps,
                 'within_balance_budget':max_residual<=budget['entropy_balance_j_k'],
                 'negative_steps_beyond_budget':sum(p['step_total_entropy_change_j_k'] < -budget['negative_step_entropy_allowance_j_k'] for p in steps)}
+            if local_policy is not None:
+                result['local_balance']={'maximum_species_residuals_mol':dict(zip(species,map(float,local_maxima[:-1]),strict=True)),
+                    'maximum_energy_residual_j':float(local_maxima[-1]),
+                    'within_budgets':bool(max(local_maxima[:-1])<=local_policy['inventory_balance_mol'] and local_maxima[-1]<=local_policy['energy_balance_j'])}
             entropy_results.append(result);print(json.dumps({k:v for k,v in result.items() if k!='steps'}),flush=True)
     low,high=entropy_results
     quadrature={key:max(abs(a[key]-b[key]) for a,b in zip(low['steps'],high['steps'],strict=True))
                 for key in ('external_entropy_integral_j_k','all_faces_production_integral_j_k')}
+    local_review=None
+    if local_policy is not None:
+        differences=np.max([np.max(np.abs(np.array(a['local_integrals'])-np.array(b['local_integrals'])),axis=0)
+                            for a,b in zip(low['steps'],high['steps'],strict=True)],axis=0)
+        local_review={'policy':local_policy,'maximum_integral_quadrature_differences':dict(zip(species+['energy_j'],map(float,differences),strict=True)),
+            'within_quadrature_budgets':bool(max(differences[:-1])<=local_policy['inventory_quadrature_mol'] and differences[-1]<=local_policy['energy_quadrature_j']),
+            'scope':'Each cell compared with independently integrated face fluxes, sealed left face; shared recorded equilibrium decoder, no material validation.'}
+        for result in entropy_results:
+            for step in result['steps']:
+                del step['local_integrals']
     result={'trajectory':str(args.trajectory),'settings':settings,'cell_count':n,
-        'completed':rows[-1]['kind']=='summary' and rows[-1]['status']=='completed',
+        'completed':terminal['kind']=='summary' and terminal['status']=='completed',
         'source_state_count':count,'branch_state_counts':branch_counts,'source_maxima':maxima,'worst_source_states':worst,
         'maximum_inventory_balance_residual_mol':max(balances[:-1]),'maximum_energy_balance_residual_j':balances[-1],
         'geometry_differences':deltas,'face_reconstruction':{'faces':faces_count,'max_inventory_rate_difference_mol_s':face_n,
@@ -140,6 +175,7 @@ def main():
             'fixed_inventory_calorimetry':all(p['cell_cv_j_k']>0 and abs(p['difference_j_k'])<=budget['calorimetry_j_k'] for p in calorimetry),
             'quadrature':max(quadrature.values())<=budget['entropy_quadrature_j_k']},
         'material_qualified':False,'training_eligible':False,
+        'local_conservation_review':local_review,
         'scope':'Conditional trajectory, independent entropy/face/source integrals with shared equilibrium decoder and IAPWS backend.',
         'elapsed_s':time.monotonic()-started}
     with args.output.open('x') as stream:
