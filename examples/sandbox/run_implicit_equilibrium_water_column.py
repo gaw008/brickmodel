@@ -13,6 +13,7 @@ from tempfile import TemporaryDirectory
 import time
 
 import numpy as np
+import scipy
 from scipy.integrate import BDF
 from scipy.sparse import lil_matrix
 
@@ -25,6 +26,8 @@ def main():
     parser.add_argument('--mesh')
     parser.add_argument('--tolerance', choices=('base', 'refined'))
     parser.add_argument('--stop-at', help='Name of an explicit root-parameter stop point')
+    parser.add_argument('--dense-policy', type=Path,
+                        help='Root parameter file requesting reproducible dense polynomials')
     parser.add_argument('--output', required=True, type=Path)
     args = parser.parse_args()
     if args.parameters and (args.mesh is None or args.tolerance is None):
@@ -145,6 +148,11 @@ def run(args, source_directory):
         else:
             emit(header)
             emit({'kind': 'initial', 'time_s': knots[0], 'states': initial, 'exterior_integrals': [0.]*width})
+        if args.dense_policy:
+            emit({'kind': 'dense_recording_policy', 'settings': json.loads(args.dense_policy.read_text()),
+                  'scipy_version': scipy.__version__,
+                  'representation': 'D0 + sum_k Dk product_j<k((t-shift_j)/denominator_j)',
+                  'source': 'scipy.integrate._ivp.bdf.BdfDenseOutput; recorded numeric coefficients'})
         statistics = checkpoint['solver_statistics'].copy() if args.resume_from else []
         samples = checkpoint['samples'] if args.resume_from else 0
         events = checkpoint['phase_events'].copy() if args.resume_from else []
@@ -168,11 +176,18 @@ def run(args, source_directory):
                 if solver.status == 'failed':
                     raise RuntimeError(message)
                 accepted += 1
-                emit({'kind': 'accepted', 'segment': segment, 'time_s': float(solver.t),
+                interpolant = solver.dense_output()
+                accepted_record = {'kind': 'accepted', 'segment': segment, 'time_s': float(solver.t),
                       'step_s': float(solver.step_size), 'rhs_evaluations': solver.nfev,
                       'jacobian_evaluations': solver.njev, 'linear_factorizations': solver.nlu,
-                      'conserved_state': solver.y.tolist()})
-                interpolant = solver.dense_output()
+                      'conserved_state': solver.y.tolist()}
+                if args.dense_policy:
+                    accepted_record['dense_output'] = {'start_time_s': previous_time,
+                        'end_time_s': float(solver.t), 'order': int(interpolant.order),
+                        'shifts_s': interpolant.t_shift.tolist(),
+                        'denominators_s': interpolant.denom.tolist(),
+                        'differences': interpolant.D.tolist()}
+                emit(accepted_record)
                 def event_points(at_time):
                     return decode(interpolant(at_time))[1]
 

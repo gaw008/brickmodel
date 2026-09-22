@@ -1,0 +1,23 @@
+{
+  "schema": "water_column_entropy_review_v1",
+  "quadrature_orders": [
+    2,
+    4
+  ],
+  "solid_entropy_quadrature": {
+    "absolute_tolerance_j_mol_k": 1e-11,
+    "relative_tolerance": 1e-12,
+    "maximum_subintervals": 100
+  },
+  "numerical_comparison_budgets": {
+    "entropy_balance_j_k": 1e-07,
+    "quadrature_difference_j_k": 1e-07,
+    "negative_step_entropy_allowance_j_k": 1e-11,
+    "temperature_inverse_energy_j": 1e-07
+  },
+  "definition": "Offline reconstruction on recorded BDF dense polynomials. System entropy includes ideal-gas mixture, pure liquid and fixed-amount quartz entropy differences. Independent scalar face entropy and external reservoir entropy changes are quadrature-integrated. Targets are numerical research budgets, not universal second-law or material certification.",
+  "scipy_source": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.BDF.html",
+  "entropy_reference": "The constant quartz entropy reference cancels from changes because its amount is fixed. Gas/liquid standard entropies use the recorded source convention; formation-energy offsets cancel correctly through chemical potentials.",
+  "validity": "Only the declared conditional channel and sampled/dense numerical trajectory. No proof for arbitrary states, constitutive parameters or unresolved roots.",
+  "property_cache_entries": 2048
+}

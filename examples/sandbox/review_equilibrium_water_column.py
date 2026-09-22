@@ -12,6 +12,49 @@ from iapws import IAPWS95
 from scipy.integrate import quad
 
 
+def reconstruct_face_rates(config, states, boundary, surface, ideal_properties, gas_constant):
+    """Independent scalar reconstruction of the registered face equations."""
+    masses = config['molar_masses_kg_mol']
+    transport = config['transfer']
+    gas_settings = transport['gas']
+    area, dx = config['geometry']['area_m2'], config['geometry']['length_m']/len(states)
+    gases = [{'t': p['temperature_k'], 'p': p['pressure_pa'],
+              'x': {k: v/math.fsum(p['amounts_mol'].values()) for k, v in p['amounts_mol'].items()}}
+             for p in states]
+    gases.append({'t': boundary['gas_temperature_k'], 'p': boundary['total_pressure_pa'],
+                  'x': boundary['mole_fractions']})
+    for g in gases:
+        mean_mass = math.fsum(g['x'][k]*m for k, m in masses.items())
+        g['y'] = {k: g['x'][k]*m/mean_mass for k, m in masses.items()}
+    faces = []
+    for i, (left, right) in enumerate(zip(gases[:-1], gases[1:], strict=True)):
+        dr = transport['external_distance_m'] if i == len(states)-1 else dx/2
+        distance, weight = dx/2+dr, dr/(dx/2+dr)
+        tf = weight*left['t']+(1-weight)*right['t']
+        pf = weight*left['p']+(1-weight)*right['p']
+        xf = {k: weight*left['x'][k]+(1-weight)*right['x'][k] for k in masses}
+        total = math.fsum(xf.values())
+        xf = {k: value/total for k, value in xf.items()}
+        mean_mass = math.fsum(xf[k]*m for k, m in masses.items())
+        rho = pf*mean_mass/(gas_constant*tf)
+        star = {k: -rho*(m/mean_mass)*gas_settings['effective_diffusivities_m2_s'][k]*(
+            right['x'][k]-left['x'][k])/distance for k, m in masses.items()}
+        total_star = math.fsum(star.values())
+        correction_donor = left if total_star < 0 else right
+        diffusion = {k: area*(v-total_star*correction_donor['y'][k])/masses[k] for k, v in star.items()}
+        velocity = -gas_settings['permeability_m2']*gas_settings['relative_permeability']/gas_settings[
+            'viscosity_pa_s']*(right['p']-left['p'])/distance
+        donor = left if velocity > 0 else right
+        advection = {k: area*rho*donor['y'][k]*velocity/m for k, m in masses.items()}
+        heat = (-surface['convective_in_w'] if i == len(states)-1 else
+                transport['conductivity_w_m_k']*area*(left['t']-right['t'])/distance)
+        energy = heat+math.fsum(diffusion[k]*ideal_properties(k, tf)[0]+
+            advection[k]*ideal_properties(k, donor['t'])[0] for k in masses)
+        faces.append({'energy_out_w': energy,
+                      'exchange': {'net_mol_s': {k: diffusion[k]+advection[k] for k in masses}}})
+    return faces, -surface['radiative_in_w']
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--parameters', required=True, type=Path)
@@ -126,47 +169,6 @@ def main():
                 zip(ends, row['criterion_bracket_pa'], strict=True)],
             'direct_source_brackets_transition': [(v > 0) for v in ends] == expected_wet})
 
-    def reconstructed_rates(states, boundary, surface):
-        """Independent scalar reconstruction of the registered face equations."""
-        masses = config['molar_masses_kg_mol']
-        transport = config['transfer']
-        gas_settings = transport['gas']
-        area, dx = config['geometry']['area_m2'], config['geometry']['length_m']/len(states)
-        gases = [{'t': p['temperature_k'], 'p': p['pressure_pa'],
-                  'x': {k: v/math.fsum(p['amounts_mol'].values()) for k, v in p['amounts_mol'].items()}}
-                 for p in states]
-        gases.append({'t': boundary['gas_temperature_k'], 'p': boundary['total_pressure_pa'],
-                      'x': boundary['mole_fractions']})
-        for g in gases:
-            mean_mass = math.fsum(g['x'][k]*m for k, m in masses.items())
-            g['y'] = {k: g['x'][k]*m/mean_mass for k, m in masses.items()}
-        faces = []
-        for i, (left, right) in enumerate(zip(gases[:-1], gases[1:], strict=True)):
-            dr = transport['external_distance_m'] if i == len(states)-1 else dx/2
-            distance, weight = dx/2+dr, dr/(dx/2+dr)
-            tf = weight*left['t']+(1-weight)*right['t']
-            pf = weight*left['p']+(1-weight)*right['p']
-            xf = {k: weight*left['x'][k]+(1-weight)*right['x'][k] for k in masses}
-            total = math.fsum(xf.values())
-            xf = {k: value/total for k, value in xf.items()}
-            mean_mass = math.fsum(xf[k]*m for k, m in masses.items())
-            rho = pf*mean_mass/(gas_constant*tf)
-            star = {k: -rho*(m/mean_mass)*gas_settings['effective_diffusivities_m2_s'][k]*(
-                right['x'][k]-left['x'][k])/distance for k, m in masses.items()}
-            total_star = math.fsum(star.values())
-            correction_donor = left if total_star < 0 else right
-            diffusion = {k: area*(v-total_star*correction_donor['y'][k])/masses[k] for k, v in star.items()}
-            velocity = -gas_settings['permeability_m2']*gas_settings['relative_permeability']/gas_settings[
-                'viscosity_pa_s']*(right['p']-left['p'])/distance
-            donor = left if velocity > 0 else right
-            advection = {k: area*rho*donor['y'][k]*velocity/m for k, m in masses.items()}
-            heat = (-surface['convective_in_w'] if i == len(states)-1 else
-                    transport['conductivity_w_m_k']*area*(left['t']-right['t'])/distance)
-            energy = heat+math.fsum(diffusion[k]*ideal_properties(k, tf)[0]+
-                advection[k]*ideal_properties(k, donor['t'])[0] for k in masses)
-            faces.append({'energy_out_w': energy,
-                          'exchange': {'net_mol_s': {k: diffusion[k]+advection[k] for k in masses}}})
-        return faces, -surface['radiative_in_w']
 
     minimum = None
     negative = 0
@@ -179,7 +181,7 @@ def main():
             faces, radiation = row['rates'], row['surface_radiation_out_w']
         else:
             states, boundary = row['states'], row['boundary']
-            faces, radiation = reconstructed_rates(states, boundary, row['surface'])
+            faces, radiation = reconstruct_face_rates(config, states, boundary, row['surface'], ideal_properties, gas_constant)
         temperatures = [p['temperature_k'] for p in states]+[boundary['gas_temperature_k']]
         mus = [chemical_over_temperature(p['temperature_k'], {
             k: n*gas_constant*p['temperature_k']/p['gas_volume_m3'] for k, n in p['amounts_mol'].items()})
