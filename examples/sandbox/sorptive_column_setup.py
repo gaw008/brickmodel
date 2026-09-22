@@ -2,7 +2,7 @@
 from copy import deepcopy
 from dataclasses import dataclass
 
-from sorptive_gas_cell_setup import build_sorptive_cell
+from sorptive_gas_cell_setup import build_sorptive_cell, restore_sorptive_cell
 from sludge_sandbox.boundary_program import BoundaryProgram, ProgramIdentity
 from sludge_sandbox.gas_transport import ideal_gas_reservoir
 from sludge_sandbox.open_gas_boundary import GasBoundaryTransfer, open_gas_boundary_rate
@@ -44,6 +44,16 @@ class SorptiveColumn:
 
 def build_column(root,config,count):
     host=build_sorptive_cell(root,cell_parameters(config,count))
+    return column_with_host(host,config,count)
+
+
+def restore_column(header,directory):
+    single={**header,'parameters':header['cell_parameters']}
+    host=restore_sorptive_cell(single,directory)
+    return column_with_host(host,header['parameters'],header['cell_count'])
+
+
+def column_with_host(host,config,count):
     half=config['geometry']['length_m']/count/2
     inner={**config['transfer'],'area_m2':config['geometry']['face_area_m2'],
            'cell_distance_m':half,'reservoir_distance_m':half,
