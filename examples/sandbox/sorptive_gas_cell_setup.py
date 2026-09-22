@@ -21,7 +21,8 @@ def build_sorptive_cell(root, config):
         config['cell']['available_fluid_volume_m3'], config['reference_pressure_pa'], config['numerics'])
     excess_type, cell_type = {
         'sorptive_common_gas_cell_v1':(RecordedLowMoisture, EquilibriumSorptiveCell),
-        'source_sorptive_common_gas_cell_v1':(RecordedSourceSorption, EquilibriumSourceSorptiveCell)}[config['schema']]
+        'source_sorptive_common_gas_cell_v1':(RecordedSourceSorption, EquilibriumSourceSorptiveCell),
+        'source_sorptive_common_gas_column_v1':(RecordedSourceSorption, EquilibriumSourceSorptiveCell)}[config['schema']]
     excess = excess_type(json.loads((root/config['sorption_record_file']).read_text()))
     return cell_type(fluid, excess, config['cell']['dry_mass_kg'],
         config['cell']['dry_reference_temperature_k'], config['numerics']['warm_temperature_inverse'])

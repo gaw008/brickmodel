@@ -107,6 +107,18 @@ class SorptiveSource:
               'x':{k:point['amounts_mol'][k]/math.fsum(point['amounts_mol'].values()) for k in species}}
         right={'t':interpolate('gas_temperature_k'),'p':interpolate('total_pressure_pa'),
                'x':{k:float(np.interp(at_time,p['knot_times_s'],np.array(p['mole_fractions'])[:,i])) for i,k in enumerate(species)}}
+        return self.connection(left,right,gas)
+
+    def between_states(self,left,right,transfer):
+        def endpoint(point):
+            total=math.fsum(point['amounts_mol'].values())
+            return {'t':point['temperature_k'],'p':point['pressure_pa'],
+                    'x':{k:n/total for k,n in point['amounts_mol'].items()}}
+        return self.connection(endpoint(left),endpoint(right),transfer)
+
+    def connection(self,left,right,gas):
+        species=self.config['boundary_program']['values']['species_order']
+        masses=self.config['molar_masses_kg_mol']
         for end in [left,right]:
             mean=math.fsum(end['x'][k]*masses[k] for k in species)
             end['y']={k:end['x'][k]*masses[k]/mean for k in species}

@@ -1,0 +1,151 @@
+"""Independent source/face equations and whole-column N/U/entropy accounting.
+
+Geometry is reconstructed from root inputs. Entropy state decoding shares the
+recorded host; direct liquid properties share IAPWS95. No material certificate.
+"""
+import argparse
+from copy import deepcopy
+from fractions import Fraction
+import json
+import math
+from pathlib import Path
+from tempfile import TemporaryDirectory
+import time
+
+import numpy as np
+from numpy.polynomial.legendre import leggauss
+
+from audit_sorptive_gas_cell import polynomial
+from sorptive_gas_cell_setup import restore_sorptive_cell
+from sorptive_source_formulas import SorptiveSource
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--parameters',type=Path,required=True)
+    parser.add_argument('--trajectory',type=Path,required=True)
+    parser.add_argument('--output',type=Path,required=True)
+    args=parser.parse_args();settings=json.loads(args.parameters.read_text());started=time.monotonic()
+    rows=[json.loads(line) for line in args.trajectory.read_text().splitlines()]
+    header=rows[0];config=header['parameters'];n=header['cell_count']
+    species=config['boundary_program']['values']['species_order'];width=len(species)+1
+    single=deepcopy(header);single['parameters']=deepcopy(config)
+    for key in ('available_fluid_volume_m3','dry_mass_kg'):
+        single['parameters']['cell'][key]/=n
+    half=config['geometry']['length_m']/(2*n)
+    boundary={**config['transfer'],'area_m2':config['geometry']['face_area_m2'],'cell_distance_m':half}
+    internal={**boundary,'reservoir_distance_m':half,
+              'reservoir_conductivity_w_m_k':config['transfer']['cell_conductivity_w_m_k']}
+    single['parameters']['transfer']=boundary
+    source=SorptiveSource(single,settings['source_quadrature'])
+    geometry=header['geometry'];deltas={
+        'available_fluid_volume_m3_per_cell':geometry['available_fluid_volume_m3_per_cell']-config['cell']['available_fluid_volume_m3']/n,
+        'dry_mass_kg_per_cell':geometry['dry_mass_kg_per_cell']-config['cell']['dry_mass_kg']/n,
+        'cell_width_m':geometry['cell_width_m']-2*half}
+    for label,expected in [('internal_transfer',internal),('boundary_transfer',boundary)]:
+        for key,value in expected.items():
+            if isinstance(value,dict):
+                for name,amount in value.items():
+                    deltas[label+'.'+key+'.'+name]=geometry[label][key][name]-amount
+            else:
+                deltas[label+'.'+key]=geometry[label][key]-value
+
+    def faces(at_time,states):
+        return [source.between_states(a,b,internal) for a,b in zip(states[:-1],states[1:],strict=True)]+[
+            source.fluxes(at_time,states[-1])]
+
+    initial=rows[1];accepted=[row for row in rows if row['kind']=='accepted']
+    baseline=[sum(Fraction(initial['conserved_state'][i*width+k]) for i in range(n)) for k in range(width)]
+    maxima={'energy_j':0.,'pressure_pa':0.,'mu_j_mol':0.};worst={}
+    balances=[0.]*width;count=0;faces_count=0;face_n=face_u=0.;min_production=None
+    entropy_by_time={};branch_counts={'source':0,'low':0}
+    for row in rows:
+        if row['kind'] not in settings['source_state_kinds']:
+            continue
+        v=row['conserved_state']
+        for k in range(width):
+            value=sum(Fraction(v[i*width+k]) for i in range(n))+Fraction(v[n*width+k])-baseline[k]
+            balances[k]=max(balances[k],abs(float(value)))
+        entropy=[]
+        for i,p in enumerate(row['states']):
+            q=source.reconstruct(p);count+=1;entropy.append(q['entropy_j_k'])
+            branch_counts['source' if p['moisture_kg_kg_dry']>header['sorption_source']['join']['moisture_kg_kg'] else 'low']+=1
+            errors={'energy_j':q['internal_energy_j']-p['internal_energy_j'],
+                    'pressure_pa':q['pressure_pa']-p['pressure_pa'],'mu_j_mol':q['mu_vapor_minus_condensed_j_mol']}
+            for key,value in errors.items():
+                if abs(value)>maxima[key]:
+                    maxima[key]=abs(value);worst[key]={'time_s':row['time_s'],'cell':i,'signed_difference':value}
+        entropy_by_time[(row['kind'],row['time_s'])]=math.fsum(entropy)
+        if row['kind']=='accepted':
+            for original,review in zip(row['faces'],faces(row['time_s'],row['states']),strict=True):
+                faces_count+=1
+                face_n=max(face_n,*(abs(review['net_mol_s'][k]-original['exchange']['net_mol_s'][k]) for k in species))
+                face_u=max(face_u,abs(review['energy_out_w']-original['energy_out_w']))
+                min_production=review['production_w_k'] if min_production is None else min(min_production,review['production_w_k'])
+    budget=settings['comparison_budgets'];calorimetry=[];entropy_results=[]
+    with TemporaryDirectory(prefix='sorptive-column-audit-') as directory:
+        host=restore_sorptive_cell(single,Path(directory))
+        dt=settings['fixed_inventory_calorimetry']['temperature_step_k']
+        for t in settings['fixed_inventory_calorimetry']['temperatures_k']:
+            states=[host.at_temperature(initial['states'][0]['inventories_mol'],t+d)[1] for d in [-dt,dt]]
+            values=[source.reconstruct(p) for p in states]
+            cv=(states[1]['constitutive_internal_energy_j']-states[0]['constitutive_internal_energy_j'])/(2*dt)
+            tds=t*(values[1]['entropy_j_k']-values[0]['entropy_j_k'])/(2*dt)
+            calorimetry.append({'temperature_k':t,'cell_cv_j_k':cv,'t_ds_dt_j_k':tds,'difference_j_k':cv-tds})
+        for degree in settings['quadrature_orders']:
+            nodes,weights=leggauss(degree);seeds=[p['temperature_k'] for p in initial['states']]
+            s0=entropy_by_time[('initial',initial['time_s'])];previous_s=s0
+            external=production=0.;max_residual=0.;minimum_step=None;minimum_rate=None;steps=[]
+            for row in accepted:
+                dense=row['dense_output'];left,right=dense['start_time_s'],dense['end_time_s']
+                half_step=(right-left)/2;center=(left+right)/2;previous_external=external
+                for node,weight in zip(nodes,weights,strict=True):
+                    at_time=float(center+half_step*node);v=polynomial(dense,at_time);states=[]
+                    for i,cell in enumerate(v[:n*width].reshape(n,width)):
+                        _,p=host.decode(dict(zip(species,map(float,cell[:-1]),strict=True)),float(cell[-1]),seeds[i])
+                        seeds[i]=p['temperature_k'];states.append(p)
+                    rates=faces(at_time,states);scale=float(half_step*weight)
+                    external+=scale*rates[-1]['external_entropy_w_k']
+                    production+=scale*math.fsum(p['production_w_k'] for p in rates)
+                    local=min(p['production_w_k'] for p in rates)
+                    minimum_rate=local if minimum_rate is None else min(minimum_rate,local)
+                entropy=entropy_by_time[('accepted',row['time_s'])]
+                residual=entropy-s0+external-production;step_change=entropy-previous_s+external-previous_external
+                max_residual=max(max_residual,abs(residual));previous_s=entropy
+                minimum_step=step_change if minimum_step is None else min(minimum_step,step_change)
+                steps.append({'time_s':right,'entropy_balance_residual_j_k':residual,
+                    'system_entropy_j_k':entropy,'external_entropy_integral_j_k':external,
+                    'all_faces_production_integral_j_k':production,'step_total_entropy_change_j_k':step_change})
+            result={'quadrature_order':degree,'maximum_entropy_balance_residual_j_k':max_residual,
+                'minimum_step_total_entropy_change_j_k':minimum_step,'minimum_face_production_w_k':minimum_rate,
+                'final_total_entropy_change_j_k':previous_s-s0+external,'steps':steps,
+                'within_balance_budget':max_residual<=budget['entropy_balance_j_k'],
+                'negative_steps_beyond_budget':sum(p['step_total_entropy_change_j_k'] < -budget['negative_step_entropy_allowance_j_k'] for p in steps)}
+            entropy_results.append(result);print(json.dumps({k:v for k,v in result.items() if k!='steps'}),flush=True)
+    low,high=entropy_results
+    quadrature={key:max(abs(a[key]-b[key]) for a,b in zip(low['steps'],high['steps'],strict=True))
+                for key in ('external_entropy_integral_j_k','all_faces_production_integral_j_k')}
+    result={'trajectory':str(args.trajectory),'settings':settings,'cell_count':n,
+        'completed':rows[-1]['kind']=='summary' and rows[-1]['status']=='completed',
+        'source_state_count':count,'branch_state_counts':branch_counts,'source_maxima':maxima,'worst_source_states':worst,
+        'maximum_inventory_balance_residual_mol':max(balances[:-1]),'maximum_energy_balance_residual_j':balances[-1],
+        'geometry_differences':deltas,'face_reconstruction':{'faces':faces_count,'max_inventory_rate_difference_mol_s':face_n,
+            'max_energy_rate_difference_w':face_u,'minimum_nominal_production_w_k':min_production},
+        'fixed_inventory_calorimetry':calorimetry,'entropy_results':entropy_results,'quadrature_differences_j_k':quadrature,
+        'within_budgets':{'source_energy':maxima['energy_j']<=budget['source_energy_j'],
+            'source_pressure':maxima['pressure_pa']<=budget['source_pressure_pa'],
+            'source_chemical_potential':maxima['mu_j_mol']<=budget['source_chemical_potential_j_mol'],
+            'face_rates':face_n<=budget['face_inventory_mol_s'] and face_u<=budget['face_energy_w'],
+            'geometry':max(map(abs,deltas.values()))<=settings['geometry_absolute_budget'],
+            'fixed_inventory_calorimetry':all(p['cell_cv_j_k']>0 and abs(p['difference_j_k'])<=budget['calorimetry_j_k'] for p in calorimetry),
+            'quadrature':max(quadrature.values())<=budget['entropy_quadrature_j_k']},
+        'material_qualified':False,'training_eligible':False,
+        'scope':'Conditional trajectory, independent entropy/face/source integrals with shared equilibrium decoder and IAPWS backend.',
+        'elapsed_s':time.monotonic()-started}
+    with args.output.open('x') as stream:
+        json.dump(result,stream,indent=2,allow_nan=False);stream.write('\n')
+    print(json.dumps({'within_budgets':result['within_budgets'],'source_maxima':maxima,'elapsed_s':result['elapsed_s']},indent=2))
+
+
+if __name__=='__main__':
+    main()
