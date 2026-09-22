@@ -25,6 +25,7 @@ from run_open_gas_boundary import json_value
 from sorptive_column_setup import build_column,cell_parameters,restore_column
 from sorptive_column_checkpoint import read_checkpoint
 from sorptive_energy_coordinates import GasReferenceEnergy
+from sorptive_physical_jacobian import PhysicalColumnJacobian
 
 
 def main():
@@ -37,6 +38,8 @@ def main():
     parser.add_argument('--execution-parameters',type=Path)
     parser.add_argument('--energy-coordinates',type=Path,
                         help='Explicit root policy for a linear solver-coordinate study; otherwise retain physical U coordinates')
+    parser.add_argument('--jacobian-parameters',type=Path,
+                        help='Explicit policy for feedback-state differentiation and exact exterior ledger blocks')
     parser.add_argument('--stop-at')
     parser.add_argument('--output',type=Path,required=True)
     args=parser.parse_args()
@@ -114,6 +117,8 @@ def run(args,source_directory):
     def mean_moisture(states):
         return math.fsum(p['moisture_kg_kg_dry'] for p in states)/n
 
+    jacobian=PhysicalColumnJacobian(rhs,n,width,sparsity,atol,json.loads(args.jacobian_parameters.read_text())) if args.jacobian_parameters else None
+
     knots=config['boundary_program']['values']['knot_times_s']
     obs=config['observation'];target=obs['moisture_target_kg_kg']
     execution=json.loads(args.execution_parameters.read_text()) if args.execution_parameters else None
@@ -144,13 +149,15 @@ def run(args,source_directory):
             emit({'kind':'execution_policy','time_s':start_time,'settings':execution,'selected_stop_point':args.stop_at})
         if coordinates is not None:
             emit({'kind':'solver_coordinate_policy','time_s':start_time,'record':coordinates.record})
+        if jacobian is not None:
+            emit({'kind':'solver_jacobian_policy','time_s':start_time,'record':jacobian.record})
         for left,right in zip(knots[:-1],knots[1:],strict=True):
             if right<=start_time:
                 continue
             segment_start=max(left,start_time)
             segment_end=min(right,stop_time) if stop_time is not None else right
             solver=BDF(rhs,segment_start,y,segment_end,rtol=policy['relative_tolerance']*factor,atol=atol,
-                max_step=policy['maximum_step_s'],first_step=policy['initial_step_s'],jac_sparsity=sparsity.tocsr())
+                max_step=policy['maximum_step_s'],first_step=policy['initial_step_s'],jac=jacobian,jac_sparsity=sparsity.tocsr())
             samples=np.arange(left+policy['observation_interval_s'],right+policy['observation_interval_s'],policy['observation_interval_s'])
             samples=samples[(samples>segment_start)&(samples<=segment_end)];sample_index=0
             previous_score=mean_moisture(decode(y)[1])-target
