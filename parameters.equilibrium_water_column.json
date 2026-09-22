@@ -1,0 +1,244 @@
+{
+  "water_facts_file": "data/sandbox/water/source_facts.json",
+  "thermochemistry_file": "data/sandbox/thermochemistry/nist_gases_v1.json",
+  "molar_masses_kg_mol": {
+    "O2": 0.0319988,
+    "N2": 0.0280134,
+    "H2O": 0.018015268
+  },
+  "numerics": {
+    "temperature_inverse": {
+      "bracket_k": [
+        300,
+        345
+      ],
+      "absolute_tolerance_k": 1e-09,
+      "relative_tolerance": 1e-12,
+      "max_iterations": 100
+    },
+    "pressure_inverse": {
+      "bracket_pa": [
+        50000,
+        180000
+      ],
+      "absolute_tolerance_pa": 1e-06,
+      "relative_tolerance": 1e-12,
+      "max_iterations": 100
+    },
+    "water": {
+      "pressure_relative": 2e-08,
+      "pressure_absolute_pa": 0.01,
+      "energy_identity_absolute_j_kg": 1e-06,
+      "eos_caloric_absolute_j_kg": 0.002,
+      "heat_capacity_absolute_j_kg_k": 1e-05,
+      "gibbs_absolute_j_kg": 0.001,
+      "temperature_absolute_k": 1e-09
+    },
+    "liquid_inverse": {
+      "absolute_tolerance_mol": 1e-18,
+      "relative_tolerance": 1e-12,
+      "max_iterations": 100
+    },
+    "meshes": {
+      "one": 1,
+      "two": 2,
+      "four": 4,
+      "eight": 8,
+      "sixteen": 16,
+      "thirty_two": 32,
+      "sixty_four": 64
+    },
+    "steps_per_segment": {
+      "coarse": [
+        8,
+        72,
+        20,
+        60
+      ],
+      "fine": [
+        16,
+        144,
+        40,
+        120
+      ],
+      "refined": [
+        32,
+        288,
+        80,
+        240
+      ]
+    },
+    "warm_temperature_inverse": {
+      "seed_increment_k": 0.001,
+      "absolute_tolerance_k": 1e-09,
+      "relative_tolerance": 1e-12,
+      "max_iterations": 30
+    },
+    "surface_balance": {
+      "absolute_residual_w": 1e-11,
+      "relative_residual": 1e-10,
+      "maximum_iterations": 100
+    },
+    "implicit": {
+      "method": "BDF",
+      "relative_tolerance": 1e-07,
+      "inventory_absolute_tolerance_mol": 1e-13,
+      "energy_absolute_tolerance_j": 1e-08,
+      "maximum_step_s": 1.0,
+      "observation_interval_s": 0.125,
+      "method_comparison_mesh": "four",
+      "refinement_tolerance_factor": 0.1,
+      "progress_every_accepted_steps": 10
+    }
+  },
+  "schema": "equilibrium_water_column_v1",
+  "classification": "virtual_fluid_channel_with_quartz_thermal_ballast_not_brick",
+  "solid_facts_file": "data/sandbox/solids/quartz/facts.json",
+  "reference_pressure_pa": 100000,
+  "geometry": {
+    "area_m2": 0.001,
+    "length_m": 0.01,
+    "definition": "Specified fluid channel only. Fixed quartz thermal ballast is attached outside this volume; no quartz density or porosity is inferred."
+  },
+  "solid": {
+    "total_mol": 0.02,
+    "segment_index": 0,
+    "reference_temperature_k": 330,
+    "classification": "virtual_amount_with_sourced_quartz_caloric_curve",
+    "model": "Incompressible fixed thermal ballast, no expansion/reaction; standard enthalpy differences used as internal energy differences. This is a constitutive approximation, not validated quartz apparatus or clay."
+  },
+  "initial": {
+    "temperature_k": 330,
+    "total_concentrations_mol_m3": {
+      "O2": 6.657,
+      "N2": 25.043,
+      "H2O": 8.0
+    }
+  },
+  "transfer": {
+    "conductivity_w_m_k": 0.1,
+    "external_conductivity_w_m_k": 0.1,
+    "external_distance_m": 0.005,
+    "gas": {
+      "effective_diffusivities_m2_s": {
+        "O2": 1e-05,
+        "N2": 1e-05,
+        "H2O": 1.5e-05
+      },
+      "permeability_m2": 1e-16,
+      "relative_permeability": 1.0,
+      "viscosity_pa_s": 2e-05
+    }
+  },
+  "radiation": {
+    "effective_emissivity": 0.8,
+    "stefan_boltzmann_w_m2_k4": 5.670374419e-08,
+    "classification": "sigma physical constant; emissivity explicit virtual boundary choice, not measured quartz emissivity",
+    "source_url": "https://physics.nist.gov/cuu/Constants/Table/allascii.txt"
+  },
+  "boundary_program": {
+    "identity": {
+      "program_id": "wet-fluid-heating-hold-cooling",
+      "version": "1",
+      "classification": "virtual_design_choice",
+      "source_ids": [
+        "root-equilibrium-water-column-v1"
+      ]
+    },
+    "values": {
+      "knot_times_s": [
+        0,
+        2,
+        20,
+        25,
+        40
+      ],
+      "gas_temperature_k": [
+        330,
+        335,
+        335,
+        315,
+        315
+      ],
+      "radiation_temperature_k": [
+        330,
+        335,
+        335,
+        315,
+        315
+      ],
+      "total_pressure_pa": [
+        100000,
+        100000,
+        100000,
+        100000,
+        100000
+      ],
+      "species_order": [
+        "O2",
+        "N2",
+        "H2O"
+      ],
+      "mole_fractions": [
+        [
+          0.2079,
+          0.7821,
+          0.01
+        ],
+        [
+          0.2079,
+          0.7821,
+          0.01
+        ],
+        [
+          0.2079,
+          0.7821,
+          0.01
+        ],
+        [
+          0.2079,
+          0.7821,
+          0.01
+        ],
+        [
+          0.2079,
+          0.7821,
+          0.01
+        ]
+      ]
+    }
+  },
+  "sources": {
+    "water": {
+      "url": "https://iapws.org/technical-guidance/release/IAPWS-95",
+      "local_document": "data/sandbox/water/IAPWS95-2018.pdf",
+      "locator": "R6-95(2018) Eq4-6, Tables1-3; thermodynamic properties derived from Helmholtz energy",
+      "scope": "pure water; existing adapter limited to 293-500K and stable phases; wet pressure inverse bracket 50-180kPa. Column temperature inverse uses warm secant, not the retained cold Brent bracket; actual evaluated temperatures are reported separately."
+    },
+    "water_vapor": {
+      "derivation": "IAPWS ideal enthalpy with existing common energy offset. Standard ideal entropy from Eq5 and Table3 at fixed 1bar; pressure entropy -R_mix ln(p/p_ref); u=h-R_mix*T. Native fitted R is retained inside IAPWS, with the small fixed-R bridge explicitly approximate.",
+      "reference_pressure": "1bar fixed convention matching the existing chemical model; changing it without transforming standard entropy changes the approximate model."
+    },
+    "solid": {
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C14808607&Mask=2",
+      "locator": "Solid Phase Heat Capacity, Shomate, 298-847 K column; all eight coefficients read online 2026-09-22 UTC",
+      "scope": "pure quartz caloric data only; not clay composition or temperature-independent solid density"
+    },
+    "transport": "Virtual, explicitly supplied Fourier/two-resistance heat and mixture diffusion/Darcy coefficients. No brick/material coefficient admission. Boundary permeability differs from D-B3 and is recorded as a new design choice.",
+    "phase": "Liquid remains locally retained; only gas water moves between cells. Local instantaneous phase equilibrium; no capillary or adsorbed water.",
+    "solid_volume": "Attached thermal ballast outside modeled fluid volume. No USGS 25C volume transported to other temperature/molar-mass conventions.",
+    "radiation": "Gray diffuse surface facing an effective isothermal blackbody enclosure. Surface temperature is solved by half-cell Fourier conduction = film convection + radiation; sigma from NIST CODATA, emissivity and external film explicit virtual choices. Gas transport keeps the registered mixture face approximation.",
+    "numerical": "Explicit midpoint on conserved inventories/U. Every boundary-program knot is an integration endpoint. Secant inversion seeded from preceding state; no hidden solver fallback or inventory clipping. Implicit BDF alternative evolves the identical conserved inventories/U and cumulative exterior flux; adaptive steps restart at each program knot. BDF tolerances were fixed before its first run. The local pure-liquid EOS memo uses exact pressure keys within one fixed-temperature evaluation only; no interpolation, pressure rounding or persistent cache."
+  },
+  "observation": {
+    "liquid_endpoint_total_mol": 0,
+    "definition": "First sampled complete liquid depletion in this fluid channel; NOT dry-brick moisture endpoint. Water vapor remains conserved.",
+    "comparison_budgets": {
+      "time_temperature_k": 0.02,
+      "time_total_water_mol": 1e-07,
+      "space_temperature_k": 0.2,
+      "space_total_water_mol": 1e-06
+    },
+    "budget_basis": "Numerical research comparison targets chosen before execution, not source uncertainties or brick accuracy."
+  }
+}

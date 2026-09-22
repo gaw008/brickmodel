@@ -11,6 +11,7 @@ with a positive carrier inventory and available gas volume. Root brackets are
 explicit caller inputs; root and source-domain errors propagate unchanged.
 """
 from dataclasses import dataclass
+from functools import cache
 import math
 
 from scipy.optimize import brentq
@@ -64,6 +65,10 @@ class EquilibriumWaterCell:
         s_standard = self.vapor_standard_entropy_j_mol_k(temperature_k)
         mu_standard = h_vapor-temperature_k*s_standard
 
+        # Exact pressures recur in the nested brackets. This cache lives only
+        # for this single fixed-T/inventory evaluation; no rounding or EOS
+        # interpolation is introduced.
+        @cache
         def liquid_at(pressure):
             liquid = self.water.state_tp(temperature_k, pressure, phase='liquid')
             molar_volume = liquid.molar_mass_kg_mol/liquid.density_kg_m3
