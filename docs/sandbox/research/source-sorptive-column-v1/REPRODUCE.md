@@ -36,3 +36,9 @@ with Path('/tmp/restored-sorptive.jsonl').open('xb') as output:
 ```
 
 清单不证明物理准确性；科学结论由报告中对应的来源、能量、熵和时间/空间审查限定。含失败前缀的记录不能当作完整仿真。
+
+## 数值求导和续算选择
+
+已核对的反馈状态求导可明确加`--jacobian-parameters parameters.sorptive_physical_jacobian.json`。它使用锁定SciPy内部差分接口，账本的零反馈列不再进行数值扰动；科学比较见`PHYSICAL_JACOBIAN.md`。
+
+续算恢复来源、物理参数、N/U和温度起点；能量坐标/Jacobian两个可选数值路径按本次命令选择，不从前一段选项隐式继承。希望继续同一数值路径时，须在续算命令再次给出相应根文件。新记录在每个启动/恢复处明确写入实际选择，包括未选择时的物理U/默认稀疏Jacobian；旧策略记录作为历史前缀保留。该记录补充未改变数值计算。

@@ -149,8 +149,14 @@ def run(args,source_directory):
             emit({'kind':'execution_policy','time_s':start_time,'settings':execution,'selected_stop_point':args.stop_at})
         if coordinates is not None:
             emit({'kind':'solver_coordinate_policy','time_s':start_time,'record':coordinates.record})
+        else:
+            emit({'kind':'solver_coordinate_policy','time_s':start_time,'record':{
+                'method':'physical_internal_energy','selection':'energy-coordinate option not selected for this segment'}})
         if jacobian is not None:
             emit({'kind':'solver_jacobian_policy','time_s':start_time,'record':jacobian.record})
+        else:
+            emit({'kind':'solver_jacobian_policy','time_s':start_time,'record':{
+                'method':'scipy_bdf_default_sparse_numeric_jacobian','selection':'physical-column option not selected for this segment'}})
         for left,right in zip(knots[:-1],knots[1:],strict=True):
             if right<=start_time:
                 continue
