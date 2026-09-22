@@ -16,7 +16,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--parameters', required=True, type=Path)
     parser.add_argument('--trajectory', required=True, type=Path)
-    parser.add_argument('--selection', required=True, choices=('landmarks', 'all'))
+    parser.add_argument('--selection', required=True, choices=('landmarks', 'all', 'events'))
     parser.add_argument('--output', required=True, type=Path)
     args = parser.parse_args()
     settings = json.loads(args.parameters.read_text())
@@ -72,6 +72,8 @@ def main():
     selected.append(('first_sample_all_liquid_depleted', first_dry['states']))
     if args.selection == 'all':
         selected = [(r['time_s'], r['states']) for r in rows if r['kind'] in ('initial', 'step', 'sample')]
+    if args.selection == 'events':
+        selected = [(r['time_s'], r['states']) for r in rows if r['kind'] == 'phase_event']
     reconstructions = []
     for label, points in selected:
         for index, p in enumerate(points):
@@ -98,6 +100,31 @@ def main():
                 'pressure_residual_pa': pressure-p['pressure_pa'],
                 'vapor_minus_liquid_chemical_potential_j_mol': mu_vapor-mu_liquid,
                 'phase_condition': 'equality' if p['liquid_water_mol'] > 0 else 'vapor_not_above_liquid'})
+
+    def phase_criterion(p):
+        t = p['temperature_k']
+        v = header['cell_fluid_volume_m3']
+        all_vapor_pressure = math.fsum(p['inventories_mol'].values())*gas_constant*t/v
+        candidate_liquid = IAPWS95(T=t, P=all_vapor_pressure/1e6)
+        h0, s0 = ideal_properties('H2O', t)
+        mu = candidate_liquid.h*1000*mass+offset-t*candidate_liquid.s*1000*mass
+        pe = pref*math.exp((mu-h0+t*s0)/(gas_constant*t))
+        return p['inventories_mol']['H2O']*gas_constant*t/v-pe
+
+    event_reconstructions = []
+    for row in rows:
+        if row['kind'] != 'phase_event':
+            continue
+        ends = [max(phase_criterion(cell['state']) for cell in endpoint['cells'])
+                for endpoint in row['bracket_states']]
+        expected_wet = [True, False] if row['transition'] == 'liquid_depleted' else [False, True]
+        event_reconstructions.append({'scope': row['scope'], 'cell_index': row['cell_index'],
+            'transition': row['transition'], 'time_s': row['time_s'],
+            'time_bracket_width_s': row['time_bracket_s'][1]-row['time_bracket_s'][0],
+            'source_criterion_bracket_pa': ends,
+            'criterion_reconstruction_difference_pa': [a-b for a, b in
+                zip(ends, row['criterion_bracket_pa'], strict=True)],
+            'direct_source_brackets_transition': [(v > 0) for v in ends] == expected_wet})
 
     def reconstructed_rates(states, boundary, surface):
         """Independent scalar reconstruction of the registered face equations."""
@@ -172,6 +199,7 @@ def main():
     result = {'trajectory': str(args.trajectory), 'settings': settings,
         'scope': 'conditional formulas; shared EOS; nominal reservoir entropy only',
         'reconstructed_states': reconstructions,
+        'phase_events': event_reconstructions,
         'face_entropy': {'sampled_faces': face_count, 'minimum_w_k': minimum, 'negative_count': negative,
             'qualification': 'saved explicit midpoints or implicit observations with reconstructed face equations; not discrete total-entropy or global stability proof'},
         'max_abs_energy_residual_j': max(abs(p['total_energy_residual_j']) for p in reconstructions),

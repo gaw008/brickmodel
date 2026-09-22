@@ -74,7 +74,7 @@ def analyze_implicit(path):
         liquids.append(sum(p['liquid_water_mol'] for p in points))
         surfaces.append(ts)
     event = next((i for i, amount in enumerate(liquids) if amount == 0), None)
-    return {'file': path.name, 'completed': rows[-1]['kind'] == 'summary', 'cells': n,
+    return {'file': path.name, 'completed': rows[-1]['kind'] == 'summary' and rows[-1]['status'] == 'completed', 'cells': n,
             'samples': len(times)-1, 'elapsed_s': rows[-1]['elapsed_s'],
             'solver_statistics': rows[-1]['solver_statistics'],
             'global_balance_observations': len(times)*len(balances),

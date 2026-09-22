@@ -10,10 +10,10 @@ def phase_scores(points):
     return [*cells, max(cells)]
 
 
-def locate_crossings(evaluate, left_time, right_time, left_scores, right_scores, policy):
+def locate_crossings(evaluate_score, left_time, right_time, left_scores, right_scores, policy):
     """Return cell and column transitions bracketed by these two sample nodes.
 
-    evaluate(t) returns decoded cell points. The final score is max(cell scores),
+    evaluate_score(t, index) returns one scalar. The final index is max(cell scores),
     so its transition describes the presence of liquid anywhere in the column.
     Bisection bounds the crossing of this numerical interpolant only.
     """
@@ -27,7 +27,7 @@ def locate_crossings(evaluate, left_time, right_time, left_scores, right_scores,
             if iterations == policy['maximum_iterations']:
                 raise RuntimeError('phase-event bisection did not reach its time tolerance')
             midpoint = (left+right)/2
-            fm = phase_scores(evaluate(midpoint))[index]
+            fm = evaluate_score(midpoint, index)
             if (fm > 0) == (fl > 0):
                 left, fl = midpoint, fm
             else:
@@ -42,6 +42,6 @@ def locate_crossings(evaluate, left_time, right_time, left_scores, right_scores,
             'criterion_bracket_pa': [fl, fr],
             'initial_detection_bracket_s': [left_time, right_time],
             'bisection_iterations': iterations,
-            'criterion_at_reported_time_pa': phase_scores(evaluate(time))[index],
+            'criterion_at_reported_time_pa': evaluate_score(time, index),
         })
     return sorted(crossings, key=lambda e: e['time_s'])

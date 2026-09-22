@@ -92,7 +92,7 @@
       "equilibrium_cache_entries": 512
     },
     "phase_events": {
-      "scan_subintervals_per_accepted_step": 1,
+      "scan_subintervals_per_accepted_step": 4,
       "absolute_time_tolerance_s": 1e-06,
       "maximum_iterations": 60,
       "definition": "Bisection of signed all-vapor incipient-liquid criterion along BDF dense output; finite scanning does not guarantee all roots."
@@ -220,7 +220,7 @@
       "url": "https://iapws.org/technical-guidance/release/IAPWS-95",
       "local_document": "data/sandbox/water/IAPWS95-2018.pdf",
       "locator": "R6-95(2018) Eq4-6, Tables1-3; thermodynamic properties derived from Helmholtz energy",
-      "scope": "pure water; existing adapter limited to 293-500K and stable phases; wet pressure inverse bracket 50-180kPa. Column temperature inverse uses warm secant, not the retained cold Brent bracket; actual evaluated temperatures are reported separately."
+      "scope": "pure water; existing adapter limited to 293-500K and stable phases; wet pressure inverse bracket 50-180kPa. Column temperature inverse uses warm secant, not the retained cold Brent bracket; actual evaluated temperatures are reported separately. Pure liquid uses the separately reviewed Gibbs polynomial over 300-345K and 50-180kPa; ideal vapor still uses direct IAPWS ideal coefficients. This is a controlled numerical representation, not an exact IAPWS evaluation."
     },
     "water_vapor": {
       "derivation": "IAPWS ideal enthalpy with existing common energy offset. Standard ideal entropy from Eq5 and Table3 at fixed 1bar; pressure entropy -R_mix ln(p/p_ref); u=h-R_mix*T. Native fitted R is retained inside IAPWS, with the small fixed-R bridge explicitly approximate.",
@@ -252,7 +252,7 @@
     "phase_event_definition": "Per-cell and column liquid depletion/appearance, independent of observation sampling. Not a dry-brick endpoint."
   },
   "liquid_evaluation": {
-    "method": "direct",
+    "method": "gibbs_table",
     "table_file": "data/sandbox/research/liquid-gibbs-table-v1/table.json",
     "definition": "Explicit choice; no automatic fallback or extrapolation. Gibbs table must be qualified separately from direct IAPWS."
   },

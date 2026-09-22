@@ -51,21 +51,27 @@
     "steps_per_segment": {
       "coarse": [
         8,
-        72,
-        20,
-        60
+        40,
+        8,
+        40,
+        8,
+        56
       ],
       "fine": [
         16,
-        144,
-        40,
-        120
+        80,
+        16,
+        80,
+        16,
+        112
       ],
       "refined": [
         32,
-        288,
-        80,
-        240
+        160,
+        32,
+        160,
+        32,
+        224
       ]
     },
     "warm_temperature_inverse": {
@@ -119,7 +125,7 @@
     "total_concentrations_mol_m3": {
       "O2": 6.657,
       "N2": 25.043,
-      "H2O": 8.0
+      "H2O": 3.0
     }
   },
   "transfer": {
@@ -145,7 +151,7 @@
   },
   "boundary_program": {
     "identity": {
-      "program_id": "wet-fluid-heating-hold-cooling",
+      "program_id": "dry-humidify-condense-reheat-dry",
       "version": "1",
       "classification": "virtual_design_choice",
       "source_ids": [
@@ -156,25 +162,33 @@
       "knot_times_s": [
         0,
         2,
-        20,
-        25,
+        12,
+        14,
+        24,
+        26,
         40
       ],
       "gas_temperature_k": [
-        330,
         335,
         335,
-        315,
-        315
+        335,
+        335,
+        335,
+        335,
+        335
       ],
       "radiation_temperature_k": [
-        330,
+        300,
+        300,
+        300,
+        300,
+        300,
         335,
-        335,
-        315,
-        315
+        335
       ],
       "total_pressure_pa": [
+        100000,
+        100000,
         100000,
         100000,
         100000,
@@ -196,6 +210,16 @@
           0.2079,
           0.7821,
           0.01
+        ],
+        [
+          0.168,
+          0.6320000000000001,
+          0.2
+        ],
+        [
+          0.168,
+          0.6320000000000001,
+          0.2
         ],
         [
           0.2079,
@@ -220,7 +244,7 @@
       "url": "https://iapws.org/technical-guidance/release/IAPWS-95",
       "local_document": "data/sandbox/water/IAPWS95-2018.pdf",
       "locator": "R6-95(2018) Eq4-6, Tables1-3; thermodynamic properties derived from Helmholtz energy",
-      "scope": "pure water; existing adapter limited to 293-500K and stable phases; wet pressure inverse bracket 50-180kPa. Column temperature inverse uses warm secant, not the retained cold Brent bracket; actual evaluated temperatures are reported separately."
+      "scope": "pure water; existing adapter limited to 293-500K and stable phases; wet pressure inverse bracket 50-180kPa. Column temperature inverse uses warm secant, not the retained cold Brent bracket; actual evaluated temperatures are reported separately. Pure liquid uses the separately reviewed Gibbs polynomial over 300-345K and 50-180kPa; ideal vapor still uses direct IAPWS ideal coefficients. This is a controlled numerical representation, not an exact IAPWS evaluation."
     },
     "water_vapor": {
       "derivation": "IAPWS ideal enthalpy with existing common energy offset. Standard ideal entropy from Eq5 and Table3 at fixed 1bar; pressure entropy -R_mix ln(p/p_ref); u=h-R_mix*T. Native fitted R is retained inside IAPWS, with the small fixed-R bridge explicitly approximate.",
@@ -235,7 +259,8 @@
     "phase": "Liquid remains locally retained; only gas water moves between cells. Local instantaneous phase equilibrium; no capillary or adsorbed water.",
     "solid_volume": "Attached thermal ballast outside modeled fluid volume. No USGS 25C volume transported to other temperature/molar-mass conventions.",
     "radiation": "Gray diffuse surface facing an effective isothermal blackbody enclosure. Surface temperature is solved by half-cell Fourier conduction = film convection + radiation; sigma from NIST CODATA, emissivity and external film explicit virtual choices. Gas transport keeps the registered mixture face approximation.",
-    "numerical": "Explicit midpoint on conserved inventories/U. Every boundary-program knot is an integration endpoint. Secant inversion seeded from preceding state; no hidden solver fallback or inventory clipping. Implicit BDF alternative evolves the identical conserved inventories/U and cumulative exterior flux; adaptive steps restart at each program knot. BDF tolerances were fixed before its first run. The local pure-liquid EOS memo uses exact pressure keys within one fixed-temperature evaluation only; no interpolation, pressure rounding or persistent cache. The BDF driver caches at most 512 complete equilibrium states per run, keyed by exact conserved inventories and energy, with no interpolation or rounding."
+    "numerical": "Explicit midpoint on conserved inventories/U. Every boundary-program knot is an integration endpoint. Secant inversion seeded from preceding state; no hidden solver fallback or inventory clipping. Implicit BDF alternative evolves the identical conserved inventories/U and cumulative exterior flux; adaptive steps restart at each program knot. BDF tolerances were fixed before its first run. The local pure-liquid EOS memo uses exact pressure keys within one fixed-temperature evaluation only; no interpolation, pressure rounding or persistent cache. The BDF driver caches at most 512 complete equilibrium states per run, keyed by exact conserved inventories and energy, with no interpolation or rounding.",
+    "phase_cycle": "Explicit virtual humidity/radiation programme to evaluate both directions of the same phase boundary. Humid external gas has p_H2O=20kPa at335K, below its pure-water saturation pressure; no claim of brick material or experimental apparatus."
   },
   "observation": {
     "liquid_endpoint_total_mol": 0,
@@ -252,7 +277,7 @@
     "phase_event_definition": "Per-cell and column liquid depletion/appearance, independent of observation sampling. Not a dry-brick endpoint."
   },
   "liquid_evaluation": {
-    "method": "direct",
+    "method": "gibbs_table",
     "table_file": "data/sandbox/research/liquid-gibbs-table-v1/table.json",
     "definition": "Explicit choice; no automatic fallback or extrapolation. Gibbs table must be qualified separately from direct IAPWS."
   },
