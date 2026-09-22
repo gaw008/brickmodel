@@ -1,4 +1,4 @@
-"""Offline common-gas drying of the source-joined low-W conditional cell.
+"""Offline common-gas drying of the explicitly selected sorptive cell.
 
 Evolve O2/N2/total-water/U with equal and opposite external integrals. The
 reported moisture crossing is operational, not a zero-water phase transition.

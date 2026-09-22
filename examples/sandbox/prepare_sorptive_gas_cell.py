@@ -1,4 +1,4 @@
-"""Prepare the existing low-W source join from recorded source facts, offline."""
+"""Prepare the existing source/low-W join from recorded source facts, offline."""
 import argparse
 from fractions import Fraction
 import json
@@ -67,6 +67,9 @@ def main():
         'water_source_record': water.source_record,
         'source_policy': 'Explicit input/source values recorded; no content digests generated or compared.',
         'material_qualified': False, 'training_eligible': False}
+    if config['schema'] == 'source_sorptive_common_gas_cell_v1':
+        result['schema'] = 'recorded_source_sorption_v1'
+        result['model_domain']['moisture_kg_kg'] = [0,wr]
     with args.output.open('x') as stream:
         json.dump(result, stream, indent=2, allow_nan=False)
         stream.write('\n')

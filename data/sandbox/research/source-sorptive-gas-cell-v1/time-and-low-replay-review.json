@@ -1,0 +1,222 @@
+{
+  "settings": {
+    "schema": "sorptive_trajectory_comparison_v1",
+    "comparisons": [
+      {
+        "name": "source_branch_time_refinement",
+        "left": "data/sandbox/research/source-sorptive-gas-cell-v1/drying-base.jsonl",
+        "right": "data/sandbox/research/source-sorptive-gas-cell-v1/drying-refined.jsonl",
+        "budgets": {
+          "time_temperature_k": 0.02,
+          "time_total_water_mol": 1e-07,
+          "time_moisture_event_s": 0.001,
+          "source_energy_j": 1e-07,
+          "source_chemical_potential_j_mol": 1e-05,
+          "source_pressure_pa": 0.001,
+          "entropy_balance_j_k": 1e-07
+        }
+      },
+      {
+        "name": "low_branch_replay",
+        "left": "data/sandbox/research/sorptive-gas-cell-v1/drying-vented-base.jsonl",
+        "right": "data/sandbox/research/source-sorptive-gas-cell-v1/low-branch-replay.jsonl",
+        "budgets": {
+          "time_temperature_k": 0.0,
+          "time_total_water_mol": 0.0,
+          "time_moisture_event_s": 0.0
+        }
+      }
+    ],
+    "source_branch_moisture_events_kg_kg": [
+      0.25,
+      0.2,
+      0.15,
+      0.1
+    ]
+  },
+  "results": [
+    {
+      "case": {
+        "name": "source_branch_time_refinement",
+        "left": "data/sandbox/research/source-sorptive-gas-cell-v1/drying-base.jsonl",
+        "right": "data/sandbox/research/source-sorptive-gas-cell-v1/drying-refined.jsonl",
+        "budgets": {
+          "time_temperature_k": 0.02,
+          "time_total_water_mol": 1e-07,
+          "time_moisture_event_s": 0.001,
+          "source_energy_j": 1e-07,
+          "source_chemical_potential_j_mol": 1e-05,
+          "source_pressure_pa": 0.001,
+          "entropy_balance_j_k": 1e-07
+        }
+      },
+      "both_completed": true,
+      "observations": 2401,
+      "max_differences": {
+        "temperature_k": 2.206457736519951e-06,
+        "pressure_pa": 0.005176192513317801,
+        "moisture_kg_kg_dry": 2.418972633311256e-09
+      },
+      "max_total_water_difference_mol": 1.5451698758385882e-12,
+      "moisture_events": [
+        [
+          {
+            "target_kg_kg": 0.25,
+            "time_s": 92.18198488858593,
+            "direction": "decreasing",
+            "accepted_bracket_s": [
+              91.35320950386622,
+              93.35320950386622
+            ]
+          },
+          {
+            "target_kg_kg": 0.2,
+            "time_s": 200.8140339321639,
+            "direction": "decreasing",
+            "accepted_bracket_s": [
+              200.70924549316993,
+              200.9028640539847
+            ]
+          },
+          {
+            "target_kg_kg": 0.15,
+            "time_s": 326.2474134614574,
+            "direction": "decreasing",
+            "accepted_bracket_s": [
+              326.1922511226651,
+              326.3353953899859
+            ]
+          },
+          {
+            "target_kg_kg": 0.1,
+            "time_s": 488.0056566949442,
+            "direction": "decreasing",
+            "accepted_bracket_s": [
+              487.3488862685051,
+              489.3488862685051
+            ]
+          }
+        ],
+        [
+          {
+            "target_kg_kg": 0.25,
+            "time_s": 92.18198216367668,
+            "direction": "decreasing",
+            "accepted_bracket_s": [
+              91.17244790081641,
+              93.17244790081641
+            ]
+          },
+          {
+            "target_kg_kg": 0.2,
+            "time_s": 200.81402894442104,
+            "direction": "decreasing",
+            "accepted_bracket_s": [
+              200.78436685180463,
+              200.83525631633373
+            ]
+          },
+          {
+            "target_kg_kg": 0.15,
+            "time_s": 326.24740951091485,
+            "direction": "decreasing",
+            "accepted_bracket_s": [
+              326.0678832673485,
+              326.26290995786525
+            ]
+          },
+          {
+            "target_kg_kg": 0.1,
+            "time_s": 488.00565133313927,
+            "direction": "decreasing",
+            "accepted_bracket_s": [
+              486.2474576148304,
+              488.2474576148304
+            ]
+          }
+        ]
+      ],
+      "event_differences": [
+        {
+          "target_kg_kg": 0.25,
+          "time_difference_s": 2.724909251128338e-06
+        },
+        {
+          "target_kg_kg": 0.2,
+          "time_difference_s": 4.987742869388967e-06
+        },
+        {
+          "target_kg_kg": 0.15,
+          "time_difference_s": 3.950542577513261e-06
+        },
+        {
+          "target_kg_kg": 0.1,
+          "time_difference_s": 5.361804937820125e-06
+        }
+      ],
+      "within_budgets": {
+        "temperature": true,
+        "water": true,
+        "specified_event": true
+      }
+    },
+    {
+      "case": {
+        "name": "low_branch_replay",
+        "left": "data/sandbox/research/sorptive-gas-cell-v1/drying-vented-base.jsonl",
+        "right": "data/sandbox/research/source-sorptive-gas-cell-v1/low-branch-replay.jsonl",
+        "budgets": {
+          "time_temperature_k": 0.0,
+          "time_total_water_mol": 0.0,
+          "time_moisture_event_s": 0.0
+        }
+      },
+      "both_completed": true,
+      "observations": 801,
+      "max_differences": {
+        "temperature_k": 0.0,
+        "pressure_pa": 0.0,
+        "moisture_kg_kg_dry": 0.0
+      },
+      "max_total_water_difference_mol": 0.0,
+      "moisture_events": [
+        [
+          {
+            "target_kg_kg": 0.1,
+            "time_s": 129.21107552492137,
+            "direction": "decreasing",
+            "accepted_bracket_s": [
+              128.51835077374955,
+              130.51835077374955
+            ]
+          }
+        ],
+        [
+          {
+            "target_kg_kg": 0.1,
+            "time_s": 129.21107552492137,
+            "direction": "decreasing",
+            "accepted_bracket_s": [
+              128.51835077374955,
+              130.51835077374955
+            ]
+          }
+        ]
+      ],
+      "event_differences": [
+        {
+          "target_kg_kg": 0.1,
+          "time_difference_s": 0.0
+        }
+      ],
+      "within_budgets": {
+        "temperature": true,
+        "water": true,
+        "specified_event": true
+      }
+    }
+  ],
+  "material_qualified": false,
+  "training_eligible": false,
+  "scope": "Saved nominal trajectory comparisons. Additional source-knot crossings use the same frozen decoder, not an independent EOS."
+}

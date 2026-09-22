@@ -1,4 +1,4 @@
-"""Rigid sorptive water/carrier cell on the declared low-moisture branch.
+"""Rigid sorptive water/carrier cell on the explicitly selected source branch.
 
 Pure-liquid volume/caloric properties plus a zero-volume excess potential are
 the existing constitutive approximation. Dry mass is fixed. The hypothetical
@@ -45,19 +45,12 @@ class EquilibriumSorptiveCell:
         rt, volume = r*temperature_k, self.fluid.available_fluid_volume_m3
         nw = inventories_mol['H2O']
         carrier = math.fsum(value for key, value in inventories_mol.items() if key != 'H2O')
-        join_w = self.excess.record['join']['moisture_kg_kg']
-        join_activity = self.excess.evaluate(temperature_k, join_w)['activity']
         mass = self.excess.record['water_molar_mass_kg_mol']
 
         @cache
         def partition(pressure):
             liquid, vl, mu, standard, pure_pressure = self.pure_liquid(temperature_k, pressure)
-            coefficient = pure_pressure*join_activity*mass/(self.dry_mass_kg*join_w)
-            a, b = coefficient*vl/rt, 1+coefficient*volume/rt
-            # Stable small root of a*Nc**2-b*Nc+Nw=0. All water inventory
-            # remains in Nc+Nv; no phase stock or pressure is clipped.
-            condensed = 2*nw/(b+math.sqrt(b*b-4*a*nw))
-            vapor_pressure = coefficient*condensed
+            condensed, vapor_pressure = self.partition_amounts(nw, temperature_k, vl, pure_pressure)
             return condensed, liquid, vl, mu, standard, pure_pressure, vapor_pressure
 
         def residual(pressure):
@@ -96,6 +89,18 @@ class EquilibriumSorptiveCell:
             'pressure_closure_residual_pa': pressure-gas.pressure_pa,
             'water_pressure_departure_pa': pv-equilibrium_pressure}
 
+    def partition_amounts(self, total_water_mol, temperature_k, liquid_volume_m3_mol, pure_pressure_pa):
+        join_w = self.excess.record['join']['moisture_kg_kg']
+        join_activity = self.excess.evaluate(temperature_k, join_w)['activity']
+        mass = self.excess.record['water_molar_mass_kg_mol']
+        rt = self.fluid.thermochemistry.gas_constant_j_mol_k*temperature_k
+        coefficient = pure_pressure_pa*join_activity*mass/(self.dry_mass_kg*join_w)
+        a = coefficient*liquid_volume_m3_mol/rt
+        b = 1+coefficient*self.fluid.available_fluid_volume_m3/rt
+        # Stable small root of a*Nc**2-b*Nc+Nw=0; no inventory is clipped.
+        condensed = 2*total_water_mol/(b+math.sqrt(b*b-4*a*total_water_mol))
+        return condensed, coefficient*condensed
+
     def decode(self, inventories_mol, internal_energy_j, temperature_seed_k):
         policy = self.temperature_inverse
         def residual(temperature):
@@ -109,3 +114,26 @@ class EquilibriumSorptiveCell:
         point.update(internal_energy_j=internal_energy_j,
             energy_inverse_residual_j=point['constitutive_internal_energy_j']-internal_energy_j)
         return gas, point
+
+
+@dataclass(frozen=True)
+class EquilibriumSourceSorptiveCell(EquilibriumSorptiveCell):
+    """Full represented source branch with a monotone water inventory root."""
+
+    def partition_amounts(self, total_water_mol, temperature_k, liquid_volume_m3_mol, pure_pressure_pa):
+        mass = self.excess.record['water_molar_mass_kg_mol']
+        rt = self.fluid.thermochemistry.gas_constant_j_mol_k*temperature_k
+        volume = self.fluid.available_fluid_volume_m3
+        max_w = self.excess.record['model_domain']['moisture_kg_kg'][1]
+        upper = min(total_water_mol, self.dry_mass_kg*max_w/mass)
+
+        def vapor_pressure(nc):
+            return pure_pressure_pa*self.excess.evaluate(temperature_k,nc*mass/self.dry_mass_kg)['activity']
+
+        def residual(nc):
+            return nc+vapor_pressure(nc)*(volume-nc*liquid_volume_m3_mol)/rt-total_water_mol
+
+        policy = self.fluid.numerics['condensed_inventory_inverse']
+        nc = brentq(residual,0.,upper,xtol=policy['absolute_tolerance_mol'],
+                    rtol=policy['relative_tolerance'],maxiter=policy['max_iterations'])
+        return nc, vapor_pressure(nc)

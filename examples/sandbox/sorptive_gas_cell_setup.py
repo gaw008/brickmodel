@@ -2,10 +2,10 @@
 import json
 from copy import deepcopy
 
-from sludge_sandbox.equilibrium_sorptive_cell import EquilibriumSorptiveCell
+from sludge_sandbox.equilibrium_sorptive_cell import EquilibriumSorptiveCell, EquilibriumSourceSorptiveCell
 from sludge_sandbox.equilibrium_water_cell import EquilibriumWaterCell
 from sludge_sandbox.gibbs_water_table import GibbsWaterTable
-from sludge_sandbox.recorded_sorption import RecordedLowMoisture
+from sludge_sandbox.recorded_sorption import RecordedLowMoisture, RecordedSourceSorption
 from sludge_sandbox.recorded_water import RecordedWaterProperties
 from sludge_sandbox.thermochemistry import load_thermochemistry
 from sludge_sandbox.water_properties import NumericalLimits
@@ -19,8 +19,11 @@ def build_sorptive_cell(root, config):
              'gibbs_table': lambda: GibbsWaterTable(direct, json.loads((root/representation['table_file']).read_text()))}[representation['method']]()
     fluid = EquilibriumWaterCell(water, thermo, config['molar_masses_kg_mol'],
         config['cell']['available_fluid_volume_m3'], config['reference_pressure_pa'], config['numerics'])
-    excess = RecordedLowMoisture(json.loads((root/config['sorption_record_file']).read_text()))
-    return EquilibriumSorptiveCell(fluid, excess, config['cell']['dry_mass_kg'],
+    excess_type, cell_type = {
+        'sorptive_common_gas_cell_v1':(RecordedLowMoisture, EquilibriumSorptiveCell),
+        'source_sorptive_common_gas_cell_v1':(RecordedSourceSorption, EquilibriumSourceSorptiveCell)}[config['schema']]
+    excess = excess_type(json.loads((root/config['sorption_record_file']).read_text()))
+    return cell_type(fluid, excess, config['cell']['dry_mass_kg'],
         config['cell']['dry_reference_temperature_k'], config['numerics']['warm_temperature_inverse'])
 
 

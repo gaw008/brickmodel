@@ -9,7 +9,7 @@ from scipy.integrate import quad
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]/'src'))
-from sludge_sandbox.recorded_sorption import RecordedLowMoisture
+from sludge_sandbox.recorded_sorption import RecordedLowMoisture, RecordedSourceSorption
 
 
 def main():
@@ -45,7 +45,8 @@ def main():
     independent = {'h_j_kg_dry': h, 'g_at_reference_j_kg_dry': g,
         's_j_kg_dry_k': s, 'partial_h_j_kg_water': b, 'partial_s_j_kg_water_k': c}
     differences = {key: value-record['join'][key] for key,value in independent.items()}
-    model = RecordedLowMoisture(record)
+    model = {'sorptive_common_gas_cell_v1': RecordedLowMoisture,
+             'source_sorptive_common_gas_cell_v1': RecordedSourceSorption}[config['schema']](record)
     derived = model.evaluate(t0,wj)
     held_out = next(p for p in facts['observations'] if p['figure'] == 1 and
                    float(p['requested_moisture_kg_water_per_kg_dry_matter']) == config['observation']['moisture_target_kg_kg'])
@@ -79,6 +80,36 @@ def main():
                                settings['mu_derivative_budget_j_mol'] for p in derivatives)},
         'material_qualified': False, 'training_eligible': False,
         'scope': 'Independent quadrature/readout of saved source nodes and caloric reference; shared ideal-vapor/liquid latent reference retained. No real-material time prediction.'}
+    if config['schema'] == 'source_sorptive_common_gas_cell_v1':
+        nodes = {
+            'activity': [{'moisture_kg_kg':float(w),'difference':model.evaluate(t0,float(w))['activity']-float(value)} for w,value in a],
+            'heat': [{'moisture_kg_kg':float(w),'difference_j_kg':record['reference_ideal_vapor_minus_liquid_enthalpy_j_kg']-
+                      model.evaluate(t0,float(w))['partial_h_j_mol']/mass-float(value)} for w,value in q]}
+        crossings=[];delta=settings['join_one_sided_step_kg_kg']
+        for t in settings['temperatures_k']:
+            center=model.evaluate(t,wj)
+            sides=[model.evaluate(t,wj+sign*delta) for sign in [-1,1]]
+            crossings.append({'temperature_k':t,'one_sided_step_kg_kg':delta,
+                'left_minus_join':{key:sides[0][key]-center[key] for key in ('h_j_kg_dry','s_j_kg_dry_k','mu_j_mol','partial_h_j_mol')},
+                'right_minus_join':{key:sides[1][key]-center[key] for key in ('h_j_kg_dry','s_j_kg_dry_k','mu_j_mol','partial_h_j_mol')}})
+        segments=[]
+        moisture_nodes=sorted(set(a[:,0])|set(q[:,0]))
+        for left,right in zip(moisture_nodes[:-1],moisture_nodes[1:],strict=True):
+            dm=(chemical(right)-chemical(left))/(right-left)
+            db=(partial_h(right)-partial_h(left))/(right-left)
+            endpoints=[mass*(t/t0*dm+(1-t/t0)*db) for t in record['model_domain']['temperature_k']]
+            segments.append({'moisture_interval_kg_kg':[float(left),float(right)],
+                'dmu_dw_at_temperature_endpoints_j_mol':list(map(float,endpoints)),
+                'strictly_positive_on_declared_temperature_interval':bool(min(endpoints)>0)})
+        result['source_nodes']=nodes
+        result['join_one_sided_approach']=crossings
+        result['source_branch_stability']=segments
+        result['within_budgets'].update({
+            'all_source_activity_nodes':all(abs(p['difference'])<=settings['calibration_activity_budget'] for p in nodes['activity']),
+            'all_source_heat_nodes':all(abs(p['difference_j_kg'])<=settings['calibration_heat_budget_j_kg'] for p in nodes['heat']),
+            'join_one_sided_approach':all(abs(v)<=settings['join_h_s_absolute_budget'] for p in crossings for side in ('left_minus_join','right_minus_join') for v in p[side].values()),
+            'positive_composition_slope':all(p['strictly_positive_on_declared_temperature_interval'] for p in segments)})
+        result['continuity_scope']='The finite one-sided approach checks h/s and first partials; dmu/dW may jump at source knots and the low-W join. Temperature extrapolation remains unvalidated.'
     with args.output.open('x') as stream:
         json.dump(result, stream, indent=2, allow_nan=False)
         stream.write('\n')

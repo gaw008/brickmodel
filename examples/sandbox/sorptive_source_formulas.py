@@ -29,6 +29,8 @@ class SorptiveSource:
         q = np.array([[p['moisture_kg_kg'],p['value']] for p in curves['heat']])
         m0 = lambda w: self.r/self.mass*t0*float(np.interp(w,a[:,0],np.log(a[:,1])))
         b0 = lambda w: latent-float(np.interp(w,q[:,0],q[:,1]))
+        self.m0, self.b0, self.t0, self.wr = m0,b0,t0,wr
+        self.activity_nodes, self.heat_nodes, self.settings = a[:,0],q[:,0],settings
         integrate = lambda f, nodes: quad(f,wr,wj,points=nodes[1:-1],
             epsabs=settings['quad_absolute_tolerance'],epsrel=settings['quad_relative_tolerance'],
             limit=settings['quad_maximum_subintervals'])[0]
@@ -37,6 +39,21 @@ class SorptiveSource:
         self.b, self.c = b0(wj),(b0(wj)-m0(wj))/t0
         self.h0, self.s0 = hj-self.b*wj, sj-self.c*wj-self.r/self.mass*wj
         self.wj = wj
+
+    def excess(self,t,w):
+        if w <= self.wj:
+            h = self.h0+self.b*w
+            s = self.s0+(self.c+self.r/self.mass)*w-self.r/self.mass*w*math.log(w/self.wj) if w else self.s0
+            mu = self.mass*(self.b-t*self.c)+self.r*t*math.log(w/self.wj) if w else None
+            return h,s,mu
+        settings = self.settings
+        integrate = lambda f,nodes: quad(f,self.wr,w,points=[x for x in nodes if w<x<self.wr],
+            epsabs=settings['quad_absolute_tolerance'],epsrel=settings['quad_relative_tolerance'],
+            limit=settings['quad_maximum_subintervals'])[0]
+        h,g0 = integrate(self.b0,self.heat_nodes),integrate(self.m0,self.activity_nodes)
+        s = (h-g0)/self.t0
+        mu = self.mass*(self.b0(w)-t*(self.b0(w)-self.m0(w))/self.t0)
+        return h,s,mu
 
     def water_ideal(self,t):
         c,a = self.facts['iapws_constants'],self.facts['ideal_formula_constants']
@@ -66,8 +83,7 @@ class SorptiveSource:
         liquid=IAPWS95(T=t,P=point['pressure_pa']/1e6)
         vg=config['cell']['available_fluid_volume_m3']-nc*self.mass/liquid.rho
         partial={k:n*self.r*t/vg for k,n in point['amounts_mol'].items()}
-        hexcess=self.h0+self.b*w
-        sexcess=self.s0+(self.c+self.r/self.mass)*w-self.r/self.mass*w*math.log(w/self.wj) if w else self.s0
+        hexcess,sexcess,mu_ex=self.excess(t,w)
         cp=self.record['dry_caloric_relation'];tr=config['cell']['dry_reference_temperature_k']
         a=cp['intercept']-cp['slope_per_degC']*self.record['celsius_zero_k'];b=cp['slope_per_degC']
         dry_u=md*(a*(t-tr)+b*(t*t-tr*tr)/2)
@@ -78,7 +94,6 @@ class SorptiveSource:
         u=gas_u+nc*(liquid.u*1000*self.mass+self.offset)+dry_u+md*hexcess
         entropy=gas_s+nc*liquid.s*1000*self.mass+dry_s+md*sexcess
         mu_v=self.ideal('H2O',t)[0]-t*(self.ideal('H2O',t)[1]-self.r*math.log(partial['H2O']/self.pref))
-        mu_ex=self.mass*(self.b-t*self.c)+self.r*t*math.log(w/self.wj) if w else None
         mu_c=liquid.h*1000*self.mass+self.offset-t*liquid.s*1000*self.mass+mu_ex if w else None
         return {'internal_energy_j':float(u),'entropy_j_k':float(entropy),'pressure_pa':math.fsum(partial.values()),
             'gas_volume_m3':float(vg),'mu_vapor_minus_condensed_j_mol':float(mu_v-mu_c) if w else None,

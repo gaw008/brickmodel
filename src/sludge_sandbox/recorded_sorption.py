@@ -5,7 +5,9 @@ Below that join the existing ideal-dilution extension is a declared model,
 not a new measurement. Its finite dry-end energy/entropy references are retained.
 """
 from dataclasses import dataclass
+from functools import cached_property
 import math
+from bisect import bisect_right
 
 
 @dataclass(frozen=True)
@@ -44,3 +46,53 @@ class RecordedLowMoisture:
         cp = self.record['dry_caloric_relation']
         a = cp['intercept']-cp['slope_per_degC']*self.record['celsius_zero_k']
         return a*math.log(temperature_k/reference_k)+cp['slope_per_degC']*(temperature_k-reference_k)
+
+
+@dataclass(frozen=True)
+class RecordedSourceSorption(RecordedLowMoisture):
+    """The same recorded wet-source branch joined to ideal dilution below Wj.
+
+    Interpolation and integration are on represented binary64 source values.
+    Their physical/model uncertainty is not an integration tolerance.
+    """
+
+    @cached_property
+    def curves(self):
+        record = self.record
+        scale = record['gas_constant_j_mol_k']/record['water_molar_mass_kg_mol']*record['reference_temperature_k']
+        latent = record['reference_ideal_vapor_minus_liquid_enthalpy_j_kg']
+        return {
+            'm': [(p['moisture_kg_kg'], scale*math.log(p['value'])) for p in record['source_curves']['activity']],
+            'b': [(p['moisture_kg_kg'], latent-p['value']) for p in record['source_curves']['heat']]}
+
+    @staticmethod
+    def interpolate(nodes, w):
+        index = min(bisect_right([p[0] for p in nodes], w)-1, len(nodes)-2)
+        (left, a), (right, b) = nodes[index:index+2]
+        return a+(w-left)/(right-left)*(b-a)
+
+    @classmethod
+    def integral_to_reference(cls, nodes, w):
+        points = [(w, cls.interpolate(nodes, w))]+[p for p in nodes if p[0]>w]
+        return -math.fsum((right-left)*(a+b)/2 for (left,a),(right,b) in zip(points[:-1],points[1:],strict=True))
+
+    def evaluate(self, temperature_k, moisture_kg_kg):
+        w, t = moisture_kg_kg, temperature_k
+        if w <= self.record['join']['moisture_kg_kg']:
+            return super().evaluate(t,w)
+        domain = self.record['model_domain']
+        if not domain['temperature_k'][0] <= t <= domain['temperature_k'][1]:
+            raise ValueError('temperature outside declared sorption extension domain')
+        if not domain['moisture_kg_kg'][0] <= w <= domain['moisture_kg_kg'][1]:
+            raise ValueError('moisture outside recorded sorption source branch')
+        t0 = self.record['reference_temperature_k']
+        h = self.integral_to_reference(self.curves['b'],w)
+        g0 = self.integral_to_reference(self.curves['m'],w)
+        s = (h-g0)/t0
+        b0, m0 = (self.interpolate(self.curves[k],w) for k in ('b','m'))
+        mass, r = self.record['water_molar_mass_kg_mol'], self.record['gas_constant_j_mol_k']
+        mu = mass*(t/t0*m0+(1-t/t0)*b0)
+        return {'h_j_kg_dry':h, 's_j_kg_dry_k':s, 'f_j_kg_dry':h-t*s,
+                'partial_h_j_mol':mass*b0, 'mu_j_mol':mu, 'mu_limit':None,
+                'activity':math.exp(mu/(r*t)),
+                'activity_at_join':super().evaluate(t,self.record['join']['moisture_kg_kg'])['activity']}
