@@ -1,0 +1,1 @@
+The first scientific grid comparison finished its calculations but JSON serialization encountered a NumPy boolean. The partial output is retained; explicit bool conversion repairs the report serialization only. No numerical coefficients or budgets changed.

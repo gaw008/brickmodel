@@ -4,6 +4,7 @@ Exterior species and energy integrals are evolved as additional ODE variables.
 They permit a global conservation reconstruction without post hoc corrections.
 """
 import argparse
+from functools import lru_cache
 import json
 from pathlib import Path
 import sys
@@ -51,13 +52,21 @@ def main():
     for i in range(n):
         sparsity[i*width:(i+1)*width, max(0, i-1)*width:min(n, i+2)*width] = 1
     sparsity[n*width:, (n-1)*width:n*width] = 1
+    inverse_seed = [seed[0]]
+
+    @lru_cache(maxsize=policy['equilibrium_cache_entries'])
+    def equilibrium_from_conserved_state(state):
+        # A fixed N/U state has one admitted equilibrium. The seed only starts
+        # its numerical inverse; reuse requires exact conserved float inputs.
+        # The cache is private to this run and its frozen material/numerics.
+        return host.decode(dict(zip(order, state[:-1], strict=True)), state[-1], inverse_seed[0])
 
     def decode(vector):
         values = vector[:n*width].reshape(n, width)
         gases, points = [], []
         for i, cell in enumerate(values):
-            gas, point = host.decode(dict(zip(order, map(float, cell[:-1]), strict=True)),
-                                     float(cell[-1]), seed[i])
+            inverse_seed[0] = seed[i]
+            gas, point = equilibrium_from_conserved_state(tuple(map(float, cell)))
             seed[i] = point['temperature_k']
             gases.append(gas)
             points.append(point)
@@ -120,7 +129,8 @@ def main():
                     next_sample += 1
                 if accepted % policy['progress_every_accepted_steps'] == 0:
                     print(json.dumps({'cells': n, 'time_s': float(solver.t), 'accepted_steps': accepted,
-                                      'rhs_evaluations': solver.nfev, 'elapsed_s': time.monotonic()-start}), flush=True)
+                                      'rhs_evaluations': solver.nfev, 'elapsed_s': time.monotonic()-start,
+                                      'equilibrium_cache': equilibrium_from_conserved_state.cache_info()._asdict()}), flush=True)
             statistics.append({'segment': segment, 'accepted_steps': accepted,
                                'rhs_evaluations': solver.nfev, 'jacobian_evaluations': solver.njev,
                                'linear_factorizations': solver.nlu})
@@ -131,6 +141,7 @@ def main():
                               'elapsed_s': time.monotonic()-start}), flush=True)
         emit({'kind': 'summary', 'status': 'completed', 'samples': samples, 'final': points,
               'solver_statistics': statistics, 'elapsed_s': time.monotonic()-start,
+              'equilibrium_cache': equilibrium_from_conserved_state.cache_info()._asdict(),
               'material_qualified': False, 'training_eligible': False})
     print(json.dumps({'status': 'completed', 'cells': n, 'elapsed_s': time.monotonic()-start}), flush=True)
 

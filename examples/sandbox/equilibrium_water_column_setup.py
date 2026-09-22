@@ -6,6 +6,7 @@ from sludge_sandbox.boundary_program import BoundaryProgram, ProgramIdentity
 from sludge_sandbox.equilibrium_water_cell import EquilibriumWaterCell
 from sludge_sandbox.equilibrium_water_column import BallastWaterCell, column_face_rates
 from sludge_sandbox.gas_transport import ideal_gas_reservoir
+from sludge_sandbox.gibbs_water_table import GibbsWaterTable
 from sludge_sandbox.open_gas_boundary import GasBoundaryTransfer
 from sludge_sandbox.programmed_gas_heat import SurfacePolicy
 from sludge_sandbox.recorded_water import RecordedWaterProperties
@@ -26,6 +27,11 @@ class ColumnSetup:
 
 def build_column(root, config, count):
     water = RecordedWaterProperties(root/config['water_facts_file'], NumericalLimits(**config['numerics']['water']))
+    representation = config['liquid_evaluation']
+    water = {
+        'direct': lambda: water,
+        'gibbs_table': lambda: GibbsWaterTable(water, json.loads((root/representation['table_file']).read_text())),
+    }[representation['method']]()
     thermo = load_thermochemistry(root/config['thermochemistry_file'])
     solid = json.loads((root/config['solid_facts_file']).read_text())
     geometry = config['geometry']
