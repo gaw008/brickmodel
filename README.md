@@ -6,6 +6,8 @@
 
 项目按 [总规范](docs/BRICK_PHYSICS_PROJECT_SPEC.md) 建设独立的 `sludge_sandbox` 物理沙盒；[V0已有成果审查](docs/GOAL_BRICK_PHYSICS_SANDBOX.md)已完成限定范围，继续采用 [开发与验证分开的阶段 Goal](docs/sandbox/STAGED_GOALS.md)。已实现来源/材料账目、热化学、水物性、守恒输运与反应、规定变形储能、耗尽积分及独立账本检查；[原生冷却能量接口](docs/sandbox/research/cooling-energy-host-v1/REPORT.md)通过限定制造半板验证。真实材料查询包括[原污泥95°C离散解吸物性](docs/sandbox/research/arlabosse95/README.md)、低温干基比热和同来源纯方解石热化学。完整原污泥材料、湿坯至冷却耦合及三机制公开实验验证仍未完成。
 
+2026-09-22三小时连续开发新增[来源吸附水的一维干燥—吸水—再干燥](docs/sandbox/research/three-hour-20260922/REPORT.md)，32→64格达到声明空间比较目标，并保留局部能量积分失败/收紧结果、读图误差情景及明确物理假设。另完成固定体积表面储液腔的条件相变研究。运行与审查均可离线复现；真实砖坯、高温反应、烧结和冷却的[剩余材料依赖](docs/sandbox/research/three-hour-20260922/NEXT_PHASES.md)仍未闭合，M1保持blocked。
+
 2026-09-22两小时连续开发新增[相变时刻、来源快照续算、完整熵账及等价压力根](docs/sandbox/research/water-column-events-v1/REPORT.md)，并补充[ENEA热解产物证据与离线算术](docs/sandbox/research/enea-pyrolysis-products-v1/REPORT.md)。干燥事件网格比较达到限定目标；冷凝空间精度仍未通过，边界液水集中问题已记录。真实材料与完整烧砖模型资格不变。
 
 2026-09-22新增[一维液汽/载气通道与石英储热体](docs/sandbox/research/equilibrium-water-column-v1/REPORT.md)：实际模拟40s升温、局部蒸发、液水耗尽后通气和低温冷却，11组完整轨迹保留来源与收支。8→16格及时间精度比较达到预设数值目标，快速水物性表示单独复核；这是条件通道研究，M1真实砖干燥及[剩余材料阶段](docs/sandbox/research/equilibrium-water-column-v1/NEXT_PHASES.md)仍受资料和现实验证限制。
@@ -31,7 +33,7 @@
 | [B2 给定温度程序](experiments/material_dynamics_v2b2/README.md) | prescribed-temperature 扩展 | 历史审计失败已在 `0634e80` 修复并完成[冻结范围复验](docs/sandbox/research/b2-bound-0634e80/summary.json)；不代表湿砖全周期验证 |
 | [早期 VME](docs/MODEL_ARCHITECTURE.md) | 正向/反向求解与 synthetic 筛选框架 | 受限研究原型；不能继承 B1 的审核结论 |
 
-后续更新每 15 分钟由 Codex 自动同步：[同步范围、分支位置与运行条件](docs/research-status/GITHUB_SYNC.md)。
+最初研究导入任务的15分钟同步安排记录于：[同步范围、分支位置与运行条件](docs/research-status/GITHUB_SYNC.md)。
 
 完整审核、失败原始数据、上传核验与复跑方法见 [研究状态说明](docs/research-status/README.md)。早期文档和历史产物中的 pending / PASS 均属于各自提交与范围，应结合独立审核阅读。
 

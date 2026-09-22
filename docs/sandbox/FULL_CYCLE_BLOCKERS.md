@@ -1,5 +1,9 @@
 # 同一材料一维全周期闭合判断
 
+**2026-09-22三小时窗口增量：** [一维来源吸附水柱](research/source-sorptive-column-v1/REPORT.md)与[湿度循环](research/sorptive-humidity-cycle-v1/REPORT.md)已经实际接通共同O2/N2/H2O交换、吸附/干物储热并完成1200s过程，32→64格达到声明的空间比较目标。因此下文旧“下一步接共同载气、完成湿区到低W连续路径”在本轮声明的W≤.8虚拟装置范围内已实现。原文未提供的实际输运、孔隙、初态和观测并未因此补齐。
+
+[局部能量积分](research/source-sorptive-column-v1/LOCAL_BALANCES.md)新目标暴露基础容差误差并用收紧轨迹复核，失败保存；[读图情景](research/sorptive-reading-scenarios-v1/REPORT.md)一组不符合原图有限留出，不能称真实预测误差区间。干物Cp被当作无膨胀功的定体积储热系数属于材料近似，实际Cv与误差未知；固定干质量的相对能量零点不能直接用于反应。W>.8自由水、液体迁移、M1、反应、烧结/冷却同材料闭合及现实验证仍缺，见[本轮剩余表](research/three-hour-20260922/NEXT_PHASES.md)。
+
 **2026-09-22两小时窗口增量：** [相变/续算/熵账](research/water-column-events-v1/REPORT.md)提升通用低温核及其可追查性；冷凝空间比较和边界液体库存定义仍有未解决问题。新增[ENEA官方2024热解产物](research/enea-pyrolysis-products-v1/REPORT.md)提供四炉温的炭、油、水相、气体产率及油CHONS，缩小终态组成未知；它不改变下文Cedrone原实验未收集气液的事实，也不能自动证明两报告每个试样相同。仍缺配对热历史、全产物定量组成、供氧速率和相容量热参考，不能据此放行有限时间反应或MIA3全周期。当前[材料任务记录](research/water-column-events-v1/MATERIAL_DEPENDENCIES.md)保留这些区别。
 
 **2026-09-22更新：** [纯水/载气通道和外置石英储热体](research/equilibrium-water-column-v1/REPORT.md)已实际完成低温相变、共同气流、储热及程序化边界的空间耦合，并通过限定时间/空间比较。它推进下文第2/5项的通用数值基础，但不提供Arlabosse、黏土或MIA3的缺失材料关系。真实同材料全周期仍未闭合，当前剩余阶段见[依赖表](research/equilibrium-water-column-v1/NEXT_PHASES.md)。以下原判断及失败证据保留。
