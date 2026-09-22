@@ -19,3 +19,7 @@
 入口`audit_sorptive_gas_column.py --local-balance-parameters parameters.sorptive_local_balance_review.json`；模型设置根文件`parameters.sorptive_humidity_local_precision.json`明确最后一档，所有旧设置保持。数据目录保留`four-local-balance-review.json`、`four-refined-local-balance-review.json`及循环`four-tight-local-balance-review.json`。这些是科学轨迹计算与数值核算；未新增/执行软件测试。
 
 审查入口已改为逐行读取轨迹，以便处理细网格大文件；相同四格紧容差轨迹复算后，除墙钟耗时外全部科学输出字段逐值相同，记录于`streaming-audit-comparison.json`。这只核对内存读取改动，没有赋予任何新物理资格。
+
+## 32格循环扩展审查
+
+32格循环紧容差完整来源/局部积分已完成，193216个单元源状态和116288个接受面重建通过；2/4点逐格最大能量残差5.935e−7/5.628e−7J，两阶局部能量积分差1.154e−7J，各组分残差≤2.210e−12mol，全部在同一事前目标内。完整熵残差1.798e−10/1.810e−10J/K，无超负值预算步骤。此结论只授予实际执行的32格紧容差循环，原四格基础/10倍紧容差失败仍保留。
