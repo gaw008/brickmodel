@@ -1,0 +1,27 @@
+{
+  "trajectories": {
+    "base": "data/sandbox/research/effusive-gas-chambers-v1/base.jsonl",
+    "refined": "data/sandbox/research/effusive-gas-chambers-v1/refined.jsonl"
+  },
+  "numerics": {
+    "decimal_precision": 60,
+    "root_tolerance": "1e-45",
+    "root_maximum_steps": 50,
+    "root_solver": "secant",
+    "quadrature_orders": [2, 4],
+    "progress_every_steps": 250
+  },
+  "verification": {
+    "source_temperature_k": 1e-7,
+    "source_pressure_pa": 1e-9,
+    "source_energy_inverse_j": 1e-35,
+    "source_entropy_j_k": 1e-13,
+    "source_initial_species_mol": 1e-20,
+    "source_initial_energy_j": 1e-14,
+    "source_initial_temperature_k": 1e-7
+  },
+  "budget_policy": "Original recorded trajectory budgets for source flux, local/cumulative species/energy/entropy, time refinement, final equilibrium and entropy sign are unchanged. Additional inverse budgets frozen before review.",
+  "independence": "Read raw USGS coefficient strings and integrate analytically at60digits. Invert each inventory with independent high-precision secant, without importing production thermochemistry, cells, or temperature roots. Use independent Maxwell velocity moments and all accepted/2and4Gauss/sample nodes. No continuous-time numerical-error supremum claim.",
+  "material_qualified": false,
+  "training_eligible": false
+}

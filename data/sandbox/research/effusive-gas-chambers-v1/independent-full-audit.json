@@ -1,0 +1,445 @@
+{
+  "settings": {
+    "trajectories": {
+      "base": "data/sandbox/research/effusive-gas-chambers-v1/base.jsonl",
+      "refined": "data/sandbox/research/effusive-gas-chambers-v1/refined.jsonl"
+    },
+    "numerics": {
+      "decimal_precision": 60,
+      "root_tolerance": "1e-45",
+      "root_maximum_steps": 50,
+      "root_solver": "secant",
+      "quadrature_orders": [
+        2,
+        4
+      ],
+      "progress_every_steps": 250
+    },
+    "verification": {
+      "source_temperature_k": 1e-07,
+      "source_pressure_pa": 1e-09,
+      "source_energy_inverse_j": 1e-35,
+      "source_entropy_j_k": 1e-13,
+      "source_initial_species_mol": 1e-20,
+      "source_initial_energy_j": 1e-14,
+      "source_initial_temperature_k": 1e-07
+    },
+    "budget_policy": "Original recorded trajectory budgets for source flux, local/cumulative species/energy/entropy, time refinement, final equilibrium and entropy sign are unchanged. Additional inverse budgets frozen before review.",
+    "independence": "Read raw USGS coefficient strings and integrate analytically at60digits. Invert each inventory with independent high-precision secant, without importing production thermochemistry, cells, or temperature roots. Use independent Maxwell velocity moments and all accepted/2and4Gauss/sample nodes. No continuous-time numerical-error supremum claim.",
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "trajectory_reviews": {
+    "base": {
+      "trajectory": "/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/effusive-gas-chambers-v1/base.jsonl",
+      "counts": {
+        "recorded": 6014,
+        "dense": 18078
+      },
+      "maximum_residuals": {
+        "species_ledger_mol": 4.764560328305439e-22,
+        "energy_ledger_j": 2.42861286636753e-17,
+        "entropy_ledger_j_k": 3.4557507828327676e-13,
+        "entropy_above_equilibrium_j_k": 0.0,
+        "source_temperature_k": 4.774847184307873e-11,
+        "source_pressure_pa": 4.363176486776865e-14,
+        "source_entropy_j_k": 1.3552527156068805e-19,
+        "face_species_mol_s": 4.976008372389307e-25,
+        "face_energy_w": 3.3034284942917713e-20,
+        "face_entropy_w_k": 9.367820437163038e-23
+      },
+      "minima": {
+        "species_mol": 1.0933788149763593e-08,
+        "temperature_k": 399.9999999999998,
+        "production_w_k": 7.854704687479106e-23
+      },
+      "maximum_temperature_k": 1100.0,
+      "source_inverse_maximum_energy_residual_j": 4.861730685829017e-63,
+      "initial_C_N_U_differences": [
+        1.6543612251060553e-24,
+        2.6469779601696886e-23,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "independent_equilibrium": {
+        "temperature_k": 749.0884338139708,
+        "pressure_pa": 0.4971223242583624,
+        "entropy_j_k": 6.72943283987568e-05,
+        "amounts_mol": [
+          [
+            2.6022415796437356e-08,
+            5.379423769683688e-08
+          ],
+          [
+            3.9033623694656034e-08,
+            8.069135654525532e-08
+          ]
+        ]
+      },
+      "final_equilibrium_differences": {
+        "temperature_k": 0.000103243412354459,
+        "pressure_pa": 1.41551622923064e-07,
+        "species_mol": 2.0681202285819267e-14
+      },
+      "balance_component_order": [
+        "CL",
+        "NL",
+        "UL",
+        "CR",
+        "NR",
+        "UR",
+        "SL",
+        "SR",
+        "integral_JC",
+        "integral_JN",
+        "integral_E",
+        "integral_Pi"
+      ],
+      "balance_budgets": [
+        1e-13,
+        1e-13,
+        1e-08,
+        1e-13,
+        1e-13,
+        1e-08,
+        1e-10,
+        1e-10,
+        1e-13,
+        1e-13,
+        1e-08,
+        1e-10
+      ],
+      "integral_reviews": [
+        {
+          "order": 2,
+          "maximum_local_residuals": [
+            4.171466184243473e-17,
+            1.1399032912245066e-16,
+            1.6745216995515174e-11,
+            4.171466184243473e-17,
+            1.1399034235734046e-16,
+            1.6745221332323864e-11,
+            4.7333337400503934e-14,
+            5.1806625385803045e-14,
+            4.1714661764886545e-17,
+            1.1399033785954588e-16,
+            1.6745216263678708e-11,
+            9.307572720704126e-14
+          ],
+          "maximum_cumulative_residuals": [
+            1.398944976139324e-16,
+            1.7008666814068579e-16,
+            5.5953358266136455e-11,
+            1.3989449265084871e-16,
+            1.7008666152324089e-16,
+            5.595336477134949e-11,
+            6.636494798462913e-14,
+            6.842256007268342e-14,
+            1.3989449745883603e-16,
+            1.70086659022312e-16,
+            5.5953359025077976e-11,
+            3.394097495798366e-13
+          ],
+          "minimum_entropy_step_j_k": -1.6940658945086007e-20,
+          "within_budgets": {
+            "local": true,
+            "cumulative": true,
+            "nonnegative_entropy_step": true
+          }
+        },
+        {
+          "order": 4,
+          "maximum_local_residuals": [
+            4.171780388152916e-17,
+            1.139903540929654e-16,
+            1.6746523371041593e-11,
+            4.171780388152916e-17,
+            1.139903673278552e-16,
+            1.6746527707850282e-11,
+            4.733325665444126e-14,
+            5.180551434327404e-14,
+            4.171780380398098e-17,
+            1.1399036283006062e-16,
+            1.6746522639205126e-11,
+            9.308713327660837e-14
+          ],
+          "maximum_cumulative_residuals": [
+            1.3991588307620024e-16,
+            1.7008666814068579e-16,
+            5.59622585359805e-11,
+            1.3991587811311657e-16,
+            1.7008666152324089e-16,
+            5.596226504119353e-11,
+            6.637137230601758e-14,
+            6.842256008260958e-14,
+            1.3991588292110388e-16,
+            1.70086659022312e-16,
+            5.596225929492202e-11,
+            3.394742190044576e-13
+          ],
+          "minimum_entropy_step_j_k": -1.6940658945086007e-20,
+          "within_budgets": {
+            "local": true,
+            "cumulative": true,
+            "nonnegative_entropy_step": true
+          }
+        }
+      ],
+      "quadrature_maximum_prefix_difference": [
+        7.852921863333424e-20,
+        2.180448094689781e-20,
+        3.157023253930191e-14,
+        7.852921863333424e-20,
+        2.180448094689781e-20,
+        3.157023253930191e-14,
+        3.376781547523994e-17,
+        2.160967395694116e-16,
+        7.852921863333424e-20,
+        2.180448094689781e-20,
+        3.157023253930191e-14,
+        1.8232807706122442e-16
+      ],
+      "within_budgets": {
+        "source_temperature_k": true,
+        "source_pressure_pa": true,
+        "source_entropy_j_k": true,
+        "initial_species": true,
+        "initial_energy": true,
+        "initial_temperature": true,
+        "species_ledger": true,
+        "energy_ledger": true,
+        "entropy_ledger": true,
+        "entropy_upper_bound": true,
+        "source_inverse_energy": true,
+        "face_species": true,
+        "face_energy": true,
+        "face_entropy": true,
+        "positive_species": true,
+        "source_temperature_domain": true,
+        "nonnegative_production": true,
+        "local_cumulative_integrals": true,
+        "quadrature": true,
+        "final_equilibrium": true,
+        "completed": true
+      },
+      "all_requested_budgets_met": true
+    },
+    "refined": {
+      "trajectory": "/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/effusive-gas-chambers-v1/refined.jsonl",
+      "counts": {
+        "recorded": 6019,
+        "dense": 18108
+      },
+      "maximum_residuals": {
+        "species_ledger_mol": 2.9116757561866574e-22,
+        "energy_ledger_j": 6.418476861114186e-17,
+        "entropy_ledger_j_k": 1.7121515949587488e-13,
+        "entropy_above_equilibrium_j_k": 0.0,
+        "source_temperature_k": 4.774847184307873e-11,
+        "source_pressure_pa": 4.363176486776865e-14,
+        "source_entropy_j_k": 1.3552527156068805e-19,
+        "face_species_mol_s": 4.976008372389307e-25,
+        "face_energy_w": 3.3034284942917713e-20,
+        "face_entropy_w_k": 9.367820437163038e-23
+      },
+      "minima": {
+        "species_mol": 1.0933788149763593e-08,
+        "temperature_k": 399.9999999999998,
+        "production_w_k": 7.854704620973979e-23
+      },
+      "maximum_temperature_k": 1100.0,
+      "source_inverse_maximum_energy_residual_j": 4.861730685829017e-63,
+      "initial_C_N_U_differences": [
+        1.6543612251060553e-24,
+        2.6469779601696886e-23,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "independent_equilibrium": {
+        "temperature_k": 749.0884338139708,
+        "pressure_pa": 0.4971223242583624,
+        "entropy_j_k": 6.72943283987568e-05,
+        "amounts_mol": [
+          [
+            2.6022415796437356e-08,
+            5.379423769683688e-08
+          ],
+          [
+            3.9033623694656034e-08,
+            8.069135654525532e-08
+          ]
+        ]
+      },
+      "final_equilibrium_differences": {
+        "temperature_k": 0.00010324341872092191,
+        "pressure_pa": 1.4155161798257154e-07,
+        "species_mol": 2.0681202285819267e-14
+      },
+      "balance_component_order": [
+        "CL",
+        "NL",
+        "UL",
+        "CR",
+        "NR",
+        "UR",
+        "SL",
+        "SR",
+        "integral_JC",
+        "integral_JN",
+        "integral_E",
+        "integral_Pi"
+      ],
+      "balance_budgets": [
+        1e-13,
+        1e-13,
+        1e-08,
+        1e-13,
+        1e-13,
+        1e-08,
+        1e-10,
+        1e-10,
+        1e-13,
+        1e-13,
+        1e-08,
+        1e-10
+      ],
+      "integral_reviews": [
+        {
+          "order": 2,
+          "maximum_local_residuals": [
+            3.232321459858331e-17,
+            7.276344059765462e-17,
+            1.0935014280513949e-11,
+            3.2323209635499635e-17,
+            7.276344721509953e-17,
+            1.0935018617322639e-11,
+            3.528963594606623e-14,
+            3.757238485855096e-14,
+            3.232321491523839e-17,
+            7.276344013236553e-17,
+            1.0935014248326697e-11,
+            5.234815668439727e-14
+          ],
+          "maximum_cumulative_residuals": [
+            1.1048047951575387e-16,
+            1.678238690978363e-16,
+            3.963148072791498e-11,
+            1.1048046958958652e-16,
+            1.678238757152812e-16,
+            3.963148029423411e-11,
+            9.386696412867879e-14,
+            9.77092145799767e-14,
+            1.1048047924433523e-16,
+            1.6782387106239027e-16,
+            3.9631480863440254e-11,
+            1.7351593006994257e-13
+          ],
+          "minimum_entropy_step_j_k": -1.6940658945086007e-20,
+          "within_budgets": {
+            "local": true,
+            "cumulative": true,
+            "nonnegative_entropy_step": true
+          }
+        },
+        {
+          "order": 4,
+          "maximum_local_residuals": [
+            3.232321022842011e-17,
+            7.276344086907326e-17,
+            1.093501247294564e-11,
+            3.232320526533644e-17,
+            7.276344748651816e-17,
+            1.093501680975433e-11,
+            3.5289634533241746e-14,
+            3.7572365343705947e-14,
+            3.232321054507519e-17,
+            7.276344040378417e-17,
+            1.0935012440758387e-11,
+            5.2348138593957275e-14
+          ],
+          "maximum_cumulative_residuals": [
+            1.1048034935112967e-16,
+            1.678238819191358e-16,
+            3.963142670754174e-11,
+            1.1048033942496232e-16,
+            1.678238885365807e-16,
+            3.963142627386087e-11,
+            9.386692360344622e-14,
+            9.770866014397316e-14,
+            1.1048034907971103e-16,
+            1.6782388388368976e-16,
+            3.963142684306701e-11,
+            1.7351541618564138e-13
+          ],
+          "minimum_entropy_step_j_k": -1.6940658945086007e-20,
+          "within_budgets": {
+            "local": true,
+            "cumulative": true,
+            "nonnegative_entropy_step": true
+          }
+        }
+      ],
+      "quadrature_maximum_prefix_difference": [
+        7.291597099654939e-20,
+        2.2532399885944474e-20,
+        2.92526419753969e-14,
+        7.291597099654939e-20,
+        2.2532399885944474e-20,
+        2.92526419753969e-14,
+        3.2053420789997233e-17,
+        1.920664148558071e-16,
+        7.291597099654939e-20,
+        2.2532399885944474e-20,
+        2.92526419753969e-14,
+        1.6003120527417584e-16
+      ],
+      "within_budgets": {
+        "source_temperature_k": true,
+        "source_pressure_pa": true,
+        "source_entropy_j_k": true,
+        "initial_species": true,
+        "initial_energy": true,
+        "initial_temperature": true,
+        "species_ledger": true,
+        "energy_ledger": true,
+        "entropy_ledger": true,
+        "entropy_upper_bound": true,
+        "source_inverse_energy": true,
+        "face_species": true,
+        "face_energy": true,
+        "face_entropy": true,
+        "positive_species": true,
+        "source_temperature_domain": true,
+        "nonnegative_production": true,
+        "local_cumulative_integrals": true,
+        "quadrature": true,
+        "final_equilibrium": true,
+        "completed": true
+      },
+      "all_requested_budgets_met": true
+    }
+  },
+  "time_comparison": {
+    "times_compared": 45174,
+    "maximum_differences": {
+      "temperature_k": 1.9361266367923236e-06,
+      "pressure_pa": 1.8373733645660195e-09,
+      "species_mol": 1.87115090380077e-16
+    },
+    "within_budgets": {
+      "temperature_k": true,
+      "pressure_pa": true,
+      "species_mol": true
+    },
+    "all_requested_budgets_met": true,
+    "scope": "Both accepted,2and4Gauss and observed nodes; independent source inventory inverse at each time, native BDF polynomials; no continuous-time supremum."
+  },
+  "elapsed_s": 309.778391874861,
+  "all_requested_budgets_met": true,
+  "material_qualified": false,
+  "training_eligible": false
+}

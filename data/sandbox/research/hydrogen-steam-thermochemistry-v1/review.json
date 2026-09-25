@@ -1,0 +1,3573 @@
+{
+  "settings": {
+    "source_file": "data/sandbox/research/hydrogen-steam-thermochemistry-v1/source.json",
+    "selected_temperature_domain_k": [
+      298.15,
+      1200.0
+    ],
+    "decimal_digits": 80,
+    "review_temperatures_k": [
+      298.15,
+      300.0,
+      400.0,
+      500.0,
+      600.0,
+      700.0,
+      800.0,
+      900.0,
+      1000.0,
+      1100.0,
+      1200.0
+    ],
+    "numerical_budgets": {
+      "cp_j_mol_k": 1e-10,
+      "enthalpy_j_mol": 1e-06,
+      "entropy_j_mol_k": 1e-08
+    },
+    "cp_certificate": {
+      "sqrt_temperature_cover": [
+        17,
+        35
+      ],
+      "equal_subintervals": 64,
+      "polynomial_degree": 8
+    },
+    "source_print_half_units": {
+      "cp_j_mol_k": 0.005,
+      "entropy_j_mol_k": 0.005,
+      "sensible_enthalpy_over_t_j_mol_k": 0.005
+    },
+    "scope": "H2 and ideal steam source functions, exact-rational positiveCv certificate, printed-table arithmetic enclosures and source-consistentH/O/C reaction freeenergies only. No real-brick reaction rate or stable-liquid model.",
+    "carbon_oxygen_source_file": "data/sandbox/research/carbon-gas-thermochemistry-v1/source.json",
+    "reactions": {
+      "hydrogen_oxidation": {
+        "H2": -1,
+        "O2": -0.5,
+        "H2O": 1
+      },
+      "water_gas_shift": {
+        "CO": -1,
+        "H2O": -1,
+        "CO2": 1,
+        "H2": 1
+      },
+      "steam_gasification": {
+        "C": -1,
+        "H2O": -1,
+        "CO": 1,
+        "H2": 1
+      }
+    },
+    "atoms": {
+      "C": {
+        "C": 1
+      },
+      "CO": {
+        "C": 1,
+        "O": 1
+      },
+      "CO2": {
+        "C": 1,
+        "O": 2
+      },
+      "O2": {
+        "O": 2
+      },
+      "N2": {
+        "N": 2
+      },
+      "H2": {
+        "H": 2
+      },
+      "H2O": {
+        "H": 2,
+        "O": 1
+      }
+    },
+    "reaction_budgets": {
+      "enthalpy_j_mol": 1e-06,
+      "entropy_j_mol_k": 1e-08,
+      "gibbs_j_mol": 1e-06,
+      "log_equilibrium": 1e-10,
+      "gibbs_temperature_derivative_j_mol_k": 1e-07,
+      "vant_hoff_derivative_per_k": 1e-10
+    },
+    "source_arithmetic_enclosure_allowance": 1e-09,
+    "joules_per_kilojoule": 1000
+  },
+  "source": {
+    "source_id": "usgs-b2131-1995-hydrogen-steam",
+    "source_url": "https://pubs.usgs.gov/bul/2131/report.pdf",
+    "authors": [
+      "Richard A. Robie",
+      "Bruce S. Hemingway"
+    ],
+    "year": 1995,
+    "reference_temperature_k": "298.15",
+    "reference_pressure_pa": "100000",
+    "gas_constant_j_mol_k": "8.31451",
+    "gas_constant_policy": "Historical book constant retained consistently with existingC/O phases. Not silently replaced by modernSI R.",
+    "cp_formula": "A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2",
+    "phases": {
+      "H2": {
+        "id": "hydrogen",
+        "formula": "H2",
+        "molar_mass_g_mol": "2.016",
+        "cp_coefficient_strings": [
+          "4.783E+00",
+          "1.335E-02",
+          "-5.617E+05",
+          "4.583E+02",
+          "-1.825E-06"
+        ],
+        "reference_enthalpy_j_mol": "0",
+        "reference_enthalpy_is_elemental_zero": true,
+        "reference_entropy_j_mol_k": "130.68",
+        "cp_pdf_one_based_page": 48,
+        "cp_printed_page": 42,
+        "thermal_pdf_one_based_page": 95,
+        "thermal_printed_page": 89,
+        "source_domain_k": [
+          298.15,
+          2500
+        ],
+        "source_table": [
+          {
+            "temperature_k": "298.15",
+            "cp_j_mol_k": "28.82",
+            "entropy_j_mol_k": "130.68",
+            "sensible_enthalpy_over_t_j_mol_k": "0.00"
+          },
+          {
+            "temperature_k": "300",
+            "cp_j_mol_k": "28.84",
+            "entropy_j_mol_k": "130.86",
+            "sensible_enthalpy_over_t_j_mol_k": "0.18"
+          },
+          {
+            "temperature_k": "400",
+            "cp_j_mol_k": "29.24",
+            "entropy_j_mol_k": "139.23",
+            "sensible_enthalpy_over_t_j_mol_k": "7.41"
+          },
+          {
+            "temperature_k": "500",
+            "cp_j_mol_k": "29.25",
+            "entropy_j_mol_k": "145.76",
+            "sensible_enthalpy_over_t_j_mol_k": "11.78"
+          },
+          {
+            "temperature_k": "600",
+            "cp_j_mol_k": "29.29",
+            "entropy_j_mol_k": "151.09",
+            "sensible_enthalpy_over_t_j_mol_k": "14.69"
+          },
+          {
+            "temperature_k": "700",
+            "cp_j_mol_k": "29.41",
+            "entropy_j_mol_k": "155.61",
+            "sensible_enthalpy_over_t_j_mol_k": "16.78"
+          },
+          {
+            "temperature_k": "800",
+            "cp_j_mol_k": "29.62",
+            "entropy_j_mol_k": "159.55",
+            "sensible_enthalpy_over_t_j_mol_k": "18.38"
+          },
+          {
+            "temperature_k": "900",
+            "cp_j_mol_k": "29.90",
+            "entropy_j_mol_k": "163.06",
+            "sensible_enthalpy_over_t_j_mol_k": "19.64"
+          },
+          {
+            "temperature_k": "1000",
+            "cp_j_mol_k": "30.24",
+            "entropy_j_mol_k": "166.23",
+            "sensible_enthalpy_over_t_j_mol_k": "20.68"
+          },
+          {
+            "temperature_k": "1100",
+            "cp_j_mol_k": "30.61",
+            "entropy_j_mol_k": "169.13",
+            "sensible_enthalpy_over_t_j_mol_k": "21.57"
+          },
+          {
+            "temperature_k": "1200",
+            "cp_j_mol_k": "31.01",
+            "entropy_j_mol_k": "171.81",
+            "sensible_enthalpy_over_t_j_mol_k": "22.34"
+          }
+        ]
+      },
+      "H2O": {
+        "id": "steam",
+        "formula": "H2O",
+        "molar_mass_g_mol": "18.015",
+        "cp_coefficient_strings": [
+          "2.7057E+01",
+          "1.7584E-02",
+          "2.7696E+05",
+          "-2.7656E+01",
+          "-2.5097E-06"
+        ],
+        "reference_enthalpy_j_mol": "-241800",
+        "reference_enthalpy_printed_kj_mol": "-241.8",
+        "reference_enthalpy_is_elemental_zero": false,
+        "reference_entropy_j_mol_k": "188.84",
+        "cp_pdf_one_based_page": 54,
+        "cp_printed_page": 48,
+        "thermal_pdf_one_based_page": 200,
+        "thermal_printed_page": 194,
+        "source_domain_k": [
+          298.15,
+          2500
+        ],
+        "source_table": [
+          {
+            "temperature_k": "298.15",
+            "cp_j_mol_k": "33.59",
+            "entropy_j_mol_k": "188.84",
+            "sensible_enthalpy_over_t_j_mol_k": "0.00",
+            "formation_enthalpy_kj_mol": "-241.8",
+            "formation_gibbs_kj_mol": "-228.6",
+            "formation_log10_k": "40.05"
+          },
+          {
+            "temperature_k": "300",
+            "cp_j_mol_k": "33.59",
+            "entropy_j_mol_k": "189.05",
+            "sensible_enthalpy_over_t_j_mol_k": "0.21",
+            "formation_enthalpy_kj_mol": "-241.8",
+            "formation_gibbs_kj_mol": "-228.5",
+            "formation_log10_k": "39.79"
+          },
+          {
+            "temperature_k": "400",
+            "cp_j_mol_k": "34.04",
+            "entropy_j_mol_k": "198.75",
+            "sensible_enthalpy_over_t_j_mol_k": "8.59",
+            "formation_enthalpy_kj_mol": "-242.9",
+            "formation_gibbs_kj_mol": "-223.9",
+            "formation_log10_k": "29.24"
+          },
+          {
+            "temperature_k": "500",
+            "cp_j_mol_k": "35.09",
+            "entropy_j_mol_k": "206.45",
+            "sensible_enthalpy_over_t_j_mol_k": "13.78",
+            "formation_enthalpy_kj_mol": "-243.9",
+            "formation_gibbs_kj_mol": "-219.0",
+            "formation_log10_k": "22.88"
+          },
+          {
+            "temperature_k": "600",
+            "cp_j_mol_k": "36.34",
+            "entropy_j_mol_k": "212.96",
+            "sensible_enthalpy_over_t_j_mol_k": "17.43",
+            "formation_enthalpy_kj_mol": "-244.8",
+            "formation_gibbs_kj_mol": "-214.0",
+            "formation_log10_k": "18.63"
+          },
+          {
+            "temperature_k": "700",
+            "cp_j_mol_k": "37.66",
+            "entropy_j_mol_k": "218.66",
+            "sensible_enthalpy_over_t_j_mol_k": "20.23",
+            "formation_enthalpy_kj_mol": "-245.7",
+            "formation_gibbs_kj_mol": "-208.8",
+            "formation_log10_k": "15.58"
+          },
+          {
+            "temperature_k": "800",
+            "cp_j_mol_k": "38.97",
+            "entropy_j_mol_k": "223.77",
+            "sensible_enthalpy_over_t_j_mol_k": "22.49",
+            "formation_enthalpy_kj_mol": "-246.5",
+            "formation_gibbs_kj_mol": "-203.5",
+            "formation_log10_k": "13.28"
+          },
+          {
+            "temperature_k": "900",
+            "cp_j_mol_k": "40.27",
+            "entropy_j_mol_k": "228.44",
+            "sensible_enthalpy_over_t_j_mol_k": "24.39",
+            "formation_enthalpy_kj_mol": "-247.2",
+            "formation_gibbs_kj_mol": "-198.0",
+            "formation_log10_k": "11.49"
+          },
+          {
+            "temperature_k": "1000",
+            "cp_j_mol_k": "41.53",
+            "entropy_j_mol_k": "232.75",
+            "sensible_enthalpy_over_t_j_mol_k": "26.04",
+            "formation_enthalpy_kj_mol": "-247.8",
+            "formation_gibbs_kj_mol": "-192.6",
+            "formation_log10_k": "10.06"
+          },
+          {
+            "temperature_k": "1100",
+            "cp_j_mol_k": "42.76",
+            "entropy_j_mol_k": "236.76",
+            "sensible_enthalpy_over_t_j_mol_k": "27.51",
+            "formation_enthalpy_kj_mol": "-248.4",
+            "formation_gibbs_kj_mol": "-187.0",
+            "formation_log10_k": "8.88"
+          },
+          {
+            "temperature_k": "1200",
+            "cp_j_mol_k": "43.94",
+            "entropy_j_mol_k": "240.53",
+            "sensible_enthalpy_over_t_j_mol_k": "28.83",
+            "formation_enthalpy_kj_mol": "-248.9",
+            "formation_gibbs_kj_mol": "-181.4",
+            "formation_log10_k": "7.90"
+          }
+        ]
+      }
+    },
+    "visual_review": {
+      "date_utc": "2026-09-25",
+      "pdf_one_based_pages": [
+        48,
+        54,
+        95,
+        200
+      ],
+      "method": "Rendered fullPDF pages and visually checked coefficients and298.15-1200K rows; no hash"
+    },
+    "reference_policy": "h(T)=hf(298.15K)+integralCp. Formationenthalpy atT subtracts elemental sensible enthalpies, so is not single-species storage h(T).",
+    "rounding_policy": "Printed coefficient/reference/table half-last-unit arithmetic enclosures only; no physical fit error or experimental covariance inferred.",
+    "phase_scope": "Ideal gas standard-state functions. Below physical condensation temperatures the vapor standard state is a formal reference, not stable liquid-water equilibrium. No saturation/adsorption closure or energy alignment with low-temperature material inferred.",
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "records": {
+    "H2": {
+      "points": [
+        {
+          "temperature_k": 298.15,
+          "state": {
+            "temperature_k": 298.15,
+            "cp_j_mol_k": 28.824196284670762,
+            "enthalpy_j_mol": 0.0,
+            "entropy_j_mol_k": 130.68,
+            "gibbs_j_mol": -38962.242,
+            "sensible_enthalpy_j_mol": 0.0
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 4.181365054130953e-15,
+            "enthalpy_j_mol": 0.0,
+            "entropy_j_mol_k": 6.8212102632969615e-15
+          }
+        },
+        {
+          "temperature_k": 300.0,
+          "state": {
+            "temperature_k": 300.0,
+            "cp_j_mol_k": 28.842601725849438,
+            "enthalpy_j_mol": 53.34189510777368,
+            "entropy_j_mol_k": 130.85835675881822,
+            "gibbs_j_mol": -39204.16513253769,
+            "sensible_enthalpy_j_mol": 53.34189510777368
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 7.690719043188474e-17,
+            "enthalpy_j_mol": 2.380643082971924e-12,
+            "entropy_j_mol_k": 2.8917190916174327e-14
+          }
+        },
+        {
+          "temperature_k": 400.0,
+          "state": {
+            "temperature_k": 400.0,
+            "cp_j_mol_k": 29.235374999999998,
+            "enthalpy_j_mol": 2964.3225262647766,
+            "entropy_j_mol_k": 139.2301477297206,
+            "gibbs_j_mol": -52727.73656562347,
+            "sensible_enthalpy_j_mol": 2964.3225262647766
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 2.3305801732931287e-15,
+            "enthalpy_j_mol": 1.2093908432954166e-12,
+            "entropy_j_mol_k": 1.4378490418096597e-14
+          }
+        },
+        {
+          "temperature_k": 500.0,
+          "state": {
+            "temperature_k": 500.0,
+            "cp_j_mol_k": 29.25074908176307,
+            "enthalpy_j_mol": 5889.213274694516,
+            "entropy_j_mol_k": 145.75680767213032,
+            "gibbs_j_mol": -66989.19056137065,
+            "sensible_enthalpy_j_mol": 5889.213274694516
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 6.00063625378108e-16,
+            "enthalpy_j_mol": 1.8731458972559402e-12,
+            "entropy_j_mol_k": 1.8685362625306698e-15
+          }
+        },
+        {
+          "temperature_k": 600.0,
+          "state": {
+            "temperature_k": 600.0,
+            "cp_j_mol_k": 29.285741374181065,
+            "enthalpy_j_mol": 8815.395508615387,
+            "entropy_j_mol_k": 151.09177542677315,
+            "gibbs_j_mol": -81839.66974744851,
+            "sensible_enthalpy_j_mol": 8815.395508615387
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 3.3789371444656278e-16,
+            "enthalpy_j_mol": 1.5618094430278712e-12,
+            "entropy_j_mol_k": 1.7159240212766574e-16
+          }
+        },
+        {
+          "temperature_k": 700.0,
+          "state": {
+            "temperature_k": 700.0,
+            "cp_j_mol_k": 29.40953526740064,
+            "enthalpy_j_mol": 11749.382614911383,
+            "entropy_j_mol_k": 155.61429221269609,
+            "gibbs_j_mol": -97180.62193397587,
+            "sensible_enthalpy_j_mol": 11749.382614911383
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 4.2230509198531643e-16,
+            "enthalpy_j_mol": 1.2259992030968121e-12,
+            "entropy_j_mol_k": 4.968875724668309e-15
+          }
+        },
+        {
+          "temperature_k": 800.0,
+          "state": {
+            "temperature_k": 800.0,
+            "cp_j_mol_k": 29.620695640889736,
+            "enthalpy_j_mol": 14700.227218355021,
+            "entropy_j_mol_k": 159.55428253755935,
+            "gibbs_j_mol": -112943.19881169245,
+            "sensible_enthalpy_j_mol": 14700.227218355021
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 1.0212225183298702e-15,
+            "enthalpy_j_mol": 7.880944163315287e-13,
+            "entropy_j_mol_k": 8.378363521714247e-16
+          }
+        },
+        {
+          "temperature_k": 900.0,
+          "state": {
+            "temperature_k": 900.0,
+            "cp_j_mol_k": 29.902959876543214,
+            "enthalpy_j_mol": 17675.89197070922,
+            "entropy_j_mol_k": 163.0587845156117,
+            "gibbs_j_mol": -129077.0140933413,
+            "sensible_enthalpy_j_mol": 17675.89197070922
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 4.2029041426836935e-15,
+            "enthalpy_j_mol": 1.1083358764317579e-12,
+            "entropy_j_mol_k": 1.0970111237511671e-14
+          }
+        },
+        {
+          "temperature_k": 1000.0,
+          "state": {
+            "temperature_k": 1000.0,
+            "cp_j_mol_k": 30.239018516551685,
+            "enthalpy_j_mol": 20682.609559368142,
+            "entropy_j_mol_k": 166.22636676717133,
+            "gibbs_j_mol": -145543.7572078032,
+            "sensible_enthalpy_j_mol": 20682.609559368142
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 2.2335616174350437e-15,
+            "enthalpy_j_mol": 1.7543181767697506e-12,
+            "entropy_j_mol_k": 1.0154027114395298e-14
+          }
+        },
+        {
+          "temperature_k": 1100.0,
+          "state": {
+            "temperature_k": 1100.0,
+            "cp_j_mol_k": 30.613800045965853,
+            "enthalpy_j_mol": 23724.983384965406,
+            "entropy_j_mol_k": 169.1257749842975,
+            "gibbs_j_mol": -162313.36909776184,
+            "sensible_enthalpy_j_mol": 23724.983384965406
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 3.828301218414507e-15,
+            "enthalpy_j_mol": 5.322233363020378e-12,
+            "entropy_j_mol_k": 9.37226203698371e-15
+          }
+        },
+        {
+          "temperature_k": 1200.0,
+          "state": {
+            "temperature_k": 1200.0,
+            "cp_j_mol_k": 31.014911974035826,
+            "enthalpy_j_mol": 26806.24459728411,
+            "entropy_j_mol_k": 171.80656969168186,
+            "gibbs_j_mol": -179361.6390327341,
+            "sensible_enthalpy_j_mol": 26806.24459728411
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 4.05696751190362e-15,
+            "enthalpy_j_mol": 8.177054837289511e-12,
+            "entropy_j_mol_k": 1.7022953707248768e-14
+          }
+        }
+      ],
+      "maximum_integral_errors": {
+        "cp_j_mol_k": 4.2029041426836935e-15,
+        "enthalpy_j_mol": 8.177054837289511e-12,
+        "entropy_j_mol_k": 2.8917190916174327e-14
+      },
+      "cv_certificate": {
+        "method": "z=sqrt(T), z^4 Cv is an eighth-degree polynomial. Exact rational runtime coefficients expanded in Bernstein form on each rational interval; divide its positive minimum coefficient by right^4. The cover contains the whole selected T domain.",
+        "intervals": [
+          {
+            "sqrt_temperature_interval": [
+              "17",
+              "553/32"
+            ],
+            "cp_lower_bound_j_mol_k": 19.111329523306686,
+            "exact_lower_bound": "1149881695113565666489833639/60167540605234168220090368",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "553/32",
+              "281/16"
+            ],
+            "cp_lower_bound_j_mol_k": 19.231770585401954,
+            "exact_lower_bound": "9500011544420778858800582738852450344017/493974878820146018269113856005354029056",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "281/16",
+              "571/32"
+            ],
+            "cp_lower_bound_j_mol_k": 19.33513963067395,
+            "exact_lower_bound": "39756796378497686088155631463816494033/2056193911081257139365815180062621696",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "571/32",
+              "145/8"
+            ],
+            "cp_lower_bound_j_mol_k": 19.42366265604244,
+            "exact_lower_bound": "2176871019989803813492510336823309855229/112073148022502789914998717475192832000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "145/8",
+              "589/32"
+            ],
+            "cp_lower_bound_j_mol_k": 19.499307068072593,
+            "exact_lower_bound": "177320941296766027366373461989601425/9093704749493608303310261532491776",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "589/32",
+              "299/16"
+            ],
+            "cp_lower_bound_j_mol_k": 19.563813464486845,
+            "exact_lower_bound": "12388475044804424903617909340591791821873/633234163027191434186962990159296987136",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "299/16",
+              "607/32"
+            ],
+            "cp_lower_bound_j_mol_k": 19.618723170917278,
+            "exact_lower_bound": "51516356416841982879707613718320108657/2625877126051181284797688484951228416",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "607/32",
+              "77/4"
+            ],
+            "cp_lower_bound_j_mol_k": 19.665402147677465,
+            "exact_lower_bound": "2003029021150413032811404747095260195879/101855482339422988590215015184946167808",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "77/4",
+              "625/32"
+            ],
+            "cp_lower_bound_j_mol_k": 19.705061785272523,
+            "exact_lower_bound": "177487417826931865374589135054653/9007199254740992000000000000000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "625/32",
+              "317/16"
+            ],
+            "cp_lower_bound_j_mol_k": 19.73877702740481,
+            "exact_lower_bound": "15791990490990488506348768091955441217425/800049084553987001554757807525809094656",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "317/16",
+              "643/32"
+            ],
+            "cp_lower_bound_j_mol_k": 19.767502193492067,
+            "exact_lower_bound": "65360493572870770941481838995704704433/3306461936014809596957663398425788416",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "643/32",
+              "163/8"
+            ],
+            "cp_lower_bound_j_mol_k": 19.79208481686347,
+            "exact_lower_bound": "17710936559873159800093430789353714948017/894849467539816418722513795401316827136",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "163/8",
+              "661/32"
+            ],
+            "cp_lower_bound_j_mol_k": 19.81327776794195,
+            "exact_lower_bound": "285786583421460324411268224230232753/14423993181171940462085477578571776",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "661/32",
+              "335/16"
+            ],
+            "cp_lower_bound_j_mol_k": 19.831749892312526,
+            "exact_lower_bound": "3957763548253512510936734733108124383357/199567036179075611604044120254840832000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "335/16",
+              "679/32"
+            ],
+            "cp_lower_bound_j_mol_k": 19.848095360353522,
+            "exact_lower_bound": "1665411237265149399245593818341289825/83907861536769953247995139670933504",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "679/32",
+              "43/2"
+            ],
+            "cp_lower_bound_j_mol_k": 19.862841897034336,
+            "exact_lower_bound": "22037115088974774314924311500038387371473/1109464355765982951952980586302124589056",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "43/2",
+              "697/32"
+            ],
+            "cp_lower_bound_j_mol_k": 19.87645803670777,
+            "exact_lower_bound": "5408413004524972323613044849777/272101447578674967550892179456",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "697/32",
+              "353/16"
+            ],
+            "cp_lower_bound_j_mol_k": 19.889359527545498,
+            "exact_lower_bound": "24468041227649248709873244289052649263313/1230207598880324279145550941447327318016",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "353/16",
+              "715/32"
+            ],
+            "cp_lower_bound_j_mol_k": 19.901914993100956,
+            "exact_lower_bound": "20121885136536588712580829912757612701/1011052712440581077432886521495552000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "715/32",
+              "181/8"
+            ],
+            "cp_lower_bound_j_mol_k": 19.91445094385441,
+            "exact_lower_bound": "27094566254406075121961435184416666221425/1360547992550477364342343687476657258496",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "181/8",
+              "733/32"
+            ],
+            "cp_lower_bound_j_mol_k": 19.927256219100563,
+            "exact_lower_bound": "434653392729437030476302389971674993/21812004018536955425331807420153856",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "733/32",
+              "371/16"
+            ],
+            "cp_lower_bound_j_mol_k": 19.940585928847277,
+            "exact_lower_bound": "4275777499411466083938075717152544804231/214425870667414239772489382137365004288",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "371/16",
+              "751/32"
+            ],
+            "cp_lower_bound_j_mol_k": 19.95466495622729,
+            "exact_lower_bound": "122778924292376290129752900025695624753/6152893298970696529258551338195746816",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "751/32",
+              "95/4"
+            ],
+            "cp_lower_bound_j_mol_k": 19.96969107305115,
+            "exact_lower_bound": "1319609118974897423749045278143546287929/66080597548937233532980743371122278400",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "95/4",
+              "769/32"
+            ],
+            "cp_lower_bound_j_mol_k": 19.985837714353906,
+            "exact_lower_bound": "2062848914809585721847984300721425/103215534134355525455747561291776",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "769/32",
+              "389/16"
+            ],
+            "cp_lower_bound_j_mol_k": 20.003256451947824,
+            "exact_lower_bound": "36289308432885996554810971848448935878673/1814170033767292607196998925606795083776",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "389/16",
+              "787/32"
+            ],
+            "cp_lower_bound_j_mol_k": 20.02207920194956,
+            "exact_lower_bound": "148568842645060372697659641865648207857/7420250471818839166175420547780837376",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "787/32",
+              "199/8"
+            ],
+            "cp_lower_bound_j_mol_k": 20.042420196888244,
+            "exact_lower_bound": "39843917765031476872112442120688828423473/1987979364449088894247898038932997144576",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "199/8",
+              "805/32"
+            ],
+            "cp_lower_bound_j_mol_k": 20.06437774922129,
+            "exact_lower_bound": "18189503436047135040539127878052987/906557066627848928964689002496000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "805/32",
+              "407/16"
+            ],
+            "cp_lower_bound_j_mol_k": 20.088035829805193,
+            "exact_lower_bound": "43671156691944465598433188871887920349425/2173988390997805754819902094046486593536",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "407/16",
+              "823/32"
+            ],
+            "cp_lower_bound_j_mol_k": 20.113465482018427,
+            "exact_lower_bound": "178486708667776149198586146908718730833/8873990850922455461134769610771398656",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "823/32",
+              "26"
+            ],
+            "cp_lower_bound_j_mol_k": 20.140726089752455,
+            "exact_lower_bound": "47789009524534171848903684228368330516817/2372755049225811390375352090541682589696",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "26",
+              "841/32"
+            ],
+            "cp_lower_bound_j_mol_k": 20.169866515324337,
+            "exact_lower_bound": "177503457328987248435812913/8800427964861667424075776",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "841/32",
+              "425/16"
+            ],
+            "cp_lower_bound_j_mol_k": 20.200926121476485,
+            "exact_lower_bound": "10443271769110068843676385580936899798493/516969950105771229699248771563520000000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "425/16",
+              "859/32"
+            ],
+            "cp_lower_bound_j_mol_k": 20.23393568997871,
+            "exact_lower_bound": "213094704007878617169241457040944953425/10531549930418051709834754764493029376",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "859/32",
+              "217/8"
+            ],
+            "cp_lower_bound_j_mol_k": 20.268918247902988,
+            "exact_lower_bound": "8138999706018133940703950586793740045639/401550768840867503269175436439692771328",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "217/8",
+              "877/32"
+            ],
+            "cp_lower_bound_j_mol_k": 20.305889811374904,
+            "exact_lower_bound": "907611665269406845894975260600748497/44696965939457779327998943534514176",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "877/32",
+              "443/16"
+            ],
+            "cp_lower_bound_j_mol_k": 20.34486005549421,
+            "exact_lower_bound": "62079640815631584797976646994505228771633/3051367305859975153360610171330637070336",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "443/16",
+              "895/32"
+            ],
+            "cp_lower_bound_j_mol_k": 20.385832918139965,
+            "exact_lower_bound": "50602297212317697864761667744056593917/2482228585680703668090391821811712000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "895/32",
+              "113/4"
+            ],
+            "cp_lower_bound_j_mol_k": 20.428807144516195,
+            "exact_lower_bound": "67557929591820597868974994999560804625425/3306993360596460825866350525388765003776",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "113/4",
+              "913/32"
+            ],
+            "cp_lower_bound_j_mol_k": 20.47377677853649,
+            "exact_lower_bound": "4198757370772523400680260672855953/205079766971683269981525734588416",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "913/32",
+              "461/16"
+            ],
+            "cp_lower_bound_j_mol_k": 20.520731606478112,
+            "exact_lower_bound": "73430439150469890401367341436501672937617/3578353859824808472462064265869630898176",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "461/16",
+              "931/32"
+            ],
+            "cp_lower_bound_j_mol_k": 20.569657557746037,
+            "exact_lower_bound": "42701917911004234334031351208527429639/2075966398134018559091627515338293248",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "931/32",
+              "235/8"
+            ],
+            "cp_lower_bound_j_mol_k": 20.620537067065882,
+            "exact_lower_bound": "15944135757964576023193483177641661754301/773216318571535834265604274239045632000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "235/8",
+              "949/32"
+            ],
+            "cp_lower_bound_j_mol_k": 20.673349401962895,
+            "exact_lower_bound": "1266938007382013955237724236363853425/61283635406545231748554514640142336",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "949/32",
+              "479/16"
+            ],
+            "cp_lower_bound_j_mol_k": 20.728070958975206,
+            "exact_lower_bound": "86453090737367097446873357988801565269873/4170821824591116146764146649592145903616",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "479/16",
+              "967/32"
+            ],
+            "cp_lower_bound_j_mol_k": 20.78467553168658,
+            "exact_lower_bound": "351535169931614633725898435464665053457/16913190172042545122536492085108801536",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "967/32",
+              "61/2"
+            ],
+            "cp_lower_bound_j_mol_k": 20.84313455334176,
+            "exact_lower_bound": "93653045314621893302224572303348703427793/4493232295504544769190019739091568951296",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "61/2",
+              "985/32"
+            ],
+            "cp_lower_bound_j_mol_k": 20.90341731652109,
+            "exact_lower_bound": "907448410101388827285019051353/43411486091519775165802086400",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "985/32",
+              "497/16"
+            ],
+            "cp_lower_bound_j_mol_k": 20.965491172096247,
+            "exact_lower_bound": "14478118937112900886175868586860232124775/690569031665824650734982158218468261888",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "497/16",
+              "1003/32"
+            ],
+            "cp_lower_bound_j_mol_k": 21.02932170946206,
+            "exact_lower_bound": "411669443954307756819108025711562271633/19575973473698806792749121230755332096",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "1003/32",
+              "253/8"
+            ],
+            "cp_lower_bound_j_mol_k": 21.094872919836916,
+            "exact_lower_bound": "109561650108298816134040560971696191420017/5193757294705989167287602052545648787456",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "253/8",
+              "1021/32"
+            ],
+            "cp_lower_bound_j_mol_k": 21.162107344243914,
+            "exact_lower_bound": "1737566967913197482735213119631106993/82107464046382653935850729206972416",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "1021/32",
+              "515/16"
+            ],
+            "cp_lower_bound_j_mol_k": 21.230986207623555,
+            "exact_lower_bound": "23665117425483875910828500827617111521469/1114649936373953282879348940317130752000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "515/16",
+              "1039/32"
+            ],
+            "cp_lower_bound_j_mol_k": 21.301469540384698,
+            "exact_lower_bound": "480165985133962111004274789857146645425/22541448805850341882369570595569401856",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "1039/32",
+              "131/4"
+            ],
+            "cp_lower_bound_j_mol_k": 21.373516288571526,
+            "exact_lower_bound": "127667604097338807144143116805604484905873/5973168025965058251370502011898860404736",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "131/4",
+              "1057/32"
+            ],
+            "cp_lower_bound_j_mol_k": 21.447084413708815,
+            "exact_lower_bound": "1128781480504361663511844145888391/52630999101344187834789850513408",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "1057/32",
+              "533/16"
+            ],
+            "cp_lower_bound_j_mol_k": 21.522130983284313,
+            "exact_lower_bound": "137617508227211212974878863500265648711953/6394232445388200779226727770539432083456",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "533/16",
+              "1075/32"
+            ],
+            "cp_lower_bound_j_mol_k": 21.598612252734174,
+            "exact_lower_bound": "111585904045118884698777339094752744573/5166346001280392296393311518720000000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "1075/32",
+              "271/8"
+            ],
+            "cp_lower_bound_j_mol_k": 21.67648373971414,
+            "exact_lower_bound": "148205924290899930908970737835012991717425/6837175534118912245102930594366127865856",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "271/8",
+              "1093/32"
+            ],
+            "cp_lower_bound_j_mol_k": 21.755700291364203,
+            "exact_lower_bound": "2346029050237464337265409517128520593/107835142919702138330209166961934336",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "1093/32",
+              "551/16"
+            ],
+            "cp_lower_bound_j_mol_k": 21.836216145207302,
+            "exact_lower_bound": "159464260663285961163055595047001219692017/7302742361720293042256273930042302529536",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "551/16",
+              "1111/32"
+            ],
+            "cp_lower_bound_j_mol_k": 21.91798498426191,
+            "exact_lower_bound": "645916675237128366051787202208649802193/29469710637219860814587226501683347456",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "1111/32",
+              "35"
+            ],
+            "cp_lower_bound_j_mol_k": 22.000959986894,
+            "exact_lower_bound": "699692531976288477869653472662998278253/31802818258525819224749290016473088000",
+            "strictly_positive": true
+          }
+        ],
+        "whole_cover_positive": true,
+        "minimum_lower_bound_j_mol_k": 19.111329523306686,
+        "quantity": "Cv=Cp-R"
+      },
+      "within_numerical_budgets": {
+        "cp_j_mol_k": true,
+        "enthalpy_j_mol": true,
+        "entropy_j_mol_k": true,
+        "whole_domain_positive_cv": true
+      },
+      "table_comparisons": [
+        {
+          "printed": {
+            "temperature_k": "298.15",
+            "cp_j_mol_k": "28.82",
+            "entropy_j_mol_k": "130.68",
+            "sensible_enthalpy_over_t_j_mol_k": "0.00"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": 0.0041962846707580435,
+            "entropy_j_mol_k": 0.0,
+            "sensible_enthalpy_over_t_j_mol_k": 0.0
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.010493361565027275,
+            "entropy_j_mol_k": 0.01,
+            "sensible_enthalpy_over_t_j_mol_k": 0.005
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "300",
+            "cp_j_mol_k": "28.84",
+            "entropy_j_mol_k": "130.86",
+            "sensible_enthalpy_over_t_j_mol_k": "0.18"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": 0.0026017258494376765,
+            "entropy_j_mol_k": -0.0016432411818112038,
+            "sensible_enthalpy_over_t_j_mol_k": -0.0021936829740956663
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.010487306901503684,
+            "entropy_j_mol_k": 0.010033961793491024,
+            "sensible_enthalpy_over_t_j_mol_k": 0.005033856950757242
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "400",
+            "cp_j_mol_k": "29.24",
+            "entropy_j_mol_k": "139.23",
+            "sensible_enthalpy_over_t_j_mol_k": "7.41"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": -0.004625,
+            "entropy_j_mol_k": 0.00014772972059899137,
+            "sensible_enthalpy_over_t_j_mol_k": 0.0008063156619384024
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.0103925,
+            "entropy_j_mol_k": 0.011590333299390949,
+            "sensible_enthalpy_over_t_j_mol_k": 0.006377349027479071
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "500",
+            "cp_j_mol_k": "29.25",
+            "entropy_j_mol_k": "145.76",
+            "sensible_enthalpy_over_t_j_mol_k": "11.78"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": 0.0007490817630723573,
+            "entropy_j_mol_k": -0.0031923278696804613,
+            "sensible_enthalpy_over_t_j_mol_k": -0.0015734506109712303
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.01056106797749979,
+            "entropy_j_mol_k": 0.012808519120048475,
+            "sensible_enthalpy_over_t_j_mol_k": 0.00719434851031617
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "600",
+            "cp_j_mol_k": "29.29",
+            "entropy_j_mol_k": "151.09",
+            "sensible_enthalpy_over_t_j_mol_k": "14.69"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": -0.004258625818935738,
+            "entropy_j_mol_k": 0.0017754267731540391,
+            "sensible_enthalpy_over_t_j_mol_k": 0.0023258476923096816
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.010860130341208203,
+            "entropy_j_mol_k": 0.013847388504361957,
+            "sensible_enthalpy_over_t_j_mol_k": 0.007779048922958011
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "700",
+            "cp_j_mol_k": "29.41",
+            "entropy_j_mol_k": "155.61",
+            "sensible_enthalpy_over_t_j_mol_k": "16.78"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": -0.0004647325993610747,
+            "entropy_j_mol_k": 0.004292212696080502,
+            "sensible_enthalpy_over_t_j_mol_k": 0.0048323070162630604
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.011236863181372667,
+            "entropy_j_mol_k": 0.014778226055103124,
+            "sensible_enthalpy_over_t_j_mol_k": 0.008245374786610925
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "800",
+            "cp_j_mol_k": "29.62",
+            "entropy_j_mol_k": "159.55",
+            "sensible_enthalpy_over_t_j_mol_k": "18.38"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": 0.0006956408897365216,
+            "entropy_j_mol_k": 0.004282537559344363,
+            "sensible_enthalpy_over_t_j_mol_k": -0.004715977056224422
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.011665891952966368,
+            "entropy_j_mol_k": 0.015638560483738184,
+            "sensible_enthalpy_over_t_j_mol_k": 0.008645666753005607
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "900",
+            "cp_j_mol_k": "29.90",
+            "entropy_j_mol_k": "163.06",
+            "sensible_enthalpy_over_t_j_mol_k": "19.64"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": 0.0029598765432098766,
+            "entropy_j_mol_k": -0.001215484388305469,
+            "sensible_enthalpy_over_t_j_mol_k": -0.00012003254531132736
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.012133395061728395,
+            "entropy_j_mol_k": 0.016450350876634916,
+            "sensible_enthalpy_over_t_j_mol_k": 0.009006908209743784
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "1000",
+            "cp_j_mol_k": "30.24",
+            "entropy_j_mol_k": "166.23",
+            "sensible_enthalpy_over_t_j_mol_k": "20.68"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": -0.0009814834483175214,
+            "entropy_j_mol_k": -0.003633232828682289,
+            "sensible_enthalpy_over_t_j_mol_k": 0.002609559368140318
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.012631138830084189,
+            "entropy_j_mol_k": 0.01722745100515965,
+            "sensible_enthalpy_over_t_j_mol_k": 0.009344217271160008
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "1100",
+            "cp_j_mol_k": "30.61",
+            "entropy_j_mol_k": "169.13",
+            "sensible_enthalpy_over_t_j_mol_k": "21.57"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": 0.0038000459658489747,
+            "entropy_j_mol_k": -0.004225015702516252,
+            "sensible_enthalpy_over_t_j_mol_k": -0.00183328639509029
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.013153879036938406,
+            "entropy_j_mol_k": 0.01797910915242776,
+            "sensible_enthalpy_over_t_j_mol_k": 0.009666615020508317
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "1200",
+            "cp_j_mol_k": "31.01",
+            "entropy_j_mol_k": "171.81",
+            "sensible_enthalpy_over_t_j_mol_k": "22.34"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": 0.00491197403582995,
+            "entropy_j_mol_k": -0.0034303083181589198,
+            "sensible_enthalpy_over_t_j_mol_k": -0.0014628355965828563
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.013698097895196286,
+            "entropy_j_mol_k": 0.018711776986665766,
+            "sensible_enthalpy_over_t_j_mol_k": 0.00997975657733004
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        }
+      ],
+      "all_table_half_units_met": true,
+      "all_complete_arithmetic_enclosures_met": true
+    },
+    "H2O": {
+      "points": [
+        {
+          "temperature_k": 298.15,
+          "state": {
+            "temperature_k": 298.15,
+            "cp_j_mol_k": 33.59054885840539,
+            "enthalpy_j_mol": -241800.0,
+            "entropy_j_mol_k": 188.84,
+            "gibbs_j_mol": -298102.646,
+            "sensible_enthalpy_j_mol": 0.0
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 6.767934071395017e-16,
+            "enthalpy_j_mol": 0.0,
+            "entropy_j_mol_k": 3.4106051316484808e-15
+          }
+        },
+        {
+          "temperature_k": 300.0,
+          "state": {
+            "temperature_k": 300.0,
+            "cp_j_mol_k": 33.586940428862505,
+            "enthalpy_j_mol": -241737.86092228052,
+            "entropy_j_mol_k": 189.04777155997385,
+            "gibbs_j_mol": -298452.1923902727,
+            "sensible_enthalpy_j_mol": 62.13907771948463
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 5.403462349560681e-16,
+            "enthalpy_j_mol": 8.37907426419342e-12,
+            "entropy_j_mol_k": 1.6334091641792096e-14
+          }
+        },
+        {
+          "temperature_k": 400.0,
+          "state": {
+            "temperature_k": 400.0,
+            "cp_j_mol_k": 34.03724799999999,
+            "enthalpy_j_mol": -238365.0819462647,
+            "entropy_j_mol_k": 198.74747275202668,
+            "gibbs_j_mol": -317864.0710470754,
+            "sensible_enthalpy_j_mol": 3434.9180537353154
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 8.933966455515474e-15,
+            "enthalpy_j_mol": 5.216036786649183e-12,
+            "entropy_j_mol_k": 8.660706656066752e-16
+          }
+        },
+        {
+          "temperature_k": 500.0,
+          "state": {
+            "temperature_k": 500.0,
+            "cp_j_mol_k": 35.09260108028531,
+            "enthalpy_j_mol": -234911.22643264604,
+            "entropy_j_mol_k": 206.45013915936462,
+            "gibbs_j_mol": -338136.29601232836,
+            "sensible_enthalpy_j_mol": 6888.773567353964
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 3.5474359783397892e-15,
+            "enthalpy_j_mol": 7.053107345324862e-12,
+            "entropy_j_mol_k": 2.0288055474036812e-15
+          }
+        },
+        {
+          "temperature_k": 600.0,
+          "state": {
+            "temperature_k": 600.0,
+            "cp_j_mol_k": 36.344189861226475,
+            "enthalpy_j_mol": -231340.26184612626,
+            "entropy_j_mol_k": 212.95730845965636,
+            "gibbs_j_mol": -359114.64692192007,
+            "sensible_enthalpy_j_mol": 10459.73815387375
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 1.3270139622315095e-15,
+            "enthalpy_j_mol": 1.0860711905899034e-11,
+            "entropy_j_mol_k": 2.2292422839307363e-14
+          }
+        },
+        {
+          "temperature_k": 700.0,
+          "state": {
+            "temperature_k": 700.0,
+            "cp_j_mol_k": 37.65597294324159,
+            "enthalpy_j_mol": -227640.45915429786,
+            "entropy_j_mol_k": 218.65798147440609,
+            "gibbs_j_mol": -380701.0461863821,
+            "sensible_enthalpy_j_mol": 14159.540845702128
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 6.049775275527821e-15,
+            "enthalpy_j_mol": 1.483444655587352e-11,
+            "entropy_j_mol_k": 6.55463990027714e-15
+          }
+        },
+        {
+          "temperature_k": 800.0,
+          "state": {
+            "temperature_k": 800.0,
+            "cp_j_mol_k": 38.97295474297524,
+            "enthalpy_j_mol": -223808.92342417096,
+            "entropy_j_mol_k": 223.77232753048662,
+            "gibbs_j_mol": -402826.78544856026,
+            "sensible_enthalpy_j_mol": 17991.076575829036
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 1.988820462706657e-15,
+            "enthalpy_j_mol": 9.051324104355672e-13,
+            "entropy_j_mol_k": 1.738375181796177e-14
+          }
+        },
+        {
+          "temperature_k": 900.0,
+          "state": {
+            "temperature_k": 900.0,
+            "cp_j_mol_k": 40.26980225925926,
+            "enthalpy_j_mol": -219846.55211293136,
+            "entropy_j_mol_k": 228.43782948256228,
+            "gibbs_j_mol": -425440.5986472374,
+            "sensible_enthalpy_j_mol": 21953.447887068647
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 1.3220852889827694e-15,
+            "enthalpy_j_mol": 4.5951550702388635e-12,
+            "entropy_j_mol_k": 1.9159555644726727e-14
+          }
+        },
+        {
+          "temperature_k": 1000.0,
+          "state": {
+            "temperature_k": 1000.0,
+            "cp_j_mol_k": 41.53370049030383,
+            "enthalpy_j_mol": -215756.067365657,
+            "entropy_j_mol_k": 232.74641610373803,
+            "gibbs_j_mol": -448502.4834693951,
+            "sensible_enthalpy_j_mol": 26043.932634342982
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 3.856050950780514e-15,
+            "enthalpy_j_mol": 4.940158020701446e-12,
+            "entropy_j_mol_k": 1.5911592965904127e-15
+          }
+        },
+        {
+          "temperature_k": 1100.0,
+          "state": {
+            "temperature_k": 1100.0,
+            "cp_j_mol_k": 42.75769578741921,
+            "enthalpy_j_mol": -211541.14523515454,
+            "entropy_j_mol_k": 236.7627393874481,
+            "gibbs_j_mol": -471980.15856134746,
+            "sensible_enthalpy_j_mol": 30258.85476484545
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 9.552278437980792e-16,
+            "enthalpy_j_mol": 3.949074363337894e-12,
+            "entropy_j_mol_k": 3.3292586359445058e-15
+          }
+        },
+        {
+          "temperature_k": 1200.0,
+          "state": {
+            "temperature_k": 1200.0,
+            "cp_j_mol_k": 43.93780538109791,
+            "enthalpy_j_mol": -207205.992764963,
+            "entropy_j_mol_k": 240.5340706843239,
+            "gibbs_j_mol": -495846.8775861517,
+            "sensible_enthalpy_j_mol": 34594.00723503699
+          },
+          "independent_integral_errors": {
+            "cp_j_mol_k": 9.152343575339798e-15,
+            "enthalpy_j_mol": 1.6981908607123928e-12,
+            "entropy_j_mol_k": 5.1761927461126375e-15
+          }
+        }
+      ],
+      "maximum_integral_errors": {
+        "cp_j_mol_k": 9.152343575339798e-15,
+        "enthalpy_j_mol": 1.483444655587352e-11,
+        "entropy_j_mol_k": 2.2292422839307363e-14
+      },
+      "cv_certificate": {
+        "method": "z=sqrt(T), z^4 Cv is an eighth-degree polynomial. Exact rational runtime coefficients expanded in Bernstein form on each rational interval; divide its positive minimum coefficient by right^4. The cover contains the whole selected T domain.",
+        "intervals": [
+          {
+            "sqrt_temperature_interval": [
+              "17",
+              "553/32"
+            ],
+            "cp_lower_bound_j_mol_k": 23.696392152226753,
+            "exact_lower_bound": "2495068864779146875710591305/105293196059159794385158144",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "553/32",
+              "281/16"
+            ],
+            "cp_lower_bound_j_mol_k": 23.694454432247664,
+            "exact_lower_bound": "2926116314219752707414333223625295577865/123493719705036504567278464001338507264",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "281/16",
+              "571/32"
+            ],
+            "cp_lower_bound_j_mol_k": 23.70828735004288,
+            "exact_lower_bound": "12187209022830740958860809178268698249/514048477770314284841453795015655424",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "571/32",
+              "145/8"
+            ],
+            "cp_lower_bound_j_mol_k": 23.736565444211227,
+            "exact_lower_bound": "3325289515718637023389378598047070458793/140091435028128487393748396843991040000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "145/8",
+              "589/32"
+            ],
+            "cp_lower_bound_j_mol_k": 23.778101604103355,
+            "exact_lower_bound": "54057758872794063173062685868328265/2273426187373402075827565383122944",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "589/32",
+              "299/16"
+            ],
+            "cp_lower_bound_j_mol_k": 23.831830592742484,
+            "exact_lower_bound": "3772782324700275625459402730256626848745/158308540756797858546740747539824246784",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "299/16",
+              "607/32"
+            ],
+            "cp_lower_bound_j_mol_k": 23.8967947303033,
+            "exact_lower_bound": "15687511667060959536423081182691746345/656469281512795321199422121237807104",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "607/32",
+              "77/4"
+            ],
+            "cp_lower_bound_j_mol_k": 23.972131428519166,
+            "exact_lower_bound": "4272962766372756322957684375147798808009/178247094093990230032876276573655793664",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "77/4",
+              "625/32"
+            ],
+            "cp_lower_bound_j_mol_k": 24.057062314455116,
+            "exact_lower_bound": "270858442187522168883228887335913/11258999068426240000000000000000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "625/32",
+              "317/16"
+            ],
+            "cp_lower_bound_j_mol_k": 24.150883722129247,
+            "exact_lower_bound": "4830473103264822625479156572614740462665/200012271138496750388689451881452273664",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "317/16",
+              "643/32"
+            ],
+            "cp_lower_bound_j_mol_k": 24.25295836391874,
+            "exact_lower_bound": "20047870916512331080638280142518042985/826615484003702399239415849606447104",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "643/32",
+              "163/8"
+            ],
+            "cp_lower_bound_j_mol_k": 24.362708021707213,
+            "exact_lower_bound": "5450239075263178711026294041612398795625/223712366884954104680628448850329206784",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "163/8",
+              "661/32"
+            ],
+            "cp_lower_bound_j_mol_k": 24.47960712126055,
+            "exact_lower_bound": "88273421548707566753317506406383209/3605998295292985115521369394642944",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "661/32",
+              "335/16"
+            ],
+            "cp_lower_bound_j_mol_k": 24.60317707312735,
+            "exact_lower_bound": "6137478911341261507582485066430961989673/249458795223844514505055150318551040000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "335/16",
+              "679/32"
+            ],
+            "cp_lower_bound_j_mol_k": 24.732981280076864,
+            "exact_lower_bound": "25422321715842607566313615854599675465/1027871303825431927287940460968935424",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "679/32",
+              "43/2"
+            ],
+            "cp_lower_bound_j_mol_k": 24.868620725227586,
+            "exact_lower_bound": "6897712067925799017770126795350755084425/277366088941495737988245146575531147264",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "43/2",
+              "697/32"
+            ],
+            "cp_lower_bound_j_mol_k": 25.009730067007954,
+            "exact_lower_bound": "1701295938696193976789778123305/68025361894668741887723044864",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "697/32",
+              "353/16"
+            ],
+            "cp_lower_bound_j_mol_k": 25.155974177277407,
+            "exact_lower_bound": "7736767647530970354454952840290477585289/307551899720081069786387735361831829504",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "353/16",
+              "715/32"
+            ],
+            "cp_lower_bound_j_mol_k": 25.30704506761034,
+            "exact_lower_bound": "31983445699329328413095547384897328073/1263815890550726346791108151869440000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "715/32",
+              "181/8"
+            ],
+            "cp_lower_bound_j_mol_k": 25.462659156147797,
+            "exact_lower_bound": "8660792449973479293362372034508100538665/340136998137619341085585921869164314624",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "181/8",
+              "733/32"
+            ],
+            "cp_lower_bound_j_mol_k": 25.622554833751522,
+            "exact_lower_bound": "139719817249742916346504534363348265/5453001004634238856332951855038464",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "733/32",
+              "371/16"
+            ],
+            "cp_lower_bound_j_mol_k": 25.786490293618225,
+            "exact_lower_bound": "9676258607165349486975867173860163463785/375245273667974919601856418740388757504",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "371/16",
+              "751/32"
+            ],
+            "cp_lower_bound_j_mol_k": 25.95424159316789,
+            "exact_lower_bound": "39923419794617309784899706232269164009/1538223324742674132314637834548936704",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "751/32",
+              "95/4"
+            ],
+            "cp_lower_bound_j_mol_k": 26.125600921024432,
+            "exact_lower_bound": "10789970751164745822191772535571634407753/413003734680857709581129646069514240000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "95/4",
+              "769/32"
+            ],
+            "cp_lower_bound_j_mol_k": 26.300375045357843,
+            "exact_lower_bound": "678651814560121197018359278917065/25803883533588881363936890322944",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "769/32",
+              "389/16"
+            ],
+            "cp_lower_bound_j_mol_k": 26.47838392283587,
+            "exact_lower_bound": "12009072663848622742409018936914919266505/453542508441823151799249731401698770944",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "389/16",
+              "787/32"
+            ],
+            "cp_lower_bound_j_mol_k": 26.659459450009383,
+            "exact_lower_bound": "49454966640591834020516894763395697065/1855062617954709791543855136945209344",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "787/32",
+              "199/8"
+            ],
+            "cp_lower_bound_j_mol_k": 26.843444341187283,
+            "exact_lower_bound": "13341053355254496692936705064643029390569/496994841112272223561974509733249286144",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "199/8",
+              "805/32"
+            ],
+            "cp_lower_bound_j_mol_k": 27.03019111879324,
+            "exact_lower_bound": "214413594246629185527273903444907913/7932374332993678128441028771840000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "805/32",
+              "407/16"
+            ],
+            "cp_lower_bound_j_mol_k": 27.219561203879618,
+            "exact_lower_bound": "14793752516322136186806623774468339370665/543497097749451438704975523511621648384",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "407/16",
+              "823/32"
+            ],
+            "cp_lower_bound_j_mol_k": 27.41142409593912,
+            "exact_lower_bound": "60812181659529780432554556894922286345/2218497712730613865283692402692849664",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "823/32",
+              "26"
+            ],
+            "cp_lower_bound_j_mol_k": 27.605656632432336,
+            "exact_lower_bound": "16375365290449459326282142028324789774345/593188762306452847593838022635420647424",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "26",
+              "841/32"
+            ],
+            "cp_lower_bound_j_mol_k": 27.802142319564666,
+            "exact_lower_bound": "61167687688040229419341289/2200106991215416856018944",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "841/32",
+              "425/16"
+            ],
+            "cp_lower_bound_j_mol_k": 28.00077072682206,
+            "exact_lower_bound": "18094446306960424953559103105597812481033/646212437632214037124060964454400000000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "425/16",
+              "859/32"
+            ],
+            "cp_lower_bound_j_mol_k": 28.20143693862917,
+            "exact_lower_bound": "74251210307177276916143086445323763465/2632887482604512927458688691123257344",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "859/32",
+              "217/8"
+            ],
+            "cp_lower_bound_j_mol_k": 28.404041057243123,
+            "exact_lower_bound": "19959912918266199942358689692952679138985/702713845471518130721057013769462349824",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "217/8",
+              "877/32"
+            ],
+            "cp_lower_bound_j_mol_k": 28.608487751654252,
+            "exact_lower_bound": "319678150653771301582918978843174025/11174241484864444831999735883628544",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "877/32",
+              "443/16"
+            ],
+            "cp_lower_bound_j_mol_k": 28.814685847844075,
+            "exact_lower_bound": "21981047581184381480316456425838396143849/762841826464993788340152542832659267584",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "443/16",
+              "895/32"
+            ],
+            "cp_lower_bound_j_mol_k": 29.022547956260553,
+            "exact_lower_bound": "90050747707898790013106307025418577833/3102785732100879585112989777264640000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "895/32",
+              "113/4"
+            ],
+            "cp_lower_bound_j_mol_k": 29.231990132820364,
+            "exact_lower_bound": "24167499321564549530276010423190692414665/826748340149115206466587631347191250944",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "113/4",
+              "913/32"
+            ],
+            "cp_lower_bound_j_mol_k": 29.442931570144694,
+            "exact_lower_bound": "1509537386342122580829416188951625/51269941742920817495381433647104",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "913/32",
+              "461/16"
+            ],
+            "cp_lower_bound_j_mol_k": 29.65529431608618,
+            "exact_lower_bound": "26529284220051920996800088325304069119305/894588464956202118115516066467407724544",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "461/16",
+              "931/32"
+            ],
+            "cp_lower_bound_j_mol_k": 29.8690030169151,
+            "exact_lower_bound": "108512331565538909281565425782882721769/3632941196734532478410348151842013184",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "931/32",
+              "235/8"
+            ],
+            "cp_lower_bound_j_mol_k": 30.08398468280829,
+            "exact_lower_bound": "29076784855504373462416048313289303377513/966520398214419792832005342798807040000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "235/8",
+              "949/32"
+            ],
+            "cp_lower_bound_j_mol_k": 30.300168473528434,
+            "exact_lower_bound": "464226119372153187671925359729716265/15320908851636307937138628660035584",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "949/32",
+              "479/16"
+            ],
+            "cp_lower_bound_j_mol_k": 30.517485502398443,
+            "exact_lower_bound": "31820748641261602696317065556979220845865/1042705456147779036691036662398036475904",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "479/16",
+              "967/32"
+            ],
+            "cp_lower_bound_j_mol_k": 30.735868656868433,
+            "exact_lower_bound": "129960397924134420025215731762536573385/4228297543010636280634123021277200384",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "967/32",
+              "61/2"
+            ],
+            "cp_lower_bound_j_mol_k": 30.955252434144715,
+            "exact_lower_bound": "34772284988148674476444589506591974965129/1123308073876136192297504934772892237824",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "61/2",
+              "985/32"
+            ],
+            "cp_lower_bound_j_mol_k": 31.175572790503217,
+            "exact_lower_bound": "8458612153688080065374256044393/271321788071998594786263040000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "985/32",
+              "497/16"
+            ],
+            "cp_lower_bound_j_mol_k": 31.396767003046406,
+            "exact_lower_bound": "37942861226779727604081891411907493526665/1208495805415193138786218776882319458304",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "497/16",
+              "1003/32"
+            ],
+            "cp_lower_bound_j_mol_k": 31.618773542784673,
+            "exact_lower_bound": "154742068036110596640785278090600671305/4893993368424701698187280307688833024",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "1003/32",
+              "253/8"
+            ],
+            "cp_lower_bound_j_mol_k": 31.841531958032338,
+            "exact_lower_bound": "41344297220411081328292800421159176090665/1298439323676497291821900513136412196864",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "253/8",
+              "1021/32"
+            ],
+            "cp_lower_bound_j_mol_k": 32.06498276720594,
+            "exact_lower_bound": "658193604926560344511908125583329129/20526866011595663483962682301743104",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "1021/32",
+              "515/16"
+            ],
+            "cp_lower_bound_j_mol_k": 32.28906736019998,
+            "exact_lower_bound": "44988758598276496735743996580289348665193/1393312420467441603599186175396413440000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "515/16",
+              "1039/32"
+            ],
+            "cp_lower_bound_j_mol_k": 32.51372790759357,
+            "exact_lower_bound": "183226633279091987046454755637539311465/5635362201462585470592392648892350464",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "1039/32",
+              "131/4"
+            ],
+            "cp_lower_bound_j_mol_k": 32.73890727701208,
+            "exact_lower_bound": "48888748538020837999653499021663404931145/1493292006491264562842625502974715101184",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "131/4",
+              "1057/32"
+            ],
+            "cp_lower_bound_j_mol_k": 32.96454895603082,
+            "exact_lower_bound": "3036175006341880120771978391939945/92104248427352328710882238398464",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "1057/32",
+              "533/16"
+            ],
+            "cp_lower_bound_j_mol_k": 33.19059698106469,
+            "exact_lower_bound": "53057098024531875719812257599783986174409/1598558111347050194806681942634858020864",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "533/16",
+              "1075/32"
+            ],
+            "cp_lower_bound_j_mol_k": 33.416995871739246,
+            "exact_lower_bound": "215804703745954296858287734260533732393/6457932501600490370491639398400000000",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "1075/32",
+              "271/8"
+            ],
+            "cp_lower_bound_j_mol_k": 33.64369057028414,
+            "exact_lower_bound": "57506954511153470923830026199992974962665/1709293883529728061275732648591531966464",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "271/8",
+              "1093/32"
+            ],
+            "cp_lower_bound_j_mol_k": 33.870626385531985,
+            "exact_lower_bound": "913110959265918898716572707239104585/26958785729925534582552291740483584",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "1093/32",
+              "551/16"
+            ],
+            "cp_lower_bound_j_mol_k": 34.097748941142896,
+            "exact_lower_bound": "62251768907946874637960965914595500480425/1825685590430073260564068482510575632384",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "551/16",
+              "1111/32"
+            ],
+            "cp_lower_bound_j_mol_k": 34.32500412770899,
+            "exact_lower_bound": "252886984816240320185990416173049531529/7367427659304965203646806625420836864",
+            "strictly_positive": true
+          },
+          {
+            "sqrt_temperature_interval": [
+              "1111/32",
+              "35"
+            ],
+            "cp_lower_bound_j_mol_k": 34.55233805842357,
+            "exact_lower_bound": "67305280820350374274068696249286576312073/1947922618334706427515894013508976640000",
+            "strictly_positive": true
+          }
+        ],
+        "whole_cover_positive": true,
+        "minimum_lower_bound_j_mol_k": 23.694454432247664,
+        "quantity": "Cv=Cp-R"
+      },
+      "within_numerical_budgets": {
+        "cp_j_mol_k": true,
+        "enthalpy_j_mol": true,
+        "entropy_j_mol_k": true,
+        "whole_domain_positive_cv": true
+      },
+      "table_comparisons": [
+        {
+          "printed": {
+            "temperature_k": "298.15",
+            "cp_j_mol_k": "33.59",
+            "entropy_j_mol_k": "188.84",
+            "sensible_enthalpy_over_t_j_mol_k": "0.00",
+            "formation_enthalpy_kj_mol": "-241.8",
+            "formation_gibbs_kj_mol": "-228.6",
+            "formation_log10_k": "40.05"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": 0.0005488584053906092,
+            "entropy_j_mol_k": 0.0,
+            "sensible_enthalpy_over_t_j_mol_k": 0.0
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.005738723737761254,
+            "entropy_j_mol_k": 0.01,
+            "sensible_enthalpy_over_t_j_mol_k": 0.005
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "300",
+            "cp_j_mol_k": "33.59",
+            "entropy_j_mol_k": "189.05",
+            "sensible_enthalpy_over_t_j_mol_k": "0.21",
+            "formation_enthalpy_kj_mol": "-241.8",
+            "formation_gibbs_kj_mol": "-228.5",
+            "formation_log10_k": "39.79"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": -0.003059571137495681,
+            "entropy_j_mol_k": -0.002228440026163261,
+            "sensible_enthalpy_over_t_j_mol_k": -0.0028697409350533754
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.005738923069015037,
+            "entropy_j_mol_k": 0.01000457017572601,
+            "sensible_enthalpy_over_t_j_mol_k": 0.005004556070456862
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "400",
+            "cp_j_mol_k": "34.04",
+            "entropy_j_mol_k": "198.75",
+            "sensible_enthalpy_over_t_j_mol_k": "8.59",
+            "formation_enthalpy_kj_mol": "-242.9",
+            "formation_gibbs_kj_mol": "-223.9",
+            "formation_log10_k": "29.24"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": -0.002752,
+            "entropy_j_mol_k": -0.0025272479733180696,
+            "sensible_enthalpy_over_t_j_mol_k": -0.0027048656617131767
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.00576425,
+            "entropy_j_mol_k": 0.01022004901664864,
+            "sensible_enthalpy_over_t_j_mol_k": 0.005190824115986758
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "500",
+            "cp_j_mol_k": "35.09",
+            "entropy_j_mol_k": "206.45",
+            "sensible_enthalpy_over_t_j_mol_k": "13.78",
+            "formation_enthalpy_kj_mol": "-243.9",
+            "formation_gibbs_kj_mol": "-219.0",
+            "formation_log10_k": "22.88"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": 0.002601080285316323,
+            "entropy_j_mol_k": 0.0001391593646226459,
+            "sensible_enthalpy_over_t_j_mol_k": -0.0024528652920712286
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.005804860679774998,
+            "entropy_j_mol_k": 0.010394774432755749,
+            "sensible_enthalpy_over_t_j_mol_k": 0.005309413985672735
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "600",
+            "cp_j_mol_k": "36.34",
+            "entropy_j_mol_k": "212.96",
+            "sensible_enthalpy_over_t_j_mol_k": "17.43",
+            "formation_enthalpy_kj_mol": "-244.8",
+            "formation_gibbs_kj_mol": "-214.0",
+            "formation_log10_k": "18.63"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": 0.004189861226473775,
+            "entropy_j_mol_k": -0.002691540343661937,
+            "sensible_enthalpy_over_t_j_mol_k": 0.0028969231229165437
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.005852301303412082,
+            "entropy_j_mol_k": 0.01054563729721189,
+            "sensible_enthalpy_over_t_j_mol_k": 0.0053958742397042245
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "700",
+            "cp_j_mol_k": "37.66",
+            "entropy_j_mol_k": "218.66",
+            "sensible_enthalpy_over_t_j_mol_k": "20.23",
+            "formation_enthalpy_kj_mol": "-245.7",
+            "formation_gibbs_kj_mol": "-208.8",
+            "formation_log10_k": "15.58"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": -0.004027056758400452,
+            "entropy_j_mol_k": -0.0020185255939079915,
+            "sensible_enthalpy_over_t_j_mol_k": -0.0020845061398206788
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.005903602305283115,
+            "entropy_j_mol_k": 0.010680833422499102,
+            "sensible_enthalpy_over_t_j_mol_k": 0.005464706146232131
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "800",
+            "cp_j_mol_k": "38.97",
+            "entropy_j_mol_k": "223.77",
+            "sensible_enthalpy_over_t_j_mol_k": "22.49",
+            "formation_enthalpy_kj_mol": "-246.5",
+            "formation_gibbs_kj_mol": "-203.5",
+            "formation_log10_k": "13.28"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": 0.002954742975242083,
+            "entropy_j_mol_k": 0.0023275304866380007,
+            "sensible_enthalpy_over_t_j_mol_k": -0.001154280213705755
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.005957490169529664,
+            "entropy_j_mol_k": 0.010804986017869285,
+            "sensible_enthalpy_over_t_j_mol_k": 0.005522913230386039
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "900",
+            "cp_j_mol_k": "40.27",
+            "entropy_j_mol_k": "228.44",
+            "sensible_enthalpy_over_t_j_mol_k": "24.39",
+            "formation_enthalpy_kj_mol": "-247.2",
+            "formation_gibbs_kj_mol": "-198.0",
+            "formation_log10_k": "11.49"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": -0.00019774074074074073,
+            "entropy_j_mol_k": -0.002170517437740333,
+            "sensible_enthalpy_over_t_j_mol_k": 0.0027198745207200697
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.006013339506172839,
+            "entropy_j_mol_k": 0.010920969371670385,
+            "sensible_enthalpy_over_t_j_mol_k": 0.005574286026858312
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "1000",
+            "cp_j_mol_k": "41.53",
+            "entropy_j_mol_k": "232.75",
+            "sensible_enthalpy_over_t_j_mol_k": "26.04",
+            "formation_enthalpy_kj_mol": "-247.8",
+            "formation_gibbs_kj_mol": "-192.6",
+            "formation_log10_k": "10.06"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": 0.003700490303833012,
+            "entropy_j_mol_k": -0.003583896261970495,
+            "sensible_enthalpy_over_t_j_mol_k": 0.003932634342980753
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.006070811388300842,
+            "entropy_j_mol_k": 0.011030696605984033,
+            "sensible_enthalpy_over_t_j_mol_k": 0.005621052422996387
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "1100",
+            "cp_j_mol_k": "42.76",
+            "entropy_j_mol_k": "236.76",
+            "sensible_enthalpy_over_t_j_mol_k": "27.51",
+            "formation_enthalpy_kj_mol": "-248.4",
+            "formation_gibbs_kj_mol": "-187.0",
+            "formation_log10_k": "8.88"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": -0.0023042125807920004,
+            "entropy_j_mol_k": 0.0027393874481038798,
+            "sensible_enthalpy_over_t_j_mol_k": -0.0019502137768626214
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.006129707798633847,
+            "entropy_j_mol_k": 0.011135507222327624,
+            "sensible_enthalpy_over_t_j_mol_k": 0.0056646064603813355
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        },
+        {
+          "printed": {
+            "temperature_k": "1200",
+            "cp_j_mol_k": "43.94",
+            "entropy_j_mol_k": "240.53",
+            "sensible_enthalpy_over_t_j_mol_k": "28.83",
+            "formation_enthalpy_kj_mol": "-248.9",
+            "formation_gibbs_kj_mol": "-181.4",
+            "formation_log10_k": "7.90"
+          },
+          "nominal_minus_printed": {
+            "cp_j_mol_k": -0.002194618902081174,
+            "entropy_j_mol_k": 0.004070684323888198,
+            "sensible_enthalpy_over_t_j_mol_k": -0.001660637469177851
+          },
+          "coefficient_reference_and_table_rounding_enclosures": {
+            "cp_j_mol_k": 0.006189905978951963,
+            "entropy_j_mol_k": 0.011236376536412102,
+            "sensible_enthalpy_over_t_j_mol_k": 0.005705864441010623
+          },
+          "within_printed_table_half_unit_only": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          },
+          "within_complete_arithmetic_enclosure": {
+            "cp_j_mol_k": true,
+            "entropy_j_mol_k": true,
+            "sensible_enthalpy_over_t_j_mol_k": true
+          }
+        }
+      ],
+      "all_table_half_units_met": true,
+      "all_complete_arithmetic_enclosures_met": true
+    }
+  },
+  "reactions": {
+    "hydrogen_oxidation": {
+      "stoichiometry": {
+        "H2": -1,
+        "O2": -0.5,
+        "H2O": 1
+      },
+      "atom_balance": {
+        "C": "0",
+        "H": "0",
+        "O": "0",
+        "N": "0"
+      },
+      "points": [
+        {
+          "temperature_k": 298.15,
+          "state": {
+            "enthalpy_j_mol": -241800.0,
+            "entropy_j_mol_k": -44.415000000000006,
+            "cp_j_mol_k": -9.908922137080841,
+            "gibbs_j_mol": -228557.66775,
+            "log_equilibrium": 92.1985990642566,
+            "gibbs_temperature_derivative_j_mol_k": 44.415000000000006,
+            "vant_hoff_derivative_per_k": -0.3271523235674857
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 0.0,
+            "entropy_j_mol_k": 6.252776074688882e-15,
+            "gibbs_j_mol": 6.7520886659622196e-12,
+            "log_equilibrium": 1.3765224777057593e-15,
+            "gibbs_temperature_derivative_j_mol_k": 6.252776074688882e-15,
+            "vant_hoff_derivative_per_k": 2.985474210728169e-17
+          }
+        },
+        {
+          "temperature_k": 300.0,
+          "state": {
+            "enthalpy_j_mol": -241818.35203772088,
+            "entropy_j_mol_k": -44.476362785991896,
+            "cp_j_mol_k": -9.930962406295635,
+            "gibbs_j_mol": -228475.4432019233,
+            "log_equilibrium": 91.59707675774972,
+            "gibbs_temperature_derivative_j_mol_k": 44.476362785991896,
+            "vant_hoff_derivative_per_k": -0.3231544105662148
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 5.8589787509971725e-12,
+            "entropy_j_mol_k": 7.893543637635577e-15,
+            "gibbs_j_mol": 1.5013959995782188e-12,
+            "log_equilibrium": 8.548491807878331e-15,
+            "gibbs_temperature_derivative_j_mol_k": 7.893543637635577e-15,
+            "vant_hoff_derivative_per_k": 6.1788830660871645e-18
+          }
+        },
+        {
+          "temperature_k": 400.0,
+          "state": {
+            "enthalpy_j_mol": -242837.37502727684,
+            "entropy_j_mol_k": -47.40605477978643,
+            "cp_j_mol_k": -10.21866700000001,
+            "gibbs_j_mol": -223874.95311536227,
+            "log_equilibrium": 67.31453600854478,
+            "gibbs_temperature_derivative_j_mol_k": 47.40605477978643,
+            "vant_hoff_derivative_per_k": -0.18254035342076444
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 1.563789387036238e-11,
+            "entropy_j_mol_k": 1.9907019218920082e-14,
+            "gibbs_j_mol": 8.811954560010508e-12,
+            "log_equilibrium": 5.638436490631643e-16,
+            "gibbs_temperature_derivative_j_mol_k": 1.9907019218920082e-14,
+            "vant_hoff_derivative_per_k": 4.844097402023768e-19
+          }
+        },
+        {
+          "temperature_k": 500.0,
+          "state": {
+            "enthalpy_j_mol": -243837.41535213913,
+            "entropy_j_mol_k": -49.63966770143476,
+            "cp_j_mol_k": -9.720250091528976,
+            "gibbs_j_mol": -219017.58150142175,
+            "log_equilibrium": 52.6832204186228,
+            "gibbs_temperature_derivative_j_mol_k": 49.63966770143476,
+            "vant_hoff_derivative_per_k": -0.1173069322676329
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 4.2374894273171677e-13,
+            "entropy_j_mol_k": 7.223879156132554e-15,
+            "gibbs_j_mol": 1.1887526169476567e-12,
+            "log_equilibrium": 2.6729995778981893e-15,
+            "gibbs_temperature_derivative_j_mol_k": 7.223879156132554e-15,
+            "vant_hoff_derivative_per_k": 5.475212057039604e-18
+          }
+        },
+        {
+          "temperature_k": 600.0,
+          "state": {
+            "enthalpy_j_mol": -244774.6898628689,
+            "entropy_j_mol_k": -51.35049475528943,
+            "cp_j_mol_k": -9.00923814077117,
+            "gibbs_j_mol": -213964.39300969522,
+            "log_equilibrium": 42.88975798728071,
+            "gibbs_temperature_derivative_j_mol_k": 51.35049475528943,
+            "vant_hoff_derivative_per_k": -0.08177627954786568
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 2.4768566472655624e-13,
+            "entropy_j_mol_k": 1.8648587286845924e-14,
+            "gibbs_j_mol": 5.959644747139402e-13,
+            "log_equilibrium": 4.468173486531008e-15,
+            "gibbs_temperature_derivative_j_mol_k": 1.8648587286845924e-14,
+            "vant_hoff_derivative_per_k": 7.030552942455372e-18
+          }
+        },
+        {
+          "temperature_k": 700.0,
+          "state": {
+            "enthalpy_j_mol": -245637.87246028899,
+            "entropy_j_mol_k": -52.68259430264159,
+            "cp_j_mol_k": -8.25341589092707,
+            "gibbs_j_mol": -208760.05644843986,
+            "log_equilibrium": 35.868457921056056,
+            "gibbs_temperature_derivative_j_mol_k": 52.68259430264159,
+            "vant_hoff_derivative_per_k": -0.06029240214170191
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 1.53535049768535e-11,
+            "entropy_j_mol_k": 1.3588073896768807e-14,
+            "gibbs_j_mol": 3.333482611485206e-11,
+            "log_equilibrium": 8.111464884091428e-15,
+            "gibbs_temperature_derivative_j_mol_k": 1.3588073896768807e-14,
+            "vant_hoff_derivative_per_k": 1.22900469399952e-17
+          }
+        },
+        {
+          "temperature_k": 800.0,
+          "state": {
+            "enthalpy_j_mol": -246425.81641624036,
+            "entropy_j_mol_k": -53.7358520234973,
+            "cp_j_mol_k": -7.509832909768882,
+            "gibbs_j_mol": -203437.13479744253,
+            "log_equilibrium": 30.584654837964372,
+            "gibbs_temperature_derivative_j_mol_k": 53.7358520234973,
+            "vant_hoff_derivative_per_k": -0.04630944435094498
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 1.2066961973010014e-11,
+            "entropy_j_mol_k": 2.5504572716902404e-14,
+            "gibbs_j_mol": 1.7009210216392155e-11,
+            "log_equilibrium": 3.835722827083951e-15,
+            "gibbs_temperature_derivative_j_mol_k": 2.5504572716902404e-14,
+            "vant_hoff_derivative_per_k": 3.811707949267489e-18
+          }
+        },
+        {
+          "temperature_k": 900.0,
+          "state": {
+            "enthalpy_j_mol": -247140.94574949905,
+            "entropy_j_mol_k": -54.578974880296926,
+            "cp_j_mol_k": -6.7990491604938335,
+            "gibbs_j_mol": -198019.8683572318,
+            "log_equilibrium": 26.4624224340917,
+            "gibbs_temperature_derivative_j_mol_k": 54.578974880296926,
+            "vant_hoff_derivative_per_k": -0.036696363189542766
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 5.186384977455343e-12,
+            "entropy_j_mol_k": 4.911969974568658e-15,
+            "gibbs_j_mol": 4.832310770259261e-12,
+            "log_equilibrium": 9.54856052531796e-16,
+            "gibbs_temperature_derivative_j_mol_k": 4.911969974568658e-15,
+            "vant_hoff_derivative_per_k": 1.854089065124657e-18
+          }
+        },
+        {
+          "temperature_k": 1000.0,
+          "state": {
+            "enthalpy_j_mol": -247786.9606039993,
+            "entropy_j_mol_k": -55.26024014601887,
+            "cp_j_mol_k": -6.128135588361236,
+            "gibbs_j_mol": -192526.7204579804,
+            "log_equilibrium": 23.15551012121946,
+            "gibbs_temperature_derivative_j_mol_k": 55.26024014601887,
+            "vant_hoff_derivative_per_k": -0.02980175146869741
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 5.851598003951197e-12,
+            "entropy_j_mol_k": 1.2217852852699487e-14,
+            "gibbs_j_mol": 1.8189685971796356e-11,
+            "log_equilibrium": 1.0863319395527278e-15,
+            "gibbs_temperature_derivative_j_mol_k": 1.2217852852699487e-14,
+            "vant_hoff_derivative_per_k": 3.0140538212810406e-19
+          }
+        },
+        {
+          "temperature_k": 1100.0,
+          "state": {
+            "enthalpy_j_mol": -248367.96252297674,
+            "entropy_j_mol_k": -55.81447051435882,
+            "cp_j_mol_k": -5.49884718537324,
+            "gibbs_j_mol": -186972.04495718205,
+            "log_equilibrium": 20.44312729489903,
+            "gibbs_temperature_derivative_j_mol_k": 55.81447051435882,
+            "vant_hoff_derivative_per_k": -0.0246872971401332
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 4.698348245313587e-12,
+            "entropy_j_mol_k": 7.234146819826373e-15,
+            "gibbs_j_mol": 2.0500301549914104e-11,
+            "log_equilibrium": 1.8801564967609407e-15,
+            "gibbs_temperature_derivative_j_mol_k": 7.234146819826373e-15,
+            "vant_hoff_derivative_per_k": 2.993243991882904e-18
+          }
+        },
+        {
+          "temperature_k": 1200.0,
+          "state": {
+            "enthalpy_j_mol": -248888.1059148316,
+            "entropy_j_mol_k": -56.267425457673696,
+            "cp_j_mol_k": -4.910810758703381,
+            "gibbs_j_mol": -181367.19536562316,
+            "log_equilibrium": 18.177779504908003,
+            "gibbs_temperature_derivative_j_mol_k": 56.267425457673696,
+            "vant_hoff_derivative_per_k": -0.020787630592885843
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 1.1012268911300137e-11,
+            "entropy_j_mol_k": 1.950123643868565e-14,
+            "gibbs_j_mol": 1.2161841139679411e-11,
+            "log_equilibrium": 1.1174416404448485e-15,
+            "gibbs_temperature_derivative_j_mol_k": 1.950123643868565e-14,
+            "vant_hoff_derivative_per_k": 2.944407316165488e-19
+          }
+        }
+      ],
+      "maximum_errors": {
+        "enthalpy_j_mol": 1.563789387036238e-11,
+        "entropy_j_mol_k": 2.5504572716902404e-14,
+        "gibbs_j_mol": 3.333482611485206e-11,
+        "log_equilibrium": 8.548491807878331e-15,
+        "gibbs_temperature_derivative_j_mol_k": 2.5504572716902404e-14,
+        "vant_hoff_derivative_per_k": 2.985474210728169e-17
+      },
+      "within_budgets": {
+        "enthalpy_j_mol": true,
+        "entropy_j_mol_k": true,
+        "gibbs_j_mol": true,
+        "log_equilibrium": true,
+        "gibbs_temperature_derivative_j_mol_k": true,
+        "vant_hoff_derivative_per_k": true,
+        "exact_element_balance": true
+      }
+    },
+    "water_gas_shift": {
+      "stoichiometry": {
+        "CO": -1,
+        "H2O": -1,
+        "CO2": 1,
+        "H2": 1
+      },
+      "atom_balance": {
+        "C": "0",
+        "H": "0",
+        "O": "0",
+        "N": "0"
+      },
+      "points": [
+        {
+          "temperature_k": 298.15,
+          "state": {
+            "enthalpy_j_mol": -41200.0,
+            "entropy_j_mol_k": -41.640000000000015,
+            "cp_j_mol_k": 3.2131146785715714,
+            "gibbs_j_mol": -28785.033999999996,
+            "log_equilibrium": 11.611685728784717,
+            "gibbs_temperature_derivative_j_mol_k": 41.640000000000015,
+            "vant_hoff_derivative_per_k": -0.05574307581050625
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 0.0,
+            "entropy_j_mol_k": 1.4779288903810084e-14,
+            "gibbs_j_mol": 3.987224772572518e-12,
+            "log_equilibrium": 1.4224224623738971e-15,
+            "gibbs_temperature_derivative_j_mol_k": 1.4779288903810084e-14,
+            "vant_hoff_derivative_per_k": 6.602104933607557e-18
+          }
+        },
+        {
+          "temperature_k": 300.0,
+          "state": {
+            "enthalpy_j_mol": -41193.95238710535,
+            "entropy_j_mol_k": -41.619779232810544,
+            "cp_j_mol_k": 3.3245103558306077,
+            "gibbs_j_mol": -28708.01861726219,
+            "log_equilibrium": 11.50920443788918,
+            "gibbs_temperature_derivative_j_mol_k": 41.619779232810544,
+            "vant_hoff_derivative_per_k": -0.05504961592191823
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 1.0596264925230408e-11,
+            "entropy_j_mol_k": 1.34001243780129e-14,
+            "gibbs_j_mol": 1.4275241725469428e-11,
+            "log_equilibrium": 6.499936106386795e-15,
+            "gibbs_temperature_derivative_j_mol_k": 1.34001243780129e-14,
+            "vant_hoff_derivative_per_k": 1.5225668797352713e-17
+          }
+        },
+        {
+          "temperature_k": 400.0,
+          "state": {
+            "enthalpy_j_mol": -40636.96610060369,
+            "entropy_j_mol_k": -40.04427746656336,
+            "cp_j_mol_k": 7.250475000000009,
+            "gibbs_j_mol": -24619.255113978346,
+            "log_equilibrium": 7.402497295083639,
+            "gibbs_temperature_derivative_j_mol_k": 40.04427746656336,
+            "vant_hoff_derivative_per_k": -0.03054672351452738
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 3.193033821782422e-11,
+            "entropy_j_mol_k": 2.121706103175333e-15,
+            "gibbs_j_mol": 3.290064518009994e-11,
+            "log_equilibrium": 9.979391018158262e-15,
+            "gibbs_temperature_derivative_j_mol_k": 2.121706103175333e-15,
+            "vant_hoff_derivative_per_k": 2.6575833094528633e-17
+          }
+        },
+        {
+          "temperature_k": 500.0,
+          "state": {
+            "enthalpy_j_mol": -39814.239033557984,
+            "entropy_j_mol_k": -38.2155653565855,
+            "cp_j_mol_k": 8.983234567045724,
+            "gibbs_j_mol": -20706.456355265233,
+            "log_equilibrium": 4.980800156657514,
+            "gibbs_temperature_derivative_j_mol_k": 38.2155653565855,
+            "vant_hoff_derivative_per_k": -0.019154100017226745
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 1.504331017175896e-11,
+            "entropy_j_mol_k": 2.557083823276836e-14,
+            "gibbs_j_mol": 2.89655976653593e-11,
+            "log_equilibrium": 6.807758147385063e-15,
+            "gibbs_temperature_derivative_j_mol_k": 2.557083823276836e-14,
+            "vant_hoff_derivative_per_k": 6.664243473818945e-18
+          }
+        },
+        {
+          "temperature_k": 600.0,
+          "state": {
+            "enthalpy_j_mol": -38870.8162480333,
+            "entropy_j_mol_k": -36.49769822848555,
+            "cp_j_mol_k": 9.779566543808677,
+            "gibbs_j_mol": -16972.19731094197,
+            "log_equilibrium": 3.402124180286826,
+            "gibbs_temperature_derivative_j_mol_k": 36.49769822848555,
+            "vant_hoff_derivative_per_k": -0.012986272140856198
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 2.606201941277255e-11,
+            "entropy_j_mol_k": 1.5178333910870328e-14,
+            "gibbs_j_mol": 3.425952505752182e-11,
+            "log_equilibrium": 6.78924855328856e-15,
+            "gibbs_temperature_derivative_j_mol_k": 1.5178333910870328e-14,
+            "vant_hoff_derivative_per_k": 8.894622443464374e-18
+          }
+        },
+        {
+          "temperature_k": 700.0,
+          "state": {
+            "enthalpy_j_mol": -37873.87026543242,
+            "entropy_j_mol_k": -34.96153482244077,
+            "cp_j_mol_k": 10.10214983124482,
+            "gibbs_j_mol": -13400.795889723886,
+            "log_equilibrium": 2.3024801375158583,
+            "gibbs_temperature_derivative_j_mol_k": 34.96153482244077,
+            "vant_hoff_derivative_per_k": -0.009296231862923585
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 8.472692501484913e-12,
+            "entropy_j_mol_k": 2.807234003861288e-14,
+            "gibbs_j_mol": 9.927390310606325e-12,
+            "log_equilibrium": 1.7747857561011449e-15,
+            "gibbs_temperature_derivative_j_mol_k": 2.807234003861288e-14,
+            "vant_hoff_derivative_per_k": 1.9259476052217656e-18
+          }
+        },
+        {
+          "temperature_k": 800.0,
+          "state": {
+            "enthalpy_j_mol": -36859.14890260823,
+            "entropy_j_mol_k": -33.60664620877654,
+            "cp_j_mol_k": 10.158795123747158,
+            "gibbs_j_mol": -9973.831935586997,
+            "log_equilibrium": 1.4994617745945036,
+            "gibbs_temperature_derivative_j_mol_k": 33.60664620877654,
+            "vant_hoff_derivative_per_k": -0.006926736531716884
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 3.1951163296928937e-11,
+            "entropy_j_mol_k": 1.7418752525440193e-14,
+            "gibbs_j_mol": 1.7106666574803853e-11,
+            "log_equilibrium": 2.6241098505186776e-15,
+            "gibbs_temperature_derivative_j_mol_k": 1.7418752525440193e-14,
+            "vant_hoff_derivative_per_k": 6.465127800246209e-18
+          }
+        },
+        {
+          "temperature_k": 900.0,
+          "state": {
+            "enthalpy_j_mol": -35847.36971171485,
+            "entropy_j_mol_k": -32.41482287690147,
+            "cp_j_mol_k": 10.056248456790122,
+            "gibbs_j_mol": -6674.029122503525,
+            "log_equilibrium": 0.8918851398209643,
+            "gibbs_temperature_derivative_j_mol_k": 32.41482287690147,
+            "vant_hoff_derivative_per_k": -0.005322744453945141
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 1.3309949347698503e-11,
+            "entropy_j_mol_k": 3.505827225994887e-14,
+            "gibbs_j_mol": 1.9493050901193255e-11,
+            "log_equilibrium": 2.6139729966576658e-15,
+            "gibbs_temperature_derivative_j_mol_k": 3.505827225994887e-14,
+            "vant_hoff_derivative_per_k": 1.6066831602557527e-18
+          }
+        },
+        {
+          "temperature_k": 1000.0,
+          "state": {
+            "enthalpy_j_mol": -34851.16694372453,
+            "entropy_j_mol_k": -31.36503199909211,
+            "cp_j_mol_k": 9.854924578439611,
+            "gibbs_j_mol": -3486.1349446324202,
+            "log_equilibrium": 0.41928327040708596,
+            "gibbs_temperature_derivative_j_mol_k": 31.36503199909211,
+            "vant_hoff_derivative_per_k": -0.004191608037482008
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 1.0719849548659668e-12,
+            "entropy_j_mol_k": 2.4950514625772022e-14,
+            "gibbs_j_mol": 2.4430883852535365e-11,
+            "log_equilibrium": 2.929838035178303e-15,
+            "gibbs_temperature_derivative_j_mol_k": 2.4950514625772022e-14,
+            "vant_hoff_derivative_per_k": 2.790018573071229e-19
+          }
+        },
+        {
+          "temperature_k": 1100.0,
+          "state": {
+            "enthalpy_j_mol": -33878.43701378633,
+            "entropy_j_mol_k": -30.43772188330408,
+            "cp_j_mol_k": 9.59161725020627,
+            "gibbs_j_mol": -396.94294215184345,
+            "log_equilibrium": 0.04340090037032122,
+            "gibbs_temperature_derivative_j_mol_k": 30.43772188330408,
+            "vant_hoff_derivative_per_k": -0.0033674513923077215
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 1.2304481153673794e-11,
+            "entropy_j_mol_k": 4.5149219546006375e-14,
+            "gibbs_j_mol": 3.7245973509211606e-11,
+            "log_equilibrium": 4.077045565229081e-15,
+            "gibbs_temperature_derivative_j_mol_k": 4.5149219546006375e-14,
+            "vant_hoff_derivative_per_k": 1.5389101398510118e-18
+          }
+        },
+        {
+          "temperature_k": 1200.0,
+          "state": {
+            "enthalpy_j_mol": -32934.11034027363,
+            "entropy_j_mol_k": -29.615859894195495,
+            "cp_j_mol_k": 9.29005656680419,
+            "gibbs_j_mol": 2604.9215327609636,
+            "log_equilibrium": -0.2610818850380202,
+            "gibbs_temperature_derivative_j_mol_k": 29.615859894195495,
+            "vant_hoff_derivative_per_k": -0.0027507225270669415
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 3.796260126357099e-11,
+            "entropy_j_mol_k": 5.3437464138518844e-14,
+            "gibbs_j_mol": 1.0527078968599885e-10,
+            "log_equilibrium": 1.0522364647074991e-14,
+            "gibbs_temperature_derivative_j_mol_k": 5.3437464138518844e-14,
+            "vant_hoff_derivative_per_k": 3.3121961467661755e-18
+          }
+        }
+      ],
+      "maximum_errors": {
+        "enthalpy_j_mol": 3.796260126357099e-11,
+        "entropy_j_mol_k": 5.3437464138518844e-14,
+        "gibbs_j_mol": 1.0527078968599885e-10,
+        "log_equilibrium": 1.0522364647074991e-14,
+        "gibbs_temperature_derivative_j_mol_k": 5.3437464138518844e-14,
+        "vant_hoff_derivative_per_k": 2.6575833094528633e-17
+      },
+      "within_budgets": {
+        "enthalpy_j_mol": true,
+        "entropy_j_mol_k": true,
+        "gibbs_j_mol": true,
+        "log_equilibrium": true,
+        "gibbs_temperature_derivative_j_mol_k": true,
+        "vant_hoff_derivative_per_k": true,
+        "exact_element_balance": true
+      }
+    },
+    "steam_gasification": {
+      "stoichiometry": {
+        "C": -1,
+        "H2O": -1,
+        "CO": 1,
+        "H2": 1
+      },
+      "atom_balance": {
+        "C": "0",
+        "H": "0",
+        "O": "0",
+        "N": "0"
+      },
+      "points": [
+        {
+          "temperature_k": 298.15,
+          "state": {
+            "enthalpy_j_mol": 131300.0,
+            "entropy_j_mol_k": 133.37,
+            "cp_j_mol_k": 15.851958727571589,
+            "gibbs_j_mol": 91535.73449999999,
+            "log_equilibrium": -36.92488888383724,
+            "gibbs_temperature_derivative_j_mol_k": -133.37,
+            "vant_hoff_derivative_per_k": 0.17764722946406483
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 0.0,
+            "entropy_j_mol_k": 4.547473508864641e-15,
+            "gibbs_j_mol": 8.614733815193176e-12,
+            "log_equilibrium": 3.272376691734997e-16,
+            "gibbs_temperature_derivative_j_mol_k": 4.547473508864641e-15,
+            "vant_hoff_derivative_per_k": 3.6804292407485165e-17
+          }
+        },
+        {
+          "temperature_k": 300.0,
+          "state": {
+            "enthalpy_j_mol": 131329.2763704763,
+            "entropy_j_mol_k": 133.46789021225777,
+            "cp_j_mol_k": 15.798057173075959,
+            "gibbs_j_mol": 91288.90930679896,
+            "log_equilibrium": -36.59823180872914,
+            "gibbs_temperature_derivative_j_mol_k": -133.46789021225777,
+            "vant_hoff_derivative_per_k": 0.17550212602957732
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 1.1905410639173606e-11,
+            "entropy_j_mol_k": 4.1684733283261206e-14,
+            "gibbs_j_mol": 6.000093458047544e-13,
+            "log_equilibrium": 2.5706037312832228e-15,
+            "gibbs_temperature_derivative_j_mol_k": 4.1684733283261206e-14,
+            "vant_hoff_derivative_per_k": 6.3453509346517805e-18
+          }
+        },
+        {
+          "temperature_k": 400.0,
+          "state": {
+            "enthalpy_j_mol": 132745.51609996404,
+            "entropy_j_mol_k": 137.5653368478861,
+            "cp_j_mol_k": 12.463664000000003,
+            "gibbs_j_mol": 77719.3813608096,
+            "log_equilibrium": -23.368599400568883,
+            "gibbs_temperature_derivative_j_mol_k": -137.5653368478861,
+            "vant_hoff_derivative_per_k": 0.0997845303721777
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 3.679234169466401e-12,
+            "entropy_j_mol_k": 7.335211449825988e-15,
+            "gibbs_j_mol": 6.613318749396796e-12,
+            "log_equilibrium": 2.9158108184092614e-15,
+            "gibbs_temperature_derivative_j_mol_k": 7.335211449825988e-15,
+            "vant_hoff_derivative_per_k": 2.907529938018134e-18
+          }
+        },
+        {
+          "temperature_k": 500.0,
+          "state": {
+            "enthalpy_j_mol": 133830.08704786724,
+            "entropy_j_mol_k": 139.99858332404386,
+            "cp_j_mol_k": 9.312135314569844,
+            "gibbs_j_mol": 63830.79538584531,
+            "log_equilibrium": -15.354072671954285,
+            "gibbs_temperature_derivative_j_mol_k": -139.99858332404386,
+            "vant_hoff_derivative_per_k": 0.06438387207321526
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 2.1362867964050293e-11,
+            "entropy_j_mol_k": 3.972367927942037e-15,
+            "gibbs_j_mol": 1.8239815622863117e-11,
+            "log_equilibrium": 3.9851804100793836e-15,
+            "gibbs_temperature_derivative_j_mol_k": 3.972367927942037e-15,
+            "vant_hoff_derivative_per_k": 1.644028994311525e-17
+          }
+        },
+        {
+          "temperature_k": 600.0,
+          "state": {
+            "enthalpy_j_mol": 134626.21038128753,
+            "entropy_j_mol_k": 141.4573265577079,
+            "cp_j_mol_k": 6.699522345547319,
+            "gibbs_j_mol": 49751.8144466628,
+            "log_equilibrium": -9.97288965247958,
+            "gibbs_temperature_derivative_j_mol_k": -141.4573265577079,
+            "vant_hoff_derivative_per_k": 0.04497699750238757
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 2.5535296605220985e-11,
+            "entropy_j_mol_k": 2.3359888928295307e-14,
+            "gibbs_j_mol": 4.3416582444733115e-11,
+            "log_equilibrium": 7.854227100300007e-15,
+            "gibbs_temperature_derivative_j_mol_k": 2.3359888928295307e-14,
+            "vant_hoff_derivative_per_k": 6.118952874603449e-18
+          }
+        },
+        {
+          "temperature_k": 700.0,
+          "state": {
+            "enthalpy_j_mol": 135186.3297557915,
+            "entropy_j_mol_k": 142.32495849038486,
+            "cp_j_mol_k": 4.576156988856351,
+            "gibbs_j_mol": 35558.858812522085,
+            "log_equilibrium": -6.109604743054541,
+            "gibbs_temperature_derivative_j_mol_k": -142.32495849038486,
+            "vant_hoff_derivative_per_k": 0.03318180733312851
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 9.148388253059463e-13,
+            "entropy_j_mol_k": 2.8208275895220855e-14,
+            "gibbs_j_mol": 2.679972118892781e-11,
+            "log_equilibrium": 4.444911926797051e-15,
+            "gibbs_temperature_derivative_j_mol_k": 2.8208275895220855e-14,
+            "vant_hoff_derivative_per_k": 6.405770225608779e-18
+          }
+        },
+        {
+          "temperature_k": 800.0,
+          "state": {
+            "enthalpy_j_mol": 135554.4444797034,
+            "entropy_j_mol_k": 142.8190812302715,
+            "cp_j_mol_k": 2.843398904003788,
+            "gibbs_j_mol": 21299.179495486198,
+            "log_equilibrium": -3.2021098500522274,
+            "gibbs_temperature_derivative_j_mol_k": -142.8190812302715,
+            "vant_hoff_derivative_per_k": 0.025473999008905703
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 1.0124475106016886e-11,
+            "entropy_j_mol_k": 3.8721002318192783e-14,
+            "gibbs_j_mol": 4.564875046943575e-11,
+            "log_equilibrium": 7.164773764419759e-15,
+            "gibbs_temperature_derivative_j_mol_k": 3.8721002318192783e-14,
+            "vant_hoff_derivative_per_k": 3.984623728459691e-18
+          }
+        },
+        {
+          "temperature_k": 900.0,
+          "state": {
+            "enthalpy_j_mol": 135765.1039332974,
+            "entropy_j_mol_k": 143.06885418675608,
+            "cp_j_mol_k": 1.414124925925929,
+            "gibbs_j_mol": 7003.1351652169105,
+            "log_equilibrium": -0.9358652878745056,
+            "gibbs_temperature_derivative_j_mol_k": -143.06885418675608,
+            "vant_hoff_derivative_per_k": 0.020158883617173343
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 1.6033760326561226e-11,
+            "entropy_j_mol_k": 2.7164230197020957e-15,
+            "gibbs_j_mol": 1.6204804289860792e-11,
+            "log_equilibrium": 2.118655440655092e-15,
+            "gibbs_temperature_derivative_j_mol_k": 2.7164230197020957e-15,
+            "vant_hoff_derivative_per_k": 1.4797385839363707e-18
+          }
+        },
+        {
+          "temperature_k": 1000.0,
+          "state": {
+            "enthalpy_j_mol": 135845.0896606664,
+            "entropy_j_mol_k": 143.15423188287417,
+            "cp_j_mol_k": 0.21999438035119212,
+            "gibbs_j_mol": -7309.142222207796,
+            "log_equilibrium": 0.8790827387552359,
+            "gibbs_temperature_derivative_j_mol_k": -143.15423188287417,
+            "vant_hoff_derivative_per_k": 0.01633831574688904
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 1.5670268578512975e-11,
+            "entropy_j_mol_k": 4.3840386839293956e-14,
+            "gibbs_j_mol": 7.269832859351439e-11,
+            "log_equilibrium": 8.765445477281938e-15,
+            "gibbs_temperature_derivative_j_mol_k": 4.3840386839293956e-14,
+            "vant_hoff_derivative_per_k": 2.147265407870483e-18
+          }
+        },
+        {
+          "temperature_k": 1100.0,
+          "state": {
+            "enthalpy_j_mol": 135815.18549159454,
+            "entropy_j_mol_k": 143.12649545091986,
+            "cp_j_mol_k": -0.7912495726748467,
+            "gibbs_j_mol": -21623.95950441729,
+            "log_equilibrium": 2.364317921803656,
+            "gibbs_temperature_derivative_j_mol_k": -143.12649545091986,
+            "vant_hoff_derivative_per_k": 0.013499767869872191
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 9.834840040692597e-12,
+            "entropy_j_mol_k": 2.2079064351373617e-14,
+            "gibbs_j_mol": 1.3902355173144387e-14,
+            "log_equilibrium": 3.474228553583041e-16,
+            "gibbs_temperature_derivative_j_mol_k": 2.2079064351373617e-14,
+            "vant_hoff_derivative_per_k": 1.2486417307921332e-18
+          }
+        },
+        {
+          "temperature_k": 1200.0,
+          "state": {
+            "enthalpy_j_mol": 135691.59337432188,
+            "entropy_j_mol_k": 143.01950393278625,
+            "cp_j_mol_k": -1.6595842467953545,
+            "gibbs_j_mol": -35931.81134502162,
+            "log_equilibrium": 3.601315786600936,
+            "gibbs_temperature_derivative_j_mol_k": -143.01950393278625,
+            "vant_hoff_derivative_per_k": 0.011333232286281743
+          },
+          "independent_errors": {
+            "enthalpy_j_mol": 2.522383718291595e-11,
+            "entropy_j_mol_k": 3.4748758773977283e-14,
+            "gibbs_j_mol": 1.2381947187878615e-11,
+            "log_equilibrium": 1.1567307967458977e-15,
+            "gibbs_temperature_derivative_j_mol_k": 3.4748758773977283e-14,
+            "vant_hoff_derivative_per_k": 2.593098614885348e-18
+          }
+        }
+      ],
+      "maximum_errors": {
+        "enthalpy_j_mol": 2.5535296605220985e-11,
+        "entropy_j_mol_k": 4.3840386839293956e-14,
+        "gibbs_j_mol": 7.269832859351439e-11,
+        "log_equilibrium": 8.765445477281938e-15,
+        "gibbs_temperature_derivative_j_mol_k": 4.3840386839293956e-14,
+        "vant_hoff_derivative_per_k": 3.6804292407485165e-17
+      },
+      "within_budgets": {
+        "enthalpy_j_mol": true,
+        "entropy_j_mol_k": true,
+        "gibbs_j_mol": true,
+        "log_equilibrium": true,
+        "gibbs_temperature_derivative_j_mol_k": true,
+        "vant_hoff_derivative_per_k": true,
+        "exact_element_balance": true
+      }
+    }
+  },
+  "steam_formation_table": [
+    {
+      "temperature_k": 298.15,
+      "nominal_values": {
+        "formation_enthalpy_kj_mol": -241.8,
+        "formation_gibbs_kj_mol": -228.55766775,
+        "formation_log10_k": 40.04134281281696
+      },
+      "nominal_minus_printed": {
+        "formation_enthalpy_kj_mol": 0.0,
+        "formation_gibbs_kj_mol": 0.04233225,
+        "formation_log10_k": -0.008657187183041405
+      },
+      "rounding_enclosures": {
+        "formation_enthalpy_kj_mol": 0.1,
+        "formation_gibbs_kj_mol": 0.103726875,
+        "formation_log10_k": 0.01441248762867797
+      },
+      "within_arithmetic_enclosures": {
+        "formation_enthalpy_kj_mol": true,
+        "formation_gibbs_kj_mol": true,
+        "formation_log10_k": true
+      }
+    },
+    {
+      "temperature_k": 300.0,
+      "nominal_values": {
+        "formation_enthalpy_kj_mol": -241.81835203772087,
+        "formation_gibbs_kj_mol": -228.4754432019233,
+        "formation_log10_k": 39.780104994359306
+      },
+      "nominal_minus_printed": {
+        "formation_enthalpy_kj_mol": -0.01835203772087112,
+        "formation_gibbs_kj_mol": 0.02455679807669517,
+        "formation_log10_k": -0.00989500564069259
+      },
+      "rounding_enclosures": {
+        "formation_enthalpy_kj_mol": 0.10001952004929032,
+        "formation_gibbs_kj_mol": 0.10378910054646287,
+        "formation_log10_k": 0.014365278111746016
+      },
+      "within_arithmetic_enclosures": {
+        "formation_enthalpy_kj_mol": true,
+        "formation_gibbs_kj_mol": true,
+        "formation_log10_k": true
+      }
+    },
+    {
+      "temperature_k": 400.0,
+      "nominal_values": {
+        "formation_enthalpy_kj_mol": -242.83737502727683,
+        "formation_gibbs_kj_mol": -223.87495311536225,
+        "formation_log10_k": 29.234331540388744
+      },
+      "nominal_minus_printed": {
+        "formation_enthalpy_kj_mol": 0.06262497272317814,
+        "formation_gibbs_kj_mol": 0.025046884637742267,
+        "formation_log10_k": -0.005668459611256281
+      },
+      "rounding_enclosures": {
+        "formation_enthalpy_kj_mol": 0.10105190666319465,
+        "formation_gibbs_kj_mol": 0.10726694229787365,
+        "formation_log10_k": 0.012478106657950514
+      },
+      "within_arithmetic_enclosures": {
+        "formation_enthalpy_kj_mol": true,
+        "formation_gibbs_kj_mol": true,
+        "formation_log10_k": true
+      }
+    },
+    {
+      "temperature_k": 500.0,
+      "nominal_values": {
+        "formation_enthalpy_kj_mol": -243.83741535213912,
+        "formation_gibbs_kj_mol": -219.01758150142174,
+        "formation_log10_k": 22.88003191670061
+      },
+      "nominal_minus_printed": {
+        "formation_enthalpy_kj_mol": 0.06258464786087321,
+        "formation_gibbs_kj_mol": -0.017581501421750266,
+        "formation_log10_k": 3.191670060907321e-05
+      },
+      "rounding_enclosures": {
+        "formation_enthalpy_kj_mol": 0.102073385975886,
+        "formation_gibbs_kj_mol": 0.11098171908800994,
+        "formation_log10_k": 0.01137055559423151
+      },
+      "within_arithmetic_enclosures": {
+        "formation_enthalpy_kj_mol": true,
+        "formation_gibbs_kj_mol": true,
+        "formation_log10_k": true
+      }
+    },
+    {
+      "temperature_k": 600.0,
+      "nominal_values": {
+        "formation_enthalpy_kj_mol": -244.77468986286888,
+        "formation_gibbs_kj_mol": -213.96439300969521,
+        "formation_log10_k": 18.626785224041935
+      },
+      "nominal_minus_printed": {
+        "formation_enthalpy_kj_mol": 0.025310137131105626,
+        "formation_gibbs_kj_mol": 0.03560699030477613,
+        "formation_log10_k": -0.0032147759580652266
+      },
+      "rounding_enclosures": {
+        "formation_enthalpy_kj_mol": 0.10311283617479725,
+        "formation_gibbs_kj_mol": 0.11493947017557363,
+        "formation_log10_k": 0.010653340476462719
+      },
+      "within_arithmetic_enclosures": {
+        "formation_enthalpy_kj_mol": true,
+        "formation_gibbs_kj_mol": true,
+        "formation_log10_k": true
+      }
+    },
+    {
+      "temperature_k": 700.0,
+      "nominal_values": {
+        "formation_enthalpy_kj_mol": -245.637872460289,
+        "formation_gibbs_kj_mol": -208.76005644843988,
+        "formation_log10_k": 15.577473349493632
+      },
+      "nominal_minus_printed": {
+        "formation_enthalpy_kj_mol": 0.06212753971099948,
+        "formation_gibbs_kj_mol": 0.03994355156010292,
+        "formation_log10_k": -0.0025266505063676306
+      },
+      "rounding_enclosures": {
+        "formation_enthalpy_kj_mol": 0.10418585542861647,
+        "formation_gibbs_kj_mol": 0.11914089913289612,
+        "formation_log10_k": 0.010159226970551844
+      },
+      "within_arithmetic_enclosures": {
+        "formation_enthalpy_kj_mol": true,
+        "formation_gibbs_kj_mol": true,
+        "formation_log10_k": true
+      }
+    },
+    {
+      "temperature_k": 800.0,
+      "nominal_values": {
+        "formation_enthalpy_kj_mol": -246.42581641624037,
+        "formation_gibbs_kj_mol": -203.43713479744255,
+        "formation_log10_k": 13.282746827043523
+      },
+      "nominal_minus_printed": {
+        "formation_enthalpy_kj_mol": 0.07418358375963247,
+        "formation_gibbs_kj_mol": 0.06286520255745318,
+        "formation_log10_k": 0.002746827043523133
+      },
+      "rounding_enclosures": {
+        "formation_enthalpy_kj_mol": 0.10530229828822806,
+        "formation_gibbs_kj_mol": 0.12358585670478717,
+        "formation_log10_k": 0.00980454222693407
+      },
+      "within_arithmetic_enclosures": {
+        "formation_enthalpy_kj_mol": true,
+        "formation_gibbs_kj_mol": true,
+        "formation_log10_k": true
+      }
+    },
+    {
+      "temperature_k": 900.0,
+      "nominal_values": {
+        "formation_enthalpy_kj_mol": -247.14094574949905,
+        "formation_gibbs_kj_mol": -198.01986835723181,
+        "formation_log10_k": 11.492484040918843
+      },
+      "nominal_minus_printed": {
+        "formation_enthalpy_kj_mol": 0.05905425050095592,
+        "formation_gibbs_kj_mol": -0.019868357231806556,
+        "formation_log10_k": 0.00248404091884322
+      },
+      "rounding_enclosures": {
+        "formation_enthalpy_kj_mol": 0.10646910110763909,
+        "formation_gibbs_kj_mol": 0.12827441702230385,
+        "formation_log10_k": 0.009542814293857702
+      },
+      "within_arithmetic_enclosures": {
+        "formation_enthalpy_kj_mol": true,
+        "formation_gibbs_kj_mol": true,
+        "formation_log10_k": true
+      }
+    },
+    {
+      "temperature_k": 1000.0,
+      "nominal_values": {
+        "formation_enthalpy_kj_mol": -247.7869606039993,
+        "formation_gibbs_kj_mol": -192.52672045798042,
+        "formation_log10_k": 10.05631027130051
+      },
+      "nominal_minus_printed": {
+        "formation_enthalpy_kj_mol": 0.013039396000711743,
+        "formation_gibbs_kj_mol": 0.07327954201957254,
+        "formation_log10_k": -0.0036897286994899067
+      },
+      "rounding_enclosures": {
+        "formation_enthalpy_kj_mol": 0.1076915459300489,
+        "formation_gibbs_kj_mol": 0.1332071133114517,
+        "formation_log10_k": 0.009346183980326212
+      },
+      "within_arithmetic_enclosures": {
+        "formation_enthalpy_kj_mol": true,
+        "formation_gibbs_kj_mol": true,
+        "formation_log10_k": true
+      }
+    },
+    {
+      "temperature_k": 1100.0,
+      "nominal_values": {
+        "formation_enthalpy_kj_mol": -248.36796252297674,
+        "formation_gibbs_kj_mol": -186.97204495718202,
+        "formation_log10_k": 8.8783373770204
+      },
+      "nominal_minus_printed": {
+        "formation_enthalpy_kj_mol": 0.03203747702326397,
+        "formation_gibbs_kj_mol": 0.027955042817970517,
+        "formation_log10_k": -0.001662622979599624
+      },
+      "rounding_enclosures": {
+        "formation_enthalpy_kj_mol": 0.1089738994905707,
+        "formation_gibbs_kj_mol": 0.13838494392609982,
+        "formation_log10_k": 0.009196944796772421
+      },
+      "within_arithmetic_enclosures": {
+        "formation_enthalpy_kj_mol": true,
+        "formation_gibbs_kj_mol": true,
+        "formation_log10_k": true
+      }
+    },
+    {
+      "temperature_k": 1200.0,
+      "nominal_values": {
+        "formation_enthalpy_kj_mol": -248.88810591483158,
+        "formation_gibbs_kj_mol": -181.3671953656232,
+        "formation_log10_k": 7.894509332235571
+      },
+      "nominal_minus_printed": {
+        "formation_enthalpy_kj_mol": 0.011894085168412956,
+        "formation_gibbs_kj_mol": 0.032804634376824314,
+        "formation_log10_k": -0.005490667764428991
+      },
+      "rounding_enclosures": {
+        "formation_enthalpy_kj_mol": 0.11031976676871932,
+        "formation_gibbs_kj_mol": 0.14380931851297105,
+        "formation_log10_k": 0.009083310319478427
+      },
+      "within_arithmetic_enclosures": {
+        "formation_enthalpy_kj_mol": true,
+        "formation_gibbs_kj_mol": true,
+        "formation_log10_k": true
+      }
+    }
+  ],
+  "all_numerical_relations_met": true,
+  "all_source_arithmetic_enclosures_met": true,
+  "material_qualified": false,
+  "training_eligible": false
+}
