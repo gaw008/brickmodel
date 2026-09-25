@@ -7,7 +7,7 @@ from pathlib import Path
 from mpmath import mp
 
 from carbon_calcium_pressure_setup import build
-from carbon_calcium_pressure_decimal_reference import reconstruct
+from carbon_calcium_inventory_decimal_reference import reconstruct
 from carbon_calcium_inventory_prototype import at_temperature_pressure
 
 

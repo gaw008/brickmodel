@@ -32,8 +32,8 @@ def at_temperature_pressure(model, temperature, pressure, inventory):
             rtol=policy['log_oxygen_relative_tolerance'],
             maxiter=policy['maximum_root_iterations']))
 
-    def quantities(calcite, carbon, gas, partial, calcium_phase, carbon_phase):
-        n = {'calcite': calcite, 'lime': ca - calcite, 'C': carbon, **gas}
+    def quantities(calcite, lime, carbon, gas, partial, calcium_phase, carbon_phase):
+        n = {'calcite': calcite, 'lime': lime, 'C': carbon, **gas}
         mu = {name: g[name] + rt * math.log(value) for name, value in partial.items()}
         mu.update({name: g[name] for name in model.volumes})
         return n, partial, mu, calcium_phase, carbon_phase
@@ -70,7 +70,7 @@ def at_temperature_pressure(model, temperature, pressure, inventory):
             gas = {'CO': carbon/(1+w), 'CO2': carbon*w/(1+w), 'O2': nn*z, 'N2': nn}
             ng = math.fsum(gas.values())
             partial = {name: pi*value/ng for name, value in gas.items()}
-        return quantities(calcite, solid_carbon, gas, partial, calcium_phase, carbon_phase)
+        return quantities(calcite, ca-calcite, solid_carbon, gas, partial, calcium_phase, carbon_phase)
 
     def affinity(state):
         mu = state[2]
@@ -78,7 +78,7 @@ def at_temperature_pressure(model, temperature, pressure, inventory):
 
     def coexistence():
         b2 = math.exp((g['calcite'] - g['lime'] - g['CO2']) / rt)
-        d = (ot - ca - 2*ct) / nn
+        d = math.fsum((ot, -ca, -ct, -ct)) / nn
         partial = {'CO2': b2, 'O2': b2/k2}
         partial['CO'] = k1 * math.sqrt(partial['O2'])
         partial['N2'] = pi - math.fsum(partial.values())
@@ -86,9 +86,10 @@ def at_temperature_pressure(model, temperature, pressure, inventory):
             gas = {name: nn*value/partial['N2'] for name, value in partial.items()}
             gas['N2'] = nn
             carbon = (2*gas['O2'] - gas['CO'] - d*nn) / 2
-            calcite = math.fsum((ct, -carbon, -gas['CO'], -gas['CO2']))
-            if carbon >= 0 and 0 <= calcite <= ca:
-                return quantities(calcite, carbon, gas, partial, 'coexistence', 'graphite_present')
+            calcite = math.fsum((ot, -ca, -gas['CO'], -2*gas['CO2'], -2*gas['O2'])) / 2
+            lime = math.fsum((ca, ca, ca, -ot, gas['CO'], 2*gas['CO2'], 2*gas['O2'])) / 2
+            if carbon >= 0 and calcite >= 0 and lime >= 0:
+                return quantities(calcite, lime, carbon, gas, partial, 'coexistence', 'graphite_present')
         # The graphite-free phase uses O - Ca - 2 C to remove the calcium
         # fraction entirely from the gas equation. Each root is monotone on
         # its physical branch. Log coordinates resolve trace partial pressures.
@@ -108,7 +109,8 @@ def at_temperature_pressure(model, temperature, pressure, inventory):
         gas = {name: nn*value/partial['N2'] for name, value in partial.items()}
         gas['N2'] = nn
         calcite = math.fsum((ct, -gas['CO'], -gas['CO2']))
-        return quantities(calcite, 0., gas, partial, 'coexistence', 'graphite_exhausted')
+        lime = math.fsum((ca, -ct, gas['CO'], gas['CO2']))
+        return quantities(calcite, lime, 0., gas, partial, 'coexistence', 'graphite_exhausted')
 
     state = fixed_calcium(0., 'lime')
     if affinity(state) > 0:
