@@ -14,9 +14,10 @@ from carbon_calcium_inventory_setup import build as build_inventory
 from carbon_calcium_source_audit import SourceState, independent_exchange
 from review_carbon_calcium_open_cell import source_bath
 from review_carbon_calcium_program import independent_program
+from carbon_calcium_radiation_reference import RadiationSource
 
 
-def audit(path, root, reservoir_kind, equilibrium_formulation):
+def audit(path, root, reservoir_kind, equilibrium_formulation, radiation_kind):
     stream = records(path)
     header, initial = next(stream), next(stream)
     stream.close()
@@ -25,6 +26,10 @@ def audit(path, root, reservoir_kind, equilibrium_formulation):
     build = {'restricted': build_restricted, 'positive_inventory': build_inventory}[equilibrium_formulation]
     model, _, _ = build(root, header['pressure_parameters'])
     source = SourceState(header['sources'])
+    radiative = {'none': False, 'black_enclosure': True}[radiation_kind]
+    radiation_source = RadiationSource(p['radiation']) if radiative else None
+    radiation_maxima = {'energy_w': 0., 'entropy_w_k': 0.}
+    radiation_minimum_production = float('inf')
     boundary_maxima = {k: 0. for k in ('temperature_k', 'pressure_pa', 'mole_fraction', 'chemical_potential_j_mol')}
 
     def constant_bath(at):
@@ -50,7 +55,8 @@ def audit(path, root, reservoir_kind, equilibrium_formulation):
     phases, samples = {}, {}
     initial_source = source.reconstruct(initial['state'], volume, [ca, *initial['values'][:3]])
 
-    def review(state, y, category, at, contact=None, recorded_bath=None):
+    def review(state, y, category, at, contact=None, recorded_bath=None, recorded_radiation=None):
+        nonlocal radiation_minimum_production
         counts[category] += 1
         bath_t, bath_p, bath_y = bath_inputs(at)
         reservoir = source_bath(source, bath_t, bath_p, bath_y)
@@ -67,7 +73,7 @@ def audit(path, root, reservoir_kind, equilibrium_formulation):
         maxima['global_energy_j'] = max(maxima['global_energy_j'],
             abs(ref['internal_energy_j'] - initial_source['internal_energy_j'] - y[4]))
         maxima['global_entropy_j_k'] = max(maxima['global_entropy_j_k'],
-            abs(ref['entropy_j_k'] - initial_source['entropy_j_k'] + y[5] - y[6]))
+            abs(ref['entropy_j_k'] - initial_source['entropy_j_k'] + y[5] - y[6] + (y[8] if radiative else 0.)))
         flux = independent_exchange(reservoir, ref, face_policy)
         minima['gas_mol'] = min(minima['gas_mol'], ref['minimum_gas_mol'])
         minima['solid_mol'] = min(minima['solid_mol'], ref['minimum_solid_mol'])
@@ -91,33 +97,53 @@ def audit(path, root, reservoir_kind, equilibrium_formulation):
         physical = np.array([*y[:3], ref['internal_energy_j'], ref['entropy_j_k'], y[5], y[6]])
         rates = np.array([*flux['inventory'], flux['energy'], flux['entropy'][1],
                           flux['entropy'][0], flux['production']])
+        if radiative:
+            radiation = radiation_source.flux(state['temperature_k'])
+            heat, body, bath, production = [radiation[k] for k in (
+                'energy_in_w', 'body_entropy_rate_w_k', 'reservoir_entropy_rate_w_k', 'entropy_production_w_k')]
+            radiation_minimum_production = min(radiation_minimum_production, production)
+            if recorded_radiation is not None:
+                radiation_maxima['energy_w'] = max(radiation_maxima['energy_w'],
+                    abs(recorded_radiation['energy_in_w'] - heat))
+                radiation_maxima['entropy_w_k'] = max(radiation_maxima['entropy_w_k'],
+                    *(abs(recorded_radiation[k] - radiation[k]) for k in (
+                        'body_entropy_rate_w_k', 'reservoir_entropy_rate_w_k', 'entropy_production_w_k')))
+            physical = np.concatenate((physical, [y[7], y[8]]))
+            rates[3] += heat
+            rates[4] += body
+            rates[6] += production
+            rates = np.concatenate((rates, [heat, bath]))
         return physical, rates
 
     boundary_record = {'constant': lambda row: None, 'program': lambda row: row['reservoir']}[reservoir_kind]
-    origin, _ = review(initial['state'], initial['values'], 'recorded', initial['time_s'], initial['face'], boundary_record(initial))
+    radiation_record = {'none': lambda row: None, 'black_enclosure': lambda row: row['radiation']}[radiation_kind]
+    origin, _ = review(initial['state'], initial['values'], 'recorded', initial['time_s'], initial['face'], boundary_record(initial), radiation_record(initial))
     for row in records(path):
         terminal = row
         if 'state' not in row or row['kind'] == 'initial':
             continue
         y = row['values']
-        physical, _ = review(row['state'], y, 'recorded', row['time_s'], row['face'], boundary_record(row))
+        physical, _ = review(row['state'], y, 'recorded', row['time_s'], row['face'], boundary_record(row), radiation_record(row))
         if row['kind'] == 'sample':
             samples[row['time_s']] = [row['state']]
     integrals, results = [], []
     bounds = np.array([budget['inventory_integral_mol']] * 3 + [budget['energy_j']] + [budget['entropy_j_k']] * 3)
+    if radiative:
+        bounds = np.concatenate((bounds, [budget['energy_j'], budget['entropy_j_k']]))
+    entropy_indices = [4, 5, 6, 8] if radiative else [4, 5, 6]
     for order in budget['quadrature_orders']:
         nodes, weights = leggauss(order)
-        total = np.zeros(7)
-        local_max, cumulative_max = np.zeros(7), np.zeros(7)
+        total = np.zeros(len(bounds))
+        local_max, cumulative_max = np.zeros(len(bounds)), np.zeros(len(bounds))
         previous, previous_y = origin, np.array(initial['values'])
-        min_step, ledger_error = float('inf'), 0.
+        min_step, ledger_error, gas_ledger_error = float('inf'), 0., 0.
         increments = []
         for row in records(path):
             if row['kind'] != 'accepted':
                 continue
             dense = row['dense_output']
             left, right = dense['start_time_s'], dense['end_time_s']
-            increment = np.zeros(7)
+            increment = np.zeros(len(bounds))
             for node, weight in zip(nodes, weights, strict=True):
                 at = (left + right) / 2 + (right - left) * node / 2
                 y = polynomial(row, at)
@@ -130,21 +156,34 @@ def audit(path, root, reservoir_kind, equilibrium_formulation):
             local_max = np.maximum(local_max, np.abs(current - previous - increment))
             cumulative_max = np.maximum(cumulative_max, np.abs(current - origin - total))
             y = np.array(row['values'])
-            min_step = min(min_step, current[4] - previous[4] + y[5] - previous_y[5])
+            min_step = min(min_step, current[4] - previous[4] + y[5] - previous_y[5]
+                           + (y[8] - previous_y[8] if radiative else 0.))
             ledger_error = max(ledger_error, abs(y[4] - total[3]))
+            if radiative:
+                gas_ledger_error = max(gas_ledger_error, abs((y[4] - y[7]) - (total[3] - total[7])))
             previous, previous_y = current, y
         flags = {'local_inventory': bool(np.all(local_max[:3] <= bounds[:3])),
             'cumulative_inventory': bool(np.all(cumulative_max[:3] <= bounds[:3])),
             'local_energy': bool(local_max[3] <= bounds[3]), 'cumulative_energy': bool(cumulative_max[3] <= bounds[3]),
-            'local_entropy': bool(np.all(local_max[4:] <= bounds[4:])),
-            'cumulative_entropy': bool(np.all(cumulative_max[4:] <= bounds[4:])),
+            'local_entropy': bool(np.all(local_max[entropy_indices] <= bounds[entropy_indices])),
+            'cumulative_entropy': bool(np.all(cumulative_max[entropy_indices] <= bounds[entropy_indices])),
             'energy_ledger': ledger_error <= budget['energy_j'],
             'nonnegative_total_step_entropy': min_step >= -budget['nonnegative_entropy_j_k']}
         flags = {k: bool(v) for k, v in flags.items()}
-        results.append({'order': order, 'final_integrals_C_O_N_U_Sbody_Sbath_Pi': total.tolist(),
+        if radiative:
+            flags.update(local_radiation_energy=bool(local_max[7] <= bounds[7]),
+                cumulative_radiation_energy=bool(cumulative_max[7] <= bounds[7]),
+                gas_energy_ledger=bool(gas_ledger_error <= budget['energy_j']))
+        results.append({'order': order, 'final_integrals_C_O_N_U_Sbody_Sbath_Pi': total[:7].tolist(),
             'maximum_local_residuals': local_max.tolist(), 'maximum_cumulative_residuals': cumulative_max.tolist(),
             'maximum_energy_ledger_residual_j': ledger_error, 'minimum_total_step_entropy_j_k': float(min_step),
             'within_budgets': flags})
+        if radiative:
+            results[-1].update(final_radiation_energy_j=float(total[7]),
+                final_radiation_reservoir_entropy_j_k=float(total[8]),
+                final_gas_energy_j=float(total[3] - total[7]),
+                maximum_gas_energy_ledger_residual_j=gas_ledger_error,
+                residual_coordinate_order=['C', 'O', 'N2', 'U', 'Sbody', 'Sgas', 'Pi', 'Eradiation', 'Sradiation'])
         integrals.append(np.array(increments))
         print(json.dumps({'trajectory': str(path), 'order': order, 'within_budgets': flags}), flush=True)
     delta = integrals[1] - integrals[0]
@@ -160,6 +199,16 @@ def audit(path, root, reservoir_kind, equilibrium_formulation):
         quadrature=bool(np.all(quadrature <= bounds)))
     flags = {k: bool(v) for k, v in flags.items()}
     boundary_review = {'kind': reservoir_kind}
+    if radiative:
+        policy = p['radiation_review']
+        radiation_flags = {'energy': radiation_maxima['energy_w'] <= policy['energy_budget_w'],
+            'entropy': radiation_maxima['entropy_w_k'] <= policy['entropy_budget_w_k'],
+            'nonnegative_production': radiation_minimum_production >= 0.,
+            'source_sigma': abs(radiation_source.sigma - p['radiation']['stefan_boltzmann_w_m2_k4']) <= policy['sigma_absolute_budget_w_m2_k4']}
+        boundary_review['radiation'] = {'kind': radiation_kind, 'maxima': radiation_maxima,
+                                         'minimum_production_w_k': radiation_minimum_production,
+                                         'within_budgets': radiation_flags}
+        flags['radiation_source'] = all(radiation_flags.values())
     if reservoir_kind == 'program':
         policy = p['boundary_source_review']
         boundary_bounds = {'temperature_k': policy['temperature_budget_k'], 'pressure_pa': policy['pressure_budget_pa'],
@@ -183,7 +232,7 @@ def main():
     reviews, samples, budgets = {}, {}, {}
     for name, path in settings['trajectories'].items():
         reviews[name], samples[name], budgets[name] = audit(args.parameters.resolve().parent / path,
-            args.parameters.resolve().parent, settings['reservoir_kind'], settings['equilibrium_formulation'])
+            args.parameters.resolve().parent, settings['reservoir_kind'], settings['equilibrium_formulation'], settings['radiation_kind'])
     left, right = settings['time_comparison_pair']
     comparison = compare(samples[left], samples[right], budgets[left])
     result = {'settings': settings, 'trajectory_reviews': reviews, 'time_comparison': comparison,

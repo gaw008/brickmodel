@@ -1,0 +1,145 @@
+{
+  "exchange_parameters": "parameters.carbon_calcium_exchange.json",
+  "volume_m3": 0.0001,
+  "initial": {
+    "calcium_atoms_mol": 0.002,
+    "carbon_atoms_mol": 0.0022,
+    "oxygen_atoms_mol": 0.0062,
+    "nitrogen_molecules_mol": 0.004,
+    "temperature_k": 900.0
+  },
+  "reservoir": {
+    "temperature_k": 1100.0,
+    "pressure_pa": 100000.0,
+    "mole_fractions": {
+      "CO": 1e-10,
+      "CO2": 0.0004,
+      "O2": 0.21,
+      "N2": 0.7895999999
+    },
+    "classification": "Prescribed virtual oxidizing gas bath; no measured kiln atmosphere or chemical equilibrium assumption. All positive fractions explicitly sum to one."
+  },
+  "duration_s": 30000.0,
+  "numerics": {
+    "relative_tolerance": 1e-12,
+    "refinement_factor": 0.1,
+    "inventory_absolute_tolerance_mol": 1e-14,
+    "temperature_absolute_tolerance_k": 1e-10,
+    "energy_ledger_absolute_tolerance_j": 1e-10,
+    "entropy_ledger_absolute_tolerance_j_k": 1e-13,
+    "maximum_step_s": 5.0,
+    "first_step_s": 1e-05,
+    "observation_interval_s": 5.0,
+    "progress_every_steps": 100
+  },
+  "verification": {
+    "element_mol": 1e-12,
+    "pressure_pa": 1e-05,
+    "volume_m3": 1e-14,
+    "reaction_gibbs_j_mol": 1e-05,
+    "source_energy_j": 1e-07,
+    "source_entropy_j_k": 1e-10,
+    "face_species_mol_s": 1e-14,
+    "face_energy_w": 1e-08,
+    "face_entropy_w_k": 1e-11,
+    "inventory_integral_mol": 1e-10,
+    "energy_j": 1e-05,
+    "entropy_j_k": 1e-08,
+    "nonnegative_entropy_j_k": 1e-10,
+    "time_temperature_k": 0.001,
+    "time_pressure_pa": 0.1,
+    "time_species_mol": 1e-10,
+    "quadrature_orders": [
+      2,
+      4
+    ]
+  },
+  "static_review": {
+    "temperatures_k": [
+      900.0,
+      1000.0,
+      1100.0,
+      1150.0
+    ],
+    "bath_temperatures_k": [
+      900.0,
+      1000.0,
+      1100.0
+    ],
+    "bath_pressures_pa": [
+      10000.0,
+      100000.0,
+      1000000.0
+    ],
+    "chemical_potential_budget_j_mol": 1e-07,
+    "face_energy_budget_w": 1e-08,
+    "face_inventory_budget_mol_s": 1e-14,
+    "face_entropy_budget_w_k": 1e-11,
+    "identical_bath_flow_budget_mol_s": 1e-18,
+    "identical_bath_energy_budget_w": 1e-10
+  },
+  "scope": "Positive-inventory Ca/C/O open rigid cell with separately prescribed black enclosure and gas bath. All elemental, caloric, entropy and time budgets retain the qualified domain-crossing values. Ideal black surface, unit view factor, no radiative-field storage and virtual area/transport; not measured brick emissivity or finite kinetics.",
+  "coordinate_order": [
+    "C_mol",
+    "O_mol",
+    "N2_mol",
+    "T_K",
+    "energy_in_J",
+    "reservoir_entropy_change_J_K",
+    "entropy_production_J_K",
+    "radiation_energy_in_J",
+    "radiation_reservoir_entropy_change_J_K"
+  ],
+  "material_qualified": false,
+  "training_eligible": false,
+  "equilibrium_formulation": "positive_inventory",
+  "radiation": {
+    "emissivity": 1.0,
+    "stefan_boltzmann_w_m2_k4": 5.6703744191844294e-08,
+    "area_classification": "Declared virtual radiative port of1cm2, not measured brick surface or pore geometry.",
+    "surface_classification": "ideal_black_surface_in_prescribed_black_enclosure_view_factor_one",
+    "material_emissivity": null,
+    "source": {
+      "constant_url": "https://physics.nist.gov/cuu/Constants/Table/allascii.txt",
+      "adjustment": "2022 CODATA",
+      "printed_value": "5.670 374 419... e-8",
+      "printed_uncertainty": "exact",
+      "unit": "W m^-2 K^-4",
+      "retrieved_utc": "2026-09-25",
+      "formula": "2*pi^5*kB^4/(15*h^3*c^2)",
+      "boltzmann_j_k": 1.380649e-23,
+      "planck_j_s": 6.62607015e-34,
+      "light_speed_m_s": 299792458.0,
+      "numerical_representation": "Nearest binary64 of80-digit evaluation from exact SI kB,h,c. Physical sigma is exact with irrational expression; stored finite number is an approximation.",
+      "boundary_reference": "https://doc.comsol.com/6.3/doc/com.comsol.help.heat/heat_ug_theory.07.047.html",
+      "source_decimal_precision": 80,
+      "derived_sigma_decimal": "0.000000056703744191844294539709967318892308758401229702913036824054617370539481606265233"
+    },
+    "entropy_scope": "Combined material plus prescribed thermal reservoir, neglect radiation-field storage; Q/Twall is reservoir entropy loss, not a claim that photon entropy flux equals Q/Twall.",
+    "area_m2": 0.0001,
+    "reservoir_temperature_k": 1150.0
+  },
+  "radiation_review": {
+    "decimal_precision": 80,
+    "temperatures_k": [
+      900.0,
+      1000.0,
+      1100.0,
+      1150.0,
+      1190.0
+    ],
+    "reservoir_temperatures_k": [
+      800.0,
+      900.0,
+      1100.0,
+      1150.0,
+      1190.0
+    ],
+    "sigma_absolute_budget_w_m2_k4": 1e-22,
+    "energy_budget_w": 1e-10,
+    "entropy_budget_w_k": 1e-12,
+    "temperature_derivative_budget_w_k": 1e-10,
+    "constitutive_energy_rate_budget_w": 1e-08,
+    "constitutive_entropy_rate_budget_w_k": 1e-10
+  }
+}
