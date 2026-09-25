@@ -1,0 +1,214 @@
+{
+  "trajectory": "data/sandbox/research/effusive-gas-chambers-v1/base.jsonl",
+  "settings": {
+    "face_parameters": "parameters.effusive_gas_limit.json",
+    "aperture_area_m2": 1e-09,
+    "thermochemistry_parameters": "parameters.calcite_rigid_exchange.json",
+    "cells": [
+      {
+        "volume_m3": 0.001,
+        "temperature_k": 1100.0,
+        "pressure_pa": 1.0,
+        "co2_fraction": 0.1
+      },
+      {
+        "volume_m3": 0.0015,
+        "temperature_k": 400.0,
+        "pressure_pa": 0.2,
+        "co2_fraction": 0.6
+      }
+    ],
+    "time_interval_s": [
+      0.0,
+      60000.0
+    ],
+    "numerics": {
+      "relative_tolerance": 1e-09,
+      "absolute_tolerances": [
+        1e-15,
+        1e-15,
+        1e-10,
+        1e-15,
+        1e-15,
+        1e-10,
+        1e-15,
+        1e-15,
+        1e-10,
+        1e-12
+      ],
+      "refinement_factor": 0.1,
+      "maximum_step_s": 20.0,
+      "initial_step_s": 0.001,
+      "observation_interval_s": 20.0,
+      "progress_every_steps": 100,
+      "temperature_bracket_k": [
+        298.15,
+        1200.0
+      ],
+      "temperature_absolute_k": 1e-10,
+      "temperature_relative": 1e-13,
+      "temperature_iterations": 100
+    },
+    "verification": {
+      "species_mol": 1e-13,
+      "energy_j": 1e-08,
+      "entropy_j_k": 1e-10,
+      "negative_step_entropy_j_k": 1e-13,
+      "source_energy_j": 1e-11,
+      "source_entropy_j_k": 1e-13,
+      "quadrature_orders": [
+        2,
+        4
+      ],
+      "quadrature_absolute": 1e-10,
+      "quadrature_relative": 1e-12,
+      "quadrature_limit": 100,
+      "time_temperature_k": 0.001,
+      "time_pressure_pa": 1e-06,
+      "time_species_mol": 1e-12,
+      "equilibrium_temperature_k": 0.1,
+      "equilibrium_pressure_pa": 0.0001,
+      "equilibrium_species_mol": 1e-10
+    },
+    "scope": "Two finite ideal-gas chambers, prescribed virtual geometry, no external matter/work/heat, no solid reaction. A zero-thickness collisionless aperture connects locally equilibrated gases; actual chamber/pore collision and wall thermalization conditions are not experimentally qualified.",
+    "classification": "conditional_molecular_flow_limit_with_source_thermochemistry",
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "accepted_steps": 3013,
+  "recorded_cell_states": 12028,
+  "maximum_residuals": {
+    "source_energy_j": 1.4181364416110398e-16,
+    "source_entropy_j_k": 1.3552527156068805e-20,
+    "species_ledger_mol": 4.499862532288471e-22,
+    "energy_ledger_j": 2.42861286636753e-17,
+    "entropy_ledger_j_k": 3.439814639053374e-13,
+    "entropy_above_equilibrium_j_k": 0.0,
+    "face_species_mol_s": 1.6155871338926322e-26,
+    "face_energy_w": 2.4451458907067498e-21,
+    "face_entropy_w_k": 2.68833699079734e-24
+  },
+  "minimum_species_mol": 1.0933788149763593e-08,
+  "minimum_face_entropy_w_k": 7.854704678250715e-23,
+  "independent_equilibrium": {
+    "temperature_k": 749.0884338139714,
+    "pressure_pa": 0.4971223242583627,
+    "species": {
+      "co2": {
+        "p": 0.162075497497932,
+        "h": -373291.0350283262,
+        "mu": -646686.0404599507
+      },
+      "nitrogen": {
+        "p": 0.3350468267604308,
+        "h": 13488.480236740803,
+        "mu": -229090.7118218065
+      }
+    },
+    "U": -0.02371363584705902,
+    "S": 6.729432839875682e-05
+  },
+  "final_equilibrium_differences": {
+    "temperature_k": 0.00010324341189971165,
+    "pressure_pa": 1.4155162320061976e-07,
+    "species_mol": 2.0681202285819267e-14
+  },
+  "within_equilibrium_budgets": {
+    "temperature_k": true,
+    "pressure_pa": true,
+    "species_mol": true
+  },
+  "integral_reviews": [
+    {
+      "quadrature_order": 2,
+      "maximum_local_C_N_U": [
+        4.1714662068616926e-17,
+        1.1399033754935315e-16,
+        1.6745221206962988e-11
+      ],
+      "maximum_cumulative_C_N_U": [
+        1.398944997852815e-16,
+        1.7008666949777898e-16,
+        5.595336276557547e-11
+      ],
+      "maximum_local_entropy_j_k": 6.842255747533629e-14,
+      "minimum_entropy_increment_j_k": -2.710505431213761e-20,
+      "integrated_face_C_N_U": [
+        -1.5088606835682865e-08,
+        4.460986875558179e-08,
+        0.00704581831243899
+      ],
+      "integrated_cell_entropy_j_k": [
+        -9.610930471990448e-06,
+        1.0615095203680167e-05
+      ],
+      "within_budgets": {
+        "local_species": true,
+        "local_energy": true,
+        "cumulative_species": true,
+        "cumulative_energy": true,
+        "local_entropy": true,
+        "entropy_step_sign": true
+      }
+    },
+    {
+      "quadrature_order": 4,
+      "maximum_local_C_N_U": [
+        4.1717804081861966e-17,
+        1.1399036259741608e-16,
+        1.674652757232501e-11
+      ],
+      "maximum_cumulative_C_N_U": [
+        1.3991588581623602e-16,
+        1.7008666949777898e-16,
+        5.596226325225995e-11
+      ],
+      "maximum_local_entropy_j_k": 6.842255748857118e-14,
+      "minimum_entropy_increment_j_k": -2.710505431213761e-20,
+      "integrated_face_C_N_U": [
+        -1.5088606835604458e-08,
+        4.460986875560349e-08,
+        0.007045818312407527
+      ],
+      "integrated_cell_entropy_j_k": [
+        -9.61093047202423e-06,
+        1.0615095203896245e-05
+      ],
+      "within_budgets": {
+        "local_species": true,
+        "local_energy": true,
+        "cumulative_species": true,
+        "cumulative_energy": true,
+        "local_entropy": true,
+        "entropy_step_sign": true
+      }
+    }
+  ],
+  "quadrature_C_N_U_differences": [
+    7.840679590267639e-20,
+    2.1698601828491022e-20,
+    3.146354704552934e-14
+  ],
+  "quadrature_entropy_difference_j_k": 2.1607810484457202e-16,
+  "within_budgets": {
+    "completed": true,
+    "positive_species": true,
+    "source_energy": true,
+    "source_entropy": true,
+    "species_ledger": true,
+    "energy_ledger": true,
+    "entropy_ledger": true,
+    "entropy_upper_bound": true,
+    "independent_face_species": true,
+    "independent_face_energy": true,
+    "independent_face_entropy": true,
+    "face_entropy_sign": true,
+    "dense_integrals": true,
+    "quadrature_agreement": true
+  },
+  "all_requested_numerical_budgets_met": true,
+  "equilibrium_target_met": true,
+  "scope": "Full recorded source expansion and independent source/Maxwell 2/4-point interval integrals. Dense states share the production temperature inverse. Final equilibrium follows total inventories, volume and independent source U.",
+  "material_qualified": false,
+  "training_eligible": false
+}

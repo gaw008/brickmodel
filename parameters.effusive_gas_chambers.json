@@ -1,0 +1,75 @@
+{
+  "face_parameters": "parameters.effusive_gas_limit.json",
+  "aperture_area_m2": 1e-09,
+  "thermochemistry_parameters": "parameters.calcite_rigid_exchange.json",
+  "cells": [
+    {
+      "volume_m3": 0.001,
+      "temperature_k": 1100.0,
+      "pressure_pa": 1.0,
+      "co2_fraction": 0.1
+    },
+    {
+      "volume_m3": 0.0015,
+      "temperature_k": 400.0,
+      "pressure_pa": 0.2,
+      "co2_fraction": 0.6
+    }
+  ],
+  "time_interval_s": [
+    0.0,
+    60000.0
+  ],
+  "numerics": {
+    "relative_tolerance": 1e-09,
+    "absolute_tolerances": [
+      1e-15,
+      1e-15,
+      1e-10,
+      1e-15,
+      1e-15,
+      1e-10,
+      1e-15,
+      1e-15,
+      1e-10,
+      1e-12
+    ],
+    "refinement_factor": 0.1,
+    "maximum_step_s": 20.0,
+    "initial_step_s": 0.001,
+    "observation_interval_s": 20.0,
+    "progress_every_steps": 100,
+    "temperature_bracket_k": [
+      298.15,
+      1200.0
+    ],
+    "temperature_absolute_k": 1e-10,
+    "temperature_relative": 1e-13,
+    "temperature_iterations": 100
+  },
+  "verification": {
+    "species_mol": 1e-13,
+    "energy_j": 1e-08,
+    "entropy_j_k": 1e-10,
+    "negative_step_entropy_j_k": 1e-13,
+    "source_energy_j": 1e-11,
+    "source_entropy_j_k": 1e-13,
+    "quadrature_orders": [
+      2,
+      4
+    ],
+    "quadrature_absolute": 1e-10,
+    "quadrature_relative": 1e-12,
+    "quadrature_limit": 100,
+    "time_temperature_k": 0.001,
+    "time_pressure_pa": 1e-06,
+    "time_species_mol": 1e-12,
+    "equilibrium_temperature_k": 0.1,
+    "equilibrium_pressure_pa": 0.0001,
+    "equilibrium_species_mol": 1e-10
+  },
+  "scope": "Two finite ideal-gas chambers, prescribed virtual geometry, no external matter/work/heat, no solid reaction. A zero-thickness collisionless aperture connects locally equilibrated gases; actual chamber/pore collision and wall thermalization conditions are not experimentally qualified.",
+  "classification": "conditional_molecular_flow_limit_with_source_thermochemistry",
+  "material_qualified": false,
+  "training_eligible": false
+}
