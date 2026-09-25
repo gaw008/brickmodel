@@ -30,4 +30,4 @@ Ca=.002mol、O元素=.008mol、N2=.004mol固定，C总量选择.0035/.0045/.007m
 
 原八边界核查中，七组全通过；富碳方解石耗尽前的Cp接近39.95124J/K，1e−3K线性投影误差H=1.34324e−6J、S=1.29571e−9J/K，分别超原1e−6/1e−9预算，保留原失败。仅将该组偏移缩小到1e−4/3e−5/1e−5K重算，所有原预算通过；最大H/S投影误差降至1.34333e−8J/1.29580e−11J/K，呈二阶收敛。没有修改物理参数或放宽误差限值。其他七组未重复执行。
 
-全部输入和核查入口位于parameters.carbon_calcium_*.json与examples/sandbox/review_carbon_calcium_*.py。下一阶段才建立恒压升降温记录并做全过程验证。当前仍是纯相、理想气体、瞬时平衡，未考虑其他可能物种、实际焦活性与速率、反应传热限速、真实砖孔结构或烧结收缩；material_qualified=false、training_eligible=false。未新增/运行软件测试，未生成或比对SHA。
+全部输入和核查入口位于parameters.carbon_calcium_*.json与examples/sandbox/review_carbon_calcium_*.py。随后完成了[恒压升降温全过程限定数值资格](../carbon-calcium-cycle-v1/REPORT.md)，原静态和相界失败证据仍完整保留。当前仍是纯相、理想气体、瞬时平衡，未考虑其他可能物种、实际焦活性与速率、反应传热限速、真实砖孔结构或烧结收缩；material_qualified=false、training_eligible=false。未新增/运行软件测试，未生成或比对SHA。

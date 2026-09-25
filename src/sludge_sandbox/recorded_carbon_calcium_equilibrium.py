@@ -14,6 +14,13 @@ class RecordedCarbonCalciumEquilibrium:
         self.carbon=carbon_model;self.phases={**carbon_model.phases,'calcite':calcite_phase,'lime':lime_phase}
         self.parameters=parameters;self.r=carbon_model.r;self.p0=carbon_model.p0
 
+    def from_enthalpy(self,enthalpy_j,calcium_atoms_mol,carbon_atoms_mol,oxygen_atoms_mol,nitrogen_molecules_mol,inverse_numerics):
+        inputs=(calcium_atoms_mol,carbon_atoms_mol,oxygen_atoms_mol,nitrogen_molecules_mol)
+        temperature=brentq(lambda t:self.at_temperature(t,*inputs)['enthalpy_j']-enthalpy_j,
+            *self.phases['calcite'].temperature_domain_k,xtol=inverse_numerics['temperature_absolute_tolerance_k'],
+            rtol=inverse_numerics['temperature_relative_tolerance'],maxiter=inverse_numerics['maximum_root_iterations'])
+        return self.at_temperature(temperature,*inputs)
+
     def at_temperature(self,temperature_k,calcium_atoms_mol,carbon_atoms_mol,oxygen_atoms_mol,nitrogen_molecules_mol):
         t=temperature_k;ca=calcium_atoms_mol;ct=carbon_atoms_mol;ot=oxygen_atoms_mol;nn=nitrogen_molecules_mol
         thermal={name:phase.standard(t) for name,phase in self.phases.items()}
