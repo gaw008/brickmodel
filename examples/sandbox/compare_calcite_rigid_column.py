@@ -11,7 +11,10 @@ def observations(path):
         header=json.loads(next(stream))
         for line in stream:
             row=json.loads(line)
-            if row['kind'] in ('initial','sample'):out.append(row)
+            if row['kind'] in ('initial','sample'):
+                out.append({'time_s':row['time_s'],'states':[
+                    {key:state[key] for key in ('temperature_k','pressure_pa','lime_mol','carbon_mol','nitrogen_mol','internal_energy_j')}
+                    for state in row['states']]})
     return header,out
 
 

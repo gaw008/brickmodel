@@ -1,0 +1,111 @@
+{
+  "affinity_parameters": "parameters.calcite_affinity.json",
+  "reactant_phase": "calcite",
+  "product_phase": "lime",
+  "classification": "sealed_1D_incompressible_solid_ideal_gas_reactive_equilibrium_conditional_column",
+  "numerics": {
+    "temperature_inverse_absolute_k": 1e-11,
+    "temperature_inverse_relative": 1e-14,
+    "temperature_inverse_iterations": 100,
+    "relative_tolerance": 1.0000000000000001e-11,
+    "refinement_factor": 0.1,
+    "maximum_step_s": 1.0,
+    "initial_step_s": 1e-05,
+    "observation_interval_s": 2.0,
+    "event_absolute_time_s": 1e-07,
+    "event_relative_tolerance": 1e-12,
+    "event_iterations": 100,
+    "progress_every_steps": 100,
+    "log_gas_root_absolute_tolerance": 1e-12,
+    "log_gas_root_relative_tolerance": 1e-13,
+    "log_gas_root_iterations": 100,
+    "log_gas_bracket_padding": 1.0,
+    "entropy_absolute_tolerance_j_k": 1e-10,
+    "inventory_density_absolute_tolerances": [
+      1e-07,
+      1e-07,
+      0.1
+    ],
+    "face_ledger_absolute_tolerances": [
+      1e-13,
+      1e-13,
+      1e-07
+    ],
+    "absolute_tolerance_basis": "Per-cell absolute errors scale with cell volume using density tolerances [mol/m3,mol/m3,J/m3]. Values match the original inventory tolerances at reference volume 1e-6 m3; face ledgers retain original absolute tolerances. Relative tolerances and all physical verification budgets are unchanged.",
+    "reference_volume_for_original_atols_m3": 1e-06
+  },
+  "verification": {
+    "balance_energy_j": 1e-05,
+    "balance_carbon_mol": 1e-10,
+    "balance_nitrogen_mol": 1e-10,
+    "balance_entropy_j_k": 1e-07,
+    "negative_entropy_allowance_j_k": 1e-10,
+    "time_temperature_k": 0.001,
+    "time_carbon_mol": 1e-10,
+    "time_nitrogen_mol": 1e-10,
+    "time_pressure_pa": 1.0,
+    "quadrature_orders": [
+      2,
+      4
+    ],
+    "quadrature_energy_j": 1e-05,
+    "quadrature_entropy_j_k": 1e-07,
+    "source_affinity_budget_j_mol": 1e-05,
+    "source_pressure_absolute_pa": 0.001,
+    "source_volume_absolute_m3": 1e-15
+  },
+  "material_qualified": false,
+  "training_eligible": false,
+  "nitrogen_source_file": "parameters.calcite_nitrogen_source.json",
+  "volume_source_file": "parameters.calcite_constant_volume_source.json",
+  "temperature_domain_k": [
+    298.15,
+    1200.0
+  ],
+  "scope": "Finite volume extension of qualified rigid cell/face; declared effective conductivity/mobility, no measured brick pore network or finite reaction kinetics.",
+  "time_interval_s": [
+    0.0,
+    6000.0
+  ],
+  "domain": {
+    "length_m": 0.02,
+    "area_m2": 0.0001,
+    "calcium_density_mol_m3": 10000.0,
+    "initial_regions": [
+      {
+        "start_fraction": 0.0,
+        "end_fraction": 0.5,
+        "carbon_density_mol_m3": 10010.0,
+        "nitrogen_density_mol_m3": 20.0,
+        "temperature_k": 1100.0
+      },
+      {
+        "start_fraction": 0.5,
+        "end_fraction": 1.0,
+        "carbon_density_mol_m3": 9970.0,
+        "nitrogen_density_mol_m3": 10.0,
+        "temperature_k": 900.0
+      }
+    ],
+    "boundary": "sealed and thermally insulated both ends"
+  },
+  "transport": {
+    "thermal_conductivity_w_m_k": 0.1,
+    "bulk_mobility_mol2_k_j_m_s": 1e-07,
+    "counter_mobility_mol2_k_j_m_s": 1e-07,
+    "classification": "declared virtual positive symmetric gas exchange, not calibrated Darcy or binary diffusivity",
+    "source_note": "No material measurement; Onsager supplies near-equilibrium response structure only; finite force use is an explicit constitutive extension."
+  },
+  "meshes": {
+    "two": 2,
+    "four": 4,
+    "eight": 8,
+    "sixteen": 16,
+    "thirty_two": 32,
+    "sixty_four": 64,
+    "one_twenty_eight": 128,
+    "two_fifty_six": 256,
+    "five_twelve": 512
+  },
+  "revision_basis": "Original 512 base/refined pressure difference 13.4682 Pa failed the 1 Pa time target despite 256->512 spatial targets passing. Preserve originals; investigate density-scaled absolute error control on new records."
+}

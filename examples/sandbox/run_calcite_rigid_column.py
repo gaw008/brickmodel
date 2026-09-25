@@ -26,7 +26,11 @@ def main():
     jacobian_settings=json.loads(args.analytic_jacobian_parameters.read_text()) if args.analytic_jacobian_parameters else None
     jacobian=({'phase_local_analytic_csc':lambda t,y:column_jacobian(column,t,y)}[jacobian_settings['method']]
               if jacobian_settings else None)
-    atols=policy['inventory_absolute_tolerances']*(2*column.count-1)+[policy['entropy_absolute_tolerance_j_k']]
+    if 'inventory_density_absolute_tolerances' in policy:
+        atols=[value*cell.volume for cell in column.cells for value in policy['inventory_density_absolute_tolerances']]
+        atols+=policy['face_ledger_absolute_tolerances']*(column.count-1)+[policy['entropy_absolute_tolerance_j_k']]
+    else:
+        atols=policy['inventory_absolute_tolerances']*(2*column.count-1)+[policy['entropy_absolute_tolerance_j_k']]
     started=time.monotonic();steps=0
     with args.output.open('x') as stream:
         def emit(row):stream.write(json.dumps(row,allow_nan=False)+'\n');stream.flush()
@@ -38,6 +42,7 @@ def main():
             'state_order':'cell-major C/N2/U; face-major integrated C/N2/E left to right; total entropy production',
             'jacobian_method':jacobian_settings['method'] if jacobian_settings else 'SciPy BDF finite difference in full physical inventories; no matrix feedback approximation',
             'jacobian_parameters':jacobian_settings,
+            'absolute_tolerances':(np.array(atols)*factor).tolist(),'relative_tolerance':policy['relative_tolerance']*factor,
             'material_qualified':False,'training_eligible':False})
         emit(record('initial',left,y))
         solver=BDF(rates,left,y,right,rtol=policy['relative_tolerance']*factor,
