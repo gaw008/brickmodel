@@ -4,7 +4,8 @@ import json
 import math
 from pathlib import Path
 
-from carbon_calcium_pressure_setup import build
+from carbon_calcium_pressure_setup import build as build_restricted
+from carbon_calcium_inventory_setup import build as build_inventory
 from carbon_calcium_source_audit import SourceState, independent_exchange
 from sludge_sandbox.carbon_calcium_open_cell import ideal_gas_reservoir
 from sludge_sandbox.carbon_calcium_rigid_exchange import exchange
@@ -32,6 +33,7 @@ def main():
     face = json.loads((root / p['exchange_parameters']).read_text())
     rigid = json.loads((root / face['rigid_parameters']).read_text())
     pressure = json.loads((root / rigid['pressure_parameters']).read_text())
+    build = {'restricted': build_restricted, 'positive_inventory': build_inventory}[p['equilibrium_formulation']]
     model, sources, _ = build(root, pressure)
     source = SourceState(sources)
     initial, policy = p['initial'], p['static_review']

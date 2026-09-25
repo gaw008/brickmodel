@@ -7,8 +7,10 @@ import time
 import numpy as np
 from scipy.integrate import BDF
 
-from carbon_calcium_pressure_setup import build
+from carbon_calcium_pressure_setup import build as build_restricted
+from carbon_calcium_inventory_setup import build as build_inventory
 from sludge_sandbox.carbon_calcium_open_cell import CarbonCalciumOpenCell
+from sludge_sandbox.carbon_calcium_inventory_open_cell import CarbonCalciumInventoryOpenCell
 
 
 def main():
@@ -22,8 +24,10 @@ def main():
     face = json.loads((root / p['exchange_parameters']).read_text())
     rigid = json.loads((root / face['rigid_parameters']).read_text())
     pressure = json.loads((root / rigid['pressure_parameters']).read_text())
+    build, cell_class = {'restricted': (build_restricted, CarbonCalciumOpenCell),
+        'positive_inventory': (build_inventory, CarbonCalciumInventoryOpenCell)}[p['equilibrium_formulation']]
     model, sources, _ = build(root, pressure)
-    cell = CarbonCalciumOpenCell(model, p, face, rigid['numerics'])
+    cell = cell_class(model, p, face, rigid['numerics'])
     policy = p['numerics']
     factor = 1. if args.tolerance == 'base' else policy['refinement_factor']
     atol = np.array([policy['inventory_absolute_tolerance_mol']] * 3

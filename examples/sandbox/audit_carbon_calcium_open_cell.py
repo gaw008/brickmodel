@@ -9,18 +9,20 @@ from numpy.polynomial.legendre import leggauss
 
 from audit_carbon_calcium_column import compare, records
 from audit_carbon_gas_cycle import polynomial
-from carbon_calcium_pressure_setup import build
+from carbon_calcium_pressure_setup import build as build_restricted
+from carbon_calcium_inventory_setup import build as build_inventory
 from carbon_calcium_source_audit import SourceState, independent_exchange
 from review_carbon_calcium_open_cell import source_bath
 from review_carbon_calcium_program import independent_program
 
 
-def audit(path, root, reservoir_kind):
+def audit(path, root, reservoir_kind, equilibrium_formulation):
     stream = records(path)
     header, initial = next(stream), next(stream)
     stream.close()
     p, face_policy, rigid = header['settings'], header['face_parameters'], header['rigid_parameters']
     budget = p['verification']
+    build = {'restricted': build_restricted, 'positive_inventory': build_inventory}[equilibrium_formulation]
     model, _, _ = build(root, header['pressure_parameters'])
     source = SourceState(header['sources'])
     boundary_maxima = {k: 0. for k in ('temperature_k', 'pressure_pa', 'mole_fraction', 'chemical_potential_j_mol')}
@@ -37,6 +39,8 @@ def audit(path, root, reservoir_kind):
     if reservoir_kind == 'program':
         mp.mp.dps = p['boundary_source_review']['decimal_precision']
     ca, volume = p['initial']['calcium_atoms_mol'], p['volume_m3']
+    carbon_lower, oxygen_lower = {'restricted': (ca, 3*ca),
+        'positive_inventory': (0., ca)}[equilibrium_formulation]
     maxima = {k: 0. for k in ('element_mol', 'pressure_pa', 'volume_m3', 'reaction_gibbs_j_mol',
         'source_energy_j', 'source_entropy_j_k', 'face_species_mol_s', 'face_energy_w', 'face_entropy_w_k',
         'global_energy_j', 'global_entropy_j_k')}
@@ -69,8 +73,8 @@ def audit(path, root, reservoir_kind):
         minima['solid_mol'] = min(minima['solid_mol'], ref['minimum_solid_mol'])
         minima['cv_j_k'] = min(minima['cv_j_k'], state['equilibrium_cv_j_k'])
         minima['production_w_k'] = min(minima['production_w_k'], flux['production'])
-        minima['carbon_domain_margin_mol'] = min(minima['carbon_domain_margin_mol'], y[0] - ca)
-        minima['oxygen_domain_margin_mol'] = min(minima['oxygen_domain_margin_mol'], y[1] - 3 * ca)
+        minima['carbon_domain_margin_mol'] = min(minima['carbon_domain_margin_mol'], y[0] - carbon_lower)
+        minima['oxygen_domain_margin_mol'] = min(minima['oxygen_domain_margin_mol'], y[1] - oxygen_lower)
         key = state['calcium_phase'] + '/' + state['carbon_phase']
         phases[key] = phases.get(key, 0) + 1
         maxima['face_entropy_w_k'] = max(maxima['face_entropy_w_k'], abs(flux['production'] - flux['dissipation']))
@@ -179,7 +183,7 @@ def main():
     reviews, samples, budgets = {}, {}, {}
     for name, path in settings['trajectories'].items():
         reviews[name], samples[name], budgets[name] = audit(args.parameters.resolve().parent / path,
-            args.parameters.resolve().parent, settings['reservoir_kind'])
+            args.parameters.resolve().parent, settings['reservoir_kind'], settings['equilibrium_formulation'])
     left, right = settings['time_comparison_pair']
     comparison = compare(samples[left], samples[right], budgets[left])
     result = {'settings': settings, 'trajectory_reviews': reviews, 'time_comparison': comparison,

@@ -26,12 +26,16 @@ def main():
     times = np.array([r['time_s'] for r in rows])
     values = np.array([r['values'] for r in rows])
     states = [r['state'] for r in rows]
+    bath = {'constant': lambda row: header['reservoir'],
+            'program': lambda row: row['reservoir']}[p['reservoir_kind']]
+    knots = {'constant': lambda: [],
+             'program': lambda: header['settings']['boundary_program']['knot_times_s'][1:-1]}[p['reservoir_kind']]()
     fig, axes = plt.subplots(2, 3, figsize=p['figure_inches'], layout='constrained')
     axes[0, 0].plot(times, [s['temperature_k'] for s in states], label='Reactive cell')
-    axes[0, 0].plot(times, [r['reservoir']['temperature_k'] for r in rows], '--', label='Gas bath')
-    axes[0, 0].set(ylabel='Temperature / K', title='Prescribed heating and cooling')
+    axes[0, 0].plot(times, [bath(r)['temperature_k'] for r in rows], '--', label='Gas bath')
+    axes[0, 0].set(ylabel='Temperature / K', title=p['temperature_title'])
     axes[0, 1].plot(times, [s['pressure_pa'] * p['pressure_display_factor'] for s in states], label='Reactive cell')
-    axes[0, 1].plot(times, [r['reservoir']['pressure_pa'] * p['pressure_display_factor'] for r in rows], '--', label='Gas bath')
+    axes[0, 1].plot(times, [bath(r)['pressure_pa'] * p['pressure_display_factor'] for r in rows], '--', label='Gas bath')
     axes[0, 1].set(ylabel=p['pressure_label'], title='Pressure response')
     for name in p['solid_order']:
         axes[0, 2].plot(times, [s['amounts_mol'][name] * p['amount_display_factor'] for s in states], label=name)
@@ -51,7 +55,7 @@ def main():
         ax.set_xlabel('Time / s')
         ax.grid(alpha=p['grid_alpha'])
         ax.legend(fontsize=p['legend_font_size'])
-        for knot in header['settings']['boundary_program']['knot_times_s'][1:-1]:
+        for knot in knots:
             ax.axvline(knot, color=p['knot_color'], linewidth=p['knot_linewidth'], alpha=p['knot_alpha'])
     fig.suptitle(p['title'])
     fig.savefig(root / p['output_png'], dpi=p['dpi'])

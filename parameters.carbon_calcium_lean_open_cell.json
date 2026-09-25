@@ -3,23 +3,23 @@
   "volume_m3": 0.0001,
   "initial": {
     "calcium_atoms_mol": 0.002,
-    "carbon_atoms_mol": 0.0045,
-    "oxygen_atoms_mol": 0.008,
+    "carbon_atoms_mol": 0.0002,
+    "oxygen_atoms_mol": 0.006,
     "nitrogen_molecules_mol": 0.004,
-    "temperature_k": 1080.0
+    "temperature_k": 900.0
   },
   "reservoir": {
-    "temperature_k": 1000.0,
+    "temperature_k": 1100.0,
     "pressure_pa": 100000.0,
     "mole_fractions": {
       "CO": 1e-10,
-      "CO2": 0.4,
-      "O2": 0.2,
-      "N2": 0.3999999999
+      "CO2": 0.0004,
+      "O2": 0.21,
+      "N2": 0.7895999999
     },
     "classification": "Prescribed virtual oxidizing gas bath; no measured kiln atmosphere or chemical equilibrium assumption. All positive fractions explicitly sum to one."
   },
-  "duration_s": 1000.0,
+  "duration_s": 10000.0,
   "numerics": {
     "relative_tolerance": 1e-12,
     "refinement_factor": 0.1,
@@ -27,9 +27,9 @@
     "temperature_absolute_tolerance_k": 1e-10,
     "energy_ledger_absolute_tolerance_j": 1e-10,
     "entropy_ledger_absolute_tolerance_j_k": 1e-13,
-    "maximum_step_s": 1.0,
+    "maximum_step_s": 5.0,
     "first_step_s": 1e-05,
-    "observation_interval_s": 1.0,
+    "observation_interval_s": 5.0,
     "progress_every_steps": 100
   },
   "verification": {
@@ -56,14 +56,14 @@
   },
   "static_review": {
     "temperatures_k": [
+      900.0,
       1000.0,
-      1080.0,
-      1160.0
+      1100.0
     ],
     "bath_temperatures_k": [
+      900.0,
       1000.0,
-      1080.0,
-      1160.0
+      1100.0
     ],
     "bath_pressures_pa": [
       10000.0,
@@ -77,7 +77,7 @@
     "identical_bath_flow_budget_mol_s": 1e-18,
     "identical_bath_energy_budget_w": 1e-10
   },
-  "scope": "Single rigid reactive capsule with the independently qualified ideal-gas and constant-solid-volume restricted equilibrium. Prescribed external bath exchanges using the existing virtual dissipative face law. Keep elemental domain Ctotal>Catotal, Ototal>3Catotal, N2>0; do not infer whole burnout or extrapolate to arbitrary inventories. Static source/entropy review precedes any trajectory.",
+  "scope": "Low-carbon positive-inventory open-cell path: 100 cm3 virtual capsule, C=0.0002 mol below Ca=0.002 mol, O=0.006 mol, N2=0.004 mol. Initially900K, prescribed1100K1bar bath, depleted CO2 and oxygen-bearing composition. Same source, ideal-gas/pure-solid/constant-volume assumptions and virtual exchange coefficients. Uses only independently admitted caloric inventory responses; no analytic chemical-potential inventory Jacobian. Static face review precedes integration; full source/local/entropy/quadrature/time qualification required.",
   "coordinate_order": [
     "C_mol",
     "O_mol",
@@ -89,5 +89,5 @@
   ],
   "material_qualified": false,
   "training_eligible": false,
-  "equilibrium_formulation": "restricted"
+  "equilibrium_formulation": "positive_inventory"
 }
