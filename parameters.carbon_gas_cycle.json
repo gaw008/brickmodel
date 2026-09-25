@@ -1,0 +1,50 @@
+{
+  "equilibrium_parameters": "parameters.carbon_gas_equilibrium.json",
+  "inventory_name": "carbon_transition",
+  "virtual_calorimeter": {
+    "initial_temperature_k": 300.0,
+    "heat_conductance_w_k": 0.005,
+    "program": [
+      {"start_s": 0.0, "end_s": 1200.0, "reservoir_temperature_k": 1150.0},
+      {"start_s": 1200.0, "end_s": 2400.0, "reservoir_temperature_k": 350.0}
+    ],
+    "classification": "Explicit virtual closed elemental inventory, equilibrium initial state, source standard-pressure piston calorimetry with heat exchange only. The reported gas volume excludes solid volume. Neither total mechanical volume nor piston work is supplied."
+  },
+  "enthalpy_inverse": {
+    "temperature_absolute_tolerance_k": 1e-10,
+    "temperature_relative_tolerance": 1e-14,
+    "maximum_root_iterations": 100
+  },
+  "phase_event": {"temperature_bracket_k": [850.0, 1000.0]},
+  "numerics": {
+    "relative_tolerance": 1e-9,
+    "refinement_factor": 0.1,
+    "absolute_tolerances_enthalpy_heat_entropy_production": [1e-9, 1e-9, 1e-12, 1e-12],
+    "maximum_step_s": 3.0,
+    "first_step_s": 0.001,
+    "observation_interval_s": 1.0,
+    "progress_every_steps": 200,
+    "event_absolute_time_s": 1e-9,
+    "event_relative_tolerance": 1e-14,
+    "root_maximum_iterations": 100
+  },
+  "verification": {
+    "element_mol": 1e-13,
+    "pressure_pa": 1e-7,
+    "reaction_gibbs_j_mol": 1e-6,
+    "source_enthalpy_j": 1e-8,
+    "source_entropy_j_k": 1e-10,
+    "energy_j": 1e-6,
+    "entropy_j_k": 1e-8,
+    "nonnegative_entropy_j_k": 1e-10,
+    "phase_event_time_s": 1e-4,
+    "phase_event_temperature_k": 1e-7,
+    "time_temperature_k": 1e-4,
+    "time_species_mol": 1e-10,
+    "quadrature_orders": [2, 4],
+    "expected_phase_events": 2
+  },
+  "scope": "Heat-driven instantaneous restricted equilibrium cycle, not ignition or finite-rate char combustion. Source formation enthalpies carry chemical energy; no extra reaction-heat source is added.",
+  "material_qualified": false,
+  "training_eligible": false
+}
