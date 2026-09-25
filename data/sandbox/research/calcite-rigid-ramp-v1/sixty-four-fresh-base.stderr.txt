@@ -1,0 +1,49 @@
+Traceback (most recent call last):
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_calcite_rigid_open_column.py", line 105, in <module>
+    main()
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_calcite_rigid_open_column.py", line 77, in main
+    previous = solver.t;message = solver.step()
+                                  ^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/base.py", line 201, in step
+    success, message = self._step_impl()
+                       ^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/bdf.py", line 371, in _step_impl
+    converged, n_iter, y_new, d = solve_bdf_system(
+                                  ^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/bdf.py", line 43, in solve_bdf_system
+    f = fun(t_new, y)
+        ^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/base.py", line 158, in fun
+    return self.fun_single(t, y)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/base.py", line 24, in fun_wrapped
+    return np.asarray(fun(t, y), dtype=dtype)
+                      ^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_calcite_rigid_open_column.py", line 63, in rates
+    return model.rates(math.fsum([program['start_s'],*widths,t]),y,segment)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/rigid_reactive_open_column.py", line 122, in rates
+    physical,_,faces,reservoir,contact = self.observe(values,segment,time_s)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/rigid_reactive_open_column.py", line 97, in observe
+    states = [cell.offset_inventory_state(cell.calcium*np.expm1(values[3*i]),*physical[3*i+1:3*i+3],physical[3*i])
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/rigid_reactive_offset.py", line 47, in offset_inventory_state
+    t = brentq(lambda value:self.at_carbon_offset(value,carbon_offset_mol,nitrogen_mol,total_carbon_mol)['internal_energy_j']-internal_energy_j,*self.domain,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_zeros_py.py", line 858, in brentq
+    r = _zeros._brentq(f, a, b, xtol, rtol, maxiter, args, full_output, disp)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_zeros_py.py", line 107, in f_raise
+    fx = f(x, *args)
+         ^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/rigid_reactive_offset.py", line 47, in <lambda>
+    t = brentq(lambda value:self.at_carbon_offset(value,carbon_offset_mol,nitrogen_mol,total_carbon_mol)['internal_energy_j']-internal_energy_j,*self.domain,
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/rigid_reactive_offset.py", line 40, in at_carbon_offset
+    state = self.inventory_partition(t,c,nitrogen_mol,g,calcite,lime,phase)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/equilibrium_calcite_rigid.py", line 66, in inventory_partition
+    g*(gas['entropy_j_mol_k']-r*math.log(pc/self.p0)),nitrogen_mol*(n['entropy_j_mol_k']-r*math.log(pn/self.p0))))
+                                                                                           ^^^^^^^^^^^^^^^^^^^^
+ValueError: math domain error
