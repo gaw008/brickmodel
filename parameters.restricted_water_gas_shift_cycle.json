@@ -1,0 +1,59 @@
+{
+  "equilibrium_parameters": "parameters.restricted_water_gas_shift_review.json",
+  "inventory_case": "forward-800K",
+  "initial_state_policy": "Start from restricted equilibrium at initial_temperature_k; preparatory equilibration from the unreacted reference inventory is outside this thermal-cycle ledger.",
+  "heat_conductance_w_k": 0.005,
+  "conductance_basis": "Declared virtual wall conductance, not a measured brick coefficient.",
+  "program": [
+    {
+      "start_s": 0.0,
+      "end_s": 6000.0,
+      "reservoir_temperature_k": 1100.0
+    },
+    {
+      "start_s": 6000.0,
+      "end_s": 14000.0,
+      "reservoir_temperature_k": 750.0
+    },
+    {
+      "start_s": 14000.0,
+      "end_s": 18000.0,
+      "reservoir_temperature_k": 1000.0
+    }
+  ],
+  "numerics": {
+    "relative_tolerance": 1e-10,
+    "refinement_factor": 0.1,
+    "absolute_tolerances_energy_entropy_production": [
+      1e-09,
+      1e-12,
+      1e-12
+    ],
+    "maximum_step_s": 30.0,
+    "first_step_s": 0.001,
+    "observation_interval_s": 10.0,
+    "progress_every_steps": 200
+  },
+  "review": {
+    "quadrature_orders": [
+      2,
+      4
+    ],
+    "independent_decimal_digits": 50,
+    "independent_root_tolerance": "1e-38",
+    "independent_root_iterations": 180,
+    "source_energy_j": 1e-07,
+    "source_entropy_j_k": 1e-09,
+    "source_amount_mol": 1e-12,
+    "local_energy_j": 1e-06,
+    "cumulative_energy_j": 1e-05,
+    "local_entropy_j_k": 1e-08,
+    "cumulative_entropy_j_k": 1e-08,
+    "nonnegative_entropy_j_k": 1e-11,
+    "time_temperature_k": 1e-05,
+    "time_pressure_pa": 0.001,
+    "time_amount_mol": 1e-09,
+    "time_entropy_j_k": 1e-08
+  },
+  "scope": "Closed rigid equilibrium water-gas-shift gas inventory with programmed finite heat exchange. Instantaneous restricted chemical equilibration; time is thermal relaxation, not measured chemical kinetics."
+}
