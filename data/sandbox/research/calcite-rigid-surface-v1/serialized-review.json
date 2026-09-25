@@ -1,0 +1,1182 @@
+{
+  "settings": {
+    "model_parameters": "parameters.calcite_rigid_column.json",
+    "cell": {
+      "calcium_mol": 0.01,
+      "nitrogen_mol": 2e-05,
+      "total_volume_m3": 1e-06
+    },
+    "surface": {
+      "area_m2": 0.0001,
+      "interior": {
+        "distance_m": 0.000625,
+        "conductivity_w_m_k": 0.1,
+        "bulk_mobility_mol2_k_j_m_s": 1e-07,
+        "counter_mobility_mol2_k_j_m_s": 1e-07
+      },
+      "exterior": {
+        "heat_transfer_w_m2_k": 10.0,
+        "bulk_mobility_mol2_k_j_m2_s": 2e-05,
+        "counter_mobility_mol2_k_j_m2_s": 2e-05
+      },
+      "radiation": {
+        "area_m2": 0.0001,
+        "emissivity": 1.0,
+        "stefan_boltzmann_w_m2_k4": 5.670374419e-08,
+        "area_classification": "Same declared zero-storage contact area, not the earlier capsule geometry.",
+        "surface_classification": "ideal_black_surface_in_prescribed_black_enclosure_view_factor_one",
+        "material_emissivity": null,
+        "source": {
+          "constant_url": "https://physics.nist.gov/cuu/Constants/Table/allascii.txt",
+          "adjustment": "2022 CODATA",
+          "printed_value": "5.670 374 419... e-8",
+          "printed_uncertainty": "exact",
+          "unit": "W m^-2 K^-4",
+          "retrieved_utc": "2026-09-25",
+          "formula": "2*pi^5*kB^4/(15*h^3*c^2)",
+          "boltzmann_j_k": 1.380649e-23,
+          "planck_j_s": 6.62607015e-34,
+          "light_speed_m_s": 299792458.0,
+          "numerical_representation": "Finite printed digits retained, not an exact decimal; not material uncertainty.",
+          "boundary_reference": "https://doc.comsol.com/6.3/doc/com.comsol.help.heat/heat_ug_theory.07.047.html"
+        },
+        "entropy_scope": "Combined material plus prescribed thermal reservoir, neglect radiation-field storage; Q/Twall is reservoir entropy loss, not a claim that photon entropy flux equals Q/Twall."
+      },
+      "numerics": {
+        "initial_reservoir_weight": 0.5,
+        "balance_scales_carbon_nitrogen_energy": [
+          1e-06,
+          1e-06,
+          1.0
+        ],
+        "coordinate_scales_temperature_logpressure_logitfraction": [
+          100.0,
+          1.0,
+          1.0
+        ],
+        "function_relative_tolerance": 1e-13,
+        "coordinate_relative_tolerance": 1e-13,
+        "gradient_absolute_tolerance": 1e-13,
+        "maximum_function_evaluations": 300
+      },
+      "classification": "Declared virtual transfer geometry, film mobilities and black enclosure; no measured brick coefficients."
+    },
+    "cases": [
+      {
+        "name": "equal",
+        "bulk": [
+          1000.0,
+          0.00997,
+          2e-05
+        ],
+        "reservoir": "same_as_bulk",
+        "wall_temperature_k": 1000.0
+      },
+      {
+        "name": "radiation_hot",
+        "bulk": [
+          1000.0,
+          0.00997,
+          2e-05
+        ],
+        "reservoir": "same_as_bulk",
+        "wall_temperature_k": 1180.0
+      },
+      {
+        "name": "hot_vent",
+        "bulk": [
+          1000.0,
+          0.00997,
+          2e-05
+        ],
+        "reservoir": [
+          1180.0,
+          100000.0,
+          0.0004
+        ],
+        "wall_temperature_k": 1180.0
+      },
+      {
+        "name": "cool_carbon_rich",
+        "bulk": [
+          1100.0,
+          0.01,
+          2e-05
+        ],
+        "reservoir": [
+          400.0,
+          100000.0,
+          0.1
+        ],
+        "wall_temperature_k": 400.0
+      },
+      {
+        "name": "pressure_rich",
+        "bulk": [
+          800.0,
+          0.01002,
+          1e-05
+        ],
+        "reservoir": [
+          1100.0,
+          500000.0,
+          0.8
+        ],
+        "wall_temperature_k": 900.0
+      }
+    ],
+    "derivative_inventory_scales": [
+      1e-05,
+      1e-05,
+      1.0
+    ],
+    "derivative_steps": [
+      0.001,
+      0.0003,
+      0.0001
+    ],
+    "derivative_flux_scales": [
+      1e-06,
+      1e-06,
+      1.0
+    ],
+    "budgets": {
+      "species_balance_mol_s": 1e-12,
+      "energy_balance_w": 1e-08,
+      "independent_species_mol_s": 1e-15,
+      "independent_energy_w": 1e-09,
+      "entropy_identity_w_k": 1e-09,
+      "negative_entropy_allowance_w_k": 1e-12,
+      "scaled_flux_derivative_absolute": 1e-05,
+      "equal_species_mol_s": 1e-15,
+      "equal_energy_w": 1e-09
+    },
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "records": [
+    {
+      "case": {
+        "name": "equal",
+        "bulk": [
+          1000.0,
+          0.00997,
+          2e-05
+        ],
+        "reservoir": "same_as_bulk",
+        "wall_temperature_k": 1000.0
+      },
+      "bulk": {
+        "temperature_k": 1000.0,
+        "carbon_mol": 0.00997,
+        "internal_energy_j": -11286.067428410513,
+        "enthalpy_j": -11285.798100928992,
+        "entropy_j_k": 2.2030233407327495,
+        "helmholtz_j": -13489.090769143262,
+        "phase": "coexistence",
+        "calcite_mol": 0.00996955017719111,
+        "lime_mol": 3.0449822808890387e-05,
+        "co2_mol": 4.498228088898757e-07,
+        "nitrogen_mol": 2e-05,
+        "pressure_pa": 269327.4815210878,
+        "co2_partial_pressure_pa": 5924.239314014303,
+        "gas_volume_m3": 6.313141729260552e-07,
+        "solid_volume_m3": 3.6868582707394466e-07,
+        "frozen_cv_j_k": 1.2431603568048324,
+        "equilibrium_cv_j_k": 1.2445806082448676,
+        "co2_temperature_derivative_mol_k": 8.765794099304518e-09,
+        "reaction_internal_energy_j_mol": 162021.99412235053,
+        "reaction_gas_derivative_j_mol2": 18483435988.44119,
+        "carbon_chemical_potential_j_mol": -652876.3411544904,
+        "nitrogen_chemical_potential_j_mol": -198676.2472422412,
+        "nitrogen_partial_pressure_pa": 263403.24220707355,
+        "co2_partial_enthalpy_j_mol": -360099.1471982535,
+        "nitrogen_partial_enthalpy_j_mol": 21487.519513866057,
+        "reaction_gibbs_j_mol": -8.403731044381857e-10
+      },
+      "reservoir": {
+        "temperature_k": 1000.0,
+        "pressure_pa": 269327.4815210878,
+        "co2_mol": 0.021996415963776973,
+        "nitrogen_mol": 0.978003584036223,
+        "co2_partial_pressure_pa": 5924.239314014304,
+        "nitrogen_partial_pressure_pa": 263403.2422070735,
+        "carbon_chemical_potential_j_mol": -652876.3411544904,
+        "nitrogen_chemical_potential_j_mol": -198676.2472422412,
+        "co2_partial_enthalpy_j_mol": -360099.1471982535,
+        "nitrogen_partial_enthalpy_j_mol": 21487.519513866057,
+        "scope": "Normalized gas composition only; no assigned storage volume or inventory."
+      },
+      "result": {
+        "surface": {
+          "temperature_k": 1000.0,
+          "pressure_pa": 269327.4815210878,
+          "co2_mol": 0.021996415963776977,
+          "nitrogen_mol": 0.978003584036223,
+          "co2_partial_pressure_pa": 5924.239314014305,
+          "nitrogen_partial_pressure_pa": 263403.2422070735,
+          "carbon_chemical_potential_j_mol": -652876.3411544904,
+          "nitrogen_chemical_potential_j_mol": -198676.2472422412,
+          "co2_partial_enthalpy_j_mol": -360099.1471982535,
+          "nitrogen_partial_enthalpy_j_mol": 21487.519513866057,
+          "scope": "Normalized gas composition only; no assigned storage volume or inventory."
+        },
+        "interior_face": {
+          "carbon_flow_mol_s": 0.0,
+          "nitrogen_flow_mol_s": 0.0,
+          "energy_flow_w": 0.0,
+          "conductive_heat_w": 0.0,
+          "face_partial_enthalpies_j_mol": [
+            -360099.1471982535,
+            21487.519513866057
+          ],
+          "face_mole_fractions": [
+            0.021996415963776973,
+            0.978003584036223
+          ],
+          "species_forces_j_mol_k": [
+            0.0,
+            0.0
+          ],
+          "bulk_force_j_mol_k": 0.0,
+          "counter_force_j_mol_k": 0.0,
+          "bulk_flow_mol_s": 0.0,
+          "counter_flow_mol_s": 0.0,
+          "entropy_production_w_k": 0.0
+        },
+        "exterior_face": {
+          "carbon_flow_mol_s": 0.0,
+          "nitrogen_flow_mol_s": 0.0,
+          "energy_flow_w": 0.0,
+          "conductive_heat_w": 0.0,
+          "face_partial_enthalpies_j_mol": [
+            -360099.1471982535,
+            21487.519513866057
+          ],
+          "face_mole_fractions": [
+            0.021996415963776973,
+            0.978003584036223
+          ],
+          "species_forces_j_mol_k": [
+            0.0,
+            0.0
+          ],
+          "bulk_force_j_mol_k": 0.0,
+          "counter_force_j_mol_k": 0.0,
+          "bulk_flow_mol_s": 0.0,
+          "counter_flow_mol_s": 0.0,
+          "entropy_production_w_k": 0.0
+        },
+        "radiation_in_w": 0.0,
+        "balance_residual_carbon_nitrogen_energy": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "entropy_production_w_k": 0.0,
+        "radiation_entropy_production_w_k": 0.0,
+        "surface_coordinate_inventory_derivative": [
+          [
+            171847.61484650217,
+            -4268.454590221168,
+            0.32397305972809715
+          ],
+          [
+            568.9027057649758,
+            43454.00940473438,
+            0.0010201518362387366
+          ],
+          [
+            7354.210138928259,
+            -44599.41757599771,
+            0.013917916917424321
+          ]
+        ],
+        "interior_flux_inventory_derivative": [
+          [
+            0.00012250140005679185,
+            -0.0007257500496631875,
+            2.3181446873448077e-10
+          ],
+          [
+            -0.00011304110558457161,
+            0.0014483476411347035,
+            -2.148503434466298e-10
+          ],
+          [
+            4023.067268960423,
+            191.379974706113,
+            0.007584074467590669
+          ]
+        ],
+        "root_coordinates": [
+          1000.0,
+          0.990757856603195,
+          -3.794633805337307
+        ],
+        "root_evaluations": 1,
+        "root_status": 1,
+        "root_message": "`gtol` termination condition is satisfied.",
+        "root_scaled_residual_norm": 0.0,
+        "material_qualified": false,
+        "training_eligible": false
+      },
+      "independent_residuals": {
+        "species_balance_mol_s": 0.0,
+        "energy_balance_w": 0.0,
+        "independent_species_mol_s": 0.0,
+        "independent_energy_w": 0.0,
+        "entropy_identity_w_k": 0.0
+      },
+      "independent_total_entropy_production_w_k": 0.0,
+      "derivative_comparisons": [
+        {
+          "step": 0.001,
+          "maximum_scaled_derivative_error": 1.1491405223218454e-09,
+          "within_budget": true
+        },
+        {
+          "step": 0.0003,
+          "maximum_scaled_derivative_error": 9.93566860729711e-11,
+          "within_budget": true
+        },
+        {
+          "step": 0.0001,
+          "maximum_scaled_derivative_error": 5.433754141082048e-11,
+          "within_budget": true
+        }
+      ],
+      "within_budgets": {
+        "species_balance_mol_s": true,
+        "energy_balance_w": true,
+        "independent_species_mol_s": true,
+        "independent_energy_w": true,
+        "entropy_identity_w_k": true,
+        "nonnegative_entropy": true,
+        "implicit_flux_derivative": true,
+        "zero_species": true,
+        "zero_energy": true
+      }
+    },
+    {
+      "case": {
+        "name": "radiation_hot",
+        "bulk": [
+          1000.0,
+          0.00997,
+          2e-05
+        ],
+        "reservoir": "same_as_bulk",
+        "wall_temperature_k": 1180.0
+      },
+      "bulk": {
+        "temperature_k": 1000.0,
+        "carbon_mol": 0.00997,
+        "internal_energy_j": -11286.067428410513,
+        "enthalpy_j": -11285.798100928992,
+        "entropy_j_k": 2.2030233407327495,
+        "helmholtz_j": -13489.090769143262,
+        "phase": "coexistence",
+        "calcite_mol": 0.00996955017719111,
+        "lime_mol": 3.0449822808890387e-05,
+        "co2_mol": 4.498228088898757e-07,
+        "nitrogen_mol": 2e-05,
+        "pressure_pa": 269327.4815210878,
+        "co2_partial_pressure_pa": 5924.239314014303,
+        "gas_volume_m3": 6.313141729260552e-07,
+        "solid_volume_m3": 3.6868582707394466e-07,
+        "frozen_cv_j_k": 1.2431603568048324,
+        "equilibrium_cv_j_k": 1.2445806082448676,
+        "co2_temperature_derivative_mol_k": 8.765794099304518e-09,
+        "reaction_internal_energy_j_mol": 162021.99412235053,
+        "reaction_gas_derivative_j_mol2": 18483435988.44119,
+        "carbon_chemical_potential_j_mol": -652876.3411544904,
+        "nitrogen_chemical_potential_j_mol": -198676.2472422412,
+        "nitrogen_partial_pressure_pa": 263403.24220707355,
+        "co2_partial_enthalpy_j_mol": -360099.1471982535,
+        "nitrogen_partial_enthalpy_j_mol": 21487.519513866057,
+        "reaction_gibbs_j_mol": -8.403731044381857e-10
+      },
+      "reservoir": {
+        "temperature_k": 1000.0,
+        "pressure_pa": 269327.4815210878,
+        "co2_mol": 0.021996415963776973,
+        "nitrogen_mol": 0.978003584036223,
+        "co2_partial_pressure_pa": 5924.239314014304,
+        "nitrogen_partial_pressure_pa": 263403.2422070735,
+        "carbon_chemical_potential_j_mol": -652876.3411544904,
+        "nitrogen_chemical_potential_j_mol": -198676.2472422412,
+        "co2_partial_enthalpy_j_mol": -360099.1471982535,
+        "nitrogen_partial_enthalpy_j_mol": 21487.519513866057,
+        "scope": "Normalized gas composition only; no assigned storage volume or inventory."
+      },
+      "result": {
+        "surface": {
+          "temperature_k": 1120.637143171209,
+          "pressure_pa": 269038.896062651,
+          "co2_mol": 0.02198048834538084,
+          "nitrogen_mol": 0.9780195116546192,
+          "co2_partial_pressure_pa": 5913.606319359228,
+          "nitrogen_partial_pressure_pa": 263125.2897432918,
+          "carbon_chemical_potential_j_mol": -688596.048596407,
+          "nitrogen_chemical_potential_j_mol": -225475.54660997874,
+          "co2_partial_enthalpy_j_mol": -353469.2956145535,
+          "nitrogen_partial_enthalpy_j_mol": 25455.97417345037,
+          "scope": "Normalized gas composition only; no assigned storage volume or inventory."
+        },
+        "interior_face": {
+          "carbon_flow_mol_s": 1.1841333917508666e-21,
+          "nitrogen_flow_mol_s": -9.734568804378264e-22,
+          "energy_flow_w": -1.9301942907393428,
+          "conductive_heat_w": -1.9301942907393423,
+          "face_partial_enthalpies_j_mol": [
+            -356784.22140640346,
+            23471.746843658213
+          ],
+          "face_mole_fractions": [
+            0.021988452154578907,
+            0.9780115478454211
+          ],
+          "species_forces_j_mol_k": [
+            8.526512829121202e-14,
+            1.1546319456101628e-14
+          ],
+          "bulk_force_j_mol_k": 1.3167281957065001e-14,
+          "counter_force_j_mol_k": 7.37188088351104e-14,
+          "bulk_flow_mol_s": 2.1067651131304e-22,
+          "counter_flow_mol_s": 1.1795009413617661e-21,
+          "entropy_production_w_k": 0.00020778637083296932
+        },
+        "exterior_face": {
+          "carbon_flow_mol_s": -1.4801667396885834e-22,
+          "nitrogen_flow_mol_s": 1.2168211005472833e-22,
+          "energy_flow_w": 0.12063714317120895,
+          "conductive_heat_w": 0.1206371431712089,
+          "face_partial_enthalpies_j_mol": [
+            -356784.22140640346,
+            23471.746843658213
+          ],
+          "face_mole_fractions": [
+            0.021988452154578907,
+            0.9780115478454211
+          ],
+          "species_forces_j_mol_k": [
+            -8.526512829121202e-14,
+            -1.1546319456101628e-14
+          ],
+          "bulk_force_j_mol_k": -1.3167281957065001e-14,
+          "counter_force_j_mol_k": -7.37188088351104e-14,
+          "bulk_flow_mol_s": -2.6334563914130003e-23,
+          "counter_flow_mol_s": -1.474376176702208e-22,
+          "entropy_production_w_k": 1.2986648177060582e-05
+        },
+        "radiation_in_w": 2.050831433910555,
+        "balance_residual_carbon_nitrogen_energy": [
+          1.332150065719725e-21,
+          -1.0951389904925547e-21,
+          3.552713678800501e-15
+        ],
+        "entropy_production_w_k": 0.00031283869330838945,
+        "radiation_entropy_production_w_k": 9.206567429835955e-05,
+        "surface_coordinate_inventory_derivative": [
+          [
+            139393.51872488006,
+            -3462.340198202677,
+            0.2627894766412837
+          ],
+          [
+            575.9269784278576,
+            43454.5423846509,
+            0.0010333933854838875
+          ],
+          [
+            7359.168716182166,
+            -44599.54074012692,
+            0.013927264998550036
+          ]
+        ],
+        "interior_flux_inventory_derivative": [
+          [
+            0.0001226280575907599,
+            -0.0007257588228211775,
+            2.3205325467138303e-10
+          ],
+          [
+            -0.00011299134948987313,
+            0.0014483579145500164,
+            -2.1475655540263166e-10
+          ],
+          [
+            4542.470569158688,
+            178.95355910767785,
+            0.008563270939132379
+          ]
+        ],
+        "root_coordinates": [
+          1120.637143171209,
+          0.9896857781893367,
+          -3.795374453959003
+        ],
+        "root_evaluations": 7,
+        "root_status": 1,
+        "root_message": "`gtol` termination condition is satisfied.",
+        "root_scaled_residual_norm": 3.949142652479182e-15,
+        "material_qualified": false,
+        "training_eligible": false
+      },
+      "independent_residuals": {
+        "species_balance_mol_s": 1.00093071122677e-21,
+        "energy_balance_w": 3.9968028886505635e-15,
+        "independent_species_mol_s": 1.8631730681949554e-21,
+        "independent_energy_w": 6.661338147750939e-16,
+        "entropy_identity_w_k": 3.74049749507499e-18
+      },
+      "independent_total_entropy_production_w_k": 0.0003128386933083857,
+      "derivative_comparisons": [
+        {
+          "step": 0.001,
+          "maximum_scaled_derivative_error": 1.1498742479021384e-09,
+          "within_budget": true
+        },
+        {
+          "step": 0.0003,
+          "maximum_scaled_derivative_error": 1.02233084844916e-10,
+          "within_budget": true
+        },
+        {
+          "step": 0.0001,
+          "maximum_scaled_derivative_error": 4.353076232810338e-11,
+          "within_budget": true
+        }
+      ],
+      "within_budgets": {
+        "species_balance_mol_s": true,
+        "energy_balance_w": true,
+        "independent_species_mol_s": true,
+        "independent_energy_w": true,
+        "entropy_identity_w_k": true,
+        "nonnegative_entropy": true,
+        "implicit_flux_derivative": true
+      }
+    },
+    {
+      "case": {
+        "name": "hot_vent",
+        "bulk": [
+          1000.0,
+          0.00997,
+          2e-05
+        ],
+        "reservoir": [
+          1180.0,
+          100000.0,
+          0.0004
+        ],
+        "wall_temperature_k": 1180.0
+      },
+      "bulk": {
+        "temperature_k": 1000.0,
+        "carbon_mol": 0.00997,
+        "internal_energy_j": -11286.067428410513,
+        "enthalpy_j": -11285.798100928992,
+        "entropy_j_k": 2.2030233407327495,
+        "helmholtz_j": -13489.090769143262,
+        "phase": "coexistence",
+        "calcite_mol": 0.00996955017719111,
+        "lime_mol": 3.0449822808890387e-05,
+        "co2_mol": 4.498228088898757e-07,
+        "nitrogen_mol": 2e-05,
+        "pressure_pa": 269327.4815210878,
+        "co2_partial_pressure_pa": 5924.239314014303,
+        "gas_volume_m3": 6.313141729260552e-07,
+        "solid_volume_m3": 3.6868582707394466e-07,
+        "frozen_cv_j_k": 1.2431603568048324,
+        "equilibrium_cv_j_k": 1.2445806082448676,
+        "co2_temperature_derivative_mol_k": 8.765794099304518e-09,
+        "reaction_internal_energy_j_mol": 162021.99412235053,
+        "reaction_gas_derivative_j_mol2": 18483435988.44119,
+        "carbon_chemical_potential_j_mol": -652876.3411544904,
+        "nitrogen_chemical_potential_j_mol": -198676.2472422412,
+        "nitrogen_partial_pressure_pa": 263403.24220707355,
+        "co2_partial_enthalpy_j_mol": -360099.1471982535,
+        "nitrogen_partial_enthalpy_j_mol": 21487.519513866057,
+        "reaction_gibbs_j_mol": -8.403731044381857e-10
+      },
+      "reservoir": {
+        "temperature_k": 1180.0,
+        "pressure_pa": 100000.0,
+        "co2_mol": 0.0004,
+        "nitrogen_mol": 0.9996,
+        "co2_partial_pressure_pa": 40.0,
+        "nitrogen_partial_pressure_pa": 99960.0,
+        "carbon_chemical_potential_j_mol": -755452.3524812552,
+        "nitrogen_chemical_potential_j_mol": -248315.24464818227,
+        "co2_partial_enthalpy_j_mol": -350153.2760207101,
+        "nitrogen_partial_enthalpy_j_mol": 27435.58201406945,
+        "scope": "Normalized gas composition only; no assigned storage volume or inventory."
+      },
+      "result": {
+        "surface": {
+          "temperature_k": 1124.3015071145096,
+          "pressure_pa": 240704.7691573831,
+          "co2_mol": 0.014175772749638004,
+          "nitrogen_mol": 0.985824227250362,
+          "co2_partial_pressure_pa": 3412.1761073291377,
+          "nitrogen_partial_pressure_pa": 237292.59305005395,
+          "carbon_chemical_potential_j_mol": -694832.7365362644,
+          "nitrogen_chemical_potential_j_mol": -227262.25458237794,
+          "co2_partial_enthalpy_j_mol": -353265.5613711565,
+          "nitrogen_partial_enthalpy_j_mol": 25577.674028135225,
+          "scope": "Normalized gas composition only; no assigned storage volume or inventory."
+        },
+        "interior_face": {
+          "carbon_flow_mol_s": 5.966717930957207e-08,
+          "nitrogen_flow_mol_s": -4.485829612197211e-08,
+          "energy_flow_w": -2.0111619760162918,
+          "conductive_heat_w": -1.9888241138321536,
+          "face_partial_enthalpies_j_mol": [
+            -356682.354284705,
+            23532.59677100064
+          ],
+          "face_mole_fractions": [
+            0.018086094356707487,
+            0.9819139056432925
+          ],
+          "species_forces_j_mol_k": [
+            4.570870343128604,
+            0.8584113149458741
+          ],
+          "bulk_force_j_mol_k": 0.9255551992249975,
+          "counter_force_j_mol_k": 3.71245902818273,
+          "bulk_flow_mol_s": 1.4808883187599958e-08,
+          "counter_flow_mol_s": 5.939934445092367e-08,
+          "entropy_production_w_k": 0.000220116375941398
+        },
+        "exterior_face": {
+          "carbon_flow_mol_s": 5.966717930957391e-08,
+          "nitrogen_flow_mol_s": -4.485829612197394e-08,
+          "energy_flow_w": -0.07787304400465228,
+          "conductive_heat_w": -0.0556984928854904,
+          "face_partial_enthalpies_j_mol": [
+            -351709.4186959333,
+            26506.628021102337
+          ],
+          "face_mole_fractions": [
+            0.007287886374819002,
+            0.9927121136251811
+          ],
+          "species_forces_j_mol_k": [
+            36.96703798226274,
+            7.187411056480381
+          ],
+          "bulk_force_j_mol_k": 7.404441593799984,
+          "counter_force_j_mol_k": 29.779626925782356,
+          "bulk_flow_mol_s": 1.4808883187599968e-08,
+          "counter_flow_mol_s": 5.9559253851564715e-08,
+          "entropy_production_w_k": 4.221721560777907e-06
+        },
+        "radiation_in_w": 1.9332889320116458,
+        "balance_residual_carbon_nitrogen_energy": [
+          -1.8396496823179335e-21,
+          1.8330322374175093e-21,
+          6.217248937900877e-15
+        ],
+        "entropy_production_w_k": 0.00030550433387946916,
+        "radiation_entropy_production_w_k": 8.116623637729327e-05,
+        "surface_coordinate_inventory_derivative": [
+          [
+            138506.06740080583,
+            -3453.267554671902,
+            0.26111643837404946
+          ],
+          [
+            563.3488892673961,
+            43535.23946619614,
+            0.001009583903218997
+          ],
+          [
+            7369.359681680602,
+            -44601.693154679706,
+            0.013946479646682794
+          ]
+        ],
+        "interior_flux_inventory_derivative": [
+          [
+            0.00012339954296651154,
+            -0.0007411198132592006,
+            2.3352616683792304e-10
+          ],
+          [
+            -0.00011179836042770426,
+            0.0014516148842848124,
+            -2.1251145036479096e-10
+          ],
+          [
+            4556.933780172503,
+            184.36567037088707,
+            0.008590530531772942
+          ]
+        ],
+        "root_coordinates": [
+          1124.3015071145096,
+          0.8784009723037867,
+          -4.241943707108582
+        ],
+        "root_evaluations": 6,
+        "root_status": 1,
+        "root_message": "`gtol` termination condition is satisfied.",
+        "root_scaled_residual_norm": 6.737841085458598e-15,
+        "material_qualified": false,
+        "training_eligible": false
+      },
+      "independent_residuals": {
+        "species_balance_mol_s": 1.5749518863009647e-21,
+        "energy_balance_w": 6.217248937900877e-15,
+        "independent_species_mol_s": 1.522012327097571e-22,
+        "independent_energy_w": 0.0,
+        "entropy_identity_w_k": 5.312590645178972e-18
+      },
+      "independent_total_entropy_production_w_k": 0.00030550433387946385,
+      "derivative_comparisons": [
+        {
+          "step": 0.001,
+          "maximum_scaled_derivative_error": 1.14728286593202e-09,
+          "within_budget": true
+        },
+        {
+          "step": 0.0003,
+          "maximum_scaled_derivative_error": 1.0305998936199767e-10,
+          "within_budget": true
+        },
+        {
+          "step": 0.0001,
+          "maximum_scaled_derivative_error": 5.181835516232525e-11,
+          "within_budget": true
+        }
+      ],
+      "within_budgets": {
+        "species_balance_mol_s": true,
+        "energy_balance_w": true,
+        "independent_species_mol_s": true,
+        "independent_energy_w": true,
+        "entropy_identity_w_k": true,
+        "nonnegative_entropy": true,
+        "implicit_flux_derivative": true
+      }
+    },
+    {
+      "case": {
+        "name": "cool_carbon_rich",
+        "bulk": [
+          1100.0,
+          0.01,
+          2e-05
+        ],
+        "reservoir": [
+          400.0,
+          100000.0,
+          0.1
+        ],
+        "wall_temperature_k": 400.0
+      },
+      "bulk": {
+        "temperature_k": 1100.0,
+        "carbon_mol": 0.01,
+        "internal_energy_j": -11175.564501136008,
+        "enthalpy_j": -11175.236697373319,
+        "entropy_j_k": 2.3271568871034742,
+        "helmholtz_j": -13735.437076949831,
+        "phase": "coexistence",
+        "calcite_mol": 0.009997392963917667,
+        "lime_mol": 2.6070360823331978e-06,
+        "co2_mol": 2.6070360823331978e-06,
+        "nitrogen_mol": 2e-05,
+        "pressure_pa": 327803.76268987916,
+        "co2_partial_pressure_pa": 37802.22379195246,
+        "gas_volume_m3": 6.307525839177806e-07,
+        "solid_volume_m3": 3.6924741608221937e-07,
+        "frozen_cv_j_k": 1.2759113370303228,
+        "equilibrium_cv_j_k": 1.282499071402654,
+        "co2_temperature_derivative_mol_k": 4.1320611625586296e-08,
+        "reaction_internal_energy_j_mol": 159429.7401022021,
+        "reaction_gas_derivative_j_mol2": 3507598790.6212845,
+        "carbon_chemical_potential_j_mol": -665468.3384064098,
+        "nitrogen_chemical_potential_j_mol": -219971.34891113316,
+        "nitrogen_partial_pressure_pa": 290001.53889792674,
+        "co2_partial_enthalpy_j_mol": -354614.24294567463,
+        "nitrogen_partial_enthalpy_j_mol": 24771.825483563025,
+        "reaction_gibbs_j_mol": -9.094947017729282e-12
+      },
+      "reservoir": {
+        "temperature_k": 400.0,
+        "pressure_pa": 100000.0,
+        "co2_mol": 0.1,
+        "nitrogen_mol": 0.9,
+        "co2_partial_pressure_pa": 10000.0,
+        "nitrogen_partial_pressure_pa": 90000.0,
+        "carbon_chemical_potential_j_mol": -487277.325839979,
+        "nitrogen_chemical_potential_j_mol": -77451.41381094676,
+        "co2_partial_enthalpy_j_mol": -389508.5151224623,
+        "nitrogen_partial_enthalpy_j_mol": 2967.4455138660583,
+        "scope": "Normalized gas composition only; no assigned storage volume or inventory."
+      },
+      "result": {
+        "surface": {
+          "temperature_k": 873.3389140569827,
+          "pressure_pa": 278951.5378138799,
+          "co2_mol": 0.11170029153725805,
+          "nitrogen_mol": 0.888299708462742,
+          "co2_partial_pressure_pa": 31158.968098576846,
+          "nitrogen_partial_pressure_pa": 247792.56971530305,
+          "carbon_chemical_potential_j_mol": -604189.2446517352,
+          "nitrogen_chemical_potential_j_mol": -171504.86116171686,
+          "co2_partial_enthalpy_j_mol": -366874.12866896566,
+          "nitrogen_partial_enthalpy_j_mol": 17404.721296875832,
+          "scope": "Normalized gas composition only; no assigned storage volume or inventory."
+        },
+        "interior_face": {
+          "carbon_flow_mol_s": 8.181257633308123e-09,
+          "nitrogen_flow_mol_s": 1.45342318973796e-08,
+          "energy_flow_w": 3.623932535820238,
+          "conductive_heat_w": 3.6265773750882766,
+          "face_partial_enthalpies_j_mol": [
+            -360744.1858073202,
+            21088.27339021943
+          ],
+          "face_mole_fractions": [
+            0.1135099839012918,
+            0.8864900160987083
+          ],
+          "species_forces_j_mol_k": [
+            1.7301459993268082,
+            1.3799695754286958
+          ],
+          "bulk_force_j_mol_k": 1.4197180956679827,
+          "counter_force_j_mol_k": 0.35017642389811243,
+          "bulk_flow_mol_s": 2.271548953068772e-08,
+          "counter_flow_mol_s": 5.602822782369798e-09,
+          "entropy_production_w_k": 0.0008556886668827581
+        },
+        "exterior_face": {
+          "carbon_flow_mol_s": 8.181257633309837e-09,
+          "nitrogen_flow_mol_s": 1.4534231897377774e-08,
+          "energy_flow_w": 0.47039288031621157,
+          "conductive_heat_w": 0.47333891405698275,
+          "face_partial_enthalpies_j_mol": [
+            -378191.321895714,
+            10186.083405370946
+          ],
+          "face_mole_fractions": [
+            0.10585014576862903,
+            0.894149854231371
+          ],
+          "species_forces_j_mol_k": [
+            13.940416036396414,
+            11.05200615875602
+          ],
+          "bulk_force_j_mol_k": 11.357744765343805,
+          "counter_force_j_mol_k": 2.8884098776403935,
+          "bulk_flow_mol_s": 2.271548953068761e-08,
+          "counter_flow_mol_s": 5.776819755280787e-09,
+          "entropy_production_w_k": 0.0006416343081098792
+        },
+        "radiation_in_w": -3.1535396555040256,
+        "balance_residual_carbon_nitrogen_energy": [
+          -1.7139182292098733e-21,
+          1.826414792517085e-21,
+          8.881784197001252e-16
+        ],
+        "entropy_production_w_k": 0.005770271918255096,
+        "radiation_entropy_production_w_k": 0.004272948943262458,
+        "surface_coordinate_inventory_derivative": [
+          [
+            203324.76260240393,
+            -6006.395935823889,
+            0.3886151809426885
+          ],
+          [
+            993.1841439903907,
+            39323.90099366726,
+            0.0018501678726608852
+          ],
+          [
+            5756.433488361605,
+            -44942.7622151429,
+            0.01105702005265641
+          ]
+        ],
+        "interior_flux_inventory_derivative": [
+          [
+            0.00010816711479284271,
+            -0.0007298066855441982,
+            2.076283582291893e-10
+          ],
+          [
+            -8.525382372318307e-05,
+            0.0013750594632498132,
+            -1.6462374425442554e-10
+          ],
+          [
+            3233.5631613907785,
+            193.25655976237385,
+            0.006179965190552291
+          ]
+        ],
+        "root_coordinates": [
+          873.3389140569827,
+          1.0258678811539248,
+          -2.0734898795046965
+        ],
+        "root_evaluations": 6,
+        "root_status": 1,
+        "root_message": "`gtol` termination condition is satisfied.",
+        "root_scaled_residual_norm": 2.6574739125651164e-15,
+        "material_qualified": false,
+        "training_eligible": false
+      },
+      "independent_residuals": {
+        "species_balance_mol_s": 1.7436967312617823e-21,
+        "energy_balance_w": 4.440892098500626e-16,
+        "independent_species_mol_s": 4.1359030627651384e-22,
+        "independent_energy_w": 4.440892098500626e-16,
+        "entropy_identity_w_k": 0.0
+      },
+      "independent_total_entropy_production_w_k": 0.005770271918255096,
+      "derivative_comparisons": [
+        {
+          "step": 0.001,
+          "maximum_scaled_derivative_error": 9.70917036005603e-10,
+          "within_budget": true
+        },
+        {
+          "step": 0.0003,
+          "maximum_scaled_derivative_error": 8.596778670877381e-11,
+          "within_budget": true
+        },
+        {
+          "step": 0.0001,
+          "maximum_scaled_derivative_error": 6.279760045302396e-11,
+          "within_budget": true
+        }
+      ],
+      "within_budgets": {
+        "species_balance_mol_s": true,
+        "energy_balance_w": true,
+        "independent_species_mol_s": true,
+        "independent_energy_w": true,
+        "entropy_identity_w_k": true,
+        "nonnegative_entropy": true,
+        "implicit_flux_derivative": true
+      }
+    },
+    {
+      "case": {
+        "name": "pressure_rich",
+        "bulk": [
+          800.0,
+          0.01002,
+          1e-05
+        ],
+        "reservoir": [
+          1100.0,
+          500000.0,
+          0.8
+        ],
+        "wall_temperature_k": 900.0
+      },
+      "bulk": {
+        "temperature_k": 800.0,
+        "carbon_mol": 0.01002,
+        "internal_energy_j": -11552.28041645873,
+        "enthalpy_j": -11551.96402476696,
+        "entropy_j_k": 1.9391591057323203,
+        "helmholtz_j": -13103.607701044586,
+        "phase": "calcite",
+        "calcite_mol": 0.01,
+        "lime_mol": 0.0,
+        "co2_mol": 1.9999999999999185e-05,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 316391.69177103945,
+        "co2_partial_pressure_pa": 210927.79451402344,
+        "gas_volume_m3": 6.307e-07,
+        "solid_volume_m3": 3.693e-07,
+        "frozen_cv_j_k": 1.1799359346588452,
+        "equilibrium_cv_j_k": 1.1799359346588452,
+        "co2_temperature_derivative_mol_k": 0.0,
+        "reaction_internal_energy_j_mol": 166765.16590575338,
+        "reaction_gas_derivative_j_mol2": 332155162.7248652,
+        "carbon_chemical_potential_j_mol": -571705.6072656813,
+        "nitrogen_chemical_potential_j_mol": -161423.66175518665,
+        "nitrogen_partial_pressure_pa": 105463.89725701603,
+        "co2_partial_enthalpy_j_mol": -370692.55741485057,
+        "nitrogen_partial_enthalpy_j_mol": 15082.225847199392,
+        "reaction_gibbs_j_mol": 58167.97472872085
+      },
+      "reservoir": {
+        "temperature_k": 1100.0,
+        "pressure_pa": 500000.0,
+        "co2_mol": 0.8,
+        "nitrogen_mol": 0.19999999999999996,
+        "co2_partial_pressure_pa": 400000.0,
+        "nitrogen_partial_pressure_pa": 99999.99999999997,
+        "carbon_chemical_potential_j_mol": -643892.1327636385,
+        "nitrogen_chemical_potential_j_mol": -229709.20032126812,
+        "co2_partial_enthalpy_j_mol": -354614.24294567463,
+        "nitrogen_partial_enthalpy_j_mol": 24771.825483563025,
+        "scope": "Normalized gas composition only; no assigned storage volume or inventory."
+      },
+      "result": {
+        "surface": {
+          "temperature_k": 856.7674843789667,
+          "pressure_pa": 333356.3132939361,
+          "co2_mol": 0.6843864833621629,
+          "nitrogen_mol": 0.3156135166378371,
+          "co2_partial_pressure_pa": 228144.55496181236,
+          "nitrogen_partial_pressure_pa": 105211.75833212373,
+          "carbon_chemical_potential_j_mol": -585512.3346645962,
+          "nitrogen_chemical_potential_j_mol": -174027.57686932775,
+          "co2_partial_enthalpy_j_mol": -367744.19904685044,
+          "nitrogen_partial_enthalpy_j_mol": 16877.217937787544,
+          "scope": "Normalized gas composition only; no assigned storage volume or inventory."
+        },
+        "interior_face": {
+          "carbon_flow_mol_s": -1.5500527112612176e-08,
+          "nitrogen_flow_mol_s": 8.50912514528862e-09,
+          "energy_flow_w": -0.9024206971278557,
+          "conductive_heat_w": -0.9082797500634678,
+          "face_partial_enthalpies_j_mol": [
+            -369218.3782308505,
+            15979.721892493468
+          ],
+          "face_mole_fractions": [
+            0.6755265750144103,
+            0.32447342498558973
+          ],
+          "species_forces_j_mol_k": [
+            -0.6555289215496849,
+            0.018074158892632974
+          ],
+          "bulk_force_j_mol_k": -0.4369626229577223,
+          "counter_force_j_mol_k": -0.6736030804423179,
+          "bulk_flow_mol_s": -6.991401967323556e-09,
+          "counter_flow_mol_s": -1.0777649287077084e-08,
+          "entropy_production_w_k": 7.523602873397739e-05
+        },
+        "exterior_face": {
+          "carbon_flow_mol_s": -1.5500527112611497e-08,
+          "nitrogen_flow_mol_s": 8.5091251452882e-09,
+          "energy_flow_w": -0.23745684885214188,
+          "conductive_heat_w": -0.24323251562103326,
+          "face_partial_enthalpies_j_mol": [
+            -361179.2209962625,
+            20824.521710675283
+          ],
+          "face_mole_fractions": [
+            0.7421932416810815,
+            0.2578067583189185
+          ],
+          "species_forces_j_mol_k": [
+            -4.824895373584681,
+            0.33088253770948306
+          ],
+          "bulk_force_j_mol_k": -3.495700983661648,
+          "counter_force_j_mol_k": -5.155777911294164,
+          "bulk_flow_mol_s": -6.9914019673232964e-09,
+          "counter_flow_mol_s": -1.031155582258833e-08,
+          "entropy_production_w_k": 6.285273120757344e-05
+        },
+        "radiation_in_w": 0.6649638482757132,
+        "balance_residual_carbon_nitrogen_energy": [
+          -6.782881022934827e-22,
+          4.2020775117693806e-22,
+          -5.551115123125783e-16
+        ],
+        "entropy_production_w_k": 0.00017537109082433193,
+        "radiation_entropy_production_w_k": 3.7282330882781074e-05,
+        "surface_coordinate_inventory_derivative": [
+          [
+            163473.35548167024,
+            -3629.2322408323016,
+            0.43370750754495063
+          ],
+          [
+            30026.1132992786,
+            29535.44536559886,
+            0.0009373492514639895
+          ],
+          [
+            43964.49806963405,
+            -88594.60817819322,
+            -9.572609741292947e-06
+          ]
+        ],
+        "interior_flux_inventory_derivative": [
+          [
+            0.001064268346616673,
+            -0.001031817888867399,
+            1.3461077133953117e-11
+          ],
+          [
+            -0.0005710255756119359,
+            0.0015364498837062823,
+            3.819012749097643e-12
+          ],
+          [
+            2099.033858545301,
+            349.2690932398641,
+            0.00661548694049956
+          ]
+        ],
+        "root_coordinates": [
+          856.7674843789667,
+          1.2040417418314997,
+          0.7740043757679427
+        ],
+        "root_evaluations": 6,
+        "root_status": 1,
+        "root_message": "`gtol` termination condition is satisfied.",
+        "root_scaled_residual_norm": 9.72007250468859e-16,
+        "material_qualified": false,
+        "training_eligible": false
+      },
+      "independent_residuals": {
+        "species_balance_mol_s": 4.549493369041652e-22,
+        "energy_balance_w": 9.992007221626409e-16,
+        "independent_species_mol_s": 9.595295105615121e-22,
+        "independent_energy_w": 4.440892098500626e-16,
+        "entropy_identity_w_k": 1.0570971181733668e-18
+      },
+      "independent_total_entropy_production_w_k": 0.00017537109082433298,
+      "derivative_comparisons": [
+        {
+          "step": 0.001,
+          "maximum_scaled_derivative_error": 4.597614441936848e-09,
+          "within_budget": true
+        },
+        {
+          "step": 0.0003,
+          "maximum_scaled_derivative_error": 4.1344346175808955e-10,
+          "within_budget": true
+        },
+        {
+          "step": 0.0001,
+          "maximum_scaled_derivative_error": 3.759808436809564e-11,
+          "within_budget": true
+        }
+      ],
+      "within_budgets": {
+        "species_balance_mol_s": true,
+        "energy_balance_w": true,
+        "independent_species_mol_s": true,
+        "independent_energy_w": true,
+        "entropy_identity_w_k": true,
+        "nonnegative_entropy": true,
+        "implicit_flux_derivative": true
+      }
+    }
+  ],
+  "all_requested_numerical_budgets_met": true,
+  "material_qualified": false,
+  "training_eligible": false,
+  "scope": "Independent source face expansion; shared gas potentials and equilibrium flash. Not a global existence/uniqueness theorem."
+}

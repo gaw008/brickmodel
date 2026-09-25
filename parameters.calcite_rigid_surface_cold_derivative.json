@@ -1,0 +1,174 @@
+{
+  "model_parameters": "parameters.calcite_rigid_column.json",
+  "cell": {
+    "calcium_mol": 0.01,
+    "nitrogen_mol": 2e-05,
+    "total_volume_m3": 1e-06
+  },
+  "surface": {
+    "area_m2": 0.0001,
+    "interior": {
+      "distance_m": 0.000625,
+      "conductivity_w_m_k": 0.1,
+      "bulk_mobility_mol2_k_j_m_s": 1e-07,
+      "counter_mobility_mol2_k_j_m_s": 1e-07
+    },
+    "exterior": {
+      "heat_transfer_w_m2_k": 10.0,
+      "bulk_mobility_mol2_k_j_m2_s": 2e-05,
+      "counter_mobility_mol2_k_j_m2_s": 2e-05
+    },
+    "radiation": {
+      "emissivity": 1.0,
+      "stefan_boltzmann_w_m2_k4": 5.670374419e-08,
+      "area_classification": "Same declared zero-storage contact area, not the earlier capsule geometry.",
+      "surface_classification": "ideal_black_surface_in_prescribed_black_enclosure_view_factor_one",
+      "material_emissivity": null,
+      "source": {
+        "constant_url": "https://physics.nist.gov/cuu/Constants/Table/allascii.txt",
+        "adjustment": "2022 CODATA",
+        "printed_value": "5.670 374 419... e-8",
+        "printed_uncertainty": "exact",
+        "unit": "W m^-2 K^-4",
+        "retrieved_utc": "2026-09-25",
+        "formula": "2*pi^5*kB^4/(15*h^3*c^2)",
+        "boltzmann_j_k": 1.380649e-23,
+        "planck_j_s": 6.62607015e-34,
+        "light_speed_m_s": 299792458.0,
+        "numerical_representation": "Finite printed digits retained, not an exact decimal; not material uncertainty.",
+        "boundary_reference": "https://doc.comsol.com/6.3/doc/com.comsol.help.heat/heat_ug_theory.07.047.html"
+      },
+      "entropy_scope": "Combined material plus prescribed thermal reservoir, neglect radiation-field storage; Q/Twall is reservoir entropy loss, not a claim that photon entropy flux equals Q/Twall."
+    },
+    "numerics": {
+      "initial_reservoir_weight": 0.5,
+      "balance_scales_carbon_nitrogen_energy": [
+        1e-06,
+        1e-06,
+        1.0
+      ],
+      "coordinate_scales_temperature_logpressure_logitfraction": [
+        100.0,
+        1.0,
+        1.0
+      ],
+      "function_relative_tolerance": 1e-13,
+      "coordinate_relative_tolerance": 1e-13,
+      "gradient_absolute_tolerance": 1e-13,
+      "maximum_function_evaluations": 300
+    },
+    "classification": "Declared virtual transfer geometry, film mobilities and black enclosure; no measured brick coefficients."
+  },
+  "cases": [
+    {
+      "name": "equal",
+      "bulk": [
+        1000.0,
+        0.00997,
+        2e-05
+      ],
+      "reservoir": "same_as_bulk",
+      "wall_temperature_k": 1000.0
+    },
+    {
+      "name": "radiation_hot",
+      "bulk": [
+        1000.0,
+        0.00997,
+        2e-05
+      ],
+      "reservoir": "same_as_bulk",
+      "wall_temperature_k": 1180.0
+    },
+    {
+      "name": "hot_vent",
+      "bulk": [
+        1000.0,
+        0.00997,
+        2e-05
+      ],
+      "reservoir": [
+        1180.0,
+        100000.0,
+        0.0004
+      ],
+      "wall_temperature_k": 1180.0
+    },
+    {
+      "name": "cool_carbon_rich",
+      "bulk": [
+        1100.0,
+        0.01,
+        2e-05
+      ],
+      "reservoir": [
+        400.0,
+        100000.0,
+        0.1
+      ],
+      "wall_temperature_k": 400.0
+    },
+    {
+      "name": "pressure_rich",
+      "bulk": [
+        800.0,
+        0.01002,
+        1e-05
+      ],
+      "reservoir": [
+        1100.0,
+        500000.0,
+        0.8
+      ],
+      "wall_temperature_k": 900.0
+    },
+    {
+      "name": "cold_start_hot_gas",
+      "bulk": [
+        300.0,
+        0.01000001,
+        2e-05
+      ],
+      "reservoir": [
+        1180.0,
+        100000.0,
+        0.0004
+      ],
+      "wall_temperature_k": 1180.0,
+      "difference_inventory_scales": [
+        1e-08,
+        1e-05,
+        1.0
+      ]
+    }
+  ],
+  "derivative_inventory_scales": [
+    1e-05,
+    1e-05,
+    1.0
+  ],
+  "derivative_steps": [
+    0.001,
+    0.0003,
+    0.0001
+  ],
+  "derivative_flux_scales": [
+    1e-06,
+    1e-06,
+    1.0
+  ],
+  "budgets": {
+    "species_balance_mol_s": 1e-12,
+    "energy_balance_w": 1e-08,
+    "independent_species_mol_s": 1e-15,
+    "independent_energy_w": 1e-09,
+    "entropy_identity_w_k": 1e-09,
+    "negative_entropy_allowance_w_k": 1e-12,
+    "scaled_flux_derivative_absolute": 1e-05,
+    "equal_species_mol_s": 1e-15,
+    "equal_energy_w": 1e-09
+  },
+  "material_qualified": false,
+  "training_eligible": false,
+  "difference_basis": "Cold case finite-difference perturbations use its 1e-8 mol residual gas scale. Derivative normalization and error budgets stay unchanged; divide by actual floating-point inventory separation."
+}
