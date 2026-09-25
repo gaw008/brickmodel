@@ -1,0 +1,212 @@
+{
+  "settings": {
+    "local_law_parameters": "parameters.dusty_gas_isothermal.json",
+    "species_order": [
+      "CO",
+      "CO2",
+      "O2",
+      "N2"
+    ],
+    "temperature_k": 600,
+    "binary_property_reference_pressure_pa": 100000,
+    "entropy_reference_pressure_pa": 100000,
+    "geometry": {
+      "length_m": 0.02,
+      "area_m2": 0.005
+    },
+    "pore": {
+      "porosity": 0.3,
+      "tortuosity": 1,
+      "mean_pore_radius_m": 1e-06,
+      "permeability_m2": 3.75e-14
+    },
+    "initial": {
+      "mean_partial_pressures_pa": [
+        10000,
+        20000,
+        30000,
+        40000
+      ],
+      "cosine_partial_pressure_amplitudes_pa": [
+        2000,
+        12000,
+        1000,
+        5000
+      ],
+      "cosine_mode": 1
+    },
+    "face_quadrature_order": 16,
+    "duration_s": 2,
+    "meshes": {
+      "two": 2,
+      "four": 4,
+      "eight": 8,
+      "sixteen": 16,
+      "thirty-two": 32,
+      "sixty-four": 64
+    },
+    "numerics": {
+      "relative_tolerance": 1e-10,
+      "absolute_concentration_tolerance_mol_m3": 1e-10,
+      "refinement_factor": 0.1,
+      "first_step_s": 1e-06,
+      "maximum_step_s": 0.02,
+      "observation_interval_s": 0.01,
+      "progress_every_steps": 50
+    },
+    "verification": {
+      "source_flux_absolute_budget_mol_m2_s": 1e-12,
+      "source_entropy_rate_budget_w_k": 1e-11,
+      "source_concentration_budget_mol_m3": 1e-12,
+      "global_species_budget_mol": 1e-12,
+      "local_species_budget_mol": 1e-12,
+      "local_entropy_budget_j_k": 1e-10,
+      "cumulative_entropy_budget_j_k": 1e-10,
+      "negative_step_entropy_budget_j_k": 1e-12,
+      "time_concentration_budget_mol_m3": 1e-07,
+      "entropy_quadrature_orders": [
+        2,
+        4
+      ],
+      "space_parent_concentration_budget_mol_m3": 0.0001,
+      "reference_face_quadrature_order": 64,
+      "reference_equation_residual_budget_mol_m4": 1e-09
+    },
+    "scope": "Closed ideal four-gas column at fixed common temperature with composition and pressure redistribution in prescribed rigid pores. Stationary-solid-frame flux; all partial concentrations are evolved. No chemistry, heat equation or material qualification.",
+    "entropy_definition": "Relative ideal-gas entropy -R*sum(n_i*ln(c_i/c_ref)); c_ref=P_ref/(R*T). Terms linear in conserved species amounts are omitted. This includes concentration/pressure redistribution, not only composition mixing. Not full absolute thermochemistry or a heat equation.",
+    "physical_input_classification": "Source-qualified approximate free-gas binary D and Wilke viscosity, porous DGM local laws. Explicit straight-capillary-bundle geometry with permeability porosity*radius^2/8; not a measured brick pore network. Initial partial-pressure profiles are declared numerical qualification inputs.",
+    "material_qualified": false,
+    "training_eligible": false,
+    "reference_anchors": "data/sandbox/research/dusty-gas-entropy-face-v1/face-review.json"
+  },
+  "records": [
+    {
+      "case": {
+        "name": "zero",
+        "left_pressure_pa": 100000,
+        "right_pressure_pa": 100000,
+        "left_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "right_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ]
+      },
+      "errors": {
+        "flux_mol_m2_s": 0.0,
+        "entropy_rate_w_k": 0.0,
+        "path_entropy_rate_w_k": 0.0,
+        "original_equation_mol_m4": 0.0
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": true,
+        "entropy_rate_w_k": true,
+        "path_entropy_rate_w_k": true,
+        "original_equation_mol_m4": true
+      }
+    },
+    {
+      "case": {
+        "name": "pressure_only",
+        "left_pressure_pa": 100000,
+        "right_pressure_pa": 110000,
+        "left_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "right_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ]
+      },
+      "errors": {
+        "flux_mol_m2_s": 3.122502256758253e-17,
+        "entropy_rate_w_k": 5.692061405548898e-19,
+        "path_entropy_rate_w_k": 5.692061405548898e-19,
+        "original_equation_mol_m4": 3.1175062531474396e-13
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": true,
+        "entropy_rate_w_k": true,
+        "path_entropy_rate_w_k": true,
+        "original_equation_mol_m4": true
+      }
+    },
+    {
+      "case": {
+        "name": "equal_pressure_composition_jump",
+        "left_pressure_pa": 100000,
+        "right_pressure_pa": 100000,
+        "left_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "right_fractions": [
+          0.2,
+          0.3,
+          0.1,
+          0.4
+        ]
+      },
+      "errors": {
+        "flux_mol_m2_s": 3.5236570605778894e-18,
+        "entropy_rate_w_k": 0.0,
+        "path_entropy_rate_w_k": 0.0,
+        "original_equation_mol_m4": 3.979039320256561e-13
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": true,
+        "entropy_rate_w_k": true,
+        "path_entropy_rate_w_k": true,
+        "original_equation_mol_m4": true
+      }
+    },
+    {
+      "case": {
+        "name": "large_pressure_and_trace_jump",
+        "left_pressure_pa": 50000,
+        "right_pressure_pa": 200000,
+        "left_fractions": [
+          0.0004,
+          0.2,
+          0.21,
+          0.5896
+        ],
+        "right_fractions": [
+          0.8,
+          0.05,
+          0.05,
+          0.1
+        ]
+      },
+      "errors": {
+        "flux_mol_m2_s": 2.220446049250313e-16,
+        "entropy_rate_w_k": 5.551115123125783e-17,
+        "path_entropy_rate_w_k": 2.7755575615628914e-17,
+        "original_equation_mol_m4": 4.956746124662459e-11
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": true,
+        "entropy_rate_w_k": true,
+        "path_entropy_rate_w_k": true,
+        "original_equation_mol_m4": true
+      }
+    }
+  ],
+  "all_requested_budgets_met": true,
+  "reference_scope": "Saved 60-digit original-equation face integrals, rounded once for this binary64 comparison. Independent full Wilke coefficient matrix and direct nonsymmetric total-flux solve.",
+  "material_qualified": false,
+  "training_eligible": false
+}
