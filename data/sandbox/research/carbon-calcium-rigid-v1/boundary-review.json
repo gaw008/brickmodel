@@ -1,0 +1,1492 @@
+{
+  "settings": {
+    "model_parameters": "parameters.carbon_calcium_rigid.json",
+    "decimal_digits": 60,
+    "root_tolerance": "1e-45",
+    "maximum_root_iterations": 100,
+    "temperature_root_absolute_tolerance_k": 1e-10,
+    "temperature_root_relative_tolerance": 1e-14,
+    "one_sided_offsets_k": [
+      0.0001,
+      3e-05,
+      1e-05
+    ],
+    "one_sided_derivative_step_fraction": 0.25,
+    "budgets": {
+      "boundary_temperature_k": 1e-07,
+      "boundary_pressure_pa": 0.0001,
+      "source_internal_energy_j": 1e-07,
+      "source_entropy_j_k": 1e-10,
+      "volume_m3": 1e-14,
+      "phase_endpoint_mol": 1e-12,
+      "projected_internal_energy_continuity_j": 1e-06,
+      "projected_entropy_continuity_j_k": 1e-09,
+      "projected_pressure_continuity_pa": 0.0001,
+      "one_sided_cv_j_k": 1e-07
+    },
+    "boundaries": [
+      {
+        "name": "limited_graphite_exhaustion",
+        "inventory_name": "limited_carbon",
+        "kind": "graphite_exhaustion",
+        "temperature_bracket_k": [
+          1000,
+          1050
+        ],
+        "left_phases": [
+          "calcite",
+          "graphite_present"
+        ],
+        "right_phases": [
+          "calcite",
+          "graphite_exhausted"
+        ]
+      },
+      {
+        "name": "limited_calcite_onset",
+        "inventory_name": "limited_carbon",
+        "kind": "calcite_onset",
+        "temperature_bracket_k": [
+          1100,
+          1150
+        ],
+        "left_phases": [
+          "calcite",
+          "graphite_exhausted"
+        ],
+        "right_phases": [
+          "coexistence",
+          "graphite_exhausted"
+        ]
+      },
+      {
+        "name": "coupled_calcite_onset",
+        "inventory_name": "coupled_carbon",
+        "kind": "calcite_onset",
+        "temperature_bracket_k": [
+          1050,
+          1100
+        ],
+        "left_phases": [
+          "calcite",
+          "graphite_present"
+        ],
+        "right_phases": [
+          "coexistence",
+          "graphite_present"
+        ]
+      },
+      {
+        "name": "coupled_graphite_exhaustion",
+        "inventory_name": "coupled_carbon",
+        "kind": "graphite_exhaustion",
+        "temperature_bracket_k": [
+          1100,
+          1150
+        ],
+        "left_phases": [
+          "coexistence",
+          "graphite_present"
+        ],
+        "right_phases": [
+          "coexistence",
+          "graphite_exhausted"
+        ]
+      },
+      {
+        "name": "coupled_calcite_exhaustion",
+        "inventory_name": "coupled_carbon",
+        "kind": "calcite_exhaustion",
+        "temperature_bracket_k": [
+          1150,
+          1190
+        ],
+        "left_phases": [
+          "coexistence",
+          "graphite_exhausted"
+        ],
+        "right_phases": [
+          "lime",
+          "graphite_exhausted"
+        ]
+      },
+      {
+        "name": "excess_calcite_onset",
+        "inventory_name": "excess_carbon",
+        "kind": "calcite_onset",
+        "temperature_bracket_k": [
+          1050,
+          1100
+        ],
+        "left_phases": [
+          "calcite",
+          "graphite_present"
+        ],
+        "right_phases": [
+          "coexistence",
+          "graphite_present"
+        ]
+      },
+      {
+        "name": "excess_calcite_exhaustion",
+        "inventory_name": "excess_carbon",
+        "kind": "calcite_exhaustion",
+        "temperature_bracket_k": [
+          1100,
+          1150
+        ],
+        "left_phases": [
+          "coexistence",
+          "graphite_present"
+        ],
+        "right_phases": [
+          "lime",
+          "graphite_present"
+        ]
+      }
+    ],
+    "scope": "Frozen after36same-phase rigid flashes. Seven boundaries inside298.15..1200K; limited-carbon calcite exhaustion is outside the selected source domain and is not invented. Independent simultaneousT/log-pressure/log-gas/fraction equations, one-sidedU/S/P continuity andCv. Numerical distances chosen before boundary evaluation."
+  },
+  "records": [
+    {
+      "case": {
+        "name": "limited_graphite_exhaustion",
+        "inventory_name": "limited_carbon",
+        "kind": "graphite_exhaustion",
+        "temperature_bracket_k": [
+          1000,
+          1050
+        ],
+        "left_phases": [
+          "calcite",
+          "graphite_present"
+        ],
+        "right_phases": [
+          "calcite",
+          "graphite_exhausted"
+        ]
+      },
+      "inventory": {
+        "name": "limited_carbon",
+        "calcium_atoms_mol": 0.002,
+        "carbon_atoms_mol": 0.0035,
+        "oxygen_atoms_mol": 0.008,
+        "nitrogen_molecules_mol": 0.004
+      },
+      "candidate_temperature_k": 1002.5298199462038,
+      "reference_temperature_k": "1002.52981994621698255357695653281895104237966704851865423823",
+      "reference_pressure_pa": "458793.796826592255561021059767098546347113853479113872275323",
+      "reference_internal_energy_j": "-2488.10531136638680231494216208048066753729739866129561385903",
+      "reference_entropy_j_k": "1.68825217939730509197769225136571654111696560852724685459531",
+      "reference_amounts_mol": {
+        "calcite": "0.00200000000000000004163336342344337026588618755340576171875",
+        "lime": "0.0",
+        "C": "0.0",
+        "CO": "0.0010000000000000000208190553589389002485879231332051867439658",
+        "CO2": "0.000500000000000000010405967208643627450826717531849134551037791",
+        "O2": "1.18682360860755782241467825115294031502742835081939676408448e-24",
+        "N2": "0.0040000000000000000832667268468867405317723751068115234375"
+      },
+      "boundary_errors": {
+        "boundary_temperature_k": 1.3166991974133096e-11,
+        "boundary_pressure_pa": 2.4638316002577558e-08,
+        "source_internal_energy_j": 1.1579918513615088e-11,
+        "source_entropy_j_k": 9.764743218335188e-15,
+        "volume_m3": 1.5356673702342924e-58,
+        "phase_endpoint_mol": 3.7513395167998453e-17
+      },
+      "boundary_within_budgets": {
+        "boundary_temperature_k": true,
+        "boundary_pressure_pa": true,
+        "source_internal_energy_j": true,
+        "source_entropy_j_k": true,
+        "volume_m3": true,
+        "phase_endpoint_mol": true
+      },
+      "one_sided_records": [
+        {
+          "direction": -1,
+          "offset_k": 0.0001,
+          "phases": [
+            "calcite",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "0.919689867969453170851337064674074847714762003617611602532262",
+          "source_cv_error_j_k": 4.448671817725257e-15,
+          "projected_internal_energy_error_j": 3.163988288408295e-14,
+          "projected_entropy_error_j_k": 4.5437114011135154e-15,
+          "projected_pressure_error_pa": 2.764157368309357e-09,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 0.0001,
+          "phases": [
+            "calcite",
+            "graphite_exhausted"
+          ],
+          "source_cv_j_k": "0.394085055197303305035981990856837133816786621528725985307226",
+          "source_cv_error_j_k": 9.464820695639151e-16,
+          "projected_internal_energy_error_j": 4.745196290360339e-13,
+          "projected_entropy_error_j_k": 1.4871708844738283e-15,
+          "projected_pressure_error_pa": 2.1976276125759126e-27,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": -1,
+          "offset_k": 3e-05,
+          "phases": [
+            "calcite",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "0.919689868412404704968681535276852523192689219667246629612663",
+          "source_cv_error_j_k": 3.7104601135983755e-16,
+          "projected_internal_energy_error_j": 2.8467079815866995e-15,
+          "projected_entropy_error_j_k": 4.0893486728299086e-16,
+          "projected_pressure_error_pa": 2.487737128682321e-10,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 3e-05,
+          "phases": [
+            "calcite",
+            "graphite_exhausted"
+          ],
+          "source_cv_j_k": "0.394085048554028489561616660118608321792923326433932723074353",
+          "source_cv_error_j_k": 8.946368409475482e-16,
+          "projected_internal_energy_error_j": 4.270676777152911e-14,
+          "projected_entropy_error_j_k": 1.3384539090799326e-16,
+          "projected_pressure_error_pa": 1.9778587981402478e-28,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": -1,
+          "offset_k": 1e-05,
+          "phases": [
+            "calcite",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "0.919689868538924890109339306734259568966122500079165584359771",
+          "source_cv_error_j_k": 1.4238362413527582e-15,
+          "projected_internal_energy_error_j": 3.162729034132104e-16,
+          "projected_entropy_error_j_k": 4.5437234180102044e-17,
+          "projected_pressure_error_pa": 2.7641509357431825e-11,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 1e-05,
+          "phases": [
+            "calcite",
+            "graphite_exhausted"
+          ],
+          "source_cv_j_k": "0.394085046655949921715246340311365419795648925208621350591595",
+          "source_cv_error_j_k": 9.654973055363303e-16,
+          "projected_internal_energy_error_j": 4.74519645582978e-15,
+          "projected_entropy_error_j_k": 1.4871710459788135e-17,
+          "projected_pressure_error_pa": 2.1976189651828566e-29,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        }
+      ],
+      "all_requested_boundary_budgets_met": true
+    },
+    {
+      "case": {
+        "name": "limited_calcite_onset",
+        "inventory_name": "limited_carbon",
+        "kind": "calcite_onset",
+        "temperature_bracket_k": [
+          1100,
+          1150
+        ],
+        "left_phases": [
+          "calcite",
+          "graphite_exhausted"
+        ],
+        "right_phases": [
+          "coexistence",
+          "graphite_exhausted"
+        ]
+      },
+      "inventory": {
+        "name": "limited_carbon",
+        "calcium_atoms_mol": 0.002,
+        "carbon_atoms_mol": 0.0035,
+        "oxygen_atoms_mol": 0.008,
+        "nitrogen_molecules_mol": 0.004
+      },
+      "candidate_temperature_k": 1112.181668654847,
+      "reference_temperature_k": "1112.18166865480102138399954324069178636296309249177233005661",
+      "reference_pressure_pa": "508974.436840637128786670555353701829339239969293143983831549",
+      "reference_internal_energy_j": "-2444.33373961794611199834647135839010753681686479883447284256",
+      "reference_entropy_j_k": "1.72967747120752653042520716615476498668991146378012964620596",
+      "reference_amounts_mol": {
+        "calcite": "0.00200000000000000004163336342344337026588618755340576171875",
+        "lime": "0.0",
+        "C": "0.0",
+        "CO": "0.00100000000000000002252209894540614160722256082266118528478109",
+        "CO2": "0.000500000000000000008702923622176386092192079842393136004281412",
+        "O2": "8.52708616842228237139733522979152212703043398559608009735042e-22",
+        "N2": "0.0040000000000000000832667268468867405317723751068115234375"
+      },
+      "boundary_errors": {
+        "boundary_temperature_k": 4.602292455390657e-11,
+        "boundary_pressure_pa": 2.1063736153255224e-08,
+        "source_internal_energy_j": 1.8435407721274664e-11,
+        "source_entropy_j_k": 1.6585313551221878e-14,
+        "volume_m3": 1.3873736644135998e-58,
+        "phase_endpoint_mol": 0.0
+      },
+      "boundary_within_budgets": {
+        "boundary_temperature_k": true,
+        "boundary_pressure_pa": true,
+        "source_internal_energy_j": true,
+        "source_entropy_j_k": true,
+        "volume_m3": true,
+        "phase_endpoint_mol": true
+      },
+      "one_sided_records": [
+        {
+          "direction": -1,
+          "offset_k": 0.0001,
+          "phases": [
+            "calcite",
+            "graphite_exhausted"
+          ],
+          "source_cv_j_k": "0.40419238555640880532075026318873542833090385908036495987822",
+          "source_cv_error_j_k": 1.0032231431676543e-17,
+          "projected_internal_energy_error_j": 4.481639002743881e-13,
+          "projected_entropy_error_j_k": 1.230870175462989e-15,
+          "projected_pressure_error_pa": 1.1489450781147021e-24,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 0.0001,
+          "phases": [
+            "coexistence",
+            "graphite_exhausted"
+          ],
+          "source_cv_j_k": "1.63510458400314274637187444006448199088494770407744172015458",
+          "source_cv_error_j_k": 7.671051118253508e-15,
+          "projected_internal_energy_error_j": 8.15062488628711e-11,
+          "projected_entropy_error_j_k": 6.667558129846396e-14,
+          "projected_pressure_error_pa": 5.472330960486087e-08,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": -1,
+          "offset_k": 3e-05,
+          "phases": [
+            "calcite",
+            "graphite_exhausted"
+          ],
+          "source_cv_j_k": "0.40419239183070340188111768331970522407410378162053337734418",
+          "source_cv_error_j_k": 1.337292812008173e-16,
+          "projected_internal_energy_error_j": 4.033475008448781e-14,
+          "projected_entropy_error_j_k": 1.1077830734061938e-16,
+          "projected_pressure_error_pa": 1.0340531191947872e-25,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 3e-05,
+          "phases": [
+            "coexistence",
+            "graphite_exhausted"
+          ],
+          "source_cv_j_k": "1.63510344291568889197615490583204919409501465229202948073491",
+          "source_cv_error_j_k": 2.2458223317798377e-13,
+          "projected_internal_energy_error_j": 7.335558494589495e-12,
+          "projected_entropy_error_j_k": 6.000799311063262e-15,
+          "projected_pressure_error_pa": 4.925094922984665e-09,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": -1,
+          "offset_k": 1e-05,
+          "phases": [
+            "calcite",
+            "graphite_exhausted"
+          ],
+          "source_cv_j_k": "0.40419239362335896101079096068806764162949740580163253232041",
+          "source_cv_error_j_k": 5.781224070914268e-17,
+          "projected_internal_energy_error_j": 4.4816388684285806e-15,
+          "projected_entropy_error_j_k": 1.2308700547337109e-17,
+          "projected_pressure_error_pa": 1.1489487193897683e-26,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 1e-05,
+          "phases": [
+            "coexistence",
+            "graphite_exhausted"
+          ],
+          "source_cv_j_k": "1.63510311689086766117216181398772973055981453800164757495892",
+          "source_cv_error_j_k": 4.970180780067651e-14,
+          "projected_internal_energy_error_j": 8.150619310474769e-13,
+          "projected_entropy_error_j_k": 6.667553835848803e-16,
+          "projected_pressure_error_pa": 5.472326758410975e-10,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        }
+      ],
+      "all_requested_boundary_budgets_met": true
+    },
+    {
+      "case": {
+        "name": "coupled_calcite_onset",
+        "inventory_name": "coupled_carbon",
+        "kind": "calcite_onset",
+        "temperature_bracket_k": [
+          1050,
+          1100
+        ],
+        "left_phases": [
+          "calcite",
+          "graphite_present"
+        ],
+        "right_phases": [
+          "coexistence",
+          "graphite_present"
+        ]
+      },
+      "inventory": {
+        "name": "coupled_carbon",
+        "calcium_atoms_mol": 0.002,
+        "carbon_atoms_mol": 0.0045,
+        "oxygen_atoms_mol": 0.008,
+        "nitrogen_molecules_mol": 0.004
+      },
+      "candidate_temperature_k": 1075.6883291260428,
+      "reference_temperature_k": "1075.68832912604303625919778458767109294140976452809673388947",
+      "reference_pressure_pa": "512128.080209359902653111196485671133870908270492637989165197",
+      "reference_internal_energy_j": "-2409.90738741912444231054437465117927256801179867287487182568",
+      "reference_entropy_j_k": "1.77668439461786656188505226862589555751215707571981456271488",
+      "reference_amounts_mol": {
+        "calcite": "0.00200000000000000004163336342344337026588618755340576171875",
+        "lime": "0.0",
+        "C": "0.00077841097219636334187180982049758262928228637463216973957094",
+        "CO": "0.00144317805560727251137777046699877814310341091544110851497888",
+        "CO2": "0.000278410972196363765111254997606078456990916803707239323575184",
+        "O2": "1.65414806162176044004715152750872794005149536060984597625201e-23",
+        "N2": "0.0040000000000000000832667268468867405317723751068115234375"
+      },
+      "boundary_errors": {
+        "boundary_temperature_k": 1.9124052409641439e-13,
+        "boundary_pressure_pa": 8.19831594955692e-08,
+        "source_internal_energy_j": 4.0737337029457755e-12,
+        "source_entropy_j_k": 1.1298271288561519e-14,
+        "volume_m3": 9.512871177022458e-57,
+        "phase_endpoint_mol": 0.0
+      },
+      "boundary_within_budgets": {
+        "boundary_temperature_k": true,
+        "boundary_pressure_pa": true,
+        "source_internal_energy_j": true,
+        "source_entropy_j_k": true,
+        "volume_m3": true,
+        "phase_endpoint_mol": true
+      },
+      "one_sided_records": [
+        {
+          "direction": -1,
+          "offset_k": 0.0001,
+          "phases": [
+            "calcite",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "0.842334531505924611172356127669247335897245857436485898069289",
+          "source_cv_error_j_k": 1.2967793674908195e-14,
+          "projected_internal_energy_error_j": 1.2114247630521073e-11,
+          "projected_entropy_error_j_k": 1.4901692319973245e-14,
+          "projected_pressure_error_pa": 4.541397620984549e-09,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 0.0001,
+          "phases": [
+            "coexistence",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "5.02868320793383012405063807067176476748142188010149927850332",
+          "source_cv_error_j_k": 3.5789175233828404e-13,
+          "projected_internal_energy_error_j": 3.3248541718596115e-10,
+          "projected_entropy_error_j_k": 2.873612587110433e-13,
+          "projected_pressure_error_pa": 2.1252286678401358e-07,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": -1,
+          "offset_k": 3e-05,
+          "phases": [
+            "calcite",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "0.842334361906454888592230858303639182092500293341624023963218",
+          "source_cv_error_j_k": 1.637732287370829e-14,
+          "projected_internal_energy_error_j": 1.090282660615659e-12,
+          "projected_entropy_error_j_k": 1.3411525399933231e-15,
+          "projected_pressure_error_pa": 4.0872608367936006e-10,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 3e-05,
+          "phases": [
+            "coexistence",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "5.02867855313812692891332710611580008143847873237406576331784",
+          "source_cv_error_j_k": 3.300902315530718e-13,
+          "projected_internal_energy_error_j": 2.992366980314973e-11,
+          "projected_entropy_error_j_k": 2.5862499032884532e-14,
+          "projected_pressure_error_pa": 1.912704549617393e-08,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": -1,
+          "offset_k": 1e-05,
+          "phases": [
+            "calcite",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "0.842334313449447678186046523726409670865863552120164091854129",
+          "source_cv_error_j_k": 1.6018437789917037e-14,
+          "projected_internal_energy_error_j": 1.2114252971501953e-13,
+          "projected_entropy_error_j_k": 1.4901695622767998e-16,
+          "projected_pressure_error_pa": 4.541401875137433e-11,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 1e-05,
+          "phases": [
+            "coexistence",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "5.0286772231972502027951712098411767011396625414645654213885",
+          "source_cv_error_j_k": 2.9186160222887294e-14,
+          "projected_internal_energy_error_j": 3.3248516370617e-12,
+          "projected_entropy_error_j_k": 2.873610551237809e-15,
+          "projected_pressure_error_pa": 2.125226880070682e-09,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        }
+      ],
+      "all_requested_boundary_budgets_met": true
+    },
+    {
+      "case": {
+        "name": "coupled_graphite_exhaustion",
+        "inventory_name": "coupled_carbon",
+        "kind": "graphite_exhaustion",
+        "temperature_bracket_k": [
+          1100,
+          1150
+        ],
+        "left_phases": [
+          "coexistence",
+          "graphite_present"
+        ],
+        "right_phases": [
+          "coexistence",
+          "graphite_exhausted"
+        ]
+      },
+      "inventory": {
+        "name": "coupled_carbon",
+        "calcium_atoms_mol": 0.002,
+        "carbon_atoms_mol": 0.0045,
+        "oxygen_atoms_mol": 0.008,
+        "nitrogen_molecules_mol": 0.004
+      },
+      "candidate_temperature_k": 1121.5254153506082,
+      "reference_temperature_k": "1121.525415350609775708768260411325538684383804283048799479",
+      "reference_pressure_pa": "706952.84774784878276224282190411284780302579340608139260355",
+      "reference_internal_energy_j": "-2094.80670212568624560535155563351207897785590524456333444835",
+      "reference_entropy_j_k": "2.06295940015693729935910761632769753651095422982489964647641",
+      "reference_amounts_mol": {
+        "calcite": "0.000922634893364894463010285443520550853349979614497320237781581",
+        "lime": "0.00107736510663510557862307797992281941253620793890844148096842",
+        "C": "0.0",
+        "CO": "0.00299999999999999919550501218960415848247832584467403155615657",
+        "CO2": "0.000577365106635106001478901075421100159434496188014927508290304",
+        "O2": "2.08352521421325144805642605259379057081407045211422325665204e-22",
+        "N2": "0.0040000000000000000832667268468867405317723751068115234375"
+      },
+      "boundary_errors": {
+        "boundary_temperature_k": 1.5481816499724307e-12,
+        "boundary_pressure_pa": 2.159810914067479e-09,
+        "source_internal_energy_j": 3.352102194711239e-11,
+        "source_entropy_j_k": 3.17010365977847e-14,
+        "volume_m3": 6.530488408366266e-59,
+        "phase_endpoint_mol": 8.890457814381136e-17
+      },
+      "boundary_within_budgets": {
+        "boundary_temperature_k": true,
+        "boundary_pressure_pa": true,
+        "source_internal_energy_j": true,
+        "source_entropy_j_k": true,
+        "volume_m3": true,
+        "phase_endpoint_mol": true
+      },
+      "one_sided_records": [
+        {
+          "direction": -1,
+          "offset_k": 0.0001,
+          "phases": [
+            "coexistence",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "9.07868040256333818952228003591215564839593815632870582209107",
+          "source_cv_error_j_k": 3.2104293968831464e-12,
+          "projected_internal_energy_error_j": 5.677093668719503e-10,
+          "projected_entropy_error_j_k": 4.701049785750811e-13,
+          "projected_pressure_error_pa": 3.842415774076652e-07,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 0.0001,
+          "phases": [
+            "coexistence",
+            "graphite_exhausted"
+          ],
+          "source_cv_j_k": "1.7728448148476513551997838120264927193680307935045324087837",
+          "source_cv_error_j_k": 9.463013836157956e-15,
+          "projected_internal_energy_error_j": 9.024126099014969e-11,
+          "projected_entropy_error_j_k": 7.341566854778e-14,
+          "projected_pressure_error_pa": 6.137627925167744e-08,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": -1,
+          "offset_k": 3e-05,
+          "phases": [
+            "coexistence",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "9.07868835049468485644487718023627738088006782348297363619126",
+          "source_cv_error_j_k": 4.3899122687246616e-14,
+          "projected_internal_energy_error_j": 5.1093870195229856e-11,
+          "projected_entropy_error_j_k": 4.230946878272153e-14,
+          "projected_pressure_error_pa": 3.458176239530854e-08,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 3e-05,
+          "phases": [
+            "coexistence",
+            "graphite_exhausted"
+          ],
+          "source_cv_j_k": "1.77284355147003023767075604822952340105461973312837242537219",
+          "source_cv_error_j_k": 1.197364389385015e-14,
+          "projected_internal_energy_error_j": 8.1217092607952e-12,
+          "projected_entropy_error_j_k": 6.607406949019529e-15,
+          "projected_pressure_error_pa": 5.523861902878797e-09,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": -1,
+          "offset_k": 1e-05,
+          "phases": [
+            "coexistence",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "9.07869062133336542880601617138709144430831718119204122120477",
+          "source_cv_error_j_k": 9.917660759394425e-14,
+          "projected_internal_energy_error_j": 5.677097551113246e-12,
+          "projected_entropy_error_j_k": 4.7010527444601656e-15,
+          "projected_pressure_error_pa": 3.84241869245098e-09,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 1e-05,
+          "phases": [
+            "coexistence",
+            "graphite_exhausted"
+          ],
+          "source_cv_j_k": "1.77284319050517501585792766615704840178956518252345654539934",
+          "source_cv_error_j_k": 6.207174843288034e-14,
+          "projected_internal_energy_error_j": 9.024120058560694e-13,
+          "projected_entropy_error_j_k": 7.341562254377306e-16,
+          "projected_pressure_error_pa": 6.137623311207858e-10,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        }
+      ],
+      "all_requested_boundary_budgets_met": true
+    },
+    {
+      "case": {
+        "name": "coupled_calcite_exhaustion",
+        "inventory_name": "coupled_carbon",
+        "kind": "calcite_exhaustion",
+        "temperature_bracket_k": [
+          1150,
+          1190
+        ],
+        "left_phases": [
+          "coexistence",
+          "graphite_exhausted"
+        ],
+        "right_phases": [
+          "lime",
+          "graphite_exhausted"
+        ]
+      },
+      "inventory": {
+        "name": "coupled_carbon",
+        "calcium_atoms_mol": 0.002,
+        "carbon_atoms_mol": 0.0045,
+        "oxygen_atoms_mol": 0.008,
+        "nitrogen_molecules_mol": 0.004
+      },
+      "candidate_temperature_k": 1188.4892609675578,
+      "reference_temperature_k": "1188.48926096756831440627346275561843066764834130595463506275",
+      "reference_pressure_pa": "840226.640812634158761952633896790725178153319876543905978208",
+      "reference_internal_energy_j": "-1924.38685282176040837152764924445635155105262955389865025666",
+      "reference_entropy_j_k": "2.21006644174929607597045471354510681220799525710050932812809",
+      "reference_amounts_mol": {
+        "calcite": "0.0",
+        "lime": "0.00200000000000000004163336342344337026588618755340576171875",
+        "C": "0.0",
+        "CO": "0.00299999999999999927527591560418632294803713130271450326122333",
+        "CO2": "0.00150000000000000038471828310435948654722567034447177603565167",
+        "O2": "4.00938042287124073775850453342796149118616643619207908505378e-20",
+        "N2": "0.0040000000000000000832667268468867405317723751068115234375"
+      },
+      "boundary_errors": {
+        "boundary_temperature_k": 1.0502951520071312e-11,
+        "boundary_pressure_pa": 6.769666229004899e-09,
+        "source_internal_energy_j": 4.0696227653252275e-12,
+        "source_entropy_j_k": 3.066803577913536e-15,
+        "volume_m3": 2.999080116820775e-61,
+        "phase_endpoint_mol": 0.0
+      },
+      "boundary_within_budgets": {
+        "boundary_temperature_k": true,
+        "boundary_pressure_pa": true,
+        "source_internal_energy_j": true,
+        "source_entropy_j_k": true,
+        "volume_m3": true,
+        "phase_endpoint_mol": true
+      },
+      "one_sided_records": [
+        {
+          "direction": -1,
+          "offset_k": 0.0001,
+          "phases": [
+            "coexistence",
+            "graphite_exhausted"
+          ],
+          "source_cv_j_k": "3.50819677330682539492070688240558183223506179405251942192986",
+          "source_cv_error_j_k": 6.991569896122503e-13,
+          "projected_internal_energy_error_j": 1.7607956974018112e-10,
+          "projected_entropy_error_j_k": 1.3573577708757417e-13,
+          "projected_pressure_error_pa": 1.3064526600781364e-07,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 0.0001,
+          "phases": [
+            "lime",
+            "graphite_exhausted"
+          ],
+          "source_cv_j_k": "0.358072227150557773401181074909590403083154503877497298946756",
+          "source_cv_error_j_k": 3.574876335773773e-17,
+          "projected_internal_energy_error_j": 2.600114897636709e-13,
+          "projected_entropy_error_j_k": 1.0487313480881957e-15,
+          "projected_pressure_error_pa": 4.404471516841825e-23,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": -1,
+          "offset_k": 3e-05,
+          "phases": [
+            "coexistence",
+            "graphite_exhausted"
+          ],
+          "source_cv_j_k": "3.50819923842085604768722923028072781914990478946668795571084",
+          "source_cv_error_j_k": 1.4414034918380922e-13,
+          "projected_internal_energy_error_j": 1.584716828713988e-11,
+          "projected_entropy_error_j_k": 1.2216224877213737e-14,
+          "projected_pressure_error_pa": 1.1758079862358644e-08,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 3e-05,
+          "phases": [
+            "lime",
+            "graphite_exhausted"
+          ],
+          "source_cv_j_k": "0.358072223510396907673165620175077067515755891682479082279592",
+          "source_cv_error_j_k": 6.205246757814754e-17,
+          "projected_internal_energy_error_j": 2.3401035245633508e-14,
+          "projected_entropy_error_j_k": 9.438582775831975e-17,
+          "projected_pressure_error_pa": 3.96401586199866e-24,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": -1,
+          "offset_k": 1e-05,
+          "phases": [
+            "coexistence",
+            "graphite_exhausted"
+          ],
+          "source_cv_j_k": "3.50819994273944793606332886581608842938321853791745727465869",
+          "source_cv_error_j_k": 3.222511722405641e-14,
+          "projected_internal_energy_error_j": 1.7607966989052332e-12,
+          "projected_entropy_error_j_k": 1.3573584764946395e-15,
+          "projected_pressure_error_pa": 1.3064535060289653e-09,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 1e-05,
+          "phases": [
+            "lime",
+            "graphite_exhausted"
+          ],
+          "source_cv_j_k": "0.358072222470350896531608518490637988956319569498004830351015",
+          "source_cv_error_j_k": 3.160033187196062e-17,
+          "projected_internal_energy_error_j": 2.6001150643371575e-15,
+          "projected_entropy_error_j_k": 1.0487314399507993e-17,
+          "projected_pressure_error_pa": 4.404459369475949e-25,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        }
+      ],
+      "all_requested_boundary_budgets_met": true
+    },
+    {
+      "case": {
+        "name": "excess_calcite_onset",
+        "inventory_name": "excess_carbon",
+        "kind": "calcite_onset",
+        "temperature_bracket_k": [
+          1050,
+          1100
+        ],
+        "left_phases": [
+          "calcite",
+          "graphite_present"
+        ],
+        "right_phases": [
+          "coexistence",
+          "graphite_present"
+        ]
+      },
+      "inventory": {
+        "name": "excess_carbon",
+        "calcium_atoms_mol": 0.002,
+        "carbon_atoms_mol": 0.007,
+        "oxygen_atoms_mol": 0.008,
+        "nitrogen_molecules_mol": 0.004
+      },
+      "candidate_temperature_k": 1075.6962730712862,
+      "reference_temperature_k": "1075.69627307128636401458830406553392012780662293692997303465",
+      "reference_pressure_pa": "512199.761933672356055296451976270905415763456245383236550099",
+      "reference_internal_energy_j": "-2376.30203273288626398451358313348797552818540322113887753967",
+      "reference_entropy_j_k": "1.84179922510489268927775459925093434888078460237424197669467",
+      "reference_amounts_mol": {
+        "calcite": "0.00200000000000000004163336342344337026588618755340576171875",
+        "lime": "0.0",
+        "C": "0.00327841090670938862932862594740760291973520157101446121347257",
+        "CO": "0.00144317818658122290790929553596065100538904775555977491090013",
+        "CO2": "0.000278410906709388566845487075240171739591219556940168172502297",
+        "O2": "1.65468685011878906573503419828252314226384020657570235947704e-23",
+        "N2": "0.0040000000000000000832667268468867405317723751068115234375"
+      },
+      "boundary_errors": {
+        "boundary_temperature_k": 1.5005199425687677e-13,
+        "boundary_pressure_pa": 2.2266139674878403e-12,
+        "source_internal_energy_j": 5.366743755317232e-13,
+        "source_entropy_j_k": 2.2138086582454767e-16,
+        "volume_m3": 7.596454196607839e-65,
+        "phase_endpoint_mol": 0.0
+      },
+      "boundary_within_budgets": {
+        "boundary_temperature_k": true,
+        "boundary_pressure_pa": true,
+        "source_internal_energy_j": true,
+        "source_entropy_j_k": true,
+        "volume_m3": true,
+        "phase_endpoint_mol": true
+      },
+      "one_sided_records": [
+        {
+          "direction": -1,
+          "offset_k": 0.0001,
+          "phases": [
+            "calcite",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "0.897680845264785190159067888489973063522148697900007509514309",
+          "source_cv_error_j_k": 3.4170827854682966e-16,
+          "projected_internal_energy_error_j": 1.2035578769438688e-11,
+          "projected_entropy_error_j_k": 1.5067577403256023e-14,
+          "projected_pressure_error_pa": 4.541895331976597e-09,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 0.0001,
+          "phases": [
+            "coexistence",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "5.08395845155689604182393594804811553761234858729439245091832",
+          "source_cv_error_j_k": 3.821062808557965e-13,
+          "projected_internal_energy_error_j": 3.3255229192380706e-10,
+          "projected_entropy_error_j_k": 2.871826180043006e-13,
+          "projected_pressure_error_pa": 2.1254582044891374e-07,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": -1,
+          "offset_k": 3e-05,
+          "phases": [
+            "calcite",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "0.897680676766679517416661865768199434681163160283350626629228",
+          "source_cv_error_j_k": 8.97212430145787e-16,
+          "projected_internal_energy_error_j": 1.0832024638046596e-12,
+          "projected_entropy_error_j_k": 1.3560821968297993e-15,
+          "projected_pressure_error_pa": 4.0877087769559705e-10,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 3e-05,
+          "phases": [
+            "coexistence",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "5.08395379582494650397661046942539498573995202237253797155701",
+          "source_cv_error_j_k": 5.542725962700985e-13,
+          "projected_internal_energy_error_j": 2.992968853121741e-11,
+          "projected_entropy_error_j_k": 2.5846421369532572e-14,
+          "projected_pressure_error_pa": 1.912911132488868e-08,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": -1,
+          "offset_k": 1e-05,
+          "phases": [
+            "calcite",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "0.897680628624347720700603391096324687732603603805459730584762",
+          "source_cv_error_j_k": 4.441443532829814e-16,
+          "projected_internal_energy_error_j": 1.2035584120225501e-13,
+          "projected_entropy_error_j_k": 1.5067580696636864e-16,
+          "projected_pressure_error_pa": 4.541899586514519e-11,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 1e-05,
+          "phases": [
+            "coexistence",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "5.0839524656165707523087537626783301822774766864361050395372",
+          "source_cv_error_j_k": 4.564841440627812e-14,
+          "projected_internal_energy_error_j": 3.3255203846775224e-12,
+          "projected_entropy_error_j_k": 2.871824144206793e-15,
+          "projected_pressure_error_pa": 2.1254564165587893e-09,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        }
+      ],
+      "all_requested_boundary_budgets_met": true
+    },
+    {
+      "case": {
+        "name": "excess_calcite_exhaustion",
+        "inventory_name": "excess_carbon",
+        "kind": "calcite_exhaustion",
+        "temperature_bracket_k": [
+          1100,
+          1150
+        ],
+        "left_phases": [
+          "coexistence",
+          "graphite_present"
+        ],
+        "right_phases": [
+          "lime",
+          "graphite_present"
+        ]
+      },
+      "inventory": {
+        "name": "excess_carbon",
+        "calcium_atoms_mol": 0.002,
+        "carbon_atoms_mol": 0.007,
+        "oxygen_atoms_mol": 0.008,
+        "nitrogen_molecules_mol": 0.004
+      },
+      "candidate_temperature_k": 1146.2051582663432,
+      "reference_temperature_k": "1146.20515826631530149672102078563523048136180438079257027733",
+      "reference_pressure_pa": "874015.171867964252900702999833067554968398008325094636532038",
+      "reference_internal_energy_j": "-1795.4168513392305818393805351139965506259673243510409146829",
+      "reference_entropy_j_k": "2.36243194900522638621654481696366597981569905487985422081211",
+      "reference_amounts_mol": {
+        "calcite": "0.0",
+        "lime": "0.00200000000000000004163336342344337026588618755340576171875",
+        "C": "0.00183289588388465787203581785289554003146119708254524293480126",
+        "CO": "0.00433420823223068442395775438171051634914861648501353404582676",
+        "CO2": "0.00083289588388465784972319974744573954999184286936138903499698",
+        "O2": "7.47968196864057674263130218240486682072891755603318121689876e-22",
+        "N2": "0.0040000000000000000832667268468867405317723751068115234375"
+      },
+      "boundary_errors": {
+        "boundary_temperature_k": 2.7931256849170775e-11,
+        "boundary_pressure_pa": 3.697436638350606e-08,
+        "source_internal_energy_j": 4.185731597033404e-11,
+        "source_entropy_j_k": 3.72676569538801e-14,
+        "volume_m3": 2.054744670081156e-57,
+        "phase_endpoint_mol": 0.0
+      },
+      "boundary_within_budgets": {
+        "boundary_temperature_k": true,
+        "boundary_pressure_pa": true,
+        "source_internal_energy_j": true,
+        "source_entropy_j_k": true,
+        "volume_m3": true,
+        "phase_endpoint_mol": true
+      },
+      "one_sided_records": [
+        {
+          "direction": -1,
+          "offset_k": 0.0001,
+          "phases": [
+            "coexistence",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "12.3462962917206891661334861086758043032444824832078758161833",
+          "source_cv_error_j_k": 4.210648894126311e-13,
+          "projected_internal_energy_error_j": 7.400303974280531e-10,
+          "projected_entropy_error_j_k": 5.986477525946766e-13,
+          "projected_pressure_error_pa": 5.160598242911208e-07,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 0.0001,
+          "phases": [
+            "lime",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "1.49878214576431228809168871094266653362084931087155895310315",
+          "source_cv_error_j_k": 3.828146320043111e-15,
+          "projected_internal_energy_error_j": 2.93270883314607e-11,
+          "projected_entropy_error_j_k": 3.129030185674096e-14,
+          "projected_pressure_error_pa": 1.1192933424250386e-08,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": -1,
+          "offset_k": 3e-05,
+          "phases": [
+            "coexistence",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "12.3463066521465122867848161029668018264138107314455595176233",
+          "source_cv_error_j_k": 2.468406259101618e-12,
+          "projected_internal_energy_error_j": 6.660276922983833e-11,
+          "projected_entropy_error_j_k": 5.387832253944025e-14,
+          "projected_pressure_error_pa": 4.6445410192843735e-08,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 3e-05,
+          "phases": [
+            "lime",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "1.49878255634354367859205695294578276922220999697535899444829",
+          "source_cv_error_j_k": 1.3907185507339841e-15,
+          "projected_internal_energy_error_j": 2.6394372719020224e-12,
+          "projected_entropy_error_j_k": 2.816126804963053e-15,
+          "projected_pressure_error_pa": 1.007363388334771e-09,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": -1,
+          "offset_k": 1e-05,
+          "phases": [
+            "coexistence",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "12.3463096122695956064505537024031073153909658978656045344276",
+          "source_cv_error_j_k": 1.8379137300706768e-13,
+          "projected_internal_energy_error_j": 7.400308754468488e-12,
+          "projected_entropy_error_j_k": 5.9864810696497316e-15,
+          "projected_pressure_error_pa": 5.160601958146181e-09,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 1e-05,
+          "phases": [
+            "lime",
+            "graphite_present"
+          ],
+          "source_cv_j_k": "1.49878267365186674380379850613863014082594730871094595362207",
+          "source_cv_error_j_k": 1.7276637484041715e-15,
+          "projected_internal_energy_error_j": 2.932707864675183e-13,
+          "projected_entropy_error_j_k": 3.1290296683258135e-16,
+          "projected_pressure_error_pa": 1.119292456928099e-10,
+          "within_budgets": {
+            "expected_phases": true,
+            "phase_constraints": true,
+            "internal_energy_continuity": true,
+            "entropy_continuity": true,
+            "pressure_continuity": true,
+            "one_sided_cv": true,
+            "positive_cv": true
+          }
+        }
+      ],
+      "all_requested_boundary_budgets_met": true
+    }
+  ],
+  "all_requested_phase_boundary_budgets_met": true,
+  "material_qualified": false,
+  "training_eligible": false
+}

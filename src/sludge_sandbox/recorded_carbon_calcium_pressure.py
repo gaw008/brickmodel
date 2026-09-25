@@ -19,6 +19,43 @@ class RecordedCarbonCalciumPressure:
         self.volumes = solid_volumes_m3_mol
         self.parameters = parameters
 
+    def at_temperature_volume(self, temperature_k, total_volume_m3,
+                              calcium_atoms_mol, carbon_atoms_mol,
+                              oxygen_atoms_mol, nitrogen_molecules_mol, numerics):
+        """Flash a rigid capsule whose volume exceeds the solid upper bound.
+
+        The elemental gas and solid upper bounds give the pressure bracket;
+        no guessed pressure floor, composition clipping or fallback is used.
+        """
+        inputs = (calcium_atoms_mol, carbon_atoms_mol,
+                  oxygen_atoms_mol, nitrogen_molecules_mol)
+        maximum_solid_volume = calcium_atoms_mol * max(self.volumes['calcite'], self.volumes['lime'])
+        maximum_solid_volume += carbon_atoms_mol * self.volumes['C']
+        maximum_gas_moles = nitrogen_molecules_mol + carbon_atoms_mol + oxygen_atoms_mol / 2
+        rt = self.r * temperature_k
+        lower = nitrogen_molecules_mol * rt / total_volume_m3
+        upper = maximum_gas_moles * rt / (total_volume_m3 - maximum_solid_volume)
+        log_pressure = brentq(lambda value: self.at_temperature_pressure(
+            temperature_k, math.exp(value), *inputs)['total_volume_m3'] / total_volume_m3 - 1,
+            math.log(lower), math.log(upper),
+            xtol=numerics['log_pressure_absolute_tolerance'],
+            rtol=numerics['log_pressure_relative_tolerance'],
+            maxiter=numerics['maximum_root_iterations'])
+        return self.at_temperature_pressure(temperature_k, math.exp(log_pressure), *inputs)
+
+    def from_internal_energy(self, internal_energy_j, total_volume_m3,
+                             calcium_atoms_mol, carbon_atoms_mol,
+                             oxygen_atoms_mol, nitrogen_molecules_mol, numerics):
+        inputs = (total_volume_m3, calcium_atoms_mol, carbon_atoms_mol,
+                  oxygen_atoms_mol, nitrogen_molecules_mol, numerics)
+        temperature = brentq(lambda value: self.at_temperature_volume(
+            value, *inputs)['internal_energy_j'] - internal_energy_j,
+            *self.phases['calcite'].temperature_domain_k,
+            xtol=numerics['temperature_absolute_tolerance_k'],
+            rtol=numerics['temperature_relative_tolerance'],
+            maxiter=numerics['maximum_root_iterations'])
+        return self.at_temperature_volume(temperature, *inputs)
+
     def at_temperature_pressure(self, temperature_k, pressure_pa,
                                 calcium_atoms_mol, carbon_atoms_mol,
                                 oxygen_atoms_mol, nitrogen_molecules_mol):
