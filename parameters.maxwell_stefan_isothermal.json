@@ -1,0 +1,47 @@
+{
+  "source": {
+    "author": "Dieter Bothe",
+    "title": "On the Maxwell-Stefan approach to multicomponent diffusion",
+    "version": "arXiv:1007.1775v1, 2010-07-11",
+    "url": "https://arxiv.org/pdf/1007.1775",
+    "local_reading_copy": ".tools/source-cache/maxwell-stefan/bothe2010.pdf",
+    "molar_frame_equations": [5, 7, 8],
+    "molar_frame_pdf_page": 3,
+    "force_and_friction_equations": [13, 15, 17, 18],
+    "force_and_friction_pdf_pages": [4, 5],
+    "binary_limit_equations": [19, 20, 21],
+    "binary_limit_pdf_pages": [5, 6],
+    "scope": "Local isothermal isobaric ideal-gas limit. Binary MS diffusivities are friction inputs, not independent Fick coefficients in a mixture."
+  },
+  "transport_parameters": "parameters.nonpolar_gas_transport.json",
+  "constants": {
+    "boltzmann_j_k": "1.380649e-23",
+    "avogadro_mol_inverse": "6.02214076e23",
+    "gram_to_kg": "0.001",
+    "gas_constant_definition": "R = exact SI kB times NA; not the historical R used by the separate USGS reaction model"
+  },
+  "species_order": ["CO", "CO2", "O2", "N2"],
+  "conditions": {
+    "temperatures_k": [300, 600, 1200],
+    "pressures_pa": [50000, 100000, 200000],
+    "mole_fraction_vectors": [["0.1", "0.2", "0.3", "0.4"], ["0.0004", "0.2", "0.21", "0.5896"], ["0.8", "0.05", "0.05", "0.1"]],
+    "composition_gradients_per_m": [["0", "2", "-1", "-1"], ["1", "0", "-0.5", "-0.5"], ["0.4", "-1", "0.1", "0.5"], ["0", "0", "0", "0"]],
+    "input_classification": "Explicit manufactured local compositions and gradients for equation qualification; not measured brick states."
+  },
+  "review": {
+    "decimal_precision": 80,
+    "absolute_flux_budget_mol_m2_s": 1e-12,
+    "relative_flux_budget": 1e-10,
+    "absolute_entropy_budget_w_m3_k": 1e-12,
+    "relative_entropy_budget": 1e-10,
+    "molar_frame_sum_budget_mol_m2_s": 1e-12,
+    "mass_frame_sum_budget_kg_m2_s": 1e-14,
+    "equation_residual_budget_mol_m4": 1e-10,
+    "binary_mole_fractions": ["0.2", "0.8"],
+    "binary_gradient_per_m": ["1", "-1"]
+  },
+  "exclusions": ["temperature gradient", "pressure gradient", "solid friction", "pore geometry", "finite-volume assembly", "reactions", "real-gas activities"],
+  "binary_diffusivities_experimentally_validated": false,
+  "material_qualified": false,
+  "training_eligible": false
+}

@@ -1,3 +1,7 @@
+## 2026-09-25 17:34 UTC 增量：四组分交叉扩散局部方程资格
+
+[等温等压Maxwell–Stefan](research/maxwell-stefan-isothermal-v1/REPORT.md)108个四组分点、54个二元Fick极限通过80位原方程、摩尔/质量参考系及熵核查；保留54个自身零梯度但非零通量的交叉影响。二元D仍是来源近似，尚无有限面、热反应或实砖资格。[氧气历史追查](research/gas-conductivity-source-resolution-v1/REPORT.md)复算1982式与1973理论表接近，但旧网页高温差异仍未解释。两个八格自适应路径和显式表面16已完成积分，完整收支核查继续；原64和低温128长审查未结束。
+
 ## 2026-09-25 17:20 UTC 增量：自适应开放导数两格资格与新版气体来源
 
 [开放导数研究](research/carbon-calcium-open-colored-jacobian-v1/REPORT.md)直接/显式表面各两档30000s全来源、局部及外界收支、熵、求积、时间和旧路径对照全部通过。直接两格步数上升，未宣称提速；八格对照继续。[氮气2025导热率](research/gas-conductivity-source-resolution-v1/REPORT.md)36字段高精度复算和表8两计算点通过，1000K相对2004版高6.18%，来源差异明确保留；没有替换既有虚拟孔内参数。氧气历史版本继续追查，实砖及全周期资格未解除。
