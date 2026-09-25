@@ -1,0 +1,78 @@
+{
+  "model_parameters_file": "parameters.sorptive_mobile_water.json",
+  "cell_count": 4,
+  "reference_shift_j_mol": 1000000.0,
+  "cases": [
+    {
+      "name": "same_state",
+      "left": {
+        "temperature_k": 330.0,
+        "pressure_pa": 100000.0,
+        "moisture_kg_kg": 0.3
+      },
+      "right": {
+        "temperature_k": 330.0,
+        "pressure_pa": 100000.0,
+        "moisture_kg_kg": 0.3
+      }
+    },
+    {
+      "name": "isothermal_source_moisture_gradient",
+      "left": {
+        "temperature_k": 330.0,
+        "pressure_pa": 100000.0,
+        "moisture_kg_kg": 0.6
+      },
+      "right": {
+        "temperature_k": 330.0,
+        "pressure_pa": 100000.0,
+        "moisture_kg_kg": 0.2
+      }
+    },
+    {
+      "name": "isothermal_pressure_gradient",
+      "left": {
+        "temperature_k": 330.0,
+        "pressure_pa": 101000.0,
+        "moisture_kg_kg": 0.3
+      },
+      "right": {
+        "temperature_k": 330.0,
+        "pressure_pa": 100000.0,
+        "moisture_kg_kg": 0.3
+      }
+    },
+    {
+      "name": "mixed_temperature_pressure_moisture",
+      "left": {
+        "temperature_k": 330.0,
+        "pressure_pa": 100000.0,
+        "moisture_kg_kg": 0.3
+      },
+      "right": {
+        "temperature_k": 333.0,
+        "pressure_pa": 101000.0,
+        "moisture_kg_kg": 0.4
+      }
+    },
+    {
+      "name": "low_moisture_temperature_gradient",
+      "left": {
+        "temperature_k": 315.0,
+        "pressure_pa": 100000.0,
+        "moisture_kg_kg": 0.05
+      },
+      "right": {
+        "temperature_k": 335.0,
+        "pressure_pa": 100000.0,
+        "moisture_kg_kg": 0.14
+      }
+    }
+  ],
+  "budgets": {
+    "molar_flow_mol_s": 1e-15,
+    "energy_w": 1e-09,
+    "entropy_w_k": 1e-12
+  },
+  "scope": "Independent Fraction arithmetic on actual decoded point values, orientation reversal and shared-reference shift. Constitutive mu/h need separate direct-source trajectory reconstruction."
+}

@@ -16,7 +16,7 @@ def load(path):
             if kind=='input':
                 header=row;species=header['parameters']['boundary_program']['values']['species_order'];width=len(species)+1
                 balance=[0.]*width
-                column=header['parameters']['schema'] in ('source_sorptive_common_gas_column_v1','sorptive_free_water_column_v1')
+                column=header['parameters']['schema'] in ('source_sorptive_common_gas_column_v1','sorptive_free_water_column_v1','source_sorptive_mobile_column_v1')
                 n=header['cell_count'] if column else 1
             if kind in ('initial','sample','accepted','moisture_event'):
                 states=row['states'] if column else [row['state']]

@@ -6,6 +6,7 @@ from sorptive_gas_cell_setup import build_sorptive_cell, restore_sorptive_cell
 from sludge_sandbox.boundary_program import BoundaryProgram, ProgramIdentity
 from sludge_sandbox.gas_transport import ideal_gas_reservoir
 from sludge_sandbox.open_gas_boundary import GasBoundaryTransfer, open_gas_boundary_rate
+from sludge_sandbox.recorded_condensed_transport import condensed_exchange,combine_faces
 
 
 def cell_parameters(config,count):
@@ -23,10 +24,16 @@ class SorptiveColumn:
     internal_transfer: GasBoundaryTransfer
     boundary_transfer: GasBoundaryTransfer
     program: BoundaryProgram
+    condensed_transfer: dict | None
 
-    def rates(self,gases,at_time):
+    def rates(self,gases,at_time,states):
         face=lambda left,right,transfer:open_gas_boundary_rate(left,right,transfer,self.host.fluid.gas_enthalpy_j_mol)
         rates=[face(left,right,self.internal_transfer) for left,right in zip(gases[:-1],gases[1:],strict=True)]
+        if self.condensed_transfer is not None:
+            rates=[combine_faces(gas_rate,condensed_exchange(left,right,
+                area_m2=self.config['geometry']['face_area_m2'],distance_m=self.config['geometry']['length_m']/self.count,
+                mobility_density_mol2_k_j_s_m=self.condensed_transfer['mobility_density_mol2_k_j_s_m']))
+                for gas_rate,left,right in zip(rates,states[:-1],states[1:],strict=True)]
         boundary=self.program.at(float(at_time))
         reservoir=ideal_gas_reservoir(temperature_k=boundary.gas_temperature_k,pressure_pa=boundary.total_pressure_pa,
             mole_fractions=boundary.mole_fractions,molar_masses_kg_mol=self.config['molar_masses_kg_mol'],
@@ -36,10 +43,13 @@ class SorptiveColumn:
 
     def geometry(self):
         config=self.config;dx=config['geometry']['length_m']/self.count
-        return {'cell_count':self.count,'cell_width_m':dx,'cell_centers_m':[(i+.5)*dx for i in range(self.count)],
+        result={'cell_count':self.count,'cell_width_m':dx,'cell_centers_m':[(i+.5)*dx for i in range(self.count)],
             'available_fluid_volume_m3_per_cell':self.host.fluid.available_fluid_volume_m3,
             'dry_mass_kg_per_cell':self.host.dry_mass_kg,
             'internal_transfer':self.internal_transfer.__dict__,'boundary_transfer':self.boundary_transfer.__dict__}
+        if self.condensed_transfer is not None:
+            result['condensed_internal_transfer']=self.condensed_transfer
+        return result
 
 
 def build_column(root,config,count):
@@ -61,4 +71,5 @@ def column_with_host(host,config,count):
     boundary={**config['transfer'],'area_m2':config['geometry']['face_area_m2'],'cell_distance_m':half}
     program=BoundaryProgram(identity=ProgramIdentity(**config['boundary_program']['identity']),
                             **config['boundary_program']['values'])
-    return SorptiveColumn(host,count,config,GasBoundaryTransfer(**inner),GasBoundaryTransfer(**boundary),program)
+    condensed=config['condensed_transfer'] if config['schema']=='source_sorptive_mobile_column_v1' else None
+    return SorptiveColumn(host,count,config,GasBoundaryTransfer(**inner),GasBoundaryTransfer(**boundary),program,condensed)

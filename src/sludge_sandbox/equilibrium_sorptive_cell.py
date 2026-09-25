@@ -90,6 +90,8 @@ class EquilibriumSorptiveCell:
             'dry_internal_energy_j': dry_u, 'excess_internal_energy_j': excess_u,
             'constitutive_internal_energy_j': math.fsum((gas_u, condensed_u, dry_u, excess_u)),
             'condensed_standard_molar_entropy_j_mol_k': liquid.native_entropy_j_kg_k*mass,
+            'condensed_chemical_potential_j_mol': mu_condensed,
+            'condensed_partial_enthalpy_j_mol': liquid.enthalpy_j_mol+excess['partial_h_j_mol'],
             'vapor_minus_condensed_chemical_potential_j_mol': mu_vapor-mu_condensed if nc else None,
             'pressure_closure_residual_pa': pressure-gas.pressure_pa,
             'water_pressure_departure_pa': pv-equilibrium_pressure}

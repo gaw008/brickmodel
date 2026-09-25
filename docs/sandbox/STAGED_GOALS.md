@@ -1,5 +1,7 @@
 # 独立阶段 Goal 顺序
 
+**2026-09-24本地日期进行中：** 用户改为本周剩余5%的连续开发停止线，开发→验证次序保持。见[窗口](research/quota-window-20260924/REPORT.md)。自由水条件模型的内部验证与原图失败分开；凝聚相共同迁移随后单独核查，资料阻塞不由虚拟参数解除。原生M1未改为成功。
+
 **2026-09-22 UTC三小时窗口：** 按本轮连续授权，依次开发/科学核对[固定容量储液腔](research/surface-storage-column-v1/REPORT.md)、[共同气流来源吸附水单元](research/source-sorptive-gas-cell-v1/REPORT.md)、[一维吸附柱](research/source-sorptive-column-v1/REPORT.md)及[干湿循环](research/sorptive-humidity-cycle-v1/REPORT.md)。细网格、局部守恒和来源敏感性分别保留通过/失败范围；见[总记录](research/three-hour-20260922/REPORT.md)。它们没有替代真实材料M1，原生Goal仍blocked；[剩余阶段](research/three-hour-20260922/NEXT_PHASES.md)依赖同材料输入与现实对照。用户连续授权覆盖可独立开发部分，不等于所有物理/材料阶段均可无资料完成。
 
 **2026-09-22 UTC两小时窗口更新：** 已按开发→科学核算推进[相变事件、检查点续算、熵账及相平衡求解](research/water-column-events-v1/REPORT.md)，原误差目标保留。干燥事件网格比较推进到64格；冷凝空间目标仍未通过，并发现边界库存集中迹象。下一通用开发需先明确表面液水/体输运的物理边界，再选离散方案；不能只扩表或细化根容差。新增[ENEA产物终态](research/enea-pyrolysis-products-v1/REPORT.md)尚不放行有限时间化学。原生M1仍blocked，真实全周期阶段仍待材料闭合；本窗口没有创建完整替代Goal。

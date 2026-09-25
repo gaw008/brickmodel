@@ -70,6 +70,8 @@ def main():
     balances=[0.]*width;count=0;faces_count=0;face_n=face_u=0.;min_production=None
     entropy_by_time={};branch_counts={};phase_partition_max_mol=0.;caloric_states=[]
     free_water=config['schema']=='sorptive_free_water_column_v1'
+    mobile_water=config['schema']=='source_sorptive_mobile_column_v1'
+    condensed_fields_max={'condensed_chemical_potential_j_mol':0.,'condensed_partial_enthalpy_j_mol':0.}
     for row in read_rows():
         terminal=row
         if row['kind'] not in settings['source_state_kinds']:
@@ -83,6 +85,9 @@ def main():
         entropy=[]
         for i,p in enumerate(row['states']):
             q=source.reconstruct(p);count+=1;entropy.append(q['entropy_j_k'])
+            if mobile_water:
+                for key in condensed_fields_max:
+                    condensed_fields_max[key]=max(condensed_fields_max[key],abs(q[key]-p[key]))
             branch=p['sorption_phase'] if free_water else ('source' if p['moisture_kg_kg_dry']>header['sorption_source']['join']['moisture_kg_kg'] else 'low')
             branch_counts[branch]=branch_counts.get(branch,0)+1
             if free_water:
@@ -203,6 +208,10 @@ def main():
     if free_water:
         result['maximum_phase_partition_difference_mol']=phase_partition_max_mol
         result['within_budgets']['free_sorbed_partition']=phase_partition_max_mol<=budget['phase_partition_mol']
+    if mobile_water:
+        result['condensed_field_maxima']=condensed_fields_max
+        result['within_budgets']['condensed_mu']=condensed_fields_max['condensed_chemical_potential_j_mol']<=budget['source_chemical_potential_j_mol']
+        result['within_budgets']['condensed_h']=condensed_fields_max['condensed_partial_enthalpy_j_mol']<=budget['condensed_enthalpy_j_mol']
     with args.output.open('x') as stream:
         json.dump(result,stream,indent=2,allow_nan=False);stream.write('\n')
     print(json.dumps({'within_budgets':result['within_budgets'],'source_maxima':maxima,'elapsed_s':result['elapsed_s']},indent=2))

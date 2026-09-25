@@ -105,7 +105,7 @@ def run(args,source_directory):
 
     def rates(at_time,vector):
         gases,states=decode(vector)
-        faces,boundary=model.rates(gases,at_time)
+        faces,boundary=model.rates(gases,at_time,states)
         return faces,states,boundary
 
     def rhs(at_time,vector):

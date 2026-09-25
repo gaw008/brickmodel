@@ -183,6 +183,35 @@ class FreeWaterSource(SorptiveSource):
         return result
 
 
+class MobileWaterSource(SorptiveSource):
+    """Reconstruct full condensed mu/h and its additional internal face rate."""
+    def condensed_fields(self,point):
+        t,p,w=point['temperature_k'],point['pressure_pa'],point['moisture_kg_kg_dry']
+        liquid=IAPWS95(T=t,P=p/1e6)
+        _,_,mu=self.excess(t,w)
+        b=self.b if w<=self.wj else self.b0(w)
+        return {'condensed_chemical_potential_j_mol':float(liquid.h*1000*self.mass+self.offset-t*liquid.s*1000*self.mass+mu),
+                'condensed_partial_enthalpy_j_mol':float(liquid.h*1000*self.mass+self.offset+self.mass*b)}
+
+    def reconstruct(self,point):
+        return {**super().reconstruct(point),**self.condensed_fields(point)}
+
+    def between_states(self,left,right,transfer):
+        gas=super().between_states(left,right,transfer)
+        a,b=self.condensed_fields(left),self.condensed_fields(right)
+        tl,tr=left['temperature_k'],right['temperature_k']
+        h=(a['condensed_partial_enthalpy_j_mol']+b['condensed_partial_enthalpy_j_mol'])/2
+        force=a['condensed_chemical_potential_j_mol']/tl-b['condensed_chemical_potential_j_mol']/tr+h*(1/tr-1/tl)
+        length=transfer['cell_distance_m']+transfer['reservoir_distance_m']
+        mobility=transfer['area_m2']/length*self.config['condensed_transfer']['mobility_density_mol2_k_j_s_m']
+        flow=mobility*force;energy=flow*h
+        net={**gas['net_mol_s'],'H2O':gas['net_mol_s']['H2O']+flow}
+        return {**gas,'net_mol_s':net,'energy_out_w':gas['energy_out_w']+energy,
+                'external_entropy_w_k':gas['external_entropy_w_k']+(energy-b['condensed_chemical_potential_j_mol']*flow)/tr,
+                'production_w_k':gas['production_w_k']+flow*force}
+
+
 def source_for_column(header,settings):
     return {'source_sorptive_common_gas_column_v1':SorptiveSource,
+            'source_sorptive_mobile_column_v1':MobileWaterSource,
             'sorptive_free_water_column_v1':FreeWaterSource}[header['parameters']['schema']](header,settings)
