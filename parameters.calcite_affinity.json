@@ -1,0 +1,32 @@
+{
+  "source_file": "parameters.calcite_affinity_source.json",
+  "gas_phase": "carbon_dioxide",
+  "total_pressure_pa": 100000.0,
+  "joules_per_kilojoule": 1000.0,
+  "gas_partial_pressures_pa": [40.0, 1000.0, 10000.0, 100000.0],
+  "pressure_cases_classification": "explicit_virtual_atmospheres_not_measurements",
+  "gas_constant_policy": "Use the historical USGS book R for this separate source consistency calculation; do not replace any other module R.",
+  "root": {
+    "bracket_k": [298.15, 1200.0],
+    "absolute_tolerance_k": 1e-8,
+    "relative_tolerance": 1e-12,
+    "maximum_iterations": 100
+  },
+  "verification": {
+    "quadrature_absolute_tolerance": 1e-8,
+    "quadrature_relative_tolerance": 1e-12,
+    "quadrature_maximum_subintervals": 100,
+    "derivative_temperatures_k": [400.0, 600.0, 800.0, 1000.0, 1100.0],
+    "derivative_step_k": 0.001,
+    "budgets": {
+      "enthalpy_quadrature_j_mol": 1e-6,
+      "entropy_quadrature_j_mol_k": 1e-8,
+      "gibbs_derivative_j_mol_k": 1e-5,
+      "vanthoff_derivative_per_k": 1e-8,
+      "equilibrium_affinity_j_mol": 1e-5
+    },
+    "rounding_policy": "Printed half-last-unit intervals propagated through the linear Cp integrals, Href and Sref. Formation G and logK table comparison retains its own half-last-unit interval. These are arithmetic envelopes, not physical uncertainty. No post-comparison budget fitting."
+  },
+  "material_qualified": false,
+  "training_eligible": false
+}
