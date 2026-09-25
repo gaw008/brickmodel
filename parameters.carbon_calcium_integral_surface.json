@@ -1,0 +1,65 @@
+{
+  "column_parameters": "parameters.carbon_calcium_open_column.json",
+  "reference_trajectory": "data/sandbox/research/carbon-calcium-radiative-program-v1/refined.jsonl",
+  "mesh_counts": [
+    1,
+    2,
+    4
+  ],
+  "reference_times_s": [
+    0.0,
+    1000.0,
+    5000.0,
+    15000.0,
+    20000.0,
+    30000.0
+  ],
+  "surface_temperature_domain_k": [
+    298.15,
+    1200.0
+  ],
+  "source_domain_basis": "Intersection of the model-selected gas phase domains, 298.15..1200 K. Raw CO/CO2 source polynomials extend to 2200 K, but this stage retains the narrower admitted model domain; no phase domain is widened.",
+  "numerics": {
+    "temperature_absolute_tolerance_k": 1e-10,
+    "temperature_relative_tolerance": 1e-14,
+    "maximum_root_iterations": 100
+  },
+  "independent_review": {
+    "decimal_precision": 80,
+    "root_tolerance": "1e-50",
+    "maximum_root_iterations": 100,
+    "species_residual_scale_mol_s": 1e-06,
+    "energy_residual_scale_w": 1.0
+  },
+  "verification": {
+    "temperature_k": 1e-07,
+    "pressure_pa": 1e-05,
+    "chemical_potential_j_mol": 1e-07,
+    "species_mol_s": 1e-14,
+    "energy_w": 1e-08,
+    "entropy_w_k": 1e-11,
+    "equal_species_mol_s": 1e-18,
+    "equal_energy_w": 1e-09
+  },
+  "limiting_cases": [
+    {
+      "name": "matched",
+      "mesh_count": 2,
+      "reference_time_s": 5000.0
+    },
+    {
+      "name": "isothermal_series",
+      "mesh_count": 2,
+      "reference_time_s": 5000.0
+    },
+    {
+      "name": "conduction_only_series",
+      "mesh_count": 2,
+      "reference_time_s": 0.0,
+      "gas_temperature_k": 1100.0
+    }
+  ],
+  "scope": "Independent source-defined zero-storage surface. Two existing virtual exchange laws connect bath-surface and surface-bulk; blackbody heat is absorbed at the surface. Species stationarity eliminates four chemical potentials analytically at fixed surface T; one energy root remains. Qualify this constitutive relation before any dynamic coupling; do not replace direct-terminal baseline or infer measured brick surface properties.",
+  "material_qualified": false,
+  "training_eligible": false
+}
