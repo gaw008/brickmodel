@@ -31,7 +31,14 @@ def main():
     nitrogen = nitrogen_from_record(header['nitrogen_source'])
     model = OpenRigidReactiveColumn(reaction,nitrogen,header['volume_source'],header['model_parameters'],policy,header['surface_parameters'],n,header.get('cell_widths_m'))
     v0 = np.array(initial['values'][:base]).reshape(n,3);s0 = np.array([s['entropy_j_k'] for s in initial['states']])
-    def quantities(states,faces,reservoir,contact,segment):
+    def wall_at(segment,time_s):
+        if 'continuous_boundary_program' not in policy:
+            return policy['boundary_program'][segment]['radiation_temperature_k']
+        # Independent direct affine interpolation, not the runtime program.
+        data = policy['continuous_boundary_program'];knots = data['knot_times_s'];values = data['radiation_temperature_k']
+        weight = (time_s-knots[segment])/(knots[segment+1]-knots[segment])
+        return (1-weight)*values[segment]+weight*values[segment+1]
+    def quantities(states,faces,reservoir,contact,segment,time_s):
         local = np.zeros((n,3));entropy = np.zeros(n);productions = [];face_species = face_energy = 0.
         for i,face in enumerate(faces):
             q = independent_face(states[i],states[i+1],model.cells[i],model.internal_face_parameters[i])
@@ -39,7 +46,7 @@ def main():
             productions.append(float(q[3]+q[4]))
             face_species = max(face_species,abs(q[0]-face['carbon_flow_mol_s']),abs(q[1]-face['nitrogen_flow_mol_s']))
             face_energy = max(face_energy,abs(q[2]-face['energy_flow_w']))
-        surface = contact['surface'];wall = policy['boundary_program'][segment]['radiation_temperature_k']
+        surface = contact['surface'];wall = wall_at(segment,time_s)
         inner = independent_face(states[-1],surface,model.cells[-1],model.boundary.surface.interior)
         outer = independent_face(surface,reservoir,model.cells[-1],model.boundary.surface.exterior)
         radiation = model.surface_parameters['area_m2']*model.surface_parameters['radiation']['emissivity']*model.surface_parameters['radiation']['stefan_boltzmann_w_m2_k4']*(wall**4-surface['temperature_k']**4)
@@ -72,7 +79,7 @@ def main():
             maximum[prefix+'_species_ledger_mol'] = max(maximum[prefix+'_species_ledger_mol'],float(np.max(np.abs(residual[:2]))))
             maximum[prefix+'_energy_ledger_j'] = max(maximum[prefix+'_energy_ledger_j'],float(abs(residual[2])))
         maximum['entropy_ledger_j_k'] = max(maximum['entropy_ledger_j_k'],abs(sum(s['entropy_j_k'] for s in row['states'])-s0.sum()+ledger[7]+ledger[8]-ledger[9]))
-        _,_,_,balance,production,fn,fe = quantities(row['states'],row['faces'],row['reservoir'],row['contact'],row['segment_index'])
+        _,_,_,balance,production,fn,fe = quantities(row['states'],row['faces'],row['reservoir'],row['contact'],row['segment_index'],row['time_s'])
         maximum['surface_species_mol_s'] = max(maximum['surface_species_mol_s'],float(np.max(np.abs(balance[:2]))))
         maximum['surface_energy_w'] = max(maximum['surface_energy_w'],float(abs(balance[2])))
         maximum['independent_face_species_mol_s'] = max(maximum['independent_face_species_mol_s'],fn)
@@ -89,8 +96,9 @@ def main():
             interval = np.zeros((n,3));interval_s = np.zeros(n);integral = np.zeros(10)
             for node,weight in zip(nodes,weights,strict=True):
                 at = (left+right)/2+(right-left)*node/2;scale = weight*(right-left)/2
-                _,states,faces,reservoir,contact = model.observe(polynomial(dense,at),row['segment_index'])
-                local,entropy,q,balance,production,_,_ = quantities(states,faces,reservoir,contact,row['segment_index'])
+                absolute_at = math.fsum([row['time_s'],at,-right])
+                _,states,faces,reservoir,contact = model.observe(polynomial(dense,at),row['segment_index'],absolute_at)
+                local,entropy,q,balance,production,_,_ = quantities(states,faces,reservoir,contact,row['segment_index'],absolute_at)
                 interval += scale*local;interval_s += scale*entropy;integral += scale*q
                 min_node = min(min_node,production);max_surface = np.maximum(max_surface,np.abs(balance))
             total += integral;total_local += interval;total_s += interval_s

@@ -14,6 +14,8 @@ from .rigid_reactive_open_cell import OpenRigidCalciteCell
 from .rigid_reactive_exchange import rigid_reactive_face
 from .rigid_reactive_source_force import source_integral_rigid_face
 from .rigid_reactive_tangent import inventory_tangent, face_tangents
+from .boundary_program import BoundaryProgram, ProgramIdentity
+from .rigid_reactive_surface import gas_contact_state
 
 
 class OpenRigidReactiveColumn:
@@ -50,7 +52,19 @@ class OpenRigidReactiveColumn:
             'distance_m':float(self.widths[-1]/2),'conductivity_w_m_k':transport['thermal_conductivity_w_m_k'],
             'bulk_mobility_mol2_k_j_m_s':transport['bulk_mobility_mol2_k_j_m_s'],
             'counter_mobility_mol2_k_j_m_s':transport['counter_mobility_mol2_k_j_m_s']}
-        self.boundary = OpenRigidCalciteCell(self.cells[-1],self.surface_parameters,settings['boundary_program'])
+        self.continuous_boundary = None
+        program = settings['boundary_program']
+        if 'continuous_boundary_program' in settings:
+            data = settings['continuous_boundary_program']
+            self.continuous_boundary = BoundaryProgram(identity=ProgramIdentity(**data['identity']),
+                **{key:value for key,value in data.items() if key!='identity'})
+            program = []
+            for segment in settings['boundary_program']:
+                state = self.continuous_boundary.at(segment['start_s'])
+                program.append({**segment,'gas_temperature_k':state.gas_temperature_k,
+                    'pressure_pa':state.total_pressure_pa,'co2_mole_fraction':state.mole_fractions['CO2'],
+                    'radiation_temperature_k':state.radiation_temperature_k})
+        self.boundary = OpenRigidCalciteCell(self.cells[-1],self.surface_parameters,program)
         self.face = rigid_reactive_face
         if 'species_force_evaluation' in settings:
             self.face = {'source_integral_differences': lambda left,right,params:
@@ -66,17 +80,29 @@ class OpenRigidReactiveColumn:
             result[3*i+1] = self.reference_nitrogen*np.exp(values[3*i+1])
         return result
 
-    def observe(self,values,segment):
+    def wall_temperature(self,segment,time_s):
+        return (self.settings['boundary_program'][segment]['radiation_temperature_k'] if self.continuous_boundary is None
+                else self.continuous_boundary.at(time_s).radiation_temperature_k)
+
+    def reservoir_at(self,segment,time_s):
+        if self.continuous_boundary is None:
+            return self.boundary.reservoirs[segment]
+        state = self.continuous_boundary.at(time_s)
+        # Interpolate prescribed primitive conditions; recompute source chemical
+        # potentials and enthalpies at that state, never interpolate them.
+        return gas_contact_state(self.cells[-1],state.gas_temperature_k,state.total_pressure_pa,state.mole_fractions['CO2'])
+
+    def observe(self,values,segment,time_s=None):
         physical = self.physical_values(values)
         states = [cell.offset_inventory_state(cell.calcium*np.expm1(values[3*i]),*physical[3*i+1:3*i+3],physical[3*i])
                   if self.log_carbon else cell.offset_inventory_state(values[3*i],*physical[3*i+1:3*i+3])
                   for i,cell in enumerate(self.cells)]
         faces = [self.face(left,right,parameters) for left,right,parameters in zip(states[:-1],states[1:],self.internal_face_parameters,strict=True)]
-        reservoir = self.boundary.reservoirs[segment]
-        contact = self.boundary.surface.solve(states[-1],reservoir,self.settings['boundary_program'][segment]['radiation_temperature_k'])
+        reservoir = self.reservoir_at(segment,time_s)
+        contact = self.boundary.surface.solve(states[-1],reservoir,self.wall_temperature(segment,time_s))
         return physical,states,faces,reservoir,contact
 
-    def physical_rates(self,physical,faces,reservoir,contact,segment):
+    def physical_rates(self,physical,faces,reservoir,contact,segment,time_s=None):
         out = np.zeros_like(physical)
         for i,face in enumerate(faces):
             flux = np.array([face[k] for k in ('carbon_flow_mol_s','nitrogen_flow_mol_s','energy_flow_w')])
@@ -87,20 +113,20 @@ class OpenRigidReactiveColumn:
         radiation = contact['radiation_in_w'];base = 3*self.count
         out[base-3:base] -= inner
         gas_entropy = (outer[2]-reservoir['carbon_chemical_potential_j_mol']*outer[0]-reservoir['nitrogen_chemical_potential_j_mol']*outer[1])/reservoir['temperature_k']
-        wall_entropy = -radiation/self.settings['boundary_program'][segment]['radiation_temperature_k']
+        wall_entropy = -radiation/self.wall_temperature(segment,time_s)
         out[base:base+9] = np.concatenate((inner,outer,[radiation,gas_entropy,wall_entropy]))
         out[-1] += contact['entropy_production_w_k']
         return out
 
     def rates(self,time_s,values,segment):
-        physical,_,faces,reservoir,contact = self.observe(values,segment)
-        out = self.physical_rates(physical,faces,reservoir,contact,segment)
+        physical,_,faces,reservoir,contact = self.observe(values,segment,time_s)
+        out = self.physical_rates(physical,faces,reservoir,contact,segment,time_s)
         if self.log_carbon:out[0:3*self.count:3] /= physical[0:3*self.count:3]
         out[1:3*self.count:3] /= physical[1:3*self.count:3]
         return out
 
     def jacobian(self,time_s,values,segment):
-        physical,states,faces,reservoir,contact = self.observe(values,segment)
+        physical,states,faces,reservoir,contact = self.observe(values,segment,time_s)
         tangents = [inventory_tangent(c,s) for c,s in zip(self.cells,states,strict=True)]
         rows,columns,entries = [],[],[]
         def block(row,column,matrix):
@@ -122,7 +148,7 @@ class OpenRigidReactiveColumn:
         reservoir_entropy_gradient = np.array([-reservoir['carbon_chemical_potential_j_mol'],
             -reservoir['nitrogen_chemical_potential_j_mol'],1.])/reservoir['temperature_k']
         gas_s_d = reservoir_entropy_gradient@outer_d
-        wall_s_d = -radiation_d/self.settings['boundary_program'][segment]['radiation_temperature_k']
+        wall_s_d = -radiation_d/self.wall_temperature(segment,time_s)
         state = states[-1];body_entropy_gradient = np.array([-state['carbon_chemical_potential_j_mol'],
             -state['nitrogen_chemical_potential_j_mol'],1.])/state['temperature_k']
         inner = np.array([contact['interior_face'][k] for k in ('carbon_flow_mol_s','nitrogen_flow_mol_s','energy_flow_w')])
@@ -134,7 +160,7 @@ class OpenRigidReactiveColumn:
         if self.log_carbon:chart[0:base:3] = physical[0:base:3]
         # dz_N/dt=f_N/N: differentiate both f_N and the row factor 1/N.
         diagonal = np.zeros(len(values))
-        physical_rate = self.physical_rates(physical,faces,reservoir,contact,segment)
+        physical_rate = self.physical_rates(physical,faces,reservoir,contact,segment,time_s)
         diagonal[1:base:3] = -physical_rate[1:base:3]/physical[1:base:3]
         if self.log_carbon:diagonal[0:base:3] = -physical_rate[0:base:3]/physical[0:base:3]
         return (diags(1/chart)@matrix@diags(chart)+diags(diagonal)).tocsc()

@@ -1,0 +1,109 @@
+{
+  "settings": {
+    "records": {
+      "four-base": {
+        "format": "column",
+        "trajectory": "data/sandbox/research/calcite-rigid-ramp-v1/four-base.jsonl"
+      },
+      "four-refined": {
+        "format": "column",
+        "trajectory": "data/sandbox/research/calcite-rigid-ramp-v1/four-refined.jsonl"
+      }
+    },
+    "pairs": [
+      {
+        "kind": "time",
+        "left": "four-base",
+        "right": "four-refined"
+      }
+    ],
+    "time_budgets": {
+      "cell_temperature_k": 0.001,
+      "cell_pressure_pa": 1.0,
+      "total_lime_mol": 1e-10,
+      "surface_temperature_k": 0.001
+    },
+    "space_budgets": {
+      "mean_temperature_k": 0.05,
+      "cell_temperature_k": 0.2,
+      "mean_pressure_pa": 100.0,
+      "total_lime_mol": 1e-08,
+      "surface_temperature_k": 0.2
+    },
+    "space_event_budget_s": 2.0,
+    "events": [
+      {
+        "name": "heat_mean_900K",
+        "mean_temperature_k": 900.0,
+        "start_s": 0.0,
+        "end_s": 8000.0,
+        "direction": 1
+      },
+      {
+        "name": "cool_mean_500K",
+        "mean_temperature_k": 500.0,
+        "start_s": 8000.0,
+        "end_s": 18000.0,
+        "direction": -1
+      }
+    ],
+    "scope": "Predeclared adjacent uniform meshes for the separate continuous virtual heating/hold/cooling schedule; original time, space and event error budgets unchanged."
+  },
+  "events_s": {
+    "four-base": {
+      "heat_mean_900K": 5695.2544333231335,
+      "cool_mean_500K": 16238.94505122037
+    },
+    "four-refined": {
+      "heat_mean_900K": 5695.254433325153,
+      "cool_mean_500K": 16238.945051184895
+    }
+  },
+  "comparisons": [
+    {
+      "observations": 9001,
+      "cell_counts": [
+        4,
+        4
+      ],
+      "maximum_differences": {
+        "mean_temperature_k": 9.761515684658661e-08,
+        "cell_temperature_k": 6.748014129698277e-07,
+        "mean_pressure_pa": 0.0005563059821724892,
+        "cell_pressure_pa": 0.0014195777475833893,
+        "total_lime_mol": 8.529437464481482e-14,
+        "surface_temperature_k": 4.4714744262819295e-07,
+        "surface_pressure_pa": 0.0005329432897269726
+      },
+      "maximum_difference_times_s": {
+        "mean_temperature_k": 6004.0,
+        "cell_temperature_k": 6004.0,
+        "mean_pressure_pa": 10294.0,
+        "cell_pressure_pa": 8004.0,
+        "total_lime_mol": 10294.0,
+        "surface_temperature_k": 4.0,
+        "surface_pressure_pa": 10294.0
+      },
+      "pair": {
+        "kind": "time",
+        "left": "four-base",
+        "right": "four-refined"
+      },
+      "event_differences_s": {
+        "heat_mean_900K": 2.0190782379359007e-09,
+        "cool_mean_500K": 3.547393134795129e-08
+      },
+      "within_budgets": {
+        "cell_temperature_k": true,
+        "cell_pressure_pa": true,
+        "total_lime_mol": true,
+        "surface_temperature_k": true,
+        "both_completed": true
+      },
+      "all_requested_budgets_met": true
+    }
+  ],
+  "all_requested_budgets_met": true,
+  "material_qualified": false,
+  "training_eligible": false
+}

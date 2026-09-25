@@ -43,7 +43,7 @@ def main():
         def emit(row):
             stream.write(json.dumps(row,allow_nan=False)+'\n');stream.flush()
         def record(kind,t,y,segment):
-            physical,states,faces,reservoir,contact = model.observe(y,segment)
+            physical,states,faces,reservoir,contact = model.observe(y,segment,t)
             return {'kind':kind,'time_s':float(t),'segment_index':segment,'integration_values':y.tolist(),'values':physical.tolist(),
                 'states':states,'faces':faces,'reservoir':reservoir,'contact':contact}
         emit({'kind':'input','settings':settings,'model_parameters':config,'surface_parameters':model.surface_parameters,
@@ -60,12 +60,12 @@ def main():
             if segment:emit(record('boundary_transition',program['start_s'],values,segment))
             def rates(t,y):
                 try:
-                    return model.rates(t,y,segment)
+                    return model.rates(math.fsum([program['start_s'],*widths,t]),y,segment)
                 except (ValueError,RuntimeError) as error:
                     emit({'kind':'evaluation_failure','time_s':math.fsum([program['start_s'],*widths,t]),
                         'solver_time_s':t,'segment_index':segment,'integration_values':y.tolist(),'error':str(error)})
                     raise
-            jacobian = (lambda t,y:model.jacobian(t,y,segment)) if args.jacobian=='analytic' else None
+            jacobian = (lambda t,y:model.jacobian(math.fsum([program['start_s'],*widths,t]),y,segment)) if args.jacobian=='analytic' else None
             solver = BDF(rates,0.,values,program['end_s']-program['start_s'],
                 rtol=policy['relative_tolerance']*factor,atol=absolute,jac=jacobian,
                 first_step=policy['initial_step_s'],max_step=policy['maximum_step_s'])

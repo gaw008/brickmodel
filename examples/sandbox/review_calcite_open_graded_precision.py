@@ -26,6 +26,7 @@ def main():
     mp.dps = settings['decimal_digits']
     records = []
     for case in review['cases']:
+        time_s = case['time_s'] if 'continuous_boundary_program' in policy else 0.
         n = len(case['temperatures_k'])
         column = OpenRigidReactiveColumn(reaction, nitrogen, volume, config, policy, surface, n, case['cell_widths_m'])
         z = column.initial.copy()
@@ -35,12 +36,12 @@ def main():
             state = cell.at_carbon_offset(case['temperatures_k'][i], dc, nn)
             z[3*i:3*i+3] = [column.carbon_coordinate(cell,dc), np.log(nn/column.reference_nitrogen), state['internal_energy_j']]
         segment = case['segment_index']
-        _, states, _, _, contact = column.observe(z, segment)
-        reference = DecimalOpenColumn(column, states, contact, segment, settings)
+        _, states, _, _, contact = column.observe(z, segment,time_s)
+        reference = DecimalOpenColumn(column, states, contact, segment, settings,time_s)
         nominal = [mp.mpf(float(value)) for value in z]
-        analytic = column.jacobian(0., z, segment).toarray()
+        analytic = column.jacobian(time_s, z, segment).toarray()
         reference_rates, reference_states = reference.rates(nominal)
-        physical_rates = column.rates(0., z, segment)
+        physical_rates = column.rates(time_s, z, segment)
         scales = np.array(review['per_cell_rate_scales']*n+review['ledger_rate_scales'])
         if column.log_carbon and review.get('carbon_rate_scale_basis')=='physical_inventory':
             scales[0:3*n:3] /= column.physical_values(z)[0:3*n:3]

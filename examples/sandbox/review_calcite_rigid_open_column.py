@@ -19,6 +19,7 @@ def main():
     reaction,nitrogen,_,_,_,_,volume = build_rigid(root,config)
     records = [];budget = settings['budgets']
     for case in settings['cases']:
+        time_s = case['time_s'] if 'continuous_boundary_program' in policy else 0.
         n = len(case['temperatures_k']);column = OpenRigidReactiveColumn(reaction,nitrogen,volume,config,policy,surface,n,case.get('cell_widths_m'))
         z = column.initial.copy();base = 3*n
         for i,cell in enumerate(column.cells):
@@ -26,8 +27,8 @@ def main():
             nitrogen_mol = case['nitrogen_densities_mol_m3'][i]*cell.volume
             state = cell.at_carbon_offset(case['temperatures_k'][i],offset,nitrogen_mol)
             z[3*i:3*i+3] = [column.carbon_coordinate(cell,offset),np.log(nitrogen_mol/column.reference_nitrogen),state['internal_energy_j']]
-        physical,states,faces,reservoir,contact = column.observe(z,case['segment_index'])
-        f = column.rates(0.,z,case['segment_index']);matrix = column.jacobian(0.,z,case['segment_index']).toarray()
+        physical,states,faces,reservoir,contact = column.observe(z,case['segment_index'],time_s)
+        f = column.rates(time_s,z,case['segment_index']);matrix = column.jacobian(time_s,z,case['segment_index']).toarray()
         physical_rates = f.copy();physical_rates[1:base:3] *= physical[1:base:3]
         if column.log_carbon:physical_rates[0:base:3] *= physical[0:base:3]
         global_balance = physical_rates[:base].reshape(n,3).sum(axis=0)+f[base:base+3]
@@ -57,9 +58,9 @@ def main():
             reference = np.zeros_like(matrix);same_phase = True
             for coordinate in range(base):
                 left,right = z.copy(),z.copy();left[coordinate] -= step*perturbation[coordinate];right[coordinate] += step*perturbation[coordinate]
-                reference[:,coordinate] = (column.rates(0.,right,case['segment_index'])-column.rates(0.,left,case['segment_index']))/(right[coordinate]-left[coordinate])
+                reference[:,coordinate] = (column.rates(time_s,right,case['segment_index'])-column.rates(time_s,left,case['segment_index']))/(right[coordinate]-left[coordinate])
                 for value in (left,right):
-                    same_phase &= [s['phase'] for s in column.observe(value,case['segment_index'])[1]]==[s['phase'] for s in states]
+                    same_phase &= [s['phase'] for s in column.observe(value,case['segment_index'],time_s)[1]]==[s['phase'] for s in states]
             scaled = np.abs(matrix[:,:base]-reference[:,:base])*normalization[None,:]/output_scales[:,None]
             worst_row,worst_column = np.unravel_index(np.argmax(scaled),scaled.shape)
             error = float(scaled[worst_row,worst_column])

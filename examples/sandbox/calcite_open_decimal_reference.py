@@ -7,10 +7,11 @@ from mpmath import mp
 
 
 class DecimalOpenColumn:
-    def __init__(self, column, nominal_states, nominal_contact, segment, settings):
+    def __init__(self, column, nominal_states, nominal_contact, segment, settings,time_s=None):
         self.column = column
         self.settings = settings
         self.segment = segment
+        self.time_s = time_s
         self.nominal = nominal_states
         self.surface_initial = tuple(mp.mpf(float(v)) for v in nominal_contact['root_coordinates'])
         self.r = mp.mpf(column.cells[0].reaction.gas_constant_j_mol_k)
@@ -98,8 +99,17 @@ class DecimalOpenColumn:
                 out[3*i+j] -= face[j]
                 out[3*i+3+j] += face[j]
             out[-1] += face[3]+face[4]
-        program = self.column.settings['boundary_program'][self.segment]
-        t, p, x, wall = [mp.mpf(program[k]) for k in ('gas_temperature_k', 'pressure_pa', 'co2_mole_fraction', 'radiation_temperature_k')]
+        if 'continuous_boundary_program' in self.column.settings:
+            program = self.column.settings['continuous_boundary_program'];i = self.segment
+            a,b = map(mp.mpf,program['knot_times_s'][i:i+2]);weight = (mp.mpf(self.time_s)-a)/(b-a)
+            def interpolate(values):
+                return (1-weight)*mp.mpf(values[i])+weight*mp.mpf(values[i+1])
+            index = program['species_order'].index('CO2')
+            t,p,wall = [interpolate(program[k]) for k in ('gas_temperature_k','total_pressure_pa','radiation_temperature_k')]
+            x = interpolate([row[index] for row in program['mole_fractions']])
+        else:
+            program = self.column.settings['boundary_program'][self.segment]
+            t, p, x, wall = [mp.mpf(program[k]) for k in ('gas_temperature_k', 'pressure_pa', 'co2_mole_fraction', 'radiation_temperature_k')]
         cell = self.column.cells[-1]
         reservoir = self.gas_state(cell, t, p*x, p*(1-x), x, 1-x)
         boundary = self.column.boundary.surface
