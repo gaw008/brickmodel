@@ -1,0 +1,26 @@
+Traceback (most recent call last):
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/audit_calcite_reactive_exchange.py", line 114, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/audit_calcite_reactive_exchange.py", line 99, in main
+    reports=[{'trajectory':name,**audit(rows)} for name,rows in records.items()];comparisons=[]
+                                  ^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/audit_calcite_reactive_exchange.py", line 23, in audit
+    equilibrium=total_model.state(c0,h0);seq=equilibrium['entropy_j_k']
+                ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/equilibrium_calcite_inventory.py", line 47, in state
+    t=brentq(lambda t:self.at_temperature(t,carbon_mol)['enthalpy_j']-enthalpy_j,*self.domain,
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_zeros_py.py", line 858, in brentq
+    r = _zeros._brentq(f, a, b, xtol, rtol, maxiter, args, full_output, disp)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_zeros_py.py", line 107, in f_raise
+    fx = f(x, *args)
+         ^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/equilibrium_calcite_inventory.py", line 47, in <lambda>
+    t=brentq(lambda t:self.at_temperature(t,carbon_mol)['enthalpy_j']-enthalpy_j,*self.domain,
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/equilibrium_calcite_inventory.py", line 36, in at_temperature
+    entropy-=r*(co2*math.log(pc/self.reaction.standard_pressure_pa)+self.carrier*math.log(pn/self.reaction.standard_pressure_pa))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: math domain error

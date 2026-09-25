@@ -1,0 +1,74 @@
+{
+  "affinity_parameters": "parameters.calcite_affinity.json",
+  "nitrogen_source_file": "parameters.calcite_nitrogen_source.json",
+  "reactant_phase": "calcite",
+  "product_phase": "lime",
+  "total_pressure_pa": 100000.0,
+  "temperature_domain_k": [
+    298.15,
+    1200.0
+  ],
+  "cells": [
+    {
+      "calcium_mol": 1.0,
+      "nitrogen_mol": 1.0,
+      "initial_carbon_mol": 0.8,
+      "initial_temperature_k": 1100.0
+    },
+    {
+      "calcium_mol": 1.0,
+      "nitrogen_mol": 1.0,
+      "initial_carbon_mol": 1.2,
+      "initial_temperature_k": 900.0
+    }
+  ],
+  "face": {
+    "heat_conductance_w_k": 1.0,
+    "carbon_mobility_mol2_k_j_s": 1e-05,
+    "classification": "declared_virtual_CO2_selective_membrane_plus_thermal_contact; not_measured_brick_diffusion",
+    "entropy_reference": "https://journals.aps.org/pr/abstract/10.1103/PhysRev.37.405",
+    "coefficient_source": "virtual positive phenomenological coefficient; primary reference supports response structure only"
+  },
+  "time_interval_s": [
+    0.0,
+    6000.0
+  ],
+  "numerics": {
+    "temperature_inverse_absolute_k": 1e-11,
+    "temperature_inverse_relative": 1e-14,
+    "temperature_inverse_iterations": 100,
+    "relative_tolerance": 1e-10,
+    "absolute_tolerances": [
+      1e-12,
+      1e-06,
+      1e-12,
+      1e-06,
+      1e-12,
+      1e-06,
+      1e-09
+    ],
+    "refinement_factor": 0.1,
+    "maximum_step_s": 1.0,
+    "initial_step_s": 1e-05,
+    "observation_interval_s": 2.0,
+    "progress_every_steps": 100
+  },
+  "verification": {
+    "balance_energy_j": 0.01,
+    "balance_carbon_mol": 1e-07,
+    "balance_entropy_j_k": 1e-05,
+    "negative_entropy_allowance_j_k": 1e-10,
+    "time_temperature_k": 0.001,
+    "time_carbon_mol": 1e-07,
+    "quadrature_orders": [
+      2,
+      4
+    ],
+    "quadrature_energy_j": 0.01,
+    "quadrature_entropy_j_k": 1e-05,
+    "source_affinity_budget_j_mol": 1e-05
+  },
+  "scope": "Two closed-to-outside, constant-pressure movable-volume equilibrium cells. Only CO2 crosses the ideal selective membrane. N2 and calcium stay in their own cells. No reaction kinetics or actual brick volume, diffusivity or spatial-convergence claim.",
+  "material_qualified": false,
+  "training_eligible": false
+}
