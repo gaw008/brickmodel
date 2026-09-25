@@ -11,6 +11,13 @@ def rigid_reactive_face(left, right, parameters):
     forces = [math.fsum((left[k + '_chemical_potential_j_mol'] / tl,
                         -right[k + '_chemical_potential_j_mol'] / tr, h * inverse_jump))
               for k, h in zip(potential, enthalpies, strict=True)]
+    return rigid_face_from_forces(left, right, parameters, enthalpies, forces, inverse_jump)
+
+
+def rigid_face_from_forces(left, right, parameters, enthalpies, forces, inverse_jump):
+    """Apply the same positive mobility matrix to explicitly evaluated forces."""
+    tl, tr = left['temperature_k'], right['temperature_k']
+    species = ('co2', 'nitrogen')
     fractions = [(left[k + '_mol'] / (left['co2_mol'] + left['nitrogen_mol'])
                   + right[k + '_mol'] / (right['co2_mol'] + right['nitrogen_mol'])) / 2 for k in species]
     bulk_force = math.fsum(x * y for x, y in zip(fractions, forces, strict=True))

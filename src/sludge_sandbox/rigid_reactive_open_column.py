@@ -12,6 +12,7 @@ from scipy.sparse import coo_matrix, diags
 from .rigid_reactive_offset import OffsetRigidCalciteMixture
 from .rigid_reactive_open_cell import OpenRigidCalciteCell
 from .rigid_reactive_exchange import rigid_reactive_face
+from .rigid_reactive_source_force import source_integral_rigid_face
 from .rigid_reactive_tangent import inventory_tangent, face_tangents
 
 
@@ -50,6 +51,10 @@ class OpenRigidReactiveColumn:
             'bulk_mobility_mol2_k_j_m_s':transport['bulk_mobility_mol2_k_j_m_s'],
             'counter_mobility_mol2_k_j_m_s':transport['counter_mobility_mol2_k_j_m_s']}
         self.boundary = OpenRigidCalciteCell(self.cells[-1],self.surface_parameters,settings['boundary_program'])
+        self.face = rigid_reactive_face
+        if 'species_force_evaluation' in settings:
+            self.face = {'source_integral_differences': lambda left,right,params:
+                source_integral_rigid_face(left,right,params,self.cells[0])}[settings['species_force_evaluation']]
 
     def carbon_coordinate(self,cell,offset):
         return np.log1p(offset/cell.calcium) if self.log_carbon else offset
@@ -66,7 +71,7 @@ class OpenRigidReactiveColumn:
         states = [cell.offset_inventory_state(cell.calcium*np.expm1(values[3*i]),*physical[3*i+1:3*i+3],physical[3*i])
                   if self.log_carbon else cell.offset_inventory_state(values[3*i],*physical[3*i+1:3*i+3])
                   for i,cell in enumerate(self.cells)]
-        faces = [rigid_reactive_face(left,right,parameters) for left,right,parameters in zip(states[:-1],states[1:],self.internal_face_parameters,strict=True)]
+        faces = [self.face(left,right,parameters) for left,right,parameters in zip(states[:-1],states[1:],self.internal_face_parameters,strict=True)]
         reservoir = self.boundary.reservoirs[segment]
         contact = self.boundary.surface.solve(states[-1],reservoir,self.settings['boundary_program'][segment]['radiation_temperature_k'])
         return physical,states,faces,reservoir,contact
@@ -103,7 +108,8 @@ class OpenRigidReactiveColumn:
                 for j in range(matrix.shape[1]):
                     rows.append(row+i);columns.append(column+j);entries.append(matrix[i,j])
         for i in range(self.count-1):
-            pair = face_tangents(states[i],states[i+1],tangents[i],tangents[i+1],self.internal_face_parameters[i])
+            pair = face_tangents(states[i],states[i+1],tangents[i],tangents[i+1],self.internal_face_parameters[i],
+                faces[i] if 'species_force_evaluation' in self.settings else None)
             for side,derivative in enumerate(pair):
                 column = 3*(i+side)
                 block(3*i,column,-derivative[:3]);block(3*i+3,column,derivative[:3])

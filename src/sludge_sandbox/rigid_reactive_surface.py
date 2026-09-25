@@ -11,6 +11,7 @@ from scipy.optimize import least_squares
 from scipy.special import expit
 
 from .rigid_reactive_exchange import rigid_reactive_face
+from .rigid_reactive_source_force import source_integral_rigid_face
 from .rigid_reactive_tangent import inventory_tangent, face_tangents
 
 
@@ -54,6 +55,10 @@ class RigidReactiveSurface:
             'bulk_mobility_mol2_k_j_s': p['bulk_mobility_mol2_k_j_m2_s']*a,
             'counter_mobility_mol2_k_j_s': p['counter_mobility_mol2_k_j_m2_s']*a}
         self.radiation_factor = a*parameters['radiation']['emissivity']*parameters['radiation']['stefan_boltzmann_w_m2_k4']
+        self.face = rigid_reactive_face
+        if 'species_force_evaluation' in parameters:
+            self.face = {'source_integral_differences': lambda left,right,params:
+                source_integral_rigid_face(left,right,params,self.cell)}[parameters['species_force_evaluation']]
 
     def solve(self, bulk, reservoir, radiation_temperature_k):
         policy = self.parameters['numerics']; scales = np.array(policy['balance_scales_carbon_nitrogen_energy'])
@@ -66,14 +71,16 @@ class RigidReactiveSurface:
         def evaluate(coordinates):
             t, logp, logitx = coordinates
             surface = gas_contact_state(self.cell, t, self.cell.p0*math.exp(logp), float(expit(logitx)))
-            inner = rigid_reactive_face(bulk, surface, self.interior)
-            outer = rigid_reactive_face(surface, reservoir, self.exterior)
+            inner = self.face(bulk, surface, self.interior)
+            outer = self.face(surface, reservoir, self.exterior)
             radiation = self.radiation_factor*(radiation_temperature_k**4-t**4)
             residual = np.array([inner[k]-outer[k] for k in ('carbon_flow_mol_s', 'nitrogen_flow_mol_s', 'energy_flow_w')])
             residual[2] += radiation
             tangent = gas_contact_tangent(self.cell, surface)
-            inner_derivatives = face_tangents(bulk, surface, bulk_tangent, tangent, self.interior)
-            outer_derivatives = face_tangents(surface, reservoir, tangent, gas_tangent, self.exterior)
+            inner_derivatives = face_tangents(bulk, surface, bulk_tangent, tangent, self.interior,
+                inner if 'species_force_evaluation' in self.parameters else None)
+            outer_derivatives = face_tangents(surface, reservoir, tangent, gas_tangent, self.exterior,
+                outer if 'species_force_evaluation' in self.parameters else None)
             matrix = inner_derivatives[1][:3]-outer_derivatives[0][:3]
             matrix[2, 0] -= 4*self.radiation_factor*t**3
             return surface, inner, outer, radiation, residual, matrix, inner_derivatives, outer_derivatives

@@ -1,0 +1,558 @@
+{
+  "settings": {
+    "static_review_parameters": "parameters.calcite_rigid_open_graded_integral_review.json",
+    "decimal_digits": 50,
+    "root_tolerance": "1e-40",
+    "maximum_root_steps": 100,
+    "difference_steps": [
+      3e-06,
+      1e-06,
+      3e-07
+    ],
+    "reason": "Double central differences on the selected very small boundary cell fail the unchanged 1e-5 scaled derivative budget, with errors worsening for smaller differences. Recompose the same source and equations in high precision; no change to the original derivative target or source precision."
+  },
+  "static_review_parameters": {
+    "column_parameters": "parameters.calcite_rigid_open_graded_integral.json",
+    "coordinate_normalization": {
+      "carbon_density_mol_m3": 10.0,
+      "log_nitrogen": 1.0,
+      "energy_density_j_m3": 1000000.0
+    },
+    "difference_scales": {
+      "log_nitrogen": 1.0,
+      "energy_density_j_m3": 1000000.0
+    },
+    "difference_steps": [
+      0.0005,
+      0.00015,
+      5e-05
+    ],
+    "per_cell_rate_scales": [
+      1e-06,
+      1.0,
+      1.0
+    ],
+    "ledger_rate_scales": [
+      1e-06,
+      1e-06,
+      1.0,
+      1e-06,
+      1e-06,
+      1.0,
+      1.0,
+      0.001,
+      0.001,
+      0.001
+    ],
+    "budgets": {
+      "species_rate_mol_s": 1e-12,
+      "energy_rate_w": 1e-08,
+      "entropy_rate_w_k": 1e-09,
+      "scaled_derivative": 1e-05,
+      "conservation_derivative": 1e-10
+    },
+    "cases": [
+      {
+        "name": "graded_four_cell_cold",
+        "temperatures_k": [
+          300.0,
+          300.0,
+          300.0,
+          300.0
+        ],
+        "excess_carbon_densities_mol_m3": [
+          0.01,
+          0.01,
+          0.01,
+          0.01
+        ],
+        "nitrogen_densities_mol_m3": [
+          20.0,
+          20.0,
+          20.0,
+          20.0
+        ],
+        "carbon_difference_density_mol_m3": 0.01,
+        "segment_index": 0,
+        "cell_widths_m": [
+          0.01,
+          0.007,
+          0.0029999,
+          1e-07
+        ]
+      },
+      {
+        "name": "graded_four_cell_hot_gradient",
+        "temperatures_k": [
+          900.0,
+          950.0,
+          1000.0,
+          1100.0
+        ],
+        "excess_carbon_densities_mol_m3": [
+          -10.0,
+          -20.0,
+          -30.0,
+          -40.0
+        ],
+        "nitrogen_densities_mol_m3": [
+          20.0,
+          18.0,
+          15.0,
+          10.0
+        ],
+        "carbon_difference_density_mol_m3": 10.0,
+        "segment_index": 0,
+        "cell_widths_m": [
+          0.01,
+          0.007,
+          0.0029999,
+          1e-07
+        ]
+      },
+      {
+        "name": "graded_four_cell_cooling",
+        "temperatures_k": [
+          1100.0,
+          1000.0,
+          900.0,
+          700.0
+        ],
+        "excess_carbon_densities_mol_m3": [
+          -40.0,
+          -30.0,
+          -20.0,
+          -10.0
+        ],
+        "nitrogen_densities_mol_m3": [
+          10.0,
+          15.0,
+          18.0,
+          20.0
+        ],
+        "carbon_difference_density_mol_m3": 10.0,
+        "segment_index": 1,
+        "cell_widths_m": [
+          0.01,
+          0.007,
+          0.0029999,
+          1e-07
+        ]
+      },
+      {
+        "name": "graded_depleted_carbon",
+        "temperatures_k": [
+          1000.0,
+          1050.0,
+          1100.0,
+          1150.0
+        ],
+        "excess_carbon_densities_mol_m3": [
+          -9999.0,
+          -9999.0,
+          -9999.0,
+          -9999.0
+        ],
+        "nitrogen_densities_mol_m3": [
+          20.0,
+          18.0,
+          15.0,
+          10.0
+        ],
+        "carbon_difference_density_mol_m3": 0.1,
+        "segment_index": 0,
+        "cell_widths_m": [
+          0.01,
+          0.007,
+          0.0029999,
+          1e-07
+        ]
+      }
+    ],
+    "scope": "Separate static qualification before time integration; original root, thermochemical and physical definitions preserved. No true-material parameter fitting.",
+    "reason": "Carbon coordinate changes from mol to log(C/Ca): transfer the existing 1e-6 mol/s rate normalization to log-rate units by dividing it by nominal C, just as density perturbations are divided by C. The first log-chart review omitted this row-unit conversion and is retained. Physical normalizations and 1e-5 scaled derivative budget are unchanged.",
+    "carbon_rate_scale_basis": "physical_inventory"
+  },
+  "records": [
+    {
+      "case": {
+        "name": "graded_four_cell_cold",
+        "temperatures_k": [
+          300.0,
+          300.0,
+          300.0,
+          300.0
+        ],
+        "excess_carbon_densities_mol_m3": [
+          0.01,
+          0.01,
+          0.01,
+          0.01
+        ],
+        "nitrogen_densities_mol_m3": [
+          20.0,
+          20.0,
+          20.0,
+          20.0
+        ],
+        "carbon_difference_density_mol_m3": 0.01,
+        "segment_index": 0,
+        "cell_widths_m": [
+          0.01,
+          0.007,
+          0.0029999,
+          1e-07
+        ]
+      },
+      "derivatives": [
+        {
+          "scaled_maximum_absolute_difference": 8.313917938827899e-07,
+          "worst_row": 10,
+          "worst_column": 6,
+          "analytic_at_worst": -277007814.14781874,
+          "central_difference_decimal_at_worst": "-277007814.14865013680786125375561688755009509155414",
+          "step": 3e-06,
+          "physical_phase_constraints_met": true,
+          "within_budget": true
+        },
+        {
+          "scaled_maximum_absolute_difference": 5.301284164235296e-07,
+          "worst_row": 10,
+          "worst_column": 9,
+          "analytic_at_worst": 360090649.37538445,
+          "central_difference_decimal_at_worst": "360090649.37485432101224932356950095949779650933828",
+          "step": 1e-06,
+          "physical_phase_constraints_met": true,
+          "within_budget": true
+        },
+        {
+          "scaled_maximum_absolute_difference": 6.394052457298312e-07,
+          "worst_row": 10,
+          "worst_column": 9,
+          "analytic_at_worst": 360090649.37538445,
+          "central_difference_decimal_at_worst": "360090649.37474504407366619259634283392545400182244",
+          "step": 3e-07,
+          "physical_phase_constraints_met": true,
+          "within_budget": true
+        }
+      ],
+      "absolute_rate_differences": [
+        4.154730409562313e-23,
+        3.4829760365279246e-18,
+        2.5245052446317074e-15,
+        8.204775367611866e-23,
+        5.61265904904669e-18,
+        2.785226357563354e-15,
+        2.5608708486201724e-21,
+        7.938186331309976e-18,
+        2.1231903850454968e-15,
+        4.5110078636955063e-13,
+        6.446822918191371e-10,
+        1.1293216441749087e-13,
+        4.5115894860833973e-20,
+        1.2897222822658348e-19,
+        1.1519597831087863e-13,
+        8.081697092269318e-24,
+        2.1388174466902727e-23,
+        7.479719983026184e-18,
+        9.615087969330588e-16,
+        1.2544715710884444e-21,
+        1.1735434958232202e-18,
+        7.437556773109408e-18
+      ],
+      "reference_temperatures_k": [
+        "300.00000000000073413573862123640598694238211485898",
+        "300.00000000000126008909896210226402130217513152381",
+        "300.00000000000002617480869006713308590457648618579",
+        "300.00000000000048530642846975087705089755466530309"
+      ],
+      "all_derivative_budgets_met": true
+    },
+    {
+      "case": {
+        "name": "graded_four_cell_hot_gradient",
+        "temperatures_k": [
+          900.0,
+          950.0,
+          1000.0,
+          1100.0
+        ],
+        "excess_carbon_densities_mol_m3": [
+          -10.0,
+          -20.0,
+          -30.0,
+          -40.0
+        ],
+        "nitrogen_densities_mol_m3": [
+          20.0,
+          18.0,
+          15.0,
+          10.0
+        ],
+        "carbon_difference_density_mol_m3": 10.0,
+        "segment_index": 0,
+        "cell_widths_m": [
+          0.01,
+          0.007,
+          0.0029999,
+          1e-07
+        ]
+      },
+      "derivatives": [
+        {
+          "scaled_maximum_absolute_difference": 5.769413454152838e-09,
+          "worst_row": 10,
+          "worst_column": 10,
+          "analytic_at_worst": -3280.1919263515347,
+          "central_difference_decimal_at_worst": "-3280.1919263573040890862906425509935169870821746203",
+          "step": 3e-06,
+          "physical_phase_constraints_met": true,
+          "within_budget": true
+        },
+        {
+          "scaled_maximum_absolute_difference": 4.038850142842147e-10,
+          "worst_row": 10,
+          "worst_column": 10,
+          "analytic_at_worst": -3280.1919263515347,
+          "central_difference_decimal_at_worst": "-3280.1919263511307906178535905504330000749630544441",
+          "step": 1e-06,
+          "physical_phase_constraints_met": true,
+          "within_budget": true
+        },
+        {
+          "scaled_maximum_absolute_difference": 1.1060977150685664e-09,
+          "worst_row": 10,
+          "worst_column": 10,
+          "analytic_at_worst": -3280.1919263515347,
+          "central_difference_decimal_at_worst": "-3280.1919263504285779170692387812116001828321502044",
+          "step": 3e-07,
+          "physical_phase_constraints_met": true,
+          "within_budget": true
+        }
+      ],
+      "absolute_rate_differences": [
+        2.5731416465017163e-20,
+        1.2252169991679108e-17,
+        6.282777383123407e-16,
+        1.43902150859798e-19,
+        7.721596271634498e-17,
+        2.231241896256952e-15,
+        2.9470151400853277e-18,
+        1.73407534329791e-15,
+        2.4223699081192877e-15,
+        1.99158792681797e-12,
+        1.9235677894008475e-10,
+        1.3231092134078188e-12,
+        2.0593183584126872e-19,
+        2.5816340971991933e-20,
+        1.327106791898267e-12,
+        4.398008233610425e-22,
+        1.7698259687440816e-22,
+        3.9315887253491875e-16,
+        1.6522165052604644e-14,
+        5.692700369641105e-19,
+        1.4123853475517557e-17,
+        6.560630972046386e-19
+      ],
+      "reference_temperatures_k": [
+        "900.00000000000030765831489333252091293912540248987",
+        "950.00000000000001552677568117216083317886383875856",
+        "999.999999999999567951360828259660180697989060163",
+        "1099.9999999999999050833261948176380057625763970978"
+      ],
+      "all_derivative_budgets_met": true
+    },
+    {
+      "case": {
+        "name": "graded_four_cell_cooling",
+        "temperatures_k": [
+          1100.0,
+          1000.0,
+          900.0,
+          700.0
+        ],
+        "excess_carbon_densities_mol_m3": [
+          -40.0,
+          -30.0,
+          -20.0,
+          -10.0
+        ],
+        "nitrogen_densities_mol_m3": [
+          10.0,
+          15.0,
+          18.0,
+          20.0
+        ],
+        "carbon_difference_density_mol_m3": 10.0,
+        "segment_index": 1,
+        "cell_widths_m": [
+          0.01,
+          0.007,
+          0.0029999,
+          1e-07
+        ]
+      },
+      "derivatives": [
+        {
+          "scaled_maximum_absolute_difference": 1.7874393550666742e-09,
+          "worst_row": 10,
+          "worst_column": 10,
+          "analytic_at_worst": 1902.5963274396759,
+          "central_difference_decimal_at_worst": "1902.5963274414633000149844907256594791904392792339",
+          "step": 3e-06,
+          "physical_phase_constraints_met": true,
+          "within_budget": true
+        },
+        {
+          "scaled_maximum_absolute_difference": 1.14854516607838e-09,
+          "worst_row": 10,
+          "worst_column": 10,
+          "analytic_at_worst": 1902.5963274396759,
+          "central_difference_decimal_at_worst": "1902.5963274408244058259961966654735987339060373418",
+          "step": 1e-06,
+          "physical_phase_constraints_met": true,
+          "within_budget": true
+        },
+        {
+          "scaled_maximum_absolute_difference": 1.075870952080898e-09,
+          "worst_row": 10,
+          "worst_column": 10,
+          "analytic_at_worst": 1902.5963274396759,
+          "central_difference_decimal_at_worst": "1902.5963274407517316119987144258770657499706113854",
+          "step": 3e-07,
+          "physical_phase_constraints_met": true,
+          "within_budget": true
+        }
+      ],
+      "absolute_rate_differences": [
+        1.1582292444455726e-19,
+        1.0476879956383923e-16,
+        9.269407240785814e-16,
+        5.505285463015931e-19,
+        3.425298648932338e-16,
+        4.0993442179472255e-15,
+        3.3408536300996687e-19,
+        1.861507525292746e-16,
+        4.379899794646587e-15,
+        3.67466609400896e-12,
+        2.26774032643897e-09,
+        1.0802946495071852e-11,
+        3.6344373161870987e-19,
+        4.499728766887337e-19,
+        1.0795283169480874e-11,
+        1.8400724799287367e-21,
+        1.6542195747935295e-21,
+        1.770911488846767e-15,
+        1.907535976103936e-14,
+        6.306426392745613e-18,
+        4.76363576983191e-17,
+        2.1648079422228802e-17
+      ],
+      "reference_temperatures_k": [
+        "1099.9999999999997870399853358884438189637127535446",
+        "999.99999999999912341409629665005439823160160366002",
+        "899.99999999999953206774605624122373357297277901037",
+        "699.99999999999987726710007143763305865883636838523"
+      ],
+      "all_derivative_budgets_met": true
+    },
+    {
+      "case": {
+        "name": "graded_depleted_carbon",
+        "temperatures_k": [
+          1000.0,
+          1050.0,
+          1100.0,
+          1150.0
+        ],
+        "excess_carbon_densities_mol_m3": [
+          -9999.0,
+          -9999.0,
+          -9999.0,
+          -9999.0
+        ],
+        "nitrogen_densities_mol_m3": [
+          20.0,
+          18.0,
+          15.0,
+          10.0
+        ],
+        "carbon_difference_density_mol_m3": 0.1,
+        "segment_index": 0,
+        "cell_widths_m": [
+          0.01,
+          0.007,
+          0.0029999,
+          1e-07
+        ]
+      },
+      "derivatives": [
+        {
+          "scaled_maximum_absolute_difference": 9.948531354187588e-09,
+          "worst_row": 10,
+          "worst_column": 10,
+          "analytic_at_worst": -2544.349407992786,
+          "central_difference_decimal_at_worst": "-2544.3494080027344588445188193170150017905279633829",
+          "step": 3e-06,
+          "physical_phase_constraints_met": true,
+          "within_budget": true
+        },
+        {
+          "scaled_maximum_absolute_difference": 3.885147670289044e-09,
+          "worst_row": 10,
+          "worst_column": 10,
+          "analytic_at_worst": -2544.349407992786,
+          "central_difference_decimal_at_worst": "-2544.3494079966710751606202772795882997297276036325",
+          "step": 1e-06,
+          "physical_phase_constraints_met": true,
+          "within_budget": true
+        },
+        {
+          "scaled_maximum_absolute_difference": 3.195437776245893e-09,
+          "worst_row": 10,
+          "worst_column": 10,
+          "analytic_at_worst": -2544.349407992786,
+          "central_difference_decimal_at_worst": "-2544.3494079959813652665771252323506761351077417438",
+          "step": 3e-07,
+          "physical_phase_constraints_met": true,
+          "within_budget": true
+        }
+      ],
+      "absolute_rate_differences": [
+        8.510627906803452e-18,
+        1.1125067788450588e-18,
+        3.849672257853648e-15,
+        1.313738337024128e-17,
+        2.7421601317213283e-18,
+        5.083652512851727e-15,
+        3.8743653168333366e-17,
+        1.5586243073406185e-17,
+        1.0082889365321692e-14,
+        2.3059998543968634e-08,
+        7.036324942886638e-10,
+        1.129030535935963e-13,
+        2.30619916636128e-19,
+        7.028162757209692e-20,
+        1.0164169512450779e-13,
+        3.774281305866328e-23,
+        2.2107050010006887e-23,
+        2.1988739771354826e-16,
+        8.49614056566864e-15,
+        1.9984281679962693e-19,
+        7.197913966487012e-18,
+        2.82091323956612e-19
+      ],
+      "reference_temperatures_k": [
+        "1000.0000000000007240447797277414581894476990023051",
+        "1049.9999999999988862799173862329334902270473995691",
+        "1100.0000000000000928124922950043798023211335210056",
+        "1150.0000000000011218219560000305480031246613826124"
+      ],
+      "all_derivative_budgets_met": true
+    }
+  ],
+  "all_derivative_budgets_met": true,
+  "scope": "Independent source polynomial, phase-local inventory inverse, surface root and face matrix at higher arithmetic precision. Identical binary-float inputs are promoted; source uncertainty is unchanged. Original double-precision difference failures remain separate.",
+  "material_qualified": false,
+  "training_eligible": false
+}

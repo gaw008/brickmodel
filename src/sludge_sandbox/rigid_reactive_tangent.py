@@ -59,14 +59,16 @@ def inventory_tangent(cell, state):
     }
 
 
-def face_tangents(left, right, left_tangent, right_tangent, parameters):
-    face = rigid_reactive_face(left, right, parameters)
+def face_tangents(left, right, left_tangent, right_tangent, parameters, face=None):
+    provided_face = face is not None
+    if face is None: face = rigid_reactive_face(left, right, parameters)
     h = np.array(face['face_partial_enthalpies_j_mol'])
     x = np.array(face['face_mole_fractions'])
     force = np.array(face['species_forces_j_mol_k'])
     bulk = face['bulk_force_j_mol_k']
     difference = face['counter_force_j_mol_k']
-    inv = 1 / right['temperature_k'] - 1 / left['temperature_k']
+    tl, tr = left['temperature_k'], right['temperature_k']
+    inv = (tl-tr)/(tl*tr) if provided_face else 1/tr-1/tl
     lb = parameters['bulk_mobility_mol2_k_j_s']
     ld = parameters['counter_mobility_mol2_k_j_s']
     flows = np.array([face['carbon_flow_mol_s'], face['nitrogen_flow_mol_s']])
