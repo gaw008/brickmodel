@@ -11,9 +11,8 @@ class RadiationSource:
                 / (15 * mp.mpf(str(source['planck_j_s'])) ** 3 * mp.mpf(str(source['light_speed_m_s'])) ** 2))
         self.sigma = float(self.sigma_decimal)
 
-    def flux(self, temperature):
+    def flux(self, temperature, reservoir):
         p = self.parameters
-        reservoir = p['reservoir_temperature_k']
         coefficient = p['emissivity'] * p['area_m2'] * self.sigma
         heat = coefficient * (reservoir ** 4 - temperature ** 4)
         body, bath = heat / temperature, -heat / reservoir
@@ -22,10 +21,10 @@ class RadiationSource:
             'temperature_derivative_w_k': -4 * coefficient * temperature ** 3,
             'reservoir_temperature_k': reservoir}
 
-    def decimal_flux(self, temperature, precision):
+    def decimal_flux(self, temperature, reservoir_temperature, precision):
         with mp.workdps(precision):
             p = self.parameters
-            t, reservoir = mp.mpf(str(temperature)), mp.mpf(str(p['reservoir_temperature_k']))
+            t, reservoir = mp.mpf(str(temperature)), mp.mpf(str(reservoir_temperature))
             coefficient = mp.mpf(str(p['emissivity'])) * mp.mpf(str(p['area_m2'])) * mp.mpf(self.sigma_decimal)
             heat = coefficient * (reservoir ** 4 - t ** 4)
             return {'energy_in_w': heat, 'body_entropy_rate_w_k': heat / t,

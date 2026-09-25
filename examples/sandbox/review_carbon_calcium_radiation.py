@@ -34,7 +34,7 @@ def main():
         for temperature in policy['temperatures_k']:
             actual = black_enclosure_exchange(temperature, radiation)
             with mp.workdps(policy['decimal_precision']):
-                expected = reference.decimal_flux(temperature, policy['decimal_precision'])
+                expected = reference.decimal_flux(temperature, reservoir, policy['decimal_precision'])
                 errors = {k: float(abs(mp.mpf(actual[k]) - v)) for k, v in expected.items()}
                 sigma_error = float(abs(mp.mpf(radiation['stefan_boltzmann_w_m2_k4']) - mp.mpf(reference.sigma_decimal)))
             flags = {'source_sigma': sigma_error <= policy['sigma_absolute_budget_w_m2_k4'],
@@ -56,7 +56,7 @@ def main():
         state = cell.state(y)
         ref = source.reconstruct(state, p['volume_m3'], [cell.calcium, *y[:3]])
         flux = independent_exchange(gas, ref, face)
-        rad = radiation.flux(temperature)
+        rad = radiation.flux(temperature, p['radiation']['reservoir_temperature_k'])
         tangent = caloric_inventory_tangent(model, state, p['volume_m3'], cell.calcium, float(y[0]), float(y[1]))
         rates = cell.rates(0., y)
         coordinate_rates = np.array([rates[3], *rates[:3]])

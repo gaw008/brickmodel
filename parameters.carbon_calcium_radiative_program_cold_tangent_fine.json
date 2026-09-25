@@ -1,0 +1,52 @@
+{
+  "rigid_parameters": "parameters.carbon_calcium_rigid.json",
+  "decimal_digits": 60,
+  "root_tolerance": "1e-45",
+  "maximum_root_iterations": 100,
+  "temperature_points_k": [
+    650.0,
+    675.0,
+    700.0
+  ],
+  "temperature_difference_steps_k": [
+    "0.0001",
+    "0.00003"
+  ],
+  "inventory_relative_difference_steps": [
+    "0.0000000001",
+    "0.00000000003",
+    "0.00000000001"
+  ],
+  "temperature_derivative_budgets": {
+    "amount": 1e-10,
+    "pressure": 0.0001,
+    "internal_energy": 1e-07,
+    "entropy": 1e-10,
+    "gas_chemical_potential": 1e-05
+  },
+  "inventory_derivative_budgets": {
+    "amount": 1e-08,
+    "pressure": 0.01,
+    "internal_energy": 1e-05,
+    "entropy": 1e-08,
+    "gas_chemical_potential": 0.01
+  },
+  "identity_budgets": {
+    "thermal_gibbs_j_k": 1e-07,
+    "elemental_gibbs_j_mol": 1e-05,
+    "existing_cv_j_k": 1e-07,
+    "inverse_chain_absolute": 1e-09
+  },
+  "scope": "Actual prescribed radiation is650K and gas700K; observed cell ends674.3426K. Independently qualify caloric response at the recorded final simulated stock over650/675/700K, still inside source Cp domains. Original derivative budgets unchanged; these inventories are simulated observations, not measured material.",
+  "inventories": [
+    {
+      "name": "recorded_cold_final_stock",
+      "calcium_atoms_mol": 0.002,
+      "carbon_atoms_mol": 0.0030839351062250256,
+      "oxygen_atoms_mol": 0.008168767097585145,
+      "nitrogen_molecules_mol": 0.003597084377232338
+    }
+  ],
+  "tangent_formulation": "scaled",
+  "difference_refinement_reason": "Original C/O finite increments are large relative to residualO2~4.48e-7mol. Their entropy and gas-potential derivative discrepancies shrink aboutquadratically between1e-7and3e-8relative steps. Preserve original failures and use separately frozen1e-10/3e-11/1e-11relative increments; source precision and all derivative budgets unchanged. No production change."
+}

@@ -32,14 +32,18 @@ class CarbonCalciumRadiativeCell(CarbonCalciumInventoryOpenCell):
     def rates(self, at, values):
         state, gas = self.observe(values)
         radiation = self.radiation(state)
-        inventories = np.array([gas['inventory_flows_mol_s'][key]
-                                for key in self.face_parameters['transferred_inventory_order']])
-        tangent = caloric_inventory_tangent(self.model, state, self.volume, self.calcium,
-                                            float(values[0]), float(values[1]))
-        du = np.array(tangent['internal_energy_derivatives'])
-        energy = gas['energy_flow_w'] + radiation['energy_in_w']
-        temperature_rate = (energy - du[1:] @ inventories) / du[0]
-        return np.array([
-            *inventories, temperature_rate, energy, gas['left_entropy_rate_w_k'],
-            gas['entropy_production_w_k'] + radiation['entropy_production_w_k'],
-            radiation['energy_in_w'], radiation['reservoir_entropy_rate_w_k']])
+        return combined_rates(self, state, gas, radiation, values)
+
+
+def combined_rates(cell, state, gas, radiation, values):
+    inventories = np.array([gas['inventory_flows_mol_s'][key]
+                            for key in cell.face_parameters['transferred_inventory_order']])
+    tangent = caloric_inventory_tangent(cell.model, state, cell.volume, cell.calcium,
+                                        float(values[0]), float(values[1]))
+    du = np.array(tangent['internal_energy_derivatives'])
+    energy = gas['energy_flow_w'] + radiation['energy_in_w']
+    temperature_rate = (energy - du[1:] @ inventories) / du[0]
+    return np.array([
+        *inventories, temperature_rate, energy, gas['left_entropy_rate_w_k'],
+        gas['entropy_production_w_k'] + radiation['entropy_production_w_k'],
+        radiation['energy_in_w'], radiation['reservoir_entropy_rate_w_k']])

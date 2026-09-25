@@ -1,0 +1,5073 @@
+{
+  "settings": {
+    "rigid_parameters": "parameters.carbon_calcium_rigid.json",
+    "decimal_digits": 60,
+    "root_tolerance": "1e-45",
+    "maximum_root_iterations": 100,
+    "temperature_points_k": [
+      900.0,
+      950.0,
+      1000.0,
+      1050.0,
+      1100.0,
+      1150.0
+    ],
+    "temperature_difference_steps_k": [
+      "0.0001",
+      "0.00003"
+    ],
+    "inventory_relative_difference_steps": [
+      "0.0000001",
+      "0.00000003"
+    ],
+    "temperature_derivative_budgets": {
+      "amount": 1e-10,
+      "pressure": 0.0001,
+      "internal_energy": 1e-07,
+      "entropy": 1e-10,
+      "gas_chemical_potential": 1e-05
+    },
+    "inventory_derivative_budgets": {
+      "amount": 1e-08,
+      "pressure": 0.01,
+      "internal_energy": 1e-05,
+      "entropy": 1e-08,
+      "gas_chemical_potential": 0.01
+    },
+    "identity_budgets": {
+      "thermal_gibbs_j_k": 1e-07,
+      "elemental_gibbs_j_mol": 1e-05,
+      "existing_cv_j_k": 1e-07,
+      "inverse_chain_absolute": 1e-09
+    },
+    "scope": "Additional initial-stock caloric-only and source finite-increment qualification below900K before the separately programmed radiation cycle; original derivative budgets retained.",
+    "inventories": [
+      {
+        "name": "near_old_domain_boundary",
+        "calcium_atoms_mol": 0.002,
+        "carbon_atoms_mol": 0.0022,
+        "oxygen_atoms_mol": 0.0062,
+        "nitrogen_molecules_mol": 0.004
+      }
+    ],
+    "tangent_formulation": "scaled",
+    "temperatures_k": [
+      700.0,
+      750.0,
+      800.0,
+      850.0
+    ]
+  },
+  "rigid_parameters": {
+    "pressure_parameters": "parameters.carbon_calcium_pressure.json",
+    "virtual_volume_m3": 0.0001,
+    "volume_classification": "100 cubic centimetres closed rigid virtual capsule, not measured brick pore volume. Volume exceeds the elemental upper bound of all allowed solids.",
+    "numerics": {
+      "log_pressure_absolute_tolerance": 1e-12,
+      "log_pressure_relative_tolerance": 1e-14,
+      "temperature_absolute_tolerance_k": 1e-10,
+      "temperature_relative_tolerance": 1e-14,
+      "maximum_root_iterations": 100
+    },
+    "scope": "Static rigid flash after pressure state and Maxwell/caloric derivatives qualified. Pressure bracket follows elemental gas and solid volume bounds; no guessed pressure floor. This stage does not yet qualify a heat trajectory or phase-boundary time.",
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "pressure_parameters": {
+    "standard_equilibrium_parameters": "parameters.carbon_calcium_equilibrium.json",
+    "solid_volume_source": "parameters.carbon_calcium_volume_source.json",
+    "equilibrium_numerics": {
+      "log_oxygen_absolute_tolerance": 1e-12,
+      "log_oxygen_relative_tolerance": 1e-14,
+      "maximum_root_iterations": 100,
+      "calcite_fraction_absolute_tolerance": 1e-12,
+      "calcite_fraction_relative_tolerance": 1e-14
+    },
+    "fixed_calcium_basis": {
+      "graphite_present": [
+        "carbon_co2_to_co",
+        "carbon_oxygen_to_co2"
+      ],
+      "graphite_exhausted": [
+        "co_oxidation"
+      ]
+    },
+    "pressure_points_pa": [
+      10000.0,
+      100000.0,
+      1000000.0
+    ],
+    "temperature_points_k": [
+      298.15,
+      350.0,
+      500.0,
+      700.0,
+      850.0,
+      900.0,
+      950.0,
+      1000.0,
+      1050.0,
+      1100.0,
+      1150.0,
+      1200.0
+    ],
+    "inventories": [
+      {
+        "name": "limited_carbon",
+        "calcium_atoms_mol": 0.002,
+        "carbon_atoms_mol": 0.0035,
+        "oxygen_atoms_mol": 0.008,
+        "nitrogen_molecules_mol": 0.004
+      },
+      {
+        "name": "coupled_carbon",
+        "calcium_atoms_mol": 0.002,
+        "carbon_atoms_mol": 0.0045,
+        "oxygen_atoms_mol": 0.008,
+        "nitrogen_molecules_mol": 0.004
+      },
+      {
+        "name": "excess_carbon",
+        "calcium_atoms_mol": 0.002,
+        "carbon_atoms_mol": 0.007,
+        "oxygen_atoms_mol": 0.008,
+        "nitrogen_molecules_mol": 0.004
+      }
+    ],
+    "scope": "Pressure continuation of the qualified common-source pure-phase/ideal-gas mixture. Source298K solid volumes explicitly extended as constants; complete thermodynamic pressure corrections included. No material, kinetics or real-brick accuracy claim.",
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "sources": {
+    "carbon_source": {
+      "source_id": "usgs1995-selected-carbon-oxygen-nitrogen-phases",
+      "source_url": "https://pubs.usgs.gov/bul/2131/report.pdf",
+      "year": 1995,
+      "authors": [
+        "Richard A. Robie",
+        "Bruce S. Hemingway"
+      ],
+      "reference_temperature_k": "298.15",
+      "reference_pressure_pa": "100000",
+      "gas_constant_j_mol_k": "8.31451",
+      "gas_constant_policy": "Historical book R retained for separate same-source nominal calculation.",
+      "cp_formula": "A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2",
+      "phases": {
+        "C": {
+          "id": "graphite",
+          "formula": "C",
+          "cp_coefficient_strings": [
+            "6.086E+01",
+            "-1.024E-02",
+            "7.139E+05",
+            "-9.922E+02",
+            "1.669E-06"
+          ],
+          "reference_enthalpy_j_mol": "0",
+          "reference_entropy_j_mol_k": "5.74",
+          "cp_pdf_one_based_page": 47,
+          "thermal_pdf_one_based_page": 82,
+          "source_domain_k": [
+            298.15,
+            2500.0
+          ],
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "8.52",
+              "entropy_j_mol_k": "5.74",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "300",
+              "cp_j_mol_k": "8.59",
+              "entropy_j_mol_k": "5.79",
+              "sensible_enthalpy_over_t_j_mol_k": "0.05"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "11.88",
+              "entropy_j_mol_k": "8.72",
+              "sensible_enthalpy_over_t_j_mol_k": "2.60"
+            },
+            {
+              "temperature_k": "500",
+              "cp_j_mol_k": "14.64",
+              "entropy_j_mol_k": "11.68",
+              "sensible_enthalpy_over_t_j_mol_k": "4.75"
+            },
+            {
+              "temperature_k": "600",
+              "cp_j_mol_k": "16.79",
+              "entropy_j_mol_k": "14.55",
+              "sensible_enthalpy_over_t_j_mol_k": "6.58"
+            },
+            {
+              "temperature_k": "700",
+              "cp_j_mol_k": "18.47",
+              "entropy_j_mol_k": "17.27",
+              "sensible_enthalpy_over_t_j_mol_k": "8.17"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "19.77",
+              "entropy_j_mol_k": "19.82",
+              "sensible_enthalpy_over_t_j_mol_k": "9.54"
+            },
+            {
+              "temperature_k": "900",
+              "cp_j_mol_k": "20.80",
+              "entropy_j_mol_k": "22.21",
+              "sensible_enthalpy_over_t_j_mol_k": "10.73"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "21.63",
+              "entropy_j_mol_k": "24.45",
+              "sensible_enthalpy_over_t_j_mol_k": "11.78"
+            },
+            {
+              "temperature_k": "1100",
+              "cp_j_mol_k": "22.29",
+              "entropy_j_mol_k": "26.54",
+              "sensible_enthalpy_over_t_j_mol_k": "12.71"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "22.83",
+              "entropy_j_mol_k": "28.51",
+              "sensible_enthalpy_over_t_j_mol_k": "13.53"
+            }
+          ]
+        },
+        "O2": {
+          "id": "oxygen",
+          "formula": "O2",
+          "cp_coefficient_strings": [
+            "5.658E+01",
+            "-5.255E-03",
+            "6.856E+05",
+            "-5.780E+02",
+            "1.113E-06"
+          ],
+          "reference_enthalpy_j_mol": "0",
+          "reference_entropy_j_mol_k": "205.15",
+          "cp_pdf_one_based_page": 49,
+          "thermal_pdf_one_based_page": 106,
+          "source_domain_k": [
+            298.15,
+            2500.0
+          ],
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "29.35",
+              "entropy_j_mol_k": "205.15",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "300",
+              "cp_j_mol_k": "29.35",
+              "entropy_j_mol_k": "205.33",
+              "sensible_enthalpy_over_t_j_mol_k": "0.18"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "30.04",
+              "entropy_j_mol_k": "213.85",
+              "sensible_enthalpy_over_t_j_mol_k": "7.54"
+            },
+            {
+              "temperature_k": "500",
+              "cp_j_mol_k": "31.12",
+              "entropy_j_mol_k": "220.67",
+              "sensible_enthalpy_over_t_j_mol_k": "12.15"
+            },
+            {
+              "temperature_k": "600",
+              "cp_j_mol_k": "32.14",
+              "entropy_j_mol_k": "226.43",
+              "sensible_enthalpy_over_t_j_mol_k": "15.40"
+            },
+            {
+              "temperature_k": "700",
+              "cp_j_mol_k": "33.00",
+              "entropy_j_mol_k": "231.45",
+              "sensible_enthalpy_over_t_j_mol_k": "17.85"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "33.72",
+              "entropy_j_mol_k": "235.91",
+              "sensible_enthalpy_over_t_j_mol_k": "19.79"
+            },
+            {
+              "temperature_k": "900",
+              "cp_j_mol_k": "34.33",
+              "entropy_j_mol_k": "239.92",
+              "sensible_enthalpy_over_t_j_mol_k": "21.37"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "34.85",
+              "entropy_j_mol_k": "243.56",
+              "sensible_enthalpy_over_t_j_mol_k": "22.70"
+            },
+            {
+              "temperature_k": "1100",
+              "cp_j_mol_k": "35.29",
+              "entropy_j_mol_k": "246.90",
+              "sensible_enthalpy_over_t_j_mol_k": "23.82"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "35.67",
+              "entropy_j_mol_k": "249.99",
+              "sensible_enthalpy_over_t_j_mol_k": "24.79"
+            }
+          ]
+        },
+        "CO": {
+          "id": "carbon_monoxide",
+          "formula": "CO",
+          "cp_coefficient_strings": [
+            "3.976E+01",
+            "3.188E-03",
+            "5.292E+05",
+            "-3.013E+02",
+            "-8.078E-07"
+          ],
+          "reference_enthalpy_j_mol": "-110500",
+          "reference_entropy_j_mol_k": "197.27",
+          "cp_pdf_one_based_page": 53,
+          "thermal_pdf_one_based_page": 186,
+          "source_domain_k": [
+            298.15,
+            2200.0
+          ],
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "29.14",
+              "entropy_j_mol_k": "197.27",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "300",
+              "cp_j_mol_k": "29.13",
+              "entropy_j_mol_k": "197.45",
+              "sensible_enthalpy_over_t_j_mol_k": "0.18"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "29.15",
+              "entropy_j_mol_k": "205.80",
+              "sensible_enthalpy_over_t_j_mol_k": "7.39"
+            },
+            {
+              "temperature_k": "500",
+              "cp_j_mol_k": "29.79",
+              "entropy_j_mol_k": "212.37",
+              "sensible_enthalpy_over_t_j_mol_k": "11.81"
+            },
+            {
+              "temperature_k": "600",
+              "cp_j_mol_k": "30.55",
+              "entropy_j_mol_k": "217.87",
+              "sensible_enthalpy_over_t_j_mol_k": "14.87"
+            },
+            {
+              "temperature_k": "700",
+              "cp_j_mol_k": "31.29",
+              "entropy_j_mol_k": "222.64",
+              "sensible_enthalpy_over_t_j_mol_k": "17.16"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "31.97",
+              "entropy_j_mol_k": "226.86",
+              "sensible_enthalpy_over_t_j_mol_k": "18.97"
+            },
+            {
+              "temperature_k": "900",
+              "cp_j_mol_k": "32.58",
+              "entropy_j_mol_k": "230.66",
+              "sensible_enthalpy_over_t_j_mol_k": "20.45"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "33.14",
+              "entropy_j_mol_k": "234.12",
+              "sensible_enthalpy_over_t_j_mol_k": "21.69"
+            },
+            {
+              "temperature_k": "1100",
+              "cp_j_mol_k": "33.64",
+              "entropy_j_mol_k": "237.31",
+              "sensible_enthalpy_over_t_j_mol_k": "22.75"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "34.09",
+              "entropy_j_mol_k": "240.25",
+              "sensible_enthalpy_over_t_j_mol_k": "23.68"
+            }
+          ],
+          "domain_note": "Cp coefficient table prints upper2500K; individual ideal-gas table states2200K. Selected1200K is within both; preserve conflict."
+        },
+        "CO2": {
+          "id": "carbon_dioxide",
+          "formula": "CO2",
+          "cp_coefficient_strings": [
+            "8.811E+01",
+            "-2.698E-03",
+            "7.232E+05",
+            "-1.007E+03",
+            "0"
+          ],
+          "reference_enthalpy_j_mol": "-393500",
+          "reference_entropy_j_mol_k": "213.79",
+          "source_domain_k": [
+            298.15,
+            2200.0
+          ],
+          "cp_pdf_one_based_page": 53,
+          "thermal_pdf_one_based_page": 187,
+          "prior_source_record": "data/sandbox/research/calcite-thermochemistry-v1/facts.json",
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "37.12",
+              "entropy_j_mol_k": "213.79",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "41.20",
+              "entropy_j_mol_k": "225.28",
+              "sensible_enthalpy_over_t_j_mol_k": "9.98"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "51.48",
+              "entropy_j_mol_k": "257.47",
+              "sensible_enthalpy_over_t_j_mol_k": "28.51"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "54.29",
+              "entropy_j_mol_k": "269.28",
+              "sensible_enthalpy_over_t_j_mol_k": "33.40"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "56.31",
+              "entropy_j_mol_k": "279.37",
+              "sensible_enthalpy_over_t_j_mol_k": "37.06"
+            }
+          ]
+        },
+        "N2": {
+          "id": "nitrogen",
+          "formula": "N2",
+          "cp_coefficient_strings": [
+            "2.479E+01",
+            "9.648E-03",
+            "1.459E+05",
+            "0",
+            "-2.003E-06"
+          ],
+          "reference_enthalpy_j_mol": "0",
+          "reference_entropy_j_mol_k": "191.61",
+          "source_domain_k": [
+            298.15,
+            2500.0
+          ],
+          "cp_pdf_one_based_page": 48,
+          "thermal_pdf_one_based_page": 103,
+          "prior_source_record": "parameters.calcite_nitrogen_source.json",
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "29.13",
+              "entropy_j_mol_k": "191.61",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "300",
+              "cp_j_mol_k": "29.13",
+              "entropy_j_mol_k": "191.79",
+              "sensible_enthalpy_over_t_j_mol_k": "0.18"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "29.24",
+              "entropy_j_mol_k": "200.17",
+              "sensible_enthalpy_over_t_j_mol_k": "7.42"
+            },
+            {
+              "temperature_k": "500",
+              "cp_j_mol_k": "29.70",
+              "entropy_j_mol_k": "206.74",
+              "sensible_enthalpy_over_t_j_mol_k": "11.83"
+            },
+            {
+              "temperature_k": "600",
+              "cp_j_mol_k": "30.26",
+              "entropy_j_mol_k": "212.21",
+              "sensible_enthalpy_over_t_j_mol_k": "14.85"
+            },
+            {
+              "temperature_k": "700",
+              "cp_j_mol_k": "30.86",
+              "entropy_j_mol_k": "216.91",
+              "sensible_enthalpy_over_t_j_mol_k": "17.09"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "31.45",
+              "entropy_j_mol_k": "221.07",
+              "sensible_enthalpy_over_t_j_mol_k": "18.85"
+            },
+            {
+              "temperature_k": "900",
+              "cp_j_mol_k": "32.03",
+              "entropy_j_mol_k": "224.81",
+              "sensible_enthalpy_over_t_j_mol_k": "20.29"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "32.58",
+              "entropy_j_mol_k": "228.22",
+              "sensible_enthalpy_over_t_j_mol_k": "21.49"
+            },
+            {
+              "temperature_k": "1100",
+              "cp_j_mol_k": "33.10",
+              "entropy_j_mol_k": "231.35",
+              "sensible_enthalpy_over_t_j_mol_k": "22.52"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "33.58",
+              "entropy_j_mol_k": "234.25",
+              "sensible_enthalpy_over_t_j_mol_k": "23.42"
+            }
+          ]
+        }
+      },
+      "readback": {
+        "utc_date": "2026-09-25",
+        "official_pdf_cache": ".tools/source-cache/usgs1995/report.pdf",
+        "new_pages_rendered_and_visually_read": [
+          47,
+          49,
+          53,
+          82,
+          106,
+          186
+        ],
+        "existing_source_records_reused": [
+          "parameters.calcite_nitrogen_source.json",
+          "data/sandbox/research/calcite-thermochemistry-v1/facts.json",
+          "parameters.calcite_affinity_source.json"
+        ],
+        "new_network_pdf_access": "403; already available official PDF inspected locally, no new retrieval claimed."
+      },
+      "source_choice": "Preserve the complete selected USGS nominal source. Do not silently replace CO entropy with another compilation. Published coefficient-fit covariance and relevant real-char properties remain unknown.",
+      "nist_co_cross_source_comparison": {
+        "url": "https://janaf.nist.gov/tables/C-093.html",
+        "reference_temperature_k": "298.15",
+        "reference_pressure_pa": "100000",
+        "enthalpy_j_mol": "-110527",
+        "entropy_j_mol_k": "197.653",
+        "cp_j_mol_k": "29.142",
+        "formation_gibbs_j_mol": "-137163",
+        "classification": "Independent published compilation value, not an experimental holdout and not substituted into the USGS model."
+      },
+      "scope": "Pure reference graphite and ideal gases; not measured sludge char, finite reaction rate, volatile inventory, or actual brick atmosphere.",
+      "material_qualified": false,
+      "training_eligible": false
+    },
+    "calcite_source": {
+      "source_id": "usgs-b2131-1995-calcite-lime-co2-gibbs-extension",
+      "source_url": "https://pubs.usgs.gov/bul/2131/report.pdf",
+      "retrieved_date_utc": "2026-09-25",
+      "title": "Thermodynamic Properties of Minerals and Related Substances at 298.15 K and 1 Bar (10^5 Pascals) Pressure and at Higher Temperatures",
+      "authors": [
+        "Richard A. Robie",
+        "Bruce S. Hemingway"
+      ],
+      "year": 1995,
+      "reference_facts_file": "data/sandbox/research/calcite-thermochemistry-v1/facts.json",
+      "evidence": {
+        "official_pdf_cache": ".tools/source-cache/usgs1995/report.pdf",
+        "bytes": 21768195,
+        "visual_review_pages": [
+          187,
+          188,
+          274
+        ],
+        "extractor": "pdftotext -layout; pdftoppm PNG pages inspected",
+        "web_pdf_fetch": "403; ordinary official curl download succeeded",
+        "digest_operation": "none"
+      },
+      "temperature_points_k": [
+        "298.15",
+        "300",
+        "400",
+        "500",
+        "600",
+        "700",
+        "800",
+        "900",
+        "1000",
+        "1100",
+        "1200"
+      ],
+      "phases": {
+        "calcite": {
+          "printed_page": 268,
+          "pdf_one_based_page": 274,
+          "entropy_reference_j_mol_k": "91.71",
+          "formation_gibbs_kj_mol": [
+            "-1128.5",
+            "-1128.0",
+            "-1101.6",
+            "-1075.6",
+            "-1049.9",
+            "-1024.4",
+            "-999.0",
+            "-973.8",
+            "-948.7",
+            "-923.7",
+            "-898.2"
+          ],
+          "formation_log10_k": [
+            "197.70",
+            "196.39",
+            "143.86",
+            "112.37",
+            "91.40",
+            "76.44",
+            "65.23",
+            "56.52",
+            "49.55",
+            "43.86",
+            "39.10"
+          ]
+        },
+        "lime": {
+          "printed_page": 182,
+          "pdf_one_based_page": 188,
+          "entropy_reference_j_mol_k": "38.10",
+          "formation_gibbs_kj_mol": [
+            "-603.1",
+            "-602.9",
+            "-592.2",
+            "-581.6",
+            "-571.2",
+            "-560.8",
+            "-550.3",
+            "-539.9",
+            "-529.4",
+            "-518.9",
+            "-507.7"
+          ],
+          "formation_log10_k": [
+            "105.66",
+            "104.97",
+            "77.33",
+            "60.76",
+            "49.72",
+            "41.84",
+            "35.93",
+            "31.33",
+            "27.65",
+            "24.64",
+            "22.10"
+          ]
+        },
+        "carbon_dioxide": {
+          "printed_page": 181,
+          "pdf_one_based_page": 187,
+          "entropy_reference_j_mol_k": "213.79",
+          "formation_gibbs_kj_mol": [
+            "-394.4",
+            "-394.4",
+            "-394.7",
+            "-394.9",
+            "-395.2",
+            "-395.4",
+            "-395.6",
+            "-395.7",
+            "-395.9",
+            "-396.0",
+            "-396.1"
+          ],
+          "formation_log10_k": [
+            "69.09",
+            "68.67",
+            "51.54",
+            "41.26",
+            "34.40",
+            "29.50",
+            "25.83",
+            "22.97",
+            "20.68",
+            "18.80",
+            "17.24"
+          ]
+        }
+      },
+      "classification": "published_compilation_nominal_standard_phases; not_target_brick_mineral_inventory_or_rate_law",
+      "entropy_reference_policy": "Use the 298.15 K row of each individual high-temperature table (two decimal places). Keep the one-decimal summary values in the old facts unchanged.",
+      "rounding_policy": "Each nonblank printed decimal or scientific-notation number carries half its last printed unit for arithmetic consistency comparisons only. Omitted Cp terms remain exact zero terms of the printed nominal formula. This is not physical uncertainty.",
+      "unknowns": [
+        "High-temperature physical fit uncertainty and covariance",
+        "Target brick phase amounts and reaction rates",
+        "Solid pressure-volume correction away from the stated 1 bar",
+        "Nonideal CO2 fugacity and transport limitations"
+      ]
+    },
+    "calcite_facts": {
+      "schema_version": 1,
+      "source_id": "usgs-b2131-1995-calcite-lime-co2",
+      "classification": "source_polynomial_nominal_thermochemistry_not_material_or_kinetic_admission",
+      "reference_state": {
+        "temperature_k": "298.15",
+        "pressure_pa": "100000",
+        "reference": "Elements in their standard states at 1 bar and stated temperature for formation columns; h(T) storage coordinate must use hf(298.15)+sensible increment, not hf(T) alone.",
+        "gas_constant_j_mol_k": "8.31451",
+        "gas_constant_printed_uncertainty_j_mol_k": "0.00007",
+        "gas_constant_policy": "Historical book constant retained as source metadata, never silently replaces runtime modern R.",
+        "atomic_weights": "1985 atomic weights, 12C=12.000; printed method p3",
+        "locators": [
+          {
+            "printed_page": "iv",
+            "pdf_one_based_page": 6,
+            "pdf_zero_based_index": 5
+          },
+          {
+            "printed_page": 3,
+            "pdf_one_based_page": 9,
+            "pdf_zero_based_index": 8
+          }
+        ]
+      },
+      "cp_equation": {
+        "printed": "Cp = A1 + A2*T + A3*T^(-2) + A4*T^(-0.5) + A5*T^2",
+        "temperature_unit": "K",
+        "output_unit": "J/(mol K)",
+        "coefficient_units": {
+          "A1": "J/(mol K)",
+          "A2": "J/(mol K^2)",
+          "A3": "J K/mol",
+          "A4": "J/(mol K^0.5)",
+          "A5": "J/(mol K^3)"
+        },
+        "locator": {
+          "printed_page": 2,
+          "pdf_one_based_page": 8,
+          "pdf_zero_based_index": 7
+        },
+        "numbered_equation": false,
+        "derived_sensible_enthalpy_formula": "A1*(T-T0)+A2*(T^2-T0^2)/2+A3*(1/T0-1/T)+2*A4*(sqrt(T)-sqrt(T0))+A5*(T^3-T0^3)/3",
+        "derived_sensible_enthalpy_unit": "J/mol",
+        "T0_k": "298.15",
+        "derivation_classification": "exact analytic integral of supplied nominal polynomial; no fitting or coefficient adjustment"
+      },
+      "uncertainty": {
+        "applies_to": "298.15 K values only",
+        "method_summary": "The book assigns estimated uncertainties; its convention for calorimetric measurements is twice the standard deviation of the mean. Individual upstream uncertainty derivations and cross-species covariance have not been reconstructed.",
+        "locator": {
+          "printed_page": 3,
+          "pdf_one_based_page": 9,
+          "pdf_zero_based_index": 8
+        },
+        "not_a_strict_bound": true,
+        "not_assumed_95_percent_interval": true,
+        "high_temperature_fit_error": null,
+        "printed_zero_uncertainty_note": "Printed 0.0 is retained at its displayed precision, not interpreted as physically exact."
+      },
+      "species": [
+        {
+          "id": "calcite",
+          "name_printed": "CALCITE",
+          "formula": "CaCO3",
+          "phase_description_printed": "Rhombohedral crystals 298.15 to 1200 K.",
+          "molar_mass_g_mol": "100.087",
+          "molar_mass_note": "Original printed formula weight in grams per mole; historical 1985 atomic weights; no mass uncertainty supplied.",
+          "reference_298": {
+            "temperature_k": "298.15",
+            "pressure_pa": "100000",
+            "hf_kj_mol": "-1207.4",
+            "hf_uncertainty_kj_mol": "1.3",
+            "gf_kj_mol": "-1128.5",
+            "gf_uncertainty_kj_mol": "1.4",
+            "volume_cm3_mol": "36.93",
+            "volume_uncertainty_cm3_mol": "0.01",
+            "entropy_j_mol_k": "91.7",
+            "entropy_uncertainty_j_mol_k": "0.2",
+            "locator": {
+              "printed_page": 25,
+              "pdf_one_based_page": 31,
+              "pdf_zero_based_index": 30
+            },
+            "reference_numbers_by_column": {
+              "S": [
+                392
+              ],
+              "H/G": [
+                246,
+                336
+              ],
+              "C": [
+                202
+              ]
+            }
+          },
+          "cp": {
+            "coefficients_printed": {
+              "A1": "9.972E+01",
+              "A2": "2.692E-02",
+              "A3": "-2.158E+06",
+              "A4": null,
+              "A5": null
+            },
+            "coefficients_nominal": {
+              "A1": "9.972E+01",
+              "A2": "2.692E-02",
+              "A3": "-2.158E+06",
+              "A4": "0",
+              "A5": "0"
+            },
+            "blank_cells_interpretation": "Blank cells are omitted terms in the printed polynomial, represented explicitly as zero only in coefficients_nominal; not missing material values filled with zero.",
+            "temperature_range_printed_k": [
+              "298",
+              "1200"
+            ],
+            "coefficient_locator": {
+              "printed_page": 55,
+              "pdf_one_based_page": 61,
+              "pdf_zero_based_index": 60
+            },
+            "phase_description_range_k": [
+              "298.15",
+              "1200"
+            ],
+            "selected_single_phase_domain_k": [
+              "298.15",
+              "1200"
+            ],
+            "high_temperature_table_locator": {
+              "printed_page": 268,
+              "pdf_one_based_page": 274,
+              "pdf_zero_based_index": 273
+            },
+            "physical_fit_uncertainty": null,
+            "coefficient_covariance": null,
+            "no_upper_limit_extrapolation": true
+          },
+          "check_points": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "83.47",
+              "entropy_j_mol_k": "91.71",
+              "enthalpy_function_j_mol_k": "0.00",
+              "formation_enthalpy_kj_mol": "-1207.4"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "97.00",
+              "entropy_j_mol_k": "118.36",
+              "enthalpy_function_j_mol_k": "23.18",
+              "formation_enthalpy_kj_mol": "-1206.3"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "117.88",
+              "entropy_j_mol_k": "193.19",
+              "enthalpy_function_j_mol_k": "66.15",
+              "formation_enthalpy_kj_mol": "-1201.6"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "124.48",
+              "entropy_j_mol_k": "220.22",
+              "enthalpy_function_j_mol_k": "77.17",
+              "formation_enthalpy_kj_mol": "-1199.1"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "130.53",
+              "entropy_j_mol_k": "243.46",
+              "enthalpy_function_j_mol_k": "85.57",
+              "formation_enthalpy_kj_mol": "-1204.9"
+            }
+          ],
+          "check_point_definition": "enthalpy_function_j_mol_k is (H(T)-H(298.15 K))/T, not H(T)-H(298.15 K) and not formation enthalpy at T.",
+          "high_temperature_table_locator": {
+            "printed_page": 268,
+            "pdf_one_based_page": 274,
+            "pdf_zero_based_index": 273
+          },
+          "runtime_material_qualified": false,
+          "volume_temperature_law": null,
+          "reaction_kinetics": null
+        },
+        {
+          "id": "lime",
+          "name_printed": "LIME",
+          "formula": "CaO",
+          "phase_description_printed": "Cubic crystals 298.15 to 1800 K.",
+          "molar_mass_g_mol": "56.077",
+          "molar_mass_note": "Original printed formula weight in grams per mole; historical 1985 atomic weights; no mass uncertainty supplied.",
+          "reference_298": {
+            "temperature_k": "298.15",
+            "pressure_pa": "100000",
+            "hf_kj_mol": "-635.1",
+            "hf_uncertainty_kj_mol": "0.9",
+            "gf_kj_mol": "-603.1",
+            "gf_uncertainty_kj_mol": "0.9",
+            "volume_cm3_mol": "16.76",
+            "volume_uncertainty_cm3_mol": "0.01",
+            "entropy_j_mol_k": "38.1",
+            "entropy_uncertainty_j_mol_k": "0.4",
+            "locator": {
+              "printed_page": 15,
+              "pdf_one_based_page": 21,
+              "pdf_zero_based_index": 20
+            },
+            "reference_numbers_by_column": {
+              "S": [
+                67,
+                117
+              ],
+              "H/G": [
+                67,
+                117
+              ],
+              "C": [
+                67,
+                117
+              ]
+            }
+          },
+          "cp": {
+            "coefficients_printed": {
+              "A1": "5.185E+01",
+              "A2": "2.444E-03",
+              "A3": "-9.340E+05",
+              "A4": null,
+              "A5": null
+            },
+            "coefficients_nominal": {
+              "A1": "5.185E+01",
+              "A2": "2.444E-03",
+              "A3": "-9.340E+05",
+              "A4": "0",
+              "A5": "0"
+            },
+            "blank_cells_interpretation": "Blank cells are omitted terms in the printed polynomial, represented explicitly as zero only in coefficients_nominal; not missing material values filled with zero.",
+            "temperature_range_printed_k": [
+              "298",
+              "2500"
+            ],
+            "coefficient_locator": {
+              "printed_page": 47,
+              "pdf_one_based_page": 53,
+              "pdf_zero_based_index": 52
+            },
+            "phase_description_range_k": [
+              "298.15",
+              "1800"
+            ],
+            "selected_single_phase_domain_k": [
+              "298.15",
+              "1800"
+            ],
+            "high_temperature_table_locator": {
+              "printed_page": 182,
+              "pdf_one_based_page": 188,
+              "pdf_zero_based_index": 187
+            },
+            "physical_fit_uncertainty": null,
+            "coefficient_covariance": null,
+            "no_upper_limit_extrapolation": true
+          },
+          "check_points": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "42.07",
+              "entropy_j_mol_k": "38.10",
+              "enthalpy_function_j_mol_k": "0.00",
+              "formation_enthalpy_kj_mol": "-635.1"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "46.99",
+              "entropy_j_mol_k": "51.25",
+              "enthalpy_function_j_mol_k": "11.43",
+              "formation_enthalpy_kj_mol": "-634.7"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "52.35",
+              "entropy_j_mol_k": "85.98",
+              "enthalpy_function_j_mol_k": "30.91",
+              "formation_enthalpy_kj_mol": "-634.0"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "53.36",
+              "entropy_j_mol_k": "97.78",
+              "enthalpy_function_j_mol_k": "35.31",
+              "formation_enthalpy_kj_mol": "-634.2"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "54.13",
+              "entropy_j_mol_k": "107.58",
+              "enthalpy_function_j_mol_k": "38.38",
+              "formation_enthalpy_kj_mol": "-643.3"
+            }
+          ],
+          "check_point_definition": "enthalpy_function_j_mol_k is (H(T)-H(298.15 K))/T, not H(T)-H(298.15 K) and not formation enthalpy at T.",
+          "high_temperature_table_locator": {
+            "printed_page": 182,
+            "pdf_one_based_page": 188,
+            "pdf_zero_based_index": 187
+          },
+          "runtime_material_qualified": false,
+          "volume_temperature_law": null,
+          "reaction_kinetics": null
+        },
+        {
+          "id": "carbon_dioxide",
+          "name_printed": "CARBON DIOXIDE",
+          "formula": "CO2",
+          "phase_description_printed": "Ideal gas at p = 1 bar, 298.15 to 2200 K.",
+          "molar_mass_g_mol": "44.010",
+          "molar_mass_note": "Original printed formula weight in grams per mole; historical 1985 atomic weights; no mass uncertainty supplied.",
+          "reference_298": {
+            "temperature_k": "298.15",
+            "pressure_pa": "100000",
+            "hf_kj_mol": "-393.5",
+            "hf_uncertainty_kj_mol": "0.1",
+            "gf_kj_mol": "-394.4",
+            "gf_uncertainty_kj_mol": "0.2",
+            "volume_cm3_mol": "24789.70",
+            "volume_uncertainty_cm3_mol": "0.20",
+            "entropy_j_mol_k": "213.8",
+            "entropy_uncertainty_j_mol_k": "0.0",
+            "locator": {
+              "printed_page": 15,
+              "pdf_one_based_page": 21,
+              "pdf_zero_based_index": 20
+            },
+            "reference_numbers_by_column": {
+              "S": [
+                67,
+                117
+              ],
+              "H/G": [
+                67,
+                117
+              ],
+              "C": [
+                67,
+                117
+              ]
+            }
+          },
+          "cp": {
+            "coefficients_printed": {
+              "A1": "8.811E+01",
+              "A2": "-2.698E-03",
+              "A3": "7.232E+05",
+              "A4": "-1.007E+03",
+              "A5": null
+            },
+            "coefficients_nominal": {
+              "A1": "8.811E+01",
+              "A2": "-2.698E-03",
+              "A3": "7.232E+05",
+              "A4": "-1.007E+03",
+              "A5": "0"
+            },
+            "blank_cells_interpretation": "Blank cells are omitted terms in the printed polynomial, represented explicitly as zero only in coefficients_nominal; not missing material values filled with zero.",
+            "temperature_range_printed_k": [
+              "298",
+              "2200"
+            ],
+            "coefficient_locator": {
+              "printed_page": 47,
+              "pdf_one_based_page": 53,
+              "pdf_zero_based_index": 52
+            },
+            "phase_description_range_k": [
+              "298.15",
+              "2200"
+            ],
+            "selected_single_phase_domain_k": [
+              "298.15",
+              "2200"
+            ],
+            "high_temperature_table_locator": {
+              "printed_page": 181,
+              "pdf_one_based_page": 187,
+              "pdf_zero_based_index": 186
+            },
+            "physical_fit_uncertainty": null,
+            "coefficient_covariance": null,
+            "no_upper_limit_extrapolation": true
+          },
+          "check_points": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "37.12",
+              "entropy_j_mol_k": "213.79",
+              "enthalpy_function_j_mol_k": "0.00",
+              "formation_enthalpy_kj_mol": "-393.5"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "41.20",
+              "entropy_j_mol_k": "225.28",
+              "enthalpy_function_j_mol_k": "9.98",
+              "formation_enthalpy_kj_mol": "-393.6"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "51.48",
+              "entropy_j_mol_k": "257.47",
+              "enthalpy_function_j_mol_k": "28.51",
+              "formation_enthalpy_kj_mol": "-394.2"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "54.29",
+              "entropy_j_mol_k": "269.28",
+              "enthalpy_function_j_mol_k": "33.40",
+              "formation_enthalpy_kj_mol": "-394.6"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "56.31",
+              "entropy_j_mol_k": "279.37",
+              "enthalpy_function_j_mol_k": "37.06",
+              "formation_enthalpy_kj_mol": "-395.0"
+            }
+          ],
+          "check_point_definition": "enthalpy_function_j_mol_k is (H(T)-H(298.15 K))/T, not H(T)-H(298.15 K) and not formation enthalpy at T.",
+          "high_temperature_table_locator": {
+            "printed_page": 181,
+            "pdf_one_based_page": 187,
+            "pdf_zero_based_index": 186
+          },
+          "runtime_material_qualified": false,
+          "volume_temperature_law": null,
+          "reaction_kinetics": null
+        }
+      ],
+      "reaction": {
+        "id": "calcite_decomposition",
+        "stoichiometry_mol_per_mol_extent": {
+          "calcite": "-1",
+          "lime": "1",
+          "carbon_dioxide": "1"
+        },
+        "extent_basis": "mol CaCO3 consumed",
+        "common_selected_temperature_domain_k": [
+          "298.15",
+          "1200"
+        ],
+        "phase_stability_not_certified": true,
+        "equilibrium_model": null,
+        "kinetic_model": null,
+        "MIA3_inventory_or_kinetic_transfer": false
+      },
+      "interpretation_guards": [
+        "Only selected original facts are transcribed; no source pages or full PDF included in tracked artifact.",
+        "Formation columns at high T use elements at that T; they are not single-species storage enthalpy curves.",
+        "Molar volumes apply at 298.15 K and 1 bar; no temperature-independent high-T law or density error envelope is inferred.",
+        "Cp source coefficients and independently printed temperature rows remain distinct and may differ because of printed precision or other source inconsistency; derived checks never rewrite either.",
+        "No Shomate fitting, no MIA3 raw-sludge properties, no reaction rate or firing recipe."
+      ]
+    },
+    "carbon_parameters": {
+      "source_file": "data/sandbox/research/carbon-gas-thermochemistry-v1/source.json",
+      "temperature_domain_k": [
+        298.15,
+        1200.0
+      ],
+      "equilibrium_numerics": {
+        "log_oxygen_absolute_tolerance": 1e-12,
+        "log_oxygen_relative_tolerance": 1e-14,
+        "maximum_root_iterations": 100
+      },
+      "temperature_points_k": [
+        298.15,
+        350.0,
+        500.0,
+        700.0,
+        850.0,
+        1000.0,
+        1100.0,
+        1200.0
+      ],
+      "inventories": [
+        {
+          "name": "carbon_lean",
+          "carbon_atoms_mol": 0.0005,
+          "oxygen_atoms_mol": 0.002,
+          "nitrogen_molecules_mol": 0.004
+        },
+        {
+          "name": "carbon_transition",
+          "carbon_atoms_mol": 0.0015,
+          "oxygen_atoms_mol": 0.002,
+          "nitrogen_molecules_mol": 0.004
+        },
+        {
+          "name": "carbon_rich",
+          "carbon_atoms_mol": 0.003,
+          "oxygen_atoms_mol": 0.002,
+          "nitrogen_molecules_mol": 0.004
+        }
+      ],
+      "classification": "explicit_virtual_element_inventories_at_source_standard_pressure",
+      "scope": "Restricted equilibrium with pure reference graphite and ideal CO/CO2/O2/N2. No finite char chemistry or ignition dynamics.",
+      "material_qualified": false,
+      "training_eligible": false
+    },
+    "calcite_parameters": {
+      "source_file": "parameters.calcite_affinity_source.json",
+      "gas_phase": "carbon_dioxide",
+      "total_pressure_pa": 100000.0,
+      "joules_per_kilojoule": 1000.0,
+      "gas_partial_pressures_pa": [
+        40.0,
+        1000.0,
+        10000.0,
+        100000.0
+      ],
+      "pressure_cases_classification": "explicit_virtual_atmospheres_not_measurements",
+      "gas_constant_policy": "Use the historical USGS book R for this separate source consistency calculation; do not replace any other module R.",
+      "root": {
+        "bracket_k": [
+          298.15,
+          1200.0
+        ],
+        "absolute_tolerance_k": 1e-08,
+        "relative_tolerance": 1e-12,
+        "maximum_iterations": 100
+      },
+      "verification": {
+        "quadrature_absolute_tolerance": 1e-08,
+        "quadrature_relative_tolerance": 1e-12,
+        "quadrature_maximum_subintervals": 100,
+        "derivative_temperatures_k": [
+          400.0,
+          600.0,
+          800.0,
+          1000.0,
+          1100.0
+        ],
+        "derivative_step_k": 0.001,
+        "budgets": {
+          "enthalpy_quadrature_j_mol": 1e-06,
+          "entropy_quadrature_j_mol_k": 1e-08,
+          "gibbs_derivative_j_mol_k": 1e-05,
+          "vanthoff_derivative_per_k": 1e-08,
+          "equilibrium_affinity_j_mol": 1e-05
+        },
+        "rounding_policy": "Printed half-last-unit intervals propagated through the linear Cp integrals, Href and Sref. Formation G and logK table comparison retains its own half-last-unit interval. These are arithmetic envelopes, not physical uncertainty. No post-comparison budget fitting."
+      },
+      "material_qualified": false,
+      "training_eligible": false
+    },
+    "solid_volume_source": {
+      "source_url": "https://pubs.usgs.gov/bul/2131/report.pdf",
+      "retrieved_utc": "2026-09-25",
+      "calcium_volume_source": "parameters.calcite_constant_volume_source.json",
+      "reference_temperature_k": 298.15,
+      "reference_pressure_pa": 100000.0,
+      "cubic_metres_per_cubic_centimetre": 1e-06,
+      "graphite": {
+        "formula": "C",
+        "crystal": "hexagonal graphite",
+        "volume_cm3_mol": "5.298",
+        "alternate_printed_volume_j_bar_mol": "0.5298",
+        "printed_page": 76,
+        "pdf_one_based_page": 82,
+        "source_printed_uncertainty_cm3_mol": null,
+        "visual_review": "Original local PDF rendered and visually inspected on 2026-09-25; graphite reference-state page gives both equivalent volume units."
+      },
+      "eos_choice": "Constant molar volumes for graphite, calcite and lime, with h=h0+(p-p0)v, s=s0 and mu=g0+(p-p0)v. This is an explicit incompressible approximation, not a measured high-temperature EOS.",
+      "unknowns": [
+        "Graphite thermal expansion and compressibility",
+        "Calcite and lime high-temperature volume changes",
+        "Target sludge char composition and structure",
+        "Nonideal gas fugacity over actual operating pressures"
+      ],
+      "material_qualified": false,
+      "training_eligible": false
+    },
+    "calcium_volume_source": {
+      "source_url": "https://pubs.usgs.gov/bul/2131/report.pdf",
+      "retrieved_utc": "2026-09-25",
+      "reference_temperature_k": 298.15,
+      "reference_pressure_pa": 100000.0,
+      "cubic_metres_per_cubic_centimetre": 1e-06,
+      "phases": {
+        "calcite": {
+          "volume_cm3_mol": "36.93",
+          "source_printed_uncertainty_cm3_mol": "0.01",
+          "printed_page": 25,
+          "pdf_one_based_page": 31
+        },
+        "lime": {
+          "volume_cm3_mol": "16.76",
+          "source_printed_uncertainty_cm3_mol": "0.01",
+          "printed_page": 15,
+          "pdf_one_based_page": 21
+        }
+      },
+      "visual_review": "Both original reference tables rendered and inspected; matched existing immutable source facts; no digest operation.",
+      "model_reference": "https://cantera.org/3.2/cxx/d3/d50/classCantera_1_1StoichSubstance.html",
+      "eos_choice": "constant molar volume, no thermal expansion or compression, incompressible pure phases",
+      "classification": "298.15 K source volumes extended as an explicitly approximate constant-volume EOS, not a measured high-temperature law",
+      "unknowns": [
+        "Actual calcite and CaO thermal expansion and compressibility",
+        "Target brick phase inventory, porosity and pore connectivity",
+        "Material reaction kinetics and nucleation",
+        "Ideal-gas and incompressible-solid model error over the resulting pressure path"
+      ],
+      "thermal_consistency": {
+        "solid_h": "h0(T)+(p-p0)*v",
+        "solid_s": "s0(T)",
+        "solid_u": "h0(T)-p0*v",
+        "solid_mu": "g0(T)+(p-p0)*v",
+        "gas_u": "h0(T)-R*T",
+        "gas_mu": "g0(T)+R*T*ln(p_i/p0)"
+      },
+      "material_qualified": false,
+      "training_eligible": false
+    }
+  },
+  "records": [
+    {
+      "inventory": {
+        "name": "near_old_domain_boundary",
+        "calcium_atoms_mol": 0.002,
+        "carbon_atoms_mol": 0.0022,
+        "oxygen_atoms_mol": 0.0062,
+        "nitrogen_molecules_mol": 0.004
+      },
+      "state": {
+        "temperature_k": 900.0,
+        "pressure_pa": 310866.2917667312,
+        "calcium_phase": "calcite",
+        "carbon_phase": "graphite_present",
+        "calcite_fraction": 1.0,
+        "amounts_mol": {
+          "calcite": 0.002,
+          "lime": 0.0,
+          "C": 4.8811535329637746e-05,
+          "CO": 0.000102376929340725,
+          "CO2": 4.881153532963733e-05,
+          "O2": 5.279464632401087e-28,
+          "N2": 0.004
+        },
+        "partial_pressures_pa": {
+          "CO": 7666.608408043706,
+          "CO2": 3655.3052487271434,
+          "O2": 3.953584875165285e-20,
+          "N2": 299544.37810996035
+        },
+        "chemical_potentials_j_mol": {
+          "CO": -318910.53788327187,
+          "CO2": -627490.81387424,
+          "O2": -617160.5519819362,
+          "N2": -175865.3960878185,
+          "calcite": -1329058.4339161278,
+          "lime": -688064.2099124457,
+          "C": -10330.261892303779
+        },
+        "calcination_gibbs_j_mol": 13503.41012944188,
+        "enthalpy_j": -2238.788742614328,
+        "entropy_j_k": 1.318413130162062,
+        "gibbs_j": -3425.3605597601836,
+        "internal_energy_j": -2269.8753717910013,
+        "helmholtz_j": -3456.447188936857,
+        "gas_volume_m3": 9.992588139648582e-05,
+        "solid_volume_m3": 7.411860351417643e-08,
+        "total_volume_m3": 9.999999999999999e-05,
+        "frozen_cp_j_k": 0.37762999048348195,
+        "equilibrium_cp_j_k": 0.4513505280876207,
+        "equilibrium_cv_j_k": 0.4102752058328594,
+        "volume_temperature_derivative_m3_k": 1.213671351879201e-07,
+        "volume_pressure_derivative_m3_pa": -3.2274812772318267e-10,
+        "pressure_temperature_derivative_at_volume_pa_k": 376.0428791457321,
+        "amount_temperature_derivatives_mol_k": {
+          "calcite": 0.0,
+          "lime": 0.0,
+          "C": -4.2957843302583e-07,
+          "CO": 8.5915686605166e-07,
+          "CO2": -4.2957843302583e-07,
+          "O2": 2.6268502469573834e-29,
+          "N2": 0.0
+        },
+        "amount_pressure_derivatives_mol_pa": {
+          "calcite": -0.0,
+          "lime": -0.0,
+          "C": 5.4218674473190484e-11,
+          "CO": -1.0843734894638097e-10,
+          "CO2": 5.4218674473190484e-11,
+          "O2": 5.860563939066789e-34,
+          "N2": -0.0
+        },
+        "amount_temperature_derivatives_at_volume_mol_k": {
+          "calcite": 0.0,
+          "lime": 0.0,
+          "C": -4.091898865734662e-07,
+          "CO": 8.183797731469324e-07,
+          "CO2": -4.091898865734662e-07,
+          "O2": 2.648888480328027e-29,
+          "N2": 0.0
+        },
+        "active_reaction_basis": [
+          "carbon_co2_to_co",
+          "carbon_oxygen_to_co2"
+        ]
+      },
+      "tangent": {
+        "coordinate_order": [
+          "temperature_k",
+          "carbon_atoms_mol",
+          "oxygen_atoms_mol",
+          "nitrogen_molecules_mol"
+        ],
+        "conserved_coordinate_order": [
+          "carbon_atoms_mol",
+          "oxygen_atoms_mol",
+          "nitrogen_molecules_mol",
+          "internal_energy_j"
+        ],
+        "amount_derivatives": {
+          "CO": [
+            8.183797731469331e-07,
+            -1.7800291477156699e-06,
+            0.34398422542975515,
+            1.780421006183524e-06
+          ],
+          "CO2": [
+            -4.091898865734659e-07,
+            8.900145738578407e-07,
+            0.3280078872851224,
+            -8.902105029488187e-07
+          ],
+          "O2": [
+            2.6488884803280275e-29,
+            9.620278192847203e-30,
+            3.5477205315567725e-24,
+            -3.7619908494418045e-29
+          ],
+          "N2": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "calcite": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "lime": [
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0
+          ],
+          "C": [
+            -4.091898865734672e-07,
+            1.0000008900145738,
+            -0.6719921127148776,
+            -8.902105032347053e-07
+          ]
+        },
+        "pressure_derivatives": [
+          376.0428791457321,
+          16415.27725466477,
+          50311789.15942534,
+          74886161.1772056
+        ],
+        "internal_energy_derivatives": [
+          0.41027520583285926,
+          9660.55738963816,
+          -163075.78566797616,
+          10773.773179621976
+        ],
+        "entropy_derivatives": [
+          0.0004558613398142885,
+          22.212021424379934,
+          161.67165591443552,
+          207.3768547416006
+        ],
+        "gas_chemical_potential_derivatives": {
+          "CO": [
+            -183.8836773388154,
+            266.638827105531,
+            25142646.64673824,
+            130.13634381885996
+          ],
+          "CO2": [
+            -345.555333253251,
+            533.1906860721667,
+            50285026.74161751,
+            -136.4741942790466
+          ],
+          "O2": [
+            -323.343311828871,
+            533.1037179332716,
+            50284760.18975855,
+            -533.2210761958131
+          ],
+          "N2": [
+            -207.37685474160054,
+            396.74688191683526,
+            -266.6105381051377,
+            1870764.749646812
+          ]
+        },
+        "physical_from_conserved_derivative": [
+          [
+            -23546.529871399893,
+            397479.01737550064,
+            -26259.86904997391,
+            2.4373883329605515
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ]
+        ],
+        "amount_conserved_derivatives": {
+          "CO": [
+            -0.019271783803701443,
+            0.6692730135001832,
+            -0.02148876525497963,
+            1.9947093109992374e-06
+          ],
+          "CO2": [
+            0.009635891901850706,
+            0.16536349324990862,
+            0.010744382627489944,
+            -9.973546554996172e-07
+          ],
+          "O2": [
+            -6.237116970023168e-25,
+            1.4076496434537448e-23,
+            -6.956322661224784e-25,
+            6.456369877265139e-29
+          ],
+          "N2": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "calcite": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "lime": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "C": [
+            1.0096358919018507,
+            -0.8346365067500918,
+            0.01074438262748969,
+            -9.973546554996204e-07
+          ]
+        },
+        "pressure_conserved_derivatives": [
+          -8838089.609477535,
+          199780943.2533251,
+          65011324.41366352,
+          916.5625263227021
+        ],
+        "gas_chemical_potential_conserved_derivatives": {
+          "CO": [
+            4330089.140148383,
+            -47947256.73328773,
+            4828891.423688767,
+            -448.1959297675112
+          ],
+          "CO2": [
+            8137162.167355291,
+            -87065967.56874835,
+            9074101.326556187,
+            -842.2525376637692
+          ],
+          "O2": [
+            7614146.054413814,
+            -78237421.67092118,
+            8490419.805734836,
+            -788.1132157925156
+          ],
+          "N2": [
+            4883402.051691971,
+            -82428215.05965142,
+            7316453.799156703,
+            -505.45792627323215
+          ]
+        },
+        "same_phase_only": true
+      },
+      "difference_reviews": [
+        {
+          "coordinate": "temperature_k",
+          "difference_step": "0.0001",
+          "source_derivatives": {
+            "pressure": "376.042879145725760732387826745758104384905737447282102606013",
+            "internal_energy": "0.410275205832845435457556411590749229669969573202017411098953",
+            "entropy": "0.000455861339814274259203180743813138180894747362952220176945941"
+          },
+          "source_amount_derivatives": {
+            "calcite": "0.0",
+            "lime": "0.0",
+            "C": "-0.000000409189886573381544671841439151897177777776664595047664776012",
+            "CO": "0.000000818379773146763089343735856073401085639761076648088073239876",
+            "CO2": "-0.000000409189886573381544671894416921503907861984412053040408463865",
+            "O2": "2.64888848033650421038737289964801609452677801206993196758715e-29",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-183.883677338817808059404152346995886759669286324774788223525",
+            "CO2": "-345.555333253255708509068544672215480421312205603437339783353",
+            "O2": "-323.343311828875800899328784650439187323285838557325104343151",
+            "N2": "-207.376854741600506329160588800819451634097934891056043130163"
+          },
+          "errors": {
+            "pressure": 6.354643334233234e-12,
+            "internal_energy": 1.3822246558540913e-14,
+            "entropy": 1.4215945592816807e-17,
+            "amount": 1.6999260616084352e-19,
+            "gas_chemical_potential": 4.820237296986958e-12
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "temperature_k",
+          "difference_step": "0.00003",
+          "source_derivatives": {
+            "pressure": "376.042879145731523567973758075136607325413580398553170683115",
+            "internal_energy": "0.4102752058328581833786798625935854867887168235534723838155",
+            "entropy": "0.000455861339814287010203286028665650024404052243800370154213652"
+          },
+          "source_amount_derivatives": {
+            "calcite": "0.0",
+            "lime": "0.0",
+            "C": "-0.000000409189886573458588445665041653667885990706197297788883107762",
+            "CO": "0.000000818379773146917176891383061076942347636057755638109801357408",
+            "CO2": "-0.000000409189886573458588445718019423274461645351558340320918249645",
+            "O2": "2.64888848032878273226805212659528318757327153561195139053576e-29",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-183.883677338815692704860021330055903711230852549384844527158",
+            "CO2": "-345.55533325325145434617535057795983127734461354094772736091",
+            "O2": "-323.343311828871523282630658495807855132227521983125765667502",
+            "N2": "-207.376854741600541258555249431050413871694145806416958744543"
+          },
+          "errors": {
+            "pressure": 5.918077483019049e-13,
+            "internal_energy": 1.0743254350899095e-15,
+            "entropy": 1.4649454875319534e-18,
+            "amount": 1.590505851363852e-20,
+            "gas_chemical_potential": 5.426205988608037e-13
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "carbon_atoms_mol",
+          "difference_step": "0.00000000022000000000000001325328735646280620130710303783416748046875",
+          "source_derivatives": {
+            "pressure": "16415.2772546647637264057666910771157072237170390153664102874",
+            "internal_energy": "9660.55738963816146051559002612791454062396414937603805108377",
+            "entropy": "22.2120214243799333831517731868591845454955235009847960467048"
+          },
+          "source_amount_derivatives": {
+            "calcite": "0.0",
+            "lime": "0.0",
+            "C": "1.00000089001457385783689547857955351821423197012665146316921",
+            "CO": "-0.00000178002914771567379095713986648004276966186020920350729181911",
+            "CO2": "0.000000890014573857836895478560312961828537691733557740710823716034",
+            "O2": "9.62027819284713919654689861745084275663498543543023708642831e-30",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "266.638827105530693865426271035262485995194802026221383285741",
+            "CO2": "533.190686072166173813819421381672160392633638002311773595242",
+            "O2": "533.103717933270959896786300692819348794877671951995402651161",
+            "N2": "396.746881916835207841929884798308490911158711432050641475743"
+          },
+          "errors": {
+            "pressure": 4.680249872718942e-12,
+            "internal_energy": 2.167416283502328e-12,
+            "entropy": 4.928736881720903e-16,
+            "amount": 4.007128696863527e-17,
+            "gas_chemical_potential": 6.223997975008151e-13
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "carbon_atoms_mol",
+          "difference_step": "0.000000000066000000000000003975986206938841860392130911350250244140625",
+          "source_derivatives": {
+            "pressure": "16415.2772546647637264037401229671524073449175173599106959133",
+            "internal_energy": "9660.55738963816146051559003069265601881345561673756977023029",
+            "entropy": "22.212021424379933383151773267010532024623298641145451933622"
+          },
+          "source_amount_derivatives": {
+            "calcite": "0.0",
+            "lime": "0.0",
+            "C": "1.00000089001457385783689547855174176519363189058822352699759",
+            "CO": "-0.00000178002914771567379095708424297400156950278335385912480137634",
+            "CO2": "0.00000089001457385783689547853250120880793761219513033065839397901",
+            "O2": "9.62027819284713919654659894105403833475855959606892233542943e-30",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "266.63882710553069386541692539716563757620188075924976858656",
+            "CO2": "533.190686072166173813800740842236310140210406512476315845108",
+            "O2": "533.103717933270959896767630890141345128017051505835167957627",
+            "N2": "396.746881916835207841913511033670914057664506894947275282455"
+          },
+          "errors": {
+            "pressure": 4.680251899287052e-12,
+            "internal_energy": 2.1674162835068926e-12,
+            "entropy": 4.92873688091939e-16,
+            "amount": 4.0071286968607455e-17,
+            "gas_chemical_potential": 6.223998161706179e-13
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "oxygen_atoms_mol",
+          "difference_step": "0.0000000006199999999999999782118731417313028941862285137176513671875",
+          "source_derivatives": {
+            "pressure": "50311789.1594373707218697376595941728305645270793877238182702",
+            "internal_energy": "-163075.785667949794052039862883015546721269904456987190407078",
+            "entropy": "161.671655914474797242166775672905451456805482167387600673658"
+          },
+          "source_amount_derivatives": {
+            "calcite": "0.0",
+            "lime": "0.0",
+            "C": "-0.671992112715038263033149299717884758405349983868930001063471",
+            "CO": "0.34398422543007652606630569487683262686368421241920262541743",
+            "CO2": "0.328007887284961736966843604841052131541665771449727375646041",
+            "O2": "3.54772053155502649212234067131234068370742176449374607713795e-24",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "25142646.6468338796143707996026002140913316145270093767734121",
+            "CO2": "50285026.7418087925295551601049918332108136582586322204444325",
+            "O2": "50284760.1899498258303687210047832382389640874632456872762615",
+            "N2": "-266.610538105133444364323863995136524176120926956084960804547"
+          },
+          "errors": {
+            "pressure": 1.2030129008562122e-05,
+            "internal_energy": 2.6366714516996133e-08,
+            "entropy": 3.927848944144642e-11,
+            "amount": 3.213733631683396e-13,
+            "gas_chemical_potential": 0.00019128429696162373
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "oxygen_atoms_mol",
+          "difference_step": "0.00000000018599999999999999346356194251939086825586855411529541015625",
+          "source_derivatives": {
+            "pressure": "50311789.1594264283084018677160631983185258675028805454758045",
+            "internal_energy": "-163075.785667973781349296003228806617402796066795953953700519",
+            "entropy": "161.671655914439082352640533230851826655344371304673825275151"
+          },
+          "source_amount_derivatives": {
+            "calcite": "0.0",
+            "lime": "0.0",
+            "C": "-0.671992112714892114825171463514236715281249453680922080385811",
+            "CO": "0.343984225429784229650350022469536543777000887266492052501617",
+            "CO2": "0.328007887285107885174821441044700171504248566414430027884194",
+            "O2": "3.5477205315566072509899523239461567501758303772996049987877e-24",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "25142646.6467468502558004638814359875368012508845623057813008",
+            "CO2": "50285026.7416347338703873952154383401360178954286311820999329",
+            "O2": "50284760.1897757672291738626680047051984332890881377524179999",
+            "N2": "-266.610538105075459632841299026855249038586432060283109217655"
+          },
+          "errors": {
+            "pressure": 1.087715540692179e-06,
+            "internal_energy": 2.3794172608557877e-09,
+            "entropy": 3.563599915203981e-12,
+            "amount": 2.9076947212667195e-14,
+            "gas_chemical_potential": 1.722563779385884e-05
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "nitrogen_molecules_mol",
+          "difference_step": "0.00000000040000000000000000832667268468867405317723751068115234375",
+          "source_derivatives": {
+            "pressure": "74886161.1772055895182759301613574644538532710991165386853492",
+            "internal_energy": "10773.773179622021948459617412218123372604880273377150452972",
+            "entropy": "207.376854741600558570627431981941292477725884904577747667885"
+          },
+          "source_amount_derivatives": {
+            "calcite": "0.0",
+            "lime": "0.0",
+            "C": "-0.000000890210503042462978329541127053556539979020152225265271976154",
+            "CO": "0.00000178042100608492595665900701429012221836968037501075489390076",
+            "CO2": "-0.000000890210503042462978329465887236565678390660222785489621924602",
+            "O2": "-3.76199084954307941799647139258629827424337511342613185689076e-29",
+            "N2": "1.00000000000000000000000000000000000000000000000000000058673"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "130.136343811765482962732957457159691107264042624014599450002",
+            "CO2": "-136.474194293304241916445976723196752804731867774286094964648",
+            "O2": "-533.221076210139449758357868360712887823991820796703346711612",
+            "N2": "1870764.74964681833504999889445459107390788388197823237201318"
+          },
+          "errors": {
+            "pressure": 1.7776760385756612e-08,
+            "internal_energy": 4.6006759687876826e-11,
+            "entropy": 3.727329258654199e-14,
+            "amount": 1.9224228118488363e-16,
+            "gas_chemical_potential": 1.4326338204923586e-08
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "nitrogen_molecules_mol",
+          "difference_step": "0.000000000120000000000000002498001805406602215953171253204345703125",
+          "source_derivatives": {
+            "pressure": "74886161.1772055895182759301635627243647882778744672214658453",
+            "internal_energy": "10773.7731796220219484596174141559059934624719551828705789767",
+            "entropy": "207.376854741600545960287265317337141115535345997563579424231"
+          },
+          "source_amount_derivatives": {
+            "calcite": "0.0",
+            "lime": "0.0",
+            "C": "-0.000000890210503042462978329552933446517982789872039255572043434441",
+            "CO": "0.00000178042100608492595665903062707604510399138415620585534962083",
+            "CO2": "-0.000000890210503042462978329477693629527121201512116950283306186391",
+            "O2": "-3.76199084954307941799611526038193858481106565573222882293062e-29",
+            "N2": "0.999999999999999999999999999999999999999999999999999998054582"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "130.136343811765482962733619249633998199647271268792421832651",
+            "CO2": "-136.474194293304241916444653149931605628099076220915572596198",
+            "O2": "-533.221076210139449758356544799131207655492694978736269642281",
+            "N2": "1870764.74964681266039692389441739481631874726740758664851179"
+          },
+          "errors": {
+            "pressure": 1.7776760385754405e-08,
+            "internal_energy": 4.6006759687878765e-11,
+            "entropy": 4.9883632753206595e-14,
+            "amount": 1.9224228118487182e-16,
+            "gas_chemical_potential": 1.4326338204922263e-08
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        }
+      ],
+      "identity_errors": {
+        "thermal_gibbs_j_k": 3.885780586188048e-16,
+        "elemental_gibbs_j_mol": 8.731149137020111e-11,
+        "existing_cv_j_k": 1.6653345369377348e-16,
+        "inverse_chain_absolute": 0.0
+      },
+      "within_budgets": {
+        "thermal_gibbs_j_k": true,
+        "elemental_gibbs_j_mol": true,
+        "existing_cv_j_k": true,
+        "inverse_chain_absolute": true,
+        "source_derivatives": true
+      }
+    },
+    {
+      "inventory": {
+        "name": "near_old_domain_boundary",
+        "calcium_atoms_mol": 0.002,
+        "carbon_atoms_mol": 0.0022,
+        "oxygen_atoms_mol": 0.0062,
+        "nitrogen_molecules_mol": 0.004
+      },
+      "state": {
+        "temperature_k": 950.0,
+        "pressure_pa": 329672.5341724253,
+        "calcium_phase": "calcite",
+        "carbon_phase": "graphite_present",
+        "calcite_fraction": 1.0,
+        "amounts_mol": {
+          "calcite": 0.002,
+          "lime": 0.0,
+          "C": 2.937697643325829e-05,
+          "CO": 0.00014124604713348395,
+          "CO2": 2.9376976433257855e-05,
+          "O2": 5.091548195595323e-27,
+          "N2": 0.004
+        },
+        "partial_pressures_pa": {
+          "CO": 11164.984712646326,
+          "CO2": 2322.1428099232157,
+          "O2": 4.024683091754116e-19,
+          "N2": 316185.4066498557
+        },
+        "chemical_potentials_j_mol": {
+          "CO": -328586.693413734,
+          "CO2": -645703.9491344475,
+          "O2": -634234.5114414269,
+          "N2": -186266.71101220069,
+          "calcite": -1339587.6995768563,
+          "lime": -692745.0367190696,
+          "C": -11469.437693020542
+        },
+        "calcination_gibbs_j_mol": 1138.7137233393732,
+        "enthalpy_j": -2216.467912366506,
+        "entropy_j_k": 1.3405175468618493,
+        "gibbs_j": -3489.959581885263,
+        "internal_energy_j": -2249.4351657837487,
+        "helmholtz_j": -3522.9268353025054,
+        "gas_volume_m3": 9.992598436077891e-05,
+        "solid_volume_m3": 7.401563922114341e-08,
+        "total_volume_m3": 0.00010000000000000006,
+        "frozen_cp_j_k": 0.3818875441887454,
+        "equilibrium_cp_j_k": 0.4447394220882856,
+        "equilibrium_cv_j_k": 0.4041771643016214,
+        "volume_temperature_derivative_m3_k": 1.1398120962332229e-07,
+        "volume_pressure_derivative_m3_pa": -3.0427621669259584e-10,
+        "pressure_temperature_derivative_at_volume_pa_k": 374.59782713965853,
+        "amount_temperature_derivatives_mol_k": {
+          "calcite": 0.0,
+          "lime": 0.0,
+          "C": -3.671993762054469e-07,
+          "CO": 7.343987524108938e-07,
+          "CO2": -3.671993762054469e-07,
+          "O2": 2.040174949532935e-28,
+          "N2": 0.0
+        },
+        "amount_pressure_derivatives_mol_pa": {
+          "calcite": -0.0,
+          "lime": -0.0,
+          "C": 4.881920155346879e-11,
+          "CO": -9.763840310693757e-11,
+          "CO2": 4.881920155346879e-11,
+          "O2": 8.45781366458597e-33,
+          "N2": -0.0
+        },
+        "amount_temperature_derivatives_at_volume_mol_k": {
+          "calcite": 0.0,
+          "lime": 0.0,
+          "C": -3.4891180938082444e-07,
+          "CO": 6.978236187616489e-07,
+          "CO2": -3.4891180938082444e-07,
+          "O2": 2.071857735743995e-28,
+          "N2": 0.0
+        },
+        "active_reaction_basis": [
+          "carbon_co2_to_co",
+          "carbon_oxygen_to_co2"
+        ]
+      },
+      "tangent": {
+        "coordinate_order": [
+          "temperature_k",
+          "carbon_atoms_mol",
+          "oxygen_atoms_mol",
+          "nitrogen_molecules_mol"
+        ],
+        "conserved_coordinate_order": [
+          "carbon_atoms_mol",
+          "oxygen_atoms_mol",
+          "nitrogen_molecules_mol",
+          "internal_energy_j"
+        ],
+        "amount_derivatives": {
+          "CO": [
+            6.978236187616499e-07,
+            -1.700061428669443e-06,
+            0.5458727322558906,
+            1.7004374350312329e-06
+          ],
+          "CO2": [
+            -3.4891180938082434e-07,
+            8.500307143347446e-07,
+            0.22706363387205472,
+            -8.502187174524949e-07
+          ],
+          "O2": [
+            2.071857735743995e-28,
+            1.4726585364457572e-28,
+            3.9353924311414466e-23,
+            -4.17308158827761e-28
+          ],
+          "N2": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "calcite": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "lime": [
+            -0.0,
+            -0.0,
+            -0.0,
+            -0.0
+          ],
+          "C": [
+            -3.489118093808256e-07,
+            1.0000008500307145,
+            -0.7729363661279454,
+            -8.50218717578738e-07
+          ]
+        },
+        "pressure_derivatives": [
+          374.5978271396585,
+          17411.81107609361,
+          61084289.6641533,
+          79046418.85429071
+        ],
+        "internal_energy_derivatives": [
+          0.4041771643016213,
+          10711.816776663169,
+          -146142.7394587667,
+          11966.580838763677
+        ],
+        "entropy_derivatives": [
+          0.00042544964663328603,
+          23.348688915456542,
+          179.97317501257555,
+          208.66662300101518
+        ],
+        "gas_chemical_potential_derivatives": {
+          "CO": [
+            -203.32186392803206,
+            323.71681441576675,
+            30526060.326771576,
+            95.09178370199669
+          ],
+          "CO2": [
+            -383.2950389406076,
+            647.3413810564523,
+            61051797.028976515,
+            -228.6043596858233
+          ],
+          "O2": [
+            -359.94635002515105,
+            647.2491332813712,
+            61051473.40440988,
+            -647.3922867758645
+          ],
+          "N2": [
+            -208.66662300101515,
+            418.78792709003216,
+            -323.69614339186097,
+            1974696.1246439386
+          ]
+        },
+        "physical_from_conserved_derivative": [
+          [
+            -26502.775819044953,
+            361580.8916648893,
+            -29607.266059775448,
+            2.4741625413892505
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ]
+        ],
+        "amount_conserved_derivatives": {
+          "CO": [
+            -0.018495962990703368,
+            0.7981924185525477,
+            -0.020658949106036446,
+            1.7265290580367672e-06
+          ],
+          "CO2": [
+            0.009247981495351667,
+            0.10090379072372638,
+            0.010329474553018268,
+            -8.63264529018382e-07
+          ],
+          "O2": [
+            -5.490850844084074e-24,
+            1.142683410607257e-22,
+            -6.134621630176467e-24,
+            5.126112800865341e-28
+          ],
+          "N2": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "calcite": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "lime": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "C": [
+            1.0092479814953519,
+            -0.8990962092762742,
+            0.01032947455301818,
+            -8.632645290183852e-07
+          ]
+        },
+        "pressure_conserved_derivatives": [
+          -9910470.423907628,
+          196531706.0170411,
+          67955601.32075307,
+          926.8159119947486
+        ],
+        "gas_chemical_potential_conserved_derivatives": {
+          "CO": [
+            5388917.495609412,
+            -42991240.52729355,
+            6019899.612870408,
+            -503.0513395761792
+          ],
+          "CO2": [
+            10159029.830976084,
+            -77540364.92189683,
+            11348089.592946872,
+            -948.3342276471853
+          ],
+          "O2": [
+            9540224.670733346,
+            -69098248.7892066,
+            10656379.960152932,
+            -890.5657761420124
+          ],
+          "N2": [
+            5530663.518240164,
+            -75450187.30155174,
+            8152744.349629853,
+            -516.2751422673043
+          ]
+        },
+        "same_phase_only": true
+      },
+      "difference_reviews": [
+        {
+          "coordinate": "temperature_k",
+          "difference_step": "0.0001",
+          "source_derivatives": {
+            "pressure": "374.597827139653675858267145197112945207909260402057893342528",
+            "internal_energy": "0.404177164301613088756871606000203303604261645555489118876984",
+            "entropy": "0.000425449646633279587006169801392799233197181125396911929135741"
+          },
+          "source_amount_derivatives": {
+            "calcite": "0.0",
+            "lime": "0.0",
+            "C": "-0.000000348911809380772595852246606293359743295750223127886145721926",
+            "CO": "0.000000697823618761545191704907584133869075679998097654914684022653",
+            "CO2": "-0.000000348911809380772595852660977840509332384247874527028538300727",
+            "O2": "2.0718577357479454424882569957116238326733735345235530346929e-28",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-203.321863928030931907174372714983254206922634868713360940918",
+            "CO2": "-383.295038940605356697809331030411100463515660835615512066598",
+            "O2": "-359.946350025148849581269916630855692513186051933804303067023",
+            "N2": "-208.666623001015109535635667941846752303095021577462454235767"
+          },
+          "errors": {
+            "pressure": 4.801477348171209e-12,
+            "internal_energy": 8.22793192349871e-15,
+            "entropy": 6.4450152450672164e-18,
+            "amount": 1.0474962209612169e-19,
+            "gas_chemical_potential": 2.226146868050187e-12
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "temperature_k",
+          "difference_step": "0.00003",
+          "source_derivatives": {
+            "pressure": "374.597827139658169319131981822516418325216394060563610750139",
+            "internal_energy": "0.404177164301620517230344561090523136297522354442824815097961",
+            "entropy": "0.000425449646633284993611845931174289427791609153898509838038216"
+          },
+          "source_amount_derivatives": {
+            "calcite": "0.0",
+            "lime": "0.0",
+            "C": "-0.000000348911809380818672526063932151378929214832516217224060732341",
+            "CO": "0.000000697823618761637345052542235849906724705574500444145936717762",
+            "CO2": "-0.000000348911809380818672526478303698527795490741984226921875985421",
+            "O2": "2.07185773574433137954734004848901242198246653860900427213916e-28",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-203.321863928032230788779450939577151978856267887465513154403",
+            "CO2": "-383.295038940607931898719820243085801368483710456815065279674",
+            "O2": "-359.946350025151402219880738607017298779254885138699104250542",
+            "N2": "-208.666623001015141099700579917542301188565544047236602458217"
+          },
+          "errors": {
+            "pressure": 3.0801648333458337e-13,
+            "internal_energy": 7.994584505436196e-16,
+            "entropy": 1.0384095689374348e-18,
+            "amount": 1.2596274461469977e-20,
+            "gas_chemical_potential": 3.5406231288177367e-13
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "carbon_atoms_mol",
+          "difference_step": "0.00000000022000000000000001325328735646280620130710303783416748046875",
+          "source_derivatives": {
+            "pressure": "17411.8110760936255374853681301297031020155700755653215435086",
+            "internal_energy": "10711.8167766631709857325882841655687393270967937897641583",
+            "entropy": "23.3486889154565319102753123710868657212167064063808674809631"
+          },
+          "source_amount_derivatives": {
+            "calcite": "0.0",
+            "lime": "0.0",
+            "C": "1.00000085003071433473166449353117667979049132251422053794534",
+            "CO": "-0.00000170006142866946332898676782165229183539592857496143921376453",
+            "CO2": "0.000000850030714334731664493236644972501344073414354423866617094724",
+            "O2": "1.47265853644573624549933032589533497816003620831342431915054e-28",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "323.716814415766153495571764541635203096314327338755556252779",
+            "CO2": "647.341381056451162964307513018768020510634953063752672571825",
+            "O2": "647.249133281370018937471496954265634828641251449994232638091",
+            "N2": "418.787927090032301829261949792850741516559336122982016872905"
+          },
+          "errors": {
+            "pressure": 1.49285351108288e-11,
+            "internal_energy": 2.3466715471078464e-12,
+            "entropy": 9.882261569614056e-15,
+            "amount": 1.4846478337908377e-16,
+            "gas_chemical_potential": 1.1816725389220867e-12
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "carbon_atoms_mol",
+          "difference_step": "0.000000000066000000000000003975986206938841860392130911350250244140625",
+          "source_derivatives": {
+            "pressure": "17411.8110760936255374832205698041894062563259346413903893602",
+            "internal_energy": "10711.8167766631709857325882908248030332957625870045499713154",
+            "entropy": "23.348688915456531910275312453506720777179194685308849558796"
+          },
+          "source_amount_derivatives": {
+            "calcite": "0.0",
+            "lime": "0.0",
+            "C": "1.00000085003071433473166449349038966706211040389337851340754",
+            "CO": "-0.00000170006142866946332898668624762683507355868690525067089898452",
+            "CO2": "0.000000850030714334731664493195857959772963154793526735794543099644",
+            "O2": "1.47265853644573624549925977221271715590570569575029434882583e-28",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "323.71681441576615349556084122607150429150667470425589155092",
+            "CO2": "647.341381056451162964285677765415227472579624668159747171926",
+            "O2": "647.249133281370018937449673078687446362145899927189784682541",
+            "N2": "418.787927090032301829244666419197092519100103526097002232352"
+          },
+          "errors": {
+            "pressure": 1.4928532963268473e-11,
+            "internal_energy": 2.346671547114506e-12,
+            "entropy": 9.882261569531635e-15,
+            "amount": 1.4846478337912457e-16,
+            "gas_chemical_potential": 1.1816725607459623e-12
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "oxygen_atoms_mol",
+          "difference_step": "0.0000000006199999999999999782118731417313028941862285137176513671875",
+          "source_derivatives": {
+            "pressure": "61084289.6641662270861109216813692376404223218490479235597099",
+            "internal_energy": "-146142.739458740038583364645844003561296849983076014397603329",
+            "entropy": "179.973175012615166268176683978170767718185840718150906021589"
+          },
+          "source_amount_derivatives": {
+            "calcite": "0.0",
+            "lime": "0.0",
+            "C": "-0.772936366128108555397995196692931772436776558852113640466233",
+            "CO": "0.545872732256217110796069101234486317285162231760323954445807",
+            "CO2": "0.227063633871891444601926095458445455151614327091789686020426",
+            "O2": "3.93539243113862058045570280484064930958699645899702447170906e-23",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "30526060.3268879287703610957505015733024013817812124501473925",
+            "CO2": "61051797.0292092167880555151778738301830172381491236139391218",
+            "O2": "61051473.4046425760353888388547445137612317127358223273861207",
+            "N2": "-323.696143391628845552230863847421886322590452762521704911482"
+          },
+          "errors": {
+            "pressure": 1.2926860376210988e-05,
+            "internal_energy": 2.666910148008644e-08,
+            "entropy": 3.9613767683325157e-11,
+            "amount": 3.264971453629011e-13,
+            "gas_chemical_potential": 0.00023270185256204595
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "oxygen_atoms_mol",
+          "difference_step": "0.00000000018599999999999999346356194251939086825586855411529541015625",
+          "source_derivatives": {
+            "pressure": "61084289.6641546060859381319523705790955763522015893649429095",
+            "internal_energy": "-146142.739458764045690778608639693160837630251403988029258411",
+            "entropy": "179.973175012579367842919116933723345508147553442009906631628"
+          },
+          "source_amount_derivatives": {
+            "calcite": "0.0",
+            "lime": "0.0",
+            "C": "-0.772936366127961514739499105059644085648417065996409013051538",
+            "CO": "0.545872732255923029479076917967910994678842381174963288222649",
+            "CO2": "0.227063633872038485260422187091733090969574684821445724828889",
+            "O2": "3.9353924311411691004124591072661818583572670816535870521138e-23",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "30526060.3267821073644977001382546613800346744503188709370236",
+            "CO2": "61051797.0289975740378967828688199897311714571567084127077332",
+            "O2": "61051473.4044309333467981654611306567022735654127790835414193",
+            "N2": "-323.696143391567265314121105448301899800075975804189944944678"
+          },
+          "errors": {
+            "pressure": 1.305860203421259e-06,
+            "internal_energy": 2.6619940661236447e-09,
+            "entropy": 3.8153424257581134e-12,
+            "amount": 3.241582837071783e-14,
+            "gas_chemical_potential": 2.1059102403313632e-05
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "nitrogen_molecules_mol",
+          "difference_step": "0.00000000040000000000000000832667268468867405317723751068115234375",
+          "source_derivatives": {
+            "pressure": "79046418.854290733778140898235346796737464761125355215388536",
+            "internal_energy": "11966.5808387636922296653632595250206157896831225489469209423",
+            "entropy": "208.666623001015158078937952161323620999173701024441925863403"
+          },
+          "source_amount_derivatives": {
+            "calcite": "0.0",
+            "lime": "0.0",
+            "C": "-0.000000850218717480811048610993509358830358275503365745844865428571",
+            "CO": "0.00000170043743496162209722115240239999538327361937849291372536736",
+            "CO2": "-0.000000850218717480811048610158893041165024998116012747068859938791",
+            "O2": "-4.17308158832666638693676491681394040996089573670759361638101e-28",
+            "N2": "1.00000000000000000000000000000000000000000000000000000058673"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "95.0917836984711268683413259498324033628465613035185455620589",
+            "CO2": "-228.604359693090048092560305183597372890749309753591995798165",
+            "O2": "-647.392286783122349921803262266859552507191742114221082720448",
+            "N2": "1974696.12464394557832626230226373870847923080764349685480303"
+          },
+          "errors": {
+            "pressure": 2.4878642912395504e-08,
+            "internal_energy": 1.5136581393010824e-11,
+            "entropy": 2.4047200872808206e-14,
+            "amount": 9.792691636486821e-17,
+            "gas_chemical_potential": 7.266736527160088e-09
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "nitrogen_molecules_mol",
+          "difference_step": "0.000000000120000000000000002498001805406602215953171253204345703125",
+          "source_derivatives": {
+            "pressure": "79046418.854290733778140898233850372111501595750801355173027",
+            "internal_energy": "11966.5808387636922296653632619702400296667000056241330541113",
+            "entropy": "208.666623001015145468597785497283160295165042473797076478143"
+          },
+          "source_amount_derivatives": {
+            "calcite": "0.0",
+            "lime": "0.0",
+            "C": "-0.000000850218717480811048611008486034969808025175939391197568586261",
+            "CO": "0.00000170043743496162209722118235575227428277296462951001819292467",
+            "CO2": "-0.000000850218717480811048610173869717304474747788690118820624338411",
+            "O2": "-4.1730815883266663869362464058233280382545492915789450045253e-28",
+            "N2": "0.999999999999999999999999999999999999999999999999999998054582"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "95.0917836984711268683414710871198067661995290359471833767212",
+            "CO2": "-228.604359693090048092560014901094508415690524242818804191575",
+            "O2": "-647.392286783122349921802971976428630363780106557531975136593",
+            "N2": "1974696.12464393958841468313555780799781702835394791765111493"
+          },
+          "errors": {
+            "pressure": 2.4878642912394005e-08,
+            "internal_energy": 1.513658139301327e-11,
+            "entropy": 3.6657541039472245e-14,
+            "amount": 9.792691636485324e-17,
+            "gas_chemical_potential": 7.266736527159797e-09
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        }
+      ],
+      "identity_errors": {
+        "thermal_gibbs_j_k": 3.885780586188048e-16,
+        "elemental_gibbs_j_mol": 5.820766091346741e-11,
+        "existing_cv_j_k": 1.1102230246251565e-16,
+        "inverse_chain_absolute": 0.0
+      },
+      "within_budgets": {
+        "thermal_gibbs_j_k": true,
+        "elemental_gibbs_j_mol": true,
+        "existing_cv_j_k": true,
+        "inverse_chain_absolute": true,
+        "source_derivatives": true
+      }
+    },
+    {
+      "inventory": {
+        "name": "near_old_domain_boundary",
+        "calcium_atoms_mol": 0.002,
+        "carbon_atoms_mol": 0.0022,
+        "oxygen_atoms_mol": 0.0062,
+        "nitrogen_molecules_mol": 0.004
+      },
+      "state": {
+        "temperature_k": 1000.0,
+        "pressure_pa": 355387.989565328,
+        "calcium_phase": "coexistence",
+        "carbon_phase": "graphite_exhausted",
+        "calcite_fraction": 0.9643924607811055,
+        "amounts_mol": {
+          "calcite": 0.001928784921562211,
+          "lime": 7.121507843778901e-05,
+          "C": 0.0,
+          "CO": 0.00020000000000000052,
+          "CO2": 7.121507843778857e-05,
+          "O2": 5.083083606370383e-25,
+          "N2": 0.004
+        },
+        "partial_pressures_pa": {
+          "CO": 16641.072062112744,
+          "CO2": 5925.47626096124,
+          "O2": 4.2293980295676627e-17,
+          "N2": 332821.441242254
+        },
+        "chemical_potentials_j_mol": {
+          "CO": -337844.0746998259,
+          "CO2": -652874.6053140422,
+          "O2": -630061.0612284327,
+          "N2": -196731.31676882872,
+          "calcite": -1350440.242480591,
+          "lime": -697565.6371665488,
+          "C": -12664.472936125618
+        },
+        "calcination_gibbs_j_mol": 0.0,
+        "enthalpy_j": -2180.118884499615,
+        "entropy_j_k": 1.3752556824768474,
+        "gibbs_j": -3555.374566976462,
+        "internal_energy_j": -2215.657683456148,
+        "helmholtz_j": -3590.9133659329955,
+        "gas_volume_m3": 9.992757640813214e-05,
+        "solid_volume_m3": 7.24235918679098e-08,
+        "total_volume_m3": 0.00010000000000000005,
+        "frozen_cp_j_k": 0.38471727505186243,
+        "equilibrium_cp_j_k": 0.6374237409208721,
+        "equilibrium_cv_j_k": 0.5740556805425722,
+        "volume_temperature_derivative_m3_k": 1.3460814707115957e-07,
+        "volume_pressure_derivative_m3_pa": -2.8593826526739996e-10,
+        "pressure_temperature_derivative_at_volume_pa_k": 470.7594730116954,
+        "amount_temperature_derivatives_mol_k": {
+          "calcite": -1.4836344218956756e-06,
+          "lime": 1.4836344218956756e-06,
+          "C": 0.0,
+          "CO": 1.1182822141735856e-25,
+          "CO2": 1.4836344218956756e-06,
+          "O2": 5.591411070867928e-26,
+          "N2": 0.0
+        },
+        "amount_pressure_derivatives_mol_pa": {
+          "calcite": 2.0360891134983322e-10,
+          "lime": -2.0360891134983322e-10,
+          "C": 0.0,
+          "CO": -8.722202027404392e-30,
+          "CO2": -2.0360891134983322e-10,
+          "O2": -4.361101013702196e-30,
+          "N2": 0.0
+        },
+        "amount_temperature_derivatives_at_volume_mol_k": {
+          "calcite": -1.3877835980881432e-06,
+          "lime": 1.3877835980881432e-06,
+          "C": 0.0,
+          "CO": 1.0772216218743613e-25,
+          "CO2": 1.3877835980881432e-06,
+          "O2": 5.386108109371807e-26,
+          "N2": 0.0
+        },
+        "active_reaction_basis": [
+          "calcination",
+          "co_oxidation"
+        ]
+      },
+      "tangent": {
+        "coordinate_order": [
+          "temperature_k",
+          "carbon_atoms_mol",
+          "oxygen_atoms_mol",
+          "nitrogen_molecules_mol"
+        ],
+        "conserved_coordinate_order": [
+          "carbon_atoms_mol",
+          "oxygen_atoms_mol",
+          "nitrogen_molecules_mol",
+          "internal_energy_j"
+        ],
+        "amount_derivatives": {
+          "CO": [
+            -1.0854710242008712e-21,
+            2.0000000000000004,
+            -1.0,
+            -2.65941076569374e-19
+          ],
+          "CO2": [
+            1.3877835980881432e-06,
+            4.311232177518218e-05,
+            -2.8737416845208476e-05,
+            1.4374904929971143e-05
+          ],
+          "O2": [
+            5.386108109371807e-26,
+            -1.016544916681952e-20,
+            5.082570768026981e-21,
+            2.052075778312653e-25
+          ],
+          "N2": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "calcite": [
+            -1.3877835980881442e-06,
+            -1.0000431123217755,
+            1.0000287374168453,
+            -1.4374904929957923e-05
+          ],
+          "lime": [
+            1.3877835980881442e-06,
+            1.0000431123217755,
+            -1.0000287374168453,
+            1.4374904929957923e-05
+          ],
+          "C": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "pressure_derivatives": [
+          470.7594730116953,
+          166342570.995163,
+          -83136015.6466206,
+          83206555.34854238
+        ],
+        "internal_energy_derivatives": [
+          0.5740556805425729,
+          336195.0098059419,
+          -433316.49408468336,
+          13175.338564628122
+        ],
+        "entropy_derivatives": [
+          0.0005740556805425717,
+          359.0085538915512,
+          -118.28596347046692,
+          209.90665533345685
+        ],
+        "gas_chemical_potential_derivatives": {
+          "CO": [
+            -240.72259042108422,
+            83143421.675529,
+            -41570871.699653804,
+            -0.02412471438411444
+          ],
+          "CO2": [
+            -122.43662695061718,
+            3355.1296569723504,
+            -1676.8534355922948,
+            1678.2762213802919
+          ],
+          "O2": [
+            236.57192694093408,
+            -166280133.09174404,
+            83138389.69243643,
+            3356.6006921891158
+          ],
+          "N2": [
+            -209.90665533345685,
+            -1678.3244708092964,
+            1678.3003460942034,
+            2078627.4758752857
+          ]
+        },
+        "physical_from_conserved_derivative": [
+          [
+            -585648.7814704397,
+            754833.5619205633,
+            -22951.325126119045,
+            1.7419912978734793
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ]
+        ],
+        "amount_conserved_derivatives": {
+          "CO": [
+            2.000000000000001,
+            -1.0000000000000009,
+            2.4647057314846257e-17,
+            -1.8908810782517306e-21
+          ],
+          "CO2": [
+            -0.8127106608432083,
+            1.0475168991029633,
+            -0.03183709765948633,
+            2.4175069512010916e-06
+          ],
+          "O2": [
+            -4.1709125678036046e-20,
+            4.57387224588905e-20,
+            -1.2359779762483557e-21,
+            9.382553455931465e-26
+          ],
+          "N2": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "calcite": [
+            -0.18728933915679125,
+            -0.047516899102964194,
+            0.03183709765948636,
+            -2.4175069512010933e-06
+          ],
+          "lime": [
+            0.18728933915679125,
+            0.047516899102964194,
+            -0.03183709765948636,
+            2.4175069512010933e-06
+          ],
+          "C": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "pressure_conserved_derivatives": [
+          -109357140.73980275,
+          272209034.1746447,
+          72402001.6272505,
+          820.0589053778783
+        ],
+        "gas_chemical_potential_conserved_derivatives": {
+          "CO": [
+            224122313.42804474,
+            -223276362.06194568,
+            5524902.41383118,
+            -419.3366577150905
+          ],
+          "CO2": [
+            71708216.51063673,
+            -92420952.0841092,
+            2811761.1087103444,
+            -213.28353868895664
+          ],
+          "O2": [
+            -304828193.834816,
+            261710819.95567298,
+            -5426282.61024167,
+            412.10623805226766
+          ],
+          "N2": [
+            122929898.59410378,
+            -158442910.01583916,
+            6896263.368569664,
+            -365.65556695660956
+          ]
+        },
+        "same_phase_only": true
+      },
+      "difference_reviews": [
+        {
+          "coordinate": "temperature_k",
+          "difference_step": "0.0001",
+          "source_derivatives": {
+            "pressure": "470.75947301175504699243503137131206146533395798410836094403",
+            "internal_energy": "0.574055680542665291434196646077916652990160318673011937692341",
+            "entropy": "0.000574055680542654167244971553790219123422672714076859820258592"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-0.00000138778359808873773776927362725053059345842383278714787597299",
+            "lime": "0.00000138778359808873773776927362725053059345842383278714787597299",
+            "C": "0.0",
+            "CO": "1.07722162189332821457022517047257346080457733741669024407533e-25",
+            "CO2": "0.00000138778359808873773766155146506119777200140131573989053027235",
+            "O2": "5.3861081094666410728511258523628673053344218238241371737477e-26",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-240.722590421084113453347704162997739830676079434072488979162",
+            "CO2": "-122.436626950617100233342168026069487698870026906226265103643",
+            "O2": "236.571926940934026440011072273856504263612105055692447751038",
+            "N2": "-209.906655333456799036747705353944842910561450041093697628447"
+          },
+          "errors": {
+            "pressure": 5.972688198709375e-11,
+            "internal_energy": 9.234779768210858e-14,
+            "entropy": 8.247087463624362e-17,
+            "amount": 5.945573591733687e-19,
+            "gas_chemical_potential": 1.0677130904255976e-13
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "temperature_k",
+          "difference_step": "0.00003",
+          "source_derivatives": {
+            "pressure": "470.759473011700402562042347533700853495543914823628491371437",
+            "internal_energy": "0.574055680542579423989429464400137916120580705648797270077738",
+            "entropy": "0.000574055680542578422812399206242055730929733314735383614954421"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-0.00000138778359808818980962283687983251032433295466834620334743373",
+            "lime": "0.00000138778359808818980962283687983251032433295466834620334743373",
+            "C": "0.0",
+            "CO": "1.07722162187605164212750448748997637657504074516062414100485e-25",
+            "CO2": "0.00000138778359808818980951511471764490516012020421959720571072578",
+            "O2": "5.3861081093802582106375224374498818837870963755817852513175e-26",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-240.722590421084141999444526345837913068203190104623705542236",
+            "CO2": "-122.43662695061716836915366238000856096064792535088999750096",
+            "O2": "236.571926940933947260581727931658704215110529507467416082552",
+            "N2": "-209.906655333456826623118919985392665882500736585918547055205"
+          },
+          "errors": {
+            "pressure": 5.082451594409911e-12,
+            "internal_energy": 6.480352914926898e-15,
+            "entropy": 6.726442063896064e-18,
+            "amount": 4.6629212736621334e-20,
+            "gas_chemical_potential": 1.2955008137240037e-13
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "carbon_atoms_mol",
+          "difference_step": "0.00000000022000000000000001325328735646280620130710303783416748046875",
+          "source_derivatives": {
+            "pressure": "166342570.99516303147580886484103640651437311774899367267417",
+            "internal_energy": "336195.009805941638773172694938827988918877651544494377623542",
+            "entropy": "359.008553891564528613626407347916309882667667905447238304228"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-1.00004311232177518461936166260321981396863300584104913232949",
+            "lime": "1.00004311232177518461936166260321981396863300584104913232949",
+            "C": "0.0",
+            "CO": "1.99999999999999999997966910166616451320697272546456817601955",
+            "CO2": "0.0000431123217751846396925609370553007616602803764809568984905674",
+            "O2": "-1.01654491669177433965136372677159123713250799751053403487391e-20",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "83143421.6756631161973920946788760776151107145712118876031389",
+            "CO2": "3355.12965697243806447201793232412135968931192915687671386847",
+            "O2": "-166280133.092012287518655245321887506987502050518565461267472",
+            "N2": "-1678.32447080937456340014982957035196588951862706054625286185"
+          },
+          "errors": {
+            "pressure": 3.780629897714572e-08,
+            "internal_energy": 2.572742704565352e-10,
+            "entropy": 1.3355248766401672e-11,
+            "amount": 4.441095407483965e-16,
+            "gas_chemical_potential": 0.0002682520362486291
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "carbon_atoms_mol",
+          "difference_step": "0.000000000066000000000000003975986206938841860392130911350250244140625",
+          "source_derivatives": {
+            "pressure": "166342570.995163031475510362385841231075256668614972861117164",
+            "internal_energy": "336195.009805941638773172697725246576965672671005650925011136",
+            "entropy": "359.008553891552321804359973750824563384876153835048923894182"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-1.00004311232177518461936167980069187036646806775521185496311",
+            "lime": "1.00004311232177518461936167980069187036646806775521185496311",
+            "C": "0.0",
+            "CO": "1.9999999999999999999796691016663435976997854635245434949242",
+            "CO2": "0.0000431123217751846396925781343482726666826042306683582104009525",
+            "O2": "-1.01654491668282011501072682377282510286313157538094552975463e-20",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "83143421.6755410481045783769015187168765552154719676351941081",
+            "CO2": "3355.12965697243806446599713780283467158550326114807947215649",
+            "O2": "-166280133.091768151333027821808761828083767259937412973611345",
+            "N2": "-1678.32447080937456339914597673892769349084279698841240549456"
+          },
+          "errors": {
+            "pressure": 3.7806000474690526e-08,
+            "internal_energy": 2.5727427045374877e-10,
+            "entropy": 1.148439499968074e-12,
+            "amount": 4.441095407483963e-16,
+            "gas_chemical_potential": 2.41158506212056e-05
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "oxygen_atoms_mol",
+          "difference_step": "0.0000000006199999999999999782118731417313028941862285137176513671875",
+          "source_derivatives": {
+            "pressure": "-83136015.6466206139046732006893631069836786367948498609763635",
+            "internal_energy": "-433316.494084683360858533716669445010373631080536126832616243",
+            "entropy": "-118.285963470480286788276197339612507536191187784556631990991"
+          },
+          "source_amount_derivatives": {
+            "calcite": "1.00002873741684521235601945750001060168493097078268601325204",
+            "lime": "-1.00002873741684521235601945750001060168493097078268601325204",
+            "C": "0.0",
+            "CO": "-0.999999999999999999989834858463750847934734025389594707206201",
+            "CO2": "-0.0000287374168452123661845990362597537501969453930913061224180671",
+            "O2": "5.08257076812457603263298730520264622405114841406460710584436e-21",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-41570871.6997869684029855254459258915862593032954823008698604",
+            "CO2": "-1676.85343559233764231918758112681945522882102205690105936169",
+            "O2": "83138389.6927027521306864125166895295336081489489204880691607",
+            "N2": "1678.30034609473749280731222097255894543335738168171644182568"
+          },
+          "errors": {
+            "pressure": 1.2489039045415926e-08,
+            "internal_energy": 2.4673601622673225e-12,
+            "entropy": 1.336206978236879e-11,
+            "amount": 6.906002514210944e-17,
+            "gas_chemical_potential": 0.00026632525271094867
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "oxygen_atoms_mol",
+          "difference_step": "0.00000000018599999999999999346356194251939086825586855411529541015625",
+          "source_derivatives": {
+            "pressure": "-83136015.6466206139034883279275775863797412161659382243396337",
+            "internal_energy": "-433316.494084683360858533727720220175744731114084122232133965",
+            "entropy": "-118.285963470468168251435220329697199890017035725902769751687"
+          },
+          "source_amount_derivatives": {
+            "calcite": "1.00002873741684521235601952570510656112313171982436501952042",
+            "lime": "-1.00002873741684521235601952570510656112313171982436501952042",
+            "C": "0.0",
+            "CO": "-0.999999999999999999989834858463928629324888538758608345452664",
+            "CO2": "-0.0000287374168452123661846672411779317982431810657566738125033268",
+            "O2": "5.08257076803568533755573062069582759833707495662676615760669e-21",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-41570871.6996657830339831060674119071640699479673623639917312",
+            "CO2": "-1676.85343559233764229528869752160550664468182548806874228222",
+            "O2": "83138389.6924603813926816215574287711171266065710737518459778",
+            "N2": "1678.30034609473749279933918606129785399107073409464627668521"
+          },
+          "errors": {
+            "pressure": 1.248785417265414e-08,
+            "internal_energy": 2.4673601512165474e-12,
+            "entropy": 1.2435329413917797e-12,
+            "amount": 6.906002507390434e-17,
+            "gas_chemical_potential": 2.395451470615769e-05
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "nitrogen_molecules_mol",
+          "difference_step": "0.00000000040000000000000000832667268468867405317723751068115234375",
+          "source_derivatives": {
+            "pressure": "83206555.3485424175733778153694026149435185247666926679098142",
+            "internal_energy": "13175.3385646281308863743930769897853397860619547514732521948",
+            "entropy": "209.906655333456843208958017133155464765241004819690987693407"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-0.0000143749049299722735086971001348673444196773324763263619634225",
+            "lime": "0.0000143749049299722735086971001348673444196773324763263619634225",
+            "C": "0.0",
+            "CO": "4.10415155662594376021978094848847129128130127712140469356097e-25",
+            "CO2": "0.0000143749049299722735082866849792047500436553543814774317480766",
+            "O2": "2.05207577831297188010989047424428074939709018955067439017684e-25",
+            "N2": "1.00000000000000000000000000000000000000000000000000000058673"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-0.0241247146370706004960766540663931108482668289527475052361583",
+            "CO2": "1678.27622138010042219805454125890219255767382121129040579815",
+            "O2": "3356.60069218947498559710123582593717133704417608048630660677",
+            "N2": "2078627.47587529232075083921094020040608066270097334638351042"
+          },
+          "errors": {
+            "pressure": 4.022066327679518e-08,
+            "internal_energy": 8.701133893401716e-12,
+            "entropy": 1.0686810273252448e-14,
+            "amount": 1.435061779702487e-17,
+            "gas_chemical_potential": 6.633825785614444e-09
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "nitrogen_molecules_mol",
+          "difference_step": "0.000000000120000000000000002498001805406602215953171253204345703125",
+          "source_derivatives": {
+            "pressure": "83206555.3485424175733778177355076266448514266572286873320299",
+            "internal_energy": "13175.3385646281308863743907742287984418884669408782347012464",
+            "entropy": "209.906655333456830598617848045518354120722671778205698252733"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-0.0000143749049299722735086828874904706893973820949507436222255069",
+            "lime": "0.0000143749049299722735086828874904706893973820949507436222255069",
+            "C": "0.0",
+            "CO": "4.10415155662594376020354903613047908278436103089749945675618e-25",
+            "CO2": "0.0000143749049299722735082724723348080950213617400471307325766909",
+            "O2": "2.05207577831297188010177451806529365637628385244005901132371e-25",
+            "N2": "0.999999999999999999999999999999999999999999999999999998054582"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-0.0241247146370706004960528026944430386874495396583101888082723",
+            "CO2": "1678.276221380100422198054588983240278573554463923053745024",
+            "O2": "3356.60069218947498559710128357186944322448382692508425081792",
+            "N2": "2078627.47587528601558075587758939447421131317112250123884991"
+          },
+          "errors": {
+            "pressure": 4.022066327916129e-08,
+            "internal_energy": 8.701133891098955e-12,
+            "entropy": 2.3297150442340084e-14,
+            "amount": 1.4350617782812226e-17,
+            "gas_chemical_potential": 3.5922387606023003e-10
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        }
+      ],
+      "identity_errors": {
+        "thermal_gibbs_j_k": 1.2212453270876722e-15,
+        "elemental_gibbs_j_mol": 2.1464074961841106e-10,
+        "existing_cv_j_k": 7.771561172376096e-16,
+        "inverse_chain_absolute": 0.0
+      },
+      "within_budgets": {
+        "thermal_gibbs_j_k": true,
+        "elemental_gibbs_j_mol": true,
+        "existing_cv_j_k": true,
+        "inverse_chain_absolute": true,
+        "source_derivatives": true
+      }
+    },
+    {
+      "inventory": {
+        "name": "near_old_domain_boundary",
+        "calcium_atoms_mol": 0.002,
+        "carbon_atoms_mol": 0.0022,
+        "oxygen_atoms_mol": 0.0062,
+        "nitrogen_molecules_mol": 0.004
+      },
+      "state": {
+        "temperature_k": 1050.0,
+        "pressure_pa": 382608.3354968221,
+        "calcium_phase": "coexistence",
+        "carbon_phase": "graphite_exhausted",
+        "calcite_fraction": 0.9102561355566379,
+        "amounts_mol": {
+          "calcite": 0.0018205122711132758,
+          "lime": 0.00017948772888672418,
+          "C": 0.0,
+          "CO": 0.00019999999999999218,
+          "CO2": 0.0001794877288867321,
+          "O2": 7.82386310238639e-23,
+          "N2": 0.004
+        },
+        "partial_pressures_pa": {
+          "CO": 17472.74380851237,
+          "CO2": 15680.715518048592,
+          "O2": 6.835217779043777e-15,
+          "N2": 349454.8761702611
+        },
+        "chemical_potentials_j_mol": {
+          "CO": -349910.9134610463,
+          "CO2": -659084.3646619971,
+          "O2": -618346.9024019017,
+          "N2": -207256.67154139865,
+          "calcite": -1361604.0252664287,
+          "lime": -702519.6606044316,
+          "C": -13913.573729289152
+        },
+        "calcination_gibbs_j_mol": 0.0,
+        "enthalpy_j": -2142.428300558046,
+        "entropy_j_k": 1.4093224941263032,
+        "gibbs_j": -3622.2169193906643,
+        "internal_energy_j": -2180.689134107728,
+        "helmholtz_j": -3660.4777529403464,
+        "gas_volume_m3": 9.992976026749115e-05,
+        "solid_volume_m3": 7.023973250835477e-08,
+        "total_volume_m3": 9.99999999999995e-05,
+        "frozen_cp_j_k": 0.3869551060867481,
+        "equilibrium_cp_j_k": 0.9733217070535983,
+        "equilibrium_cv_j_k": 0.8565165246885529,
+        "volume_temperature_derivative_m3_k": 1.7405155187664306e-07,
+        "volume_pressure_derivative_m3_pa": -2.723221624430259e-10,
+        "pressure_temperature_derivative_at_volume_pa_k": 639.1384025274014,
+        "amount_temperature_derivatives_mol_k": {
+          "calcite": -3.460042046858757e-06,
+          "lime": 3.460042046858757e-06,
+          "C": 0.0,
+          "CO": 1.5799339220505784e-23,
+          "CO2": 3.460042046858757e-06,
+          "O2": 7.899669610252892e-24,
+          "N2": 0.0
+        },
+        "amount_pressure_derivatives_mol_pa": {
+          "calcite": 4.887314514065915e-10,
+          "lime": -4.887314514065915e-10,
+          "C": 0.0,
+          "CO": -1.2785886134577505e-27,
+          "CO2": -4.887314514065915e-10,
+          "O2": -6.392943067288752e-28,
+          "N2": 0.0
+        },
+        "amount_temperature_derivatives_at_volume_mol_k": {
+          "calcite": -3.1476750077418497e-06,
+          "lime": 3.1476750077418497e-06,
+          "C": 0.0,
+          "CO": 1.4982144136610674e-23,
+          "CO2": 3.1476750077418497e-06,
+          "O2": 7.491072068305337e-24,
+          "N2": 0.0
+        },
+        "active_reaction_basis": [
+          "calcination",
+          "co_oxidation"
+        ]
+      },
+      "tangent": {
+        "coordinate_order": [
+          "temperature_k",
+          "carbon_atoms_mol",
+          "oxygen_atoms_mol",
+          "nitrogen_molecules_mol"
+        ],
+        "conserved_coordinate_order": [
+          "carbon_atoms_mol",
+          "oxygen_atoms_mol",
+          "nitrogen_molecules_mol",
+          "internal_energy_j"
+        ],
+        "amount_derivatives": {
+          "CO": [
+            1.72290812304938e-21,
+            2.0,
+            -1.0,
+            3.034204576685622e-18
+          ],
+          "CO2": [
+            3.1476750077418493e-06,
+            0.00010866020964738751,
+            -7.242946421192196e-05,
+            3.623074543547056e-05
+          ],
+          "O2": [
+            7.491072068305335e-24,
+            -1.564662097051365e-18,
+            7.823073733204568e-19,
+            3.158650776116259e-23
+          ],
+          "N2": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "calcite": [
+            -3.147675007741851e-06,
+            -1.0001086602096472,
+            1.0000724294642118,
+            -3.623074543548128e-05
+          ],
+          "lime": [
+            3.147675007741851e-06,
+            1.0001086602096472,
+            -1.0000724294642118,
+            3.623074543548128e-05
+          ],
+          "C": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "pressure_derivatives": [
+          639.1384025274011,
+          174659696.30887872,
+          -87292814.81161655,
+          87366881.49726218
+        ],
+        "internal_energy_derivatives": [
+          0.8565165246885537,
+          335111.54161483666,
+          -430981.70121612865,
+          14398.77460525384
+        ],
+        "entropy_derivatives": [
+          0.0008157300235129075,
+          357.9514322618403,
+          -116.00785715731217,
+          211.10042490157377
+        ],
+        "gas_chemical_potential_derivatives": {
+          "CO": [
+            -241.94357510452798,
+            87300592.68231732,
+            -43649415.246158764,
+            -0.06384314598330627
+          ],
+          "CO2": [
+            -125.93571794721586,
+            3522.8860745483594,
+            -1760.6960747497487,
+            1762.1899997993553
+          ],
+          "O2": [
+            232.01571431462423,
+            -174594139.59248555,
+            87295309.10016802,
+            3524.507685890677
+          ],
+          "N2": [
+            -211.1004249015738,
+            -1762.3176860928106,
+            1762.2538429458348,
+            2182558.811156854
+          ]
+        },
+        "physical_from_conserved_derivative": [
+          [
+            -391249.3594174261,
+            503179.6688018858,
+            -16810.854420455602,
+            1.167519798130713
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ]
+        ],
+        "amount_conserved_derivatives": {
+          "CO": [
+            1.9999999999999993,
+            -0.9999999999999991,
+            -2.5929353059717914e-17,
+            2.011529344020378e-21
+          ],
+          "CO2": [
+            -1.231417170223593,
+            1.5837736384273051,
+            -0.05287887557261922,
+            3.6749728896198547e-06
+          ],
+          "O2": [
+            -4.495539245125601e-18,
+            4.551662535621393e-18,
+            -1.2589973548566107e-19,
+            8.745974948970468e-24
+          ],
+          "N2": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "calcite": [
+            0.23141717022359387,
+            -0.583773638427306,
+            0.052878875572619236,
+            -3.6749728896198564e-06
+          ],
+          "lime": [
+            -0.23141717022359387,
+            0.583773638427306,
+            -0.052878875572619236,
+            3.6749728896198564e-06
+          ],
+          "C": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "pressure_conserved_derivatives": [
+          -75402794.25904402,
+          234308634.89068753,
+          76622418.85785149,
+          746.2067386963778
+        ],
+        "gas_chemical_potential_conserved_derivatives": {
+          "CO": [
+            181960861.4571258,
+            -165390503.23599935,
+            4067278.15520364,
+            -282.4739139650615
+          ],
+          "CO2": [
+            49275791.86069641,
+            -63370053.54308253,
+            2118849.210746003,
+            -147.03244399517988
+          ],
+          "O2": [
+            -265370139.19285882,
+            204040899.3858336,
+            -3896857.888915274,
+            270.8829399397633
+          ],
+          "N2": [
+            82591143.69780113,
+            -106219679.63206832,
+            5731337.322273532,
+            -246.4639254663932
+          ]
+        },
+        "same_phase_only": true
+      },
+      "difference_reviews": [
+        {
+          "coordinate": "temperature_k",
+          "difference_step": "0.0001",
+          "source_derivatives": {
+            "pressure": "639.138402527505111208254426725498666318519078938271964687582",
+            "internal_energy": "0.856516524688705868710634031048748501025683021461611813832837",
+            "entropy": "0.00081573002351303225617054716203023478812137077875351270289936"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-0.00000314767500774284068221895121897447753757971922056327440781401",
+            "lime": "0.00000314767500774284068221895121897447753757971922056327440781401",
+            "C": "0.0",
+            "CO": "1.49821441368238124305385229449537833904820279627092428860105e-23",
+            "CO2": "0.0000031476750077428406672368070821506651070411962756094910586377",
+            "O2": "7.49107206841190621526926147247689169521455978540940227112828e-24",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-241.943575104527701901168806034240185258984316660711068164186",
+            "CO2": "-125.93571794721581025446480530443392902231995628430859269524",
+            "O2": "232.01571431462378329340800145961251247332872075280495053006",
+            "N2": "-211.100424901573813311341037812000862444889622885934092727531"
+          },
+          "errors": {
+            "pressure": 1.0398474546284602e-10,
+            "internal_energy": 1.5220886084613975e-13,
+            "entropy": 1.2473562630100822e-16,
+            "amount": 9.913985279790242e-19,
+            "gas_chemical_potential": 4.500452828270724e-13
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "temperature_k",
+          "difference_step": "0.00003",
+          "source_derivatives": {
+            "pressure": "639.138402527401337219820658957572971657054632721709559147221",
+            "internal_energy": "0.856516524688554661423698835054709930766271917753308403791248",
+            "entropy": "0.000815730023512907315664627123123114318293122917580586286416566"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-0.00000314767500774186253445468039588006410003228520633648694399773",
+            "lime": "0.00000314767500774186253445468039588006410003228520633648694399773",
+            "C": "0.0",
+            "CO": "1.49821441366283072620505248317748414362454637498205128453167e-23",
+            "CO2": "0.00000314767500774186251947253625925175683798176037456164545552664",
+            "O2": "7.49107206831415363102526241588742071809958311704865067943513e-24",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-241.943575104527727083384734841797192636568542368363116938853",
+            "CO2": "-125.935717947215873618701582312779903137244170178189963308191",
+            "O2": "232.015714314623706929366305058034578998648744380346307261325",
+            "N2": "-211.100424901573837464829969291137682410998233960577542292355"
+          },
+          "errors": {
+            "pressure": 2.1075702907825074e-13,
+            "internal_energy": 1.0015739109437653e-15,
+            "entropy": 2.04879619030681e-19,
+            "amount": 1.3250763708201312e-20,
+            "gas_chemical_potential": 5.26409324523474e-13
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "carbon_atoms_mol",
+          "difference_step": "0.00000000022000000000000001325328735646280620130710303783416748046875",
+          "source_derivatives": {
+            "pressure": "174659696.308877859028716659638597656085478063741340691151509",
+            "internal_energy": "335111.541614836915866535206502959375377863353205114586400144",
+            "entropy": "357.951432261852993338489849105070783013756743484476155554831"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-1.0001086602096474093003491481313689322892113220379590524455",
+            "lime": "1.0001086602096474093003491481313689322892113220379590524455",
+            "C": "0.0",
+            "CO": "1.99999999999999999687067580586746539478429339305456143167496",
+            "CO2": "0.000108660209647412429673342263903537504917928983397609532800853",
+            "O2": "-0.00000000000000000156466209706626730260785330347271928453244728150302366237928",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "87300592.6824545293747706200243021766386528010117514236388195",
+            "CO2": "3522.88607455006612219442126464539132199996796688172651242265",
+            "O2": "-174594139.592759958617296851206075062494661602087569083639236",
+            "N2": "-1762.31768609227221102910856191109203141471868077696870625296"
+          },
+          "errors": {
+            "pressure": 8.607779544829395e-07,
+            "internal_energy": 2.519274764258328e-10,
+            "entropy": 1.2697615257874117e-11,
+            "amount": 2.38142750470749e-16,
+            "gas_chemical_potential": 0.00027441155156198794
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "carbon_atoms_mol",
+          "difference_step": "0.000000000066000000000000003975986206938841860392130911350250244140625",
+          "source_derivatives": {
+            "pressure": "174659696.308877859028403227493819903508891817079325895065155",
+            "internal_energy": "335111.541614836915866535213482617925257237595037577766438436",
+            "entropy": "357.951432261840786529223419586353920554485334286188851494187"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-1.00010866020964740930034919150422651179119091475446377321952",
+            "lime": "1.00010866020964740930034919150422651179119091475446377321952",
+            "C": "0.0",
+            "CO": "1.99999999999999999687067580589503001227341640220694936433214",
+            "CO2": "0.00010866020964741242967338560919649951777451254751449633160835",
+            "O2": "-0.00000000000000000156466209705248499386329179889652531633518879977653859988129",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "87300592.6823263578773162163610194660171851197275587664387901",
+            "CO2": "3522.88607455006612218809933828522405305855968634035208065115",
+            "O2": "-174594139.592503615622388056523362361586264122335744850937566",
+            "N2": "-1762.31768609227221102805456251017493911943087783442688296637"
+          },
+          "errors": {
+            "pressure": 8.607782679150843e-07,
+            "internal_energy": 2.519274764328125e-10,
+            "entropy": 4.908059914445972e-13,
+            "amount": 2.381427505141219e-16,
+            "gas_chemical_potential": 1.8068556653193243e-05
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "oxygen_atoms_mol",
+          "difference_step": "0.0000000006199999999999999782118731417313028941862285137176513671875",
+          "source_derivatives": {
+            "pressure": "-87292814.8116161254393970825522273774888012671380625444572088",
+            "internal_energy": "-430981.701216128777756529586099687366107274759518567014705408",
+            "entropy": "-116.007857157325166761890934272856603253684004708233080915268"
+          },
+          "source_amount_derivatives": {
+            "calcite": "1.00007242946421193111336325179438668717788595621652974429208",
+            "lime": "-1.00007242946421193111336325179438668717788595621652974429208",
+            "C": "0.0",
+            "CO": "-0.999999999999999998435385253329259222468838038830521826666772",
+            "CO2": "-0.0000724294642119326779779984651274647090479173860079058477428515",
+            "O2": "0.000000000000000000782307373335370388765580980584739086500390060509557628550439",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-43649415.2462967701751012788811013952636871359079962282455806",
+            "CO2": "-1760.69607475029710296766746072053399908103105251653852110661",
+            "O2": "87295309.100444039755996622427281349459376109753887423414119",
+            "N2": "1762.25384294602061721376742234062614884735049949105039532826"
+          },
+          "errors": {
+            "pressure": 4.294169032714517e-07,
+            "internal_energy": 1.2297852589347272e-10,
+            "entropy": 1.29932491266592e-11,
+            "amount": 1.1049780315167157e-16,
+            "gas_chemical_potential": 0.0002760202228392738
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "oxygen_atoms_mol",
+          "difference_step": "0.00000000018599999999999999346356194251939086825586855411529541015625",
+          "source_derivatives": {
+            "pressure": "-87292814.8116161254381529480410749006964532682371300488174481",
+            "internal_energy": "-430981.701216128777756529613745227898347707507147542543602958",
+            "entropy": "-116.007857157313048225049973403523015675953302029883968746151"
+          },
+          "source_amount_derivatives": {
+            "calcite": "1.00007242946421193111336342373030108760496738318030041463915",
+            "lime": "-1.00007242946421193111336342373030108760496738318030041463915",
+            "C": "0.0",
+            "CO": "-0.999999999999999998435385253356623266889043008492131065406266",
+            "CO2": "-0.0000724294642119326779781703736778207159243746881692705115612883",
+            "O2": "0.000000000000000000782307373321688366555478495753934467616516617175696226016977",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-43649415.246169525537648738536720237581705230517628294841238",
+            "CO2": "-1760.69607475029710294257326763058854427654495031887077625043",
+            "O2": "87295309.1001895504810915919269052139863219079453559519409234",
+            "N2": "1762.25384294602061720539564402862611503521714267333622780866"
+          },
+          "errors": {
+            "pressure": 4.294181474059628e-07,
+            "internal_energy": 1.2297852592111829e-10,
+            "entropy": 8.747122856983296e-13,
+            "amount": 1.1049780332360748e-16,
+            "gas_chemical_potential": 2.1530947934243293e-05
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "nitrogen_molecules_mol",
+          "difference_step": "0.00000000040000000000000000832667268468867405317723751068115234375",
+          "source_derivatives": {
+            "pressure": "87366881.497261733795290378691923516059734790562916017168586",
+            "internal_energy": "14398.7746052538399252132724302984487595426128530248909148871",
+            "entropy": "211.100424901573853711153239930443601511734057618611288581362"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-0.0000362307454354797519000969831974906247307615908705346208083084",
+            "lime": "0.0000362307454354797519000969831974906247307615908705346208083084",
+            "C": "0.0",
+            "CO": "6.31730155223444771941122332666723987666842678788669920243609e-23",
+            "CO2": "0.0000362307454354797518369239676751461475366493576038616285686401",
+            "O2": "3.15865077611722385970561166333361978686129567798448156321385e-23",
+            "N2": "1.00000000000000000000000000000000000000000000000000000058673"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-0.0638431462515938233827242167237471179430880018649191742138565",
+            "CO2": "1762.18999979976902338118487230886577535451621074628275449817",
+            "O2": "3524.50768589204123440913519305117904494491859749629534734477",
+            "N2": "2182558.81115686105411594864823451288349010184703657419554157"
+          },
+          "errors": {
+            "pressure": 4.4605624160372997e-07,
+            "internal_energy": 5.658459637981676e-13,
+            "entropy": 7.956098797636706e-14,
+            "amount": 9.188617852562816e-18,
+            "gas_chemical_potential": 7.0206457948396404e-09
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "nitrogen_molecules_mol",
+          "difference_step": "0.000000000120000000000000002498001805406602215953171253204345703125",
+          "source_derivatives": {
+            "pressure": "87366881.4972617337952903849535345726493791367592500503868044",
+            "internal_energy": "14398.7746052538399252132666719817280332523380991832321068994",
+            "entropy": "211.100424901573841100813067481798606368287775158694780025788"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-0.0000362307454354797519000611606372745635563353346358383627174437",
+            "lime": "0.0000362307454354797519000611606372745635563353346358383627174437",
+            "C": "0.0",
+            "CO": "6.31730155223444771938623643227956501230638841041852716298633e-23",
+            "CO2": "0.0000362307454354797518368881451149300863624729703130406552213683",
+            "O2": "3.15865077611722385969311821613978455924210188901513161378834e-23",
+            "N2": "0.999999999999999999999999999999999999999999999999999998054582"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-0.0638431462515938233826610997120318937893324207954415098868465",
+            "CO2": "1762.18999979976902338118499860556078676763211865317634627887",
+            "O2": "3524.50768589204123440913531941054563732284290214794357557751",
+            "N2": "2182558.81115685443368736114825423972619494406181002628238663"
+          },
+          "errors": {
+            "pressure": 4.4605624159746833e-07,
+            "internal_energy": 5.658459695564843e-13,
+            "entropy": 6.69506478039184e-14,
+            "amount": 9.188617816740256e-18,
+            "gas_chemical_potential": 1.3643950737794117e-09
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        }
+      ],
+      "identity_errors": {
+        "thermal_gibbs_j_k": 7.771561172376096e-16,
+        "elemental_gibbs_j_mol": 9.89530235528946e-10,
+        "existing_cv_j_k": 7.771561172376096e-16,
+        "inverse_chain_absolute": 1.8189894035458565e-12
+      },
+      "within_budgets": {
+        "thermal_gibbs_j_k": true,
+        "elemental_gibbs_j_mol": true,
+        "existing_cv_j_k": true,
+        "inverse_chain_absolute": true,
+        "source_derivatives": true
+      }
+    },
+    {
+      "inventory": {
+        "name": "near_old_domain_boundary",
+        "calcium_atoms_mol": 0.002,
+        "carbon_atoms_mol": 0.0022,
+        "oxygen_atoms_mol": 0.0062,
+        "nitrogen_molecules_mol": 0.004
+      },
+      "state": {
+        "temperature_k": 1100.0,
+        "pressure_pa": 422192.3297748608,
+        "calcium_phase": "coexistence",
+        "carbon_phase": "graphite_exhausted",
+        "calcite_fraction": 0.7934316707392308,
+        "amounts_mol": {
+          "calcite": 0.0015868633414784616,
+          "lime": 0.00041313665852153844,
+          "C": 0.0,
+          "CO": 0.00020000000000000055,
+          "CO2": 0.000413136658521538,
+          "O2": 7.485850645663474e-21,
+          "N2": 0.004
+        },
+        "partial_pressures_pa": {
+          "CO": 18303.916013195678,
+          "CO2": 37810.093497752576,
+          "O2": 6.851019075277524e-13,
+          "N2": 366078.3202639126
+        },
+        "chemical_potentials_j_mol": {
+          "CO": -362037.74078149186,
+          "CO2": -665466.4345890116,
+          "O2": -606857.3876150395,
+          "N2": -217840.69604317038,
+          "calcite": -1373067.4988511093,
+          "lime": -707601.0642620977,
+          "C": -15214.938576257451
+        },
+        "calcination_gibbs_j_mol": 0.0,
+        "enthalpy_j": -2083.592698157979,
+        "entropy_j_k": 1.4602842107938359,
+        "gibbs_j": -3689.905330031199,
+        "internal_energy_j": -2125.8119311354653,
+        "helmholtz_j": -3732.124563008685,
+        "gas_volume_m3": 9.99344729664025e-05,
+        "solid_volume_m3": 6.552703359762058e-08,
+        "total_volume_m3": 0.00010000000000000013,
+        "frozen_cp_j_k": 0.3866209820525442,
+        "equilibrium_cp_j_k": 1.668257293256804,
+        "equilibrium_cv_j_k": 1.3922224122469842,
+        "volume_temperature_derivative_m3_k": 2.55402679379419e-07,
+        "volume_pressure_derivative_m3_pa": -2.5994389272510925e-10,
+        "pressure_temperature_derivative_at_volume_pa_k": 982.5300248523531,
+        "amount_temperature_derivatives_mol_k": {
+          "calcite": -7.603118646921904e-06,
+          "lime": 7.603118646921904e-06,
+          "C": 0.0,
+          "CO": 1.4157905423522328e-21,
+          "CO2": 7.603118646921902e-06,
+          "O2": 7.078952711761164e-22,
+          "N2": 0.0
+        },
+        "amount_pressure_derivatives_mol_pa": {
+          "calcite": 1.0738061137605532e-09,
+          "lime": -1.0738061137605532e-09,
+          "C": 0.0,
+          "CO": -1.1677432393171695e-25,
+          "CO2": -1.073806113760553e-09,
+          "O2": -5.838716196585847e-26,
+          "N2": 0.0
+        },
+        "amount_temperature_derivatives_at_volume_mol_k": {
+          "calcite": -6.548071899282139e-06,
+          "lime": 6.548071899282139e-06,
+          "C": 0.0,
+          "CO": 1.3010562629574863e-21,
+          "CO2": 6.548071899282137e-06,
+          "O2": 6.5052813147874315e-22,
+          "N2": 0.0
+        },
+        "active_reaction_basis": [
+          "calcination",
+          "co_oxidation"
+        ]
+      },
+      "tangent": {
+        "coordinate_order": [
+          "temperature_k",
+          "carbon_atoms_mol",
+          "oxygen_atoms_mol",
+          "nitrogen_molecules_mol"
+        ],
+        "conserved_coordinate_order": [
+          "carbon_atoms_mol",
+          "oxygen_atoms_mol",
+          "nitrogen_molecules_mol",
+          "internal_energy_j"
+        ],
+        "amount_derivatives": {
+          "CO": [
+            2.0364493504827895e-21,
+            2.0,
+            -0.9999999999999999,
+            3.538660035451247e-18
+          ],
+          "CO2": [
+            6.548071899282137e-06,
+            0.00025011696465379016,
+            -0.00016671875964189789,
+            8.339820501185125e-05
+          ],
+          "O2": [
+            6.50528131478743e-22,
+            -1.4970643763519394e-16,
+            7.48509535805789e-17,
+            3.022402019471851e-21
+          ],
+          "N2": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "calcite": [
+            -6.548071899282138e-06,
+            -1.0002501169646532,
+            1.0001667187596417,
+            -8.339820501183226e-05
+          ],
+          "lime": [
+            6.548071899282138e-06,
+            1.0002501169646532,
+            -1.0001667187596417,
+            8.339820501183226e-05
+          ],
+          "C": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "pressure_derivatives": [
+          982.5300248523527,
+          182976817.3887234,
+          -91449611.86057472,
+          91527205.52814874
+        ],
+        "internal_energy_derivatives": [
+          1.3922224122469846,
+          333998.5435070096,
+          -428600.8856646281,
+          15639.160637713043
+        ],
+        "entropy_derivatives": [
+          0.0012656567384063495,
+          356.9159913463472,
+          -113.7929016882803,
+          212.2544151644395
+        ],
+        "gas_chemical_potential_derivatives": {
+          "CO": [
+            -243.1230896580668,
+            91457763.58836645,
+            -45727958.74231546,
+            -0.15394891070755265
+          ],
+          "CO2": [
+            -129.33018796978655,
+            3690.6424067300736,
+            -1844.5386712277787,
+            1846.1037355028152
+          ],
+          "O2": [
+            227.58580337656042,
+            -182908145.8919194,
+            91452228.40728848,
+            3692.515368827045
+          ],
+          "N2": [
+            -212.2544151644395,
+            -1846.41163332605,
+            1846.2576844137827,
+            2286490.0960510895
+          ]
+        },
+        "physical_from_conserved_derivative": [
+          [
+            -239903.15093976323,
+            307853.7465668905,
+            -11233.234359783175,
+            0.7182760392328729
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ]
+        ],
+        "amount_conserved_derivatives": {
+          "CO": [
+            1.9999999999999996,
+            -0.9999999999999992,
+            -1.933725278035015e-17,
+            1.4627327735631345e-21
+          ],
+          "CO2": [
+            -1.5706529642532507,
+            2.015681748223739,
+            -0.07347262804433492,
+            4.703323148428449e-06
+          ],
+          "O2": [
+            -3.0577018615190096e-16,
+            2.7511847610346864e-16,
+            -7.30451255651309e-18,
+            4.672587696881131e-22
+          ],
+          "N2": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "calcite": [
+            0.5706529642532516,
+            -1.0156817482237388,
+            0.07347262804433496,
+            -4.70332314842845e-06
+          ],
+          "lime": [
+            -0.5706529642532516,
+            1.0156817482237388,
+            -0.07347262804433496,
+            4.70332314842845e-06
+          ],
+          "C": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "pressure_conserved_derivatives": [
+          -52735231.466279864,
+          211025937.4046821,
+          80490215.49345867,
+          705.727774678324
+        ],
+        "gas_chemical_potential_conserved_derivatives": {
+          "CO": [
+            149783758.86354724,
+            -120574312.77046937,
+            2731058.490454731,
+            -174.62948988565483
+          ],
+          "CO2": [
+            31030410.247990385,
+            -39816627.449370205,
+            1454642.4149949257,
+            -92.89477516818123
+          ],
+          "O2": [
+            -237506697.23111367,
+            161515370.64219826,
+            -2552832.1509196092,
+            163.46942943494722
+          ],
+          "N2": [
+            50918656.58719237,
+            -65341470.6760525,
+            4670793.685491955,
+            -152.45726063400343
+          ]
+        },
+        "same_phase_only": true
+      },
+      "difference_reviews": [
+        {
+          "coordinate": "temperature_k",
+          "difference_step": "0.0001",
+          "source_derivatives": {
+            "pressure": "982.530024852547842415053515044657532725595756494370466237562",
+            "internal_energy": "1.39222241224724479949893869839092939504832066857693062721196",
+            "entropy": "0.0012656567384065505474335437382612572413023063317488562642012"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-0.00000654807189928384890812223928008246646953085113710728852619789",
+            "lime": "0.00000654807189928384890812223928008246646953085113710728852619789",
+            "C": "0.0",
+            "CO": "1.30105626297277427908928753222453330734668115638599081555144e-21",
+            "CO2": "0.00000654807189928384760706597630730818738024331891257398117999151",
+            "O2": "6.50528131486387139544643766112266653673332117395001092379923e-22",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-243.123089658066787888858921377501158453609720760498239379735",
+            "CO2": "-129.330187969786456254819112536014343067775702430965995181163",
+            "O2": "227.58580337656066326807961768297363077166803665906448758148",
+            "N2": "-212.254415164439474790658541557771511738310047428721529458981"
+          },
+          "errors": {
+            "pressure": 1.951890178063198e-10,
+            "internal_energy": 2.60179799719333e-13,
+            "entropy": 2.0104140153226225e-16,
+            "amount": 1.710852778483674e-18,
+            "gas_chemical_potential": 2.4279351822069673e-13
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "temperature_k",
+          "difference_step": "0.00003",
+          "source_derivatives": {
+            "pressure": "982.530024852366132667406554337631639804376802905126193332147",
+            "internal_energy": "1.39222241224699923357284865518335098822132792381692063000542",
+            "entropy": "0.00126565673840635973255805909334779901099392315185281628792162"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-0.00000654807189928223599784959936755580874626687773145713328487995",
+            "lime": "0.00000654807189928223599784959936755580874626687773145713328487995",
+            "C": "0.0",
+            "CO": "1.30105626295883815594549112697587572988198883517132747968016e-21",
+            "CO2": "0.00000654807189928223469679333640871765280077575075558140340225808",
+            "O2": "6.5052813147941907797274556348793786494106507298908164416073e-22",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-243.123089658066809423762994157862758732555775748570765955923",
+            "CO2": "-129.330187969786516118407784752327733735860443463101044163923",
+            "O2": "227.585803376560586610710418811070049993390664570939443584",
+            "N2": "-212.254415164439495263478098677809043460696944235087336317208"
+          },
+          "errors": {
+            "pressure": 1.3479270159359093e-11,
+            "internal_energy": 1.4613873629289753e-14,
+            "entropy": 1.0226526047617339e-17,
+            "amount": 9.794250584376153e-20,
+            "gas_chemical_potential": 1.6613614902182483e-13
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "carbon_atoms_mol",
+          "difference_step": "0.00000000022000000000000001325328735646280620130710303783416748046875",
+          "source_derivatives": {
+            "pressure": "182976817.38872365318030479313321654968573646734850134718373",
+            "internal_energy": "333998.54350700974759970050302031242744028012451880383395306",
+            "entropy": "356.915991346360515144311798269050189872925849824335600356323"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-1.00025011696465342725601063720625292088191640714493625224339",
+            "lime": "1.00025011696465342725601063720625292088191640714493625224339",
+            "C": "0.0",
+            "CO": "1.99999999999999970058712472672005891348537446722826432634036",
+            "CO2": "0.000250116964653726668885910486194007396541939916671926232609172",
+            "O2": "-0.000000000000000149706437636639970543257312766385867837211201378506587652394",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "91457763.5885139734346105101188728804481935711219614833357037",
+            "CO2": "3690.64240673055577621221416529981255433899946301240103155891",
+            "O2": "-182908145.892214485757668595809415161271278464244996941869344",
+            "N2": "-1846.41163332415731295241192964396955931801991800020718922896"
+          },
+          "errors": {
+            "pressure": 2.499648964679379e-07,
+            "internal_energy": 1.1937085729089264e-10,
+            "entropy": 1.3317112148947546e-11,
+            "amount": 2.9941287527327995e-16,
+            "gas_chemical_potential": 0.0002950814894038253
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "carbon_atoms_mol",
+          "difference_step": "0.000000000066000000000000003975986206938841860392130911350250244140625",
+          "source_derivatives": {
+            "pressure": "182976817.388723653179976425673865594331611547906249416066548",
+            "internal_energy": "333998.543507009747599700520081047205392763245297923017454294",
+            "entropy": "356.91599134634830833504537809275964593721675267593619759326"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-1.00025011696465342725601073962381840533420197472678672957048",
+            "lime": "1.00025011696465342725601073962381840533420197472678672957048",
+            "C": "0.0",
+            "CO": "1.99999999999999970058712472935743390388384514459640743517368",
+            "CO2": "0.000250116964653726668886010266384501450356830130379292496361372",
+            "O2": "-0.000000000000000149706437635321283048058077427701796280916907566288157849694",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "91457763.5883796985325154208651251483053167409477128487254691",
+            "CO2": "3690.64240673055577620559099364470378539981183785688094266098",
+            "O2": "-182908145.891945935953478430548263007203062682271749983689053",
+            "N2": "-1846.41163332415731295130784869011834043972189138695678926838"
+          },
+          "errors": {
+            "pressure": 2.4996456810047854e-07,
+            "internal_energy": 1.1937085730795337e-10,
+            "entropy": 1.11030288252737e-12,
+            "amount": 2.994128752706426e-16,
+            "gas_chemical_potential": 2.653168521366004e-05
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "oxygen_atoms_mol",
+          "difference_step": "0.0000000006199999999999999782118731417313028941862285137176513671875",
+          "source_derivatives": {
+            "pressure": "-91449611.8605748335139745150027705003697031897109444806725599",
+            "internal_energy": "-428600.885664628142505186085619344687202317050653903561505105",
+            "entropy": "-113.792901688293606588057747688743070310227307824960843265518"
+          },
+          "source_amount_derivatives": {
+            "calcite": "1.00016671875964173831550299402520646989597718413093930476407",
+            "lime": "-1.00016671875964173831550299402520646989597718413093930476407",
+            "C": "0.0",
+            "CO": "-0.999999999999999850298092835968178295530868702099346690683144",
+            "CO2": "-0.000166718759641888017410158057028174365108482031592611768297037",
+            "O2": "0.0000000000000000748509535820159108522345656489503266544872548333675060534454",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-45727958.7424619457264866712605309748657255171511919026888315",
+            "CO2": "-1844.53867122779423782499702256125162827106809440958280460568",
+            "O2": "91452228.407581435864497692527016827228194492166194986277833",
+            "N2": "1846.25768441345963286734612743532433673886629091237459702888"
+          },
+          "errors": {
+            "pressure": 1.1122393545250277e-07,
+            "internal_energy": 2.236594486705245e-11,
+            "entropy": 1.3311085648757984e-11,
+            "amount": 4.5289306331339374e-17,
+            "gas_chemical_potential": 0.0002929590397372555
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "oxygen_atoms_mol",
+          "difference_step": "0.00000000018599999999999999346356194251939086825586855411529541015625",
+          "source_derivatives": {
+            "pressure": "-91449611.8605748335126710953938661169228360440598676008451516",
+            "internal_energy": "-428600.88566462814250518614985474854519360680241081322399644",
+            "entropy": "-113.792901688281488051216820757424374362650597277562686099656"
+          },
+          "source_amount_derivatives": {
+            "calcite": "1.00016671875964173831550339237248881983414556976510728330088",
+            "lime": "-1.00016671875964173831550339237248881983414556976510728330088",
+            "C": "0.0",
+            "CO": "-0.999999999999999850298092838586362510080721836542744243005008",
+            "CO2": "-0.000166718759641888017410553786126309753423733222363040653227445",
+            "O2": "0.0000000000000000748509535807068187449596390817286278788138520543301196103584",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-45727958.7423286418205840102437754845621441498719884185025327",
+            "CO2": "-1844.53867122779423779870704904965021634486461754082980820377",
+            "O2": "91452228.4073148280526924230734528698238556100147417557839775",
+            "N2": "1846.25768441345963285857549050952911962065318095533770502534"
+          },
+          "errors": {
+            "pressure": 1.1122263203289387e-07,
+            "internal_energy": 2.2365944931287853e-11,
+            "entropy": 1.1925488078310523e-12,
+            "amount": 4.5289306729686657e-17,
+            "gas_chemical_potential": 2.6351227931986062e-05
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "nitrogen_molecules_mol",
+          "difference_step": "0.00000000040000000000000000832667268468867405317723751068115234375",
+          "source_derivatives": {
+            "pressure": "91527205.5281488402105543732461121739967680271908969495986294",
+            "internal_energy": "15639.1606377130547840909895086622744593979916222460958051522",
+            "entropy": "212.254415164439511145779131034766752229138591850741411422688"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-0.0000833982050118386887240216261857656638958872690513361160829023",
+            "lime": "0.0000833982050118386887240216261857656638958872690513361160829023",
+            "C": "0.0",
+            "CO": "6.04480403894293278718980557164230977890028290820753288544974e-21",
+            "CO2": "0.0000833982050118386826792175872428328767060816974090262897047806",
+            "O2": "3.02240201947146639359490278582115489136983962703882741004958e-21",
+            "N2": "1.00000000000000000000000000000000000000000000000000000058673"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-0.153948910697680093490756225664436414029805884685660237175805",
+            "CO2": "1846.10373550276195276421714122151203054503595200813738159339",
+            "O2": "3692.51536882691926571541579489435293391813151578564608366113",
+            "N2": "2286490.09605109695564708124520327976395291884840653545721983"
+          },
+          "errors": {
+            "pressure": 9.968054033516018e-08,
+            "internal_energy": 1.1895882697083984e-11,
+            "entropy": 3.965929233523463e-15,
+            "amount": 1.2566137223974675e-17,
+            "gas_chemical_potential": 7.490028947700282e-09
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "nitrogen_molecules_mol",
+          "difference_step": "0.000000000120000000000000002498001805406602215953171253204345703125",
+          "source_derivatives": {
+            "pressure": "91527205.5281488402105543883451187595556131639600301187972381",
+            "internal_energy": "15639.1606377130547840909763616893057185831129651823671097677",
+            "entropy": "212.254415164439498535438951730743768870017251525285862136896"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-0.0000833982050118386887239391636981500347736730159586393862461725",
+            "lime": "0.0000833982050118386887239391636981500347736730159586393862461725",
+            "C": "0.0",
+            "CO": "6.04480403894293278716589240611487167947802281687932663154063e-21",
+            "CO2": "0.0000833982050118386826791351247552172476077806098437677067681497",
+            "O2": "3.02240201947146639358294620305743587417327003168120707716762e-21",
+            "N2": "0.999999999999999999999999999999999999999999999999999998054582"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-0.153948910697680093490604042120950067290087911269414316554298",
+            "CO2": "1846.10373550276195276421744576847486126691690902896872470182",
+            "O2": "3692.51536882691926571541609962119162266841399388081613764446",
+            "N2": "2286490.0960510900199599895786433402732389951985578447923207"
+          },
+          "errors": {
+            "pressure": 9.968054035025918e-08,
+            "internal_energy": 1.189588268393701e-11,
+            "entropy": 8.644410945780559e-15,
+            "amount": 1.2566137306437162e-17,
+            "gas_chemical_potential": 5.543418560337215e-10
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        }
+      ],
+      "identity_errors": {
+        "thermal_gibbs_j_k": 2.220446049250313e-16,
+        "elemental_gibbs_j_mol": 2.255546860396862e-10,
+        "existing_cv_j_k": 4.440892098500626e-16,
+        "inverse_chain_absolute": 5.820766091346741e-11
+      },
+      "within_budgets": {
+        "thermal_gibbs_j_k": true,
+        "elemental_gibbs_j_mol": true,
+        "existing_cv_j_k": true,
+        "inverse_chain_absolute": true,
+        "source_derivatives": true
+      }
+    },
+    {
+      "inventory": {
+        "name": "near_old_domain_boundary",
+        "calcium_atoms_mol": 0.002,
+        "carbon_atoms_mol": 0.0022,
+        "oxygen_atoms_mol": 0.0062,
+        "nitrogen_molecules_mol": 0.004
+      },
+      "state": {
+        "temperature_k": 1150.0,
+        "pressure_pa": 485904.22404514824,
+        "calcium_phase": "coexistence",
+        "carbon_phase": "graphite_exhausted",
+        "calcite_fraction": 0.560534412578792,
+        "amounts_mol": {
+          "calcite": 0.001121068825157584,
+          "lime": 0.000878931174842416,
+          "C": 0.0,
+          "CO": 0.00020000000000000145,
+          "CO2": 0.0008789311748424147,
+          "O2": 4.739208764567017e-19,
+          "N2": 0.004
+        },
+        "partial_pressures_pa": {
+          "CO": 19134.113352509758,
+          "CO2": 84087.84364244607,
+          "O2": 4.534027885121619e-11,
+          "N2": 382682.26705019234
+        },
+        "chemical_potentials_j_mol": {
+          "CO": -374222.6314977471,
+          "CO2": -672015.7370226511,
+          "O2": -595586.211049808,
+          "N2": -228481.5512697959,
+          "calcite": -1384820.034128108,
+          "lime": -712804.2971054569,
+          "C": -16566.840125458515
+        },
+        "calcination_gibbs_j_mol": 0.0,
+        "enthalpy_j": -1986.0860922670681,
+        "entropy_j_k": 1.5411519194503314,
+        "gibbs_j": -3758.4107996349494,
+        "internal_energy_j": -2034.676514671583,
+        "helmholtz_j": -3807.0012220394638,
+        "gas_volume_m3": 9.994386804179662e-05,
+        "solid_volume_m3": 5.613195820342847e-08,
+        "total_volume_m3": 0.00010000000000000005,
+        "frozen_cp_j_k": 0.38134925091828975,
+        "equilibrium_cp_j_k": 3.0973107017105574,
+        "equilibrium_cv_j_k": 2.337109217271378,
+        "volume_temperature_derivative_m3_k": 4.0541768119529053e-07,
+        "volume_pressure_derivative_m3_pa": -2.4864200416429697e-10,
+        "pressure_temperature_derivative_at_volume_pa_k": 1630.5277242191137,
+        "amount_temperature_derivatives_mol_k": {
+          "calcite": -1.620259525732966e-05,
+          "lime": 1.620259525732966e-05,
+          "C": 0.0,
+          "CO": 8.659251946008118e-20,
+          "CO2": 1.620259525732957e-05,
+          "O2": 4.329625973004059e-20,
+          "N2": 0.0
+        },
+        "amount_pressure_derivatives_mol_pa": {
+          "calcite": 2.1851530124972355e-09,
+          "lime": -2.1851530124972355e-09,
+          "C": 0.0,
+          "CO": -7.071424166843358e-24,
+          "CO2": -2.1851530124972285e-09,
+          "O2": -3.535712083421679e-24,
+          "N2": 0.0
+        },
+        "amount_temperature_derivatives_at_volume_mol_k": {
+          "calcite": -1.2639642688792002e-05,
+          "lime": 1.2639642688792002e-05,
+          "C": 0.0,
+          "CO": 7.506236630633004e-20,
+          "CO2": 1.2639642688791924e-05,
+          "O2": 3.753118315316502e-20,
+          "N2": 0.0
+        },
+        "active_reaction_basis": [
+          "calcination",
+          "co_oxidation"
+        ]
+      },
+      "tangent": {
+        "coordinate_order": [
+          "temperature_k",
+          "carbon_atoms_mol",
+          "oxygen_atoms_mol",
+          "nitrogen_molecules_mol"
+        ],
+        "conserved_coordinate_order": [
+          "carbon_atoms_mol",
+          "oxygen_atoms_mol",
+          "nitrogen_molecules_mol",
+          "internal_energy_j"
+        ],
+        "amount_derivatives": {
+          "CO": [
+            7.614150613776234e-20,
+            1.9999999999999807,
+            -0.9999999999999905,
+            4.393071995007092e-18
+          ],
+          "CO2": [
+            1.2639642688791902e-05,
+            0.0005321468283812171,
+            -0.00035470392617955774,
+            0.00017744290220166875
+          ],
+          "O2": [
+            3.753118315316499e-20,
+            -9.477747966133071e-15,
+            4.7387305734424015e-15,
+            1.9137187626660083e-19
+          ],
+          "N2": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "calcite": [
+            -1.2639642688791978e-05,
+            -1.000532146828362,
+            1.00035470392617,
+            -0.00017744290220167048
+          ],
+          "lime": [
+            1.2639642688791978e-05,
+            1.000532146828362,
+            -1.00035470392617,
+            0.00017744290220167048
+          ],
+          "C": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "pressure_derivatives": [
+          1630.5277242191119,
+          191293930.20435333,
+          -95606404.77917776,
+          95687525.42517696
+        ],
+        "internal_energy_derivatives": [
+          2.3371092172713737,
+          332865.31049448147,
+          -426180.6896033135,
+          16899.38154134999
+        ],
+        "entropy_derivatives": [
+          0.002032268884583802,
+          355.9085534498473,
+          -111.64137745948629,
+          213.37472418360514
+        ],
+        "gas_chemical_potential_derivatives": {
+          "CO": [
+            -244.267175990361,
+            95614934.29779617,
+            -47806502.14020418,
+            -0.3424071906790561
+          ],
+          "CO2": [
+            -132.62579853087476,
+            3858.3985722206694,
+            -1928.3811843954243,
+            1930.0173878257888
+          ],
+          "O2": [
+            223.2827549189724,
+            -191222151.7984479,
+            95609147.51803955,
+            3860.7195900329357
+          ],
+          "N2": [
+            -213.37472418360514,
+            -1930.7022022087774,
+            1930.359795017555,
+            2390421.282592809
+          ]
+        },
+        "physical_from_conserved_derivative": [
+          [
+            -142426.0826300232,
+            182353.77553338686,
+            -7230.890801534893,
+            0.4278790193500336
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ]
+        ],
+        "amount_conserved_derivatives": {
+          "CO": [
+            1.9999999999999698,
+            -0.9999999999999766,
+            -5.461778443515511e-16,
+            3.257935297806031e-20
+          ],
+          "CO2": [
+            -1.7996826471794627,
+            2.304531861767993,
+            -0.09121843315087146,
+            5.408237918615101e-06
+          ],
+          "O2": [
+            -1.4823167359108282e-14,
+            1.158268352165708e-14,
+            -2.7119251515667543e-16,
+            1.6058805842622736e-20
+          ],
+          "N2": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "calcite": [
+            0.7996826471794929,
+            -1.3045318617680168,
+            0.09121843315087201,
+            -5.408237918615134e-06
+          ],
+          "lime": [
+            -0.7996826471794929,
+            1.3045318617680168,
+            -0.09121843315087201,
+            5.408237918615134e-06
+          ],
+          "C": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "pressure_conserved_derivatives": [
+          -40935746.17582154,
+          201726481.84403828,
+          83897357.50247337,
+          697.6686036619155
+        ],
+        "gas_chemical_potential_conserved_derivatives": {
+          "CO": [
+            130404951.28920175,
+            -92349543.92092477,
+            1766268.9335784158,
+            -104.51679972215774
+          ],
+          "CO2": [
+            18893231.3390034,
+            -24186743.47641972,
+            960932.6840309481,
+            -56.74779661590582
+          ],
+          "O2": [
+            -223023439.90039667,
+            136325600.88901007,
+            -1610672.4990949344,
+            95.53800621250379
+          ],
+          "N2": [
+            30388195.395530343,
+            -38907756.19848044,
+            3933310.6129720844,
+            -91.29856773776486
+          ]
+        },
+        "same_phase_only": true
+      },
+      "difference_reviews": [
+        {
+          "coordinate": "temperature_k",
+          "difference_step": "0.0001",
+          "source_derivatives": {
+            "pressure": "1630.52772421942562355354773180896348669168341968226695698881",
+            "internal_energy": "2.33710921727176250689680292119428315034448016193627743015048",
+            "entropy": "0.00203226888458408521432011646216941171128906077668899680115731"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-0.0000126396426887945827087999712428581744895447575786492492956212",
+            "lime": "0.0000126396426887945827087999712428581744895447575786492492956212",
+            "C": "0.0",
+            "CO": "7.50623663070596182045220764792528111680753274697779104920356e-20",
+            "CO2": "0.0000126396426887945076464336641832399699674682783258380811835459",
+            "O2": "3.7531183153529809102261038239626405584037659718220890405736e-20",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-244.267175990361038763271191474445867450883297048841188385177",
+            "CO2": "-132.625798530874738034504871942849444818503026471546527591195",
+            "O2": "223.282754918972601457532639063192845264760541154589321995797",
+            "N2": "-213.374724183605107480495100125366116360283249954003729326026"
+          },
+          "errors": {
+            "pressure": 3.137632603512176e-10,
+            "internal_energy": 3.888445688428022e-13,
+            "entropy": 2.8333827199062818e-16,
+            "amount": 2.60561360357382e-18,
+            "gas_chemical_potential": 2.1465358897522768e-13
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "temperature_k",
+          "difference_step": "0.00003",
+          "source_derivatives": {
+            "pressure": "1630.52772421912901954571595493192333414356991735275067522571",
+            "internal_energy": "2.33710921727139069770324223020433681294250797765666752257984",
+            "entropy": "0.00203226888458381294936057567082542681778223058308095503517323"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-0.000012639642688792099082477802734619988943045963768529864443986",
+            "lime": "0.000012639642688792099082477802734619988943045963768529864443986",
+            "C": "0.0",
+            "CO": "7.50623663063943028770863674990166679822832173682944197915932e-20",
+            "CO2": "0.0000126396426887920240201114963403171118566784647518618834239956",
+            "O2": "3.75311831531971514385431837495083339911415457410769394630781e-20",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-244.267175990361056151008503477473172634763427900122807706604",
+            "CO2": "-132.625798530874795730972187357207460609308497957522557086897",
+            "O2": "223.282754918972520840072632240531424050909859885200498520537",
+            "N2": "-213.374724183605123799903633882607426185282571431683037258612"
+          },
+          "errors": {
+            "pressure": 1.7159252519440683e-11,
+            "internal_energy": 1.7035375282111205e-14,
+            "entropy": 1.1073312449836808e-17,
+            "amount": 1.2198728140597703e-19,
+            "gas_chemical_potential": 1.34036128968405e-13
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "carbon_atoms_mol",
+          "difference_step": "0.00000000022000000000000001325328735646280620130710303783416748046875",
+          "source_derivatives": {
+            "pressure": "191293930.204353474989941324471214654955057680982533759636768",
+            "internal_energy": "332865.310494481444274212811140457434887577458337618681607091",
+            "entropy": "355.908553449860728380250311735859784018714872794990502615504"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-1.00053214682836228662308762844706630748813891634349041760624",
+            "lime": "1.00053214682836228662308762844706630748813891634349041760624",
+            "C": "0.0",
+            "CO": "1.99999999999998104450406755075100638593155711236595672285973",
+            "CO2": "0.000532146828381242119020077696059921556581803977533576726790813",
+            "O2": "-0.00000000000000947774796622462449680703422144381702163894063513890437978803",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "95614934.2979504469524405252057397163939584297164410903549247",
+            "CO2": "3858.39857222180926809285718101554788997619708188745947575159",
+            "O2": "-191222151.798756450286344864697117401692136907038718405420142",
+            "N2": "-1930.70220220807593385866285353086928815452721957572596348188"
+          },
+          "errors": {
+            "pressure": 1.4247041007447123e-07,
+            "internal_energy": 2.5230322387071214e-11,
+            "entropy": 1.3410373745519015e-11,
+            "amount": 3.9642243386746208e-16,
+            "gas_chemical_potential": 0.0003085433153670815
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "carbon_atoms_mol",
+          "difference_step": "0.000000000066000000000000003975986206938841860392130911350250244140625",
+          "source_derivatives": {
+            "pressure": "191293930.20435347498959803325778633526968720075926246831037",
+            "internal_energy": "332865.310494481444274212917400573936247287288639278314971912",
+            "entropy": "355.908553449848521570983970068286527993158703538290901666847"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-1.00053214682836228662308800780744231524422587752844697708464",
+            "lime": "1.00053214682836228662308800780744231524422587752844697708464",
+            "C": "0.0",
+            "CO": "1.99999999999998104450406771772028155503630822908544702558388",
+            "CO2": "0.000532146828381242119020290087160760207917648442999969166948447",
+            "O2": "-0.00000000000000947774796614113985922248184588545727648573088796623288070117",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "95614934.2978100686457047697178299904938058651433968302825784",
+            "CO2": "3858.39857222180926808593299724069868250094269421304732274211",
+            "O2": "-191222151.798475693672873367569665499590246728401405235706364",
+            "N2": "-1930.70220220807593385750912136840717921664462856707549893916"
+          },
+          "errors": {
+            "pressure": 1.4247006678325778e-07,
+            "internal_energy": 2.5230322280811095e-11,
+            "entropy": 1.2035644791773483e-12,
+            "amount": 3.9642243424682242e-16,
+            "gas_chemical_potential": 2.7786701895584366e-05
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "oxygen_atoms_mol",
+          "difference_step": "0.0000000006199999999999999782118731417313028941862285137176513671875",
+          "source_derivatives": {
+            "pressure": "-95606404.7791778283042557234947600091305897458687517421727031",
+            "internal_energy": "-426180.689603313295719920859062158767286122415663415033729345",
+            "entropy": "-111.641377459499573506910051271790322695887338668238041739861"
+          },
+          "source_amount_derivatives": {
+            "calcite": "1.00035470392617006965090884952050167445579344234766239461122",
+            "lime": "-1.00035470392617006965090884952050167445579344234766239461122",
+            "C": "0.0",
+            "CO": "-0.99999999999999052253885293323870245465218415943834455970596",
+            "CO2": "-0.000354703926179547112055916281799219803609282909317836574643961",
+            "O2": "0.00000000000000473873057353338064877267390792028082771998075159377059922011",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-47806502.1403573259875797121055951133461584874055408265564799",
+            "CO2": "-1928.38118439601663573807870948440501493053367899363166863351",
+            "O2": "95609147.5183458599418879480537712578822871137437236659154018",
+            "N2": "1930.35979501694799550613144248683906605484756727612624778001"
+          },
+          "errors": {
+            "pressure": 7.318683934165882e-08,
+            "internal_energy": 2.1691456510094454e-10,
+            "entropy": 1.328062895521294e-11,
+            "amount": 8.384498149572581e-17,
+            "gas_chemical_potential": 0.00030630558435926154
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "oxygen_atoms_mol",
+          "difference_step": "0.00000000018599999999999999346356194251939086825586855411529541015625",
+          "source_derivatives": {
+            "pressure": "-95606404.779177828302892995590111645508440938509648059992778",
+            "internal_energy": "-426180.689603313295719921064337881918335137088059770974659146",
+            "entropy": "-111.641377459487454970069248832523885653623914471326234813115"
+          },
+          "source_amount_derivatives": {
+            "calcite": "1.00035470392617006965090985740271431125548232309478550941885",
+            "lime": "-1.00035470392617006965090985740271431125548232309478550941885",
+            "C": "0.0",
+            "CO": "-0.999999999999990522538853098993030965231271545268712551168634",
+            "CO2": "-0.000354703926179547112056758409683346024210777826073141269623882",
+            "O2": "0.00000000000000473873057345050348451738436422736564372473913041274940489033",
+            "N2": "0.0"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-47806502.140217962813226949632448116131495152143289332604093",
+            "CO2": "-1928.38118439601663571059248764764752296887200440529396524843",
+            "O2": "95609147.518067133593182478079920936967944366542569855058784",
+            "N2": "1930.3597950169479954969620232923312469150151031354056813446"
+          },
+          "errors": {
+            "pressure": 7.318547661375418e-08,
+            "internal_energy": 2.1691456489566884e-10,
+            "entropy": 1.1620921144105008e-12,
+            "amount": 8.384498250360803e-17,
+            "gas_chemical_potential": 2.7579235653791556e-05
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "nitrogen_molecules_mol",
+          "difference_step": "0.00000000040000000000000000832667268468867405317723751068115234375",
+          "source_derivatives": {
+            "pressure": "95687525.4251770063673879353068320143884527581615660284496272",
+            "internal_energy": "16899.3815413499947101600810671070863869143663754854142011963",
+            "entropy": "213.37472418360513927142776606094936527475900346738902752824"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-0.000177442902201699592678283628838033139268874117063836272847906",
+            "lime": "0.000177442902201699592678283628838033139268874117063836272847906",
+            "C": "0.0",
+            "CO": "0.000000000000000000382743752533304392779465198165572771630676274318050931865022",
+            "CO2": "0.000177442902201699209934531095533640359803675951491052820189788",
+            "O2": "0.000000000000000000191371876266652196389732599082786385819756821948216518161065",
+            "N2": "1.00000000000000000000000000000000000000000000000000000058673"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-0.342407191127938361340230218696886222984022790166521566439745",
+            "CO2": "1930.01738782582005713471455497256245403668386473152626892306",
+            "O2": "3860.71959003389599099210957038251868051933577504338558097901",
+            "N2": "2390421.28259281685525793508635937743232604644893101703096879"
+          },
+          "errors": {
+            "pressure": 4.315728203931074e-08,
+            "internal_energy": 4.125738178172133e-12,
+            "entropy": 5.660392396287332e-16,
+            "amount": 3.0463337665140145e-17,
+            "gas_chemical_potential": 8.027500099698175e-09
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        },
+        {
+          "coordinate": "nitrogen_molecules_mol",
+          "difference_step": "0.000000000120000000000000002498001805406602215953171253204345703125",
+          "source_derivatives": {
+            "pressure": "95687525.425177006367387968889448310117973119181067690727497",
+            "internal_energy": "16899.3815413499947101600533302511866974713552837091862538115",
+            "entropy": "213.374724183605126661087573816818560527097454477616359820041"
+          },
+          "source_amount_derivatives": {
+            "calcite": "-0.000177442902201699592678108160412200196847240586227929316123175",
+            "lime": "0.000177442902201699592678108160412200196847240586227929316123175",
+            "C": "0.0",
+            "CO": "0.000000000000000000382743752533304392777950553394110216646562727776972586988151",
+            "CO2": "0.000177442902201699209934355627107807418896687192117558762233235",
+            "O2": "0.000000000000000000191371876266652196388975276697055108301061410603365418682039",
+            "N2": "0.999999999999999999999999999999999999999999999999999998054582"
+          },
+          "source_gas_chemical_potential_derivatives": {
+            "CO": "-0.342407191127938361339891801795932277252717131709336736997513",
+            "CO2": "1930.01738782582005713471523233393313890105293801993308235003",
+            "O2": "3860.71959003389599099211024827145814235661131030328483817406",
+            "N2": "2390421.28259280960431233925331693843396006995068403626602726"
+          },
+          "errors": {
+            "pressure": 4.315728207289336e-08,
+            "internal_energy": 4.125738150435277e-12,
+            "entropy": 1.2044300952615398e-14,
+            "amount": 3.046333748967172e-17,
+            "gas_chemical_potential": 9.603064161781478e-10
+          },
+          "within_budgets": {
+            "pressure": true,
+            "internal_energy": true,
+            "entropy": true,
+            "amount": true,
+            "gas_chemical_potential": true,
+            "same_phase": true
+          }
+        }
+      ],
+      "identity_errors": {
+        "thermal_gibbs_j_k": 1.3322676295501878e-15,
+        "elemental_gibbs_j_mol": 1.7462298274040222e-10,
+        "existing_cv_j_k": 4.440892098500626e-15,
+        "inverse_chain_absolute": 1.1102230246251565e-16
+      },
+      "within_budgets": {
+        "thermal_gibbs_j_k": true,
+        "elemental_gibbs_j_mol": true,
+        "existing_cv_j_k": true,
+        "inverse_chain_absolute": true,
+        "source_derivatives": true
+      }
+    }
+  ],
+  "all_requested_budgets_met": true,
+  "material_qualified": false,
+  "training_eligible": false
+}

@@ -26,9 +26,9 @@ def audit(path, root, reservoir_kind, equilibrium_formulation, radiation_kind):
     build = {'restricted': build_restricted, 'positive_inventory': build_inventory}[equilibrium_formulation]
     model, _, _ = build(root, header['pressure_parameters'])
     source = SourceState(header['sources'])
-    radiative = {'none': False, 'black_enclosure': True}[radiation_kind]
+    radiative = {'none': False, 'black_enclosure': True, 'programmed_black_enclosure': True}[radiation_kind]
     radiation_source = RadiationSource(p['radiation']) if radiative else None
-    radiation_maxima = {'energy_w': 0., 'entropy_w_k': 0.}
+    radiation_maxima = {'energy_w': 0., 'entropy_w_k': 0., 'reservoir_temperature_k': 0.}
     radiation_minimum_production = float('inf')
     boundary_maxima = {k: 0. for k in ('temperature_k', 'pressure_pa', 'mole_fraction', 'chemical_potential_j_mol')}
 
@@ -43,6 +43,12 @@ def audit(path, root, reservoir_kind, equilibrium_formulation, radiation_kind):
     bath_inputs = {'constant': constant_bath, 'program': programmed_bath}[reservoir_kind]
     if reservoir_kind == 'program':
         mp.mp.dps = p['boundary_source_review']['decimal_precision']
+
+    def radiation_temperature(at):
+        if radiation_kind == 'black_enclosure':
+            return p['radiation']['reservoir_temperature_k']
+        program = dict(p['boundary_program'], gas_temperature_k=p['boundary_program']['radiation_temperature_k'])
+        return float(independent_program(program, at)[0])
     ca, volume = p['initial']['calcium_atoms_mol'], p['volume_m3']
     carbon_lower, oxygen_lower = {'restricted': (ca, 3*ca),
         'positive_inventory': (0., ca)}[equilibrium_formulation]
@@ -98,11 +104,13 @@ def audit(path, root, reservoir_kind, equilibrium_formulation, radiation_kind):
         rates = np.array([*flux['inventory'], flux['energy'], flux['entropy'][1],
                           flux['entropy'][0], flux['production']])
         if radiative:
-            radiation = radiation_source.flux(state['temperature_k'])
+            radiation = radiation_source.flux(state['temperature_k'], radiation_temperature(at))
             heat, body, bath, production = [radiation[k] for k in (
                 'energy_in_w', 'body_entropy_rate_w_k', 'reservoir_entropy_rate_w_k', 'entropy_production_w_k')]
             radiation_minimum_production = min(radiation_minimum_production, production)
             if recorded_radiation is not None:
+                radiation_maxima['reservoir_temperature_k'] = max(radiation_maxima['reservoir_temperature_k'],
+                    abs(recorded_radiation['reservoir_temperature_k'] - radiation['reservoir_temperature_k']))
                 radiation_maxima['energy_w'] = max(radiation_maxima['energy_w'],
                     abs(recorded_radiation['energy_in_w'] - heat))
                 radiation_maxima['entropy_w_k'] = max(radiation_maxima['entropy_w_k'],
@@ -116,7 +124,8 @@ def audit(path, root, reservoir_kind, equilibrium_formulation, radiation_kind):
         return physical, rates
 
     boundary_record = {'constant': lambda row: None, 'program': lambda row: row['reservoir']}[reservoir_kind]
-    radiation_record = {'none': lambda row: None, 'black_enclosure': lambda row: row['radiation']}[radiation_kind]
+    radiation_record = {'none': lambda row: None, 'black_enclosure': lambda row: row['radiation'],
+                        'programmed_black_enclosure': lambda row: row['radiation']}[radiation_kind]
     origin, _ = review(initial['state'], initial['values'], 'recorded', initial['time_s'], initial['face'], boundary_record(initial), radiation_record(initial))
     for row in records(path):
         terminal = row
@@ -205,6 +214,8 @@ def audit(path, root, reservoir_kind, equilibrium_formulation, radiation_kind):
             'entropy': radiation_maxima['entropy_w_k'] <= policy['entropy_budget_w_k'],
             'nonnegative_production': radiation_minimum_production >= 0.,
             'source_sigma': abs(radiation_source.sigma - p['radiation']['stefan_boltzmann_w_m2_k4']) <= policy['sigma_absolute_budget_w_m2_k4']}
+        if radiation_kind == 'programmed_black_enclosure':
+            radiation_flags['reservoir_temperature'] = radiation_maxima['reservoir_temperature_k'] <= p['boundary_source_review']['temperature_budget_k']
         boundary_review['radiation'] = {'kind': radiation_kind, 'maxima': radiation_maxima,
                                          'minimum_production_w_k': radiation_minimum_production,
                                          'within_budgets': radiation_flags}
