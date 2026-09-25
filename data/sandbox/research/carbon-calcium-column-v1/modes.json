@@ -1,0 +1,3957 @@
+{
+  "settings": {
+    "column_parameters": "parameters.carbon_calcium_column.json",
+    "mesh": "four",
+    "temperature_points_k": [
+      350.0,
+      900.0,
+      1000.0,
+      1100.0,
+      1150.0,
+      1190.0
+    ],
+    "budgets": {
+      "stationary_inventory_rate_mol_s": 1e-13,
+      "stationary_energy_rate_w": 1e-08,
+      "stationary_production_w_k": 1e-12,
+      "scaled_hessian_symmetry_j_k": 1e-09,
+      "scaled_entropy_maximum_eigenvalue_j_k": 1e-09,
+      "scaled_mobility_identity_s_inverse": 1e-08,
+      "scaled_dissipation_symmetry_w_k": 1e-09,
+      "scaled_dissipation_maximum_eigenvalue_w_k": 1e-09,
+      "scaled_spatial_operator_s_inverse": 1e-08,
+      "spectral_real_difference_s_inverse": 1e-08,
+      "spectral_imaginary_s_inverse": 1e-09,
+      "maximum_growth_rate_s_inverse": 1e-09,
+      "zero_eigenvalue_absolute_s_inverse": 1e-10
+    },
+    "scaling": "Per-cell conserved scales [C,O,N2,Cv*T]. Similarity transforms change numerical units, not eigenvalues or physics.",
+    "scope": "Conditional linear stability inside each phase region, using previously source-qualified cell and face derivatives. Entropy Hessian symmetry/concavity, D=-M*H, finite-volume Neumann modes and predicted nullity from immobile solids. No nonlinear/global stability or continuum convergence claim."
+  },
+  "column_parameters": {
+    "exchange_parameters": "parameters.carbon_calcium_exchange.json",
+    "geometry": {
+      "length_m": 0.02,
+      "area_m2": 0.01
+    },
+    "initial": {
+      "calcium_density_mol_m3": 20.0,
+      "carbon_density_mol_m3": 45.0,
+      "oxygen_density_mol_m3": 80.0,
+      "nitrogen_density_mol_m3": 40.0,
+      "temperature_left_k": 1160.0,
+      "temperature_right_k": 1000.0,
+      "interface_length_fraction": 0.5
+    },
+    "transport": {
+      "thermal_conductivity_w_m_k": 0.005,
+      "gas_mobility_density_mol2_k_j_m_s": {
+        "CO": 1e-09,
+        "CO2": 1e-09,
+        "O2": 1e-09,
+        "N2": 1e-09
+      },
+      "classification": "Explicit virtual continuum coefficients. Face conductance/mobility scales as area over center distance; neither inferred nor measured brick transport."
+    },
+    "meshes": {
+      "two": 2,
+      "four": 4,
+      "eight": 8,
+      "sixteen": 16,
+      "thirty_two": 32,
+      "sixty_four": 64
+    },
+    "duration_s": 20000.0,
+    "numerics": {
+      "jacobian_method": "analytic",
+      "relative_tolerance": 1e-09,
+      "refinement_factor": 0.1,
+      "cell_density_absolute_tolerances_C_O_N_U": [
+        1e-09,
+        1e-09,
+        1e-09,
+        0.001
+      ],
+      "production_absolute_tolerance_j_k": 1e-11,
+      "maximum_step_s": 20.0,
+      "first_step_s": 0.001,
+      "observation_interval_s": 20.0,
+      "progress_every_steps": 100
+    },
+    "verification": {
+      "element_mol": 1e-12,
+      "pressure_pa": 1e-05,
+      "volume_m3": 1e-14,
+      "reaction_gibbs_j_mol": 1e-05,
+      "source_energy_j": 1e-07,
+      "source_entropy_j_k": 1e-10,
+      "face_species_mol_s": 1e-14,
+      "face_energy_w": 1e-08,
+      "face_entropy_w_k": 1e-11,
+      "inventory_integral_mol": 1e-10,
+      "energy_j": 1e-05,
+      "entropy_j_k": 1e-08,
+      "nonnegative_entropy_j_k": 1e-10,
+      "time_temperature_k": 0.001,
+      "time_pressure_pa": 0.1,
+      "time_species_mol": 1e-10,
+      "quadrature_orders": [
+        2,
+        4
+      ]
+    },
+    "initial_mapping": "Uniform even meshes reproduce the half-hot/half-cold initial slab; total source inventories and U remain mesh independent. Two cells map exactly to the prior100cm3-per-cell experiment, including face coefficients and absolute tolerances.",
+    "scope": "Closed one-dimensional uniform finite-volume column. Local restricted equilibrium and immobile solids; one shared gas/energy face adds equal opposite elemental and U rates. No external reservoir or deformation. Qualify two-cell assembly before spatial refinement.",
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "rigid_parameters": {
+    "pressure_parameters": "parameters.carbon_calcium_pressure.json",
+    "virtual_volume_m3": 0.0001,
+    "volume_classification": "100 cubic centimetres closed rigid virtual capsule, not measured brick pore volume. Volume exceeds the elemental upper bound of all allowed solids.",
+    "numerics": {
+      "log_pressure_absolute_tolerance": 1e-12,
+      "log_pressure_relative_tolerance": 1e-14,
+      "temperature_absolute_tolerance_k": 1e-10,
+      "temperature_relative_tolerance": 1e-14,
+      "maximum_root_iterations": 100
+    },
+    "scope": "Static rigid flash after pressure state and Maxwell/caloric derivatives qualified. Pressure bracket follows elemental gas and solid volume bounds; no guessed pressure floor. This stage does not yet qualify a heat trajectory or phase-boundary time.",
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "sources": {
+    "carbon_source": {
+      "source_id": "usgs1995-selected-carbon-oxygen-nitrogen-phases",
+      "source_url": "https://pubs.usgs.gov/bul/2131/report.pdf",
+      "year": 1995,
+      "authors": [
+        "Richard A. Robie",
+        "Bruce S. Hemingway"
+      ],
+      "reference_temperature_k": "298.15",
+      "reference_pressure_pa": "100000",
+      "gas_constant_j_mol_k": "8.31451",
+      "gas_constant_policy": "Historical book R retained for separate same-source nominal calculation.",
+      "cp_formula": "A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2",
+      "phases": {
+        "C": {
+          "id": "graphite",
+          "formula": "C",
+          "cp_coefficient_strings": [
+            "6.086E+01",
+            "-1.024E-02",
+            "7.139E+05",
+            "-9.922E+02",
+            "1.669E-06"
+          ],
+          "reference_enthalpy_j_mol": "0",
+          "reference_entropy_j_mol_k": "5.74",
+          "cp_pdf_one_based_page": 47,
+          "thermal_pdf_one_based_page": 82,
+          "source_domain_k": [
+            298.15,
+            2500.0
+          ],
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "8.52",
+              "entropy_j_mol_k": "5.74",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "300",
+              "cp_j_mol_k": "8.59",
+              "entropy_j_mol_k": "5.79",
+              "sensible_enthalpy_over_t_j_mol_k": "0.05"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "11.88",
+              "entropy_j_mol_k": "8.72",
+              "sensible_enthalpy_over_t_j_mol_k": "2.60"
+            },
+            {
+              "temperature_k": "500",
+              "cp_j_mol_k": "14.64",
+              "entropy_j_mol_k": "11.68",
+              "sensible_enthalpy_over_t_j_mol_k": "4.75"
+            },
+            {
+              "temperature_k": "600",
+              "cp_j_mol_k": "16.79",
+              "entropy_j_mol_k": "14.55",
+              "sensible_enthalpy_over_t_j_mol_k": "6.58"
+            },
+            {
+              "temperature_k": "700",
+              "cp_j_mol_k": "18.47",
+              "entropy_j_mol_k": "17.27",
+              "sensible_enthalpy_over_t_j_mol_k": "8.17"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "19.77",
+              "entropy_j_mol_k": "19.82",
+              "sensible_enthalpy_over_t_j_mol_k": "9.54"
+            },
+            {
+              "temperature_k": "900",
+              "cp_j_mol_k": "20.80",
+              "entropy_j_mol_k": "22.21",
+              "sensible_enthalpy_over_t_j_mol_k": "10.73"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "21.63",
+              "entropy_j_mol_k": "24.45",
+              "sensible_enthalpy_over_t_j_mol_k": "11.78"
+            },
+            {
+              "temperature_k": "1100",
+              "cp_j_mol_k": "22.29",
+              "entropy_j_mol_k": "26.54",
+              "sensible_enthalpy_over_t_j_mol_k": "12.71"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "22.83",
+              "entropy_j_mol_k": "28.51",
+              "sensible_enthalpy_over_t_j_mol_k": "13.53"
+            }
+          ]
+        },
+        "O2": {
+          "id": "oxygen",
+          "formula": "O2",
+          "cp_coefficient_strings": [
+            "5.658E+01",
+            "-5.255E-03",
+            "6.856E+05",
+            "-5.780E+02",
+            "1.113E-06"
+          ],
+          "reference_enthalpy_j_mol": "0",
+          "reference_entropy_j_mol_k": "205.15",
+          "cp_pdf_one_based_page": 49,
+          "thermal_pdf_one_based_page": 106,
+          "source_domain_k": [
+            298.15,
+            2500.0
+          ],
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "29.35",
+              "entropy_j_mol_k": "205.15",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "300",
+              "cp_j_mol_k": "29.35",
+              "entropy_j_mol_k": "205.33",
+              "sensible_enthalpy_over_t_j_mol_k": "0.18"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "30.04",
+              "entropy_j_mol_k": "213.85",
+              "sensible_enthalpy_over_t_j_mol_k": "7.54"
+            },
+            {
+              "temperature_k": "500",
+              "cp_j_mol_k": "31.12",
+              "entropy_j_mol_k": "220.67",
+              "sensible_enthalpy_over_t_j_mol_k": "12.15"
+            },
+            {
+              "temperature_k": "600",
+              "cp_j_mol_k": "32.14",
+              "entropy_j_mol_k": "226.43",
+              "sensible_enthalpy_over_t_j_mol_k": "15.40"
+            },
+            {
+              "temperature_k": "700",
+              "cp_j_mol_k": "33.00",
+              "entropy_j_mol_k": "231.45",
+              "sensible_enthalpy_over_t_j_mol_k": "17.85"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "33.72",
+              "entropy_j_mol_k": "235.91",
+              "sensible_enthalpy_over_t_j_mol_k": "19.79"
+            },
+            {
+              "temperature_k": "900",
+              "cp_j_mol_k": "34.33",
+              "entropy_j_mol_k": "239.92",
+              "sensible_enthalpy_over_t_j_mol_k": "21.37"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "34.85",
+              "entropy_j_mol_k": "243.56",
+              "sensible_enthalpy_over_t_j_mol_k": "22.70"
+            },
+            {
+              "temperature_k": "1100",
+              "cp_j_mol_k": "35.29",
+              "entropy_j_mol_k": "246.90",
+              "sensible_enthalpy_over_t_j_mol_k": "23.82"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "35.67",
+              "entropy_j_mol_k": "249.99",
+              "sensible_enthalpy_over_t_j_mol_k": "24.79"
+            }
+          ]
+        },
+        "CO": {
+          "id": "carbon_monoxide",
+          "formula": "CO",
+          "cp_coefficient_strings": [
+            "3.976E+01",
+            "3.188E-03",
+            "5.292E+05",
+            "-3.013E+02",
+            "-8.078E-07"
+          ],
+          "reference_enthalpy_j_mol": "-110500",
+          "reference_entropy_j_mol_k": "197.27",
+          "cp_pdf_one_based_page": 53,
+          "thermal_pdf_one_based_page": 186,
+          "source_domain_k": [
+            298.15,
+            2200.0
+          ],
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "29.14",
+              "entropy_j_mol_k": "197.27",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "300",
+              "cp_j_mol_k": "29.13",
+              "entropy_j_mol_k": "197.45",
+              "sensible_enthalpy_over_t_j_mol_k": "0.18"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "29.15",
+              "entropy_j_mol_k": "205.80",
+              "sensible_enthalpy_over_t_j_mol_k": "7.39"
+            },
+            {
+              "temperature_k": "500",
+              "cp_j_mol_k": "29.79",
+              "entropy_j_mol_k": "212.37",
+              "sensible_enthalpy_over_t_j_mol_k": "11.81"
+            },
+            {
+              "temperature_k": "600",
+              "cp_j_mol_k": "30.55",
+              "entropy_j_mol_k": "217.87",
+              "sensible_enthalpy_over_t_j_mol_k": "14.87"
+            },
+            {
+              "temperature_k": "700",
+              "cp_j_mol_k": "31.29",
+              "entropy_j_mol_k": "222.64",
+              "sensible_enthalpy_over_t_j_mol_k": "17.16"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "31.97",
+              "entropy_j_mol_k": "226.86",
+              "sensible_enthalpy_over_t_j_mol_k": "18.97"
+            },
+            {
+              "temperature_k": "900",
+              "cp_j_mol_k": "32.58",
+              "entropy_j_mol_k": "230.66",
+              "sensible_enthalpy_over_t_j_mol_k": "20.45"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "33.14",
+              "entropy_j_mol_k": "234.12",
+              "sensible_enthalpy_over_t_j_mol_k": "21.69"
+            },
+            {
+              "temperature_k": "1100",
+              "cp_j_mol_k": "33.64",
+              "entropy_j_mol_k": "237.31",
+              "sensible_enthalpy_over_t_j_mol_k": "22.75"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "34.09",
+              "entropy_j_mol_k": "240.25",
+              "sensible_enthalpy_over_t_j_mol_k": "23.68"
+            }
+          ],
+          "domain_note": "Cp coefficient table prints upper2500K; individual ideal-gas table states2200K. Selected1200K is within both; preserve conflict."
+        },
+        "CO2": {
+          "id": "carbon_dioxide",
+          "formula": "CO2",
+          "cp_coefficient_strings": [
+            "8.811E+01",
+            "-2.698E-03",
+            "7.232E+05",
+            "-1.007E+03",
+            "0"
+          ],
+          "reference_enthalpy_j_mol": "-393500",
+          "reference_entropy_j_mol_k": "213.79",
+          "source_domain_k": [
+            298.15,
+            2200.0
+          ],
+          "cp_pdf_one_based_page": 53,
+          "thermal_pdf_one_based_page": 187,
+          "prior_source_record": "data/sandbox/research/calcite-thermochemistry-v1/facts.json",
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "37.12",
+              "entropy_j_mol_k": "213.79",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "41.20",
+              "entropy_j_mol_k": "225.28",
+              "sensible_enthalpy_over_t_j_mol_k": "9.98"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "51.48",
+              "entropy_j_mol_k": "257.47",
+              "sensible_enthalpy_over_t_j_mol_k": "28.51"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "54.29",
+              "entropy_j_mol_k": "269.28",
+              "sensible_enthalpy_over_t_j_mol_k": "33.40"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "56.31",
+              "entropy_j_mol_k": "279.37",
+              "sensible_enthalpy_over_t_j_mol_k": "37.06"
+            }
+          ]
+        },
+        "N2": {
+          "id": "nitrogen",
+          "formula": "N2",
+          "cp_coefficient_strings": [
+            "2.479E+01",
+            "9.648E-03",
+            "1.459E+05",
+            "0",
+            "-2.003E-06"
+          ],
+          "reference_enthalpy_j_mol": "0",
+          "reference_entropy_j_mol_k": "191.61",
+          "source_domain_k": [
+            298.15,
+            2500.0
+          ],
+          "cp_pdf_one_based_page": 48,
+          "thermal_pdf_one_based_page": 103,
+          "prior_source_record": "parameters.calcite_nitrogen_source.json",
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "29.13",
+              "entropy_j_mol_k": "191.61",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "300",
+              "cp_j_mol_k": "29.13",
+              "entropy_j_mol_k": "191.79",
+              "sensible_enthalpy_over_t_j_mol_k": "0.18"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "29.24",
+              "entropy_j_mol_k": "200.17",
+              "sensible_enthalpy_over_t_j_mol_k": "7.42"
+            },
+            {
+              "temperature_k": "500",
+              "cp_j_mol_k": "29.70",
+              "entropy_j_mol_k": "206.74",
+              "sensible_enthalpy_over_t_j_mol_k": "11.83"
+            },
+            {
+              "temperature_k": "600",
+              "cp_j_mol_k": "30.26",
+              "entropy_j_mol_k": "212.21",
+              "sensible_enthalpy_over_t_j_mol_k": "14.85"
+            },
+            {
+              "temperature_k": "700",
+              "cp_j_mol_k": "30.86",
+              "entropy_j_mol_k": "216.91",
+              "sensible_enthalpy_over_t_j_mol_k": "17.09"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "31.45",
+              "entropy_j_mol_k": "221.07",
+              "sensible_enthalpy_over_t_j_mol_k": "18.85"
+            },
+            {
+              "temperature_k": "900",
+              "cp_j_mol_k": "32.03",
+              "entropy_j_mol_k": "224.81",
+              "sensible_enthalpy_over_t_j_mol_k": "20.29"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "32.58",
+              "entropy_j_mol_k": "228.22",
+              "sensible_enthalpy_over_t_j_mol_k": "21.49"
+            },
+            {
+              "temperature_k": "1100",
+              "cp_j_mol_k": "33.10",
+              "entropy_j_mol_k": "231.35",
+              "sensible_enthalpy_over_t_j_mol_k": "22.52"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "33.58",
+              "entropy_j_mol_k": "234.25",
+              "sensible_enthalpy_over_t_j_mol_k": "23.42"
+            }
+          ]
+        }
+      },
+      "readback": {
+        "utc_date": "2026-09-25",
+        "official_pdf_cache": ".tools/source-cache/usgs1995/report.pdf",
+        "new_pages_rendered_and_visually_read": [
+          47,
+          49,
+          53,
+          82,
+          106,
+          186
+        ],
+        "existing_source_records_reused": [
+          "parameters.calcite_nitrogen_source.json",
+          "data/sandbox/research/calcite-thermochemistry-v1/facts.json",
+          "parameters.calcite_affinity_source.json"
+        ],
+        "new_network_pdf_access": "403; already available official PDF inspected locally, no new retrieval claimed."
+      },
+      "source_choice": "Preserve the complete selected USGS nominal source. Do not silently replace CO entropy with another compilation. Published coefficient-fit covariance and relevant real-char properties remain unknown.",
+      "nist_co_cross_source_comparison": {
+        "url": "https://janaf.nist.gov/tables/C-093.html",
+        "reference_temperature_k": "298.15",
+        "reference_pressure_pa": "100000",
+        "enthalpy_j_mol": "-110527",
+        "entropy_j_mol_k": "197.653",
+        "cp_j_mol_k": "29.142",
+        "formation_gibbs_j_mol": "-137163",
+        "classification": "Independent published compilation value, not an experimental holdout and not substituted into the USGS model."
+      },
+      "scope": "Pure reference graphite and ideal gases; not measured sludge char, finite reaction rate, volatile inventory, or actual brick atmosphere.",
+      "material_qualified": false,
+      "training_eligible": false
+    },
+    "calcite_source": {
+      "source_id": "usgs-b2131-1995-calcite-lime-co2-gibbs-extension",
+      "source_url": "https://pubs.usgs.gov/bul/2131/report.pdf",
+      "retrieved_date_utc": "2026-09-25",
+      "title": "Thermodynamic Properties of Minerals and Related Substances at 298.15 K and 1 Bar (10^5 Pascals) Pressure and at Higher Temperatures",
+      "authors": [
+        "Richard A. Robie",
+        "Bruce S. Hemingway"
+      ],
+      "year": 1995,
+      "reference_facts_file": "data/sandbox/research/calcite-thermochemistry-v1/facts.json",
+      "evidence": {
+        "official_pdf_cache": ".tools/source-cache/usgs1995/report.pdf",
+        "bytes": 21768195,
+        "visual_review_pages": [
+          187,
+          188,
+          274
+        ],
+        "extractor": "pdftotext -layout; pdftoppm PNG pages inspected",
+        "web_pdf_fetch": "403; ordinary official curl download succeeded",
+        "digest_operation": "none"
+      },
+      "temperature_points_k": [
+        "298.15",
+        "300",
+        "400",
+        "500",
+        "600",
+        "700",
+        "800",
+        "900",
+        "1000",
+        "1100",
+        "1200"
+      ],
+      "phases": {
+        "calcite": {
+          "printed_page": 268,
+          "pdf_one_based_page": 274,
+          "entropy_reference_j_mol_k": "91.71",
+          "formation_gibbs_kj_mol": [
+            "-1128.5",
+            "-1128.0",
+            "-1101.6",
+            "-1075.6",
+            "-1049.9",
+            "-1024.4",
+            "-999.0",
+            "-973.8",
+            "-948.7",
+            "-923.7",
+            "-898.2"
+          ],
+          "formation_log10_k": [
+            "197.70",
+            "196.39",
+            "143.86",
+            "112.37",
+            "91.40",
+            "76.44",
+            "65.23",
+            "56.52",
+            "49.55",
+            "43.86",
+            "39.10"
+          ]
+        },
+        "lime": {
+          "printed_page": 182,
+          "pdf_one_based_page": 188,
+          "entropy_reference_j_mol_k": "38.10",
+          "formation_gibbs_kj_mol": [
+            "-603.1",
+            "-602.9",
+            "-592.2",
+            "-581.6",
+            "-571.2",
+            "-560.8",
+            "-550.3",
+            "-539.9",
+            "-529.4",
+            "-518.9",
+            "-507.7"
+          ],
+          "formation_log10_k": [
+            "105.66",
+            "104.97",
+            "77.33",
+            "60.76",
+            "49.72",
+            "41.84",
+            "35.93",
+            "31.33",
+            "27.65",
+            "24.64",
+            "22.10"
+          ]
+        },
+        "carbon_dioxide": {
+          "printed_page": 181,
+          "pdf_one_based_page": 187,
+          "entropy_reference_j_mol_k": "213.79",
+          "formation_gibbs_kj_mol": [
+            "-394.4",
+            "-394.4",
+            "-394.7",
+            "-394.9",
+            "-395.2",
+            "-395.4",
+            "-395.6",
+            "-395.7",
+            "-395.9",
+            "-396.0",
+            "-396.1"
+          ],
+          "formation_log10_k": [
+            "69.09",
+            "68.67",
+            "51.54",
+            "41.26",
+            "34.40",
+            "29.50",
+            "25.83",
+            "22.97",
+            "20.68",
+            "18.80",
+            "17.24"
+          ]
+        }
+      },
+      "classification": "published_compilation_nominal_standard_phases; not_target_brick_mineral_inventory_or_rate_law",
+      "entropy_reference_policy": "Use the 298.15 K row of each individual high-temperature table (two decimal places). Keep the one-decimal summary values in the old facts unchanged.",
+      "rounding_policy": "Each nonblank printed decimal or scientific-notation number carries half its last printed unit for arithmetic consistency comparisons only. Omitted Cp terms remain exact zero terms of the printed nominal formula. This is not physical uncertainty.",
+      "unknowns": [
+        "High-temperature physical fit uncertainty and covariance",
+        "Target brick phase amounts and reaction rates",
+        "Solid pressure-volume correction away from the stated 1 bar",
+        "Nonideal CO2 fugacity and transport limitations"
+      ]
+    },
+    "calcite_facts": {
+      "schema_version": 1,
+      "source_id": "usgs-b2131-1995-calcite-lime-co2",
+      "classification": "source_polynomial_nominal_thermochemistry_not_material_or_kinetic_admission",
+      "reference_state": {
+        "temperature_k": "298.15",
+        "pressure_pa": "100000",
+        "reference": "Elements in their standard states at 1 bar and stated temperature for formation columns; h(T) storage coordinate must use hf(298.15)+sensible increment, not hf(T) alone.",
+        "gas_constant_j_mol_k": "8.31451",
+        "gas_constant_printed_uncertainty_j_mol_k": "0.00007",
+        "gas_constant_policy": "Historical book constant retained as source metadata, never silently replaces runtime modern R.",
+        "atomic_weights": "1985 atomic weights, 12C=12.000; printed method p3",
+        "locators": [
+          {
+            "printed_page": "iv",
+            "pdf_one_based_page": 6,
+            "pdf_zero_based_index": 5
+          },
+          {
+            "printed_page": 3,
+            "pdf_one_based_page": 9,
+            "pdf_zero_based_index": 8
+          }
+        ]
+      },
+      "cp_equation": {
+        "printed": "Cp = A1 + A2*T + A3*T^(-2) + A4*T^(-0.5) + A5*T^2",
+        "temperature_unit": "K",
+        "output_unit": "J/(mol K)",
+        "coefficient_units": {
+          "A1": "J/(mol K)",
+          "A2": "J/(mol K^2)",
+          "A3": "J K/mol",
+          "A4": "J/(mol K^0.5)",
+          "A5": "J/(mol K^3)"
+        },
+        "locator": {
+          "printed_page": 2,
+          "pdf_one_based_page": 8,
+          "pdf_zero_based_index": 7
+        },
+        "numbered_equation": false,
+        "derived_sensible_enthalpy_formula": "A1*(T-T0)+A2*(T^2-T0^2)/2+A3*(1/T0-1/T)+2*A4*(sqrt(T)-sqrt(T0))+A5*(T^3-T0^3)/3",
+        "derived_sensible_enthalpy_unit": "J/mol",
+        "T0_k": "298.15",
+        "derivation_classification": "exact analytic integral of supplied nominal polynomial; no fitting or coefficient adjustment"
+      },
+      "uncertainty": {
+        "applies_to": "298.15 K values only",
+        "method_summary": "The book assigns estimated uncertainties; its convention for calorimetric measurements is twice the standard deviation of the mean. Individual upstream uncertainty derivations and cross-species covariance have not been reconstructed.",
+        "locator": {
+          "printed_page": 3,
+          "pdf_one_based_page": 9,
+          "pdf_zero_based_index": 8
+        },
+        "not_a_strict_bound": true,
+        "not_assumed_95_percent_interval": true,
+        "high_temperature_fit_error": null,
+        "printed_zero_uncertainty_note": "Printed 0.0 is retained at its displayed precision, not interpreted as physically exact."
+      },
+      "species": [
+        {
+          "id": "calcite",
+          "name_printed": "CALCITE",
+          "formula": "CaCO3",
+          "phase_description_printed": "Rhombohedral crystals 298.15 to 1200 K.",
+          "molar_mass_g_mol": "100.087",
+          "molar_mass_note": "Original printed formula weight in grams per mole; historical 1985 atomic weights; no mass uncertainty supplied.",
+          "reference_298": {
+            "temperature_k": "298.15",
+            "pressure_pa": "100000",
+            "hf_kj_mol": "-1207.4",
+            "hf_uncertainty_kj_mol": "1.3",
+            "gf_kj_mol": "-1128.5",
+            "gf_uncertainty_kj_mol": "1.4",
+            "volume_cm3_mol": "36.93",
+            "volume_uncertainty_cm3_mol": "0.01",
+            "entropy_j_mol_k": "91.7",
+            "entropy_uncertainty_j_mol_k": "0.2",
+            "locator": {
+              "printed_page": 25,
+              "pdf_one_based_page": 31,
+              "pdf_zero_based_index": 30
+            },
+            "reference_numbers_by_column": {
+              "S": [
+                392
+              ],
+              "H/G": [
+                246,
+                336
+              ],
+              "C": [
+                202
+              ]
+            }
+          },
+          "cp": {
+            "coefficients_printed": {
+              "A1": "9.972E+01",
+              "A2": "2.692E-02",
+              "A3": "-2.158E+06",
+              "A4": null,
+              "A5": null
+            },
+            "coefficients_nominal": {
+              "A1": "9.972E+01",
+              "A2": "2.692E-02",
+              "A3": "-2.158E+06",
+              "A4": "0",
+              "A5": "0"
+            },
+            "blank_cells_interpretation": "Blank cells are omitted terms in the printed polynomial, represented explicitly as zero only in coefficients_nominal; not missing material values filled with zero.",
+            "temperature_range_printed_k": [
+              "298",
+              "1200"
+            ],
+            "coefficient_locator": {
+              "printed_page": 55,
+              "pdf_one_based_page": 61,
+              "pdf_zero_based_index": 60
+            },
+            "phase_description_range_k": [
+              "298.15",
+              "1200"
+            ],
+            "selected_single_phase_domain_k": [
+              "298.15",
+              "1200"
+            ],
+            "high_temperature_table_locator": {
+              "printed_page": 268,
+              "pdf_one_based_page": 274,
+              "pdf_zero_based_index": 273
+            },
+            "physical_fit_uncertainty": null,
+            "coefficient_covariance": null,
+            "no_upper_limit_extrapolation": true
+          },
+          "check_points": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "83.47",
+              "entropy_j_mol_k": "91.71",
+              "enthalpy_function_j_mol_k": "0.00",
+              "formation_enthalpy_kj_mol": "-1207.4"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "97.00",
+              "entropy_j_mol_k": "118.36",
+              "enthalpy_function_j_mol_k": "23.18",
+              "formation_enthalpy_kj_mol": "-1206.3"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "117.88",
+              "entropy_j_mol_k": "193.19",
+              "enthalpy_function_j_mol_k": "66.15",
+              "formation_enthalpy_kj_mol": "-1201.6"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "124.48",
+              "entropy_j_mol_k": "220.22",
+              "enthalpy_function_j_mol_k": "77.17",
+              "formation_enthalpy_kj_mol": "-1199.1"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "130.53",
+              "entropy_j_mol_k": "243.46",
+              "enthalpy_function_j_mol_k": "85.57",
+              "formation_enthalpy_kj_mol": "-1204.9"
+            }
+          ],
+          "check_point_definition": "enthalpy_function_j_mol_k is (H(T)-H(298.15 K))/T, not H(T)-H(298.15 K) and not formation enthalpy at T.",
+          "high_temperature_table_locator": {
+            "printed_page": 268,
+            "pdf_one_based_page": 274,
+            "pdf_zero_based_index": 273
+          },
+          "runtime_material_qualified": false,
+          "volume_temperature_law": null,
+          "reaction_kinetics": null
+        },
+        {
+          "id": "lime",
+          "name_printed": "LIME",
+          "formula": "CaO",
+          "phase_description_printed": "Cubic crystals 298.15 to 1800 K.",
+          "molar_mass_g_mol": "56.077",
+          "molar_mass_note": "Original printed formula weight in grams per mole; historical 1985 atomic weights; no mass uncertainty supplied.",
+          "reference_298": {
+            "temperature_k": "298.15",
+            "pressure_pa": "100000",
+            "hf_kj_mol": "-635.1",
+            "hf_uncertainty_kj_mol": "0.9",
+            "gf_kj_mol": "-603.1",
+            "gf_uncertainty_kj_mol": "0.9",
+            "volume_cm3_mol": "16.76",
+            "volume_uncertainty_cm3_mol": "0.01",
+            "entropy_j_mol_k": "38.1",
+            "entropy_uncertainty_j_mol_k": "0.4",
+            "locator": {
+              "printed_page": 15,
+              "pdf_one_based_page": 21,
+              "pdf_zero_based_index": 20
+            },
+            "reference_numbers_by_column": {
+              "S": [
+                67,
+                117
+              ],
+              "H/G": [
+                67,
+                117
+              ],
+              "C": [
+                67,
+                117
+              ]
+            }
+          },
+          "cp": {
+            "coefficients_printed": {
+              "A1": "5.185E+01",
+              "A2": "2.444E-03",
+              "A3": "-9.340E+05",
+              "A4": null,
+              "A5": null
+            },
+            "coefficients_nominal": {
+              "A1": "5.185E+01",
+              "A2": "2.444E-03",
+              "A3": "-9.340E+05",
+              "A4": "0",
+              "A5": "0"
+            },
+            "blank_cells_interpretation": "Blank cells are omitted terms in the printed polynomial, represented explicitly as zero only in coefficients_nominal; not missing material values filled with zero.",
+            "temperature_range_printed_k": [
+              "298",
+              "2500"
+            ],
+            "coefficient_locator": {
+              "printed_page": 47,
+              "pdf_one_based_page": 53,
+              "pdf_zero_based_index": 52
+            },
+            "phase_description_range_k": [
+              "298.15",
+              "1800"
+            ],
+            "selected_single_phase_domain_k": [
+              "298.15",
+              "1800"
+            ],
+            "high_temperature_table_locator": {
+              "printed_page": 182,
+              "pdf_one_based_page": 188,
+              "pdf_zero_based_index": 187
+            },
+            "physical_fit_uncertainty": null,
+            "coefficient_covariance": null,
+            "no_upper_limit_extrapolation": true
+          },
+          "check_points": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "42.07",
+              "entropy_j_mol_k": "38.10",
+              "enthalpy_function_j_mol_k": "0.00",
+              "formation_enthalpy_kj_mol": "-635.1"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "46.99",
+              "entropy_j_mol_k": "51.25",
+              "enthalpy_function_j_mol_k": "11.43",
+              "formation_enthalpy_kj_mol": "-634.7"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "52.35",
+              "entropy_j_mol_k": "85.98",
+              "enthalpy_function_j_mol_k": "30.91",
+              "formation_enthalpy_kj_mol": "-634.0"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "53.36",
+              "entropy_j_mol_k": "97.78",
+              "enthalpy_function_j_mol_k": "35.31",
+              "formation_enthalpy_kj_mol": "-634.2"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "54.13",
+              "entropy_j_mol_k": "107.58",
+              "enthalpy_function_j_mol_k": "38.38",
+              "formation_enthalpy_kj_mol": "-643.3"
+            }
+          ],
+          "check_point_definition": "enthalpy_function_j_mol_k is (H(T)-H(298.15 K))/T, not H(T)-H(298.15 K) and not formation enthalpy at T.",
+          "high_temperature_table_locator": {
+            "printed_page": 182,
+            "pdf_one_based_page": 188,
+            "pdf_zero_based_index": 187
+          },
+          "runtime_material_qualified": false,
+          "volume_temperature_law": null,
+          "reaction_kinetics": null
+        },
+        {
+          "id": "carbon_dioxide",
+          "name_printed": "CARBON DIOXIDE",
+          "formula": "CO2",
+          "phase_description_printed": "Ideal gas at p = 1 bar, 298.15 to 2200 K.",
+          "molar_mass_g_mol": "44.010",
+          "molar_mass_note": "Original printed formula weight in grams per mole; historical 1985 atomic weights; no mass uncertainty supplied.",
+          "reference_298": {
+            "temperature_k": "298.15",
+            "pressure_pa": "100000",
+            "hf_kj_mol": "-393.5",
+            "hf_uncertainty_kj_mol": "0.1",
+            "gf_kj_mol": "-394.4",
+            "gf_uncertainty_kj_mol": "0.2",
+            "volume_cm3_mol": "24789.70",
+            "volume_uncertainty_cm3_mol": "0.20",
+            "entropy_j_mol_k": "213.8",
+            "entropy_uncertainty_j_mol_k": "0.0",
+            "locator": {
+              "printed_page": 15,
+              "pdf_one_based_page": 21,
+              "pdf_zero_based_index": 20
+            },
+            "reference_numbers_by_column": {
+              "S": [
+                67,
+                117
+              ],
+              "H/G": [
+                67,
+                117
+              ],
+              "C": [
+                67,
+                117
+              ]
+            }
+          },
+          "cp": {
+            "coefficients_printed": {
+              "A1": "8.811E+01",
+              "A2": "-2.698E-03",
+              "A3": "7.232E+05",
+              "A4": "-1.007E+03",
+              "A5": null
+            },
+            "coefficients_nominal": {
+              "A1": "8.811E+01",
+              "A2": "-2.698E-03",
+              "A3": "7.232E+05",
+              "A4": "-1.007E+03",
+              "A5": "0"
+            },
+            "blank_cells_interpretation": "Blank cells are omitted terms in the printed polynomial, represented explicitly as zero only in coefficients_nominal; not missing material values filled with zero.",
+            "temperature_range_printed_k": [
+              "298",
+              "2200"
+            ],
+            "coefficient_locator": {
+              "printed_page": 47,
+              "pdf_one_based_page": 53,
+              "pdf_zero_based_index": 52
+            },
+            "phase_description_range_k": [
+              "298.15",
+              "2200"
+            ],
+            "selected_single_phase_domain_k": [
+              "298.15",
+              "2200"
+            ],
+            "high_temperature_table_locator": {
+              "printed_page": 181,
+              "pdf_one_based_page": 187,
+              "pdf_zero_based_index": 186
+            },
+            "physical_fit_uncertainty": null,
+            "coefficient_covariance": null,
+            "no_upper_limit_extrapolation": true
+          },
+          "check_points": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "37.12",
+              "entropy_j_mol_k": "213.79",
+              "enthalpy_function_j_mol_k": "0.00",
+              "formation_enthalpy_kj_mol": "-393.5"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "41.20",
+              "entropy_j_mol_k": "225.28",
+              "enthalpy_function_j_mol_k": "9.98",
+              "formation_enthalpy_kj_mol": "-393.6"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "51.48",
+              "entropy_j_mol_k": "257.47",
+              "enthalpy_function_j_mol_k": "28.51",
+              "formation_enthalpy_kj_mol": "-394.2"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "54.29",
+              "entropy_j_mol_k": "269.28",
+              "enthalpy_function_j_mol_k": "33.40",
+              "formation_enthalpy_kj_mol": "-394.6"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "56.31",
+              "entropy_j_mol_k": "279.37",
+              "enthalpy_function_j_mol_k": "37.06",
+              "formation_enthalpy_kj_mol": "-395.0"
+            }
+          ],
+          "check_point_definition": "enthalpy_function_j_mol_k is (H(T)-H(298.15 K))/T, not H(T)-H(298.15 K) and not formation enthalpy at T.",
+          "high_temperature_table_locator": {
+            "printed_page": 181,
+            "pdf_one_based_page": 187,
+            "pdf_zero_based_index": 186
+          },
+          "runtime_material_qualified": false,
+          "volume_temperature_law": null,
+          "reaction_kinetics": null
+        }
+      ],
+      "reaction": {
+        "id": "calcite_decomposition",
+        "stoichiometry_mol_per_mol_extent": {
+          "calcite": "-1",
+          "lime": "1",
+          "carbon_dioxide": "1"
+        },
+        "extent_basis": "mol CaCO3 consumed",
+        "common_selected_temperature_domain_k": [
+          "298.15",
+          "1200"
+        ],
+        "phase_stability_not_certified": true,
+        "equilibrium_model": null,
+        "kinetic_model": null,
+        "MIA3_inventory_or_kinetic_transfer": false
+      },
+      "interpretation_guards": [
+        "Only selected original facts are transcribed; no source pages or full PDF included in tracked artifact.",
+        "Formation columns at high T use elements at that T; they are not single-species storage enthalpy curves.",
+        "Molar volumes apply at 298.15 K and 1 bar; no temperature-independent high-T law or density error envelope is inferred.",
+        "Cp source coefficients and independently printed temperature rows remain distinct and may differ because of printed precision or other source inconsistency; derived checks never rewrite either.",
+        "No Shomate fitting, no MIA3 raw-sludge properties, no reaction rate or firing recipe."
+      ]
+    },
+    "carbon_parameters": {
+      "source_file": "data/sandbox/research/carbon-gas-thermochemistry-v1/source.json",
+      "temperature_domain_k": [
+        298.15,
+        1200.0
+      ],
+      "equilibrium_numerics": {
+        "log_oxygen_absolute_tolerance": 1e-12,
+        "log_oxygen_relative_tolerance": 1e-14,
+        "maximum_root_iterations": 100
+      },
+      "temperature_points_k": [
+        298.15,
+        350.0,
+        500.0,
+        700.0,
+        850.0,
+        1000.0,
+        1100.0,
+        1200.0
+      ],
+      "inventories": [
+        {
+          "name": "carbon_lean",
+          "carbon_atoms_mol": 0.0005,
+          "oxygen_atoms_mol": 0.002,
+          "nitrogen_molecules_mol": 0.004
+        },
+        {
+          "name": "carbon_transition",
+          "carbon_atoms_mol": 0.0015,
+          "oxygen_atoms_mol": 0.002,
+          "nitrogen_molecules_mol": 0.004
+        },
+        {
+          "name": "carbon_rich",
+          "carbon_atoms_mol": 0.003,
+          "oxygen_atoms_mol": 0.002,
+          "nitrogen_molecules_mol": 0.004
+        }
+      ],
+      "classification": "explicit_virtual_element_inventories_at_source_standard_pressure",
+      "scope": "Restricted equilibrium with pure reference graphite and ideal CO/CO2/O2/N2. No finite char chemistry or ignition dynamics.",
+      "material_qualified": false,
+      "training_eligible": false
+    },
+    "calcite_parameters": {
+      "source_file": "parameters.calcite_affinity_source.json",
+      "gas_phase": "carbon_dioxide",
+      "total_pressure_pa": 100000.0,
+      "joules_per_kilojoule": 1000.0,
+      "gas_partial_pressures_pa": [
+        40.0,
+        1000.0,
+        10000.0,
+        100000.0
+      ],
+      "pressure_cases_classification": "explicit_virtual_atmospheres_not_measurements",
+      "gas_constant_policy": "Use the historical USGS book R for this separate source consistency calculation; do not replace any other module R.",
+      "root": {
+        "bracket_k": [
+          298.15,
+          1200.0
+        ],
+        "absolute_tolerance_k": 1e-08,
+        "relative_tolerance": 1e-12,
+        "maximum_iterations": 100
+      },
+      "verification": {
+        "quadrature_absolute_tolerance": 1e-08,
+        "quadrature_relative_tolerance": 1e-12,
+        "quadrature_maximum_subintervals": 100,
+        "derivative_temperatures_k": [
+          400.0,
+          600.0,
+          800.0,
+          1000.0,
+          1100.0
+        ],
+        "derivative_step_k": 0.001,
+        "budgets": {
+          "enthalpy_quadrature_j_mol": 1e-06,
+          "entropy_quadrature_j_mol_k": 1e-08,
+          "gibbs_derivative_j_mol_k": 1e-05,
+          "vanthoff_derivative_per_k": 1e-08,
+          "equilibrium_affinity_j_mol": 1e-05
+        },
+        "rounding_policy": "Printed half-last-unit intervals propagated through the linear Cp integrals, Href and Sref. Formation G and logK table comparison retains its own half-last-unit interval. These are arithmetic envelopes, not physical uncertainty. No post-comparison budget fitting."
+      },
+      "material_qualified": false,
+      "training_eligible": false
+    },
+    "solid_volume_source": {
+      "source_url": "https://pubs.usgs.gov/bul/2131/report.pdf",
+      "retrieved_utc": "2026-09-25",
+      "calcium_volume_source": "parameters.calcite_constant_volume_source.json",
+      "reference_temperature_k": 298.15,
+      "reference_pressure_pa": 100000.0,
+      "cubic_metres_per_cubic_centimetre": 1e-06,
+      "graphite": {
+        "formula": "C",
+        "crystal": "hexagonal graphite",
+        "volume_cm3_mol": "5.298",
+        "alternate_printed_volume_j_bar_mol": "0.5298",
+        "printed_page": 76,
+        "pdf_one_based_page": 82,
+        "source_printed_uncertainty_cm3_mol": null,
+        "visual_review": "Original local PDF rendered and visually inspected on 2026-09-25; graphite reference-state page gives both equivalent volume units."
+      },
+      "eos_choice": "Constant molar volumes for graphite, calcite and lime, with h=h0+(p-p0)v, s=s0 and mu=g0+(p-p0)v. This is an explicit incompressible approximation, not a measured high-temperature EOS.",
+      "unknowns": [
+        "Graphite thermal expansion and compressibility",
+        "Calcite and lime high-temperature volume changes",
+        "Target sludge char composition and structure",
+        "Nonideal gas fugacity over actual operating pressures"
+      ],
+      "material_qualified": false,
+      "training_eligible": false
+    },
+    "calcium_volume_source": {
+      "source_url": "https://pubs.usgs.gov/bul/2131/report.pdf",
+      "retrieved_utc": "2026-09-25",
+      "reference_temperature_k": 298.15,
+      "reference_pressure_pa": 100000.0,
+      "cubic_metres_per_cubic_centimetre": 1e-06,
+      "phases": {
+        "calcite": {
+          "volume_cm3_mol": "36.93",
+          "source_printed_uncertainty_cm3_mol": "0.01",
+          "printed_page": 25,
+          "pdf_one_based_page": 31
+        },
+        "lime": {
+          "volume_cm3_mol": "16.76",
+          "source_printed_uncertainty_cm3_mol": "0.01",
+          "printed_page": 15,
+          "pdf_one_based_page": 21
+        }
+      },
+      "visual_review": "Both original reference tables rendered and inspected; matched existing immutable source facts; no digest operation.",
+      "model_reference": "https://cantera.org/3.2/cxx/d3/d50/classCantera_1_1StoichSubstance.html",
+      "eos_choice": "constant molar volume, no thermal expansion or compression, incompressible pure phases",
+      "classification": "298.15 K source volumes extended as an explicitly approximate constant-volume EOS, not a measured high-temperature law",
+      "unknowns": [
+        "Actual calcite and CaO thermal expansion and compressibility",
+        "Target brick phase inventory, porosity and pore connectivity",
+        "Material reaction kinetics and nucleation",
+        "Ideal-gas and incompressible-solid model error over the resulting pressure path"
+      ],
+      "thermal_consistency": {
+        "solid_h": "h0(T)+(p-p0)*v",
+        "solid_s": "s0(T)",
+        "solid_u": "h0(T)-p0*v",
+        "solid_mu": "g0(T)+(p-p0)*v",
+        "gas_u": "h0(T)-R*T",
+        "gas_mu": "g0(T)+R*T*ln(p_i/p0)"
+      },
+      "material_qualified": false,
+      "training_eligible": false
+    }
+  },
+  "records": [
+    {
+      "inventory_name": "limited_carbon",
+      "temperature_k": 350.0,
+      "phases": [
+        "calcite",
+        "graphite_present"
+      ],
+      "scales": [
+        0.00175,
+        0.004,
+        0.002,
+        52.90391359041115
+      ],
+      "scaled_entropy_hessian": [
+        [
+          -3.9190467227272757e-05,
+          0.03633350891791371,
+          0.00012582439051863394,
+          0.00243386302131645
+        ],
+        [
+          0.036333508917908715,
+          -33.757665886866654,
+          -0.11952160412747112,
+          -2.2566688795915786
+        ],
+        [
+          0.00012582439051861595,
+          -0.11952160412746947,
+          -0.01705305580749235,
+          -0.008005918117923743
+        ],
+        [
+          0.002433863021316143,
+          -2.256668879591578,
+          -0.008005918117923816,
+          -0.15115403882974582
+        ]
+      ],
+      "scaled_local_diffusion_matrix": [
+        [
+          -4.775969126637328e-06,
+          0.00448772553842584,
+          1.571972116609648e-05,
+          0.0002967738366215721
+        ],
+        [
+          -2.0392613139207203e-05,
+          0.01898600010171041,
+          6.708929867911252e-05,
+          0.0012666902424532565
+        ],
+        [
+          -1.3233623765348276e-07,
+          0.00012413051991320563,
+          8.754890467273878e-06,
+          8.314509999939783e-06
+        ],
+        [
+          -0.0010476892520408156,
+          0.9708308452478508,
+          0.0034466413198258805,
+          0.06506469537420619
+        ]
+      ],
+      "entropy_hessian_eigenvalues": [
+        -33.908985945541914,
+        -0.016629681217064495,
+        -0.00029654521212424444,
+        -1.954618749325641e-19
+      ],
+      "entropy_dissipation_eigenvalues": [
+        -2.844350113568046,
+        -1.3833159713702681e-07,
+        -1.9708293616780382e-08,
+        2.067951531382569e-21
+      ],
+      "actual_eigenvalue_real_parts": [
+        -0.2867254720285009,
+        -0.16795989283646837,
+        -0.0491943136444357,
+        -0.00022675010989477647,
+        -0.00013282713910676926,
+        -3.890416831876222e-05,
+        -2.8387169574524955e-05,
+        -1.6628818939372164e-05,
+        -4.870468304219356e-06,
+        -4.8401389472853865e-18,
+        -3.995207338050843e-18,
+        -1.1557527821967129e-18,
+        -3.095659583961966e-20,
+        -6.278654817598249e-21,
+        4.6599301318892196e-21,
+        1.0304018179769337e-17
+      ],
+      "expected_eigenvalue_real_parts": [
+        -0.28672547202850124,
+        -0.1679598928364685,
+        -0.0491943136444358,
+        -0.00022675010989478173,
+        -0.00013282713910677338,
+        -3.8904168318765066e-05,
+        -2.8387169574524843e-05,
+        -1.6628818939371768e-05,
+        -4.870468304218698e-06,
+        -0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        1.6651839494377582e-20,
+        5.685293624016388e-20,
+        9.705403298595019e-20
+      ],
+      "expected_nullity": 7,
+      "observed_nullity": 7,
+      "errors": {
+        "stationary_inventory_rate_mol_s": 0.0,
+        "stationary_energy_rate_w": 0.0,
+        "stationary_production_w_k": 0.0,
+        "scaled_hessian_symmetry_j_k": 4.9960036108132044e-15,
+        "scaled_entropy_maximum_eigenvalue_j_k": -1.954618749325641e-19,
+        "scaled_mobility_identity_s_inverse": 1.3753155712665832e-16,
+        "scaled_dissipation_symmetry_w_k": 3.929148673087468e-16,
+        "scaled_dissipation_maximum_eigenvalue_w_k": 2.067951531382569e-21,
+        "scaled_spatial_operator_s_inverse": 0.0,
+        "spectral_real_difference_s_inverse": 3.3306690738754696e-16,
+        "spectral_imaginary_s_inverse": 0.0,
+        "maximum_growth_rate_s_inverse": 1.0304018179769337e-17
+      },
+      "within_budgets": {
+        "stationary_inventory_rate_mol_s": true,
+        "stationary_energy_rate_w": true,
+        "stationary_production_w_k": true,
+        "scaled_hessian_symmetry_j_k": true,
+        "scaled_entropy_maximum_eigenvalue_j_k": true,
+        "scaled_mobility_identity_s_inverse": true,
+        "scaled_dissipation_symmetry_w_k": true,
+        "scaled_dissipation_maximum_eigenvalue_w_k": true,
+        "scaled_spatial_operator_s_inverse": true,
+        "spectral_real_difference_s_inverse": true,
+        "spectral_imaginary_s_inverse": true,
+        "maximum_growth_rate_s_inverse": true,
+        "expected_nullity": true
+      }
+    },
+    {
+      "inventory_name": "limited_carbon",
+      "temperature_k": 900.0,
+      "phases": [
+        "calcite",
+        "graphite_present"
+      ],
+      "scales": [
+        0.00175,
+        0.004,
+        0.002,
+        339.4489556942245
+      ],
+      "scaled_entropy_hessian": [
+        [
+          -0.0009354175559975808,
+          0.04024891694934146,
+          -0.0011954751460071002,
+          0.01878315628277945
+        ],
+        [
+          0.040248916949341476,
+          -1.8062798215767941,
+          0.05131419120878365,
+          -0.8082667459172631
+        ],
+        [
+          -0.0011954751460070978,
+          0.05131419120878377,
+          -0.018148975761123294,
+          0.023943159580124874
+        ],
+        [
+          0.018783156282779462,
+          -0.8082667459172632,
+          0.023943159580124884,
+          -0.37716550632691537
+        ]
+      ],
+      "scaled_local_diffusion_matrix": [
+        [
+          -4.341466897899257e-06,
+          0.00025051844500300165,
+          -5.537230436268072e-06,
+          8.723581973665326e-05
+        ],
+        [
+          -2.2771889762196504e-05,
+          0.001063509442090659,
+          -2.9034368661706455e-05,
+          0.00045733694003939276
+        ],
+        [
+          -4.1248261443603345e-07,
+          1.78141597729761e-05,
+          7.786745671809157e-06,
+          8.313626953739377e-06
+        ],
+        [
+          -0.0013218013178191751,
+          0.05679317500181778,
+          -0.001684020147144415,
+          0.026541674816296414
+        ]
+      ],
+      "entropy_hessian_eigenvalues": [
+        -2.172955813213301,
+        -0.016803056046211615,
+        -0.012770851961317959,
+        -1.1816958429863625e-18
+      ],
+      "entropy_dissipation_eigenvalues": [
+        -0.05825890717482474,
+        -1.0901319852095232e-06,
+        -1.3764540108721362e-07,
+        -2.0418694408064867e-20
+      ],
+      "actual_eigenvalue_real_parts": [
+        -0.09395361316798015,
+        -0.05503675235984733,
+        -0.016119891551714564,
+        -0.00027975710419093626,
+        -0.00016387791746482643,
+        -4.7998730738717885e-05,
+        -2.8387132138425054e-05,
+        -1.662879700981232e-05,
+        -4.870461881199581e-06,
+        -1.914496172049528e-18,
+        -9.294826407384015e-19,
+        -9.128367755899306e-20,
+        -8.766105812385762e-21,
+        -7.331628274276285e-21,
+        -7.331628274276285e-21,
+        3.380089783614351e-19
+      ],
+      "expected_eigenvalue_real_parts": [
+        -0.09395361316798011,
+        -0.05503675235984733,
+        -0.01611989155171456,
+        -0.0002797571041909361,
+        -0.00016387791746482733,
+        -4.7998730738718576e-05,
+        -2.838713213842499e-05,
+        -1.6628797009812197e-05,
+        -4.870461881199408e-06,
+        -0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        3.436091011499724e-20,
+        1.1731548533010643e-19,
+        2.0027006054521566e-19
+      ],
+      "expected_nullity": 7,
+      "observed_nullity": 7,
+      "errors": {
+        "stationary_inventory_rate_mol_s": 0.0,
+        "stationary_energy_rate_w": 0.0,
+        "stationary_production_w_k": 0.0,
+        "scaled_hessian_symmetry_j_k": 1.1796119636642288e-16,
+        "scaled_entropy_maximum_eigenvalue_j_k": -1.1816958429863625e-18,
+        "scaled_mobility_identity_s_inverse": 2.9305137440464527e-19,
+        "scaled_dissipation_symmetry_w_k": 8.673617379884035e-19,
+        "scaled_dissipation_maximum_eigenvalue_w_k": -2.0418694408064867e-20,
+        "scaled_spatial_operator_s_inverse": 0.0,
+        "spectral_real_difference_s_inverse": 4.163336342344337e-17,
+        "spectral_imaginary_s_inverse": 5.0244770738138727e-20,
+        "maximum_growth_rate_s_inverse": 3.380089783614351e-19
+      },
+      "within_budgets": {
+        "stationary_inventory_rate_mol_s": true,
+        "stationary_energy_rate_w": true,
+        "stationary_production_w_k": true,
+        "scaled_hessian_symmetry_j_k": true,
+        "scaled_entropy_maximum_eigenvalue_j_k": true,
+        "scaled_mobility_identity_s_inverse": true,
+        "scaled_dissipation_symmetry_w_k": true,
+        "scaled_dissipation_maximum_eigenvalue_w_k": true,
+        "scaled_spatial_operator_s_inverse": true,
+        "spectral_real_difference_s_inverse": true,
+        "spectral_imaginary_s_inverse": true,
+        "maximum_growth_rate_s_inverse": true,
+        "expected_nullity": true
+      }
+    },
+    {
+      "inventory_name": "limited_carbon",
+      "temperature_k": 1000.0,
+      "phases": [
+        "calcite",
+        "graphite_present"
+      ],
+      "scales": [
+        0.00175,
+        0.004,
+        0.002,
+        459.77191734548586
+      ],
+      "scaled_entropy_hessian": [
+        [
+          -0.0009246901191349579,
+          0.029347090325391033,
+          -0.001184735516080975,
+          0.020619073656710098
+        ],
+        [
+          0.029347090325391307,
+          -1.0198495258169846,
+          0.03751220718976694,
+          -0.6544837615207173
+        ],
+        [
+          -0.0011847355160809843,
+          0.03751220718976692,
+          -0.018139036255168692,
+          0.026348872520628463
+        ],
+        [
+          0.02061907365671024,
+          -0.6544837615207174,
+          0.02634887252062844,
+          -0.45977191734548556
+        ]
+      ],
+      "scaled_local_diffusion_matrix": [
+        [
+          -9.39019170020287e-07,
+          0.00010551766757756303,
+          -1.2044219504709254e-06,
+          2.1016817148699834e-05
+        ],
+        [
+          -1.5100239851802969e-05,
+          0.00057867477145547,
+          -1.9304917877996066e-05,
+          0.00033681350849999866
+        ],
+        [
+          -3.712681902235698e-07,
+          1.1831307394416632e-05,
+          7.83809904543554e-06,
+          8.313083253551837e-06
+        ],
+        [
+          -0.0009790347933069127,
+          0.031002849111302605,
+          -0.0012503153271968288,
+          0.02183081623969886
+        ]
+      ],
+      "entropy_hessian_eigenvalues": [
+        -1.4540376705225193,
+        -0.028126888311190635,
+        -0.01652061070306521,
+        -2.119071176490455e-18
+      ],
+      "entropy_dissipation_eigenvalues": [
+        -0.031185899709155727,
+        -2.865308545403872e-06,
+        -1.3779521415905273e-07,
+        -4.937341472022323e-21
+      ],
+      "actual_eigenvalue_real_parts": [
+        -0.07617052434125514,
+        -0.04461966010603733,
+        -0.013068795870819465,
+        -0.00033543159623029633,
+        -0.00019649127982325192,
+        -5.755096341620737e-05,
+        -2.8387130754212045e-05,
+        -1.662879619895885e-05,
+        -4.870461643705717e-06,
+        -1.3259429859467949e-18,
+        -1.5406274891663316e-19,
+        -6.38897586686854e-20,
+        1.5633844947061602e-20,
+        4.2432309634561104e-20,
+        6.276957821528821e-19,
+        6.276957821528821e-19
+      ],
+      "expected_eigenvalue_real_parts": [
+        -0.07617052434125512,
+        -0.04461966010603728,
+        -0.013068795870819454,
+        -0.0003354315962302972,
+        -0.00019649127982325213,
+        -5.7550963416207105e-05,
+        -2.8387130754212065e-05,
+        -1.662879619895904e-05,
+        -4.8704616437060164e-06,
+        -4.6909439878131526e-20,
+        -2.7478913677284136e-20,
+        -8.048387476436754e-21,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0
+      ],
+      "expected_nullity": 7,
+      "observed_nullity": 7,
+      "errors": {
+        "stationary_inventory_rate_mol_s": 0.0,
+        "stationary_energy_rate_w": 0.0,
+        "stationary_production_w_k": 0.0,
+        "scaled_hessian_symmetry_j_k": 2.740863092043355e-16,
+        "scaled_entropy_maximum_eigenvalue_j_k": -2.119071176490455e-18,
+        "scaled_mobility_identity_s_inverse": 7.912572886347104e-18,
+        "scaled_dissipation_symmetry_w_k": 5.204170427930421e-18,
+        "scaled_dissipation_maximum_eigenvalue_w_k": -4.937341472022323e-21,
+        "scaled_spatial_operator_s_inverse": 0.0,
+        "spectral_real_difference_s_inverse": 4.85722573273506e-17,
+        "spectral_imaginary_s_inverse": 7.124668414026506e-19,
+        "maximum_growth_rate_s_inverse": 6.276957821528821e-19
+      },
+      "within_budgets": {
+        "stationary_inventory_rate_mol_s": true,
+        "stationary_energy_rate_w": true,
+        "stationary_production_w_k": true,
+        "scaled_hessian_symmetry_j_k": true,
+        "scaled_entropy_maximum_eigenvalue_j_k": true,
+        "scaled_mobility_identity_s_inverse": true,
+        "scaled_dissipation_symmetry_w_k": true,
+        "scaled_dissipation_maximum_eigenvalue_w_k": true,
+        "scaled_spatial_operator_s_inverse": true,
+        "spectral_real_difference_s_inverse": true,
+        "spectral_imaginary_s_inverse": true,
+        "maximum_growth_rate_s_inverse": true,
+        "expected_nullity": true
+      }
+    },
+    {
+      "inventory_name": "limited_carbon",
+      "temperature_k": 1100.0,
+      "phases": [
+        "calcite",
+        "graphite_exhausted"
+      ],
+      "scales": [
+        0.00175,
+        0.004,
+        0.002,
+        221.70350082997373
+      ],
+      "scaled_entropy_hessian": [
+        [
+          -0.6880708026696895,
+          1.8139103996893382,
+          -0.03913941059304862,
+          0.27765965710340135
+        ],
+        [
+          1.8139103996893382,
+          -5.550735108431624,
+          0.13796039200885596,
+          -0.9787075113960234
+        ],
+        [
+          -0.03913941059304851,
+          0.1379603920088555,
+          -0.020633838719917762,
+          0.02841066269738723
+        ],
+        [
+          0.2776596571034012,
+          -0.9787075113960233,
+          0.028410662697387304,
+          -0.20154863711815818
+        ]
+      ],
+      "scaled_local_diffusion_matrix": [
+        [
+          -2.618131885291348e-05,
+          0.0001683034922615379,
+          -2.6789221979982315e-06,
+          1.9004594285714162e-05
+        ],
+        [
+          -0.0009860547352883915,
+          0.0030513795660657727,
+          -7.409616297264496e-05,
+          0.000525647036885024
+        ],
+        [
+          -1.1454326998149764e-05,
+          4.037473786442334e-05,
+          7.14248153837577e-06,
+          8.31451000000006e-06
+        ],
+        [
+          -0.06839020926871009,
+          0.24108913004414434,
+          -0.0070047861917054595,
+          0.04970597159862729
+        ]
+      ],
+      "entropy_hessian_eigenvalues": [
+        -6.324996157537175,
+        -0.11156252918674185,
+        -0.016741230272004692,
+        -0.0076884699434651045
+      ],
+      "entropy_dissipation_eigenvalues": [
+        -0.28403317569133213,
+        -4.427361953511822e-05,
+        -4.425183957161846e-07,
+        -1.3483953671597648e-07
+      ],
+      "actual_eigenvalue_real_parts": [
+        -0.1783973452799733,
+        -0.10450274537365246,
+        -0.030608145467331732,
+        -0.0014848389085315742,
+        -0.000869798494678531,
+        -0.00025475808082549127,
+        -0.00014928989413703127,
+        -8.74519952602296e-05,
+        -2.838712216216219e-05,
+        -2.5614096383426006e-05,
+        -1.6628791165852772e-05,
+        -4.8704601695433175e-06,
+        -2.7577260822270574e-18,
+        -3.8713170433118387e-19,
+        -3.8713170433118387e-19,
+        7.664413265555315e-19
+      ],
+      "expected_eigenvalue_real_parts": [
+        -0.1783973452799732,
+        -0.10450274537365244,
+        -0.03060814546733169,
+        -0.0014848389085315684,
+        -0.0008697984946785291,
+        -0.00025475808082549,
+        -0.00014928989413703176,
+        -8.745199526022959e-05,
+        -2.838712216216215e-05,
+        -2.5614096383427433e-05,
+        -1.6628791165852725e-05,
+        -4.870460169543308e-06,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0
+      ],
+      "expected_nullity": 4,
+      "observed_nullity": 4,
+      "errors": {
+        "stationary_inventory_rate_mol_s": 0.0,
+        "stationary_energy_rate_w": 0.0,
+        "stationary_production_w_k": 0.0,
+        "scaled_hessian_symmetry_j_k": 4.718447854656915e-16,
+        "scaled_entropy_maximum_eigenvalue_j_k": -0.0076884699434651045,
+        "scaled_mobility_identity_s_inverse": 3.281841552769804e-17,
+        "scaled_dissipation_symmetry_w_k": 2.7755575615628914e-17,
+        "scaled_dissipation_maximum_eigenvalue_w_k": -1.3483953671597648e-07,
+        "scaled_spatial_operator_s_inverse": 0.0,
+        "spectral_real_difference_s_inverse": 1.1102230246251565e-16,
+        "spectral_imaginary_s_inverse": 7.26737053964031e-19,
+        "maximum_growth_rate_s_inverse": 7.664413265555315e-19
+      },
+      "within_budgets": {
+        "stationary_inventory_rate_mol_s": true,
+        "stationary_energy_rate_w": true,
+        "stationary_production_w_k": true,
+        "scaled_hessian_symmetry_j_k": true,
+        "scaled_entropy_maximum_eigenvalue_j_k": true,
+        "scaled_mobility_identity_s_inverse": true,
+        "scaled_dissipation_symmetry_w_k": true,
+        "scaled_dissipation_maximum_eigenvalue_w_k": true,
+        "scaled_spatial_operator_s_inverse": true,
+        "spectral_real_difference_s_inverse": true,
+        "spectral_imaginary_s_inverse": true,
+        "maximum_growth_rate_s_inverse": true,
+        "expected_nullity": true
+      }
+    },
+    {
+      "inventory_name": "limited_carbon",
+      "temperature_k": 1150.0,
+      "phases": [
+        "coexistence",
+        "graphite_exhausted"
+      ],
+      "scales": [
+        0.00175,
+        0.004,
+        0.002,
+        1377.2526074680131
+      ],
+      "scaled_entropy_hessian": [
+        [
+          -0.4179049646336959,
+          0.859708915375957,
+          -0.012418960808879068,
+          0.5065341819345429
+        ],
+        [
+          0.8597089153759587,
+          -2.1007880066579094,
+          0.03635151075545144,
+          -1.4823676317650811
+        ],
+        [
+          -0.012418960808879111,
+          0.03635151075545152,
+          -0.017350275218682463,
+          0.029390236651657235
+        ],
+        [
+          0.5065341819345486,
+          -1.4823676317650936,
+          0.029390236651657353,
+          -1.197610963015672
+        ]
+      ],
+      "scaled_local_diffusion_matrix": [
+        [
+          -7.95767410203822e-06,
+          0.00014194801954786916,
+          -4.313849870024358e-06,
+          0.0001760959419519282
+        ],
+        [
+          -0.00047445015274845946,
+          0.0012328271037704691,
+          -2.2445586290584403e-05,
+          0.0009154469957596207
+        ],
+        [
+          -3.5122130742506123e-06,
+          1.0274691310221985e-05,
+          8.111063392469333e-06,
+          8.290115651257107e-06
+        ],
+        [
+          -0.0035248149050791395,
+          0.010294266158337525,
+          -0.00020351585632043503,
+          0.00830587350821512
+        ]
+      ],
+      "entropy_hessian_eigenvalues": [
+        -3.517573960691123,
+        -0.19945958578179673,
+        -0.01662066305304001,
+        1.598376160224545e-16
+      ],
+      "entropy_dissipation_eigenvalues": [
+        -0.031106678197255273,
+        -3.220692975274321e-05,
+        -1.381947884913489e-07,
+        -1.2592378554708314e-18
+      ],
+      "actual_eigenvalue_real_parts": [
+        -0.032019439239584606,
+        -0.01875655324696742,
+        -0.005493667254350195,
+        -0.0005198583334842581,
+        -0.00030452596124240256,
+        -8.919358900054808e-05,
+        -2.838712758456274e-05,
+        -1.6628794342221446e-05,
+        -4.870461099880182e-06,
+        -8.317752397134334e-19,
+        -3.6363072838303937e-19,
+        -2.3821415988835764e-19,
+        -1.3707996775436657e-19,
+        -1.3707996775436657e-19,
+        -2.0595783730533652e-20,
+        4.843054724415521e-19
+      ],
+      "expected_eigenvalue_real_parts": [
+        -0.03201943923958462,
+        -0.018756553246967407,
+        -0.005493667254350197,
+        -0.0005198583334842577,
+        -0.00030452596124240283,
+        -8.919358900054804e-05,
+        -2.8387127584562724e-05,
+        -1.6628794342221442e-05,
+        -4.870461099880165e-06,
+        -6.428556531285158e-19,
+        -3.7657612295447056e-19,
+        -1.1029659278042534e-19,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0
+      ],
+      "expected_nullity": 7,
+      "observed_nullity": 7,
+      "errors": {
+        "stationary_inventory_rate_mol_s": 0.0,
+        "stationary_energy_rate_w": 0.0,
+        "stationary_production_w_k": 0.0,
+        "scaled_hessian_symmetry_j_k": 1.2434497875801753e-14,
+        "scaled_entropy_maximum_eigenvalue_j_k": 1.598376160224545e-16,
+        "scaled_mobility_identity_s_inverse": 5.778227318184947e-19,
+        "scaled_dissipation_symmetry_w_k": 1.1796119636642288e-16,
+        "scaled_dissipation_maximum_eigenvalue_w_k": -1.2592378554708314e-18,
+        "scaled_spatial_operator_s_inverse": 0.0,
+        "spectral_real_difference_s_inverse": 1.3877787807814457e-17,
+        "spectral_imaginary_s_inverse": 3.792661762042653e-19,
+        "maximum_growth_rate_s_inverse": 4.843054724415521e-19
+      },
+      "within_budgets": {
+        "stationary_inventory_rate_mol_s": true,
+        "stationary_energy_rate_w": true,
+        "stationary_production_w_k": true,
+        "scaled_hessian_symmetry_j_k": true,
+        "scaled_entropy_maximum_eigenvalue_j_k": true,
+        "scaled_mobility_identity_s_inverse": true,
+        "scaled_dissipation_symmetry_w_k": true,
+        "scaled_dissipation_maximum_eigenvalue_w_k": true,
+        "scaled_spatial_operator_s_inverse": true,
+        "spectral_real_difference_s_inverse": true,
+        "spectral_imaginary_s_inverse": true,
+        "maximum_growth_rate_s_inverse": true,
+        "expected_nullity": true
+      }
+    },
+    {
+      "inventory_name": "limited_carbon",
+      "temperature_k": 1190.0,
+      "phases": [
+        "coexistence",
+        "graphite_exhausted"
+      ],
+      "scales": [
+        0.00175,
+        0.004,
+        0.002,
+        2132.790553862869
+      ],
+      "scaled_entropy_hessian": [
+        [
+          -0.3366290761344036,
+          0.6211317657216638,
+          -0.008193804315710583,
+          0.48816744233668574
+        ],
+        [
+          0.6211317657216637,
+          -1.4004792905936267,
+          0.023941953753286952,
+          -1.425959372938505
+        ],
+        [
+          -0.008193804315710608,
+          0.023941953753287032,
+          -0.017135400055542687,
+          0.030125946301985222
+        ],
+        [
+          0.48816744233668596,
+          -1.4259593729385056,
+          0.030125946301985156,
+          -1.792260969632665
+        ]
+      ],
+      "scaled_local_diffusion_matrix": [
+        [
+          2.0288652539869056e-05,
+          5.9033647292190146e-05,
+          -2.845545006447596e-06,
+          0.0001697442722455956
+        ],
+        [
+          -0.00032751255381474717,
+          0.0008015073441739647,
+          -1.480650287447553e-05,
+          0.000882070924702817
+        ],
+        [
+          -2.2594476565892787e-06,
+          6.596210955870469e-06,
+          8.17543492244193e-06,
+          8.273768904623027e-06
+        ],
+        [
+          -0.001520338990625291,
+          0.004427269507523284,
+          -9.313317106758798e-05,
+          0.005553476463434423
+        ]
+      ],
+      "entropy_hessian_eigenvalues": [
+        -3.243941679931586,
+        -0.28593836316984805,
+        -0.016624693314802957,
+        7.146143342634984e-17
+      ],
+      "entropy_dissipation_eigenvalues": [
+        -0.01943685188159758,
+        -4.5445391512440546e-05,
+        -1.3822549770242773e-07,
+        1.182420278831011e-18
+      ],
+      "actual_eigenvalue_real_parts": [
+        -0.02124351580543807,
+        -0.012444163446338438,
+        -0.003644811087238766,
+        -0.0005225514462461633,
+        -0.0003061035501733263,
+        -8.965565410049102e-05,
+        -2.8387126368143994e-05,
+        -1.6628793629659837e-05,
+        -4.870460891175655e-06,
+        -3.1817984338591097e-19,
+        -3.1817984338591097e-19,
+        -1.718338646660848e-19,
+        -1.0400503746055765e-19,
+        2.5128328712999124e-20,
+        8.051048262880018e-20,
+        4.354374771755597e-19
+      ],
+      "expected_eigenvalue_real_parts": [
+        -0.02124351580543806,
+        -0.01244416344633841,
+        -0.0036448110872387626,
+        -0.0005225514462461618,
+        -0.0003061035501733262,
+        -8.965565410049066e-05,
+        -2.8387126368144045e-05,
+        -1.6628793629659878e-05,
+        -4.870460891175715e-06,
+        -0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        1.4654370488894468e-20,
+        5.003315047122354e-20,
+        8.541193045355262e-20
+      ],
+      "expected_nullity": 7,
+      "observed_nullity": 7,
+      "errors": {
+        "stationary_inventory_rate_mol_s": 0.0,
+        "stationary_energy_rate_w": 0.0,
+        "stationary_production_w_k": 0.0,
+        "scaled_hessian_symmetry_j_k": 6.661338147750939e-16,
+        "scaled_entropy_maximum_eigenvalue_j_k": 7.146143342634984e-17,
+        "scaled_mobility_identity_s_inverse": 8.673617379884035e-19,
+        "scaled_dissipation_symmetry_w_k": 3.469446951953614e-18,
+        "scaled_dissipation_maximum_eigenvalue_w_k": 1.182420278831011e-18,
+        "scaled_spatial_operator_s_inverse": 0.0,
+        "spectral_real_difference_s_inverse": 2.7755575615628914e-17,
+        "spectral_imaginary_s_inverse": 5.068540172622313e-19,
+        "maximum_growth_rate_s_inverse": 4.354374771755597e-19
+      },
+      "within_budgets": {
+        "stationary_inventory_rate_mol_s": true,
+        "stationary_energy_rate_w": true,
+        "stationary_production_w_k": true,
+        "scaled_hessian_symmetry_j_k": true,
+        "scaled_entropy_maximum_eigenvalue_j_k": true,
+        "scaled_mobility_identity_s_inverse": true,
+        "scaled_dissipation_symmetry_w_k": true,
+        "scaled_dissipation_maximum_eigenvalue_w_k": true,
+        "scaled_spatial_operator_s_inverse": true,
+        "spectral_real_difference_s_inverse": true,
+        "spectral_imaginary_s_inverse": true,
+        "maximum_growth_rate_s_inverse": true,
+        "expected_nullity": true
+      }
+    },
+    {
+      "inventory_name": "coupled_carbon",
+      "temperature_k": 350.0,
+      "phases": [
+        "calcite",
+        "graphite_present"
+      ],
+      "scales": [
+        0.00225,
+        0.004,
+        0.002,
+        54.70166877256843
+      ],
+      "scaled_entropy_hessian": [
+        [
+          -6.265516460876739e-05,
+          0.04517912142628675,
+          0.0001563269484601609,
+          0.0031292524559774987
+        ],
+        [
+          0.0451791214262919,
+          -32.65041535473553,
+          -0.11559344364480524,
+          -2.2566688795916425
+        ],
+        [
+          0.00015632694846017716,
+          -0.11559344364480395,
+          -0.017039119988212156,
+          -0.008005918117923857
+        ],
+        [
+          0.0031292524559778743,
+          -2.256668879591643,
+          -0.008005918117923934,
+          -0.1562904822073384
+        ]
+      ],
+      "scaled_local_diffusion_matrix": [
+        [
+          -4.618921148614285e-06,
+          0.00337719772314516,
+          1.18246567103578e-05,
+          0.000230824095150152
+        ],
+        [
+          -2.5357244519728133e-05,
+          0.01836448958333355,
+          6.488438393926887e-05,
+          0.0012666902424533259
+        ],
+        [
+          -1.6448946913763438e-07,
+          0.00012005094673656588,
+          8.74041748528033e-06,
+          8.314509999939754e-06
+        ],
+        [
+          -0.0012599455366619319,
+          0.9080494943533332,
+          0.0032238331368809295,
+          0.06292636219517972
+        ]
+      ],
+      "entropy_hessian_eigenvalues": [
+        -32.80686095806442,
+        -0.016629682132704576,
+        -0.0003169718985814118,
+        8.478328994807417e-20
+      ],
+      "entropy_dissipation_eigenvalues": [
+        -2.661367567862821,
+        -1.383323957457763e-07,
+        -2.106646557572642e-08,
+        -8.503416697045124e-22
+      ],
+      "actual_eigenvalue_real_parts": [
+        -0.27730326380129433,
+        -0.16244049104447417,
+        -0.04757771828765381,
+        -0.0002267493368826766,
+        -0.0001328266862867634,
+        -3.890403569085656e-05,
+        -2.838716957383204e-05,
+        -1.6628818938966466e-05,
+        -4.870468304100924e-06,
+        -4.9437220520817604e-18,
+        -4.9437220520817604e-18,
+        -4.457288253775284e-18,
+        -3.0379134591159085e-20,
+        -5.296330453706824e-21,
+        2.6792037669512072e-21,
+        6.986269074910149e-19
+      ],
+      "expected_eigenvalue_real_parts": [
+        -0.2773032638012944,
+        -0.16244049104447408,
+        -0.047577718287653815,
+        -0.0002267493368826873,
+        -0.00013282668628677234,
+        -3.890403569085742e-05,
+        -2.8387169573831845e-05,
+        -1.662881893896582e-05,
+        -4.870468304099799e-06,
+        -4.667087077408026e-19,
+        -2.7339163131694104e-19,
+        -8.007455489307954e-20,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0
+      ],
+      "expected_nullity": 7,
+      "observed_nullity": 7,
+      "errors": {
+        "stationary_inventory_rate_mol_s": 0.0,
+        "stationary_energy_rate_w": 0.0,
+        "stationary_production_w_k": 0.0,
+        "scaled_hessian_symmetry_j_k": 5.1486592766991635e-15,
+        "scaled_entropy_maximum_eigenvalue_j_k": 8.478328994807417e-20,
+        "scaled_mobility_identity_s_inverse": 1.3877787807814457e-17,
+        "scaled_dissipation_symmetry_w_k": 4.349819116011844e-16,
+        "scaled_dissipation_maximum_eigenvalue_w_k": -8.503416697045124e-22,
+        "scaled_spatial_operator_s_inverse": 0.0,
+        "spectral_real_difference_s_inverse": 8.326672684688674e-17,
+        "spectral_imaginary_s_inverse": 5.191040731328929e-18,
+        "maximum_growth_rate_s_inverse": 6.986269074910149e-19
+      },
+      "within_budgets": {
+        "stationary_inventory_rate_mol_s": true,
+        "stationary_energy_rate_w": true,
+        "stationary_production_w_k": true,
+        "scaled_hessian_symmetry_j_k": true,
+        "scaled_entropy_maximum_eigenvalue_j_k": true,
+        "scaled_mobility_identity_s_inverse": true,
+        "scaled_dissipation_symmetry_w_k": true,
+        "scaled_dissipation_maximum_eigenvalue_w_k": true,
+        "scaled_spatial_operator_s_inverse": true,
+        "spectral_real_difference_s_inverse": true,
+        "spectral_imaginary_s_inverse": true,
+        "maximum_growth_rate_s_inverse": true,
+        "expected_nullity": true
+      }
+    },
+    {
+      "inventory_name": "coupled_carbon",
+      "temperature_k": 900.0,
+      "phases": [
+        "calcite",
+        "graphite_present"
+      ],
+      "scales": [
+        0.00225,
+        0.004,
+        0.002,
+        348.80745794139256
+      ],
+      "scaled_entropy_hessian": [
+        [
+          -0.0015048152273521502,
+          0.0503601420071292,
+          -0.0014959073714400737,
+          0.02414977229811412
+        ],
+        [
+          0.05036014200712905,
+          -1.759811484341335,
+          0.04993760536734157,
+          -0.8082678434904647
+        ],
+        [
+          -0.00149590737144007,
+          0.04993760536734166,
+          -0.01810819536284607,
+          0.023943159638352526
+        ],
+        [
+          0.024149772298114033,
+          -0.8082678434904644,
+          0.023943159638352533,
+          -0.38756384215710327
+        ]
+      ],
+      "scaled_local_diffusion_matrix": [
+        [
+          -4.224951664960308e-06,
+          0.00019094810463875713,
+          -4.19121652848168e-06,
+          6.785081378458403e-05
+        ],
+        [
+          -2.8492554626121726e-05,
+          0.0010372176971984266,
+          -2.8255500874216373e-05,
+          0.0004573381748528825
+        ],
+        [
+          -5.160525774968541e-07,
+          1.7336176589717233e-05,
+          7.800905586256035e-06,
+          8.313626924625523e-06
+        ],
+        [
+          -0.0016094892939831356,
+          0.053784369243526545,
+          -0.0015948444646178444,
+          0.025829560587265064
+        ]
+      ],
+      "entropy_hessian_eigenvalues": [
+        -2.1368158937803488,
+        -0.016831196054211087,
+        -0.01334124725407696,
+        -1.4234748921805236e-18
+      ],
+      "entropy_dissipation_eigenvalues": [
+        -0.0557441695999073,
+        -1.1405985116422288e-06,
+        -1.376822289289918e-07,
+        -6.218788414380924e-21
+      ],
+      "actual_eigenvalue_real_parts": [
+        -0.09143298483434387,
+        -0.05356020246770516,
+        -0.015687420101066368,
+        -0.00027975589998324404,
+        -0.00016387721205629195,
+        -4.799852412934175e-05,
+        -2.8387132135515655e-05,
+        -1.6628797008107838e-05,
+        -4.870461880700061e-06,
+        -1.971913033169262e-19,
+        -1.971913033169262e-19,
+        -1.946507900157129e-20,
+        1.1221038805898719e-20,
+        4.391016525935472e-20,
+        6.87313532976647e-19,
+        1.2223448683746252e-18
+      ],
+      "expected_eigenvalue_real_parts": [
+        -0.09143298483434405,
+        -0.05356020246770522,
+        -0.015687420101066402,
+        -0.0002797558999832409,
+        -0.00016387721205629138,
+        -4.79985241293419e-05,
+        -2.8387132135515726e-05,
+        -1.662879700810799e-05,
+        -4.870461880700257e-06,
+        -0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        2.0851021298726542e-21,
+        7.118983970744243e-21,
+        1.2152865811615834e-20
+      ],
+      "expected_nullity": 7,
+      "observed_nullity": 7,
+      "errors": {
+        "stationary_inventory_rate_mol_s": 0.0,
+        "stationary_energy_rate_w": 0.0,
+        "stationary_production_w_k": 0.0,
+        "scaled_hessian_symmetry_j_k": 2.220446049250313e-16,
+        "scaled_entropy_maximum_eigenvalue_j_k": -1.4234748921805236e-18,
+        "scaled_mobility_identity_s_inverse": 6.51860131618619e-19,
+        "scaled_dissipation_symmetry_w_k": 1.0408340855860843e-17,
+        "scaled_dissipation_maximum_eigenvalue_w_k": -6.218788414380924e-21,
+        "scaled_spatial_operator_s_inverse": 0.0,
+        "spectral_real_difference_s_inverse": 1.8041124150158794e-16,
+        "spectral_imaginary_s_inverse": 3.3002104061173174e-19,
+        "maximum_growth_rate_s_inverse": 1.2223448683746252e-18
+      },
+      "within_budgets": {
+        "stationary_inventory_rate_mol_s": true,
+        "stationary_energy_rate_w": true,
+        "stationary_production_w_k": true,
+        "scaled_hessian_symmetry_j_k": true,
+        "scaled_entropy_maximum_eigenvalue_j_k": true,
+        "scaled_mobility_identity_s_inverse": true,
+        "scaled_dissipation_symmetry_w_k": true,
+        "scaled_dissipation_maximum_eigenvalue_w_k": true,
+        "scaled_spatial_operator_s_inverse": true,
+        "spectral_real_difference_s_inverse": true,
+        "spectral_imaginary_s_inverse": true,
+        "maximum_growth_rate_s_inverse": true,
+        "expected_nullity": true
+      }
+    },
+    {
+      "inventory_name": "coupled_carbon",
+      "temperature_k": 1000.0,
+      "phases": [
+        "calcite",
+        "graphite_present"
+      ],
+      "scales": [
+        0.00225,
+        0.004,
+        0.002,
+        470.5837051230571
+      ],
+      "scaled_entropy_hessian": [
+        [
+          -0.0014934500983073357,
+          0.03686509097929159,
+          -0.001488326089012559,
+          0.02651023740905125
+        ],
+        [
+          0.036865090979291804,
+          -0.9984509529416777,
+          0.03665060237444523,
+          -0.654486269491843
+        ],
+        [
+          -0.0014883260890125696,
+          0.0366506023744453,
+          -0.01810434323788078,
+          0.026348872653666307
+        ],
+        [
+          0.026510237409051503,
+          -0.6544862694918434,
+          0.026348872653666314,
+          -0.4705837051230567
+        ]
+      ],
+      "scaled_local_diffusion_matrix": [
+        [
+          -9.174583913778406e-07,
+          8.153675401198557e-05,
+          -9.15343242976185e-07,
+          1.6348085436811637e-05
+        ],
+        [
+          -1.896856114634108e-05,
+          0.0005676643527996333,
+          -1.8861600472277053e-05,
+          0.0003368163300672324
+        ],
+        [
+          -4.663320012056293e-07,
+          1.1559470287356715e-05,
+          7.849044716860401e-06,
+          8.31308318703294e-06
+        ],
+        [
+          -0.0012015827878078817,
+          0.0295930838306882,
+          -0.0011935050944623658,
+          0.02132924530290429
+        ]
+      ],
+      "entropy_hessian_eigenvalues": [
+        -1.4430784425478476,
+        -0.02902401382246194,
+        -0.01652999503061222,
+        -8.934236943763392e-19
+      ],
+      "entropy_dissipation_eigenvalues": [
+        -0.030250343379455622,
+        -2.9568490470917514e-06,
+        -1.378174025405207e-07,
+        -1.9920553195557638e-20
+      ],
+      "actual_eigenvalue_real_parts": [
+        -0.07442057546756278,
+        -0.04359456378928784,
+        -0.012768552111012903,
+        -0.00033542923829009647,
+        -0.00019648989857386204,
+        -5.7550558857627137e-05,
+        -2.8387130751126686e-05,
+        -1.6628796197151633e-05,
+        -4.8704616431764565e-06,
+        -1.2512898212467178e-19,
+        -9.441097153055197e-21,
+        -9.441097153055197e-21,
+        7.441232763370724e-21,
+        3.470039980163878e-19,
+        3.470039980163878e-19,
+        2.08847362534383e-18
+      ],
+      "expected_eigenvalue_real_parts": [
+        -0.07442057546756276,
+        -0.04359456378928782,
+        -0.012768552111012889,
+        -0.00033542923829009847,
+        -0.000196489898573863,
+        -5.7550558857627536e-05,
+        -2.8387130751126758e-05,
+        -1.6628796197151707e-05,
+        -4.8704616431766615e-06,
+        -0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        1.827371506381133e-20,
+        6.239036580580617e-20,
+        1.0650701654780103e-19
+      ],
+      "expected_nullity": 7,
+      "observed_nullity": 7,
+      "errors": {
+        "stationary_inventory_rate_mol_s": 0.0,
+        "stationary_energy_rate_w": 0.0,
+        "stationary_production_w_k": 0.0,
+        "scaled_hessian_symmetry_j_k": 4.440892098500626e-16,
+        "scaled_entropy_maximum_eigenvalue_j_k": -8.934236943763392e-19,
+        "scaled_mobility_identity_s_inverse": 7.730779386295124e-18,
+        "scaled_dissipation_symmetry_w_k": 1.214306433183765e-17,
+        "scaled_dissipation_maximum_eigenvalue_w_k": -1.9920553195557638e-20,
+        "scaled_spatial_operator_s_inverse": 0.0,
+        "spectral_real_difference_s_inverse": 2.7755575615628914e-17,
+        "spectral_imaginary_s_inverse": 4.2992793098322407e-19,
+        "maximum_growth_rate_s_inverse": 2.08847362534383e-18
+      },
+      "within_budgets": {
+        "stationary_inventory_rate_mol_s": true,
+        "stationary_energy_rate_w": true,
+        "stationary_production_w_k": true,
+        "scaled_hessian_symmetry_j_k": true,
+        "scaled_entropy_maximum_eigenvalue_j_k": true,
+        "scaled_mobility_identity_s_inverse": true,
+        "scaled_dissipation_symmetry_w_k": true,
+        "scaled_dissipation_maximum_eigenvalue_w_k": true,
+        "scaled_spatial_operator_s_inverse": true,
+        "spectral_real_difference_s_inverse": true,
+        "spectral_imaginary_s_inverse": true,
+        "maximum_growth_rate_s_inverse": true,
+        "expected_nullity": true
+      }
+    },
+    {
+      "inventory_name": "coupled_carbon",
+      "temperature_k": 1100.0,
+      "phases": [
+        "coexistence",
+        "graphite_present"
+      ],
+      "scales": [
+        0.00225,
+        0.004,
+        0.002,
+        3799.273901601403
+      ],
+      "scaled_entropy_hessian": [
+        [
+          -0.00023603992565258343,
+          0.008074889561252274,
+          -0.0002396918648165503,
+          0.02855261062617228
+        ],
+        [
+          0.008074889561252243,
+          -0.2762420062455814,
+          0.008054189989164596,
+          -0.976784624279413
+        ],
+        [
+          -0.00023969186481655056,
+          0.008054189989164589,
+          -0.016864424592636287,
+          0.028514423631529187
+        ],
+        [
+          0.02855261062617217,
+          -0.9767846242794127,
+          0.02851442363152915,
+          -3.4538853650921792
+        ]
+      ],
+      "scaled_local_diffusion_matrix": [
+        [
+          -2.256888550042398e-06,
+          7.720822795128197e-05,
+          -2.2441352107867728e-06,
+          0.00027300629220627123
+        ],
+        [
+          -6.13762876268287e-06,
+          0.00020996836091380686,
+          -6.115637548656048e-06,
+          0.0007424427069309719
+        ],
+        [
+          -6.632129476466873e-08,
+          2.341684639199395e-06,
+          8.246294053975336e-06,
+          8.26262953292905e-06
+        ],
+        [
+          -2.3700263835123477e-05,
+          0.0008107868097564887,
+          -2.3561544333940017e-05,
+          0.0028669211273916633
+        ]
+      ],
+      "entropy_hessian_eigenvalues": [
+        -3.730599824402758,
+        -0.016628011453293196,
+        -1.7069860438523364e-19,
+        3.408647821866268e-16
+      ],
+      "entropy_dissipation_eigenvalues": [
+        -0.011469963857106538,
+        -1.3825197723085307e-07,
+        -9.556728061519629e-23,
+        1.2034566739971446e-18
+      ],
+      "actual_eigenvalue_real_parts": [
+        -0.01049721979981626,
+        -0.006149128991520982,
+        -0.0018010381832257005,
+        -2.838713058157093e-05,
+        -1.662879609782821e-05,
+        -4.870461614085499e-06,
+        -2.3937636057621224e-19,
+        -1.2219719799136233e-19,
+        -8.543772568326767e-20,
+        -1.0287359666279778e-20,
+        -3.0840851870181143e-21,
+        -1.2603256245768608e-21,
+        -1.2603256245768608e-21,
+        4.115147679017531e-21,
+        1.0113204147276539e-19,
+        2.0683101611774102e-19
+      ],
+      "expected_eigenvalue_real_parts": [
+        -0.010497219799816262,
+        -0.00614912899152098,
+        -0.0018010381832256988,
+        -2.8387130581570938e-05,
+        -1.6628796097828207e-05,
+        -4.870461614085482e-06,
+        -0.0,
+        -0.0,
+        0.0,
+        0.0,
+        6.066687402622162e-21,
+        6.066687402622162e-21,
+        2.071296640871059e-20,
+        2.071296640871059e-20,
+        3.535924541479902e-20,
+        3.535924541479902e-20
+      ],
+      "expected_nullity": 10,
+      "observed_nullity": 10,
+      "errors": {
+        "stationary_inventory_rate_mol_s": 0.0,
+        "stationary_energy_rate_w": 0.0,
+        "stationary_production_w_k": 0.0,
+        "scaled_hessian_symmetry_j_k": 3.3306690738754696e-16,
+        "scaled_entropy_maximum_eigenvalue_j_k": 3.408647821866268e-16,
+        "scaled_mobility_identity_s_inverse": 4.336808689942018e-19,
+        "scaled_dissipation_symmetry_w_k": 1.3010426069826053e-18,
+        "scaled_dissipation_maximum_eigenvalue_w_k": 1.2034566739971446e-18,
+        "scaled_spatial_operator_s_inverse": 0.0,
+        "spectral_real_difference_s_inverse": 1.734723475976807e-18,
+        "spectral_imaginary_s_inverse": 2.1847537595224065e-20,
+        "maximum_growth_rate_s_inverse": 2.0683101611774102e-19
+      },
+      "within_budgets": {
+        "stationary_inventory_rate_mol_s": true,
+        "stationary_energy_rate_w": true,
+        "stationary_production_w_k": true,
+        "scaled_hessian_symmetry_j_k": true,
+        "scaled_entropy_maximum_eigenvalue_j_k": true,
+        "scaled_mobility_identity_s_inverse": true,
+        "scaled_dissipation_symmetry_w_k": true,
+        "scaled_dissipation_maximum_eigenvalue_w_k": true,
+        "scaled_spatial_operator_s_inverse": true,
+        "spectral_real_difference_s_inverse": true,
+        "spectral_imaginary_s_inverse": true,
+        "maximum_growth_rate_s_inverse": true,
+        "expected_nullity": true
+      }
+    },
+    {
+      "inventory_name": "coupled_carbon",
+      "temperature_k": 1150.0,
+      "phases": [
+        "coexistence",
+        "graphite_exhausted"
+      ],
+      "scales": [
+        0.00225,
+        0.004,
+        0.002,
+        1364.1546352299733
+      ],
+      "scaled_entropy_hessian": [
+        [
+          -0.4697312007278261,
+          0.9135317747392608,
+          -0.016120705270668247,
+          0.65125827819475
+        ],
+        [
+          0.9135317747392608,
+          -1.9410291212517787,
+          0.036700829791303624,
+          -1.482367671100261
+        ],
+        [
+          -0.01612070527066825,
+          0.03670082979130367,
+          -0.017357201370771073,
+          0.029390256343096516
+        ],
+        [
+          0.6512582781947507,
+          -1.4823676711002625,
+          0.029390256343096544,
+          -1.1862214219391065
+        ]
+      ],
+      "scaled_local_diffusion_matrix": [
+        [
+          -5.301685819068539e-05,
+          0.000151448691649601,
+          -3.387492331049866e-06,
+          0.00013696350164470688
+        ],
+        [
+          -0.0005399566275504992,
+          0.001177190723484107,
+          -2.266131130295965e-05,
+          0.0009154470104924284
+        ],
+        [
+          -4.5589810126370535e-06,
+          1.0373200384039479e-05,
+          8.109110111198888e-06,
+          8.290105805537548e-06
+        ],
+        [
+          -0.004608982529078444,
+          0.01048368186627583,
+          -0.00020744595017529104,
+          0.008385622607072237
+        ]
+      ],
+      "entropy_hessian_eigenvalues": [
+        -3.5077657556306256,
+        -0.08995277723329816,
+        -0.016620412425559353,
+        3.148564218926398e-17
+      ],
+      "entropy_dissipation_eigenvalues": [
+        -0.032373814936322735,
+        -4.680598469948812e-06,
+        -1.381966657925158e-07,
+        -5.476051575775628e-18
+      ],
+      "actual_eigenvalue_real_parts": [
+        -0.03229442316153429,
+        -0.018917635099011017,
+        -0.005540847036487682,
+        -0.00017335203627641033,
+        -0.00010154727178572879,
+        -2.9742507295046574e-05,
+        -2.8387127268377946e-05,
+        -1.6628794157004685e-05,
+        -4.870461045631399e-06,
+        -3.4821341999632566e-19,
+        -2.1183052502312006e-19,
+        -2.1183052502312006e-19,
+        4.0663215416044045e-20,
+        4.638584516487075e-19,
+        7.736795314200193e-19,
+        7.736795314200193e-19
+      ],
+      "expected_eigenvalue_real_parts": [
+        -0.03229442316153433,
+        -0.018917635099011003,
+        -0.005540847036487678,
+        -0.0001733520362764109,
+        -0.00010154727178572872,
+        -2.974250729504657e-05,
+        -2.838712726837796e-05,
+        -1.6628794157004695e-05,
+        -4.870461045631436e-06,
+        -6.229215718751201e-19,
+        -3.648990085096786e-19,
+        -1.0687644514423715e-19,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0
+      ],
+      "expected_nullity": 7,
+      "observed_nullity": 7,
+      "errors": {
+        "stationary_inventory_rate_mol_s": 0.0,
+        "stationary_energy_rate_w": 0.0,
+        "stationary_production_w_k": 0.0,
+        "scaled_hessian_symmetry_j_k": 1.5543122344752192e-15,
+        "scaled_entropy_maximum_eigenvalue_j_k": 3.148564218926398e-17,
+        "scaled_mobility_identity_s_inverse": 1.734723475976807e-18,
+        "scaled_dissipation_symmetry_w_k": 1.5612511283791264e-17,
+        "scaled_dissipation_maximum_eigenvalue_w_k": -5.476051575775628e-18,
+        "scaled_spatial_operator_s_inverse": 0.0,
+        "spectral_real_difference_s_inverse": 4.163336342344337e-17,
+        "spectral_imaginary_s_inverse": 3.716456666262684e-19,
+        "maximum_growth_rate_s_inverse": 7.736795314200193e-19
+      },
+      "within_budgets": {
+        "stationary_inventory_rate_mol_s": true,
+        "stationary_energy_rate_w": true,
+        "stationary_production_w_k": true,
+        "scaled_hessian_symmetry_j_k": true,
+        "scaled_entropy_maximum_eigenvalue_j_k": true,
+        "scaled_mobility_identity_s_inverse": true,
+        "scaled_dissipation_symmetry_w_k": true,
+        "scaled_dissipation_maximum_eigenvalue_w_k": true,
+        "scaled_spatial_operator_s_inverse": true,
+        "spectral_real_difference_s_inverse": true,
+        "spectral_imaginary_s_inverse": true,
+        "maximum_growth_rate_s_inverse": true,
+        "expected_nullity": true
+      }
+    },
+    {
+      "inventory_name": "coupled_carbon",
+      "temperature_k": 1190.0,
+      "phases": [
+        "lime",
+        "graphite_exhausted"
+      ],
+      "scales": [
+        0.00225,
+        0.004,
+        0.002,
+        213.0996798307543
+      ],
+      "scaled_entropy_hessian": [
+        [
+          -0.7787064680114582,
+          1.857473892175409,
+          -0.055466609728384485,
+          0.330600111055574
+        ],
+        [
+          1.8574738921754075,
+          -4.769665745987506,
+          0.15066990630109142,
+          -0.8980445713159069
+        ],
+        [
+          -0.05546660972838415,
+          0.15066990630109098,
+          -0.021669745969617057,
+          0.030044464111231173
+        ],
+        [
+          0.33060011105557346,
+          -0.8980445713159065,
+          0.030044464111231243,
+          -0.17907536120231438
+        ]
+      ],
+      "scaled_local_diffusion_matrix": [
+        [
+          -2.7288602329629855e-05,
+          9.3835428065603e-05,
+          -2.479949056037686e-06,
+          1.478135111111115e-05
+        ],
+        [
+          -0.001009836871661746,
+          0.002604512952738788,
+          -8.157178199129594e-05,
+          0.00048619593512893384
+        ],
+        [
+          -1.534983881041683e-05,
+          4.169641495356857e-05,
+          6.919538655978802e-06,
+          8.314510000000036e-06
+        ],
+        [
+          -0.1032415318209424,
+          0.2804495400885921,
+          -0.00938345778160968,
+          0.055941558900712944
+        ]
+      ],
+      "entropy_hessian_eigenvalues": [
+        -5.671889942372748,
+        -0.05792803585507754,
+        -0.016578177671956153,
+        -0.0027211652711174174
+      ],
+      "entropy_dissipation_eigenvalues": [
+        -0.3108200349144239,
+        -6.812231898141241e-06,
+        -1.3877640027755638e-07,
+        -5.2068950466366585e-08
+      ],
+      "actual_eigenvalue_real_parts": [
+        -0.19924278501068854,
+        -0.11671372125427455,
+        -0.03418465749786055,
+        -0.0004983086886649932,
+        -0.00029190247157160156,
+        -8.549625447820755e-05,
+        -4.976739179841695e-05,
+        -2.9153063151578307e-05,
+        -2.838712112543363e-05,
+        -1.6628790558551295e-05,
+        -8.538734504738229e-06,
+        -4.870459991668889e-06,
+        -1.1918245270323624e-18,
+        -7.669900071218558e-20,
+        -7.669900071218558e-20,
+        2.1149723268492692e-19
+      ],
+      "expected_eigenvalue_real_parts": [
+        -0.1992427850106884,
+        -0.11671372125427444,
+        -0.0341846574978605,
+        -0.0004983086886649903,
+        -0.0002919024715715991,
+        -8.549625447820798e-05,
+        -4.976739179841744e-05,
+        -2.9153063151577396e-05,
+        -2.838712112543367e-05,
+        -1.6628790558551244e-05,
+        -8.538734504737356e-06,
+        -4.870459991668822e-06,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0
+      ],
+      "expected_nullity": 4,
+      "observed_nullity": 4,
+      "errors": {
+        "stationary_inventory_rate_mol_s": 0.0,
+        "stationary_energy_rate_w": 0.0,
+        "stationary_production_w_k": 0.0,
+        "scaled_hessian_symmetry_j_k": 1.5543122344752192e-15,
+        "scaled_entropy_maximum_eigenvalue_j_k": -0.0027211652711174174,
+        "scaled_mobility_identity_s_inverse": 1.2874900798265365e-19,
+        "scaled_dissipation_symmetry_w_k": 1.249000902703301e-16,
+        "scaled_dissipation_maximum_eigenvalue_w_k": -5.2068950466366585e-08,
+        "scaled_spatial_operator_s_inverse": 0.0,
+        "spectral_real_difference_s_inverse": 1.3877787807814457e-16,
+        "spectral_imaginary_s_inverse": 5.15712936114847e-19,
+        "maximum_growth_rate_s_inverse": 2.1149723268492692e-19
+      },
+      "within_budgets": {
+        "stationary_inventory_rate_mol_s": true,
+        "stationary_energy_rate_w": true,
+        "stationary_production_w_k": true,
+        "scaled_hessian_symmetry_j_k": true,
+        "scaled_entropy_maximum_eigenvalue_j_k": true,
+        "scaled_mobility_identity_s_inverse": true,
+        "scaled_dissipation_symmetry_w_k": true,
+        "scaled_dissipation_maximum_eigenvalue_w_k": true,
+        "scaled_spatial_operator_s_inverse": true,
+        "spectral_real_difference_s_inverse": true,
+        "spectral_imaginary_s_inverse": true,
+        "maximum_growth_rate_s_inverse": true,
+        "expected_nullity": true
+      }
+    },
+    {
+      "inventory_name": "excess_carbon",
+      "temperature_k": 350.0,
+      "phases": [
+        "calcite",
+        "graphite_present"
+      ],
+      "scales": [
+        0.0035,
+        0.004,
+        0.002,
+        59.196056727966464
+      ],
+      "scaled_entropy_hessian": [
+        [
+          -0.00014009944081482345,
+          0.06494234504583674,
+          0.0002242430440710138,
+          0.00486772604263216
+        ],
+        [
+          0.06494234504583958,
+          -30.176522256314293,
+          -0.10681688506091566,
+          -2.25666887959178
+        ],
+        [
+          0.0002242430440710259,
+          -0.10681688506091852,
+          -0.01700798364992529,
+          -0.008005918117923784
+        ],
+        [
+          0.004867726042632371,
+          -2.256668879591781,
+          -0.008005918117923653,
+          -0.16913159065133185
+        ]
+      ],
+      "scaled_local_diffusion_matrix": [
+        [
+          -4.26803402866519e-06,
+          0.0020083852153735607,
+          7.024463853304193e-06,
+          0.0001483869183108756
+        ],
+        [
+          -3.6449291487485586e-05,
+          0.016975869268949804,
+          5.9958016130295034e-05,
+          0.001266690242453488
+        ],
+        [
+          -2.36210988224007e-07,
+          0.0001109360918230013,
+          8.708080982179205e-06,
+          8.31450999993988e-06
+        ],
+        [
+          -0.001673608241295498,
+          0.775360866689767,
+          0.002752917445241734,
+          0.05814875537540882
+        ]
+      ],
+      "entropy_hessian_eigenvalues": [
+        -30.345801239081766,
+        -0.01662968487356539,
+        -0.0003710061010251409,
+        -3.700140892902225e-21
+      ],
+      "entropy_dissipation_eigenvalues": [
+        -2.2746184328504166,
+        -1.383345982052846e-07,
+        -2.46594370673957e-08,
+        4.251708348522562e-21
+      ],
+      "actual_eigenvalue_real_parts": [
+        -0.2562515370237178,
+        -0.15010867500954253,
+        -0.04396581299536739,
+        -0.0002267474041935747,
+        -0.00013282555414370202,
+        -3.8903704093835796e-05,
+        -2.8387169572099727e-05,
+        -1.6628818937951192e-05,
+        -4.8704683038026816e-06,
+        -1.3724276532046535e-18,
+        7.205815851701784e-22,
+        7.205815851701784e-22,
+        1.5700546793347692e-20,
+        3.8040386088559057e-19,
+        3.8040386088559057e-19,
+        1.6792943943686879e-18
+      ],
+      "expected_eigenvalue_real_parts": [
+        -0.2562515370237179,
+        -0.1501086750095426,
+        -0.04396581299536739,
+        -0.00022674740419357516,
+        -0.0001328255541437023,
+        -3.8903704093829474e-05,
+        -2.8387169572099744e-05,
+        -1.662881893795118e-05,
+        -4.870468303802617e-06,
+        -2.707905404301795e-19,
+        -1.5862542602165922e-19,
+        -4.6460311613138954e-20,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0
+      ],
+      "expected_nullity": 7,
+      "observed_nullity": 7,
+      "errors": {
+        "stationary_inventory_rate_mol_s": 0.0,
+        "stationary_energy_rate_w": 0.0,
+        "stationary_production_w_k": 0.0,
+        "scaled_hessian_symmetry_j_k": 2.858824288409778e-15,
+        "scaled_entropy_maximum_eigenvalue_j_k": -3.700140892902225e-21,
+        "scaled_mobility_identity_s_inverse": 1.2291287657250296e-16,
+        "scaled_dissipation_symmetry_w_k": 2.0990154059319366e-16,
+        "scaled_dissipation_maximum_eigenvalue_w_k": 4.251708348522562e-21,
+        "scaled_spatial_operator_s_inverse": 0.0,
+        "spectral_real_difference_s_inverse": 1.1102230246251565e-16,
+        "spectral_imaginary_s_inverse": 8.721657103550952e-19,
+        "maximum_growth_rate_s_inverse": 1.6792943943686879e-18
+      },
+      "within_budgets": {
+        "stationary_inventory_rate_mol_s": true,
+        "stationary_energy_rate_w": true,
+        "stationary_production_w_k": true,
+        "scaled_hessian_symmetry_j_k": true,
+        "scaled_entropy_maximum_eigenvalue_j_k": true,
+        "scaled_mobility_identity_s_inverse": true,
+        "scaled_dissipation_symmetry_w_k": true,
+        "scaled_dissipation_maximum_eigenvalue_w_k": true,
+        "scaled_spatial_operator_s_inverse": true,
+        "spectral_real_difference_s_inverse": true,
+        "spectral_imaginary_s_inverse": true,
+        "maximum_growth_rate_s_inverse": true,
+        "expected_nullity": true
+      }
+    },
+    {
+      "inventory_name": "excess_carbon",
+      "temperature_k": 900.0,
+      "phases": [
+        "calcite",
+        "graphite_present"
+      ],
+      "scales": [
+        0.0035,
+        0.004,
+        0.002,
+        372.20371296141917
+      ],
+      "scaled_entropy_hessian": [
+        [
+          -0.003412395089302665,
+          0.0734135864840437,
+          -0.0021810855999574406,
+          0.03756631220913274
+        ],
+        [
+          0.07341358648404278,
+          -1.6538638937577042,
+          0.0467989974596,
+          -0.8082705875557649
+        ],
+        [
+          -0.0021810855999574025,
+          0.046798997459599985,
+          -0.01801521628464321,
+          0.023943159783942253
+        ],
+        [
+          0.037566312209132306,
+          -0.8082705875557641,
+          0.02394315978394233,
+          -0.4135596810682436
+        ]
+      ],
+      "scaled_local_diffusion_matrix": [
+        [
+          -3.959297563044605e-06,
+          0.00011703668584403556,
+          -2.5250371425871266e-06,
+          4.361955640121051e-05
+        ],
+        [
+          -4.153553488148374e-05,
+          0.000977272617864008,
+          -2.647968673579908e-05,
+          0.00045734126203545984
+        ],
+        [
+          -7.520942960652572e-07,
+          1.624637760696322e-05,
+          7.833190111379648e-06,
+          8.313626851830664e-06
+        ],
+        [
+          -0.0021987900952582904,
+          0.04723049024845255,
+          -0.0014005948139450947,
+          0.024205944158913188
+        ]
+      ],
+      "entropy_hessian_eigenvalues": [
+        -2.0571507530967352,
+        -0.016970136469108034,
+        -0.01473029663404988,
+        1.5951901932506847e-18
+      ],
+      "entropy_dissipation_eigenvalues": [
+        -0.05027949691059357,
+        -1.2693426177630371e-06,
+        -1.3776119812345634e-07,
+        -8.971849425864421e-20
+      ],
+      "actual_eigenvalue_real_parts": [
+        -0.08568596653873112,
+        -0.05019367709334145,
+        -0.014701387647951827,
+        -0.0002797528890728505,
+        -0.0001638754483058196,
+        -4.799800753878811e-05,
+        -2.8387132128242525e-05,
+        -1.6628797003847526e-05,
+        -4.8704618794525855e-06,
+        -1.8126080154637825e-18,
+        -4.453151437139928e-19,
+        -4.453151437139928e-19,
+        8.995862193720957e-21,
+        1.8879191599478678e-20,
+        1.5763256623819697e-19,
+        1.5763256623819697e-19
+      ],
+      "expected_eigenvalue_real_parts": [
+        -0.085685966538731,
+        -0.05019367709334141,
+        -0.014701387647951822,
+        -0.00027975288907285134,
+        -0.00016387544830582027,
+        -4.799800753878924e-05,
+        -2.838713212824249e-05,
+        -1.6628797003847428e-05,
+        -4.870461879452368e-06,
+        -5.476770482764138e-20,
+        -3.208217870798589e-20,
+        -9.396652588330397e-21,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0
+      ],
+      "expected_nullity": 7,
+      "observed_nullity": 7,
+      "errors": {
+        "stationary_inventory_rate_mol_s": 0.0,
+        "stationary_energy_rate_w": 0.0,
+        "stationary_production_w_k": 0.0,
+        "scaled_hessian_symmetry_j_k": 9.159339953157541e-16,
+        "scaled_entropy_maximum_eigenvalue_j_k": 1.5951901932506847e-18,
+        "scaled_mobility_identity_s_inverse": 3.469446951953614e-18,
+        "scaled_dissipation_symmetry_w_k": 2.0383000842727483e-17,
+        "scaled_dissipation_maximum_eigenvalue_w_k": -8.971849425864421e-20,
+        "scaled_spatial_operator_s_inverse": 0.0,
+        "spectral_real_difference_s_inverse": 1.1102230246251565e-16,
+        "spectral_imaginary_s_inverse": 2.007352951391069e-19,
+        "maximum_growth_rate_s_inverse": 1.5763256623819697e-19
+      },
+      "within_budgets": {
+        "stationary_inventory_rate_mol_s": true,
+        "stationary_energy_rate_w": true,
+        "stationary_production_w_k": true,
+        "scaled_hessian_symmetry_j_k": true,
+        "scaled_entropy_maximum_eigenvalue_j_k": true,
+        "scaled_mobility_identity_s_inverse": true,
+        "scaled_dissipation_symmetry_w_k": true,
+        "scaled_dissipation_maximum_eigenvalue_w_k": true,
+        "scaled_spatial_operator_s_inverse": true,
+        "spectral_real_difference_s_inverse": true,
+        "spectral_imaginary_s_inverse": true,
+        "maximum_growth_rate_s_inverse": true,
+        "expected_nullity": true
+      }
+    },
+    {
+      "inventory_name": "excess_carbon",
+      "temperature_k": 1000.0,
+      "phases": [
+        "calcite",
+        "graphite_present"
+      ],
+      "scales": [
+        0.0035,
+        0.004,
+        0.002,
+        497.6131736159757
+      ],
+      "scaled_entropy_hessian": [
+        [
+          -0.003417486383123514,
+          0.05423085357820851,
+          -0.0021897538252705706,
+          0.04123814649897309
+        ],
+        [
+          0.05423085357820837,
+          -0.9490225901735377,
+          0.03466039345028108,
+          -0.6544925398032063
+        ],
+        [
+          -0.002189753825270567,
+          0.034660393450281,
+          -0.01802420631948456,
+          0.02634887298631219
+        ],
+        [
+          0.04123814649897289,
+          -0.6544925398032061,
+          0.02634887298631217,
+          -0.49761317361597623
+        ]
+      ],
+      "scaled_local_diffusion_matrix": [
+        [
+          -8.676554305642739e-07,
+          5.162565573429312e-05,
+          -5.566138804061021e-07,
+          1.0512170961357935e-05
+        ],
+        [
+          -2.7903984589311205e-05,
+          0.0005422314307009961,
+          -1.7837587802407658e-05,
+          0.00033682338441684654
+        ],
+        [
+          -6.858345407479462e-07,
+          1.0931557517632638e-05,
+          7.874327971140273e-06,
+          8.313083020709944e-06
+        ],
+        [
+          -0.001671587948680208,
+          0.02646208221012866,
+          -0.0010673290523427288,
+          0.020170673567534332
+        ]
+      ],
+      "entropy_hessian_eigenvalues": [
+        -1.420265089336338,
+        -0.031264001348009274,
+        -0.016548365807775252,
+        3.3713143663666208e-18
+      ],
+      "entropy_dissipation_eigenvalues": [
+        -0.028183637250090283,
+        -3.18415996442121e-06,
+        -1.37866656887171e-07,
+        3.2230700909739304e-20
+      ],
+      "actual_eigenvalue_real_parts": [
+        -0.07037839296398685,
+        -0.04122670810028027,
+        -0.012075023236573739,
+        -0.0003354233428053997,
+        -0.000196486445078883,
+        -5.7549547352366516e-05,
+        -2.8387130743413388e-05,
+        -1.6628796192633254e-05,
+        -4.8704616418531285e-06,
+        4.024788003435584e-21,
+        1.7552119316883607e-20,
+        1.7552119316883607e-20,
+        5.208531503580027e-20,
+        5.208531503580027e-20,
+        3.270716178819971e-19,
+        1.085242581037905e-18
+      ],
+      "expected_eigenvalue_real_parts": [
+        -0.07037839296398687,
+        -0.0412267081002803,
+        -0.012075023236573732,
+        -0.0003354233428053996,
+        -0.00019648644507888315,
+        -5.754954735236673e-05,
+        -2.8387130743413347e-05,
+        -1.6628796192633295e-05,
+        -4.87046164185325e-06,
+        -4.3634868982197254e-20,
+        -2.556071445739806e-20,
+        -7.486559932598868e-21,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0
+      ],
+      "expected_nullity": 7,
+      "observed_nullity": 7,
+      "errors": {
+        "stationary_inventory_rate_mol_s": 0.0,
+        "stationary_energy_rate_w": 0.0,
+        "stationary_production_w_k": 0.0,
+        "scaled_hessian_symmetry_j_k": 2.220446049250313e-16,
+        "scaled_entropy_maximum_eigenvalue_j_k": 3.3713143663666208e-18,
+        "scaled_mobility_identity_s_inverse": 3.655428553725609e-18,
+        "scaled_dissipation_symmetry_w_k": 4.9873299934333204e-18,
+        "scaled_dissipation_maximum_eigenvalue_w_k": 3.2230700909739304e-20,
+        "scaled_spatial_operator_s_inverse": 0.0,
+        "spectral_real_difference_s_inverse": 2.7755575615628914e-17,
+        "spectral_imaginary_s_inverse": 3.715414694339745e-19,
+        "maximum_growth_rate_s_inverse": 1.085242581037905e-18
+      },
+      "within_budgets": {
+        "stationary_inventory_rate_mol_s": true,
+        "stationary_energy_rate_w": true,
+        "stationary_production_w_k": true,
+        "scaled_hessian_symmetry_j_k": true,
+        "scaled_entropy_maximum_eigenvalue_j_k": true,
+        "scaled_mobility_identity_s_inverse": true,
+        "scaled_dissipation_symmetry_w_k": true,
+        "scaled_dissipation_maximum_eigenvalue_w_k": true,
+        "scaled_spatial_operator_s_inverse": true,
+        "spectral_real_difference_s_inverse": true,
+        "spectral_imaginary_s_inverse": true,
+        "maximum_growth_rate_s_inverse": true,
+        "expected_nullity": true
+      }
+    },
+    {
+      "inventory_name": "excess_carbon",
+      "temperature_k": 1100.0,
+      "phases": [
+        "coexistence",
+        "graphite_present"
+      ],
+      "scales": [
+        0.0035,
+        0.004,
+        0.002,
+        3829.4521963147104
+      ],
+      "scaled_entropy_hessian": [
+        [
+          -0.0005666572997475979,
+          0.012461951832130337,
+          -0.00036996517513697007,
+          0.04441517208515979
+        ],
+        [
+          0.012461951832130284,
+          -0.2740650597620187,
+          0.007990638973752033,
+          -0.9767846242794114
+        ],
+        [
+          -0.00036996517513696557,
+          0.00799063897375208,
+          -0.016862569441080055,
+          0.02851442363950298
+        ],
+        [
+          0.04441517208515959,
+          -0.9767846242794114,
+          0.02851442363950285,
+          -3.4813201784679246
+        ]
+      ],
+      "scaled_local_diffusion_matrix": [
+        [
+          -2.239102946045905e-06,
+          4.9242717370650764e-05,
+          -1.4312392095661913e-06,
+          0.00017550404498974323
+        ],
+        [
+          -9.472183275203528e-06,
+          0.00020831368904555578,
+          -6.067332326135812e-06,
+          0.0007424427069309677
+        ],
+        [
+          -1.023287131901e-07,
+          2.323270485591319e-06,
+          8.246831621258121e-06,
+          8.262629528942186e-06
+        ],
+        [
+          -3.6288298621325336e-05,
+          0.0007980582264256329,
+          -2.3190813675403612e-05,
+          0.0028443281333373903
+        ]
+      ],
+      "entropy_hessian_eigenvalues": [
+        -3.7561864380122634,
+        -0.016628026958505907,
+        -5.898924164656018e-17,
+        5.7797105929196845e-18
+      ],
+      "entropy_dissipation_eigenvalues": [
+        -0.011457621704495944,
+        -1.3825210520024907e-07,
+        -3.907714866538347e-18,
+        1.734340336510942e-21
+      ],
+      "actual_eigenvalue_real_parts": [
+        -0.010414495649194031,
+        -0.006100670306022265,
+        -0.0017868449628505138,
+        -2.838713057512442e-05,
+        -1.662879609405192e-05,
+        -4.87046161297942e-06,
+        -1.379590795247234e-19,
+        -7.334277117398772e-20,
+        -3.1194531358818904e-20,
+        -3.1194531358818904e-20,
+        -1.2008164481453369e-21,
+        -5.892303556219041e-22,
+        6.805295577830566e-21,
+        1.4083730235409654e-20,
+        5.0445750606376076e-20,
+        5.0445750606376076e-20
+      ],
+      "expected_eigenvalue_real_parts": [
+        -0.010414495649194017,
+        -0.006100670306022264,
+        -0.001786844962850511,
+        -2.8387130575124438e-05,
+        -1.6628796094051935e-05,
+        -4.870461612979437e-06,
+        -3.666704886784638e-20,
+        -2.147905993458737e-20,
+        -6.291071001328359e-21,
+        -0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        1.790285444763766e-20,
+        6.112416846031598e-20,
+        1.0434548247299432e-19
+      ],
+      "expected_nullity": 10,
+      "observed_nullity": 10,
+      "errors": {
+        "stationary_inventory_rate_mol_s": 0.0,
+        "stationary_energy_rate_w": 0.0,
+        "stationary_production_w_k": 0.0,
+        "scaled_hessian_symmetry_j_k": 2.0122792321330962e-16,
+        "scaled_entropy_maximum_eigenvalue_j_k": 5.7797105929196845e-18,
+        "scaled_mobility_identity_s_inverse": 4.336808689942018e-19,
+        "scaled_dissipation_symmetry_w_k": 6.2341624917916505e-19,
+        "scaled_dissipation_maximum_eigenvalue_w_k": 1.734340336510942e-21,
+        "scaled_spatial_operator_s_inverse": 0.0,
+        "spectral_real_difference_s_inverse": 1.3877787807814457e-17,
+        "spectral_imaginary_s_inverse": 1.263439987722259e-19,
+        "maximum_growth_rate_s_inverse": 5.0445750606376076e-20
+      },
+      "within_budgets": {
+        "stationary_inventory_rate_mol_s": true,
+        "stationary_energy_rate_w": true,
+        "stationary_production_w_k": true,
+        "scaled_hessian_symmetry_j_k": true,
+        "scaled_entropy_maximum_eigenvalue_j_k": true,
+        "scaled_mobility_identity_s_inverse": true,
+        "scaled_dissipation_symmetry_w_k": true,
+        "scaled_dissipation_maximum_eigenvalue_w_k": true,
+        "scaled_spatial_operator_s_inverse": true,
+        "spectral_real_difference_s_inverse": true,
+        "spectral_imaginary_s_inverse": true,
+        "maximum_growth_rate_s_inverse": true,
+        "expected_nullity": true
+      }
+    },
+    {
+      "inventory_name": "excess_carbon",
+      "temperature_k": 1150.0,
+      "phases": [
+        "lime",
+        "graphite_present"
+      ],
+      "scales": [
+        0.0035,
+        0.004,
+        0.002,
+        848.8774709756533
+      ],
+      "scaled_entropy_hessian": [
+        [
+          -0.002860622077800722,
+          0.030796780000052423,
+          -0.0018331719521060784,
+          0.045951897293606825
+        ],
+        [
+          0.030796780000052437,
+          -0.3666870411717041,
+          0.019680870577031426,
+          -0.4948642389415303
+        ],
+        [
+          -0.0018331719521060795,
+          0.019680870577031457,
+          -0.017795878876776087,
+          0.02934828764795645
+        ],
+        [
+          0.04595189729360677,
+          -0.49486423894153,
+          0.029348287647956373,
+          -0.7381543225875252
+        ]
+      ],
+      "scaled_local_diffusion_matrix": [
+        [
+          1.2102852264182423e-06,
+          1.9826908288127995e-06,
+          7.699496754135476e-07,
+          -1.937463686254249e-05
+        ],
+        [
+          -1.3621359036751624e-05,
+          0.0001861049080546555,
+          -8.710201342988365e-06,
+          0.0002189841645083339
+        ],
+        [
+          -5.143005996458082e-07,
+          5.569039357776598e-06,
+          7.984069211291856e-06,
+          8.311090153107568e-06
+        ],
+        [
+          -0.0008477367625496334,
+          0.009114334949386536,
+          -0.0005409065869681285,
+          0.013617666344290999
+        ]
+      ],
+      "entropy_hessian_eigenvalues": [
+        -1.0849950370082349,
+        -0.023918980059177832,
+        -0.01658384764639393,
+        -2.701686496660439e-18
+      ],
+      "entropy_dissipation_eigenvalues": [
+        -0.014793867789191239,
+        -9.440200339803819e-07,
+        -1.3803300716406817e-07,
+        -1.0807976222682762e-20
+      ],
+      "actual_eigenvalue_real_parts": [
+        -0.046998411648533835,
+        -0.02753103213371748,
+        -0.008063652618901098,
+        -0.00013361573519620588,
+        -7.827028553148521e-05,
+        -2.838712754285445e-05,
+        -2.292483586676509e-05,
+        -1.662879431778935e-05,
+        -4.8704610927242726e-06,
+        -1.7607432934890389e-19,
+        -4.031005768918548e-20,
+        -1.4285024148066768e-21,
+        -4.381808448748087e-22,
+        2.588248316599915e-20,
+        4.962687287918658e-19,
+        8.962213385955359e-19
+      ],
+      "expected_eigenvalue_real_parts": [
+        -0.04699841164853382,
+        -0.027531032133717458,
+        -0.008063652618901098,
+        -0.00013361573519620658,
+        -7.827028553148571e-05,
+        -2.8387127542854405e-05,
+        -2.2924835866764848e-05,
+        -1.6628794317789275e-05,
+        -4.87046109272415e-06,
+        -0.0,
+        -0.0,
+        -0.0,
+        0.0,
+        7.059702417885806e-21,
+        2.410333174146385e-20,
+        4.1146961065041897e-20
+      ],
+      "expected_nullity": 7,
+      "observed_nullity": 7,
+      "errors": {
+        "stationary_inventory_rate_mol_s": 0.0,
+        "stationary_energy_rate_w": 0.0,
+        "stationary_production_w_k": 0.0,
+        "scaled_hessian_symmetry_j_k": 3.3306690738754696e-16,
+        "scaled_entropy_maximum_eigenvalue_j_k": -2.701686496660439e-18,
+        "scaled_mobility_identity_s_inverse": 1.734723475976807e-18,
+        "scaled_dissipation_symmetry_w_k": 4.336808689942018e-18,
+        "scaled_dissipation_maximum_eigenvalue_w_k": -1.0807976222682762e-20,
+        "scaled_spatial_operator_s_inverse": 0.0,
+        "spectral_real_difference_s_inverse": 2.0816681711721685e-17,
+        "spectral_imaginary_s_inverse": 0.0,
+        "maximum_growth_rate_s_inverse": 8.962213385955359e-19
+      },
+      "within_budgets": {
+        "stationary_inventory_rate_mol_s": true,
+        "stationary_energy_rate_w": true,
+        "stationary_production_w_k": true,
+        "scaled_hessian_symmetry_j_k": true,
+        "scaled_entropy_maximum_eigenvalue_j_k": true,
+        "scaled_mobility_identity_s_inverse": true,
+        "scaled_dissipation_symmetry_w_k": true,
+        "scaled_dissipation_maximum_eigenvalue_w_k": true,
+        "scaled_spatial_operator_s_inverse": true,
+        "spectral_real_difference_s_inverse": true,
+        "spectral_imaginary_s_inverse": true,
+        "maximum_growth_rate_s_inverse": true,
+        "expected_nullity": true
+      }
+    },
+    {
+      "inventory_name": "excess_carbon",
+      "temperature_k": 1190.0,
+      "phases": [
+        "lime",
+        "graphite_present"
+      ],
+      "scales": [
+        0.0035,
+        0.004,
+        0.002,
+        729.6371983318865
+      ],
+      "scaled_entropy_hessian": [
+        [
+          -0.003614616801477407,
+          0.034465826566441184,
+          -0.0023134184351291756,
+          0.04707722155195629
+        ],
+        [
+          0.03446582656644116,
+          -0.36610574507258914,
+          0.022012488809593164,
+          -0.44902296740465436
+        ],
+        [
+          -0.002313418435129169,
+          0.02201248880959308,
+          -0.018101763632919016,
+          0.030049938700637435
+        ],
+        [
+          0.04707722155195616,
+          -0.4490229674046544,
+          0.030049938700637574,
+          -0.6131405027998921
+        ]
+      ],
+      "scaled_local_diffusion_matrix": [
+        [
+          2.3373311737491955e-06,
+          -6.274206918652827e-06,
+          1.4885805024289009e-06,
+          -3.0383821147976486e-05
+        ],
+        [
+          -1.3906384525450366e-05,
+          0.00017468536338492463,
+          -8.888083590434337e-06,
+          0.0001812707526721365
+        ],
+        [
+          -6.350970177700815e-07,
+          6.084019767148904e-06,
+          7.907151032012023e-06,
+          8.311772705297107e-06
+        ],
+        [
+          -0.0012594178548911653,
+          0.011993826942971322,
+          -0.0008032641844487651,
+          0.016402775359673084
+        ]
+      ],
+      "entropy_hessian_eigenvalues": [
+        -0.9603648847595496,
+        -0.024040465198663492,
+        -0.016557278348663884,
+        3.3617071093882464e-18
+      ],
+      "entropy_dissipation_eigenvalues": [
+        -0.015672422274891403,
+        -1.0169245361581851e-06,
+        -1.3791486276849886e-07,
+        1.3036604435710086e-20
+      ],
+      "actual_eigenvalue_real_parts": [
+        -0.05646280469708775,
+        -0.03307514522193073,
+        -0.009687485746773654,
+        -0.0001427762560162325,
+        -8.363639438945589e-05,
+        -2.8387127354385837e-05,
+        -2.4496532762679236e-05,
+        -1.6628794207386892e-05,
+        -4.870461060387973e-06,
+        -1.4865023667374658e-18,
+        -8.871336099771976e-19,
+        -1.1029882997099947e-19,
+        -1.6471328618772496e-20,
+        1.1728709545117429e-21,
+        1.4615133869865944e-21,
+        2.370661274314804e-19
+      ],
+      "expected_eigenvalue_real_parts": [
+        -0.056462804697087726,
+        -0.03307514522193069,
+        -0.009687485746773663,
+        -0.00014277625601623266,
+        -8.363639438945588e-05,
+        -2.8387127354385773e-05,
+        -2.449653276267911e-05,
+        -1.6628794207386906e-05,
+        -4.870461060388044e-06,
+        -3.941280527735183e-20,
+        -2.3087486800302807e-20,
+        -6.762168323253785e-21,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0
+      ],
+      "expected_nullity": 7,
+      "observed_nullity": 7,
+      "errors": {
+        "stationary_inventory_rate_mol_s": 0.0,
+        "stationary_energy_rate_w": 0.0,
+        "stationary_production_w_k": 0.0,
+        "scaled_hessian_symmetry_j_k": 1.3877787807814457e-16,
+        "scaled_entropy_maximum_eigenvalue_j_k": 3.3617071093882464e-18,
+        "scaled_mobility_identity_s_inverse": 4.986010602815954e-18,
+        "scaled_dissipation_symmetry_w_k": 2.4936649967166602e-18,
+        "scaled_dissipation_maximum_eigenvalue_w_k": 1.3036604435710086e-20,
+        "scaled_spatial_operator_s_inverse": 0.0,
+        "spectral_real_difference_s_inverse": 4.163336342344337e-17,
+        "spectral_imaginary_s_inverse": 0.0,
+        "maximum_growth_rate_s_inverse": 2.370661274314804e-19
+      },
+      "within_budgets": {
+        "stationary_inventory_rate_mol_s": true,
+        "stationary_energy_rate_w": true,
+        "stationary_production_w_k": true,
+        "scaled_hessian_symmetry_j_k": true,
+        "scaled_entropy_maximum_eigenvalue_j_k": true,
+        "scaled_mobility_identity_s_inverse": true,
+        "scaled_dissipation_symmetry_w_k": true,
+        "scaled_dissipation_maximum_eigenvalue_w_k": true,
+        "scaled_spatial_operator_s_inverse": true,
+        "spectral_real_difference_s_inverse": true,
+        "spectral_imaginary_s_inverse": true,
+        "maximum_growth_rate_s_inverse": true,
+        "expected_nullity": true
+      }
+    }
+  ],
+  "all_requested_budgets_met": true,
+  "material_qualified": false,
+  "training_eligible": false
+}

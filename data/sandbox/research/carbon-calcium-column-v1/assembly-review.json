@@ -1,0 +1,1588 @@
+{
+  "settings": {
+    "column_parameters": "parameters.carbon_calcium_column.json",
+    "meshes": [
+      "two",
+      "four",
+      "eight"
+    ],
+    "reference_two_cell_trajectory": "data/sandbox/research/carbon-calcium-exchange-v1/refined.jsonl",
+    "difference_steps": [
+      0.001,
+      0.0003
+    ],
+    "direction": {
+      "temperature_amplitude_k": 1.0,
+      "inventory_relative_amplitudes_C_O_N": [
+        0.001,
+        -0.001,
+        0.001
+      ],
+      "spatial_wave_number": 1.0
+    },
+    "budgets": {
+      "inventory_total_mol": 1e-12,
+      "energy_total_j": 1e-07,
+      "inventory_rate_mol_s": 1e-13,
+      "energy_rate_w": 1e-06,
+      "entropy_rate_w_k": 1e-09,
+      "jacobian_conservation_absolute": 1e-08,
+      "reference_temperature_k": 1e-07,
+      "reference_pressure_pa": 1e-05,
+      "reference_species_mol": 1e-12
+    },
+    "scope": "Physical finite-volume assembly review before dynamics: mesh-independent initial conserved totals, equal-opposite face rates and Jacobian conservation, one explicit smooth thermodynamic direction at both declared difference sizes, same-assemblage neighbors, and actual two-cell baseline mapping. This isolates assembly; thermochemical and face derivatives have separate independent source qualification."
+  },
+  "column_parameters": {
+    "exchange_parameters": "parameters.carbon_calcium_exchange.json",
+    "geometry": {
+      "length_m": 0.02,
+      "area_m2": 0.01
+    },
+    "initial": {
+      "calcium_density_mol_m3": 20.0,
+      "carbon_density_mol_m3": 45.0,
+      "oxygen_density_mol_m3": 80.0,
+      "nitrogen_density_mol_m3": 40.0,
+      "temperature_left_k": 1160.0,
+      "temperature_right_k": 1000.0,
+      "interface_length_fraction": 0.5
+    },
+    "transport": {
+      "thermal_conductivity_w_m_k": 0.005,
+      "gas_mobility_density_mol2_k_j_m_s": {
+        "CO": 1e-09,
+        "CO2": 1e-09,
+        "O2": 1e-09,
+        "N2": 1e-09
+      },
+      "classification": "Explicit virtual continuum coefficients. Face conductance/mobility scales as area over center distance; neither inferred nor measured brick transport."
+    },
+    "meshes": {
+      "two": 2,
+      "four": 4,
+      "eight": 8,
+      "sixteen": 16,
+      "thirty_two": 32,
+      "sixty_four": 64
+    },
+    "duration_s": 20000.0,
+    "numerics": {
+      "jacobian_method": "analytic",
+      "relative_tolerance": 1e-09,
+      "refinement_factor": 0.1,
+      "cell_density_absolute_tolerances_C_O_N_U": [
+        1e-09,
+        1e-09,
+        1e-09,
+        0.001
+      ],
+      "production_absolute_tolerance_j_k": 1e-11,
+      "maximum_step_s": 20.0,
+      "first_step_s": 0.001,
+      "observation_interval_s": 20.0,
+      "progress_every_steps": 100
+    },
+    "verification": {
+      "element_mol": 1e-12,
+      "pressure_pa": 1e-05,
+      "volume_m3": 1e-14,
+      "reaction_gibbs_j_mol": 1e-05,
+      "source_energy_j": 1e-07,
+      "source_entropy_j_k": 1e-10,
+      "face_species_mol_s": 1e-14,
+      "face_energy_w": 1e-08,
+      "face_entropy_w_k": 1e-11,
+      "inventory_integral_mol": 1e-10,
+      "energy_j": 1e-05,
+      "entropy_j_k": 1e-08,
+      "nonnegative_entropy_j_k": 1e-10,
+      "time_temperature_k": 0.001,
+      "time_pressure_pa": 0.1,
+      "time_species_mol": 1e-10,
+      "quadrature_orders": [
+        2,
+        4
+      ]
+    },
+    "initial_mapping": "Uniform even meshes reproduce the half-hot/half-cold initial slab; total source inventories and U remain mesh independent. Two cells map exactly to the prior100cm3-per-cell experiment, including face coefficients and absolute tolerances.",
+    "scope": "Closed one-dimensional uniform finite-volume column. Local restricted equilibrium and immobile solids; one shared gas/energy face adds equal opposite elemental and U rates. No external reservoir or deformation. Qualify two-cell assembly before spatial refinement.",
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "sources": {
+    "carbon_source": {
+      "source_id": "usgs1995-selected-carbon-oxygen-nitrogen-phases",
+      "source_url": "https://pubs.usgs.gov/bul/2131/report.pdf",
+      "year": 1995,
+      "authors": [
+        "Richard A. Robie",
+        "Bruce S. Hemingway"
+      ],
+      "reference_temperature_k": "298.15",
+      "reference_pressure_pa": "100000",
+      "gas_constant_j_mol_k": "8.31451",
+      "gas_constant_policy": "Historical book R retained for separate same-source nominal calculation.",
+      "cp_formula": "A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2",
+      "phases": {
+        "C": {
+          "id": "graphite",
+          "formula": "C",
+          "cp_coefficient_strings": [
+            "6.086E+01",
+            "-1.024E-02",
+            "7.139E+05",
+            "-9.922E+02",
+            "1.669E-06"
+          ],
+          "reference_enthalpy_j_mol": "0",
+          "reference_entropy_j_mol_k": "5.74",
+          "cp_pdf_one_based_page": 47,
+          "thermal_pdf_one_based_page": 82,
+          "source_domain_k": [
+            298.15,
+            2500.0
+          ],
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "8.52",
+              "entropy_j_mol_k": "5.74",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "300",
+              "cp_j_mol_k": "8.59",
+              "entropy_j_mol_k": "5.79",
+              "sensible_enthalpy_over_t_j_mol_k": "0.05"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "11.88",
+              "entropy_j_mol_k": "8.72",
+              "sensible_enthalpy_over_t_j_mol_k": "2.60"
+            },
+            {
+              "temperature_k": "500",
+              "cp_j_mol_k": "14.64",
+              "entropy_j_mol_k": "11.68",
+              "sensible_enthalpy_over_t_j_mol_k": "4.75"
+            },
+            {
+              "temperature_k": "600",
+              "cp_j_mol_k": "16.79",
+              "entropy_j_mol_k": "14.55",
+              "sensible_enthalpy_over_t_j_mol_k": "6.58"
+            },
+            {
+              "temperature_k": "700",
+              "cp_j_mol_k": "18.47",
+              "entropy_j_mol_k": "17.27",
+              "sensible_enthalpy_over_t_j_mol_k": "8.17"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "19.77",
+              "entropy_j_mol_k": "19.82",
+              "sensible_enthalpy_over_t_j_mol_k": "9.54"
+            },
+            {
+              "temperature_k": "900",
+              "cp_j_mol_k": "20.80",
+              "entropy_j_mol_k": "22.21",
+              "sensible_enthalpy_over_t_j_mol_k": "10.73"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "21.63",
+              "entropy_j_mol_k": "24.45",
+              "sensible_enthalpy_over_t_j_mol_k": "11.78"
+            },
+            {
+              "temperature_k": "1100",
+              "cp_j_mol_k": "22.29",
+              "entropy_j_mol_k": "26.54",
+              "sensible_enthalpy_over_t_j_mol_k": "12.71"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "22.83",
+              "entropy_j_mol_k": "28.51",
+              "sensible_enthalpy_over_t_j_mol_k": "13.53"
+            }
+          ]
+        },
+        "O2": {
+          "id": "oxygen",
+          "formula": "O2",
+          "cp_coefficient_strings": [
+            "5.658E+01",
+            "-5.255E-03",
+            "6.856E+05",
+            "-5.780E+02",
+            "1.113E-06"
+          ],
+          "reference_enthalpy_j_mol": "0",
+          "reference_entropy_j_mol_k": "205.15",
+          "cp_pdf_one_based_page": 49,
+          "thermal_pdf_one_based_page": 106,
+          "source_domain_k": [
+            298.15,
+            2500.0
+          ],
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "29.35",
+              "entropy_j_mol_k": "205.15",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "300",
+              "cp_j_mol_k": "29.35",
+              "entropy_j_mol_k": "205.33",
+              "sensible_enthalpy_over_t_j_mol_k": "0.18"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "30.04",
+              "entropy_j_mol_k": "213.85",
+              "sensible_enthalpy_over_t_j_mol_k": "7.54"
+            },
+            {
+              "temperature_k": "500",
+              "cp_j_mol_k": "31.12",
+              "entropy_j_mol_k": "220.67",
+              "sensible_enthalpy_over_t_j_mol_k": "12.15"
+            },
+            {
+              "temperature_k": "600",
+              "cp_j_mol_k": "32.14",
+              "entropy_j_mol_k": "226.43",
+              "sensible_enthalpy_over_t_j_mol_k": "15.40"
+            },
+            {
+              "temperature_k": "700",
+              "cp_j_mol_k": "33.00",
+              "entropy_j_mol_k": "231.45",
+              "sensible_enthalpy_over_t_j_mol_k": "17.85"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "33.72",
+              "entropy_j_mol_k": "235.91",
+              "sensible_enthalpy_over_t_j_mol_k": "19.79"
+            },
+            {
+              "temperature_k": "900",
+              "cp_j_mol_k": "34.33",
+              "entropy_j_mol_k": "239.92",
+              "sensible_enthalpy_over_t_j_mol_k": "21.37"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "34.85",
+              "entropy_j_mol_k": "243.56",
+              "sensible_enthalpy_over_t_j_mol_k": "22.70"
+            },
+            {
+              "temperature_k": "1100",
+              "cp_j_mol_k": "35.29",
+              "entropy_j_mol_k": "246.90",
+              "sensible_enthalpy_over_t_j_mol_k": "23.82"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "35.67",
+              "entropy_j_mol_k": "249.99",
+              "sensible_enthalpy_over_t_j_mol_k": "24.79"
+            }
+          ]
+        },
+        "CO": {
+          "id": "carbon_monoxide",
+          "formula": "CO",
+          "cp_coefficient_strings": [
+            "3.976E+01",
+            "3.188E-03",
+            "5.292E+05",
+            "-3.013E+02",
+            "-8.078E-07"
+          ],
+          "reference_enthalpy_j_mol": "-110500",
+          "reference_entropy_j_mol_k": "197.27",
+          "cp_pdf_one_based_page": 53,
+          "thermal_pdf_one_based_page": 186,
+          "source_domain_k": [
+            298.15,
+            2200.0
+          ],
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "29.14",
+              "entropy_j_mol_k": "197.27",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "300",
+              "cp_j_mol_k": "29.13",
+              "entropy_j_mol_k": "197.45",
+              "sensible_enthalpy_over_t_j_mol_k": "0.18"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "29.15",
+              "entropy_j_mol_k": "205.80",
+              "sensible_enthalpy_over_t_j_mol_k": "7.39"
+            },
+            {
+              "temperature_k": "500",
+              "cp_j_mol_k": "29.79",
+              "entropy_j_mol_k": "212.37",
+              "sensible_enthalpy_over_t_j_mol_k": "11.81"
+            },
+            {
+              "temperature_k": "600",
+              "cp_j_mol_k": "30.55",
+              "entropy_j_mol_k": "217.87",
+              "sensible_enthalpy_over_t_j_mol_k": "14.87"
+            },
+            {
+              "temperature_k": "700",
+              "cp_j_mol_k": "31.29",
+              "entropy_j_mol_k": "222.64",
+              "sensible_enthalpy_over_t_j_mol_k": "17.16"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "31.97",
+              "entropy_j_mol_k": "226.86",
+              "sensible_enthalpy_over_t_j_mol_k": "18.97"
+            },
+            {
+              "temperature_k": "900",
+              "cp_j_mol_k": "32.58",
+              "entropy_j_mol_k": "230.66",
+              "sensible_enthalpy_over_t_j_mol_k": "20.45"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "33.14",
+              "entropy_j_mol_k": "234.12",
+              "sensible_enthalpy_over_t_j_mol_k": "21.69"
+            },
+            {
+              "temperature_k": "1100",
+              "cp_j_mol_k": "33.64",
+              "entropy_j_mol_k": "237.31",
+              "sensible_enthalpy_over_t_j_mol_k": "22.75"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "34.09",
+              "entropy_j_mol_k": "240.25",
+              "sensible_enthalpy_over_t_j_mol_k": "23.68"
+            }
+          ],
+          "domain_note": "Cp coefficient table prints upper2500K; individual ideal-gas table states2200K. Selected1200K is within both; preserve conflict."
+        },
+        "CO2": {
+          "id": "carbon_dioxide",
+          "formula": "CO2",
+          "cp_coefficient_strings": [
+            "8.811E+01",
+            "-2.698E-03",
+            "7.232E+05",
+            "-1.007E+03",
+            "0"
+          ],
+          "reference_enthalpy_j_mol": "-393500",
+          "reference_entropy_j_mol_k": "213.79",
+          "source_domain_k": [
+            298.15,
+            2200.0
+          ],
+          "cp_pdf_one_based_page": 53,
+          "thermal_pdf_one_based_page": 187,
+          "prior_source_record": "data/sandbox/research/calcite-thermochemistry-v1/facts.json",
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "37.12",
+              "entropy_j_mol_k": "213.79",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "41.20",
+              "entropy_j_mol_k": "225.28",
+              "sensible_enthalpy_over_t_j_mol_k": "9.98"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "51.48",
+              "entropy_j_mol_k": "257.47",
+              "sensible_enthalpy_over_t_j_mol_k": "28.51"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "54.29",
+              "entropy_j_mol_k": "269.28",
+              "sensible_enthalpy_over_t_j_mol_k": "33.40"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "56.31",
+              "entropy_j_mol_k": "279.37",
+              "sensible_enthalpy_over_t_j_mol_k": "37.06"
+            }
+          ]
+        },
+        "N2": {
+          "id": "nitrogen",
+          "formula": "N2",
+          "cp_coefficient_strings": [
+            "2.479E+01",
+            "9.648E-03",
+            "1.459E+05",
+            "0",
+            "-2.003E-06"
+          ],
+          "reference_enthalpy_j_mol": "0",
+          "reference_entropy_j_mol_k": "191.61",
+          "source_domain_k": [
+            298.15,
+            2500.0
+          ],
+          "cp_pdf_one_based_page": 48,
+          "thermal_pdf_one_based_page": 103,
+          "prior_source_record": "parameters.calcite_nitrogen_source.json",
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "29.13",
+              "entropy_j_mol_k": "191.61",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "300",
+              "cp_j_mol_k": "29.13",
+              "entropy_j_mol_k": "191.79",
+              "sensible_enthalpy_over_t_j_mol_k": "0.18"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "29.24",
+              "entropy_j_mol_k": "200.17",
+              "sensible_enthalpy_over_t_j_mol_k": "7.42"
+            },
+            {
+              "temperature_k": "500",
+              "cp_j_mol_k": "29.70",
+              "entropy_j_mol_k": "206.74",
+              "sensible_enthalpy_over_t_j_mol_k": "11.83"
+            },
+            {
+              "temperature_k": "600",
+              "cp_j_mol_k": "30.26",
+              "entropy_j_mol_k": "212.21",
+              "sensible_enthalpy_over_t_j_mol_k": "14.85"
+            },
+            {
+              "temperature_k": "700",
+              "cp_j_mol_k": "30.86",
+              "entropy_j_mol_k": "216.91",
+              "sensible_enthalpy_over_t_j_mol_k": "17.09"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "31.45",
+              "entropy_j_mol_k": "221.07",
+              "sensible_enthalpy_over_t_j_mol_k": "18.85"
+            },
+            {
+              "temperature_k": "900",
+              "cp_j_mol_k": "32.03",
+              "entropy_j_mol_k": "224.81",
+              "sensible_enthalpy_over_t_j_mol_k": "20.29"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "32.58",
+              "entropy_j_mol_k": "228.22",
+              "sensible_enthalpy_over_t_j_mol_k": "21.49"
+            },
+            {
+              "temperature_k": "1100",
+              "cp_j_mol_k": "33.10",
+              "entropy_j_mol_k": "231.35",
+              "sensible_enthalpy_over_t_j_mol_k": "22.52"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "33.58",
+              "entropy_j_mol_k": "234.25",
+              "sensible_enthalpy_over_t_j_mol_k": "23.42"
+            }
+          ]
+        }
+      },
+      "readback": {
+        "utc_date": "2026-09-25",
+        "official_pdf_cache": ".tools/source-cache/usgs1995/report.pdf",
+        "new_pages_rendered_and_visually_read": [
+          47,
+          49,
+          53,
+          82,
+          106,
+          186
+        ],
+        "existing_source_records_reused": [
+          "parameters.calcite_nitrogen_source.json",
+          "data/sandbox/research/calcite-thermochemistry-v1/facts.json",
+          "parameters.calcite_affinity_source.json"
+        ],
+        "new_network_pdf_access": "403; already available official PDF inspected locally, no new retrieval claimed."
+      },
+      "source_choice": "Preserve the complete selected USGS nominal source. Do not silently replace CO entropy with another compilation. Published coefficient-fit covariance and relevant real-char properties remain unknown.",
+      "nist_co_cross_source_comparison": {
+        "url": "https://janaf.nist.gov/tables/C-093.html",
+        "reference_temperature_k": "298.15",
+        "reference_pressure_pa": "100000",
+        "enthalpy_j_mol": "-110527",
+        "entropy_j_mol_k": "197.653",
+        "cp_j_mol_k": "29.142",
+        "formation_gibbs_j_mol": "-137163",
+        "classification": "Independent published compilation value, not an experimental holdout and not substituted into the USGS model."
+      },
+      "scope": "Pure reference graphite and ideal gases; not measured sludge char, finite reaction rate, volatile inventory, or actual brick atmosphere.",
+      "material_qualified": false,
+      "training_eligible": false
+    },
+    "calcite_source": {
+      "source_id": "usgs-b2131-1995-calcite-lime-co2-gibbs-extension",
+      "source_url": "https://pubs.usgs.gov/bul/2131/report.pdf",
+      "retrieved_date_utc": "2026-09-25",
+      "title": "Thermodynamic Properties of Minerals and Related Substances at 298.15 K and 1 Bar (10^5 Pascals) Pressure and at Higher Temperatures",
+      "authors": [
+        "Richard A. Robie",
+        "Bruce S. Hemingway"
+      ],
+      "year": 1995,
+      "reference_facts_file": "data/sandbox/research/calcite-thermochemistry-v1/facts.json",
+      "evidence": {
+        "official_pdf_cache": ".tools/source-cache/usgs1995/report.pdf",
+        "bytes": 21768195,
+        "visual_review_pages": [
+          187,
+          188,
+          274
+        ],
+        "extractor": "pdftotext -layout; pdftoppm PNG pages inspected",
+        "web_pdf_fetch": "403; ordinary official curl download succeeded",
+        "digest_operation": "none"
+      },
+      "temperature_points_k": [
+        "298.15",
+        "300",
+        "400",
+        "500",
+        "600",
+        "700",
+        "800",
+        "900",
+        "1000",
+        "1100",
+        "1200"
+      ],
+      "phases": {
+        "calcite": {
+          "printed_page": 268,
+          "pdf_one_based_page": 274,
+          "entropy_reference_j_mol_k": "91.71",
+          "formation_gibbs_kj_mol": [
+            "-1128.5",
+            "-1128.0",
+            "-1101.6",
+            "-1075.6",
+            "-1049.9",
+            "-1024.4",
+            "-999.0",
+            "-973.8",
+            "-948.7",
+            "-923.7",
+            "-898.2"
+          ],
+          "formation_log10_k": [
+            "197.70",
+            "196.39",
+            "143.86",
+            "112.37",
+            "91.40",
+            "76.44",
+            "65.23",
+            "56.52",
+            "49.55",
+            "43.86",
+            "39.10"
+          ]
+        },
+        "lime": {
+          "printed_page": 182,
+          "pdf_one_based_page": 188,
+          "entropy_reference_j_mol_k": "38.10",
+          "formation_gibbs_kj_mol": [
+            "-603.1",
+            "-602.9",
+            "-592.2",
+            "-581.6",
+            "-571.2",
+            "-560.8",
+            "-550.3",
+            "-539.9",
+            "-529.4",
+            "-518.9",
+            "-507.7"
+          ],
+          "formation_log10_k": [
+            "105.66",
+            "104.97",
+            "77.33",
+            "60.76",
+            "49.72",
+            "41.84",
+            "35.93",
+            "31.33",
+            "27.65",
+            "24.64",
+            "22.10"
+          ]
+        },
+        "carbon_dioxide": {
+          "printed_page": 181,
+          "pdf_one_based_page": 187,
+          "entropy_reference_j_mol_k": "213.79",
+          "formation_gibbs_kj_mol": [
+            "-394.4",
+            "-394.4",
+            "-394.7",
+            "-394.9",
+            "-395.2",
+            "-395.4",
+            "-395.6",
+            "-395.7",
+            "-395.9",
+            "-396.0",
+            "-396.1"
+          ],
+          "formation_log10_k": [
+            "69.09",
+            "68.67",
+            "51.54",
+            "41.26",
+            "34.40",
+            "29.50",
+            "25.83",
+            "22.97",
+            "20.68",
+            "18.80",
+            "17.24"
+          ]
+        }
+      },
+      "classification": "published_compilation_nominal_standard_phases; not_target_brick_mineral_inventory_or_rate_law",
+      "entropy_reference_policy": "Use the 298.15 K row of each individual high-temperature table (two decimal places). Keep the one-decimal summary values in the old facts unchanged.",
+      "rounding_policy": "Each nonblank printed decimal or scientific-notation number carries half its last printed unit for arithmetic consistency comparisons only. Omitted Cp terms remain exact zero terms of the printed nominal formula. This is not physical uncertainty.",
+      "unknowns": [
+        "High-temperature physical fit uncertainty and covariance",
+        "Target brick phase amounts and reaction rates",
+        "Solid pressure-volume correction away from the stated 1 bar",
+        "Nonideal CO2 fugacity and transport limitations"
+      ]
+    },
+    "calcite_facts": {
+      "schema_version": 1,
+      "source_id": "usgs-b2131-1995-calcite-lime-co2",
+      "classification": "source_polynomial_nominal_thermochemistry_not_material_or_kinetic_admission",
+      "reference_state": {
+        "temperature_k": "298.15",
+        "pressure_pa": "100000",
+        "reference": "Elements in their standard states at 1 bar and stated temperature for formation columns; h(T) storage coordinate must use hf(298.15)+sensible increment, not hf(T) alone.",
+        "gas_constant_j_mol_k": "8.31451",
+        "gas_constant_printed_uncertainty_j_mol_k": "0.00007",
+        "gas_constant_policy": "Historical book constant retained as source metadata, never silently replaces runtime modern R.",
+        "atomic_weights": "1985 atomic weights, 12C=12.000; printed method p3",
+        "locators": [
+          {
+            "printed_page": "iv",
+            "pdf_one_based_page": 6,
+            "pdf_zero_based_index": 5
+          },
+          {
+            "printed_page": 3,
+            "pdf_one_based_page": 9,
+            "pdf_zero_based_index": 8
+          }
+        ]
+      },
+      "cp_equation": {
+        "printed": "Cp = A1 + A2*T + A3*T^(-2) + A4*T^(-0.5) + A5*T^2",
+        "temperature_unit": "K",
+        "output_unit": "J/(mol K)",
+        "coefficient_units": {
+          "A1": "J/(mol K)",
+          "A2": "J/(mol K^2)",
+          "A3": "J K/mol",
+          "A4": "J/(mol K^0.5)",
+          "A5": "J/(mol K^3)"
+        },
+        "locator": {
+          "printed_page": 2,
+          "pdf_one_based_page": 8,
+          "pdf_zero_based_index": 7
+        },
+        "numbered_equation": false,
+        "derived_sensible_enthalpy_formula": "A1*(T-T0)+A2*(T^2-T0^2)/2+A3*(1/T0-1/T)+2*A4*(sqrt(T)-sqrt(T0))+A5*(T^3-T0^3)/3",
+        "derived_sensible_enthalpy_unit": "J/mol",
+        "T0_k": "298.15",
+        "derivation_classification": "exact analytic integral of supplied nominal polynomial; no fitting or coefficient adjustment"
+      },
+      "uncertainty": {
+        "applies_to": "298.15 K values only",
+        "method_summary": "The book assigns estimated uncertainties; its convention for calorimetric measurements is twice the standard deviation of the mean. Individual upstream uncertainty derivations and cross-species covariance have not been reconstructed.",
+        "locator": {
+          "printed_page": 3,
+          "pdf_one_based_page": 9,
+          "pdf_zero_based_index": 8
+        },
+        "not_a_strict_bound": true,
+        "not_assumed_95_percent_interval": true,
+        "high_temperature_fit_error": null,
+        "printed_zero_uncertainty_note": "Printed 0.0 is retained at its displayed precision, not interpreted as physically exact."
+      },
+      "species": [
+        {
+          "id": "calcite",
+          "name_printed": "CALCITE",
+          "formula": "CaCO3",
+          "phase_description_printed": "Rhombohedral crystals 298.15 to 1200 K.",
+          "molar_mass_g_mol": "100.087",
+          "molar_mass_note": "Original printed formula weight in grams per mole; historical 1985 atomic weights; no mass uncertainty supplied.",
+          "reference_298": {
+            "temperature_k": "298.15",
+            "pressure_pa": "100000",
+            "hf_kj_mol": "-1207.4",
+            "hf_uncertainty_kj_mol": "1.3",
+            "gf_kj_mol": "-1128.5",
+            "gf_uncertainty_kj_mol": "1.4",
+            "volume_cm3_mol": "36.93",
+            "volume_uncertainty_cm3_mol": "0.01",
+            "entropy_j_mol_k": "91.7",
+            "entropy_uncertainty_j_mol_k": "0.2",
+            "locator": {
+              "printed_page": 25,
+              "pdf_one_based_page": 31,
+              "pdf_zero_based_index": 30
+            },
+            "reference_numbers_by_column": {
+              "S": [
+                392
+              ],
+              "H/G": [
+                246,
+                336
+              ],
+              "C": [
+                202
+              ]
+            }
+          },
+          "cp": {
+            "coefficients_printed": {
+              "A1": "9.972E+01",
+              "A2": "2.692E-02",
+              "A3": "-2.158E+06",
+              "A4": null,
+              "A5": null
+            },
+            "coefficients_nominal": {
+              "A1": "9.972E+01",
+              "A2": "2.692E-02",
+              "A3": "-2.158E+06",
+              "A4": "0",
+              "A5": "0"
+            },
+            "blank_cells_interpretation": "Blank cells are omitted terms in the printed polynomial, represented explicitly as zero only in coefficients_nominal; not missing material values filled with zero.",
+            "temperature_range_printed_k": [
+              "298",
+              "1200"
+            ],
+            "coefficient_locator": {
+              "printed_page": 55,
+              "pdf_one_based_page": 61,
+              "pdf_zero_based_index": 60
+            },
+            "phase_description_range_k": [
+              "298.15",
+              "1200"
+            ],
+            "selected_single_phase_domain_k": [
+              "298.15",
+              "1200"
+            ],
+            "high_temperature_table_locator": {
+              "printed_page": 268,
+              "pdf_one_based_page": 274,
+              "pdf_zero_based_index": 273
+            },
+            "physical_fit_uncertainty": null,
+            "coefficient_covariance": null,
+            "no_upper_limit_extrapolation": true
+          },
+          "check_points": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "83.47",
+              "entropy_j_mol_k": "91.71",
+              "enthalpy_function_j_mol_k": "0.00",
+              "formation_enthalpy_kj_mol": "-1207.4"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "97.00",
+              "entropy_j_mol_k": "118.36",
+              "enthalpy_function_j_mol_k": "23.18",
+              "formation_enthalpy_kj_mol": "-1206.3"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "117.88",
+              "entropy_j_mol_k": "193.19",
+              "enthalpy_function_j_mol_k": "66.15",
+              "formation_enthalpy_kj_mol": "-1201.6"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "124.48",
+              "entropy_j_mol_k": "220.22",
+              "enthalpy_function_j_mol_k": "77.17",
+              "formation_enthalpy_kj_mol": "-1199.1"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "130.53",
+              "entropy_j_mol_k": "243.46",
+              "enthalpy_function_j_mol_k": "85.57",
+              "formation_enthalpy_kj_mol": "-1204.9"
+            }
+          ],
+          "check_point_definition": "enthalpy_function_j_mol_k is (H(T)-H(298.15 K))/T, not H(T)-H(298.15 K) and not formation enthalpy at T.",
+          "high_temperature_table_locator": {
+            "printed_page": 268,
+            "pdf_one_based_page": 274,
+            "pdf_zero_based_index": 273
+          },
+          "runtime_material_qualified": false,
+          "volume_temperature_law": null,
+          "reaction_kinetics": null
+        },
+        {
+          "id": "lime",
+          "name_printed": "LIME",
+          "formula": "CaO",
+          "phase_description_printed": "Cubic crystals 298.15 to 1800 K.",
+          "molar_mass_g_mol": "56.077",
+          "molar_mass_note": "Original printed formula weight in grams per mole; historical 1985 atomic weights; no mass uncertainty supplied.",
+          "reference_298": {
+            "temperature_k": "298.15",
+            "pressure_pa": "100000",
+            "hf_kj_mol": "-635.1",
+            "hf_uncertainty_kj_mol": "0.9",
+            "gf_kj_mol": "-603.1",
+            "gf_uncertainty_kj_mol": "0.9",
+            "volume_cm3_mol": "16.76",
+            "volume_uncertainty_cm3_mol": "0.01",
+            "entropy_j_mol_k": "38.1",
+            "entropy_uncertainty_j_mol_k": "0.4",
+            "locator": {
+              "printed_page": 15,
+              "pdf_one_based_page": 21,
+              "pdf_zero_based_index": 20
+            },
+            "reference_numbers_by_column": {
+              "S": [
+                67,
+                117
+              ],
+              "H/G": [
+                67,
+                117
+              ],
+              "C": [
+                67,
+                117
+              ]
+            }
+          },
+          "cp": {
+            "coefficients_printed": {
+              "A1": "5.185E+01",
+              "A2": "2.444E-03",
+              "A3": "-9.340E+05",
+              "A4": null,
+              "A5": null
+            },
+            "coefficients_nominal": {
+              "A1": "5.185E+01",
+              "A2": "2.444E-03",
+              "A3": "-9.340E+05",
+              "A4": "0",
+              "A5": "0"
+            },
+            "blank_cells_interpretation": "Blank cells are omitted terms in the printed polynomial, represented explicitly as zero only in coefficients_nominal; not missing material values filled with zero.",
+            "temperature_range_printed_k": [
+              "298",
+              "2500"
+            ],
+            "coefficient_locator": {
+              "printed_page": 47,
+              "pdf_one_based_page": 53,
+              "pdf_zero_based_index": 52
+            },
+            "phase_description_range_k": [
+              "298.15",
+              "1800"
+            ],
+            "selected_single_phase_domain_k": [
+              "298.15",
+              "1800"
+            ],
+            "high_temperature_table_locator": {
+              "printed_page": 182,
+              "pdf_one_based_page": 188,
+              "pdf_zero_based_index": 187
+            },
+            "physical_fit_uncertainty": null,
+            "coefficient_covariance": null,
+            "no_upper_limit_extrapolation": true
+          },
+          "check_points": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "42.07",
+              "entropy_j_mol_k": "38.10",
+              "enthalpy_function_j_mol_k": "0.00",
+              "formation_enthalpy_kj_mol": "-635.1"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "46.99",
+              "entropy_j_mol_k": "51.25",
+              "enthalpy_function_j_mol_k": "11.43",
+              "formation_enthalpy_kj_mol": "-634.7"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "52.35",
+              "entropy_j_mol_k": "85.98",
+              "enthalpy_function_j_mol_k": "30.91",
+              "formation_enthalpy_kj_mol": "-634.0"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "53.36",
+              "entropy_j_mol_k": "97.78",
+              "enthalpy_function_j_mol_k": "35.31",
+              "formation_enthalpy_kj_mol": "-634.2"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "54.13",
+              "entropy_j_mol_k": "107.58",
+              "enthalpy_function_j_mol_k": "38.38",
+              "formation_enthalpy_kj_mol": "-643.3"
+            }
+          ],
+          "check_point_definition": "enthalpy_function_j_mol_k is (H(T)-H(298.15 K))/T, not H(T)-H(298.15 K) and not formation enthalpy at T.",
+          "high_temperature_table_locator": {
+            "printed_page": 182,
+            "pdf_one_based_page": 188,
+            "pdf_zero_based_index": 187
+          },
+          "runtime_material_qualified": false,
+          "volume_temperature_law": null,
+          "reaction_kinetics": null
+        },
+        {
+          "id": "carbon_dioxide",
+          "name_printed": "CARBON DIOXIDE",
+          "formula": "CO2",
+          "phase_description_printed": "Ideal gas at p = 1 bar, 298.15 to 2200 K.",
+          "molar_mass_g_mol": "44.010",
+          "molar_mass_note": "Original printed formula weight in grams per mole; historical 1985 atomic weights; no mass uncertainty supplied.",
+          "reference_298": {
+            "temperature_k": "298.15",
+            "pressure_pa": "100000",
+            "hf_kj_mol": "-393.5",
+            "hf_uncertainty_kj_mol": "0.1",
+            "gf_kj_mol": "-394.4",
+            "gf_uncertainty_kj_mol": "0.2",
+            "volume_cm3_mol": "24789.70",
+            "volume_uncertainty_cm3_mol": "0.20",
+            "entropy_j_mol_k": "213.8",
+            "entropy_uncertainty_j_mol_k": "0.0",
+            "locator": {
+              "printed_page": 15,
+              "pdf_one_based_page": 21,
+              "pdf_zero_based_index": 20
+            },
+            "reference_numbers_by_column": {
+              "S": [
+                67,
+                117
+              ],
+              "H/G": [
+                67,
+                117
+              ],
+              "C": [
+                67,
+                117
+              ]
+            }
+          },
+          "cp": {
+            "coefficients_printed": {
+              "A1": "8.811E+01",
+              "A2": "-2.698E-03",
+              "A3": "7.232E+05",
+              "A4": "-1.007E+03",
+              "A5": null
+            },
+            "coefficients_nominal": {
+              "A1": "8.811E+01",
+              "A2": "-2.698E-03",
+              "A3": "7.232E+05",
+              "A4": "-1.007E+03",
+              "A5": "0"
+            },
+            "blank_cells_interpretation": "Blank cells are omitted terms in the printed polynomial, represented explicitly as zero only in coefficients_nominal; not missing material values filled with zero.",
+            "temperature_range_printed_k": [
+              "298",
+              "2200"
+            ],
+            "coefficient_locator": {
+              "printed_page": 47,
+              "pdf_one_based_page": 53,
+              "pdf_zero_based_index": 52
+            },
+            "phase_description_range_k": [
+              "298.15",
+              "2200"
+            ],
+            "selected_single_phase_domain_k": [
+              "298.15",
+              "2200"
+            ],
+            "high_temperature_table_locator": {
+              "printed_page": 181,
+              "pdf_one_based_page": 187,
+              "pdf_zero_based_index": 186
+            },
+            "physical_fit_uncertainty": null,
+            "coefficient_covariance": null,
+            "no_upper_limit_extrapolation": true
+          },
+          "check_points": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "37.12",
+              "entropy_j_mol_k": "213.79",
+              "enthalpy_function_j_mol_k": "0.00",
+              "formation_enthalpy_kj_mol": "-393.5"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "41.20",
+              "entropy_j_mol_k": "225.28",
+              "enthalpy_function_j_mol_k": "9.98",
+              "formation_enthalpy_kj_mol": "-393.6"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "51.48",
+              "entropy_j_mol_k": "257.47",
+              "enthalpy_function_j_mol_k": "28.51",
+              "formation_enthalpy_kj_mol": "-394.2"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "54.29",
+              "entropy_j_mol_k": "269.28",
+              "enthalpy_function_j_mol_k": "33.40",
+              "formation_enthalpy_kj_mol": "-394.6"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "56.31",
+              "entropy_j_mol_k": "279.37",
+              "enthalpy_function_j_mol_k": "37.06",
+              "formation_enthalpy_kj_mol": "-395.0"
+            }
+          ],
+          "check_point_definition": "enthalpy_function_j_mol_k is (H(T)-H(298.15 K))/T, not H(T)-H(298.15 K) and not formation enthalpy at T.",
+          "high_temperature_table_locator": {
+            "printed_page": 181,
+            "pdf_one_based_page": 187,
+            "pdf_zero_based_index": 186
+          },
+          "runtime_material_qualified": false,
+          "volume_temperature_law": null,
+          "reaction_kinetics": null
+        }
+      ],
+      "reaction": {
+        "id": "calcite_decomposition",
+        "stoichiometry_mol_per_mol_extent": {
+          "calcite": "-1",
+          "lime": "1",
+          "carbon_dioxide": "1"
+        },
+        "extent_basis": "mol CaCO3 consumed",
+        "common_selected_temperature_domain_k": [
+          "298.15",
+          "1200"
+        ],
+        "phase_stability_not_certified": true,
+        "equilibrium_model": null,
+        "kinetic_model": null,
+        "MIA3_inventory_or_kinetic_transfer": false
+      },
+      "interpretation_guards": [
+        "Only selected original facts are transcribed; no source pages or full PDF included in tracked artifact.",
+        "Formation columns at high T use elements at that T; they are not single-species storage enthalpy curves.",
+        "Molar volumes apply at 298.15 K and 1 bar; no temperature-independent high-T law or density error envelope is inferred.",
+        "Cp source coefficients and independently printed temperature rows remain distinct and may differ because of printed precision or other source inconsistency; derived checks never rewrite either.",
+        "No Shomate fitting, no MIA3 raw-sludge properties, no reaction rate or firing recipe."
+      ]
+    },
+    "carbon_parameters": {
+      "source_file": "data/sandbox/research/carbon-gas-thermochemistry-v1/source.json",
+      "temperature_domain_k": [
+        298.15,
+        1200.0
+      ],
+      "equilibrium_numerics": {
+        "log_oxygen_absolute_tolerance": 1e-12,
+        "log_oxygen_relative_tolerance": 1e-14,
+        "maximum_root_iterations": 100
+      },
+      "temperature_points_k": [
+        298.15,
+        350.0,
+        500.0,
+        700.0,
+        850.0,
+        1000.0,
+        1100.0,
+        1200.0
+      ],
+      "inventories": [
+        {
+          "name": "carbon_lean",
+          "carbon_atoms_mol": 0.0005,
+          "oxygen_atoms_mol": 0.002,
+          "nitrogen_molecules_mol": 0.004
+        },
+        {
+          "name": "carbon_transition",
+          "carbon_atoms_mol": 0.0015,
+          "oxygen_atoms_mol": 0.002,
+          "nitrogen_molecules_mol": 0.004
+        },
+        {
+          "name": "carbon_rich",
+          "carbon_atoms_mol": 0.003,
+          "oxygen_atoms_mol": 0.002,
+          "nitrogen_molecules_mol": 0.004
+        }
+      ],
+      "classification": "explicit_virtual_element_inventories_at_source_standard_pressure",
+      "scope": "Restricted equilibrium with pure reference graphite and ideal CO/CO2/O2/N2. No finite char chemistry or ignition dynamics.",
+      "material_qualified": false,
+      "training_eligible": false
+    },
+    "calcite_parameters": {
+      "source_file": "parameters.calcite_affinity_source.json",
+      "gas_phase": "carbon_dioxide",
+      "total_pressure_pa": 100000.0,
+      "joules_per_kilojoule": 1000.0,
+      "gas_partial_pressures_pa": [
+        40.0,
+        1000.0,
+        10000.0,
+        100000.0
+      ],
+      "pressure_cases_classification": "explicit_virtual_atmospheres_not_measurements",
+      "gas_constant_policy": "Use the historical USGS book R for this separate source consistency calculation; do not replace any other module R.",
+      "root": {
+        "bracket_k": [
+          298.15,
+          1200.0
+        ],
+        "absolute_tolerance_k": 1e-08,
+        "relative_tolerance": 1e-12,
+        "maximum_iterations": 100
+      },
+      "verification": {
+        "quadrature_absolute_tolerance": 1e-08,
+        "quadrature_relative_tolerance": 1e-12,
+        "quadrature_maximum_subintervals": 100,
+        "derivative_temperatures_k": [
+          400.0,
+          600.0,
+          800.0,
+          1000.0,
+          1100.0
+        ],
+        "derivative_step_k": 0.001,
+        "budgets": {
+          "enthalpy_quadrature_j_mol": 1e-06,
+          "entropy_quadrature_j_mol_k": 1e-08,
+          "gibbs_derivative_j_mol_k": 1e-05,
+          "vanthoff_derivative_per_k": 1e-08,
+          "equilibrium_affinity_j_mol": 1e-05
+        },
+        "rounding_policy": "Printed half-last-unit intervals propagated through the linear Cp integrals, Href and Sref. Formation G and logK table comparison retains its own half-last-unit interval. These are arithmetic envelopes, not physical uncertainty. No post-comparison budget fitting."
+      },
+      "material_qualified": false,
+      "training_eligible": false
+    },
+    "solid_volume_source": {
+      "source_url": "https://pubs.usgs.gov/bul/2131/report.pdf",
+      "retrieved_utc": "2026-09-25",
+      "calcium_volume_source": "parameters.calcite_constant_volume_source.json",
+      "reference_temperature_k": 298.15,
+      "reference_pressure_pa": 100000.0,
+      "cubic_metres_per_cubic_centimetre": 1e-06,
+      "graphite": {
+        "formula": "C",
+        "crystal": "hexagonal graphite",
+        "volume_cm3_mol": "5.298",
+        "alternate_printed_volume_j_bar_mol": "0.5298",
+        "printed_page": 76,
+        "pdf_one_based_page": 82,
+        "source_printed_uncertainty_cm3_mol": null,
+        "visual_review": "Original local PDF rendered and visually inspected on 2026-09-25; graphite reference-state page gives both equivalent volume units."
+      },
+      "eos_choice": "Constant molar volumes for graphite, calcite and lime, with h=h0+(p-p0)v, s=s0 and mu=g0+(p-p0)v. This is an explicit incompressible approximation, not a measured high-temperature EOS.",
+      "unknowns": [
+        "Graphite thermal expansion and compressibility",
+        "Calcite and lime high-temperature volume changes",
+        "Target sludge char composition and structure",
+        "Nonideal gas fugacity over actual operating pressures"
+      ],
+      "material_qualified": false,
+      "training_eligible": false
+    },
+    "calcium_volume_source": {
+      "source_url": "https://pubs.usgs.gov/bul/2131/report.pdf",
+      "retrieved_utc": "2026-09-25",
+      "reference_temperature_k": 298.15,
+      "reference_pressure_pa": 100000.0,
+      "cubic_metres_per_cubic_centimetre": 1e-06,
+      "phases": {
+        "calcite": {
+          "volume_cm3_mol": "36.93",
+          "source_printed_uncertainty_cm3_mol": "0.01",
+          "printed_page": 25,
+          "pdf_one_based_page": 31
+        },
+        "lime": {
+          "volume_cm3_mol": "16.76",
+          "source_printed_uncertainty_cm3_mol": "0.01",
+          "printed_page": 15,
+          "pdf_one_based_page": 21
+        }
+      },
+      "visual_review": "Both original reference tables rendered and inspected; matched existing immutable source facts; no digest operation.",
+      "model_reference": "https://cantera.org/3.2/cxx/d3/d50/classCantera_1_1StoichSubstance.html",
+      "eos_choice": "constant molar volume, no thermal expansion or compression, incompressible pure phases",
+      "classification": "298.15 K source volumes extended as an explicitly approximate constant-volume EOS, not a measured high-temperature law",
+      "unknowns": [
+        "Actual calcite and CaO thermal expansion and compressibility",
+        "Target brick phase inventory, porosity and pore connectivity",
+        "Material reaction kinetics and nucleation",
+        "Ideal-gas and incompressible-solid model error over the resulting pressure path"
+      ],
+      "thermal_consistency": {
+        "solid_h": "h0(T)+(p-p0)*v",
+        "solid_s": "s0(T)",
+        "solid_u": "h0(T)-p0*v",
+        "solid_mu": "g0(T)+(p-p0)*v",
+        "gas_u": "h0(T)-R*T",
+        "gas_mu": "g0(T)+R*T*ln(p_i/p0)"
+      },
+      "material_qualified": false,
+      "training_eligible": false
+    }
+  },
+  "records": [
+    {
+      "mesh": "two",
+      "cells": 2,
+      "cell_volume_m3": 0.0001,
+      "initial_totals_C_O_N_U": [
+        0.009000000000000001,
+        0.016,
+        0.008,
+        -4489.879718604647
+      ],
+      "global_rate_residuals": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "maximum_jacobian_conservation_residual": 0.0,
+      "direction": [
+        3.181980515339464e-06,
+        -5.65685424949238e-06,
+        2.82842712474619e-06,
+        5.373369877633458,
+        3.181980515339465e-06,
+        -5.656854249492381e-06,
+        2.8284271247461903e-06,
+        1.6658432870648163,
+        0.0
+      ],
+      "difference_reviews": [
+        {
+          "difference_step": 0.001,
+          "errors": {
+            "inventory_rate_mol_s": 1.1721422249478545e-18,
+            "energy_rate_w": 2.2345181328637005e-12,
+            "entropy_rate_w_k": 6.840908867871055e-16
+          },
+          "within_budgets": {
+            "inventory_rate_mol_s": true,
+            "energy_rate_w": true,
+            "entropy_rate_w_k": true,
+            "same_phase": true
+          }
+        },
+        {
+          "difference_step": 0.0003,
+          "errors": {
+            "inventory_rate_mol_s": 3.501482933294757e-18,
+            "energy_rate_w": 1.4233790070260297e-11,
+            "entropy_rate_w_k": 4.0321885767597286e-15
+          },
+          "within_budgets": {
+            "inventory_rate_mol_s": true,
+            "energy_rate_w": true,
+            "entropy_rate_w_k": true,
+            "same_phase": true
+          }
+        }
+      ],
+      "within_budgets": {
+        "inventory_rate_conservation": true,
+        "energy_rate_conservation": true,
+        "jacobian_conservation": true,
+        "nonnegative_face_entropy": true,
+        "directional_derivatives": true
+      }
+    },
+    {
+      "mesh": "four",
+      "cells": 4,
+      "cell_volume_m3": 5e-05,
+      "initial_totals_C_O_N_U": [
+        0.009000000000000001,
+        0.016,
+        0.008,
+        -4489.879718604647
+      ],
+      "global_rate_residuals": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "maximum_jacobian_conservation_residual": 4.547473508864641e-13,
+      "direction": [
+        8.610377228214522e-07,
+        -1.530733729460359e-06,
+        7.653668647301795e-07,
+        1.4540234112091377,
+        2.0787289481503954e-06,
+        -3.695518130045147e-06,
+        1.8477590650225734e-06,
+        3.510323039349092,
+        2.0787289481503954e-06,
+        -3.695518130045147e-06,
+        1.8477590650225734e-06,
+        1.0882645720834074,
+        8.610377228214514e-07,
+        -1.5307337294603578e-06,
+        7.653668647301789e-07,
+        0.4507739452070997,
+        0.0
+      ],
+      "difference_reviews": [
+        {
+          "difference_step": 0.001,
+          "errors": {
+            "inventory_rate_mol_s": 2.7151992675996932e-18,
+            "energy_rate_w": 2.1417446809113283e-11,
+            "entropy_rate_w_k": 2.8950729575084075e-15
+          },
+          "within_budgets": {
+            "inventory_rate_mol_s": true,
+            "energy_rate_w": true,
+            "entropy_rate_w_k": true,
+            "same_phase": true
+          }
+        },
+        {
+          "difference_step": 0.0003,
+          "errors": {
+            "inventory_rate_mol_s": 7.89097134433025e-18,
+            "energy_rate_w": 4.5767168700694416e-11,
+            "entropy_rate_w_k": 3.4836498415944967e-15
+          },
+          "within_budgets": {
+            "inventory_rate_mol_s": true,
+            "energy_rate_w": true,
+            "entropy_rate_w_k": true,
+            "same_phase": true
+          }
+        }
+      ],
+      "within_budgets": {
+        "inventory_rate_conservation": true,
+        "energy_rate_conservation": true,
+        "jacobian_conservation": true,
+        "nonnegative_face_entropy": true,
+        "directional_derivatives": true
+      }
+    },
+    {
+      "mesh": "eight",
+      "cells": 8,
+      "cell_volume_m3": 2.5e-05,
+      "initial_totals_C_O_N_U": [
+        0.009000000000000001,
+        0.016,
+        0.008,
+        -4489.879718604647
+      ],
+      "global_rate_residuals": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "maximum_jacobian_conservation_residual": 1.8189894035458565e-12,
+      "direction": [
+        2.1947661226814432e-07,
+        -3.9018064403225647e-07,
+        1.9509032201612823e-07,
+        0.37062735347418363,
+        6.250165121470526e-07,
+        -1.1111404660392044e-06,
+        5.555702330196022e-07,
+        1.055457405601432,
+        9.354033138403635e-07,
+        -1.6629392246050905e-06,
+        8.314696123025452e-07,
+        1.5796036354710696,
+        1.1033834404536344e-06,
+        -1.961570560806461e-06,
+        9.807852804032304e-07,
+        1.8632695309828498,
+        1.1033834404536344e-06,
+        -1.961570560806461e-06,
+        9.807852804032304e-07,
+        0.57764775380533,
+        9.354033138403638e-07,
+        -1.6629392246050907e-06,
+        8.314696123025453e-07,
+        0.4897061196783964,
+        6.250165121470526e-07,
+        -1.1111404660392044e-06,
+        5.555702330196022e-07,
+        0.327211168027456,
+        2.1947661226814474e-07,
+        -3.901806440322572e-07,
+        1.950903220161286e-07,
+        0.11490128222096024,
+        0.0
+      ],
+      "difference_reviews": [
+        {
+          "difference_step": 0.001,
+          "errors": {
+            "inventory_rate_mol_s": 1.968131014654365e-17,
+            "energy_rate_w": 5.1083670713630847e-11,
+            "entropy_rate_w_k": 1.2643609981688106e-15
+          },
+          "within_budgets": {
+            "inventory_rate_mol_s": true,
+            "energy_rate_w": true,
+            "entropy_rate_w_k": true,
+            "same_phase": true
+          }
+        },
+        {
+          "difference_step": 0.0003,
+          "errors": {
+            "inventory_rate_mol_s": 7.549518146125264e-17,
+            "energy_rate_w": 1.839018824376093e-10,
+            "entropy_rate_w_k": 1.8051424706072117e-14
+          },
+          "within_budgets": {
+            "inventory_rate_mol_s": true,
+            "energy_rate_w": true,
+            "entropy_rate_w_k": true,
+            "same_phase": true
+          }
+        }
+      ],
+      "within_budgets": {
+        "inventory_rate_conservation": true,
+        "energy_rate_conservation": true,
+        "jacobian_conservation": true,
+        "nonnegative_face_entropy": true,
+        "directional_derivatives": true
+      }
+    }
+  ],
+  "two_cell_mapping": {
+    "maximum_differences": {
+      "temperature_k": 2.5011104298755527e-12,
+      "pressure_pa": 5.471520125865936e-09,
+      "species_mol": 5.833007687972014e-17
+    },
+    "face_coefficients_match": true,
+    "within_budgets": true
+  },
+  "maximum_initial_total_differences": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "within_budgets": {
+    "assembly": true,
+    "initial_inventory_totals": true,
+    "initial_energy_total": true,
+    "two_cell_mapping": true
+  },
+  "all_requested_budgets_met": true,
+  "material_qualified": false,
+  "training_eligible": false
+}

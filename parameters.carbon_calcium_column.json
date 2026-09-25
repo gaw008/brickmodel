@@ -1,0 +1,54 @@
+{
+  "exchange_parameters": "parameters.carbon_calcium_exchange.json",
+  "geometry": {"length_m": 0.02, "area_m2": 0.01},
+  "initial": {
+    "calcium_density_mol_m3": 20.0,
+    "carbon_density_mol_m3": 45.0,
+    "oxygen_density_mol_m3": 80.0,
+    "nitrogen_density_mol_m3": 40.0,
+    "temperature_left_k": 1160.0,
+    "temperature_right_k": 1000.0,
+    "interface_length_fraction": 0.5
+  },
+  "transport": {
+    "thermal_conductivity_w_m_k": 0.005,
+    "gas_mobility_density_mol2_k_j_m_s": {"CO": 1e-9, "CO2": 1e-9, "O2": 1e-9, "N2": 1e-9},
+    "classification": "Explicit virtual continuum coefficients. Face conductance/mobility scales as area over center distance; neither inferred nor measured brick transport."
+  },
+  "meshes": {"two": 2, "four": 4, "eight": 8, "sixteen": 16, "thirty_two": 32, "sixty_four": 64},
+  "duration_s": 20000.0,
+  "numerics": {
+    "jacobian_method": "analytic",
+    "relative_tolerance": 1e-9,
+    "refinement_factor": 0.1,
+    "cell_density_absolute_tolerances_C_O_N_U": [1e-9, 1e-9, 1e-9, 0.001],
+    "production_absolute_tolerance_j_k": 1e-11,
+    "maximum_step_s": 20.0,
+    "first_step_s": 0.001,
+    "observation_interval_s": 20.0,
+    "progress_every_steps": 100
+  },
+  "verification": {
+    "element_mol": 1e-12,
+    "pressure_pa": 1e-5,
+    "volume_m3": 1e-14,
+    "reaction_gibbs_j_mol": 1e-5,
+    "source_energy_j": 1e-7,
+    "source_entropy_j_k": 1e-10,
+    "face_species_mol_s": 1e-14,
+    "face_energy_w": 1e-8,
+    "face_entropy_w_k": 1e-11,
+    "inventory_integral_mol": 1e-10,
+    "energy_j": 1e-5,
+    "entropy_j_k": 1e-8,
+    "nonnegative_entropy_j_k": 1e-10,
+    "time_temperature_k": 0.001,
+    "time_pressure_pa": 0.1,
+    "time_species_mol": 1e-10,
+    "quadrature_orders": [2,4]
+  },
+  "initial_mapping": "Uniform even meshes reproduce the half-hot/half-cold initial slab; total source inventories and U remain mesh independent. Two cells map exactly to the prior100cm3-per-cell experiment, including face coefficients and absolute tolerances.",
+  "scope": "Closed one-dimensional uniform finite-volume column. Local restricted equilibrium and immobile solids; one shared gas/energy face adds equal opposite elemental and U rates. No external reservoir or deformation. Qualify two-cell assembly before spatial refinement.",
+  "material_qualified": false,
+  "training_eligible": false
+}

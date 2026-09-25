@@ -67,5 +67,7 @@ def independent_exchange(left,right,parameters):
     sl=math.fsum([-energy]+[left['mu'][k]*flow[k] for k in names])/tl
     sr=math.fsum([energy]+[-right['mu'][k]*flow[k] for k in names])/tr
     elemental=[flow['CO']+flow['CO2'],flow['CO']+2*flow['CO2']+2*flow['O2'],flow['N2']]
+    dissipation=parameters['heat_conductance_w_k']*(tl-tr)**2/(tl*tr)
+    dissipation+=math.fsum(parameters['gas_mobilities_mol2_k_j_s'][k]*force[k]**2 for k in names)
     return {'gas':flow,'inventory':elemental,'energy':energy,'entropy':[sl,sr],
-            'production':math.fsum((sl,sr))}
+            'production':math.fsum((sl,sr)),'dissipation':dissipation}
