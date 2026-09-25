@@ -1,0 +1,226 @@
+{
+  "settings": {
+    "model_parameters": "parameters.carbon_calcium_equilibrium.json",
+    "decimal_digits": 60,
+    "root_tolerance": "1e-45",
+    "maximum_root_iterations": 100,
+    "temperature_root_absolute_tolerance_k": 1e-10,
+    "temperature_root_relative_tolerance": 1e-14,
+    "one_sided_offsets_k": [
+      0.0001,
+      3e-05,
+      1e-05
+    ],
+    "one_sided_derivative_step_fraction": 0.25,
+    "budgets": {
+      "boundary_temperature_k": 1e-07,
+      "source_enthalpy_j": 1e-07,
+      "source_entropy_j_k": 1e-10,
+      "phase_endpoint_mol": 1e-12,
+      "projected_enthalpy_continuity_j": 1e-06,
+      "projected_entropy_continuity_j_k": 1e-09,
+      "one_sided_cp_j_k": 1e-07
+    },
+    "boundaries": [
+      {
+        "name": "excess_calcite_exhaustion",
+        "inventory_name": "excess_carbon",
+        "kind": "calcite_exhaustion",
+        "temperature_bracket_k": [
+          1000.0,
+          1050.0
+        ],
+        "left_phases": [
+          "coexistence",
+          "graphite_present"
+        ],
+        "right_phases": [
+          "lime",
+          "graphite_present"
+        ]
+      }
+    ],
+    "scope": "Frozen after same-phase qualification, before boundary calculation: independent temperature/log-mole/phase-fraction roots and one-sided caloric continuity. Heating/cooling kinetic hysteresis is outside this instantaneous-equilibrium model.",
+    "refinement_reason": "Preserve original1e-3K linear projection failure near the high-Cp excess-carbon calcite exhaustion. Reduce only one-sided distance; unchanged source phases, inventory, root tolerance and acceptance budgets. Other seven already-passing boundaries are not rerun."
+  },
+  "records": [
+    {
+      "case": {
+        "name": "excess_calcite_exhaustion",
+        "inventory_name": "excess_carbon",
+        "kind": "calcite_exhaustion",
+        "temperature_bracket_k": [
+          1000.0,
+          1050.0
+        ],
+        "left_phases": [
+          "coexistence",
+          "graphite_present"
+        ],
+        "right_phases": [
+          "lime",
+          "graphite_present"
+        ]
+      },
+      "inventory": {
+        "name": "excess_carbon",
+        "calcium_atoms_mol": 0.002,
+        "carbon_atoms_mol": 0.007,
+        "oxygen_atoms_mol": 0.008,
+        "nitrogen_molecules_mol": 0.004
+      },
+      "candidate_temperature_k": 1021.5914138637727,
+      "reference_temperature_k": "1021.59141386377477836843771729816268661340476875007427201905",
+      "reference_amounts_mol": {
+        "calcite": "0.0",
+        "lime": "0.00200000000000000004163336342344337026588618755340576171875",
+        "C": "0.0018363073701359206229613157058639484892747432415390697802589",
+        "CO": "0.00432738525972815892062042793103416573530059910805537092190432",
+        "CO2": "0.000836307370135920602135028345153681706026314087325725313461777",
+        "O2": "4.80282449429082515266768875523180372171868923474713888319984e-24",
+        "N2": "0.0040000000000000000832667268468867405317723751068115234375"
+      },
+      "reference_enthalpy_j": "-1767.39463274046387682373691874751968827109999473988482236991",
+      "reference_entropy_j_k": "2.4728361439580100966555861824140034418471266370218117510572",
+      "boundary_errors": {
+        "boundary_temperature_k": 2.091913970241884e-12,
+        "source_enthalpy_j": 3.964534885617315e-12,
+        "source_entropy_j_k": 4.102263461988577e-15,
+        "phase_endpoint_mol": 0.0
+      },
+      "boundary_within_budgets": {
+        "boundary_temperature_k": true,
+        "source_enthalpy_j": true,
+        "source_entropy_j_k": true,
+        "phase_endpoint_mol": true
+      },
+      "one_sided_records": [
+        {
+          "direction": -1,
+          "offset_k": 0.0001,
+          "phases": [
+            "coexistence",
+            "graphite_present"
+          ],
+          "source_cp_j_k": "39.9509962033921685137189737825829611265651604266810444086466",
+          "candidate_cp_j_k": 39.95099620336593,
+          "source_cp_error_j_k": 2.6236466883022742e-11,
+          "projected_enthalpy_error_j": 1.3433251518613992e-08,
+          "projected_entropy_error_j_k": 1.295793857287532e-11,
+          "within_budgets": {
+            "expected_phases": true,
+            "reference_phase_constraints": true,
+            "enthalpy_continuity": true,
+            "entropy_continuity": true,
+            "one_sided_cp": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 0.0001,
+          "phases": [
+            "lime",
+            "graphite_present"
+          ],
+          "source_cp_j_k": "2.13285851059574465632012766116705663255044857183691182291755",
+          "candidate_cp_j_k": 2.132858510595751,
+          "source_cp_error_j_k": 6.4995270829505156e-15,
+          "projected_enthalpy_error_j": 5.841981849100466e-11,
+          "projected_entropy_error_j_k": 6.740338279048492e-14,
+          "within_budgets": {
+            "expected_phases": true,
+            "reference_phase_constraints": true,
+            "enthalpy_continuity": true,
+            "entropy_continuity": true,
+            "one_sided_cp": true
+          }
+        },
+        {
+          "direction": -1,
+          "offset_k": 3e-05,
+          "phases": [
+            "coexistence",
+            "graphite_present"
+          ],
+          "source_cp_j_k": "39.9511842689582500289290431638817666465446929031204749440619",
+          "candidate_cp_j_k": 39.95118426895589,
+          "source_cp_error_j_k": 2.3582193463620016e-12,
+          "projected_enthalpy_error_j": 1.2089984244598574e-09,
+          "projected_entropy_error_j_k": 1.1662200304719668e-12,
+          "within_budgets": {
+            "expected_phases": true,
+            "reference_phase_constraints": true,
+            "enthalpy_continuity": true,
+            "entropy_continuity": true,
+            "one_sided_cp": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 3e-05,
+          "phases": [
+            "lime",
+            "graphite_present"
+          ],
+          "source_cp_j_k": "2.1328593284731836087954306228763831844106151747648383227094",
+          "candidate_cp_j_k": 2.132859328473187,
+          "source_cp_error_j_k": 3.546088841253777e-15,
+          "projected_enthalpy_error_j": 5.257781091701601e-12,
+          "projected_entropy_error_j_k": 6.066302487246579e-15,
+          "within_budgets": {
+            "expected_phases": true,
+            "reference_phase_constraints": true,
+            "enthalpy_continuity": true,
+            "entropy_continuity": true,
+            "one_sided_cp": true
+          }
+        },
+        {
+          "direction": -1,
+          "offset_k": 1e-05,
+          "phases": [
+            "coexistence",
+            "graphite_present"
+          ],
+          "source_cp_j_k": "39.9512380022226729247585903354444378784887021252550020159235",
+          "candidate_cp_j_k": 39.951238002222816,
+          "source_cp_error_j_k": 1.4281248244475904e-13,
+          "projected_enthalpy_error_j": 1.3433334201337532e-10,
+          "projected_entropy_error_j_k": 1.2958017986003715e-13,
+          "within_budgets": {
+            "expected_phases": true,
+            "reference_phase_constraints": true,
+            "enthalpy_continuity": true,
+            "entropy_continuity": true,
+            "one_sided_cp": true
+          }
+        },
+        {
+          "direction": 1,
+          "offset_k": 1e-05,
+          "phases": [
+            "lime",
+            "graphite_present"
+          ],
+          "source_cp_j_k": "2.13285956215234274503063160612365583519414125893835743016935",
+          "candidate_cp_j_k": 2.132859562152339,
+          "source_cp_error_j_k": 3.561603301834321e-15,
+          "projected_enthalpy_error_j": 5.841978174115299e-13,
+          "projected_entropy_error_j_k": 6.74033547348008e-16,
+          "within_budgets": {
+            "expected_phases": true,
+            "reference_phase_constraints": true,
+            "enthalpy_continuity": true,
+            "entropy_continuity": true,
+            "one_sided_cp": true
+          }
+        }
+      ],
+      "all_requested_boundary_budgets_met": true
+    }
+  ],
+  "all_requested_phase_boundary_budgets_met": true,
+  "material_qualified": false,
+  "training_eligible": false,
+  "scope": "Frozen after same-phase qualification, before boundary calculation: independent temperature/log-mole/phase-fraction roots and one-sided caloric continuity. Heating/cooling kinetic hysteresis is outside this instantaneous-equilibrium model."
+}

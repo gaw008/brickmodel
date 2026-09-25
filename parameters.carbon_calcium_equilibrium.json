@@ -1,0 +1,29 @@
+{
+  "carbon_parameters": "parameters.carbon_gas_equilibrium.json",
+  "calcite_affinity_parameters": "parameters.calcite_affinity.json",
+  "equilibrium_numerics": {
+    "calcite_fraction_absolute_tolerance": 1e-12,
+    "calcite_fraction_relative_tolerance": 1e-14,
+    "maximum_root_iterations": 100
+  },
+  "temperature_points_k": [298.15, 350.0, 500.0, 700.0, 850.0, 900.0, 950.0, 1000.0, 1050.0, 1100.0, 1150.0, 1200.0],
+  "inventories": [
+    {"name": "limited_carbon", "calcium_atoms_mol": 0.002, "carbon_atoms_mol": 0.0035, "oxygen_atoms_mol": 0.008, "nitrogen_molecules_mol": 0.004},
+    {"name": "coupled_carbon", "calcium_atoms_mol": 0.002, "carbon_atoms_mol": 0.0045, "oxygen_atoms_mol": 0.008, "nitrogen_molecules_mol": 0.004},
+    {"name": "excess_carbon", "calcium_atoms_mol": 0.002, "carbon_atoms_mol": 0.007, "oxygen_atoms_mol": 0.008, "nitrogen_molecules_mol": 0.004}
+  ],
+  "phase_order": ["calcite", "lime", "C", "CO", "CO2", "O2", "N2"],
+  "reaction_stoichiometry": {
+    "calcination": {"calcite": -1.0, "lime": 1.0, "C": 0.0, "CO": 0.0, "CO2": 1.0, "O2": 0.0, "N2": 0.0},
+    "carbon_co2_to_co": {"calcite": 0.0, "lime": 0.0, "C": -1.0, "CO": 2.0, "CO2": -1.0, "O2": 0.0, "N2": 0.0},
+    "carbon_oxygen_to_co2": {"calcite": 0.0, "lime": 0.0, "C": -1.0, "CO": 0.0, "CO2": 1.0, "O2": -1.0, "N2": 0.0},
+    "co_oxidation": {"calcite": 0.0, "lime": 0.0, "C": 0.0, "CO": -1.0, "CO2": 1.0, "O2": -0.5, "N2": 0.0}
+  },
+  "coexistence_basis": {
+    "graphite_present": ["calcination", "carbon_co2_to_co", "carbon_oxygen_to_co2"],
+    "graphite_exhausted": ["calcination", "co_oxidation"]
+  },
+  "scope": "Restricted isobaric equilibrium at common USGS source standard pressure. Virtual domain Ctotal>Catotal, Ototal>3Catotal, N2>0; inventories include atoms in all solid and gas phases. Pure phases, ideal gas, no kinetics/volume/real-brick claim.",
+  "material_qualified": false,
+  "training_eligible": false
+}
