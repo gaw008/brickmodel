@@ -1,0 +1,41 @@
+{
+  "source_url": "https://pubs.usgs.gov/bul/2131/report.pdf",
+  "retrieved_utc": "2026-09-25",
+  "reference_temperature_k": 298.15,
+  "reference_pressure_pa": 100000.0,
+  "cubic_metres_per_cubic_centimetre": 1e-06,
+  "phases": {
+    "calcite": {
+      "volume_cm3_mol": "36.93",
+      "source_printed_uncertainty_cm3_mol": "0.01",
+      "printed_page": 25,
+      "pdf_one_based_page": 31
+    },
+    "lime": {
+      "volume_cm3_mol": "16.76",
+      "source_printed_uncertainty_cm3_mol": "0.01",
+      "printed_page": 15,
+      "pdf_one_based_page": 21
+    }
+  },
+  "visual_review": "Both original reference tables rendered and inspected; matched existing immutable source facts; no digest operation.",
+  "model_reference": "https://cantera.org/3.2/cxx/d3/d50/classCantera_1_1StoichSubstance.html",
+  "eos_choice": "constant molar volume, no thermal expansion or compression, incompressible pure phases",
+  "classification": "298.15 K source volumes extended as an explicitly approximate constant-volume EOS, not a measured high-temperature law",
+  "unknowns": [
+    "Actual calcite and CaO thermal expansion and compressibility",
+    "Target brick phase inventory, porosity and pore connectivity",
+    "Material reaction kinetics and nucleation",
+    "Ideal-gas and incompressible-solid model error over the resulting pressure path"
+  ],
+  "thermal_consistency": {
+    "solid_h": "h0(T)+(p-p0)*v",
+    "solid_s": "s0(T)",
+    "solid_u": "h0(T)-p0*v",
+    "solid_mu": "g0(T)+(p-p0)*v",
+    "gas_u": "h0(T)-R*T",
+    "gas_mu": "g0(T)+R*T*ln(p_i/p0)"
+  },
+  "material_qualified": false,
+  "training_eligible": false
+}

@@ -1,0 +1,1135 @@
+{
+  "settings": {
+    "model_parameters": "parameters.calcite_rigid_equilibrium.json",
+    "temperatures_k": [
+      300.0,
+      600.0,
+      900.0,
+      1100.0,
+      1180.0
+    ],
+    "carbon_amounts_mol": [
+      0.008,
+      0.010001,
+      0.01001
+    ],
+    "temperature_step_k": 0.001,
+    "carbon_step_mol": 1e-09,
+    "volume_relative_step": 1e-05,
+    "log_gas_derivative_step": 0.0001,
+    "gibbs_probe_log_step": 0.001,
+    "equal_inventory_corner_temperatures_k": [
+      298.15,
+      300.0,
+      600.0,
+      1000.0
+    ],
+    "budgets": {
+      "inventory_mol": 1e-13,
+      "inverse_temperature_k": 1e-07,
+      "effective_capacity_j_k": 1e-05,
+      "entropy_temperature_identity_j_k": 1e-05,
+      "carbon_chemical_identity_j_mol": 0.1,
+      "volume_identity_pa": 10.0,
+      "reaction_affinity_j_mol": 1e-05,
+      "reaction_derivative_relative": 1e-05,
+      "reference_enthalpy_identity_j": 1e-08,
+      "helmholtz_negative_allowance_j": 1e-08
+    },
+    "scope": "Formal continuum equilibrium and exact thermodynamic identities of declared incompressible/ideal model. Not validation of tiny bulk-phase nucleation, high-temperature volume or actual brick pressure."
+  },
+  "parameters": {
+    "affinity_parameters": "parameters.calcite_affinity.json",
+    "reactant_phase": "calcite",
+    "product_phase": "lime",
+    "initial_temperature_k": 300.0,
+    "heat_conductance_w_k": 0.001,
+    "classification": "closed_rigid_pure_solid_constant_molar_volume_ideal_CO2_N2_equilibrium_capsule",
+    "wall_program": [
+      {
+        "start_s": 0.0,
+        "end_s": 8000.0,
+        "temperature_k": 1180.0
+      },
+      {
+        "start_s": 8000.0,
+        "end_s": 16000.0,
+        "temperature_k": 300.0
+      }
+    ],
+    "numerics": {
+      "temperature_inverse_absolute_k": 1e-11,
+      "temperature_inverse_relative": 1e-14,
+      "temperature_inverse_iterations": 100,
+      "relative_tolerance": 1.0000000000000001e-11,
+      "absolute_tolerances": [
+        1e-07,
+        1e-07,
+        1e-10,
+        1e-10
+      ],
+      "refinement_factor": 0.1,
+      "maximum_step_s": 1.0,
+      "initial_step_s": 1e-05,
+      "observation_interval_s": 2.0,
+      "event_absolute_time_s": 1e-07,
+      "event_relative_tolerance": 1e-12,
+      "event_iterations": 100,
+      "progress_every_steps": 100,
+      "log_gas_root_absolute_tolerance": 1e-12,
+      "log_gas_root_relative_tolerance": 1e-13,
+      "log_gas_root_iterations": 100,
+      "log_gas_bracket_padding": 1.0
+    },
+    "verification": {
+      "quadrature_orders": [
+        2,
+        4
+      ],
+      "balance_energy_j": 1e-05,
+      "balance_co2_mol": 1e-07,
+      "balance_entropy_j_k": 1e-07,
+      "quadrature_energy_j": 1e-05,
+      "quadrature_entropy_j_k": 1e-07,
+      "negative_entropy_allowance_j_k": 1e-10,
+      "time_temperature_k": 0.001,
+      "time_extent_mol": 1e-07,
+      "event_difference_s": 0.001
+    },
+    "material_qualified": false,
+    "training_eligible": false,
+    "radiation": {
+      "area_m2": 1e-05,
+      "emissivity": 1.0,
+      "stefan_boltzmann_w_m2_k4": 5.670374419e-08,
+      "area_classification": "declared virtual capsule exposed area, not target brick",
+      "surface_classification": "ideal_black_surface_in_prescribed_black_enclosure_view_factor_one",
+      "material_emissivity": null,
+      "source": {
+        "constant_url": "https://physics.nist.gov/cuu/Constants/Table/allascii.txt",
+        "adjustment": "2022 CODATA",
+        "printed_value": "5.670 374 419... e-8",
+        "printed_uncertainty": "exact",
+        "unit": "W m^-2 K^-4",
+        "retrieved_utc": "2026-09-25",
+        "formula": "2*pi^5*kB^4/(15*h^3*c^2)",
+        "boltzmann_j_k": 1.380649e-23,
+        "planck_j_s": 6.62607015e-34,
+        "light_speed_m_s": 299792458.0,
+        "numerical_representation": "Finite printed digits retained, not an exact decimal; not material uncertainty.",
+        "boundary_reference": "https://doc.comsol.com/6.3/doc/com.comsol.help.heat/heat_ug_theory.07.047.html"
+      },
+      "entropy_scope": "Combined material plus prescribed thermal reservoir, neglect radiation-field storage; Q/Twall is reservoir entropy loss, not a claim that photon entropy flux equals Q/Twall."
+    },
+    "nitrogen_source_file": "parameters.calcite_nitrogen_source.json",
+    "volume_source_file": "parameters.calcite_constant_volume_source.json",
+    "cell": {
+      "calcium_mol": 0.01,
+      "nitrogen_mol": 1e-05,
+      "total_volume_m3": 1e-06
+    },
+    "initial_carbon_mol": 0.01000001,
+    "temperature_domain_k": [
+      298.15,
+      1200.0
+    ],
+    "scope": "Closed rigid 1 cm3 virtual capsule; incompressible phase volumes at 298.15 K extended as an explicit approximation, ideal gas, instantaneous equilibrium. Actual high-T volume, fugacity and kinetics errors unknown."
+  },
+  "volume_source": {
+    "source_url": "https://pubs.usgs.gov/bul/2131/report.pdf",
+    "retrieved_utc": "2026-09-25",
+    "reference_temperature_k": 298.15,
+    "reference_pressure_pa": 100000.0,
+    "cubic_metres_per_cubic_centimetre": 1e-06,
+    "phases": {
+      "calcite": {
+        "volume_cm3_mol": "36.93",
+        "source_printed_uncertainty_cm3_mol": "0.01",
+        "printed_page": 25,
+        "pdf_one_based_page": 31
+      },
+      "lime": {
+        "volume_cm3_mol": "16.76",
+        "source_printed_uncertainty_cm3_mol": "0.01",
+        "printed_page": 15,
+        "pdf_one_based_page": 21
+      }
+    },
+    "visual_review": "Both original reference tables rendered and inspected; matched existing immutable source facts; no digest operation.",
+    "model_reference": "https://cantera.org/3.2/cxx/d3/d50/classCantera_1_1StoichSubstance.html",
+    "eos_choice": "constant molar volume, no thermal expansion or compression, incompressible pure phases",
+    "classification": "298.15 K source volumes extended as an explicitly approximate constant-volume EOS, not a measured high-temperature law",
+    "unknowns": [
+      "Actual calcite and CaO thermal expansion and compressibility",
+      "Target brick phase inventory, porosity and pore connectivity",
+      "Material reaction kinetics and nucleation",
+      "Ideal-gas and incompressible-solid model error over the resulting pressure path"
+    ],
+    "thermal_consistency": {
+      "solid_h": "h0(T)+(p-p0)*v",
+      "solid_s": "s0(T)",
+      "solid_u": "h0(T)-p0*v",
+      "solid_mu": "g0(T)+(p-p0)*v",
+      "gas_u": "h0(T)-R*T",
+      "gas_mu": "g0(T)+R*T*ln(p_i/p0)"
+    },
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "source_volume_matches": {
+    "calcite": true,
+    "lime": true
+  },
+  "records": [
+    {
+      "state": {
+        "temperature_k": 300.0,
+        "carbon_mol": 0.008,
+        "internal_energy_j": -10928.063448025892,
+        "enthalpy_j": -10928.026276575607,
+        "entropy_j_k": 0.816540735198131,
+        "helmholtz_j": -11173.025668585331,
+        "phase": "coexistence",
+        "calcite_mol": 0.008,
+        "lime_mol": 0.002,
+        "co2_mol": 4.626354915182623e-28,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 37171.450286123036,
+        "co2_partial_pressure_pa": 1.7196832173567182e-18,
+        "gas_volume_m3": 6.7104e-07,
+        "solid_volume_m3": 3.2896e-07,
+        "frozen_cv_j_k": 0.7551647295333334,
+        "equilibrium_cv_j_k": 0.7551647295333334,
+        "co2_temperature_derivative_mol_k": 1.089961509920348e-28,
+        "reaction_internal_energy_j_mol": 176299.6232670378,
+        "reaction_gas_derivative_j_mol2": 5.391616176731518e+30,
+        "carbon_chemical_potential_j_mol": -588384.5047802833,
+        "reaction_gibbs_j_mol": 0.0
+      },
+      "errors": {
+        "inventory_mol": 0.0,
+        "inverse_temperature_k": 5.684341886080802e-14,
+        "effective_capacity_j_k": 7.474354468683941e-12,
+        "entropy_temperature_identity_j_k": 6.439293542825908e-12,
+        "carbon_chemical_identity_j_mol": 0.0005016116192564368,
+        "volume_identity_pa": 0.0006311829638434574,
+        "reaction_affinity_j_mol": 0.0,
+        "reaction_derivative_relative": 2.9917623933783943e-11,
+        "reference_enthalpy_identity_j": 8.092693182248922e-13
+      },
+      "helmholtz_probe_increases_j": [
+        0.0,
+        0.0
+      ],
+      "within_budgets": {
+        "inventory_mol": true,
+        "inverse_temperature_k": true,
+        "effective_capacity_j_k": true,
+        "entropy_temperature_identity_j_k": true,
+        "carbon_chemical_identity_j_mol": true,
+        "volume_identity_pa": true,
+        "reaction_affinity_j_mol": true,
+        "reaction_derivative_relative": true,
+        "reference_enthalpy_identity_j": true,
+        "helmholtz_minimum": true,
+        "positive_capacity": true,
+        "positive_gas_volume": true
+      }
+    },
+    {
+      "state": {
+        "temperature_k": 300.0,
+        "carbon_mol": 0.010001,
+        "internal_energy_j": -12072.909836275154,
+        "enthalpy_j": -12072.866332417536,
+        "entropy_j_k": 0.9245099459053233,
+        "helmholtz_j": -12350.262820046752,
+        "phase": "calcite",
+        "calcite_mol": 0.01,
+        "lime_mol": 0.0,
+        "co2_mol": 9.999999999992654e-07,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 43503.8576185162,
+        "co2_partial_pressure_pa": 3954.896147135195,
+        "gas_volume_m3": 6.307000000000001e-07,
+        "solid_volume_m3": 3.693e-07,
+        "frozen_cv_j_k": 0.8384192120067814,
+        "equilibrium_cv_j_k": 0.8384192120067814,
+        "co2_temperature_derivative_mol_k": 0.0,
+        "reaction_internal_energy_j_mol": 176299.6232670378,
+        "reaction_gas_derivative_j_mol2": 2494193487.5531344,
+        "carbon_chemical_potential_j_mol": -465694.5113477025,
+        "reaction_gibbs_j_mol": 122689.86570792487
+      },
+      "errors": {
+        "inventory_mol": 0.0,
+        "inverse_temperature_k": 1.4210854715202004e-12,
+        "effective_capacity_j_k": 5.022661175857479e-10,
+        "entropy_temperature_identity_j_k": 5.024869409453459e-10,
+        "carbon_chemical_identity_j_mol": 0.0005686566582880914,
+        "volume_identity_pa": 0.0004351915995357558,
+        "reaction_affinity_j_mol": 0.0,
+        "reaction_derivative_relative": 1.2459810960763207e-11,
+        "reference_enthalpy_identity_j": 6.09436112686268e-13
+      },
+      "helmholtz_probe_increases_j": [
+        0.0001227524808200542
+      ],
+      "within_budgets": {
+        "inventory_mol": true,
+        "inverse_temperature_k": true,
+        "effective_capacity_j_k": true,
+        "entropy_temperature_identity_j_k": true,
+        "carbon_chemical_identity_j_mol": true,
+        "volume_identity_pa": true,
+        "reaction_affinity_j_mol": true,
+        "reaction_derivative_relative": true,
+        "reference_enthalpy_identity_j": true,
+        "helmholtz_minimum": true,
+        "positive_capacity": true,
+        "positive_gas_volume": true
+      }
+    },
+    {
+      "state": {
+        "temperature_k": 300.0,
+        "carbon_mol": 0.01001,
+        "internal_energy_j": -12076.473166747635,
+        "enthalpy_j": -12076.394068824693,
+        "entropy_j_k": 0.926486394926332,
+        "helmholtz_j": -12354.419085225534,
+        "phase": "calcite",
+        "calcite_mol": 0.01,
+        "lime_mol": 0.0,
+        "co2_mol": 9.999999999999593e-06,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 79097.92294276039,
+        "co2_partial_pressure_pa": 39548.96147137939,
+        "gas_volume_m3": 6.307000000000001e-07,
+        "solid_volume_m3": 3.693e-07,
+        "frozen_cv_j_k": 0.8386791542678149,
+        "equilibrium_cv_j_k": 0.8386791542678149,
+        "co2_temperature_derivative_mol_k": 0.0,
+        "reaction_internal_energy_j_mol": 176299.6232670378,
+        "reaction_gas_derivative_j_mol2": 249275810.51103118,
+        "carbon_chemical_potential_j_mol": -459951.0513132358,
+        "reaction_gibbs_j_mol": 128432.60781009399
+      },
+      "errors": {
+        "inventory_mol": 3.469446951953614e-18,
+        "inverse_temperature_k": 4.433786671143025e-12,
+        "effective_capacity_j_k": 8.25859380881866e-11,
+        "entropy_temperature_identity_j_k": 7.283063041541027e-11,
+        "carbon_chemical_identity_j_mol": 0.0007469484116882086,
+        "volume_identity_pa": 0.00026849725691135973,
+        "reaction_affinity_j_mol": 0.0,
+        "reaction_derivative_relative": 1.51577639329048e-11,
+        "reference_enthalpy_identity_j": 4.5027870321234786e-13
+      },
+      "helmholtz_probe_increases_j": [
+        0.0012849809263570933
+      ],
+      "within_budgets": {
+        "inventory_mol": true,
+        "inverse_temperature_k": true,
+        "effective_capacity_j_k": true,
+        "entropy_temperature_identity_j_k": true,
+        "carbon_chemical_identity_j_mol": true,
+        "volume_identity_pa": true,
+        "reaction_affinity_j_mol": true,
+        "reaction_derivative_relative": true,
+        "reference_enthalpy_identity_j": true,
+        "helmholtz_minimum": true,
+        "positive_capacity": true,
+        "positive_gas_volume": true
+      }
+    },
+    {
+      "state": {
+        "temperature_k": 600.0,
+        "carbon_mol": 0.008,
+        "internal_energy_j": -10659.715013525118,
+        "enthalpy_j": -10659.640670619296,
+        "entropy_j_k": 1.4278894446372774,
+        "helmholtz_j": -11516.448680307483,
+        "phase": "coexistence",
+        "calcite_mol": 0.007999999999293747,
+        "lime_mol": 0.0020000000007062524,
+        "co2_mol": 7.062522091562773e-13,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 74342.90582115168,
+        "co2_partial_pressure_pa": 0.005250483776311966,
+        "gas_volume_m3": 6.71040000014245e-07,
+        "solid_volume_m3": 3.289599999857549e-07,
+        "frozen_cv_j_k": 0.9806838404191514,
+        "equilibrium_cv_j_k": 0.980683847318971,
+        "co2_temperature_derivative_mol_k": 4.034866749590687e-14,
+        "reaction_internal_energy_j_mol": 171004.893445155,
+        "reaction_gas_derivative_j_mol2": 7063632417869496.0,
+        "carbon_chemical_potential_j_mol": -610172.7715598979,
+        "reaction_gibbs_j_mol": 1.3387762010097504e-09
+      },
+      "errors": {
+        "inventory_mol": 0.0,
+        "inverse_temperature_k": 1.5916157281026244e-12,
+        "effective_capacity_j_k": 2.7222268883519973e-10,
+        "entropy_temperature_identity_j_k": 1.4921397450962104e-10,
+        "carbon_chemical_identity_j_mol": 0.0004234880907461047,
+        "volume_identity_pa": 0.0026986809680238366,
+        "reaction_affinity_j_mol": 1.3387762010097504e-09,
+        "reaction_derivative_relative": 5.564437799421285e-13,
+        "reference_enthalpy_identity_j": 9.207218321094501e-13
+      },
+      "helmholtz_probe_increases_j": [
+        -1.8189894035458565e-12,
+        -1.8189894035458565e-12
+      ],
+      "within_budgets": {
+        "inventory_mol": true,
+        "inverse_temperature_k": true,
+        "effective_capacity_j_k": true,
+        "entropy_temperature_identity_j_k": true,
+        "carbon_chemical_identity_j_mol": true,
+        "volume_identity_pa": true,
+        "reaction_affinity_j_mol": true,
+        "reaction_derivative_relative": true,
+        "reference_enthalpy_identity_j": true,
+        "helmholtz_minimum": true,
+        "positive_capacity": true,
+        "positive_gas_volume": true
+      }
+    },
+    {
+      "state": {
+        "temperature_k": 600.0,
+        "carbon_mol": 0.010001,
+        "internal_energy_j": -11773.300551364975,
+        "enthalpy_j": -11773.213543649737,
+        "entropy_j_k": 1.606729623017852,
+        "helmholtz_j": -12737.338325175686,
+        "phase": "calcite",
+        "calcite_mol": 0.01,
+        "lime_mol": 0.0,
+        "co2_mol": 9.999999999992654e-07,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 87007.7152370324,
+        "co2_partial_pressure_pa": 7909.79229427039,
+        "gas_volume_m3": 6.307000000000001e-07,
+        "solid_volume_m3": 3.693e-07,
+        "frozen_cv_j_k": 1.0990341154093726,
+        "equilibrium_cv_j_k": 1.0990341154093726,
+        "co2_temperature_derivative_mol_k": 0.0,
+        "reaction_internal_energy_j_mol": 171004.893445155,
+        "reaction_gas_derivative_j_mol2": 4988386975.106269,
+        "carbon_chemical_potential_j_mol": -539206.9727034399,
+        "reaction_gibbs_j_mol": 70965.54340725347
+      },
+      "errors": {
+        "inventory_mol": 0.0,
+        "inverse_temperature_k": 1.5916157281026244e-12,
+        "effective_capacity_j_k": 1.1051410897522373e-09,
+        "entropy_temperature_identity_j_k": 1.077360423096252e-09,
+        "carbon_chemical_identity_j_mol": 0.00010507483966648579,
+        "volume_identity_pa": 0.0008703831990715116,
+        "reaction_affinity_j_mol": 0.0,
+        "reaction_derivative_relative": 2.1260770921571748e-12,
+        "reference_enthalpy_identity_j": 6.001171781733206e-13
+      },
+      "helmholtz_probe_increases_j": [
+        7.100353286659811e-05
+      ],
+      "within_budgets": {
+        "inventory_mol": true,
+        "inverse_temperature_k": true,
+        "effective_capacity_j_k": true,
+        "entropy_temperature_identity_j_k": true,
+        "carbon_chemical_identity_j_mol": true,
+        "volume_identity_pa": true,
+        "reaction_affinity_j_mol": true,
+        "reaction_derivative_relative": true,
+        "reference_enthalpy_identity_j": true,
+        "helmholtz_minimum": true,
+        "positive_capacity": true,
+        "positive_gas_volume": true
+      }
+    },
+    {
+      "state": {
+        "temperature_k": 600.0,
+        "carbon_mol": 0.01001,
+        "internal_energy_j": -11776.770907065855,
+        "enthalpy_j": -11776.61271121997,
+        "entropy_j_k": 1.6089171833624563,
+        "helmholtz_j": -12742.121217083328,
+        "phase": "calcite",
+        "calcite_mol": 0.01,
+        "lime_mol": 0.0,
+        "co2_mol": 9.999999999999593e-06,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 158195.84588552077,
+        "co2_partial_pressure_pa": 79097.92294275879,
+        "gas_volume_m3": 6.307000000000001e-07,
+        "solid_volume_m3": 3.693e-07,
+        "frozen_cv_j_k": 1.0993857901937252,
+        "equilibrium_cv_j_k": 1.0993857901937252,
+        "co2_temperature_derivative_mol_k": 0.0,
+        "reaction_internal_energy_j_mol": 171004.893445155,
+        "reaction_gas_derivative_j_mol2": 498551621.02206236,
+        "carbon_chemical_potential_j_mol": -527720.0526345065,
+        "reaction_gibbs_j_mol": 82451.02761159171
+      },
+      "errors": {
+        "inventory_mol": 3.469446951953614e-18,
+        "inverse_temperature_k": 9.094947017729282e-13,
+        "effective_capacity_j_k": 6.636644567237227e-10,
+        "entropy_temperature_identity_j_k": 6.74127420552395e-10,
+        "carbon_chemical_identity_j_mol": 0.0002023488050326705,
+        "volume_identity_pa": 0.002793674560962245,
+        "reaction_affinity_j_mol": 0.0,
+        "reaction_derivative_relative": 5.635492072997295e-13,
+        "reference_enthalpy_identity_j": 9.005574064246957e-13
+      },
+      "helmholtz_probe_increases_j": [
+        0.0008249476140917977
+      ],
+      "within_budgets": {
+        "inventory_mol": true,
+        "inverse_temperature_k": true,
+        "effective_capacity_j_k": true,
+        "entropy_temperature_identity_j_k": true,
+        "carbon_chemical_identity_j_mol": true,
+        "volume_identity_pa": true,
+        "reaction_affinity_j_mol": true,
+        "reaction_derivative_relative": true,
+        "reference_enthalpy_identity_j": true,
+        "helmholtz_minimum": true,
+        "positive_capacity": true,
+        "positive_gas_volume": true
+      }
+    },
+    {
+      "state": {
+        "temperature_k": 900.0,
+        "carbon_mol": 0.008,
+        "internal_energy_j": -10350.272716570258,
+        "enthalpy_j": -10350.160601235717,
+        "entropy_j_k": 1.844814739907138,
+        "helmholtz_j": -12010.605982486682,
+        "phase": "coexistence",
+        "calcite_mol": 0.007999946090763226,
+        "lime_mol": 0.0020000539092367734,
+        "co2_mol": 5.390923677352398e-08,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 112115.33454174132,
+        "co2_partial_pressure_pa": 601.164380283706,
+        "gas_volume_m3": 6.710410873493057e-07,
+        "solid_volume_m3": 3.2895891265069423e-07,
+        "frozen_cv_j_k": 1.0762993334320694,
+        "equilibrium_cv_j_k": 1.0765158438286375,
+        "co2_temperature_derivative_mol_k": 1.3164695963058494e-09,
+        "reaction_internal_energy_j_mol": 164462.8916425861,
+        "reaction_gas_derivative_j_mol2": 138808026241.0297,
+        "carbon_chemical_potential_j_mol": -640998.2328104893,
+        "reaction_gibbs_j_mol": -1.4551915228366852e-11
+      },
+      "errors": {
+        "inventory_mol": 1.734723475976807e-18,
+        "inverse_temperature_k": 9.094947017729282e-13,
+        "effective_capacity_j_k": 2.0492785246517542e-10,
+        "entropy_temperature_identity_j_k": 2.660094367001875e-10,
+        "carbon_chemical_identity_j_mol": 0.0005898539675399661,
+        "volume_identity_pa": 0.043801563428132795,
+        "reaction_affinity_j_mol": 1.4551915228366852e-11,
+        "reaction_derivative_relative": 2.3381296898605797e-13,
+        "reference_enthalpy_identity_j": 5.827976989891681e-13
+      },
+      "helmholtz_probe_increases_j": [
+        1.964508555829525e-10,
+        2.000888343900442e-10
+      ],
+      "within_budgets": {
+        "inventory_mol": true,
+        "inverse_temperature_k": true,
+        "effective_capacity_j_k": true,
+        "entropy_temperature_identity_j_k": true,
+        "carbon_chemical_identity_j_mol": true,
+        "volume_identity_pa": true,
+        "reaction_affinity_j_mol": true,
+        "reaction_derivative_relative": true,
+        "reference_enthalpy_identity_j": true,
+        "helmholtz_minimum": true,
+        "positive_capacity": true,
+        "positive_gas_volume": true
+      }
+    },
+    {
+      "state": {
+        "temperature_k": 900.0,
+        "carbon_mol": 0.010001,
+        "internal_energy_j": -11425.478274260113,
+        "enthalpy_j": -11425.347762687257,
+        "entropy_j_k": 2.075277574679662,
+        "helmholtz_j": -13293.228091471809,
+        "phase": "calcite",
+        "calcite_mol": 0.01,
+        "lime_mol": 0.0,
+        "co2_mol": 9.999999999992654e-07,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 130511.5728555486,
+        "co2_partial_pressure_pa": 11864.688441405584,
+        "gas_volume_m3": 6.307000000000001e-07,
+        "solid_volume_m3": 3.693e-07,
+        "frozen_cv_j_k": 1.2131198819887654,
+        "equilibrium_cv_j_k": 1.2131198819887654,
+        "co2_temperature_derivative_mol_k": 0.0,
+        "reaction_internal_energy_j_mol": 164462.8916425861,
+        "reaction_gas_derivative_j_mol2": 7482580462.659404,
+        "carbon_chemical_potential_j_mol": -618680.3572942014,
+        "reaction_gibbs_j_mol": 22317.504464161077
+      },
+      "errors": {
+        "inventory_mol": 0.0,
+        "inverse_temperature_k": 1.7053025658242404e-12,
+        "effective_capacity_j_k": 1.0303633501962395e-09,
+        "entropy_temperature_identity_j_k": 9.903189379656396e-10,
+        "carbon_chemical_identity_j_mol": 0.0003713450860232115,
+        "volume_identity_pa": 0.011297582008410245,
+        "reaction_affinity_j_mol": 0.0,
+        "reaction_derivative_relative": 4.55713244917888e-12,
+        "reference_enthalpy_identity_j": 9.325873406851315e-15
+      },
+      "helmholtz_probe_increases_j": [
+        2.2332413209369406e-05
+      ],
+      "within_budgets": {
+        "inventory_mol": true,
+        "inverse_temperature_k": true,
+        "effective_capacity_j_k": true,
+        "entropy_temperature_identity_j_k": true,
+        "carbon_chemical_identity_j_mol": true,
+        "volume_identity_pa": true,
+        "reaction_affinity_j_mol": true,
+        "reaction_derivative_relative": true,
+        "reference_enthalpy_identity_j": true,
+        "helmholtz_minimum": true,
+        "positive_capacity": true,
+        "positive_gas_volume": true
+      }
+    },
+    {
+      "state": {
+        "temperature_k": 900.0,
+        "carbon_mol": 0.01001,
+        "internal_energy_j": -11428.834815077214,
+        "enthalpy_j": -11428.597521308386,
+        "entropy_j_k": 2.077618270378008,
+        "helmholtz_j": -13298.691258417422,
+        "phase": "calcite",
+        "calcite_mol": 0.01,
+        "lime_mol": 0.0,
+        "co2_mol": 9.999999999999593e-06,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 237293.76882828117,
+        "co2_partial_pressure_pa": 118646.88441413817,
+        "gas_volume_m3": 6.307000000000001e-07,
+        "solid_volume_m3": 3.693e-07,
+        "frozen_cv_j_k": 1.213522123154321,
+        "equilibrium_cv_j_k": 1.213522123154321,
+        "co2_temperature_derivative_mol_k": 0.0,
+        "reaction_internal_energy_j_mol": 164462.8916425861,
+        "reaction_gas_derivative_j_mol2": 747827431.5330937,
+        "carbon_chemical_potential_j_mol": -601449.9771908013,
+        "reaction_gibbs_j_mol": 39545.73077066842
+      },
+      "errors": {
+        "inventory_mol": 3.469446951953614e-18,
+        "inverse_temperature_k": 3.410605131648481e-13,
+        "effective_capacity_j_k": 8.836604781237156e-10,
+        "entropy_temperature_identity_j_k": 9.183764859699295e-10,
+        "carbon_chemical_identity_j_mol": 6.250862497836351e-05,
+        "volume_identity_pa": 0.004190511885099113,
+        "reaction_affinity_j_mol": 0.0,
+        "reaction_derivative_relative": 5.63660229602192e-13,
+        "reference_enthalpy_identity_j": 1.3508361096370436e-12
+      },
+      "helmholtz_probe_increases_j": [
+        0.0003956925211241469
+      ],
+      "within_budgets": {
+        "inventory_mol": true,
+        "inverse_temperature_k": true,
+        "effective_capacity_j_k": true,
+        "entropy_temperature_identity_j_k": true,
+        "carbon_chemical_identity_j_mol": true,
+        "volume_identity_pa": true,
+        "reaction_affinity_j_mol": true,
+        "reaction_derivative_relative": true,
+        "reference_enthalpy_identity_j": true,
+        "helmholtz_minimum": true,
+        "positive_capacity": true,
+        "positive_gas_volume": true
+      }
+    },
+    {
+      "state": {
+        "temperature_k": 1100.0,
+        "carbon_mol": 0.008,
+        "internal_energy_j": -10129.314437040684,
+        "enthalpy_j": -10129.140363671711,
+        "entropy_j_k": 2.0663201415314876,
+        "helmholtz_j": -12402.26659272532,
+        "phase": "coexistence",
+        "calcite_mol": 0.00799722715643162,
+        "lime_mol": 0.00200277284356838,
+        "co2_mol": 2.772843568379725e-06,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 174073.3689731946,
+        "co2_partial_pressure_pa": 37789.40993048916,
+        "gas_volume_m3": 6.710959282547741e-07,
+        "solid_volume_m3": 3.289040717452258e-07,
+        "frozen_cv_j_k": 1.1280949949563481,
+        "equilibrium_cv_j_k": 1.1351017090146225,
+        "co2_temperature_derivative_mol_k": 4.394860114419477e-08,
+        "reaction_internal_energy_j_mol": 159429.7401022021,
+        "reaction_gas_derivative_j_mol2": 3297855303.519327,
+        "carbon_chemical_potential_j_mol": -665471.4391484511,
+        "reaction_gibbs_j_mol": -3.637978807091713e-12
+      },
+      "errors": {
+        "inventory_mol": 0.0,
+        "inverse_temperature_k": 1.3642420526593924e-12,
+        "effective_capacity_j_k": 7.002991520010937e-10,
+        "entropy_temperature_identity_j_k": 1.1119993814645568e-09,
+        "carbon_chemical_identity_j_mol": 6.513181142508984e-05,
+        "volume_identity_pa": 0.02576667905668728,
+        "reaction_affinity_j_mol": 3.637978807091713e-12,
+        "reaction_derivative_relative": 1.116329251260595e-12,
+        "reference_enthalpy_identity_j": 1.5409895581797173e-13
+      },
+      "helmholtz_probe_increases_j": [
+        1.266926119569689e-08,
+        1.2685632100328803e-08
+      ],
+      "within_budgets": {
+        "inventory_mol": true,
+        "inverse_temperature_k": true,
+        "effective_capacity_j_k": true,
+        "entropy_temperature_identity_j_k": true,
+        "carbon_chemical_identity_j_mol": true,
+        "volume_identity_pa": true,
+        "reaction_affinity_j_mol": true,
+        "reaction_derivative_relative": true,
+        "reference_enthalpy_identity_j": true,
+        "helmholtz_minimum": true,
+        "positive_capacity": true,
+        "positive_gas_volume": true
+      }
+    },
+    {
+      "state": {
+        "temperature_k": 1100.0,
+        "carbon_mol": 0.010001,
+        "internal_energy_j": -11176.24409592128,
+        "enthalpy_j": -11176.06130037381,
+        "entropy_j_k": 2.325118794695213,
+        "helmholtz_j": -13733.874770086015,
+        "phase": "coexistence",
+        "calcite_mol": 0.009998393880913375,
+        "lime_mol": 1.606119086625327e-06,
+        "co2_mol": 2.6061190866245923e-06,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 182795.54746904763,
+        "co2_partial_pressure_pa": 37790.13683240032,
+        "gas_volume_m3": 6.307323954219772e-07,
+        "solid_volume_m3": 3.692676045780228e-07,
+        "frozen_cv_j_k": 1.2757372911760183,
+        "equilibrium_cv_j_k": 1.2823227082111832,
+        "co2_temperature_derivative_mol_k": 4.130607646317061e-08,
+        "reaction_internal_energy_j_mol": 159429.7401022021,
+        "reaction_gas_derivative_j_mol2": 3508833076.771803,
+        "carbon_chemical_potential_j_mol": -665471.2632221108,
+        "reaction_gibbs_j_mol": 1.8189894035458565e-12
+      },
+      "errors": {
+        "inventory_mol": 0.0,
+        "inverse_temperature_k": 1.1368683772161603e-12,
+        "effective_capacity_j_k": 1.1272338618084632e-09,
+        "entropy_temperature_identity_j_k": 1.4672707493446069e-09,
+        "carbon_chemical_identity_j_mol": 0.00013214501086622477,
+        "volume_identity_pa": 0.0457115653262008,
+        "reaction_affinity_j_mol": 1.8189894035458565e-12,
+        "reaction_derivative_relative": 3.028688411177427e-13,
+        "reference_enthalpy_identity_j": 9.3119956190435e-14
+      },
+      "helmholtz_probe_increases_j": [
+        1.1907104635611176e-08,
+        1.1921656550839543e-08
+      ],
+      "within_budgets": {
+        "inventory_mol": true,
+        "inverse_temperature_k": true,
+        "effective_capacity_j_k": true,
+        "entropy_temperature_identity_j_k": true,
+        "carbon_chemical_identity_j_mol": true,
+        "volume_identity_pa": true,
+        "reaction_affinity_j_mol": true,
+        "reaction_derivative_relative": true,
+        "reference_enthalpy_identity_j": true,
+        "helmholtz_minimum": true,
+        "positive_capacity": true,
+        "positive_gas_volume": true
+      }
+    },
+    {
+      "state": {
+        "temperature_k": 1100.0,
+        "carbon_mol": 0.01001,
+        "internal_energy_j": -11179.774000905345,
+        "enthalpy_j": -11179.483975187888,
+        "entropy_j_k": 2.327304221262686,
+        "helmholtz_j": -13739.8086442943,
+        "phase": "calcite",
+        "calcite_mol": 0.01,
+        "lime_mol": 0.0,
+        "co2_mol": 9.999999999999593e-06,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 290025.7174567882,
+        "co2_partial_pressure_pa": 145012.85872839112,
+        "gas_volume_m3": 6.307000000000001e-07,
+        "solid_volume_m3": 3.693e-07,
+        "frozen_cv_j_k": 1.2762037734768366,
+        "equilibrium_cv_j_k": 1.2762037734768366,
+        "co2_temperature_derivative_mol_k": 0.0,
+        "reaction_internal_energy_j_mol": 159429.7401022021,
+        "reaction_gas_derivative_j_mol2": 914011305.2071145,
+        "carbon_chemical_potential_j_mol": -653172.0100928495,
+        "reaction_gibbs_j_mol": 12297.090296732653
+      },
+      "errors": {
+        "inventory_mol": 3.469446951953614e-18,
+        "inverse_temperature_k": 1.3642420526593924e-12,
+        "effective_capacity_j_k": 2.1367578817432786e-09,
+        "entropy_temperature_identity_j_k": 2.296829393344524e-09,
+        "carbon_chemical_identity_j_mol": 0.0010336164850741625,
+        "volume_identity_pa": 0.005121736787259579,
+        "reaction_affinity_j_mol": 0.0,
+        "reaction_derivative_relative": 1.890376744029254e-12,
+        "reference_enthalpy_identity_j": 3.4701130857683893e-12
+      },
+      "helmholtz_probe_increases_j": [
+        0.00012307814176892862
+      ],
+      "within_budgets": {
+        "inventory_mol": true,
+        "inverse_temperature_k": true,
+        "effective_capacity_j_k": true,
+        "entropy_temperature_identity_j_k": true,
+        "carbon_chemical_identity_j_mol": true,
+        "volume_identity_pa": true,
+        "reaction_affinity_j_mol": true,
+        "reaction_derivative_relative": true,
+        "reference_enthalpy_identity_j": true,
+        "helmholtz_minimum": true,
+        "positive_capacity": true,
+        "positive_gas_volume": true
+      }
+    },
+    {
+      "state": {
+        "temperature_k": 1180.0,
+        "carbon_mol": 0.008,
+        "internal_energy_j": -10037.301405200591,
+        "enthalpy_j": -10037.024083571116,
+        "entropy_j_k": 2.1470535152322645,
+        "helmholtz_j": -12570.824553174663,
+        "phase": "coexistence",
+        "calcite_mol": 0.007991027236244211,
+        "lime_mol": 0.0020089727637557886,
+        "co2_mol": 8.972763755788397e-06,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 277321.6294755949,
+        "co2_partial_pressure_pa": 131153.34685467897,
+        "gas_volume_m3": 6.712209806449542e-07,
+        "solid_volume_m3": 3.2877901935504577e-07,
+        "frozen_cv_j_k": 1.1476123524349113,
+        "equilibrium_cv_j_k": 1.1667849634126204,
+        "co2_temperature_derivative_mol_k": 1.219327885662608e-07,
+        "reaction_internal_energy_j_mol": 157239.17416430064,
+        "reaction_gas_derivative_j_mol2": 1092844172.549705,
+        "carbon_chemical_potential_j_mol": -676028.9369156897,
+        "reaction_gibbs_j_mol": -4.092726157978177e-12
+      },
+      "errors": {
+        "inventory_mol": 0.0,
+        "inverse_temperature_k": 0.0,
+        "effective_capacity_j_k": 3.514022406392314e-10,
+        "entropy_temperature_identity_j_k": 4.787281682183675e-10,
+        "carbon_chemical_identity_j_mol": 0.0002764839446172118,
+        "volume_identity_pa": 0.04475710209226236,
+        "reaction_affinity_j_mol": 4.092726157978177e-12,
+        "reaction_derivative_relative": 4.563016631209393e-13,
+        "reference_enthalpy_identity_j": 1.8562928971732617e-13
+      },
+      "helmholtz_probe_increases_j": [
+        4.396133590489626e-08,
+        4.402136255521327e-08
+      ],
+      "within_budgets": {
+        "inventory_mol": true,
+        "inverse_temperature_k": true,
+        "effective_capacity_j_k": true,
+        "entropy_temperature_identity_j_k": true,
+        "carbon_chemical_identity_j_mol": true,
+        "volume_identity_pa": true,
+        "reaction_affinity_j_mol": true,
+        "reaction_derivative_relative": true,
+        "reference_enthalpy_identity_j": true,
+        "helmholtz_minimum": true,
+        "positive_capacity": true,
+        "positive_gas_volume": true
+      }
+    },
+    {
+      "state": {
+        "temperature_k": 1180.0,
+        "carbon_mol": 0.010001,
+        "internal_energy_j": -11072.3105849895,
+        "enthalpy_j": -11072.023906841816,
+        "entropy_j_k": 2.416311598340442,
+        "helmholtz_j": -13923.558271031221,
+        "phase": "coexistence",
+        "calcite_mol": 0.009992566747134892,
+        "lime_mol": 7.433252865107708e-06,
+        "co2_mol": 8.433252865106973e-06,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 286678.14768481534,
+        "co2_partial_pressure_pa": 131155.86966763495,
+        "gas_volume_m3": 6.308499287102892e-07,
+        "solid_volume_m3": 3.691500712897107e-07,
+        "frozen_cv_j_k": 1.2994486062442303,
+        "equilibrium_cv_j_k": 1.3174684139309751,
+        "co2_temperature_derivative_mol_k": 1.1460126131110136e-07,
+        "reaction_internal_energy_j_mol": 157239.17416430064,
+        "reaction_gas_derivative_j_mol2": 1162758035.1462085,
+        "carbon_chemical_potential_j_mol": -676028.7481947175,
+        "reaction_gibbs_j_mol": -4.547473508864641e-13
+      },
+      "errors": {
+        "inventory_mol": 0.0,
+        "inverse_temperature_k": 9.094947017729282e-13,
+        "effective_capacity_j_k": 3.1351321538863886e-10,
+        "entropy_temperature_identity_j_k": 4.3076653355456074e-10,
+        "carbon_chemical_identity_j_mol": 0.0013761153677478433,
+        "volume_identity_pa": 0.03941038576886058,
+        "reaction_affinity_j_mol": 4.547473508864641e-13,
+        "reaction_derivative_relative": 1.5040191314596996e-12,
+        "reference_enthalpy_identity_j": 6.728506640740761e-13
+      },
+      "helmholtz_probe_increases_j": [
+        4.1316525312140584e-08,
+        4.137473297305405e-08
+      ],
+      "within_budgets": {
+        "inventory_mol": true,
+        "inverse_temperature_k": true,
+        "effective_capacity_j_k": true,
+        "entropy_temperature_identity_j_k": true,
+        "carbon_chemical_identity_j_mol": true,
+        "volume_identity_pa": true,
+        "reaction_affinity_j_mol": true,
+        "reaction_derivative_relative": true,
+        "reference_enthalpy_identity_j": true,
+        "helmholtz_minimum": true,
+        "positive_capacity": true,
+        "positive_gas_volume": true
+      }
+    },
+    {
+      "state": {
+        "temperature_k": 1180.0,
+        "carbon_mol": 0.01001,
+        "internal_energy_j": -11076.719063111752,
+        "enthalpy_j": -11076.407944614844,
+        "entropy_j_k": 2.4177306068999056,
+        "helmholtz_j": -13929.64117925364,
+        "phase": "calcite",
+        "calcite_mol": 0.01,
+        "lime_mol": 0.0,
+        "co2_mol": 9.999999999999593e-06,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 311118.4969081909,
+        "co2_partial_pressure_pa": 155559.2484540923,
+        "gas_volume_m3": 6.307000000000001e-07,
+        "solid_volume_m3": 3.693e-07,
+        "frozen_cv_j_k": 1.3000875027409708,
+        "equilibrium_cv_j_k": 1.3000875027409708,
+        "co2_temperature_derivative_mol_k": 0.0,
+        "reaction_internal_energy_j_mol": 157239.17416430064,
+        "reaction_gas_derivative_j_mol2": 980484854.6767228,
+        "carbon_chemical_potential_j_mol": -674354.5762382258,
+        "reaction_gibbs_j_mol": 1673.6789946478875
+      },
+      "errors": {
+        "inventory_mol": 3.469446951953614e-18,
+        "inverse_temperature_k": 6.821210263296962e-13,
+        "effective_capacity_j_k": 3.546662963316294e-10,
+        "entropy_temperature_identity_j_k": 1.8740564655672642e-10,
+        "carbon_chemical_identity_j_mol": 0.0011240036692470312,
+        "volume_identity_pa": 0.005494226701557636,
+        "reaction_affinity_j_mol": 0.0,
+        "reaction_derivative_relative": 1.1821654766208667e-12,
+        "reference_enthalpy_identity_j": 6.797340468267521e-13
+      },
+      "helmholtz_probe_increases_j": [
+        1.6794218026916496e-05
+      ],
+      "within_budgets": {
+        "inventory_mol": true,
+        "inverse_temperature_k": true,
+        "effective_capacity_j_k": true,
+        "entropy_temperature_identity_j_k": true,
+        "carbon_chemical_identity_j_mol": true,
+        "volume_identity_pa": true,
+        "reaction_affinity_j_mol": true,
+        "reaction_derivative_relative": true,
+        "reference_enthalpy_identity_j": true,
+        "helmholtz_minimum": true,
+        "positive_capacity": true,
+        "positive_gas_volume": true
+      }
+    }
+  ],
+  "equal_inventory_corners": [
+    {
+      "state": {
+        "temperature_k": 298.15,
+        "carbon_mol": 0.01,
+        "internal_energy_j": -12074.061719711564,
+        "enthalpy_j": -12074.022414635356,
+        "entropy_j_k": 0.9190937422670915,
+        "helmholtz_j": -12348.089518968498,
+        "phase": "coexistence",
+        "calcite_mol": 0.01,
+        "lime_mol": 2.8044275828586437e-28,
+        "co2_mol": 2.8044275828586437e-28,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 39305.07620897416,
+        "co2_partial_pressure_pa": 1.1022823986680817e-18,
+        "gas_volume_m3": 6.307e-07,
+        "solid_volume_m3": 3.693e-07,
+        "frozen_cv_j_k": 0.8349075144418063,
+        "equilibrium_cv_j_k": 0.8349075144418063,
+        "co2_temperature_derivative_mol_k": 6.69032202178841e-29,
+        "reaction_internal_energy_j_mol": 176323.0458435,
+        "reaction_gas_derivative_j_mol2": 8.839490709805045e+30,
+        "carbon_chemical_potential_j_mol": -588285.0457166128,
+        "reaction_gibbs_j_mol": 1.4551915228366852e-11
+      },
+      "within_budgets": {
+        "positive_products": true,
+        "equal_products": true,
+        "inverse_temperature": true,
+        "chemical_equilibrium": true
+      }
+    },
+    {
+      "state": {
+        "temperature_k": 300.0,
+        "carbon_mol": 0.01,
+        "internal_energy_j": -12072.513910667101,
+        "enthalpy_j": -12072.47436170563,
+        "entropy_j_k": 0.9242690683843431,
+        "helmholtz_j": -12349.794631182403,
+        "phase": "coexistence",
+        "calcite_mol": 0.01,
+        "lime_mol": 4.3483222186475e-28,
+        "co2_mol": 4.3483222186475e-28,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 39548.96147138101,
+        "co2_partial_pressure_pa": 1.7197162789043997e-18,
+        "gas_volume_m3": 6.307e-07,
+        "solid_volume_m3": 3.693e-07,
+        "frozen_cv_j_k": 0.8383903295333333,
+        "equilibrium_cv_j_k": 0.8383903295333333,
+        "co2_temperature_derivative_mol_k": 1.0244574698545663e-28,
+        "reaction_internal_energy_j_mol": 176299.6232670378,
+        "reaction_gas_derivative_j_mol2": 5.73635732260854e+30,
+        "carbon_chemical_potential_j_mol": -588384.4568258827,
+        "reaction_gibbs_j_mol": 0.0
+      },
+      "within_budgets": {
+        "positive_products": true,
+        "equal_products": true,
+        "inverse_temperature": true,
+        "chemical_equilibrium": true
+      }
+    },
+    {
+      "state": {
+        "temperature_k": 600.0,
+        "carbon_mol": 0.01,
+        "internal_energy_j": -11772.914956173587,
+        "enthalpy_j": -11772.835858245395,
+        "entropy_j_k": 1.606465288877849,
+        "helmholtz_j": -12736.794129500297,
+        "phase": "coexistence",
+        "calcite_mol": 0.009999999999336193,
+        "lime_mol": 6.638081663309012e-13,
+        "co2_mol": 6.638081663309012e-13,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 79097.92819166758,
+        "co2_partial_pressure_pa": 0.005250584718810314,
+        "gas_volume_m3": 6.30700000013389e-07,
+        "solid_volume_m3": 3.69299999986611e-07,
+        "frozen_cv_j_k": 1.0989950404200037,
+        "equilibrium_cv_j_k": 1.0989950469051608,
+        "co2_temperature_derivative_mol_k": 3.7923810555368566e-14,
+        "reaction_internal_energy_j_mol": 171004.893445155,
+        "reaction_gas_derivative_j_mol2": 7515282656678568.0,
+        "carbon_chemical_potential_j_mol": -610172.6756510964,
+        "reaction_gibbs_j_mol": 1.7025740817189217e-09
+      },
+      "within_budgets": {
+        "positive_products": true,
+        "equal_products": true,
+        "inverse_temperature": true,
+        "chemical_equilibrium": true
+      }
+    },
+    {
+      "state": {
+        "temperature_k": 1000.0,
+        "carbon_mol": 0.01,
+        "internal_energy_j": -11302.112321138502,
+        "enthalpy_j": -11301.974570812263,
+        "entropy_j_k": 2.2045525421143846,
+        "helmholtz_j": -13506.664863252887,
+        "phase": "coexistence",
+        "calcite_mol": 0.009999550751762685,
+        "lime_mol": 4.492482373151203e-07,
+        "co2_mol": 4.492482373151203e-07,
+        "nitrogen_mol": 1e-05,
+        "pressure_pa": 137750.32623992133,
+        "co2_partial_pressure_pa": 5922.348655846289,
+        "gas_volume_m3": 6.307090613369466e-07,
+        "solid_volume_m3": 3.692909386630534e-07,
+        "frozen_cv_j_k": 1.2450513673526908,
+        "equilibrium_cv_j_k": 1.2464698046583262,
+        "co2_temperature_derivative_mol_k": 8.754597258963312e-09,
+        "reaction_internal_energy_j_mol": 162021.99412235053,
+        "reaction_gas_derivative_j_mol2": 18507075691.74194,
+        "carbon_chemical_potential_j_mol": -652878.9950657124,
+        "reaction_gibbs_j_mol": -8.476490620523691e-10
+      },
+      "within_budgets": {
+        "positive_products": true,
+        "equal_products": true,
+        "inverse_temperature": true,
+        "chemical_equilibrium": true
+      }
+    }
+  ],
+  "all_requested_numerical_budgets_met": true,
+  "material_qualified": false,
+  "training_eligible": false
+}
