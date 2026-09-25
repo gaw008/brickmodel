@@ -1,0 +1,109 @@
+{
+  "settings": {
+    "records": {
+      "sixty-four-refined": {
+        "format": "column",
+        "trajectory": "data/sandbox/research/calcite-rigid-ramp-v1/sixty-four-fresh-refined.jsonl"
+      },
+      "sixty-four-further-refined": {
+        "format": "column",
+        "trajectory": "data/sandbox/research/calcite-rigid-ramp-v1/sixty-four-fresh-further-refined.jsonl"
+      }
+    },
+    "pairs": [
+      {
+        "kind": "time",
+        "left": "sixty-four-refined",
+        "right": "sixty-four-further-refined"
+      }
+    ],
+    "time_budgets": {
+      "cell_temperature_k": 0.001,
+      "cell_pressure_pa": 1.0,
+      "total_lime_mol": 1e-10,
+      "surface_temperature_k": 0.001
+    },
+    "space_budgets": {
+      "mean_temperature_k": 0.05,
+      "cell_temperature_k": 0.2,
+      "mean_pressure_pa": 100.0,
+      "total_lime_mol": 1e-08,
+      "surface_temperature_k": 0.2
+    },
+    "space_event_budget_s": 2.0,
+    "events": [
+      {
+        "name": "heat_mean_900K",
+        "mean_temperature_k": 900.0,
+        "start_s": 0.0,
+        "end_s": 8000.0,
+        "direction": 1
+      },
+      {
+        "name": "cool_mean_500K",
+        "mean_temperature_k": 500.0,
+        "start_s": 8000.0,
+        "end_s": 18000.0,
+        "direction": -1
+      }
+    ],
+    "scope": "Successful64-cell refined vs separately tightened trajectory; original time thresholds retained. Does not erase failed original base or change original32-to64spatial failure."
+  },
+  "events_s": {
+    "sixty-four-refined": {
+      "heat_mean_900K": 5646.438233151794,
+      "cool_mean_500K": 16167.78832133212
+    },
+    "sixty-four-further-refined": {
+      "heat_mean_900K": 5646.43823315152,
+      "cool_mean_500K": 16167.788321330281
+    }
+  },
+  "comparisons": [
+    {
+      "observations": 9001,
+      "cell_counts": [
+        64,
+        64
+      ],
+      "maximum_differences": {
+        "mean_temperature_k": 2.207343641202897e-09,
+        "cell_temperature_k": 1.682861352492182e-07,
+        "mean_pressure_pa": 1.701503060758114e-05,
+        "cell_pressure_pa": 0.000868519302457571,
+        "total_lime_mol": 2.827700909795866e-15,
+        "surface_temperature_k": 1.641486164771777e-07,
+        "surface_pressure_pa": 0.0007406487129628658
+      },
+      "maximum_difference_times_s": {
+        "mean_temperature_k": 6030.0,
+        "cell_temperature_k": 8.0,
+        "mean_pressure_pa": 8044.0,
+        "cell_pressure_pa": 8282.0,
+        "total_lime_mol": 13810.0,
+        "surface_temperature_k": 8.0,
+        "surface_pressure_pa": 8040.0
+      },
+      "pair": {
+        "kind": "time",
+        "left": "sixty-four-refined",
+        "right": "sixty-four-further-refined"
+      },
+      "event_differences_s": {
+        "heat_mean_900K": 2.737579052336514e-10,
+        "cool_mean_500K": 1.838998286984861e-09
+      },
+      "within_budgets": {
+        "cell_temperature_k": true,
+        "cell_pressure_pa": true,
+        "total_lime_mol": true,
+        "surface_temperature_k": true,
+        "both_completed": true
+      },
+      "all_requested_budgets_met": true
+    }
+  ],
+  "all_requested_budgets_met": true,
+  "material_qualified": false,
+  "training_eligible": false
+}
