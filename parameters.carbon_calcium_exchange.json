@@ -1,0 +1,24 @@
+{
+  "rigid_parameters": "parameters.carbon_calcium_rigid.json",
+  "gas_order": ["CO", "CO2", "O2", "N2"],
+  "transferred_inventory_order": ["carbon_atoms_mol", "oxygen_atoms_mol", "nitrogen_molecules_mol"],
+  "inventory_per_gas_molecule": {
+    "CO": [1, 1, 0],
+    "CO2": [1, 2, 0],
+    "O2": [0, 2, 0],
+    "N2": [0, 0, 1]
+  },
+  "heat_conductance_w_k": 0.005,
+  "gas_mobilities_mol2_k_j_s": {"CO": 1e-9, "CO2": 1e-9, "O2": 1e-9, "N2": 1e-9},
+  "classification": "Virtual thermodynamic transport closure. Conductance and diagonal gas mobilities are design values, not measured brick permeability, diffusivity, or kinetics.",
+  "source_basis": {
+    "title": "Onsager (1931), Reciprocal Relations in Irreversible Processes I",
+    "doi": "10.1103/PhysRev.37.405",
+    "url": "https://journals.aps.org/pr/pdf/10.1103/PhysRev.37.405",
+    "locator": "Printed page 408, linear conductance relations (2.1)-(2.3)",
+    "scope": "General thermodynamic flux-force formulation only. This source does not supply the selected diagonal coefficients, arithmetic face enthalpy, or real-brick validity."
+  },
+  "definition": "Positive left-to-right flow: F_i=mu_i,L/T_L-mu_i,R/T_R+hbar_i*(1/T_R-1/T_L); J_i=L_i*F_i; E=G*(T_L-T_R)+sum(hbar_i*J_i); hbar_i=(h_i,L+h_i,R)/2. Total entropy rate is G*(T_L-T_R)^2/(T_L*T_R)+sum(L_i*F_i^2). Equal opposite elemental and energy rates couple rigid cells with immobile solids.",
+  "material_qualified": false,
+  "training_eligible": false
+}

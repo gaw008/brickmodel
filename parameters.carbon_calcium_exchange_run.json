@@ -1,0 +1,40 @@
+{
+  "exchange_parameters": "parameters.carbon_calcium_exchange.json",
+  "cells": [
+    {"inventory_name": "coupled_carbon", "volume_m3": 0.0001, "initial_temperature_k": 1160.0},
+    {"inventory_name": "coupled_carbon", "volume_m3": 0.0001, "initial_temperature_k": 1000.0}
+  ],
+  "duration_s": 20000.0,
+  "numerics": {
+    "relative_tolerance": 1e-9,
+    "refinement_factor": 0.1,
+    "cell_absolute_tolerances_carbon_oxygen_nitrogen_energy": [1e-13, 1e-13, 1e-13, 1e-7],
+    "production_absolute_tolerance_j_k": 1e-11,
+    "maximum_step_s": 20.0,
+    "first_step_s": 0.001,
+    "observation_interval_s": 20.0,
+    "progress_every_steps": 100
+  },
+  "verification": {
+    "element_mol": 1e-12,
+    "pressure_pa": 1e-5,
+    "volume_m3": 1e-14,
+    "reaction_gibbs_j_mol": 1e-5,
+    "source_energy_j": 1e-7,
+    "source_entropy_j_k": 1e-10,
+    "face_species_mol_s": 1e-14,
+    "face_energy_w": 1e-8,
+    "face_entropy_w_k": 1e-11,
+    "inventory_integral_mol": 1e-10,
+    "energy_j": 1e-5,
+    "entropy_j_k": 1e-8,
+    "nonnegative_entropy_j_k": 1e-10,
+    "time_temperature_k": 0.001,
+    "time_pressure_pa": 0.1,
+    "time_species_mol": 1e-10,
+    "quadrature_orders": [2, 4]
+  },
+  "scope": "Two closed rigid virtual cells with immobile calcium/graphite solids and locally instantaneous restricted equilibrium. Four gas species transfer elemental C/O/N and full energy. Coordinates are C/O/N inventories and changes of internal energy from each initial source state, plus an independent entropy-production integral. Neither a continuum limit nor a real-brick transport claim.",
+  "material_qualified": false,
+  "training_eligible": false
+}

@@ -1,0 +1,54 @@
+{
+  "exchange_parameters": "parameters.carbon_calcium_exchange.json",
+  "decimal_digits": 60,
+  "root_tolerance": "1e-45",
+  "maximum_root_iterations": 100,
+  "temperature_points_k": [
+    350.0,
+    900.0,
+    1000.0,
+    1100.0,
+    1150.0,
+    1190.0
+  ],
+  "inventory_relative_difference_steps": [
+    "0.000001",
+    "0.0000003"
+  ],
+  "pairings": [
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      4,
+      5
+    ],
+    [
+      5,
+      0
+    ]
+  ],
+  "budgets": {
+    "inventory_gibbs_derivative_j_mol": 1e-05,
+    "face_gas_rate_mol_s": 1e-14,
+    "face_inventory_rate_mol_s": 1e-14,
+    "face_energy_w": 1e-08,
+    "face_entropy_rate_w_k": 1e-11,
+    "gas_element_potential_j_mol": 1e-05,
+    "reversal_absolute": 1e-12
+  },
+  "scope": "Before time integration: independent 60-digit source/volume reconstruction, constant-T,V inventory differences verify dU-T*dS=elemental_mu*dN; source-derived face fluxes, entropy identity, reversal and identical-state zero flow. Phase membership must stay unchanged in derivative pairs. Original1e-5 relative differences failed5 points, maximum2.9267e-5J/mol;3e-6 passed with2.6340e-6. Explicit finer central differences retain original1e-5J/mol budget and all original evidence."
+}
