@@ -1,0 +1,69 @@
+{
+  "settings": {
+    "source_model": {
+      "url": "https://www.wias-berlin.de/preprint/2947/wias_preprints_2947.pdf",
+      "locator": "printedp23 / PDFp25 equationB.1c, visually checked",
+      "zero_flux_single_species_condition": "dn/dz+n*d(lnT)/dz=0, hence nT constant and p constant for ideal gas"
+    },
+    "kinetic_reference": {
+      "url": "https://www.osti.gov/servlets/purl/4602483",
+      "locator": "printedp4 / PDFp10 equation1, visually checked",
+      "zero_flux_condition": "p/sqrt(T) constant in ideal fully thermalized free molecular limit",
+      "limitation": "Actual wall scattering/surface adsorption can give departures; not all real pores obey ideal limit."
+    },
+    "cases": [
+      {
+        "name": "isothermal",
+        "left_temperature_k": 300,
+        "right_temperature_k": 300
+      },
+      {
+        "name": "small_temperature_difference",
+        "left_temperature_k": 300,
+        "right_temperature_k": 330
+      },
+      {
+        "name": "heating",
+        "left_temperature_k": 300,
+        "right_temperature_k": 600
+      }
+    ],
+    "decimal_precision": 80,
+    "pressure_ratio_absolute_budget": "1e-10",
+    "scope": "Algebraic source-closure limit comparison for model selection, not a full implementation or a claim that the entire source theory is false. No coefficients fitted to force agreement."
+  },
+  "records": [
+    {
+      "name": "isothermal",
+      "left_temperature_k": 300,
+      "right_temperature_k": 300,
+      "source_zero_flux_right_over_left_pressure_decimal": "1.0",
+      "ideal_knudsen_right_over_left_pressure_decimal": "1.0",
+      "absolute_pressure_ratio_difference_decimal": "0.0",
+      "same_limit_within_budget": true
+    },
+    {
+      "name": "small_temperature_difference",
+      "left_temperature_k": 300,
+      "right_temperature_k": 330,
+      "source_zero_flux_right_over_left_pressure_decimal": "1.0",
+      "ideal_knudsen_right_over_left_pressure_decimal": "1.0488088481701515469914535136799375984752718576815039848757557635800059255011007",
+      "absolute_pressure_ratio_difference_decimal": "0.048808848170151546991453513679937598475271857681503984875755763580005925501100691",
+      "same_limit_within_budget": false
+    },
+    {
+      "name": "heating",
+      "left_temperature_k": 300,
+      "right_temperature_k": 600,
+      "source_zero_flux_right_over_left_pressure_decimal": "1.0",
+      "ideal_knudsen_right_over_left_pressure_decimal": "1.414213562373095048801688724209698078569671875376948073176679737990732478462107",
+      "absolute_pressure_ratio_difference_decimal": "0.41421356237309504880168872420969807856967187537694807317667973799073247846210704",
+      "same_limit_within_budget": false
+    }
+  ],
+  "all_limits_match": false,
+  "admitted_as_full_thermalized_knudsen_replacement": false,
+  "production_model_changed": false,
+  "material_qualified": false,
+  "training_eligible": false
+}

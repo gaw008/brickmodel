@@ -1,0 +1,238 @@
+{
+  "settings": {
+    "sources": {
+      "nist": {
+        "url": "https://nvlpubs.nist.gov/nistpubs/TechnicalNotes/NIST.TN.2279.pdf",
+        "title": "Self-Diffusion and Binary-Diffusion Coefficients in Gases",
+        "author": "Donald R. Burgess Jr.",
+        "date": "February2024",
+        "locator": "Table1a printedp8 PDFp13; repeatedTable1c printedp13 PDFp18; reference31",
+        "pressure_basis": "standard atmospheric pressure101.325kPa",
+        "coefficient_formula": "ln(D/[cm2/s]) = A + B/(T/K) + C ln(T/K)"
+      },
+      "vogel": {
+        "url": "https://link.springer.com/article/10.1007/s10765-023-03233-y",
+        "pdf_url": "https://link.springer.com/content/pdf/10.1007/s10765-023-03233-y.pdf",
+        "authors": "Eckhard Vogel, Eckard Bich, Robert Hellmann",
+        "year": 2023,
+        "license": "CC BY4.0; original PDF unchanged",
+        "locators": [
+          "Table5 p13: first procedure, nonspherical potential",
+          "Table7 p15: second procedure, nonspherical potential",
+          "p17 andp22: second procedure judged unsuitable"
+        ],
+        "classification": "Diffusion inferred using kinetic theory from experimental viscosity and nonspherical potential cross-section ratio; NOT a direct diffusion measurement"
+      }
+    },
+    "constants": {
+      "boltzmann_j_k": "1.380649e-23",
+      "avogadro_mol_inverse": "6.02214076e23",
+      "standard_pressure_pa": "101325",
+      "table_rhoD_scale_mol_m_s": "1e-4",
+      "cm2_to_m2": "1e-4",
+      "decimal_precision": 80,
+      "arithmetic_relative_budget": "1e-14"
+    },
+    "nist_fit": {
+      "A": "-7.317",
+      "B_k": "-139.909",
+      "C": "1.103",
+      "temperature_range_k": [
+        253,
+        473
+      ],
+      "reference_temperature_k": "298.15",
+      "reference_diffusivity_cm2_s": "0.224",
+      "published_uncertainty_percent_range": [
+        1,
+        3
+      ]
+    },
+    "vogel_rows": [
+      {
+        "temperature_k": "298.20",
+        "first_procedure_table5_scaled_rhoD": "6.824",
+        "second_procedure_table7_scaled_rhoD": "9.283",
+        "check_measurement": false
+      },
+      {
+        "temperature_k": "323.21",
+        "first_procedure_table5_scaled_rhoD": "7.327",
+        "second_procedure_table7_scaled_rhoD": "9.794",
+        "check_measurement": false
+      },
+      {
+        "temperature_k": "373.30",
+        "first_procedure_table5_scaled_rhoD": "8.273",
+        "second_procedure_table7_scaled_rhoD": "9.862",
+        "check_measurement": false
+      },
+      {
+        "temperature_k": "423.26",
+        "first_procedure_table5_scaled_rhoD": "9.140",
+        "second_procedure_table7_scaled_rhoD": "10.995",
+        "check_measurement": false
+      },
+      {
+        "temperature_k": "473.30",
+        "first_procedure_table5_scaled_rhoD": "9.983",
+        "second_procedure_table7_scaled_rhoD": "11.382",
+        "check_measurement": false
+      },
+      {
+        "temperature_k": "253.17",
+        "first_procedure_table5_scaled_rhoD": "5.870",
+        "second_procedure_table7_scaled_rhoD": "8.175",
+        "check_measurement": false
+      },
+      {
+        "temperature_k": "273.20",
+        "first_procedure_table5_scaled_rhoD": "6.297",
+        "second_procedure_table7_scaled_rhoD": "8.694",
+        "check_measurement": false
+      },
+      {
+        "temperature_k": "298.21",
+        "first_procedure_table5_scaled_rhoD": "6.818",
+        "second_procedure_table7_scaled_rhoD": "8.912",
+        "check_measurement": true
+      }
+    ],
+    "approximation_parameters": "parameters.nonpolar_gas_transport.json",
+    "approximation_admitted_temperature_range_k": [
+      300,
+      1200
+    ],
+    "scope": "Review source consistency and unit conversion before any adoption; report candidate deviations without silently changing production properties. NIST uncertainty upper bound used only as a source-consistency screen, not as an assigned uncertainty for Vogel values or for all temperatures.",
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "records": [
+    {
+      "temperature_k": "298.20",
+      "first_procedure_table5_scaled_rhoD": "6.824",
+      "second_procedure_table7_scaled_rhoD": "9.283",
+      "check_measurement": false,
+      "first_procedure_diffusivity_m2_s_decimal": "0.000016697991280189502146984455958549222797927461139896373056994818652849740932642487",
+      "second_procedure_diffusivity_m2_s_decimal": "0.000022715042944607143673865284974093264248704663212435233160621761658031088082901554",
+      "nist_fit_diffusivity_m2_s_decimal": "0.000022278585330502755776686570844650560305101255100406504678740038091452044189924612",
+      "within_nist_published_temperature_range": true,
+      "nist_minus_first_relative_percent": 33.42075077577787,
+      "nist_minus_second_relative_percent": -1.9214474529884558,
+      "nist_fit_binary64_relative_arithmetic_error": 2.738484823673641e-16,
+      "approximation_within_existing_temperature_scope": false
+    },
+    {
+      "temperature_k": "323.21",
+      "first_procedure_table5_scaled_rhoD": "7.327",
+      "second_procedure_table7_scaled_rhoD": "9.794",
+      "check_measurement": false,
+      "first_procedure_diffusivity_m2_s_decimal": "0.000019432494497935467898179916111522329138909449790278805822847273624475697014557118",
+      "second_procedure_diffusivity_m2_s_decimal": "0.000025975413008431823747068936590180113496175672341475450283740439180853688625709351",
+      "nist_fit_diffusivity_m2_s_decimal": "0.000025248436226007469973487387440006657299867794274284343023751040351077733747761172",
+      "within_nist_published_temperature_range": true,
+      "nist_minus_first_relative_percent": 29.928950854404693,
+      "nist_minus_second_relative_percent": -2.7987111588499918,
+      "nist_fit_binary64_relative_arithmetic_error": 4.527567207773807e-17,
+      "approximation_within_existing_temperature_scope": true,
+      "existing_approximation_m2_s": 1.8091794604938366e-05,
+      "approximation_minus_first_relative_percent": -6.899268095197655
+    },
+    {
+      "temperature_k": "373.30",
+      "first_procedure_table5_scaled_rhoD": "8.273",
+      "second_procedure_table7_scaled_rhoD": "9.862",
+      "check_measurement": false,
+      "first_procedure_diffusivity_m2_s_decimal": "0.000025341865809311807512771773994571922033061929434986429805082654823587466074512707",
+      "second_procedure_diffusivity_m2_s_decimal": "0.0000302092929543615430546301505057981741919565753762644954354798914384406612385887",
+      "nist_fit_diffusivity_m2_s_decimal": "0.000031367371997005008102866281506583352463935537564673637016893991619658636884226833",
+      "within_nist_published_temperature_range": true,
+      "nist_minus_first_relative_percent": 23.776884594973836,
+      "nist_minus_second_relative_percent": 3.8335191902472663,
+      "nist_fit_binary64_relative_arithmetic_error": 1.3214585759919427e-16,
+      "approximation_within_existing_temperature_scope": true,
+      "existing_approximation_m2_s": 2.3521104538183113e-05,
+      "approximation_minus_first_relative_percent": -7.1847956453926916
+    },
+    {
+      "temperature_k": "423.26",
+      "first_procedure_table5_scaled_rhoD": "9.140",
+      "second_procedure_table7_scaled_rhoD": "10.995",
+      "check_measurement": false,
+      "first_procedure_diffusivity_m2_s_decimal": "0.000031744683101428274278150505798174191956575376264495435479891438440661238588699729",
+      "second_procedure_diffusivity_m2_s_decimal": "0.000038187395043785982022786084381939304219096965210954848260547742413027387120651369",
+      "nist_fit_diffusivity_m2_s_decimal": "0.000037658116041339795585211247961492971170314630902929274692519008142500520810035533",
+      "within_nist_published_temperature_range": true,
+      "nist_minus_first_relative_percent": 18.628105125564982,
+      "nist_minus_second_relative_percent": -1.386004470426199,
+      "nist_fit_binary64_relative_arithmetic_error": 5.028047301798312e-16,
+      "approximation_within_existing_temperature_scope": true,
+      "existing_approximation_m2_s": 2.9469261458608387e-05,
+      "approximation_minus_first_relative_percent": -7.167882683061057
+    },
+    {
+      "temperature_k": "473.30",
+      "first_procedure_table5_scaled_rhoD": "9.983",
+      "second_procedure_table7_scaled_rhoD": "11.382",
+      "check_measurement": false,
+      "first_procedure_diffusivity_m2_s_decimal": "0.000038771727188795817553057981741919565753762644954354798914384406612385886997285961",
+      "second_procedure_diffusivity_m2_s_decimal": "0.000044205128604915756324642487046632124352331606217616580310880829015544041450777202",
+      "nist_fit_diffusivity_m2_s_decimal": "0.000044112736196915319725725543003744526367086976643912478237148478544057564136548797",
+      "within_nist_published_temperature_range": false,
+      "nist_minus_first_relative_percent": 13.775525093612382,
+      "nist_minus_second_relative_percent": -0.20900834567453844,
+      "nist_fit_binary64_relative_arithmetic_error": 7.659583190103838e-16,
+      "approximation_within_existing_temperature_scope": true,
+      "existing_approximation_m2_s": 3.593557225776404e-05,
+      "approximation_minus_first_relative_percent": -7.315007962429301
+    },
+    {
+      "temperature_k": "253.17",
+      "first_procedure_table5_scaled_rhoD": "5.870",
+      "second_procedure_table7_scaled_rhoD": "8.175",
+      "check_measurement": false,
+      "first_procedure_diffusivity_m2_s_decimal": "0.000012194609998610622624817172464840858623242042931162102146558105107327905255366395",
+      "second_procedure_diffusivity_m2_s_decimal": "0.00001698312380556079045279052553663952627683197631384159881569207994078460399703923",
+      "nist_fit_diffusivity_m2_s_decimal": "0.000017109109157192532663018199577627183428025475328864846168132310480612191735898735",
+      "within_nist_published_temperature_range": true,
+      "nist_minus_first_relative_percent": 40.30058492351815,
+      "nist_minus_second_relative_percent": 0.7418267279573784,
+      "nist_fit_binary64_relative_arithmetic_error": 1.1431045162575624e-15,
+      "approximation_within_existing_temperature_scope": false
+    },
+    {
+      "temperature_k": "273.20",
+      "first_procedure_table5_scaled_rhoD": "6.297",
+      "second_procedure_table7_scaled_rhoD": "8.694",
+      "check_measurement": false,
+      "first_procedure_diffusivity_m2_s_decimal": "0.000014116660198666461547393042190969652109548482605477424130273871206513693560325685",
+      "second_procedure_diffusivity_m2_s_decimal": "0.000019490272156138830664290155440414507772020725388601036269430051813471502590673575",
+      "nist_fit_diffusivity_m2_s_decimal": "0.000019377514219358788251715923730419428619289346839909071683911067323583733108353268",
+      "within_nist_published_temperature_range": true,
+      "nist_minus_first_relative_percent": 37.266987705698945,
+      "nist_minus_second_relative_percent": -0.5785344395230888,
+      "nist_fit_binary64_relative_arithmetic_error": 4.7359606565560587e-17,
+      "approximation_within_existing_temperature_scope": false
+    },
+    {
+      "temperature_k": "298.21",
+      "first_procedure_table5_scaled_rhoD": "6.818",
+      "second_procedure_table7_scaled_rhoD": "8.912",
+      "check_measurement": true,
+      "first_procedure_diffusivity_m2_s_decimal": "0.000016683869043372236823416925734024179620034542314335060449050086355785837651122625",
+      "second_procedure_diffusivity_m2_s_decimal": "0.000021807955546279462389306489020478657784357266222551196644460893165556377991611152",
+      "nist_fit_diffusivity_m2_s_decimal": "0.000022279759913718442544327994442181962039905251967260348563522710758299951453808798",
+      "within_nist_published_temperature_range": true,
+      "nist_minus_first_relative_percent": 33.54072640943682,
+      "nist_minus_second_relative_percent": 2.163450702372108,
+      "nist_fit_binary64_relative_arithmetic_error": 1.0609680879131025e-15,
+      "approximation_within_existing_temperature_scope": false
+    }
+  ],
+  "all_arithmetic_budgets_met": true,
+  "nist_fit_matches_first_procedure_within_published_upper_uncertainty": false,
+  "source_selection_issue": "NIST fit is markedly above Table5 accepted first procedure and closer to Table7 rejected second procedure. Similarity is evidence for investigation, not proof of which data the compiler used.",
+  "production_properties_changed": false,
+  "material_qualified": false,
+  "training_eligible": false
+}

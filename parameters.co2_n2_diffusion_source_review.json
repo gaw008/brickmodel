@@ -1,0 +1,108 @@
+{
+  "sources": {
+    "nist": {
+      "url": "https://nvlpubs.nist.gov/nistpubs/TechnicalNotes/NIST.TN.2279.pdf",
+      "title": "Self-Diffusion and Binary-Diffusion Coefficients in Gases",
+      "author": "Donald R. Burgess Jr.",
+      "date": "February2024",
+      "locator": "Table1a printedp8 PDFp13; repeatedTable1c printedp13 PDFp18; reference31",
+      "pressure_basis": "standard atmospheric pressure101.325kPa",
+      "coefficient_formula": "ln(D/[cm2/s]) = A + B/(T/K) + C ln(T/K)"
+    },
+    "vogel": {
+      "url": "https://link.springer.com/article/10.1007/s10765-023-03233-y",
+      "pdf_url": "https://link.springer.com/content/pdf/10.1007/s10765-023-03233-y.pdf",
+      "authors": "Eckhard Vogel, Eckard Bich, Robert Hellmann",
+      "year": 2023,
+      "license": "CC BY4.0; original PDF unchanged",
+      "locators": [
+        "Table5 p13: first procedure, nonspherical potential",
+        "Table7 p15: second procedure, nonspherical potential",
+        "p17 andp22: second procedure judged unsuitable"
+      ],
+      "classification": "Diffusion inferred using kinetic theory from experimental viscosity and nonspherical potential cross-section ratio; NOT a direct diffusion measurement"
+    }
+  },
+  "constants": {
+    "boltzmann_j_k": "1.380649e-23",
+    "avogadro_mol_inverse": "6.02214076e23",
+    "standard_pressure_pa": "101325",
+    "table_rhoD_scale_mol_m_s": "1e-4",
+    "cm2_to_m2": "1e-4",
+    "decimal_precision": 80,
+    "arithmetic_relative_budget": "1e-14"
+  },
+  "nist_fit": {
+    "A": "-7.317",
+    "B_k": "-139.909",
+    "C": "1.103",
+    "temperature_range_k": [
+      253,
+      473
+    ],
+    "reference_temperature_k": "298.15",
+    "reference_diffusivity_cm2_s": "0.224",
+    "published_uncertainty_percent_range": [
+      1,
+      3
+    ]
+  },
+  "vogel_rows": [
+    {
+      "temperature_k": "298.20",
+      "first_procedure_table5_scaled_rhoD": "6.824",
+      "second_procedure_table7_scaled_rhoD": "9.283",
+      "check_measurement": false
+    },
+    {
+      "temperature_k": "323.21",
+      "first_procedure_table5_scaled_rhoD": "7.327",
+      "second_procedure_table7_scaled_rhoD": "9.794",
+      "check_measurement": false
+    },
+    {
+      "temperature_k": "373.30",
+      "first_procedure_table5_scaled_rhoD": "8.273",
+      "second_procedure_table7_scaled_rhoD": "9.862",
+      "check_measurement": false
+    },
+    {
+      "temperature_k": "423.26",
+      "first_procedure_table5_scaled_rhoD": "9.140",
+      "second_procedure_table7_scaled_rhoD": "10.995",
+      "check_measurement": false
+    },
+    {
+      "temperature_k": "473.30",
+      "first_procedure_table5_scaled_rhoD": "9.983",
+      "second_procedure_table7_scaled_rhoD": "11.382",
+      "check_measurement": false
+    },
+    {
+      "temperature_k": "253.17",
+      "first_procedure_table5_scaled_rhoD": "5.870",
+      "second_procedure_table7_scaled_rhoD": "8.175",
+      "check_measurement": false
+    },
+    {
+      "temperature_k": "273.20",
+      "first_procedure_table5_scaled_rhoD": "6.297",
+      "second_procedure_table7_scaled_rhoD": "8.694",
+      "check_measurement": false
+    },
+    {
+      "temperature_k": "298.21",
+      "first_procedure_table5_scaled_rhoD": "6.818",
+      "second_procedure_table7_scaled_rhoD": "8.912",
+      "check_measurement": true
+    }
+  ],
+  "approximation_parameters": "parameters.nonpolar_gas_transport.json",
+  "approximation_admitted_temperature_range_k": [
+    300,
+    1200
+  ],
+  "scope": "Review source consistency and unit conversion before any adoption; report candidate deviations without silently changing production properties. NIST uncertainty upper bound used only as a source-consistency screen, not as an assigned uncertainty for Vogel values or for all temperatures.",
+  "material_qualified": false,
+  "training_eligible": false
+}
