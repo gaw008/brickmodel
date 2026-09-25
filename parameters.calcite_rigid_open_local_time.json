@@ -1,0 +1,13 @@
+{
+  "method": "log_nitrogen",
+  "reference_nitrogen_mol": 1e-05,
+  "log_nitrogen_absolute_tolerance": 1e-09,
+  "definition": "Integrate dC=C-Ca directly and z=ln(N2/Nref). d(dC)/dt equals physical carbon rate; dz/dt=(dN2/dt)/N2. Recover trace gas and last solid with the separately stored carbon offset; physical conserved totals and ledgers remain recorded.",
+  "reason": "The offset coordinate alone still failed near recarbonation completion. At global time 5527.8s, the BDF floating-point minimum step is about 9e-12s, while the trace-gas exchange scale is a few picoseconds. This exact autonomous time-coordinate change does not modify physical laws or accuracy budgets.",
+  "material_qualified": false,
+  "training_eligible": false,
+  "carbon_coordinate": "excess_over_calcium",
+  "static_reference": "data/sandbox/research/calcite-rigid-open-cell-v1/offset-review.json",
+  "time_coordinate": "step_local_autonomous",
+  "time_translation": "Each constant-reservoir segment is autonomous. After recording an accepted local interval, translate the solver clock to zero, retain its backward differences, order, step size, Jacobian and factorization. Store dense polynomials in local time; use math.fsum of accepted widths for absolute observations and the remaining segment duration."
+}

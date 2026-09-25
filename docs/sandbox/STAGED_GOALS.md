@@ -1,5 +1,7 @@
 # 独立阶段 Goal 顺序
 
+**2026-09-25 06:15 UTC增量：** [开放刚性反应单元](research/calcite-rigid-open-cell-v1/REPORT.md)的两档8000s热气/辐射—富CO2冷却轨迹、全程来源/内外物种及能量/熵审查和时间比较均通过原预算。原负N2试算和极短步长失败保留；碳差值、log-N2和分段局部时钟解决所录数值问题，没有改变物理系数。最低压力约.0564Pa也暴露虚拟输运关系的实际适用性未知，不能当作真实砖孔预测。下一独立增量是接通开放空间列并核验其几何、局部收支及时间/空间误差；M1、有限速率和全周期材料依赖仍保留。
+
 **2026-09-25 05:20 UTC检查点：** 共同反应输运已从双室扩展到[一维柱](research/calcite-rigid-column-v1/REPORT.md)，空间失败保留并继续细化；原算子资格之后开发并核对[解析导数](research/calcite-rigid-tangent-v1/REPORT.md)和[解析空间模态](research/calcite-rigid-modes-v1/REPORT.md)。蒸发表面64→128的空间目标已过，时间及全程资格尚待完成，不能替代M1或同材高温输入。仍按开发→限定验证顺序推进，不新建完整替代Goal。
 
 **2026-09-25 UTC增量：** [辐射换热](research/calcite-radiative-calorimeter-v1/REPORT.md)、[封闭等压CO2/N2](research/calcite-closed-mixture-v1/REPORT.md)、[刚性压力反馈](research/calcite-rigid-equilibrium-v1/REPORT.md)及[双刚性室气体/内能交换](research/calcite-rigid-exchange-v1/REPORT.md)均已完成相应来源、局部守恒和熵的数值核查。压力、反应相分配与共同气流已在限定高温条件模型内接通；瞬时平衡不提供有限速率，虚拟系数不提供砖孔网络，M1与同材料全周期缺项未解除。
