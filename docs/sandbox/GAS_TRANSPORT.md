@@ -32,6 +32,8 @@
 
 物性取自有出处的气体输运关联式，来源算术核对与实际物性精度分开。原子量、碰撞参数、自由气体黏度与扩散系数均可沿根参数链追查；氧气黏度的历史来源对照仍有偏差记录。新的 [CO₂–N₂ 扩散来源](research/co2-n2-crusius2018-v1/REPORT.md)已单独核对；[NIST 汇编与其引文的冲突](research/co2-n2-diffusion-source-review-v1/REPORT.md)保留，旧轨迹所用简化物性不会被静默替换。Wilke 混合黏度和 Dusty Gas 方程的独立核对见[混合黏度](research/wilke-gas-mixture-v1/REPORT.md)与[局部孔隙输运](research/dusty-gas-source-v1/REPORT.md)。
 
+新增[CO₂–N₂实据对照](research/co2-n2-mixture-viscosity-v1/REPORT.md)显示Wilke近似在24个来源点均超0.5%筛查范围；旧四气体数值资格不等于混合黏度物性精度已通过。公开二元碰撞方程在相同24点的交叉核对最大偏差0.202%，仅限表列温度，尚未取得600K所需A*。
+
 孔隙率、半径、迂曲因子和渗透率是明确声明的理想几何输入。通量使用总截面积，库存使用孔隙体积 εV；混淆这两个基准会改变时间尺度。开放模型的[原始 Sandia 报告](research/dusty-gas-open-pure-column-v1/SOURCES.md)也独立支持这个定义，并记录了原文标签笔误。
 
 开放系统需要同时计算砖体、进出气流与热浴，不能只看砖体熵是否增加。单温度非反应模型选择能量零点只是一种参考规范，不是把气体热容或生成焓设为零。这一规范不能直接充当湿砖—高温反应的统一能量来源。

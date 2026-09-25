@@ -190,14 +190,16 @@ def time_comparison(base,refined):
                 left,right=row['dense_output']['start_time_s'],row['dense_output']['end_time_s']
                 times.update(float((left+right)/2+(right-left)*node/2) for node in nodes)
     ends=[[row['time_s'] for row in steps] for steps in accepted]
-    maximum,when=0.0,None
+    maximum,when,pressure_error=0.0,None,0.0
+    species_count=len(settings['species_order'])
+    rt=base[0]['gas_constant_j_mol_k']*settings['temperature_k']
     for at in sorted(times):
         values=[np.asarray(rows[1]['values']) if at==0 else polynomial(steps[bisect_left(right,at)],at)
             for rows,steps,right in zip([base,refined],accepted,ends,strict=True)]
         error=float(np.max(np.abs(values[0]-values[1])))
         if error>maximum: maximum,when=error,at
-    r=base[0]['gas_constant_j_mol_k']
-    pressure_error=maximum*r*settings['temperature_k']
+        delta=values[0].reshape(-1,species_count)-values[1].reshape(-1,species_count)
+        pressure_error=max(pressure_error,rt*float(np.max(np.abs(delta.sum(axis=1)))))
     budget=settings['verification']
     return {'times_compared':len(times),'maximum_concentration_difference_mol_m3':maximum,'maximum_at_time_s':when,
         'maximum_pressure_difference_pa':pressure_error,'concentration_budget_mol_m3':budget['time_concentration_budget_mol_m3'],

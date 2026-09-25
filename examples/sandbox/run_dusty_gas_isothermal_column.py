@@ -35,6 +35,19 @@ def main():
     reference_pressure = p['binary_property_reference_pressure_pa']
     for i, j in combinations(range(len(names)), 2):
         products[i,j] = products[j,i] = reference_pressure*source.binary_diffusivity_m2_s(p['temperature_k'], reference_pressure, names[i], names[j])
+    properties = {'local_law_settings': local_p, 'gas_settings': gas_p,
+        'transport_settings': transport_p, 'gas_constant_j_mol_k': gas_constant,
+        'molar_masses_kg_mol': masses.tolist(), 'pure_viscosities_pa_s': viscosities.tolist(),
+        'diffusivity_pressure_products_pa_m2_s': products.tolist()}
+    record_column(p, properties, args)
+
+
+def record_column(p, properties, args):
+    """Integrate a declared property set and retain it in the trajectory header."""
+    gas_constant = properties['gas_constant_j_mol_k']
+    masses = np.asarray(properties['molar_masses_kg_mol'])
+    viscosities = np.asarray(properties['pure_viscosities_pa_s'])
+    products = np.asarray(properties['diffusivity_pressure_products_pa_m2_s'])
     count = p['meshes'][args.mesh]
     column = IsothermalDustyGasColumn(p, count, gas_constant, masses, viscosities, products)
     concentration_reference = p['entropy_reference_pressure_pa']/(gas_constant*p['temperature_k'])
@@ -59,10 +72,7 @@ def main():
                 'partial_pressures_pa': partial_pressures.tolist(), 'pressure_pa': partial_pressures.sum(axis=1).tolist(),
                 'faces': [{key: value.tolist() if isinstance(value, np.ndarray) else float(value) for key, value in face.items()} for face in faces]}
 
-        emit({'kind': 'input', 'settings': p, 'local_law_settings': local_p,
-            'gas_settings': gas_p, 'transport_settings': transport_p,
-            'gas_constant_j_mol_k': gas_constant, 'molar_masses_kg_mol': masses.tolist(),
-            'pure_viscosities_pa_s': viscosities.tolist(), 'diffusivity_pressure_products_pa_m2_s': products.tolist(),
+        emit({'kind': 'input', 'settings': p, **properties,
             'effective_knudsen_diffusivities_m2_s': column.face.knudsen.tolist(),
             'cell_count': count, 'cell_width_m': column.width,
             'cell_bulk_volume_m3': column.area*column.width, 'cell_pore_volume_m3': column.pore_volume,
