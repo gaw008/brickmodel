@@ -1,0 +1,87 @@
+{
+  "model_parameters": "parameters.carbon_calcium_pressure.json",
+  "decimal_digits": 60,
+  "root_tolerance": "1e-45",
+  "maximum_root_iterations": 100,
+  "temperature_points_k": [
+    300.0,
+    350.0,
+    500.0,
+    700.0,
+    850.0,
+    900.0,
+    950.0,
+    1000.0,
+    1050.0,
+    1100.0,
+    1150.0,
+    1190.0
+  ],
+  "pressure_points_pa": [
+    10000.0,
+    100000.0,
+    1000000.0
+  ],
+  "difference_steps": [
+    {
+      "temperature_k": "0.001",
+      "pressure_fraction": "0.00001"
+    },
+    {
+      "temperature_k": "0.0003",
+      "pressure_fraction": "0.000003"
+    }
+  ],
+  "budgets": {
+    "enthalpy_temperature_j_k": 1e-07,
+    "entropy_temperature_j_k": 1e-07,
+    "volume_temperature_m3_k": 1e-12,
+    "volume_pressure_m3_pa": 1e-15,
+    "enthalpy_pressure_m3": 1e-10,
+    "entropy_pressure_m3_k": 1e-12,
+    "gibbs_temperature_j_k": 1e-08,
+    "gibbs_pressure_m3": 1e-10,
+    "amount_temperature_mol_k": 1e-12,
+    "amount_pressure_mol_pa": 1e-15,
+    "cv_identity_j_k": 1e-07
+  },
+  "scope": "General-inventory static derivative qualification: independent source differences at two frozen increments, Gibbs/Maxwell identities, positive Cp/Cv and all phase choices. Old reaction-Hessian closure retained in first attempt; no dynamic qualification.",
+  "inventories": [
+    {
+      "name": "carbon_lean",
+      "calcium_atoms_mol": 0.002,
+      "carbon_atoms_mol": 0.0002,
+      "oxygen_atoms_mol": 0.006,
+      "nitrogen_molecules_mol": 0.004
+    },
+    {
+      "name": "old_boundaries_equal",
+      "calcium_atoms_mol": 0.002,
+      "carbon_atoms_mol": 0.002,
+      "oxygen_atoms_mol": 0.006,
+      "nitrogen_molecules_mol": 0.004
+    },
+    {
+      "name": "oxygen_lean",
+      "calcium_atoms_mol": 0.002,
+      "carbon_atoms_mol": 0.0045,
+      "oxygen_atoms_mol": 0.004,
+      "nitrogen_molecules_mol": 0.004
+    },
+    {
+      "name": "both_lean",
+      "calcium_atoms_mol": 0.002,
+      "carbon_atoms_mol": 0.001,
+      "oxygen_atoms_mol": 0.003,
+      "nitrogen_molecules_mol": 0.004
+    },
+    {
+      "name": "old_coupled",
+      "calcium_atoms_mol": 0.002,
+      "carbon_atoms_mol": 0.0045,
+      "oxygen_atoms_mol": 0.008,
+      "nitrogen_molecules_mol": 0.004
+    }
+  ],
+  "prototype": "examples/sandbox/carbon_calcium_inventory_caloric_prototype.py"
+}
