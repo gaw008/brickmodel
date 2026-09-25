@@ -1,0 +1,50 @@
+{
+  "records": {
+    "sixty-four-refined": {
+      "format": "column",
+      "trajectory": "data/sandbox/research/calcite-rigid-ramp-v1/sixty-four-fresh-refined.jsonl"
+    },
+    "sixty-four-further-refined": {
+      "format": "column",
+      "trajectory": "data/sandbox/research/calcite-rigid-ramp-v1/sixty-four-fresh-further-refined.jsonl"
+    }
+  },
+  "pairs": [
+    {
+      "kind": "time",
+      "left": "sixty-four-refined",
+      "right": "sixty-four-further-refined"
+    }
+  ],
+  "time_budgets": {
+    "cell_temperature_k": 0.001,
+    "cell_pressure_pa": 1.0,
+    "total_lime_mol": 1e-10,
+    "surface_temperature_k": 0.001
+  },
+  "space_budgets": {
+    "mean_temperature_k": 0.05,
+    "cell_temperature_k": 0.2,
+    "mean_pressure_pa": 100.0,
+    "total_lime_mol": 1e-08,
+    "surface_temperature_k": 0.2
+  },
+  "space_event_budget_s": 2.0,
+  "events": [
+    {
+      "name": "heat_mean_900K",
+      "mean_temperature_k": 900.0,
+      "start_s": 0.0,
+      "end_s": 8000.0,
+      "direction": 1
+    },
+    {
+      "name": "cool_mean_500K",
+      "mean_temperature_k": 500.0,
+      "start_s": 8000.0,
+      "end_s": 18000.0,
+      "direction": -1
+    }
+  ],
+  "scope": "Successful64-cell refined vs separately tightened trajectory; original time thresholds retained. Does not erase failed original base or change original32-to64spatial failure."
+}

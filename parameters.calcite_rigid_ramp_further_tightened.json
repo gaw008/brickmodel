@@ -1,0 +1,198 @@
+{
+  "model_parameters": "parameters.calcite_rigid_column.json",
+  "surface_parameters": "parameters.calcite_rigid_integral_surface.json",
+  "initial": {
+    "temperature_k": 300.0,
+    "excess_carbon_density_mol_m3": 0.01,
+    "nitrogen_density_mol_m3": 20.0
+  },
+  "boundary_program": [
+    {
+      "start_s": 0.0,
+      "end_s": 6000.0
+    },
+    {
+      "start_s": 6000.0,
+      "end_s": 8000.0
+    },
+    {
+      "start_s": 8000.0,
+      "end_s": 14000.0
+    },
+    {
+      "start_s": 14000.0,
+      "end_s": 18000.0
+    }
+  ],
+  "numerics": {
+    "relative_tolerance": 1e-12,
+    "refinement_factor": 0.1,
+    "initial_step_s": 1e-05,
+    "maximum_step_s": 1.0,
+    "observation_interval_s": 2.0,
+    "progress_every_steps": 100,
+    "ledger_absolute_tolerances": [
+      1.0000000000000002e-14,
+      1.0000000000000002e-14,
+      1e-08,
+      1.0000000000000002e-14,
+      1.0000000000000002e-14,
+      1e-08,
+      1e-08,
+      1.0000000000000001e-11,
+      1.0000000000000001e-11,
+      1.0000000000000001e-11
+    ],
+    "absolute_tolerance_basis": "Dimensionless absolute errors in log(C/Ca) and log(N/Nref); energy scales with actual volume. Relative tolerance and exterior ledger tolerances unchanged.",
+    "initial_step_reason": "Uniform mesh with continuous forcing; explicit small initial step retained from the original uniform setup.",
+    "log_inventory_absolute_tolerances": [
+      1e-13,
+      1.0000000000000002e-10
+    ],
+    "energy_density_absolute_tolerance_j_m3": 0.010000000000000002,
+    "jacobian_refresh": "accepted_state",
+    "jacobian_refresh_reason": "Controlled fresh-Jacobian nonlinear-stage reconstruction at the failed16-cell state returned nonconvergence before an out-of-domain trial. Evaluate the analytic Jacobian at each accepted state and refactor the new BDF stage matrix; preserve the standard BDF convergence/error/step controller. This is a separately recorded numerical experiment, not a claimed cure or physical change."
+  },
+  "verification": {
+    "species_balance_mol": 1e-10,
+    "energy_balance_j": 1e-05,
+    "entropy_balance_j_k": 1e-07,
+    "negative_step_entropy_allowance_j_k": 1e-10,
+    "source_energy_j": 1e-05,
+    "source_entropy_j_k": 1e-07,
+    "source_pressure_pa": 0.001,
+    "source_volume_m3": 1e-15,
+    "source_affinity_j_mol": 1e-05,
+    "surface_species_mol_s": 1e-12,
+    "surface_energy_w": 1e-08,
+    "time_temperature_k": 0.001,
+    "time_pressure_pa": 1.0,
+    "time_lime_mol": 1e-08,
+    "quadrature_orders": [
+      2,
+      4
+    ]
+  },
+  "classification": "Prescribed virtual gas and radiation reservoirs; equilibrium reaction limit with physically separate inner/outer ledgers",
+  "boundary_change_interpretation": "Continuous piecewise affine primitive gas/radiation states; restart at every knot. Source gas h/mu recalculated at each physical time. Reservoir conditioning energy is outside the column system boundary.",
+  "scope": "Independent new ramp scenario; it does not replace or qualify the unresolved original step-boundary spatial experiment. Equilibrium chemistry and virtual transport only.",
+  "material_qualified": false,
+  "training_eligible": false,
+  "domain": {
+    "length_m": 0.02,
+    "area_m2": 0.0001,
+    "calcium_density_mol_m3": 10000.0,
+    "geometry_classification": "Virtual 2cm fixed-volume planar column, sealed left and one open right surface."
+  },
+  "transport": {
+    "thermal_conductivity_w_m_k": 0.1,
+    "bulk_mobility_mol2_k_j_m_s": 1e-07,
+    "counter_mobility_mol2_k_j_m_s": 1e-07,
+    "classification": "declared virtual positive symmetric gas exchange, not calibrated Darcy or binary diffusivity",
+    "source_note": "No material measurement; Onsager supplies near-equilibrium response structure only; finite force use is an explicit constitutive extension."
+  },
+  "coordinates": {
+    "carbon": "log_total_over_calcium_with_expm1_offset",
+    "nitrogen": "log_inventory_over_reference",
+    "reference_nitrogen_density_mol_m3": 10.0,
+    "time": "step_local_clock_with_absolute_schedule_evaluation"
+  },
+  "meshes": {
+    "one": 1,
+    "two": 2,
+    "four": 4,
+    "eight": 8,
+    "sixteen": 16,
+    "thirty_two": 32,
+    "sixty_four": 64,
+    "one_twenty_eight": 128
+  },
+  "state_order": "Per-cell [ln(C/Ca), ln(N2/Nref), U], followed by original ten exterior ledgers",
+  "surface_geometry": "Uniform planar widths; internal center distance dx and outer half-cell distance dx/2.",
+  "extended_program_reason": "The geometry-matched one-cell 8000s reference completed and agreed with the column assembly, but did not yet cross the separately declared mean-500K cooling event. Preserve that complete record and extend the cooling phase to 12000s before any multi-cell spatial trajectory; physical coefficients and all event/accuracy thresholds are unchanged.",
+  "mesh_recipe": {
+    "core_cell_count": 32,
+    "boundary_cell_count": 16,
+    "boundary_layer_width_m": 0.000625,
+    "boundary_successive_width_ratio": 0.6,
+    "nested_subdivision_factors": [
+      1,
+      2,
+      4,
+      8
+    ]
+  },
+  "species_force_evaluation": "source_integral_differences",
+  "continuous_boundary_program": {
+    "identity": {
+      "program_id": "virtual-calcite-heat-hold-cool",
+      "version": "1",
+      "classification": "virtual_design_choice",
+      "source_ids": [
+        "parameters.calcite_rigid_ramp_column.json"
+      ]
+    },
+    "knot_times_s": [
+      0.0,
+      6000.0,
+      8000.0,
+      14000.0,
+      18000.0
+    ],
+    "gas_temperature_k": [
+      300.0,
+      1180.0,
+      1180.0,
+      400.0,
+      400.0
+    ],
+    "radiation_temperature_k": [
+      300.0,
+      1180.0,
+      1180.0,
+      400.0,
+      400.0
+    ],
+    "total_pressure_pa": [
+      79137.471904233,
+      100000.0,
+      100000.0,
+      100000.0,
+      100000.0
+    ],
+    "species_order": [
+      "CO2",
+      "N2"
+    ],
+    "mole_fractions": [
+      [
+        0.0004997501249375311,
+        0.9995002498750625
+      ],
+      [
+        0.0004,
+        0.9996
+      ],
+      [
+        0.0004,
+        0.9996
+      ],
+      [
+        0.1,
+        0.9
+      ],
+      [
+        0.1,
+        0.9
+      ]
+    ]
+  },
+  "initial_reservoir_basis": {
+    "classification": "derived_from_virtual_initial_equilibrium_state",
+    "pressure_pa": 79137.471904233,
+    "co2_mole_fraction": 0.0004997501249375311,
+    "source_model_parameters": "parameters.calcite_rigid_column.json",
+    "note": "Match initial virtual gas pressure/composition and temperature; subsequent knots are prescribed virtual choices, not measured kiln operation."
+  },
+  "further_tightening_reason": "The64-cell original base path failed in a nonaccepted Newton trial; its refined path completed and passed every full source/local/global/entropy/quadrature budget. A separately frozen further-refined path is needed for a complete successful time-comparison pair. Execute this root with tolerance=refined: actualrtol1e-13 and all actual absolute tolerances one tenth of the prior completed refined path. Keep all physical inputs and verification budgets, preserve failures; this is not an automatic retry."
+}
