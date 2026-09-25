@@ -53,7 +53,8 @@ class DecimalOpenColumn:
 
     def state(self, i, values):
         cell = self.column.cells[i]
-        dc, logn, energy = values
+        carbon, logn, energy = values
+        dc = mp.mpf(cell.calcium)*mp.expm1(carbon) if self.column.log_carbon else carbon
         nn = self.reference_n*mp.exp(logn)
         nominal = self.nominal[i]
         phase = nominal['phase']
@@ -130,5 +131,6 @@ class DecimalOpenColumn:
         out[3*n+8] = -radiation/wall
         out[-1] += inner[3]+inner[4]+outer[3]+outer[4]+radiation*(1/solution[0]-1/wall)
         for i, state in enumerate(states):
+            if self.column.log_carbon:out[3*i] /= mp.mpf(self.column.cells[i].calcium)*mp.exp(values[3*i])
             out[3*i+1] /= state['nn']
         return out, states

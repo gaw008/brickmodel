@@ -1,0 +1,134 @@
+{
+  "classification": "Source-admission review; no rate admitted to the brick model",
+  "reviewed_at_utc": "2026-09-25",
+  "sources": [
+    {
+      "id": "slaoui_bounahmidi_2004",
+      "doi": "10.1016/j.crci.2004.01.011",
+      "url": "https://comptes-rendus.academie-sciences.fr/chimie/item/10.1016/j.crci.2004.01.011.pdf",
+      "title": "Étude expérimentale et modélisation de la cinétique de décomposition de la pierre à chaux",
+      "material": "Moroccan limestone from the Sunabel Loukkos sugar factory, not the target clay/sludge brick",
+      "experimental": {
+        "locator": "printed pp562-563",
+        "sample_mg": 5,
+        "particle_size_range_um": [
+          50,
+          125
+        ],
+        "gas_flow_l_h": 2,
+        "isothermal_temperatures_c": [
+          820,
+          850,
+          860,
+          890,
+          900
+        ],
+        "first_series_co2_pressure_kpa": 16.71,
+        "pressure_series_temperature_c": 890,
+        "figure_table_co2_pressures_kpa": [
+          16.71,
+          27.35,
+          36.47,
+          46.59
+        ],
+        "body_text_pressure_range_kpa": [
+          16.71,
+          42.54
+        ]
+      },
+      "models": [
+        {
+          "locator": "Eq8 p564",
+          "expression_as_printed": "ln(Peq)=-19129.877/T+16.3",
+          "pressure_unit": "unresolved: nomenclature p560 says Pa, while the magnitude and cited Baker atmosphere study suggest a different reference pressure; no silent correction"
+        },
+        {
+          "locator": "Eq13 p565 and Table4 p567",
+          "law": "t=R0*Cs0/[A1*exp(-E/RT)*(1-pCO2/peq)]*[1-(1-X)^(1/3)]",
+          "A1_mol_m2_s": 16600000.0,
+          "E_kj_mol": 205.41,
+          "reported_standard_deviation_A1": 1900000.0,
+          "reported_standard_deviation_E_kj_mol": 42.59,
+          "required_unresolved_input": "effective R0*Cs0 for the reported size distribution; coefficient covariance not given"
+        },
+        {
+          "locator": "Eq14-15 p565 and Table5 p567",
+          "law": "dX/dt=A*exp(-E/RT)*(1-X)^n",
+          "A_per_s": 522000000.0,
+          "E_kj_mol": 233.15,
+          "n": 0.5,
+          "reported_standard_deviation_A": 66000000.0,
+          "reported_standard_deviation_E_kj_mol": 46.76,
+          "scope": "forward empirical decomposition in the studied conditions; no reverse or equilibrium pressure dependence"
+        }
+      ],
+      "source_issues": [
+        "42.54 kPa in body text versus 46.59 kPa in Fig3, Fig10 and Table3",
+        "Eq8 pressure normalization is not explicit and conflicts with literal Pa nomenclature",
+        "Fig2 and Fig4 nominal 820C/16.71kPa traces appear different in their time scale; numerical extraction is pending, so no quantified contradiction is asserted"
+      ],
+      "fit_quality": {
+        "locator": "Table3 p567",
+        "reported_maximum_relative_error_percent_range": [
+          4.16,
+          23.06
+        ],
+        "interpretation": "Printed in-sample fit errors, not an independent material prediction bound"
+      },
+      "admission": "blocked_pending_pressure_normalization_and_trace_reconciliation"
+    },
+    {
+      "id": "rodriguez_navarro_2009",
+      "doi": "10.2138/am.2009.3021",
+      "url": "https://www.ugr.es/~grupo179/pdf/CRNavarro%2009a.pdf",
+      "title": "Thermal decomposition of calcite: Mechanisms of formation and textural evolution of CaO nanocrystals",
+      "material": "Optical-quality Mexican Iceland spar single crystals; not limestone powder or target brick",
+      "experimental": {
+        "locator": "p580 TGA section, Fig10 p589",
+        "single_crystal_approximate_size_mm": [
+          2,
+          2,
+          1
+        ],
+        "sample_approximate_mass_mg": 10,
+        "air_flow_cm3_min": 100,
+        "initial_temperature_c": 25,
+        "final_temperature_c": 950,
+        "heating_rates_k_min": [
+          2,
+          5,
+          10,
+          15
+        ],
+        "distinction": "Separate microscopy specimens use 2C/min and 30min stepped holds; those are not the TGA histories"
+      },
+      "model": {
+        "locator": "Table1 p579, Table2 and discussion p589",
+        "name": "F1",
+        "f_alpha": "1-alpha",
+        "fitted_heating_rate_k_min": 2,
+        "E_kj_mol": 179.9,
+        "ln_A": 17.46,
+        "reported_r_squared": 0.8083,
+        "A_time_unit": "Table2 has no unit; discussion writes s^-1 next to rounded lnA; whether beta was converted from K/min is not documented here"
+      },
+      "author_conclusion": "No single listed conversion function fits the whole conversion range well; D1 and F1 only suggest changing mechanisms",
+      "limitations": [
+        "Sample CO2 partial pressure is not measured; purge flow does not establish zero local CO2",
+        "Isoconversional E varies with conversion and cannot simply be merged into a constant F1 law",
+        "Reported A time-unit interpretation requires direct curve reproduction before use"
+      ],
+      "admission": "candidate_for_published_parameter_reproduction_only"
+    },
+    {
+      "id": "baker_1962",
+      "doi": "10.1039/JR9620000464",
+      "url": "https://pubs.rsc.org/en/content/articlelanding/1962/jr/jr9620000464",
+      "title": "The calcium oxide-carbon dioxide system in the pressure range 1-300 atmospheres",
+      "access": "Primary landing/PDF route returned 403 in this review; full equation and normalization not verified",
+      "admission": "bibliographic_lead_only_not_a_confirmed_parameter_source"
+    }
+  ],
+  "material_qualified": false,
+  "training_eligible": false
+}

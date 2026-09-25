@@ -33,7 +33,7 @@ def main():
             dc = case['excess_carbon_densities_mol_m3'][i]*cell.volume
             nn = case['nitrogen_densities_mol_m3'][i]*cell.volume
             state = cell.at_carbon_offset(case['temperatures_k'][i], dc, nn)
-            z[3*i:3*i+3] = [dc, np.log(nn/column.reference_nitrogen), state['internal_energy_j']]
+            z[3*i:3*i+3] = [column.carbon_coordinate(cell,dc), np.log(nn/column.reference_nitrogen), state['internal_energy_j']]
         segment = case['segment_index']
         _, states, _, _, contact = column.observe(z, segment)
         reference = DecimalOpenColumn(column, states, contact, segment, settings)
@@ -42,12 +42,19 @@ def main():
         reference_rates, reference_states = reference.rates(nominal)
         physical_rates = column.rates(0., z, segment)
         scales = np.array(review['per_cell_rate_scales']*n+review['ledger_rate_scales'])
+        if column.log_carbon and review.get('carbon_rate_scale_basis')=='physical_inventory':
+            scales[0:3*n:3] /= column.physical_values(z)[0:3*n:3]
         normalization = [entry for cell in column.cells for entry in (
             review['coordinate_normalization']['carbon_density_mol_m3']*cell.volume,
             review['coordinate_normalization']['log_nitrogen'], review['coordinate_normalization']['energy_density_j_m3']*cell.volume)]
         perturbation = [entry for cell in column.cells for entry in (
             case['carbon_difference_density_mol_m3']*cell.volume,
             review['difference_scales']['log_nitrogen'], review['difference_scales']['energy_density_j_m3']*cell.volume)]
+        if column.log_carbon:
+            physical = column.physical_values(z)
+            for i in range(n):
+                normalization[3*i] /= physical[3*i]
+                perturbation[3*i] /= physical[3*i]
         derivatives = []
         for step in settings['difference_steps']:
             worst = {'scaled_maximum_absolute_difference': 0.}

@@ -11,8 +11,9 @@ from .equilibrium_calcite_rigid import RigidCalciteMixture
 
 
 class OffsetRigidCalciteMixture(RigidCalciteMixture):
-    def at_carbon_offset(self,t,offset,nitrogen_mol):
-        c = self.calcium+offset;rt = self.reaction.gas_constant_j_mol_k*t
+    def at_carbon_offset(self,t,offset,nitrogen_mol,total_carbon_mol=None):
+        c = self.calcium+offset if total_carbon_mol is None else total_carbon_mol
+        rt = self.reaction.gas_constant_j_mol_k*t
         dg = self.reaction.standard(t)['reaction']['gibbs_j_mol'];policy = self.config['numerics']
         base = self.volume-self.calcium*self.vc-offset*self.dv
         def pressure(g):
@@ -33,16 +34,18 @@ class OffsetRigidCalciteMixture(RigidCalciteMixture):
                 log_left = math.log(self.p0*base/rt)-dg/rt+(min(p_left,p_right)-self.p0)*self.dv/rt-policy['log_gas_bracket_padding']
             g = math.exp(brentq(lambda value:score(math.exp(value)),log_left,math.log(c),
                 xtol=policy['log_gas_root_absolute_tolerance'],rtol=policy['log_gas_root_relative_tolerance'],maxiter=policy['log_gas_root_iterations']))
-            lime = g-offset;calcite = self.calcium-lime;phase = 'coexistence'
+            lime = g-offset
+            calcite = self.calcium-lime if total_carbon_mol is None else c-g
+            phase = 'coexistence'
         state = self.inventory_partition(t,c,nitrogen_mol,g,calcite,lime,phase)
         state['carbon_offset_mol'] = offset
         state['carbon_offset_closure_residual_mol'] = math.fsum((g,-lime,-offset))
         return state
 
-    def offset_inventory_state(self,carbon_offset_mol,nitrogen_mol,internal_energy_j):
+    def offset_inventory_state(self,carbon_offset_mol,nitrogen_mol,internal_energy_j,total_carbon_mol=None):
         p = self.config['numerics']
-        t = brentq(lambda value:self.at_carbon_offset(value,carbon_offset_mol,nitrogen_mol)['internal_energy_j']-internal_energy_j,*self.domain,
+        t = brentq(lambda value:self.at_carbon_offset(value,carbon_offset_mol,nitrogen_mol,total_carbon_mol)['internal_energy_j']-internal_energy_j,*self.domain,
             xtol=p['temperature_inverse_absolute_k'],rtol=p['temperature_inverse_relative'],maxiter=p['temperature_inverse_iterations'])
-        state = self.at_carbon_offset(t,carbon_offset_mol,nitrogen_mol)
+        state = self.at_carbon_offset(t,carbon_offset_mol,nitrogen_mol,total_carbon_mol)
         state['constitutive_internal_energy_j'] = state['internal_energy_j'];state['internal_energy_j'] = internal_energy_j
         return state

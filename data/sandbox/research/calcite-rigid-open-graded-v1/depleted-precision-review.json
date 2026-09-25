@@ -1,0 +1,189 @@
+{
+  "settings": {
+    "static_review_parameters": "parameters.calcite_rigid_open_graded_depleted_review.json",
+    "decimal_digits": 50,
+    "root_tolerance": "1e-40",
+    "maximum_root_steps": 100,
+    "difference_steps": [
+      3e-06,
+      1e-06,
+      3e-07
+    ],
+    "reason": "Double central differences on the selected very small boundary cell fail the unchanged 1e-5 scaled derivative budget, with errors worsening for smaller differences. Recompose the same source and equations in high precision; no change to the original derivative target or source precision."
+  },
+  "static_review_parameters": {
+    "column_parameters": "parameters.calcite_rigid_open_graded_log_carbon.json",
+    "coordinate_normalization": {
+      "carbon_density_mol_m3": 10.0,
+      "log_nitrogen": 1.0,
+      "energy_density_j_m3": 1000000.0
+    },
+    "difference_scales": {
+      "log_nitrogen": 1.0,
+      "energy_density_j_m3": 1000000.0
+    },
+    "difference_steps": [
+      0.0005,
+      0.00015,
+      5e-05
+    ],
+    "per_cell_rate_scales": [
+      1e-06,
+      1.0,
+      1.0
+    ],
+    "ledger_rate_scales": [
+      1e-06,
+      1e-06,
+      1.0,
+      1e-06,
+      1e-06,
+      1.0,
+      1.0,
+      0.001,
+      0.001,
+      0.001
+    ],
+    "budgets": {
+      "species_rate_mol_s": 1e-12,
+      "energy_rate_w": 1e-08,
+      "entropy_rate_w_k": 1e-09,
+      "scaled_derivative": 1e-05,
+      "conservation_derivative": 1e-10
+    },
+    "cases": [
+      {
+        "name": "graded_depleted_carbon",
+        "temperatures_k": [
+          1000.0,
+          1050.0,
+          1100.0,
+          1150.0
+        ],
+        "excess_carbon_densities_mol_m3": [
+          -9999.0,
+          -9999.0,
+          -9999.0,
+          -9999.0
+        ],
+        "nitrogen_densities_mol_m3": [
+          20.0,
+          18.0,
+          15.0,
+          10.0
+        ],
+        "carbon_difference_density_mol_m3": 0.1,
+        "segment_index": 0,
+        "cell_widths_m": [
+          0.01,
+          0.007,
+          0.0029999,
+          1e-07
+        ]
+      }
+    ],
+    "scope": "Separate static qualification before time integration; original root, thermochemical and physical definitions preserved. No true-material parameter fitting.",
+    "reason": "Additional near-depleted C/Ca=1e-4 field probes the positive-total-carbon chart and near/past-full decomposition branches before complete trajectories.",
+    "carbon_rate_scale_basis": "physical_inventory"
+  },
+  "records": [
+    {
+      "case": {
+        "name": "graded_depleted_carbon",
+        "temperatures_k": [
+          1000.0,
+          1050.0,
+          1100.0,
+          1150.0
+        ],
+        "excess_carbon_densities_mol_m3": [
+          -9999.0,
+          -9999.0,
+          -9999.0,
+          -9999.0
+        ],
+        "nitrogen_densities_mol_m3": [
+          20.0,
+          18.0,
+          15.0,
+          10.0
+        ],
+        "carbon_difference_density_mol_m3": 0.1,
+        "segment_index": 0,
+        "cell_widths_m": [
+          0.01,
+          0.007,
+          0.0029999,
+          1e-07
+        ]
+      },
+      "derivatives": [
+        {
+          "scaled_maximum_absolute_difference": 6.057237069692144e-08,
+          "worst_row": 10,
+          "worst_column": 10,
+          "analytic_at_worst": -2544.349407942162,
+          "central_difference_decimal_at_worst": "-2544.3494080027344588445188193170150017905279633829",
+          "step": 3e-06,
+          "physical_phase_constraints_met": true,
+          "within_budget": true
+        },
+        {
+          "scaled_maximum_absolute_difference": 5.450898701302289e-08,
+          "worst_row": 10,
+          "worst_column": 10,
+          "analytic_at_worst": -2544.349407942162,
+          "central_difference_decimal_at_worst": "-2544.3494079966710751606202772795882997297276036325",
+          "step": 1e-06,
+          "physical_phase_constraints_met": true,
+          "within_budget": true
+        },
+        {
+          "scaled_maximum_absolute_difference": 5.381927711897974e-08,
+          "worst_row": 10,
+          "worst_column": 10,
+          "analytic_at_worst": -2544.349407942162,
+          "central_difference_decimal_at_worst": "-2544.3494079959813652665771252323506761351077417438",
+          "step": 3e-07,
+          "physical_phase_constraints_met": true,
+          "within_budget": true
+        }
+      ],
+      "absolute_rate_differences": [
+        1.186655686313307e-16,
+        4.1458737577096375e-18,
+        3.808038894430205e-15,
+        2.438556056751566e-16,
+        1.4062973541803992e-17,
+        5.014263573812654e-15,
+        2.943232542192136e-16,
+        7.023003256667561e-17,
+        1.0110644940937321e-14,
+        1.6442276004053486e-07,
+        5.132747183702251e-08,
+        7.439538207905353e-13,
+        1.6441987915953476e-18,
+        5.13253433216802e-18,
+        7.326924623214468e-13,
+        9.068237226205705e-23,
+        1.1475127861594598e-22,
+        2.060096099057338e-16,
+        8.49614056566864e-15,
+        2.0661908037766134e-19,
+        7.197913966487012e-18,
+        2.82091323956612e-19
+      ],
+      "reference_temperatures_k": [
+        "1000.0000000000007240447797277414581894476990023051",
+        "1049.9999999999988862799173862329334902270473995691",
+        "1100.0000000000000928124922950043798023211335210056",
+        "1150.0000000000011218219560000305480031246613826124"
+      ],
+      "all_derivative_budgets_met": true
+    }
+  ],
+  "all_derivative_budgets_met": true,
+  "scope": "Independent source polynomial, phase-local inventory inverse, surface root and face matrix at higher arithmetic precision. Identical binary-float inputs are promoted; source uncertainty is unchanged. Original double-precision difference failures remain separate.",
+  "material_qualified": false,
+  "training_eligible": false
+}

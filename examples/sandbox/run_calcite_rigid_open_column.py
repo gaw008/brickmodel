@@ -27,7 +27,10 @@ def main():
     widths = settings['mesh_cell_widths_m'][args.mesh] if 'mesh_cell_widths_m' in settings else None
     model = OpenRigidReactiveColumn(reaction,nitrogen,volume,config,settings,surface,n,widths)
     values = model.initial;policy = settings['numerics'];factor = 1. if args.tolerance=='base' else policy['refinement_factor']
-    if 'physical_coordinate_density_absolute_tolerances' in policy:
+    if model.log_carbon:
+        c_atol,z_atol = policy['log_inventory_absolute_tolerances']
+        body_absolute = [entry for cell in model.cells for entry in (c_atol,z_atol,policy['energy_density_absolute_tolerance_j_m3']*cell.volume)]
+    elif 'physical_coordinate_density_absolute_tolerances' in policy:
         c_atol,z_atol,u_atol = policy['physical_coordinate_density_absolute_tolerances']
         body_absolute = [entry for cell in model.cells for entry in (c_atol*cell.volume,z_atol,u_atol*cell.volume)]
     else:

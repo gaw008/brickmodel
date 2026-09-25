@@ -25,24 +25,33 @@ def main():
             offset = case['excess_carbon_densities_mol_m3'][i]*cell.volume
             nitrogen_mol = case['nitrogen_densities_mol_m3'][i]*cell.volume
             state = cell.at_carbon_offset(case['temperatures_k'][i],offset,nitrogen_mol)
-            z[3*i:3*i+3] = [offset,np.log(nitrogen_mol/column.reference_nitrogen),state['internal_energy_j']]
+            z[3*i:3*i+3] = [column.carbon_coordinate(cell,offset),np.log(nitrogen_mol/column.reference_nitrogen),state['internal_energy_j']]
         physical,states,faces,reservoir,contact = column.observe(z,case['segment_index'])
         f = column.rates(0.,z,case['segment_index']);matrix = column.jacobian(0.,z,case['segment_index']).toarray()
         physical_rates = f.copy();physical_rates[1:base:3] *= physical[1:base:3]
+        if column.log_carbon:physical_rates[0:base:3] *= physical[0:base:3]
         global_balance = physical_rates[:base].reshape(n,3).sum(axis=0)+f[base:base+3]
         exterior_balance = physical_rates[:base].reshape(n,3).sum(axis=0)+f[base+3:base+6];exterior_balance[2] -= f[base+6]
         entropy_gradient = np.array([[-s['carbon_chemical_potential_j_mol']/s['temperature_k'],
             -s['nitrogen_chemical_potential_j_mol']/s['temperature_k'],1/s['temperature_k']] for s in states])
         entropy_identity = float(np.sum(entropy_gradient*physical_rates[:base].reshape(n,3))+f[base+7]+f[base+8]-f[-1])
         chart = np.ones(len(z));chart[1:base:3] = physical[1:base:3]
+        if column.log_carbon:chart[0:base:3] = physical[0:base:3]
         physical_jacobian = chart[:,None]*matrix
         for i in range(n):physical_jacobian[3*i+1,3*i+1] += physical_rates[3*i+1]
+        if column.log_carbon:
+            for i in range(n):physical_jacobian[3*i,3*i] += physical_rates[3*i]
         balance_jacobian = physical_jacobian[:base].reshape(n,3,len(z)).sum(axis=0)+matrix[base:base+3]
         normalization = np.array([entry for cell in column.cells for entry in [settings['coordinate_normalization']['carbon_density_mol_m3']*cell.volume,
             settings['coordinate_normalization']['log_nitrogen'],settings['coordinate_normalization']['energy_density_j_m3']*cell.volume]])
         perturbation = np.array([entry for cell in column.cells for entry in [case['carbon_difference_density_mol_m3']*cell.volume,
             settings['difference_scales']['log_nitrogen'],settings['difference_scales']['energy_density_j_m3']*cell.volume]])
+        if column.log_carbon:
+            normalization[0:base:3] /= physical[0:base:3]
+            perturbation[0:base:3] /= physical[0:base:3]
         output_scales = np.array(settings['per_cell_rate_scales']*n+settings['ledger_rate_scales'])
+        if column.log_carbon and settings.get('carbon_rate_scale_basis')=='physical_inventory':
+            output_scales[0:base:3] /= physical[0:base:3]
         derivatives = []
         for step in settings['difference_steps']:
             reference = np.zeros_like(matrix);same_phase = True
