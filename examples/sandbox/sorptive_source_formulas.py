@@ -189,10 +189,17 @@ class FreeWaterSource(SorptiveSource):
 
 class MobileWaterSource(SorptiveSource):
     """Reconstruct full condensed mu/h and its additional internal face rate."""
+    def excess_partial_chemical_potential(self,t,w):
+        # Partial fields are the derivatives of the integrated excess terms.
+        # Evaluating their H/S integrals is unnecessary at each face/root trial.
+        if w <= self.wj:
+            return self.mass*(self.b-t*self.c)+self.r*t*math.log(w/self.wj) if w else None
+        return self.mass*(self.b0(w)-t*(self.b0(w)-self.m0(w))/self.t0)
+
     def condensed_fields(self,point):
         t,p,w=point['temperature_k'],point['pressure_pa'],point['moisture_kg_kg_dry']
         liquid=self.liquid_at(t,p)
-        _,_,mu=self.excess(t,w)
+        mu=self.excess_partial_chemical_potential(t,w)
         b=self.b if w<=self.wj else self.b0(w)
         return {'condensed_chemical_potential_j_mol':float(liquid.h*1000*self.mass+self.offset-t*liquid.s*1000*self.mass+mu),
                 'condensed_partial_enthalpy_j_mol':float(liquid.h*1000*self.mass+self.offset+self.mass*b)}
