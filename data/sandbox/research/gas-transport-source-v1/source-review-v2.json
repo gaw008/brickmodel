@@ -1,0 +1,4693 @@
+{
+  "settings": {
+    "source_files": {
+      "collision_integrals": "data/sandbox/research/gas-transport-source-v1/source/MMCollisionInt.cpp",
+      "collision_header": "data/sandbox/research/gas-transport-source-v1/source/MMCollisionInt.h",
+      "gas_transport": "data/sandbox/research/gas-transport-source-v1/source/GasTransport.cpp",
+      "gri30": "data/sandbox/research/gas-transport-source-v1/source/gri30.yaml",
+      "nist_tables": "data/sandbox/research/gas-transport-source-v1/source/nist-selected-tables.json"
+    },
+    "source_version": "Cantera v3.2.0, source collision formulas before temperature polynomial fitting",
+    "constants": {
+      "boltzmann_j_k": "1.380649e-23",
+      "avogadro_mol_inverse": "6.02214076e23",
+      "angstrom_m": "1e-10",
+      "gram_kg": "1e-3",
+      "micropascal_pa": "1e-6",
+      "source": "https://physics.nist.gov/cuu/Constants/Table/allascii.txt",
+      "classification": "kB and NA exact SI; metric prefixes exact; molecular masses taken from the selected historical NIST compilation"
+    },
+    "species": {
+      "CO": {
+        "well_depth_over_kb_k": "98.1",
+        "diameter_angstrom": "3.65",
+        "molar_mass_g_mol": "28.0104",
+        "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+        "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-5"
+      },
+      "CO2": {
+        "well_depth_over_kb_k": "244.0",
+        "diameter_angstrom": "3.763",
+        "molar_mass_g_mol": "44.010",
+        "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+        "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-4"
+      },
+      "O2": {
+        "well_depth_over_kb_k": "107.4",
+        "diameter_angstrom": "3.458",
+        "molar_mass_g_mol": "31.999",
+        "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+        "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+      },
+      "N2": {
+        "well_depth_over_kb_k": "97.53",
+        "diameter_angstrom": "3.621",
+        "molar_mass_g_mol": "28.0135",
+        "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+        "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+      }
+    },
+    "collision_tables": {
+      "reduced_temperature": [
+        "0.1",
+        "0.2",
+        "0.3",
+        "0.4",
+        "0.5",
+        "0.6",
+        "0.7",
+        "0.8",
+        "0.9",
+        "1.0",
+        "1.2",
+        "1.4",
+        "1.6",
+        "1.8",
+        "2.0",
+        "2.5",
+        "3.0",
+        "3.5",
+        "4.0",
+        "5.0",
+        "6.0",
+        "7.0",
+        "8.0",
+        "9.0",
+        "10.0",
+        "12.0",
+        "14.0",
+        "16.0",
+        "18.0",
+        "20.0",
+        "25.0",
+        "30.0",
+        "35.0",
+        "40.0",
+        "50.0",
+        "75.0",
+        "100.0"
+      ],
+      "omega22_delta_zero": [
+        "4.1005",
+        "3.2626",
+        "2.8399",
+        "2.531",
+        "2.2837",
+        "2.0838",
+        "1.922",
+        "1.7902",
+        "1.6823",
+        "1.5929",
+        "1.4551",
+        "1.3551",
+        "1.28",
+        "1.2219",
+        "1.1757",
+        "1.0933",
+        "1.0388",
+        "0.99963",
+        "0.96988",
+        "0.92676",
+        "0.89616",
+        "0.87272",
+        "0.85379",
+        "0.83795",
+        "0.82435",
+        "0.80184",
+        "0.78363",
+        "0.76834",
+        "0.75518",
+        "0.74364",
+        "0.71982",
+        "0.70097",
+        "0.68545",
+        "0.67232",
+        "0.65099",
+        "0.61397",
+        "0.5887"
+      ],
+      "astar_delta_zero": [
+        "1.0231",
+        "1.0424",
+        "1.0719",
+        "1.0936",
+        "1.1053",
+        "1.1104",
+        "1.1114",
+        "1.1104",
+        "1.1086",
+        "1.1063",
+        "1.1020",
+        "1.0985",
+        "1.0960",
+        "1.0943",
+        "1.0934",
+        "1.0926",
+        "1.0934",
+        "1.0948",
+        "1.0965",
+        "1.0997",
+        "1.1025",
+        "1.1050",
+        "1.1072",
+        "1.1091",
+        "1.1107",
+        "1.1133",
+        "1.1154",
+        "1.1172",
+        "1.1186",
+        "1.1199",
+        "1.1223",
+        "1.1243",
+        "1.1259",
+        "1.1273",
+        "1.1297",
+        "1.1339",
+        "1.1364"
+      ]
+    },
+    "review": {
+      "decimal_precision": 80,
+      "temperatures_k": [
+        300,
+        400,
+        500,
+        600,
+        700,
+        800,
+        900,
+        1000,
+        1100,
+        1200
+      ],
+      "pressures_pa": [
+        50000,
+        100000,
+        200000
+      ],
+      "relative_arithmetic_budget": 1e-13,
+      "relative_symmetry_budget": 1e-14,
+      "relative_pressure_scaling_budget": 1e-14,
+      "nist_uncertainty_fraction": {
+        "CO": 0.05,
+        "CO2": 0.05,
+        "O2": 0.005,
+        "N2": 0.03
+      },
+      "nist_rounding_half_unit_micro_pa_s": {
+        "CO": 0.05,
+        "CO2": 0.005,
+        "O2": 0.005,
+        "N2": 0.05
+      },
+      "selected_calculation_temperature_domain_k": [
+        300,
+        1200
+      ],
+      "table_comparison_temperature_domain_k": [
+        300,
+        1000
+      ]
+    },
+    "scope": "Pure dilute-gas viscosity and first-order binary molecular diffusion only; explicit zero-dipole LJ approximation. No mixture-viscosity, porous effective diffusivity, Darcy permeability, multicomponent flux, Soret or brick qualification. GRI NASA thermo and reactions are not imported. No post-fit calibration to NIST tables. NIST comparison pressure is unspecified on selected pages; agreement is not pressure-matched experimental validation.",
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "source_inputs_match": {
+    "reduced_temperature": true,
+    "omega22_delta_zero": true,
+    "astar_delta_zero": true,
+    "CO": true,
+    "CO_table_uncertainty": true,
+    "CO2": true,
+    "CO2_table_uncertainty": true,
+    "O2": true,
+    "O2_table_uncertainty": true,
+    "N2": true,
+    "N2_table_uncertainty": true
+  },
+  "viscosity": [
+    {
+      "species": "CO",
+      "temperature_k": 300,
+      "viscosity_pa_s": 1.77707152184514e-05,
+      "reference_pa_s_decimal": "0.000017770715218451395978175557380782095018292002538801202208498099373691524759072028",
+      "relative_arithmetic_error": 2.1750369653054064e-16,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 300,
+      "viscosity_pa_s": 1.5060212738756866e-05,
+      "reference_pa_s_decimal": "0.00001506021273875686444520560240222190376331356164238286918161497199304664147862099",
+      "relative_arithmetic_error": 9.94242917138131e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "O2",
+      "temperature_k": 300,
+      "viscosity_pa_s": 2.065329027295279e-05,
+      "reference_pa_s_decimal": "0.000020653290272952791666979307942547138614815471460690443875642875306382381002973738",
+      "relative_arithmetic_error": 9.811528245922513e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "N2",
+      "temperature_k": 300,
+      "viscosity_pa_s": 1.8084626814678912e-05,
+      "reference_pa_s_decimal": "0.000018084626814678915111662221985140802473950284845934739135886782785262278103703959",
+      "relative_arithmetic_error": 1.810994844137388e-16,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "CO",
+      "temperature_k": 400,
+      "viscosity_pa_s": 2.195838730181745e-05,
+      "reference_pa_s_decimal": "0.000021958387301817442790260362828752840961210556434982888954775640472350901580175532",
+      "relative_arithmetic_error": 3.478144681645796e-16,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 400,
+      "viscosity_pa_s": 1.9735334656813695e-05,
+      "reference_pa_s_decimal": "0.000019735334656813693052875799494642537541190569228400158489582991841210096383839695",
+      "relative_arithmetic_error": 8.244295888475848e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "O2",
+      "temperature_k": 400,
+      "viscosity_pa_s": 2.563121266982727e-05,
+      "reference_pa_s_decimal": "0.000025631212669827267539049228320813462266096208124901228228680967301099746643845713",
+      "relative_arithmetic_error": 1.125612197160924e-16,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "N2",
+      "temperature_k": 400,
+      "viscosity_pa_s": 2.234030784566974e-05,
+      "reference_pa_s_decimal": "0.000022340307845669739356986006080537650735647559216946031173314349224359590040415731",
+      "relative_arithmetic_error": 3.574995505394088e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "CO",
+      "temperature_k": 500,
+      "viscosity_pa_s": 2.5681080430895028e-05,
+      "reference_pa_s_decimal": "0.000025681080430895022285433820140183277999108109183281522267893775466253342494604949",
+      "relative_arithmetic_error": 2.0465271101591148e-16,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 500,
+      "viscosity_pa_s": 2.3986972580544655e-05,
+      "reference_pa_s_decimal": "0.000023986972580544656613801115225933072169538408639416256080865457647977203066923338",
+      "relative_arithmetic_error": 6.703088412584186e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "O2",
+      "temperature_k": 500,
+      "viscosity_pa_s": 3.0045102118963934e-05,
+      "reference_pa_s_decimal": "0.000030045102118963941713797101659044228000526614542078249438619481056288902770399283",
+      "relative_arithmetic_error": 2.4082071022851117e-16,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "N2",
+      "temperature_k": 500,
+      "viscosity_pa_s": 2.61242606334714e-05,
+      "reference_pa_s_decimal": "0.000026124260633471399215559097152606285522807997573191234459227672702446916159926844",
+      "relative_arithmetic_error": 8.768504157782e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "CO",
+      "temperature_k": 600,
+      "viscosity_pa_s": 2.908480893262893e-05,
+      "reference_pa_s_decimal": "0.000029084808932628928287303602052050320950029556482721959389239805676240577771477468",
+      "relative_arithmetic_error": 1.167312290624616e-16,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 600,
+      "viscosity_pa_s": 2.7880531980869516e-05,
+      "reference_pa_s_decimal": "0.00002788053198086951727278126140746299996634840557967413507929674806303636660050419",
+      "relative_arithmetic_error": 3.628199827569096e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "O2",
+      "temperature_k": 600,
+      "viscosity_pa_s": 3.4076822160863583e-05,
+      "reference_pa_s_decimal": "0.000034076822160863587190491158974506120687852273835887419084287873859107114999813895",
+      "relative_arithmetic_error": 1.0944860725468921e-16,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "N2",
+      "temperature_k": 600,
+      "viscosity_pa_s": 2.9584291036524023e-05,
+      "reference_pa_s_decimal": "0.000029584291036524021733192057864029771177059837134076945216800830629510242414535273",
+      "relative_arithmetic_error": 3.4921668221362815e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "CO",
+      "temperature_k": 700,
+      "viscosity_pa_s": 3.2253467393455635e-05,
+      "reference_pa_s_decimal": "0.0000322534673934556334051578134792024026970702042548650240419639601200620821283318",
+      "relative_arithmetic_error": 5.980843960812722e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 700,
+      "viscosity_pa_s": 3.147410201880765e-05,
+      "reference_pa_s_decimal": "0.000031474102018807649942493318753239633864139332720106462600132742161313298214417185",
+      "relative_arithmetic_error": 4.124505192575244e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "O2",
+      "temperature_k": 700,
+      "viscosity_pa_s": 3.7824116435894e-05,
+      "reference_pa_s_decimal": "0.000037824116435894012446479016646950382270819336276370056758202493243482514360369101",
+      "relative_arithmetic_error": 2.457880475594258e-16,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "N2",
+      "temperature_k": 700,
+      "viscosity_pa_s": 3.280569682567399e-05,
+      "reference_pa_s_decimal": "0.00003280569682567398522120965178591672426682830890470942387373167521067973229671545",
+      "relative_arithmetic_error": 6.393979662998466e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "CO",
+      "temperature_k": 800,
+      "viscosity_pa_s": 3.524087992819054e-05,
+      "reference_pa_s_decimal": "0.000035240879928190539421704892793722199710404384798330496730429088594379460514605958",
+      "relative_arithmetic_error": 4.308039734071876e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 800,
+      "viscosity_pa_s": 3.48315169324596e-05,
+      "reference_pa_s_decimal": "0.000034831516932459599117423484743283507701185685909013933703019207929568430610794595",
+      "relative_arithmetic_error": 1.6277025267431315e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "O2",
+      "temperature_k": 800,
+      "viscosity_pa_s": 4.1352361607523276e-05,
+      "reference_pa_s_decimal": "0.000041352361607523285068878930299155466694146502953009688112099759487070219720521364",
+      "relative_arithmetic_error": 2.242451253849724e-16,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "N2",
+      "temperature_k": 800,
+      "viscosity_pa_s": 3.584303758135315e-05,
+      "reference_pa_s_decimal": "0.000035843037581353158594299749236513559198391213873244955449178427317167914003056566",
+      "relative_arithmetic_error": 1.7976361371416291e-16,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "CO",
+      "temperature_k": 900,
+      "viscosity_pa_s": 3.808205405311477e-05,
+      "reference_pa_s_decimal": "0.000038082054053114765552285498627265087645909595748452509993498229088678955880963494",
+      "relative_arithmetic_error": 1.9696454711448175e-16,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 900,
+      "viscosity_pa_s": 3.7992120373834454e-05,
+      "reference_pa_s_decimal": "0.0000379921203738344537513209434172301289501893308696753275384277745309690857001224",
+      "relative_arithmetic_error": 8.177536019882361e-19,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "O2",
+      "temperature_k": 900,
+      "viscosity_pa_s": 4.470499924717779e-05,
+      "reference_pa_s_decimal": "0.000044704999247177789449861949834015060449767227377362769458916205096004712150874484",
+      "relative_arithmetic_error": 2.5500643323359034e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "N2",
+      "temperature_k": 900,
+      "viscosity_pa_s": 3.873181901299005e-05,
+      "reference_pa_s_decimal": "0.000038731819012990052809310673926168168137644416981844668475337924920757450703050709",
+      "relative_arithmetic_error": 9.299038690687882e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "CO",
+      "temperature_k": 1000,
+      "viscosity_pa_s": 4.080179729297936e-05,
+      "reference_pa_s_decimal": "0.000040801797292979355060087039208862848352139040143450367444920257268193167237884359",
+      "relative_arithmetic_error": 4.162440666416603e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 1000,
+      "viscosity_pa_s": 4.098961534871281e-05,
+      "reference_pa_s_decimal": "0.000040989615348712810593493915390679639525023726227263065695281666201075801806327037",
+      "relative_arithmetic_error": 1.348374631242546e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "O2",
+      "temperature_k": 1000,
+      "viscosity_pa_s": 4.791204071555017e-05,
+      "reference_pa_s_decimal": "0.000047912040715550183406358554663438878146890548909377134683927428277867357162894975",
+      "relative_arithmetic_error": 2.4394175595870823e-16,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "N2",
+      "temperature_k": 1000,
+      "viscosity_pa_s": 4.149722616372896e-05,
+      "reference_pa_s_decimal": "0.000041497226163728950441879580116902773419149171132032308941204037503990383701300276",
+      "relative_arithmetic_error": 2.050634497284606e-16,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "CO",
+      "temperature_k": 1100,
+      "viscosity_pa_s": 4.341877789495053e-05,
+      "reference_pa_s_decimal": "0.000043418777894950528462881541761043018603945405055736446394741409360914280622589469",
+      "relative_arithmetic_error": 7.295099949240989e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 1100,
+      "viscosity_pa_s": 4.3848759198422524e-05,
+      "reference_pa_s_decimal": "0.000043848759198422524511027503043248282242274668651248922737830650774370662051143804",
+      "relative_arithmetic_error": 2.2157329884570334e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "O2",
+      "temperature_k": 1100,
+      "viscosity_pa_s": 5.0995824440805286e-05,
+      "reference_pa_s_decimal": "0.000050995824440805289968712337084912883394298070348216313637208782870041992857311524",
+      "relative_arithmetic_error": 7.092391346198813e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "N2",
+      "temperature_k": 1100,
+      "viscosity_pa_s": 4.4158425893010576e-05,
+      "reference_pa_s_decimal": "0.000044158425893010573774291411879480178338040893549527675264846129787210038900355344",
+      "relative_arithmetic_error": 4.1310113910669375e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "CO",
+      "temperature_k": 1200,
+      "viscosity_pa_s": 4.594782265881616e-05,
+      "reference_pa_s_decimal": "0.000045947822658816159613494567414106978408323266915729399387170433380611771506422036",
+      "relative_arithmetic_error": 6.445810983597679e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 1200,
+      "viscosity_pa_s": 4.659910424591803e-05,
+      "reference_pa_s_decimal": "0.00004659910424591802557920689565134868907534866270045066465582199859254557822981857",
+      "relative_arithmetic_error": 6.686940691224444e-17,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "O2",
+      "temperature_k": 1200,
+      "viscosity_pa_s": 5.397365301973301e-05,
+      "reference_pa_s_decimal": "0.000053973653019733019933669859321478124591006022057789927926515808715482931933701582",
+      "relative_arithmetic_error": 2.3123399494336475e-16,
+      "within_arithmetic_budget": true
+    },
+    {
+      "species": "N2",
+      "temperature_k": 1200,
+      "viscosity_pa_s": 4.673003630514297e-05,
+      "reference_pa_s_decimal": "0.000046730036305142972956644370739194407521222582947541708524707542920863845172050858",
+      "relative_arithmetic_error": 9.116018576095234e-17,
+      "within_arithmetic_budget": true
+    }
+  ],
+  "binary_diffusivity": [
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 300,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 3.1680038914533605e-05,
+      "reference_m2_s_decimal": "0.000031680038914533609132695762200739775568505494718274280252750784373048640457413368",
+      "relative_errors": {
+        "arithmetic": 1.3797996513911297e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 300,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 1.5840019457266802e-05,
+      "reference_m2_s_decimal": "0.000015840019457266804566347881100369887784252747359137140126375392186524320228706684",
+      "relative_errors": {
+        "arithmetic": 1.3797996513911297e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 300,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 7.920009728633401e-06,
+      "reference_m2_s_decimal": "0.000007920009728633402283173940550184943892126373679568570063187696093262160114353342",
+      "relative_errors": {
+        "arithmetic": 1.3797996513911297e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 300,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 4.190395401025097e-05,
+      "reference_m2_s_decimal": "0.000041903954010250976550210368099412170393456024957286932003514456712541264284680607",
+      "relative_errors": {
+        "arithmetic": 2.2795181430473114e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 300,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 2.0951977005125483e-05,
+      "reference_m2_s_decimal": "0.000020951977005125488275105184049706085196728012478643466001757228356270632142340303",
+      "relative_errors": {
+        "arithmetic": 2.2795181430473114e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 300,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 1.0475988502562742e-05,
+      "reference_m2_s_decimal": "0.000010475988502562744137552592024853042598364006239321733000878614178135316071170152",
+      "relative_errors": {
+        "arithmetic": 2.2795181430473114e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 300,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 4.189556001930261e-05,
+      "reference_m2_s_decimal": "0.000041895560019302610521005865236049784487274499945905478795484130434506107967344239",
+      "relative_errors": {
+        "arithmetic": 1.104594778914895e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 300,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 2.0947780009651305e-05,
+      "reference_m2_s_decimal": "0.000020947780009651305260502932618024892243637249972952739397742065217253053983672119",
+      "relative_errors": {
+        "arithmetic": 1.104594778914895e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 300,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 1.0473890004825653e-05,
+      "reference_m2_s_decimal": "0.00001047389000482565263025146630901244612181862498647636969887103260862652699183606",
+      "relative_errors": {
+        "arithmetic": 1.104594778914895e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 300,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 3.157391304515785e-05,
+      "reference_m2_s_decimal": "0.00003157391304515784606313924025131840856750822092301629062709694773765036543947533",
+      "relative_errors": {
+        "arithmetic": 8.715243202740564e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 300,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 1.5786956522578924e-05,
+      "reference_m2_s_decimal": "0.000015786956522578923031569620125659204283754110461508145313548473868825182719737665",
+      "relative_errors": {
+        "arithmetic": 8.715243202740564e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 300,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 7.893478261289462e-06,
+      "reference_m2_s_decimal": "0.0000078934782612894615157848100628296021418770552307540726567742369344125913598688324",
+      "relative_errors": {
+        "arithmetic": 8.715243202740564e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 300,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 3.1961206049404624e-05,
+      "reference_m2_s_decimal": "0.000031961206049404636790361520179166774829082002326604142355348916438222446122279394",
+      "relative_errors": {
+        "arithmetic": 3.889089011293058e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 300,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 1.5980603024702312e-05,
+      "reference_m2_s_decimal": "0.000015980603024702318395180760089583387414541001163302071177674458219111223061139697",
+      "relative_errors": {
+        "arithmetic": 3.889089011293058e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 300,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 7.990301512351156e-06,
+      "reference_m2_s_decimal": "0.0000079903015123511591975903800447916937072705005816510355888372291095556115305698485",
+      "relative_errors": {
+        "arithmetic": 3.889089011293058e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 300,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 4.228055967609118e-05,
+      "reference_m2_s_decimal": "0.000042280559676091185228083630162599819926426252581620128370967540965780932553574569",
+      "relative_errors": {
+        "arithmetic": 1.4149478278218182e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 300,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 2.114027983804559e-05,
+      "reference_m2_s_decimal": "0.000021140279838045592614041815081299909963213126290810064185483770482890466276787285",
+      "relative_errors": {
+        "arithmetic": 1.4149478278218182e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 300,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 1.0570139919022795e-05,
+      "reference_m2_s_decimal": "0.000010570139919022796307020907540649954981606563145405032092741885241445233138393642",
+      "relative_errors": {
+        "arithmetic": 1.4149478278218182e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 400,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 5.3512279268119425e-05,
+      "reference_m2_s_decimal": "0.000053512279268119421944380956576713623727455670904642839745808291258467925283113716",
+      "relative_errors": {
+        "arithmetic": 5.182793137227585e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 400,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 2.6756139634059712e-05,
+      "reference_m2_s_decimal": "0.000026756139634059710972190478288356811863727835452321419872904145629233962641556858",
+      "relative_errors": {
+        "arithmetic": 5.182793137227585e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 400,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 1.3378069817029856e-05,
+      "reference_m2_s_decimal": "0.000013378069817029855486095239144178405931863917726160709936452072814616981320778429",
+      "relative_errors": {
+        "arithmetic": 5.182793137227585e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 400,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 6.936967276916203e-05,
+      "reference_m2_s_decimal": "0.00006936967276916203487685123600007034006182206898688717423681026033976891433253713",
+      "relative_errors": {
+        "arithmetic": 9.960259663851075e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 400,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 3.4684836384581014e-05,
+      "reference_m2_s_decimal": "0.000034684836384581017438425618000035170030911034493443587118405130169884457166268565",
+      "relative_errors": {
+        "arithmetic": 9.960259663851075e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 400,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 1.7342418192290507e-05,
+      "reference_m2_s_decimal": "0.000017342418192290508719212809000017585015455517246721793559202565084942228583134282",
+      "relative_errors": {
+        "arithmetic": 9.960259663851075e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 400,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 6.92197192957452e-05,
+      "reference_m2_s_decimal": "0.000069219719295745201704971451679466759635570319510428668148758929885014070707596853",
+      "relative_errors": {
+        "arithmetic": 2.0716662546342133e-18,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 400,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 3.46098596478726e-05,
+      "reference_m2_s_decimal": "0.000034609859647872600852485725839733379817785159755214334074379464942507035353798427",
+      "relative_errors": {
+        "arithmetic": 2.0716662546342133e-18,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 400,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 1.73049298239363e-05,
+      "reference_m2_s_decimal": "0.000017304929823936300426242862919866689908892579877607167037189732471253517676899213",
+      "relative_errors": {
+        "arithmetic": 2.0716662546342133e-18,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 400,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 5.348020847428399e-05,
+      "reference_m2_s_decimal": "0.000053480208474283978685099725635879414701461234185136339168798238036652664815159638",
+      "relative_errors": {
+        "arithmetic": 1.7731221474242739e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 400,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 2.6740104237141994e-05,
+      "reference_m2_s_decimal": "0.000026740104237141989342549862817939707350730617092568169584399119018326332407579819",
+      "relative_errors": {
+        "arithmetic": 1.7731221474242739e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 400,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 1.3370052118570997e-05,
+      "reference_m2_s_decimal": "0.000013370052118570994671274931408969853675365308546284084792199559509163166203789909",
+      "relative_errors": {
+        "arithmetic": 1.7731221474242739e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 400,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 5.3977613729031e-05,
+      "reference_m2_s_decimal": "0.000053977613729030990875420935890853896365671922208274953877942777740862810198975873",
+      "relative_errors": {
+        "arithmetic": 1.1347291370661942e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 400,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 2.69888068645155e-05,
+      "reference_m2_s_decimal": "0.000026988806864515495437710467945426948182835961104137476938971388870431405099487937",
+      "relative_errors": {
+        "arithmetic": 1.1347291370661942e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 400,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 1.349440343225775e-05,
+      "reference_m2_s_decimal": "0.000013494403432257747718855233972713474091417980552068738469485694435215702549743968",
+      "relative_errors": {
+        "arithmetic": 1.1347291370661942e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 400,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 6.998468776498721e-05,
+      "reference_m2_s_decimal": "0.000069984687764987201968885264337316495638380602305518596249295598025660639072350749",
+      "relative_errors": {
+        "arithmetic": 1.679802111836289e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 400,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 3.499234388249361e-05,
+      "reference_m2_s_decimal": "0.000034992343882493600984442632168658247819190301152759298124647799012830319536175375",
+      "relative_errors": {
+        "arithmetic": 1.679802111836289e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 400,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 1.7496171941246803e-05,
+      "reference_m2_s_decimal": "0.000017496171941246800492221316084329123909595150576379649062323899506415159768087687",
+      "relative_errors": {
+        "arithmetic": 1.679802111836289e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 500,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 7.95298776410273e-05,
+      "reference_m2_s_decimal": "0.000079529877641027295375436568623668138729916720689177813554228562751991511474996314",
+      "relative_errors": {
+        "arithmetic": 2.440142183005444e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 500,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 3.976493882051365e-05,
+      "reference_m2_s_decimal": "0.000039764938820513647687718284311834069364958360344588906777114281375995755737498157",
+      "relative_errors": {
+        "arithmetic": 2.440142183005444e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 500,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 1.9882469410256823e-05,
+      "reference_m2_s_decimal": "0.000019882469410256823843859142155917034682479180172294453388557140687997877868749079",
+      "relative_errors": {
+        "arithmetic": 2.440142183005444e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 500,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00010181703854815442,
+      "reference_m2_s_decimal": "0.00010181703854815443640151014148529923064059198369846649544023558677698693060645787",
+      "relative_errors": {
+        "arithmetic": 1.6985283993082957e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 500,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 5.090851927407721e-05,
+      "reference_m2_s_decimal": "0.000050908519274077218200755070742649615320295991849233247720117793388493465303228936",
+      "relative_errors": {
+        "arithmetic": 1.6985283993082957e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 500,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 2.5454259637038605e-05,
+      "reference_m2_s_decimal": "0.000025454259637038609100377535371324807660147995924616623860058896694246732651614468",
+      "relative_errors": {
+        "arithmetic": 1.6985283993082957e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 500,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00010148423844502542,
+      "reference_m2_s_decimal": "0.00010148423844502540676960964630861491401124747851717092096062312920799764441067019",
+      "relative_errors": {
+        "arithmetic": 1.5274726401047787e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 500,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 5.074211922251271e-05,
+      "reference_m2_s_decimal": "0.000050742119222512703384804823154307457005623739258585460480311564603998822205335094",
+      "relative_errors": {
+        "arithmetic": 1.5274726401047787e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 500,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 2.5371059611256356e-05,
+      "reference_m2_s_decimal": "0.000025371059611256351692402411577153728502811869629292730240155782301999411102667547",
+      "relative_errors": {
+        "arithmetic": 1.5274726401047787e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 500,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 7.961359653145651e-05,
+      "reference_m2_s_decimal": "0.000079613596531456506712886788370350830109511893187420805155540896377377548967098097",
+      "relative_errors": {
+        "arithmetic": 8.216079777527996e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 500,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 3.980679826572826e-05,
+      "reference_m2_s_decimal": "0.000039806798265728253356443394185175415054755946593710402577770448188688774483549048",
+      "relative_errors": {
+        "arithmetic": 8.216079777527996e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 500,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 1.990339913286413e-05,
+      "reference_m2_s_decimal": "0.000019903399132864126678221697092587707527377973296855201288885224094344387241774524",
+      "relative_errors": {
+        "arithmetic": 8.216079777527996e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 500,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 8.021334554400283e-05,
+      "reference_m2_s_decimal": "0.000080213345544002838483141710708708945194234907000247196580381637826256793772037659",
+      "relative_errors": {
+        "arithmetic": 5.4363006201743676e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 500,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 4.010667277200142e-05,
+      "reference_m2_s_decimal": "0.000040106672772001419241570855354354472597117453500123598290190818913128396886018829",
+      "relative_errors": {
+        "arithmetic": 5.4363006201743676e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 500,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 2.005333638600071e-05,
+      "reference_m2_s_decimal": "0.000020053336386000709620785427677177236298558726750061799145095409456564198443009415",
+      "relative_errors": {
+        "arithmetic": 5.4363006201743676e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 500,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00010271253613556172,
+      "reference_m2_s_decimal": "0.00010271253613556172098407796216973589706021414358087431328673054794620220443274689",
+      "relative_errors": {
+        "arithmetic": 5.124112418787275e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 500,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 5.135626806778086e-05,
+      "reference_m2_s_decimal": "0.000051356268067780860492038981084867948530107071790437156643365273973101102216373444",
+      "relative_errors": {
+        "arithmetic": 5.124112418787275e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 500,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 2.567813403389043e-05,
+      "reference_m2_s_decimal": "0.000025678134033890430246019490542433974265053535895218578321682636986550551108186722",
+      "relative_errors": {
+        "arithmetic": 5.124112418787275e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 600,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00010932836819800118,
+      "reference_m2_s_decimal": "0.0001093283681980011760246393215568073996614348581520807910382257186159790184084418",
+      "relative_errors": {
+        "arithmetic": 2.2853969505561958e-18,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 600,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 5.466418409900059e-05,
+      "reference_m2_s_decimal": "0.000054664184099000588012319660778403699830717429076040395519112859307989509204220902",
+      "relative_errors": {
+        "arithmetic": 2.2853969505561958e-18,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 600,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 2.7332092049500294e-05,
+      "reference_m2_s_decimal": "0.000027332092049500294006159830389201849915358714538020197759556429653994754602110451",
+      "relative_errors": {
+        "arithmetic": 2.2853969505561958e-18,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 600,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00013881958385242576,
+      "reference_m2_s_decimal": "0.00013881958385242573433814428212762554862000680137935353986892580585880459474867722",
+      "relative_errors": {
+        "arithmetic": 1.6337677211324457e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 600,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 6.940979192621288e-05,
+      "reference_m2_s_decimal": "0.000069409791926212867169072141063812774310003400689676769934462902929402297374338611",
+      "relative_errors": {
+        "arithmetic": 1.6337677211324457e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 600,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 3.470489596310644e-05,
+      "reference_m2_s_decimal": "0.000034704895963106433584536070531906387155001700344838384967231451464701148687169305",
+      "relative_errors": {
+        "arithmetic": 1.6337677211324457e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 600,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00013827030449459985,
+      "reference_m2_s_decimal": "0.00013827030449459982313289274271679357366120084242972777042096840674076997954012371",
+      "relative_errors": {
+        "arithmetic": 2.094055421804048e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 600,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 6.913515224729993e-05,
+      "reference_m2_s_decimal": "0.000069135152247299911566446371358396786830600421214863885210484203370384989770061854",
+      "relative_errors": {
+        "arithmetic": 2.094055421804048e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 600,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 3.456757612364996e-05,
+      "reference_m2_s_decimal": "0.000034567576123649955783223185679198393415300210607431942605242101685192494885030927",
+      "relative_errors": {
+        "arithmetic": 2.094055421804048e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 600,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00010956480559908325,
+      "reference_m2_s_decimal": "0.00010956480559908323615807887170419085989729493695445661669835712644522826336574346",
+      "relative_errors": {
+        "arithmetic": 1.0602952209458219e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 600,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 5.4782402799541624e-05,
+      "reference_m2_s_decimal": "0.000054782402799541618079039435852095429948647468477228308349178563222614131682871732",
+      "relative_errors": {
+        "arithmetic": 1.0602952209458219e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 600,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 2.7391201399770812e-05,
+      "reference_m2_s_decimal": "0.000027391201399770809039519717926047714974323734238614154174589281611307065841435866",
+      "relative_errors": {
+        "arithmetic": 1.0602952209458219e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 600,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00011026017545948988,
+      "reference_m2_s_decimal": "0.00011026017545948989080112085583882790796178778272123594474081106129251817212347177",
+      "relative_errors": {
+        "arithmetic": 1.1328582833838658e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 600,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 5.513008772974494e-05,
+      "reference_m2_s_decimal": "0.000055130087729744945400560427919413953980893891360617972370405530646259086061735885",
+      "relative_errors": {
+        "arithmetic": 1.1328582833838658e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 600,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 2.756504386487247e-05,
+      "reference_m2_s_decimal": "0.000027565043864872472700280213959706976990446945680308986185202765323129543030867943",
+      "relative_errors": {
+        "arithmetic": 1.1328582833838658e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 600,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00014003420740212302,
+      "reference_m2_s_decimal": "0.00014003420740212298838615388557083460759598608779750394403450917348876016195033655",
+      "relative_errors": {
+        "arithmetic": 2.0835335344908875e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 600,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 7.001710370106151e-05,
+      "reference_m2_s_decimal": "0.000070017103701061494193076942785417303797993043898751972017254586744380080975168274",
+      "relative_errors": {
+        "arithmetic": 2.0835335344908875e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 600,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 3.5008551850530754e-05,
+      "reference_m2_s_decimal": "0.000035008551850530747096538471392708651898996521949375986008627293372190040487584137",
+      "relative_errors": {
+        "arithmetic": 2.0835335344908875e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 700,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00014259661375846708,
+      "reference_m2_s_decimal": "0.0001425966137584670389194242835496208962709602925414382702834628607872225861247453",
+      "relative_errors": {
+        "arithmetic": 2.807583111785613e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 700,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 7.129830687923354e-05,
+      "reference_m2_s_decimal": "0.000071298306879233519459712141774810448135480146270719135141731430393611293062372649",
+      "relative_errors": {
+        "arithmetic": 2.807583111785613e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 700,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 3.564915343961677e-05,
+      "reference_m2_s_decimal": "0.000035649153439616759729856070887405224067740073135359567570865715196805646531186325",
+      "relative_errors": {
+        "arithmetic": 2.807583111785613e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 700,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00018008350785430526,
+      "reference_m2_s_decimal": "0.00018008350785430522753594894222567750120398695788104492003812780726703740967562088",
+      "relative_errors": {
+        "arithmetic": 1.6628926321235586e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 700,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 9.004175392715263e-05,
+      "reference_m2_s_decimal": "0.000090041753927152613767974471112838750601993478940522460019063903633518704837810439",
+      "relative_errors": {
+        "arithmetic": 1.6628926321235586e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 700,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 4.5020876963576314e-05,
+      "reference_m2_s_decimal": "0.000045020876963576306883987235556419375300996739470261230009531951816759352418905219",
+      "relative_errors": {
+        "arithmetic": 1.6628926321235586e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 700,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.0001792927747453521,
+      "reference_m2_s_decimal": "0.00017929277474535207050973357529572472653331061680975523290135167171498434090406635",
+      "relative_errors": {
+        "arithmetic": 1.9077665953311874e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 700,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 8.964638737267605e-05,
+      "reference_m2_s_decimal": "0.000089646387372676035254866787647862363266655308404877616450675835857492170452033173",
+      "relative_errors": {
+        "arithmetic": 1.9077665953311874e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 700,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 4.4823193686338026e-05,
+      "reference_m2_s_decimal": "0.000044823193686338017627433393823931181633327654202438808225337917928746085226016587",
+      "relative_errors": {
+        "arithmetic": 1.9077665953311874e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 700,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00014302514943115792,
+      "reference_m2_s_decimal": "0.00014302514943115790758778013865116268197170379483624927351791824202977813393429987",
+      "relative_errors": {
+        "arithmetic": 1.2158004766203465e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 700,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 7.151257471557896e-05,
+      "reference_m2_s_decimal": "0.000071512574715578953793890069325581340985851897418124636758959121014889066967149937",
+      "relative_errors": {
+        "arithmetic": 1.2158004766203465e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 700,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 3.575628735778948e-05,
+      "reference_m2_s_decimal": "0.000035756287357789476896945034662790670492925948709062318379479560507444533483574968",
+      "relative_errors": {
+        "arithmetic": 1.2158004766203465e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 700,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.0001438044424051184,
+      "reference_m2_s_decimal": "0.0001438044424051183928611579819740108332046011576795456244897843418992133043183844",
+      "relative_errors": {
+        "arithmetic": 9.316032934129e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 700,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 7.19022212025592e-05,
+      "reference_m2_s_decimal": "0.000071902221202559196430578990987005416602300578839772812244892170949606652159192202",
+      "relative_errors": {
+        "arithmetic": 9.316032934129e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 700,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 3.59511106012796e-05,
+      "reference_m2_s_decimal": "0.000035951110601279598215289495493502708301150289419886406122446085474803326079596101",
+      "relative_errors": {
+        "arithmetic": 9.316032934129e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 700,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.0001816540027733456,
+      "reference_m2_s_decimal": "0.00018165400277334556164892287055505250146793612044212206883701962710729021419437729",
+      "relative_errors": {
+        "arithmetic": 2.408443054980252e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 700,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 9.08270013866728e-05,
+      "reference_m2_s_decimal": "0.000090827001386672780824461435277526250733968060221061034418509813553645107097188647",
+      "relative_errors": {
+        "arithmetic": 2.408443054980252e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 700,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 4.54135006933364e-05,
+      "reference_m2_s_decimal": "0.000045413500693336390412230717638763125366984030110530517209254906776822553548594323",
+      "relative_errors": {
+        "arithmetic": 2.408443054980252e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 800,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00017915857258941082,
+      "reference_m2_s_decimal": "0.0001791585725894108048612226087489021990123406993758874007972187689426596746189874",
+      "relative_errors": {
+        "arithmetic": 6.601213905212973e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 800,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 8.957928629470541e-05,
+      "reference_m2_s_decimal": "0.000089579286294705402430611304374451099506170349687943700398609384471329837309493702",
+      "relative_errors": {
+        "arithmetic": 6.601213905212973e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 800,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 4.4789643147352704e-05,
+      "reference_m2_s_decimal": "0.000044789643147352701215305652187225549753085174843971850199304692235664918654746851",
+      "relative_errors": {
+        "arithmetic": 6.601213905212973e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 800,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00022538461909820558,
+      "reference_m2_s_decimal": "0.0002253846190982055251736176115868553957351594048591986979269296650693224525360091",
+      "relative_errors": {
+        "arithmetic": 2.6526403576589407e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 800,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.00011269230954910279,
+      "reference_m2_s_decimal": "0.00011269230954910276258680880579342769786757970242959934896346483253466122626800455",
+      "relative_errors": {
+        "arithmetic": 2.6526403576589407e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 800,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 5.6346154774551396e-05,
+      "reference_m2_s_decimal": "0.000056346154774551381293404402896713848933789851214799674481732416267330613134002276",
+      "relative_errors": {
+        "arithmetic": 2.6526403576589407e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 800,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.0002243263957821189,
+      "reference_m2_s_decimal": "0.00022432639578211884012440029360312158614030367315212731054568715691479649160420006",
+      "relative_errors": {
+        "arithmetic": 2.247207199580552e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 800,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.00011216319789105945,
+      "reference_m2_s_decimal": "0.00011216319789105942006220014680156079307015183657606365527284357845739824580210003",
+      "relative_errors": {
+        "arithmetic": 2.247207199580552e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 800,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 5.608159894552972e-05,
+      "reference_m2_s_decimal": "0.000056081598945529710031100073400780396535075918288031827636421789228699122901050015",
+      "relative_errors": {
+        "arithmetic": 2.247207199580552e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 800,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.0001798100515439361,
+      "reference_m2_s_decimal": "0.00017981005154393606896210436315940474224025677301296786727723292409980187579334279",
+      "relative_errors": {
+        "arithmetic": 2.4364132228004764e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 800,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 8.990502577196806e-05,
+      "reference_m2_s_decimal": "0.000089905025771968034481052181579702371120128386506483933638616462049900937896671394",
+      "relative_errors": {
+        "arithmetic": 2.4364132228004764e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 800,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 4.495251288598403e-05,
+      "reference_m2_s_decimal": "0.000044952512885984017240526090789851185560064193253241966819308231024950468948335697",
+      "relative_errors": {
+        "arithmetic": 2.4364132228004764e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 800,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00018066864355096863,
+      "reference_m2_s_decimal": "0.00018066864355096862005696633419741317277431458017466116774953175926909717365032706",
+      "relative_errors": {
+        "arithmetic": 6.197979425717218e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 800,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 9.033432177548432e-05,
+      "reference_m2_s_decimal": "0.000090334321775484310028483167098706586387157290087330583874765879634548586825163529",
+      "relative_errors": {
+        "arithmetic": 6.197979425717218e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 800,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 4.516716088774216e-05,
+      "reference_m2_s_decimal": "0.000045167160887742155014241583549353293193578645043665291937382939817274293412581764",
+      "relative_errors": {
+        "arithmetic": 6.197979425717218e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 800,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.0002273457538455561,
+      "reference_m2_s_decimal": "0.00022734575384555609465212294223089485799714115142253462304289883176248646524842054",
+      "relative_errors": {
+        "arithmetic": 2.5407828855203183e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 800,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.00011367287692277805,
+      "reference_m2_s_decimal": "0.00011367287692277804732606147111544742899857057571126731152144941588124323262421027",
+      "relative_errors": {
+        "arithmetic": 2.5407828855203183e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 800,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 5.6836438461389025e-05,
+      "reference_m2_s_decimal": "0.000056836438461389023663030735557723714499285287855633655760724707940621616312105134",
+      "relative_errors": {
+        "arithmetic": 2.5407828855203183e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 900,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00021882520230663444,
+      "reference_m2_s_decimal": "0.00021882520230663438680603335172643688564252224080236492688589119250229090789895113",
+      "relative_errors": {
+        "arithmetic": 2.2808471574583055e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 900,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.00010941260115331722,
+      "reference_m2_s_decimal": "0.00010941260115331719340301667586321844282126112040118246344294559625114545394947556",
+      "relative_errors": {
+        "arithmetic": 2.2808471574583055e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 900,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 5.470630057665861e-05,
+      "reference_m2_s_decimal": "0.000054706300576658596701508337931609221410630560200591231721472798125572726974737782",
+      "relative_errors": {
+        "arithmetic": 2.2808471574583055e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 900,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.0002745290635574542,
+      "reference_m2_s_decimal": "0.00027452906355745418227624379472711189088377408480451053957844435256862858468685325",
+      "relative_errors": {
+        "arithmetic": 4.4911722482586084e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 900,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.0001372645317787271,
+      "reference_m2_s_decimal": "0.00013726453177872709113812189736355594544188704240225526978922217628431429234342662",
+      "relative_errors": {
+        "arithmetic": 4.4911722482586084e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 900,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 6.863226588936355e-05,
+      "reference_m2_s_decimal": "0.000068632265889363545569060948681777972720943521201127634894611088142157146171713312",
+      "relative_errors": {
+        "arithmetic": 4.4911722482586084e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 900,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00027317204519581223,
+      "reference_m2_s_decimal": "0.00027317204519581218400278092476908195937659113710312236409952839139936323799303567",
+      "relative_errors": {
+        "arithmetic": 1.5959303193481554e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 900,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.00013658602259790611,
+      "reference_m2_s_decimal": "0.00013658602259790609200139046238454097968829556855156118204976419569968161899651783",
+      "relative_errors": {
+        "arithmetic": 1.5959303193481554e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 900,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 6.829301129895306e-05,
+      "reference_m2_s_decimal": "0.000068293011298953046000695231192270489844147784275780591024882097849840809498258917",
+      "relative_errors": {
+        "arithmetic": 1.5959303193481554e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 900,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00021970391299921258,
+      "reference_m2_s_decimal": "0.00021970391299921253410293650380890771536938668445962995521919845788689456694521384",
+      "relative_errors": {
+        "arithmetic": 1.890927502904847e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 900,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.00010985195649960629,
+      "reference_m2_s_decimal": "0.00010985195649960626705146825190445385768469334222981497760959922894344728347260692",
+      "relative_errors": {
+        "arithmetic": 1.890927502904847e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 900,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 5.4925978249803144e-05,
+      "reference_m2_s_decimal": "0.000054925978249803133525734125952226928842346671114907488804799614471723641736303459",
+      "relative_errors": {
+        "arithmetic": 1.890927502904847e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 900,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.0002206647135391632,
+      "reference_m2_s_decimal": "0.00022066471353916319088790099139636017108120186848791786277144122341899016256493683",
+      "relative_errors": {
+        "arithmetic": 1.2534672441036825e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 900,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.0001103323567695816,
+      "reference_m2_s_decimal": "0.00011033235676958159544395049569818008554060093424395893138572061170949508128246841",
+      "relative_errors": {
+        "arithmetic": 1.2534672441036825e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 900,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 5.51661783847908e-05,
+      "reference_m2_s_decimal": "0.000055166178384790797721975247849090042770300467121979465692860305854747540641234207",
+      "relative_errors": {
+        "arithmetic": 1.2534672441036825e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 900,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00027691368060791264,
+      "reference_m2_s_decimal": "0.00027691368060791264610605849302654067248725019165131562688288971534869776776263261",
+      "relative_errors": {
+        "arithmetic": 3.7396379617101664e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 900,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.00013845684030395632,
+      "reference_m2_s_decimal": "0.00013845684030395632305302924651327033624362509582565781344144485767434888388131631",
+      "relative_errors": {
+        "arithmetic": 3.7396379617101664e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 900,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 6.922842015197816e-05,
+      "reference_m2_s_decimal": "0.000069228420151978161526514623256635168121812547912828906720722428837174441940658153",
+      "relative_errors": {
+        "arithmetic": 3.7396379617101664e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 1000,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00026147204935390384,
+      "reference_m2_s_decimal": "0.00026147204935390376989848012554988107273244923670405095788852873632772785296262284",
+      "relative_errors": {
+        "arithmetic": 2.566817146440009e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 1000,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.00013073602467695192,
+      "reference_m2_s_decimal": "0.00013073602467695188494924006277494053636622461835202547894426436816386392648131142",
+      "relative_errors": {
+        "arithmetic": 2.566817146440009e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 1000,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 6.536801233847596e-05,
+      "reference_m2_s_decimal": "0.00006536801233847594247462003138747026818311230917601273947213218408193196324065571",
+      "relative_errors": {
+        "arithmetic": 2.566817146440009e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 1000,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.0003273414611990743,
+      "reference_m2_s_decimal": "0.00032734146119907420625535556988014858720806994073666853150409132573203127493551883",
+      "relative_errors": {
+        "arithmetic": 2.897951156314708e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 1000,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.00016367073059953715,
+      "reference_m2_s_decimal": "0.00016367073059953710312767778494007429360403497036833426575204566286601563746775941",
+      "relative_errors": {
+        "arithmetic": 2.897951156314708e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 1000,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 8.183536529976858e-05,
+      "reference_m2_s_decimal": "0.000081835365299768551563838892470037146802017485184167132876022831433007818733879707",
+      "relative_errors": {
+        "arithmetic": 2.897951156314708e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 1000,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.0003256619146748642,
+      "reference_m2_s_decimal": "0.00032566191467486421116834202274727494942290845596882235960706566677633610544639875",
+      "relative_errors": {
+        "arithmetic": 7.869730987166342e-18,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 1000,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.0001628309573374321,
+      "reference_m2_s_decimal": "0.00016283095733743210558417101137363747471145422798441117980353283338816805272319938",
+      "relative_errors": {
+        "arithmetic": 7.869730987166342e-18,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 1000,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 8.141547866871605e-05,
+      "reference_m2_s_decimal": "0.000081415478668716052792085505686818737355727113992205589901766416694084026361599689",
+      "relative_errors": {
+        "arithmetic": 7.869730987166342e-18,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 1000,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.0002626146651450104,
+      "reference_m2_s_decimal": "0.00026261466514501030518724527582250316134379359755497058460687272537402776622794087",
+      "relative_errors": {
+        "arithmetic": 3.7305542971893174e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 1000,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.0001313073325725052,
+      "reference_m2_s_decimal": "0.00013130733257250515259362263791125158067189679877748529230343636268701388311397043",
+      "relative_errors": {
+        "arithmetic": 3.7305542971893174e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 1000,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 6.56536662862526e-05,
+      "reference_m2_s_decimal": "0.000065653666286252576296811318955625790335948399388742646151718181343506941556985216",
+      "relative_errors": {
+        "arithmetic": 3.7305542971893174e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 1000,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00026366439471120127,
+      "reference_m2_s_decimal": "0.00026366439471120129509272335164494849234578758398335483607471987732401254179981752",
+      "relative_errors": {
+        "arithmetic": 1.0985569899436634e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 1000,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.00013183219735560063,
+      "reference_m2_s_decimal": "0.00013183219735560064754636167582247424617289379199167741803735993866200627089990876",
+      "relative_errors": {
+        "arithmetic": 1.0985569899436634e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 1000,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 6.591609867780032e-05,
+      "reference_m2_s_decimal": "0.000065916098677800323773180837911237123086446895995838709018679969331003135449954379",
+      "relative_errors": {
+        "arithmetic": 1.0985569899436634e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 1000,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00033018096462802596,
+      "reference_m2_s_decimal": "0.00033018096462802591534571756721453232810463766892637824956666788191406976368779256",
+      "relative_errors": {
+        "arithmetic": 1.4109588961493746e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 1000,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.00016509048231401298,
+      "reference_m2_s_decimal": "0.00016509048231401295767285878360726616405231883446318912478333394095703488184389628",
+      "relative_errors": {
+        "arithmetic": 1.4109588961493746e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 1000,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 8.254524115700649e-05,
+      "reference_m2_s_decimal": "0.000082545241157006478836429391803633082026159417231594562391666970478517440921948139",
+      "relative_errors": {
+        "arithmetic": 1.4109588961493746e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 1100,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.0003070020200427768,
+      "reference_m2_s_decimal": "0.00030700202004277682302424584769321186219735688194912449855643857392713182089967402",
+      "relative_errors": {
+        "arithmetic": 6.110002218122695e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 1100,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.0001535010100213884,
+      "reference_m2_s_decimal": "0.00015350101002138841151212292384660593109867844097456224927821928696356591044983701",
+      "relative_errors": {
+        "arithmetic": 6.110002218122695e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 1100,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 7.67505050106942e-05,
+      "reference_m2_s_decimal": "0.000076750505010694205756061461923302965549339220487281124639109643481782955224918506",
+      "relative_errors": {
+        "arithmetic": 6.110002218122695e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 1100,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.0003836854741914105,
+      "reference_m2_s_decimal": "0.00038368547419141060826384796648371566631640625154533280844471112522034133895960694",
+      "relative_errors": {
+        "arithmetic": 2.477834427877035e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 1100,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.00019184273709570526,
+      "reference_m2_s_decimal": "0.00019184273709570530413192398324185783315820312577266640422235556261017066947980347",
+      "relative_errors": {
+        "arithmetic": 2.477834427877035e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 1100,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 9.592136854785263e-05,
+      "reference_m2_s_decimal": "0.000095921368547852652065961991620928916579101562886333202111177781305085334739901735",
+      "relative_errors": {
+        "arithmetic": 2.477834427877035e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 1100,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.000381671786181521,
+      "reference_m2_s_decimal": "0.00038167178618152105485674183434207019828637264519471075872698797971182388926355366",
+      "relative_errors": {
+        "arithmetic": 9.281451178753155e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 1100,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.0001908358930907605,
+      "reference_m2_s_decimal": "0.00019083589309076052742837091717103509914318632259735537936349398985591194463177683",
+      "relative_errors": {
+        "arithmetic": 9.281451178753155e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 1100,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 9.541794654538025e-05,
+      "reference_m2_s_decimal": "0.000095417946545380263714185458585517549571593161298677689681746994927955972315888414",
+      "relative_errors": {
+        "arithmetic": 9.281451178753155e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 1100,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00030841431958249406,
+      "reference_m2_s_decimal": "0.00030841431958249404052673863871287322885606968874310882109812440060741665664973264",
+      "relative_errors": {
+        "arithmetic": 6.055259785033586e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 1100,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.00015420715979124703,
+      "reference_m2_s_decimal": "0.00015420715979124702026336931935643661442803484437155441054906220030370832832486632",
+      "relative_errors": {
+        "arithmetic": 6.055259785033586e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 1100,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 7.710357989562351e-05,
+      "reference_m2_s_decimal": "0.000077103579895623510131684659678218307214017422185777205274531100151854164162433161",
+      "relative_errors": {
+        "arithmetic": 6.055259785033586e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 1100,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00030957117393359324,
+      "reference_m2_s_decimal": "0.00030957117393359332057714153676520773590044775391848191736777547049419701247817594",
+      "relative_errors": {
+        "arithmetic": 2.466790271717891e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 1100,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.00015478558696679662,
+      "reference_m2_s_decimal": "0.00015478558696679666028857076838260386795022387695924095868388773524709850623908797",
+      "relative_errors": {
+        "arithmetic": 2.466790271717891e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 1100,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 7.739279348339831e-05,
+      "reference_m2_s_decimal": "0.000077392793483398330144285384191301933975111938479620479341943867623549253119543985",
+      "relative_errors": {
+        "arithmetic": 2.466790271717891e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 1100,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.0003870102435864082,
+      "reference_m2_s_decimal": "0.00038701024358640818184798559155034901632024033292289567792650588878467537770009207",
+      "relative_errors": {
+        "arithmetic": 1.8995212901984153e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 1100,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.0001935051217932041,
+      "reference_m2_s_decimal": "0.00019350512179320409092399279577517450816012016646144783896325294439233768885004603",
+      "relative_errors": {
+        "arithmetic": 1.8995212901984153e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 1100,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 9.675256089660204e-05,
+      "reference_m2_s_decimal": "0.000096752560896602045461996397887587254080060083230723919481626472196168844425023017",
+      "relative_errors": {
+        "arithmetic": 1.8995212901984153e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 1200,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.0003553085492170396,
+      "reference_m2_s_decimal": "0.00035530854921703960599089719375072793841301358169406541404672252705897069729416621",
+      "relative_errors": {
+        "arithmetic": 1.5608961505387797e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 1200,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.0001776542746085198,
+      "reference_m2_s_decimal": "0.00017765427460851980299544859687536396920650679084703270702336126352948534864708311",
+      "relative_errors": {
+        "arithmetic": 1.5608961505387797e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "CO2"
+      ],
+      "temperature_k": 1200,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 8.88271373042599e-05,
+      "reference_m2_s_decimal": "0.000088827137304259901497724298437681984603253395423516353511680631764742674323541553",
+      "relative_errors": {
+        "arithmetic": 1.5608961505387797e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 1200,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00044347136318773447,
+      "reference_m2_s_decimal": "0.00044347136318773456885113014421780497563476678308124719477556500726140917546444062",
+      "relative_errors": {
+        "arithmetic": 2.2818017627052213e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 1200,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.00022173568159386723,
+      "reference_m2_s_decimal": "0.00022173568159386728442556507210890248781738339154062359738778250363070458773222031",
+      "relative_errors": {
+        "arithmetic": 2.2818017627052213e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "O2"
+      ],
+      "temperature_k": 1200,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 0.00011086784079693362,
+      "reference_m2_s_decimal": "0.00011086784079693364221278253605445124390869169577031179869389125181535229386611015",
+      "relative_errors": {
+        "arithmetic": 2.2818017627052213e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 1200,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00044110009703865016,
+      "reference_m2_s_decimal": "0.00044110009703865014696153793532051853849545572565899442077464894773358991852890289",
+      "relative_errors": {
+        "arithmetic": 3.231530598857621e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 1200,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.00022055004851932508,
+      "reference_m2_s_decimal": "0.00022055004851932507348076896766025926924772786282949721038732447386679495926445144",
+      "relative_errors": {
+        "arithmetic": 3.231530598857621e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO",
+        "N2"
+      ],
+      "temperature_k": 1200,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 0.00011027502425966254,
+      "reference_m2_s_decimal": "0.00011027502425966253674038448383012963462386393141474860519366223693339747963222572",
+      "relative_errors": {
+        "arithmetic": 3.231530598857621e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 1200,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.0003570122213689353,
+      "reference_m2_s_decimal": "0.00035701222136893537950910764708249326151919448054943069838571379811419278198429426",
+      "relative_errors": {
+        "arithmetic": 1.9085005677199052e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 1200,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.00017850611068446766,
+      "reference_m2_s_decimal": "0.00017850611068446768975455382354124663075959724027471534919285689905709639099214713",
+      "relative_errors": {
+        "arithmetic": 1.9085005677199052e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "O2"
+      ],
+      "temperature_k": 1200,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 8.925305534223383e-05,
+      "reference_m2_s_decimal": "0.000089253055342233844877276911770623315379798620137357674596428449528548195496073564",
+      "relative_errors": {
+        "arithmetic": 1.9085005677199052e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 1200,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.00035827807946486683,
+      "reference_m2_s_decimal": "0.00035827807946486688573157105761543095868031064109385593951174017396921370726174534",
+      "relative_errors": {
+        "arithmetic": 1.552964978575812e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 1200,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.00017913903973243342,
+      "reference_m2_s_decimal": "0.00017913903973243344286578552880771547934015532054692796975587008698460685363087267",
+      "relative_errors": {
+        "arithmetic": 1.552964978575812e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "CO2",
+        "N2"
+      ],
+      "temperature_k": 1200,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 8.956951986621671e-05,
+      "reference_m2_s_decimal": "0.000089569519866216721432892764403857739670077660273463984877935043492303426815436334",
+      "relative_errors": {
+        "arithmetic": 1.552964978575812e-16,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 1200,
+      "pressure_pa": 50000,
+      "diffusivity_m2_s": 0.0004473119597652445,
+      "reference_m2_s_decimal": "0.00044731195976524450147987768121846743490494998114154880493800500110108810299802017",
+      "relative_errors": {
+        "arithmetic": 4.8837157897836917e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 1200,
+      "pressure_pa": 100000,
+      "diffusivity_m2_s": 0.00022365597988262224,
+      "reference_m2_s_decimal": "0.00022365597988262225073993884060923371745247499057077440246900250055054405149901009",
+      "relative_errors": {
+        "arithmetic": 4.8837157897836917e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    },
+    {
+      "species": [
+        "O2",
+        "N2"
+      ],
+      "temperature_k": 1200,
+      "pressure_pa": 200000,
+      "diffusivity_m2_s": 0.00011182798994131112,
+      "reference_m2_s_decimal": "0.00011182798994131112536996942030461685872623749528538720123450125027527202574950504",
+      "relative_errors": {
+        "arithmetic": 4.8837157897836917e-17,
+        "symmetry": 0.0,
+        "pressure_scaling": 0.0
+      },
+      "within_budgets": {
+        "arithmetic": true,
+        "symmetry": true,
+        "pressure_scaling": true,
+        "positive": true
+      }
+    }
+  ],
+  "nist_viscosity_comparison": [
+    {
+      "species": "N2",
+      "temperature_k": 300.0,
+      "table_micro_pa_s": 17.8,
+      "model_micro_pa_s": 18.084626814678913,
+      "signed_relative_difference": 0.015990270487579335,
+      "table_estimated_uncertainty_micro_pa_s": 0.534,
+      "table_rounding_half_unit_micro_pa_s": 0.05,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 400.0,
+      "table_micro_pa_s": 22.1,
+      "model_micro_pa_s": 22.340307845669738,
+      "signed_relative_difference": 0.010873658175101199,
+      "table_estimated_uncertainty_micro_pa_s": 0.663,
+      "table_rounding_half_unit_micro_pa_s": 0.05,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 500.0,
+      "table_micro_pa_s": 25.9,
+      "model_micro_pa_s": 26.1242606334714,
+      "signed_relative_difference": 0.00865871171704257,
+      "table_estimated_uncertainty_micro_pa_s": 0.7769999999999999,
+      "table_rounding_half_unit_micro_pa_s": 0.05,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 600.0,
+      "table_micro_pa_s": 29.4,
+      "model_micro_pa_s": 29.584291036524025,
+      "signed_relative_difference": 0.006268402602858043,
+      "table_estimated_uncertainty_micro_pa_s": 0.8819999999999999,
+      "table_rounding_half_unit_micro_pa_s": 0.05,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 700.0,
+      "table_micro_pa_s": 32.7,
+      "model_micro_pa_s": 32.80569682567399,
+      "signed_relative_difference": 0.003232318827950699,
+      "table_estimated_uncertainty_micro_pa_s": 0.9810000000000001,
+      "table_rounding_half_unit_micro_pa_s": 0.05,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 800.0,
+      "table_micro_pa_s": 35.8,
+      "model_micro_pa_s": 35.84303758135315,
+      "signed_relative_difference": 0.0012021670769037445,
+      "table_estimated_uncertainty_micro_pa_s": 1.0739999999999998,
+      "table_rounding_half_unit_micro_pa_s": 0.05,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 900.0,
+      "table_micro_pa_s": 38.7,
+      "model_micro_pa_s": 38.73181901299005,
+      "signed_relative_difference": 0.0008221967180891119,
+      "table_estimated_uncertainty_micro_pa_s": 1.161,
+      "table_rounding_half_unit_micro_pa_s": 0.05,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 1000.0,
+      "table_micro_pa_s": 41.5,
+      "model_micro_pa_s": 41.49722616372896,
+      "signed_relative_difference": -6.68394282178179e-05,
+      "table_estimated_uncertainty_micro_pa_s": 1.2449999999999999,
+      "table_rounding_half_unit_micro_pa_s": 0.05,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "CO",
+      "temperature_k": 300.0,
+      "table_micro_pa_s": 17.8,
+      "model_micro_pa_s": 17.7707152184514,
+      "signed_relative_difference": -0.001645212446550595,
+      "table_estimated_uncertainty_micro_pa_s": 0.8900000000000001,
+      "table_rounding_half_unit_micro_pa_s": 0.05,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-5"
+    },
+    {
+      "species": "CO",
+      "temperature_k": 400.0,
+      "table_micro_pa_s": 22.0,
+      "model_micro_pa_s": 21.958387301817453,
+      "signed_relative_difference": -0.0018914862810248678,
+      "table_estimated_uncertainty_micro_pa_s": 1.1,
+      "table_rounding_half_unit_micro_pa_s": 0.05,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-5"
+    },
+    {
+      "species": "CO",
+      "temperature_k": 500.0,
+      "table_micro_pa_s": 25.8,
+      "model_micro_pa_s": 25.68108043089503,
+      "signed_relative_difference": -0.004609285624223688,
+      "table_estimated_uncertainty_micro_pa_s": 1.29,
+      "table_rounding_half_unit_micro_pa_s": 0.05,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-5"
+    },
+    {
+      "species": "CO",
+      "temperature_k": 600.0,
+      "table_micro_pa_s": 29.2,
+      "model_micro_pa_s": 29.084808932628935,
+      "signed_relative_difference": -0.003944899567502211,
+      "table_estimated_uncertainty_micro_pa_s": 1.46,
+      "table_rounding_half_unit_micro_pa_s": 0.05,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-5"
+    },
+    {
+      "species": "CO",
+      "temperature_k": 700.0,
+      "table_micro_pa_s": 32.4,
+      "model_micro_pa_s": 32.25346739345564,
+      "signed_relative_difference": -0.004522611313097591,
+      "table_estimated_uncertainty_micro_pa_s": 1.62,
+      "table_rounding_half_unit_micro_pa_s": 0.05,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-5"
+    },
+    {
+      "species": "CO",
+      "temperature_k": 800.0,
+      "table_micro_pa_s": 35.3,
+      "model_micro_pa_s": 35.240879928190544,
+      "signed_relative_difference": -0.0016747895696728801,
+      "table_estimated_uncertainty_micro_pa_s": 1.765,
+      "table_rounding_half_unit_micro_pa_s": 0.05,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-5"
+    },
+    {
+      "species": "CO",
+      "temperature_k": 900.0,
+      "table_micro_pa_s": 38.0,
+      "model_micro_pa_s": 38.082054053114774,
+      "signed_relative_difference": 0.0021593171872309,
+      "table_estimated_uncertainty_micro_pa_s": 1.9000000000000001,
+      "table_rounding_half_unit_micro_pa_s": 0.05,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-5"
+    },
+    {
+      "species": "CO",
+      "temperature_k": 1000.0,
+      "table_micro_pa_s": 40.6,
+      "model_micro_pa_s": 40.80179729297936,
+      "signed_relative_difference": 0.004970376674368404,
+      "table_estimated_uncertainty_micro_pa_s": 2.0300000000000002,
+      "table_rounding_half_unit_micro_pa_s": 0.05,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-5"
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 300.0,
+      "table_micro_pa_s": 15.01,
+      "model_micro_pa_s": 15.060212738756867,
+      "signed_relative_difference": 0.0033452857266400653,
+      "table_estimated_uncertainty_micro_pa_s": 0.7505000000000001,
+      "table_rounding_half_unit_micro_pa_s": 0.005,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-4"
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 400.0,
+      "table_micro_pa_s": 19.69,
+      "model_micro_pa_s": 19.735334656813695,
+      "signed_relative_difference": 0.002302420356205873,
+      "table_estimated_uncertainty_micro_pa_s": 0.9845000000000002,
+      "table_rounding_half_unit_micro_pa_s": 0.005,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-4"
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 500.0,
+      "table_micro_pa_s": 24.01,
+      "model_micro_pa_s": 23.986972580544656,
+      "signed_relative_difference": -0.0009590761955579309,
+      "table_estimated_uncertainty_micro_pa_s": 1.2005000000000001,
+      "table_rounding_half_unit_micro_pa_s": 0.005,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-4"
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 600.0,
+      "table_micro_pa_s": 28.0,
+      "model_micro_pa_s": 27.880531980869517,
+      "signed_relative_difference": -0.004266714968945833,
+      "table_estimated_uncertainty_micro_pa_s": 1.4000000000000001,
+      "table_rounding_half_unit_micro_pa_s": 0.005,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-4"
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 700.0,
+      "table_micro_pa_s": 31.67,
+      "model_micro_pa_s": 31.474102018807653,
+      "signed_relative_difference": -0.006185600921766629,
+      "table_estimated_uncertainty_micro_pa_s": 1.5835000000000001,
+      "table_rounding_half_unit_micro_pa_s": 0.005,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-4"
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 800.0,
+      "table_micro_pa_s": 35.09,
+      "model_micro_pa_s": 34.8315169324596,
+      "signed_relative_difference": -0.00736628861614145,
+      "table_estimated_uncertainty_micro_pa_s": 1.7545000000000002,
+      "table_rounding_half_unit_micro_pa_s": 0.005,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-4"
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 900.0,
+      "table_micro_pa_s": 38.27,
+      "model_micro_pa_s": 37.99212037383445,
+      "signed_relative_difference": -0.007261030210753855,
+      "table_estimated_uncertainty_micro_pa_s": 1.9135000000000002,
+      "table_rounding_half_unit_micro_pa_s": 0.005,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-4"
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 1000.0,
+      "table_micro_pa_s": 41.26,
+      "model_micro_pa_s": 40.98961534871281,
+      "signed_relative_difference": -0.0065531907728353786,
+      "table_estimated_uncertainty_micro_pa_s": 2.063,
+      "table_rounding_half_unit_micro_pa_s": 0.005,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-4"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 300.0,
+      "table_micro_pa_s": 20.54,
+      "model_micro_pa_s": 20.65329027295279,
+      "signed_relative_difference": 0.0055155926461924075,
+      "table_estimated_uncertainty_micro_pa_s": 0.1027,
+      "table_rounding_half_unit_micro_pa_s": 0.005,
+      "within_table_uncertainty_plus_rounding": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 400.0,
+      "table_micro_pa_s": 25.74,
+      "model_micro_pa_s": 25.63121266982727,
+      "signed_relative_difference": -0.004226392003602478,
+      "table_estimated_uncertainty_micro_pa_s": 0.12869999999999998,
+      "table_rounding_half_unit_micro_pa_s": 0.005,
+      "within_table_uncertainty_plus_rounding": true,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 500.0,
+      "table_micro_pa_s": 30.4,
+      "model_micro_pa_s": 30.045102118963936,
+      "signed_relative_difference": -0.011674272402502073,
+      "table_estimated_uncertainty_micro_pa_s": 0.152,
+      "table_rounding_half_unit_micro_pa_s": 0.005,
+      "within_table_uncertainty_plus_rounding": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 600.0,
+      "table_micro_pa_s": 34.66,
+      "model_micro_pa_s": 34.076822160863586,
+      "signed_relative_difference": -0.016825673373814517,
+      "table_estimated_uncertainty_micro_pa_s": 0.17329999999999998,
+      "table_rounding_half_unit_micro_pa_s": 0.005,
+      "within_table_uncertainty_plus_rounding": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 700.0,
+      "table_micro_pa_s": 38.62,
+      "model_micro_pa_s": 37.824116435894005,
+      "signed_relative_difference": -0.020608067428948527,
+      "table_estimated_uncertainty_micro_pa_s": 0.1931,
+      "table_rounding_half_unit_micro_pa_s": 0.005,
+      "within_table_uncertainty_plus_rounding": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 800.0,
+      "table_micro_pa_s": 42.32,
+      "model_micro_pa_s": 41.35236160752328,
+      "signed_relative_difference": -0.02286480133451612,
+      "table_estimated_uncertainty_micro_pa_s": 0.2116,
+      "table_rounding_half_unit_micro_pa_s": 0.005,
+      "within_table_uncertainty_plus_rounding": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 900.0,
+      "table_micro_pa_s": 45.82,
+      "model_micro_pa_s": 44.704999247177795,
+      "signed_relative_difference": -0.02433436824142743,
+      "table_estimated_uncertainty_micro_pa_s": 0.2291,
+      "table_rounding_half_unit_micro_pa_s": 0.005,
+      "within_table_uncertainty_plus_rounding": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 1000.0,
+      "table_micro_pa_s": 49.14,
+      "model_micro_pa_s": 47.91204071555018,
+      "signed_relative_difference": -0.024988996427550345,
+      "table_estimated_uncertainty_micro_pa_s": 0.2457,
+      "table_rounding_half_unit_micro_pa_s": 0.005,
+      "within_table_uncertainty_plus_rounding": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    }
+  ],
+  "all_arithmetic_and_source_budgets_met": true,
+  "all_nist_values_within_reported_uncertainty_plus_rounding": false,
+  "pressure_matched_experimental_validation": false,
+  "binary_diffusion_experimental_validation": false,
+  "material_qualified": false,
+  "training_eligible": false
+}
