@@ -26,6 +26,7 @@ from sorptive_column_setup import build_column,cell_parameters,restore_column
 from sorptive_column_checkpoint import read_checkpoint
 from sorptive_energy_coordinates import GasReferenceEnergy
 from sorptive_physical_jacobian import PhysicalColumnJacobian
+from sorptive_primitive_jacobian import PrimitiveColumnJacobian
 
 
 def main():
@@ -38,8 +39,11 @@ def main():
     parser.add_argument('--execution-parameters',type=Path)
     parser.add_argument('--energy-coordinates',type=Path,
                         help='Explicit root policy for a linear solver-coordinate study; otherwise retain physical U coordinates')
-    parser.add_argument('--jacobian-parameters',type=Path,
+    jacobian_inputs=parser.add_mutually_exclusive_group()
+    jacobian_inputs.add_argument('--jacobian-parameters',type=Path,
                         help='Explicit policy for feedback-state differentiation and exact exterior ledger blocks')
+    jacobian_inputs.add_argument('--primitive-jacobian-parameters',type=Path,
+                        help='Explicit local T/P/W/composition derivative policy, in physical N/U coordinates')
     parser.add_argument('--stop-at')
     parser.add_argument('--output',type=Path,required=True)
     args=parser.parse_args()
@@ -49,6 +53,8 @@ def main():
         parser.error('resumed runs use the recorded mesh and tolerance')
     if args.stop_at and args.execution_parameters is None:
         parser.error('--stop-at requires --execution-parameters')
+    if args.primitive_jacobian_parameters and args.energy_coordinates:
+        parser.error('the primitive Jacobian is defined in physical N/U coordinates')
     with TemporaryDirectory(prefix='sorptive-column-sources-') as directory:
         run(args,Path(directory))
 
@@ -118,6 +124,8 @@ def run(args,source_directory):
         return math.fsum(p['moisture_kg_kg_dry'] for p in states)/n
 
     jacobian=PhysicalColumnJacobian(rhs,n,width,sparsity,atol,json.loads(args.jacobian_parameters.read_text())) if args.jacobian_parameters else None
+    if args.primitive_jacobian_parameters:
+        jacobian=PrimitiveColumnJacobian(model,decode,species,json.loads(args.primitive_jacobian_parameters.read_text()))
 
     knots=config['boundary_program']['values']['knot_times_s']
     obs=config['observation'];target=obs['moisture_target_kg_kg']

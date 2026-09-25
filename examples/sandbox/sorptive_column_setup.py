@@ -28,20 +28,28 @@ class SorptiveColumn:
     condensed_transfer: dict | None
     evaporating_surface: object | None
 
-    def rates(self,gases,at_time,states):
-        face=lambda left,right,transfer:open_gas_boundary_rate(left,right,transfer,self.host.fluid.gas_enthalpy_j_mol)
-        rates=[face(left,right,self.internal_transfer) for left,right in zip(gases[:-1],gases[1:],strict=True)]
+    def internal_rate(self, left_gas, right_gas, left_state, right_state):
+        rate=open_gas_boundary_rate(left_gas,right_gas,self.internal_transfer,self.host.fluid.gas_enthalpy_j_mol)
         if self.condensed_transfer is not None:
-            rates=[combine_faces(gas_rate,condensed_exchange(left,right,
+            rate=combine_faces(rate,condensed_exchange(left_state,right_state,
                 area_m2=self.config['geometry']['face_area_m2'],distance_m=self.config['geometry']['length_m']/self.count,
                 mobility_density_mol2_k_j_s_m=self.condensed_transfer['mobility_density_mol2_k_j_s_m']))
-                for gas_rate,left,right in zip(rates,states[:-1],states[1:],strict=True)]
+        return rate
+
+    def boundary_rate(self, gas, state, at_time):
         boundary=self.program.at(float(at_time))
         reservoir=ideal_gas_reservoir(temperature_k=boundary.gas_temperature_k,pressure_pa=boundary.total_pressure_pa,
             mole_fractions=boundary.mole_fractions,molar_masses_kg_mol=self.config['molar_masses_kg_mol'],
             gas_constant_j_mol_k=self.host.fluid.thermochemistry.gas_constant_j_mol_k)
-        rates.append(self.evaporating_surface.rate(gases[-1],states[-1],reservoir) if self.evaporating_surface is not None
-                     else face(gases[-1],reservoir,self.boundary_transfer))
+        rate=(self.evaporating_surface.rate(gas,state,reservoir) if self.evaporating_surface is not None
+              else open_gas_boundary_rate(gas,reservoir,self.boundary_transfer,self.host.fluid.gas_enthalpy_j_mol))
+        return rate,boundary
+
+    def rates(self,gases,at_time,states):
+        rates=[self.internal_rate(lg,rg,ls,rs) for lg,rg,ls,rs in
+            zip(gases[:-1],gases[1:],states[:-1],states[1:],strict=True)]
+        rate,boundary=self.boundary_rate(gases[-1],states[-1],at_time)
+        rates.append(rate)
         return rates,boundary
 
     def geometry(self):

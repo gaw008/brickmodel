@@ -43,6 +43,18 @@ class EquilibriumSorptiveCell:
         return {**{key: value*carrier for key, value in carrier_fractions.items()},
                 'H2O': condensed+vapor_pressure*gas_volume/rt}
 
+    def at_tp_moisture(self, temperature_k, pressure_pa, moisture_kg_kg, carrier_fractions):
+        """Direct equilibrium chart used for local constitutive derivatives."""
+        liquid, vl, mu, standard, pure_pressure = self.pure_liquid(temperature_k, pressure_pa)
+        nc = moisture_kg_kg*self.dry_mass_kg/liquid.molar_mass_kg_mol
+        vg = self.fluid.available_fluid_volume_m3-nc*vl
+        pv = self.excess.evaluate(temperature_k, moisture_kg_kg)['activity']*pure_pressure
+        rt = self.fluid.thermochemistry.gas_constant_j_mol_k*temperature_k
+        carrier = (pressure_pa-pv)*vg/rt
+        inventories = {**{k:v*carrier for k,v in carrier_fractions.items()}, 'H2O':nc+pv*vg/rt}
+        return self._state_from_partition(inventories, temperature_k, pressure_pa, nc,
+            liquid, vl, mu, standard, pure_pressure, pv)
+
     def at_temperature(self, inventories_mol, temperature_k):
         r = self.fluid.thermochemistry.gas_constant_j_mol_k
         rt, volume = r*temperature_k, self.fluid.available_fluid_volume_m3
@@ -66,6 +78,16 @@ class EquilibriumSorptiveCell:
         pressure = brentq(residual, *policy['bracket_pa'], xtol=policy['absolute_tolerance_pa'],
                           rtol=policy['relative_tolerance'], maxiter=policy['max_iterations'])
         nc, liquid, vl, mu_liquid, mu_standard, pure_pressure, equilibrium_pressure = partition(pressure)
+        return self._state_from_partition(inventories_mol, temperature_k, pressure, nc,
+            liquid, vl, mu_liquid, mu_standard, pure_pressure, equilibrium_pressure)
+
+    def _state_from_partition(self, inventories_mol, temperature_k, pressure, nc,
+                              liquid, vl, mu_liquid, mu_standard, pure_pressure, equilibrium_pressure):
+        r = self.fluid.thermochemistry.gas_constant_j_mol_k
+        rt = r*temperature_k
+        volume = self.fluid.available_fluid_volume_m3
+        mass = self.excess.record['water_molar_mass_kg_mol']
+        nw = inventories_mol['H2O']
         w = nc*mass/self.dry_mass_kg
         excess = self.excess.evaluate(temperature_k, w)
         amounts = {**inventories_mol, 'H2O': nw-nc}

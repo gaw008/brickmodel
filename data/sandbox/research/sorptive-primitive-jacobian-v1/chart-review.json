@@ -1,0 +1,294 @@
+{
+  "settings": {
+    "jacobian_parameters": "parameters.sorptive_primitive_jacobian.json",
+    "trajectories": [
+      "data/sandbox/research/sorptive-evaporating-surface-v1/four-refined.jsonl"
+    ],
+    "times_s": [
+      0,
+      10,
+      50,
+      200,
+      300,
+      400,
+      600,
+      1200
+    ],
+    "difference_step_factor": 0.5,
+    "direction_primitive_changes": [
+      0.02,
+      10.0,
+      1e-05,
+      1e-05
+    ],
+    "direction_cell_factors": [
+      1.0,
+      -0.7,
+      0.4,
+      -0.2
+    ],
+    "direction_amplitude": 0.1,
+    "flux_scales": [
+      1e-07,
+      1e-07,
+      1e-07,
+      0.01
+    ],
+    "budgets": {
+      "roundtrip_temperature_k": 1e-07,
+      "roundtrip_pressure_pa": 0.001,
+      "roundtrip_inventory_mol": 1e-12,
+      "roundtrip_energy_j": 1e-07,
+      "derivative_scaled_absolute": 0.01,
+      "step_refinement_scaled_absolute": 0.01,
+      "ledger_derivative_absolute": 1e-07
+    },
+    "scope": "Constitutive and numerical differentiation study using recorded physical states; not software tests or material validation. At branch knots central derivatives are only local solver approximations."
+  },
+  "jacobian_policy": {
+    "method": "local_equilibrium_chart_face_chain_rule",
+    "central_steps": {
+      "temperature_k": 0.001,
+      "pressure_pa": 1.0,
+      "moisture_kg_kg": 1e-06,
+      "carrier_oxygen_fraction": 1e-05
+    },
+    "coordinate_scales": {
+      "temperature_k": 330.0,
+      "pressure_pa": 100000.0,
+      "moisture_kg_kg": 0.1,
+      "carrier_oxygen_fraction": 0.2
+    },
+    "energy_reference_temperature_k": 330.0,
+    "whole_column_inventory_scale_mol": 0.0001,
+    "whole_column_energy_scale_j": 1.0,
+    "basis": "Explicit numerical differencing and matrix conditioning parameters, no material fitting or ODE tolerance relaxation. Original conserved N/U, source functions and face rates remain unchanged."
+  },
+  "records": [
+    {
+      "trajectory": "data/sandbox/research/sorptive-evaporating-surface-v1/four-refined.jsonl",
+      "observations": [
+        {
+          "time_s": 0.0,
+          "roundtrip_maxima": {
+            "temperature_k": 3.4788172342814505e-11,
+            "pressure_pa": 5.587935447692871e-08,
+            "inventory_mol": 7.684282897491013e-18,
+            "energy_j": 1.858069254012662e-12
+          },
+          "capacity_scaled_condition_numbers": [
+            130.17475307094602,
+            130.17475307094602,
+            130.17475307094602,
+            130.17475307094602
+          ],
+          "directional_scaled_absolute_difference": 1.9207849789003306e-06,
+          "step_refinement_scaled_absolute_difference": 1.2483536220801034e-07,
+          "maximum_conserved_jacobian_column_sum": 7.275957614183426e-12,
+          "within_budgets": {
+            "temperature_k": true,
+            "pressure_pa": true,
+            "inventory_mol": true,
+            "energy_j": true,
+            "directional": true,
+            "step_refinement": true,
+            "conserved_jacobian": true
+          }
+        },
+        {
+          "time_s": 10.0,
+          "roundtrip_maxima": {
+            "temperature_k": 1.5631940186722204e-11,
+            "pressure_pa": 2.329761628061533e-08,
+            "inventory_mol": 3.2051726724102725e-18,
+            "energy_j": 7.744915819785092e-13
+          },
+          "capacity_scaled_condition_numbers": [
+            123.52414806907,
+            123.01276525747639,
+            121.73962222551447,
+            116.35083348987995
+          ],
+          "directional_scaled_absolute_difference": 3.5417210307948224e-11,
+          "step_refinement_scaled_absolute_difference": 1.938009728956614e-11,
+          "maximum_conserved_jacobian_column_sum": 5.820766091346741e-11,
+          "within_budgets": {
+            "temperature_k": true,
+            "pressure_pa": true,
+            "inventory_mol": true,
+            "energy_j": true,
+            "directional": true,
+            "step_refinement": true,
+            "conserved_jacobian": true
+          }
+        },
+        {
+          "time_s": 50.0,
+          "roundtrip_maxima": {
+            "temperature_k": 2.2737367544323206e-13,
+            "pressure_pa": 3.637978807091713e-10,
+            "inventory_mol": 4.0657581468206416e-20,
+            "energy_j": 1.0658141036401503e-14
+          },
+          "capacity_scaled_condition_numbers": [
+            117.1554591477419,
+            116.21582293487005,
+            112.17024267908323,
+            100.56859939705872
+          ],
+          "directional_scaled_absolute_difference": 7.4484971142319e-11,
+          "step_refinement_scaled_absolute_difference": 3.445377663724436e-11,
+          "maximum_conserved_jacobian_column_sum": 5.820766091346741e-11,
+          "within_budgets": {
+            "temperature_k": true,
+            "pressure_pa": true,
+            "inventory_mol": true,
+            "energy_j": true,
+            "directional": true,
+            "step_refinement": true,
+            "conserved_jacobian": true
+          }
+        },
+        {
+          "time_s": 200.0,
+          "roundtrip_maxima": {
+            "temperature_k": 2.9558577807620168e-12,
+            "pressure_pa": 3.623426891863346e-09,
+            "inventory_mol": 4.87890977618477e-19,
+            "energy_j": 1.1723955140041653e-13
+          },
+          "capacity_scaled_condition_numbers": [
+            106.28764306294153,
+            100.76281670521925,
+            95.01699811587811,
+            89.86126728954818
+          ],
+          "directional_scaled_absolute_difference": 1.000315715676825e-10,
+          "step_refinement_scaled_absolute_difference": 2.919007266802276e-11,
+          "maximum_conserved_jacobian_column_sum": 1.1641532182693481e-10,
+          "within_budgets": {
+            "temperature_k": true,
+            "pressure_pa": true,
+            "inventory_mol": true,
+            "energy_j": true,
+            "directional": true,
+            "step_refinement": true,
+            "conserved_jacobian": true
+          }
+        },
+        {
+          "time_s": 300.0,
+          "roundtrip_maxima": {
+            "temperature_k": 0.0,
+            "pressure_pa": 2.9103830456733704e-11,
+            "inventory_mol": 3.3881317890172014e-21,
+            "energy_j": 8.881784197001252e-16
+          },
+          "capacity_scaled_condition_numbers": [
+            95.29618622854349,
+            93.16344972720513,
+            90.03359272472677,
+            86.58559404159668
+          ],
+          "directional_scaled_absolute_difference": 8.968114879187583e-11,
+          "step_refinement_scaled_absolute_difference": 2.2413451303271437e-11,
+          "maximum_conserved_jacobian_column_sum": 5.820766091346741e-11,
+          "within_budgets": {
+            "temperature_k": true,
+            "pressure_pa": true,
+            "inventory_mol": true,
+            "energy_j": true,
+            "directional": true,
+            "step_refinement": true,
+            "conserved_jacobian": true
+          }
+        },
+        {
+          "time_s": 400.0,
+          "roundtrip_maxima": {
+            "temperature_k": 0.0,
+            "pressure_pa": 2.9103830456733704e-11,
+            "inventory_mol": 5.082197683525802e-21,
+            "energy_j": 1.3322676295501878e-15
+          },
+          "capacity_scaled_condition_numbers": [
+            88.0517845802679,
+            87.11281040205667,
+            85.47039344276847,
+            83.47335906441553
+          ],
+          "directional_scaled_absolute_difference": 7.135064023985893e-11,
+          "step_refinement_scaled_absolute_difference": 1.7746860838524503e-11,
+          "maximum_conserved_jacobian_column_sum": 5.820766091346741e-11,
+          "within_budgets": {
+            "temperature_k": true,
+            "pressure_pa": true,
+            "inventory_mol": true,
+            "energy_j": true,
+            "directional": true,
+            "step_refinement": true,
+            "conserved_jacobian": true
+          }
+        },
+        {
+          "time_s": 600.0,
+          "roundtrip_maxima": {
+            "temperature_k": 0.0,
+            "pressure_pa": 4.3655745685100555e-11,
+            "inventory_mol": 2.541098841762901e-21,
+            "energy_j": 2.220446049250313e-16
+          },
+          "capacity_scaled_condition_numbers": [
+            80.31923974390638,
+            80.10184315163444,
+            79.69854136646964,
+            79.16273448715906
+          ],
+          "directional_scaled_absolute_difference": 5.4606991671535265e-11,
+          "step_refinement_scaled_absolute_difference": 6.151025869205462e-12,
+          "maximum_conserved_jacobian_column_sum": 2.9103830456733704e-11,
+          "within_budgets": {
+            "temperature_k": true,
+            "pressure_pa": true,
+            "inventory_mol": true,
+            "energy_j": true,
+            "directional": true,
+            "step_refinement": true,
+            "conserved_jacobian": true
+          }
+        },
+        {
+          "time_s": 1200.0,
+          "roundtrip_maxima": {
+            "temperature_k": 0.0,
+            "pressure_pa": 1.4551915228366852e-11,
+            "inventory_mol": 2.541098841762901e-21,
+            "energy_j": 1.1102230246251565e-16
+          },
+          "capacity_scaled_condition_numbers": [
+            76.59273317527352,
+            76.59047345441805,
+            76.58604231284612,
+            76.57961196320622
+          ],
+          "directional_scaled_absolute_difference": 4.2730113611262914e-07,
+          "step_refinement_scaled_absolute_difference": 9.83684221479307e-07,
+          "maximum_conserved_jacobian_column_sum": 3.637978807091713e-12,
+          "within_budgets": {
+            "temperature_k": true,
+            "pressure_pa": true,
+            "inventory_mol": true,
+            "energy_j": true,
+            "directional": true,
+            "step_refinement": true,
+            "conserved_jacobian": true
+          }
+        }
+      ]
+    }
+  ],
+  "elapsed_s": 1.131756833055988,
+  "all_numerical_budgets_met": true,
+  "material_qualified": false,
+  "training_eligible": false
+}
