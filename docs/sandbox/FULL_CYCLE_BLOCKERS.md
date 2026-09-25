@@ -1,5 +1,7 @@
 # 同一材料一维全周期闭合判断
 
+**2026-09-24本地日期窗口增量（进行中）：** [自由水条件势函数](research/sorptive-free-water-v1/REPORT.md)、[凝聚水迁移](research/sorptive-mobile-water-v1/REPORT.md)和[无储量蒸发表面](research/sorptive-evaporating-surface-v1/REPORT.md)推进低温水量/能量共同方程；高W原图热量一致性失败仍在，新表面空间时刻目标尚未全部通过。[方解石同源自由能](research/calcite-affinity-v1/REPORT.md)与[纯方解石等压循环](research/calcite-equilibrium-calorimeter-v1/REPORT.md)已实际实现源定义的反应平衡、组成焓和CO2流焓，最终限定循环数值核查通过。因此“反应方向和组成热储都完全没有实现”不再准确；真实材料有限速率、矿相库存、气体供排与收缩/孔连通/冷却现实对照仍未闭合。本增量没有解除下文同一实际含污泥配方全周期的数据依赖。
+
 **2026-09-22三小时窗口增量：** [一维来源吸附水柱](research/source-sorptive-column-v1/REPORT.md)与[湿度循环](research/sorptive-humidity-cycle-v1/REPORT.md)已经实际接通共同O2/N2/H2O交换、吸附/干物储热并完成1200s过程，32→64格达到声明的空间比较目标。因此下文旧“下一步接共同载气、完成湿区到低W连续路径”在本轮声明的W≤.8虚拟装置范围内已实现。原文未提供的实际输运、孔隙、初态和观测并未因此补齐。
 
 [局部能量积分](research/source-sorptive-column-v1/LOCAL_BALANCES.md)新目标暴露基础容差误差并用收紧轨迹复核，失败保存；[读图情景](research/sorptive-reading-scenarios-v1/REPORT.md)一组不符合原图有限留出，不能称真实预测误差区间。干物Cp被当作无膨胀功的定体积储热系数属于材料近似，实际Cv与误差未知；固定干质量的相对能量零点不能直接用于反应。W>.8自由水、液体迁移、M1、反应、烧结/冷却同材料闭合及现实验证仍缺，见[本轮剩余表](research/three-hour-20260922/NEXT_PHASES.md)。

@@ -10,6 +10,10 @@ from sludge_sandbox.recorded_reaction_affinity import RecordedThermalPhase, Reco
 def build(root, settings):
     source=json.loads((root/settings['source_file']).read_text())
     facts=json.loads((root/source['reference_facts_file']).read_text())
+    return from_records(settings,source,facts),source,facts
+
+
+def from_records(settings,source,facts):
     tref=float(facts['reference_state']['temperature_k']);phases={}
     domain=tuple(map(float,facts['reaction']['common_selected_temperature_domain_k']))
     for phase in facts['species']:
@@ -20,4 +24,4 @@ def build(root, settings):
     reaction=RecordedSingleGasReaction(phases,{k:float(v) for k,v in facts['reaction']['stoichiometry_mol_per_mol_extent'].items()},
         settings['gas_phase'],float(facts['reference_state']['gas_constant_j_mol_k']),
         float(facts['reference_state']['pressure_pa']),settings['total_pressure_pa'])
-    return reaction,source,facts
+    return reaction
