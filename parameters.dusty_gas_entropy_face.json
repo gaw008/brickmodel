@@ -1,0 +1,26 @@
+{
+  "local_law_parameters": "parameters.dusty_gas_isothermal.json",
+  "temperature_k": 600,
+  "binary_property_reference_pressure_pa": 100000,
+  "virtual_pore_name": "radius_1_um",
+  "distance_m": 0.01,
+  "quadrature_orders": [8, 16, 32, 64],
+  "face_cases": [
+    {"name": "zero", "left_pressure_pa": 100000, "right_pressure_pa": 100000, "left_fractions": [0.1, 0.2, 0.3, 0.4], "right_fractions": [0.1, 0.2, 0.3, 0.4]},
+    {"name": "pressure_only", "left_pressure_pa": 100000, "right_pressure_pa": 110000, "left_fractions": [0.1, 0.2, 0.3, 0.4], "right_fractions": [0.1, 0.2, 0.3, 0.4]},
+    {"name": "equal_pressure_composition_jump", "left_pressure_pa": 100000, "right_pressure_pa": 100000, "left_fractions": [0.1, 0.2, 0.3, 0.4], "right_fractions": [0.2, 0.3, 0.1, 0.4]},
+    {"name": "large_pressure_and_trace_jump", "left_pressure_pa": 50000, "right_pressure_pa": 200000, "left_fractions": [0.0004, 0.2, 0.21, 0.5896], "right_fractions": [0.8, 0.05, 0.05, 0.1]}
+  ],
+  "pure_limit_pressures_pa": [50000, 200000],
+  "review": {
+    "decimal_precision": 60,
+    "reference_integral_subintervals": ["0", "0.25", "0.5", "0.75", "1"],
+    "absolute_flux_budget_mol_m2_s": 1e-12,
+    "relative_flux_budget": 1e-10,
+    "absolute_entropy_budget_w_m2_k": 1e-10,
+    "relative_entropy_budget": 1e-10
+  },
+  "scope": "Numerical straight path in log partial concentrations. Positive-quadrature entropy consistency and pointwise DGM source integration; no exact multicomponent steady-profile claim. Pure gas constant-T steady flux has a separate exact linear-plus-quadratic concentration potential.",
+  "material_qualified": false,
+  "training_eligible": false
+}

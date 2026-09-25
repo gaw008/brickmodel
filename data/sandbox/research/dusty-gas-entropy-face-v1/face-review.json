@@ -1,0 +1,2086 @@
+{
+  "settings": {
+    "local_law_parameters": "parameters.dusty_gas_isothermal.json",
+    "temperature_k": 600,
+    "binary_property_reference_pressure_pa": 100000,
+    "virtual_pore_name": "radius_1_um",
+    "distance_m": 0.01,
+    "quadrature_orders": [
+      8,
+      16,
+      32,
+      64
+    ],
+    "face_cases": [
+      {
+        "name": "zero",
+        "left_pressure_pa": 100000,
+        "right_pressure_pa": 100000,
+        "left_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "right_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ]
+      },
+      {
+        "name": "pressure_only",
+        "left_pressure_pa": 100000,
+        "right_pressure_pa": 110000,
+        "left_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "right_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ]
+      },
+      {
+        "name": "equal_pressure_composition_jump",
+        "left_pressure_pa": 100000,
+        "right_pressure_pa": 100000,
+        "left_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "right_fractions": [
+          0.2,
+          0.3,
+          0.1,
+          0.4
+        ]
+      },
+      {
+        "name": "large_pressure_and_trace_jump",
+        "left_pressure_pa": 50000,
+        "right_pressure_pa": 200000,
+        "left_fractions": [
+          0.0004,
+          0.2,
+          0.21,
+          0.5896
+        ],
+        "right_fractions": [
+          0.8,
+          0.05,
+          0.05,
+          0.1
+        ]
+      }
+    ],
+    "pure_limit_pressures_pa": [
+      50000,
+      200000
+    ],
+    "review": {
+      "decimal_precision": 60,
+      "reference_integral_subintervals": [
+        "0",
+        "0.25",
+        "0.5",
+        "0.75",
+        "1"
+      ],
+      "absolute_flux_budget_mol_m2_s": 1e-12,
+      "relative_flux_budget": 1e-10,
+      "absolute_entropy_budget_w_m2_k": 1e-10,
+      "relative_entropy_budget": 1e-10
+    },
+    "scope": "Numerical straight path in log partial concentrations. Positive-quadrature entropy consistency and pointwise DGM source integration; no exact multicomponent steady-profile claim. Pure gas constant-T steady flux has a separate exact linear-plus-quadratic concentration potential.",
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "local_law_settings": {
+    "source": {
+      "name": "Cantera 3.2.0 DustyGasTransport original constitutive equations",
+      "url": "https://cantera.org/3.2/cxx/dc/de6/classCantera_1_1DustyGasTransport.html",
+      "source_directory": "data/sandbox/research/dusty-gas-source-v1/source",
+      "source_urls": [
+        "https://raw.githubusercontent.com/Cantera/cantera/v3.2.0/include/cantera/transport/DustyGasTransport.h",
+        "https://raw.githubusercontent.com/Cantera/cantera/v3.2.0/src/transport/DustyGasTransport.cpp"
+      ],
+      "license": "BSD-3-Clause, retained License.txt",
+      "selected_functions": [
+        "updateBinaryDiffCoeffs",
+        "updateKnudsenDiffCoeffs",
+        "eval_H_matrix",
+        "getMolarFluxes"
+      ],
+      "selection": "Local isothermal equations only; no source fallback permeability, fraction offset or midpoint face approximation is copied.",
+      "permeability_derivation": {
+        "source_url": "https://openstax.org/books/university-physics-volume-1/pages/14-7-viscosity-and-turbulence",
+        "basis": "Poiseuille long circular-tube laminar continuum relation Q = pi*r^4*deltaP/(8*eta*L); divide by tube area, then multiply by bundle porosity to obtain kappa = porosity*r^2/8. Local viscous term only; no claim of finite-length end corrections or exact rarefied flow."
+      }
+    },
+    "local_gas_parameters": "parameters.maxwell_stefan_isothermal.json",
+    "viscosity_parameters": "parameters.wilke_gas_mixture.json",
+    "species_order": [
+      "CO",
+      "CO2",
+      "O2",
+      "N2"
+    ],
+    "temperatures_k": [
+      300,
+      600,
+      1200
+    ],
+    "pressures_pa": [
+      50000,
+      100000,
+      200000
+    ],
+    "compositions": [
+      [
+        0.1,
+        0.2,
+        0.3,
+        0.4
+      ],
+      [
+        0.0004,
+        0.2,
+        0.21,
+        0.5896
+      ],
+      [
+        0.8,
+        0.05,
+        0.05,
+        0.1
+      ]
+    ],
+    "virtual_pore_sets": [
+      {
+        "name": "radius_0.1_um",
+        "porosity": 0.3,
+        "tortuosity": 1,
+        "mean_pore_radius_m": 1e-07,
+        "permeability_m2": 3.75e-16
+      },
+      {
+        "name": "radius_1_um",
+        "porosity": 0.3,
+        "tortuosity": 1,
+        "mean_pore_radius_m": 1e-06,
+        "permeability_m2": 3.75e-14
+      },
+      {
+        "name": "radius_10_um",
+        "porosity": 0.3,
+        "tortuosity": 1,
+        "mean_pore_radius_m": 1e-05,
+        "permeability_m2": 3.75e-12
+      }
+    ],
+    "pore_classification": "Declared uniform straight circular-capillary geometry, porosity 0.3 and transport tortuosity 1. Permeability values follow the continuum Poiseuille bundle relation kappa = porosity * radius^2 / 8. This is a model geometry, not measured brick; adding the Knudsen term is the sourced Dusty Gas approximation, not an exact Boltzmann solution.",
+    "force_cases": [
+      {
+        "name": "zero",
+        "composition_gradient_per_m": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "log_pressure_gradient_per_m": 0
+      },
+      {
+        "name": "composition_only",
+        "composition_gradient_per_m": [
+          0,
+          2,
+          -1,
+          -1
+        ],
+        "log_pressure_gradient_per_m": 0
+      },
+      {
+        "name": "pressure_only",
+        "composition_gradient_per_m": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "log_pressure_gradient_per_m": 2
+      },
+      {
+        "name": "mixed",
+        "composition_gradient_per_m": [
+          -1,
+          0.5,
+          0.3,
+          0.2
+        ],
+        "log_pressure_gradient_per_m": -3
+      }
+    ],
+    "review": {
+      "decimal_precision": 80,
+      "absolute_flux_budget_mol_m2_s": 1e-12,
+      "relative_flux_budget": 1e-10,
+      "absolute_entropy_budget_w_m3_k": 1e-10,
+      "relative_entropy_budget": 1e-10,
+      "original_equation_residual_budget_mol_m4": 1e-08,
+      "knudsen_relative_budget": 1e-12,
+      "species_permutation": [
+        3,
+        2,
+        1,
+        0
+      ],
+      "pure_log_pressure_gradient_per_m": 2,
+      "include_zero_permeability_limit": true
+    },
+    "scope": "Stationary solid frame, ideal dilute gas, common local temperature and supplied positive pore coefficients. No heat equation, thermodiffusion, finite face, changing pore geometry or chemical reaction.",
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "gas_settings": {
+    "source": {
+      "author": "Dieter Bothe",
+      "title": "On the Maxwell-Stefan approach to multicomponent diffusion",
+      "version": "arXiv:1007.1775v1, 2010-07-11",
+      "url": "https://arxiv.org/pdf/1007.1775",
+      "local_reading_copy": ".tools/source-cache/maxwell-stefan/bothe2010.pdf",
+      "molar_frame_equations": [
+        5,
+        7,
+        8
+      ],
+      "molar_frame_pdf_page": 3,
+      "force_and_friction_equations": [
+        13,
+        15,
+        17,
+        18
+      ],
+      "force_and_friction_pdf_pages": [
+        4,
+        5
+      ],
+      "binary_limit_equations": [
+        19,
+        20,
+        21
+      ],
+      "binary_limit_pdf_pages": [
+        5,
+        6
+      ],
+      "scope": "Local isothermal isobaric ideal-gas limit. Binary MS diffusivities are friction inputs, not independent Fick coefficients in a mixture."
+    },
+    "transport_parameters": "parameters.nonpolar_gas_transport.json",
+    "constants": {
+      "boltzmann_j_k": "1.380649e-23",
+      "avogadro_mol_inverse": "6.02214076e23",
+      "gram_to_kg": "0.001",
+      "gas_constant_definition": "R = exact SI kB times NA; not the historical R used by the separate USGS reaction model"
+    },
+    "species_order": [
+      "CO",
+      "CO2",
+      "O2",
+      "N2"
+    ],
+    "conditions": {
+      "temperatures_k": [
+        300,
+        600,
+        1200
+      ],
+      "pressures_pa": [
+        50000,
+        100000,
+        200000
+      ],
+      "mole_fraction_vectors": [
+        [
+          "0.1",
+          "0.2",
+          "0.3",
+          "0.4"
+        ],
+        [
+          "0.0004",
+          "0.2",
+          "0.21",
+          "0.5896"
+        ],
+        [
+          "0.8",
+          "0.05",
+          "0.05",
+          "0.1"
+        ]
+      ],
+      "composition_gradients_per_m": [
+        [
+          "0",
+          "2",
+          "-1",
+          "-1"
+        ],
+        [
+          "1",
+          "0",
+          "-0.5",
+          "-0.5"
+        ],
+        [
+          "0.4",
+          "-1",
+          "0.1",
+          "0.5"
+        ],
+        [
+          "0",
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "input_classification": "Explicit manufactured local compositions and gradients for equation qualification; not measured brick states."
+    },
+    "review": {
+      "decimal_precision": 80,
+      "absolute_flux_budget_mol_m2_s": 1e-12,
+      "relative_flux_budget": 1e-10,
+      "absolute_entropy_budget_w_m3_k": 1e-12,
+      "relative_entropy_budget": 1e-10,
+      "molar_frame_sum_budget_mol_m2_s": 1e-12,
+      "mass_frame_sum_budget_kg_m2_s": 1e-14,
+      "equation_residual_budget_mol_m4": 1e-10,
+      "binary_mole_fractions": [
+        "0.2",
+        "0.8"
+      ],
+      "binary_gradient_per_m": [
+        "1",
+        "-1"
+      ]
+    },
+    "exclusions": [
+      "temperature gradient",
+      "pressure gradient",
+      "solid friction",
+      "pore geometry",
+      "finite-volume assembly",
+      "reactions",
+      "real-gas activities"
+    ],
+    "binary_diffusivities_experimentally_validated": false,
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "transport_settings": {
+    "source_files": {
+      "collision_integrals": "data/sandbox/research/gas-transport-source-v1/source/MMCollisionInt.cpp",
+      "collision_header": "data/sandbox/research/gas-transport-source-v1/source/MMCollisionInt.h",
+      "gas_transport": "data/sandbox/research/gas-transport-source-v1/source/GasTransport.cpp",
+      "gri30": "data/sandbox/research/gas-transport-source-v1/source/gri30.yaml",
+      "nist_tables": "data/sandbox/research/gas-transport-source-v1/source/nist-selected-tables.json"
+    },
+    "source_version": "Cantera v3.2.0, source collision formulas before temperature polynomial fitting",
+    "constants": {
+      "boltzmann_j_k": "1.380649e-23",
+      "avogadro_mol_inverse": "6.02214076e23",
+      "angstrom_m": "1e-10",
+      "gram_kg": "1e-3",
+      "micropascal_pa": "1e-6",
+      "source": "https://physics.nist.gov/cuu/Constants/Table/allascii.txt",
+      "classification": "kB and NA exact SI; metric prefixes exact; molecular masses taken from the selected historical NIST compilation"
+    },
+    "species": {
+      "CO": {
+        "well_depth_over_kb_k": "98.1",
+        "diameter_angstrom": "3.65",
+        "molar_mass_g_mol": "28.0104",
+        "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+        "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-5"
+      },
+      "CO2": {
+        "well_depth_over_kb_k": "244.0",
+        "diameter_angstrom": "3.763",
+        "molar_mass_g_mol": "44.010",
+        "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+        "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-4"
+      },
+      "O2": {
+        "well_depth_over_kb_k": "107.4",
+        "diameter_angstrom": "3.458",
+        "molar_mass_g_mol": "31.999",
+        "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+        "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+      },
+      "N2": {
+        "well_depth_over_kb_k": "97.53",
+        "diameter_angstrom": "3.621",
+        "molar_mass_g_mol": "28.0135",
+        "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+        "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+      }
+    },
+    "collision_tables": {
+      "reduced_temperature": [
+        "0.1",
+        "0.2",
+        "0.3",
+        "0.4",
+        "0.5",
+        "0.6",
+        "0.7",
+        "0.8",
+        "0.9",
+        "1.0",
+        "1.2",
+        "1.4",
+        "1.6",
+        "1.8",
+        "2.0",
+        "2.5",
+        "3.0",
+        "3.5",
+        "4.0",
+        "5.0",
+        "6.0",
+        "7.0",
+        "8.0",
+        "9.0",
+        "10.0",
+        "12.0",
+        "14.0",
+        "16.0",
+        "18.0",
+        "20.0",
+        "25.0",
+        "30.0",
+        "35.0",
+        "40.0",
+        "50.0",
+        "75.0",
+        "100.0"
+      ],
+      "omega22_delta_zero": [
+        "4.1005",
+        "3.2626",
+        "2.8399",
+        "2.531",
+        "2.2837",
+        "2.0838",
+        "1.922",
+        "1.7902",
+        "1.6823",
+        "1.5929",
+        "1.4551",
+        "1.3551",
+        "1.28",
+        "1.2219",
+        "1.1757",
+        "1.0933",
+        "1.0388",
+        "0.99963",
+        "0.96988",
+        "0.92676",
+        "0.89616",
+        "0.87272",
+        "0.85379",
+        "0.83795",
+        "0.82435",
+        "0.80184",
+        "0.78363",
+        "0.76834",
+        "0.75518",
+        "0.74364",
+        "0.71982",
+        "0.70097",
+        "0.68545",
+        "0.67232",
+        "0.65099",
+        "0.61397",
+        "0.5887"
+      ],
+      "astar_delta_zero": [
+        "1.0231",
+        "1.0424",
+        "1.0719",
+        "1.0936",
+        "1.1053",
+        "1.1104",
+        "1.1114",
+        "1.1104",
+        "1.1086",
+        "1.1063",
+        "1.1020",
+        "1.0985",
+        "1.0960",
+        "1.0943",
+        "1.0934",
+        "1.0926",
+        "1.0934",
+        "1.0948",
+        "1.0965",
+        "1.0997",
+        "1.1025",
+        "1.1050",
+        "1.1072",
+        "1.1091",
+        "1.1107",
+        "1.1133",
+        "1.1154",
+        "1.1172",
+        "1.1186",
+        "1.1199",
+        "1.1223",
+        "1.1243",
+        "1.1259",
+        "1.1273",
+        "1.1297",
+        "1.1339",
+        "1.1364"
+      ]
+    },
+    "review": {
+      "decimal_precision": 80,
+      "temperatures_k": [
+        300,
+        400,
+        500,
+        600,
+        700,
+        800,
+        900,
+        1000,
+        1100,
+        1200
+      ],
+      "pressures_pa": [
+        50000,
+        100000,
+        200000
+      ],
+      "relative_arithmetic_budget": 1e-13,
+      "relative_symmetry_budget": 1e-14,
+      "relative_pressure_scaling_budget": 1e-14,
+      "nist_uncertainty_fraction": {
+        "CO": 0.05,
+        "CO2": 0.05,
+        "O2": 0.005,
+        "N2": 0.03
+      },
+      "nist_rounding_half_unit_micro_pa_s": {
+        "CO": 0.05,
+        "CO2": 0.005,
+        "O2": 0.005,
+        "N2": 0.05
+      },
+      "selected_calculation_temperature_domain_k": [
+        300,
+        1200
+      ],
+      "table_comparison_temperature_domain_k": [
+        300,
+        1000
+      ]
+    },
+    "scope": "Pure dilute-gas viscosity and first-order binary molecular diffusion only; explicit zero-dipole LJ approximation. No mixture-viscosity, porous effective diffusivity, Darcy permeability, multicomponent flux, Soret or brick qualification. GRI NASA thermo and reactions are not imported. No post-fit calibration to NIST tables. NIST comparison pressure is unspecified on selected pages; agreement is not pressure-matched experimental validation.",
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "gas_constant_j_mol_k": 8.31446261815324,
+  "molar_masses_kg_mol": [
+    0.0280104,
+    0.04401,
+    0.031999,
+    0.0280135
+  ],
+  "pure_viscosities_pa_s": [
+    2.908480893262893e-05,
+    2.7880531980869516e-05,
+    3.4076822160863583e-05,
+    2.9584291036524023e-05
+  ],
+  "diffusivity_pressure_products_pa_m2_s": [
+    [
+      0.0,
+      5.466418409900059,
+      6.940979192621288,
+      6.913515224729992
+    ],
+    [
+      5.466418409900059,
+      0.0,
+      5.4782402799541625,
+      5.513008772974494
+    ],
+    [
+      6.940979192621288,
+      5.4782402799541625,
+      0.0,
+      7.001710370106151
+    ],
+    [
+      6.913515224729992,
+      5.513008772974494,
+      7.001710370106151,
+      0.0
+    ]
+  ],
+  "pore": {
+    "name": "radius_1_um",
+    "porosity": 0.3,
+    "tortuosity": 1,
+    "mean_pore_radius_m": 1e-06,
+    "permeability_m2": 3.75e-14
+  },
+  "face_reviews": [
+    {
+      "case": {
+        "name": "zero",
+        "left_pressure_pa": 100000,
+        "right_pressure_pa": 100000,
+        "left_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "right_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ]
+      },
+      "quadrature_order": 8,
+      "left_partial_concentrations_mol_m3": [
+        2.0045392507121007,
+        4.009078501424201,
+        6.013617752136303,
+        8.018157002848403
+      ],
+      "right_partial_concentrations_mol_m3": [
+        2.0045392507121007,
+        4.009078501424201,
+        6.013617752136303,
+        8.018157002848403
+      ],
+      "actual": {
+        "molar_fluxes_mol_m2_s": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "diffusive_fluxes_mol_m2_s": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "darcy_fluxes_mol_m2_s": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "entropy_from_jump_w_m2_k": -0.0,
+        "entropy_from_path_w_m2_k": 0.0,
+        "entropy_molecular_w_m2_k": 0.0,
+        "entropy_wall_w_m2_k": 0.0,
+        "entropy_darcy_w_m2_k": 0.0
+      },
+      "reference_fluxes_decimal": [
+        "0.0",
+        "0.0",
+        "0.0",
+        "0.0"
+      ],
+      "reference_entropy_decimal": "0.0",
+      "errors": {
+        "flux_mol_m2_s": 0.0,
+        "jump_entropy_w_m2_k": 0.0,
+        "path_entropy_w_m2_k": 0.0,
+        "reversal_flux_mol_m2_s": 0.0,
+        "reversal_entropy_w_m2_k": 0.0,
+        "flux_decomposition_mol_m2_s": 0.0
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": true,
+        "jump_entropy_w_m2_k": true,
+        "path_entropy_w_m2_k": true,
+        "reversal_flux_mol_m2_s": true,
+        "reversal_entropy_w_m2_k": true,
+        "flux_decomposition_mol_m2_s": true,
+        "nonnegative_entropy_parts": true
+      }
+    },
+    {
+      "case": {
+        "name": "zero",
+        "left_pressure_pa": 100000,
+        "right_pressure_pa": 100000,
+        "left_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "right_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ]
+      },
+      "quadrature_order": 16,
+      "left_partial_concentrations_mol_m3": [
+        2.0045392507121007,
+        4.009078501424201,
+        6.013617752136303,
+        8.018157002848403
+      ],
+      "right_partial_concentrations_mol_m3": [
+        2.0045392507121007,
+        4.009078501424201,
+        6.013617752136303,
+        8.018157002848403
+      ],
+      "actual": {
+        "molar_fluxes_mol_m2_s": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "diffusive_fluxes_mol_m2_s": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "darcy_fluxes_mol_m2_s": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "entropy_from_jump_w_m2_k": -0.0,
+        "entropy_from_path_w_m2_k": 0.0,
+        "entropy_molecular_w_m2_k": 0.0,
+        "entropy_wall_w_m2_k": 0.0,
+        "entropy_darcy_w_m2_k": 0.0
+      },
+      "reference_fluxes_decimal": [
+        "0.0",
+        "0.0",
+        "0.0",
+        "0.0"
+      ],
+      "reference_entropy_decimal": "0.0",
+      "errors": {
+        "flux_mol_m2_s": 0.0,
+        "jump_entropy_w_m2_k": 0.0,
+        "path_entropy_w_m2_k": 0.0,
+        "reversal_flux_mol_m2_s": 0.0,
+        "reversal_entropy_w_m2_k": 0.0,
+        "flux_decomposition_mol_m2_s": 0.0
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": true,
+        "jump_entropy_w_m2_k": true,
+        "path_entropy_w_m2_k": true,
+        "reversal_flux_mol_m2_s": true,
+        "reversal_entropy_w_m2_k": true,
+        "flux_decomposition_mol_m2_s": true,
+        "nonnegative_entropy_parts": true
+      }
+    },
+    {
+      "case": {
+        "name": "zero",
+        "left_pressure_pa": 100000,
+        "right_pressure_pa": 100000,
+        "left_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "right_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ]
+      },
+      "quadrature_order": 32,
+      "left_partial_concentrations_mol_m3": [
+        2.0045392507121007,
+        4.009078501424201,
+        6.013617752136303,
+        8.018157002848403
+      ],
+      "right_partial_concentrations_mol_m3": [
+        2.0045392507121007,
+        4.009078501424201,
+        6.013617752136303,
+        8.018157002848403
+      ],
+      "actual": {
+        "molar_fluxes_mol_m2_s": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "diffusive_fluxes_mol_m2_s": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "darcy_fluxes_mol_m2_s": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "entropy_from_jump_w_m2_k": -0.0,
+        "entropy_from_path_w_m2_k": 0.0,
+        "entropy_molecular_w_m2_k": 0.0,
+        "entropy_wall_w_m2_k": 0.0,
+        "entropy_darcy_w_m2_k": 0.0
+      },
+      "reference_fluxes_decimal": [
+        "0.0",
+        "0.0",
+        "0.0",
+        "0.0"
+      ],
+      "reference_entropy_decimal": "0.0",
+      "errors": {
+        "flux_mol_m2_s": 0.0,
+        "jump_entropy_w_m2_k": 0.0,
+        "path_entropy_w_m2_k": 0.0,
+        "reversal_flux_mol_m2_s": 0.0,
+        "reversal_entropy_w_m2_k": 0.0,
+        "flux_decomposition_mol_m2_s": 0.0
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": true,
+        "jump_entropy_w_m2_k": true,
+        "path_entropy_w_m2_k": true,
+        "reversal_flux_mol_m2_s": true,
+        "reversal_entropy_w_m2_k": true,
+        "flux_decomposition_mol_m2_s": true,
+        "nonnegative_entropy_parts": true
+      }
+    },
+    {
+      "case": {
+        "name": "zero",
+        "left_pressure_pa": 100000,
+        "right_pressure_pa": 100000,
+        "left_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "right_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ]
+      },
+      "quadrature_order": 64,
+      "left_partial_concentrations_mol_m3": [
+        2.0045392507121007,
+        4.009078501424201,
+        6.013617752136303,
+        8.018157002848403
+      ],
+      "right_partial_concentrations_mol_m3": [
+        2.0045392507121007,
+        4.009078501424201,
+        6.013617752136303,
+        8.018157002848403
+      ],
+      "actual": {
+        "molar_fluxes_mol_m2_s": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "diffusive_fluxes_mol_m2_s": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "darcy_fluxes_mol_m2_s": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "entropy_from_jump_w_m2_k": -0.0,
+        "entropy_from_path_w_m2_k": 0.0,
+        "entropy_molecular_w_m2_k": 0.0,
+        "entropy_wall_w_m2_k": 0.0,
+        "entropy_darcy_w_m2_k": 0.0
+      },
+      "reference_fluxes_decimal": [
+        "0.0",
+        "0.0",
+        "0.0",
+        "0.0"
+      ],
+      "reference_entropy_decimal": "0.0",
+      "errors": {
+        "flux_mol_m2_s": 0.0,
+        "jump_entropy_w_m2_k": 0.0,
+        "path_entropy_w_m2_k": 0.0,
+        "reversal_flux_mol_m2_s": 0.0,
+        "reversal_entropy_w_m2_k": 0.0,
+        "flux_decomposition_mol_m2_s": 0.0
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": true,
+        "jump_entropy_w_m2_k": true,
+        "path_entropy_w_m2_k": true,
+        "reversal_flux_mol_m2_s": true,
+        "reversal_entropy_w_m2_k": true,
+        "flux_decomposition_mol_m2_s": true,
+        "nonnegative_entropy_parts": true
+      }
+    },
+    {
+      "case": {
+        "name": "pressure_only",
+        "left_pressure_pa": 100000,
+        "right_pressure_pa": 110000,
+        "left_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "right_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ]
+      },
+      "quadrature_order": 8,
+      "left_partial_concentrations_mol_m3": [
+        2.0045392507121007,
+        4.009078501424201,
+        6.013617752136303,
+        8.018157002848403
+      ],
+      "right_partial_concentrations_mol_m3": [
+        2.204993175783311,
+        4.409986351566622,
+        6.614979527349932,
+        8.819972703133244
+      ],
+      "actual": {
+        "molar_fluxes_mol_m2_s": [
+          -0.005134997313771728,
+          -0.01013665504227605,
+          -0.01534103027163909,
+          -0.020540582714626363
+        ],
+        "diffusive_fluxes_mol_m2_s": [
+          -0.0025419792797589692,
+          -0.0049506189742505305,
+          -0.007561976169600814,
+          -0.010168510578575325
+        ],
+        "darcy_fluxes_mol_m2_s": [
+          -0.0025930180340127595,
+          -0.005186036068025519,
+          -0.007779054102038278,
+          -0.010372072136051038
+        ],
+        "entropy_from_jump_w_m2_k": 0.04053655485187975,
+        "entropy_from_path_w_m2_k": 0.040536554851879764,
+        "entropy_molecular_w_m2_k": 1.568422595084733e-05,
+        "entropy_wall_w_m2_k": 0.01997242331483917,
+        "entropy_darcy_w_m2_k": 0.02054844731108974
+      },
+      "reference_fluxes_decimal": [
+        "-0.00513499731377172229737037288884323275659509584330470101042407",
+        "-0.0101366550422760351221289961682297676636449320983117384395006",
+        "-0.0153410302716390706399373604375842355429104890788146964214685",
+        "-0.0205405827146263325421676941739901182586184004080205766922099"
+      ],
+      "reference_entropy_decimal": "0.0405365548518796419479940614866217401494776257223519594261327",
+      "errors": {
+        "flux_mol_m2_s": 3.068884644475856e-17,
+        "jump_entropy_w_m2_k": 1.0776884238149874e-16,
+        "path_entropy_w_m2_k": 1.216466301893132e-16,
+        "reversal_flux_mol_m2_s": 1.734723475976807e-18,
+        "reversal_entropy_w_m2_k": 0.0,
+        "flux_decomposition_mol_m2_s": 1.734723475976807e-18
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": true,
+        "jump_entropy_w_m2_k": true,
+        "path_entropy_w_m2_k": true,
+        "reversal_flux_mol_m2_s": true,
+        "reversal_entropy_w_m2_k": true,
+        "flux_decomposition_mol_m2_s": true,
+        "nonnegative_entropy_parts": true
+      }
+    },
+    {
+      "case": {
+        "name": "pressure_only",
+        "left_pressure_pa": 100000,
+        "right_pressure_pa": 110000,
+        "left_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "right_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ]
+      },
+      "quadrature_order": 16,
+      "left_partial_concentrations_mol_m3": [
+        2.0045392507121007,
+        4.009078501424201,
+        6.013617752136303,
+        8.018157002848403
+      ],
+      "right_partial_concentrations_mol_m3": [
+        2.204993175783311,
+        4.409986351566622,
+        6.614979527349932,
+        8.819972703133244
+      ],
+      "actual": {
+        "molar_fluxes_mol_m2_s": [
+          -0.0051349973137717305,
+          -0.010136655042276052,
+          -0.015341030271639092,
+          -0.02054058271462637
+        ],
+        "diffusive_fluxes_mol_m2_s": [
+          -0.0025419792797589692,
+          -0.00495061897425053,
+          -0.007561976169600817,
+          -0.010168510578575325
+        ],
+        "darcy_fluxes_mol_m2_s": [
+          -0.0025930180340127595,
+          -0.00518603606802552,
+          -0.007779054102038278,
+          -0.010372072136051038
+        ],
+        "entropy_from_jump_w_m2_k": 0.040536554851879764,
+        "entropy_from_path_w_m2_k": 0.040536554851879764,
+        "entropy_molecular_w_m2_k": 1.5684225950847314e-05,
+        "entropy_wall_w_m2_k": 0.019972423314839175,
+        "entropy_darcy_w_m2_k": 0.020548447311089745
+      },
+      "reference_fluxes_decimal": [
+        "-0.00513499731377172229737037288884323275659509584330470101042407",
+        "-0.0101366550422760351221289961682297676636449320983117384395006",
+        "-0.0153410302716390706399373604375842355429104890788146964214685",
+        "-0.0205405827146263325421676941739901182586184004080205766922099"
+      ],
+      "reference_entropy_decimal": "0.0405365548518796419479940614866217401494776257223519594261327",
+      "errors": {
+        "flux_mol_m2_s": 3.762774034866579e-17,
+        "jump_entropy_w_m2_k": 1.216466301893132e-16,
+        "path_entropy_w_m2_k": 1.216466301893132e-16,
+        "reversal_flux_mol_m2_s": 3.469446951953614e-18,
+        "reversal_entropy_w_m2_k": 6.938893903907228e-18,
+        "flux_decomposition_mol_m2_s": 6.938893903907228e-18
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": true,
+        "jump_entropy_w_m2_k": true,
+        "path_entropy_w_m2_k": true,
+        "reversal_flux_mol_m2_s": true,
+        "reversal_entropy_w_m2_k": true,
+        "flux_decomposition_mol_m2_s": true,
+        "nonnegative_entropy_parts": true
+      }
+    },
+    {
+      "case": {
+        "name": "pressure_only",
+        "left_pressure_pa": 100000,
+        "right_pressure_pa": 110000,
+        "left_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "right_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ]
+      },
+      "quadrature_order": 32,
+      "left_partial_concentrations_mol_m3": [
+        2.0045392507121007,
+        4.009078501424201,
+        6.013617752136303,
+        8.018157002848403
+      ],
+      "right_partial_concentrations_mol_m3": [
+        2.204993175783311,
+        4.409986351566622,
+        6.614979527349932,
+        8.819972703133244
+      ],
+      "actual": {
+        "molar_fluxes_mol_m2_s": [
+          -0.005134997313771727,
+          -0.01013665504227605,
+          -0.015341030271639093,
+          -0.02054058271462636
+        ],
+        "diffusive_fluxes_mol_m2_s": [
+          -0.0025419792797589697,
+          -0.0049506189742505305,
+          -0.007561976169600813,
+          -0.010168510578575325
+        ],
+        "darcy_fluxes_mol_m2_s": [
+          -0.0025930180340127595,
+          -0.005186036068025519,
+          -0.0077790541020382785,
+          -0.010372072136051038
+        ],
+        "entropy_from_jump_w_m2_k": 0.04053655485187975,
+        "entropy_from_path_w_m2_k": 0.040536554851879764,
+        "entropy_molecular_w_m2_k": 1.5684225950847345e-05,
+        "entropy_wall_w_m2_k": 0.019972423314839168,
+        "entropy_darcy_w_m2_k": 0.020548447311089745
+      },
+      "reference_fluxes_decimal": [
+        "-0.00513499731377172229737037288884323275659509584330470101042407",
+        "-0.0101366550422760351221289961682297676636449320983117384395006",
+        "-0.0153410302716390706399373604375842355429104890788146964214685",
+        "-0.0205405827146263325421676941739901182586184004080205766922099"
+      ],
+      "reference_entropy_decimal": "0.0405365548518796419479940614866217401494776257223519594261327",
+      "errors": {
+        "flux_mol_m2_s": 2.7219399492804946e-17,
+        "jump_entropy_w_m2_k": 1.0776884238149874e-16,
+        "path_entropy_w_m2_k": 1.216466301893132e-16,
+        "reversal_flux_mol_m2_s": 3.469446951953614e-18,
+        "reversal_entropy_w_m2_k": 6.938893903907228e-18,
+        "flux_decomposition_mol_m2_s": 3.469446951953614e-18
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": true,
+        "jump_entropy_w_m2_k": true,
+        "path_entropy_w_m2_k": true,
+        "reversal_flux_mol_m2_s": true,
+        "reversal_entropy_w_m2_k": true,
+        "flux_decomposition_mol_m2_s": true,
+        "nonnegative_entropy_parts": true
+      }
+    },
+    {
+      "case": {
+        "name": "pressure_only",
+        "left_pressure_pa": 100000,
+        "right_pressure_pa": 110000,
+        "left_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "right_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ]
+      },
+      "quadrature_order": 64,
+      "left_partial_concentrations_mol_m3": [
+        2.0045392507121007,
+        4.009078501424201,
+        6.013617752136303,
+        8.018157002848403
+      ],
+      "right_partial_concentrations_mol_m3": [
+        2.204993175783311,
+        4.409986351566622,
+        6.614979527349932,
+        8.819972703133244
+      ],
+      "actual": {
+        "molar_fluxes_mol_m2_s": [
+          -0.005134997313771729,
+          -0.01013665504227605,
+          -0.01534103027163909,
+          -0.020540582714626363
+        ],
+        "diffusive_fluxes_mol_m2_s": [
+          -0.00254197927975897,
+          -0.0049506189742505305,
+          -0.007561976169600815,
+          -0.010168510578575323
+        ],
+        "darcy_fluxes_mol_m2_s": [
+          -0.0025930180340127595,
+          -0.00518603606802552,
+          -0.007779054102038277,
+          -0.010372072136051038
+        ],
+        "entropy_from_jump_w_m2_k": 0.04053655485187976,
+        "entropy_from_path_w_m2_k": 0.04053655485187975,
+        "entropy_molecular_w_m2_k": 1.5684225950847318e-05,
+        "entropy_wall_w_m2_k": 0.019972423314839168,
+        "entropy_darcy_w_m2_k": 0.020548447311089735
+      },
+      "reference_fluxes_decimal": [
+        "-0.00513499731377172229737037288884323275659509584330470101042407",
+        "-0.0101366550422760351221289961682297676636449320983117384395006",
+        "-0.0153410302716390706399373604375842355429104890788146964214685",
+        "-0.0205405827146263325421676941739901182586184004080205766922099"
+      ],
+      "reference_entropy_decimal": "0.0405365548518796419479940614866217401494776257223519594261327",
+      "errors": {
+        "flux_mol_m2_s": 3.068884644475856e-17,
+        "jump_entropy_w_m2_k": 1.1470773628540598e-16,
+        "path_entropy_w_m2_k": 1.0776884238149874e-16,
+        "reversal_flux_mol_m2_s": 3.469446951953614e-18,
+        "reversal_entropy_w_m2_k": 1.3877787807814457e-17,
+        "flux_decomposition_mol_m2_s": 1.734723475976807e-18
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": true,
+        "jump_entropy_w_m2_k": true,
+        "path_entropy_w_m2_k": true,
+        "reversal_flux_mol_m2_s": true,
+        "reversal_entropy_w_m2_k": true,
+        "flux_decomposition_mol_m2_s": true,
+        "nonnegative_entropy_parts": true
+      }
+    },
+    {
+      "case": {
+        "name": "equal_pressure_composition_jump",
+        "left_pressure_pa": 100000,
+        "right_pressure_pa": 100000,
+        "left_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "right_fractions": [
+          0.2,
+          0.3,
+          0.1,
+          0.4
+        ]
+      },
+      "quadrature_order": 8,
+      "left_partial_concentrations_mol_m3": [
+        2.0045392507121007,
+        4.009078501424201,
+        6.013617752136303,
+        8.018157002848403
+      ],
+      "right_partial_concentrations_mol_m3": [
+        4.009078501424201,
+        6.013617752136303,
+        2.0045392507121007,
+        8.018157002848403
+      ],
+      "actual": {
+        "molar_fluxes_mol_m2_s": [
+          -0.004836811169980382,
+          -0.004192279690635014,
+          0.00937469603758081,
+          -0.00026324637787017804
+        ],
+        "diffusive_fluxes_mol_m2_s": [
+          -0.004130362945967783,
+          -0.0034561032078600563,
+          0.008073300944545446,
+          -0.00016646987354361899
+        ],
+        "darcy_fluxes_mol_m2_s": [
+          -0.0007064482240125988,
+          -0.0007361764827749578,
+          0.001301395093035363,
+          -9.677650432655938e-05
+        ],
+        "entropy_from_jump_w_m2_k": 0.12764031624155597,
+        "entropy_from_path_w_m2_k": 0.12764031624155597,
+        "entropy_molecular_w_m2_k": 0.078287084013093,
+        "entropy_wall_w_m2_k": 0.03091262621643233,
+        "entropy_darcy_w_m2_k": 0.018440606012030646
+      },
+      "reference_fluxes_decimal": [
+        "-0.00483681116998038208702521461615417262132246017537101958782501",
+        "-0.00419227969063501630429233609226183507176978326037494819699496",
+        "0.00937469603758080865672356026219888107334406151715017103561367",
+        "-0.000263246377870182578159135756138771141464181663314836060970105"
+      ],
+      "reference_entropy_decimal": "0.127640316241555984726850029175559516412347543936420594549211",
+      "errors": {
+        "flux_mol_m2_s": 4.539007452853398e-18,
+        "jump_entropy_w_m2_k": 1.1395704605376388e-17,
+        "path_entropy_w_m2_k": 1.1395704605376388e-17,
+        "reversal_flux_mol_m2_s": 8.673617379884035e-19,
+        "reversal_entropy_w_m2_k": 0.0,
+        "flux_decomposition_mol_m2_s": 1.5178830414797062e-18
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": true,
+        "jump_entropy_w_m2_k": true,
+        "path_entropy_w_m2_k": true,
+        "reversal_flux_mol_m2_s": true,
+        "reversal_entropy_w_m2_k": true,
+        "flux_decomposition_mol_m2_s": true,
+        "nonnegative_entropy_parts": true
+      }
+    },
+    {
+      "case": {
+        "name": "equal_pressure_composition_jump",
+        "left_pressure_pa": 100000,
+        "right_pressure_pa": 100000,
+        "left_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "right_fractions": [
+          0.2,
+          0.3,
+          0.1,
+          0.4
+        ]
+      },
+      "quadrature_order": 16,
+      "left_partial_concentrations_mol_m3": [
+        2.0045392507121007,
+        4.009078501424201,
+        6.013617752136303,
+        8.018157002848403
+      ],
+      "right_partial_concentrations_mol_m3": [
+        4.009078501424201,
+        6.013617752136303,
+        2.0045392507121007,
+        8.018157002848403
+      ],
+      "actual": {
+        "molar_fluxes_mol_m2_s": [
+          -0.004836811169980382,
+          -0.004192279690635014,
+          0.009374696037580808,
+          -0.0002632463778701809
+        ],
+        "diffusive_fluxes_mol_m2_s": [
+          -0.004130362945967783,
+          -0.0034561032078600563,
+          0.008073300944545446,
+          -0.00016646987354362045
+        ],
+        "darcy_fluxes_mol_m2_s": [
+          -0.0007064482240125985,
+          -0.0007361764827749574,
+          0.001301395093035361,
+          -9.677650432656038e-05
+        ],
+        "entropy_from_jump_w_m2_k": 0.12764031624155597,
+        "entropy_from_path_w_m2_k": 0.12764031624155597,
+        "entropy_molecular_w_m2_k": 0.07828708401309302,
+        "entropy_wall_w_m2_k": 0.030912626216432326,
+        "entropy_darcy_w_m2_k": 0.018440606012030625
+      },
+      "reference_fluxes_decimal": [
+        "-0.00483681116998038208702521461615417262132246017537101958782501",
+        "-0.00419227969063501630429233609226183507176978326037494819699496",
+        "0.00937469603758080865672356026219888107334406151715017103561367",
+        "-0.000263246377870182578159135756138771141464181663314836060970105"
+      ],
+      "reference_entropy_decimal": "0.127640316241555984726850029175559516412347543936420594549211",
+      "errors": {
+        "flux_mol_m2_s": 2.572089517888175e-18,
+        "jump_entropy_w_m2_k": 1.1395704605376388e-17,
+        "path_entropy_w_m2_k": 1.1395704605376388e-17,
+        "reversal_flux_mol_m2_s": 8.673617379884035e-19,
+        "reversal_entropy_w_m2_k": 0.0,
+        "flux_decomposition_mol_m2_s": 1.734723475976807e-18
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": true,
+        "jump_entropy_w_m2_k": true,
+        "path_entropy_w_m2_k": true,
+        "reversal_flux_mol_m2_s": true,
+        "reversal_entropy_w_m2_k": true,
+        "flux_decomposition_mol_m2_s": true,
+        "nonnegative_entropy_parts": true
+      }
+    },
+    {
+      "case": {
+        "name": "equal_pressure_composition_jump",
+        "left_pressure_pa": 100000,
+        "right_pressure_pa": 100000,
+        "left_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "right_fractions": [
+          0.2,
+          0.3,
+          0.1,
+          0.4
+        ]
+      },
+      "quadrature_order": 32,
+      "left_partial_concentrations_mol_m3": [
+        2.0045392507121007,
+        4.009078501424201,
+        6.013617752136303,
+        8.018157002848403
+      ],
+      "right_partial_concentrations_mol_m3": [
+        4.009078501424201,
+        6.013617752136303,
+        2.0045392507121007,
+        8.018157002848403
+      ],
+      "actual": {
+        "molar_fluxes_mol_m2_s": [
+          -0.004836811169980385,
+          -0.004192279690635016,
+          0.009374696037580824,
+          -0.00026324637787017473
+        ],
+        "diffusive_fluxes_mol_m2_s": [
+          -0.004130362945967784,
+          -0.003456103207860057,
+          0.008073300944545458,
+          -0.00016646987354361717
+        ],
+        "darcy_fluxes_mol_m2_s": [
+          -0.0007064482240126003,
+          -0.0007361764827749594,
+          0.0013013950930353695,
+          -9.677650432655759e-05
+        ],
+        "entropy_from_jump_w_m2_k": 0.12764031624155617,
+        "entropy_from_path_w_m2_k": 0.12764031624155614,
+        "entropy_molecular_w_m2_k": 0.07828708401309303,
+        "entropy_wall_w_m2_k": 0.030912626216432416,
+        "entropy_darcy_w_m2_k": 0.018440606012030705
+      },
+      "reference_fluxes_decimal": [
+        "-0.00483681116998038208702521461615417262132246017537101958782501",
+        "-0.00419227969063501630429233609226183507176978326037494819699496",
+        "0.00937469603758080865672356026219888107334406151715017103561367",
+        "-0.000263246377870182578159135756138771141464181663314836060970105"
+      ],
+      "reference_entropy_decimal": "0.127640316241555984726850029175559516412347543936420594549211",
+      "errors": {
+        "flux_mol_m2_s": 1.5283459356680177e-17,
+        "jump_entropy_w_m2_k": 1.8289332470402601e-16,
+        "path_entropy_w_m2_k": 1.551377490883971e-16,
+        "reversal_flux_mol_m2_s": 1.734723475976807e-18,
+        "reversal_entropy_w_m2_k": 0.0,
+        "flux_decomposition_mol_m2_s": 3.2526065174565133e-18
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": true,
+        "jump_entropy_w_m2_k": true,
+        "path_entropy_w_m2_k": true,
+        "reversal_flux_mol_m2_s": true,
+        "reversal_entropy_w_m2_k": true,
+        "flux_decomposition_mol_m2_s": true,
+        "nonnegative_entropy_parts": true
+      }
+    },
+    {
+      "case": {
+        "name": "equal_pressure_composition_jump",
+        "left_pressure_pa": 100000,
+        "right_pressure_pa": 100000,
+        "left_fractions": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "right_fractions": [
+          0.2,
+          0.3,
+          0.1,
+          0.4
+        ]
+      },
+      "quadrature_order": 64,
+      "left_partial_concentrations_mol_m3": [
+        2.0045392507121007,
+        4.009078501424201,
+        6.013617752136303,
+        8.018157002848403
+      ],
+      "right_partial_concentrations_mol_m3": [
+        4.009078501424201,
+        6.013617752136303,
+        2.0045392507121007,
+        8.018157002848403
+      ],
+      "actual": {
+        "molar_fluxes_mol_m2_s": [
+          -0.004836811169980381,
+          -0.004192279690635012,
+          0.009374696037580805,
+          -0.0002632463778701815
+        ],
+        "diffusive_fluxes_mol_m2_s": [
+          -0.0041303629459677835,
+          -0.0034561032078600554,
+          0.008073300944545446,
+          -0.00016646987354362031
+        ],
+        "darcy_fluxes_mol_m2_s": [
+          -0.0007064482240125984,
+          -0.0007361764827749584,
+          0.0013013950930353616,
+          -9.677650432656166e-05
+        ],
+        "entropy_from_jump_w_m2_k": 0.12764031624155595,
+        "entropy_from_path_w_m2_k": 0.12764031624155597,
+        "entropy_molecular_w_m2_k": 0.07828708401309303,
+        "entropy_wall_w_m2_k": 0.030912626216432322,
+        "entropy_darcy_w_m2_k": 0.018440606012030635
+      },
+      "reference_fluxes_decimal": [
+        "-0.00483681116998038208702521461615417262132246017537101958782501",
+        "-0.00419227969063501630429233609226183507176978326037494819699496",
+        "0.00937469603758080865672356026219888107334406151715017103561367",
+        "-0.000263246377870182578159135756138771141464181663314836060970105"
+      ],
+      "reference_entropy_decimal": "0.127640316241555984726850029175559516412347543936420594549211",
+      "errors": {
+        "flux_mol_m2_s": 4.3068129938649824e-18,
+        "jump_entropy_w_m2_k": 3.91512802210053e-17,
+        "path_entropy_w_m2_k": 1.1395704605376388e-17,
+        "reversal_flux_mol_m2_s": 4.336808689942018e-18,
+        "reversal_entropy_w_m2_k": 0.0,
+        "flux_decomposition_mol_m2_s": 2.3852447794681098e-18
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": true,
+        "jump_entropy_w_m2_k": true,
+        "path_entropy_w_m2_k": true,
+        "reversal_flux_mol_m2_s": true,
+        "reversal_entropy_w_m2_k": true,
+        "flux_decomposition_mol_m2_s": true,
+        "nonnegative_entropy_parts": true
+      }
+    },
+    {
+      "case": {
+        "name": "large_pressure_and_trace_jump",
+        "left_pressure_pa": 50000,
+        "right_pressure_pa": 200000,
+        "left_fractions": [
+          0.0004,
+          0.2,
+          0.21,
+          0.5896
+        ],
+        "right_fractions": [
+          0.8,
+          0.05,
+          0.05,
+          0.1
+        ]
+      },
+      "quadrature_order": 8,
+      "left_partial_concentrations_mol_m3": [
+        0.004009078501424202,
+        2.0045392507121007,
+        2.104766213247706,
+        5.9093817110992735
+      ],
+      "right_partial_concentrations_mol_m3": [
+        32.07262801139361,
+        2.0045392507121007,
+        2.0045392507121007,
+        4.009078501424201
+      ],
+      "actual": {
+        "molar_fluxes_mol_m2_s": [
+          -0.5960816111296465,
+          -0.06952140043126197,
+          -0.06920874323883192,
+          -0.1383893788788212
+        ],
+        "diffusive_fluxes_mol_m2_s": [
+          -0.2731733124041219,
+          -0.03133147350956175,
+          -0.030864131715334392,
+          -0.059546637697370244
+        ],
+        "darcy_fluxes_mol_m2_s": [
+          -0.3229082987255247,
+          -0.038189926921700215,
+          -0.03834461152349752,
+          -0.07884274118145096
+        ],
+        "entropy_from_jump_w_m2_k": 44.06693267039685,
+        "entropy_from_path_w_m2_k": 44.066932670396874,
+        "entropy_molecular_w_m2_k": 1.7614947371713383,
+        "entropy_wall_w_m2_k": 18.446420586328642,
+        "entropy_darcy_w_m2_k": 23.85901734689689
+      },
+      "reference_fluxes_decimal": [
+        "-0.596083403761828599192585327781744906971133530846907492123435",
+        "-0.069522012302834607377378906990641980208857504283805279153533",
+        "-0.0692093450131640970141572935754309545495355567179018683032926",
+        "-0.138390623885170750745045234747133784019708914340988091474883"
+      ],
+      "reference_entropy_decimal": "44.0670623622139553010023854978295558393693249149465565142146",
+      "errors": {
+        "flux_mol_m2_s": 1.792632182072245e-06,
+        "jump_entropy_w_m2_k": 0.00012969181710305582,
+        "path_entropy_w_m2_k": 0.00012969181708173954,
+        "reversal_flux_mol_m2_s": 6.661338147750939e-16,
+        "reversal_entropy_w_m2_k": 5.684341886080802e-14,
+        "flux_decomposition_mol_m2_s": 5.551115123125783e-17
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": false,
+        "jump_entropy_w_m2_k": false,
+        "path_entropy_w_m2_k": false,
+        "reversal_flux_mol_m2_s": true,
+        "reversal_entropy_w_m2_k": true,
+        "flux_decomposition_mol_m2_s": true,
+        "nonnegative_entropy_parts": true
+      }
+    },
+    {
+      "case": {
+        "name": "large_pressure_and_trace_jump",
+        "left_pressure_pa": 50000,
+        "right_pressure_pa": 200000,
+        "left_fractions": [
+          0.0004,
+          0.2,
+          0.21,
+          0.5896
+        ],
+        "right_fractions": [
+          0.8,
+          0.05,
+          0.05,
+          0.1
+        ]
+      },
+      "quadrature_order": 16,
+      "left_partial_concentrations_mol_m3": [
+        0.004009078501424202,
+        2.0045392507121007,
+        2.104766213247706,
+        5.9093817110992735
+      ],
+      "right_partial_concentrations_mol_m3": [
+        32.07262801139361,
+        2.0045392507121007,
+        2.0045392507121007,
+        4.009078501424201
+      ],
+      "actual": {
+        "molar_fluxes_mol_m2_s": [
+          -0.5960834037518157,
+          -0.06952201230509747,
+          -0.06920934501517077,
+          -0.13839062389022408
+        ],
+        "diffusive_fluxes_mol_m2_s": [
+          -0.27317061765642614,
+          -0.03133209539309401,
+          -0.030864743400526393,
+          -0.059547900832903004
+        ],
+        "darcy_fluxes_mol_m2_s": [
+          -0.32291278609538954,
+          -0.038189916912003456,
+          -0.03834460161464438,
+          -0.07884272305732107
+        ],
+        "entropy_from_jump_w_m2_k": 44.067062361448635,
+        "entropy_from_path_w_m2_k": 44.06706236144863,
+        "entropy_molecular_w_m2_k": 1.761537315400685,
+        "entropy_wall_w_m2_k": 18.446172323732338,
+        "entropy_darcy_w_m2_k": 23.859352722315606
+      },
+      "reference_fluxes_decimal": [
+        "-0.596083403761828599192585327781744906971133530846907492123435",
+        "-0.069522012302834607377378906990641980208857504283805279153533",
+        "-0.0692093450131640970141572935754309545495355567179018683032926",
+        "-0.138390623885170750745045234747133784019708914340988091474883"
+      ],
+      "reference_entropy_decimal": "44.0670623622139553010023854978295558393693249149465565142146",
+      "errors": {
+        "flux_mol_m2_s": 1.001292225173472e-11,
+        "jump_entropy_w_m2_k": 7.653207678126245e-10,
+        "path_entropy_w_m2_k": 7.653278732399821e-10,
+        "reversal_flux_mol_m2_s": 3.3306690738754696e-16,
+        "reversal_entropy_w_m2_k": 2.842170943040401e-14,
+        "flux_decomposition_mol_m2_s": 0.0
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": true,
+        "jump_entropy_w_m2_k": true,
+        "path_entropy_w_m2_k": true,
+        "reversal_flux_mol_m2_s": true,
+        "reversal_entropy_w_m2_k": true,
+        "flux_decomposition_mol_m2_s": true,
+        "nonnegative_entropy_parts": true
+      }
+    },
+    {
+      "case": {
+        "name": "large_pressure_and_trace_jump",
+        "left_pressure_pa": 50000,
+        "right_pressure_pa": 200000,
+        "left_fractions": [
+          0.0004,
+          0.2,
+          0.21,
+          0.5896
+        ],
+        "right_fractions": [
+          0.8,
+          0.05,
+          0.05,
+          0.1
+        ]
+      },
+      "quadrature_order": 32,
+      "left_partial_concentrations_mol_m3": [
+        0.004009078501424202,
+        2.0045392507121007,
+        2.104766213247706,
+        5.9093817110992735
+      ],
+      "right_partial_concentrations_mol_m3": [
+        32.07262801139361,
+        2.0045392507121007,
+        2.0045392507121007,
+        4.009078501424201
+      ],
+      "actual": {
+        "molar_fluxes_mol_m2_s": [
+          -0.5960834037618356,
+          -0.06952201230283499,
+          -0.06920934501316449,
+          -0.13839062388517154
+        ],
+        "diffusive_fluxes_mol_m2_s": [
+          -0.2731706176667721,
+          -0.03133209539075826,
+          -0.03086474339844715,
+          -0.05954790082771074
+        ],
+        "darcy_fluxes_mol_m2_s": [
+          -0.3229127860950635,
+          -0.038189916912076724,
+          -0.03834460161471733,
+          -0.07884272305746079
+        ],
+        "entropy_from_jump_w_m2_k": 44.067062362214486,
+        "entropy_from_path_w_m2_k": 44.067062362214486,
+        "entropy_molecular_w_m2_k": 1.7615373142219655,
+        "entropy_wall_w_m2_k": 18.44617232570175,
+        "entropy_darcy_w_m2_k": 23.85935272229077
+      },
+      "reference_fluxes_decimal": [
+        "-0.596083403761828599192585327781744906971133530846907492123435",
+        "-0.069522012302834607377378906990641980208857504283805279153533",
+        "-0.0692093450131640970141572935754309545495355567179018683032926",
+        "-0.138390623885170750745045234747133784019708914340988091474883"
+      ],
+      "reference_entropy_decimal": "44.0670623622139553010023854978295558393693249149465565142146",
+      "errors": {
+        "flux_mol_m2_s": 6.951567809780446e-15,
+        "jump_entropy_w_m2_k": 5.306144990418732e-13,
+        "path_entropy_w_m2_k": 5.306144990418732e-13,
+        "reversal_flux_mol_m2_s": 1.1102230246251565e-16,
+        "reversal_entropy_w_m2_k": 2.1316282072803006e-14,
+        "flux_decomposition_mol_m2_s": 5.551115123125783e-17
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": true,
+        "jump_entropy_w_m2_k": true,
+        "path_entropy_w_m2_k": true,
+        "reversal_flux_mol_m2_s": true,
+        "reversal_entropy_w_m2_k": true,
+        "flux_decomposition_mol_m2_s": true,
+        "nonnegative_entropy_parts": true
+      }
+    },
+    {
+      "case": {
+        "name": "large_pressure_and_trace_jump",
+        "left_pressure_pa": 50000,
+        "right_pressure_pa": 200000,
+        "left_fractions": [
+          0.0004,
+          0.2,
+          0.21,
+          0.5896
+        ],
+        "right_fractions": [
+          0.8,
+          0.05,
+          0.05,
+          0.1
+        ]
+      },
+      "quadrature_order": 64,
+      "left_partial_concentrations_mol_m3": [
+        0.004009078501424202,
+        2.0045392507121007,
+        2.104766213247706,
+        5.9093817110992735
+      ],
+      "right_partial_concentrations_mol_m3": [
+        32.07262801139361,
+        2.0045392507121007,
+        2.0045392507121007,
+        4.009078501424201
+      ],
+      "actual": {
+        "molar_fluxes_mol_m2_s": [
+          -0.5960834037618283,
+          -0.06952201230283463,
+          -0.06920934501316411,
+          -0.13839062388517076
+        ],
+        "diffusive_fluxes_mol_m2_s": [
+          -0.27317061766676964,
+          -0.03133209539075815,
+          -0.030864743398447043,
+          -0.059547900827710526
+        ],
+        "darcy_fluxes_mol_m2_s": [
+          -0.32291278609505863,
+          -0.038189916912076446,
+          -0.03834460161471705,
+          -0.07884272305746023
+        ],
+        "entropy_from_jump_w_m2_k": 44.067062362213946,
+        "entropy_from_path_w_m2_k": 44.06706236221393,
+        "entropy_molecular_w_m2_k": 1.7615373142219644,
+        "entropy_wall_w_m2_k": 18.44617232570156,
+        "entropy_darcy_w_m2_k": 23.859352722290403
+      },
+      "reference_fluxes_decimal": [
+        "-0.596083403761828599192585327781744906971133530846907492123435",
+        "-0.069522012302834607377378906990641980208857504283805279153533",
+        "-0.0692093450131640970141572935754309545495355567179018683032926",
+        "-0.138390623885170750745045234747133784019708914340988091474883"
+      ],
+      "reference_entropy_decimal": "44.0670623622139553010023854978295558393693249149465565142146",
+      "errors": {
+        "flux_mol_m2_s": 2.648818502830719e-16,
+        "jump_entropy_w_m2_k": 9.397980135802917e-15,
+        "path_entropy_w_m2_k": 2.360883485100492e-14,
+        "reversal_flux_mol_m2_s": 3.3306690738754696e-16,
+        "reversal_entropy_w_m2_k": 2.842170943040401e-14,
+        "flux_decomposition_mol_m2_s": 5.551115123125783e-17
+      },
+      "within_budgets": {
+        "flux_mol_m2_s": true,
+        "jump_entropy_w_m2_k": true,
+        "path_entropy_w_m2_k": true,
+        "reversal_flux_mol_m2_s": true,
+        "reversal_entropy_w_m2_k": true,
+        "flux_decomposition_mol_m2_s": true,
+        "nonnegative_entropy_parts": true
+      }
+    }
+  ],
+  "pure_limits": [
+    {
+      "species": "CO",
+      "quadrature_order": 8,
+      "actual_flux_mol_m2_s": -0.8895821882281345,
+      "exact_steady_flux_decimal": "-0.889582188228134871628427357274352711576022831077659636819309",
+      "error_mol_m2_s": 3.6441544213033164e-16,
+      "within_budget": true
+    },
+    {
+      "species": "CO",
+      "quadrature_order": 16,
+      "actual_flux_mol_m2_s": -0.8895821882281348,
+      "exact_steady_flux_decimal": "-0.889582188228134871628427357274352711576022831077659636819309",
+      "error_mol_m2_s": 3.1348534742784696e-17,
+      "within_budget": true
+    },
+    {
+      "species": "CO",
+      "quadrature_order": 32,
+      "actual_flux_mol_m2_s": -0.8895821882281353,
+      "exact_steady_flux_decimal": "-0.889582188228134871628427357274352711576022831077659636819309",
+      "error_mol_m2_s": 4.1274067510727794e-16,
+      "within_budget": true
+    },
+    {
+      "species": "CO",
+      "quadrature_order": 64,
+      "actual_flux_mol_m2_s": -0.8895821882281347,
+      "exact_steady_flux_decimal": "-0.889582188228134871628427357274352711576022831077659636819309",
+      "error_mol_m2_s": 1.4237083720530036e-16,
+      "within_budget": true
+    },
+    {
+      "species": "CO2",
+      "quadrature_order": 8,
+      "actual_flux_mol_m2_s": -0.8286185185160744,
+      "exact_steady_flux_decimal": "-0.828618518516074711233135672124722755597719794104443423483901",
+      "error_mol_m2_s": 3.352095965556932e-16,
+      "within_budget": true
+    },
+    {
+      "species": "CO2",
+      "quadrature_order": 16,
+      "actual_flux_mol_m2_s": -0.8286185185160747,
+      "exact_steady_flux_decimal": "-0.828618518516074711233135672124722755597719794104443423483901",
+      "error_mol_m2_s": 2.142689168146267e-18,
+      "within_budget": true
+    },
+    {
+      "species": "CO2",
+      "quadrature_order": 32,
+      "actual_flux_mol_m2_s": -0.8286185185160754,
+      "exact_steady_flux_decimal": "-0.828618518516074711233135672124722755597719794104443423483901",
+      "error_mol_m2_s": 6.639911256069477e-16,
+      "within_budget": true
+    },
+    {
+      "species": "CO2",
+      "quadrature_order": 64,
+      "actual_flux_mol_m2_s": -0.8286185185160746,
+      "exact_steady_flux_decimal": "-0.828618518516074711233135672124722755597719794104443423483901",
+      "error_mol_m2_s": 1.1316499163066193e-16,
+      "within_budget": true
+    },
+    {
+      "species": "O2",
+      "quadrature_order": 8,
+      "actual_flux_mol_m2_s": -0.7925121775335845,
+      "exact_steady_flux_decimal": "-0.792512177533584784842367229889553447930652543756921443291739",
+      "error_mol_m2_s": 2.905934256200499e-16,
+      "within_budget": true
+    },
+    {
+      "species": "O2",
+      "quadrature_order": 16,
+      "actual_flux_mol_m2_s": -0.7925121775335848,
+      "exact_steady_flux_decimal": "-0.792512177533584784842367229889553447930652543756921443291739",
+      "error_mol_m2_s": 4.2473481767497085e-17,
+      "within_budget": true
+    },
+    {
+      "species": "O2",
+      "quadrature_order": 32,
+      "actual_flux_mol_m2_s": -0.7925121775335855,
+      "exact_steady_flux_decimal": "-0.792512177533584784842367229889553447930652543756921443291739",
+      "error_mol_m2_s": 7.08607296542591e-16,
+      "within_budget": true
+    },
+    {
+      "species": "O2",
+      "quadrature_order": 64,
+      "actual_flux_mol_m2_s": -0.7925121775335845,
+      "exact_steady_flux_decimal": "-0.792512177533584784842367229889553447930652543756921443291739",
+      "error_mol_m2_s": 2.905934256200499e-16,
+      "within_budget": true
+    },
+    {
+      "species": "N2",
+      "quadrature_order": 8,
+      "actual_flux_mol_m2_s": -0.8813781529911237,
+      "exact_steady_flux_decimal": "-0.881378152991123894789740897615512040807596955588266742605854",
+      "error_mol_m2_s": 2.413750230331084e-16,
+      "within_budget": true
+    },
+    {
+      "species": "N2",
+      "quadrature_order": 16,
+      "actual_flux_mol_m2_s": -0.8813781529911239,
+      "exact_steady_flux_decimal": "-0.881378152991123894789740897615512040807596955588266742605854",
+      "error_mol_m2_s": 1.9330418108077094e-17,
+      "within_budget": true
+    },
+    {
+      "species": "N2",
+      "quadrature_order": 32,
+      "actual_flux_mol_m2_s": -0.8813781529911243,
+      "exact_steady_flux_decimal": "-0.881378152991123894789740897615512040807596955588266742605854",
+      "error_mol_m2_s": 4.247587917419855e-16,
+      "within_budget": true
+    },
+    {
+      "species": "N2",
+      "quadrature_order": 64,
+      "actual_flux_mol_m2_s": -0.8813781529911238,
+      "exact_steady_flux_decimal": "-0.881378152991123894789740897615512040807596955588266742605854",
+      "error_mol_m2_s": 1.3035272057059275e-16,
+      "within_budget": true
+    }
+  ],
+  "all_requested_budgets_by_order": {
+    "8": false,
+    "16": true,
+    "32": true,
+    "64": true
+  },
+  "material_qualified": false,
+  "training_eligible": false
+}
