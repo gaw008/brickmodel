@@ -21,16 +21,23 @@ def read(path,format_name):
     return header,result,row
 
 
-def compare(a,b):
+def mean(values,widths):
+    return values.mean() if widths is None else np.average(values,weights=widths)
+
+
+def compare(a,b,widths_a=None,widths_b=None):
     if [r['time_s'] for r in a]!=[r['time_s'] for r in b]:raise ValueError('Comparison requires identical physical observation times')
     na,nb = len(a[0]['temperature']),len(b[0]['temperature']);ratio = nb//na
     maxima = {k:0. for k in ['mean_temperature_k','cell_temperature_k','mean_pressure_pa','cell_pressure_pa','total_lime_mol','surface_temperature_k','surface_pressure_pa']}
     where = {k:None for k in maxima}
     for left,right in zip(a,b,strict=True):
-        differences = {'mean_temperature_k':abs(left['temperature'].mean()-right['temperature'].mean()),
-            'cell_temperature_k':np.max(np.abs(left['temperature']-right['temperature'].reshape(na,ratio).mean(axis=1))),
-            'mean_pressure_pa':abs(left['pressure'].mean()-right['pressure'].mean()),
-            'cell_pressure_pa':np.max(np.abs(left['pressure']-right['pressure'].reshape(na,ratio).mean(axis=1))),
+        def project(values):
+            matrix = values.reshape(na,ratio)
+            return matrix.mean(axis=1) if widths_b is None else np.average(matrix,axis=1,weights=np.array(widths_b).reshape(na,ratio))
+        differences = {'mean_temperature_k':abs(mean(left['temperature'],widths_a)-mean(right['temperature'],widths_b)),
+            'cell_temperature_k':np.max(np.abs(left['temperature']-project(right['temperature']))),
+            'mean_pressure_pa':abs(mean(left['pressure'],widths_a)-mean(right['pressure'],widths_b)),
+            'cell_pressure_pa':np.max(np.abs(left['pressure']-project(right['pressure']))),
             'total_lime_mol':abs(left['lime_mol']-right['lime_mol']),
             'surface_temperature_k':abs(left['surface_temperature_k']-right['surface_temperature_k']),
             'surface_pressure_pa':abs(left['surface_pressure_pa']-right['surface_pressure_pa'])}
@@ -39,11 +46,11 @@ def compare(a,b):
     return {'observations':len(a),'cell_counts':[na,nb],'maximum_differences':maxima,'maximum_difference_times_s':where}
 
 
-def event_time(rows,event):
+def event_time(rows,event,widths=None):
     selection = [r for r in rows if event['start_s']<=r['time_s']<=event['end_s']]
     direction = event['direction'];target = event['mean_temperature_k']
     for before,after in zip(selection[:-1],selection[1:],strict=True):
-        a,b = before['temperature'].mean(),after['temperature'].mean()
+        a,b = mean(before['temperature'],widths),mean(after['temperature'],widths)
         if direction*(a-target)<0<=direction*(b-target):
             return float(before['time_s']+(after['time_s']-before['time_s'])*(target-a)/(b-a))
     return None
@@ -53,10 +60,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__);parser.add_argument('--parameters',type=Path,required=True);parser.add_argument('--output',type=Path,required=True)
     args = parser.parse_args();root = args.parameters.resolve().parent;settings = json.loads(args.parameters.read_text())
     records = {k:read(root/p['trajectory'],p['format']) for k,p in settings['records'].items()}
-    events = {name:{e['name']:event_time(data[1],e) for e in settings['events']} for name,data in records.items()}
+    events = {name:{e['name']:event_time(data[1],e,data[0].get('cell_widths_m')) for e in settings['events']} for name,data in records.items()}
     reports = []
     for pair in settings['pairs']:
-        left,right = pair['left'],pair['right'];report = compare(records[left][1],records[right][1])
+        left,right = pair['left'],pair['right'];report = compare(records[left][1],records[right][1],records[left][0].get('cell_widths_m'),records[right][0].get('cell_widths_m'))
         budgets = settings[pair['kind']+'_budgets'];flags = {k:report['maximum_differences'][k]<=v for k,v in budgets.items()}
         differences = {key:abs(events[left][key]-events[right][key]) if events[left][key] is not None and events[right][key] is not None else None for key in events[left]}
         if pair['kind']=='space':

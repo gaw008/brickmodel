@@ -19,11 +19,11 @@ def main():
     reaction,nitrogen,_,_,_,_,volume = build_rigid(root,config)
     records = [];budget = settings['budgets']
     for case in settings['cases']:
-        n = len(case['temperatures_k']);column = OpenRigidReactiveColumn(reaction,nitrogen,volume,config,policy,surface,n)
+        n = len(case['temperatures_k']);column = OpenRigidReactiveColumn(reaction,nitrogen,volume,config,policy,surface,n,case.get('cell_widths_m'))
         z = column.initial.copy();base = 3*n
         for i,cell in enumerate(column.cells):
-            offset = case['excess_carbon_densities_mol_m3'][i]*column.volume
-            nitrogen_mol = case['nitrogen_densities_mol_m3'][i]*column.volume
+            offset = case['excess_carbon_densities_mol_m3'][i]*cell.volume
+            nitrogen_mol = case['nitrogen_densities_mol_m3'][i]*cell.volume
             state = cell.at_carbon_offset(case['temperatures_k'][i],offset,nitrogen_mol)
             z[3*i:3*i+3] = [offset,np.log(nitrogen_mol/column.reference_nitrogen),state['internal_energy_j']]
         physical,states,faces,reservoir,contact = column.observe(z,case['segment_index'])
@@ -38,10 +38,10 @@ def main():
         physical_jacobian = chart[:,None]*matrix
         for i in range(n):physical_jacobian[3*i+1,3*i+1] += physical_rates[3*i+1]
         balance_jacobian = physical_jacobian[:base].reshape(n,3,len(z)).sum(axis=0)+matrix[base:base+3]
-        normalization = np.tile([settings['coordinate_normalization']['carbon_density_mol_m3']*column.volume,
-            settings['coordinate_normalization']['log_nitrogen'],settings['coordinate_normalization']['energy_density_j_m3']*column.volume],n)
-        perturbation = np.tile([case['carbon_difference_density_mol_m3']*column.volume,
-            settings['difference_scales']['log_nitrogen'],settings['difference_scales']['energy_density_j_m3']*column.volume],n)
+        normalization = np.array([entry for cell in column.cells for entry in [settings['coordinate_normalization']['carbon_density_mol_m3']*cell.volume,
+            settings['coordinate_normalization']['log_nitrogen'],settings['coordinate_normalization']['energy_density_j_m3']*cell.volume]])
+        perturbation = np.array([entry for cell in column.cells for entry in [case['carbon_difference_density_mol_m3']*cell.volume,
+            settings['difference_scales']['log_nitrogen'],settings['difference_scales']['energy_density_j_m3']*cell.volume]])
         output_scales = np.array(settings['per_cell_rate_scales']*n+settings['ledger_rate_scales'])
         derivatives = []
         for step in settings['difference_steps']:
@@ -65,7 +65,7 @@ def main():
             'derivatives':all(d['within_budget'] for d in derivatives),
             'conservation_derivative':float(np.max(np.abs(balance_jacobian[:,:base])*normalization))<=budget['conservation_derivative'],
             'passive_ledger_columns':bool(np.all(matrix[:,base:]==0.))}
-        record = {'case':case,'cell_volume_m3':column.volume,'surface_parameters':column.surface_parameters,
+        record = {'case':case,'cell_volume_m3':column.volume,'cell_volumes_m3':column.volumes.tolist(),'surface_parameters':column.surface_parameters,
             'integration_values':z.tolist(),'phases':[s['phase'] for s in states],
             'inner_C_N_U_rate_residuals':global_balance.tolist(),'outer_C_N_U_rate_residuals':exterior_balance.tolist(),
             'entropy_rate_identity_residual_w_k':entropy_identity,'derivative_reviews':derivatives,

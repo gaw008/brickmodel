@@ -16,16 +16,18 @@ from .rigid_reactive_tangent import inventory_tangent, face_tangents
 
 
 class OpenRigidReactiveColumn:
-    def __init__(self,reaction,nitrogen,volume_source,model_parameters,settings,surface_parameters,cell_count):
+    def __init__(self,reaction,nitrogen,volume_source,model_parameters,settings,surface_parameters,cell_count,cell_widths_m=None):
         self.settings = settings;self.count = cell_count;domain = settings['domain']
         self.width = domain['length_m']/cell_count;self.volume = domain['area_m2']*self.width
+        self.widths = np.full(cell_count,self.width) if cell_widths_m is None else np.asarray(cell_widths_m,dtype=float)
+        self.volumes = domain['area_m2']*self.widths
         self.reference_nitrogen = settings['coordinates']['reference_nitrogen_density_mol_m3']*self.volume
         self.cells = [];initial = [];condition = settings['initial']
-        for _ in range(cell_count):
+        for volume in self.volumes:
             cell = OffsetRigidCalciteMixture(reaction,nitrogen,volume_source,model_parameters,{
-                'calcium_mol':domain['calcium_density_mol_m3']*self.volume,
-                'nitrogen_mol':condition['nitrogen_density_mol_m3']*self.volume,'total_volume_m3':self.volume})
-            offset = condition['excess_carbon_density_mol_m3']*self.volume
+                'calcium_mol':domain['calcium_density_mol_m3']*volume,
+                'nitrogen_mol':condition['nitrogen_density_mol_m3']*volume,'total_volume_m3':volume})
+            offset = condition['excess_carbon_density_mol_m3']*volume
             state = cell.at_carbon_offset(condition['temperature_k'],offset,cell.carrier)
             initial.extend((offset,np.log(state['nitrogen_mol']/self.reference_nitrogen),state['internal_energy_j']))
             self.cells.append(cell)
@@ -35,10 +37,15 @@ class OpenRigidReactiveColumn:
             'heat_conductance_w_k':transport['thermal_conductivity_w_m_k']*conductance,
             'bulk_mobility_mol2_k_j_s':transport['bulk_mobility_mol2_k_j_m_s']*conductance,
             'counter_mobility_mol2_k_j_s':transport['counter_mobility_mol2_k_j_m_s']*conductance}
+        self.internal_face_parameters = [self.face_parameters]*(cell_count-1) if cell_widths_m is None else [
+            {'heat_conductance_w_k':transport['thermal_conductivity_w_m_k']*domain['area_m2']/distance,
+             'bulk_mobility_mol2_k_j_s':transport['bulk_mobility_mol2_k_j_m_s']*domain['area_m2']/distance,
+             'counter_mobility_mol2_k_j_s':transport['counter_mobility_mol2_k_j_m_s']*domain['area_m2']/distance}
+            for distance in (self.widths[:-1]+self.widths[1:])/2]
         self.surface_parameters = deepcopy(surface_parameters)
         self.surface_parameters['area_m2'] = domain['area_m2']
         self.surface_parameters['interior'] = {
-            'distance_m':self.width/2,'conductivity_w_m_k':transport['thermal_conductivity_w_m_k'],
+            'distance_m':float(self.widths[-1]/2),'conductivity_w_m_k':transport['thermal_conductivity_w_m_k'],
             'bulk_mobility_mol2_k_j_m_s':transport['bulk_mobility_mol2_k_j_m_s'],
             'counter_mobility_mol2_k_j_m_s':transport['counter_mobility_mol2_k_j_m_s']}
         self.boundary = OpenRigidCalciteCell(self.cells[-1],self.surface_parameters,settings['boundary_program'])
@@ -53,7 +60,7 @@ class OpenRigidReactiveColumn:
     def observe(self,values,segment):
         physical = self.physical_values(values)
         states = [cell.offset_inventory_state(values[3*i],*physical[3*i+1:3*i+3]) for i,cell in enumerate(self.cells)]
-        faces = [rigid_reactive_face(left,right,self.face_parameters) for left,right in zip(states[:-1],states[1:],strict=True)]
+        faces = [rigid_reactive_face(left,right,parameters) for left,right,parameters in zip(states[:-1],states[1:],self.internal_face_parameters,strict=True)]
         reservoir = self.boundary.reservoirs[segment]
         contact = self.boundary.surface.solve(states[-1],reservoir,self.settings['boundary_program'][segment]['radiation_temperature_k'])
         return physical,states,faces,reservoir,contact
@@ -89,7 +96,7 @@ class OpenRigidReactiveColumn:
                 for j in range(matrix.shape[1]):
                     rows.append(row+i);columns.append(column+j);entries.append(matrix[i,j])
         for i in range(self.count-1):
-            pair = face_tangents(states[i],states[i+1],tangents[i],tangents[i+1],self.face_parameters)
+            pair = face_tangents(states[i],states[i+1],tangents[i],tangents[i+1],self.internal_face_parameters[i])
             for side,derivative in enumerate(pair):
                 column = 3*(i+side)
                 block(3*i,column,-derivative[:3]);block(3*i+3,column,derivative[:3])

@@ -24,9 +24,15 @@ def main():
     surface = json.loads((root/settings['surface_parameters']).read_text())['surface']
     reaction,nitrogen,affinity,source,facts,nsource,volume = build_rigid(root,config)
     n = settings['meshes'][args.mesh]
-    model = OpenRigidReactiveColumn(reaction,nitrogen,volume,config,settings,surface,n)
+    widths = settings['mesh_cell_widths_m'][args.mesh] if 'mesh_cell_widths_m' in settings else None
+    model = OpenRigidReactiveColumn(reaction,nitrogen,volume,config,settings,surface,n,widths)
     values = model.initial;policy = settings['numerics'];factor = 1. if args.tolerance=='base' else policy['refinement_factor']
-    absolute = np.array(policy['physical_coordinate_absolute_tolerances']*n+policy['ledger_absolute_tolerances'])*factor
+    if 'physical_coordinate_density_absolute_tolerances' in policy:
+        c_atol,z_atol,u_atol = policy['physical_coordinate_density_absolute_tolerances']
+        body_absolute = [entry for cell in model.cells for entry in (c_atol*cell.volume,z_atol,u_atol*cell.volume)]
+    else:
+        body_absolute = policy['physical_coordinate_absolute_tolerances']*n
+    absolute = np.array(body_absolute+policy['ledger_absolute_tolerances'])*factor
     begin,end = settings['boundary_program'][0]['start_s'],settings['boundary_program'][-1]['end_s']
     times = np.arange(begin+policy['observation_interval_s'],end+policy['observation_interval_s'],policy['observation_interval_s'])
     index = steps = 0;started = time.monotonic()
@@ -39,7 +45,10 @@ def main():
                 'states':states,'faces':faces,'reservoir':reservoir,'contact':contact}
         emit({'kind':'input','settings':settings,'model_parameters':config,'surface_parameters':model.surface_parameters,
             'affinity_parameters':affinity,'source':source,'reference_facts':facts,'nitrogen_source':nsource,'volume_source':volume,
-            'cell_count':n,'cell_volume_m3':model.volume,'cell_width_m':model.width,'internal_face_parameters':model.face_parameters,
+            'cell_count':n,'cell_volume_m3':model.volume,'cell_width_m':model.width,'internal_face_parameters':model.internal_face_parameters,
+            'cell_widths_m':None if widths is None else model.widths.tolist(),
+            'cell_volumes_m3':model.volumes.tolist(),'absolute_tolerances':absolute.tolist(),'relative_tolerance':policy['relative_tolerance']*factor,
+            'geometry_note':'Singular cell_width_m/cell_volume_m3 are domain averages; per-cell vectors define geometry. Null widths means the original uniform construction.',
             'tolerance':args.tolerance,'jacobian_method':args.jacobian,'scipy_version':scipy.__version__,
             'material_qualified':False,'training_eligible':False})
         emit(record('initial',begin,values,0))

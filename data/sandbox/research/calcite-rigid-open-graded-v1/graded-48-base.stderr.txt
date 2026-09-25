@@ -1,0 +1,49 @@
+Traceback (most recent call last):
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_calcite_rigid_open_column.py", line 98, in <module>
+    main()
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_calcite_rigid_open_column.py", line 70, in main
+    previous = solver.t;message = solver.step()
+                                  ^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/base.py", line 201, in step
+    success, message = self._step_impl()
+                       ^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/bdf.py", line 371, in _step_impl
+    converged, n_iter, y_new, d = solve_bdf_system(
+                                  ^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/bdf.py", line 43, in solve_bdf_system
+    f = fun(t_new, y)
+        ^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/base.py", line 158, in fun
+    return self.fun_single(t, y)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/base.py", line 24, in fun_wrapped
+    return np.asarray(fun(t, y), dtype=dtype)
+                      ^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_calcite_rigid_open_column.py", line 60, in rates
+    return model.rates(t,y,segment)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/rigid_reactive_open_column.py", line 85, in rates
+    physical,_,faces,reservoir,contact = self.observe(values,segment)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/rigid_reactive_open_column.py", line 62, in observe
+    states = [cell.offset_inventory_state(values[3*i],*physical[3*i+1:3*i+3]) for i,cell in enumerate(self.cells)]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/rigid_reactive_offset.py", line 44, in offset_inventory_state
+    t = brentq(lambda value:self.at_carbon_offset(value,carbon_offset_mol,nitrogen_mol)['internal_energy_j']-internal_energy_j,*self.domain,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_zeros_py.py", line 858, in brentq
+    r = _zeros._brentq(f, a, b, xtol, rtol, maxiter, args, full_output, disp)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_zeros_py.py", line 107, in f_raise
+    fx = f(x, *args)
+         ^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/rigid_reactive_offset.py", line 44, in <lambda>
+    t = brentq(lambda value:self.at_carbon_offset(value,carbon_offset_mol,nitrogen_mol)['internal_energy_j']-internal_energy_j,*self.domain,
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/rigid_reactive_offset.py", line 24, in at_carbon_offset
+    if score(c)<=0.:
+       ^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/rigid_reactive_offset.py", line 23, in score
+    return dg-(p-self.p0)*self.dv+rt*math.log(pc/self.p0)
+                                     ^^^^^^^^^^^^^^^^^^^^
+ValueError: math domain error

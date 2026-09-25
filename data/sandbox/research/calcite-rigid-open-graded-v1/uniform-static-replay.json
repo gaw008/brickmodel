@@ -1,0 +1,900 @@
+{
+  "settings": {
+    "column_parameters": "parameters.calcite_rigid_open_column.json",
+    "coordinate_normalization": {
+      "carbon_density_mol_m3": 10.0,
+      "log_nitrogen": 1.0,
+      "energy_density_j_m3": 1000000.0
+    },
+    "difference_scales": {
+      "log_nitrogen": 1.0,
+      "energy_density_j_m3": 1000000.0
+    },
+    "difference_steps": [
+      0.0005,
+      0.00015,
+      5e-05
+    ],
+    "per_cell_rate_scales": [
+      1e-06,
+      1.0,
+      1.0
+    ],
+    "ledger_rate_scales": [
+      1e-06,
+      1e-06,
+      1.0,
+      1e-06,
+      1e-06,
+      1.0,
+      1.0,
+      0.001,
+      0.001,
+      0.001
+    ],
+    "budgets": {
+      "species_rate_mol_s": 1e-12,
+      "energy_rate_w": 1e-08,
+      "entropy_rate_w_k": 1e-09,
+      "scaled_derivative": 1e-05,
+      "conservation_derivative": 1e-10
+    },
+    "cases": [
+      {
+        "name": "one_cell_cold",
+        "temperatures_k": [
+          300.0
+        ],
+        "excess_carbon_densities_mol_m3": [
+          0.01
+        ],
+        "nitrogen_densities_mol_m3": [
+          20.0
+        ],
+        "carbon_difference_density_mol_m3": 0.01,
+        "segment_index": 0
+      },
+      {
+        "name": "four_cell_cold",
+        "temperatures_k": [
+          300.0,
+          300.0,
+          300.0,
+          300.0
+        ],
+        "excess_carbon_densities_mol_m3": [
+          0.01,
+          0.01,
+          0.01,
+          0.01
+        ],
+        "nitrogen_densities_mol_m3": [
+          20.0,
+          20.0,
+          20.0,
+          20.0
+        ],
+        "carbon_difference_density_mol_m3": 0.01,
+        "segment_index": 0
+      },
+      {
+        "name": "four_cell_hot_gradient",
+        "temperatures_k": [
+          900.0,
+          950.0,
+          1000.0,
+          1100.0
+        ],
+        "excess_carbon_densities_mol_m3": [
+          -10.0,
+          -20.0,
+          -30.0,
+          -40.0
+        ],
+        "nitrogen_densities_mol_m3": [
+          20.0,
+          18.0,
+          15.0,
+          10.0
+        ],
+        "carbon_difference_density_mol_m3": 10.0,
+        "segment_index": 0
+      },
+      {
+        "name": "four_cell_cooling",
+        "temperatures_k": [
+          1100.0,
+          1000.0,
+          900.0,
+          700.0
+        ],
+        "excess_carbon_densities_mol_m3": [
+          -40.0,
+          -30.0,
+          -20.0,
+          -10.0
+        ],
+        "nitrogen_densities_mol_m3": [
+          10.0,
+          15.0,
+          18.0,
+          20.0
+        ],
+        "carbon_difference_density_mol_m3": 10.0,
+        "segment_index": 1
+      }
+    ],
+    "scope": "Separate static qualification before time integration; original root, thermochemical and physical definitions preserved. No true-material parameter fitting.",
+    "reason": "Original four-cell cold coarse difference missed 1e-5 by reaching 1.10862e-5; differences decreased with step squared to 9.99476e-7 and 1.07915e-7. Halve all derivative comparison steps, retaining original coordinate/rate normalization and error budget. Original results preserved."
+  },
+  "column_parameters": {
+    "model_parameters": "parameters.calcite_rigid_column.json",
+    "surface_parameters": "parameters.calcite_rigid_surface_cold_derivative.json",
+    "initial": {
+      "temperature_k": 300.0,
+      "excess_carbon_density_mol_m3": 0.01,
+      "nitrogen_density_mol_m3": 20.0
+    },
+    "boundary_program": [
+      {
+        "start_s": 0.0,
+        "end_s": 4000.0,
+        "gas_temperature_k": 1180.0,
+        "pressure_pa": 100000.0,
+        "co2_mole_fraction": 0.0004,
+        "radiation_temperature_k": 1180.0
+      },
+      {
+        "start_s": 4000.0,
+        "end_s": 8000.0,
+        "gas_temperature_k": 400.0,
+        "pressure_pa": 100000.0,
+        "co2_mole_fraction": 0.1,
+        "radiation_temperature_k": 400.0
+      }
+    ],
+    "numerics": {
+      "relative_tolerance": 1e-11,
+      "refinement_factor": 0.1,
+      "initial_step_s": 1e-05,
+      "maximum_step_s": 1.0,
+      "observation_interval_s": 2.0,
+      "progress_every_steps": 100,
+      "physical_coordinate_absolute_tolerances": [
+        1e-13,
+        1e-09,
+        1e-07
+      ],
+      "ledger_absolute_tolerances": [
+        1e-13,
+        1e-13,
+        1e-07,
+        1e-13,
+        1e-13,
+        1e-07,
+        1e-07,
+        1e-10,
+        1e-10,
+        1e-10
+      ]
+    },
+    "verification": {
+      "species_balance_mol": 1e-10,
+      "energy_balance_j": 1e-05,
+      "entropy_balance_j_k": 1e-07,
+      "negative_step_entropy_allowance_j_k": 1e-10,
+      "source_energy_j": 1e-05,
+      "source_entropy_j_k": 1e-07,
+      "source_pressure_pa": 0.001,
+      "source_volume_m3": 1e-15,
+      "source_affinity_j_mol": 1e-05,
+      "surface_species_mol_s": 1e-12,
+      "surface_energy_w": 1e-08,
+      "time_temperature_k": 0.001,
+      "time_pressure_pa": 1.0,
+      "time_lime_mol": 1e-08,
+      "quadrature_orders": [
+        2,
+        4
+      ]
+    },
+    "classification": "Prescribed virtual gas and radiation reservoirs; equilibrium reaction limit with physically separate inner/outer ledgers",
+    "boundary_change_interpretation": "Switch contacts to distinct prescribed reservoirs at 4000s; no instantaneous change of cell inventory or internal energy. No model of the energy required to condition the external reservoirs.",
+    "scope": "One-dimensional conditional equilibrium reaction and shared gas/energy transport. No actual brick material accuracy or finite-rate chemistry.",
+    "material_qualified": false,
+    "training_eligible": false,
+    "domain": {
+      "length_m": 0.02,
+      "area_m2": 0.0001,
+      "calcium_density_mol_m3": 10000.0,
+      "geometry_classification": "Virtual 2cm fixed-volume planar column, sealed left and one open right surface."
+    },
+    "transport": {
+      "thermal_conductivity_w_m_k": 0.1,
+      "bulk_mobility_mol2_k_j_m_s": 1e-07,
+      "counter_mobility_mol2_k_j_m_s": 1e-07,
+      "classification": "declared virtual positive symmetric gas exchange, not calibrated Darcy or binary diffusivity",
+      "source_note": "No material measurement; Onsager supplies near-equilibrium response structure only; finite force use is an explicit constitutive extension."
+    },
+    "coordinates": {
+      "carbon": "excess_over_fixed_calcium",
+      "nitrogen": "log_inventory_over_reference",
+      "reference_nitrogen_density_mol_m3": 10.0,
+      "time": "step_local_autonomous"
+    },
+    "meshes": {
+      "one": 1,
+      "two": 2,
+      "four": 4,
+      "eight": 8,
+      "sixteen": 16,
+      "thirty_two": 32,
+      "sixty_four": 64,
+      "one_twenty_eight": 128
+    },
+    "state_order": "Per-cell [C-Ca, ln(N2/Nref), U], then [C_inner_out,N_inner_out,E_inner_out,C_outer_out,N_outer_out,E_outer_out,Q_radiation_in,S_gas,S_wall,S_production]",
+    "surface_geometry": "Surface area equals domain area; interior surface distance is half the cell width; internal faces use full cell width. Interior density coefficients are taken from transport; external film/radiation from the explicit surface file."
+  },
+  "records": [
+    {
+      "case": {
+        "name": "one_cell_cold",
+        "temperatures_k": [
+          300.0
+        ],
+        "excess_carbon_densities_mol_m3": [
+          0.01
+        ],
+        "nitrogen_densities_mol_m3": [
+          20.0
+        ],
+        "carbon_difference_density_mol_m3": 0.01,
+        "segment_index": 0
+      },
+      "cell_volume_m3": 2.0000000000000003e-06,
+      "cell_volumes_m3": [
+        2.0000000000000003e-06
+      ],
+      "surface_parameters": {
+        "area_m2": 0.0001,
+        "interior": {
+          "distance_m": 0.01,
+          "conductivity_w_m_k": 0.1,
+          "bulk_mobility_mol2_k_j_m_s": 1e-07,
+          "counter_mobility_mol2_k_j_m_s": 1e-07
+        },
+        "exterior": {
+          "heat_transfer_w_m2_k": 10.0,
+          "bulk_mobility_mol2_k_j_m2_s": 2e-05,
+          "counter_mobility_mol2_k_j_m2_s": 2e-05
+        },
+        "radiation": {
+          "emissivity": 1.0,
+          "stefan_boltzmann_w_m2_k4": 5.670374419e-08,
+          "area_classification": "Same declared zero-storage contact area, not the earlier capsule geometry.",
+          "surface_classification": "ideal_black_surface_in_prescribed_black_enclosure_view_factor_one",
+          "material_emissivity": null,
+          "source": {
+            "constant_url": "https://physics.nist.gov/cuu/Constants/Table/allascii.txt",
+            "adjustment": "2022 CODATA",
+            "printed_value": "5.670 374 419... e-8",
+            "printed_uncertainty": "exact",
+            "unit": "W m^-2 K^-4",
+            "retrieved_utc": "2026-09-25",
+            "formula": "2*pi^5*kB^4/(15*h^3*c^2)",
+            "boltzmann_j_k": 1.380649e-23,
+            "planck_j_s": 6.62607015e-34,
+            "light_speed_m_s": 299792458.0,
+            "numerical_representation": "Finite printed digits retained, not an exact decimal; not material uncertainty.",
+            "boundary_reference": "https://doc.comsol.com/6.3/doc/com.comsol.help.heat/heat_ug_theory.07.047.html"
+          },
+          "entropy_scope": "Combined material plus prescribed thermal reservoir, neglect radiation-field storage; Q/Twall is reservoir entropy loss, not a claim that photon entropy flux equals Q/Twall."
+        },
+        "numerics": {
+          "initial_reservoir_weight": 0.5,
+          "balance_scales_carbon_nitrogen_energy": [
+            1e-06,
+            1e-06,
+            1.0
+          ],
+          "coordinate_scales_temperature_logpressure_logitfraction": [
+            100.0,
+            1.0,
+            1.0
+          ],
+          "function_relative_tolerance": 1e-13,
+          "coordinate_relative_tolerance": 1e-13,
+          "gradient_absolute_tolerance": 1e-13,
+          "maximum_function_evaluations": 300
+        },
+        "classification": "Declared virtual transfer geometry, film mobilities and black enclosure; no measured brick coefficients."
+      },
+      "integration_values": [
+        2.0000000000000004e-08,
+        0.6931471805599453,
+        -24145.08454918942,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "phases": [
+        "calcite"
+      ],
+      "inner_C_N_U_rate_residuals": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "outer_C_N_U_rate_residuals": [
+        -4.822462971184151e-22,
+        5.699274420490361e-22,
+        1.1102230246251565e-15
+      ],
+      "entropy_rate_identity_residual_w_k": 4.336808689942018e-19,
+      "derivative_reviews": [
+        {
+          "step": 0.0005,
+          "scaled_maximum_absolute_difference": 4.620103055685833e-07,
+          "all_perturbations_same_phase": true,
+          "worst_row": 4,
+          "worst_column": 0,
+          "analytic_at_worst": -0.2769770211672145,
+          "central_difference_at_worst": -0.2769770442677298,
+          "within_budget": true
+        },
+        {
+          "step": 0.00015,
+          "scaled_maximum_absolute_difference": 4.3242184277758624e-08,
+          "all_perturbations_same_phase": true,
+          "worst_row": 4,
+          "worst_column": 0,
+          "analytic_at_worst": -0.2769770211672145,
+          "central_difference_at_worst": -0.2769770233293237,
+          "within_budget": true
+        },
+        {
+          "step": 5e-05,
+          "scaled_maximum_absolute_difference": 1.2214207568916892e-07,
+          "all_perturbations_same_phase": true,
+          "worst_row": 12,
+          "worst_column": 0,
+          "analytic_at_worst": -7.564147260810494,
+          "central_difference_at_worst": -7.56414115370671,
+          "within_budget": true
+        }
+      ],
+      "maximum_scaled_conservation_derivative": 1.6543612251060553e-24,
+      "within_budgets": {
+        "inner_species": true,
+        "outer_species": true,
+        "inner_energy": true,
+        "outer_energy": true,
+        "entropy_identity": true,
+        "derivatives": true,
+        "conservation_derivative": true,
+        "passive_ledger_columns": true
+      }
+    },
+    {
+      "case": {
+        "name": "four_cell_cold",
+        "temperatures_k": [
+          300.0,
+          300.0,
+          300.0,
+          300.0
+        ],
+        "excess_carbon_densities_mol_m3": [
+          0.01,
+          0.01,
+          0.01,
+          0.01
+        ],
+        "nitrogen_densities_mol_m3": [
+          20.0,
+          20.0,
+          20.0,
+          20.0
+        ],
+        "carbon_difference_density_mol_m3": 0.01,
+        "segment_index": 0
+      },
+      "cell_volume_m3": 5.000000000000001e-07,
+      "cell_volumes_m3": [
+        5.000000000000001e-07,
+        5.000000000000001e-07,
+        5.000000000000001e-07,
+        5.000000000000001e-07
+      ],
+      "surface_parameters": {
+        "area_m2": 0.0001,
+        "interior": {
+          "distance_m": 0.0025,
+          "conductivity_w_m_k": 0.1,
+          "bulk_mobility_mol2_k_j_m_s": 1e-07,
+          "counter_mobility_mol2_k_j_m_s": 1e-07
+        },
+        "exterior": {
+          "heat_transfer_w_m2_k": 10.0,
+          "bulk_mobility_mol2_k_j_m2_s": 2e-05,
+          "counter_mobility_mol2_k_j_m2_s": 2e-05
+        },
+        "radiation": {
+          "emissivity": 1.0,
+          "stefan_boltzmann_w_m2_k4": 5.670374419e-08,
+          "area_classification": "Same declared zero-storage contact area, not the earlier capsule geometry.",
+          "surface_classification": "ideal_black_surface_in_prescribed_black_enclosure_view_factor_one",
+          "material_emissivity": null,
+          "source": {
+            "constant_url": "https://physics.nist.gov/cuu/Constants/Table/allascii.txt",
+            "adjustment": "2022 CODATA",
+            "printed_value": "5.670 374 419... e-8",
+            "printed_uncertainty": "exact",
+            "unit": "W m^-2 K^-4",
+            "retrieved_utc": "2026-09-25",
+            "formula": "2*pi^5*kB^4/(15*h^3*c^2)",
+            "boltzmann_j_k": 1.380649e-23,
+            "planck_j_s": 6.62607015e-34,
+            "light_speed_m_s": 299792458.0,
+            "numerical_representation": "Finite printed digits retained, not an exact decimal; not material uncertainty.",
+            "boundary_reference": "https://doc.comsol.com/6.3/doc/com.comsol.help.heat/heat_ug_theory.07.047.html"
+          },
+          "entropy_scope": "Combined material plus prescribed thermal reservoir, neglect radiation-field storage; Q/Twall is reservoir entropy loss, not a claim that photon entropy flux equals Q/Twall."
+        },
+        "numerics": {
+          "initial_reservoir_weight": 0.5,
+          "balance_scales_carbon_nitrogen_energy": [
+            1e-06,
+            1e-06,
+            1.0
+          ],
+          "coordinate_scales_temperature_logpressure_logitfraction": [
+            100.0,
+            1.0,
+            1.0
+          ],
+          "function_relative_tolerance": 1e-13,
+          "coordinate_relative_tolerance": 1e-13,
+          "gradient_absolute_tolerance": 1e-13,
+          "maximum_function_evaluations": 300
+        },
+        "classification": "Declared virtual transfer geometry, film mobilities and black enclosure; no measured brick coefficients."
+      },
+      "integration_values": [
+        5.000000000000001e-09,
+        0.6931471805599453,
+        -6036.271137297355,
+        5.000000000000001e-09,
+        0.6931471805599453,
+        -6036.271137297355,
+        5.000000000000001e-09,
+        0.6931471805599453,
+        -6036.271137297355,
+        5.000000000000001e-09,
+        0.6931471805599453,
+        -6036.271137297355,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "phases": [
+        "calcite",
+        "calcite",
+        "calcite",
+        "calcite"
+      ],
+      "inner_C_N_U_rate_residuals": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "outer_C_N_U_rate_residuals": [
+        1.9521462456251453e-22,
+        -1.819797347616661e-23,
+        -2.220446049250313e-15
+      ],
+      "entropy_rate_identity_residual_w_k": -3.469446951953614e-18,
+      "derivative_reviews": [
+        {
+          "step": 0.0005,
+          "scaled_maximum_absolute_difference": 2.770653400041568e-06,
+          "all_perturbations_same_phase": true,
+          "worst_row": 3,
+          "worst_column": 3,
+          "analytic_at_worst": -6.651609713554316,
+          "central_difference_at_worst": -6.651610267684996,
+          "within_budget": true
+        },
+        {
+          "step": 0.00015,
+          "scaled_maximum_absolute_difference": 2.527957931874881e-07,
+          "all_perturbations_same_phase": true,
+          "worst_row": 3,
+          "worst_column": 3,
+          "analytic_at_worst": -6.651609713554316,
+          "central_difference_at_worst": -6.651609764113474,
+          "within_budget": true
+        },
+        {
+          "step": 5e-05,
+          "scaled_maximum_absolute_difference": 4.3321082515035425e-07,
+          "all_perturbations_same_phase": true,
+          "worst_row": 21,
+          "worst_column": 9,
+          "analytic_at_worst": -75.67615621955864,
+          "central_difference_at_worst": -75.6760695773936,
+          "within_budget": true
+        }
+      ],
+      "maximum_scaled_conservation_derivative": 1.1641532182693484e-15,
+      "within_budgets": {
+        "inner_species": true,
+        "outer_species": true,
+        "inner_energy": true,
+        "outer_energy": true,
+        "entropy_identity": true,
+        "derivatives": true,
+        "conservation_derivative": true,
+        "passive_ledger_columns": true
+      }
+    },
+    {
+      "case": {
+        "name": "four_cell_hot_gradient",
+        "temperatures_k": [
+          900.0,
+          950.0,
+          1000.0,
+          1100.0
+        ],
+        "excess_carbon_densities_mol_m3": [
+          -10.0,
+          -20.0,
+          -30.0,
+          -40.0
+        ],
+        "nitrogen_densities_mol_m3": [
+          20.0,
+          18.0,
+          15.0,
+          10.0
+        ],
+        "carbon_difference_density_mol_m3": 10.0,
+        "segment_index": 0
+      },
+      "cell_volume_m3": 5.000000000000001e-07,
+      "cell_volumes_m3": [
+        5.000000000000001e-07,
+        5.000000000000001e-07,
+        5.000000000000001e-07,
+        5.000000000000001e-07
+      ],
+      "surface_parameters": {
+        "area_m2": 0.0001,
+        "interior": {
+          "distance_m": 0.0025,
+          "conductivity_w_m_k": 0.1,
+          "bulk_mobility_mol2_k_j_m_s": 1e-07,
+          "counter_mobility_mol2_k_j_m_s": 1e-07
+        },
+        "exterior": {
+          "heat_transfer_w_m2_k": 10.0,
+          "bulk_mobility_mol2_k_j_m2_s": 2e-05,
+          "counter_mobility_mol2_k_j_m2_s": 2e-05
+        },
+        "radiation": {
+          "emissivity": 1.0,
+          "stefan_boltzmann_w_m2_k4": 5.670374419e-08,
+          "area_classification": "Same declared zero-storage contact area, not the earlier capsule geometry.",
+          "surface_classification": "ideal_black_surface_in_prescribed_black_enclosure_view_factor_one",
+          "material_emissivity": null,
+          "source": {
+            "constant_url": "https://physics.nist.gov/cuu/Constants/Table/allascii.txt",
+            "adjustment": "2022 CODATA",
+            "printed_value": "5.670 374 419... e-8",
+            "printed_uncertainty": "exact",
+            "unit": "W m^-2 K^-4",
+            "retrieved_utc": "2026-09-25",
+            "formula": "2*pi^5*kB^4/(15*h^3*c^2)",
+            "boltzmann_j_k": 1.380649e-23,
+            "planck_j_s": 6.62607015e-34,
+            "light_speed_m_s": 299792458.0,
+            "numerical_representation": "Finite printed digits retained, not an exact decimal; not material uncertainty.",
+            "boundary_reference": "https://doc.comsol.com/6.3/doc/com.comsol.help.heat/heat_ug_theory.07.047.html"
+          },
+          "entropy_scope": "Combined material plus prescribed thermal reservoir, neglect radiation-field storage; Q/Twall is reservoir entropy loss, not a claim that photon entropy flux equals Q/Twall."
+        },
+        "numerics": {
+          "initial_reservoir_weight": 0.5,
+          "balance_scales_carbon_nitrogen_energy": [
+            1e-06,
+            1e-06,
+            1.0
+          ],
+          "coordinate_scales_temperature_logpressure_logitfraction": [
+            100.0,
+            1.0,
+            1.0
+          ],
+          "function_relative_tolerance": 1e-13,
+          "coordinate_relative_tolerance": 1e-13,
+          "gradient_absolute_tolerance": 1e-13,
+          "maximum_function_evaluations": 300
+        },
+        "classification": "Declared virtual transfer geometry, film mobilities and black enclosure; no measured brick coefficients."
+      },
+      "integration_values": [
+        -5.000000000000001e-06,
+        0.6931471805599453,
+        -5709.807565863605,
+        -1.0000000000000003e-05,
+        0.587786664902119,
+        -5676.621888886128,
+        -1.5000000000000002e-05,
+        0.4054651081081642,
+        -5643.066652549988,
+        -2.0000000000000005e-05,
+        0.0,
+        -5577.396381790201,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "phases": [
+        "coexistence",
+        "coexistence",
+        "coexistence",
+        "coexistence"
+      ],
+      "inner_C_N_U_rate_residuals": [
+        -1.3234889800848443e-23,
+        1.3234889800848443e-23,
+        0.0
+      ],
+      "outer_C_N_U_rate_residuals": [
+        9.661469554619363e-22,
+        -8.602678370551488e-22,
+        -4.718447854656915e-15
+      ],
+      "entropy_rate_identity_residual_w_k": -3.577867169202165e-18,
+      "derivative_reviews": [
+        {
+          "step": 0.0005,
+          "scaled_maximum_absolute_difference": 1.740982465830987e-09,
+          "all_perturbations_same_phase": true,
+          "worst_row": 10,
+          "worst_column": 10,
+          "analytic_at_worst": -0.029430301858621753,
+          "central_difference_at_worst": -0.02943030359960422,
+          "within_budget": true
+        },
+        {
+          "step": 0.00015,
+          "scaled_maximum_absolute_difference": 1.5682258269755778e-10,
+          "all_perturbations_same_phase": true,
+          "worst_row": 10,
+          "worst_column": 10,
+          "analytic_at_worst": -0.029430301858621753,
+          "central_difference_at_worst": -0.029430302015444335,
+          "within_budget": true
+        },
+        {
+          "step": 5e-05,
+          "scaled_maximum_absolute_difference": 6.239361482585084e-11,
+          "all_perturbations_same_phase": true,
+          "worst_row": 8,
+          "worst_column": 6,
+          "analytic_at_worst": -3199.3614803869605,
+          "central_difference_at_worst": -3199.3614928656834,
+          "within_budget": true
+        }
+      ],
+      "maximum_scaled_conservation_derivative": 1.1368683772161606e-18,
+      "within_budgets": {
+        "inner_species": true,
+        "outer_species": true,
+        "inner_energy": true,
+        "outer_energy": true,
+        "entropy_identity": true,
+        "derivatives": true,
+        "conservation_derivative": true,
+        "passive_ledger_columns": true
+      }
+    },
+    {
+      "case": {
+        "name": "four_cell_cooling",
+        "temperatures_k": [
+          1100.0,
+          1000.0,
+          900.0,
+          700.0
+        ],
+        "excess_carbon_densities_mol_m3": [
+          -40.0,
+          -30.0,
+          -20.0,
+          -10.0
+        ],
+        "nitrogen_densities_mol_m3": [
+          10.0,
+          15.0,
+          18.0,
+          20.0
+        ],
+        "carbon_difference_density_mol_m3": 10.0,
+        "segment_index": 1
+      },
+      "cell_volume_m3": 5.000000000000001e-07,
+      "cell_volumes_m3": [
+        5.000000000000001e-07,
+        5.000000000000001e-07,
+        5.000000000000001e-07,
+        5.000000000000001e-07
+      ],
+      "surface_parameters": {
+        "area_m2": 0.0001,
+        "interior": {
+          "distance_m": 0.0025,
+          "conductivity_w_m_k": 0.1,
+          "bulk_mobility_mol2_k_j_m_s": 1e-07,
+          "counter_mobility_mol2_k_j_m_s": 1e-07
+        },
+        "exterior": {
+          "heat_transfer_w_m2_k": 10.0,
+          "bulk_mobility_mol2_k_j_m2_s": 2e-05,
+          "counter_mobility_mol2_k_j_m2_s": 2e-05
+        },
+        "radiation": {
+          "emissivity": 1.0,
+          "stefan_boltzmann_w_m2_k4": 5.670374419e-08,
+          "area_classification": "Same declared zero-storage contact area, not the earlier capsule geometry.",
+          "surface_classification": "ideal_black_surface_in_prescribed_black_enclosure_view_factor_one",
+          "material_emissivity": null,
+          "source": {
+            "constant_url": "https://physics.nist.gov/cuu/Constants/Table/allascii.txt",
+            "adjustment": "2022 CODATA",
+            "printed_value": "5.670 374 419... e-8",
+            "printed_uncertainty": "exact",
+            "unit": "W m^-2 K^-4",
+            "retrieved_utc": "2026-09-25",
+            "formula": "2*pi^5*kB^4/(15*h^3*c^2)",
+            "boltzmann_j_k": 1.380649e-23,
+            "planck_j_s": 6.62607015e-34,
+            "light_speed_m_s": 299792458.0,
+            "numerical_representation": "Finite printed digits retained, not an exact decimal; not material uncertainty.",
+            "boundary_reference": "https://doc.comsol.com/6.3/doc/com.comsol.help.heat/heat_ug_theory.07.047.html"
+          },
+          "entropy_scope": "Combined material plus prescribed thermal reservoir, neglect radiation-field storage; Q/Twall is reservoir entropy loss, not a claim that photon entropy flux equals Q/Twall."
+        },
+        "numerics": {
+          "initial_reservoir_weight": 0.5,
+          "balance_scales_carbon_nitrogen_energy": [
+            1e-06,
+            1e-06,
+            1.0
+          ],
+          "coordinate_scales_temperature_logpressure_logitfraction": [
+            100.0,
+            1.0,
+            1.0
+          ],
+          "function_relative_tolerance": 1e-13,
+          "coordinate_relative_tolerance": 1e-13,
+          "gradient_absolute_tolerance": 1e-13,
+          "maximum_function_evaluations": 300
+        },
+        "classification": "Declared virtual transfer geometry, film mobilities and black enclosure; no measured brick coefficients."
+      },
+      "integration_values": [
+        -2.0000000000000005e-05,
+        0.0,
+        -5577.396381790201,
+        -1.5000000000000002e-05,
+        0.4054651081081642,
+        -5643.066652549988,
+        -1.0000000000000003e-05,
+        0.587786664902119,
+        -5707.131279068576,
+        -5.000000000000001e-06,
+        0.6931471805599453,
+        -5827.623096835341,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "phases": [
+        "coexistence",
+        "coexistence",
+        "coexistence",
+        "coexistence"
+      ],
+      "inner_C_N_U_rate_residuals": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "outer_C_N_U_rate_residuals": [
+        -8.999725064576941e-22,
+        1.4161332086907834e-21,
+        2.220446049250313e-15
+      ],
+      "entropy_rate_identity_residual_w_k": 3.2526065174565133e-18,
+      "derivative_reviews": [
+        {
+          "step": 0.0005,
+          "scaled_maximum_absolute_difference": 1.2111420529675732e-09,
+          "all_perturbations_same_phase": true,
+          "worst_row": 7,
+          "worst_column": 7,
+          "analytic_at_worst": -0.014567936194003563,
+          "central_difference_at_worst": -0.014567937405145616,
+          "within_budget": true
+        },
+        {
+          "step": 0.00015,
+          "scaled_maximum_absolute_difference": 1.094159936265715e-10,
+          "all_perturbations_same_phase": true,
+          "worst_row": 7,
+          "worst_column": 7,
+          "analytic_at_worst": -0.014567936194003563,
+          "central_difference_at_worst": -0.014567936303419557,
+          "within_budget": true
+        },
+        {
+          "step": 5e-05,
+          "scaled_maximum_absolute_difference": 9.268664058481592e-11,
+          "all_perturbations_same_phase": true,
+          "worst_row": 20,
+          "worst_column": 9,
+          "analytic_at_worst": 4.259298274437462,
+          "central_difference_at_worst": 4.2592982929747905,
+          "within_budget": true
+        }
+      ],
+      "maximum_scaled_conservation_derivative": 1.734723475976807e-18,
+      "within_budgets": {
+        "inner_species": true,
+        "outer_species": true,
+        "inner_energy": true,
+        "outer_energy": true,
+        "entropy_identity": true,
+        "derivatives": true,
+        "conservation_derivative": true,
+        "passive_ledger_columns": true
+      }
+    }
+  ],
+  "all_requested_static_budgets_met": true,
+  "material_qualified": false,
+  "training_eligible": false,
+  "scope": "Selected phase-local full-column derivatives, coordinate-chain conservation and thermodynamic rate identity. No completed spatial trajectory or material accuracy."
+}

@@ -1,0 +1,77 @@
+{
+  "records": {
+    "graded-48-base": {
+      "format": "column",
+      "trajectory": "data/sandbox/research/calcite-rigid-open-graded-v1/graded-48-base.jsonl"
+    },
+    "graded-48-refined": {
+      "format": "column",
+      "trajectory": "data/sandbox/research/calcite-rigid-open-graded-v1/graded-48-refined.jsonl"
+    },
+    "graded-96-refined": {
+      "format": "column",
+      "trajectory": "data/sandbox/research/calcite-rigid-open-graded-v1/graded-96-refined.jsonl"
+    },
+    "graded-192-refined": {
+      "format": "column",
+      "trajectory": "data/sandbox/research/calcite-rigid-open-graded-v1/graded-192-refined.jsonl"
+    },
+    "graded-384-refined": {
+      "format": "column",
+      "trajectory": "data/sandbox/research/calcite-rigid-open-graded-v1/graded-384-refined.jsonl"
+    }
+  },
+  "pairs": [
+    {
+      "kind": "time",
+      "left": "graded-48-base",
+      "right": "graded-48-refined"
+    },
+    {
+      "kind": "space",
+      "left": "graded-48-refined",
+      "right": "graded-96-refined"
+    },
+    {
+      "kind": "space",
+      "left": "graded-96-refined",
+      "right": "graded-192-refined"
+    },
+    {
+      "kind": "space",
+      "left": "graded-192-refined",
+      "right": "graded-384-refined"
+    }
+  ],
+  "time_budgets": {
+    "cell_temperature_k": 0.001,
+    "cell_pressure_pa": 1.0,
+    "total_lime_mol": 1e-10,
+    "surface_temperature_k": 0.001
+  },
+  "space_budgets": {
+    "mean_temperature_k": 0.05,
+    "cell_temperature_k": 0.2,
+    "mean_pressure_pa": 100.0,
+    "total_lime_mol": 1e-08,
+    "surface_temperature_k": 0.2
+  },
+  "space_event_budget_s": 2.0,
+  "events": [
+    {
+      "name": "heat_mean_900K",
+      "mean_temperature_k": 900.0,
+      "start_s": 0.0,
+      "end_s": 4000.0,
+      "direction": 1
+    },
+    {
+      "name": "cool_mean_500K",
+      "mean_temperature_k": 500.0,
+      "start_s": 4000.0,
+      "end_s": 12000.0,
+      "direction": -1
+    }
+  ],
+  "scope": "Predeclared nested nonuniform full-cycle comparisons with physical volume weights; original uniform time, space and event budgets retained."
+}

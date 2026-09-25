@@ -29,12 +29,12 @@ def main():
     policy = header['settings'];budget = policy['verification'];n = header['cell_count'];base = 3*n
     reaction = from_records(header['affinity_parameters'],header['source'],header['reference_facts'])
     nitrogen = nitrogen_from_record(header['nitrogen_source'])
-    model = OpenRigidReactiveColumn(reaction,nitrogen,header['volume_source'],header['model_parameters'],policy,header['surface_parameters'],n)
+    model = OpenRigidReactiveColumn(reaction,nitrogen,header['volume_source'],header['model_parameters'],policy,header['surface_parameters'],n,header.get('cell_widths_m'))
     v0 = np.array(initial['values'][:base]).reshape(n,3);s0 = np.array([s['entropy_j_k'] for s in initial['states']])
     def quantities(states,faces,reservoir,contact,segment):
         local = np.zeros((n,3));entropy = np.zeros(n);productions = [];face_species = face_energy = 0.
         for i,face in enumerate(faces):
-            q = independent_face(states[i],states[i+1],model.cells[i],model.face_parameters)
+            q = independent_face(states[i],states[i+1],model.cells[i],model.internal_face_parameters[i])
             local[i] -= q[:3];local[i+1] += q[:3];entropy[i] += q[3];entropy[i+1] += q[4]
             productions.append(float(q[3]+q[4]))
             face_species = max(face_species,abs(q[0]-face['carbon_flow_mol_s']),abs(q[1]-face['nitrogen_flow_mol_s']))
