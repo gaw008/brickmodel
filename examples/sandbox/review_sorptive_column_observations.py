@@ -10,7 +10,7 @@ import json
 import math
 from pathlib import Path
 
-from sorptive_source_formulas import SorptiveSource
+from sorptive_source_formulas import source_for_column
 
 
 def review(path,settings):
@@ -26,7 +26,7 @@ def review(path,settings):
         boundary={**config['transfer'],'area_m2':config['geometry']['face_area_m2'],'cell_distance_m':half}
         internal={**boundary,'reservoir_distance_m':half,'reservoir_conductivity_w_m_k':config['transfer']['cell_conductivity_w_m_k']}
         single['parameters']['transfer']=boundary
-        source=SorptiveSource(single,settings['source_quadrature'])
+        source=source_for_column(single,settings['source_quadrature'])
         for line in stream:
             row=json.loads(line);kind=row['kind'];counts[kind]=counts.get(kind,0)+1
             if kind not in ('initial','accepted','sample','moisture_event'):

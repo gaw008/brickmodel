@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/audit_sorptive_gas_column.py", line 196, in <module>
+    main()
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/audit_sorptive_gas_column.py", line 104, in main
+    states=[host.at_temperature(initial['states'][0]['inventories_mol'],t+d)[1] for d in [-dt,dt]]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/equilibrium_sorption_free_water_cell.py", line 20, in at_temperature
+    gas, state = super().at_temperature(inventories_mol, temperature_k)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/equilibrium_sorptive_cell.py", line 66, in at_temperature
+    pressure = brentq(residual, *policy['bracket_pa'], xtol=policy['absolute_tolerance_pa'],
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_zeros_py.py", line 858, in brentq
+    r = _zeros._brentq(f, a, b, xtol, rtol, maxiter, args, full_output, disp)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: f(a) and f(b) must have different signs

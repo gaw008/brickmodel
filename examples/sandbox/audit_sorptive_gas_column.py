@@ -17,7 +17,7 @@ from numpy.polynomial.legendre import leggauss
 
 from audit_sorptive_gas_cell import polynomial
 from sorptive_gas_cell_setup import restore_sorptive_cell
-from sorptive_source_formulas import SorptiveSource
+from sorptive_source_formulas import source_for_column
 
 
 def main():
@@ -26,8 +26,11 @@ def main():
     parser.add_argument('--trajectory',type=Path,required=True)
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--local-balance-parameters',type=Path)
+    parser.add_argument('--calorimetry-state-parameters',type=Path,
+                        help='Use listed saved physical states for fixed-inventory thermal derivatives')
     args=parser.parse_args();settings=json.loads(args.parameters.read_text());started=time.monotonic()
     local_policy=json.loads(args.local_balance_parameters.read_text()) if args.local_balance_parameters else None
+    caloric_policy=json.loads(args.calorimetry_state_parameters.read_text()) if args.calorimetry_state_parameters else None
     def read_rows():
         with args.trajectory.open() as stream:
             for line in stream:
@@ -45,7 +48,7 @@ def main():
     internal={**boundary,'reservoir_distance_m':half,
               'reservoir_conductivity_w_m_k':config['transfer']['cell_conductivity_w_m_k']}
     single['parameters']['transfer']=boundary
-    source=SorptiveSource(single,settings['source_quadrature'])
+    source=source_for_column(single,settings['source_quadrature'])
     geometry=header['geometry'];deltas={
         'available_fluid_volume_m3_per_cell':geometry['available_fluid_volume_m3_per_cell']-config['cell']['available_fluid_volume_m3']/n,
         'dry_mass_kg_per_cell':geometry['dry_mass_kg_per_cell']-config['cell']['dry_mass_kg']/n,
@@ -65,19 +68,27 @@ def main():
     baseline=[sum(Fraction(initial['conserved_state'][i*width+k]) for i in range(n)) for k in range(width)]
     maxima={'energy_j':0.,'pressure_pa':0.,'mu_j_mol':0.};worst={}
     balances=[0.]*width;count=0;faces_count=0;face_n=face_u=0.;min_production=None
-    entropy_by_time={};branch_counts={'source':0,'low':0}
+    entropy_by_time={};branch_counts={};phase_partition_max_mol=0.;caloric_states=[]
+    free_water=config['schema']=='sorptive_free_water_column_v1'
     for row in read_rows():
         terminal=row
         if row['kind'] not in settings['source_state_kinds']:
             continue
         v=row['conserved_state']
+        if caloric_policy is not None and row['kind'] in ('initial','sample') and row['time_s'] in caloric_policy['observation_times_s']:
+            caloric_states.extend({'time_s':row['time_s'],'cell':i,'state':p} for i,p in enumerate(row['states']))
         for k in range(width):
             value=sum(Fraction(v[i*width+k]) for i in range(n))+Fraction(v[n*width+k])-baseline[k]
             balances[k]=max(balances[k],abs(float(value)))
         entropy=[]
         for i,p in enumerate(row['states']):
             q=source.reconstruct(p);count+=1;entropy.append(q['entropy_j_k'])
-            branch_counts['source' if p['moisture_kg_kg_dry']>header['sorption_source']['join']['moisture_kg_kg'] else 'low']+=1
+            branch=p['sorption_phase'] if free_water else ('source' if p['moisture_kg_kg_dry']>header['sorption_source']['join']['moisture_kg_kg'] else 'low')
+            branch_counts[branch]=branch_counts.get(branch,0)+1
+            if free_water:
+                phase_partition_max_mol=max(phase_partition_max_mol,
+                    abs(q['sorbed_water_mol']-p['sorbed_water_mol']),abs(q['free_water_mol']-p['free_water_mol']),
+                    abs(p['free_water_mol']+p['sorbed_water_mol']-p['condensed_water_mol']))
             errors={'energy_j':q['internal_energy_j']-p['internal_energy_j'],
                     'pressure_pa':q['pressure_pa']-p['pressure_pa'],'mu_j_mol':q['mu_vapor_minus_condensed_j_mol']}
             for key,value in errors.items():
@@ -93,13 +104,21 @@ def main():
     budget=settings['comparison_budgets'];calorimetry=[];entropy_results=[]
     with TemporaryDirectory(prefix='sorptive-column-audit-') as directory:
         host=restore_sorptive_cell(single,Path(directory))
-        dt=settings['fixed_inventory_calorimetry']['temperature_step_k']
-        for t in settings['fixed_inventory_calorimetry']['temperatures_k']:
-            states=[host.at_temperature(initial['states'][0]['inventories_mol'],t+d)[1] for d in [-dt,dt]]
+        if caloric_policy is None:
+            dt=settings['fixed_inventory_calorimetry']['temperature_step_k']
+            probes=[{'temperature_k':t,'inventories_mol':initial['states'][0]['inventories_mol'],
+                     'basis':'initial inventories, prescribed temperature'} for t in settings['fixed_inventory_calorimetry']['temperatures_k']]
+        else:
+            dt=caloric_policy['temperature_step_k']
+            probes=[{'temperature_k':p['state']['temperature_k'],'inventories_mol':p['state']['inventories_mol'],
+                     'basis':'saved physical trajectory state','time_s':p['time_s'],'cell':p['cell']} for p in caloric_states]
+        for probe in probes:
+            t=probe['temperature_k']
+            states=[host.at_temperature(probe['inventories_mol'],t+d)[1] for d in [-dt,dt]]
             values=[source.reconstruct(p) for p in states]
             cv=(states[1]['constitutive_internal_energy_j']-states[0]['constitutive_internal_energy_j'])/(2*dt)
             tds=t*(values[1]['entropy_j_k']-values[0]['entropy_j_k'])/(2*dt)
-            calorimetry.append({'temperature_k':t,'cell_cv_j_k':cv,'t_ds_dt_j_k':tds,'difference_j_k':cv-tds})
+            calorimetry.append({**probe,'cell_cv_j_k':cv,'t_ds_dt_j_k':tds,'difference_j_k':cv-tds})
         for degree in settings['quadrature_orders']:
             nodes,weights=leggauss(degree);seeds=[p['temperature_k'] for p in initial['states']]
             s0=entropy_by_time[('initial',initial['time_s'])];previous_s=s0
@@ -178,6 +197,12 @@ def main():
         'local_conservation_review':local_review,
         'scope':'Conditional trajectory, independent entropy/face/source integrals with shared equilibrium decoder and IAPWS backend.',
         'elapsed_s':time.monotonic()-started}
+    if caloric_policy is not None:
+        result['trajectory_calorimetry_policy']=caloric_policy
+        result['within_budgets']['requested_calorimetry_states_observed']=len(caloric_states)==len(caloric_policy['observation_times_s'])*n
+    if free_water:
+        result['maximum_phase_partition_difference_mol']=phase_partition_max_mol
+        result['within_budgets']['free_sorbed_partition']=phase_partition_max_mol<=budget['phase_partition_mol']
     with args.output.open('x') as stream:
         json.dump(result,stream,indent=2,allow_nan=False);stream.write('\n')
     print(json.dumps({'within_budgets':result['within_budgets'],'source_maxima':maxima,'elapsed_s':result['elapsed_s']},indent=2))

@@ -8,6 +8,7 @@ import math
 from iapws import IAPWS95
 import numpy as np
 from scipy.integrate import quad
+from scipy.optimize import brentq
 
 
 class SorptiveSource:
@@ -141,3 +142,47 @@ class SorptiveSource:
         external=energy/right['t']-math.fsum(right['mu_over_t'][k]*net[k] for k in species)
         production=energy*(1/right['t']-1/left['t'])+math.fsum(net[k]*(left['mu_over_t'][k]-right['mu_over_t'][k]) for k in species)
         return {'net_mol_s':net,'energy_out_w':energy,'external_entropy_w_k':external,'production_w_k':production}
+
+
+class FreeWaterSource(SorptiveSource):
+    """Independent direct-liquid and integrated end-line reference equations."""
+    def __init__(self, header, settings):
+        super().__init__(header, settings)
+        self.m_end, self.b_end = self.m0(self.wr), self.b0(self.wr)
+        self.m_slope = (self.m_end-self.m0(self.activity_nodes[-2]))/(self.wr-self.activity_nodes[-2])
+        self.b_slope = (self.b_end-self.b0(self.heat_nodes[-2]))/(self.wr-self.heat_nodes[-2])
+
+    def phase_partition(self, t, w):
+        def mu(wb):
+            b = self.b_end+self.b_slope*(wb-self.wr)
+            m = self.m_end+self.m_slope*(wb-self.wr)
+            return b-t*(b-m)/self.t0
+        policy = self.settings['phase_partition_root']
+        ws = brentq(mu,self.wr,self.record['model_domain']['moisture_kg_kg'][1],
+                    xtol=policy['moisture_absolute_tolerance_kg_kg'],
+                    rtol=policy['relative_tolerance'],maxiter=policy['maximum_iterations'])
+        return min(w,ws),max(0.,w-ws),mu
+
+    def excess(self,t,w):
+        if w <= self.wr:
+            return super().excess(t,w)
+        bound,free,mu = self.phase_partition(t,w)
+        settings = self.settings
+        integrate = lambda f:quad(f,self.wr,bound,
+            epsabs=settings['quad_absolute_tolerance'],epsrel=settings['quad_relative_tolerance'],
+            limit=settings['quad_maximum_subintervals'])[0]
+        h = integrate(lambda x:self.b_end+self.b_slope*(x-self.wr))
+        g0 = integrate(lambda x:self.m_end+self.m_slope*(x-self.wr))
+        return h,(h-g0)/self.t0,0. if free>0 else self.mass*mu(bound)
+
+    def reconstruct(self,point):
+        result = super().reconstruct(point)
+        bound,free,_ = self.phase_partition(point['temperature_k'],point['moisture_kg_kg_dry'])
+        scale = self.config['cell']['dry_mass_kg']/self.mass
+        result.update(sorbed_water_mol=bound*scale,free_water_mol=free*scale)
+        return result
+
+
+def source_for_column(header,settings):
+    return {'source_sorptive_common_gas_column_v1':SorptiveSource,
+            'sorptive_free_water_column_v1':FreeWaterSource}[header['parameters']['schema']](header,settings)
