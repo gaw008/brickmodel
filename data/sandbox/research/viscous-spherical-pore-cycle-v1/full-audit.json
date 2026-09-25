@@ -1,0 +1,862 @@
+{
+  "settings": {
+    "trajectories": {
+      "contracting": {
+        "base": "data/sandbox/research/viscous-spherical-pore-cycle-v1/contracting-base.jsonl",
+        "refined": "data/sandbox/research/viscous-spherical-pore-cycle-v1/contracting-refined.jsonl"
+      },
+      "expanding": {
+        "base": "data/sandbox/research/viscous-spherical-pore-cycle-v1/expanding-base.jsonl",
+        "refined": "data/sandbox/research/viscous-spherical-pore-cycle-v1/expanding-refined.jsonl"
+      }
+    },
+    "review": {
+      "decimal_digits": 60,
+      "quadrature_orders": [
+        2,
+        4
+      ],
+      "root_tolerance": "1e-45",
+      "root_iterations": 220,
+      "equilibrium_radius_ratio_bracket": [
+        0.1,
+        4.0
+      ],
+      "implicit_reference_times_s": [
+        0.0,
+        100.0,
+        500.0,
+        1000.0,
+        2000.0,
+        4000.0,
+        8000.0,
+        20000.0
+      ],
+      "source_radius_rate_m_s": 1e-20,
+      "source_pressure_pa": 1e-07,
+      "source_dissipation_w": 1e-21,
+      "force_balance_pa": 1e-06,
+      "matrix_volume_m3": 1e-27,
+      "local_energy_j": 1e-18,
+      "cumulative_energy_j": 1e-17,
+      "entropy_j_k": 1e-20,
+      "negative_step_entropy_j_k": 1e-22,
+      "radius_reference_m": 1e-13,
+      "time_radius_m": 1e-13,
+      "time_pressure_pa": 0.01,
+      "time_energy_j": 1e-17,
+      "time_porosity": 1e-08
+    },
+    "scope": "All source/boundary/energy/freeenergy/entropy checks on recorded and2/4Gauss states; implicit source time quadrature at fixed8timespertrajectory; independent union-node time comparison, not a continuous-time supremum."
+  },
+  "cases": {
+    "contracting": {
+      "trajectory_reviews": {
+        "base": {
+          "trajectory": "/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/viscous-spherical-pore-cycle-v1/contracting-base.jsonl",
+          "counts": {
+            "recorded": 3743,
+            "dense": 5484
+          },
+          "maxima": {
+            "source_radius_rate_m_s": 3.5556792261345295e-24,
+            "source_pressure_pa": 1.4207903312861003e-10,
+            "source_dissipation_w": 4.010971731514508e-28,
+            "force_balance_pa": 1.4608723920729037e-10,
+            "matrix_volume_m3": 2.548402869382797e-29,
+            "surface_energy_j": 5.811359123636634e-20,
+            "free_energy_j": 3.501192037140031e-19,
+            "entropy_j_k": 9.502386717141877e-23
+          },
+          "minimum_dissipation_w": 1.1716194702624386e-38,
+          "integral_reviews": [
+            {
+              "order": 2,
+              "maximum_local_radius_W_Q_D_residuals": [
+                1.6773889821018272e-17,
+                2.3470425931753875e-21,
+                3.4294304370757235e-21,
+                3.1341307323048632e-21
+              ],
+              "maximum_cumulative_radius_W_Q_D_residuals": [
+                1.3674734952116288e-15,
+                3.1807346034893707e-19,
+                4.629653891240518e-19,
+                3.545754932148302e-19
+              ],
+              "minimum_step_entropy_j_k": -4.838004641185482e-28,
+              "within_budgets": {
+                "local_radius": true,
+                "cumulative_radius": true,
+                "local_work_heat_dissipation": true,
+                "cumulative_work_heat_dissipation": true,
+                "nonnegative_step_entropy": true
+              }
+            },
+            {
+              "order": 4,
+              "maximum_local_radius_W_Q_D_residuals": [
+                1.7421674397452943e-17,
+                2.4285961190297413e-21,
+                3.5535927511799905e-21,
+                3.213119008713183e-21
+              ],
+              "maximum_cumulative_radius_W_Q_D_residuals": [
+                1.4345504578211704e-15,
+                3.3032416031721226e-19,
+                4.81391664449283e-19,
+                3.663486385510238e-19
+              ],
+              "minimum_step_entropy_j_k": -4.838004641185482e-28,
+              "within_budgets": {
+                "local_radius": true,
+                "cumulative_radius": true,
+                "local_work_heat_dissipation": true,
+                "cumulative_work_heat_dissipation": true,
+                "nonnegative_step_entropy": true
+              }
+            }
+          ],
+          "quadrature_radius_W_Q_D_differences": [
+            6.70754029007401e-17,
+            1.22509035187886e-20,
+            1.84261328031186e-20,
+            1.177324005986344e-20
+          ],
+          "implicit_time_reference": {
+            "equilibrium_radius_m": 8.348325738698661e-06,
+            "points": [
+              {
+                "time_s": 0.0,
+                "radius_m": 1e-05,
+                "radius_decimal_m": "0.00001",
+                "time_integral_residual_s": 0.0,
+                "numerical_radius_error_m": 0.0
+              },
+              {
+                "time_s": 100.0,
+                "radius_m": 9.784573759724165e-06,
+                "radius_decimal_m": "0.00000978457375972416426563739656170244246577858129797971210564478",
+                "time_integral_residual_s": 2.3085015711435887e-43,
+                "numerical_radius_error_m": 7.749523402084782e-18
+              },
+              {
+                "time_s": 500.0,
+                "radius_m": 9.167375550905267e-06,
+                "radius_decimal_m": "0.00000916737555090526658622846939169367264230008846705447871341349",
+                "time_integral_residual_s": 1.417738352416402e-44,
+                "numerical_radius_error_m": 1.0307330940266907e-16
+              },
+              {
+                "time_s": 1000.0,
+                "radius_m": 8.750761761596233e-06,
+                "radius_decimal_m": "0.00000875076176159623247192473638352214510793381349602193783701317",
+                "time_integral_residual_s": 1.5721220481073628e-43,
+                "numerical_radius_error_m": 1.727545407193246e-16
+              },
+              {
+                "time_s": 2000.0,
+                "radius_m": 8.44350003710765e-06,
+                "radius_decimal_m": "0.0000084435000371076490187512919900508064355073662478143485875492",
+                "time_integral_residual_s": 2.766852712713921e-43,
+                "numerical_radius_error_m": 2.4151741285927782e-16
+              },
+              {
+                "time_s": 4000.0,
+                "radius_m": 8.353515173673408e-06,
+                "radius_decimal_m": "0.00000835351517367340734197455650129622854160790162870946354553711",
+                "time_integral_residual_s": 1.4099658647326883e-43,
+                "numerical_radius_error_m": 1.5804991028801022e-16
+              },
+              {
+                "time_s": 8000.0,
+                "radius_m": 8.348341026036207e-06,
+                "radius_decimal_m": "0.00000834834102603620642833618232951342514097113198814941029923212",
+                "time_integral_residual_s": 1.6530630893598146e-43,
+                "numerical_radius_error_m": 1.4891386052832564e-18
+              },
+              {
+                "time_s": 20000.0,
+                "radius_m": 8.34832573869905e-06,
+                "radius_decimal_m": "0.00000834832573869905098326289851475034209381197454035602595501747",
+                "time_integral_residual_s": 6.365212223949194e-45,
+                "numerical_radius_error_m": 2.5142918454659866e-20
+              }
+            ],
+            "method": "Independent ideal-gas cubic root and separated time quadrature in log distance from equilibrium; no fitted relaxation times."
+          },
+          "final": {
+            "kind": "final",
+            "time_s": 20000.0,
+            "values": [
+              0.8348325738699076,
+              0.46463028374017773,
+              -0.7676848571917722,
+              0.16593790836769712
+            ],
+            "state": {
+              "radius_m": 8.348325738699078e-06,
+              "outer_radius_m": 1.3460746700534524e-05,
+              "pore_volume_m3": 2.437175299576374e-15,
+              "total_volume_m3": 1.021635710846539e-14,
+              "porosity": 0.2385561970574524,
+              "gas_pressure_pa": 171870.6982429405,
+              "laplace_pressure_pa": 71870.69824296268,
+              "radius_rate_m_s": -6.080067885241187e-22,
+              "outer_radius_rate_m_s": -2.3386697427019412e-22,
+              "radial_velocity_constant_m3_s": -4.2374755047854353e-32,
+              "matrix_pressure_pa": 100000.00000000696,
+              "pore_volume_rate_m3_s": -5.324968766240249e-31,
+              "porosity_rate_s": -3.9687967294687844e-17,
+              "surface_energy_j": 2.6274223578158367e-10,
+              "surface_energy_rate_w": -3.827092233516543e-26,
+              "external_work_in_w": 5.32496876624025e-26,
+              "viscous_dissipation_w": 1.1812014043739427e-38,
+              "entropy_production_w_k": 1.1812014043739428e-41,
+              "gas_amount_mol": 5.0379566270956206e-14,
+              "gas_entropy_change_j_k": -2.2685325515447248e-13,
+              "gas_entropy_rate_w_k": -9.15206099975561e-29,
+              "heat_in_w": -9.152060999756792e-26,
+              "bath_entropy_rate_w_k": 9.152060999756792e-29,
+              "free_energy_plus_pressure_work_change_j": -6.255711801572095e-11
+            },
+            "outer_linear_ratio": 0.9486190315532356,
+            "surface_energy_balance_j": -5.811349638673053e-20,
+            "free_energy_balance_j": -3.5011930323394513e-19,
+            "entropy_balance_j_k": 9.502204470089248e-23
+          },
+          "within_budgets": {
+            "source_radius_rate_m_s": true,
+            "source_pressure_pa": true,
+            "source_dissipation_w": true,
+            "force_balance_pa": true,
+            "matrix_volume_m3": true,
+            "entropy_j_k": true,
+            "completed": true,
+            "surface_energy": true,
+            "free_energy": true,
+            "nonnegative_dissipation": true,
+            "local_integrals": true,
+            "quadrature_radius": true,
+            "quadrature_energy": true,
+            "implicit_time_reference": true
+          },
+          "all_requested_budgets_met": true
+        },
+        "refined": {
+          "trajectory": "/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/viscous-spherical-pore-cycle-v1/contracting-refined.jsonl",
+          "counts": {
+            "recorded": 3995,
+            "dense": 5988
+          },
+          "maxima": {
+            "source_radius_rate_m_s": 3.6154747060340236e-24,
+            "source_pressure_pa": 1.4779913418283463e-10,
+            "source_dissipation_w": 3.8732957462502854e-28,
+            "force_balance_pa": 1.512311445895566e-10,
+            "matrix_volume_m3": 2.6289280320859227e-29,
+            "surface_energy_j": 1.0238497299691073e-20,
+            "free_energy_j": 6.181926934208088e-20,
+            "entropy_j_k": 1.757281827592638e-23
+          },
+          "minimum_dissipation_w": 1.1037797435075309e-38,
+          "integral_reviews": [
+            {
+              "order": 2,
+              "maximum_local_radius_W_Q_D_residuals": [
+                3.552759342479036e-18,
+                4.067564358090204e-22,
+                6.557951913960584e-22,
+                3.1560920014392665e-22
+              ],
+              "maximum_cumulative_radius_W_Q_D_residuals": [
+                4.051115064744983e-16,
+                6.927226624764744e-20,
+                1.049920188986127e-19,
+                6.174498729690025e-20
+              ],
+              "minimum_step_entropy_j_k": -4.818525400952381e-28,
+              "within_budgets": {
+                "local_radius": true,
+                "cumulative_radius": true,
+                "local_work_heat_dissipation": true,
+                "cumulative_work_heat_dissipation": true,
+                "nonnegative_step_entropy": true
+              }
+            },
+            {
+              "order": 4,
+              "maximum_local_radius_W_Q_D_residuals": [
+                3.6854684776442876e-18,
+                4.2340686613753514e-22,
+                6.8350786237469805e-22,
+                3.2778366525065356e-22
+              ],
+              "maximum_cumulative_radius_W_Q_D_residuals": [
+                4.2818531923241587e-16,
+                7.28288585382899e-20,
+                1.1047431350467275e-19,
+                6.460420170767514e-20
+              ],
+              "minimum_step_entropy_j_k": -4.818525400952381e-28,
+              "within_budgets": {
+                "local_radius": true,
+                "cumulative_radius": true,
+                "local_work_heat_dissipation": true,
+                "cumulative_work_heat_dissipation": true,
+                "nonnegative_step_entropy": true
+              }
+            }
+          ],
+          "quadrature_radius_W_Q_D_differences": [
+            2.30722260733481e-17,
+            3.556467015410713e-21,
+            5.482514909062341e-21,
+            2.8591245863947097e-21
+          ],
+          "implicit_time_reference": {
+            "equilibrium_radius_m": 8.348325738698661e-06,
+            "points": [
+              {
+                "time_s": 0.0,
+                "radius_m": 1e-05,
+                "radius_decimal_m": "0.00001",
+                "time_integral_residual_s": 0.0,
+                "numerical_radius_error_m": 0.0
+              },
+              {
+                "time_s": 100.0,
+                "radius_m": 9.784573759724165e-06,
+                "radius_decimal_m": "0.00000978457375972416426563739656170244246577858129797971210564478",
+                "time_integral_residual_s": 2.3085015711435887e-43,
+                "numerical_radius_error_m": 2.181754933589622e-18
+              },
+              {
+                "time_s": 500.0,
+                "radius_m": 9.167375550905267e-06,
+                "radius_decimal_m": "0.00000916737555090526658622846939169367264230008846705447871341349",
+                "time_integral_residual_s": 1.417738352416402e-44,
+                "numerical_radius_error_m": 1.626275066117883e-17
+              },
+              {
+                "time_s": 1000.0,
+                "radius_m": 8.750761761596233e-06,
+                "radius_decimal_m": "0.00000875076176159623247192473638352214510793381349602193783701317",
+                "time_integral_residual_s": 1.5721220481073628e-43,
+                "numerical_radius_error_m": 2.6604781757669006e-17
+              },
+              {
+                "time_s": 2000.0,
+                "radius_m": 8.44350003710765e-06,
+                "radius_decimal_m": "0.0000084435000371076490187512919900508064355073662478143485875492",
+                "time_integral_residual_s": 2.766852712713921e-43,
+                "numerical_radius_error_m": 4.583394343094623e-17
+              },
+              {
+                "time_s": 4000.0,
+                "radius_m": 8.353515173673408e-06,
+                "radius_decimal_m": "0.00000835351517367340734197455650129622854160790162870946354553711",
+                "time_integral_residual_s": 1.4099658647326883e-43,
+                "numerical_radius_error_m": 8.273460074348886e-17
+              },
+              {
+                "time_s": 8000.0,
+                "radius_m": 8.348341026036207e-06,
+                "radius_decimal_m": "0.00000834834102603620642833618232951342514097113198814941029923212",
+                "time_integral_residual_s": 1.6530630893598146e-43,
+                "numerical_radius_error_m": 1.2704246694321004e-18
+              },
+              {
+                "time_s": 20000.0,
+                "radius_m": 8.34832573869905e-06,
+                "radius_decimal_m": "0.00000834832573869905098326289851475034209381197454035602595501747",
+                "time_integral_residual_s": 6.365212223949194e-45,
+                "numerical_radius_error_m": 1.2930465183783144e-20
+              }
+            ],
+            "method": "Independent ideal-gas cubic root and separated time quadrature in log distance from equilibrium; no fitted relaxation times."
+          },
+          "final": {
+            "kind": "final",
+            "time_s": 20000.0,
+            "values": [
+              0.8348325738699064,
+              0.4646302841724839,
+              -0.7676848577510743,
+              0.16593790913243645
+            ],
+            "state": {
+              "radius_m": 8.348325738699064e-06,
+              "outer_radius_m": 1.3460746700534519e-05,
+              "pore_volume_m3": 2.4371752995763623e-15,
+              "total_volume_m3": 1.0216357108465378e-14,
+              "porosity": 0.23855619705745154,
+              "gas_pressure_pa": 171870.69824294135,
+              "laplace_pressure_pa": 71870.6982429628,
+              "radius_rate_m_s": -5.879586030512006e-22,
+              "outer_radius_rate_m_s": -2.2615553327207543e-22,
+              "radial_velocity_constant_m3_s": -4.097750593056882e-32,
+              "matrix_pressure_pa": 100000.00000000672,
+              "pore_volume_rate_m3_s": -5.149385263756287e-31,
+              "porosity_rate_s": -3.8379311298759827e-17,
+              "surface_energy_j": 2.6274223578158284e-10,
+              "surface_energy_rate_w": -3.7008991442818754e-26,
+              "external_work_in_w": 5.149385263756287e-26,
+              "viscous_dissipation_w": 1.1045887019365013e-38,
+              "entropy_production_w_k": 1.1045887019365012e-41,
+              "gas_amount_mol": 5.0379566270956206e-14,
+              "gas_entropy_change_j_k": -2.2685325515447448e-13,
+              "gas_entropy_rate_w_k": -8.850284408037058e-29,
+              "heat_in_w": -8.850284408038162e-26,
+              "bath_entropy_rate_w_k": 8.850284408038162e-29,
+              "free_energy_plus_pressure_work_change_j": -6.25571180157209e-11
+            },
+            "outer_linear_ratio": 0.9486190315532352,
+            "surface_energy_balance_j": -1.023797566747761e-20,
+            "free_energy_balance_j": -6.181931722975638e-20,
+            "entropy_balance_j_k": 1.7572084923077016e-23
+          },
+          "within_budgets": {
+            "source_radius_rate_m_s": true,
+            "source_pressure_pa": true,
+            "source_dissipation_w": true,
+            "force_balance_pa": true,
+            "matrix_volume_m3": true,
+            "entropy_j_k": true,
+            "completed": true,
+            "surface_energy": true,
+            "free_energy": true,
+            "nonnegative_dissipation": true,
+            "local_integrals": true,
+            "quadrature_radius": true,
+            "quadrature_energy": true,
+            "implicit_time_reference": true
+          },
+          "all_requested_budgets_met": true
+        }
+      },
+      "time_comparison": {
+        "union_nodes": 14383,
+        "maximum_differences": {
+          "time_radius_m": 2.6325719382214175e-16,
+          "time_pressure_pa": 1.6008035720649766e-05,
+          "time_energy_j": 2.883564482849799e-19,
+          "time_porosity": 1.722192780155404e-11
+        },
+        "within_budgets": {
+          "time_radius_m": true,
+          "time_pressure_pa": true,
+          "time_energy_j": true,
+          "time_porosity": true
+        }
+      },
+      "all_requested_budgets_met": true
+    },
+    "expanding": {
+      "trajectory_reviews": {
+        "base": {
+          "trajectory": "/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/viscous-spherical-pore-cycle-v1/expanding-base.jsonl",
+          "counts": {
+            "recorded": 3887,
+            "dense": 5772
+          },
+          "maxima": {
+            "source_radius_rate_m_s": 4.5825212825647896e-24,
+            "source_pressure_pa": 1.1951441851267162e-10,
+            "source_dissipation_w": 1.2715344070173992e-27,
+            "force_balance_pa": 2.1412563853730573e-10,
+            "matrix_volume_m3": 3.923618246875388e-29,
+            "surface_energy_j": 1.530600111143265e-19,
+            "free_energy_j": 1.4225703089191495e-18,
+            "entropy_j_k": 7.449945870061028e-22
+          },
+          "minimum_dissipation_w": 4.5643788578937513e-41,
+          "integral_reviews": [
+            {
+              "order": 2,
+              "maximum_local_radius_W_Q_D_residuals": [
+                4.746802890544003e-17,
+                8.645940259900277e-21,
+                1.2959544073928771e-20,
+                1.1717087618091149e-20
+              ],
+              "maximum_cumulative_radius_W_Q_D_residuals": [
+                4.255474892280765e-15,
+                3.066202400393454e-19,
+                5.538210981492864e-19,
+                1.4743004718173299e-18
+              ],
+              "minimum_step_entropy_j_k": -1.5938246723211582e-27,
+              "within_budgets": {
+                "local_radius": true,
+                "cumulative_radius": true,
+                "local_work_heat_dissipation": true,
+                "cumulative_work_heat_dissipation": true,
+                "nonnegative_step_entropy": true
+              }
+            },
+            {
+              "order": 4,
+              "maximum_local_radius_W_Q_D_residuals": [
+                4.871634329786575e-17,
+                8.876799330962375e-21,
+                1.3302117259254297e-20,
+                1.2006799221536041e-20
+              ],
+              "maximum_cumulative_radius_W_Q_D_residuals": [
+                4.409634888681048e-15,
+                3.2089841138777637e-19,
+                5.781026748380508e-19,
+                1.5170871903328536e-18
+              ],
+              "minimum_step_entropy_j_k": -1.5938246723211582e-27,
+              "within_budgets": {
+                "local_radius": true,
+                "cumulative_radius": true,
+                "local_work_heat_dissipation": true,
+                "cumulative_work_heat_dissipation": true,
+                "nonnegative_step_entropy": true
+              }
+            }
+          ],
+          "quadrature_radius_W_Q_D_differences": [
+            1.5416265640599832e-16,
+            1.427718769773645e-20,
+            2.428293217742558e-20,
+            4.278673031434876e-20
+          ],
+          "implicit_time_reference": {
+            "equilibrium_radius_m": 1.267461549263418e-05,
+            "points": [
+              {
+                "time_s": 0.0,
+                "radius_m": 1e-05,
+                "radius_decimal_m": "0.00001",
+                "time_integral_residual_s": 0.0,
+                "numerical_radius_error_m": 0.0
+              },
+              {
+                "time_s": 100.0,
+                "radius_m": 1.0485891040444396e-05,
+                "radius_decimal_m": "0.0000104858910404443958021272413921466694842710431161509863972173",
+                "time_integral_residual_s": 1.0548044085095046e-43,
+                "numerical_radius_error_m": 5.446610620765058e-17
+              },
+              {
+                "time_s": 500.0,
+                "radius_m": 1.1691942947902507e-05,
+                "radius_decimal_m": "0.0000116919429479025064437511658072090266756659376677577752878744",
+                "time_integral_residual_s": 2.2235002407734937e-45,
+                "numerical_radius_error_m": 4.1153670401892966e-16
+              },
+              {
+                "time_s": 1000.0,
+                "radius_m": 1.231856394492116e-05,
+                "radius_decimal_m": "0.0000123185639449211596441919241184558548486106380824082403763615",
+                "time_integral_residual_s": 6.246374547495493e-44,
+                "numerical_radius_error_m": 4.451953884049758e-16
+              },
+              {
+                "time_s": 2000.0,
+                "radius_m": 1.2629140773142802e-05,
+                "radius_decimal_m": "0.000012629140773142803249705580745632175313231199012004613730801",
+                "time_integral_residual_s": 1.0557421322967637e-43,
+                "numerical_radius_error_m": 6.932890868049396e-16
+              },
+              {
+                "time_s": 4000.0,
+                "radius_m": 1.2673888053192359e-05,
+                "radius_decimal_m": "0.0000126738880531923596004468540449734523374307365062075460172256",
+                "time_integral_residual_s": 1.2403397457738805e-43,
+                "numerical_radius_error_m": 1.9024153007982156e-16
+              },
+              {
+                "time_s": 8000.0,
+                "radius_m": 1.2674615307071371e-05,
+                "radius_decimal_m": "0.0000126746153070713709220245664341573706879007131491170184792164",
+                "time_integral_residual_s": 5.757157441773057e-45,
+                "numerical_radius_error_m": 1.5561321502446798e-19
+              },
+              {
+                "time_s": 20000.0,
+                "radius_m": 1.267461549263418e-05,
+                "radius_decimal_m": "0.0000126746154926341812717750274088392207459866563750372866659881",
+                "time_integral_residual_s": 1.4701366507126344e-43,
+                "numerical_radius_error_m": 2.0953144861988366e-20
+              }
+            ],
+            "method": "Independent ideal-gas cubic root and separated time quadrature in log distance from equilibrium; no fitted relaxation times."
+          },
+          "final": {
+            "kind": "final",
+            "time_s": 20000.0,
+            "values": [
+              1.267461549263416,
+              -1.151249704372869,
+              1.757708483640092,
+              0.6124527157459771
+            ],
+            "state": {
+              "radius_m": 1.2674615492634162e-05,
+              "outer_radius_m": 1.5731546493292875e-05,
+              "pore_volume_m3": 8.528899335986934e-15,
+              "total_volume_m3": 1.630808114487595e-14,
+              "porosity": 0.52298607421798,
+              "gas_pressure_pa": 147338.71416838618,
+              "laplace_pressure_pa": 47338.714168385566,
+              "radius_rate_m_s": 4.1312124493618554e-23,
+              "outer_radius_rate_m_s": 2.6816634899210615e-23,
+              "radial_velocity_constant_m3_s": 6.636622506618114e-33,
+              "matrix_pressure_pa": 99999.99999999932,
+              "pore_volume_rate_m3_s": 8.339825804576057e-32,
+              "porosity_rate_s": 2.4394121000734567e-18,
+              "surface_energy_j": 6.056206917558284e-10,
+              "surface_energy_rate_w": 3.947966299769522e-27,
+              "external_work_in_w": -8.339825804576058e-27,
+              "viscous_dissipation_w": 5.186695652297161e-41,
+              "entropy_production_w_k": 5.186695652297161e-44,
+              "gas_amount_mol": 1.511386988128686e-13,
+              "gas_entropy_change_j_k": 8.93529722162719e-13,
+              "gas_entropy_rate_w_k": 1.228779210434563e-29,
+              "heat_in_w": 1.2287792104345579e-26,
+              "bath_entropy_rate_w_k": -1.2287792104345578e-29,
+              "free_energy_plus_pressure_work_change_j": -2.3088923571761167e-10
+            },
+            "outer_linear_ratio": 1.1086490765560268,
+            "surface_energy_balance_j": -1.5305997543255785e-19,
+            "free_energy_balance_j": -1.4225700438743355e-18,
+            "entropy_balance_j_k": 7.449371300183059e-22
+          },
+          "within_budgets": {
+            "source_radius_rate_m_s": true,
+            "source_pressure_pa": true,
+            "source_dissipation_w": true,
+            "force_balance_pa": true,
+            "matrix_volume_m3": true,
+            "entropy_j_k": true,
+            "completed": true,
+            "surface_energy": true,
+            "free_energy": true,
+            "nonnegative_dissipation": true,
+            "local_integrals": true,
+            "quadrature_radius": true,
+            "quadrature_energy": true,
+            "implicit_time_reference": true
+          },
+          "all_requested_budgets_met": true
+        },
+        "refined": {
+          "trajectory": "/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/viscous-spherical-pore-cycle-v1/expanding-refined.jsonl",
+          "counts": {
+            "recorded": 4217,
+            "dense": 6432
+          },
+          "maxima": {
+            "source_radius_rate_m_s": 4.910447387432018e-24,
+            "source_pressure_pa": 1.448931969829617e-10,
+            "source_dissipation_w": 1.3708442029327683e-27,
+            "force_balance_pa": 2.060944211524155e-10,
+            "matrix_volume_m3": 3.9026513895314417e-29,
+            "surface_energy_j": 2.5752922548803344e-20,
+            "free_energy_j": 2.372310585084006e-19,
+            "entropy_j_k": 1.2199666398570386e-22
+          },
+          "minimum_dissipation_w": 4.5643788578937513e-41,
+          "integral_reviews": [
+            {
+              "order": 2,
+              "maximum_local_radius_W_Q_D_residuals": [
+                5.2059505206086354e-18,
+                9.102017478572291e-22,
+                1.3455175990078917e-21,
+                1.2060815620051272e-21
+              ],
+              "maximum_cumulative_radius_W_Q_D_residuals": [
+                8.7727964676780415e-16,
+                8.445327938528588e-20,
+                1.4189063316943674e-19,
+                2.421232357691783e-19
+              ],
+              "minimum_step_entropy_j_k": -1.7826588930073403e-27,
+              "within_budgets": {
+                "local_radius": true,
+                "cumulative_radius": true,
+                "local_work_heat_dissipation": true,
+                "cumulative_work_heat_dissipation": true,
+                "nonnegative_step_entropy": true
+              }
+            },
+            {
+              "order": 4,
+              "maximum_local_radius_W_Q_D_residuals": [
+                5.475191606140052e-18,
+                9.371761081374543e-22,
+                1.3873684118347451e-21,
+                1.242119467080686e-21
+              ],
+              "maximum_cumulative_radius_W_Q_D_residuals": [
+                9.197731721491843e-16,
+                8.895929407338021e-20,
+                1.4932088641927088e-19,
+                2.523716675165865e-19
+              ],
+              "minimum_step_entropy_j_k": -1.7826588930073403e-27,
+              "within_budgets": {
+                "local_radius": true,
+                "cumulative_radius": true,
+                "local_work_heat_dissipation": true,
+                "cumulative_work_heat_dissipation": true,
+                "nonnegative_step_entropy": true
+              }
+            }
+          ],
+          "quadrature_radius_W_Q_D_differences": [
+            4.249370904176686e-17,
+            4.5052950066899745e-21,
+            7.430711882295242e-21,
+            1.0248148500423195e-20
+          ],
+          "implicit_time_reference": {
+            "equilibrium_radius_m": 1.267461549263418e-05,
+            "points": [
+              {
+                "time_s": 0.0,
+                "radius_m": 1e-05,
+                "radius_decimal_m": "0.00001",
+                "time_integral_residual_s": 0.0,
+                "numerical_radius_error_m": 0.0
+              },
+              {
+                "time_s": 100.0,
+                "radius_m": 1.0485891040444396e-05,
+                "radius_decimal_m": "0.0000104858910404443958021272413921466694842710431161509863972173",
+                "time_integral_residual_s": 1.0548044085095046e-43,
+                "numerical_radius_error_m": 9.197872601584446e-18
+              },
+              {
+                "time_s": 500.0,
+                "radius_m": 1.1691942947902507e-05,
+                "radius_decimal_m": "0.0000116919429479025064437511658072090266756659376677577752878744",
+                "time_integral_residual_s": 2.2235002407734937e-45,
+                "numerical_radius_error_m": 6.329526833080608e-17
+              },
+              {
+                "time_s": 1000.0,
+                "radius_m": 1.231856394492116e-05,
+                "radius_decimal_m": "0.0000123185639449211596441919241184558548486106380824082403763615",
+                "time_integral_residual_s": 6.246374547495493e-44,
+                "numerical_radius_error_m": 6.806817006215485e-17
+              },
+              {
+                "time_s": 2000.0,
+                "radius_m": 1.2629140773142802e-05,
+                "radius_decimal_m": "0.000012629140773142803249705580745632175313231199012004613730801",
+                "time_integral_residual_s": 1.0557421322967637e-43,
+                "numerical_radius_error_m": 1.2403111271258757e-16
+              },
+              {
+                "time_s": 4000.0,
+                "radius_m": 1.2673888053192359e-05,
+                "radius_decimal_m": "0.0000126738880531923596004468540449734523374307365062075460172256",
+                "time_integral_residual_s": 1.2403397457738805e-43,
+                "numerical_radius_error_m": 8.38355349536973e-17
+              },
+              {
+                "time_s": 8000.0,
+                "radius_m": 1.2674615307071371e-05,
+                "radius_decimal_m": "0.0000126746153070713709220245664341573706879007131491170184792164",
+                "time_integral_residual_s": 5.757157441773057e-45,
+                "numerical_radius_error_m": 1.3118830848271452e-19
+              },
+              {
+                "time_s": 20000.0,
+                "radius_m": 1.267461549263418e-05,
+                "radius_decimal_m": "0.0000126746154926341812717750274088392207459866563750372866659881",
+                "time_integral_residual_s": 1.4701366507126344e-43,
+                "numerical_radius_error_m": 2.0953144861988366e-20
+              }
+            ],
+            "method": "Independent ideal-gas cubic root and separated time quadrature in log distance from equilibrium; no fitted relaxation times."
+          },
+          "final": {
+            "kind": "final",
+            "time_s": 20000.0,
+            "values": [
+              1.267461549263416,
+              -1.1512497032189055,
+              1.757708482148436,
+              0.6124527188901873
+            ],
+            "state": {
+              "radius_m": 1.2674615492634162e-05,
+              "outer_radius_m": 1.5731546493292875e-05,
+              "pore_volume_m3": 8.528899335986934e-15,
+              "total_volume_m3": 1.630808114487595e-14,
+              "porosity": 0.52298607421798,
+              "gas_pressure_pa": 147338.71416838618,
+              "laplace_pressure_pa": 47338.714168385566,
+              "radius_rate_m_s": 4.1312124493618554e-23,
+              "outer_radius_rate_m_s": 2.6816634899210615e-23,
+              "radial_velocity_constant_m3_s": 6.636622506618114e-33,
+              "matrix_pressure_pa": 99999.99999999932,
+              "pore_volume_rate_m3_s": 8.339825804576057e-32,
+              "porosity_rate_s": 2.4394121000734567e-18,
+              "surface_energy_j": 6.056206917558284e-10,
+              "surface_energy_rate_w": 3.947966299769522e-27,
+              "external_work_in_w": -8.339825804576058e-27,
+              "viscous_dissipation_w": 5.186695652297161e-41,
+              "entropy_production_w_k": 5.186695652297161e-44,
+              "gas_amount_mol": 1.511386988128686e-13,
+              "gas_entropy_change_j_k": 8.93529722162719e-13,
+              "gas_entropy_rate_w_k": 1.228779210434563e-29,
+              "heat_in_w": 1.2287792104345579e-26,
+              "bath_entropy_rate_w_k": -1.2287792104345578e-29,
+              "free_energy_plus_pressure_work_change_j": -2.3088923571761167e-10
+            },
+            "outer_linear_ratio": 1.1086490765560268,
+            "surface_energy_balance_j": -2.5752872504554833e-20,
+            "free_energy_balance_j": -2.3723074678926273e-19,
+            "entropy_balance_j_k": 1.2193886231124725e-22
+          },
+          "within_budgets": {
+            "source_radius_rate_m_s": true,
+            "source_pressure_pa": true,
+            "source_dissipation_w": true,
+            "force_balance_pa": true,
+            "matrix_volume_m3": true,
+            "entropy_j_k": true,
+            "completed": true,
+            "surface_energy": true,
+            "free_energy": true,
+            "nonnegative_dissipation": true,
+            "local_integrals": true,
+            "quadrature_radius": true,
+            "quadrature_energy": true,
+            "implicit_time_reference": true
+          },
+          "all_requested_budgets_met": true
+        }
+      },
+      "time_comparison": {
+        "union_nodes": 15237,
+        "maximum_differences": {
+          "time_radius_m": 7.177503036359667e-16,
+          "time_pressure_pa": 2.514971957421749e-05,
+          "time_energy_j": 1.185353099602887e-18,
+          "time_porosity": 4.24389541442989e-11
+        },
+        "within_budgets": {
+          "time_radius_m": true,
+          "time_pressure_pa": true,
+          "time_energy_j": true,
+          "time_porosity": true
+        }
+      },
+      "all_requested_budgets_met": true
+    }
+  },
+  "all_requested_budgets_met": true,
+  "elapsed_s": 65.9737309999764,
+  "material_qualified": false,
+  "training_eligible": false
+}
