@@ -70,6 +70,10 @@ def main():
                 rtol=policy['relative_tolerance']*factor,atol=absolute,jac=jacobian,
                 first_step=policy['initial_step_s'],max_step=policy['maximum_step_s'])
             while solver.status=='running':
+                if 'jacobian_refresh' in policy:
+                    refresh_time,refresh_state = {'accepted_state':(solver.t,solver.y)}[policy['jacobian_refresh']]
+                    solver.J = solver.jac(refresh_time,refresh_state)
+                    solver.LU = None
                 previous = solver.t;message = solver.step()
                 if solver.status=='failed':
                     emit({'kind':'integration_failure','segment_index':segment,'reason':str(message),

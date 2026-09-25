@@ -35,6 +35,8 @@ def main():
             nn = case['nitrogen_densities_mol_m3'][i]*cell.volume
             state = cell.at_carbon_offset(case['temperatures_k'][i], dc, nn)
             z[3*i:3*i+3] = [column.carbon_coordinate(cell,dc), np.log(nn/column.reference_nitrogen), state['internal_energy_j']]
+        if 'integration_values' in case:
+            z = np.array(case['integration_values'], dtype=float)
         segment = case['segment_index']
         _, states, _, _, contact = column.observe(z, segment,time_s)
         reference = DecimalOpenColumn(column, states, contact, segment, settings,time_s)
