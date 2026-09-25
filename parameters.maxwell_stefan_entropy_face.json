@@ -1,0 +1,27 @@
+{
+  "local_law_parameters": "parameters.maxwell_stefan_isothermal.json",
+  "temperature_k": 600,
+  "pressure_pa": 100000,
+  "distance_m": 0.001,
+  "face_cases": [
+    {"name": "zero_jump", "left": ["0.1", "0.2", "0.3", "0.4"], "right": ["0.1", "0.2", "0.3", "0.4"]},
+    {"name": "moderate_jump", "left": ["0.1", "0.2", "0.3", "0.4"], "right": ["0.4", "0.3", "0.2", "0.1"]},
+    {"name": "large_trace_jump", "left": ["0.0004", "0.2", "0.21", "0.5896"], "right": ["0.8", "0.05", "0.05", "0.1"]}
+  ],
+  "binary_left_fractions": ["0.02", "0.98"],
+  "binary_right_fractions": ["0.98", "0.02"],
+  "quadrature_orders": [8, 16, 32],
+  "review": {
+    "decimal_precision": 60,
+    "relative_flux_budget": 1e-10,
+    "absolute_flux_budget_mol_m2_s": 1e-12,
+    "relative_entropy_budget": 1e-10,
+    "absolute_entropy_budget_w_m2_k": 1e-12,
+    "molar_sum_budget_mol_m2_s": 1e-12,
+    "reference_integral_subintervals": ["0", "0.25", "0.5", "0.75", "1"]
+  },
+  "discretization": "Interpolate log mole fractions linearly, normalize the geometric path, integrate the local molar-frame mobility driven by the fixed entropy-variable jump using Gauss-Legendre quadrature. Numerical path definition is this project's finite-face choice; it is not claimed to be an exact steady profile or a source-measured pore law.",
+  "physical_input_classification": "Same-temperature, same-pressure ideal free gas; arbitrary specified distance and endpoint compositions for numerical qualification.",
+  "material_qualified": false,
+  "training_eligible": false
+}
