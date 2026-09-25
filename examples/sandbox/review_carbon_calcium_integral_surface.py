@@ -9,6 +9,8 @@ import mpmath as mp
 from carbon_calcium_inventory_setup import build
 from carbon_calcium_source_audit import SourceState
 from carbon_calcium_surface_reference import solve, uniqueness_certificate
+from carbon_calcium_surface_source_flux import solve_float
+from review_carbon_calcium_open_cell import source_bath
 from sludge_sandbox.carbon_calcium_integral_surface import surface_exchange
 from sludge_sandbox.carbon_calcium_open_cell import ideal_gas_reservoir
 from sludge_sandbox.carbon_calcium_open_column import CarbonCalciumOpenColumn
@@ -77,6 +79,8 @@ def main():
         bath = ideal_gas_reservoir(model, bath_t, bath_p, fractions)
         actual = surface_exchange(model, bulk, bath, inner_p, outer_p, radiation, p)
         ref = solve(source, bulk, bath, inner_p, outer_p, radiation, p, actual['surface'])
+        float_ref = solve_float(source, bulk_source,
+            source_bath(source,bath_t,bath_p,fractions),inner_p,outer_p,radiation,p)
         certificate = uniqueness_certificate(source, bulk, bath, inner_p, outer_p, radiation, p)
         names = exterior['gas_order']
         errors = {
@@ -124,9 +128,19 @@ def main():
                 'equal_species_mol_s': max(abs(actual[side]['gas_flows_mol_s'][k]) for side in ('outer','inner') for k in names),
                 'energy_w': max(abs(actual[side]['energy_flow_w']-expected_q) for side in ('outer','inner'))}
         flags.update({'limit_'+k: value <= p['verification'][k] for k,value in limits.items()})
+        float_errors = {
+            'temperature_k': difference(float_ref['surface']['temperature_k'],ref['surface']['temperature']),
+            'pressure_pa': difference(float_ref['surface']['pressure_pa'],ref['surface']['pressure']),
+            'chemical_potential_j_mol': max(difference(float_ref['surface']['mu'][k],ref['surface']['mu'][k]) for k in names),
+            'species_mol_s': max(difference(float_ref[side]['gas'][k],ref[side]['flow'][k]) for side in ('inner','outer') for k in names),
+            'energy_w': max(difference(float_ref[side]['energy'],ref[side]['energy']) for side in ('inner','outer')),
+            'entropy_w_k': max(difference(float_ref[side]['entropy'][i],ref[side][key]) for side in ('inner','outer')
+                for i,key in enumerate(('entropy_left','entropy_right')))}
+        flags.update({'source_float_'+k:v<=p['verification'][k] for k,v in float_errors.items()})
         rows.append({'case': case, 'bulk': bulk, 'reservoir': bath, 'interior_parameters': inner_p,
             'exterior_parameters': outer_p, 'radiation_parameters': radiation,
             'actual': actual, 'independent': decimal_record(ref), 'source_errors': bulk_source['errors'],
+            'source_float_reference': float_ref, 'source_float_errors': float_errors,
             'uniqueness_certificate': certificate, 'errors': errors, 'limit_errors': limits,
             'total_entropy_identity_w_k': entropy_identity, 'within_budgets': flags})
     result = {'settings': p, 'source_records': sources, 'states': rows,
