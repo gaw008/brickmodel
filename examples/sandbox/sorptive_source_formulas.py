@@ -4,6 +4,7 @@ No production equilibrium or excess provider is imported. Pure liquid uses
 direct IAPWS95 (shared EOS backend); source join uses independent quadrature.
 """
 import math
+from functools import lru_cache
 
 from iapws import IAPWS95
 import numpy as np
@@ -13,6 +14,9 @@ from scipy.optimize import brentq, root as solve_root
 
 class SorptiveSource:
     def __init__(self, header, settings):
+        self.liquid_at = lambda t,p:IAPWS95(T=t,P=p/1e6)
+        if 'liquid_cache_entries' in settings:
+            self.liquid_at = lru_cache(maxsize=settings['liquid_cache_entries'])(self.liquid_at)
         self.config = header['parameters']
         self.record = header['sorption_source']
         self.facts = header['water_source']['facts']
@@ -23,7 +27,7 @@ class SorptiveSource:
         self.offset = self.facts['gas_formation_h_j_mol']-self.water_ideal(self.facts['reference_temperature_k'])[0]
         t0 = self.record['reference_temperature_k']
         wj, wr = self.record['join']['moisture_kg_kg'], self.record['reference_moisture_kg_kg']
-        reference_liquid = IAPWS95(T=t0,P=self.record['reference_liquid_pressure_pa']/1e6)
+        reference_liquid = self.liquid_at(t0,self.record['reference_liquid_pressure_pa'])
         latent = float((self.ideal('H2O',t0)[0]-reference_liquid.h*1000*self.mass-self.offset)/self.mass)
         curves = self.record['source_curves']
         a = np.array([[p['moisture_kg_kg'],p['value']] for p in curves['activity']])
@@ -81,7 +85,7 @@ class SorptiveSource:
     def reconstruct(self,point):
         config=self.config;md=config['cell']['dry_mass_kg']
         t=point['temperature_k'];nc=point['condensed_water_mol'];w=nc*self.mass/md
-        liquid=IAPWS95(T=t,P=point['pressure_pa']/1e6)
+        liquid=self.liquid_at(t,point['pressure_pa'])
         vg=config['cell']['available_fluid_volume_m3']-nc*self.mass/liquid.rho
         partial={k:n*self.r*t/vg for k,n in point['amounts_mol'].items()}
         hexcess,sexcess,mu_ex=self.excess(t,w)
@@ -187,7 +191,7 @@ class MobileWaterSource(SorptiveSource):
     """Reconstruct full condensed mu/h and its additional internal face rate."""
     def condensed_fields(self,point):
         t,p,w=point['temperature_k'],point['pressure_pa'],point['moisture_kg_kg_dry']
-        liquid=IAPWS95(T=t,P=p/1e6)
+        liquid=self.liquid_at(t,p)
         _,_,mu=self.excess(t,w)
         b=self.b if w<=self.wj else self.b0(w)
         return {'condensed_chemical_potential_j_mol':float(liquid.h*1000*self.mass+self.offset-t*liquid.s*1000*self.mass+mu),
