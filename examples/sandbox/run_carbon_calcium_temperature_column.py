@@ -5,10 +5,12 @@ from pathlib import Path
 import time
 
 import numpy as np
+import scipy
 from scipy.integrate import BDF
 
 from carbon_calcium_pressure_setup import build
 from sludge_sandbox.carbon_calcium_temperature_column import CarbonCalciumTemperatureColumn
+from sludge_sandbox.carbon_calcium_temperature_jacobian import TemperatureColumnJacobian
 
 
 def main():
@@ -34,6 +36,7 @@ def main():
             'tolerance':args.tolerance,'relative_tolerance':policy['relative_tolerance']*factor,'absolute_tolerances':atol.tolist(),
             'integration_coordinate_order':'per-cellC/O/N2/T, then entropy production; dense polynomials use these coordinates',
             'recorded_value_order':'per-cellC/O/N2/source-U-change, then entropy production',
+            'scipy_version':scipy.__version__,
             'material_qualified':False,'training_eligible':False})
         emit(record('initial',0.,column.initial))
         def rates(at,values):
@@ -42,8 +45,11 @@ def main():
                 emit({'kind':'evaluation_failure','time_s':float(at),'integration_values':values.tolist(),
                       'error_type':type(error).__name__,'error':str(error)})
                 raise
-        sparsity={'numerical_with_local_sparsity':column.numerical_jacobian_sparsity()}[policy['jacobian_method']]
-        solver=BDF(rates,0.,column.initial,p['duration_s'],jac_sparsity=sparsity,rtol=policy['relative_tolerance']*factor,atol=atol,
+        jacobian_options={
+            'numerical_with_local_sparsity':lambda:{'jac_sparsity':column.numerical_jacobian_sparsity()},
+            'numerical_local_body_analytic_entropy':lambda:{'jac':TemperatureColumnJacobian(column,atol[:-1])}
+        }[policy['jacobian_method']]()
+        solver=BDF(rates,0.,column.initial,p['duration_s'],**jacobian_options,rtol=policy['relative_tolerance']*factor,atol=atol,
                    max_step=policy['maximum_step_s'],first_step=policy['first_step_s'])
         while solver.status=='running':
             before=solver.t;message=solver.step()
