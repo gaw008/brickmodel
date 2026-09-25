@@ -1,5 +1,7 @@
 # 同一材料一维全周期闭合判断
 
+**2026-09-25 05:20 UTC增量：** 已实现[刚性反应一维柱](research/calcite-rigid-column-v1/REPORT.md)与经核对的[解析导数](research/calcite-rigid-tangent-v1/REPORT.md)，时间误差、空间失败与守恒资格分别记录。[共存静止族](research/calcite-rigid-modes-v1/REPORT.md)显示无骨架/毛细能的条件模型允许相比例非唯一，尚不能迁移为真实砖结构关系。低温蒸发表面64→128空间比较已通过原目标，其余128格完整资格仍在执行。真实全周期的同材物性、有限速率、骨架和现实留出对照依赖不变。
+
 **外部对照新增偏差：** [薄膜分解起始温度](research/calcite-film-onset-v1/REPORT.md)的六个真实文献点均比现有纯相平衡高约10–15K，超过冻结的图像读取范围。平衡与有限升温onset并非同一观测，误差归因未定；内部数值通过不等于实际起始温度通过，未调参或升级材料资格。
 
 **2026-09-25 UTC增量：** [辐射换热](research/calcite-radiative-calorimeter-v1/REPORT.md)、[封闭等压CO2/N2](research/calcite-closed-mixture-v1/REPORT.md)、[刚性压力反馈](research/calcite-rigid-equilibrium-v1/REPORT.md)及[双刚性室气体/内能交换](research/calcite-rigid-exchange-v1/REPORT.md)均已完成相应来源、局部守恒和熵的数值核查。压力、反应相分配与共同气流已在限定高温条件模型内接通；瞬时平衡不提供有限速率，虚拟系数不提供砖孔网络，M1与同材料全周期缺项未解除。

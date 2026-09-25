@@ -1,0 +1,151 @@
+{
+  "settings": {
+    "trajectories": {
+      "two-refined": "data/sandbox/research/calcite-rigid-column-v1/two-refined.jsonl",
+      "four-physical": "data/sandbox/research/calcite-rigid-column-v1/four-refined.jsonl",
+      "four-analytic": "data/sandbox/research/calcite-rigid-tangent-v1/four-refined.jsonl",
+      "sixteen-physical": "data/sandbox/research/calcite-rigid-column-v1/sixteen-refined.jsonl",
+      "sixteen-analytic": "data/sandbox/research/calcite-rigid-tangent-v1/sixteen-refined.jsonl"
+    },
+    "time_pairs": [
+      [
+        "four-physical",
+        "four-analytic"
+      ],
+      [
+        "sixteen-physical",
+        "sixteen-analytic"
+      ]
+    ],
+    "space_pairs": [],
+    "two_cell_reference": "data/sandbox/research/calcite-rigid-exchange-v1/refined.jsonl",
+    "budgets": {
+      "time_temperature_k": 0.001,
+      "time_pressure_pa": 1.0,
+      "time_total_lime_mol": 1e-10,
+      "two_cell_path_temperature_k": 0.001,
+      "two_cell_path_pressure_pa": 1.0,
+      "space_mean_temperature_k": 0.05,
+      "space_cell_average_temperature_k": 0.2,
+      "space_mean_pressure_pa": 100.0,
+      "space_total_lime_mol": 1e-08,
+      "space_event_time_s": 2.0
+    },
+    "event": {
+      "temperature_range_target_k": 1.0,
+      "method": "linear interpolation of first crossing between common 2-second observations; record missing event as incomplete"
+    },
+    "scope": "Same physical initial data and tolerance, distinct Jacobian paths; time-path comparison only, no spatial qualification."
+  },
+  "initial_totals": {
+    "two-refined": {
+      "carbon_mol": 0.019980000000000005,
+      "nitrogen_mol": 3.0000000000000008e-05,
+      "internal_energy_j": -22588.592370169143
+    },
+    "four-physical": {
+      "carbon_mol": 0.019980000000000005,
+      "nitrogen_mol": 3.0000000000000008e-05,
+      "internal_energy_j": -22588.592370169143
+    },
+    "four-analytic": {
+      "carbon_mol": 0.019980000000000005,
+      "nitrogen_mol": 3.0000000000000008e-05,
+      "internal_energy_j": -22588.592370169143
+    },
+    "sixteen-physical": {
+      "carbon_mol": 0.019980000000000005,
+      "nitrogen_mol": 3.0000000000000008e-05,
+      "internal_energy_j": -22588.592370169143
+    },
+    "sixteen-analytic": {
+      "carbon_mol": 0.019980000000000005,
+      "nitrogen_mol": 3.0000000000000008e-05,
+      "internal_energy_j": -22588.592370169143
+    }
+  },
+  "two_cell_reference_comparison": {
+    "observations": 3001,
+    "cell_counts": [
+      2,
+      2
+    ],
+    "maximum_differences": {
+      "mean_temperature_k": 4.5997694542165846e-10,
+      "cell_average_temperature_k": 2.2394033294403926e-08,
+      "mean_pressure_pa": 4.942275700159371e-05,
+      "cell_average_pressure_pa": 0.0010446846135891974,
+      "total_lime_mol": 3.628316451540631e-16
+    },
+    "time_of_maximum_difference_s": {
+      "mean_temperature_k": 410.0,
+      "cell_average_temperature_k": 410.0,
+      "mean_pressure_pa": 406.0,
+      "cell_average_pressure_pa": 406.0,
+      "total_lime_mol": 410.0
+    },
+    "within_budgets": true
+  },
+  "time_comparisons": [
+    {
+      "observations": 3001,
+      "cell_counts": [
+        4,
+        4
+      ],
+      "maximum_differences": {
+        "mean_temperature_k": 2.955857780762017e-11,
+        "cell_average_temperature_k": 4.490630090003833e-11,
+        "mean_pressure_pa": 5.098991096019745e-08,
+        "cell_average_pressure_pa": 2.350425347685814e-07,
+        "total_lime_mol": 4.517734927475536e-17
+      },
+      "time_of_maximum_difference_s": {
+        "mean_temperature_k": 5124.0,
+        "cell_average_temperature_k": 5192.0,
+        "mean_pressure_pa": 162.0,
+        "cell_average_pressure_pa": 222.0,
+        "total_lime_mol": 1332.0
+      },
+      "left": "four-physical",
+      "right": "four-analytic",
+      "within_budgets": true
+    },
+    {
+      "observations": 3001,
+      "cell_counts": [
+        16,
+        16
+      ],
+      "maximum_differences": {
+        "mean_temperature_k": 1.678472472121939e-09,
+        "cell_average_temperature_k": 1.0286953511240426e-07,
+        "mean_pressure_pa": 0.00017820281209424138,
+        "cell_average_pressure_pa": 0.008009158831555396,
+        "total_lime_mol": 2.612570804225861e-14
+      },
+      "time_of_maximum_difference_s": {
+        "mean_temperature_k": 284.0,
+        "cell_average_temperature_k": 292.0,
+        "mean_pressure_pa": 284.0,
+        "cell_average_pressure_pa": 290.0,
+        "total_lime_mol": 284.0
+      },
+      "left": "sixteen-physical",
+      "right": "sixteen-analytic",
+      "within_budgets": true
+    }
+  ],
+  "space_comparisons": [],
+  "temperature_equalization_events_s": {
+    "two-refined": 3302.47408458775,
+    "four-physical": 2921.0467818158404,
+    "four-analytic": 2921.04678180734,
+    "sixteen-physical": 2808.751807151564,
+    "sixteen-analytic": 2808.75180726087
+  },
+  "all_requested_time_budgets_met": true,
+  "all_requested_space_budgets_met": null,
+  "material_qualified": false,
+  "training_eligible": false
+}

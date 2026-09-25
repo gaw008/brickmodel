@@ -1,5 +1,7 @@
 # 独立阶段 Goal 顺序
 
+**2026-09-25 05:20 UTC检查点：** 共同反应输运已从双室扩展到[一维柱](research/calcite-rigid-column-v1/REPORT.md)，空间失败保留并继续细化；原算子资格之后开发并核对[解析导数](research/calcite-rigid-tangent-v1/REPORT.md)和[解析空间模态](research/calcite-rigid-modes-v1/REPORT.md)。蒸发表面64→128的空间目标已过，时间及全程资格尚待完成，不能替代M1或同材高温输入。仍按开发→限定验证顺序推进，不新建完整替代Goal。
+
 **2026-09-25 UTC增量：** [辐射换热](research/calcite-radiative-calorimeter-v1/REPORT.md)、[封闭等压CO2/N2](research/calcite-closed-mixture-v1/REPORT.md)、[刚性压力反馈](research/calcite-rigid-equilibrium-v1/REPORT.md)及[双刚性室气体/内能交换](research/calcite-rigid-exchange-v1/REPORT.md)均已完成相应来源、局部守恒和熵的数值核查。压力、反应相分配与共同气流已在限定高温条件模型内接通；瞬时平衡不提供有限速率，虚拟系数不提供砖孔网络，M1与同材料全周期缺项未解除。
 
 **2026-09-24本地日期进行中：** 用户改为本周剩余5%的连续开发停止线，开发→验证次序保持。见[窗口](research/quota-window-20260924/REPORT.md)。自由水条件模型的内部验证与原图失败分开；凝聚相迁移与无储量表面四格物理核查通过后，单独开发并核对同源方解石自由能及等压瞬时平衡热化学循环；空间精度与真实材料资料依赖仍分别保留。原生M1未改为成功。

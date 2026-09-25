@@ -1,0 +1,31 @@
+{
+  "model_parameters": "parameters.calcite_rigid_column.json",
+  "cell": {"calcium_mol": 0.01, "nitrogen_mol": 0.00001, "total_volume_m3": 0.000001},
+  "states": [
+    {"name": "calcite-cool", "temperature_k": 600.0, "carbon_mol": 0.01001, "nitrogen_mol": 0.00001, "input_scales": [0.00001, 0.00001, 1.0]},
+    {"name": "calcite-warm", "temperature_k": 900.0, "carbon_mol": 0.01003, "nitrogen_mol": 0.00002, "input_scales": [0.00001, 0.00001, 1.0]},
+    {"name": "coexistence-depleted", "temperature_k": 1000.0, "carbon_mol": 0.00997, "nitrogen_mol": 0.00001, "input_scales": [0.00001, 0.00001, 1.0]},
+    {"name": "coexistence-stoichiometric", "temperature_k": 1100.0, "carbon_mol": 0.01, "nitrogen_mol": 0.00002, "input_scales": [0.00001, 0.00001, 1.0]},
+    {"name": "lime-warm", "temperature_k": 1000.0, "carbon_mol": 0.0000001, "nitrogen_mol": 0.00001, "input_scales": [0.0000001, 0.00001, 1.0]},
+    {"name": "lime-hot", "temperature_k": 1150.0, "carbon_mol": 0.000001, "nitrogen_mol": 0.00002, "input_scales": [0.000001, 0.00001, 1.0]}
+  ],
+  "dimensionless_difference_steps": [0.001, 0.0003, 0.0001],
+  "state_output_order": ["T_K", "CO2_mol", "P_Pa", "muC_over_T_J_mol_K", "muN_over_T_J_mol_K", "inverse_T_per_K", "hC_J_mol", "hN_J_mol", "gas_xC"],
+  "state_output_scales": [1000.0, 0.00001, 100000.0, 1000.0, 1000.0, 0.001, 100000.0, 100000.0, 1.0],
+  "face": {"heat_conductance_w_k": 0.001, "bulk_mobility_mol2_k_j_s": 1e-9, "counter_mobility_mol2_k_j_s": 1e-9},
+  "face_pairs": [[0, 0], [0, 1], [1, 2], [2, 3], [4, 5], [5, 2]],
+  "face_output_scales": [1e-8, 1e-8, 0.01, 0.00001],
+  "column_mesh": "four",
+  "column_inventory_scales": [0.000005, 0.000005, 0.5],
+  "column_entropy_scale_j_k": 0.001,
+  "budgets": {
+    "state_scaled_derivative_absolute": 0.00001,
+    "face_scaled_derivative_absolute": 0.00001,
+    "column_scaled_derivative_absolute": 0.00001,
+    "entropy_hessian_symmetry_j_k": 1e-10,
+    "entropy_hessian_positive_eigenvalue_j_k": 1e-10
+  },
+  "classification": "Declared numerical derivative scales, not material parameter uncertainty",
+  "material_qualified": false,
+  "training_eligible": false
+}

@@ -1,14 +1,16 @@
 # 物理沙盒 Goal 进度
 
+**2026-09-25 05:20 UTC检查点（继续执行）：** [刚性反应柱](research/calcite-rigid-column-v1/REPORT.md)已推进到64格，时间比较通过，空间目标仍有失败；[解析导数](research/calcite-rigid-tangent-v1/REPORT.md)的4/16格路径与完整守恒/熵核查通过，[解析模态](research/calcite-rigid-modes-v1/REPORT.md)核对了空间算子与共存静止族。低温蒸发表面64→128格已通过原温度/水量/干燥时刻空间比较，128格时间和完整审查仍在运行。未授予真实砖或全周期资格。
+
 **外部对照新增偏差：** [薄膜分解起始温度](research/calcite-film-onset-v1/REPORT.md)的六个真实文献点均比现有纯相平衡高约10–15K，超过冻结的图像读取范围。平衡与有限升温onset并非同一观测，误差归因未定；内部数值通过不等于实际起始温度通过，未调参或升级材料资格。
 
 **2026-09-25 UTC增量：** [辐射换热](research/calcite-radiative-calorimeter-v1/REPORT.md)、[封闭等压CO2/N2](research/calcite-closed-mixture-v1/REPORT.md)、[刚性压力反馈](research/calcite-rigid-equilibrium-v1/REPORT.md)及[双刚性室气体/内能交换](research/calcite-rigid-exchange-v1/REPORT.md)均已完成相应来源、局部守恒和熵的数值核查。压力、反应相分配与共同气流已在限定高温条件模型内接通；瞬时平衡不提供有限速率，虚拟系数不提供砖孔网络，M1与同材料全周期缺项未解除。
 
 ## 2026-09-24本地日期：按本周额度停止线连续推进（进行中）
 
-用户授权持续开发到账户周额度剩余5%。[窗口记录](research/quota-window-20260924/REPORT.md)保留当前运行。自由水条件模型内部核查与高W原图失败分开保留；凝聚水迁移、无储量蒸发表面四格干燥/干湿循环的完整局部守恒和熵核查通过。新边界32→64格事件差.02898s仍未达.02s空间目标；局部物理坐标Jacobian四格已核对，32格及更细资格继续检查。
+用户授权持续开发到账户周额度剩余5%。[窗口记录](research/quota-window-20260924/REPORT.md)保留当前运行。自由水条件模型内部核查与高W原图失败分开保留；凝聚水迁移、无储量蒸发表面四格干燥/干湿循环的完整局部守恒和熵核查通过。新边界32→64格事件差.02898s未达.02s的失败保留，后续64→128差.005639s已通过；局部物理坐标Jacobian四格已核对，32格及更细完整资格继续检查。
 
-[同源方解石自由能](research/calcite-affinity-v1/REPORT.md)及[等压纯方解石热化学循环](research/calcite-equilibrium-calorimeter-v1/REPORT.md)已实现并完成限定数值核查：热量驱动的瞬时平衡分解/再碳酸化与CO2流焓共账。它不提供真实有限反应速率、MIA3矿相量或烧结关系。原128格反馈Jacobian基础轨迹完成且复算限定来源/面率通过，紧容差仍在运行。原真实黏土M1资料依赖未解除，没有替代Goal或完整烧砖成功声明。后续历史记录按各自时间理解。
+[同源方解石自由能](research/calcite-affinity-v1/REPORT.md)及[等压纯方解石热化学循环](research/calcite-equilibrium-calorimeter-v1/REPORT.md)已实现并完成限定数值核查：热量驱动的瞬时平衡分解/再碳酸化与CO2流焓共账。它不提供真实有限反应速率、MIA3矿相量或烧结关系。原128格反馈Jacobian两档轨迹均已完成，时间与限定来源/面率复算通过，紧容差整段局部/熵审查仍在运行。原真实黏土M1资料依赖未解除，没有替代Goal或完整烧砖成功声明。后续历史记录按各自时间理解。
 
 ## 2026-09-22 UTC 三小时窗口：来源吸附水空间过程与准确性审查
 
