@@ -1,0 +1,112 @@
+{
+  "settings": {
+    "records": {
+      "thirty-two-refined": {
+        "format": "column",
+        "trajectory": "data/sandbox/research/calcite-rigid-ramp-v1/thirty-two-fresh-refined.jsonl"
+      },
+      "sixty-four-refined": {
+        "format": "column",
+        "trajectory": "data/sandbox/research/calcite-rigid-ramp-v1/sixty-four-fresh-refined.jsonl"
+      }
+    },
+    "pairs": [
+      {
+        "kind": "space",
+        "left": "thirty-two-refined",
+        "right": "sixty-four-refined"
+      }
+    ],
+    "time_budgets": {
+      "cell_temperature_k": 0.001,
+      "cell_pressure_pa": 1.0,
+      "total_lime_mol": 1e-10,
+      "surface_temperature_k": 0.001
+    },
+    "space_budgets": {
+      "mean_temperature_k": 0.05,
+      "cell_temperature_k": 0.2,
+      "mean_pressure_pa": 100.0,
+      "total_lime_mol": 1e-08,
+      "surface_temperature_k": 0.2
+    },
+    "space_event_budget_s": 2.0,
+    "events": [
+      {
+        "name": "heat_mean_900K",
+        "mean_temperature_k": 900.0,
+        "start_s": 0.0,
+        "end_s": 8000.0,
+        "direction": 1
+      },
+      {
+        "name": "cool_mean_500K",
+        "mean_temperature_k": 500.0,
+        "start_s": 8000.0,
+        "end_s": 18000.0,
+        "direction": -1
+      }
+    ],
+    "scope": "Space-only comparison of completed refined32 and refined64. Original64 base failed in an unaccepted trial; no completed64 time pair is claimed. Original space/event budgets preserved."
+  },
+  "events_s": {
+    "thirty-two-refined": {
+      "heat_mean_900K": 5647.508715709861,
+      "cool_mean_500K": 16169.043721202102
+    },
+    "sixty-four-refined": {
+      "heat_mean_900K": 5646.438233151794,
+      "cool_mean_500K": 16167.78832133212
+    }
+  },
+  "comparisons": [
+    {
+      "observations": 9001,
+      "cell_counts": [
+        32,
+        64
+      ],
+      "maximum_differences": {
+        "mean_temperature_k": 0.19670592508362006,
+        "cell_temperature_k": 0.6134027012104752,
+        "mean_pressure_pa": 5086.856414841139,
+        "cell_pressure_pa": 22807.726957153995,
+        "total_lime_mol": 1.0762722220931324e-05,
+        "surface_temperature_k": 0.5039366874672169,
+        "surface_pressure_pa": 317670.68929675594
+      },
+      "maximum_difference_times_s": {
+        "mean_temperature_k": 12974.0,
+        "cell_temperature_k": 12988.0,
+        "mean_pressure_pa": 5894.0,
+        "cell_pressure_pa": 5760.0,
+        "total_lime_mol": 9296.0,
+        "surface_temperature_k": 12992.0,
+        "surface_pressure_pa": 8000.0
+      },
+      "pair": {
+        "kind": "space",
+        "left": "thirty-two-refined",
+        "right": "sixty-four-refined"
+      },
+      "event_differences_s": {
+        "heat_mean_900K": 1.0704825580669421,
+        "cool_mean_500K": 1.2553998699822841
+      },
+      "within_budgets": {
+        "mean_temperature_k": false,
+        "cell_temperature_k": false,
+        "mean_pressure_pa": false,
+        "total_lime_mol": false,
+        "surface_temperature_k": false,
+        "heat_mean_900K": true,
+        "cool_mean_500K": true,
+        "both_completed": true
+      },
+      "all_requested_budgets_met": false
+    }
+  ],
+  "all_requested_budgets_met": false,
+  "material_qualified": false,
+  "training_eligible": false
+}
