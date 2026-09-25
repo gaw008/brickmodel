@@ -1,0 +1,1435 @@
+{
+  "settings": {
+    "source": {
+      "title": "Viscosity and Thermal Conductivity Equations for Nitrogen, Oxygen, Argon, and Air",
+      "authors": [
+        "E. W. Lemmon",
+        "R. T. Jacobsen"
+      ],
+      "year": 2004,
+      "url": "https://trc.nist.gov/refprop/FAQ/NAO.PDF",
+      "local_reading_copy": ".tools/source-cache/lemmon2004/NAO.pdf",
+      "viscosity_equation_printed_page": 23,
+      "species_and_collision_tables_printed_page": 24,
+      "conductivity_equation_printed_page": 24,
+      "conductivity_table_printed_page": 26,
+      "calculated_reference_table_printed_page": 28,
+      "visual_verification": "Formula, Table I/II, first three Table IV terms and zero-density Table V rows visually checked from PDF pages 3/4/6/8. PDF unit is micro-Pa s, not milli-Pa s from text extraction."
+    },
+    "collision_log_coefficients": [
+      "0.431",
+      "-0.4623",
+      "0.08406",
+      "0.005341",
+      "-0.00331"
+    ],
+    "viscosity_prefactor": "0.0266958",
+    "unit_conversion": {
+      "micro_pa_s_to_pa_s": "1e-6",
+      "milli_w_m_k_to_w_m_k": "1e-3"
+    },
+    "species": {
+      "N2": {
+        "molar_mass_g_mol": "28.01348",
+        "well_depth_over_kb_k": "98.94",
+        "diameter_nm": "0.3656",
+        "critical_temperature_k": "126.192",
+        "conductivity_viscosity_coefficient": "1.511",
+        "conductivity_terms": [
+          [
+            "2.117",
+            "-1.0"
+          ],
+          [
+            "-3.332",
+            "-0.7"
+          ]
+        ]
+      },
+      "O2": {
+        "molar_mass_g_mol": "31.9988",
+        "well_depth_over_kb_k": "118.5",
+        "diameter_nm": "0.3428",
+        "critical_temperature_k": "154.581",
+        "conductivity_viscosity_coefficient": "1.036",
+        "conductivity_terms": [
+          [
+            "6.283",
+            "-0.9"
+          ],
+          [
+            "-4.262",
+            "-0.6"
+          ]
+        ]
+      }
+    },
+    "calculated_paper_references": [
+      {
+        "species": "N2",
+        "temperature_k": 100,
+        "viscosity_micro_pa_s": "6.90349",
+        "conductivity_mw_m_k": "9.27749",
+        "viscosity_rounding_half_unit": "0.000005",
+        "conductivity_rounding_half_unit": "0.000005"
+      },
+      {
+        "species": "N2",
+        "temperature_k": 300,
+        "viscosity_micro_pa_s": "17.8771",
+        "conductivity_mw_m_k": "25.9361",
+        "viscosity_rounding_half_unit": "0.00005",
+        "conductivity_rounding_half_unit": "0.00005"
+      },
+      {
+        "species": "O2",
+        "temperature_k": 100,
+        "viscosity_micro_pa_s": "7.70243",
+        "conductivity_mw_m_k": "8.94334",
+        "viscosity_rounding_half_unit": "0.000005",
+        "conductivity_rounding_half_unit": "0.000005"
+      },
+      {
+        "species": "O2",
+        "temperature_k": 300,
+        "viscosity_micro_pa_s": "20.6307",
+        "conductivity_mw_m_k": "26.4403",
+        "viscosity_rounding_half_unit": "0.00005",
+        "conductivity_rounding_half_unit": "0.00005"
+      }
+    ],
+    "review": {
+      "decimal_precision": 80,
+      "temperatures_k": [
+        100,
+        200,
+        300,
+        400,
+        500,
+        600,
+        700,
+        800,
+        900,
+        1000,
+        1100,
+        1200
+      ],
+      "relative_value_budget": 1e-13,
+      "relative_temperature_derivative_budget": 1e-12,
+      "nist_table_file": "data/sandbox/research/gas-transport-source-v1/source/nist-selected-tables.json",
+      "previous_lj_review": "data/sandbox/research/gas-transport-source-v1/source-review-v2.json",
+      "nist_estimated_uncertainty_fraction": {
+        "N2": {
+          "viscosity": 0.03,
+          "conductivity": 0.03
+        },
+        "O2": {
+          "viscosity": 0.005,
+          "conductivity": 0.02
+        }
+      },
+      "nist_rounding_half_unit": {
+        "N2": {
+          "viscosity": 0.05,
+          "conductivity": 0.05
+        },
+        "O2": {
+          "viscosity": 0.005,
+          "conductivity": 0.005
+        }
+      }
+    },
+    "scope": "Only zero-density eta0(T), lambda0(T) and temperature derivatives for pure N2/O2. The paper explicitly labels Table V values as calculated numerical reference values, not measurement accuracy. No density residual, critical enhancement, pressure conversion, mixture law or binary diffusivity; no automatic replacement of GRI transport. The fitted prefactor and molar masses remain those of the publication.",
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "independent_arithmetic": [
+    {
+      "species": "N2",
+      "temperature_k": 100,
+      "actual": {
+        "viscosity_pa_s": 6.903488326689481e-06,
+        "viscosity_temperature_derivative_pa_s_k": 6.630846184661129e-08,
+        "conductivity_w_m_k": 0.009277493928717772,
+        "conductivity_temperature_derivative_w_m_k2": 9.714915447086741e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.0000069034883266894801989796758710477260175201835203329967048970635630167409674545206",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000066308461846611287971917929794851345844628978569479038264112904675528682795645919",
+        "conductivity_w_m_k": "0.0092774939287177712209956018682667874785161871853530676034417451422767639235230377",
+        "conductivity_temperature_derivative_w_m_k2": "0.000097149154470867410436000683389694378548637514604199344901458401726143197834396499"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 9.524992618854656e-17,
+        "viscosity_temperature_derivative_pa_s_k": 1.4134944849007645e-17,
+        "conductivity_w_m_k": 1.1937495915309251e-16,
+        "conductivity_temperature_derivative_w_m_k2": 3.114974462095468e-17
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "N2",
+      "temperature_k": 200,
+      "actual": {
+        "viscosity_pa_s": 1.2888865785548378e-05,
+        "viscosity_temperature_derivative_pa_s_k": 5.4175475563879736e-08,
+        "conductivity_w_m_k": 0.018230854150011393,
+        "conductivity_temperature_derivative_w_m_k2": 8.253717354619754e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000012888865785548377588625007672205131816697099965177848325722531625323644788971266",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000054175475563879735202182279500122370383808483265742627524929285608762947362809076",
+        "conductivity_w_m_k": "0.018230854150011392904490129664397211988575432861404440258488762503738978731526803",
+        "conductivity_temperature_derivative_w_m_k2": "0.000082537173546197548006841035155496584712446818846416751232283038888913223437354502"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 2.046505546757027e-17,
+        "viscosity_temperature_derivative_pa_s_k": 7.146543393802275e-18,
+        "conductivity_w_m_k": 2.686120791328281e-17,
+        "conductivity_temperature_derivative_w_m_k2": 9.540104219791929e-17
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "N2",
+      "temperature_k": 300,
+      "actual": {
+        "viscosity_pa_s": 1.7877064146009673e-05,
+        "viscosity_temperature_derivative_pa_s_k": 4.613268500622789e-08,
+        "conductivity_w_m_k": 0.025936086671217853,
+        "conductivity_temperature_derivative_w_m_k2": 7.222826060414522e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000017877064146009667473040452432838608210289279482963486246337118648616935460099301",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000046132685006227880244591515761557541080082709292589744746079625589402010717171548",
+        "conductivity_w_m_k": "0.025936086671217843970563450998207735719959234918250763902488282655623895532119522",
+        "conductivity_temperature_derivative_w_m_k2": "0.000072228260604145199854847720930698455620267417636060439749284233884745165526382372"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 2.9622397093753036e-16,
+        "viscosity_temperature_derivative_pa_s_k": 2.44971704319049e-16,
+        "conductivity_w_m_k": 3.3616569926318536e-16,
+        "conductivity_temperature_derivative_w_m_k2": 3.4248107544965436e-16
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "N2",
+      "temperature_k": 400,
+      "actual": {
+        "viscosity_pa_s": 2.2199546281472832e-05,
+        "viscosity_temperature_derivative_pa_s_k": 4.0640147545540784e-08,
+        "conductivity_w_m_k": 0.03278213305431449,
+        "conductivity_temperature_derivative_w_m_k2": 6.510765268258593e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000022199546281472830441473816357332797714515143120057531076562895549886706960054516",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000040640147545540783162291019552986301640666486459592947945204339863773827782652255",
+        "conductivity_w_m_k": "0.032782133054314478559131573189620513934996775695557934410999840089600554073916275",
+        "conductivity_temperature_derivative_w_m_k2": "0.0000651076526825859167699063548033992315237855500952663540232398692046853784080976"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 6.44789261685041e-17,
+        "viscosity_temperature_derivative_pa_s_k": 1.163774097174339e-17,
+        "conductivity_w_m_k": 3.0109066787686095e-16,
+        "conductivity_temperature_derivative_w_m_k2": 1.6597214446709933e-16
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "N2",
+      "temperature_k": 500,
+      "actual": {
+        "viscosity_pa_s": 2.6056237215664066e-05,
+        "viscosity_temperature_derivative_pa_s_k": 3.669625625800681e-08,
+        "conductivity_w_m_k": 0.039024010285473885,
+        "conductivity_temperature_derivative_w_m_k2": 5.999510055050394e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000026056237215664059163461892907679982979790186958065383198033399686482498726601109",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000036696256258006793929007442952375317521674990033286950037724003767156300898027336",
+        "conductivity_w_m_k": "0.039024010285473874034327726668755016487513405522294353547973120169445225697413875",
+        "conductivity_temperature_derivative_w_m_k2": "0.000059995100550503926348473285460268172577422314963224315865031312304121488705327459"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 2.57241921389843e-16,
+        "viscosity_temperature_derivative_pa_s_k": 3.5261653103134135e-16,
+        "conductivity_w_m_k": 2.9255455618600007e-16,
+        "conductivity_temperature_derivative_w_m_k2": 2.610614034142746e-16
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "N2",
+      "temperature_k": 600,
+      "actual": {
+        "viscosity_pa_s": 2.9571769781834957e-05,
+        "viscosity_temperature_derivative_pa_s_k": 3.3748824720701414e-08,
+        "conductivity_w_m_k": 0.04482451648889345,
+        "conductivity_temperature_derivative_w_m_k2": 5.619244904395213e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000029571769781834954046402817928947140901035190607541568936584745488978498689723973",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000033748824720701412797826183086454213881080468844596221420679325152428627823654091",
+        "conductivity_w_m_k": "0.044824516488893439365155511915246753724365415874131816557654770503874457394675518",
+        "conductivity_temperature_derivative_w_m_k2": "0.00005619244904395211700013453575221949234946483721748463178485537845852900670674174"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 8.953868672467405e-17,
+        "viscosity_temperature_derivative_pa_s_k": 4.8861552015003044e-17,
+        "conductivity_w_m_k": 1.994894494491515e-16,
+        "conductivity_temperature_derivative_w_m_k2": 1.9410775264414005e-16
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "N2",
+      "temperature_k": 700,
+      "actual": {
+        "viscosity_pa_s": 3.282840394936731e-05,
+        "viscosity_temperature_derivative_pa_s_k": 3.147735552139265e-08,
+        "conductivity_w_m_k": 0.05029212348552283,
+        "conductivity_temperature_derivative_w_m_k2": 5.328349646186111e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000032828403949367304845892268788248891530057881498778583817976905043529316243283729",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000031477355521392651235395752836966206109862362821883577676698781576565529075901221",
+        "conductivity_w_m_k": "0.050292123485522827543609381349466669183879154070937096958746579444035267653721031",
+        "conductivity_temperature_derivative_w_m_k2": "0.000053283496461861113766220655826956812229064524132955893687263162956963065122086776"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 9.108843819714006e-17,
+        "viscosity_temperature_derivative_pa_s_k": 1.0409945649258991e-16,
+        "conductivity_w_m_k": 7.568237114545874e-17,
+        "conductivity_temperature_derivative_w_m_k2": 1.1388346085045823e-16
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "N2",
+      "temperature_k": 800,
+      "actual": {
+        "viscosity_pa_s": 3.5883122320924855e-05,
+        "viscosity_temperature_derivative_pa_s_k": 2.96845554411808e-08,
+        "conductivity_w_m_k": 0.05550225675012148,
+        "conductivity_temperature_derivative_w_m_k2": 5.1008671980435696e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000035883122320924851521920642567604969818879274475633020176174320594972268386777617",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000029684555441180801724233925191904132693636555497543716860591651519823957033970403",
+        "conductivity_w_m_k": "0.055502256750121471924763279808939534605621308398253821339423740998046100363591091",
+        "conductivity_temperature_derivative_w_m_k2": "0.000051008671980435697849137511322972797273318518221971494055913113274626706433883842"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 9.650564075268104e-17,
+        "viscosity_temperature_derivative_pa_s_k": 2.4072578421934114e-17,
+        "conductivity_w_m_k": 1.2089157876836647e-16,
+        "conductivity_temperature_derivative_w_m_k2": 4.4519048928494576e-17
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "N2",
+      "temperature_k": 900,
+      "actual": {
+        "viscosity_pa_s": 3.877696839387091e-05,
+        "viscosity_temperature_derivative_pa_s_k": 2.824269390040905e-08,
+        "conductivity_w_m_k": 0.06050929586830755,
+        "conductivity_temperature_derivative_w_m_k2": 4.919874834299054e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000038776968393870898429286872082651311911427913879191023471818602997085780436280646",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000028242693900409045696987147310158887514436497684040895970209596932436923662266948",
+        "conductivity_w_m_k": "0.06050929586830752604380892291999289471859127166327464185163445223896600359766858",
+        "conductivity_temperature_derivative_w_m_k2": "0.000049198748342990521389563002379055841631966108621472837896754062566709574366314925"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 2.29669916860461e-16,
+        "viscosity_temperature_derivative_pa_s_k": 1.8604732862118816e-16,
+        "conductivity_w_m_k": 3.7156771415509823e-16,
+        "conductivity_temperature_derivative_w_m_k2": 3.8793162474319523e-16
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "N2",
+      "temperature_k": 1000,
+      "actual": {
+        "viscosity_pa_s": 4.1540457025260754e-05,
+        "viscosity_temperature_derivative_pa_s_k": 2.7065551680900224e-08,
+        "conductivity_w_m_k": 0.06535364391883705,
+        "conductivity_temperature_derivative_w_m_k2": 4.773906508841586e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000041540457025260743528626414322829538908372578366702243645020581630397325763722556",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000027065551680900213793087765434571888287831810167125479316008998243159176884085046",
+        "conductivity_w_m_k": "0.065353643918837027925275958226567102008609003924830306599527028124213693330587062",
+        "conductivity_temperature_derivative_w_m_k2": "0.000047739065088415841986892135980856572020655290554254001770808074913401930021254815"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 2.5398094144419795e-16,
+        "viscosity_temperature_derivative_pa_s_k": 3.878429857367954e-16,
+        "conductivity_w_m_k": 3.5370424812171344e-16,
+        "conductivity_temperature_derivative_w_m_k2": 4.429658747990412e-16
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "N2",
+      "temperature_k": 1100,
+      "actual": {
+        "viscosity_pa_s": 4.4196876022732424e-05,
+        "viscosity_temperature_derivative_pa_s_k": 2.6092878489500712e-08,
+        "conductivity_w_m_k": 0.07006608337706748,
+        "conductivity_temperature_derivative_w_m_k2": 4.6549348907464604e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000044196876022732420829012630339750248025933724674070849454182418087838014115570193",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000026092878489500711817508300371329656150405874895694942388685508148933771087716055",
+        "conductivity_w_m_k": "0.070066083377067464621055627167932280253065890589263700423280199284937163598598562",
+        "conductivity_temperature_derivative_w_m_k2": "0.00004654934890746460313331953367477444464937864195449298425602562714632150525452913"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 7.727741909570143e-17,
+        "viscosity_temperature_derivative_pa_s_k": 2.197621271308869e-17,
+        "conductivity_w_m_k": 1.5798438739715727e-16,
+        "conductivity_temperature_derivative_w_m_k2": 1.8577384337820857e-17
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "N2",
+      "temperature_k": 1200,
+      "actual": {
+        "viscosity_pa_s": 4.6764391138026415e-05,
+        "viscosity_temperature_derivative_pa_s_k": 2.5281329510909385e-08,
+        "conductivity_w_m_k": 0.07467056989708985,
+        "conductivity_temperature_derivative_w_m_k2": 4.5571814726385696e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.00004676439113802640135641896769676418158797909031059081191168776459337658946028574",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000025281329510909375364425200230168441182968881794458214791085906416228057746221518",
+        "conductivity_w_m_k": "0.074670569897089825976900138114752384984011426904512044010824636246302051534553779",
+        "conductivity_temperature_derivative_w_m_k2": "0.000045571814726385681894672783083878790861902208350605621097806213301428189634524278"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 2.9740623887753714e-16,
+        "viscosity_temperature_derivative_pa_s_k": 3.6841690536916205e-16,
+        "conductivity_w_m_k": 3.6094341967616794e-16,
+        "conductivity_temperature_derivative_w_m_k2": 2.985948291835092e-16
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "O2",
+      "temperature_k": 100,
+      "actual": {
+        "viscosity_pa_s": 7.702432945056445e-06,
+        "viscosity_temperature_derivative_pa_s_k": 7.627802050561355e-08,
+        "conductivity_w_m_k": 0.008943340238199926,
+        "conductivity_temperature_derivative_w_m_k2": 9.75421804243718e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000007702432945056444102967638482110429376416991686337728915583868311841907038163912",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000076278020505613548198624092096490787104563707538117906558856913791229968206452474",
+        "conductivity_w_m_k": "0.0089433402381999256798655426716683094670773574931525184006179797686597083534837961",
+        "conductivity_temperature_derivative_w_m_k2": "0.000097542180424371779166762550798560538773066207726789484754996348684322243845694438"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 1.3266604339479091e-16,
+        "viscosity_temperature_derivative_pa_s_k": 2.5537167965698806e-17,
+        "conductivity_w_m_k": 4.399105835401956e-17,
+        "conductivity_temperature_derivative_w_m_k2": 1.645934060935018e-16
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "O2",
+      "temperature_k": 200,
+      "actual": {
+        "viscosity_pa_s": 1.469340946472148e-05,
+        "viscosity_temperature_derivative_pa_s_k": 6.404961286567469e-08,
+        "conductivity_w_m_k": 0.018170347175639465,
+        "conductivity_temperature_derivative_w_m_k2": 8.708283596489208e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000014693409464721479139524304523646903524915899464680093107135096111735862578672156",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000064049612865674685507847026080485866651155305904030338308103798722798799796763981",
+        "conductivity_w_m_k": "0.018170347175639458778760974632978006000140108953475191955934321084772732264332864",
+        "conductivity_temperature_derivative_w_m_k2": "0.000087082835964892063712292932048252319989218773077588993339323687515572840189918717"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 3.3460945152733866e-18,
+        "viscosity_temperature_derivative_pa_s_k": 6.636829674955237e-17,
+        "conductivity_w_m_k": 3.2396024293275307e-16,
+        "conductivity_temperature_derivative_w_m_k2": 1.9960583303641118e-16
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "O2",
+      "temperature_k": 300,
+      "actual": {
+        "viscosity_pa_s": 2.0630709814209994e-05,
+        "viscosity_temperature_derivative_pa_s_k": 5.5216357236722615e-08,
+        "conductivity_w_m_k": 0.026440301365017002,
+        "conductivity_temperature_derivative_w_m_k2": 7.874923293107657e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000020630709814209989842664990546363437262657582107763485049507875928446642239039323",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000055216357236722608111762094935227594032229076779685275839805303454150155756209863",
+        "conductivity_w_m_k": "0.026440301365016998665004498188859228168753199632507401580998199088203367211359293",
+        "conductivity_temperature_derivative_w_m_k2": "0.000078749232931076552742394663916720743173253026540572595398788929674841747221075071"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 1.910414369619283e-16,
+        "viscosity_temperature_derivative_pa_s_k": 1.2035483579140564e-16,
+        "conductivity_w_m_k": 1.30748626335345e-16,
+        "conductivity_temperature_derivative_w_m_k2": 1.9805293592507665e-16
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "O2",
+      "temperature_k": 400,
+      "actual": {
+        "viscosity_pa_s": 2.582093461117556e-05,
+        "viscosity_temperature_derivative_pa_s_k": 4.89240789217372e-08,
+        "conductivity_w_m_k": 0.03399437045040785,
+        "conductivity_temperature_derivative_w_m_k2": 7.263887792117368e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000025820934611175562259598034079570806243343566517187680811721258556106416435726271",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000048924078921737184521952365732841244478918072248568792093028881527340811579372011",
+        "conductivity_w_m_k": "0.033994370450407845750545165069639627752093469763476429076938652813030618265008912",
+        "conductivity_temperature_derivative_w_m_k2": "0.000072638877921173660127633952383040679625236010960989523051257790895200958730039966"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 4.945217408562554e-17,
+        "viscosity_temperature_derivative_pa_s_k": 2.544250458603757e-16,
+        "conductivity_w_m_k": 2.0807442249301906e-16,
+        "conductivity_temperature_derivative_w_m_k2": 3.288355508986679e-16
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "O2",
+      "temperature_k": 500,
+      "actual": {
+        "viscosity_pa_s": 3.046994477818859e-05,
+        "viscosity_temperature_derivative_pa_s_k": 4.427627599710752e-08,
+        "conductivity_w_m_k": 0.04101869471458868,
+        "conductivity_temperature_derivative_w_m_k2": 6.805545407274694e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000030469944778188586218729750710286911348364902031374800731396979928547295227212814",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000044276275997107519030810460148182870074998622159477527945762243884450092646527106",
+        "conductivity_w_m_k": "0.041018694714588674012364716909610567989157475975137866493520627961118974212292362",
+        "conductivity_temperature_derivative_w_m_k2": "0.000068055454072746934789185932746092041832308103221967090877107560681692865959958174"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 1.5378228194220478e-16,
+        "viscosity_temperature_derivative_pa_s_k": 7.378470670998009e-17,
+        "conductivity_w_m_k": 1.7697287242664138e-16,
+        "conductivity_temperature_derivative_w_m_k2": 1.2938787297567332e-16
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "O2",
+      "temperature_k": 600,
+      "actual": {
+        "viscosity_pa_s": 3.4712567453826606e-05,
+        "viscosity_temperature_derivative_pa_s_k": 4.0726620797876425e-08,
+        "conductivity_w_m_k": 0.047640130425194924,
+        "conductivity_temperature_derivative_w_m_k2": 6.451782291108275e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000034712567453826607628875993131757374476884383316028454999472847702833709112132697",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000040726620797876430914155014291924467747241737433126779129808503132174913634389039",
+        "conductivity_w_m_k": "0.047640130425194914701422688698822589596652802686134762262210604263409871739500763",
+        "conductivity_temperature_derivative_w_m_k2": "0.000064517822911082741455365906135865788286672948626697098043548303286265864369359198"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 5.2753788656164345e-17,
+        "viscosity_temperature_derivative_pa_s_k": 1.4284951239378132e-16,
+        "conductivity_w_m_k": 1.887018021431948e-16,
+        "conductivity_temperature_derivative_w_m_k2": 9.035738365064966e-17
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "O2",
+      "temperature_k": 700,
+      "actual": {
+        "viscosity_pa_s": 3.864061624273545e-05,
+        "viscosity_temperature_derivative_pa_s_k": 3.7941269410028644e-08,
+        "conductivity_w_m_k": 0.053946758550221005,
+        "conductivity_temperature_derivative_w_m_k2": 6.17186321154026e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000038640616242735454006041243897646424787467658979889005454191167642522750326097999",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000037941269410028643758148139890525902823915021319090242013279178773595052608966138",
+        "conductivity_w_m_k": "0.053946758550220989462272629130167367930546118272785964058847952943958564021933282",
+        "conductivity_temperature_derivative_w_m_k2": "0.000061718632115402599371124267878996149735207121321715913431403920088254685653993523"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 3.814733435871827e-17,
+        "viscosity_temperature_derivative_pa_s_k": 1.6039237677611847e-18,
+        "conductivity_w_m_k": 2.894957119053711e-16,
+        "conductivity_temperature_derivative_w_m_k2": 8.158672743086208e-17
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "O2",
+      "temperature_k": 800,
+      "actual": {
+        "viscosity_pa_s": 4.2319137003093846e-05,
+        "viscosity_temperature_derivative_pa_s_k": 3.570768926477633e-08,
+        "conductivity_w_m_k": 0.06000172795876009,
+        "conductivity_temperature_derivative_w_m_k2": 5.945769077075526e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.00004231913700309384355382715120888709759409849546846961838879510211449483804773925",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000035707689264776329746518927289835020585941939548426280454948513469403625576846746",
+        "conductivity_w_m_k": "0.060001727958760079949462184770689822140200254771419774220321507107266362991673456",
+        "conductivity_temperature_derivative_w_m_k2": "0.000059457690770755252784588739355861129492509641928781089523545469682388197314460279"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 5.983777848241401e-17,
+        "viscosity_temperature_derivative_pa_s_k": 9.557789344416017e-17,
+        "conductivity_w_m_k": 1.6599318729377374e-16,
+        "conductivity_temperature_derivative_w_m_k2": 1.7176523979221036e-16
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "O2",
+      "temperature_k": 900,
+      "actual": {
+        "viscosity_pa_s": 4.579579851678124e-05,
+        "viscosity_temperature_derivative_pa_s_k": 3.3884864683457966e-08,
+        "conductivity_w_m_k": 0.06585170354524701,
+        "conductivity_temperature_derivative_w_m_k2": 5.760028806773626e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000045795798516781254201470760879327323582014687821970971373809326007034031704763146",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000033884864683457978411165853431654221653679382350722152157486280196218619630384926",
+        "conductivity_w_m_k": "0.065851703545247011110551619778517438931738920566821503368628247834944059469581562",
+        "conductivity_temperature_derivative_w_m_k2": "0.000057600288067736266947098456085834263940298082696310282212526861161191017905619621"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 3.253166288740948e-16,
+        "viscosity_temperature_derivative_pa_s_k": 3.592941074263258e-16,
+        "conductivity_w_m_k": 9.721003053912228e-18,
+        "conductivity_temperature_derivative_w_m_k2": 1.0099787961111555e-16
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "O2",
+      "temperature_k": 1000,
+      "actual": {
+        "viscosity_pa_s": 4.9106537153148974e-05,
+        "viscosity_temperature_derivative_pa_s_k": 3.2375771526090894e-08,
+        "conductivity_w_m_k": 0.0715320883494655,
+        "conductivity_temperature_derivative_w_m_k2": 5.605283710850075e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000049106537153148979247506562208665572529842982700822960660371272364769033112978283",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000032375771526090898331973927605874696077537899477079799641080798899945300941972489",
+        "conductivity_w_m_k": "0.071532088349465504330604009220600908035432317909818808849836404030338696331993973",
+        "conductivity_temperature_derivative_w_m_k2": "0.000056052837108500737287106211042767914284616523615630186499389166207360332351495565"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 1.0930341337721416e-16,
+        "viscosity_temperature_derivative_pa_s_k": 1.2437393844385045e-16,
+        "conductivity_w_m_k": 1.9997403706599228e-17,
+        "conductivity_temperature_derivative_w_m_k2": 1.792868424952996e-16
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "O2",
+      "temperature_k": 1100,
+      "actual": {
+        "viscosity_pa_s": 5.2279094842940005e-05,
+        "viscosity_temperature_derivative_pa_s_k": 3.1111547980000105e-08,
+        "conductivity_w_m_k": 0.07707035328181296,
+        "conductivity_temperature_derivative_w_m_k2": 5.4748438905847415e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000052279094842939998530862665763637165689938005972909385214349085893879187833737241",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000031111547980000107212312926740508502503141093229312258094665801907035970646245147",
+        "conductivity_w_m_k": "0.077070353281812935885538111591507017439262598280856855490567392362963568781936891",
+        "conductivity_temperature_derivative_w_m_k2": "0.000054748438905847404950566855987545573971236903220940359038190049603148605583355769"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 1.295935978674795e-16,
+        "viscosity_temperature_derivative_pa_s_k": 6.089916669267976e-17,
+        "conductivity_w_m_k": 2.6204029262302026e-16,
+        "conductivity_temperature_derivative_w_m_k2": 1.8257354290980723e-16
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    },
+    {
+      "species": "O2",
+      "temperature_k": 1200,
+      "actual": {
+        "viscosity_pa_s": 5.5335322232782664e-05,
+        "viscosity_temperature_derivative_pa_s_k": 3.004200652935757e-08,
+        "conductivity_w_m_k": 0.08248823012987394,
+        "conductivity_temperature_derivative_w_m_k2": 5.363806347367247e-05
+      },
+      "reference_decimal": {
+        "viscosity_pa_s": "0.000055335322232782662110315419853909502650814425645294681213155328330198928046654516",
+        "viscosity_temperature_derivative_pa_s_k": "0.000000030042006529357561295107033107385881193846576269540271566843072882923349206997558",
+        "conductivity_w_m_k": "0.082488230129873928660011891513302687943006956786016680499312513112722015827305185",
+        "conductivity_temperature_derivative_w_m_k2": "0.000053638063473672459632422578264393283531641553904092911904080600765954226170056449"
+      },
+      "relative_errors": {
+        "viscosity_pa_s": 3.341367385158556e-17,
+        "viscosity_temperature_derivative_pa_s_k": 2.4747165340266844e-16,
+        "conductivity_w_m_k": 1.4541164465916836e-16,
+        "conductivity_temperature_derivative_w_m_k2": 1.6586569848082994e-16
+      },
+      "within_budgets": {
+        "viscosity_pa_s": true,
+        "viscosity_temperature_derivative_pa_s_k": true,
+        "conductivity_w_m_k": true,
+        "conductivity_temperature_derivative_w_m_k2": true
+      }
+    }
+  ],
+  "paper_calculated_anchors": [
+    {
+      "source": {
+        "species": "N2",
+        "temperature_k": 100,
+        "viscosity_micro_pa_s": "6.90349",
+        "conductivity_mw_m_k": "9.27749",
+        "viscosity_rounding_half_unit": "0.000005",
+        "conductivity_rounding_half_unit": "0.000005"
+      },
+      "actual_viscosity_micro_pa_s": 6.903488326689481,
+      "actual_conductivity_mw_m_k": 9.277493928717773,
+      "absolute_errors": {
+        "viscosity": 1.6733105185906538e-06,
+        "conductivity": 3.928717772438972e-06
+      },
+      "within_printed_rounding": {
+        "viscosity": true,
+        "conductivity": true
+      }
+    },
+    {
+      "source": {
+        "species": "N2",
+        "temperature_k": 300,
+        "viscosity_micro_pa_s": "17.8771",
+        "conductivity_mw_m_k": "25.9361",
+        "viscosity_rounding_half_unit": "0.00005",
+        "conductivity_rounding_half_unit": "0.00005"
+      },
+      "actual_viscosity_micro_pa_s": 17.877064146009673,
+      "actual_conductivity_mw_m_k": 25.93608667121785,
+      "absolute_errors": {
+        "viscosity": 3.585399032601799e-05,
+        "conductivity": 1.332878214910238e-05
+      },
+      "within_printed_rounding": {
+        "viscosity": true,
+        "conductivity": true
+      }
+    },
+    {
+      "source": {
+        "species": "O2",
+        "temperature_k": 100,
+        "viscosity_micro_pa_s": "7.70243",
+        "conductivity_mw_m_k": "8.94334",
+        "viscosity_rounding_half_unit": "0.000005",
+        "conductivity_rounding_half_unit": "0.000005"
+      },
+      "actual_viscosity_micro_pa_s": 7.7024329450564455,
+      "actual_conductivity_mw_m_k": 8.943340238199927,
+      "absolute_errors": {
+        "viscosity": 2.9450564458244344e-06,
+        "conductivity": 2.3819992733820072e-07
+      },
+      "within_printed_rounding": {
+        "viscosity": true,
+        "conductivity": true
+      }
+    },
+    {
+      "source": {
+        "species": "O2",
+        "temperature_k": 300,
+        "viscosity_micro_pa_s": "20.6307",
+        "conductivity_mw_m_k": "26.4403",
+        "viscosity_rounding_half_unit": "0.00005",
+        "conductivity_rounding_half_unit": "0.00005"
+      },
+      "actual_viscosity_micro_pa_s": 20.630709814209993,
+      "actual_conductivity_mw_m_k": 26.440301365017003,
+      "absolute_errors": {
+        "viscosity": 9.814209992242695e-06,
+        "conductivity": 1.3650170025414354e-06
+      },
+      "within_printed_rounding": {
+        "viscosity": true,
+        "conductivity": true
+      }
+    }
+  ],
+  "nist_historical_table_comparisons": [
+    {
+      "species": "N2",
+      "temperature_k": 300.0,
+      "property": "viscosity",
+      "table_value": 17.8,
+      "model_value": 17.877064146009673,
+      "signed_relative_difference": 0.004329446405037749,
+      "table_uncertainty_plus_rounding": 0.5840000000000001,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 300.0,
+      "property": "conductivity",
+      "table_value": 25.6,
+      "model_value": 25.93608667121785,
+      "signed_relative_difference": 0.013128385594447234,
+      "table_uncertainty_plus_rounding": 0.8180000000000001,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 400.0,
+      "property": "viscosity",
+      "table_value": 22.1,
+      "model_value": 22.199546281472834,
+      "signed_relative_difference": 0.004504356627729988,
+      "table_uncertainty_plus_rounding": 0.7130000000000001,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 400.0,
+      "property": "conductivity",
+      "table_value": 32.5,
+      "model_value": 32.782133054314485,
+      "signed_relative_difference": 0.008681017055830317,
+      "table_uncertainty_plus_rounding": 1.025,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 500.0,
+      "property": "viscosity",
+      "table_value": 25.9,
+      "model_value": 26.056237215664066,
+      "signed_relative_difference": 0.0060323249291145565,
+      "table_uncertainty_plus_rounding": 0.827,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 500.0,
+      "property": "conductivity",
+      "table_value": 38.9,
+      "model_value": 39.024010285473885,
+      "signed_relative_difference": 0.003187925076449524,
+      "table_uncertainty_plus_rounding": 1.2169999999999999,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 600.0,
+      "property": "viscosity",
+      "table_value": 29.4,
+      "model_value": 29.57176978183496,
+      "signed_relative_difference": 0.00584250958622315,
+      "table_uncertainty_plus_rounding": 0.9319999999999999,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 600.0,
+      "property": "conductivity",
+      "table_value": 45.0,
+      "model_value": 44.824516488893444,
+      "signed_relative_difference": -0.0038996335801456893,
+      "table_uncertainty_plus_rounding": 1.4,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 700.0,
+      "property": "viscosity",
+      "table_value": 32.7,
+      "model_value": 32.828403949367306,
+      "signed_relative_difference": 0.003926726280345672,
+      "table_uncertainty_plus_rounding": 1.0310000000000001,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 700.0,
+      "property": "conductivity",
+      "table_value": 50.9,
+      "model_value": 50.29212348552283,
+      "signed_relative_difference": -0.011942564135111383,
+      "table_uncertainty_plus_rounding": 1.577,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 800.0,
+      "property": "viscosity",
+      "table_value": 35.8,
+      "model_value": 35.883122320924855,
+      "signed_relative_difference": 0.0023218525398004952,
+      "table_uncertainty_plus_rounding": 1.1239999999999999,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 800.0,
+      "property": "conductivity",
+      "table_value": 56.6,
+      "model_value": 55.502256750121475,
+      "signed_relative_difference": -0.01939475706499163,
+      "table_uncertainty_plus_rounding": 1.748,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 900.0,
+      "property": "viscosity",
+      "table_value": 38.7,
+      "model_value": 38.77696839387091,
+      "signed_relative_difference": 0.0019888473868451286,
+      "table_uncertainty_plus_rounding": 1.211,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 900.0,
+      "property": "conductivity",
+      "table_value": 62.2,
+      "model_value": 60.50929586830755,
+      "signed_relative_difference": -0.027181738451647206,
+      "table_uncertainty_plus_rounding": 1.9160000000000001,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 1000.0,
+      "property": "viscosity",
+      "table_value": 41.5,
+      "model_value": 41.54045702526076,
+      "signed_relative_difference": 0.000974868078572458,
+      "table_uncertainty_plus_rounding": 1.295,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 1000.0,
+      "property": "conductivity",
+      "table_value": 67.6,
+      "model_value": 65.35364391883705,
+      "signed_relative_difference": -0.033230119543830525,
+      "table_uncertainty_plus_rounding": 2.0779999999999994,
+      "within_table_range": false,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 300.0,
+      "property": "viscosity",
+      "table_value": 20.54,
+      "model_value": 20.630709814209993,
+      "signed_relative_difference": 0.00441625190895784,
+      "table_uncertainty_plus_rounding": 0.1077,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 300.0,
+      "property": "conductivity",
+      "table_value": 26.64,
+      "model_value": 26.440301365017003,
+      "signed_relative_difference": -0.007496195006869273,
+      "table_uncertainty_plus_rounding": 0.5378000000000001,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 400.0,
+      "property": "viscosity",
+      "table_value": 25.74,
+      "model_value": 25.820934611175563,
+      "signed_relative_difference": 0.003144312788483467,
+      "table_uncertainty_plus_rounding": 0.13369999999999999,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 400.0,
+      "property": "conductivity",
+      "table_value": 34.67,
+      "model_value": 33.99437045040785,
+      "signed_relative_difference": -0.019487440138221863,
+      "table_uncertainty_plus_rounding": 0.6984,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 500.0,
+      "property": "viscosity",
+      "table_value": 30.4,
+      "model_value": 30.46994477818859,
+      "signed_relative_difference": 0.0023008150719931657,
+      "table_uncertainty_plus_rounding": 0.157,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 500.0,
+      "property": "conductivity",
+      "table_value": 42.74,
+      "model_value": 41.01869471458868,
+      "signed_relative_difference": -0.04027387190948335,
+      "table_uncertainty_plus_rounding": 0.8598,
+      "within_table_range": false,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 600.0,
+      "property": "viscosity",
+      "table_value": 34.66,
+      "model_value": 34.71256745382661,
+      "signed_relative_difference": 0.0015166605258687725,
+      "table_uncertainty_plus_rounding": 0.1783,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 600.0,
+      "property": "conductivity",
+      "table_value": 50.73,
+      "model_value": 47.640130425194926,
+      "signed_relative_difference": -0.06090813275783701,
+      "table_uncertainty_plus_rounding": 1.0195999999999998,
+      "within_table_range": false,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 700.0,
+      "property": "viscosity",
+      "table_value": 38.62,
+      "model_value": 38.640616242735454,
+      "signed_relative_difference": 0.0005338229605245219,
+      "table_uncertainty_plus_rounding": 0.1981,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 700.0,
+      "property": "conductivity",
+      "table_value": 58.49,
+      "model_value": 53.946758550221006,
+      "signed_relative_difference": -0.0776755248722687,
+      "table_uncertainty_plus_rounding": 1.1748,
+      "within_table_range": false,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 800.0,
+      "property": "viscosity",
+      "table_value": 42.32,
+      "model_value": 42.31913700309385,
+      "signed_relative_difference": -2.0392176421318883e-05,
+      "table_uncertainty_plus_rounding": 0.21660000000000001,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 800.0,
+      "property": "conductivity",
+      "table_value": 65.93,
+      "model_value": 60.001727958760085,
+      "signed_relative_difference": -0.08991767088184317,
+      "table_uncertainty_plus_rounding": 1.3236,
+      "within_table_range": false,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 900.0,
+      "property": "viscosity",
+      "table_value": 45.82,
+      "model_value": 45.79579851678124,
+      "signed_relative_difference": -0.0005281860152501244,
+      "table_uncertainty_plus_rounding": 0.2341,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 900.0,
+      "property": "conductivity",
+      "table_value": 72.99,
+      "model_value": 65.851703545247,
+      "signed_relative_difference": -0.09779827996647472,
+      "table_uncertainty_plus_rounding": 1.4647999999999999,
+      "within_table_range": false,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 1000.0,
+      "property": "viscosity",
+      "table_value": 49.14,
+      "model_value": 49.10653715314898,
+      "signed_relative_difference": -0.0006809696143879363,
+      "table_uncertainty_plus_rounding": 0.2507,
+      "within_table_range": true,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 1000.0,
+      "property": "conductivity",
+      "table_value": 79.68,
+      "model_value": 71.53208834946551,
+      "signed_relative_difference": -0.10225792734104537,
+      "table_uncertainty_plus_rounding": 1.5986,
+      "within_table_range": false,
+      "pressure_condition_matches": false,
+      "source_url": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+    }
+  ],
+  "difference_from_previous_lj_model": [
+    {
+      "species": "O2",
+      "temperature_k": 300,
+      "previous_lj_pa_s": 2.065329027295279e-05,
+      "paper_correlation_pa_s": 2.0630709814209994e-05,
+      "signed_relative_change": -0.0010933104819800482
+    },
+    {
+      "species": "N2",
+      "temperature_k": 300,
+      "previous_lj_pa_s": 1.8084626814678912e-05,
+      "paper_correlation_pa_s": 1.7877064146009673e-05,
+      "signed_relative_change": -0.011477298967583052
+    },
+    {
+      "species": "O2",
+      "temperature_k": 400,
+      "previous_lj_pa_s": 2.563121266982727e-05,
+      "paper_correlation_pa_s": 2.582093461117556e-05,
+      "signed_relative_change": 0.0074019884970807
+    },
+    {
+      "species": "N2",
+      "temperature_k": 400,
+      "previous_lj_pa_s": 2.234030784566974e-05,
+      "paper_correlation_pa_s": 2.2199546281472832e-05,
+      "signed_relative_change": -0.006300788922395747
+    },
+    {
+      "species": "O2",
+      "temperature_k": 500,
+      "previous_lj_pa_s": 3.0045102118963934e-05,
+      "paper_correlation_pa_s": 3.046994477818859e-05,
+      "signed_relative_change": 0.014140163596132472
+    },
+    {
+      "species": "N2",
+      "temperature_k": 500,
+      "previous_lj_pa_s": 2.61242606334714e-05,
+      "paper_correlation_pa_s": 2.6056237215664066e-05,
+      "signed_relative_change": -0.00260384088038769
+    },
+    {
+      "species": "O2",
+      "temperature_k": 600,
+      "previous_lj_pa_s": 3.4076822160863583e-05,
+      "paper_correlation_pa_s": 3.4712567453826606e-05,
+      "signed_relative_change": 0.018656237660950693
+    },
+    {
+      "species": "N2",
+      "temperature_k": 600,
+      "previous_lj_pa_s": 2.9584291036524023e-05,
+      "paper_correlation_pa_s": 2.9571769781834957e-05,
+      "signed_relative_change": -0.000423239978054828
+    },
+    {
+      "species": "O2",
+      "temperature_k": 700,
+      "previous_lj_pa_s": 3.7824116435894e-05,
+      "paper_correlation_pa_s": 3.864061624273545e-05,
+      "signed_relative_change": 0.021586751622481113
+    },
+    {
+      "species": "N2",
+      "temperature_k": 700,
+      "previous_lj_pa_s": 3.280569682567399e-05,
+      "paper_correlation_pa_s": 3.282840394936731e-05,
+      "signed_relative_change": 0.0006921701378264811
+    },
+    {
+      "species": "O2",
+      "temperature_k": 800,
+      "previous_lj_pa_s": 4.1352361607523276e-05,
+      "paper_correlation_pa_s": 4.2319137003093846e-05,
+      "signed_relative_change": 0.02337896453765494
+    },
+    {
+      "species": "N2",
+      "temperature_k": 800,
+      "previous_lj_pa_s": 3.584303758135315e-05,
+      "paper_correlation_pa_s": 3.5883122320924855e-05,
+      "signed_relative_change": 0.0011183410301295548
+    },
+    {
+      "species": "O2",
+      "temperature_k": 900,
+      "previous_lj_pa_s": 4.470499924717779e-05,
+      "paper_correlation_pa_s": 4.579579851678124e-05,
+      "signed_relative_change": 0.024399939335024382
+    },
+    {
+      "species": "N2",
+      "temperature_k": 900,
+      "previous_lj_pa_s": 3.873181901299005e-05,
+      "paper_correlation_pa_s": 3.877696839387091e-05,
+      "signed_relative_change": 0.0011656922404216473
+    },
+    {
+      "species": "O2",
+      "temperature_k": 1000,
+      "previous_lj_pa_s": 4.791204071555017e-05,
+      "paper_correlation_pa_s": 4.9106537153148974e-05,
+      "signed_relative_change": 0.024931028187474395
+    },
+    {
+      "species": "N2",
+      "temperature_k": 1000,
+      "previous_lj_pa_s": 4.149722616372896e-05,
+      "paper_correlation_pa_s": 4.1540457025260754e-05,
+      "signed_relative_change": 0.001041777138578517
+    },
+    {
+      "species": "O2",
+      "temperature_k": 1100,
+      "previous_lj_pa_s": 5.0995824440805286e-05,
+      "paper_correlation_pa_s": 5.2279094842940005e-05,
+      "signed_relative_change": 0.02516422503619503
+    },
+    {
+      "species": "N2",
+      "temperature_k": 1100,
+      "previous_lj_pa_s": 4.4158425893010576e-05,
+      "paper_correlation_pa_s": 4.4196876022732424e-05,
+      "signed_relative_change": 0.0008707314390011932
+    },
+    {
+      "species": "O2",
+      "temperature_k": 1200,
+      "previous_lj_pa_s": 5.397365301973301e-05,
+      "paper_correlation_pa_s": 5.5335322232782664e-05,
+      "signed_relative_change": 0.02522840565473351
+    },
+    {
+      "species": "N2",
+      "temperature_k": 1200,
+      "previous_lj_pa_s": 4.673003630514297e-05,
+      "paper_correlation_pa_s": 4.6764391138026415e-05,
+      "signed_relative_change": 0.0007351766786379658
+    }
+  ],
+  "all_source_arithmetic_and_printed_anchor_budgets_met": true,
+  "all_nist_table_ranges_met": false,
+  "pressure_matched_experimental_validation": false,
+  "material_qualified": false,
+  "training_eligible": false
+}

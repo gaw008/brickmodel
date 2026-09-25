@@ -1,0 +1,144 @@
+{
+  "source": {
+    "title": "Viscosity and Thermal Conductivity Equations for Nitrogen, Oxygen, Argon, and Air",
+    "authors": [
+      "E. W. Lemmon",
+      "R. T. Jacobsen"
+    ],
+    "year": 2004,
+    "url": "https://trc.nist.gov/refprop/FAQ/NAO.PDF",
+    "local_reading_copy": ".tools/source-cache/lemmon2004/NAO.pdf",
+    "viscosity_equation_printed_page": 23,
+    "species_and_collision_tables_printed_page": 24,
+    "conductivity_equation_printed_page": 24,
+    "conductivity_table_printed_page": 26,
+    "calculated_reference_table_printed_page": 28,
+    "visual_verification": "Formula, Table I/II, first three Table IV terms and zero-density Table V rows visually checked from PDF pages 3/4/6/8. PDF unit is micro-Pa s, not milli-Pa s from text extraction."
+  },
+  "collision_log_coefficients": [
+    "0.431",
+    "-0.4623",
+    "0.08406",
+    "0.005341",
+    "-0.00331"
+  ],
+  "viscosity_prefactor": "0.0266958",
+  "unit_conversion": {
+    "micro_pa_s_to_pa_s": "1e-6",
+    "milli_w_m_k_to_w_m_k": "1e-3"
+  },
+  "species": {
+    "N2": {
+      "molar_mass_g_mol": "28.01348",
+      "well_depth_over_kb_k": "98.94",
+      "diameter_nm": "0.3656",
+      "critical_temperature_k": "126.192",
+      "conductivity_viscosity_coefficient": "1.511",
+      "conductivity_terms": [
+        [
+          "2.117",
+          "-1.0"
+        ],
+        [
+          "-3.332",
+          "-0.7"
+        ]
+      ]
+    },
+    "O2": {
+      "molar_mass_g_mol": "31.9988",
+      "well_depth_over_kb_k": "118.5",
+      "diameter_nm": "0.3428",
+      "critical_temperature_k": "154.581",
+      "conductivity_viscosity_coefficient": "1.036",
+      "conductivity_terms": [
+        [
+          "6.283",
+          "-0.9"
+        ],
+        [
+          "-4.262",
+          "-0.6"
+        ]
+      ]
+    }
+  },
+  "calculated_paper_references": [
+    {
+      "species": "N2",
+      "temperature_k": 100,
+      "viscosity_micro_pa_s": "6.90349",
+      "conductivity_mw_m_k": "9.27749",
+      "viscosity_rounding_half_unit": "0.000005",
+      "conductivity_rounding_half_unit": "0.000005"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 300,
+      "viscosity_micro_pa_s": "17.8771",
+      "conductivity_mw_m_k": "25.9361",
+      "viscosity_rounding_half_unit": "0.00005",
+      "conductivity_rounding_half_unit": "0.00005"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 100,
+      "viscosity_micro_pa_s": "7.70243",
+      "conductivity_mw_m_k": "8.94334",
+      "viscosity_rounding_half_unit": "0.000005",
+      "conductivity_rounding_half_unit": "0.000005"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 300,
+      "viscosity_micro_pa_s": "20.6307",
+      "conductivity_mw_m_k": "26.4403",
+      "viscosity_rounding_half_unit": "0.00005",
+      "conductivity_rounding_half_unit": "0.00005"
+    }
+  ],
+  "review": {
+    "decimal_precision": 80,
+    "temperatures_k": [
+      100,
+      200,
+      300,
+      400,
+      500,
+      600,
+      700,
+      800,
+      900,
+      1000,
+      1100,
+      1200
+    ],
+    "relative_value_budget": 1e-13,
+    "relative_temperature_derivative_budget": 1e-12,
+    "nist_table_file": "data/sandbox/research/gas-transport-source-v1/source/nist-selected-tables.json",
+    "previous_lj_review": "data/sandbox/research/gas-transport-source-v1/source-review-v2.json",
+    "nist_estimated_uncertainty_fraction": {
+      "N2": {
+        "viscosity": 0.03,
+        "conductivity": 0.03
+      },
+      "O2": {
+        "viscosity": 0.005,
+        "conductivity": 0.02
+      }
+    },
+    "nist_rounding_half_unit": {
+      "N2": {
+        "viscosity": 0.05,
+        "conductivity": 0.05
+      },
+      "O2": {
+        "viscosity": 0.005,
+        "conductivity": 0.005
+      }
+    }
+  },
+  "scope": "Only zero-density eta0(T), lambda0(T) and temperature derivatives for pure N2/O2. The paper explicitly labels Table V values as calculated numerical reference values, not measurement accuracy. No density residual, critical enhancement, pressure conversion, mixture law or binary diffusivity; no automatic replacement of GRI transport. The fitted prefactor and molar masses remain those of the publication.",
+  "material_qualified": false,
+  "training_eligible": false
+}
