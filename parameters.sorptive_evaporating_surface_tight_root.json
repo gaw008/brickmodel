@@ -1,0 +1,286 @@
+{
+  "schema": "sorptive_evaporating_surface_column_v1",
+  "classification": "conditional_mobile_water_and_zero_storage_sorptive_evaporating_surface",
+  "water_facts_file": "data/sandbox/water/source_facts.json",
+  "thermochemistry_file": "data/sandbox/thermochemistry/nist_gases_v1.json",
+  "molar_masses_kg_mol": {
+    "O2": 0.0319988,
+    "N2": 0.0280134,
+    "H2O": 0.018015268
+  },
+  "reference_pressure_pa": 100000,
+  "source_files": {
+    "dry_caloric": "data/sandbox/research/arlabosse2005/source.json",
+    "curves": "data/sandbox/research/arlabosse95/facts.json",
+    "wet_definition": "data/sandbox/research/arlabosse-wet-thermo-v1/model.json",
+    "low_moisture_definition": "data/sandbox/research/arlabosse-low-moisture-v1/model.json"
+  },
+  "sorption_record_file": "data/sandbox/research/source-sorptive-gas-cell-v1/source-joined.json",
+  "source_construction": {
+    "activity_levels_kg_kg": [
+      0.15,
+      0.2,
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.7,
+      0.8
+    ],
+    "heat_levels_kg_kg": [
+      0.15,
+      0.2,
+      0.3,
+      0.4,
+      0.7,
+      0.8
+    ],
+    "celsius_zero_k": 273.15,
+    "basis": "Existing piecewise-linear ln(activity)/total-desorption-heat source curves from W=.15 to .8, joined to the declared low-W ideal-dilution extension. No refitting."
+  },
+  "cell": {
+    "available_fluid_volume_m3": 1e-06,
+    "dry_mass_kg": 1e-05,
+    "dry_reference_temperature_k": 330.0,
+    "classification": "virtual_fixed_mass_and_available_volume; dry solid excluded from stated fluid volume"
+  },
+  "initial": {
+    "temperature_k": 330.0,
+    "total_pressure_pa": 100000.0,
+    "moisture_kg_kg_dry": 0.3,
+    "carrier_mole_fractions": {
+      "O2": 0.21,
+      "N2": 0.79
+    },
+    "definition": "Equilibrium initial water/carrier inventories derived from explicitly declared T/P/W/V/md; no initial nonequilibrium projection."
+  },
+  "liquid_evaluation": {
+    "method": "gibbs_table",
+    "table_file": "data/sandbox/research/water-column-events-v1/liquid-gibbs-condensation.json",
+    "definition": "Explicit choice; no automatic fallback or extrapolation. Gibbs table must be qualified separately from direct IAPWS."
+  },
+  "transfer": {
+    "area_m2": 0.0001,
+    "cell_distance_m": 0.005,
+    "reservoir_distance_m": 0.005,
+    "cell_conductivity_w_m_k": 0.1,
+    "reservoir_conductivity_w_m_k": 0.1,
+    "effective_diffusivities_m2_s": {
+      "O2": 1e-05,
+      "N2": 1e-05,
+      "H2O": 1.5e-05
+    },
+    "permeability_m2": 1e-14,
+    "relative_permeability": 1.0,
+    "viscosity_pa_s": 2e-05
+  },
+  "transfer_classification": "Virtual gas-connection diffusion/Darcy/two-resistance heat parameters. No measured sludge transport coefficient or radiative boundary; independent virtual condensed transport is separately declared.",
+  "boundary_program": {
+    "identity": {
+      "program_id": "source-sorptive-common-gas-drying-v1",
+      "version": "1",
+      "classification": "virtual_design_choice",
+      "source_ids": [
+        "VIRTUAL_SORPTIVE_GAS_BOUNDARY_V1"
+      ]
+    },
+    "values": {
+      "knot_times_s": [
+        0.0,
+        10.0,
+        1200.0
+      ],
+      "gas_temperature_k": [
+        330.0,
+        333.0,
+        333.0
+      ],
+      "radiation_temperature_k": [
+        330.0,
+        333.0,
+        333.0
+      ],
+      "total_pressure_pa": [
+        100000.0,
+        100000.0,
+        100000.0
+      ],
+      "species_order": [
+        "O2",
+        "N2",
+        "H2O"
+      ],
+      "mole_fractions": [
+        [
+          0.2079,
+          0.7821,
+          0.01
+        ],
+        [
+          0.2079,
+          0.7821,
+          0.01
+        ],
+        [
+          0.2079,
+          0.7821,
+          0.01
+        ]
+      ]
+    }
+  },
+  "numerics": {
+    "water": {
+      "pressure_relative": 2e-08,
+      "pressure_absolute_pa": 0.01,
+      "energy_identity_absolute_j_kg": 1e-06,
+      "eos_caloric_absolute_j_kg": 0.002,
+      "heat_capacity_absolute_j_kg_k": 1e-05,
+      "gibbs_absolute_j_kg": 0.001,
+      "temperature_absolute_k": 1e-09
+    },
+    "pressure_inverse": {
+      "bracket_pa": [
+        90000,
+        110000
+      ],
+      "absolute_tolerance_pa": 1e-06,
+      "relative_tolerance": 1e-12,
+      "max_iterations": 100
+    },
+    "warm_temperature_inverse": {
+      "seed_increment_k": 0.001,
+      "absolute_tolerance_k": 1e-09,
+      "relative_tolerance": 1e-12,
+      "max_iterations": 30
+    },
+    "temperature_inverse": {
+      "bracket_k": [
+        310,
+        340
+      ],
+      "absolute_tolerance_k": 1e-09,
+      "relative_tolerance": 1e-12,
+      "max_iterations": 100
+    },
+    "implicit": {
+      "method": "BDF",
+      "relative_tolerance": 1e-07,
+      "inventory_absolute_tolerance_mol": 1e-13,
+      "energy_absolute_tolerance_j": 1e-08,
+      "maximum_step_s": 10.0,
+      "observation_interval_s": 0.5,
+      "refinement_tolerance_factor": 0.1,
+      "progress_every_accepted_steps": 50,
+      "equilibrium_cache_entries": 8192,
+      "initial_step_s": 1e-05
+    },
+    "condensed_inventory_inverse": {
+      "absolute_tolerance_mol": 1e-16,
+      "relative_tolerance": 1e-12,
+      "max_iterations": 100
+    },
+    "meshes": {
+      "one": 1,
+      "two": 2,
+      "four": 4,
+      "eight": 8,
+      "sixteen": 16,
+      "thirty_two": 32,
+      "sixty_four": 64,
+      "one_twenty_eight": 128
+    }
+  },
+  "observation": {
+    "moisture_target_kg_kg": 0.1,
+    "definition": "Dry-mass-weighted mean condensed water W=.10; not all cells below threshold, zero-water dry endpoint or real material criterion.",
+    "comparison_budgets": {
+      "time_temperature_k": 0.02,
+      "time_total_water_mol": 1e-07,
+      "time_moisture_event_s": 0.001,
+      "source_energy_j": 1e-07,
+      "source_chemical_potential_j_mol": 1e-05,
+      "source_pressure_pa": 0.001,
+      "entropy_balance_j_k": 1e-07,
+      "space_temperature_k": 0.2,
+      "space_total_water_mol": 1e-06,
+      "space_moisture_event_s": 0.02
+    },
+    "moisture_event_absolute_time_tolerance_s": 1e-06,
+    "moisture_event_relative_tolerance": 1e-12,
+    "moisture_event_maximum_iterations": 100
+  },
+  "limitations": [
+    "Sorption source95C; current temperature extension and W<0.15 shape are conditional assumptions with unquantified model error.",
+    "Zero excess volume and Cp; local equilibrium; fixed dry mass/reference; no reaction, pore connectivity, sintering, cooling mechanics or real-brick validation."
+  ],
+  "material_qualified": false,
+  "training_eligible": false,
+  "source_review": {
+    "temperatures_k": [
+      315.0,
+      330.0,
+      360.0
+    ],
+    "moisture_levels_kg_kg": [
+      0.01,
+      0.05,
+      0.1,
+      0.14,
+      0.175,
+      0.25,
+      0.35,
+      0.45,
+      0.55,
+      0.65,
+      0.75
+    ],
+    "temperature_difference_step_k": 0.01,
+    "moisture_difference_step_kg_kg": 1e-07,
+    "mu_derivative_budget_j_mol": 1e-05,
+    "calibration_activity_budget": 1e-12,
+    "calibration_heat_budget_j_kg": 1e-06,
+    "join_quadrature_budget_j_kg": 1e-07,
+    "quad_absolute_tolerance": 1e-08,
+    "quad_relative_tolerance": 1e-12,
+    "quad_maximum_subintervals": 100,
+    "join_one_sided_step_kg_kg": 1e-08,
+    "join_h_s_absolute_budget": 0.01
+  },
+  "case_definition": {
+    "baseline_parameters": "parameters.source_sorptive_gas_cell.json",
+    "classification": "spatial_resolution_of_same_virtual_channel",
+    "mesh_relation": "One cell equals original single-cell apparatus: L/2=.005m, same external resistance, total available volume, total dry mass and boundary. Refined cells share interior gas/heat fluxes with equal opposite signs.",
+    "numerical_change": "Same physical model and tolerances, declared maximum step10s and exact-state cache8192. Full four-cell comparison against original2s policy required before fine grids; no rounded cache keys."
+  },
+  "geometry": {
+    "length_m": 0.01,
+    "face_area_m2": 0.0001,
+    "classification": "Virtual one-dimensional channel with specified available fluid volume and fixed dry sorbent storage. Dry material volume excluded; not a measured porosity or brick geometry."
+  },
+  "condensed_transfer": {
+    "model": "full_mu_over_T_with_symmetric_partial_enthalpy",
+    "mobility_density_mol2_k_j_s_m": 1e-06,
+    "classification": "virtual_design_choice_not_measured_diffusivity",
+    "definition": "L_face=area/center_distance * mobility_density; independent condensed-water path. No borrowed total-loss D; gas diffusion/Darcy coefficients remain separately declared virtual values.",
+    "boundary": "sealed_left; right_massless_equilibrium_surface_converts_to_external_gas",
+    "material_error": null
+  },
+  "surface_equilibrium": {
+    "method": "hybr",
+    "coordinate_tolerance": 1e-11,
+    "maximum_function_evaluations": 150,
+    "temperature_coordinate_scale_k": 330.0,
+    "pressure_coordinate_scale_pa": 100000.0,
+    "residual_reference_temperature_k": 330.0,
+    "inventory_residual_scale_mol_s": 1e-07,
+    "energy_residual_scale_w": 0.01,
+    "classification": "zero_storage_local_equilibrium_material_trace_with_explicit_internal_water_and_external_gas_paths",
+    "mass_energy_rate_selection": "interior total rate used once for final cell and exterior ledger; inside-minus-outside residual retained separately"
+  },
+  "surface_root_revision": {
+    "previous_parameters": "parameters.sorptive_evaporating_surface.json",
+    "reason": "Full 32-cell source root replay reproduced the original energy-rate failure at 1e-9; all 25229 states/nodes met the unchanged 1e-8 W budget with 1e-11. This is a new explicit trajectory, not a replacement record or fallback.",
+    "source_record": "data/sandbox/research/sorptive-primitive-jacobian-v1/surface-thirty-two-cached-root-review.json"
+  }
+}

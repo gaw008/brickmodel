@@ -20,4 +20,6 @@
 
 长审查的实际性能剖析显示，一次来源表面求根调用45次直接IAPWS95构造，耗时.221s中的.186s用于这些重复液体状态。新增明确可选的256项缓存仅复用**完全相同、未经取整的T/P键**，公式和求根精度不变。六个已保存模拟状态（0、10、100、400、800、1200s）在两档表面根容差下的全部来源U/S/P/化学势和面结果逐项精确相等；同次记录未缓存.936/.920s、缓存.206/.224s，仅属本机此组调用，不作普遍加速保证。
 
-原未缓存128格精细全审查在运行1h28m时主动中断，退出130及原stderr、`surface-one-twenty-eight-refined-audit-cancellation-plan.json`保存；它没有完成，也没有被记为通过。以`parameters.sorptive_surface_cached_audit.json`从头做同一完整审查，输出独立的`surface-one-twenty-eight-refined-cached-audit.json`，目前待完成。32格原/收紧表面根的全节点重放也分别用未缓存及精确缓存入口进行，原失败预算保持不变。最初一次交互性能诊断遗漏src导入路径而未进入物理计算，重跑记录在`surface-source-profile.txt`注明。
+原未缓存128格精细全审查在运行1h28m时主动中断，退出130及原stderr、`surface-one-twenty-eight-refined-audit-cancellation-plan.json`保存；它没有完成，也没有被记为通过。以`parameters.sorptive_surface_cached_audit.json`从头做同一完整审查，输出独立的`surface-one-twenty-eight-refined-cached-audit.json`，目前待完成。32格原/收紧表面根的全节点重放先启动未缓存入口，后在第900接受区间、物理时间76.0358s处中断重复任务（退出130）；原进度和stderr及取消记录保留。精确缓存入口从头完整重放仍在运行，原失败预算保持不变。最初一次交互性能诊断遗漏src导入路径而未进入物理计算，重跑记录在`surface-source-profile.txt`注明。
+
+2026-09-25约07:12UTC，32格全部25229个来源表面状态/积分节点重放完成：原1e−9根坐标精度重现最大1.86050082285e−8W能量率失败；显式1e−11根精度最大2.80315493040e−11W、物种1.11656e−16mol/s，0次求解失败，通过不变预算。精确缓存重放1904.29s，未缓存重复任务中断记录保留。此结果只核对原轨迹上的来源求根；已冻结新参数`parameters.sorptive_evaporating_surface_tight_root.json`，重新做32格两档完整时间积分和全程审查，不能直接给旧失败轨迹重新贴通过标签。

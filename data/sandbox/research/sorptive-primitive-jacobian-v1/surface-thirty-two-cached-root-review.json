@@ -1,0 +1,397 @@
+{
+  "settings": {
+    "trajectory": "data/sandbox/research/sorptive-primitive-jacobian-v1/surface-thirty-two-refined.jsonl",
+    "source_audit_parameters": "parameters.sorptive_surface_cached_audit.json",
+    "surface_policies": [
+      {
+        "name": "original",
+        "coordinate_tolerance": 1e-09
+      },
+      {
+        "name": "tighter",
+        "coordinate_tolerance": 1e-11
+      }
+    ],
+    "state_kinds": [
+      "initial",
+      "accepted",
+      "sample",
+      "moisture_event"
+    ],
+    "quadrature_orders": [
+      2,
+      4
+    ],
+    "progress_every_steps": 100,
+    "purpose": "Locate the full 32-cell audit surface-energy failure and measure a stricter root solve with unchanged physical budgets. Each policy is an independent replay, without fallback."
+  },
+  "original_surface_policy": {
+    "method": "hybr",
+    "coordinate_tolerance": 1e-09,
+    "maximum_function_evaluations": 150,
+    "temperature_coordinate_scale_k": 330.0,
+    "pressure_coordinate_scale_pa": 100000.0,
+    "residual_reference_temperature_k": 330.0,
+    "inventory_residual_scale_mol_s": 1e-07,
+    "energy_residual_scale_w": 0.01,
+    "classification": "zero_storage_local_equilibrium_material_trace_with_explicit_internal_water_and_external_gas_paths",
+    "mass_energy_rate_selection": "interior total rate used once for final cell and exterior ledger; inside-minus-outside residual retained separately"
+  },
+  "source_audit_parameters": {
+    "schema": "sorptive_column_source_entropy_review_v1",
+    "source_quadrature": {
+      "quad_absolute_tolerance": 1e-08,
+      "quad_relative_tolerance": 1e-12,
+      "quad_maximum_subintervals": 100,
+      "liquid_cache_entries": 256
+    },
+    "quadrature_orders": [
+      2,
+      4
+    ],
+    "fixed_inventory_calorimetry": {
+      "temperatures_k": [
+        315.0,
+        320.0,
+        325.0,
+        330.0,
+        335.0
+      ],
+      "temperature_step_k": 0.01
+    },
+    "comparison_budgets": {
+      "source_energy_j": 1e-07,
+      "source_pressure_pa": 0.001,
+      "source_chemical_potential_j_mol": 1e-05,
+      "face_inventory_mol_s": 1e-12,
+      "face_energy_w": 1e-08,
+      "calorimetry_j_k": 1e-07,
+      "entropy_balance_j_k": 1e-07,
+      "entropy_quadrature_j_k": 1e-07,
+      "negative_step_entropy_allowance_j_k": 1e-11,
+      "condensed_enthalpy_j_mol": 1e-05,
+      "surface_inventory_rate_mol_s": 1e-12,
+      "surface_energy_rate_w": 1e-08,
+      "surface_temperature_k": 1e-06,
+      "surface_pressure_pa": 0.001,
+      "surface_moisture_kg_kg": 1e-08
+    },
+    "basis": "Existing source/entropy budgets retained; fixed-N,V calorimetry checks positive heat capacity and dU=T dS along equilibrium before any material claim. Independent full condensed mu/h reconstruction and combined gas/condensed face rates.",
+    "source_state_kinds": [
+      "initial",
+      "accepted",
+      "sample",
+      "moisture_event"
+    ],
+    "geometry_absolute_budget": 1e-15,
+    "source_cache_basis": "Explicit exact, unrounded T/P memoization of direct IAPWS95 objects. Six recorded physical observations and both surface-root tolerances produced identical source-state and surface outputs. No interpolation or physical budget change."
+  },
+  "reviews": [
+    {
+      "policy": {
+        "name": "original",
+        "coordinate_tolerance": 1e-09
+      },
+      "evaluations": 25229,
+      "failures": 0,
+      "first_failure": null,
+      "maximum_species_residual_mol_s": 7.416360595274612e-14,
+      "maximum_energy_residual_w": 1.8605008228478326e-08,
+      "worst_species": {
+        "time_s": 12.877772970489362,
+        "location": {
+          "kind": "dense_node",
+          "quadrature_order": 4,
+          "node_index": 2,
+          "interval_end_s": 12.954292407833842
+        },
+        "state": {
+          "temperature_k": 323.9240024151671,
+          "pressure_pa": 100820.59196940114,
+          "inventories_mol": {
+            "O2": 2.2990927823605474e-07,
+            "N2": 8.648968086022735e-07,
+            "H2O": 3.5975864728886046e-06
+          },
+          "amounts_mol": {
+            "O2": 2.2990927823605474e-07,
+            "N2": 8.648968086022735e-07,
+            "H2O": 7.261488553724129e-08
+          },
+          "condensed_water_mol": 3.5249715873513633e-06,
+          "moisture_kg_kg_dry": 0.20321058508326467,
+          "gas_volume_m3": 3.1185704753975086e-08,
+          "condensed_volume_m3": 6.429524602491406e-11,
+          "water_partial_pressure_pa": 6271.153182007182,
+          "equilibrium_partial_pressure_pa": 6271.153182116615,
+          "pure_equilibrium_partial_pressure_pa": 12791.429501539325,
+          "water_activity": 0.4902621072462575,
+          "excess": {
+            "h_j_kg_dry": 77930.80948603334,
+            "s_j_kg_dry_k": 153.11215371502888,
+            "f_j_kg_dry": 28334.107836254887,
+            "partial_h_j_mol": -4557.850971298468,
+            "mu_j_mol": -1919.7921747644098,
+            "mu_limit": null,
+            "activity": 0.4902621072462575,
+            "activity_at_join": 0.3863856458977759
+          },
+          "gas_internal_energy_j": -0.019817485808743814,
+          "condensed_internal_energy_j": -1.0007386624552652,
+          "dry_internal_energy_j": -0.0030589638017766516,
+          "excess_internal_energy_j": 0.02435337796438542,
+          "constitutive_internal_energy_j": -0.9992617341014003,
+          "condensed_standard_molar_entropy_j_mol_k": 12.858775793274553,
+          "condensed_chemical_potential_j_mol": -289983.0005548832,
+          "condensed_partial_enthalpy_j_mol": -288455.79323030054,
+          "vapor_minus_condensed_chemical_potential_j_mol": -4.7031790018081665e-08,
+          "pressure_closure_residual_pa": 1.095759216696024e-07,
+          "water_pressure_departure_pa": -1.0943313100142404e-07,
+          "internal_energy_j": -0.9992617341014002,
+          "energy_inverse_residual_j": -1.1102230246251565e-16
+        },
+        "surface": {
+          "temperature_k": 324.09031828118674,
+          "pressure_pa": 100803.67645994168,
+          "moisture_kg_kg_dry": 0.19540740146162477,
+          "condensed_chemical_potential_j_mol": -290059.612266281,
+          "condensed_partial_enthalpy_j_mol": -288674.54869048385,
+          "gas_mole_fractions": {
+            "O2": 0.197182602679391,
+            "N2": 0.7417821719843286,
+            "H2O": 0.061035225336280474
+          }
+        },
+        "value": 7.416360595274612e-14
+      },
+      "worst_energy": {
+        "time_s": 12.877772970489362,
+        "location": {
+          "kind": "dense_node",
+          "quadrature_order": 4,
+          "node_index": 2,
+          "interval_end_s": 12.954292407833842
+        },
+        "state": {
+          "temperature_k": 323.9240024151671,
+          "pressure_pa": 100820.59196940114,
+          "inventories_mol": {
+            "O2": 2.2990927823605474e-07,
+            "N2": 8.648968086022735e-07,
+            "H2O": 3.5975864728886046e-06
+          },
+          "amounts_mol": {
+            "O2": 2.2990927823605474e-07,
+            "N2": 8.648968086022735e-07,
+            "H2O": 7.261488553724129e-08
+          },
+          "condensed_water_mol": 3.5249715873513633e-06,
+          "moisture_kg_kg_dry": 0.20321058508326467,
+          "gas_volume_m3": 3.1185704753975086e-08,
+          "condensed_volume_m3": 6.429524602491406e-11,
+          "water_partial_pressure_pa": 6271.153182007182,
+          "equilibrium_partial_pressure_pa": 6271.153182116615,
+          "pure_equilibrium_partial_pressure_pa": 12791.429501539325,
+          "water_activity": 0.4902621072462575,
+          "excess": {
+            "h_j_kg_dry": 77930.80948603334,
+            "s_j_kg_dry_k": 153.11215371502888,
+            "f_j_kg_dry": 28334.107836254887,
+            "partial_h_j_mol": -4557.850971298468,
+            "mu_j_mol": -1919.7921747644098,
+            "mu_limit": null,
+            "activity": 0.4902621072462575,
+            "activity_at_join": 0.3863856458977759
+          },
+          "gas_internal_energy_j": -0.019817485808743814,
+          "condensed_internal_energy_j": -1.0007386624552652,
+          "dry_internal_energy_j": -0.0030589638017766516,
+          "excess_internal_energy_j": 0.02435337796438542,
+          "constitutive_internal_energy_j": -0.9992617341014003,
+          "condensed_standard_molar_entropy_j_mol_k": 12.858775793274553,
+          "condensed_chemical_potential_j_mol": -289983.0005548832,
+          "condensed_partial_enthalpy_j_mol": -288455.79323030054,
+          "vapor_minus_condensed_chemical_potential_j_mol": -4.7031790018081665e-08,
+          "pressure_closure_residual_pa": 1.095759216696024e-07,
+          "water_pressure_departure_pa": -1.0943313100142404e-07,
+          "internal_energy_j": -0.9992617341014002,
+          "energy_inverse_residual_j": -1.1102230246251565e-16
+        },
+        "surface": {
+          "temperature_k": 324.09031828118674,
+          "pressure_pa": 100803.67645994168,
+          "moisture_kg_kg_dry": 0.19540740146162477,
+          "condensed_chemical_potential_j_mol": -290059.612266281,
+          "condensed_partial_enthalpy_j_mol": -288674.54869048385,
+          "gas_mole_fractions": {
+            "O2": 0.197182602679391,
+            "N2": 0.7417821719843286,
+            "H2O": 0.061035225336280474
+          }
+        },
+        "value": 1.8605008228478326e-08
+      },
+      "minimum_entropy_production_w_k": 9.933273933954157e-13,
+      "within_budgets": {
+        "root_completion": true,
+        "surface_species": true,
+        "surface_energy": false
+      }
+    },
+    {
+      "policy": {
+        "name": "tighter",
+        "coordinate_tolerance": 1e-11
+      },
+      "evaluations": 25229,
+      "failures": 0,
+      "first_failure": null,
+      "maximum_species_residual_mol_s": 1.1165577722794346e-16,
+      "maximum_energy_residual_w": 2.8031549303975112e-11,
+      "worst_species": {
+        "time_s": 13.289884392069805,
+        "location": {
+          "kind": "dense_node",
+          "quadrature_order": 4,
+          "node_index": 1,
+          "interval_end_s": 13.500461564679899
+        },
+        "state": {
+          "temperature_k": 323.8847347447114,
+          "pressure_pa": 100819.49054975674,
+          "inventories_mol": {
+            "O2": 2.3002760658303935e-07,
+            "N2": 8.653419485742289e-07,
+            "H2O": 3.56735996664561e-06
+          },
+          "amounts_mol": {
+            "O2": 2.3002760658303935e-07,
+            "N2": 8.653419485742289e-07,
+            "H2O": 7.22006013209e-08
+          },
+          "condensed_water_mol": 3.49515936532471e-06,
+          "moisture_kg_kg_dry": 0.20149194454091054,
+          "gas_volume_m3": 3.118624968573557e-08,
+          "condensed_volume_m3": 6.375031426442782e-11,
+          "water_partial_pressure_pa": 6234.510022520725,
+          "equilibrium_partial_pressure_pa": 6234.510022651006,
+          "pure_equilibrium_partial_pressure_pa": 12766.727798861124,
+          "water_activity": 0.48834048323699397,
+          "excess": {
+            "h_j_kg_dry": 78366.86216597981,
+            "s_j_kg_dry_k": 153.89143587358564,
+            "f_j_kg_dry": 28523.77527858076,
+            "partial_h_j_mol": -4583.79988327012,
+            "mu_j_mol": -1930.1353465442983,
+            "mu_limit": null,
+            "activity": 0.48834048323699397,
+            "activity_at_join": 0.386270924889068
+          },
+          "gas_internal_energy_j": -0.019718609332840094,
+          "condensed_internal_energy_j": -0.9922853180836413,
+          "dry_internal_energy_j": -0.0030786096857078585,
+          "excess_internal_energy_j": 0.02448964442686869,
+          "constitutive_internal_energy_j": -0.9905928926753206,
+          "condensed_standard_molar_entropy_j_mol_k": 12.849643137036859,
+          "condensed_chemical_potential_j_mol": -289992.838991888,
+          "condensed_partial_enthalpy_j_mol": -288484.7002696104,
+          "vapor_minus_condensed_chemical_potential_j_mol": -5.6228600442409515e-08,
+          "pressure_closure_residual_pa": 1.302541932091117e-07,
+          "water_pressure_departure_pa": -1.302805685554631e-07,
+          "internal_energy_j": -0.9905928926753207,
+          "energy_inverse_residual_j": 1.1102230246251565e-16
+        },
+        "surface": {
+          "temperature_k": 324.05217059360416,
+          "pressure_pa": 100802.60944273455,
+          "moisture_kg_kg_dry": 0.19460457685642998,
+          "condensed_chemical_potential_j_mol": -290069.43676900177,
+          "condensed_partial_enthalpy_j_mol": -288709.3790455618,
+          "gas_mole_fractions": {
+            "O2": 0.19725648711970314,
+            "N2": 0.7420601182121652,
+            "H2O": 0.06068339466813165
+          }
+        },
+        "value": 1.1165577722794346e-16
+      },
+      "worst_energy": {
+        "time_s": 13.289884392069805,
+        "location": {
+          "kind": "dense_node",
+          "quadrature_order": 4,
+          "node_index": 1,
+          "interval_end_s": 13.500461564679899
+        },
+        "state": {
+          "temperature_k": 323.8847347447114,
+          "pressure_pa": 100819.49054975674,
+          "inventories_mol": {
+            "O2": 2.3002760658303935e-07,
+            "N2": 8.653419485742289e-07,
+            "H2O": 3.56735996664561e-06
+          },
+          "amounts_mol": {
+            "O2": 2.3002760658303935e-07,
+            "N2": 8.653419485742289e-07,
+            "H2O": 7.22006013209e-08
+          },
+          "condensed_water_mol": 3.49515936532471e-06,
+          "moisture_kg_kg_dry": 0.20149194454091054,
+          "gas_volume_m3": 3.118624968573557e-08,
+          "condensed_volume_m3": 6.375031426442782e-11,
+          "water_partial_pressure_pa": 6234.510022520725,
+          "equilibrium_partial_pressure_pa": 6234.510022651006,
+          "pure_equilibrium_partial_pressure_pa": 12766.727798861124,
+          "water_activity": 0.48834048323699397,
+          "excess": {
+            "h_j_kg_dry": 78366.86216597981,
+            "s_j_kg_dry_k": 153.89143587358564,
+            "f_j_kg_dry": 28523.77527858076,
+            "partial_h_j_mol": -4583.79988327012,
+            "mu_j_mol": -1930.1353465442983,
+            "mu_limit": null,
+            "activity": 0.48834048323699397,
+            "activity_at_join": 0.386270924889068
+          },
+          "gas_internal_energy_j": -0.019718609332840094,
+          "condensed_internal_energy_j": -0.9922853180836413,
+          "dry_internal_energy_j": -0.0030786096857078585,
+          "excess_internal_energy_j": 0.02448964442686869,
+          "constitutive_internal_energy_j": -0.9905928926753206,
+          "condensed_standard_molar_entropy_j_mol_k": 12.849643137036859,
+          "condensed_chemical_potential_j_mol": -289992.838991888,
+          "condensed_partial_enthalpy_j_mol": -288484.7002696104,
+          "vapor_minus_condensed_chemical_potential_j_mol": -5.6228600442409515e-08,
+          "pressure_closure_residual_pa": 1.302541932091117e-07,
+          "water_pressure_departure_pa": -1.302805685554631e-07,
+          "internal_energy_j": -0.9905928926753207,
+          "energy_inverse_residual_j": 1.1102230246251565e-16
+        },
+        "surface": {
+          "temperature_k": 324.05217059360416,
+          "pressure_pa": 100802.60944273455,
+          "moisture_kg_kg_dry": 0.19460457685642998,
+          "condensed_chemical_potential_j_mol": -290069.43676900177,
+          "condensed_partial_enthalpy_j_mol": -288709.3790455618,
+          "gas_mole_fractions": {
+            "O2": 0.19725648711970314,
+            "N2": 0.7420601182121652,
+            "H2O": 0.06068339466813165
+          }
+        },
+        "value": 2.8031549303975112e-11
+      },
+      "minimum_entropy_production_w_k": 9.93327396296237e-13,
+      "within_budgets": {
+        "root_completion": true,
+        "surface_species": true,
+        "surface_energy": true
+      }
+    }
+  ],
+  "elapsed_s": 1904.2901035000104,
+  "scope": "Independent surface root replay on recorded physical states and every original 2/4 Gauss node. No reintegration, no time accuracy or material qualification.",
+  "material_qualified": false,
+  "training_eligible": false
+}
