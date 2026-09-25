@@ -1,0 +1,95 @@
+{
+  "exchange_parameters": "parameters.carbon_calcium_exchange.json",
+  "volume_m3": 0.0001,
+  "initial": {
+    "calcium_atoms_mol": 0.002,
+    "carbon_atoms_mol": 0.0022,
+    "oxygen_atoms_mol": 0.0062,
+    "nitrogen_molecules_mol": 0.004,
+    "temperature_k": 900.0
+  },
+  "reservoir": {
+    "temperature_k": 1100.0,
+    "pressure_pa": 100000.0,
+    "mole_fractions": {
+      "CO": 1e-10,
+      "CO2": 0.0004,
+      "O2": 0.21,
+      "N2": 0.7895999999
+    },
+    "classification": "Prescribed virtual oxidizing gas bath; no measured kiln atmosphere or chemical equilibrium assumption. All positive fractions explicitly sum to one."
+  },
+  "duration_s": 30000.0,
+  "numerics": {
+    "relative_tolerance": 1e-12,
+    "refinement_factor": 0.1,
+    "inventory_absolute_tolerance_mol": 1e-14,
+    "temperature_absolute_tolerance_k": 1e-10,
+    "energy_ledger_absolute_tolerance_j": 1e-10,
+    "entropy_ledger_absolute_tolerance_j_k": 1e-13,
+    "maximum_step_s": 5.0,
+    "first_step_s": 1e-05,
+    "observation_interval_s": 5.0,
+    "progress_every_steps": 100
+  },
+  "verification": {
+    "element_mol": 1e-12,
+    "pressure_pa": 1e-05,
+    "volume_m3": 1e-14,
+    "reaction_gibbs_j_mol": 1e-05,
+    "source_energy_j": 1e-07,
+    "source_entropy_j_k": 1e-10,
+    "face_species_mol_s": 1e-14,
+    "face_energy_w": 1e-08,
+    "face_entropy_w_k": 1e-11,
+    "inventory_integral_mol": 1e-10,
+    "energy_j": 1e-05,
+    "entropy_j_k": 1e-08,
+    "nonnegative_entropy_j_k": 1e-10,
+    "time_temperature_k": 0.001,
+    "time_pressure_pa": 0.1,
+    "time_species_mol": 1e-10,
+    "quadrature_orders": [
+      2,
+      4
+    ]
+  },
+  "static_review": {
+    "temperatures_k": [
+      900.0,
+      1000.0,
+      1100.0,
+      1150.0
+    ],
+    "bath_temperatures_k": [
+      900.0,
+      1000.0,
+      1100.0
+    ],
+    "bath_pressures_pa": [
+      10000.0,
+      100000.0,
+      1000000.0
+    ],
+    "chemical_potential_budget_j_mol": 1e-07,
+    "face_energy_budget_w": 1e-08,
+    "face_inventory_budget_mol_s": 1e-14,
+    "face_entropy_budget_w_k": 1e-11,
+    "identical_bath_flow_budget_mol_s": 1e-18,
+    "identical_bath_energy_budget_w": 1e-10
+  },
+  "scope": "Domain-crossing virtual capsule: start within the original strict C>Ca and O>3Ca domain (Ca=.002,C=.0022,O=.0062,N2=.004mol,900K), heat and exchange with the same1100K1bar low-CO2 bath. Establish source/flux and initial-stock caloric qualification before trajectory. Observe crossings rather than assume they occur; preserve original source, conservation, entropy and temporal budgets. Caloric-only inventory tangent; no analytic gas-chemical-potential inventory Jacobian.",
+  "coordinate_order": [
+    "C_mol",
+    "O_mol",
+    "N2_mol",
+    "T_K",
+    "energy_in_J",
+    "reservoir_entropy_change_J_K",
+    "entropy_production_J_K"
+  ],
+  "material_qualified": false,
+  "training_eligible": false,
+  "equilibrium_formulation": "positive_inventory",
+  "extension_reason": "The fully qualified20000s path crosses the old C=Ca and O=3Ca domains but retains0.0002469492mol calcite. A separately recorded30000s path keeps all source/transport/numerical parameters and budgets to cover subsequent carbonate exhaustion; phase disappearance and its time must be observed and audited, not assumed. Existing20000s evidence is preserved."
+}
