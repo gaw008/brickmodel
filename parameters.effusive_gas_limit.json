@@ -1,0 +1,157 @@
+{
+  "thermochemistry_parameters": "parameters.calcite_rigid_exchange.json",
+  "source_record": "data/sandbox/research/effusive-gas-limit-v1/sources.json",
+  "aperture": {
+    "area_m2": 1e-12,
+    "molar_masses_kg_mol": {
+      "co2": 0.0440095,
+      "nitrogen": 0.0280134
+    },
+    "classification": "Declared virtual zero-thickness aperture. No measured pore size, collision diameter or Knudsen-number qualification."
+  },
+  "quadrature": {
+    "epsabs": 1e-12,
+    "epsrel": 1e-12,
+    "limit": 100
+  },
+  "verification": {
+    "species_flux_absolute_mol_m2_s": 1e-12,
+    "energy_flux_absolute_w_m2": 1e-07,
+    "entropy_flux_absolute_w_m2_k": 1e-10,
+    "negative_entropy_flux_allowance_w_m2_k": 1e-11,
+    "moment_absolute": 1e-12,
+    "polynomial_real_root_tolerance": 1e-09
+  },
+  "gauge_shifts": {
+    "co2": {
+      "enthalpy_j_mol": 123456.0,
+      "entropy_j_mol_k": 12.3
+    },
+    "nitrogen": {
+      "enthalpy_j_mol": -56789.0,
+      "entropy_j_mol_k": -8.7
+    }
+  },
+  "cases": [
+    {
+      "name": "equal_cold",
+      "left": {
+        "temperature_k": 300,
+        "pressure_pa": 1,
+        "co2_fraction": 0.1
+      },
+      "right": {
+        "temperature_k": 300,
+        "pressure_pa": 1,
+        "co2_fraction": 0.1
+      }
+    },
+    {
+      "name": "equal_hot",
+      "left": {
+        "temperature_k": 1200,
+        "pressure_pa": 10,
+        "co2_fraction": 0.5
+      },
+      "right": {
+        "temperature_k": 1200,
+        "pressure_pa": 10,
+        "co2_fraction": 0.5
+      }
+    },
+    {
+      "name": "pressure_driven",
+      "left": {
+        "temperature_k": 600,
+        "pressure_pa": 1,
+        "co2_fraction": 0.1
+      },
+      "right": {
+        "temperature_k": 600,
+        "pressure_pa": 0.1,
+        "co2_fraction": 0.1
+      }
+    },
+    {
+      "name": "opposite_composition",
+      "left": {
+        "temperature_k": 900,
+        "pressure_pa": 1,
+        "co2_fraction": 0.9
+      },
+      "right": {
+        "temperature_k": 900,
+        "pressure_pa": 1,
+        "co2_fraction": 0.0004
+      }
+    },
+    {
+      "name": "temperature_only",
+      "left": {
+        "temperature_k": 1200,
+        "pressure_pa": 0.1,
+        "co2_fraction": 0.1
+      },
+      "right": {
+        "temperature_k": 300,
+        "pressure_pa": 0.1,
+        "co2_fraction": 0.1
+      }
+    },
+    {
+      "name": "balanced_species_thermal",
+      "left": {
+        "temperature_k": 1200,
+        "pressure_pa": 2,
+        "co2_fraction": 0.1
+      },
+      "right": {
+        "temperature_k": 300,
+        "pressure_pa": 1,
+        "co2_fraction": 0.1
+      }
+    },
+    {
+      "name": "mixed_forcing",
+      "left": {
+        "temperature_k": 1100,
+        "pressure_pa": 0.01,
+        "co2_fraction": 0.0004
+      },
+      "right": {
+        "temperature_k": 400,
+        "pressure_pa": 0.1,
+        "co2_fraction": 0.1
+      }
+    },
+    {
+      "name": "trace_carbon",
+      "left": {
+        "temperature_k": 298.15,
+        "pressure_pa": 0.01,
+        "co2_fraction": 1e-08
+      },
+      "right": {
+        "temperature_k": 1200,
+        "pressure_pa": 10,
+        "co2_fraction": 0.5
+      }
+    },
+    {
+      "name": "nearly_equal",
+      "left": {
+        "temperature_k": 900.000001,
+        "pressure_pa": 1.000001,
+        "co2_fraction": 0.10000001
+      },
+      "right": {
+        "temperature_k": 900,
+        "pressure_pa": 1,
+        "co2_fraction": 0.1
+      }
+    }
+  ],
+  "material_qualified": false,
+  "training_eligible": false,
+  "scope": "Static ideal-gas collisionless aperture limit, with independently integrated Maxwell moments, complete source energy, source-Cp interval extrema and entropy decomposition. No claim that a real brick or the previous full-pressure cycle is in this regime."
+}
