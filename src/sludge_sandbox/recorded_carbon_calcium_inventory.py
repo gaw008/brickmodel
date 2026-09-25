@@ -11,7 +11,7 @@ from scipy.optimize import brentq
 from .recorded_carbon_calcium_pressure import RecordedCarbonCalciumPressure
 
 
-def static_inventory_state(model, temperature, pressure, inventory):
+def _inventory_equilibrium(model, temperature, pressure, inventory):
     t, p, rt, pi = temperature, pressure, model.r * temperature, pressure / model.p0
     ca, ct, ot, nn = [inventory[name] for name in
         ['calcium_atoms_mol', 'carbon_atoms_mol', 'oxygen_atoms_mol', 'nitrogen_molecules_mol']]
@@ -131,27 +131,21 @@ def static_inventory_state(model, temperature, pressure, inventory):
     enthalpy = math.fsum(n[name]*h[name] for name in n)
     entropy = math.fsum(n[name]*thermal[name]['entropy_j_mol_k'] for name in n)
     entropy -= model.r * math.fsum(n[name]*math.log(partial[name]) for name in gas_names)
-    return {'temperature_k': t, 'pressure_pa': p, 'calcium_phase': calcium_phase,
+    state = {'temperature_k': t, 'pressure_pa': p, 'calcium_phase': calcium_phase,
         'carbon_phase': carbon_phase, 'calcite_fraction': n['calcite']/ca, 'amounts_mol': n,
         'partial_pressures_pa': {name: model.p0*value for name, value in partial.items()},
         'chemical_potentials_j_mol': mu, 'calcination_gibbs_j_mol': affinity(state),
         'enthalpy_j': enthalpy, 'entropy_j_k': entropy, 'gibbs_j': enthalpy-t*entropy,
         'internal_energy_j': enthalpy-p*volume, 'helmholtz_j': enthalpy-p*volume-t*entropy,
         'gas_volume_m3': gas_volume, 'solid_volume_m3': solid_volume, 'total_volume_m3': volume}
+    return state, thermal, h
 
 
 class RecordedCarbonCalciumInventory(RecordedCarbonCalciumPressure):
-    def at_temperature_pressure(self, temperature_k, pressure_pa,
+    def _equilibrium_at_pressure(self, temperature_k, pressure_pa,
                                 calcium_atoms_mol, carbon_atoms_mol,
                                 oxygen_atoms_mol, nitrogen_molecules_mol):
         inventory = {'calcium_atoms_mol': calcium_atoms_mol,
             'carbon_atoms_mol': carbon_atoms_mol, 'oxygen_atoms_mol': oxygen_atoms_mol,
             'nitrogen_molecules_mol': nitrogen_molecules_mol}
-        state = static_inventory_state(self, temperature_k, pressure_pa, inventory)
-        thermal = {name: phase.standard(temperature_k) for name, phase in self.phases.items()}
-        h = {name: value['enthalpy_j_mol'] for name, value in thermal.items()}
-        for name, volume in self.volumes.items():
-            h[name] += (pressure_pa-self.p0)*volume
-        state.update(self.caloric_response(temperature_k, pressure_pa, state['amounts_mol'],
-            state['calcium_phase'], state['carbon_phase'], thermal, h))
-        return state
+        return _inventory_equilibrium(self, temperature_k, pressure_pa, inventory)

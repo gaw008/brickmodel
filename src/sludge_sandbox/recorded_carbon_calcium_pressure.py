@@ -35,8 +35,8 @@ class RecordedCarbonCalciumPressure:
         rt = self.r * temperature_k
         lower = nitrogen_molecules_mol * rt / total_volume_m3
         upper = maximum_gas_moles * rt / (total_volume_m3 - maximum_solid_volume)
-        log_pressure = brentq(lambda value: self.at_temperature_pressure(
-            temperature_k, math.exp(value), *inputs)['total_volume_m3'] / total_volume_m3 - 1,
+        log_pressure = brentq(lambda value: self._equilibrium_at_pressure(
+            temperature_k, math.exp(value), *inputs)[0]['total_volume_m3'] / total_volume_m3 - 1,
             math.log(lower), math.log(upper),
             xtol=numerics['log_pressure_absolute_tolerance'],
             rtol=numerics['log_pressure_relative_tolerance'],
@@ -57,6 +57,15 @@ class RecordedCarbonCalciumPressure:
         return self.at_temperature_volume(temperature, *inputs)
 
     def at_temperature_pressure(self, temperature_k, pressure_pa,
+                                calcium_atoms_mol, carbon_atoms_mol,
+                                oxygen_atoms_mol, nitrogen_molecules_mol):
+        state, thermal, h = self._equilibrium_at_pressure(temperature_k, pressure_pa,
+            calcium_atoms_mol, carbon_atoms_mol, oxygen_atoms_mol, nitrogen_molecules_mol)
+        response = self.caloric_response(temperature_k, pressure_pa, state['amounts_mol'],
+            state['calcium_phase'], state['carbon_phase'], thermal, h)
+        return {**state, **response}
+
+    def _equilibrium_at_pressure(self, temperature_k, pressure_pa,
                                 calcium_atoms_mol, carbon_atoms_mol,
                                 oxygen_atoms_mol, nitrogen_molecules_mol):
         t, p = temperature_k, pressure_pa
@@ -141,8 +150,7 @@ class RecordedCarbonCalciumPressure:
         enthalpy = math.fsum(n[name] * h[name] for name in n)
         entropy = math.fsum(n[name] * thermal[name]['entropy_j_mol_k'] for name in n)
         entropy -= self.r * math.fsum(n[name] * math.log(partial[name]) for name in gas_names)
-        response = self.caloric_response(t, p, n, calcium_phase, carbon_phase, thermal, h)
-        return {'temperature_k': t, 'pressure_pa': p, 'calcium_phase': calcium_phase,
+        state = {'temperature_k': t, 'pressure_pa': p, 'calcium_phase': calcium_phase,
             'carbon_phase': carbon_phase, 'calcite_fraction': fraction, 'amounts_mol': n,
             'partial_pressures_pa': {name: self.p0 * value for name, value in partial.items()},
             'chemical_potentials_j_mol': mu, 'calcination_gibbs_j_mol': affinity,
@@ -150,7 +158,8 @@ class RecordedCarbonCalciumPressure:
             'internal_energy_j': enthalpy - p * total_volume,
             'helmholtz_j': enthalpy - p * total_volume - t * entropy,
             'gas_volume_m3': gas_volume, 'solid_volume_m3': solid_volume,
-            'total_volume_m3': total_volume, **response}
+            'total_volume_m3': total_volume}
+        return state, thermal, h
 
 
     def caloric_response(self, t, p, n, calcium_phase, carbon_phase, thermal, h):
