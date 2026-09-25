@@ -1,0 +1,79 @@
+{
+  "model_parameters": "parameters.carbon_calcium_pressure.json",
+  "decimal_digits": 60,
+  "root_tolerance": "1e-45",
+  "maximum_root_iterations": 100,
+  "budgets": {
+    "element_mol": 1e-13,
+    "pressure_pa": 1e-07,
+    "chemical_potential_j_mol": 1e-05,
+    "source_enthalpy_j": 1e-07,
+    "source_entropy_j_k": 1e-10,
+    "amount_mol": 1e-12,
+    "positive_gas_relative": 1e-07,
+    "volume_m3": 1e-14,
+    "standard_pressure_enthalpy_j": 1e-08,
+    "standard_pressure_amount_mol": 1e-12
+  },
+  "scope": "Static research prototype only; C>0, O>Ca, N2>0. Independent simultaneous source equations, source H/U/S/G/V and Gibbs phase inequalities. Frozen original static budgets; no dynamic or derivative qualification.",
+  "prototype": "examples/sandbox/carbon_calcium_inventory_prototype.py",
+  "baseline": "data/sandbox/research/carbon-calcium-inventory-domain-v1/old-domain-baseline.json",
+  "temperature_points_k": [
+    300.0,
+    350.0,
+    500.0,
+    700.0,
+    850.0,
+    900.0,
+    950.0,
+    1000.0,
+    1050.0,
+    1100.0,
+    1150.0,
+    1190.0
+  ],
+  "pressure_points_pa": [
+    10000.0,
+    100000.0,
+    1000000.0
+  ],
+  "inventories": [
+    {
+      "name": "carbon_lean",
+      "calcium_atoms_mol": 0.002,
+      "carbon_atoms_mol": 0.0002,
+      "oxygen_atoms_mol": 0.006,
+      "nitrogen_molecules_mol": 0.004
+    },
+    {
+      "name": "old_boundaries_equal",
+      "calcium_atoms_mol": 0.002,
+      "carbon_atoms_mol": 0.002,
+      "oxygen_atoms_mol": 0.006,
+      "nitrogen_molecules_mol": 0.004
+    },
+    {
+      "name": "oxygen_lean",
+      "calcium_atoms_mol": 0.002,
+      "carbon_atoms_mol": 0.0045,
+      "oxygen_atoms_mol": 0.004,
+      "nitrogen_molecules_mol": 0.004
+    },
+    {
+      "name": "both_lean",
+      "calcium_atoms_mol": 0.002,
+      "carbon_atoms_mol": 0.001,
+      "oxygen_atoms_mol": 0.003,
+      "nitrogen_molecules_mol": 0.004
+    },
+    {
+      "name": "old_coupled",
+      "calcium_atoms_mol": 0.002,
+      "carbon_atoms_mol": 0.0045,
+      "oxygen_atoms_mol": 0.008,
+      "nitrogen_molecules_mol": 0.004
+    }
+  ],
+  "material_qualified": false,
+  "training_eligible": false
+}
