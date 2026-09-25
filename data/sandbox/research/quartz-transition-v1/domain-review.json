@@ -1,0 +1,682 @@
+{
+  "settings": {
+    "model_parameters": "parameters.quartz_transition.json",
+    "decimal_digits": 50,
+    "temperatures_k": [
+      298.15,
+      300.0,
+      400.0,
+      500.0,
+      600.0,
+      700.0,
+      800.0,
+      846.0,
+      846.99,
+      847.0,
+      847.01,
+      900.0,
+      1000.0,
+      1100.0
+    ],
+    "transition_high_phase_fractions": [
+      0.0,
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "source_table_rows": [
+      {
+        "temperature_k": 298.15,
+        "cp_j_mol_k": 44.589,
+        "s_j_mol_k": 41.463,
+        "h_increment_j_mol": 0.0
+      },
+      {
+        "temperature_k": 300,
+        "cp_j_mol_k": 44.769,
+        "s_j_mol_k": 41.74,
+        "h_increment_j_mol": 83.0
+      },
+      {
+        "temperature_k": 400,
+        "cp_j_mol_k": 53.43,
+        "s_j_mol_k": 55.874,
+        "h_increment_j_mol": 5017.0
+      },
+      {
+        "temperature_k": 500,
+        "cp_j_mol_k": 59.643,
+        "s_j_mol_k": 68.499,
+        "h_increment_j_mol": 10686.0
+      },
+      {
+        "temperature_k": 600,
+        "cp_j_mol_k": 64.417,
+        "s_j_mol_k": 79.808,
+        "h_increment_j_mol": 16896.0
+      },
+      {
+        "temperature_k": 700,
+        "cp_j_mol_k": 68.768,
+        "s_j_mol_k": 90.063,
+        "h_increment_j_mol": 23554.0
+      },
+      {
+        "temperature_k": 800,
+        "cp_j_mol_k": 73.701,
+        "s_j_mol_k": 99.555,
+        "h_increment_j_mol": 30668.0
+      },
+      {
+        "temperature_k": 900,
+        "cp_j_mol_k": 67.948,
+        "s_j_mol_k": 108.807,
+        "h_increment_j_mol": 38512.0
+      },
+      {
+        "temperature_k": 1000,
+        "cp_j_mol_k": 68.952,
+        "s_j_mol_k": 116.018,
+        "h_increment_j_mol": 45357.0
+      },
+      {
+        "temperature_k": 1100,
+        "cp_j_mol_k": 69.956,
+        "s_j_mol_k": 122.637,
+        "h_increment_j_mol": 52302.0
+      }
+    ],
+    "printed_intervals_only": {
+      "cp_j_mol_k": 0.0005,
+      "s_j_mol_k": 0.0005,
+      "h_increment_j_mol": 0.5
+    },
+    "scope": "Independent source Cp quadrature and equilibrium joining; report all original-table deviations without treating display rounding as physical model uncertainty."
+  },
+  "model_parameters": {
+    "source_facts_file": "data/sandbox/solids/quartz/facts.json",
+    "source_urls": [
+      "https://janaf.nist.gov/tables/O-037.html",
+      "https://webbook.nist.gov/cgi/cbook.cgi?ID=C14808607&Mask=2&Table=on&Type=JANAFS"
+    ],
+    "source_review_utc": "2026-09-25",
+    "reference": {
+      "temperature_k": 298.15,
+      "pressure_pa": 100000.0,
+      "enthalpy_j_mol": -910856.8,
+      "entropy_j_mol_k": 41.463,
+      "enthalpy_locator": "WebBook Shomate H, common elemental formation reference",
+      "entropy_locator": "JANAF O-037 298.15 K row"
+    },
+    "phase_transition": {
+      "temperature_k": 847.0,
+      "low_enthalpy_increment_kj_mol": 34.196,
+      "high_enthalpy_increment_kj_mol": 34.924,
+      "latent_enthalpy_j_mol": 728.0,
+      "source_locator": "JANAF O-037 two 847.000 K rows",
+      "printed_enthalpy_increment_half_unit_j_mol": 0.5,
+      "interpretation": "Difference of rounded source entries, not experimental uncertainty. Transition entropy is derived as L/T from phase equilibrium; original rounded entropy entries remain independently recorded."
+    },
+    "caloric_representation": {
+      "definition": "Integrate each original Shomate Cp; anchor alpha h/S to 298.15 K reference, join beta h by original table latent heat and beta S by L/T. No modification to Cp coefficients. Constant shifts from the original fitted h/S are explicitly reported; this derived representation enforces phase equilibrium, not exact reproduction of all printed thermochemical data.",
+      "temperature_scale_k": 1000.0,
+      "phase_names": [
+        "alpha",
+        "beta"
+      ],
+      "domain_k": [
+        298.15,
+        1100.0
+      ],
+      "pressure_scope": "Only source standard pressure; no molar-volume, thermal expansion, stress or pressure-shift prediction",
+      "other_phase_scope": "Restricted below 1100 K; no tridymite, cristobalite or melt conversion"
+    },
+    "virtual_calorimeter": {
+      "amount_mol": 0.01,
+      "initial_temperature_k": 300.0,
+      "heat_conductance_w_k": 0.001,
+      "program": [
+        {
+          "start_s": 0.0,
+          "end_s": 3000.0,
+          "reservoir_temperature_k": 1000.0
+        },
+        {
+          "start_s": 3000.0,
+          "end_s": 9000.0,
+          "reservoir_temperature_k": 300.0
+        }
+      ],
+      "definition": "Stress-free constant standard-pressure pure-quartz body; dH/dt=Q includes enthalpy storage, not fixed-volume internal energy. Ideal instantaneous reversible alpha-beta partition, no hysteresis or rate claim."
+    },
+    "numerics": {
+      "relative_tolerance": 1e-10,
+      "absolute_tolerances_enthalpy_heat_entropy": [
+        1e-09,
+        1e-09,
+        1e-11
+      ],
+      "refinement_factor": 0.1,
+      "maximum_step_s": 1.0,
+      "first_step_s": 1e-05,
+      "observation_interval_s": 2.0,
+      "temperature_inverse_absolute_k": 1e-10,
+      "temperature_inverse_relative": 1e-13,
+      "root_maximum_iterations": 100,
+      "progress_every_steps": 500,
+      "event_absolute_time_s": 1e-08,
+      "event_relative_tolerance": 1e-13
+    },
+    "verification": {
+      "energy_j": 1e-07,
+      "entropy_j_k": 1e-08,
+      "nonnegative_entropy_j_k": 1e-12,
+      "source_quadrature_h_j_mol": 1e-07,
+      "source_quadrature_s_j_mol_k": 1e-09,
+      "equal_gibbs_j_mol": 1e-08,
+      "time_temperature_k": 0.001,
+      "time_phase_fraction": 1e-07,
+      "phase_event_time_s": 0.001,
+      "quadrature_orders": [
+        2,
+        4
+      ]
+    },
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "source_facts": {
+    "schema_version": 1,
+    "source_id": "nist-quartz-shomate-janaf-1967-chase1998",
+    "classification": "literature_constitutive_model",
+    "species": "SiO2_quartz",
+    "cas": "14808-60-7",
+    "molar_mass_kg_mol": "0.0600843",
+    "standard_pressure_pa": "100000",
+    "reference_temperature_k": "298.15",
+    "coefficients_order": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H"
+    ],
+    "segments": [
+      {
+        "temperature_range_k": [
+          298,
+          847
+        ],
+        "coefficients": [
+          "-6.076591",
+          "251.6755",
+          "-324.7964",
+          "168.5604",
+          "0.002548",
+          "-917.6893",
+          "-27.96962",
+          "-910.8568"
+        ]
+      },
+      {
+        "temperature_range_k": [
+          847,
+          1996
+        ],
+        "coefficients": [
+          "58.75340",
+          "10.27925",
+          "-0.131384",
+          "0.025210",
+          "0.025601",
+          "-929.3292",
+          "105.8092",
+          "-910.8568"
+        ]
+      }
+    ],
+    "transition_847k_rows": [
+      [
+        "847.000",
+        "76.509",
+        "103.840",
+        "63.467",
+        "34.196",
+        "I <--> II"
+      ],
+      [
+        "847.000",
+        "67.417",
+        "104.700",
+        "63.467",
+        "34.924",
+        "TRANSITION"
+      ]
+    ],
+    "unknown": {
+      "molar_volume_m3_mol": null,
+      "thermal_expansion": null,
+      "compressibility": null,
+      "coefficient_covariance": null,
+      "sludge_mineral_fraction": null
+    },
+    "runtime_admission": "source_candidate_no_solid_volume_or_material_package_not_auto_loaded"
+  },
+  "source_quadrature": [
+    {
+      "phase": "alpha",
+      "temperature_k": 298.15,
+      "enthalpy_difference_j_mol": 0.0,
+      "entropy_difference_j_mol_k": 0.0,
+      "cp_j_mol_k": 44.58431227250184,
+      "within_budget": true
+    },
+    {
+      "phase": "alpha",
+      "temperature_k": 300.0,
+      "enthalpy_difference_j_mol": 2.0821580196230344e-11,
+      "entropy_difference_j_mol_k": 1.5412152437608852e-15,
+      "cp_j_mol_k": 44.77382491111112,
+      "within_budget": true
+    },
+    {
+      "phase": "alpha",
+      "temperature_k": 400.0,
+      "enthalpy_difference_j_mol": 3.164758182255913e-12,
+      "entropy_difference_j_mol_k": 4.907967091782571e-17,
+      "cp_j_mol_k": 53.4299756,
+      "within_budget": true
+    },
+    {
+      "phase": "alpha",
+      "temperature_k": 500.0,
+      "enthalpy_difference_j_mol": 9.742012201458085e-12,
+      "entropy_difference_j_mol_k": 3.819916747096344e-15,
+      "cp_j_mol_k": 59.642300999999996,
+      "within_budget": true
+    },
+    {
+      "phase": "alpha",
+      "temperature_k": 600.0,
+      "enthalpy_difference_j_mol": 4.827301484019247e-11,
+      "entropy_difference_j_mol_k": 1.1289444389103446e-14,
+      "cp_j_mol_k": 64.41812917777779,
+      "within_budget": true
+    },
+    {
+      "phase": "alpha",
+      "temperature_k": 700.0,
+      "enthalpy_difference_j_mol": 4.475831110050349e-11,
+      "entropy_difference_j_mol_k": 5.521912160590772e-15,
+      "cp_j_mol_k": 68.76744019999998,
+      "within_budget": true
+    },
+    {
+      "phase": "alpha",
+      "temperature_k": 800.0,
+      "enthalpy_difference_j_mol": 2.3242319323674255e-11,
+      "entropy_difference_j_mol_k": 2.6921125769491984e-14,
+      "cp_j_mol_k": 73.70101905,
+      "within_budget": true
+    },
+    {
+      "phase": "alpha",
+      "temperature_k": 846.0,
+      "enthalpy_difference_j_mol": 2.4545338260155e-11,
+      "entropy_difference_j_mol_k": 2.2315172213447328e-14,
+      "cp_j_mol_k": 76.44506530736763,
+      "within_budget": true
+    },
+    {
+      "phase": "alpha",
+      "temperature_k": 846.99,
+      "enthalpy_difference_j_mol": 4.328942962961945e-11,
+      "entropy_difference_j_mol_k": 1.8123544781764832e-14,
+      "cp_j_mol_k": 76.50856178921059,
+      "within_budget": true
+    },
+    {
+      "phase": "beta",
+      "temperature_k": 847.0,
+      "enthalpy_difference_j_mol": 6.809449775907194e-11,
+      "entropy_difference_j_mol_k": 1.4110656127620792e-14,
+      "cp_j_mol_k": 67.41667278924314,
+      "within_budget": true
+    },
+    {
+      "phase": "beta",
+      "temperature_k": 847.01,
+      "enthalpy_difference_j_mol": 8.206030523501153e-11,
+      "entropy_difference_j_mol_k": 2.1316572814901872e-14,
+      "cp_j_mol_k": 67.41677305605323,
+      "within_budget": true
+    },
+    {
+      "phase": "beta",
+      "temperature_k": 900.0,
+      "enthalpy_difference_j_mol": 9.739838646085804e-11,
+      "entropy_difference_j_mol_k": 2.047040162931314e-14,
+      "cp_j_mol_k": 67.94828822283951,
+      "within_budget": true
+    },
+    {
+      "phase": "beta",
+      "temperature_k": 1000.0,
+      "enthalpy_difference_j_mol": 1.1422991091083603e-11,
+      "entropy_difference_j_mol_k": 1.7053298722973267e-14,
+      "cp_j_mol_k": 68.952077,
+      "within_budget": true
+    },
+    {
+      "phase": "beta",
+      "temperature_k": 1100.0,
+      "enthalpy_difference_j_mol": 1.0783120738396268e-10,
+      "entropy_difference_j_mol_k": 2.3790137772714607e-14,
+      "cp_j_mol_k": 69.95631272123967,
+      "within_budget": true
+    }
+  ],
+  "transition_states": [
+    {
+      "input_beta_fraction": 0.0,
+      "state": {
+        "temperature_k": 847.0,
+        "enthalpy_j_mol": -876657.5150186708,
+        "entropy_j_mol_k": 103.84576365471042,
+        "cp_j_mol_k": null,
+        "beta_fraction": 0.0,
+        "phase": "coexistence"
+      },
+      "entropy_difference_j_mol_k": 0.0,
+      "gibbs_j_mol": -964614.8768342106
+    },
+    {
+      "input_beta_fraction": 0.25,
+      "state": {
+        "temperature_k": 847.0,
+        "enthalpy_j_mol": -876475.5150186708,
+        "entropy_j_mol_k": 104.06063968776827,
+        "cp_j_mol_k": null,
+        "beta_fraction": 0.25,
+        "phase": "coexistence"
+      },
+      "entropy_difference_j_mol_k": 0.0,
+      "gibbs_j_mol": -964614.8768342106
+    },
+    {
+      "input_beta_fraction": 0.5,
+      "state": {
+        "temperature_k": 847.0,
+        "enthalpy_j_mol": -876293.5150186708,
+        "entropy_j_mol_k": 104.27551572082612,
+        "cp_j_mol_k": null,
+        "beta_fraction": 0.5,
+        "phase": "coexistence"
+      },
+      "entropy_difference_j_mol_k": 0.0,
+      "gibbs_j_mol": -964614.8768342106
+    },
+    {
+      "input_beta_fraction": 0.75,
+      "state": {
+        "temperature_k": 847.0,
+        "enthalpy_j_mol": -876111.5150186708,
+        "entropy_j_mol_k": 104.49039175388398,
+        "cp_j_mol_k": null,
+        "beta_fraction": 0.75,
+        "phase": "coexistence"
+      },
+      "entropy_difference_j_mol_k": 0.0,
+      "gibbs_j_mol": -964614.8768342106
+    },
+    {
+      "input_beta_fraction": 1.0,
+      "state": {
+        "temperature_k": 847.0,
+        "enthalpy_j_mol": -875929.5150186708,
+        "entropy_j_mol_k": 104.70526778694183,
+        "cp_j_mol_k": null,
+        "beta_fraction": 1.0,
+        "phase": "coexistence"
+      },
+      "entropy_difference_j_mol_k": 0.0,
+      "gibbs_j_mol": -964614.8768342106
+    }
+  ],
+  "independent_gibbs_gap_j_mol": 1.5053010847239246e-47,
+  "mixture_gibbs_spread_j_mol": 0.0,
+  "capacity_domain_bounds": [
+    {
+      "phase": 0,
+      "temperature_interval_k": [
+        298.15,
+        847.0
+      ],
+      "source_D_positive": true,
+      "source_E_positive": true,
+      "dcp_dx_lower_bound": 42.86818861709439,
+      "cp_lower_bound_j_mol_k": 44.58431227250183,
+      "monotonic_positive_capacity_proved_for_recorded_coefficients": true
+    },
+    {
+      "phase": 1,
+      "temperature_interval_k": [
+        847.0,
+        1100.0
+      ],
+      "source_D_positive": true,
+      "source_E_positive": true,
+      "dcp_dx_lower_bound": 9.997454543246022,
+      "cp_lower_bound_j_mol_k": 67.41667278924312,
+      "monotonic_positive_capacity_proved_for_recorded_coefficients": true
+    }
+  ],
+  "original_fit_constant_shifts": [
+    {
+      "phase": "alpha",
+      "temperature_k": 847.0,
+      "source_fitted_enthalpy_j_mol": -876660.5774010431,
+      "source_fitted_entropy_j_mol_k": 103.84252004688136,
+      "derived_enthalpy_shift_j_mol": 3.0623823723290116,
+      "derived_entropy_shift_j_mol_k": 0.0032436078290629666
+    },
+    {
+      "phase": "beta",
+      "temperature_k": 847.0,
+      "source_fitted_enthalpy_j_mol": -875931.4503554669,
+      "source_fitted_entropy_j_mol_k": 104.6995888689382,
+      "derived_enthalpy_shift_j_mol": 1.9353367961011827,
+      "derived_entropy_shift_j_mol_k": 0.005678918003624744
+    }
+  ],
+  "original_janaf_table_comparisons": [
+    {
+      "source": {
+        "temperature_k": 298.15,
+        "cp_j_mol_k": 44.589,
+        "s_j_mol_k": 41.463,
+        "h_increment_j_mol": 0.0
+      },
+      "differences": {
+        "cp_j_mol_k": -0.004687727498158267,
+        "s_j_mol_k": 0.0,
+        "h_increment_j_mol": 0.0
+      },
+      "within_printing_intervals_only": {
+        "cp_j_mol_k": false,
+        "s_j_mol_k": true,
+        "h_increment_j_mol": true
+      }
+    },
+    {
+      "source": {
+        "temperature_k": 300,
+        "cp_j_mol_k": 44.769,
+        "s_j_mol_k": 41.74,
+        "h_increment_j_mol": 83.0
+      },
+      "differences": {
+        "cp_j_mol_k": 0.004824911111121821,
+        "s_j_mol_k": -0.0006260407147706815,
+        "h_increment_j_mol": -0.34354096080642194
+      },
+      "within_printing_intervals_only": {
+        "cp_j_mol_k": false,
+        "s_j_mol_k": false,
+        "h_increment_j_mol": true
+      }
+    },
+    {
+      "source": {
+        "temperature_k": 400,
+        "cp_j_mol_k": 53.43,
+        "s_j_mol_k": 55.874,
+        "h_increment_j_mol": 5017.0
+      },
+      "differences": {
+        "cp_j_mol_k": -2.4400000000923683e-05,
+        "s_j_mol_k": 0.002028322518945913,
+        "h_increment_j_mol": 0.3926757058361545
+      },
+      "within_printing_intervals_only": {
+        "cp_j_mol_k": true,
+        "s_j_mol_k": false,
+        "h_increment_j_mol": true
+      }
+    },
+    {
+      "source": {
+        "temperature_k": 500,
+        "cp_j_mol_k": 59.643,
+        "s_j_mol_k": 68.499,
+        "h_increment_j_mol": 10686.0
+      },
+      "differences": {
+        "cp_j_mol_k": -0.0006990000000044461,
+        "s_j_mol_k": 0.003049526894983501,
+        "h_increment_j_mol": 1.1812990391626954
+      },
+      "within_printing_intervals_only": {
+        "cp_j_mol_k": false,
+        "s_j_mol_k": false,
+        "h_increment_j_mol": false
+      }
+    },
+    {
+      "source": {
+        "temperature_k": 600,
+        "cp_j_mol_k": 64.417,
+        "s_j_mol_k": 79.808,
+        "h_increment_j_mol": 16896.0
+      },
+      "differences": {
+        "cp_j_mol_k": 0.0011291777777842071,
+        "s_j_mol_k": 0.004459906885941223,
+        "h_increment_j_mol": 1.9672757058870047
+      },
+      "within_printing_intervals_only": {
+        "cp_j_mol_k": false,
+        "s_j_mol_k": false,
+        "h_increment_j_mol": false
+      }
+    },
+    {
+      "source": {
+        "temperature_k": 700,
+        "cp_j_mol_k": 68.768,
+        "s_j_mol_k": 90.063,
+        "h_increment_j_mol": 23554.0
+      },
+      "differences": {
+        "cp_j_mol_k": -0.000559800000019095,
+        "s_j_mol_k": 0.005195762092640166,
+        "h_increment_j_mol": 2.589125705882907
+      },
+      "within_printing_intervals_only": {
+        "cp_j_mol_k": false,
+        "s_j_mol_k": false,
+        "h_increment_j_mol": false
+      }
+    },
+    {
+      "source": {
+        "temperature_k": 800,
+        "cp_j_mol_k": 73.701,
+        "s_j_mol_k": 99.555,
+        "h_increment_j_mol": 30668.0
+      },
+      "differences": {
+        "cp_j_mol_k": 1.905000000590462e-05,
+        "s_j_mol_k": 0.005778678453026487,
+        "h_increment_j_mol": 2.9306090391473845
+      },
+      "within_printing_intervals_only": {
+        "cp_j_mol_k": true,
+        "s_j_mol_k": false,
+        "h_increment_j_mol": false
+      }
+    },
+    {
+      "source": {
+        "temperature_k": 900,
+        "cp_j_mol_k": 67.948,
+        "s_j_mol_k": 108.807,
+        "h_increment_j_mol": 38512.0
+      },
+      "differences": {
+        "cp_j_mol_k": 0.0002882228395151287,
+        "s_j_mol_k": 0.006027820933340422,
+        "h_increment_j_mol": 2.454789490555413
+      },
+      "within_printing_intervals_only": {
+        "cp_j_mol_k": true,
+        "s_j_mol_k": false,
+        "h_increment_j_mol": false
+      }
+    },
+    {
+      "source": {
+        "temperature_k": 1000,
+        "cp_j_mol_k": 68.952,
+        "s_j_mol_k": 116.018,
+        "h_increment_j_mol": 45357.0
+      },
+      "differences": {
+        "cp_j_mol_k": 7.700000000454565e-05,
+        "s_j_mol_k": 0.006039751336956556,
+        "h_increment_j_mol": 2.467170129530132
+      },
+      "within_printing_intervals_only": {
+        "cp_j_mol_k": true,
+        "s_j_mol_k": false,
+        "h_increment_j_mol": false
+      }
+    },
+    {
+      "source": {
+        "temperature_k": 1100,
+        "cp_j_mol_k": 69.956,
+        "s_j_mol_k": 122.637,
+        "h_increment_j_mol": 52302.0
+      },
+      "differences": {
+        "cp_j_mol_k": 0.0003127212396663026,
+        "s_j_mol_k": 0.00596962716588223,
+        "h_increment_j_mol": 2.884739349130541
+      },
+      "within_printing_intervals_only": {
+        "cp_j_mol_k": true,
+        "s_j_mol_k": false,
+        "h_increment_j_mol": false
+      }
+    }
+  ],
+  "all_declared_thermodynamic_arithmetic_budgets_met": true,
+  "scope": "Source-derived thermodynamically consistent join. Original fitted h/S and JANAF differences remain visible; arithmetic agreement is not empirical error certification.",
+  "material_qualified": false,
+  "training_eligible": false
+}

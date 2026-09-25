@@ -1,0 +1,92 @@
+{
+  "source_facts_file": "data/sandbox/solids/quartz/facts.json",
+  "source_urls": [
+    "https://janaf.nist.gov/tables/O-037.html",
+    "https://webbook.nist.gov/cgi/cbook.cgi?ID=C14808607&Mask=2&Table=on&Type=JANAFS"
+  ],
+  "source_review_utc": "2026-09-25",
+  "reference": {
+    "temperature_k": 298.15,
+    "pressure_pa": 100000.0,
+    "enthalpy_j_mol": -910856.8,
+    "entropy_j_mol_k": 41.463,
+    "enthalpy_locator": "WebBook Shomate H, common elemental formation reference",
+    "entropy_locator": "JANAF O-037 298.15 K row"
+  },
+  "phase_transition": {
+    "temperature_k": 847.0,
+    "low_enthalpy_increment_kj_mol": 34.196,
+    "high_enthalpy_increment_kj_mol": 34.924,
+    "latent_enthalpy_j_mol": 728.0,
+    "source_locator": "JANAF O-037 two 847.000 K rows",
+    "printed_enthalpy_increment_half_unit_j_mol": 0.5,
+    "interpretation": "Difference of rounded source entries, not experimental uncertainty. Transition entropy is derived as L/T from phase equilibrium; original rounded entropy entries remain independently recorded."
+  },
+  "caloric_representation": {
+    "definition": "Integrate each original Shomate Cp; anchor alpha h/S to 298.15 K reference, join beta h by original table latent heat and beta S by L/T. No modification to Cp coefficients. Constant shifts from the original fitted h/S are explicitly reported; this derived representation enforces phase equilibrium, not exact reproduction of all printed thermochemical data.",
+    "temperature_scale_k": 1000.0,
+    "phase_names": [
+      "alpha",
+      "beta"
+    ],
+    "domain_k": [
+      298.15,
+      1100.0
+    ],
+    "pressure_scope": "Only source standard pressure; no molar-volume, thermal expansion, stress or pressure-shift prediction",
+    "other_phase_scope": "Restricted below 1100 K; no tridymite, cristobalite or melt conversion"
+  },
+  "virtual_calorimeter": {
+    "amount_mol": 0.01,
+    "initial_temperature_k": 300.0,
+    "heat_conductance_w_k": 0.001,
+    "program": [
+      {
+        "start_s": 0.0,
+        "end_s": 3000.0,
+        "reservoir_temperature_k": 1000.0
+      },
+      {
+        "start_s": 3000.0,
+        "end_s": 9000.0,
+        "reservoir_temperature_k": 300.0
+      }
+    ],
+    "definition": "Stress-free constant standard-pressure pure-quartz body; dH/dt=Q includes enthalpy storage, not fixed-volume internal energy. Ideal instantaneous reversible alpha-beta partition, no hysteresis or rate claim."
+  },
+  "numerics": {
+    "relative_tolerance": 1e-10,
+    "absolute_tolerances_enthalpy_heat_entropy": [
+      1e-09,
+      1e-09,
+      1e-11
+    ],
+    "refinement_factor": 0.01,
+    "maximum_step_s": 1.0,
+    "first_step_s": 1e-05,
+    "observation_interval_s": 2.0,
+    "temperature_inverse_absolute_k": 1e-10,
+    "temperature_inverse_relative": 1e-13,
+    "root_maximum_iterations": 100,
+    "progress_every_steps": 500,
+    "event_absolute_time_s": 1e-08,
+    "event_relative_tolerance": 1e-13
+  },
+  "verification": {
+    "energy_j": 1e-07,
+    "entropy_j_k": 1e-08,
+    "nonnegative_entropy_j_k": 1e-12,
+    "source_quadrature_h_j_mol": 1e-07,
+    "source_quadrature_s_j_mol_k": 1e-09,
+    "equal_gibbs_j_mol": 1e-08,
+    "time_temperature_k": 0.001,
+    "time_phase_fraction": 1e-07,
+    "phase_event_time_s": 0.001,
+    "quadrature_orders": [
+      2,
+      4
+    ]
+  },
+  "material_qualified": false,
+  "training_eligible": false
+}
