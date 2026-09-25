@@ -1,0 +1,147 @@
+{
+  "source": {
+    "name": "Cantera 3.2.0 DustyGasTransport original constitutive equations",
+    "url": "https://cantera.org/3.2/cxx/dc/de6/classCantera_1_1DustyGasTransport.html",
+    "source_directory": "data/sandbox/research/dusty-gas-source-v1/source",
+    "source_urls": [
+      "https://raw.githubusercontent.com/Cantera/cantera/v3.2.0/include/cantera/transport/DustyGasTransport.h",
+      "https://raw.githubusercontent.com/Cantera/cantera/v3.2.0/src/transport/DustyGasTransport.cpp"
+    ],
+    "license": "BSD-3-Clause, retained License.txt",
+    "selected_functions": [
+      "updateBinaryDiffCoeffs",
+      "updateKnudsenDiffCoeffs",
+      "eval_H_matrix",
+      "getMolarFluxes"
+    ],
+    "selection": "Local isothermal equations only; no source fallback permeability, fraction offset or midpoint face approximation is copied.",
+    "permeability_derivation": {
+      "source_url": "https://openstax.org/books/university-physics-volume-1/pages/14-7-viscosity-and-turbulence",
+      "basis": "Poiseuille long circular-tube laminar continuum relation Q = pi*r^4*deltaP/(8*eta*L); divide by tube area, then multiply by bundle porosity to obtain kappa = porosity*r^2/8. Local viscous term only; no claim of finite-length end corrections or exact rarefied flow."
+    }
+  },
+  "local_gas_parameters": "parameters.maxwell_stefan_isothermal.json",
+  "viscosity_parameters": "parameters.wilke_gas_mixture.json",
+  "species_order": [
+    "CO",
+    "CO2",
+    "O2",
+    "N2"
+  ],
+  "temperatures_k": [
+    300,
+    600,
+    1200
+  ],
+  "pressures_pa": [
+    50000,
+    100000,
+    200000
+  ],
+  "compositions": [
+    [
+      0.1,
+      0.2,
+      0.3,
+      0.4
+    ],
+    [
+      0.0004,
+      0.2,
+      0.21,
+      0.5896
+    ],
+    [
+      0.8,
+      0.05,
+      0.05,
+      0.1
+    ]
+  ],
+  "virtual_pore_sets": [
+    {
+      "name": "radius_0.1_um",
+      "porosity": 0.3,
+      "tortuosity": 1,
+      "mean_pore_radius_m": 1e-07,
+      "permeability_m2": 3.75e-16
+    },
+    {
+      "name": "radius_1_um",
+      "porosity": 0.3,
+      "tortuosity": 1,
+      "mean_pore_radius_m": 1e-06,
+      "permeability_m2": 3.75e-14
+    },
+    {
+      "name": "radius_10_um",
+      "porosity": 0.3,
+      "tortuosity": 1,
+      "mean_pore_radius_m": 1e-05,
+      "permeability_m2": 3.75e-12
+    }
+  ],
+  "pore_classification": "Declared uniform straight circular-capillary geometry, porosity 0.3 and transport tortuosity 1. Permeability values follow the continuum Poiseuille bundle relation kappa = porosity * radius^2 / 8. This is a model geometry, not measured brick; adding the Knudsen term is the sourced Dusty Gas approximation, not an exact Boltzmann solution.",
+  "force_cases": [
+    {
+      "name": "zero",
+      "composition_gradient_per_m": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "log_pressure_gradient_per_m": 0
+    },
+    {
+      "name": "composition_only",
+      "composition_gradient_per_m": [
+        0,
+        2,
+        -1,
+        -1
+      ],
+      "log_pressure_gradient_per_m": 0
+    },
+    {
+      "name": "pressure_only",
+      "composition_gradient_per_m": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "log_pressure_gradient_per_m": 2
+    },
+    {
+      "name": "mixed",
+      "composition_gradient_per_m": [
+        -1,
+        0.5,
+        0.3,
+        0.2
+      ],
+      "log_pressure_gradient_per_m": -3
+    }
+  ],
+  "review": {
+    "decimal_precision": 80,
+    "absolute_flux_budget_mol_m2_s": 1e-12,
+    "relative_flux_budget": 1e-10,
+    "absolute_entropy_budget_w_m3_k": 1e-10,
+    "relative_entropy_budget": 1e-10,
+    "original_equation_residual_budget_mol_m4": 1e-08,
+    "knudsen_relative_budget": 1e-12,
+    "species_permutation": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "pure_log_pressure_gradient_per_m": 2,
+    "include_zero_permeability_limit": true
+  },
+  "scope": "Stationary solid frame, ideal dilute gas, common local temperature and supplied positive pore coefficients. No heat equation, thermodiffusion, finite face, changing pore geometry or chemical reaction.",
+  "material_qualified": false,
+  "training_eligible": false
+}

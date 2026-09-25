@@ -1,0 +1,2477 @@
+{
+  "settings": {
+    "source": {
+      "implementation": "Cantera v3.2.0 GasTransport.cpp, viscosity and updateViscosity_T, lines 60-101",
+      "url": "https://www.cantera.org/3.2/cxx/d8/d58/classCantera_1_1GasTransport.html",
+      "source_file": "data/sandbox/research/gas-transport-source-v1/source/GasTransport.cpp",
+      "license": "data/sandbox/research/gas-transport-source-v1/source/License.txt",
+      "equation_reference": "Poling et al. (2001), equations 9-5.13 and 9-5.14, as reproduced by the official Cantera documentation"
+    },
+    "pure_property_parameters": "parameters.nonpolar_gas_transport.json",
+    "species_order": [
+      "CO",
+      "CO2",
+      "O2",
+      "N2"
+    ],
+    "temperatures_k": [
+      300,
+      600,
+      1200
+    ],
+    "compositions": [
+      [
+        0.1,
+        0.2,
+        0.3,
+        0.4
+      ],
+      [
+        0.0004,
+        0.2,
+        0.21,
+        0.5896
+      ],
+      [
+        0.8,
+        0.05,
+        0.05,
+        0.1
+      ]
+    ],
+    "review": {
+      "decimal_precision": 80,
+      "relative_budget": 1e-12,
+      "absolute_viscosity_budget_pa_s": 1e-18,
+      "absolute_weight_budget": 1e-13,
+      "species_permutation": [
+        3,
+        2,
+        1,
+        0
+      ],
+      "include_pure_limits": true,
+      "include_equal_binary_compositions": true
+    },
+    "scope": "Low-density empirical mixture rule on previously source-qualified approximate pure-gas viscosities. No mixture measurements or pore permeability inferred.",
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "pure_property_settings": {
+    "source_files": {
+      "collision_integrals": "data/sandbox/research/gas-transport-source-v1/source/MMCollisionInt.cpp",
+      "collision_header": "data/sandbox/research/gas-transport-source-v1/source/MMCollisionInt.h",
+      "gas_transport": "data/sandbox/research/gas-transport-source-v1/source/GasTransport.cpp",
+      "gri30": "data/sandbox/research/gas-transport-source-v1/source/gri30.yaml",
+      "nist_tables": "data/sandbox/research/gas-transport-source-v1/source/nist-selected-tables.json"
+    },
+    "source_version": "Cantera v3.2.0, source collision formulas before temperature polynomial fitting",
+    "constants": {
+      "boltzmann_j_k": "1.380649e-23",
+      "avogadro_mol_inverse": "6.02214076e23",
+      "angstrom_m": "1e-10",
+      "gram_kg": "1e-3",
+      "micropascal_pa": "1e-6",
+      "source": "https://physics.nist.gov/cuu/Constants/Table/allascii.txt",
+      "classification": "kB and NA exact SI; metric prefixes exact; molecular masses taken from the selected historical NIST compilation"
+    },
+    "species": {
+      "CO": {
+        "well_depth_over_kb_k": "98.1",
+        "diameter_angstrom": "3.65",
+        "molar_mass_g_mol": "28.0104",
+        "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+        "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-5"
+      },
+      "CO2": {
+        "well_depth_over_kb_k": "244.0",
+        "diameter_angstrom": "3.763",
+        "molar_mass_g_mol": "44.010",
+        "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+        "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-4"
+      },
+      "O2": {
+        "well_depth_over_kb_k": "107.4",
+        "diameter_angstrom": "3.458",
+        "molar_mass_g_mol": "31.999",
+        "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+        "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+      },
+      "N2": {
+        "well_depth_over_kb_k": "97.53",
+        "diameter_angstrom": "3.621",
+        "molar_mass_g_mol": "28.0135",
+        "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+        "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+      }
+    },
+    "collision_tables": {
+      "reduced_temperature": [
+        "0.1",
+        "0.2",
+        "0.3",
+        "0.4",
+        "0.5",
+        "0.6",
+        "0.7",
+        "0.8",
+        "0.9",
+        "1.0",
+        "1.2",
+        "1.4",
+        "1.6",
+        "1.8",
+        "2.0",
+        "2.5",
+        "3.0",
+        "3.5",
+        "4.0",
+        "5.0",
+        "6.0",
+        "7.0",
+        "8.0",
+        "9.0",
+        "10.0",
+        "12.0",
+        "14.0",
+        "16.0",
+        "18.0",
+        "20.0",
+        "25.0",
+        "30.0",
+        "35.0",
+        "40.0",
+        "50.0",
+        "75.0",
+        "100.0"
+      ],
+      "omega22_delta_zero": [
+        "4.1005",
+        "3.2626",
+        "2.8399",
+        "2.531",
+        "2.2837",
+        "2.0838",
+        "1.922",
+        "1.7902",
+        "1.6823",
+        "1.5929",
+        "1.4551",
+        "1.3551",
+        "1.28",
+        "1.2219",
+        "1.1757",
+        "1.0933",
+        "1.0388",
+        "0.99963",
+        "0.96988",
+        "0.92676",
+        "0.89616",
+        "0.87272",
+        "0.85379",
+        "0.83795",
+        "0.82435",
+        "0.80184",
+        "0.78363",
+        "0.76834",
+        "0.75518",
+        "0.74364",
+        "0.71982",
+        "0.70097",
+        "0.68545",
+        "0.67232",
+        "0.65099",
+        "0.61397",
+        "0.5887"
+      ],
+      "astar_delta_zero": [
+        "1.0231",
+        "1.0424",
+        "1.0719",
+        "1.0936",
+        "1.1053",
+        "1.1104",
+        "1.1114",
+        "1.1104",
+        "1.1086",
+        "1.1063",
+        "1.1020",
+        "1.0985",
+        "1.0960",
+        "1.0943",
+        "1.0934",
+        "1.0926",
+        "1.0934",
+        "1.0948",
+        "1.0965",
+        "1.0997",
+        "1.1025",
+        "1.1050",
+        "1.1072",
+        "1.1091",
+        "1.1107",
+        "1.1133",
+        "1.1154",
+        "1.1172",
+        "1.1186",
+        "1.1199",
+        "1.1223",
+        "1.1243",
+        "1.1259",
+        "1.1273",
+        "1.1297",
+        "1.1339",
+        "1.1364"
+      ]
+    },
+    "review": {
+      "decimal_precision": 80,
+      "temperatures_k": [
+        300,
+        400,
+        500,
+        600,
+        700,
+        800,
+        900,
+        1000,
+        1100,
+        1200
+      ],
+      "pressures_pa": [
+        50000,
+        100000,
+        200000
+      ],
+      "relative_arithmetic_budget": 1e-13,
+      "relative_symmetry_budget": 1e-14,
+      "relative_pressure_scaling_budget": 1e-14,
+      "nist_uncertainty_fraction": {
+        "CO": 0.05,
+        "CO2": 0.05,
+        "O2": 0.005,
+        "N2": 0.03
+      },
+      "nist_rounding_half_unit_micro_pa_s": {
+        "CO": 0.05,
+        "CO2": 0.005,
+        "O2": 0.005,
+        "N2": 0.05
+      },
+      "selected_calculation_temperature_domain_k": [
+        300,
+        1200
+      ],
+      "table_comparison_temperature_domain_k": [
+        300,
+        1000
+      ]
+    },
+    "scope": "Pure dilute-gas viscosity and first-order binary molecular diffusion only; explicit zero-dipole LJ approximation. No mixture-viscosity, porous effective diffusivity, Darcy permeability, multicomponent flux, Soret or brick qualification. GRI NASA thermo and reactions are not imported. No post-fit calibration to NIST tables. NIST comparison pressure is unspecified on selected pages; agreement is not pressure-matched experimental validation.",
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "records": [
+    {
+      "temperature_k": 300,
+      "case": "mixture",
+      "mole_fractions": [
+        0.1,
+        0.2,
+        0.3,
+        0.4
+      ],
+      "pure_viscosities_pa_s": [
+        1.77707152184514e-05,
+        1.5060212738756866e-05,
+        2.065329027295279e-05,
+        1.8084626814678912e-05
+      ],
+      "actual_viscosity_pa_s": 1.7992874884464875e-05,
+      "reference_viscosity_decimal": "0.000017992874884464877156125353273814023573541807653047920732667545357954619187970653",
+      "weighting_factors": [
+        [
+          1.0,
+          1.35740598344109,
+          0.9907773540804562,
+          0.9913567742852345
+        ],
+        [
+          0.7321564638763741,
+          1.0,
+          0.7338076723520193,
+          0.7264507646373862
+        ],
+        [
+          1.0079600456495712,
+          1.3840613865501477,
+          1.0,
+          0.9990672799234287
+        ],
+        [
+          1.0087569981566809,
+          1.3704671359281058,
+          0.9992728128210893,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 1.6754819278421768e-21,
+        "weight": 3.8287422559429327e-16,
+        "permutation_pa_s": 3.3881317890172014e-21,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 300,
+      "case": "mixture",
+      "mole_fractions": [
+        0.0004,
+        0.2,
+        0.21,
+        0.5896
+      ],
+      "pure_viscosities_pa_s": [
+        1.77707152184514e-05,
+        1.5060212738756866e-05,
+        2.065329027295279e-05,
+        1.8084626814678912e-05
+      ],
+      "actual_viscosity_pa_s": 1.781330152156792e-05,
+      "reference_viscosity_decimal": "0.000017813301521567921708125250956817302340153566880924120291748027564490822195178448",
+      "weighting_factors": [
+        [
+          1.0,
+          1.35740598344109,
+          0.9907773540804562,
+          0.9913567742852345
+        ],
+        [
+          0.7321564638763741,
+          1.0,
+          0.7338076723520193,
+          0.7264507646373862
+        ],
+        [
+          1.0079600456495712,
+          1.3840613865501477,
+          1.0,
+          0.9990672799234287
+        ],
+        [
+          1.0087569981566809,
+          1.3704671359281058,
+          0.9992728128210893,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 1.2640285566688675e-21,
+        "weight": 3.8287422559429327e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 300,
+      "case": "mixture",
+      "mole_fractions": [
+        0.8,
+        0.05,
+        0.05,
+        0.1
+      ],
+      "pure_viscosities_pa_s": [
+        1.77707152184514e-05,
+        1.5060212738756866e-05,
+        2.065329027295279e-05,
+        1.8084626814678912e-05
+      ],
+      "actual_viscosity_pa_s": 1.776637412902705e-05,
+      "reference_viscosity_decimal": "0.000017766374129027053370004319319062802724338935171175571090526608063820357957738689",
+      "weighting_factors": [
+        [
+          1.0,
+          1.35740598344109,
+          0.9907773540804562,
+          0.9913567742852345
+        ],
+        [
+          0.7321564638763741,
+          1.0,
+          0.7338076723520193,
+          0.7264507646373862
+        ],
+        [
+          1.0079600456495712,
+          1.3840613865501477,
+          1.0,
+          0.9990672799234287
+        ],
+        [
+          1.0087569981566809,
+          1.3704671359281058,
+          0.9992728128210893,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 3.034871268767579e-21,
+        "weight": 3.8287422559429327e-16,
+        "permutation_pa_s": 3.3881317890172014e-21,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 300,
+      "case": "pure_CO",
+      "mole_fractions": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pure_viscosities_pa_s": [
+        1.77707152184514e-05,
+        1.5060212738756866e-05,
+        2.065329027295279e-05,
+        1.8084626814678912e-05
+      ],
+      "actual_viscosity_pa_s": 1.77707152184514e-05,
+      "reference_viscosity_decimal": "0.00001777071521845139984337180738549477609922178089618682861328125",
+      "weighting_factors": [
+        [
+          1.0,
+          1.35740598344109,
+          0.9907773540804562,
+          0.9913567742852345
+        ],
+        [
+          0.7321564638763741,
+          1.0,
+          0.7338076723520193,
+          0.7264507646373862
+        ],
+        [
+          1.0079600456495712,
+          1.3840613865501477,
+          1.0,
+          0.9990672799234287
+        ],
+        [
+          1.0087569981566809,
+          1.3704671359281058,
+          0.9992728128210893,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 0.0,
+        "weight": 3.8287422559429327e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": 0.0
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true,
+        "pure_limit": true
+      }
+    },
+    {
+      "temperature_k": 300,
+      "case": "pure_CO2",
+      "mole_fractions": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "pure_viscosities_pa_s": [
+        1.77707152184514e-05,
+        1.5060212738756866e-05,
+        2.065329027295279e-05,
+        1.8084626814678912e-05
+      ],
+      "actual_viscosity_pa_s": 1.5060212738756866e-05,
+      "reference_viscosity_decimal": "0.00001506021273875686594255658701246858299782616086304187774658203125",
+      "weighting_factors": [
+        [
+          1.0,
+          1.35740598344109,
+          0.9907773540804562,
+          0.9913567742852345
+        ],
+        [
+          0.7321564638763741,
+          1.0,
+          0.7338076723520193,
+          0.7264507646373862
+        ],
+        [
+          1.0079600456495712,
+          1.3840613865501477,
+          1.0,
+          0.9990672799234287
+        ],
+        [
+          1.0087569981566809,
+          1.3704671359281058,
+          0.9992728128210893,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 0.0,
+        "weight": 3.8287422559429327e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": 0.0
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true,
+        "pure_limit": true
+      }
+    },
+    {
+      "temperature_k": 300,
+      "case": "pure_O2",
+      "mole_fractions": [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "pure_viscosities_pa_s": [
+        1.77707152184514e-05,
+        1.5060212738756866e-05,
+        2.065329027295279e-05,
+        1.8084626814678912e-05
+      ],
+      "actual_viscosity_pa_s": 2.065329027295279e-05,
+      "reference_viscosity_decimal": "0.0000206532902729527896405758990994172563659958541393280029296875",
+      "weighting_factors": [
+        [
+          1.0,
+          1.35740598344109,
+          0.9907773540804562,
+          0.9913567742852345
+        ],
+        [
+          0.7321564638763741,
+          1.0,
+          0.7338076723520193,
+          0.7264507646373862
+        ],
+        [
+          1.0079600456495712,
+          1.3840613865501477,
+          1.0,
+          0.9990672799234287
+        ],
+        [
+          1.0087569981566809,
+          1.3704671359281058,
+          0.9992728128210893,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 0.0,
+        "weight": 3.8287422559429327e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": 0.0
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true,
+        "pure_limit": true
+      }
+    },
+    {
+      "temperature_k": 300,
+      "case": "pure_N2",
+      "mole_fractions": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "pure_viscosities_pa_s": [
+        1.77707152184514e-05,
+        1.5060212738756866e-05,
+        2.065329027295279e-05,
+        1.8084626814678912e-05
+      ],
+      "actual_viscosity_pa_s": 1.8084626814678912e-05,
+      "reference_viscosity_decimal": "0.00001808462681467891183654563003191384495949023403227329254150390625",
+      "weighting_factors": [
+        [
+          1.0,
+          1.35740598344109,
+          0.9907773540804562,
+          0.9913567742852345
+        ],
+        [
+          0.7321564638763741,
+          1.0,
+          0.7338076723520193,
+          0.7264507646373862
+        ],
+        [
+          1.0079600456495712,
+          1.3840613865501477,
+          1.0,
+          0.9990672799234287
+        ],
+        [
+          1.0087569981566809,
+          1.3704671359281058,
+          0.9992728128210893,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 0.0,
+        "weight": 3.8287422559429327e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": 0.0
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true,
+        "pure_limit": true
+      }
+    },
+    {
+      "temperature_k": 300,
+      "case": "binary_CO_CO2",
+      "mole_fractions": [
+        0.5,
+        0.5,
+        0.0,
+        0.0
+      ],
+      "pure_viscosities_pa_s": [
+        1.77707152184514e-05,
+        1.5060212738756866e-05,
+        2.065329027295279e-05,
+        1.8084626814678912e-05
+      ],
+      "actual_viscosity_pa_s": 1.6232737323927387e-05,
+      "reference_viscosity_decimal": "0.000016232737323927387246246522302909354626270514179874769262967287620268683859378314",
+      "weighting_factors": [
+        [
+          1.0,
+          1.35740598344109,
+          0.9907773540804562,
+          0.9913567742852345
+        ],
+        [
+          0.7321564638763741,
+          1.0,
+          0.7338076723520193,
+          0.7264507646373862
+        ],
+        [
+          1.0079600456495712,
+          1.3840613865501477,
+          1.0,
+          0.9990672799234287
+        ],
+        [
+          1.0087569981566809,
+          1.3704671359281058,
+          0.9992728128210893,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 9.580932075672679e-23,
+        "weight": 3.8287422559429327e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 300,
+      "case": "binary_CO_O2",
+      "mole_fractions": [
+        0.5,
+        0.0,
+        0.5,
+        0.0
+      ],
+      "pure_viscosities_pa_s": [
+        1.77707152184514e-05,
+        1.5060212738756866e-05,
+        2.065329027295279e-05,
+        1.8084626814678912e-05
+      ],
+      "actual_viscosity_pa_s": 1.9212228463707694e-05,
+      "reference_viscosity_decimal": "0.000019212228463707695910814806475705065947101258288167200314986285290751461377410765",
+      "weighting_factors": [
+        [
+          1.0,
+          1.35740598344109,
+          0.9907773540804562,
+          0.9913567742852345
+        ],
+        [
+          0.7321564638763741,
+          1.0,
+          0.7338076723520193,
+          0.7264507646373862
+        ],
+        [
+          1.0079600456495712,
+          1.3840613865501477,
+          1.0,
+          0.9990672799234287
+        ],
+        [
+          1.0087569981566809,
+          1.3704671359281058,
+          0.9992728128210893,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 1.5124996719993424e-21,
+        "weight": 3.8287422559429327e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 300,
+      "case": "binary_CO_N2",
+      "mole_fractions": [
+        0.5,
+        0.0,
+        0.0,
+        0.5
+      ],
+      "pure_viscosities_pa_s": [
+        1.77707152184514e-05,
+        1.5060212738756866e-05,
+        2.065329027295279e-05,
+        1.8084626814678912e-05
+      ],
+      "actual_viscosity_pa_s": 1.7926817594311427e-05,
+      "reference_viscosity_decimal": "0.000017926817594311431028576514223119357535076843502587428329736414596757960374538309",
+      "weighting_factors": [
+        [
+          1.0,
+          1.35740598344109,
+          0.9907773540804562,
+          0.9913567742852345
+        ],
+        [
+          0.7321564638763741,
+          1.0,
+          0.7338076723520193,
+          0.7264507646373862
+        ],
+        [
+          1.0079600456495712,
+          1.3840613865501477,
+          1.0,
+          0.9990672799234287
+        ],
+        [
+          1.0087569981566809,
+          1.3704671359281058,
+          0.9992728128210893,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 3.9972540802338946e-21,
+        "weight": 3.8287422559429327e-16,
+        "permutation_pa_s": 1.0164395367051604e-20,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 300,
+      "case": "binary_CO2_O2",
+      "mole_fractions": [
+        0.0,
+        0.5,
+        0.5,
+        0.0
+      ],
+      "pure_viscosities_pa_s": [
+        1.77707152184514e-05,
+        1.5060212738756866e-05,
+        2.065329027295279e-05,
+        1.8084626814678912e-05
+      ],
+      "actual_viscosity_pa_s": 1.7349277060800835e-05,
+      "reference_viscosity_decimal": "0.000017349277060800835060112254380586511914556394959791437032875179478544388513346265",
+      "weighting_factors": [
+        [
+          1.0,
+          1.35740598344109,
+          0.9907773540804562,
+          0.9913567742852345
+        ],
+        [
+          0.7321564638763741,
+          1.0,
+          0.7338076723520193,
+          0.7264507646373862
+        ],
+        [
+          1.0079600456495712,
+          1.3840613865501477,
+          1.0,
+          0.9990672799234287
+        ],
+        [
+          1.0087569981566809,
+          1.3704671359281058,
+          0.9992728128210893,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 1.4346709096436208e-22,
+        "weight": 3.8287422559429327e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 300,
+      "case": "binary_CO2_N2",
+      "mole_fractions": [
+        0.0,
+        0.5,
+        0.0,
+        0.5
+      ],
+      "pure_viscosities_pa_s": [
+        1.77707152184514e-05,
+        1.5060212738756866e-05,
+        2.065329027295279e-05,
+        1.8084626814678912e-05
+      ],
+      "actual_viscosity_pa_s": 1.635236217281959e-05,
+      "reference_viscosity_decimal": "0.000016352362172819586643350426179300334551486842400005210528562176369316968429532217",
+      "weighting_factors": [
+        [
+          1.0,
+          1.35740598344109,
+          0.9907773540804562,
+          0.9913567742852345
+        ],
+        [
+          0.7321564638763741,
+          1.0,
+          0.7338076723520193,
+          0.7264507646373862
+        ],
+        [
+          1.0079600456495712,
+          1.3840613865501477,
+          1.0,
+          0.9990672799234287
+        ],
+        [
+          1.0087569981566809,
+          1.3704671359281058,
+          0.9992728128210893,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 2.3518147147639994e-21,
+        "weight": 3.8287422559429327e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 300,
+      "case": "binary_O2_N2",
+      "mole_fractions": [
+        0.0,
+        0.0,
+        0.5,
+        0.5
+      ],
+      "pure_viscosities_pa_s": [
+        1.77707152184514e-05,
+        1.5060212738756866e-05,
+        2.065329027295279e-05,
+        1.8084626814678912e-05
+      ],
+      "actual_viscosity_pa_s": 1.937706564846451e-05,
+      "reference_viscosity_decimal": "0.00001937706564846451085365080628478853630590626543652703854463208255292668404514436",
+      "weighting_factors": [
+        [
+          1.0,
+          1.35740598344109,
+          0.9907773540804562,
+          0.9913567742852345
+        ],
+        [
+          0.7321564638763741,
+          1.0,
+          0.7338076723520193,
+          0.7264507646373862
+        ],
+        [
+          1.0079600456495712,
+          1.3840613865501477,
+          1.0,
+          0.9990672799234287
+        ],
+        [
+          1.0087569981566809,
+          1.3704671359281058,
+          0.9992728128210893,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 1.1050531834445946e-21,
+        "weight": 3.8287422559429327e-16,
+        "permutation_pa_s": 3.3881317890172014e-21,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 600,
+      "case": "mixture",
+      "mole_fractions": [
+        0.1,
+        0.2,
+        0.3,
+        0.4
+      ],
+      "pure_viscosities_pa_s": [
+        2.908480893262893e-05,
+        2.7880531980869516e-05,
+        3.4076822160863583e-05,
+        2.9584291036524023e-05
+      ],
+      "actual_viscosity_pa_s": 3.043894487484336e-05,
+      "reference_viscosity_decimal": "0.000030438944874843358686467057973792595721094334326175609095313798079846511135160068",
+      "weighting_factors": [
+        [
+          1.0,
+          1.2698564322694852,
+          0.9868708133252179,
+          0.9915951043424979
+        ],
+        [
+          0.7747425458840679,
+          1.0,
+          0.7726483063180236,
+          0.7686721756044951
+        ],
+        [
+          1.0121294970894468,
+          1.2988375946658788,
+          1.0,
+          1.003429004451722
+        ],
+        [
+          1.0085124477236753,
+          1.2814016135593842,
+          0.9950794610730894,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 2.3755802397976785e-21,
+        "weight": 4.620387386192373e-16,
+        "permutation_pa_s": 3.3881317890172014e-21,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 600,
+      "case": "mixture",
+      "mole_fractions": [
+        0.0004,
+        0.2,
+        0.21,
+        0.5896
+      ],
+      "pure_viscosities_pa_s": [
+        2.908480893262893e-05,
+        2.7880531980869516e-05,
+        3.4076822160863583e-05,
+        2.9584291036524023e-05
+      ],
+      "actual_viscosity_pa_s": 3.011575711394282e-05,
+      "reference_viscosity_decimal": "0.000030115757113942823426919027230508905637661776586020048379904042335125895837125948",
+      "weighting_factors": [
+        [
+          1.0,
+          1.2698564322694852,
+          0.9868708133252179,
+          0.9915951043424979
+        ],
+        [
+          0.7747425458840679,
+          1.0,
+          0.7726483063180236,
+          0.7686721756044951
+        ],
+        [
+          1.0121294970894468,
+          1.2988375946658788,
+          1.0,
+          1.003429004451722
+        ],
+        [
+          1.0085124477236753,
+          1.2814016135593842,
+          0.9950794610730894,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 2.593339266244255e-21,
+        "weight": 4.620387386192373e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 600,
+      "case": "mixture",
+      "mole_fractions": [
+        0.8,
+        0.05,
+        0.05,
+        0.1
+      ],
+      "pure_viscosities_pa_s": [
+        2.908480893262893e-05,
+        2.7880531980869516e-05,
+        3.4076822160863583e-05,
+        2.9584291036524023e-05
+      ],
+      "actual_viscosity_pa_s": 2.9328125381745464e-05,
+      "reference_viscosity_decimal": "0.00002932812538174546781134425102382049624192689973530927241938813119606491855260645",
+      "weighting_factors": [
+        [
+          1.0,
+          1.2698564322694852,
+          0.9868708133252179,
+          0.9915951043424979
+        ],
+        [
+          0.7747425458840679,
+          1.0,
+          0.7726483063180236,
+          0.7686721756044951
+        ],
+        [
+          1.0121294970894468,
+          1.2988375946658788,
+          1.0,
+          1.003429004451722
+        ],
+        [
+          1.0085124477236753,
+          1.2814016135593842,
+          0.9950794610730894,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 4.174308195020006e-21,
+        "weight": 4.620387386192373e-16,
+        "permutation_pa_s": 3.3881317890172014e-21,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 600,
+      "case": "pure_CO",
+      "mole_fractions": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pure_viscosities_pa_s": [
+        2.908480893262893e-05,
+        2.7880531980869516e-05,
+        3.4076822160863583e-05,
+        2.9584291036524023e-05
+      ],
+      "actual_viscosity_pa_s": 2.908480893262893e-05,
+      "reference_viscosity_decimal": "0.0000290848089326289316824090958046866717268130742013454437255859375",
+      "weighting_factors": [
+        [
+          1.0,
+          1.2698564322694852,
+          0.9868708133252179,
+          0.9915951043424979
+        ],
+        [
+          0.7747425458840679,
+          1.0,
+          0.7726483063180236,
+          0.7686721756044951
+        ],
+        [
+          1.0121294970894468,
+          1.2988375946658788,
+          1.0,
+          1.003429004451722
+        ],
+        [
+          1.0085124477236753,
+          1.2814016135593842,
+          0.9950794610730894,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 0.0,
+        "weight": 4.620387386192373e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": 0.0
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true,
+        "pure_limit": true
+      }
+    },
+    {
+      "temperature_k": 600,
+      "case": "pure_CO2",
+      "mole_fractions": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "pure_viscosities_pa_s": [
+        2.908480893262893e-05,
+        2.7880531980869516e-05,
+        3.4076822160863583e-05,
+        2.9584291036524023e-05
+      ],
+      "actual_viscosity_pa_s": 2.7880531980869516e-05,
+      "reference_viscosity_decimal": "0.0000278805319808695162612198481522085558026446960866451263427734375",
+      "weighting_factors": [
+        [
+          1.0,
+          1.2698564322694852,
+          0.9868708133252179,
+          0.9915951043424979
+        ],
+        [
+          0.7747425458840679,
+          1.0,
+          0.7726483063180236,
+          0.7686721756044951
+        ],
+        [
+          1.0121294970894468,
+          1.2988375946658788,
+          1.0,
+          1.003429004451722
+        ],
+        [
+          1.0085124477236753,
+          1.2814016135593842,
+          0.9950794610730894,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 0.0,
+        "weight": 4.620387386192373e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": 0.0
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true,
+        "pure_limit": true
+      }
+    },
+    {
+      "temperature_k": 600,
+      "case": "pure_O2",
+      "mole_fractions": [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "pure_viscosities_pa_s": [
+        2.908480893262893e-05,
+        2.7880531980869516e-05,
+        3.4076822160863583e-05,
+        2.9584291036524023e-05
+      ],
+      "actual_viscosity_pa_s": 3.4076822160863583e-05,
+      "reference_viscosity_decimal": "0.0000340768221608635834608304338022577439915039576590061187744140625",
+      "weighting_factors": [
+        [
+          1.0,
+          1.2698564322694852,
+          0.9868708133252179,
+          0.9915951043424979
+        ],
+        [
+          0.7747425458840679,
+          1.0,
+          0.7726483063180236,
+          0.7686721756044951
+        ],
+        [
+          1.0121294970894468,
+          1.2988375946658788,
+          1.0,
+          1.003429004451722
+        ],
+        [
+          1.0085124477236753,
+          1.2814016135593842,
+          0.9950794610730894,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 0.0,
+        "weight": 4.620387386192373e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": 0.0
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true,
+        "pure_limit": true
+      }
+    },
+    {
+      "temperature_k": 600,
+      "case": "pure_N2",
+      "mole_fractions": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "pure_viscosities_pa_s": [
+        2.908480893262893e-05,
+        2.7880531980869516e-05,
+        3.4076822160863583e-05,
+        2.9584291036524023e-05
+      ],
+      "actual_viscosity_pa_s": 2.9584291036524023e-05,
+      "reference_viscosity_decimal": "0.0000295842910365240227663248540057594482277636416256427764892578125",
+      "weighting_factors": [
+        [
+          1.0,
+          1.2698564322694852,
+          0.9868708133252179,
+          0.9915951043424979
+        ],
+        [
+          0.7747425458840679,
+          1.0,
+          0.7726483063180236,
+          0.7686721756044951
+        ],
+        [
+          1.0121294970894468,
+          1.2988375946658788,
+          1.0,
+          1.003429004451722
+        ],
+        [
+          1.0085124477236753,
+          1.2814016135593842,
+          0.9950794610730894,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 0.0,
+        "weight": 4.620387386192373e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": 0.0
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true,
+        "pure_limit": true
+      }
+    },
+    {
+      "temperature_k": 600,
+      "case": "binary_CO_CO2",
+      "mole_fractions": [
+        0.5,
+        0.5,
+        0.0,
+        0.0
+      ],
+      "pure_viscosities_pa_s": [
+        2.908480893262893e-05,
+        2.7880531980869516e-05,
+        3.4076822160863583e-05,
+        2.9584291036524023e-05
+      ],
+      "actual_viscosity_pa_s": 2.852312211482476e-05,
+      "reference_viscosity_decimal": "0.000028523122114824760639655762892888501599402256199127607445826161139818203147233611",
+      "weighting_factors": [
+        [
+          1.0,
+          1.2698564322694852,
+          0.9868708133252179,
+          0.9915951043424979
+        ],
+        [
+          0.7747425458840679,
+          1.0,
+          0.7726483063180236,
+          0.7686721756044951
+        ],
+        [
+          1.0121294970894468,
+          1.2988375946658788,
+          1.0,
+          1.003429004451722
+        ],
+        [
+          1.0085124477236753,
+          1.2814016135593842,
+          0.9950794610730894,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 3.33563085972602e-22,
+        "weight": 4.620387386192373e-16,
+        "permutation_pa_s": 3.3881317890172014e-21,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 600,
+      "case": "binary_CO_O2",
+      "mole_fractions": [
+        0.5,
+        0.0,
+        0.5,
+        0.0
+      ],
+      "pure_viscosities_pa_s": [
+        2.908480893262893e-05,
+        2.7880531980869516e-05,
+        3.4076822160863583e-05,
+        2.9584291036524023e-05
+      ],
+      "actual_viscosity_pa_s": 3.157420058422374e-05,
+      "reference_viscosity_decimal": "0.000031574200584223747795585265348950487540704804478852510231476963784276740010736011",
+      "weighting_factors": [
+        [
+          1.0,
+          1.2698564322694852,
+          0.9868708133252179,
+          0.9915951043424979
+        ],
+        [
+          0.7747425458840679,
+          1.0,
+          0.7726483063180236,
+          0.7686721756044951
+        ],
+        [
+          1.0121294970894468,
+          1.2988375946658788,
+          1.0,
+          1.003429004451722
+        ],
+        [
+          1.0085124477236753,
+          1.2814016135593842,
+          0.9950794610730894,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 4.445364617508108e-21,
+        "weight": 4.620387386192373e-16,
+        "permutation_pa_s": 6.776263578034403e-21,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 600,
+      "case": "binary_CO_N2",
+      "mole_fractions": [
+        0.5,
+        0.0,
+        0.0,
+        0.5
+      ],
+      "pure_viscosities_pa_s": [
+        2.908480893262893e-05,
+        2.7880531980869516e-05,
+        3.4076822160863583e-05,
+        2.9584291036524023e-05
+      ],
+      "actual_viscosity_pa_s": 2.9333229739462085e-05,
+      "reference_viscosity_decimal": "0.0000293332297394620878185988449230137197089286970750062444085875238236291240891637",
+      "weighting_factors": [
+        [
+          1.0,
+          1.2698564322694852,
+          0.9868708133252179,
+          0.9915951043424979
+        ],
+        [
+          0.7747425458840679,
+          1.0,
+          0.7726483063180236,
+          0.7686721756044951
+        ],
+        [
+          1.0121294970894468,
+          1.2988375946658788,
+          1.0,
+          1.003429004451722
+        ],
+        [
+          1.0085124477236753,
+          1.2814016135593842,
+          0.9950794610730894,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 2.3440493429275024e-21,
+        "weight": 4.620387386192373e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 600,
+      "case": "binary_CO2_O2",
+      "mole_fractions": [
+        0.0,
+        0.5,
+        0.5,
+        0.0
+      ],
+      "pure_viscosities_pa_s": [
+        2.908480893262893e-05,
+        2.7880531980869516e-05,
+        3.4076822160863583e-05,
+        2.9584291036524023e-05
+      ],
+      "actual_viscosity_pa_s": 3.055168153137268e-05,
+      "reference_viscosity_decimal": "0.000030551681531372673351975339456117251834062641960241633600874401352246802326997961",
+      "weighting_factors": [
+        [
+          1.0,
+          1.2698564322694852,
+          0.9868708133252179,
+          0.9915951043424979
+        ],
+        [
+          0.7747425458840679,
+          1.0,
+          0.7726483063180236,
+          0.7686721756044951
+        ],
+        [
+          1.0121294970894468,
+          1.2988375946658788,
+          1.0,
+          1.003429004451722
+        ],
+        [
+          1.0085124477236753,
+          1.2814016135593842,
+          0.9950794610730894,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 4.298220906201693e-21,
+        "weight": 4.620387386192373e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 600,
+      "case": "binary_CO2_N2",
+      "mole_fractions": [
+        0.0,
+        0.5,
+        0.0,
+        0.5
+      ],
+      "pure_viscosities_pa_s": [
+        2.908480893262893e-05,
+        2.7880531980869516e-05,
+        3.4076822160863583e-05,
+        2.9584291036524023e-05
+      ],
+      "actual_viscosity_pa_s": 2.873113303536024e-05,
+      "reference_viscosity_decimal": "0.000028731133035360242288988698393656501233050970367642976618997540311378746273206911",
+      "weighting_factors": [
+        [
+          1.0,
+          1.2698564322694852,
+          0.9868708133252179,
+          0.9915951043424979
+        ],
+        [
+          0.7747425458840679,
+          1.0,
+          0.7726483063180236,
+          0.7686721756044951
+        ],
+        [
+          1.0121294970894468,
+          1.2988375946658788,
+          1.0,
+          1.003429004451722
+        ],
+        [
+          1.0085124477236753,
+          1.2814016135593842,
+          0.9950794610730894,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 1.1242632839403273e-21,
+        "weight": 4.620387386192373e-16,
+        "permutation_pa_s": 6.776263578034403e-21,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 600,
+      "case": "binary_O2_N2",
+      "mole_fractions": [
+        0.0,
+        0.0,
+        0.5,
+        0.5
+      ],
+      "pure_viscosities_pa_s": [
+        2.908480893262893e-05,
+        2.7880531980869516e-05,
+        3.4076822160863583e-05,
+        2.9584291036524023e-05
+      ],
+      "actual_viscosity_pa_s": 3.183787662446463e-05,
+      "reference_viscosity_decimal": "0.000031837876624464631183041138387013409983781564894094920411748686380644880291831388",
+      "weighting_factors": [
+        [
+          1.0,
+          1.2698564322694852,
+          0.9868708133252179,
+          0.9915951043424979
+        ],
+        [
+          0.7747425458840679,
+          1.0,
+          0.7726483063180236,
+          0.7686721756044951
+        ],
+        [
+          1.0121294970894468,
+          1.2988375946658788,
+          1.0,
+          1.003429004451722
+        ],
+        [
+          1.0085124477236753,
+          1.2814016135593842,
+          0.9950794610730894,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 2.6499414968040203e-21,
+        "weight": 4.620387386192373e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 1200,
+      "case": "mixture",
+      "mole_fractions": [
+        0.1,
+        0.2,
+        0.3,
+        0.4
+      ],
+      "pure_viscosities_pa_s": [
+        4.594782265881616e-05,
+        4.659910424591803e-05,
+        5.397365301973301e-05,
+        4.673003630514297e-05
+      ],
+      "actual_viscosity_pa_s": 4.879444157347354e-05,
+      "reference_viscosity_decimal": "0.000048794441573473538811294452073113687225905183173618972863444253632412431554587459",
+      "weighting_factors": [
+        [
+          1.0,
+          1.23248659452604,
+          0.9856242621477145,
+          0.9916675989837552
+        ],
+        [
+          0.7955413881377873,
+          1.0,
+          0.7919330093928676,
+          0.7892686755855255
+        ],
+        [
+          1.0134706276464098,
+          1.2615592493386807,
+          1.0,
+          1.004828289862859
+        ],
+        [
+          1.0084380961050539,
+          1.2434473826764134,
+          0.9937455407655134,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 1.5742692993694188e-21,
+        "weight": 3.890519250125947e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 1200,
+      "case": "mixture",
+      "mole_fractions": [
+        0.0004,
+        0.2,
+        0.21,
+        0.5896
+      ],
+      "pure_viscosities_pa_s": [
+        4.594782265881616e-05,
+        4.659910424591803e-05,
+        5.397365301973301e-05,
+        4.673003630514297e-05
+      ],
+      "actual_viscosity_pa_s": 4.8267297138668024e-05,
+      "reference_viscosity_decimal": "0.000048267297138668028991179009599268462256863805745373219282701288283708393993354757",
+      "weighting_factors": [
+        [
+          1.0,
+          1.23248659452604,
+          0.9856242621477145,
+          0.9916675989837552
+        ],
+        [
+          0.7955413881377873,
+          1.0,
+          0.7919330093928676,
+          0.7892686755855255
+        ],
+        [
+          1.0134706276464098,
+          1.2615592493386807,
+          1.0,
+          1.004828289862859
+        ],
+        [
+          1.0084380961050539,
+          1.2434473826764134,
+          0.9937455407655134,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 4.694178945328222e-21,
+        "weight": 3.890519250125947e-16,
+        "permutation_pa_s": 1.3552527156068805e-20,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 1200,
+      "case": "mixture",
+      "mole_fractions": [
+        0.8,
+        0.05,
+        0.05,
+        0.1
+      ],
+      "pure_viscosities_pa_s": [
+        4.594782265881616e-05,
+        4.659910424591803e-05,
+        5.397365301973301e-05,
+        4.673003630514297e-05
+      ],
+      "actual_viscosity_pa_s": 4.6508411862440104e-05,
+      "reference_viscosity_decimal": "0.000046508411862440098804964711621415382510350846631211418079318825286777644235245385",
+      "weighting_factors": [
+        [
+          1.0,
+          1.23248659452604,
+          0.9856242621477145,
+          0.9916675989837552
+        ],
+        [
+          0.7955413881377873,
+          1.0,
+          0.7919330093928676,
+          0.7892686755855255
+        ],
+        [
+          1.0134706276464098,
+          1.2615592493386807,
+          1.0,
+          1.004828289862859
+        ],
+        [
+          1.0084380961050539,
+          1.2434473826764134,
+          0.9937455407655134,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 5.2723339410191774e-21,
+        "weight": 3.890519250125947e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 1200,
+      "case": "pure_CO",
+      "mole_fractions": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pure_viscosities_pa_s": [
+        4.594782265881616e-05,
+        4.659910424591803e-05,
+        5.397365301973301e-05,
+        4.673003630514297e-05
+      ],
+      "actual_viscosity_pa_s": 4.594782265881616e-05,
+      "reference_viscosity_decimal": "0.00004594782265881616257520436708006172921159304678440093994140625",
+      "weighting_factors": [
+        [
+          1.0,
+          1.23248659452604,
+          0.9856242621477145,
+          0.9916675989837552
+        ],
+        [
+          0.7955413881377873,
+          1.0,
+          0.7919330093928676,
+          0.7892686755855255
+        ],
+        [
+          1.0134706276464098,
+          1.2615592493386807,
+          1.0,
+          1.004828289862859
+        ],
+        [
+          1.0084380961050539,
+          1.2434473826764134,
+          0.9937455407655134,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 0.0,
+        "weight": 3.890519250125947e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": 0.0
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true,
+        "pure_limit": true
+      }
+    },
+    {
+      "temperature_k": 1200,
+      "case": "pure_CO2",
+      "mole_fractions": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "pure_viscosities_pa_s": [
+        4.594782265881616e-05,
+        4.659910424591803e-05,
+        5.397365301973301e-05,
+        4.673003630514297e-05
+      ],
+      "actual_viscosity_pa_s": 4.659910424591803e-05,
+      "reference_viscosity_decimal": "0.000046599104245918028695261359217738572624512016773223876953125",
+      "weighting_factors": [
+        [
+          1.0,
+          1.23248659452604,
+          0.9856242621477145,
+          0.9916675989837552
+        ],
+        [
+          0.7955413881377873,
+          1.0,
+          0.7919330093928676,
+          0.7892686755855255
+        ],
+        [
+          1.0134706276464098,
+          1.2615592493386807,
+          1.0,
+          1.004828289862859
+        ],
+        [
+          1.0084380961050539,
+          1.2434473826764134,
+          0.9937455407655134,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 0.0,
+        "weight": 3.890519250125947e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": 0.0
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true,
+        "pure_limit": true
+      }
+    },
+    {
+      "temperature_k": 1200,
+      "case": "pure_O2",
+      "mole_fractions": [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "pure_viscosities_pa_s": [
+        4.594782265881616e-05,
+        4.659910424591803e-05,
+        5.397365301973301e-05,
+        4.673003630514297e-05
+      ],
+      "actual_viscosity_pa_s": 5.397365301973301e-05,
+      "reference_viscosity_decimal": "0.00005397365301973300745312644988160855064052157104015350341796875",
+      "weighting_factors": [
+        [
+          1.0,
+          1.23248659452604,
+          0.9856242621477145,
+          0.9916675989837552
+        ],
+        [
+          0.7955413881377873,
+          1.0,
+          0.7919330093928676,
+          0.7892686755855255
+        ],
+        [
+          1.0134706276464098,
+          1.2615592493386807,
+          1.0,
+          1.004828289862859
+        ],
+        [
+          1.0084380961050539,
+          1.2434473826764134,
+          0.9937455407655134,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 0.0,
+        "weight": 3.890519250125947e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": 0.0
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true,
+        "pure_limit": true
+      }
+    },
+    {
+      "temperature_k": 1200,
+      "case": "pure_N2",
+      "mole_fractions": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "pure_viscosities_pa_s": [
+        4.594782265881616e-05,
+        4.659910424591803e-05,
+        5.397365301973301e-05,
+        4.673003630514297e-05
+      ],
+      "actual_viscosity_pa_s": 4.673003630514297e-05,
+      "reference_viscosity_decimal": "0.000046730036305142968696725580546313949525938369333744049072265625",
+      "weighting_factors": [
+        [
+          1.0,
+          1.23248659452604,
+          0.9856242621477145,
+          0.9916675989837552
+        ],
+        [
+          0.7955413881377873,
+          1.0,
+          0.7919330093928676,
+          0.7892686755855255
+        ],
+        [
+          1.0134706276464098,
+          1.2615592493386807,
+          1.0,
+          1.004828289862859
+        ],
+        [
+          1.0084380961050539,
+          1.2434473826764134,
+          0.9937455407655134,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 0.0,
+        "weight": 3.890519250125947e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": 0.0
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true,
+        "pure_limit": true
+      }
+    },
+    {
+      "temperature_k": 1200,
+      "case": "binary_CO_CO2",
+      "mole_fractions": [
+        0.5,
+        0.5,
+        0.0,
+        0.0
+      ],
+      "pure_viscosities_pa_s": [
+        4.594782265881616e-05,
+        4.659910424591803e-05,
+        5.397365301973301e-05,
+        4.673003630514297e-05
+      ],
+      "actual_viscosity_pa_s": 4.653413132109906e-05,
+      "reference_viscosity_decimal": "0.000046534131321099048240838041424973597745462062119023181444434085838097579279182702",
+      "weighting_factors": [
+        [
+          1.0,
+          1.23248659452604,
+          0.9856242621477145,
+          0.9916675989837552
+        ],
+        [
+          0.7955413881377873,
+          1.0,
+          0.7919330093928676,
+          0.7892686755855255
+        ],
+        [
+          1.0134706276464098,
+          1.2615592493386807,
+          1.0,
+          1.004828289862859
+        ],
+        [
+          1.0084380961050539,
+          1.2434473826764134,
+          0.9937455407655134,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 1.2410826367158299e-20,
+        "weight": 3.890519250125947e-16,
+        "permutation_pa_s": 2.0328790734103208e-20,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 1200,
+      "case": "binary_CO_O2",
+      "mole_fractions": [
+        0.5,
+        0.0,
+        0.5,
+        0.0
+      ],
+      "pure_viscosities_pa_s": [
+        4.594782265881616e-05,
+        4.659910424591803e-05,
+        5.397365301973301e-05,
+        4.673003630514297e-05
+      ],
+      "actual_viscosity_pa_s": 4.994651816026105e-05,
+      "reference_viscosity_decimal": "0.00004994651816026104320153881614679222204991451121358144577921794918748573648580205",
+      "weighting_factors": [
+        [
+          1.0,
+          1.23248659452604,
+          0.9856242621477145,
+          0.9916675989837552
+        ],
+        [
+          0.7955413881377873,
+          1.0,
+          0.7919330093928676,
+          0.7892686755855255
+        ],
+        [
+          1.0134706276464098,
+          1.2615592493386807,
+          1.0,
+          1.004828289862859
+        ],
+        [
+          1.0084380961050539,
+          1.2434473826764134,
+          0.9937455407655134,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 5.665771146981699e-21,
+        "weight": 3.890519250125947e-16,
+        "permutation_pa_s": 1.3552527156068805e-20,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 1200,
+      "case": "binary_CO_N2",
+      "mole_fractions": [
+        0.5,
+        0.0,
+        0.0,
+        0.5
+      ],
+      "pure_viscosities_pa_s": [
+        4.594782265881616e-05,
+        4.659910424591803e-05,
+        5.397365301973301e-05,
+        4.673003630514297e-05
+      ],
+      "actual_viscosity_pa_s": 4.633687985889592e-05,
+      "reference_viscosity_decimal": "0.00004633687985889591610489972867312227313305798435825764462898525064158384355655126",
+      "weighting_factors": [
+        [
+          1.0,
+          1.23248659452604,
+          0.9856242621477145,
+          0.9916675989837552
+        ],
+        [
+          0.7955413881377873,
+          1.0,
+          0.7919330093928676,
+          0.7892686755855255
+        ],
+        [
+          1.0134706276464098,
+          1.2615592493386807,
+          1.0,
+          1.004828289862859
+        ],
+        [
+          1.0084380961050539,
+          1.2434473826764134,
+          0.9937455407655134,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 1.3706352803271314e-21,
+        "weight": 3.890519250125947e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 1200,
+      "case": "binary_CO2_O2",
+      "mole_fractions": [
+        0.0,
+        0.5,
+        0.5,
+        0.0
+      ],
+      "pure_viscosities_pa_s": [
+        4.594782265881616e-05,
+        4.659910424591803e-05,
+        5.397365301973301e-05,
+        4.673003630514297e-05
+      ],
+      "actual_viscosity_pa_s": 4.98706181939559e-05,
+      "reference_viscosity_decimal": "0.000049870618193955898549786561623756810639776846858561925943575809421847531394181807",
+      "weighting_factors": [
+        [
+          1.0,
+          1.23248659452604,
+          0.9856242621477145,
+          0.9916675989837552
+        ],
+        [
+          0.7955413881377873,
+          1.0,
+          0.7919330093928676,
+          0.7892686755855255
+        ],
+        [
+          1.0134706276464098,
+          1.2615592493386807,
+          1.0,
+          1.004828289862859
+        ],
+        [
+          1.0084380961050539,
+          1.2434473826764134,
+          0.9937455407655134,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 1.9663575802192435e-21,
+        "weight": 3.890519250125947e-16,
+        "permutation_pa_s": 0.0,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 1200,
+      "case": "binary_CO2_N2",
+      "mole_fractions": [
+        0.0,
+        0.5,
+        0.0,
+        0.5
+      ],
+      "pure_viscosities_pa_s": [
+        4.594782265881616e-05,
+        4.659910424591803e-05,
+        5.397365301973301e-05,
+        4.673003630514297e-05
+      ],
+      "actual_viscosity_pa_s": 4.687322599555458e-05,
+      "reference_viscosity_decimal": "0.000046873225995554589456775430018072840031307790693564032229756063712435789270303009",
+      "weighting_factors": [
+        [
+          1.0,
+          1.23248659452604,
+          0.9856242621477145,
+          0.9916675989837552
+        ],
+        [
+          0.7955413881377873,
+          1.0,
+          0.7919330093928676,
+          0.7892686755855255
+        ],
+        [
+          1.0134706276464098,
+          1.2615592493386807,
+          1.0,
+          1.004828289862859
+        ],
+        [
+          1.0084380961050539,
+          1.2434473826764134,
+          0.9937455407655134,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 6.541100095442406e-21,
+        "weight": 3.890519250125947e-16,
+        "permutation_pa_s": 1.3552527156068805e-20,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    },
+    {
+      "temperature_k": 1200,
+      "case": "binary_O2_N2",
+      "mole_fractions": [
+        0.0,
+        0.0,
+        0.5,
+        0.5
+      ],
+      "pure_viscosities_pa_s": [
+        4.594782265881616e-05,
+        4.659910424591803e-05,
+        5.397365301973301e-05,
+        4.673003630514297e-05
+      ],
+      "actual_viscosity_pa_s": 5.036014844832854e-05,
+      "reference_viscosity_decimal": "0.000050360148448328530959219933970741484267761556250099173607774838176230834478357615",
+      "weighting_factors": [
+        [
+          1.0,
+          1.23248659452604,
+          0.9856242621477145,
+          0.9916675989837552
+        ],
+        [
+          0.7955413881377873,
+          1.0,
+          0.7919330093928676,
+          0.7892686755855255
+        ],
+        [
+          1.0134706276464098,
+          1.2615592493386807,
+          1.0,
+          1.004828289862859
+        ],
+        [
+          1.0084380961050539,
+          1.2434473826764134,
+          0.9937455407655134,
+          1.0
+        ]
+      ],
+      "errors": {
+        "viscosity_pa_s": 8.134644286117906e-21,
+        "weight": 3.890519250125947e-16,
+        "permutation_pa_s": 1.3552527156068805e-20,
+        "pure_limit_pa_s": null
+      },
+      "within_budgets": {
+        "source_viscosity": true,
+        "source_weights": true,
+        "permutation": true,
+        "positive_viscosity": true
+      }
+    }
+  ],
+  "all_requested_budgets_met": true,
+  "reference_scope": "80-digit direct all-pairs source formula on actual binary64 pure inputs; production uses triangular reciprocal weights. Pure-property accuracy remains the separate source/experimental review.",
+  "mixture_experimentally_validated": false,
+  "material_qualified": false,
+  "training_eligible": false
+}

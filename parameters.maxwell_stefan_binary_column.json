@@ -1,23 +1,43 @@
 {
   "local_law_parameters": "parameters.maxwell_stefan_isothermal.json",
-  "species_order": ["N2", "O2"],
+  "species_order": [
+    "N2",
+    "O2"
+  ],
   "temperature_k": 600,
   "pressure_pa": 100000,
-  "geometry": {"length_m": 0.02, "area_m2": 0.005},
+  "geometry": {
+    "length_m": 0.02,
+    "area_m2": 0.005
+  },
   "initial": {
-    "mean_mole_fractions": [0.4, 0.6],
-    "cosine_amplitudes": [0.2, -0.2],
+    "mean_mole_fractions": [
+      0.4,
+      0.6
+    ],
+    "cosine_amplitudes": [
+      0.2,
+      -0.2
+    ],
     "cosine_mode": 1,
     "sampling": "Exact initial cell averages of a continuum cosine mode"
   },
   "face_quadrature_order": 32,
   "duration_s": 2.0,
-  "meshes": {"two": 2, "four": 4, "eight": 8, "sixteen": 16, "thirty-two": 32, "sixty-four": 64},
+  "meshes": {
+    "two": 2,
+    "four": 4,
+    "eight": 8,
+    "sixteen": 16,
+    "thirty-two": 32,
+    "sixty-four": 64,
+    "one-twenty-eight": 128
+  },
   "numerics": {
     "relative_tolerance": 1e-10,
     "absolute_fraction_tolerance": 1e-12,
     "refinement_factor": 0.1,
-    "first_step_s": 1e-5,
+    "first_step_s": 1e-05,
     "maximum_step_s": 0.05,
     "observation_interval_s": 0.01,
     "progress_every_steps": 50
@@ -30,10 +50,13 @@
     "local_mixing_entropy_budget_j_k": 1e-10,
     "cumulative_mixing_entropy_budget_j_k": 1e-10,
     "negative_step_mixing_entropy_budget_j_k": 1e-12,
-    "semidiscrete_exact_fraction_budget": 1e-8,
-    "time_fraction_budget": 1e-8,
-    "continuum_exact_cell_average_fraction_budget": 1e-5,
-    "entropy_quadrature_orders": [2, 4]
+    "semidiscrete_exact_fraction_budget": 1e-08,
+    "time_fraction_budget": 1e-08,
+    "continuum_exact_cell_average_fraction_budget": 1e-05,
+    "entropy_quadrature_orders": [
+      2,
+      4
+    ]
   },
   "scope": "Closed ideal-gas binary composition diffusion at common T and P, with no imposed molar-average convection. Verify finite-volume cosine eigenvalue and independent continuum cosine cell average before four-species dynamics. No absolute thermal-energy or real-brick claim.",
   "physical_input_classification": "Source-based approximate free-gas binary diffusivity; specified virtual geometry/composition profile for analytic numerical qualification.",
