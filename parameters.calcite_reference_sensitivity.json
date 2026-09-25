@@ -1,0 +1,47 @@
+{
+  "model_parameters": "parameters.calcite_rigid_equilibrium.json",
+  "frozen_comparison": "data/sandbox/research/calcite-film-onset-v1/review.json",
+  "reference_facts_file": "data/sandbox/research/calcite-thermochemistry-v1/facts.json",
+  "source_uncertainty_definition": {
+    "url": "https://pubs.usgs.gov/bul/2131/report.pdf",
+    "printed_page": 3,
+    "pdf_one_based_page": 9,
+    "applies_at_temperature_k": 298.15,
+    "definition": "Reported calorimetric uncertainty convention is twice standard deviation of mean; original report is principal source. Correlations and high-temperature Cp uncertainty are not specified here."
+  },
+  "enthalpy_sensitivity_phases": [
+    "calcite",
+    "lime",
+    "carbon_dioxide"
+  ],
+  "entropy_sensitivity_phases": [
+    "calcite",
+    "lime"
+  ],
+  "excluded_entropy_phase": {
+    "phase": "carbon_dioxide",
+    "printed_uncertainty_j_mol_k": "0.0",
+    "interpretation": "Rounded reporting value, not proof of exact entropy; no fabricated positive width and no claim that excluded error vanishes."
+  },
+  "factor_levels": [
+    -1.0,
+    1.0
+  ],
+  "case_groups": [
+    "enthalpy_only",
+    "enthalpy_and_reported_nonzero_entropy"
+  ],
+  "reference_field_names": {
+    "enthalpy": "hf_uncertainty_kj_mol",
+    "entropy": "entropy_uncertainty_j_mol_k"
+  },
+  "interpretation": "Axis-aligned source-reference perturbation scenarios with Cp and volume fixed; not joint confidence, posterior, or total high-temperature prediction interval. No model refit.",
+  "material_qualified": false,
+  "training_eligible": false,
+  "common_reference_feasibility": {
+    "method": "highs",
+    "primal_feasibility_tolerance": 1e-09,
+    "dual_feasibility_tolerance": 1e-09,
+    "classification": "Linear feasibility of one shared reaction H/S offset within printed-reference perturbation box against all frozen reading intervals. Any witness is diagnostic only, never adopted as fitted material data."
+  }
+}
