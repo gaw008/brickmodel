@@ -39,17 +39,17 @@ def main():
         'transport_settings': transport_p, 'gas_constant_j_mol_k': gas_constant,
         'molar_masses_kg_mol': masses.tolist(), 'pure_viscosities_pa_s': viscosities.tolist(),
         'diffusivity_pressure_products_pa_m2_s': products.tolist()}
-    record_column(p, properties, args)
+    record_column(p, properties, args, IsothermalDustyGasColumn)
 
 
-def record_column(p, properties, args):
+def record_column(p, properties, args, column_type):
     """Integrate a declared property set and retain it in the trajectory header."""
     gas_constant = properties['gas_constant_j_mol_k']
     masses = np.asarray(properties['molar_masses_kg_mol'])
     viscosities = np.asarray(properties['pure_viscosities_pa_s'])
     products = np.asarray(properties['diffusivity_pressure_products_pa_m2_s'])
     count = p['meshes'][args.mesh]
-    column = IsothermalDustyGasColumn(p, count, gas_constant, masses, viscosities, products)
+    column = column_type(p, count, gas_constant, masses, viscosities, products)
     concentration_reference = p['entropy_reference_pressure_pa']/(gas_constant*p['temperature_k'])
     policy = p['numerics']
     factor = {'base': 1.0, 'refined': policy['refinement_factor']}[args.tolerance]

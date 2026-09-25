@@ -25,6 +25,9 @@ class DustyGasEntropyFace:
         nodes, weights = leggauss(quadrature_order)
         self.nodes, self.weights = (nodes+1)/2, weights/2
 
+    def mixture_viscosity(self, fractions):
+        return wilke_viscosity_pa_s(fractions, self.viscosities, self.masses)['viscosity_pa_s']
+
     def evaluate(self, left_partial_concentrations_mol_m3, right_partial_concentrations_mol_m3):
         left_log = np.log(left_partial_concentrations_mol_m3)
         jump = np.log(right_partial_concentrations_mol_m3)-left_log
@@ -36,7 +39,7 @@ class DustyGasEntropyFace:
             fractions = concentrations/total
             pressure = total*self.gas_constant*self.temperature
             effective = self.diffusion_pressure/pressure*self.pore['porosity']/self.pore['tortuosity']
-            viscosity = wilke_viscosity_pa_s(fractions, self.viscosities, self.masses)['viscosity_pa_s']
+            viscosity = self.mixture_viscosity(fractions)
             local = isothermal_dusty_gas_fluxes(fractions, jump/self.distance,
                 self.temperature, pressure, self.gas_constant, effective, self.knudsen,
                 viscosity, self.pore['permeability_m2'])

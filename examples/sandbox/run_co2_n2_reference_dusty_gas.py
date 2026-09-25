@@ -37,7 +37,8 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     p = json.loads(args.parameters.read_text())
-    record_column(p, reference_properties(p, args.parameters.resolve().parent), args)
+    from sludge_sandbox.dusty_gas_isothermal_column import IsothermalDustyGasColumn
+    record_column(p, reference_properties(p, args.parameters.resolve().parent), args, IsothermalDustyGasColumn)
 
 
 if __name__ == '__main__':

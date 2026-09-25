@@ -10,13 +10,13 @@ from audit_maxwell_stefan_binary_column import polynomial
 from dusty_gas_column_reference import ColumnReference
 
 
-def audit(path):
+def audit(path, reference_type):
     with path.open() as stream:
         rows = [json.loads(line) for line in stream]
     header, initial = rows[:2]
     p = header['settings']
     budget = p['verification']
-    reference = ColumnReference(header)
+    reference = reference_type(header)
     maxima = {key: 0.0 for key in ['concentration_encoding', 'inventory_encoding_mol',
         'entropy_encoding_j_k', 'pressure_encoding_pa', 'face_flux_mol_m2_s', 'face_entropy_rate_w_k',
         'original_equation_mol_m4', 'global_species_mol',
@@ -149,7 +149,7 @@ def main():
     root = args.parameters.resolve().parent
     reports, observations = {}, {}
     for name, path in settings['trajectories'].items():
-        reports[name], rows = audit(root/path)
+        reports[name], rows = audit(root/path, ColumnReference)
         observations[name] = [row for row in rows if row['kind'] in ('initial', 'sample')]
         print(json.dumps({'trajectory': name, 'all_requested_budgets_met': reports[name]['all_requested_budgets_met']}), flush=True)
     base, refined = observations['base'], observations['refined']

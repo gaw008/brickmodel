@@ -33,6 +33,9 @@ class ColumnReference:
         nodes, weights = leggauss(self.settings['verification']['reference_face_quadrature_order'])
         self.nodes, self.weights = (nodes+1)/2, weights/2
 
+    def mixture_viscosity(self, fractions):
+        return np.sum(fractions*self.viscosities/(fractions@self.phi.T), axis=2)
+
     def evaluate(self, values):
         species = self.species_count
         concentrations = np.asarray(values).reshape(self.count, species)
@@ -44,7 +47,7 @@ class ColumnReference:
         x = c/total
         gradient = jump[:, None, :]/self.width
         pressure_gradient = self.rt*np.sum(c*gradient, axis=2)
-        viscosity = np.sum(x*self.viscosities/(x@self.phi.T), axis=2)
+        viscosity = self.mixture_viscosity(x)
         matrix = np.zeros((*c.shape[:2], species, species))
         for i in range(species):
             for j in range(species):

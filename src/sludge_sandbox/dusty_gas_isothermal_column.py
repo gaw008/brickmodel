@@ -13,14 +13,17 @@ class IsothermalDustyGasColumn:
         self.area = parameters['geometry']['area_m2']
         self.porosity = parameters['pore']['porosity']
         self.pore_volume = self.porosity*self.area*self.width
-        self.face = DustyGasEntropyFace(self.temperature, gas_constant, masses, pure_viscosities,
-            diffusion_pressure, parameters['pore'], self.width, parameters['face_quadrature_order'])
+        self.face = self.create_face(gas_constant, masses, pure_viscosities, diffusion_pressure)
         edges = np.linspace(0, parameters['geometry']['length_m'], count+1)
         wave = parameters['initial']['cosine_mode']*np.pi/parameters['geometry']['length_m']
         cosine = np.diff(np.sin(wave*edges))/(wave*self.width)
         initial_pressure = np.asarray(parameters['initial']['mean_partial_pressures_pa'])+np.outer(
             cosine, parameters['initial']['cosine_partial_pressure_amplitudes_pa'])
         self.initial = (initial_pressure/(gas_constant*self.temperature)).ravel()
+
+    def create_face(self, gas_constant, masses, pure_viscosities, diffusion_pressure):
+        return DustyGasEntropyFace(self.temperature, gas_constant, masses, pure_viscosities,
+            diffusion_pressure, self.parameters['pore'], self.width, self.parameters['face_quadrature_order'])
 
     def observe(self, values):
         concentrations = np.asarray(values).reshape(self.count, self.species_count)

@@ -1,0 +1,120 @@
+{
+  "species_order": [
+    "CO2",
+    "N2"
+  ],
+  "temperature_k": 373.3,
+  "binary_property_reference_pressure_pa": 100000,
+  "entropy_reference_pressure_pa": 100000,
+  "geometry": {
+    "length_m": 0.02,
+    "area_m2": 0.005
+  },
+  "pore": {
+    "porosity": 0.3,
+    "tortuosity": 1,
+    "mean_pore_radius_m": 1e-06,
+    "permeability_m2": 3.75e-14
+  },
+  "initial": {
+    "mean_partial_pressures_pa": [
+      50000,
+      50000
+    ],
+    "cosine_partial_pressure_amplitudes_pa": [
+      15000,
+      -10000
+    ],
+    "cosine_mode": 1
+  },
+  "face_quadrature_order": 16,
+  "duration_s": 2,
+  "meshes": {
+    "two": 2,
+    "four": 4,
+    "eight": 8,
+    "sixteen": 16,
+    "thirty-two": 32,
+    "sixty-four": 64,
+    "one-twenty-eight": 128,
+    "two-fifty-six": 256
+  },
+  "numerics": {
+    "relative_tolerance": 1e-10,
+    "absolute_concentration_tolerance_mol_m3": 1e-10,
+    "refinement_factor": 0.1,
+    "first_step_s": 1e-06,
+    "maximum_step_s": 0.02,
+    "observation_interval_s": 0.01,
+    "progress_every_steps": 50
+  },
+  "verification": {
+    "source_flux_absolute_budget_mol_m2_s": 1e-12,
+    "source_entropy_rate_budget_w_k": 1e-11,
+    "source_concentration_budget_mol_m3": 1e-12,
+    "global_species_budget_mol": 1e-12,
+    "local_species_budget_mol": 1e-12,
+    "local_entropy_budget_j_k": 1e-10,
+    "cumulative_entropy_budget_j_k": 1e-10,
+    "negative_step_entropy_budget_j_k": 1e-12,
+    "time_concentration_budget_mol_m3": 1e-07,
+    "entropy_quadrature_orders": [
+      2,
+      4
+    ],
+    "space_parent_concentration_budget_mol_m3": 0.0001,
+    "reference_face_quadrature_order": 64,
+    "reference_equation_residual_budget_mol_m4": 1e-09,
+    "time_pressure_budget_pa": 0.001,
+    "source_property_relative_budget": 1e-13,
+    "source_property_decimal_precision": 80
+  },
+  "scope": "Closed isothermal idealCO2/N2at373.30K in prescribed rigid pores. Separate scenario from the600KWilke study. No thermal cross effects, chemical reaction or material qualification.",
+  "entropy_definition": "Relative ideal-gas entropy -R*sum(n_i*ln(c_i/c_ref)); c_ref=P_ref/(R*T). Terms linear in conserved species amounts are omitted. This includes concentration/pressure redistribution, not only composition mixing. Not full absolute thermochemistry or a heat equation.",
+  "physical_input_classification": "Published dilute pure/diffusion correlations and published nonspherical A* at373.30K; source-screened first-order binary viscosity. Pore geometry remains virtual.",
+  "material_qualified": false,
+  "training_eligible": false,
+  "property_sources": {
+    "molecular_constants": "parameters.nonpolar_gas_transport.json",
+    "CO2_viscosity": "parameters.co2_dilute_viscosity2017.json",
+    "N2_viscosity": "parameters.lemmon2004_dilute_transport.json",
+    "CO2_N2_diffusion": "parameters.co2_n2_crusius2018_diffusion.json"
+  },
+  "property_scope": "CO2eta0Laesecke2017, N2eta0Lemmon2004, CO2N2diffusionCrusius2018, nonsphericalA*Vogel2023Table5at373.30K; first-orderChapman-Enskogmixing.24sourcepointsscreened,notdensegasorbrickvalidation.",
+  "constitutive_source": {
+    "name": "Cantera 3.2.0 DustyGasTransport original constitutive equations",
+    "url": "https://cantera.org/3.2/cxx/dc/de6/classCantera_1_1DustyGasTransport.html",
+    "source_directory": "data/sandbox/research/dusty-gas-source-v1/source",
+    "source_urls": [
+      "https://raw.githubusercontent.com/Cantera/cantera/v3.2.0/include/cantera/transport/DustyGasTransport.h",
+      "https://raw.githubusercontent.com/Cantera/cantera/v3.2.0/src/transport/DustyGasTransport.cpp"
+    ],
+    "license": "BSD-3-Clause, retained License.txt",
+    "selected_functions": [
+      "updateBinaryDiffCoeffs",
+      "updateKnudsenDiffCoeffs",
+      "eval_H_matrix",
+      "getMolarFluxes"
+    ],
+    "selection": "Local isothermal equations only; no source fallback permeability, fraction offset or midpoint face approximation is copied.",
+    "permeability_derivation": {
+      "source_url": "https://openstax.org/books/university-physics-volume-1/pages/14-7-viscosity-and-turbulence",
+      "basis": "Poiseuille long circular-tube laminar continuum relation Q = pi*r^4*deltaP/(8*eta*L); divide by tube area, then multiply by bundle porosity to obtain kappa = porosity*r^2/8. Local viscous term only; no claim of finite-length end corrections or exact rarefied flow."
+    }
+  },
+  "mixture_viscosity": {
+    "model": "Chapman-Enskog_first_order_binary_zero_density",
+    "source_review_file": "parameters.co2_n2_chapman_enskog_source_review.json",
+    "cross_section_row": {
+      "temperature_k": "373.30",
+      "A_star": "1.1719",
+      "source_inferred_interaction_viscosities_micro_pa_s": [
+        "20.168",
+        "20.137",
+        "20.115"
+      ]
+    },
+    "source_temperature_policy": "Use the exact source row temperature. No implicit interpolation or extrapolation.",
+    "interaction_input": "Crusius2018 molar-density diffusion product converted by Vogel2023 Eq31; no mixture-data fit."
+  }
+}

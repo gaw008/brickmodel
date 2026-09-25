@@ -7,6 +7,7 @@ import mpmath as mp
 
 from audit_dusty_gas_four_species_column import audit
 from audit_dusty_gas_open_pure_column import time_comparison
+from dusty_gas_column_reference import ColumnReference
 
 
 def property_review(header):
@@ -44,7 +45,7 @@ def property_review(header):
     limit = p['verification']['source_property_relative_budget']
     return {'source_values_decimal': {k:str(v) for k,v in source_values.items()},
         'relative_errors': errors, 'budget': limit, 'within_budget': all(v<=limit for v in errors.values()),
-        'scope': 'Independent source expressions evaluated from recorded parameter coefficients; gas diffusivity retains dilute equimolar approximation and Wilke mixture viscosity remains approximate.'}
+        'scope': 'Independent pure-gas viscosity and binary-diffusion source expressions from recorded coefficients; dilute equimolar diffusion approximation. Mixture-viscosity closure is reviewed separately.'}
 
 
 def main():
@@ -55,7 +56,7 @@ def main():
     p = json.loads(args.parameters.read_text())
     reviews, rows, properties = {}, {}, {}
     for name,path in p['trajectories'].items():
-        reviews[name],rows[name] = audit(root/path)
+        reviews[name],rows[name] = audit(root/path, ColumnReference)
         properties[name] = property_review(rows[name][0])
     time = time_comparison(rows['base'], rows['refined'])
     result = {'settings':p, 'property_reviews':properties, 'trajectory_reviews':reviews, 'time_comparison':time,
