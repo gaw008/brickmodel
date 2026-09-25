@@ -1,5 +1,7 @@
 # 独立阶段 Goal 顺序
 
+**2026-09-25 UTC增量：** [辐射换热](research/calcite-radiative-calorimeter-v1/REPORT.md)、[封闭等压CO2/N2](research/calcite-closed-mixture-v1/REPORT.md)、[刚性压力反馈](research/calcite-rigid-equilibrium-v1/REPORT.md)及[双刚性室气体/内能交换](research/calcite-rigid-exchange-v1/REPORT.md)均已完成相应来源、局部守恒和熵的数值核查。压力、反应相分配与共同气流已在限定高温条件模型内接通；瞬时平衡不提供有限速率，虚拟系数不提供砖孔网络，M1与同材料全周期缺项未解除。
+
 **2026-09-24本地日期进行中：** 用户改为本周剩余5%的连续开发停止线，开发→验证次序保持。见[窗口](research/quota-window-20260924/REPORT.md)。自由水条件模型的内部验证与原图失败分开；凝聚相迁移与无储量表面四格物理核查通过后，单独开发并核对同源方解石自由能及等压瞬时平衡热化学循环；空间精度与真实材料资料依赖仍分别保留。原生M1未改为成功。
 
 **2026-09-22 UTC三小时窗口：** 按本轮连续授权，依次开发/科学核对[固定容量储液腔](research/surface-storage-column-v1/REPORT.md)、[共同气流来源吸附水单元](research/source-sorptive-gas-cell-v1/REPORT.md)、[一维吸附柱](research/source-sorptive-column-v1/REPORT.md)及[干湿循环](research/sorptive-humidity-cycle-v1/REPORT.md)。细网格、局部守恒和来源敏感性分别保留通过/失败范围；见[总记录](research/three-hour-20260922/REPORT.md)。它们没有替代真实材料M1，原生Goal仍blocked；[剩余阶段](research/three-hour-20260922/NEXT_PHASES.md)依赖同材料输入与现实对照。用户连续授权覆盖可独立开发部分，不等于所有物理/材料阶段均可无资料完成。

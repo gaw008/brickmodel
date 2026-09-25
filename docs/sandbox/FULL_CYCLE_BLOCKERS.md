@@ -1,5 +1,7 @@
 # 同一材料一维全周期闭合判断
 
+**2026-09-25 UTC增量：** [辐射换热](research/calcite-radiative-calorimeter-v1/REPORT.md)、[封闭等压CO2/N2](research/calcite-closed-mixture-v1/REPORT.md)、[刚性压力反馈](research/calcite-rigid-equilibrium-v1/REPORT.md)及[双刚性室气体/内能交换](research/calcite-rigid-exchange-v1/REPORT.md)均已完成相应来源、局部守恒和熵的数值核查。压力、反应相分配与共同气流已在限定高温条件模型内接通；瞬时平衡不提供有限速率，虚拟系数不提供砖孔网络，M1与同材料全周期缺项未解除。
+
 **2026-09-24本地日期窗口增量（进行中）：** [自由水条件势函数](research/sorptive-free-water-v1/REPORT.md)、[凝聚水迁移](research/sorptive-mobile-water-v1/REPORT.md)和[无储量蒸发表面](research/sorptive-evaporating-surface-v1/REPORT.md)推进低温水量/能量共同方程；高W原图热量一致性失败仍在，新表面空间时刻目标尚未全部通过。[方解石同源自由能](research/calcite-affinity-v1/REPORT.md)与[纯方解石等压循环](research/calcite-equilibrium-calorimeter-v1/REPORT.md)已实际实现源定义的反应平衡、组成焓和CO2流焓，最终限定循环数值核查通过。因此“反应方向和组成热储都完全没有实现”不再准确；真实材料有限速率、矿相库存、气体供排与收缩/孔连通/冷却现实对照仍未闭合。本增量没有解除下文同一实际含污泥配方全周期的数据依赖。
 
 **2026-09-22三小时窗口增量：** [一维来源吸附水柱](research/source-sorptive-column-v1/REPORT.md)与[湿度循环](research/sorptive-humidity-cycle-v1/REPORT.md)已经实际接通共同O2/N2/H2O交换、吸附/干物储热并完成1200s过程，32→64格达到声明的空间比较目标。因此下文旧“下一步接共同载气、完成湿区到低W连续路径”在本轮声明的W≤.8虚拟装置范围内已实现。原文未提供的实际输运、孔隙、初态和观测并未因此补齐。
