@@ -1,0 +1,92 @@
+{
+  "exchange_parameters": "parameters.carbon_calcium_exchange.json",
+  "volume_m3": 0.0001,
+  "initial": {
+    "calcium_atoms_mol": 0.002,
+    "carbon_atoms_mol": 0.0045,
+    "oxygen_atoms_mol": 0.008,
+    "nitrogen_molecules_mol": 0.004,
+    "temperature_k": 1080.0
+  },
+  "reservoir": {
+    "temperature_k": 1000.0,
+    "pressure_pa": 100000.0,
+    "mole_fractions": {
+      "CO": 1e-10,
+      "CO2": 0.4,
+      "O2": 0.2,
+      "N2": 0.3999999999
+    },
+    "classification": "Prescribed virtual oxidizing gas bath; no measured kiln atmosphere or chemical equilibrium assumption. All positive fractions explicitly sum to one."
+  },
+  "duration_s": 1000.0,
+  "numerics": {
+    "relative_tolerance": 1e-12,
+    "refinement_factor": 0.1,
+    "inventory_absolute_tolerance_mol": 1e-14,
+    "temperature_absolute_tolerance_k": 1e-10,
+    "energy_ledger_absolute_tolerance_j": 1e-10,
+    "entropy_ledger_absolute_tolerance_j_k": 1e-13,
+    "maximum_step_s": 1.0,
+    "first_step_s": 1e-05,
+    "observation_interval_s": 1.0,
+    "progress_every_steps": 100
+  },
+  "verification": {
+    "element_mol": 1e-12,
+    "pressure_pa": 1e-05,
+    "volume_m3": 1e-14,
+    "reaction_gibbs_j_mol": 1e-05,
+    "source_energy_j": 1e-07,
+    "source_entropy_j_k": 1e-10,
+    "face_species_mol_s": 1e-14,
+    "face_energy_w": 1e-08,
+    "face_entropy_w_k": 1e-11,
+    "inventory_integral_mol": 1e-10,
+    "energy_j": 1e-05,
+    "entropy_j_k": 1e-08,
+    "nonnegative_entropy_j_k": 1e-10,
+    "time_temperature_k": 0.001,
+    "time_pressure_pa": 0.1,
+    "time_species_mol": 1e-10,
+    "quadrature_orders": [
+      2,
+      4
+    ]
+  },
+  "static_review": {
+    "temperatures_k": [
+      1000.0,
+      1080.0,
+      1160.0
+    ],
+    "bath_temperatures_k": [
+      1000.0,
+      1080.0,
+      1160.0
+    ],
+    "bath_pressures_pa": [
+      10000.0,
+      100000.0,
+      1000000.0
+    ],
+    "chemical_potential_budget_j_mol": 1e-07,
+    "face_energy_budget_w": 1e-08,
+    "face_inventory_budget_mol_s": 1e-14,
+    "face_entropy_budget_w_k": 1e-11,
+    "identical_bath_flow_budget_mol_s": 1e-18,
+    "identical_bath_energy_budget_w": 1e-10
+  },
+  "scope": "Single rigid reactive capsule with the independently qualified ideal-gas and constant-solid-volume restricted equilibrium. Prescribed external bath exchanges using the existing virtual dissipative face law. Keep elemental domain Ctotal>Catotal, Ototal>3Catotal, N2>0; do not infer whole burnout or extrapolate to arbitrary inventories. Static source/entropy review precedes any trajectory.",
+  "coordinate_order": [
+    "C_mol",
+    "O_mol",
+    "N2_mol",
+    "T_K",
+    "energy_in_J",
+    "reservoir_entropy_change_J_K",
+    "entropy_production_J_K"
+  ],
+  "material_qualified": false,
+  "training_eligible": false
+}
