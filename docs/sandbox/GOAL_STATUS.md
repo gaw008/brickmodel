@@ -1,5 +1,7 @@
 # 物理沙盒 Goal 进度
 
+**外部对照新增偏差：** [薄膜分解起始温度](research/calcite-film-onset-v1/REPORT.md)的六个真实文献点均比现有纯相平衡高约10–15K，超过冻结的图像读取范围。平衡与有限升温onset并非同一观测，误差归因未定；内部数值通过不等于实际起始温度通过，未调参或升级材料资格。
+
 **2026-09-25 UTC增量：** [辐射换热](research/calcite-radiative-calorimeter-v1/REPORT.md)、[封闭等压CO2/N2](research/calcite-closed-mixture-v1/REPORT.md)、[刚性压力反馈](research/calcite-rigid-equilibrium-v1/REPORT.md)及[双刚性室气体/内能交换](research/calcite-rigid-exchange-v1/REPORT.md)均已完成相应来源、局部守恒和熵的数值核查。压力、反应相分配与共同气流已在限定高温条件模型内接通；瞬时平衡不提供有限速率，虚拟系数不提供砖孔网络，M1与同材料全周期缺项未解除。
 
 ## 2026-09-24本地日期：按本周额度停止线连续推进（进行中）
