@@ -1,0 +1,70 @@
+{
+  "local_law_parameters": "parameters.dusty_gas_isothermal.json",
+  "species_order": [
+    "N2"
+  ],
+  "temperature_k": 600,
+  "binary_property_reference_pressure_pa": 100000,
+  "entropy_reference_pressure_pa": 100000,
+  "geometry": {
+    "length_m": 0.02,
+    "area_m2": 0.005
+  },
+  "pore": {
+    "porosity": 0.3,
+    "tortuosity": 1,
+    "mean_pore_radius_m": 1e-06,
+    "permeability_m2": 0
+  },
+  "initial": {
+    "mean_partial_pressures_pa": [
+      100000
+    ],
+    "cosine_partial_pressure_amplitudes_pa": [
+      20000
+    ],
+    "cosine_mode": 1
+  },
+  "face_quadrature_order": 16,
+  "duration_s": 2,
+  "meshes": {
+    "two": 2,
+    "four": 4,
+    "eight": 8,
+    "sixteen": 16,
+    "thirty-two": 32,
+    "sixty-four": 64,
+    "one-twenty-eight": 128
+  },
+  "numerics": {
+    "relative_tolerance": 1e-10,
+    "absolute_concentration_tolerance_mol_m3": 1e-10,
+    "refinement_factor": 0.1,
+    "first_step_s": 1e-06,
+    "maximum_step_s": 0.02,
+    "observation_interval_s": 0.01,
+    "progress_every_steps": 50
+  },
+  "verification": {
+    "source_flux_absolute_budget_mol_m2_s": 1e-12,
+    "source_entropy_rate_budget_w_k": 1e-11,
+    "source_concentration_budget_mol_m3": 1e-12,
+    "global_species_budget_mol": 1e-12,
+    "local_species_budget_mol": 1e-12,
+    "local_entropy_budget_j_k": 1e-10,
+    "cumulative_entropy_budget_j_k": 1e-10,
+    "negative_step_entropy_budget_j_k": 1e-12,
+    "semidiscrete_exact_concentration_budget_mol_m3": 1e-07,
+    "time_concentration_budget_mol_m3": 1e-07,
+    "continuum_exact_cell_average_concentration_budget_mol_m3": 0.0001,
+    "entropy_quadrature_orders": [
+      2,
+      4
+    ]
+  },
+  "scope": "Pure-N2, zero-Darcy mathematical verification limit. Effective Knudsen D already includes porosity/tortuosity; pore storage is porosity times bulk volume, so transient concentration diffusivity is D_K/effective_porosity. Closed boundaries, fixed T, all species concentrations evolved.",
+  "entropy_definition": "Relative ideal-gas entropy -R*sum(n_i*ln(c_i/c_ref)); c_ref=P_ref/(R*T). Terms linear in conserved species amounts are omitted. This includes concentration/pressure redistribution, not only composition mixing. Not full absolute thermochemistry or a heat equation.",
+  "physical_input_classification": "Explicit mathematical zero-permeability limit, not a claim that a finite-radius straight tube has zero actual permeability. Geometry, initial profile and temperature are prescribed qualification inputs.",
+  "material_qualified": false,
+  "training_eligible": false
+}
