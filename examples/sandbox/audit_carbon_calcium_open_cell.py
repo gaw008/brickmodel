@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 import numpy as np
+import mpmath as mp
 from numpy.polynomial.legendre import leggauss
 
 from audit_carbon_calcium_column import compare, records
@@ -11,9 +12,10 @@ from audit_carbon_gas_cycle import polynomial
 from carbon_calcium_pressure_setup import build
 from carbon_calcium_source_audit import SourceState, independent_exchange
 from review_carbon_calcium_open_cell import source_bath
+from review_carbon_calcium_program import independent_program
 
 
-def audit(path, root):
+def audit(path, root, reservoir_kind):
     stream = records(path)
     header, initial = next(stream), next(stream)
     stream.close()
@@ -21,8 +23,19 @@ def audit(path, root):
     budget = p['verification']
     model, _, _ = build(root, header['pressure_parameters'])
     source = SourceState(header['sources'])
-    bath = p['reservoir']
-    reservoir = source_bath(source, bath['temperature_k'], bath['pressure_pa'], bath['mole_fractions'])
+    boundary_maxima = {k: 0. for k in ('temperature_k', 'pressure_pa', 'mole_fraction', 'chemical_potential_j_mol')}
+
+    def constant_bath(at):
+        bath = p['reservoir']
+        return bath['temperature_k'], bath['pressure_pa'], bath['mole_fractions']
+
+    def programmed_bath(at):
+        temperature, pressure, fractions = independent_program(p['boundary_program'], at)
+        return float(temperature), float(pressure), {k: float(v) for k, v in fractions.items()}
+
+    bath_inputs = {'constant': constant_bath, 'program': programmed_bath}[reservoir_kind]
+    if reservoir_kind == 'program':
+        mp.mp.dps = p['boundary_source_review']['decimal_precision']
     ca, volume = p['initial']['calcium_atoms_mol'], p['volume_m3']
     maxima = {k: 0. for k in ('element_mol', 'pressure_pa', 'volume_m3', 'reaction_gibbs_j_mol',
         'source_energy_j', 'source_entropy_j_k', 'face_species_mol_s', 'face_energy_w', 'face_entropy_w_k',
@@ -33,8 +46,17 @@ def audit(path, root):
     phases, samples = {}, {}
     initial_source = source.reconstruct(initial['state'], volume, [ca, *initial['values'][:3]])
 
-    def review(state, y, category, contact=None):
+    def review(state, y, category, at, contact=None, recorded_bath=None):
         counts[category] += 1
+        bath_t, bath_p, bath_y = bath_inputs(at)
+        reservoir = source_bath(source, bath_t, bath_p, bath_y)
+        if recorded_bath is not None:
+            errors = {'temperature_k': abs(recorded_bath['temperature_k'] - bath_t),
+                'pressure_pa': abs(recorded_bath['pressure_pa'] - bath_p),
+                'mole_fraction': max(abs(recorded_bath['mole_fractions'][k] - v) for k, v in bath_y.items()),
+                'chemical_potential_j_mol': max(abs(recorded_bath['chemical_potentials_j_mol'][k] - v) for k, v in reservoir['mu'].items())}
+            for key, value in errors.items():
+                boundary_maxima[key] = max(boundary_maxima[key], value)
         ref = source.reconstruct(state, volume, [ca, *y[:3]])
         for key, value in ref['errors'].items():
             maxima[key] = max(maxima[key], value)
@@ -67,13 +89,14 @@ def audit(path, root):
                           flux['entropy'][0], flux['production']])
         return physical, rates
 
-    origin, _ = review(initial['state'], initial['values'], 'recorded', initial['face'])
+    boundary_record = {'constant': lambda row: None, 'program': lambda row: row['reservoir']}[reservoir_kind]
+    origin, _ = review(initial['state'], initial['values'], 'recorded', initial['time_s'], initial['face'], boundary_record(initial))
     for row in records(path):
         terminal = row
         if 'state' not in row or row['kind'] == 'initial':
             continue
         y = row['values']
-        physical, _ = review(row['state'], y, 'recorded', row['face'])
+        physical, _ = review(row['state'], y, 'recorded', row['time_s'], row['face'], boundary_record(row))
         if row['kind'] == 'sample':
             samples[row['time_s']] = [row['state']]
     integrals, results = [], []
@@ -95,11 +118,11 @@ def audit(path, root):
                 at = (left + right) / 2 + (right - left) * node / 2
                 y = polynomial(row, at)
                 state = model.at_temperature_volume(float(y[3]), volume, ca, *map(float, y[:3]), rigid['numerics'])
-                _, rate = review(state, y, 'dense')
+                _, rate = review(state, y, 'dense', at)
                 increment += weight * (right - left) / 2 * rate
             total += increment
             increments.append(increment)
-            current, _ = review(row['state'], row['values'], 'endpoint_repeat')
+            current, _ = review(row['state'], row['values'], 'endpoint_repeat', row['time_s'])
             local_max = np.maximum(local_max, np.abs(current - previous - increment))
             cumulative_max = np.maximum(cumulative_max, np.abs(current - origin - total))
             y = np.array(row['values'])
@@ -132,8 +155,17 @@ def audit(path, root):
         integral_reviews=all(all(r['within_budgets'].values()) for r in results),
         quadrature=bool(np.all(quadrature <= bounds)))
     flags = {k: bool(v) for k, v in flags.items()}
+    boundary_review = {'kind': reservoir_kind}
+    if reservoir_kind == 'program':
+        policy = p['boundary_source_review']
+        boundary_bounds = {'temperature_k': policy['temperature_budget_k'], 'pressure_pa': policy['pressure_budget_pa'],
+            'mole_fraction': policy['mole_fraction_budget'], 'chemical_potential_j_mol': policy['chemical_potential_budget_j_mol']}
+        boundary_flags = {k: v <= boundary_bounds[k] for k, v in boundary_maxima.items()}
+        boundary_review.update(maxima=boundary_maxima, within_budgets=boundary_flags)
+        flags['boundary_source'] = all(boundary_flags.values())
     return {'trajectory': str(path), 'counts': counts, 'phase_counts': phases, 'maxima': maxima,
         'minima': {k: float(v) for k, v in minima.items()}, 'integral_reviews': results,
+        'boundary_review': boundary_review,
         'maximum_quadrature_differences': quadrature.tolist(), 'within_budgets': flags,
         'all_requested_numerical_budgets_met': all(flags.values())}, samples, budget
 
@@ -146,7 +178,8 @@ def main():
     settings = json.loads(args.parameters.read_text())
     reviews, samples, budgets = {}, {}, {}
     for name, path in settings['trajectories'].items():
-        reviews[name], samples[name], budgets[name] = audit(args.parameters.resolve().parent / path, args.parameters.resolve().parent)
+        reviews[name], samples[name], budgets[name] = audit(args.parameters.resolve().parent / path,
+            args.parameters.resolve().parent, settings['reservoir_kind'])
     left, right = settings['time_comparison_pair']
     comparison = compare(samples[left], samples[right], budgets[left])
     result = {'settings': settings, 'trajectory_reviews': reviews, 'time_comparison': comparison,

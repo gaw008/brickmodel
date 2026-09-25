@@ -1,0 +1,157 @@
+{
+  "exchange_parameters": "parameters.carbon_calcium_exchange.json",
+  "volume_m3": 0.0001,
+  "initial": {
+    "calcium_atoms_mol": 0.002,
+    "carbon_atoms_mol": 0.0045,
+    "oxygen_atoms_mol": 0.008,
+    "nitrogen_molecules_mol": 0.004,
+    "temperature_k": 1080.0
+  },
+  "duration_s": 3000.0,
+  "numerics": {
+    "relative_tolerance": 1e-12,
+    "refinement_factor": 0.1,
+    "inventory_absolute_tolerance_mol": 1e-14,
+    "temperature_absolute_tolerance_k": 1e-10,
+    "energy_ledger_absolute_tolerance_j": 1e-10,
+    "entropy_ledger_absolute_tolerance_j_k": 1e-13,
+    "maximum_step_s": 1.0,
+    "first_step_s": 1e-05,
+    "observation_interval_s": 1.0,
+    "progress_every_steps": 100
+  },
+  "verification": {
+    "element_mol": 1e-12,
+    "pressure_pa": 1e-05,
+    "volume_m3": 1e-14,
+    "reaction_gibbs_j_mol": 1e-05,
+    "source_energy_j": 1e-07,
+    "source_entropy_j_k": 1e-10,
+    "face_species_mol_s": 1e-14,
+    "face_energy_w": 1e-08,
+    "face_entropy_w_k": 1e-11,
+    "inventory_integral_mol": 1e-10,
+    "energy_j": 1e-05,
+    "entropy_j_k": 1e-08,
+    "nonnegative_entropy_j_k": 1e-10,
+    "time_temperature_k": 0.001,
+    "time_pressure_pa": 0.1,
+    "time_species_mol": 1e-10,
+    "quadrature_orders": [
+      2,
+      4
+    ]
+  },
+  "scope": "Single rigid capsule with variable imposed atmosphere, within the existing restricted elemental domain. Restart BDF at every program knot; audit sources and body/bath entropy at actual physical time. Neither material rate nor apparatus energy qualification.",
+  "coordinate_order": [
+    "C_mol",
+    "O_mol",
+    "N2_mol",
+    "T_K",
+    "energy_in_J",
+    "reservoir_entropy_change_J_K",
+    "entropy_production_J_K"
+  ],
+  "material_qualified": false,
+  "training_eligible": false,
+  "boundary_program": {
+    "identity": {
+      "program_id": "virtual-carbon-calcium-oxidizing-cycle",
+      "version": "1",
+      "classification": "virtual_design_choice",
+      "source_ids": [
+        "parameters.carbon_calcium_program_cell.json"
+      ]
+    },
+    "knot_times_s": [
+      0.0,
+      1000.0,
+      1500.0,
+      2500.0,
+      3000.0
+    ],
+    "gas_temperature_k": [
+      1000.0,
+      1160.0,
+      1160.0,
+      1000.0,
+      1000.0
+    ],
+    "radiation_temperature_k": [
+      1000.0,
+      1160.0,
+      1160.0,
+      1000.0,
+      1000.0
+    ],
+    "total_pressure_pa": [
+      100000.0,
+      100000.0,
+      100000.0,
+      100000.0,
+      100000.0
+    ],
+    "species_order": [
+      "CO",
+      "CO2",
+      "O2",
+      "N2"
+    ],
+    "mole_fractions": [
+      [
+        1e-10,
+        0.4,
+        0.2,
+        0.3999999999
+      ],
+      [
+        1e-10,
+        0.05,
+        0.1,
+        0.8499999999
+      ],
+      [
+        1e-10,
+        0.05,
+        0.1,
+        0.8499999999
+      ],
+      [
+        1e-10,
+        0.4,
+        0.2,
+        0.3999999999
+      ],
+      [
+        1e-10,
+        0.4,
+        0.2,
+        0.3999999999
+      ]
+    ]
+  },
+  "boundary_definition": "Prescribed continuous piecewise affine primitive gas T,P,y; no bath chemistry equilibrium. Radiation temperature is a required BoundaryProgram field and unused in this gas/heat exchange scenario: no radiative term added.",
+  "boundary_source_review": {
+    "times_s": [
+      0.0,
+      100.0,
+      500.0,
+      999.5,
+      1000.0,
+      1250.0,
+      1500.0,
+      1750.0,
+      2499.5,
+      2500.0,
+      2750.0,
+      3000.0
+    ],
+    "decimal_precision": 60,
+    "temperature_budget_k": 1e-10,
+    "pressure_budget_pa": 1e-07,
+    "mole_fraction_budget": 1e-15,
+    "enthalpy_budget_j_mol": 1e-07,
+    "chemical_potential_budget_j_mol": 1e-07
+  }
+}
