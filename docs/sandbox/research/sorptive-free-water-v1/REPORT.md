@@ -45,3 +45,5 @@
 七条完整原始轨迹与stderr保留；`first-archive.json` 和 `second-archive.json` 保存有序gzip分块清单，全部逐字节往返相同、末态completed。压缩存储约148MB，不使用SHA。首次JSON编码失败及额外量热探针越界见[失败记录](FAILED_CHECKS.md)。原编码失败前缀保留未完成的行尾空格，因此Git空白核查只对代码/参数/报告执行；不为满足格式检查改变失败原件。
 
 没有新增或执行软件测试、子代理或外部消息；阶段提交/推送以Git回执为准。`material_qualified=false`、`training_eligible=false`。该分支的毛细、液体迁移、收缩、反应和真实砖独立对照仍未完成；另一个原来源含水范围的迁移增量单独见 `../sorptive-mobile-water-v1/DESIGN.md`。
+
+原TG-DSC方法的[补充核读](METHOD_SOURCE_REVIEW.md)定位样温、储热处理及内部梯度前提；没有取得该污泥对应误差，未解除高W失败。

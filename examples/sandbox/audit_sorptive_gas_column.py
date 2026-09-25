@@ -70,7 +70,9 @@ def main():
     balances=[0.]*width;count=0;faces_count=0;face_n=face_u=0.;min_production=None
     entropy_by_time={};branch_counts={};phase_partition_max_mol=0.;caloric_states=[]
     free_water=config['schema']=='sorptive_free_water_column_v1'
-    mobile_water=config['schema']=='source_sorptive_mobile_column_v1'
+    surface_water=config['schema']=='sorptive_evaporating_surface_column_v1'
+    mobile_water=config['schema'] in ('source_sorptive_mobile_column_v1','sorptive_evaporating_surface_column_v1')
+    surface_max={'inventory_mol_s':0.,'energy_w':0.,'temperature_k':0.,'pressure_pa':0.,'moisture_kg_kg':0.}
     condensed_fields_max={'condensed_chemical_potential_j_mol':0.,'condensed_partial_enthalpy_j_mol':0.}
     for row in read_rows():
         terminal=row
@@ -101,11 +103,19 @@ def main():
                     maxima[key]=abs(value);worst[key]={'time_s':row['time_s'],'cell':i,'signed_difference':value}
         entropy_by_time[(row['kind'],row['time_s'])]=math.fsum(entropy)
         if row['kind']=='accepted':
-            for original,review in zip(row['faces'],faces(row['time_s'],row['states']),strict=True):
+            for face_index,(original,review) in enumerate(zip(row['faces'],faces(row['time_s'],row['states']),strict=True)):
                 faces_count+=1
                 face_n=max(face_n,*(abs(review['net_mol_s'][k]-original['exchange']['net_mol_s'][k]) for k in species))
                 face_u=max(face_u,abs(review['energy_out_w']-original['energy_out_w']))
                 min_production=review['production_w_k'] if min_production is None else min(min_production,review['production_w_k'])
+                if surface_water and face_index==n-1:
+                    surface_max['inventory_mol_s']=max(surface_max['inventory_mol_s'],
+                        *map(abs,original['inventory_rate_residuals_mol_s'].values()),
+                        *map(abs,review['surface_inventory_residuals_mol_s'].values()))
+                    surface_max['energy_w']=max(surface_max['energy_w'],abs(original['energy_rate_residual_w']),abs(review['surface_energy_residual_w']))
+                    for key,field in [('temperature_k','temperature_k'),('pressure_pa','pressure_pa'),('moisture_kg_kg','moisture_kg_kg_dry')]:
+                        surface_max[key]=max(surface_max[key],abs(original['surface'][field]-review['surface_state'][field]))
+                    min_production=min(min_production,*review['individual_productions_w_k'])
     budget=settings['comparison_budgets'];calorimetry=[];entropy_results=[]
     with TemporaryDirectory(prefix='sorptive-column-audit-') as directory:
         host=restore_sorptive_cell(single,Path(directory))
@@ -148,6 +158,10 @@ def main():
                     external+=scale*rates[-1]['external_entropy_w_k']
                     production+=scale*math.fsum(p['production_w_k'] for p in rates)
                     local=min(p['production_w_k'] for p in rates)
+                    if surface_water:
+                        local=min(local,*rates[-1]['individual_productions_w_k'])
+                        surface_max['inventory_mol_s']=max(surface_max['inventory_mol_s'],*map(abs,rates[-1]['surface_inventory_residuals_mol_s'].values()))
+                        surface_max['energy_w']=max(surface_max['energy_w'],abs(rates[-1]['surface_energy_residual_w']))
                     minimum_rate=local if minimum_rate is None else min(minimum_rate,local)
                 entropy=entropy_by_time[('accepted',row['time_s'])]
                 residual=entropy-s0+external-production;step_change=entropy-previous_s+external-previous_external
@@ -212,6 +226,11 @@ def main():
         result['condensed_field_maxima']=condensed_fields_max
         result['within_budgets']['condensed_mu']=condensed_fields_max['condensed_chemical_potential_j_mol']<=budget['source_chemical_potential_j_mol']
         result['within_budgets']['condensed_h']=condensed_fields_max['condensed_partial_enthalpy_j_mol']<=budget['condensed_enthalpy_j_mol']
+    if surface_water:
+        result['surface_reconstruction_maxima']=surface_max
+        result['within_budgets']['surface_mass_balance']=surface_max['inventory_mol_s']<=budget['surface_inventory_rate_mol_s']
+        result['within_budgets']['surface_energy_balance']=surface_max['energy_w']<=budget['surface_energy_rate_w']
+        result['within_budgets']['surface_state']=all(surface_max[k]<=budget['surface_'+k] for k in ('temperature_k','pressure_pa','moisture_kg_kg'))
     with args.output.open('x') as stream:
         json.dump(result,stream,indent=2,allow_nan=False);stream.write('\n')
     print(json.dumps({'within_budgets':result['within_budgets'],'source_maxima':maxima,'elapsed_s':result['elapsed_s']},indent=2))

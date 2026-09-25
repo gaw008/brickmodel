@@ -8,7 +8,7 @@ import math
 from iapws import IAPWS95
 import numpy as np
 from scipy.integrate import quad
-from scipy.optimize import brentq
+from scipy.optimize import brentq, root as solve_root
 
 
 class SorptiveSource:
@@ -198,6 +198,13 @@ class MobileWaterSource(SorptiveSource):
 
     def between_states(self,left,right,transfer):
         gas=super().between_states(left,right,transfer)
+        condensed=self.condensed_between_states(left,right,transfer)
+        net={**gas['net_mol_s'],'H2O':gas['net_mol_s']['H2O']+condensed['flow_mol_s']}
+        return {**gas,'net_mol_s':net,'energy_out_w':gas['energy_out_w']+condensed['energy_w'],
+                'external_entropy_w_k':gas['external_entropy_w_k']+condensed['external_entropy_w_k'],
+                'production_w_k':gas['production_w_k']+condensed['production_w_k']}
+
+    def condensed_between_states(self,left,right,transfer):
         a,b=self.condensed_fields(left),self.condensed_fields(right)
         tl,tr=left['temperature_k'],right['temperature_k']
         h=(a['condensed_partial_enthalpy_j_mol']+b['condensed_partial_enthalpy_j_mol'])/2
@@ -205,13 +212,73 @@ class MobileWaterSource(SorptiveSource):
         length=transfer['cell_distance_m']+transfer['reservoir_distance_m']
         mobility=transfer['area_m2']/length*self.config['condensed_transfer']['mobility_density_mol2_k_j_s_m']
         flow=mobility*force;energy=flow*h
-        net={**gas['net_mol_s'],'H2O':gas['net_mol_s']['H2O']+flow}
-        return {**gas,'net_mol_s':net,'energy_out_w':gas['energy_out_w']+energy,
-                'external_entropy_w_k':gas['external_entropy_w_k']+(energy-b['condensed_chemical_potential_j_mol']*flow)/tr,
-                'production_w_k':gas['production_w_k']+flow*force}
+        return {'flow_mol_s':flow,'energy_w':energy,
+                'external_entropy_w_k':(energy-b['condensed_chemical_potential_j_mol']*flow)/tr,
+                'production_w_k':flow*force}
+
+
+class EvaporatingSurfaceSource(MobileWaterSource):
+    """Direct-IAPWS surface root with independent connection/source equations."""
+    def __init__(self,header,settings):
+        super().__init__(header,settings)
+        c=self.config;self.surface_policy=c['surface_equilibrium']
+        half=c['geometry']['length_m']/header['cell_count']/2
+        film=c['transfer']['reservoir_distance_m']
+        kin,kout=c['transfer']['cell_conductivity_w_m_k'],c['transfer']['reservoir_conductivity_w_m_k']
+        self.inner_surface={**c['transfer'],'area_m2':c['geometry']['face_area_m2'],
+            'cell_distance_m':half/2,'reservoir_distance_m':half/2,
+            'cell_conductivity_w_m_k':kin,'reservoir_conductivity_w_m_k':kin}
+        self.outer_surface={**c['transfer'],'area_m2':c['geometry']['face_area_m2'],
+            'cell_distance_m':film/2,'reservoir_distance_m':film/2,
+            'cell_conductivity_w_m_k':kout,'reservoir_conductivity_w_m_k':kout}
+
+    def fluxes(self,at_time,point):
+        policy=self.surface_policy;program=self.config['boundary_program']['values']
+        species=program['species_order'];total=math.fsum(point['amounts_mol'].values())
+        left={'t':point['temperature_k'],'p':point['pressure_pa'],'x':{k:v/total for k,v in point['amounts_mol'].items()}}
+        right={'t':float(np.interp(at_time,program['knot_times_s'],program['gas_temperature_k'])),
+               'p':float(np.interp(at_time,program['knot_times_s'],program['total_pressure_pa'])),
+               'x':{k:float(np.interp(at_time,program['knot_times_s'],np.array(program['mole_fractions'])[:,i])) for i,k in enumerate(species)}}
+        references=np.array([self.ideal(k,policy['residual_reference_temperature_k'])[0] for k in species])
+        scales=np.array([policy['inventory_residual_scale_mol_s']]*len(species)+[policy['energy_residual_scale_w']])
+        x0=[point['temperature_k']/policy['temperature_coordinate_scale_k'],point['pressure_pa']/policy['pressure_coordinate_scale_pa'],
+            math.log(point['moisture_kg_kg_dry']),math.log(left['x']['O2']/left['x']['N2'])]
+
+        def evaluate(coordinates):
+            t=float(coordinates[0])*policy['temperature_coordinate_scale_k'];p=float(coordinates[1])*policy['pressure_coordinate_scale_pa']
+            w=math.exp(float(coordinates[2]));fraction=1/(1+math.exp(-float(coordinates[3])))
+            surface={'temperature_k':t,'pressure_pa':p,'moisture_kg_kg_dry':w}
+            fields=self.condensed_fields(surface)
+            vapor_mu0=self.ideal('H2O',t)[0]-t*self.ideal('H2O',t)[1]
+            xv=self.pref/p*math.exp((fields['condensed_chemical_potential_j_mol']-vapor_mu0)/(self.r*t))
+            endpoint={'t':t,'p':p,'x':{'O2':(1-xv)*fraction,'N2':(1-xv)*(1-fraction),'H2O':xv}}
+            gas_in=self.connection(left,endpoint,self.inner_surface)
+            liquid_in=self.condensed_between_states(point,surface,self.inner_surface)
+            gas_out=self.connection(endpoint,right,self.outer_surface)
+            net={**gas_in['net_mol_s'],'H2O':gas_in['net_mol_s']['H2O']+liquid_in['flow_mol_s']}
+            energy=gas_in['energy_out_w']+liquid_in['energy_w']
+            differences=np.array([net[k]-gas_out['net_mol_s'][k] for k in species]+[energy-gas_out['energy_out_w']])
+            result={'net_mol_s':net,'energy_out_w':energy,'external_entropy_w_k':gas_out['external_entropy_w_k'],
+                'production_w_k':gas_in['production_w_k']+liquid_in['production_w_k']+gas_out['production_w_k'],
+                'surface_state':{**surface,**fields,'gas_mole_fractions':endpoint['x']},
+                'surface_inventory_residuals_mol_s':dict(zip(species,map(float,differences[:-1]),strict=True)),
+                'surface_energy_residual_w':float(differences[-1]),
+                'individual_productions_w_k':[gas_in['production_w_k'],liquid_in['production_w_k'],gas_out['production_w_k']]}
+            return result,differences
+
+        def residual(coordinates):
+            differences=evaluate(coordinates)[1].copy();differences[-1]-=differences[:-1]@references
+            return differences/scales
+
+        solution=solve_root(residual,x0,method=policy['method'],options={
+            'xtol':policy['coordinate_tolerance'],'maxfev':policy['maximum_function_evaluations']})
+        if not solution.success:
+            raise RuntimeError('independent surface root did not converge: '+solution.message)
+        return evaluate(solution.x)[0]
 
 
 def source_for_column(header,settings):
     return {'source_sorptive_common_gas_column_v1':SorptiveSource,
             'source_sorptive_mobile_column_v1':MobileWaterSource,
+            'sorptive_evaporating_surface_column_v1':EvaporatingSurfaceSource,
             'sorptive_free_water_column_v1':FreeWaterSource}[header['parameters']['schema']](header,settings)

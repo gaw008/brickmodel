@@ -1,0 +1,59 @@
+{
+  "model_parameters_file": "parameters.sorptive_evaporating_surface.json",
+  "source_header_file": "data/sandbox/research/sorptive-mobile-water-v1/four-refined.jsonl",
+  "cell_count": 4,
+  "budgets": {
+    "inventory_rate_mol_s": 1e-12,
+    "energy_rate_w": 1e-08,
+    "source_mu_j_mol": 1e-05,
+    "source_h_j_mol": 1e-05,
+    "entropy_rate_w_k": 1e-12
+  },
+  "cases": [
+    {
+      "name": "same_equilibrium",
+      "cell_temperature_k": 330.0,
+      "cell_pressure_pa": 100000.0,
+      "cell_moisture_kg_kg": 0.3,
+      "reservoir": "same_equilibrium"
+    },
+    {
+      "name": "drying_source_range",
+      "cell_temperature_k": 330.0,
+      "cell_pressure_pa": 100000.0,
+      "cell_moisture_kg_kg": 0.3,
+      "reservoir": {
+        "temperature_k": 333.0,
+        "pressure_pa": 100000.0,
+        "water_mole_fraction": 0.01
+      }
+    },
+    {
+      "name": "humidifying_low_range",
+      "cell_temperature_k": 330.0,
+      "cell_pressure_pa": 100000.0,
+      "cell_moisture_kg_kg": 0.14,
+      "reservoir": {
+        "temperature_k": 333.0,
+        "pressure_pa": 100000.0,
+        "water_mole_fraction": 0.12
+      }
+    },
+    {
+      "name": "drying_low_range",
+      "cell_temperature_k": 330.0,
+      "cell_pressure_pa": 101000.0,
+      "cell_moisture_kg_kg": 0.05,
+      "reservoir": {
+        "temperature_k": 333.0,
+        "pressure_pa": 100000.0,
+        "water_mole_fraction": 0.01
+      }
+    }
+  ],
+  "source_quadrature": {
+    "quad_absolute_tolerance": 1e-08,
+    "quad_relative_tolerance": 1e-12,
+    "quad_maximum_subintervals": 100
+  }
+}
