@@ -1,0 +1,378 @@
+{
+  "settings": {
+    "local_law_parameters": "parameters.dusty_gas_isothermal.json",
+    "species_order": [
+      "N2"
+    ],
+    "temperature_k": 600,
+    "binary_property_reference_pressure_pa": 100000,
+    "entropy_reference_pressure_pa": 100000,
+    "geometry": {
+      "length_m": 0.02,
+      "area_m2": 0.005
+    },
+    "pore": {
+      "porosity": 0.3,
+      "tortuosity": 1,
+      "mean_pore_radius_m": 1e-06,
+      "permeability_m2": 3.75e-14
+    },
+    "face_quadrature_order": 16,
+    "duration_s": 30,
+    "meshes": {
+      "two": 2,
+      "four": 4,
+      "eight": 8,
+      "sixteen": 16,
+      "thirty-two": 32,
+      "sixty-four": 64,
+      "one-twenty-eight": 128
+    },
+    "numerics": {
+      "relative_tolerance": 1.0000000000000001e-11,
+      "absolute_concentration_tolerance_mol_m3": 1.0000000000000001e-11,
+      "refinement_factor": 0.1,
+      "first_step_s": 1e-06,
+      "maximum_step_s": 0.1,
+      "observation_interval_s": 0.1,
+      "progress_every_steps": 50
+    },
+    "verification": {
+      "source_flux_absolute_budget_mol_m2_s": 1e-12,
+      "source_entropy_rate_budget_w_k": 1e-11,
+      "source_concentration_budget_mol_m3": 1e-12,
+      "global_species_budget_mol": 1e-12,
+      "local_species_budget_mol": 1e-12,
+      "local_entropy_budget_j_k": 1e-10,
+      "cumulative_entropy_budget_j_k": 1e-10,
+      "negative_step_entropy_budget_j_k": 1e-12,
+      "time_concentration_budget_mol_m3": 1e-07,
+      "entropy_quadrature_orders": [
+        2,
+        4
+      ],
+      "source_energy_rate_budget_w": 1e-10,
+      "local_energy_budget_j": 1e-09,
+      "cumulative_energy_budget_j": 1e-08,
+      "time_pressure_budget_pa": 0.001,
+      "source_reference_decimal_precision": 80,
+      "equilibrium_pressure_budget_pa": 0.001,
+      "equilibrium_entropy_budget_j_k": 1e-09,
+      "space_concentration_budget_mol_m3": 0.0001,
+      "space_reservoir_pressure_budget_pa": 0.5
+    },
+    "scope": "Pure N2 pressure relaxation of two well-mixed rigid finite reservoirs connected by an isothermal rigid pore column. Reservoir and pore inventories evolve together. Full pore storage is retained; no quasi-steady blowdown formula, thermal evolution, reaction, or real-brick qualification.",
+    "entropy_definition": "Relative ideal-gas entropy -R*n*ln(c/c_ref) at one common fixed T, including both finite reservoirs and pore cells. All local control volumes obey Udot = incoming minus outgoing stream h plus bath Q; h=u+RT and Q=-RT*ndot. Closed total inventory makes net bath heat and bath entropy zero; internal face entropy production equals total gas entropy increase.",
+    "physical_input_classification": "Declared straight capillary bundle and well-mixed vessel geometry. Initial pore pressure is the cell average of the linear interpolation between initial vessel pressures, hence compatible with the initial boundary values. Source-qualified approximate N2 viscosity and Knudsen law. u=1000 J/mol is an arbitrary common energy gauge at this fixed T, not a heat capacity or formation energy.",
+    "material_qualified": false,
+    "training_eligible": false,
+    "fixed_temperature_molar_internal_energy_reference_j_mol": [
+      1000
+    ],
+    "reference_property_trajectory": "data/sandbox/research/dusty-gas-pure-knudsen-column-v1/one-twenty-eight-refined.jsonl",
+    "initial_reservoir_partial_pressures_pa": {
+      "left": [
+        120000
+      ],
+      "right": [
+        80000
+      ]
+    },
+    "reservoir_volumes_m3": {
+      "left": 0.0001,
+      "right": 0.0002
+    },
+    "source_basis": [
+      "SAND2012-5961 equation1 pore storage, equation23 pure gas Darcy-Knudsen flux, section3.2 finite vessels",
+      "Finite-volume mass conservation with ideal rigid well-mixed reservoirs; source section3.2 quasi-steady pore-storage neglect is NOT used here."
+    ]
+  },
+  "equilibrium_pressure_pa_decimal": "93939.393939393939370084954956149967161960342104942606173200356482278985588307987",
+  "effective_knudsen_diffusivity_m2_s_decimal": "0.00013468185336370274040027774125574136335545829997813360853606253040451473181677724",
+  "records": [
+    {
+      "mesh": "two",
+      "profile": "linear_initial",
+      "flux_error_mol_m2_s": 6.796611129016697e-17,
+      "entropy_rate_error_w_k": 8.972399946379813e-19,
+      "local_energy_error_w": 6.938893903907228e-16,
+      "entropy_identity_error_w_k": 1.5178830414797062e-18,
+      "equilibrium_pressure_pa": 93939.39393939394,
+      "net_inventory_rate_mol_s": -1.0842021724855044e-19,
+      "net_bath_heat_w": 0.0,
+      "within_budgets": {
+        "source_flux": true,
+        "source_entropy": true,
+        "total_inventory_rate": true,
+        "closed_bath_heat": true,
+        "local_energy": true,
+        "entropy_identity": true,
+        "equilibrium_inventory": true
+      }
+    },
+    {
+      "mesh": "two",
+      "profile": "uniform_equilibrium",
+      "flux_error_mol_m2_s": 0.0,
+      "entropy_rate_error_w_k": 0.0,
+      "local_energy_error_w": 0.0,
+      "entropy_identity_error_w_k": 0.0,
+      "equilibrium_pressure_pa": 93939.39393939394,
+      "net_inventory_rate_mol_s": 0.0,
+      "net_bath_heat_w": 0.0,
+      "within_budgets": {
+        "source_flux": true,
+        "source_entropy": true,
+        "total_inventory_rate": true,
+        "closed_bath_heat": true,
+        "local_energy": true,
+        "entropy_identity": true,
+        "equilibrium_inventory": true
+      }
+    },
+    {
+      "mesh": "four",
+      "profile": "linear_initial",
+      "flux_error_mol_m2_s": 7.335309478529376e-16,
+      "entropy_rate_error_w_k": 2.5473002672259764e-18,
+      "local_energy_error_w": 4.996003610813204e-16,
+      "entropy_identity_error_w_k": 4.336808689942018e-19,
+      "equilibrium_pressure_pa": 93939.39393939394,
+      "net_inventory_rate_mol_s": 5.421010862427522e-20,
+      "net_bath_heat_w": 4.440892098500626e-16,
+      "within_budgets": {
+        "source_flux": true,
+        "source_entropy": true,
+        "total_inventory_rate": true,
+        "closed_bath_heat": true,
+        "local_energy": true,
+        "entropy_identity": true,
+        "equilibrium_inventory": true
+      }
+    },
+    {
+      "mesh": "four",
+      "profile": "uniform_equilibrium",
+      "flux_error_mol_m2_s": 0.0,
+      "entropy_rate_error_w_k": 0.0,
+      "local_energy_error_w": 0.0,
+      "entropy_identity_error_w_k": 0.0,
+      "equilibrium_pressure_pa": 93939.39393939394,
+      "net_inventory_rate_mol_s": 0.0,
+      "net_bath_heat_w": 0.0,
+      "within_budgets": {
+        "source_flux": true,
+        "source_entropy": true,
+        "total_inventory_rate": true,
+        "closed_bath_heat": true,
+        "local_energy": true,
+        "entropy_identity": true,
+        "equilibrium_inventory": true
+      }
+    },
+    {
+      "mesh": "eight",
+      "profile": "linear_initial",
+      "flux_error_mol_m2_s": 6.086316220188018e-16,
+      "entropy_rate_error_w_k": 2.6191894428010967e-18,
+      "local_energy_error_w": 4.85722573273506e-16,
+      "entropy_identity_error_w_k": 2.3852447794681098e-18,
+      "equilibrium_pressure_pa": 93939.39393939394,
+      "net_inventory_rate_mol_s": 5.421010862427522e-20,
+      "net_bath_heat_w": 0.0,
+      "within_budgets": {
+        "source_flux": true,
+        "source_entropy": true,
+        "total_inventory_rate": true,
+        "closed_bath_heat": true,
+        "local_energy": true,
+        "entropy_identity": true,
+        "equilibrium_inventory": true
+      }
+    },
+    {
+      "mesh": "eight",
+      "profile": "uniform_equilibrium",
+      "flux_error_mol_m2_s": 0.0,
+      "entropy_rate_error_w_k": 0.0,
+      "local_energy_error_w": 0.0,
+      "entropy_identity_error_w_k": 0.0,
+      "equilibrium_pressure_pa": 93939.39393939394,
+      "net_inventory_rate_mol_s": 0.0,
+      "net_bath_heat_w": 0.0,
+      "within_budgets": {
+        "source_flux": true,
+        "source_entropy": true,
+        "total_inventory_rate": true,
+        "closed_bath_heat": true,
+        "local_energy": true,
+        "entropy_identity": true,
+        "equilibrium_inventory": true
+      }
+    },
+    {
+      "mesh": "sixteen",
+      "profile": "linear_initial",
+      "flux_error_mol_m2_s": 1.4840702103357592e-15,
+      "entropy_rate_error_w_k": 2.9475732013208915e-18,
+      "local_energy_error_w": 5.169475958410885e-16,
+      "entropy_identity_error_w_k": 1.951563910473908e-18,
+      "equilibrium_pressure_pa": 93939.39393939394,
+      "net_inventory_rate_mol_s": 0.0,
+      "net_bath_heat_w": -4.440892098500626e-16,
+      "within_budgets": {
+        "source_flux": true,
+        "source_entropy": true,
+        "total_inventory_rate": true,
+        "closed_bath_heat": true,
+        "local_energy": true,
+        "entropy_identity": true,
+        "equilibrium_inventory": true
+      }
+    },
+    {
+      "mesh": "sixteen",
+      "profile": "uniform_equilibrium",
+      "flux_error_mol_m2_s": 0.0,
+      "entropy_rate_error_w_k": 0.0,
+      "local_energy_error_w": 0.0,
+      "entropy_identity_error_w_k": 0.0,
+      "equilibrium_pressure_pa": 93939.39393939394,
+      "net_inventory_rate_mol_s": 0.0,
+      "net_bath_heat_w": 0.0,
+      "within_budgets": {
+        "source_flux": true,
+        "source_entropy": true,
+        "total_inventory_rate": true,
+        "closed_bath_heat": true,
+        "local_energy": true,
+        "entropy_identity": true,
+        "equilibrium_inventory": true
+      }
+    },
+    {
+      "mesh": "thirty-two",
+      "profile": "linear_initial",
+      "flux_error_mol_m2_s": 3.521384164727322e-15,
+      "entropy_rate_error_w_k": 3.2123183283227824e-18,
+      "local_energy_error_w": 8.083811398051921e-16,
+      "entropy_identity_error_w_k": 6.505213034913027e-19,
+      "equilibrium_pressure_pa": 93939.39393939394,
+      "net_inventory_rate_mol_s": 0.0,
+      "net_bath_heat_w": 8.881784197001252e-16,
+      "within_budgets": {
+        "source_flux": true,
+        "source_entropy": true,
+        "total_inventory_rate": true,
+        "closed_bath_heat": true,
+        "local_energy": true,
+        "entropy_identity": true,
+        "equilibrium_inventory": true
+      }
+    },
+    {
+      "mesh": "thirty-two",
+      "profile": "uniform_equilibrium",
+      "flux_error_mol_m2_s": 0.0,
+      "entropy_rate_error_w_k": 0.0,
+      "local_energy_error_w": 0.0,
+      "entropy_identity_error_w_k": 0.0,
+      "equilibrium_pressure_pa": 93939.39393939394,
+      "net_inventory_rate_mol_s": 0.0,
+      "net_bath_heat_w": 0.0,
+      "within_budgets": {
+        "source_flux": true,
+        "source_entropy": true,
+        "total_inventory_rate": true,
+        "closed_bath_heat": true,
+        "local_energy": true,
+        "entropy_identity": true,
+        "equilibrium_inventory": true
+      }
+    },
+    {
+      "mesh": "sixty-four",
+      "profile": "linear_initial",
+      "flux_error_mol_m2_s": 6.439299598909609e-15,
+      "entropy_rate_error_w_k": 3.381561982883461e-18,
+      "local_energy_error_w": 6.83481049534862e-16,
+      "entropy_identity_error_w_k": 3.2526065174565133e-18,
+      "equilibrium_pressure_pa": 93939.39393939394,
+      "net_inventory_rate_mol_s": -2.168404344971009e-19,
+      "net_bath_heat_w": -4.440892098500626e-16,
+      "within_budgets": {
+        "source_flux": true,
+        "source_entropy": true,
+        "total_inventory_rate": true,
+        "closed_bath_heat": true,
+        "local_energy": true,
+        "entropy_identity": true,
+        "equilibrium_inventory": true
+      }
+    },
+    {
+      "mesh": "sixty-four",
+      "profile": "uniform_equilibrium",
+      "flux_error_mol_m2_s": 0.0,
+      "entropy_rate_error_w_k": 0.0,
+      "local_energy_error_w": 0.0,
+      "entropy_identity_error_w_k": 0.0,
+      "equilibrium_pressure_pa": 93939.39393939394,
+      "net_inventory_rate_mol_s": 0.0,
+      "net_bath_heat_w": 0.0,
+      "within_budgets": {
+        "source_flux": true,
+        "source_entropy": true,
+        "total_inventory_rate": true,
+        "closed_bath_heat": true,
+        "local_energy": true,
+        "entropy_identity": true,
+        "equilibrium_inventory": true
+      }
+    },
+    {
+      "mesh": "one-twenty-eight",
+      "profile": "linear_initial",
+      "flux_error_mol_m2_s": 1.535326364761875e-14,
+      "entropy_rate_error_w_k": 3.758644259243045e-18,
+      "local_energy_error_w": 7.7021722333370235e-16,
+      "entropy_identity_error_w_k": 1.734723475976807e-18,
+      "equilibrium_pressure_pa": 93939.39393939392,
+      "net_inventory_rate_mol_s": -1.0842021724855044e-19,
+      "net_bath_heat_w": 0.0,
+      "within_budgets": {
+        "source_flux": true,
+        "source_entropy": true,
+        "total_inventory_rate": true,
+        "closed_bath_heat": true,
+        "local_energy": true,
+        "entropy_identity": true,
+        "equilibrium_inventory": true
+      }
+    },
+    {
+      "mesh": "one-twenty-eight",
+      "profile": "uniform_equilibrium",
+      "flux_error_mol_m2_s": 0.0,
+      "entropy_rate_error_w_k": 0.0,
+      "local_energy_error_w": 0.0,
+      "entropy_identity_error_w_k": 0.0,
+      "equilibrium_pressure_pa": 93939.39393939392,
+      "net_inventory_rate_mol_s": 0.0,
+      "net_bath_heat_w": 0.0,
+      "within_budgets": {
+        "source_flux": true,
+        "source_entropy": true,
+        "total_inventory_rate": true,
+        "closed_bath_heat": true,
+        "local_energy": true,
+        "entropy_identity": true,
+        "equilibrium_inventory": true
+      }
+    }
+  ],
+  "all_source_budgets_met": true,
+  "scope": "Frozen pure-gas law checked with MP80 arithmetic and independently derived finite-volume identities. Static scope, no dynamic or real-material qualification.",
+  "material_qualified": false,
+  "training_eligible": false
+}

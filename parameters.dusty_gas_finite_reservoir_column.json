@@ -1,0 +1,88 @@
+{
+  "local_law_parameters": "parameters.dusty_gas_isothermal.json",
+  "species_order": [
+    "N2"
+  ],
+  "temperature_k": 600,
+  "binary_property_reference_pressure_pa": 100000,
+  "entropy_reference_pressure_pa": 100000,
+  "geometry": {
+    "length_m": 0.02,
+    "area_m2": 0.005
+  },
+  "pore": {
+    "porosity": 0.3,
+    "tortuosity": 1,
+    "mean_pore_radius_m": 1e-06,
+    "permeability_m2": 3.75e-14
+  },
+  "face_quadrature_order": 16,
+  "duration_s": 30,
+  "meshes": {
+    "two": 2,
+    "four": 4,
+    "eight": 8,
+    "sixteen": 16,
+    "thirty-two": 32,
+    "sixty-four": 64,
+    "one-twenty-eight": 128
+  },
+  "numerics": {
+    "relative_tolerance": 1.0000000000000001e-11,
+    "absolute_concentration_tolerance_mol_m3": 1.0000000000000001e-11,
+    "refinement_factor": 0.1,
+    "first_step_s": 1e-06,
+    "maximum_step_s": 0.1,
+    "observation_interval_s": 0.1,
+    "progress_every_steps": 50
+  },
+  "verification": {
+    "source_flux_absolute_budget_mol_m2_s": 1e-12,
+    "source_entropy_rate_budget_w_k": 1e-11,
+    "source_concentration_budget_mol_m3": 1e-12,
+    "global_species_budget_mol": 1e-12,
+    "local_species_budget_mol": 1e-12,
+    "local_entropy_budget_j_k": 1e-10,
+    "cumulative_entropy_budget_j_k": 1e-10,
+    "negative_step_entropy_budget_j_k": 1e-12,
+    "time_concentration_budget_mol_m3": 1e-07,
+    "entropy_quadrature_orders": [
+      2,
+      4
+    ],
+    "source_energy_rate_budget_w": 1e-10,
+    "local_energy_budget_j": 1e-09,
+    "cumulative_energy_budget_j": 1e-08,
+    "time_pressure_budget_pa": 0.001,
+    "source_reference_decimal_precision": 80,
+    "equilibrium_pressure_budget_pa": 0.001,
+    "equilibrium_entropy_budget_j_k": 1e-09,
+    "space_concentration_budget_mol_m3": 0.0001,
+    "space_reservoir_pressure_budget_pa": 0.5
+  },
+  "scope": "Pure N2 pressure relaxation of two well-mixed rigid finite reservoirs connected by an isothermal rigid pore column. Reservoir and pore inventories evolve together. Full pore storage is retained; no quasi-steady blowdown formula, thermal evolution, reaction, or real-brick qualification.",
+  "entropy_definition": "Relative ideal-gas entropy -R*n*ln(c/c_ref) at one common fixed T, including both finite reservoirs and pore cells. All local control volumes obey Udot = incoming minus outgoing stream h plus bath Q; h=u+RT and Q=-RT*ndot. Closed total inventory makes net bath heat and bath entropy zero; internal face entropy production equals total gas entropy increase.",
+  "physical_input_classification": "Declared straight capillary bundle and well-mixed vessel geometry. Initial pore pressure is the cell average of the linear interpolation between initial vessel pressures, hence compatible with the initial boundary values. Source-qualified approximate N2 viscosity and Knudsen law. u=1000 J/mol is an arbitrary common energy gauge at this fixed T, not a heat capacity or formation energy.",
+  "material_qualified": false,
+  "training_eligible": false,
+  "fixed_temperature_molar_internal_energy_reference_j_mol": [
+    1000
+  ],
+  "reference_property_trajectory": "data/sandbox/research/dusty-gas-pure-knudsen-column-v1/one-twenty-eight-refined.jsonl",
+  "initial_reservoir_partial_pressures_pa": {
+    "left": [
+      120000
+    ],
+    "right": [
+      80000
+    ]
+  },
+  "reservoir_volumes_m3": {
+    "left": 0.0001,
+    "right": 0.0002
+  },
+  "source_basis": [
+    "SAND2012-5961 equation1 pore storage, equation23 pure gas Darcy-Knudsen flux, section3.2 finite vessels",
+    "Finite-volume mass conservation with ideal rigid well-mixed reservoirs; source section3.2 quasi-steady pore-storage neglect is NOT used here."
+  ]
+}
