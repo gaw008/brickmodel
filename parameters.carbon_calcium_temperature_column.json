@@ -1,0 +1,78 @@
+{
+  "exchange_parameters": "parameters.carbon_calcium_exchange.json",
+  "geometry": {
+    "length_m": 0.02,
+    "area_m2": 0.01
+  },
+  "initial": {
+    "calcium_density_mol_m3": 20.0,
+    "carbon_density_mol_m3": 45.0,
+    "oxygen_density_mol_m3": 80.0,
+    "nitrogen_density_mol_m3": 40.0,
+    "temperature_left_k": 1160.0,
+    "temperature_right_k": 1000.0,
+    "interface_length_fraction": 0.5
+  },
+  "transport": {
+    "thermal_conductivity_w_m_k": 0.005,
+    "gas_mobility_density_mol2_k_j_m_s": {
+      "CO": 1e-09,
+      "CO2": 1e-09,
+      "O2": 1e-09,
+      "N2": 1e-09
+    },
+    "classification": "Explicit virtual continuum coefficients. Face conductance/mobility scales as area over center distance; neither inferred nor measured brick transport."
+  },
+  "meshes": {
+    "two": 2,
+    "four": 4,
+    "eight": 8,
+    "sixteen": 16,
+    "thirty_two": 32,
+    "sixty_four": 64
+  },
+  "duration_s": 20000.0,
+  "numerics": {
+    "jacobian_method": "numerical_with_local_sparsity",
+    "relative_tolerance": 1e-11,
+    "refinement_factor": 0.1,
+    "production_absolute_tolerance_j_k": 1e-13,
+    "maximum_step_s": 20.0,
+    "first_step_s": 0.001,
+    "observation_interval_s": 20.0,
+    "progress_every_steps": 100,
+    "inventory_density_absolute_tolerances_C_O_N": [
+      1e-09,
+      1e-09,
+      1e-09
+    ],
+    "temperature_absolute_tolerance_k": 1e-09
+  },
+  "verification": {
+    "element_mol": 1e-12,
+    "pressure_pa": 1e-05,
+    "volume_m3": 1e-14,
+    "reaction_gibbs_j_mol": 1e-05,
+    "source_energy_j": 1e-07,
+    "source_entropy_j_k": 1e-10,
+    "face_species_mol_s": 1e-14,
+    "face_energy_w": 1e-08,
+    "face_entropy_w_k": 1e-11,
+    "inventory_integral_mol": 1e-10,
+    "energy_j": 1e-05,
+    "entropy_j_k": 1e-08,
+    "nonnegative_entropy_j_k": 1e-10,
+    "time_temperature_k": 0.001,
+    "time_pressure_pa": 0.1,
+    "time_species_mol": 1e-10,
+    "quadrature_orders": [
+      2,
+      4
+    ]
+  },
+  "initial_mapping": "Same geometry, composition, initial temperatures and transport as the qualified conserved-coordinate column. Temperature-coordinate integrator has separately explicit numerical tolerances; physical budgets unchanged.",
+  "scope": "Closed one-dimensional uniform finite-volume column. Local restricted equilibrium and immobile solids; one shared gas/energy face adds equal opposite elemental and U rates. No external reservoir or deformation. Qualify two-cell assembly before spatial refinement.",
+  "material_qualified": false,
+  "training_eligible": false,
+  "coordinate_definition": "C/O/N2/T; Tdot=(Udot-U_C*Cdot-U_O*Odot-U_N*Ndot)/Cv from independently source-qualified same-phase derivatives. No duplicated U state; actual source U must satisfy closed/local energy budgets."
+}

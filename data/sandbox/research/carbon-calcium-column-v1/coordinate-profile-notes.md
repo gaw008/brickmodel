@@ -1,0 +1,5 @@
+# Coordinate profile record
+
+The first coordinate-review profile called both states() and rates() on the conserved path, duplicating its state reconstruction. Its physical outputs remain recorded, but its timing is not a valid single-decode cost comparison. The original script text is preserved as coordinate-review-original-script.py; it is a historical snapshot of the examples/sandbox entry point, not a standalone executable from this evidence directory.
+
+The corrected coordinate-single-decode-review uses one state reconstruction per endpoint in both paths and the same face and caloric-coordinate operations. Seven recorded observations have identical T/P/species and inventory/entropy rates. Reconstructed energy-rate difference is1.324e-23W. Recorded profiled wall times are.3237s versus.03485s under current load, not a universal speedup claim. The U route used14 U inversions,163 rigid-temperature flashes and1734 pressure flashes; the direct-T route used14 rigid-temperature flashes and154 pressure flashes. No time trajectory is qualified by this pointwise result.

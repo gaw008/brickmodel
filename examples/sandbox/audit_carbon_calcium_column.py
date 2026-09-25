@@ -16,7 +16,7 @@ def records(path):
         for line in stream:yield json.loads(line)
 
 
-def audit(path,root):
+def audit(path,root,integration_coordinates):
     stream=records(path);header=next(stream);initial=next(stream);stream.close()
     n=header['cell_count'];base=4*n;p=header['settings'];budget=p['verification'];volume=header['cell_volume_m3']
     rigid=header['rigid_parameters'];face_policy=header['face_parameters'];inventories=header['inventories']
@@ -27,9 +27,17 @@ def audit(path,root):
         'face_species_mol_s','face_energy_w','face_entropy_w_k','global_inventory_mol','global_energy_j','entropy_ledger_j_k','energy_coordinate_j']}
     minima={'gas_mol':float('inf'),'solid_mol':float('inf'),'cv_j_k':float('inf'),'dissipation_w_k':float('inf'),'source_entropy_sum_w_k':float('inf')}
     counts={'recorded':0,'dense':0};phases={};samples={}
-    def decode(y):
-        return [model.from_internal_energy(float(u0[i]+y[4*i+3]),volume,inventories[i]['calcium_atoms_mol'],
+    def conserved_decode(y):
+        states=[model.from_internal_energy(float(u0[i]+y[4*i+3]),volume,inventories[i]['calcium_atoms_mol'],
                     *map(float,y[4*i:4*i+3]),rigid['numerics']) for i in range(n)]
+        return y,states
+    def temperature_decode(y):
+        states=[model.at_temperature_volume(float(y[4*i+3]),volume,inventories[i]['calcium_atoms_mol'],
+                    *map(float,y[4*i:4*i+3]),rigid['numerics']) for i in range(n)]
+        physical=y.copy()
+        for i,state in enumerate(states):physical[4*i+3]=state['internal_energy_j']-u0[i]
+        return physical,states
+    decode={'conserved':conserved_decode,'temperature':temperature_decode}[integration_coordinates]
     def review(states,y,category,faces=None):
         counts[category]+=n;refs=[]
         for i,state in enumerate(states):
@@ -72,7 +80,8 @@ def audit(path,root):
             dense=row['dense_output'];left,right=dense['start_time_s'],dense['end_time_s'];integral=np.zeros(5*n+1)
             for node,weight in zip(nodes,weights,strict=True):
                 at=(left+right)/2+(right-left)*node/2;y=polynomial(row,at)
-                _,rates=review(decode(y),y,'dense');integral+=weight*(right-left)/2*rates
+                physical,states=decode(y)
+                _,rates=review(states,physical,'dense');integral+=weight*(right-left)/2*rates
             total+=integral;increments.append(integral);local=integral[:-1].reshape(n,5);cumulative=total[:-1].reshape(n,5)
             y=np.array(row['values'][:base]).reshape(n,4);before=np.array(previous['values'][:base]).reshape(n,4)
             max_local=np.maximum(max_local,np.max(np.abs(y-before-local[:,:4]),axis=0))
@@ -116,11 +125,11 @@ def compare(left,right,budget):
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--parameters',type=Path,required=True);parser.add_argument('--output',type=Path,required=True)
     args=parser.parse_args();root=args.parameters.resolve().parent;settings=json.loads(args.parameters.read_text());reviews={};samples={};headers={}
-    for name,path in settings['trajectories'].items():reviews[name],samples[name],headers[name]=audit(root/path,root)
+    for name,path in settings['trajectories'].items():reviews[name],samples[name],headers[name]=audit(root/path,root,settings['integration_coordinates'])
     left,right=settings['time_comparison_pair'];budget=headers[left]['settings']['verification'];comparisons={'time':compare(samples[left],samples[right],budget)}
-    if 'reference_pair_trajectory' in settings:
-        reference={r['time_s']:r['states'] for r in records(root/settings['reference_pair_trajectory']) if r['kind']=='sample'}
-        comparisons['original_pair']=compare(reference,samples[right],budget)
+    if 'reference_trajectory' in settings:
+        reference={r['time_s']:r['states'] for r in records(root/settings['reference_trajectory']) if r['kind']=='sample'}
+        comparisons['reference']=compare(reference,samples[right],budget)
     result={'settings':settings,'trajectory_reviews':reviews,'comparisons':comparisons,
         'all_requested_numerical_budgets_met':all(r['all_requested_numerical_budgets_met'] for r in reviews.values()) and all(r['all_requested_budgets_met'] for r in comparisons.values()),
         'material_qualified':False,'training_eligible':False}
