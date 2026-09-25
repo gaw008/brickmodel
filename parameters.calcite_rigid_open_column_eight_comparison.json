@@ -1,0 +1,95 @@
+{
+  "records": {
+    "cycle-one-refined": {
+      "format": "column",
+      "trajectory": "data/sandbox/research/calcite-rigid-open-column-v1/cycle-one-refined.jsonl"
+    },
+    "cycle-four-base": {
+      "format": "column",
+      "trajectory": "data/sandbox/research/calcite-rigid-open-column-v1/cycle-four-base.jsonl"
+    },
+    "cycle-four-refined": {
+      "format": "column",
+      "trajectory": "data/sandbox/research/calcite-rigid-open-column-v1/cycle-four-refined.jsonl"
+    },
+    "cycle-four-numerical": {
+      "format": "column",
+      "trajectory": "data/sandbox/research/calcite-rigid-open-column-v1/cycle-four-numerical.jsonl"
+    },
+    "cycle-two-refined": {
+      "format": "column",
+      "trajectory": "data/sandbox/research/calcite-rigid-open-column-v1/cycle-two-refined.jsonl"
+    },
+    "cycle-eight-base": {
+      "format": "column",
+      "trajectory": "data/sandbox/research/calcite-rigid-open-column-v1/cycle-eight-base.jsonl"
+    },
+    "cycle-eight-refined": {
+      "format": "column",
+      "trajectory": "data/sandbox/research/calcite-rigid-open-column-v1/cycle-eight-refined.jsonl"
+    }
+  },
+  "pairs": [
+    {
+      "kind": "time",
+      "left": "cycle-four-base",
+      "right": "cycle-four-refined"
+    },
+    {
+      "kind": "time",
+      "left": "cycle-four-refined",
+      "right": "cycle-four-numerical"
+    },
+    {
+      "kind": "time",
+      "left": "cycle-eight-base",
+      "right": "cycle-eight-refined"
+    },
+    {
+      "kind": "space",
+      "left": "cycle-one-refined",
+      "right": "cycle-two-refined"
+    },
+    {
+      "kind": "space",
+      "left": "cycle-two-refined",
+      "right": "cycle-four-refined"
+    },
+    {
+      "kind": "space",
+      "left": "cycle-four-refined",
+      "right": "cycle-eight-refined"
+    }
+  ],
+  "time_budgets": {
+    "cell_temperature_k": 0.001,
+    "cell_pressure_pa": 1.0,
+    "total_lime_mol": 1e-10,
+    "surface_temperature_k": 0.001
+  },
+  "space_budgets": {
+    "mean_temperature_k": 0.05,
+    "cell_temperature_k": 0.2,
+    "mean_pressure_pa": 100.0,
+    "total_lime_mol": 1e-08,
+    "surface_temperature_k": 0.2
+  },
+  "space_event_budget_s": 2.0,
+  "events": [
+    {
+      "name": "heat_mean_900K",
+      "mean_temperature_k": 900.0,
+      "start_s": 0.0,
+      "end_s": 4000.0,
+      "direction": 1
+    },
+    {
+      "name": "cool_mean_500K",
+      "mean_temperature_k": 500.0,
+      "start_s": 4000.0,
+      "end_s": 12000.0,
+      "direction": -1
+    }
+  ],
+  "scope": "Frozen extended-program time/path and future spatial budgets. The original complete 8000s one-cell reference, including missing 500K cooling event, is preserved separately."
+}

@@ -1,0 +1,16 @@
+{
+  "column_parameters": "parameters.calcite_rigid_open_column.json",
+  "coordinate_normalization": {"carbon_density_mol_m3": 10.0, "log_nitrogen": 1.0, "energy_density_j_m3": 1000000.0},
+  "difference_scales": {"log_nitrogen": 1.0, "energy_density_j_m3": 1000000.0},
+  "difference_steps": [0.001, 0.0003, 0.0001],
+  "per_cell_rate_scales": [1e-6, 1.0, 1.0],
+  "ledger_rate_scales": [1e-6, 1e-6, 1.0, 1e-6, 1e-6, 1.0, 1.0, 0.001, 0.001, 0.001],
+  "budgets": {"species_rate_mol_s": 1e-12, "energy_rate_w": 1e-8, "entropy_rate_w_k": 1e-9, "scaled_derivative": 1e-5, "conservation_derivative": 1e-10},
+  "cases": [
+    {"name": "one_cell_cold", "temperatures_k": [300.0], "excess_carbon_densities_mol_m3": [0.01], "nitrogen_densities_mol_m3": [20.0], "carbon_difference_density_mol_m3": 0.01, "segment_index": 0},
+    {"name": "four_cell_cold", "temperatures_k": [300.0, 300.0, 300.0, 300.0], "excess_carbon_densities_mol_m3": [0.01, 0.01, 0.01, 0.01], "nitrogen_densities_mol_m3": [20.0, 20.0, 20.0, 20.0], "carbon_difference_density_mol_m3": 0.01, "segment_index": 0},
+    {"name": "four_cell_hot_gradient", "temperatures_k": [900.0, 950.0, 1000.0, 1100.0], "excess_carbon_densities_mol_m3": [-10.0, -20.0, -30.0, -40.0], "nitrogen_densities_mol_m3": [20.0, 18.0, 15.0, 10.0], "carbon_difference_density_mol_m3": 10.0, "segment_index": 0},
+    {"name": "four_cell_cooling", "temperatures_k": [1100.0, 1000.0, 900.0, 700.0], "excess_carbon_densities_mol_m3": [-40.0, -30.0, -20.0, -10.0], "nitrogen_densities_mol_m3": [10.0, 15.0, 18.0, 20.0], "carbon_difference_density_mol_m3": 10.0, "segment_index": 1}
+  ],
+  "scope": "Separate static qualification before time integration; original root, thermochemical and physical definitions preserved. No true-material parameter fitting."
+}

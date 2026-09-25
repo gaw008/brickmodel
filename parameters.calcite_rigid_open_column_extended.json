@@ -1,0 +1,109 @@
+{
+  "model_parameters": "parameters.calcite_rigid_column.json",
+  "surface_parameters": "parameters.calcite_rigid_surface_cold_derivative.json",
+  "initial": {
+    "temperature_k": 300.0,
+    "excess_carbon_density_mol_m3": 0.01,
+    "nitrogen_density_mol_m3": 20.0
+  },
+  "boundary_program": [
+    {
+      "start_s": 0.0,
+      "end_s": 4000.0,
+      "gas_temperature_k": 1180.0,
+      "pressure_pa": 100000.0,
+      "co2_mole_fraction": 0.0004,
+      "radiation_temperature_k": 1180.0
+    },
+    {
+      "start_s": 4000.0,
+      "end_s": 12000.0,
+      "gas_temperature_k": 400.0,
+      "pressure_pa": 100000.0,
+      "co2_mole_fraction": 0.1,
+      "radiation_temperature_k": 400.0
+    }
+  ],
+  "numerics": {
+    "relative_tolerance": 1e-11,
+    "refinement_factor": 0.1,
+    "initial_step_s": 1e-05,
+    "maximum_step_s": 1.0,
+    "observation_interval_s": 2.0,
+    "progress_every_steps": 100,
+    "physical_coordinate_absolute_tolerances": [
+      1e-13,
+      1e-09,
+      1e-07
+    ],
+    "ledger_absolute_tolerances": [
+      1e-13,
+      1e-13,
+      1e-07,
+      1e-13,
+      1e-13,
+      1e-07,
+      1e-07,
+      1e-10,
+      1e-10,
+      1e-10
+    ]
+  },
+  "verification": {
+    "species_balance_mol": 1e-10,
+    "energy_balance_j": 1e-05,
+    "entropy_balance_j_k": 1e-07,
+    "negative_step_entropy_allowance_j_k": 1e-10,
+    "source_energy_j": 1e-05,
+    "source_entropy_j_k": 1e-07,
+    "source_pressure_pa": 0.001,
+    "source_volume_m3": 1e-15,
+    "source_affinity_j_mol": 1e-05,
+    "surface_species_mol_s": 1e-12,
+    "surface_energy_w": 1e-08,
+    "time_temperature_k": 0.001,
+    "time_pressure_pa": 1.0,
+    "time_lime_mol": 1e-08,
+    "quadrature_orders": [
+      2,
+      4
+    ]
+  },
+  "classification": "Prescribed virtual gas and radiation reservoirs; equilibrium reaction limit with physically separate inner/outer ledgers",
+  "boundary_change_interpretation": "Switch contacts to distinct prescribed reservoirs at 4000s; no instantaneous change of cell inventory or internal energy. No model of the energy required to condition the external reservoirs.",
+  "scope": "One-dimensional conditional equilibrium reaction and shared gas/energy transport. No actual brick material accuracy or finite-rate chemistry.",
+  "material_qualified": false,
+  "training_eligible": false,
+  "domain": {
+    "length_m": 0.02,
+    "area_m2": 0.0001,
+    "calcium_density_mol_m3": 10000.0,
+    "geometry_classification": "Virtual 2cm fixed-volume planar column, sealed left and one open right surface."
+  },
+  "transport": {
+    "thermal_conductivity_w_m_k": 0.1,
+    "bulk_mobility_mol2_k_j_m_s": 1e-07,
+    "counter_mobility_mol2_k_j_m_s": 1e-07,
+    "classification": "declared virtual positive symmetric gas exchange, not calibrated Darcy or binary diffusivity",
+    "source_note": "No material measurement; Onsager supplies near-equilibrium response structure only; finite force use is an explicit constitutive extension."
+  },
+  "coordinates": {
+    "carbon": "excess_over_fixed_calcium",
+    "nitrogen": "log_inventory_over_reference",
+    "reference_nitrogen_density_mol_m3": 10.0,
+    "time": "step_local_autonomous"
+  },
+  "meshes": {
+    "one": 1,
+    "two": 2,
+    "four": 4,
+    "eight": 8,
+    "sixteen": 16,
+    "thirty_two": 32,
+    "sixty_four": 64,
+    "one_twenty_eight": 128
+  },
+  "state_order": "Per-cell [C-Ca, ln(N2/Nref), U], then [C_inner_out,N_inner_out,E_inner_out,C_outer_out,N_outer_out,E_outer_out,Q_radiation_in,S_gas,S_wall,S_production]",
+  "surface_geometry": "Surface area equals domain area; interior surface distance is half the cell width; internal faces use full cell width. Interior density coefficients are taken from transport; external film/radiation from the explicit surface file.",
+  "extended_program_reason": "The geometry-matched one-cell 8000s reference completed and agreed with the column assembly, but did not yet cross the separately declared mean-500K cooling event. Preserve that complete record and extend the cooling phase to 12000s before any multi-cell spatial trajectory; physical coefficients and all event/accuracy thresholds are unchanged."
+}

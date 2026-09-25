@@ -1,0 +1,45 @@
+Traceback (most recent call last):
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/audit_calcite_rigid_open_column.py", line 150, in <module>
+    main()
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/audit_calcite_rigid_open_column.py", line 92, in main
+    _,states,faces,reservoir,contact = model.observe(polynomial(dense,at),row['segment_index'])
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/rigid_reactive_open_column.py", line 58, in observe
+    contact = self.boundary.surface.solve(states[-1],reservoir,self.settings['boundary_program'][segment]['radiation_temperature_k'])
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/rigid_reactive_surface.py", line 81, in solve
+    solution = least_squares(lambda q: evaluate(q)[4]/scales, initial,
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/_lib/_util.py", line 662, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_lsq/least_squares.py", line 1019, in least_squares
+    result = trf(vector_fun.fun, vector_fun.jac, x0, f0, J0, lb, ub, ftol, xtol,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_lsq/trf.py", line 124, in trf
+    return trf_bounds(
+           ^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_lsq/trf.py", line 340, in trf_bounds
+    f_new = fun(x_new)
+            ^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_differentiable_functions.py", line 743, in fun
+    self._update_fun()
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_differentiable_functions.py", line 707, in _update_fun
+    self.f = self.fun_wrapped(xp_copy(self.x))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_differentiable_functions.py", line 424, in __call__
+    return np.atleast_1d(self.fun(x))
+                         ^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_lsq/least_squares.py", line 263, in __call__
+    return self.f(x, *self.args, **self.kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/rigid_reactive_surface.py", line 81, in <lambda>
+    solution = least_squares(lambda q: evaluate(q)[4]/scales, initial,
+                                       ^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/rigid_reactive_surface.py", line 75, in evaluate
+    inner_derivatives = face_tangents(bulk, surface, bulk_tangent, tangent, self.interior)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/rigid_reactive_tangent.py", line 81, in face_tangents
+    dflows = lb * (bulk * dx + x[:, None] * dbulk) + ld * np.array([ddifference, -ddifference])
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

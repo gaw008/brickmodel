@@ -1,0 +1,79 @@
+{
+  "model_parameters": "parameters.calcite_rigid_column.json",
+  "surface_parameters": "parameters.calcite_rigid_open_column_reference_surface.json",
+  "cell": {
+    "calcium_mol": 0.020000000000000004,
+    "nitrogen_mol": 4.000000000000001e-05,
+    "total_volume_m3": 2.0000000000000003e-06
+  },
+  "initial": {
+    "temperature_k": 300.0,
+    "carbon_mol": 0.020000020000000004
+  },
+  "boundary_program": [
+    {
+      "start_s": 0.0,
+      "end_s": 4000.0,
+      "gas_temperature_k": 1180.0,
+      "pressure_pa": 100000.0,
+      "co2_mole_fraction": 0.0004,
+      "radiation_temperature_k": 1180.0
+    },
+    {
+      "start_s": 4000.0,
+      "end_s": 8000.0,
+      "gas_temperature_k": 400.0,
+      "pressure_pa": 100000.0,
+      "co2_mole_fraction": 0.1,
+      "radiation_temperature_k": 400.0
+    }
+  ],
+  "numerics": {
+    "relative_tolerance": 1e-11,
+    "absolute_tolerances": [
+      1e-13,
+      1e-13,
+      1e-07,
+      1e-13,
+      1e-13,
+      1e-07,
+      1e-13,
+      1e-13,
+      1e-07,
+      1e-07,
+      1e-10,
+      1e-10,
+      1e-10
+    ],
+    "refinement_factor": 0.1,
+    "initial_step_s": 1e-05,
+    "maximum_step_s": 1.0,
+    "observation_interval_s": 2.0,
+    "progress_every_steps": 100
+  },
+  "verification": {
+    "species_balance_mol": 1e-10,
+    "energy_balance_j": 1e-05,
+    "entropy_balance_j_k": 1e-07,
+    "negative_step_entropy_allowance_j_k": 1e-10,
+    "source_energy_j": 1e-05,
+    "source_entropy_j_k": 1e-07,
+    "source_pressure_pa": 0.001,
+    "source_volume_m3": 1e-15,
+    "source_affinity_j_mol": 1e-05,
+    "surface_species_mol_s": 1e-12,
+    "surface_energy_w": 1e-08,
+    "time_temperature_k": 0.001,
+    "time_pressure_pa": 1.0,
+    "time_lime_mol": 1e-08,
+    "quadrature_orders": [
+      2,
+      4
+    ]
+  },
+  "classification": "Prescribed virtual gas and radiation reservoirs; equilibrium reaction limit with physically separate inner/outer ledgers",
+  "boundary_change_interpretation": "Switch contacts to distinct prescribed reservoirs at 4000s; no instantaneous change of cell inventory or internal energy. No model of the energy required to condition the external reservoirs.",
+  "scope": "One-cell reference using the same total geometry as the 2cm open column. Distinct from the original 1cm3 open-cell example.",
+  "material_qualified": false,
+  "training_eligible": false
+}

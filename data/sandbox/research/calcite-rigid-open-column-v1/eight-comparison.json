@@ -1,0 +1,393 @@
+{
+  "settings": {
+    "records": {
+      "cycle-one-refined": {
+        "format": "column",
+        "trajectory": "data/sandbox/research/calcite-rigid-open-column-v1/cycle-one-refined.jsonl"
+      },
+      "cycle-four-base": {
+        "format": "column",
+        "trajectory": "data/sandbox/research/calcite-rigid-open-column-v1/cycle-four-base.jsonl"
+      },
+      "cycle-four-refined": {
+        "format": "column",
+        "trajectory": "data/sandbox/research/calcite-rigid-open-column-v1/cycle-four-refined.jsonl"
+      },
+      "cycle-four-numerical": {
+        "format": "column",
+        "trajectory": "data/sandbox/research/calcite-rigid-open-column-v1/cycle-four-numerical.jsonl"
+      },
+      "cycle-two-refined": {
+        "format": "column",
+        "trajectory": "data/sandbox/research/calcite-rigid-open-column-v1/cycle-two-refined.jsonl"
+      },
+      "cycle-eight-base": {
+        "format": "column",
+        "trajectory": "data/sandbox/research/calcite-rigid-open-column-v1/cycle-eight-base.jsonl"
+      },
+      "cycle-eight-refined": {
+        "format": "column",
+        "trajectory": "data/sandbox/research/calcite-rigid-open-column-v1/cycle-eight-refined.jsonl"
+      }
+    },
+    "pairs": [
+      {
+        "kind": "time",
+        "left": "cycle-four-base",
+        "right": "cycle-four-refined"
+      },
+      {
+        "kind": "time",
+        "left": "cycle-four-refined",
+        "right": "cycle-four-numerical"
+      },
+      {
+        "kind": "time",
+        "left": "cycle-eight-base",
+        "right": "cycle-eight-refined"
+      },
+      {
+        "kind": "space",
+        "left": "cycle-one-refined",
+        "right": "cycle-two-refined"
+      },
+      {
+        "kind": "space",
+        "left": "cycle-two-refined",
+        "right": "cycle-four-refined"
+      },
+      {
+        "kind": "space",
+        "left": "cycle-four-refined",
+        "right": "cycle-eight-refined"
+      }
+    ],
+    "time_budgets": {
+      "cell_temperature_k": 0.001,
+      "cell_pressure_pa": 1.0,
+      "total_lime_mol": 1e-10,
+      "surface_temperature_k": 0.001
+    },
+    "space_budgets": {
+      "mean_temperature_k": 0.05,
+      "cell_temperature_k": 0.2,
+      "mean_pressure_pa": 100.0,
+      "total_lime_mol": 1e-08,
+      "surface_temperature_k": 0.2
+    },
+    "space_event_budget_s": 2.0,
+    "events": [
+      {
+        "name": "heat_mean_900K",
+        "mean_temperature_k": 900.0,
+        "start_s": 0.0,
+        "end_s": 4000.0,
+        "direction": 1
+      },
+      {
+        "name": "cool_mean_500K",
+        "mean_temperature_k": 500.0,
+        "start_s": 4000.0,
+        "end_s": 12000.0,
+        "direction": -1
+      }
+    ],
+    "scope": "Frozen extended-program time/path and future spatial budgets. The original complete 8000s one-cell reference, including missing 500K cooling event, is preserved separately."
+  },
+  "events_s": {
+    "cycle-one-refined": {
+      "heat_mean_900K": 2607.9457472951576,
+      "cool_mean_500K": 9545.025717333028
+    },
+    "cycle-four-base": {
+      "heat_mean_900K": 1773.0662466641497,
+      "cool_mean_500K": 8600.685478253468
+    },
+    "cycle-four-refined": {
+      "heat_mean_900K": 1773.0662466626936,
+      "cool_mean_500K": 8600.68547829466
+    },
+    "cycle-four-numerical": {
+      "heat_mean_900K": 1773.0662466627173,
+      "cool_mean_500K": 8600.685478295378
+    },
+    "cycle-two-refined": {
+      "heat_mean_900K": 1926.156358812108,
+      "cool_mean_500K": 8786.773428923492
+    },
+    "cycle-eight-base": {
+      "heat_mean_900K": 1734.9254299895388,
+      "cool_mean_500K": 8554.500061458242
+    },
+    "cycle-eight-refined": {
+      "heat_mean_900K": 1734.9254299958486,
+      "cool_mean_500K": 8554.500061436855
+    }
+  },
+  "comparisons": [
+    {
+      "observations": 6001,
+      "cell_counts": [
+        4,
+        4
+      ],
+      "maximum_differences": {
+        "mean_temperature_k": 2.2007611732988153e-07,
+        "cell_temperature_k": 1.6574197161389748e-06,
+        "mean_pressure_pa": 0.0008319517364725471,
+        "cell_pressure_pa": 0.0025707678869366646,
+        "total_lime_mol": 4.815088215301411e-14,
+        "surface_temperature_k": 4.940338840242475e-07,
+        "surface_pressure_pa": 0.0008011293248273432
+      },
+      "maximum_difference_times_s": {
+        "mean_temperature_k": 4002.0,
+        "cell_temperature_k": 4002.0,
+        "mean_pressure_pa": 4030.0,
+        "cell_pressure_pa": 4002.0,
+        "total_lime_mol": 4014.0,
+        "surface_temperature_k": 4002.0,
+        "surface_pressure_pa": 4222.0
+      },
+      "pair": {
+        "kind": "time",
+        "left": "cycle-four-base",
+        "right": "cycle-four-refined"
+      },
+      "event_differences_s": {
+        "heat_mean_900K": 1.4561010175384581e-09,
+        "cool_mean_500K": 4.119101504329592e-08
+      },
+      "within_budgets": {
+        "cell_temperature_k": true,
+        "cell_pressure_pa": true,
+        "total_lime_mol": true,
+        "surface_temperature_k": true,
+        "both_completed": true
+      },
+      "all_requested_budgets_met": true
+    },
+    {
+      "observations": 6001,
+      "cell_counts": [
+        4,
+        4
+      ],
+      "maximum_differences": {
+        "mean_temperature_k": 1.5052137314341962e-10,
+        "cell_temperature_k": 1.0991243470925838e-09,
+        "mean_pressure_pa": 6.4684427343308926e-06,
+        "cell_pressure_pa": 0.00011856562923640013,
+        "total_lime_mol": 9.475791462251748e-16,
+        "surface_temperature_k": 4.347384674474597e-10,
+        "surface_pressure_pa": 1.1028343578800559e-05
+      },
+      "maximum_difference_times_s": {
+        "mean_temperature_k": 4216.0,
+        "cell_temperature_k": 4216.0,
+        "mean_pressure_pa": 6384.0,
+        "cell_pressure_pa": 4216.0,
+        "total_lime_mol": 6360.0,
+        "surface_temperature_k": 4216.0,
+        "surface_pressure_pa": 6360.0
+      },
+      "pair": {
+        "kind": "time",
+        "left": "cycle-four-refined",
+        "right": "cycle-four-numerical"
+      },
+      "event_differences_s": {
+        "heat_mean_900K": 2.3646862246096134e-11,
+        "cool_mean_500K": 7.185008144006133e-10
+      },
+      "within_budgets": {
+        "cell_temperature_k": true,
+        "cell_pressure_pa": true,
+        "total_lime_mol": true,
+        "surface_temperature_k": true,
+        "both_completed": true
+      },
+      "all_requested_budgets_met": true
+    },
+    {
+      "observations": 6001,
+      "cell_counts": [
+        8,
+        8
+      ],
+      "maximum_differences": {
+        "mean_temperature_k": 1.710996002657339e-07,
+        "cell_temperature_k": 2.548064003349282e-06,
+        "mean_pressure_pa": 0.0027449537301436067,
+        "cell_pressure_pa": 0.04139736504293978,
+        "total_lime_mol": 3.3227831293738963e-13,
+        "surface_temperature_k": 9.721361493575387e-07,
+        "surface_pressure_pa": 0.008685627719387412
+      },
+      "maximum_difference_times_s": {
+        "mean_temperature_k": 4002.0,
+        "cell_temperature_k": 4002.0,
+        "mean_pressure_pa": 3796.0,
+        "cell_pressure_pa": 3796.0,
+        "total_lime_mol": 3796.0,
+        "surface_temperature_k": 4002.0,
+        "surface_pressure_pa": 3796.0
+      },
+      "pair": {
+        "kind": "time",
+        "left": "cycle-eight-base",
+        "right": "cycle-eight-refined"
+      },
+      "event_differences_s": {
+        "heat_mean_900K": 6.309846867225133e-09,
+        "cool_mean_500K": 2.138767740689218e-08
+      },
+      "within_budgets": {
+        "cell_temperature_k": true,
+        "cell_pressure_pa": true,
+        "total_lime_mol": true,
+        "surface_temperature_k": true,
+        "both_completed": true
+      },
+      "all_requested_budgets_met": true
+    },
+    {
+      "observations": 6001,
+      "cell_counts": [
+        1,
+        2
+      ],
+      "maximum_differences": {
+        "mean_temperature_k": 99.41891293669187,
+        "cell_temperature_k": 99.41891293669187,
+        "mean_pressure_pa": 361538.2360674804,
+        "cell_pressure_pa": 361538.2360674804,
+        "total_lime_mol": 7.845275116558133e-05,
+        "surface_temperature_k": 88.30477180265439,
+        "surface_pressure_pa": 162720.73753667026
+      },
+      "maximum_difference_times_s": {
+        "mean_temperature_k": 1052.0,
+        "cell_temperature_k": 1052.0,
+        "mean_pressure_pa": 4000.0,
+        "cell_pressure_pa": 4000.0,
+        "total_lime_mol": 4000.0,
+        "surface_temperature_k": 4002.0,
+        "surface_pressure_pa": 4002.0
+      },
+      "pair": {
+        "kind": "space",
+        "left": "cycle-one-refined",
+        "right": "cycle-two-refined"
+      },
+      "event_differences_s": {
+        "heat_mean_900K": 681.7893884830496,
+        "cool_mean_500K": 758.252288409536
+      },
+      "within_budgets": {
+        "mean_temperature_k": false,
+        "cell_temperature_k": false,
+        "mean_pressure_pa": false,
+        "total_lime_mol": false,
+        "surface_temperature_k": false,
+        "heat_mean_900K": false,
+        "cool_mean_500K": false,
+        "both_completed": true
+      },
+      "all_requested_budgets_met": false
+    },
+    {
+      "observations": 6001,
+      "cell_counts": [
+        2,
+        4
+      ],
+      "maximum_differences": {
+        "mean_temperature_k": 45.797054040645094,
+        "cell_temperature_k": 92.23366907401089,
+        "mean_pressure_pa": 227563.0692765395,
+        "cell_pressure_pa": 364762.34266739816,
+        "total_lime_mol": 7.896766220737123e-05,
+        "surface_temperature_k": 90.62106457970845,
+        "surface_pressure_pa": 370104.51224943734
+      },
+      "maximum_difference_times_s": {
+        "mean_temperature_k": 264.0,
+        "cell_temperature_k": 224.0,
+        "mean_pressure_pa": 3698.0,
+        "cell_pressure_pa": 3330.0,
+        "total_lime_mol": 4000.0,
+        "surface_temperature_k": 4002.0,
+        "surface_pressure_pa": 4000.0
+      },
+      "pair": {
+        "kind": "space",
+        "left": "cycle-two-refined",
+        "right": "cycle-four-refined"
+      },
+      "event_differences_s": {
+        "heat_mean_900K": 153.09011214941438,
+        "cool_mean_500K": 186.0879506288329
+      },
+      "within_budgets": {
+        "mean_temperature_k": false,
+        "cell_temperature_k": false,
+        "mean_pressure_pa": false,
+        "total_lime_mol": false,
+        "surface_temperature_k": false,
+        "heat_mean_900K": false,
+        "cool_mean_500K": false,
+        "both_completed": true
+      },
+      "all_requested_budgets_met": false
+    },
+    {
+      "observations": 6001,
+      "cell_counts": [
+        4,
+        8
+      ],
+      "maximum_differences": {
+        "mean_temperature_k": 20.666723123606573,
+        "cell_temperature_k": 83.87886173810762,
+        "mean_pressure_pa": 105045.0391681795,
+        "cell_pressure_pa": 286931.68602044403,
+        "total_lime_mol": 5.909374800372428e-05,
+        "surface_temperature_k": 90.7129680138861,
+        "surface_pressure_pa": 602677.31796085
+      },
+      "maximum_difference_times_s": {
+        "mean_temperature_k": 72.0,
+        "cell_temperature_k": 62.0,
+        "mean_pressure_pa": 2360.0,
+        "cell_pressure_pa": 1632.0,
+        "total_lime_mol": 4000.0,
+        "surface_temperature_k": 0.0,
+        "surface_pressure_pa": 4000.0
+      },
+      "pair": {
+        "kind": "space",
+        "left": "cycle-four-refined",
+        "right": "cycle-eight-refined"
+      },
+      "event_differences_s": {
+        "heat_mean_900K": 38.14081666684501,
+        "cool_mean_500K": 46.18541685780474
+      },
+      "within_budgets": {
+        "mean_temperature_k": false,
+        "cell_temperature_k": false,
+        "mean_pressure_pa": false,
+        "total_lime_mol": false,
+        "surface_temperature_k": false,
+        "heat_mean_900K": false,
+        "cool_mean_500K": false,
+        "both_completed": true
+      },
+      "all_requested_budgets_met": false
+    }
+  ],
+  "all_requested_budgets_met": false,
+  "material_qualified": false,
+  "training_eligible": false
+}

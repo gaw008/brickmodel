@@ -1,0 +1,109 @@
+{
+  "settings": {
+    "records": {
+      "reference": {
+        "format": "single_cell",
+        "trajectory": "data/sandbox/research/calcite-rigid-open-column-v1/one-reference.jsonl"
+      },
+      "one": {
+        "format": "column",
+        "trajectory": "data/sandbox/research/calcite-rigid-open-column-v1/one-refined.jsonl"
+      }
+    },
+    "pairs": [
+      {
+        "kind": "time",
+        "left": "reference",
+        "right": "one"
+      }
+    ],
+    "time_budgets": {
+      "cell_temperature_k": 0.001,
+      "cell_pressure_pa": 1.0,
+      "total_lime_mol": 1e-10,
+      "surface_temperature_k": 0.001
+    },
+    "space_budgets": {
+      "mean_temperature_k": 0.05,
+      "cell_temperature_k": 0.2,
+      "mean_pressure_pa": 100.0,
+      "total_lime_mol": 1e-08,
+      "surface_temperature_k": 0.2
+    },
+    "space_event_budget_s": 2.0,
+    "events": [
+      {
+        "name": "heat_mean_900K",
+        "mean_temperature_k": 900.0,
+        "start_s": 0.0,
+        "end_s": 4000.0,
+        "direction": 1
+      },
+      {
+        "name": "cool_mean_500K",
+        "mean_temperature_k": 500.0,
+        "start_s": 4000.0,
+        "end_s": 8000.0,
+        "direction": -1
+      }
+    ],
+    "scope": "Inherited physical budgets; one-cell assembly comparison now, frozen spatial and event budgets before multi-cell trajectories. Events are linear interpolations of common 2s observations, not exact crossings."
+  },
+  "events_s": {
+    "reference": {
+      "heat_mean_900K": 2607.945747294409,
+      "cool_mean_500K": null
+    },
+    "one": {
+      "heat_mean_900K": 2607.9457472951576,
+      "cool_mean_500K": null
+    }
+  },
+  "comparisons": [
+    {
+      "observations": 4001,
+      "cell_counts": [
+        1,
+        1
+      ],
+      "maximum_differences": {
+        "mean_temperature_k": 1.0270468919770792e-09,
+        "cell_temperature_k": 1.0270468919770792e-09,
+        "mean_pressure_pa": 7.751287193968892e-05,
+        "cell_pressure_pa": 7.751287193968892e-05,
+        "total_lime_mol": 1.4233243162500307e-14,
+        "surface_temperature_k": 5.324523044691887e-10,
+        "surface_pressure_pa": 7.395542343147099e-05
+      },
+      "maximum_difference_times_s": {
+        "mean_temperature_k": 2054.0,
+        "cell_temperature_k": 2054.0,
+        "mean_pressure_pa": 2054.0,
+        "cell_pressure_pa": 2054.0,
+        "total_lime_mol": 2054.0,
+        "surface_temperature_k": 5358.0,
+        "surface_pressure_pa": 5358.0
+      },
+      "pair": {
+        "kind": "time",
+        "left": "reference",
+        "right": "one"
+      },
+      "event_differences_s": {
+        "heat_mean_900K": 7.485141395591199e-10,
+        "cool_mean_500K": null
+      },
+      "within_budgets": {
+        "cell_temperature_k": true,
+        "cell_pressure_pa": true,
+        "total_lime_mol": true,
+        "surface_temperature_k": true,
+        "both_completed": true
+      },
+      "all_requested_budgets_met": true
+    }
+  ],
+  "all_requested_budgets_met": true,
+  "material_qualified": false,
+  "training_eligible": false
+}
