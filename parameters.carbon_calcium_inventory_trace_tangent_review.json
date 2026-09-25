@@ -1,0 +1,53 @@
+{
+  "rigid_parameters": "parameters.carbon_calcium_rigid.json",
+  "decimal_digits": 180,
+  "root_tolerance": "1e-150",
+  "maximum_root_iterations": 100,
+  "temperature_points_k": [
+    350.0,
+    900.0,
+    1000.0,
+    1100.0,
+    1150.0,
+    1190.0
+  ],
+  "temperature_difference_steps_k": [
+    "0.0001",
+    "0.00003"
+  ],
+  "inventory_relative_difference_steps": [
+    "1e-85",
+    "3e-86"
+  ],
+  "temperature_derivative_budgets": {
+    "amount": 1e-10,
+    "pressure": 0.0001,
+    "internal_energy": 1e-07,
+    "entropy": 1e-10,
+    "gas_chemical_potential": 1e-05
+  },
+  "inventory_derivative_budgets": {
+    "amount": 1e-08,
+    "pressure": 0.01,
+    "internal_energy": 1e-05,
+    "entropy": 1e-08,
+    "gas_chemical_potential": 0.01
+  },
+  "identity_budgets": {
+    "thermal_gibbs_j_k": 1e-07,
+    "elemental_gibbs_j_mol": 1e-05,
+    "existing_cv_j_k": 1e-07,
+    "inverse_chain_absolute": 1e-09
+  },
+  "scope": "Explicit 180-digit trace-inventory diagnostic after original and scaled ordinary-step reviews failed. Original physical and derivative budgets retained. Inventory increments resolve the extremely narrow same-phase neighborhood; all absolute gas-potential derivative failures remain visible. This does not relax a budget or grant dynamic qualification.",
+  "inventories": [
+    {
+      "name": "old_boundaries_equal",
+      "calcium_atoms_mol": 0.002,
+      "carbon_atoms_mol": 0.002,
+      "oxygen_atoms_mol": 0.006,
+      "nitrogen_molecules_mol": 0.004
+    }
+  ],
+  "tangent_formulation": "scaled"
+}

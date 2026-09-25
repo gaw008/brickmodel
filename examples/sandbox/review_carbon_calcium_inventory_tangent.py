@@ -9,7 +9,8 @@ import numpy as np
 from carbon_calcium_pressure_setup import build
 from carbon_calcium_inventory_rigid_reference import reconstruct
 from carbon_calcium_inventory_model import InventoryPrototype
-from sludge_sandbox.carbon_calcium_rigid_tangent import rigid_tangent
+from sludge_sandbox.carbon_calcium_rigid_tangent import rigid_tangent as original_tangent
+from carbon_calcium_inventory_tangent_prototype import rigid_tangent as scaled_tangent
 
 
 def main():
@@ -19,6 +20,7 @@ def main():
     base,sources,_=build(root,pressure)
     model=InventoryPrototype(base.phases,base.r,base.p0,base.volumes,base.parameters)
     volume=rigid['virtual_volume_m3'];mp.dps=settings['decimal_digits']
+    rigid_tangent={'original':original_tangent,'scaled':scaled_tangent}[settings['tangent_formulation']]
     keys=['calcium_atoms_mol','carbon_atoms_mol','oxygen_atoms_mol','nitrogen_molecules_mol'];records=[]
     for inventory in settings['inventories']:
         for temperature in settings['temperature_points_k']:
@@ -46,6 +48,8 @@ def main():
                     errors['gas_chemical_potential']=max(float(abs(mp.mpf(tangent['gas_chemical_potential_derivatives'][k][index])-v)) for k,v in mu.items())
                     flags={k:v<=budget[k] for k,v in errors.items()};flags['same_phase']=all(pair==(state['calcium_phase'],state['carbon_phase']) for pair in phases)
                     reviews.append({'coordinate':coordinate,'difference_step':str(step),'source_derivatives':{k:str(v) for k,v in finite.items()},
+                        'source_amount_derivatives':{k:str(v) for k,v in amounts.items()},
+                        'source_gas_chemical_potential_derivatives':{k:str(v) for k,v in mu.items()},
                         'errors':errors,'within_budgets':flags})
             u=np.array(tangent['internal_energy_derivatives']);s=np.array(tangent['entropy_derivatives']);mu=ref['mu']
             potential=np.array([float(mu['CO']-mu['O2']/2),float(mu['O2']/2),float(mu['N2'])])
