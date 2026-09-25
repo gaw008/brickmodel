@@ -1,0 +1,85 @@
+{
+  "affinity_parameters": "parameters.calcite_affinity.json",
+  "reactant_phase": "calcite",
+  "product_phase": "lime",
+  "initial_calcite_mol": 1.0,
+  "initial_temperature_k": 300.0,
+  "co2_partial_pressure_pa": 100000.0,
+  "heat_conductance_w_k": 1.0,
+  "classification": "virtual_isothermal_isobaric_pure_phase_instantaneous_equilibrium_calorimeter",
+  "wall_program": [
+    {
+      "start_s": 0.0,
+      "end_s": 8000.0,
+      "temperature_k": 1200.0
+    },
+    {
+      "start_s": 8000.0,
+      "end_s": 16000.0,
+      "temperature_k": 300.0
+    }
+  ],
+  "numerics": {
+    "temperature_inverse_absolute_k": 1e-11,
+    "temperature_inverse_relative": 1e-14,
+    "temperature_inverse_iterations": 100,
+    "relative_tolerance": 1.0000000000000001e-11,
+    "absolute_tolerances": [
+      1.0000000000000002e-06,
+      1e-12,
+      1.0000000000000002e-06,
+      1.0000000000000002e-06,
+      1e-09,
+      1e-09,
+      1e-09
+    ],
+    "refinement_factor": 0.1,
+    "maximum_step_s": 1.0,
+    "initial_step_s": 1e-05,
+    "observation_interval_s": 2.0,
+    "event_absolute_time_s": 1e-07,
+    "event_relative_tolerance": 1e-12,
+    "event_iterations": 100,
+    "progress_every_steps": 100
+  },
+  "verification": {
+    "quadrature_orders": [
+      2,
+      4
+    ],
+    "balance_energy_j": 0.01,
+    "balance_co2_mol": 1e-07,
+    "balance_entropy_j_k": 1e-05,
+    "quadrature_energy_j": 0.01,
+    "quadrature_entropy_j_k": 1e-05,
+    "negative_entropy_allowance_j_k": 1e-10,
+    "time_temperature_k": 0.001,
+    "time_extent_mol": 1e-07,
+    "event_difference_s": 0.001
+  },
+  "material_qualified": false,
+  "training_eligible": false,
+  "radiation": {
+    "area_m2": 0.001,
+    "emissivity": 1.0,
+    "stefan_boltzmann_w_m2_k4": 5.670374419e-08,
+    "area_classification": "explicit_virtual_exposed_area_not_target_brick_geometry",
+    "surface_classification": "ideal_black_surface_in_prescribed_black_enclosure_view_factor_one",
+    "material_emissivity": null,
+    "source": {
+      "constant_url": "https://physics.nist.gov/cuu/Constants/Table/allascii.txt",
+      "adjustment": "2022 CODATA",
+      "printed_value": "5.670 374 419... e-8",
+      "printed_uncertainty": "exact",
+      "unit": "W m^-2 K^-4",
+      "retrieved_utc": "2026-09-25",
+      "formula": "2*pi^5*kB^4/(15*h^3*c^2)",
+      "boltzmann_j_k": 1.380649e-23,
+      "planck_j_s": 6.62607015e-34,
+      "light_speed_m_s": 299792458.0,
+      "numerical_representation": "Finite printed digits retained, not an exact decimal; not material uncertainty.",
+      "boundary_reference": "https://doc.comsol.com/6.3/doc/com.comsol.help.heat/heat_ug_theory.07.047.html"
+    },
+    "entropy_scope": "Combined material plus prescribed thermal reservoir, neglect radiation-field storage; Q/Twall is reservoir entropy loss, not a claim that photon entropy flux equals Q/Twall."
+  }
+}

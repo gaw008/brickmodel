@@ -26,8 +26,13 @@ def audit(rows):
         maximum['co2_mol']=max(maximum['co2_mol'],abs(n-state['extent_mol']))
         maximum['entropy_j_k']=max(maximum['entropy_j_k'],abs(state['entropy_j_k']-initial_s+sgas-swall-production))
     events=[p['time_s'] for p in rows if p['kind']=='phase_event'];integrals=[]
+    def heat_rate(t,wall):
+        q=config['heat_conductance_w_k']*(wall-t)
+        if 'radiation' in config:
+            p=config['radiation'];q+=p['area_m2']*p['emissivity']*p['stefan_boltzmann_w_m2_k4']*(wall**4-t**4)
+        return q
     def rates(h,wall):
-        state=model.state(float(h));t=state['temperature_k'];q=config['heat_conductance_w_k']*(wall-t)
+        state=model.state(float(h));t=state['temperature_k'];q=heat_rate(t,wall)
         flow=(q/reaction.standard(t)['reaction']['enthalpy_j_mol']) if state['phase']=='coexistence' else 0.
         hgas=state['co2_enthalpy_j_mol']*flow;sgas=state['co2_entropy_j_mol_k']*flow
         return np.array([q-hgas,flow,q,hgas,q/wall,sgas,q*(1/t-1/wall)])
@@ -65,10 +70,10 @@ def audit(rows):
     source_review=header['affinity_parameters']['verification']
     options={'epsabs':source_review['quadrature_absolute_tolerance'],'epsrel':source_review['quadrature_relative_tolerance'],
              'limit':source_review['quadrature_maximum_subintervals']}
-    sensible_time=quad(lambda t:model.amount*model.reactant.standard(t)['cp_j_mol_k']/
-        (config['heat_conductance_w_k']*(wall-t)),config['initial_temperature_k'],teq,**options)[0]
+    sensible_time=quad(lambda t:model.amount*model.reactant.standard(t)['cp_j_mol_k']/heat_rate(t,wall),
+        config['initial_temperature_k'],teq,**options)[0]
     plateau_time=(model.amount*reaction.standard(teq)['reaction']['enthalpy_j_mol']/
-        (config['heat_conductance_w_k']*(wall-teq)))
+        heat_rate(teq,wall))
     reference_events=[config['wall_program'][0]['start_s']+sensible_time,config['wall_program'][0]['start_s']+sensible_time+plateau_time]
     actual=[p['time_s'] for p in rows if p['kind']=='phase_event' and p['direction']=='heating']
     event_difference=max(abs(x-y) for x,y in zip(reference_events,actual,strict=True))

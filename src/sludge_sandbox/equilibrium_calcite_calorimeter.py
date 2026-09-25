@@ -3,6 +3,8 @@ import math
 
 from scipy.optimize import brentq
 
+from .exchanges import boundary_heat
+
 
 class EquilibriumCalciteCalorimeter:
     def __init__(self, reaction, config, equilibrium_root_policy):
@@ -39,11 +41,27 @@ class EquilibriumCalciteCalorimeter:
 
     def rates(self, enthalpy_j, wall_temperature_k):
         state=self.state(enthalpy_j);t=state['temperature_k']
-        q=self.config['heat_conductance_w_k']*(wall_temperature_k-t)
+        q=self.heat_rate(t,wall_temperature_k)
         hdot=q/(1+state['co2_enthalpy_j_mol']*state['extent_derivative_mol_j'])
         extent_rate=state['extent_derivative_mol_j']*hdot
         return [hdot,extent_rate,q,state['co2_enthalpy_j_mol']*extent_rate,
             q/wall_temperature_k,state['co2_entropy_j_mol_k']*extent_rate,q*(1/t-1/wall_temperature_k)]
+
+    def heat_rate(self, temperature_k, wall_temperature_k):
+        if 'radiation' in self.config:
+            p=self.config['radiation']
+            return boundary_heat(surface_temperature_k=temperature_k,gas_temperature_k=wall_temperature_k,
+                radiation_temperature_k=wall_temperature_k,area_m2=p['area_m2'],
+                convection_w_m2_k=self.config['heat_conductance_w_k']/p['area_m2'],
+                emissivity=p['emissivity'],stefan_boltzmann_w_m2_k4=p['stefan_boltzmann_w_m2_k4']).total_in_w
+        return self.config['heat_conductance_w_k']*(wall_temperature_k-temperature_k)
+
+    def heat_temperature_derivative(self, temperature_k):
+        derivative=-self.config['heat_conductance_w_k']
+        if 'radiation' in self.config:
+            p=self.config['radiation']
+            derivative-=4*p['area_m2']*p['emissivity']*p['stefan_boltzmann_w_m2_k4']*temperature_k**3
+        return derivative
 
     def enthalpy_rate_derivative(self, enthalpy_j, wall_temperature_k):
         state=self.state(enthalpy_j)
@@ -51,7 +69,7 @@ class EquilibriumCalciteCalorimeter:
             return [0.]*7
         t=state['temperature_k'];phase=self.reactant if state['phase']=='calcite' else self.product
         temperature_derivative=1/(self.amount*phase.standard(t)['cp_j_mol_k'])
-        conductance=self.config['heat_conductance_w_k'];q=conductance*(wall_temperature_k-t)
-        heat_derivative=-conductance*temperature_derivative
-        production_derivative=(-conductance*(1/t-1/wall_temperature_k)-q/t**2)*temperature_derivative
+        q=self.heat_rate(t,wall_temperature_k);slope=self.heat_temperature_derivative(t)
+        heat_derivative=slope*temperature_derivative
+        production_derivative=(slope*(1/t-1/wall_temperature_k)-q/t**2)*temperature_derivative
         return [heat_derivative,0.,heat_derivative,0.,heat_derivative/wall_temperature_k,0.,production_derivative]
