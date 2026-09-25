@@ -1,0 +1,27 @@
+Traceback (most recent call last):
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_effusion_reservoirs.py", line 89, in <module>
+    main()
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_effusion_reservoirs.py", line 65, in main
+    emit(record('initial',0.,model.initial))
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_effusion_reservoirs.py", line 56, in record
+    states, exchange, heat = model.observe(values)
+                             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/molecular_effusion.py", line 80, in observe
+    states = [self.thermal.at_temperature_inventory(t, row, volume)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/molecular_effusion.py", line 59, in at_temperature_inventory
+    state = self.at_temperature_pressure(temperature, n*self.r*temperature/volume)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/molecular_effusion.py", line 42, in at_temperature_pressure
+    h = np.array([gas.enthalpy_j_mol(temperature) for gas in self.gases])
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/thermochemistry.py", line 202, in enthalpy_j_mol
+    return self.segment_for(temperature_k).enthalpy_j_mol(temperature_k)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/thermochemistry.py", line 188, in segment_for
+    temperature = _number(temperature_k, 'temperature')
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/thermochemistry.py", line 37, in _number
+    raise ThermochemistryError(f'{name}_must_be_finite_number')
+sludge_sandbox.thermochemistry.ThermochemistryError: temperature_must_be_finite_number

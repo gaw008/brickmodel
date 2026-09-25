@@ -1,0 +1,1279 @@
+{
+  "settings": {
+    "sources": {
+      "effusion": {
+        "authors": "Cleuren, Van den Broeck, Kawai",
+        "year": 2006,
+        "doi": "10.1103/PhysRevE.74.021117",
+        "public_preprint": "https://arxiv.org/abs/cond-mat/0606141",
+        "pdf": "https://arxiv.org/pdf/cond-mat/0606141",
+        "local_reading_copy": ".tools/source-cache/effusion2006/cleuren2006.pdf",
+        "locator": "PDFpage2 Eqs3-5; page3 Eqs13/20/21. Page3 visually checked.",
+        "source_scope": "Monatomic ideal-gas effusion; mean translational crossing energy2kBT. Polyatomic internal energy below is a separately derived local-equilibrium extension, not asserted as a result of that paper."
+      },
+      "molecular_flux": {
+        "url": "https://farside.ph.utexas.edu/teaching/355/Surveyhtml/node213.html",
+        "locator": "Eqs5.167-5.172"
+      },
+      "thermal_pressure_ratio": {
+        "url": "https://farside.ph.utexas.edu/teaching/355/Surveyhtml/node224.html",
+        "locator": "Eqs5.284-5.286; held-temperature mass-stationary state, not isolated thermal equilibrium"
+      },
+      "caloric_urls": {
+        "CO2": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C124389&Units=SI&Mask=1#Thermo-Gas",
+        "O2": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7782447&Units=SI&Mask=1#Thermo-Gas",
+        "N2": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7727379&Units=SI&Mask=1#Thermo-Gas"
+      }
+    },
+    "thermochemistry_file": "data/sandbox/thermochemistry/nist_gases_v1.json",
+    "molecular_constants_file": "parameters.nonpolar_gas_transport.json",
+    "species_order": [
+      "CO2",
+      "O2",
+      "N2"
+    ],
+    "reference_pressure_pa": 100000,
+    "area_m2": 1e-08,
+    "source_temperature_interval_k": [
+      300,
+      450
+    ],
+    "internal_mode_extension": "Internal mode energy is statistically independent of center-of-mass speed in an equilibrated ideal gas. Crossing energy is bulku-3RT/2+2RT=h-RT/2. No reaction, adsorption or velocity-selective membrane.",
+    "cases": [
+      {
+        "name": "equilibrium",
+        "left": {
+          "temperature_k": 330,
+          "partial_pressures_pa": [
+            0.3,
+            0.2,
+            0.5
+          ]
+        },
+        "right": {
+          "temperature_k": 330,
+          "partial_pressures_pa": [
+            0.3,
+            0.2,
+            0.5
+          ]
+        }
+      },
+      {
+        "name": "isothermal_pressure",
+        "left": {
+          "temperature_k": 330,
+          "partial_pressures_pa": [
+            0.3,
+            0.2,
+            0.5
+          ]
+        },
+        "right": {
+          "temperature_k": 330,
+          "partial_pressures_pa": [
+            0.15,
+            0.1,
+            0.25
+          ]
+        }
+      },
+      {
+        "name": "equal_pressure_temperature",
+        "left": {
+          "temperature_k": 450,
+          "partial_pressures_pa": [
+            0.3,
+            0.2,
+            0.5
+          ]
+        },
+        "right": {
+          "temperature_k": 300,
+          "partial_pressures_pa": [
+            0.3,
+            0.2,
+            0.5
+          ]
+        }
+      },
+      {
+        "name": "thermal_mass_stationary",
+        "left": {
+          "temperature_k": 450,
+          "partial_pressures_pa": [
+            0.36742346141747667,
+            0.2449489742783178,
+            0.6123724356957945
+          ]
+        },
+        "right": {
+          "temperature_k": 300,
+          "partial_pressures_pa": [
+            0.3,
+            0.2,
+            0.5
+          ]
+        }
+      },
+      {
+        "name": "mixed_driving",
+        "left": {
+          "temperature_k": 450,
+          "partial_pressures_pa": [
+            0.6,
+            0.1,
+            0.3
+          ]
+        },
+        "right": {
+          "temperature_k": 300,
+          "partial_pressures_pa": [
+            0.1,
+            0.15,
+            0.25
+          ]
+        }
+      },
+      {
+        "name": "reversed_driving",
+        "left": {
+          "temperature_k": 300,
+          "partial_pressures_pa": [
+            0.1,
+            0.15,
+            0.25
+          ]
+        },
+        "right": {
+          "temperature_k": 450,
+          "partial_pressures_pa": [
+            0.6,
+            0.1,
+            0.3
+          ]
+        }
+      },
+      {
+        "name": "near_equilibrium",
+        "left": {
+          "temperature_k": 330.0001,
+          "partial_pressures_pa": [
+            0.3000004000001,
+            0.2000002,
+            0.5000003999999
+          ]
+        },
+        "right": {
+          "temperature_k": 330,
+          "partial_pressures_pa": [
+            0.3,
+            0.2,
+            0.5
+          ]
+        }
+      },
+      {
+        "name": "isothermal_counterdiffusion",
+        "left": {
+          "temperature_k": 330,
+          "partial_pressures_pa": [
+            0.6,
+            0.1,
+            0.3
+          ]
+        },
+        "right": {
+          "temperature_k": 330,
+          "partial_pressures_pa": [
+            0.2,
+            0.3,
+            0.5
+          ]
+        }
+      }
+    ],
+    "review": {
+      "decimal_precision": 80,
+      "absolute_species_flux_budget_mol_s": 1e-21,
+      "absolute_energy_flux_budget_w": 1e-16,
+      "absolute_entropy_rate_budget_w_k": 1e-18,
+      "velocity_moment_relative_budget": 1e-14,
+      "gauge_energy_shifts_j_mol": [
+        10000,
+        -50000,
+        20000
+      ],
+      "gauge_entropy_rate_budget_w_k": 1e-18,
+      "thermal_mass_stationary_flux_budget_mol_s": 1e-21,
+      "nonnegative_entropy_allowance_w_k": 1e-20,
+      "reference_quadrature_relative_budget": 1e-13
+    },
+    "physical_scope": "Reservoirs internally equilibrated; molecular mean free path far exceeds zero-thickness aperture diameter. No finite-length pore geometry, intermolecular collision correction, continuum advection, radiative/wall conduction, reaction or brick validation.",
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "thermochemistry": {
+    "schema_version": 1,
+    "pack_id": "nist-webbook-gases-20260907-v1",
+    "model": "ideal_gas_shomate",
+    "energy_reference": "formation_enthalpy_plus_sensible",
+    "reference_temperature_k": 298.15,
+    "units": {
+      "temperature": "K",
+      "enthalpy": "J/mol",
+      "heat_capacity": "J/(mol K)",
+      "inventory": "mol"
+    },
+    "gas_constant": {
+      "value_j_mol_k": 8.31446261815324,
+      "source_ids": [
+        "nist-codata-2022"
+      ],
+      "derivation": "R = exact Avogadro constant * exact Boltzmann constant"
+    },
+    "species": [
+      {
+        "species_id": "O2",
+        "phase": "ideal_gas",
+        "classification": "literature_constitutive_model",
+        "formation_enthalpy_298_j_mol": 0.0,
+        "source_ids": [
+          "nist-webbook-o2-shomate"
+        ],
+        "segments": [
+          {
+            "temperature_range_k": [
+              100,
+              700
+            ],
+            "coefficients": [
+              31.32234,
+              -20.23531,
+              57.86644,
+              -36.50624,
+              -0.007374,
+              -8.903471,
+              246.7945,
+              0
+            ],
+            "source_ids": [
+              "nist-webbook-o2-shomate"
+            ]
+          },
+          {
+            "temperature_range_k": [
+              700,
+              2000
+            ],
+            "coefficients": [
+              30.03235,
+              8.772972,
+              -3.988133,
+              0.788313,
+              -0.741599,
+              -11.32468,
+              236.1663,
+              0
+            ],
+            "source_ids": [
+              "nist-webbook-o2-shomate"
+            ]
+          },
+          {
+            "temperature_range_k": [
+              2000,
+              6000
+            ],
+            "coefficients": [
+              20.91111,
+              10.72071,
+              -2.020498,
+              0.146449,
+              9.245722,
+              5.337651,
+              237.6185,
+              0
+            ],
+            "source_ids": [
+              "nist-webbook-o2-shomate"
+            ]
+          }
+        ]
+      },
+      {
+        "species_id": "N2",
+        "phase": "ideal_gas",
+        "classification": "literature_constitutive_model",
+        "formation_enthalpy_298_j_mol": 0.0,
+        "source_ids": [
+          "nist-webbook-n2-shomate"
+        ],
+        "segments": [
+          {
+            "temperature_range_k": [
+              100,
+              500
+            ],
+            "coefficients": [
+              28.98641,
+              1.853978,
+              -9.647459,
+              16.63537,
+              0.000117,
+              -8.671914,
+              226.4168,
+              0
+            ],
+            "source_ids": [
+              "nist-webbook-n2-shomate"
+            ]
+          },
+          {
+            "temperature_range_k": [
+              500,
+              2000
+            ],
+            "coefficients": [
+              19.50583,
+              19.88705,
+              -8.598535,
+              1.369784,
+              0.527601,
+              -4.935202,
+              212.39,
+              0
+            ],
+            "source_ids": [
+              "nist-webbook-n2-shomate"
+            ]
+          },
+          {
+            "temperature_range_k": [
+              2000,
+              6000
+            ],
+            "coefficients": [
+              35.51872,
+              1.128728,
+              -0.196103,
+              0.014662,
+              -4.55376,
+              -18.97091,
+              224.981,
+              0
+            ],
+            "source_ids": [
+              "nist-webbook-n2-shomate"
+            ]
+          }
+        ]
+      },
+      {
+        "species_id": "CO2",
+        "phase": "ideal_gas",
+        "classification": "literature_constitutive_model",
+        "formation_enthalpy_298_j_mol": -393522.4,
+        "source_ids": [
+          "nist-webbook-co2-shomate"
+        ],
+        "segments": [
+          {
+            "temperature_range_k": [
+              298,
+              1200
+            ],
+            "coefficients": [
+              24.99735,
+              55.18696,
+              -33.69137,
+              7.948387,
+              -0.136638,
+              -403.6075,
+              228.2431,
+              -393.5224
+            ],
+            "source_ids": [
+              "nist-webbook-co2-shomate"
+            ]
+          },
+          {
+            "temperature_range_k": [
+              1200,
+              6000
+            ],
+            "coefficients": [
+              58.16639,
+              2.720074,
+              -0.492289,
+              0.038844,
+              -6.447293,
+              -425.9186,
+              263.6125,
+              -393.5224
+            ],
+            "source_ids": [
+              "nist-webbook-co2-shomate"
+            ]
+          }
+        ]
+      },
+      {
+        "species_id": "H2O",
+        "phase": "ideal_gas",
+        "classification": "literature_constitutive_model",
+        "formation_enthalpy_298_j_mol": -241826.4,
+        "source_ids": [
+          "nist-webbook-h2o-shomate"
+        ],
+        "segments": [
+          {
+            "temperature_range_k": [
+              500,
+              1700
+            ],
+            "coefficients": [
+              30.092,
+              6.832514,
+              6.793435,
+              -2.53448,
+              0.082139,
+              -250.881,
+              223.3967,
+              -241.8264
+            ],
+            "source_ids": [
+              "nist-webbook-h2o-shomate"
+            ]
+          },
+          {
+            "temperature_range_k": [
+              1700,
+              6000
+            ],
+            "coefficients": [
+              41.96426,
+              8.622053,
+              -1.49978,
+              0.098119,
+              -11.15764,
+              -272.1797,
+              219.7809,
+              -241.8264
+            ],
+            "source_ids": [
+              "nist-webbook-h2o-shomate"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "velocity_moments_decimal": {
+    "normal": "0.5",
+    "normal_energy": "0.5",
+    "transverse": "1.7724538509055160272981674833411451827975494561223871282138077898529112845910322",
+    "transverse_energy": "0.88622692545275801364908374167057259139877472806119356410690389492645564229551609",
+    "crossing_translational_energy_over_RT": "2.0"
+  },
+  "all_velocity_moment_budgets_met": true,
+  "records": [
+    {
+      "case": {
+        "name": "equilibrium",
+        "left": {
+          "temperature_k": 330,
+          "partial_pressures_pa": [
+            0.3,
+            0.2,
+            0.5
+          ]
+        },
+        "right": {
+          "temperature_k": 330,
+          "partial_pressures_pa": [
+            0.3,
+            0.2,
+            0.5
+          ]
+        }
+      },
+      "production": {
+        "one_way_species_mol_s": [
+          [
+            1.089134646924802e-10,
+            8.515257702346629e-11,
+            2.2752143660255644e-10
+          ],
+          [
+            1.089134646924802e-10,
+            8.515257702346629e-11,
+            2.2752143660255644e-10
+          ]
+        ],
+        "crossing_energies_j_mol": [
+          [
+            -393691.2998381223,
+            -433.5040138074273,
+            -443.93680014640506
+          ],
+          [
+            -393691.2998381223,
+            -433.5040138074273,
+            -443.93680014640506
+          ]
+        ],
+        "species_mol_s": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "energy_by_species_w": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "energy_w": 0.0,
+        "left_entropy_w_k": 0.0,
+        "right_entropy_w_k": 0.0,
+        "entropy_production_w_k": 0.0
+      },
+      "source_entropy_production_decimal": "0.0",
+      "nonnegative_species_entropy_components_decimal": [
+        [
+          "0.0",
+          "0.0",
+          "0.0"
+        ],
+        [
+          "0.0",
+          "0.0",
+          "0.0"
+        ],
+        [
+          "0.0",
+          "0.0",
+          "0.0"
+        ]
+      ],
+      "errors": {
+        "species_mol_s": 0.0,
+        "energy_w": 0.0,
+        "entropy_w_k": 0.0,
+        "positive_decomposition_w_k": 0.0,
+        "gauge_entropy_w_k": 0.0,
+        "gauge_energy_relation_w": 0.0,
+        "reverse_species_mol_s": 0.0,
+        "reverse_energy_w": 0.0,
+        "reverse_entropy_w_k": 0.0
+      },
+      "within_budgets": {
+        "species": true,
+        "energy": true,
+        "entropy": true,
+        "gauge": true,
+        "reverse": true,
+        "nonnegative_entropy": true,
+        "nonnegative_decomposition": true
+      }
+    },
+    {
+      "case": {
+        "name": "isothermal_pressure",
+        "left": {
+          "temperature_k": 330,
+          "partial_pressures_pa": [
+            0.3,
+            0.2,
+            0.5
+          ]
+        },
+        "right": {
+          "temperature_k": 330,
+          "partial_pressures_pa": [
+            0.15,
+            0.1,
+            0.25
+          ]
+        }
+      },
+      "production": {
+        "one_way_species_mol_s": [
+          [
+            1.089134646924802e-10,
+            8.515257702346629e-11,
+            2.2752143660255644e-10
+          ],
+          [
+            5.44567323462401e-11,
+            4.2576288511733146e-11,
+            1.1376071830127822e-10
+          ]
+        ],
+        "crossing_energies_j_mol": [
+          [
+            -393691.2998381223,
+            -433.5040138074273,
+            -443.93680014640506
+          ],
+          [
+            -393691.2998381223,
+            -433.5040138074273,
+            -443.93680014640506
+          ]
+        ],
+        "species_mol_s": [
+          5.44567323462401e-11,
+          4.2576288511733146e-11,
+          1.1376071830127822e-10
+        ],
+        "energy_by_species_w": [
+          -2.1439141742327984e-05,
+          -1.8456991962859374e-08,
+          -5.050256926502603e-08
+        ],
+        "energy_w": -2.150810130355587e-05,
+        "left_entropy_w_k": -6.391923958014794e-08,
+        "right_entropy_w_k": 6.513407474260913e-08,
+        "entropy_production_w_k": 1.2148351624611955e-09
+      },
+      "source_entropy_production_decimal": "0.0000000012148351624612205412533236700333628941973475893368868407525647835146932597728061",
+      "nonnegative_species_entropy_components_decimal": [
+        [
+          "0.00000000031384211670998433520872672697563813460399277400459537531250152040329985754869908",
+          "0.0",
+          "0.0"
+        ],
+        [
+          "0.00000000024537338052564769101021555524291226994048730749272031906361269722526106874099014",
+          "0.0",
+          "0.0"
+        ],
+        [
+          "0.0000000006556196652255885150343813878148124896528675078395711463764505658861323334831168",
+          "0.0",
+          "0.0"
+        ]
+      ],
+      "errors": {
+        "species_mol_s": 5.236151473858659e-27,
+        "energy_w": 8.382429943020557e-21,
+        "entropy_w_k": 2.5007226572814294e-23,
+        "positive_decomposition_w_k": 4.9090934652977266e-89,
+        "gauge_entropy_w_k": 5.293955920339377e-23,
+        "gauge_energy_relation_w": 2.752857078576476e-21,
+        "reverse_species_mol_s": 0.0,
+        "reverse_energy_w": 0.0,
+        "reverse_entropy_w_k": 0.0
+      },
+      "within_budgets": {
+        "species": true,
+        "energy": true,
+        "entropy": true,
+        "gauge": true,
+        "reverse": true,
+        "nonnegative_entropy": true,
+        "nonnegative_decomposition": true
+      }
+    },
+    {
+      "case": {
+        "name": "equal_pressure_temperature",
+        "left": {
+          "temperature_k": 450,
+          "partial_pressures_pa": [
+            0.3,
+            0.2,
+            0.5
+          ]
+        },
+        "right": {
+          "temperature_k": 300,
+          "partial_pressures_pa": [
+            0.3,
+            0.2,
+            0.5
+          ]
+        }
+      },
+      "production": {
+        "one_way_species_mol_s": [
+          [
+            9.326791899487605e-11,
+            7.29203104359414e-11,
+            1.948377179861234e-10
+          ],
+          [
+            1.1422940545434064e-10,
+            8.93087762267018e-11,
+            2.3862649585714537e-10
+          ]
+        ],
+        "crossing_energies_j_mol": [
+          [
+            -389280.0188667298,
+            2671.83655408219,
+            2566.1686515561464
+          ],
+          [
+            -394703.718039048,
+            -1193.0745187229854,
+            -1193.2618894729856
+          ]
+        ],
+        "species_mol_s": [
+          -2.0961486459464583e-11,
+          -1.63884657907604e-11,
+          -4.378877787102196e-11
+        ],
+        "energy_by_species_w": [
+          8.779433776232183e-06,
+          3.013831761721803e-07,
+          7.84730347361542e-07
+        ],
+        "energy_w": 9.865547299765906e-06,
+        "left_entropy_w_k": 2.128128382572055e-08,
+        "right_entropy_w_k": -1.9293234477926867e-08,
+        "entropy_production_w_k": 1.9880493477936837e-09
+      },
+      "source_entropy_production_decimal": "0.0000000019880493477936772580385457810227039635353403717418870206935198792987933049508718",
+      "nonnegative_species_entropy_components_decimal": [
+        [
+          "0.000000000035332938190057684228139721048372128744127082378126520316193563663791609412811223",
+          "0.00000000032624906119176794650277338455964539731204088739619240047534123815569229866510094",
+          "0.00000000028881250419473559898391205384343792641498403876476712886096588195415722117310979"
+        ],
+        [
+          "0.000000000027624598567214546504937712928288253993795412793104621123449305660999435966336506",
+          "0.00000000017879495471221462788986198809218893661290649010248265670046821618669636881300197",
+          "0.00000000016454454967136726743698527002273738757066031078405228248839145097773861686915499"
+        ],
+        [
+          "0.000000000073810900048855927035875240011264921812397017685361623948677111932775854482941926",
+          "0.00000000046229149993456471417102637152310106552887017458040378887284058442620237592073742",
+          "0.00000000043058834128289894528503403899366794554555895725739599790719252634073952364767713"
+        ]
+      ],
+      "errors": {
+        "species_mol_s": 3.93349875302046e-26,
+        "energy_w": 1.062476914563121e-20,
+        "entropy_w_k": 6.408908116352545e-24,
+        "positive_decomposition_w_k": 5.498184681133454e-89,
+        "gauge_entropy_w_k": 3.308722450212111e-24,
+        "gauge_energy_relation_w": 2.964615315390051e-21,
+        "reverse_species_mol_s": 0.0,
+        "reverse_energy_w": 0.0,
+        "reverse_entropy_w_k": 0.0
+      },
+      "within_budgets": {
+        "species": true,
+        "energy": true,
+        "entropy": true,
+        "gauge": true,
+        "reverse": true,
+        "nonnegative_entropy": true,
+        "nonnegative_decomposition": true
+      }
+    },
+    {
+      "case": {
+        "name": "thermal_mass_stationary",
+        "left": {
+          "temperature_k": 450,
+          "partial_pressures_pa": [
+            0.36742346141747667,
+            0.2449489742783178,
+            0.6123724356957945
+          ]
+        },
+        "right": {
+          "temperature_k": 300,
+          "partial_pressures_pa": [
+            0.3,
+            0.2,
+            0.5
+          ]
+        }
+      },
+      "production": {
+        "one_way_species_mol_s": [
+          [
+            1.142294054543406e-10,
+            8.930877622670178e-11,
+            2.3862649585714537e-10
+          ],
+          [
+            1.1422940545434064e-10,
+            8.93087762267018e-11,
+            2.3862649585714537e-10
+          ]
+        ],
+        "crossing_energies_j_mol": [
+          [
+            -389280.0188667298,
+            2671.83655408219,
+            2566.1686515561464
+          ],
+          [
+            -394703.718039048,
+            -1193.0745187229854,
+            -1193.2618894729856
+          ]
+        ],
+        "species_mol_s": [
+          -3.877409121342317e-26,
+          -2.5849394142282115e-26,
+          0.0
+        ],
+        "energy_by_species_w": [
+          6.19545931817123e-07,
+          3.451704781372593e-07,
+          8.97099736424114e-07
+        ],
+        "energy_w": 1.8618161463784963e-06,
+        "left_entropy_w_k": -4.137369214174381e-09,
+        "right_entropy_w_k": 6.206053821261583e-09,
+        "entropy_production_w_k": 2.068684607087202e-09
+      },
+      "source_entropy_production_decimal": "0.0000000020686846070871997821520278160215890628494141239697370346134042978339867409368701",
+      "nonnegative_species_entropy_components_decimal": [
+        [
+          "1.4075642191767728380186208021526337175254179973542030114677551160196354677630853e-41",
+          "0.0000000003995718644909384508995911892410161705456677889042602352618509896964719948183081",
+          "0.00000000028881250419473559898391205384343792641498403876476712886096588195415722117310979"
+        ],
+        [
+          "1.193372499748340330409039208888297106260366751845252913718075198409758131258052e-42",
+          "0.00000000021897820381447628408008343673453464133463350965493933771309331212785520444638076",
+          "0.00000000016454454967136726743698527002273738757066031078405228248839145097773861686915499"
+        ],
+        [
+          "3.1886037397306440025968099356058451820559037047955033954859718415823282318247503e-42",
+          "0.00000000056618914363278323546642182718617653381947827189160886032474411625756060953180922",
+          "0.00000000043058834128289894528503403899366794554555895725739599790719252634073952364767713"
+        ]
+      ],
+      "errors": {
+        "species_mol_s": 2.4867971145637315e-26,
+        "energy_w": 1.1020732527918215e-20,
+        "entropy_w_k": 2.3873787918111136e-24,
+        "positive_decomposition_w_k": 4.7127297266858175e-89,
+        "gauge_entropy_w_k": 0.0,
+        "gauge_energy_relation_w": 5.769584772557368e-23,
+        "reverse_species_mol_s": 0.0,
+        "reverse_energy_w": 0.0,
+        "reverse_entropy_w_k": 0.0
+      },
+      "within_budgets": {
+        "species": true,
+        "energy": true,
+        "entropy": true,
+        "gauge": true,
+        "reverse": true,
+        "nonnegative_entropy": true,
+        "nonnegative_decomposition": true,
+        "zero_species_flow": true,
+        "nonzero_heat_transfer": true
+      }
+    },
+    {
+      "case": {
+        "name": "mixed_driving",
+        "left": {
+          "temperature_k": 450,
+          "partial_pressures_pa": [
+            0.6,
+            0.1,
+            0.3
+          ]
+        },
+        "right": {
+          "temperature_k": 300,
+          "partial_pressures_pa": [
+            0.1,
+            0.15,
+            0.25
+          ]
+        }
+      },
+      "production": {
+        "one_way_species_mol_s": [
+          [
+            1.865358379897521e-10,
+            3.64601552179707e-11,
+            1.1690263079167402e-10
+          ],
+          [
+            3.807646848478021e-11,
+            6.698158217002635e-11,
+            1.1931324792857268e-10
+          ]
+        ],
+        "crossing_energies_j_mol": [
+          [
+            -389280.0188667298,
+            2671.83655408219,
+            2566.1686515561464
+          ],
+          [
+            -394703.718039048,
+            -1193.0745187229854,
+            -1193.2618894729856
+          ]
+        ],
+        "species_mol_s": [
+          1.484593695049719e-10,
+          -3.052142695205565e-11,
+          -2.4106171368986583e-12
+        ],
+        "energy_by_species_w": [
+          -5.758575085123256e-05,
+          1.773295943896929e-07,
+          4.423638180844436e-07
+        ],
+        "energy_w": -5.6966057438758424e-05,
+        "left_entropy_w_k": -3.9691721406687434e-08,
+        "right_entropy_w_k": 4.326214736335842e-08,
+        "entropy_production_w_k": 3.570425956670984e-09
+      },
+      "source_entropy_production_decimal": "0.0000000035704259566710132102851447001029234307060597977716880149507622926474718271041758",
+      "nonnegative_species_entropy_components_decimal": [
+        [
+          "0.0000000019614310692540633869426468378793623784902470384803782394630031389193293464608167",
+          "0.00000000065249812238353589300554676911929079462408177479238480095068247631138459733020188",
+          "0.000000000096270834731578532994637351281145975471661346254922376286988627318052407057703264"
+        ],
+        [
+          "0.00000000015434187275622573170328746389901130770038832411113697717304991063073741269909983",
+          "0.000000000089397477356107313944930994046094468306453245051241328350234108093348184406500983",
+          "0.00000000012340841225352545057773895251705304067799523308803921186629358823330396265186624"
+        ],
+        [
+          "0.00000000000040909733378859997122348895027085334513125261664480858320982931522472912170646078",
+          "0.00000000027737489996073882850261582291386063931732210474824227332370435065572142555244245",
+          "0.00000000021529417064144947264251701949683397277277947862869799895359626317036976182383857"
+        ]
+      ],
+      "errors": {
+        "species_mol_s": 1.5009259843017566e-27,
+        "energy_w": 1.125930660033279e-20,
+        "entropy_w_k": 2.9048847689210774e-23,
+        "positive_decomposition_w_k": 5.341093690243926e-88,
+        "gauge_entropy_w_k": 3.3087224502121107e-23,
+        "gauge_energy_relation_w": 3.3881317890172014e-21,
+        "reverse_species_mol_s": 0.0,
+        "reverse_energy_w": 0.0,
+        "reverse_entropy_w_k": 0.0
+      },
+      "within_budgets": {
+        "species": true,
+        "energy": true,
+        "entropy": true,
+        "gauge": true,
+        "reverse": true,
+        "nonnegative_entropy": true,
+        "nonnegative_decomposition": true
+      }
+    },
+    {
+      "case": {
+        "name": "reversed_driving",
+        "left": {
+          "temperature_k": 300,
+          "partial_pressures_pa": [
+            0.1,
+            0.15,
+            0.25
+          ]
+        },
+        "right": {
+          "temperature_k": 450,
+          "partial_pressures_pa": [
+            0.6,
+            0.1,
+            0.3
+          ]
+        }
+      },
+      "production": {
+        "one_way_species_mol_s": [
+          [
+            3.807646848478021e-11,
+            6.698158217002635e-11,
+            1.1931324792857268e-10
+          ],
+          [
+            1.865358379897521e-10,
+            3.64601552179707e-11,
+            1.1690263079167402e-10
+          ]
+        ],
+        "crossing_energies_j_mol": [
+          [
+            -394703.718039048,
+            -1193.0745187229854,
+            -1193.2618894729856
+          ],
+          [
+            -389280.0188667298,
+            2671.83655408219,
+            2566.1686515561464
+          ]
+        ],
+        "species_mol_s": [
+          -1.484593695049719e-10,
+          3.052142695205565e-11,
+          2.4106171368986583e-12
+        ],
+        "energy_by_species_w": [
+          5.758575085123256e-05,
+          -1.773295943896929e-07,
+          -4.423638180844436e-07
+        ],
+        "energy_w": 5.6966057438758424e-05,
+        "left_entropy_w_k": 4.326214736335842e-08,
+        "right_entropy_w_k": -3.9691721406687434e-08,
+        "entropy_production_w_k": 3.570425956670984e-09
+      },
+      "source_entropy_production_decimal": "0.0000000035704259566710132102851447001029234307060597977716880149507622926474718271041758",
+      "nonnegative_species_entropy_components_decimal": [
+        [
+          "0.0000000019614310692540633869426468378793623784902470384803782394630031389193293464608167",
+          "0.000000000096270834731578532994637351281145975471661346254922376286988627318052407057703264",
+          "0.00000000065249812238353589300554676911929079462408177479238480095068247631138459733020188"
+        ],
+        [
+          "0.00000000015434187275622573170328746389901130770038832411113697717304991063073741269909983",
+          "0.00000000012340841225352545057773895251705304067799523308803921186629358823330396265186624",
+          "0.000000000089397477356107313944930994046094468306453245051241328350234108093348184406500983"
+        ],
+        [
+          "0.00000000000040909733378859997122348895027085334513125261664480858320982931522472912170646077",
+          "0.00000000021529417064144947264251701949683397277277947862869799895359626317036976182383857",
+          "0.00000000027737489996073882850261582291386063931732210474824227332370435065572142555244245"
+        ]
+      ],
+      "errors": {
+        "species_mol_s": 1.5009259843017566e-27,
+        "energy_w": 1.125930660033279e-20,
+        "entropy_w_k": 2.9048847689210774e-23,
+        "positive_decomposition_w_k": 5.341093690243926e-88,
+        "gauge_entropy_w_k": 3.3087224502121107e-23,
+        "gauge_energy_relation_w": 3.3881317890172014e-21,
+        "reverse_species_mol_s": 0.0,
+        "reverse_energy_w": 0.0,
+        "reverse_entropy_w_k": 0.0
+      },
+      "within_budgets": {
+        "species": true,
+        "energy": true,
+        "entropy": true,
+        "gauge": true,
+        "reverse": true,
+        "nonnegative_entropy": true,
+        "nonnegative_decomposition": true
+      }
+    },
+    {
+      "case": {
+        "name": "near_equilibrium",
+        "left": {
+          "temperature_k": 330.0001,
+          "partial_pressures_pa": [
+            0.3000004000001,
+            0.2000002,
+            0.5000003999999
+          ]
+        },
+        "right": {
+          "temperature_k": 330,
+          "partial_pressures_pa": [
+            0.3,
+            0.2,
+            0.5
+          ]
+        }
+      },
+      "production": {
+        "one_way_species_mol_s": [
+          [
+            1.0891359340841107e-10,
+            8.515264927412774e-11,
+            2.2752158414669553e-10
+          ],
+          [
+            1.089134646924802e-10,
+            8.515257702346629e-11,
+            2.2752143660255644e-10
+          ]
+        ],
+        "crossing_energies_j_mol": [
+          [
+            -393691.2963967465,
+            -433.5014728600514,
+            -443.9343012181196
+          ],
+          [
+            -393691.2998381223,
+            -433.5040138074273,
+            -443.93680014640506
+          ]
+        ],
+        "species_mol_s": [
+          1.2871593086526464e-16,
+          7.225066144853974e-17,
+          1.4754413909209848e-16
+        ],
+        "energy_by_species_w": [
+          -5.029952952902931e-11,
+          1.8504744898186713e-13,
+          5.030598491889805e-13
+        ],
+        "energy_w": -4.961142223085846e-11,
+        "left_entropy_w_k": -1.1028947561808113e-13,
+        "right_entropy_w_k": 1.1028947925306026e-13,
+        "entropy_production_w_k": 3.634979126874859e-21
+      },
+      "source_entropy_production_decimal": "0.0000000000000000000036349791268284576114268134899095732914549341313371428398997764938977577246029593",
+      "nonnegative_species_entropy_components_decimal": [
+        [
+          "0.0000000000000000000012647857338838295212865870103205448529607174928181287153721743885601163922538358",
+          "0.00000000000000000000017209023674013135163430019020945728136199437002735106681411620025410951937454978",
+          "0.0000000000000000000001720899914024824182111676361999898314674091966925450987617348393425629579129865"
+        ],
+        [
+          "0.00000000000000000000050970613354974812975066413745702179300099483956532809509848327553165283706541765",
+          "0.000000000000000000000099342680502921353698604486635801451602727690430673071125773956099280039611830482",
+          "0.000000000000000000000099342575303719735063798106830256078445897507795348021173693568210765395993051323"
+        ],
+        [
+          "0.00000000000000000000079552832665251766575213800956889115315757814838531307721213838921747267983601383",
+          "0.00000000000000000000026104683556655642440979786458440431164384363498661038022818225667868070955357555",
+          "0.0000000000000000000002610466132265510116197560481032065378137712506358453141134796200031171929726108"
+        ]
+      ],
+      "errors": {
+        "species_mol_s": 5.351349823319725e-27,
+        "energy_w": 1.3780014001156672e-21,
+        "entropy_w_k": 4.640119384677072e-32,
+        "positive_decomposition_w_k": 2.9087536080854036e-95,
+        "gauge_entropy_w_k": 0.0,
+        "gauge_energy_relation_w": 1.872943701973193e-21,
+        "reverse_species_mol_s": 0.0,
+        "reverse_energy_w": 0.0,
+        "reverse_entropy_w_k": 0.0
+      },
+      "within_budgets": {
+        "species": true,
+        "energy": true,
+        "entropy": true,
+        "gauge": true,
+        "reverse": true,
+        "nonnegative_entropy": true,
+        "nonnegative_decomposition": true
+      }
+    },
+    {
+      "case": {
+        "name": "isothermal_counterdiffusion",
+        "left": {
+          "temperature_k": 330,
+          "partial_pressures_pa": [
+            0.6,
+            0.1,
+            0.3
+          ]
+        },
+        "right": {
+          "temperature_k": 330,
+          "partial_pressures_pa": [
+            0.2,
+            0.3,
+            0.5
+          ]
+        }
+      },
+      "production": {
+        "one_way_species_mol_s": [
+          [
+            2.178269293849604e-10,
+            4.2576288511733146e-11,
+            1.3651286196153387e-10
+          ],
+          [
+            7.260897646165347e-11,
+            1.2772886553519945e-10,
+            2.2752143660255644e-10
+          ]
+        ],
+        "crossing_energies_j_mol": [
+          [
+            -393691.2998381223,
+            -433.5040138074273,
+            -443.93680014640506
+          ],
+          [
+            -393691.2998381223,
+            -433.5040138074273,
+            -443.93680014640506
+          ]
+        ],
+        "species_mol_s": [
+          1.4521795292330696e-10,
+          -8.51525770234663e-11,
+          -9.100857464102258e-11
+        ],
+        "energy_by_species_w": [
+          -5.717104464620796e-05,
+          3.6913983925718755e-08,
+          4.040205541202083e-08
+        ],
+        "energy_w": -5.709372860687022e-05,
+        "left_entropy_w_k": 8.584848874911525e-09,
+        "right_entropy_w_k": -6.09402372270481e-09,
+        "entropy_production_w_k": 2.4908251522067147e-09
+      },
+      "source_entropy_production_decimal": "0.0000000024908251522067627742770330945735098175468884039594923407908658626317668262305297",
+      "nonnegative_species_entropy_components_decimal": [
+        [
+          "0.0000000013264746296860739449578467022810926143511324988805375617638209949852430005279035",
+          "0.0",
+          "0.0"
+        ],
+        [
+          "0.00000000077781521361666881718610018385940505806620278193498608309257859261916167657852218",
+          "0.0",
+          "0.0"
+        ],
+        [
+          "0.00000000038653530890402001213308620843301214512955312314396869593446627502736214912410402",
+          "0.0",
+          "0.0"
+        ]
+      ],
+      "errors": {
+        "species_mol_s": 3.11960000251445e-26,
+        "energy_w": 2.335079313182327e-20,
+        "entropy_w_k": 4.8102099284079936e-23,
+        "positive_decomposition_w_k": 1.1781824316714544e-89,
+        "gauge_entropy_w_k": 2.0679515313825692e-23,
+        "gauge_energy_relation_w": 1.3552527156068805e-20,
+        "reverse_species_mol_s": 0.0,
+        "reverse_energy_w": 0.0,
+        "reverse_entropy_w_k": 0.0
+      },
+      "within_budgets": {
+        "species": true,
+        "energy": true,
+        "entropy": true,
+        "gauge": true,
+        "reverse": true,
+        "nonnegative_entropy": true,
+        "nonnegative_decomposition": true
+      }
+    }
+  ],
+  "all_requested_budgets_met": true,
+  "material_qualified": false,
+  "training_eligible": false
+}

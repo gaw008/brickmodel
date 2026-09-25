@@ -1,0 +1,214 @@
+{
+  "sources": {
+    "effusion": {
+      "authors": "Cleuren, Van den Broeck, Kawai",
+      "year": 2006,
+      "doi": "10.1103/PhysRevE.74.021117",
+      "public_preprint": "https://arxiv.org/abs/cond-mat/0606141",
+      "pdf": "https://arxiv.org/pdf/cond-mat/0606141",
+      "local_reading_copy": ".tools/source-cache/effusion2006/cleuren2006.pdf",
+      "locator": "PDFpage2 Eqs3-5; page3 Eqs13/20/21. Page3 visually checked.",
+      "source_scope": "Monatomic ideal-gas effusion; mean translational crossing energy2kBT. Polyatomic internal energy below is a separately derived local-equilibrium extension, not asserted as a result of that paper."
+    },
+    "molecular_flux": {
+      "url": "https://farside.ph.utexas.edu/teaching/355/Surveyhtml/node213.html",
+      "locator": "Eqs5.167-5.172"
+    },
+    "thermal_pressure_ratio": {
+      "url": "https://farside.ph.utexas.edu/teaching/355/Surveyhtml/node224.html",
+      "locator": "Eqs5.284-5.286; held-temperature mass-stationary state, not isolated thermal equilibrium"
+    },
+    "caloric_urls": {
+      "CO2": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C124389&Units=SI&Mask=1#Thermo-Gas",
+      "O2": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7782447&Units=SI&Mask=1#Thermo-Gas",
+      "N2": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7727379&Units=SI&Mask=1#Thermo-Gas"
+    }
+  },
+  "thermochemistry_file": "data/sandbox/thermochemistry/nist_gases_v1.json",
+  "molecular_constants_file": "parameters.nonpolar_gas_transport.json",
+  "species_order": [
+    "CO2",
+    "O2",
+    "N2"
+  ],
+  "reference_pressure_pa": 100000,
+  "area_m2": 1e-08,
+  "source_temperature_interval_k": [
+    300,
+    450
+  ],
+  "internal_mode_extension": "Internal mode energy is statistically independent of center-of-mass speed in an equilibrated ideal gas. Crossing energy is bulku-3RT/2+2RT=h-RT/2. No reaction, adsorption or velocity-selective membrane.",
+  "cases": [
+    {
+      "name": "equilibrium",
+      "left": {
+        "temperature_k": 330,
+        "partial_pressures_pa": [
+          0.3,
+          0.2,
+          0.5
+        ]
+      },
+      "right": {
+        "temperature_k": 330,
+        "partial_pressures_pa": [
+          0.3,
+          0.2,
+          0.5
+        ]
+      }
+    },
+    {
+      "name": "isothermal_pressure",
+      "left": {
+        "temperature_k": 330,
+        "partial_pressures_pa": [
+          0.3,
+          0.2,
+          0.5
+        ]
+      },
+      "right": {
+        "temperature_k": 330,
+        "partial_pressures_pa": [
+          0.15,
+          0.1,
+          0.25
+        ]
+      }
+    },
+    {
+      "name": "equal_pressure_temperature",
+      "left": {
+        "temperature_k": 450,
+        "partial_pressures_pa": [
+          0.3,
+          0.2,
+          0.5
+        ]
+      },
+      "right": {
+        "temperature_k": 300,
+        "partial_pressures_pa": [
+          0.3,
+          0.2,
+          0.5
+        ]
+      }
+    },
+    {
+      "name": "thermal_mass_stationary",
+      "left": {
+        "temperature_k": 450,
+        "partial_pressures_pa": [
+          0.36742346141747667,
+          0.2449489742783178,
+          0.6123724356957945
+        ]
+      },
+      "right": {
+        "temperature_k": 300,
+        "partial_pressures_pa": [
+          0.3,
+          0.2,
+          0.5
+        ]
+      }
+    },
+    {
+      "name": "mixed_driving",
+      "left": {
+        "temperature_k": 450,
+        "partial_pressures_pa": [
+          0.6,
+          0.1,
+          0.3
+        ]
+      },
+      "right": {
+        "temperature_k": 300,
+        "partial_pressures_pa": [
+          0.1,
+          0.15,
+          0.25
+        ]
+      }
+    },
+    {
+      "name": "reversed_driving",
+      "left": {
+        "temperature_k": 300,
+        "partial_pressures_pa": [
+          0.1,
+          0.15,
+          0.25
+        ]
+      },
+      "right": {
+        "temperature_k": 450,
+        "partial_pressures_pa": [
+          0.6,
+          0.1,
+          0.3
+        ]
+      }
+    },
+    {
+      "name": "near_equilibrium",
+      "left": {
+        "temperature_k": 330.0001,
+        "partial_pressures_pa": [
+          0.3000004000001,
+          0.2000002,
+          0.5000003999999
+        ]
+      },
+      "right": {
+        "temperature_k": 330,
+        "partial_pressures_pa": [
+          0.3,
+          0.2,
+          0.5
+        ]
+      }
+    },
+    {
+      "name": "isothermal_counterdiffusion",
+      "left": {
+        "temperature_k": 330,
+        "partial_pressures_pa": [
+          0.6,
+          0.1,
+          0.3
+        ]
+      },
+      "right": {
+        "temperature_k": 330,
+        "partial_pressures_pa": [
+          0.2,
+          0.3,
+          0.5
+        ]
+      }
+    }
+  ],
+  "review": {
+    "decimal_precision": 80,
+    "absolute_species_flux_budget_mol_s": 1e-21,
+    "absolute_energy_flux_budget_w": 1e-16,
+    "absolute_entropy_rate_budget_w_k": 1e-18,
+    "velocity_moment_relative_budget": 1e-14,
+    "gauge_energy_shifts_j_mol": [
+      10000,
+      -50000,
+      20000
+    ],
+    "gauge_entropy_rate_budget_w_k": 1e-18,
+    "thermal_mass_stationary_flux_budget_mol_s": 1e-21,
+    "nonnegative_entropy_allowance_w_k": 1e-20,
+    "reference_quadrature_relative_budget": 1e-13
+  },
+  "physical_scope": "Reservoirs internally equilibrated; molecular mean free path far exceeds zero-thickness aperture diameter. No finite-length pore geometry, intermolecular collision correction, continuum advection, radiative/wall conduction, reaction or brick validation.",
+  "material_qualified": false,
+  "training_eligible": false
+}

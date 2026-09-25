@@ -1,0 +1,63 @@
+{
+  "source_review_parameters": "parameters.molecular_effusion_source_review.json",
+  "temperatures_k": [
+    450,
+    300
+  ],
+  "volumes_m3": [
+    0.001,
+    0.002
+  ],
+  "area_m2": 1e-08,
+  "initial_partial_pressures_pa": [
+    [
+      0.6,
+      0.1,
+      0.3
+    ],
+    [
+      0.1,
+      0.15,
+      0.25
+    ]
+  ],
+  "duration_s": 20000,
+  "numerics": {
+    "relative_tolerance": 1e-10,
+    "inventory_absolute_mol": 1e-18,
+    "heat_absolute_j": 1e-12,
+    "entropy_absolute_j_k": 1e-15,
+    "refinement_factor": 0.1,
+    "first_step_s": 0.001,
+    "maximum_step_s": 50,
+    "observation_interval_s": 20,
+    "progress_every_steps": 100
+  },
+  "verification": {
+    "source_flux_mol_s": 1e-20,
+    "source_energy_w": 1e-16,
+    "source_entropy_w_k": 1e-17,
+    "global_species_mol": 1e-17,
+    "local_species_mol": 1e-15,
+    "local_energy_j": 1e-09,
+    "local_entropy_j_k": 1e-11,
+    "analytic_inventory_mol": 1e-15,
+    "analytic_heat_j": 1e-09,
+    "analytic_entropy_j_k": 1e-11,
+    "time_inventory_mol": 1e-15,
+    "time_heat_j": 1e-09,
+    "time_pressure_pa": 1e-08,
+    "nonnegative_entropy_w_k": 1e-18,
+    "nonnegative_step_entropy_j_k": 1e-13,
+    "entropy_quadrature_orders": [
+      2,
+      4
+    ],
+    "source_decimal_precision": 80,
+    "final_pressure_ratio_relative": 1e-09
+  },
+  "analytic_solution": "For eachspecies a_i,s=A/V_s*sqrt(RT_s/(2piM_i)); n_L\u221e=a_R*Ntotal/(a_L+a_R); n_L(t)=n_L\u221e+(n_L0-n_L\u221e)exp(-(a_L+a_R)t). Integrate both affine heat rates exactly. At steady mass balance p_Li/p_Ri=sqrt(T_L/T_R), with sustained energy exchange and thermostat heat.",
+  "physical_input_classification": "Virtual externally heated/cooled finite ideal-gas reservoirs linked by an ideal thin free-molecular aperture; local-equilibrium and ballistic assumptions, no measured apparatus or realbrick.",
+  "material_qualified": false,
+  "training_eligible": false
+}

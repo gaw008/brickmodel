@@ -1,0 +1,1543 @@
+{
+  "failure": "NumPy temperature scalar rejected by source primitive before initial state; no integrated trajectory; see preserved stderr",
+  "headers": {
+    "base": {
+      "kind": "input",
+      "settings": {
+        "source_review_parameters": "parameters.molecular_effusion_source_review.json",
+        "temperatures_k": [
+          450,
+          300
+        ],
+        "volumes_m3": [
+          0.001,
+          0.002
+        ],
+        "area_m2": 1e-08,
+        "initial_partial_pressures_pa": [
+          [
+            0.6,
+            0.1,
+            0.3
+          ],
+          [
+            0.1,
+            0.15,
+            0.25
+          ]
+        ],
+        "duration_s": 20000,
+        "numerics": {
+          "relative_tolerance": 1e-10,
+          "inventory_absolute_mol": 1e-18,
+          "heat_absolute_j": 1e-12,
+          "entropy_absolute_j_k": 1e-15,
+          "refinement_factor": 0.1,
+          "first_step_s": 0.001,
+          "maximum_step_s": 50,
+          "observation_interval_s": 20,
+          "progress_every_steps": 100
+        },
+        "verification": {
+          "source_flux_mol_s": 1e-20,
+          "source_energy_w": 1e-16,
+          "source_entropy_w_k": 1e-17,
+          "global_species_mol": 1e-17,
+          "local_species_mol": 1e-15,
+          "local_energy_j": 1e-09,
+          "local_entropy_j_k": 1e-11,
+          "analytic_inventory_mol": 1e-15,
+          "analytic_heat_j": 1e-09,
+          "analytic_entropy_j_k": 1e-11,
+          "time_inventory_mol": 1e-15,
+          "time_heat_j": 1e-09,
+          "time_pressure_pa": 1e-08,
+          "nonnegative_entropy_w_k": 1e-18,
+          "nonnegative_step_entropy_j_k": 1e-13,
+          "entropy_quadrature_orders": [
+            2,
+            4
+          ],
+          "source_decimal_precision": 80,
+          "final_pressure_ratio_relative": 1e-09
+        },
+        "analytic_solution": "For eachspecies a_i,s=A/V_s*sqrt(RT_s/(2piM_i)); n_L\u221e=a_R*Ntotal/(a_L+a_R); n_L(t)=n_L\u221e+(n_L0-n_L\u221e)exp(-(a_L+a_R)t). Integrate both affine heat rates exactly. At steady mass balance p_Li/p_Ri=sqrt(T_L/T_R), with sustained energy exchange and thermostat heat.",
+        "physical_input_classification": "Virtual externally heated/cooled finite ideal-gas reservoirs linked by an ideal thin free-molecular aperture; local-equilibrium and ballistic assumptions, no measured apparatus or realbrick.",
+        "material_qualified": false,
+        "training_eligible": false
+      },
+      "source_settings": {
+        "sources": {
+          "effusion": {
+            "authors": "Cleuren, Van den Broeck, Kawai",
+            "year": 2006,
+            "doi": "10.1103/PhysRevE.74.021117",
+            "public_preprint": "https://arxiv.org/abs/cond-mat/0606141",
+            "pdf": "https://arxiv.org/pdf/cond-mat/0606141",
+            "local_reading_copy": ".tools/source-cache/effusion2006/cleuren2006.pdf",
+            "locator": "PDFpage2 Eqs3-5; page3 Eqs13/20/21. Page3 visually checked.",
+            "source_scope": "Monatomic ideal-gas effusion; mean translational crossing energy2kBT. Polyatomic internal energy below is a separately derived local-equilibrium extension, not asserted as a result of that paper."
+          },
+          "molecular_flux": {
+            "url": "https://farside.ph.utexas.edu/teaching/355/Surveyhtml/node213.html",
+            "locator": "Eqs5.167-5.172"
+          },
+          "thermal_pressure_ratio": {
+            "url": "https://farside.ph.utexas.edu/teaching/355/Surveyhtml/node224.html",
+            "locator": "Eqs5.284-5.286; held-temperature mass-stationary state, not isolated thermal equilibrium"
+          },
+          "caloric_urls": {
+            "CO2": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C124389&Units=SI&Mask=1#Thermo-Gas",
+            "O2": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7782447&Units=SI&Mask=1#Thermo-Gas",
+            "N2": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7727379&Units=SI&Mask=1#Thermo-Gas"
+          }
+        },
+        "thermochemistry_file": "data/sandbox/thermochemistry/nist_gases_v1.json",
+        "molecular_constants_file": "parameters.nonpolar_gas_transport.json",
+        "species_order": [
+          "CO2",
+          "O2",
+          "N2"
+        ],
+        "reference_pressure_pa": 100000,
+        "area_m2": 1e-08,
+        "source_temperature_interval_k": [
+          300,
+          450
+        ],
+        "internal_mode_extension": "Internal mode energy is statistically independent of center-of-mass speed in an equilibrated ideal gas. Crossing energy is bulku-3RT/2+2RT=h-RT/2. No reaction, adsorption or velocity-selective membrane.",
+        "cases": [
+          {
+            "name": "equilibrium",
+            "left": {
+              "temperature_k": 330,
+              "partial_pressures_pa": [
+                0.3,
+                0.2,
+                0.5
+              ]
+            },
+            "right": {
+              "temperature_k": 330,
+              "partial_pressures_pa": [
+                0.3,
+                0.2,
+                0.5
+              ]
+            }
+          },
+          {
+            "name": "isothermal_pressure",
+            "left": {
+              "temperature_k": 330,
+              "partial_pressures_pa": [
+                0.3,
+                0.2,
+                0.5
+              ]
+            },
+            "right": {
+              "temperature_k": 330,
+              "partial_pressures_pa": [
+                0.15,
+                0.1,
+                0.25
+              ]
+            }
+          },
+          {
+            "name": "equal_pressure_temperature",
+            "left": {
+              "temperature_k": 450,
+              "partial_pressures_pa": [
+                0.3,
+                0.2,
+                0.5
+              ]
+            },
+            "right": {
+              "temperature_k": 300,
+              "partial_pressures_pa": [
+                0.3,
+                0.2,
+                0.5
+              ]
+            }
+          },
+          {
+            "name": "thermal_mass_stationary",
+            "left": {
+              "temperature_k": 450,
+              "partial_pressures_pa": [
+                0.36742346141747667,
+                0.2449489742783178,
+                0.6123724356957945
+              ]
+            },
+            "right": {
+              "temperature_k": 300,
+              "partial_pressures_pa": [
+                0.3,
+                0.2,
+                0.5
+              ]
+            }
+          },
+          {
+            "name": "mixed_driving",
+            "left": {
+              "temperature_k": 450,
+              "partial_pressures_pa": [
+                0.6,
+                0.1,
+                0.3
+              ]
+            },
+            "right": {
+              "temperature_k": 300,
+              "partial_pressures_pa": [
+                0.1,
+                0.15,
+                0.25
+              ]
+            }
+          },
+          {
+            "name": "reversed_driving",
+            "left": {
+              "temperature_k": 300,
+              "partial_pressures_pa": [
+                0.1,
+                0.15,
+                0.25
+              ]
+            },
+            "right": {
+              "temperature_k": 450,
+              "partial_pressures_pa": [
+                0.6,
+                0.1,
+                0.3
+              ]
+            }
+          },
+          {
+            "name": "near_equilibrium",
+            "left": {
+              "temperature_k": 330.0001,
+              "partial_pressures_pa": [
+                0.3000004000001,
+                0.2000002,
+                0.5000003999999
+              ]
+            },
+            "right": {
+              "temperature_k": 330,
+              "partial_pressures_pa": [
+                0.3,
+                0.2,
+                0.5
+              ]
+            }
+          },
+          {
+            "name": "isothermal_counterdiffusion",
+            "left": {
+              "temperature_k": 330,
+              "partial_pressures_pa": [
+                0.6,
+                0.1,
+                0.3
+              ]
+            },
+            "right": {
+              "temperature_k": 330,
+              "partial_pressures_pa": [
+                0.2,
+                0.3,
+                0.5
+              ]
+            }
+          }
+        ],
+        "review": {
+          "decimal_precision": 80,
+          "absolute_species_flux_budget_mol_s": 1e-21,
+          "absolute_energy_flux_budget_w": 1e-16,
+          "absolute_entropy_rate_budget_w_k": 1e-18,
+          "velocity_moment_relative_budget": 1e-14,
+          "gauge_energy_shifts_j_mol": [
+            10000,
+            -50000,
+            20000
+          ],
+          "gauge_entropy_rate_budget_w_k": 1e-18,
+          "thermal_mass_stationary_flux_budget_mol_s": 1e-21,
+          "nonnegative_entropy_allowance_w_k": 1e-20,
+          "reference_quadrature_relative_budget": 1e-13
+        },
+        "physical_scope": "Reservoirs internally equilibrated; molecular mean free path far exceeds zero-thickness aperture diameter. No finite-length pore geometry, intermolecular collision correction, continuum advection, radiative/wall conduction, reaction or brick validation.",
+        "material_qualified": false,
+        "training_eligible": false
+      },
+      "thermochemistry": {
+        "schema_version": 1,
+        "pack_id": "nist-webbook-gases-20260907-v1",
+        "model": "ideal_gas_shomate",
+        "energy_reference": "formation_enthalpy_plus_sensible",
+        "reference_temperature_k": 298.15,
+        "units": {
+          "temperature": "K",
+          "enthalpy": "J/mol",
+          "heat_capacity": "J/(mol K)",
+          "inventory": "mol"
+        },
+        "gas_constant": {
+          "value_j_mol_k": 8.31446261815324,
+          "source_ids": [
+            "nist-codata-2022"
+          ],
+          "derivation": "R = exact Avogadro constant * exact Boltzmann constant"
+        },
+        "species": [
+          {
+            "species_id": "O2",
+            "phase": "ideal_gas",
+            "classification": "literature_constitutive_model",
+            "formation_enthalpy_298_j_mol": 0.0,
+            "source_ids": [
+              "nist-webbook-o2-shomate"
+            ],
+            "segments": [
+              {
+                "temperature_range_k": [
+                  100,
+                  700
+                ],
+                "coefficients": [
+                  31.32234,
+                  -20.23531,
+                  57.86644,
+                  -36.50624,
+                  -0.007374,
+                  -8.903471,
+                  246.7945,
+                  0
+                ],
+                "source_ids": [
+                  "nist-webbook-o2-shomate"
+                ]
+              },
+              {
+                "temperature_range_k": [
+                  700,
+                  2000
+                ],
+                "coefficients": [
+                  30.03235,
+                  8.772972,
+                  -3.988133,
+                  0.788313,
+                  -0.741599,
+                  -11.32468,
+                  236.1663,
+                  0
+                ],
+                "source_ids": [
+                  "nist-webbook-o2-shomate"
+                ]
+              },
+              {
+                "temperature_range_k": [
+                  2000,
+                  6000
+                ],
+                "coefficients": [
+                  20.91111,
+                  10.72071,
+                  -2.020498,
+                  0.146449,
+                  9.245722,
+                  5.337651,
+                  237.6185,
+                  0
+                ],
+                "source_ids": [
+                  "nist-webbook-o2-shomate"
+                ]
+              }
+            ]
+          },
+          {
+            "species_id": "N2",
+            "phase": "ideal_gas",
+            "classification": "literature_constitutive_model",
+            "formation_enthalpy_298_j_mol": 0.0,
+            "source_ids": [
+              "nist-webbook-n2-shomate"
+            ],
+            "segments": [
+              {
+                "temperature_range_k": [
+                  100,
+                  500
+                ],
+                "coefficients": [
+                  28.98641,
+                  1.853978,
+                  -9.647459,
+                  16.63537,
+                  0.000117,
+                  -8.671914,
+                  226.4168,
+                  0
+                ],
+                "source_ids": [
+                  "nist-webbook-n2-shomate"
+                ]
+              },
+              {
+                "temperature_range_k": [
+                  500,
+                  2000
+                ],
+                "coefficients": [
+                  19.50583,
+                  19.88705,
+                  -8.598535,
+                  1.369784,
+                  0.527601,
+                  -4.935202,
+                  212.39,
+                  0
+                ],
+                "source_ids": [
+                  "nist-webbook-n2-shomate"
+                ]
+              },
+              {
+                "temperature_range_k": [
+                  2000,
+                  6000
+                ],
+                "coefficients": [
+                  35.51872,
+                  1.128728,
+                  -0.196103,
+                  0.014662,
+                  -4.55376,
+                  -18.97091,
+                  224.981,
+                  0
+                ],
+                "source_ids": [
+                  "nist-webbook-n2-shomate"
+                ]
+              }
+            ]
+          },
+          {
+            "species_id": "CO2",
+            "phase": "ideal_gas",
+            "classification": "literature_constitutive_model",
+            "formation_enthalpy_298_j_mol": -393522.4,
+            "source_ids": [
+              "nist-webbook-co2-shomate"
+            ],
+            "segments": [
+              {
+                "temperature_range_k": [
+                  298,
+                  1200
+                ],
+                "coefficients": [
+                  24.99735,
+                  55.18696,
+                  -33.69137,
+                  7.948387,
+                  -0.136638,
+                  -403.6075,
+                  228.2431,
+                  -393.5224
+                ],
+                "source_ids": [
+                  "nist-webbook-co2-shomate"
+                ]
+              },
+              {
+                "temperature_range_k": [
+                  1200,
+                  6000
+                ],
+                "coefficients": [
+                  58.16639,
+                  2.720074,
+                  -0.492289,
+                  0.038844,
+                  -6.447293,
+                  -425.9186,
+                  263.6125,
+                  -393.5224
+                ],
+                "source_ids": [
+                  "nist-webbook-co2-shomate"
+                ]
+              }
+            ]
+          },
+          {
+            "species_id": "H2O",
+            "phase": "ideal_gas",
+            "classification": "literature_constitutive_model",
+            "formation_enthalpy_298_j_mol": -241826.4,
+            "source_ids": [
+              "nist-webbook-h2o-shomate"
+            ],
+            "segments": [
+              {
+                "temperature_range_k": [
+                  500,
+                  1700
+                ],
+                "coefficients": [
+                  30.092,
+                  6.832514,
+                  6.793435,
+                  -2.53448,
+                  0.082139,
+                  -250.881,
+                  223.3967,
+                  -241.8264
+                ],
+                "source_ids": [
+                  "nist-webbook-h2o-shomate"
+                ]
+              },
+              {
+                "temperature_range_k": [
+                  1700,
+                  6000
+                ],
+                "coefficients": [
+                  41.96426,
+                  8.622053,
+                  -1.49978,
+                  0.098119,
+                  -11.15764,
+                  -272.1797,
+                  219.7809,
+                  -241.8264
+                ],
+                "source_ids": [
+                  "nist-webbook-h2o-shomate"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "molecular_settings": {
+        "source_files": {
+          "collision_integrals": "data/sandbox/research/gas-transport-source-v1/source/MMCollisionInt.cpp",
+          "collision_header": "data/sandbox/research/gas-transport-source-v1/source/MMCollisionInt.h",
+          "gas_transport": "data/sandbox/research/gas-transport-source-v1/source/GasTransport.cpp",
+          "gri30": "data/sandbox/research/gas-transport-source-v1/source/gri30.yaml",
+          "nist_tables": "data/sandbox/research/gas-transport-source-v1/source/nist-selected-tables.json"
+        },
+        "source_version": "Cantera v3.2.0, source collision formulas before temperature polynomial fitting",
+        "constants": {
+          "boltzmann_j_k": "1.380649e-23",
+          "avogadro_mol_inverse": "6.02214076e23",
+          "angstrom_m": "1e-10",
+          "gram_kg": "1e-3",
+          "micropascal_pa": "1e-6",
+          "source": "https://physics.nist.gov/cuu/Constants/Table/allascii.txt",
+          "classification": "kB and NA exact SI; metric prefixes exact; molecular masses taken from the selected historical NIST compilation"
+        },
+        "species": {
+          "CO": {
+            "well_depth_over_kb_k": "98.1",
+            "diameter_angstrom": "3.65",
+            "molar_mass_g_mol": "28.0104",
+            "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+            "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-5"
+          },
+          "CO2": {
+            "well_depth_over_kb_k": "244.0",
+            "diameter_angstrom": "3.763",
+            "molar_mass_g_mol": "44.010",
+            "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+            "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-4"
+          },
+          "O2": {
+            "well_depth_over_kb_k": "107.4",
+            "diameter_angstrom": "3.458",
+            "molar_mass_g_mol": "31.999",
+            "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+            "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+          },
+          "N2": {
+            "well_depth_over_kb_k": "97.53",
+            "diameter_angstrom": "3.621",
+            "molar_mass_g_mol": "28.0135",
+            "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+            "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+          }
+        },
+        "collision_tables": {
+          "reduced_temperature": [
+            "0.1",
+            "0.2",
+            "0.3",
+            "0.4",
+            "0.5",
+            "0.6",
+            "0.7",
+            "0.8",
+            "0.9",
+            "1.0",
+            "1.2",
+            "1.4",
+            "1.6",
+            "1.8",
+            "2.0",
+            "2.5",
+            "3.0",
+            "3.5",
+            "4.0",
+            "5.0",
+            "6.0",
+            "7.0",
+            "8.0",
+            "9.0",
+            "10.0",
+            "12.0",
+            "14.0",
+            "16.0",
+            "18.0",
+            "20.0",
+            "25.0",
+            "30.0",
+            "35.0",
+            "40.0",
+            "50.0",
+            "75.0",
+            "100.0"
+          ],
+          "omega22_delta_zero": [
+            "4.1005",
+            "3.2626",
+            "2.8399",
+            "2.531",
+            "2.2837",
+            "2.0838",
+            "1.922",
+            "1.7902",
+            "1.6823",
+            "1.5929",
+            "1.4551",
+            "1.3551",
+            "1.28",
+            "1.2219",
+            "1.1757",
+            "1.0933",
+            "1.0388",
+            "0.99963",
+            "0.96988",
+            "0.92676",
+            "0.89616",
+            "0.87272",
+            "0.85379",
+            "0.83795",
+            "0.82435",
+            "0.80184",
+            "0.78363",
+            "0.76834",
+            "0.75518",
+            "0.74364",
+            "0.71982",
+            "0.70097",
+            "0.68545",
+            "0.67232",
+            "0.65099",
+            "0.61397",
+            "0.5887"
+          ],
+          "astar_delta_zero": [
+            "1.0231",
+            "1.0424",
+            "1.0719",
+            "1.0936",
+            "1.1053",
+            "1.1104",
+            "1.1114",
+            "1.1104",
+            "1.1086",
+            "1.1063",
+            "1.1020",
+            "1.0985",
+            "1.0960",
+            "1.0943",
+            "1.0934",
+            "1.0926",
+            "1.0934",
+            "1.0948",
+            "1.0965",
+            "1.0997",
+            "1.1025",
+            "1.1050",
+            "1.1072",
+            "1.1091",
+            "1.1107",
+            "1.1133",
+            "1.1154",
+            "1.1172",
+            "1.1186",
+            "1.1199",
+            "1.1223",
+            "1.1243",
+            "1.1259",
+            "1.1273",
+            "1.1297",
+            "1.1339",
+            "1.1364"
+          ]
+        },
+        "review": {
+          "decimal_precision": 80,
+          "temperatures_k": [
+            300,
+            400,
+            500,
+            600,
+            700,
+            800,
+            900,
+            1000,
+            1100,
+            1200
+          ],
+          "pressures_pa": [
+            50000,
+            100000,
+            200000
+          ],
+          "relative_arithmetic_budget": 1e-13,
+          "relative_symmetry_budget": 1e-14,
+          "relative_pressure_scaling_budget": 1e-14,
+          "nist_uncertainty_fraction": {
+            "CO": 0.05,
+            "CO2": 0.05,
+            "O2": 0.005,
+            "N2": 0.03
+          },
+          "nist_rounding_half_unit_micro_pa_s": {
+            "CO": 0.05,
+            "CO2": 0.005,
+            "O2": 0.005,
+            "N2": 0.05
+          },
+          "selected_calculation_temperature_domain_k": [
+            300,
+            1200
+          ],
+          "table_comparison_temperature_domain_k": [
+            300,
+            1000
+          ]
+        },
+        "scope": "Pure dilute-gas viscosity and first-order binary molecular diffusion only; explicit zero-dipole LJ approximation. No mixture-viscosity, porous effective diffusivity, Darcy permeability, multicomponent flux, Soret or brick qualification. GRI NASA thermo and reactions are not imported. No post-fit calibration to NIST tables. NIST comparison pressure is unspecified on selected pages; agreement is not pressure-matched experimental validation.",
+        "material_qualified": false,
+        "training_eligible": false
+      },
+      "molar_masses_kg_mol": [
+        0.04401,
+        0.031999,
+        0.0280135
+      ],
+      "relative_tolerance": 1e-10,
+      "absolute_tolerances": [
+        1e-18,
+        1e-18,
+        1e-18,
+        1e-18,
+        1e-18,
+        1e-18,
+        1e-12,
+        1e-12,
+        1e-15
+      ],
+      "material_qualified": false,
+      "training_eligible": false
+    },
+    "refined": {
+      "kind": "input",
+      "settings": {
+        "source_review_parameters": "parameters.molecular_effusion_source_review.json",
+        "temperatures_k": [
+          450,
+          300
+        ],
+        "volumes_m3": [
+          0.001,
+          0.002
+        ],
+        "area_m2": 1e-08,
+        "initial_partial_pressures_pa": [
+          [
+            0.6,
+            0.1,
+            0.3
+          ],
+          [
+            0.1,
+            0.15,
+            0.25
+          ]
+        ],
+        "duration_s": 20000,
+        "numerics": {
+          "relative_tolerance": 1e-10,
+          "inventory_absolute_mol": 1e-18,
+          "heat_absolute_j": 1e-12,
+          "entropy_absolute_j_k": 1e-15,
+          "refinement_factor": 0.1,
+          "first_step_s": 0.001,
+          "maximum_step_s": 50,
+          "observation_interval_s": 20,
+          "progress_every_steps": 100
+        },
+        "verification": {
+          "source_flux_mol_s": 1e-20,
+          "source_energy_w": 1e-16,
+          "source_entropy_w_k": 1e-17,
+          "global_species_mol": 1e-17,
+          "local_species_mol": 1e-15,
+          "local_energy_j": 1e-09,
+          "local_entropy_j_k": 1e-11,
+          "analytic_inventory_mol": 1e-15,
+          "analytic_heat_j": 1e-09,
+          "analytic_entropy_j_k": 1e-11,
+          "time_inventory_mol": 1e-15,
+          "time_heat_j": 1e-09,
+          "time_pressure_pa": 1e-08,
+          "nonnegative_entropy_w_k": 1e-18,
+          "nonnegative_step_entropy_j_k": 1e-13,
+          "entropy_quadrature_orders": [
+            2,
+            4
+          ],
+          "source_decimal_precision": 80,
+          "final_pressure_ratio_relative": 1e-09
+        },
+        "analytic_solution": "For eachspecies a_i,s=A/V_s*sqrt(RT_s/(2piM_i)); n_L\u221e=a_R*Ntotal/(a_L+a_R); n_L(t)=n_L\u221e+(n_L0-n_L\u221e)exp(-(a_L+a_R)t). Integrate both affine heat rates exactly. At steady mass balance p_Li/p_Ri=sqrt(T_L/T_R), with sustained energy exchange and thermostat heat.",
+        "physical_input_classification": "Virtual externally heated/cooled finite ideal-gas reservoirs linked by an ideal thin free-molecular aperture; local-equilibrium and ballistic assumptions, no measured apparatus or realbrick.",
+        "material_qualified": false,
+        "training_eligible": false
+      },
+      "source_settings": {
+        "sources": {
+          "effusion": {
+            "authors": "Cleuren, Van den Broeck, Kawai",
+            "year": 2006,
+            "doi": "10.1103/PhysRevE.74.021117",
+            "public_preprint": "https://arxiv.org/abs/cond-mat/0606141",
+            "pdf": "https://arxiv.org/pdf/cond-mat/0606141",
+            "local_reading_copy": ".tools/source-cache/effusion2006/cleuren2006.pdf",
+            "locator": "PDFpage2 Eqs3-5; page3 Eqs13/20/21. Page3 visually checked.",
+            "source_scope": "Monatomic ideal-gas effusion; mean translational crossing energy2kBT. Polyatomic internal energy below is a separately derived local-equilibrium extension, not asserted as a result of that paper."
+          },
+          "molecular_flux": {
+            "url": "https://farside.ph.utexas.edu/teaching/355/Surveyhtml/node213.html",
+            "locator": "Eqs5.167-5.172"
+          },
+          "thermal_pressure_ratio": {
+            "url": "https://farside.ph.utexas.edu/teaching/355/Surveyhtml/node224.html",
+            "locator": "Eqs5.284-5.286; held-temperature mass-stationary state, not isolated thermal equilibrium"
+          },
+          "caloric_urls": {
+            "CO2": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C124389&Units=SI&Mask=1#Thermo-Gas",
+            "O2": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7782447&Units=SI&Mask=1#Thermo-Gas",
+            "N2": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7727379&Units=SI&Mask=1#Thermo-Gas"
+          }
+        },
+        "thermochemistry_file": "data/sandbox/thermochemistry/nist_gases_v1.json",
+        "molecular_constants_file": "parameters.nonpolar_gas_transport.json",
+        "species_order": [
+          "CO2",
+          "O2",
+          "N2"
+        ],
+        "reference_pressure_pa": 100000,
+        "area_m2": 1e-08,
+        "source_temperature_interval_k": [
+          300,
+          450
+        ],
+        "internal_mode_extension": "Internal mode energy is statistically independent of center-of-mass speed in an equilibrated ideal gas. Crossing energy is bulku-3RT/2+2RT=h-RT/2. No reaction, adsorption or velocity-selective membrane.",
+        "cases": [
+          {
+            "name": "equilibrium",
+            "left": {
+              "temperature_k": 330,
+              "partial_pressures_pa": [
+                0.3,
+                0.2,
+                0.5
+              ]
+            },
+            "right": {
+              "temperature_k": 330,
+              "partial_pressures_pa": [
+                0.3,
+                0.2,
+                0.5
+              ]
+            }
+          },
+          {
+            "name": "isothermal_pressure",
+            "left": {
+              "temperature_k": 330,
+              "partial_pressures_pa": [
+                0.3,
+                0.2,
+                0.5
+              ]
+            },
+            "right": {
+              "temperature_k": 330,
+              "partial_pressures_pa": [
+                0.15,
+                0.1,
+                0.25
+              ]
+            }
+          },
+          {
+            "name": "equal_pressure_temperature",
+            "left": {
+              "temperature_k": 450,
+              "partial_pressures_pa": [
+                0.3,
+                0.2,
+                0.5
+              ]
+            },
+            "right": {
+              "temperature_k": 300,
+              "partial_pressures_pa": [
+                0.3,
+                0.2,
+                0.5
+              ]
+            }
+          },
+          {
+            "name": "thermal_mass_stationary",
+            "left": {
+              "temperature_k": 450,
+              "partial_pressures_pa": [
+                0.36742346141747667,
+                0.2449489742783178,
+                0.6123724356957945
+              ]
+            },
+            "right": {
+              "temperature_k": 300,
+              "partial_pressures_pa": [
+                0.3,
+                0.2,
+                0.5
+              ]
+            }
+          },
+          {
+            "name": "mixed_driving",
+            "left": {
+              "temperature_k": 450,
+              "partial_pressures_pa": [
+                0.6,
+                0.1,
+                0.3
+              ]
+            },
+            "right": {
+              "temperature_k": 300,
+              "partial_pressures_pa": [
+                0.1,
+                0.15,
+                0.25
+              ]
+            }
+          },
+          {
+            "name": "reversed_driving",
+            "left": {
+              "temperature_k": 300,
+              "partial_pressures_pa": [
+                0.1,
+                0.15,
+                0.25
+              ]
+            },
+            "right": {
+              "temperature_k": 450,
+              "partial_pressures_pa": [
+                0.6,
+                0.1,
+                0.3
+              ]
+            }
+          },
+          {
+            "name": "near_equilibrium",
+            "left": {
+              "temperature_k": 330.0001,
+              "partial_pressures_pa": [
+                0.3000004000001,
+                0.2000002,
+                0.5000003999999
+              ]
+            },
+            "right": {
+              "temperature_k": 330,
+              "partial_pressures_pa": [
+                0.3,
+                0.2,
+                0.5
+              ]
+            }
+          },
+          {
+            "name": "isothermal_counterdiffusion",
+            "left": {
+              "temperature_k": 330,
+              "partial_pressures_pa": [
+                0.6,
+                0.1,
+                0.3
+              ]
+            },
+            "right": {
+              "temperature_k": 330,
+              "partial_pressures_pa": [
+                0.2,
+                0.3,
+                0.5
+              ]
+            }
+          }
+        ],
+        "review": {
+          "decimal_precision": 80,
+          "absolute_species_flux_budget_mol_s": 1e-21,
+          "absolute_energy_flux_budget_w": 1e-16,
+          "absolute_entropy_rate_budget_w_k": 1e-18,
+          "velocity_moment_relative_budget": 1e-14,
+          "gauge_energy_shifts_j_mol": [
+            10000,
+            -50000,
+            20000
+          ],
+          "gauge_entropy_rate_budget_w_k": 1e-18,
+          "thermal_mass_stationary_flux_budget_mol_s": 1e-21,
+          "nonnegative_entropy_allowance_w_k": 1e-20,
+          "reference_quadrature_relative_budget": 1e-13
+        },
+        "physical_scope": "Reservoirs internally equilibrated; molecular mean free path far exceeds zero-thickness aperture diameter. No finite-length pore geometry, intermolecular collision correction, continuum advection, radiative/wall conduction, reaction or brick validation.",
+        "material_qualified": false,
+        "training_eligible": false
+      },
+      "thermochemistry": {
+        "schema_version": 1,
+        "pack_id": "nist-webbook-gases-20260907-v1",
+        "model": "ideal_gas_shomate",
+        "energy_reference": "formation_enthalpy_plus_sensible",
+        "reference_temperature_k": 298.15,
+        "units": {
+          "temperature": "K",
+          "enthalpy": "J/mol",
+          "heat_capacity": "J/(mol K)",
+          "inventory": "mol"
+        },
+        "gas_constant": {
+          "value_j_mol_k": 8.31446261815324,
+          "source_ids": [
+            "nist-codata-2022"
+          ],
+          "derivation": "R = exact Avogadro constant * exact Boltzmann constant"
+        },
+        "species": [
+          {
+            "species_id": "O2",
+            "phase": "ideal_gas",
+            "classification": "literature_constitutive_model",
+            "formation_enthalpy_298_j_mol": 0.0,
+            "source_ids": [
+              "nist-webbook-o2-shomate"
+            ],
+            "segments": [
+              {
+                "temperature_range_k": [
+                  100,
+                  700
+                ],
+                "coefficients": [
+                  31.32234,
+                  -20.23531,
+                  57.86644,
+                  -36.50624,
+                  -0.007374,
+                  -8.903471,
+                  246.7945,
+                  0
+                ],
+                "source_ids": [
+                  "nist-webbook-o2-shomate"
+                ]
+              },
+              {
+                "temperature_range_k": [
+                  700,
+                  2000
+                ],
+                "coefficients": [
+                  30.03235,
+                  8.772972,
+                  -3.988133,
+                  0.788313,
+                  -0.741599,
+                  -11.32468,
+                  236.1663,
+                  0
+                ],
+                "source_ids": [
+                  "nist-webbook-o2-shomate"
+                ]
+              },
+              {
+                "temperature_range_k": [
+                  2000,
+                  6000
+                ],
+                "coefficients": [
+                  20.91111,
+                  10.72071,
+                  -2.020498,
+                  0.146449,
+                  9.245722,
+                  5.337651,
+                  237.6185,
+                  0
+                ],
+                "source_ids": [
+                  "nist-webbook-o2-shomate"
+                ]
+              }
+            ]
+          },
+          {
+            "species_id": "N2",
+            "phase": "ideal_gas",
+            "classification": "literature_constitutive_model",
+            "formation_enthalpy_298_j_mol": 0.0,
+            "source_ids": [
+              "nist-webbook-n2-shomate"
+            ],
+            "segments": [
+              {
+                "temperature_range_k": [
+                  100,
+                  500
+                ],
+                "coefficients": [
+                  28.98641,
+                  1.853978,
+                  -9.647459,
+                  16.63537,
+                  0.000117,
+                  -8.671914,
+                  226.4168,
+                  0
+                ],
+                "source_ids": [
+                  "nist-webbook-n2-shomate"
+                ]
+              },
+              {
+                "temperature_range_k": [
+                  500,
+                  2000
+                ],
+                "coefficients": [
+                  19.50583,
+                  19.88705,
+                  -8.598535,
+                  1.369784,
+                  0.527601,
+                  -4.935202,
+                  212.39,
+                  0
+                ],
+                "source_ids": [
+                  "nist-webbook-n2-shomate"
+                ]
+              },
+              {
+                "temperature_range_k": [
+                  2000,
+                  6000
+                ],
+                "coefficients": [
+                  35.51872,
+                  1.128728,
+                  -0.196103,
+                  0.014662,
+                  -4.55376,
+                  -18.97091,
+                  224.981,
+                  0
+                ],
+                "source_ids": [
+                  "nist-webbook-n2-shomate"
+                ]
+              }
+            ]
+          },
+          {
+            "species_id": "CO2",
+            "phase": "ideal_gas",
+            "classification": "literature_constitutive_model",
+            "formation_enthalpy_298_j_mol": -393522.4,
+            "source_ids": [
+              "nist-webbook-co2-shomate"
+            ],
+            "segments": [
+              {
+                "temperature_range_k": [
+                  298,
+                  1200
+                ],
+                "coefficients": [
+                  24.99735,
+                  55.18696,
+                  -33.69137,
+                  7.948387,
+                  -0.136638,
+                  -403.6075,
+                  228.2431,
+                  -393.5224
+                ],
+                "source_ids": [
+                  "nist-webbook-co2-shomate"
+                ]
+              },
+              {
+                "temperature_range_k": [
+                  1200,
+                  6000
+                ],
+                "coefficients": [
+                  58.16639,
+                  2.720074,
+                  -0.492289,
+                  0.038844,
+                  -6.447293,
+                  -425.9186,
+                  263.6125,
+                  -393.5224
+                ],
+                "source_ids": [
+                  "nist-webbook-co2-shomate"
+                ]
+              }
+            ]
+          },
+          {
+            "species_id": "H2O",
+            "phase": "ideal_gas",
+            "classification": "literature_constitutive_model",
+            "formation_enthalpy_298_j_mol": -241826.4,
+            "source_ids": [
+              "nist-webbook-h2o-shomate"
+            ],
+            "segments": [
+              {
+                "temperature_range_k": [
+                  500,
+                  1700
+                ],
+                "coefficients": [
+                  30.092,
+                  6.832514,
+                  6.793435,
+                  -2.53448,
+                  0.082139,
+                  -250.881,
+                  223.3967,
+                  -241.8264
+                ],
+                "source_ids": [
+                  "nist-webbook-h2o-shomate"
+                ]
+              },
+              {
+                "temperature_range_k": [
+                  1700,
+                  6000
+                ],
+                "coefficients": [
+                  41.96426,
+                  8.622053,
+                  -1.49978,
+                  0.098119,
+                  -11.15764,
+                  -272.1797,
+                  219.7809,
+                  -241.8264
+                ],
+                "source_ids": [
+                  "nist-webbook-h2o-shomate"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "molecular_settings": {
+        "source_files": {
+          "collision_integrals": "data/sandbox/research/gas-transport-source-v1/source/MMCollisionInt.cpp",
+          "collision_header": "data/sandbox/research/gas-transport-source-v1/source/MMCollisionInt.h",
+          "gas_transport": "data/sandbox/research/gas-transport-source-v1/source/GasTransport.cpp",
+          "gri30": "data/sandbox/research/gas-transport-source-v1/source/gri30.yaml",
+          "nist_tables": "data/sandbox/research/gas-transport-source-v1/source/nist-selected-tables.json"
+        },
+        "source_version": "Cantera v3.2.0, source collision formulas before temperature polynomial fitting",
+        "constants": {
+          "boltzmann_j_k": "1.380649e-23",
+          "avogadro_mol_inverse": "6.02214076e23",
+          "angstrom_m": "1e-10",
+          "gram_kg": "1e-3",
+          "micropascal_pa": "1e-6",
+          "source": "https://physics.nist.gov/cuu/Constants/Table/allascii.txt",
+          "classification": "kB and NA exact SI; metric prefixes exact; molecular masses taken from the selected historical NIST compilation"
+        },
+        "species": {
+          "CO": {
+            "well_depth_over_kb_k": "98.1",
+            "diameter_angstrom": "3.65",
+            "molar_mass_g_mol": "28.0104",
+            "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+            "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-5"
+          },
+          "CO2": {
+            "well_depth_over_kb_k": "244.0",
+            "diameter_angstrom": "3.763",
+            "molar_mass_g_mol": "44.010",
+            "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+            "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-4"
+          },
+          "O2": {
+            "well_depth_over_kb_k": "107.4",
+            "diameter_angstrom": "3.458",
+            "molar_mass_g_mol": "31.999",
+            "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+            "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+          },
+          "N2": {
+            "well_depth_over_kb_k": "97.53",
+            "diameter_angstrom": "3.621",
+            "molar_mass_g_mol": "28.0135",
+            "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+            "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+          }
+        },
+        "collision_tables": {
+          "reduced_temperature": [
+            "0.1",
+            "0.2",
+            "0.3",
+            "0.4",
+            "0.5",
+            "0.6",
+            "0.7",
+            "0.8",
+            "0.9",
+            "1.0",
+            "1.2",
+            "1.4",
+            "1.6",
+            "1.8",
+            "2.0",
+            "2.5",
+            "3.0",
+            "3.5",
+            "4.0",
+            "5.0",
+            "6.0",
+            "7.0",
+            "8.0",
+            "9.0",
+            "10.0",
+            "12.0",
+            "14.0",
+            "16.0",
+            "18.0",
+            "20.0",
+            "25.0",
+            "30.0",
+            "35.0",
+            "40.0",
+            "50.0",
+            "75.0",
+            "100.0"
+          ],
+          "omega22_delta_zero": [
+            "4.1005",
+            "3.2626",
+            "2.8399",
+            "2.531",
+            "2.2837",
+            "2.0838",
+            "1.922",
+            "1.7902",
+            "1.6823",
+            "1.5929",
+            "1.4551",
+            "1.3551",
+            "1.28",
+            "1.2219",
+            "1.1757",
+            "1.0933",
+            "1.0388",
+            "0.99963",
+            "0.96988",
+            "0.92676",
+            "0.89616",
+            "0.87272",
+            "0.85379",
+            "0.83795",
+            "0.82435",
+            "0.80184",
+            "0.78363",
+            "0.76834",
+            "0.75518",
+            "0.74364",
+            "0.71982",
+            "0.70097",
+            "0.68545",
+            "0.67232",
+            "0.65099",
+            "0.61397",
+            "0.5887"
+          ],
+          "astar_delta_zero": [
+            "1.0231",
+            "1.0424",
+            "1.0719",
+            "1.0936",
+            "1.1053",
+            "1.1104",
+            "1.1114",
+            "1.1104",
+            "1.1086",
+            "1.1063",
+            "1.1020",
+            "1.0985",
+            "1.0960",
+            "1.0943",
+            "1.0934",
+            "1.0926",
+            "1.0934",
+            "1.0948",
+            "1.0965",
+            "1.0997",
+            "1.1025",
+            "1.1050",
+            "1.1072",
+            "1.1091",
+            "1.1107",
+            "1.1133",
+            "1.1154",
+            "1.1172",
+            "1.1186",
+            "1.1199",
+            "1.1223",
+            "1.1243",
+            "1.1259",
+            "1.1273",
+            "1.1297",
+            "1.1339",
+            "1.1364"
+          ]
+        },
+        "review": {
+          "decimal_precision": 80,
+          "temperatures_k": [
+            300,
+            400,
+            500,
+            600,
+            700,
+            800,
+            900,
+            1000,
+            1100,
+            1200
+          ],
+          "pressures_pa": [
+            50000,
+            100000,
+            200000
+          ],
+          "relative_arithmetic_budget": 1e-13,
+          "relative_symmetry_budget": 1e-14,
+          "relative_pressure_scaling_budget": 1e-14,
+          "nist_uncertainty_fraction": {
+            "CO": 0.05,
+            "CO2": 0.05,
+            "O2": 0.005,
+            "N2": 0.03
+          },
+          "nist_rounding_half_unit_micro_pa_s": {
+            "CO": 0.05,
+            "CO2": 0.005,
+            "O2": 0.005,
+            "N2": 0.05
+          },
+          "selected_calculation_temperature_domain_k": [
+            300,
+            1200
+          ],
+          "table_comparison_temperature_domain_k": [
+            300,
+            1000
+          ]
+        },
+        "scope": "Pure dilute-gas viscosity and first-order binary molecular diffusion only; explicit zero-dipole LJ approximation. No mixture-viscosity, porous effective diffusivity, Darcy permeability, multicomponent flux, Soret or brick qualification. GRI NASA thermo and reactions are not imported. No post-fit calibration to NIST tables. NIST comparison pressure is unspecified on selected pages; agreement is not pressure-matched experimental validation.",
+        "material_qualified": false,
+        "training_eligible": false
+      },
+      "molar_masses_kg_mol": [
+        0.04401,
+        0.031999,
+        0.0280135
+      ],
+      "relative_tolerance": 1.0000000000000001e-11,
+      "absolute_tolerances": [
+        1.0000000000000001e-19,
+        1.0000000000000001e-19,
+        1.0000000000000001e-19,
+        1.0000000000000001e-19,
+        1.0000000000000001e-19,
+        1.0000000000000001e-19,
+        1e-13,
+        1e-13,
+        1.0000000000000001e-16
+      ],
+      "material_qualified": false,
+      "training_eligible": false
+    }
+  }
+}
