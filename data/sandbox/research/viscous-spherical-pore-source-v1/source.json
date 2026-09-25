@@ -1,0 +1,60 @@
+{
+  "sources": [
+    {
+      "id": "brennen1995",
+      "title": "Cavitation and Bubble Dynamics",
+      "url": "https://authors.library.caltech.edu/records/4g53z-vj984",
+      "pdf_url": "https://authors.library.caltech.edu/records/4g53z-vj984/files/BUBBOOK.pdf?download=1",
+      "equations": [
+        "2.10",
+        "2.11"
+      ],
+      "pdf_one_based_page": 50,
+      "visual_reviewed": true,
+      "use": "Full Rayleigh-Plesset surface traction and closed ideal-gas pressure; creeping infinite-matrix limit derived separately."
+    },
+    {
+      "id": "wadsworth2016",
+      "doi": "10.1098/rspa.2015.0780",
+      "url": "https://strathprints.strath.ac.uk/70131/1/Wadsworth_etal_PRSA_2016_Sintering_of_viscous_droplets_under_surface_tension.pdf",
+      "equations": [
+        "2.11",
+        "2.12",
+        "2.13",
+        "2.15"
+      ],
+      "pdf_one_based_pages": [
+        5,
+        9
+      ],
+      "visual_reviewed": true,
+      "use": "Vented spherical-shell porosity law only; experimental glass viscosity and glass-bead qualification not transferred to brick."
+    }
+  ],
+  "selected_model": "Finite spherical incompressible Newtonian shell, fixed matrix volume, outer normal traction -p_out, no exterior surface energy, constantT and gamma; closed ideal gas or prescribed pressure venting.",
+  "derivation": {
+    "velocity": "v(r)=a^2*adot/r^2",
+    "normal_stress": "sigma_rr=-p_l-4*eta*a^2*adot/r^3",
+    "outer_pressure": "p_l=p_out-4*eta*a^2*adot/S^3",
+    "force_balance": "4*eta*(1-phi)*adot/a=p_g-p_out-2*gamma/a",
+    "dissipation": "Integral[2*eta*(err^2+2*ett^2)4*pi*r^2 dr,a,S]=16*pi*eta*a*(1-phi)*adot^2",
+    "closed_potential": "Phi=gamma*A+p_out*V-n*R*T*ln(V/V_ref)+constant; dPhi/dt=-D",
+    "vented_potential": "Omega=gamma*A+(p_out-p_g)*V+constant; dOmega/dt=-D",
+    "source_vented_limit": "Whenp_g=p_out, dphi/dt=-3gamma/(2eta*a_i)*(phi_i/(1-phi_i))^(1/3)*phi^(2/3)*(1-phi)^(1/3), WadsworthEq2.12."
+  },
+  "literal_source_cautions": [
+    "Wadsworthp5prose describeszero porosityat infinite time, but its Eq2.12 has an integrable phi^(-2/3) closure time for constant finite positive viscosity. Distinguish prose from the equation actually used.",
+    "Wadsworthp8viscosity prose writes mu=A+B/(T-C); no logarithm is printed while p9figure uses viscosity of10^5to10^13Pa*s. No empirical viscosity parameter admitted until original2014source is checked."
+  ],
+  "not_admitted": [
+    "targetbrick viscosity",
+    "targetbrick surface tension",
+    "pore network or permeability evolution",
+    "non-Newtonian yield stress",
+    "matrix temperature evolution",
+    "reaction-gas coupling",
+    "material validation"
+  ],
+  "material_qualified": false,
+  "training_eligible": false
+}
