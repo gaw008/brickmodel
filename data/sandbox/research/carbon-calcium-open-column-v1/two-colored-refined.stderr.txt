@@ -1,0 +1,58 @@
+Traceback (most recent call last):
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_carbon_calcium_open_column.py", line 106, in <module>
+    main()
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_carbon_calcium_open_column.py", line 80, in main
+    message = solver.step()
+              ^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/base.py", line 201, in step
+    success, message = self._step_impl()
+                       ^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/bdf.py", line 378, in _step_impl
+    J = self.jac(t_new, y_predict)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/bdf.py", line 290, in jac_wrapped
+    return csc_constructor(jac(t, y), dtype=y0.dtype)
+                           ^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/carbon_calcium_open_colored_jacobian.py", line 33, in __call__
+    rates_plus, parts_plus = self.column.rate_components(at, plus)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/carbon_calcium_open_column.py", line 58, in rate_components
+    states, faces, _, contact, radiation = self.observe(at, values)
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/carbon_calcium_open_column.py", line 42, in observe
+    states = self.states(values)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/carbon_calcium_open_column.py", line 38, in states
+    return [self.model.at_temperature_volume(float(values[4*i+3]), self.volume, self.calcium,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/recorded_carbon_calcium_pressure.py", line 38, in at_temperature_volume
+    log_pressure = brentq(lambda value: self._equilibrium_at_pressure(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_zeros_py.py", line 858, in brentq
+    r = _zeros._brentq(f, a, b, xtol, rtol, maxiter, args, full_output, disp)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_zeros_py.py", line 107, in f_raise
+    fx = f(x, *args)
+         ^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/recorded_carbon_calcium_pressure.py", line 38, in <lambda>
+    log_pressure = brentq(lambda value: self._equilibrium_at_pressure(
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/recorded_carbon_calcium_inventory.py", line 151, in _equilibrium_at_pressure
+    return _inventory_equilibrium(self, temperature_k, pressure_pa, inventory)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/recorded_carbon_calcium_inventory.py", line 117, in _inventory_equilibrium
+    state = fixed_calcium(0., 'lime')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/recorded_carbon_calcium_inventory.py", line 67, in fixed_calcium
+    z = math.exp(brentq(residual, lower, upper,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_zeros_py.py", line 858, in brentq
+    r = _zeros._brentq(f, a, b, xtol, rtol, maxiter, args, full_output, disp)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_zeros_py.py", line 107, in f_raise
+    fx = f(x, *args)
+         ^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/recorded_carbon_calcium_inventory.py", line 64, in residual
+    w = math.exp(ln_k3) * math.sqrt(pi*z/(1+c+z))
+        ^^^^^^^^^^^^^^^
+KeyboardInterrupt

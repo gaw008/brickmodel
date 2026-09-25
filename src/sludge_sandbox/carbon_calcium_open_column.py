@@ -51,6 +51,10 @@ class CarbonCalciumOpenColumn:
         return states, faces, reservoir, contact, radiation
 
     def rates(self, at, values):
+        return self.rate_components(at, values)[0]
+
+    def rate_components(self, at, values):
+        """Return the unchanged RHS and local pieces of its production ledger."""
         states, faces, _, contact, radiation = self.observe(at, values)
         result = np.zeros((self.count, 4))
         keys = self.face_parameters['transferred_inventory_order']
@@ -67,8 +71,11 @@ class CarbonCalciumOpenColumn:
             result[i, 3] = (result[i, 3] - du[1:] @ result[i, :3]) / du[0]
         production = math.fsum([f['entropy_production_w_k'] for f in faces]
             + [contact['entropy_production_w_k'], radiation['entropy_production_w_k']])
-        return np.concatenate((result.ravel(), [incoming_energy, contact['left_entropy_rate_w_k'],
+        rates = np.concatenate((result.ravel(), [incoming_energy, contact['left_entropy_rate_w_k'],
             production, radiation['energy_in_w'], radiation['reservoir_entropy_rate_w_k']]))
+        production_parts = [f['entropy_production_w_k'] for f in faces] + [math.fsum(
+            [contact['entropy_production_w_k'], radiation['entropy_production_w_k']])]
+        return rates, np.array(production_parts)
 
     def numerical_jacobian_sparsity(self):
         body = 4 * self.count

@@ -1,0 +1,40 @@
+Traceback (most recent call last):
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_carbon_calcium_surface_column.py", line 109, in <module>
+    main()
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_carbon_calcium_surface_column.py", line 83, in main
+    message = solver.step()
+              ^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/base.py", line 201, in step
+    success, message = self._step_impl()
+                       ^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/bdf.py", line 378, in _step_impl
+    J = self.jac(t_new, y_predict)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/bdf.py", line 290, in jac_wrapped
+    return csc_constructor(jac(t, y), dtype=y0.dtype)
+                           ^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/carbon_calcium_open_colored_jacobian.py", line 34, in __call__
+    rates_minus, parts_minus = self.column.rate_components(at, minus)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/carbon_calcium_surface_column.py", line 38, in rate_components
+    states,faces,_,surface = self.observe(at,values)
+                             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/carbon_calcium_surface_column.py", line 29, in observe
+    surface = surface_exchange(self.model,states[-1],reservoir,self.surface_interior,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/carbon_calcium_integral_surface.py", line 33, in surface_exchange
+    temperature = brentq(lambda t: at_temperature(t)[0], *settings['surface_temperature_domain_k'],
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_zeros_py.py", line 858, in brentq
+    r = _zeros._brentq(f, a, b, xtol, rtol, maxiter, args, full_output, disp)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_zeros_py.py", line 107, in f_raise
+    fx = f(x, *args)
+         ^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/carbon_calcium_integral_surface.py", line 33, in <lambda>
+    temperature = brentq(lambda t: at_temperature(t)[0], *settings['surface_temperature_domain_k'],
+                                   ^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/carbon_calcium_integral_surface.py", line 25, in at_temperature
+    flows[name] = lo[name] * li[name] / (lo[name] + li[name]) * (a - b)
+    ~~~~~^^^^^^
+KeyboardInterrupt

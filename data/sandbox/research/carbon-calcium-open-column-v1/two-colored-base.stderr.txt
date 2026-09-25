@@ -1,0 +1,30 @@
+Traceback (most recent call last):
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_carbon_calcium_open_column.py", line 106, in <module>
+    main()
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_carbon_calcium_open_column.py", line 80, in main
+    message = solver.step()
+              ^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/base.py", line 201, in step
+    success, message = self._step_impl()
+                       ^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/bdf.py", line 378, in _step_impl
+    J = self.jac(t_new, y_predict)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/bdf.py", line 290, in jac_wrapped
+    return csc_constructor(jac(t, y), dtype=y0.dtype)
+                           ^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/carbon_calcium_open_colored_jacobian.py", line 34, in __call__
+    rates_minus, parts_minus = self.column.rate_components(at, minus)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/carbon_calcium_open_column.py", line 68, in rate_components
+    tangent = caloric_inventory_tangent(self.model, state, self.volume, self.calcium,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/carbon_calcium_caloric_inventory.py", line 47, in caloric_inventory_tangent
+    logarithmic=np.linalg.solve(np.array(matrix),np.array(rhs))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/numpy/linalg/_linalg.py", line 461, in solve
+    with errstate(call=_raise_linalgerror_singular, invalid='call',
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/numpy/_core/_ufunc_config.py", line 489, in __exit__
+    _extobj_contextvar.reset(self._token)
+KeyboardInterrupt

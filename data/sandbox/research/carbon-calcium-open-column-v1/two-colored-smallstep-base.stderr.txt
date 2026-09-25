@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_carbon_calcium_open_column.py", line 106, in <module>
+    main()
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_carbon_calcium_open_column.py", line 85, in main
+    row = record('accepted', solver.t, solver.y)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_carbon_calcium_open_column.py", line 47, in record
+    states, faces, reservoir, contact, radiation = cell.observe(at, values)
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/carbon_calcium_open_column.py", line 42, in observe
+    states = self.states(values)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/carbon_calcium_open_column.py", line 38, in states
+    return [self.model.at_temperature_volume(float(values[4*i+3]), self.volume, self.calcium,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/recorded_carbon_calcium_pressure.py", line 44, in at_temperature_volume
+    return self.at_temperature_pressure(temperature_k, math.exp(log_pressure), *inputs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/recorded_carbon_calcium_pressure.py", line 64, in at_temperature_pressure
+    response = self.caloric_response(temperature_k, pressure_pa, state['amounts_mol'],
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/recorded_carbon_calcium_pressure.py", line 187, in caloric_response
+    frozen_cp = math.fsum(n[name] * thermal[name]['cp_j_mol_k'] for name in names)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/recorded_carbon_calcium_pressure.py", line 187, in <genexpr>
+    frozen_cp = math.fsum(n[name] * thermal[name]['cp_j_mol_k'] for name in names)
+
+KeyboardInterrupt

@@ -1,0 +1,96 @@
+{
+  "cell_parameters": "parameters.carbon_calcium_radiative_program.json",
+  "geometry": {
+    "length_m": 0.02,
+    "area_m2": 0.005,
+    "classification": "Virtual uniform1D100cm3 chain, sealed left end and externally contacted right terminal control volume. Immobile pure solids and rigid cells; no measured brick shape or pores."
+  },
+  "transport": {
+    "thermal_conductivity_w_m_k": 0.005,
+    "gas_mobility_density_mol2_k_j_m_s": {
+      "CO": 1e-09,
+      "CO2": 1e-09,
+      "O2": 1e-09,
+      "N2": 1e-09
+    },
+    "classification": "Explicit virtual continuum coefficients. Face conductance/mobility scales as area over center distance; neither inferred nor measured brick transport."
+  },
+  "meshes": {
+    "one": 1,
+    "two": 2,
+    "four": 4,
+    "eight": 8,
+    "sixteen": 16
+  },
+  "initial_mapping": "Divide the qualified capsule elemental inventories and total volume equally; same uniform initial temperature and full external conductance/mobilities/radiative port. One cell must match the already qualified capsule. Internal faces scale conductance and mobility as area/center distance.",
+  "external_contact_definition": "Gas/thermal film and ideal black radiative port couple directly to the terminal control-volume temperature and potentials. No extra surface storage, half-cell resistance or hidden massless-surface solve. This is the declared discrete approximation; spatial convergence must be shown separately before a continuum claim.",
+  "numerics": {
+    "relative_tolerance": 1e-12,
+    "refinement_factor": 0.1,
+    "inventory_absolute_tolerance_mol": 1e-14,
+    "temperature_absolute_tolerance_k": 1e-10,
+    "energy_ledger_absolute_tolerance_j": 1e-10,
+    "entropy_ledger_absolute_tolerance_j_k": 1e-13,
+    "maximum_step_s": 5.0,
+    "first_step_s": 1e-05,
+    "observation_interval_s": 5.0,
+    "progress_every_steps": 100,
+    "inventory_absolute_tolerance_basis": "Whole-capsule original absolute tolerance divided by actual cell count; ledger and temperature tolerances unchanged.",
+    "jacobian_method": "adaptive_body_colored_ledgers"
+  },
+  "verification": {
+    "element_mol": 1e-12,
+    "pressure_pa": 1e-05,
+    "volume_m3": 1e-14,
+    "reaction_gibbs_j_mol": 1e-05,
+    "source_energy_j": 1e-07,
+    "source_entropy_j_k": 1e-10,
+    "face_species_mol_s": 1e-14,
+    "face_energy_w": 1e-08,
+    "face_entropy_w_k": 1e-11,
+    "inventory_integral_mol": 1e-10,
+    "energy_j": 1e-05,
+    "entropy_j_k": 1e-08,
+    "nonnegative_entropy_j_k": 1e-10,
+    "time_temperature_k": 0.001,
+    "time_pressure_pa": 0.1,
+    "time_species_mol": 1e-10,
+    "quadrature_orders": [
+      2,
+      4
+    ]
+  },
+  "static_review": {
+    "reference_trajectory": "data/sandbox/research/carbon-calcium-radiative-program-v1/refined.jsonl",
+    "times_s": [
+      0.0,
+      1000.0,
+      5000.0,
+      15000.0,
+      20000.0,
+      30000.0
+    ],
+    "cell_counts": [
+      1,
+      2,
+      4
+    ],
+    "temperature_span_k": 20.0,
+    "carbon_relative_span": 0.02,
+    "oxygen_relative_span": 0.01,
+    "nitrogen_relative_span": 0.02,
+    "inventory_rate_budget_mol_s": 1e-14,
+    "energy_rate_budget_w": 1e-08,
+    "entropy_rate_budget_w_k": 1e-10,
+    "initial_inventory_budget_mol": 1e-14,
+    "initial_energy_budget_j": 1e-08,
+    "one_cell_temperature_rate_budget_k_s": 1e-08
+  },
+  "scope": "Develop and qualify one/two cells before finer grids. Source-defined positive inventory equilibrium and caloric-only tangent; do not use unqualified analytic gas-potential inventory Jacobians. No real material, finite kinetics, deformation or full brick cycle qualification.",
+  "material_qualified": false,
+  "training_eligible": false,
+  "jacobian_numerics": {
+    "inventory_relative_step": 1e-08,
+    "temperature_step_k": 1e-06
+  }
+}

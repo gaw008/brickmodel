@@ -31,6 +31,10 @@ class CarbonCalciumSurfaceColumn(CarbonCalciumOpenColumn):
         return states,faces,reservoir,surface
 
     def rates(self, at, values):
+        return self.rate_components(at, values)[0]
+
+    def rate_components(self, at, values):
+        """Return unchanged body/exterior rates and internal/surface production."""
         states,faces,_,surface = self.observe(at,values)
         result = np.zeros((self.count,4))
         keys = self.face_parameters['transferred_inventory_order']
@@ -48,5 +52,7 @@ class CarbonCalciumSurfaceColumn(CarbonCalciumOpenColumn):
         production = math.fsum([f['entropy_production_w_k'] for f in faces]
             +[surface['combined_entropy_production_w_k']])
         external_energy = outer['energy_flow_w']+rad['energy_in_w']
-        return np.concatenate((result.ravel(),[external_energy,outer['left_entropy_rate_w_k'],
+        rates = np.concatenate((result.ravel(),[external_energy,outer['left_entropy_rate_w_k'],
             production,rad['energy_in_w'],rad['reservoir_entropy_rate_w_k']]))
+        return rates, np.array([f['entropy_production_w_k'] for f in faces]
+                              + [surface['combined_entropy_production_w_k']])

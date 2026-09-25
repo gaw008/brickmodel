@@ -1,0 +1,37 @@
+Traceback (most recent call last):
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_carbon_calcium_surface_column.py", line 109, in <module>
+    main()
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_carbon_calcium_surface_column.py", line 88, in main
+    row = record('accepted', solver.t, solver.y)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_carbon_calcium_surface_column.py", line 48, in record
+    states, faces, reservoir, surface = cell.observe(at, values)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/carbon_calcium_surface_column.py", line 22, in observe
+    states = self.states(values)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/carbon_calcium_open_column.py", line 38, in states
+    return [self.model.at_temperature_volume(float(values[4*i+3]), self.volume, self.calcium,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/recorded_carbon_calcium_pressure.py", line 38, in at_temperature_volume
+    log_pressure = brentq(lambda value: self._equilibrium_at_pressure(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_zeros_py.py", line 858, in brentq
+    r = _zeros._brentq(f, a, b, xtol, rtol, maxiter, args, full_output, disp)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/optimize/_zeros_py.py", line 107, in f_raise
+    fx = f(x, *args)
+         ^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/recorded_carbon_calcium_pressure.py", line 38, in <lambda>
+    log_pressure = brentq(lambda value: self._equilibrium_at_pressure(
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/recorded_carbon_calcium_inventory.py", line 151, in _equilibrium_at_pressure
+    return _inventory_equilibrium(self, temperature_k, pressure_pa, inventory)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/recorded_carbon_calcium_inventory.py", line 18, in _inventory_equilibrium
+    thermal = {name: phase.standard(t) for name, phase in model.phases.items()}
+                     ^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/recorded_reaction_affinity.py", line 26, in standard
+    dh=a*(t-t0)+b*(t*t-t0*t0)/2+c*(1/t0-1/t)+2*d*(math.sqrt(t)-math.sqrt(t0))+e*(t**3-t0**3)/3
+                                                  ^^^^^^^^^^^^
+KeyboardInterrupt

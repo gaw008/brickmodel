@@ -9,6 +9,7 @@ from scipy.integrate import BDF
 
 from carbon_calcium_inventory_setup import build
 from sludge_sandbox.carbon_calcium_open_column import CarbonCalciumOpenColumn
+from sludge_sandbox.carbon_calcium_open_colored_jacobian import OpenColumnColoredJacobian, OpenColumnAdaptiveBodyJacobian
 
 
 def main():
@@ -67,7 +68,12 @@ def main():
         values = cell.initial.copy()
         knots = cell_p['boundary_program']['knot_times_s']
         for segment, (start, end) in enumerate(zip(knots[:-1], knots[1:], strict=True)):
-            solver = BDF(rates, start, values, end, jac_sparsity=cell.numerical_jacobian_sparsity(),
+            jacobian_options = {
+                'scipy_full_sparse': lambda: {'jac_sparsity': cell.numerical_jacobian_sparsity()},
+                'central_colored_local': lambda: {'jac': OpenColumnColoredJacobian(cell, p['jacobian_numerics'])},
+                'adaptive_body_colored_ledgers': lambda: {'jac': OpenColumnAdaptiveBodyJacobian(cell, atol[:4*count], p['jacobian_numerics'])},
+            }[policy['jacobian_method']]()
+            solver = BDF(rates, start, values, end, **jacobian_options,
                          rtol=policy['relative_tolerance'] * factor, atol=atol,
                          max_step=policy['maximum_step_s'], first_step=policy['first_step_s'])
             while solver.status == 'running':
