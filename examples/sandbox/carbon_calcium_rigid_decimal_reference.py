@@ -55,5 +55,49 @@ def reconstruct(model, temperature, volume, inventory, candidate, settings):
     s = mp.fsum(value*thermal[name][1] for name,value in n.items())
     s -= r*mp.fsum(value*mp.log(p/p0*value/ng) for value in gas.values())
     return {'amounts':n,'mu':mu,'pressure':p,'volume':v,'enthalpy':h,'entropy':s,
-            'internal_energy':h-p*v,'helmholtz':h-p*v-t*s,
+            'internal_energy':h-p*v,'helmholtz':h-p*v-t*s,'thermal':thermal,
             'equation_residual':max(abs(v) for v in equations(*solution))}
+
+
+def caloric_capacity(model, temperature, volume, inventory, candidate, settings):
+    """Differentiate independent log-pressure/mole/volume constraints at fixed V."""
+    state=reconstruct(model,temperature,volume,inventory,candidate,settings)
+    t,r,p,p0=map(mp.mpf,(temperature,model.r,state['pressure'],model.p0))
+    n=state['amounts'];thermal=state['thermal'];names=['CO','CO2','O2']
+    gas_names=['CO','CO2','O2','N2'];ng=mp.fsum(n[k] for k in gas_names)
+    volumes={name:mp.mpf(v) for name,v in model.volumes.items()}
+    entropy={name:hs[1] if name in volumes else hs[1]-r*mp.log(p/p0*n[name]/ng)
+             for name,hs in thermal.items()}
+    ca,carbon,oxygen=[mp.mpf(inventory[k]) for k in ['calcium_atoms_mol','carbon_atoms_mol','oxygen_atoms_mol']]
+    coexist=candidate['calcium_phase']=='coexistence';present=candidate['carbon_phase']=='graphite_present'
+    oxygen_row=[n['CO']/oxygen,2*n['CO2']/oxygen,2*n['O2']/oxygen]+([2*ca/oxygen] if coexist else [])+[0]
+    if present:
+        first=[r*t*(int(name=='CO')-mp.mpf('.5')*int(name=='O2')-n[name]/(2*ng)) for name in names]+([0] if coexist else [])+[r*t/2-p*volumes['C']]
+        second=[r*t*(int(name=='CO2')-int(name=='O2')) for name in names]+([0] if coexist else [])+[-p*volumes['C']]
+        matrix=[first,second,oxygen_row]
+        rhs=[entropy['CO']-entropy['C']-entropy['O2']/2,entropy['CO2']-entropy['C']-entropy['O2'],0]
+    else:
+        carbon_row=[n['CO']/carbon,n['CO2']/carbon,0]+([ca/carbon] if coexist else [])+[0]
+        reaction=[r*t*(int(name=='CO2')-int(name=='CO')-mp.mpf('.5')*int(name=='O2')+n[name]/(2*ng)) for name in names]+([0] if coexist else [])+[-r*t/2]
+        matrix=[carbon_row,oxygen_row,reaction]
+        rhs=[0,0,entropy['CO2']-entropy['CO']-entropy['O2']/2]
+    if coexist:
+        matrix.append([r*t*(int(name=='CO2')-n[name]/ng) for name in names]+[0,r*t+p*(volumes['lime']-volumes['calcite'])])
+        rhs.append(entropy['lime']+entropy['CO2']-entropy['calcite'])
+    volume_row=[n[name]*(r*t/p-(volumes['C'] if present and name in ['CO','CO2'] else 0)) for name in names]
+    if coexist:volume_row.append(ca*(volumes['calcite']-volumes['lime']-(volumes['C'] if present else 0)))
+    volume_row.append(-ng*r*t/p)
+    matrix.append([v/mp.mpf(volume) for v in volume_row]);rhs.append(-ng*r/p/mp.mpf(volume))
+    rates=mp.lu_solve(mp.matrix(matrix),mp.matrix(rhs))
+    dn={name:n[name]*rates[i] for i,name in enumerate(names)}
+    dn['N2']=mp.mpf(0);dn['calcite']=ca*rates[3] if coexist else mp.mpf(0);dn['lime']=-dn['calcite']
+    dn['C']=-dn['calcite']-dn['CO']-dn['CO2'] if present else mp.mpf(0)
+    frozen=-ng*r
+    for name,phase in model.phases.items():
+        a,b,c,d,e=map(mp.mpf,phase.coefficients)
+        frozen+=n[name]*(a+b*t+c/t**2+d/mp.sqrt(t)+e*t**2)
+    internal={name:hs[0]-(p0*volumes[name] if name in volumes else r*t) for name,hs in thermal.items()}
+    state['cv']=frozen+mp.fsum(dn[name]*internal[name] for name in dn)
+    state['amount_temperature_derivatives']=dn
+    state['pressure_temperature_derivative']=p*rates[len(rates)-1]
+    return state

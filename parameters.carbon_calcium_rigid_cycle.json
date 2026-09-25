@@ -1,0 +1,49 @@
+{
+  "rigid_parameters": "parameters.carbon_calcium_rigid.json",
+  "inventory_name": "coupled_carbon",
+  "phase_boundary_reference": "data/sandbox/research/carbon-calcium-rigid-v1/boundary-review.json",
+  "virtual_calorimeter": {
+    "initial_temperature_k": 300.0,
+    "heat_conductance_w_k": 0.005,
+    "program": [
+      {"start_s": 0.0, "end_s": 4800.0, "reservoir_temperature_k": 1195.0},
+      {"start_s": 4800.0, "end_s": 9600.0, "reservoir_temperature_k": 350.0}
+    ],
+    "classification": "Explicit virtual rigid closed elemental inventory and thermal reservoirs. Source domain remains298.15..1200K. No actual kiln schedule or target-brick recipe."
+  },
+  "numerics": {
+    "relative_tolerance": 1e-11,
+    "refinement_factor": 0.1,
+    "absolute_tolerances_temperature_heat_entropy_production": [1e-10, 1e-9, 1e-12, 1e-12],
+    "maximum_step_s": 5.0,
+    "first_step_s": 0.001,
+    "observation_interval_s": 2.0,
+    "progress_every_steps": 200,
+    "event_absolute_time_s": 1e-9,
+    "event_relative_tolerance": 1e-14,
+    "root_maximum_iterations": 100
+  },
+  "verification": {
+    "element_mol": 1e-13,
+    "pressure_pa": 1e-6,
+    "volume_m3": 1e-14,
+    "reaction_gibbs_j_mol": 1e-5,
+    "source_energy_j": 1e-7,
+    "source_entropy_j_k": 1e-10,
+    "energy_j": 1e-6,
+    "entropy_j_k": 1e-8,
+    "nonnegative_entropy_j_k": 1e-10,
+    "phase_event_time_s": 1e-4,
+    "phase_event_temperature_k": 1e-7,
+    "phase_event_pressure_pa": 1e-4,
+    "phase_endpoint_mol": 1e-10,
+    "time_temperature_k": 1e-4,
+    "time_pressure_pa": 0.1,
+    "time_species_mol": 1e-10,
+    "quadrature_orders": [2, 4],
+    "expected_phase_events": 6
+  },
+  "scope": "Temperature coordinate dT/dt=Q/Cv, plus independent heat and reservoir/production entropy integrals. Actual source U(T,V)-U0 must agree with heat rather than being an identical duplicated state coordinate. BDF numerical Jacobian uses structural temperature-only dependence. Phase boundaries only record events, never alter the ODE.",
+  "material_qualified": false,
+  "training_eligible": false
+}
