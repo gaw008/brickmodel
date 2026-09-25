@@ -141,6 +141,23 @@ class RecordedCarbonCalciumPressure:
         enthalpy = math.fsum(n[name] * h[name] for name in n)
         entropy = math.fsum(n[name] * thermal[name]['entropy_j_mol_k'] for name in n)
         entropy -= self.r * math.fsum(n[name] * math.log(partial[name]) for name in gas_names)
+        response = self.caloric_response(t, p, n, calcium_phase, carbon_phase, thermal, h)
+        return {'temperature_k': t, 'pressure_pa': p, 'calcium_phase': calcium_phase,
+            'carbon_phase': carbon_phase, 'calcite_fraction': fraction, 'amounts_mol': n,
+            'partial_pressures_pa': {name: self.p0 * value for name, value in partial.items()},
+            'chemical_potentials_j_mol': mu, 'calcination_gibbs_j_mol': affinity,
+            'enthalpy_j': enthalpy, 'entropy_j_k': entropy, 'gibbs_j': enthalpy - t * entropy,
+            'internal_energy_j': enthalpy - p * total_volume,
+            'helmholtz_j': enthalpy - p * total_volume - t * entropy,
+            'gas_volume_m3': gas_volume, 'solid_volume_m3': solid_volume,
+            'total_volume_m3': total_volume, **response}
+
+
+    def caloric_response(self, t, p, n, calcium_phase, carbon_phase, thermal, h):
+        """Same-phase reaction-Hessian response shared by both static domains."""
+        rt = self.r*t
+        gas_names = ['CO', 'CO2', 'O2', 'N2']
+        ng = math.fsum(n[name] for name in gas_names)
         names = self.parameters['phase_order']
         basis = self.parameters['coexistence_basis' if calcium_phase == 'coexistence'
                                 else 'fixed_calcium_basis'][carbon_phase]
@@ -165,15 +182,7 @@ class RecordedCarbonCalciumPressure:
         pressure_t_at_v = -volume_t / volume_p
         dn_t_at_v = dn_t + dn_p * pressure_t_at_v
         cv = cp + t * volume_t * volume_t / volume_p
-        return {'temperature_k': t, 'pressure_pa': p, 'calcium_phase': calcium_phase,
-            'carbon_phase': carbon_phase, 'calcite_fraction': fraction, 'amounts_mol': n,
-            'partial_pressures_pa': {name: self.p0 * value for name, value in partial.items()},
-            'chemical_potentials_j_mol': mu, 'calcination_gibbs_j_mol': affinity,
-            'enthalpy_j': enthalpy, 'entropy_j_k': entropy, 'gibbs_j': enthalpy - t * entropy,
-            'internal_energy_j': enthalpy - p * total_volume,
-            'helmholtz_j': enthalpy - p * total_volume - t * entropy,
-            'gas_volume_m3': gas_volume, 'solid_volume_m3': solid_volume,
-            'total_volume_m3': total_volume, 'frozen_cp_j_k': frozen_cp,
+        return {'frozen_cp_j_k': frozen_cp,
             'equilibrium_cp_j_k': cp, 'equilibrium_cv_j_k': cv,
             'volume_temperature_derivative_m3_k': volume_t,
             'volume_pressure_derivative_m3_pa': volume_p,
