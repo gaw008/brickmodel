@@ -1,3 +1,10 @@
+## 2026-09-25 11:10 UTC 增量：组成与压力反馈、开放16格核查
+
+- [缺碳/富碳两种相顺序](research/carbon-calcium-composition-cycles-v1/REPORT.md)的四条4800s轨迹、完整热量/熵、时间精度及独立高精度事件积分全部通过原预算。
+- [共同反应压力反馈](research/carbon-calcium-pressure-v1/REPORT.md)的108组0.1/1/10bar静态与108组导数核查通过。石墨常温体积从USGS原表核实，常体积固相EOS明确为近似；固定容积热过程尚未授予资格。
+- [开放连续外界16格](research/calcite-rigid-ramp-v1/REPORT.md)更新Jacobian的两档完整来源/逐格收支/熵/时间核查通过；8→16空间仍失败，继续32格。原精细档试算失败不被覆盖。
+- 实材M1与同材料全周期资格未解除；其余长任务各自等待完整审计结果。
+
 ## 2026-09-25 10:55 UTC 增量：碳酸钙与碳氧反应共同热过程
 
 - [共同化学平衡](research/carbon-calcium-equilibrium-v1/REPORT.md)完成三组虚拟库存、六种相组合的36组静态与90组热容核查，八个相边界的独立高精度对照完成；富碳边界原粗距离连续性失败及更细距离通过均保存。
