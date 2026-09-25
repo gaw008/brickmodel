@@ -231,9 +231,16 @@ def main():
         result['within_budgets']['surface_mass_balance']=surface_max['inventory_mol_s']<=budget['surface_inventory_rate_mol_s']
         result['within_budgets']['surface_energy_balance']=surface_max['energy_w']<=budget['surface_energy_rate_w']
         result['within_budgets']['surface_state']=all(surface_max[k]<=budget['surface_'+k] for k in ('temperature_k','pressure_pa','moisture_kg_kg'))
+    requested_checks=[result['completed'],*result['within_budgets'].values()]
+    requested_checks.extend(p['within_balance_budget'] and p['negative_steps_beyond_budget']==0 for p in entropy_results)
+    if local_policy is not None:
+        requested_checks.extend(p['local_balance']['within_budgets'] for p in entropy_results)
+        requested_checks.append(local_review['within_quadrature_budgets'])
+    result['all_requested_numerical_budgets_met']=all(requested_checks)
     with args.output.open('x') as stream:
         json.dump(result,stream,indent=2,allow_nan=False);stream.write('\n')
-    print(json.dumps({'within_budgets':result['within_budgets'],'source_maxima':maxima,'elapsed_s':result['elapsed_s']},indent=2))
+    print(json.dumps({'all_requested_numerical_budgets_met':result['all_requested_numerical_budgets_met'],
+        'within_budgets':result['within_budgets'],'source_maxima':maxima,'elapsed_s':result['elapsed_s']},indent=2))
 
 
 if __name__=='__main__':
