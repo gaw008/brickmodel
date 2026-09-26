@@ -60,3 +60,11 @@
 32 格两档独立来源、逐格及外界物质/能量/熵、两阶积分均通过。6000 个共同观测时间节点最大格温差 9.7993e−8 K、压力差 0.000277889 Pa、相量差 9.58842e−14 mol。读取已完成单档审查后只补做时间比较，没有重跑耗时的全程审查。
 
 16→32 空间比较仍失败：最大均温差 1.89076 K、母格局部温差 5.41663 K、均压差 2159.13 Pa、总物种量差 1.29529e−4 mol。温度与压力差随加密下降，但尚不满足原目标；同物理输入和预算的 64 格两档继续计算。没有把时间精度通过转成空间或材料资格。
+
+## 2026-09-26 07:44 UTC: 64-cell base integration finished; source audit pending
+
+The base trajectory reached 30,000 s in 54,349 accepted steps. Its recorded integrator elapsed time is 31,616.151941166027 s; the final 64-cell temperature range is 674.0167914171428–675.5047868684456 K. The saved source terminal record is `data/sandbox/research/carbon-calcium-open-column-v1/sixty-four-base-completion.json`; the complete original JSONL remains local (13,225,196,849 bytes). These are simulation outputs, not measured brick properties.
+
+An individual full-trajectory review now calls the existing `audit_carbon_calcium_open_column.audit` unchanged, using `parameters.carbon_calcium_open_column_sixty_four_base_audit.json` and its original parent parameters. It reviews recorded states and dense intervals against source, local/global element, energy, entropy, boundary/radiation and quadrature budgets. It is still running; no 64-cell audit pass is claimed. The refined integration, paired time comparison and 32-to-64 spatial qualification remain outstanding. Material qualification and training eligibility remain false.
+
+The result will be `data/sandbox/research/carbon-calcium-open-column-v1/sixty-four-base-full-audit.json`; stdout/stderr use that basename with `.stdout.txt`/`.stderr.txt`. Started as PID 72831 with full access after the base integrator exited. Preserve this running review; do not launch a duplicate. The launch body imports `audit`, reads the root review parameters, calls `review, _, _ = audit(root / parent['trajectories'][settings['trajectory_name']], root)`, and saves `trajectory_review` plus explicit false time/material/training qualification flags, matching the previous 32-cell individual-review schema.
