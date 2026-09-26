@@ -1,3 +1,7 @@
+## 2026-09-26 18:46 UTC：256格两档续算均结束，仅记录终态
+
+refined任务已正常退出0，末条压缩记录为completed：20000s、累计37737接受步、续算积分耗时46023.77s，stderr为空。合并压缩数据9.11GB，代表35.81GB完整记录字节；摘要为`data/sandbox/research/carbon-calcium-temperature-column-v1/two-fifty-six-refined-completion.json`。完整轨迹和前缀保持不变。两档都重新初始化过BDF历史，只有完成积分与终态记录的证据，未追加全轨迹物理/时间/空间审计，不据相近终态宣称配对通过。
+
 ## 2026-09-26 17:53 UTC：256格base续算结束，仅记录终态
 
 迁移失败后从44.995461s保存点继续的base任务已退出0。直接读取末个gzip分片中的completed摘要：终态20000s、累计29078接受步，续算积分耗时40320.62s，stderr为空。256个格温度约1102.97873K、压力613151–613216Pa。小体积汇总保存于`data/sandbox/research/carbon-calcium-temperature-column-v1/two-fifty-six-base-completion.json`，全部原前缀和新分片保留。
