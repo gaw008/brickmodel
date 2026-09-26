@@ -219,7 +219,8 @@ def main(argv: list[str] | None = None) -> int:
             from .inverse.full_cycle import fit, synthetic_demo
             result = synthetic_demo(config, args.out) if args.synthetic_calibration else fit(config, json.loads(args.calibrate.read_text()), args.out)
             print(json.dumps({"qualified_fit":result["qualified_fit"], "measurement_kind":result["measurement_kind"], "elapsed_s":result["elapsed_s"]}))
-            return 0 if result['qualified_fit'] else EXIT_SOLVER
+            passed = result['demonstration_passed'] if args.synthetic_calibration else result['qualified_fit']
+            return 0 if passed else EXIT_SOLVER
         if args.compare:
             from .uq.full_cycle import compare
             result = compare(config, args.out)

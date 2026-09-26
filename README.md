@@ -1,5 +1,17 @@
 # 污泥烧结砖：第一性原理研究与反向原料设计
 
+## 当前入口：全流程近似模型（2026-09-26）
+
+`sludge_vme`已串联湿坯→干燥→升温→脱羟/碳酸盐分解/有机物与炭氧化→烧结→冷却。统一参数文件为`parameters.full_cycle.json`。
+
+```sh
+.venv/bin/python examples/run_full_cycle.py parameters.full_cycle.json --out runs/full-cycle --acceptance
+```
+
+声明的一维充分通气近似下，阶段守恒0.1%、时间/空间加密2%、三个方案不确定性比较及合成标定接口已完成。**真实材料预测仍待实测**；不模拟孔压积聚或三维裂纹。方程、命令、来源身份、验收及失败证据见[全流程交付报告](docs/FULL_CYCLE_REPORT.md)。历史数据迁移与20GB磁盘目标仍在收尾。
+
+## 历史研究记录（下述旧阶段状态不替代上方当前入口）
+
 本仓库从 Hermes 的 `research/material-dynamics-v2b2` 分支导入，保留完整的 10 个原始提交；导入时的模型提交为 `3b501c5`。后续实现与验收以当前分支及下列进度记录为准。
 
 **目前没有砖厂可用的污泥成分窗口，也没有完成完整 virtual world model。所有模型结果只用于研究。**
