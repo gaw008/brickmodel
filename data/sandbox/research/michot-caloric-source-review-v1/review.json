@@ -1,0 +1,663 @@
+{
+  "settings": {
+    "source_file": "data/sandbox/research/michot-caloric-source-review-v1/source.json",
+    "reference_temperature_k": 313.15,
+    "kelvin_offset": 273.15,
+    "decimal_digits": 60,
+    "raw_kaolin_review_temperatures_c": [
+      40,
+      60,
+      80,
+      100,
+      150,
+      200
+    ],
+    "calcined_review_temperatures_c": [
+      40,
+      100,
+      200,
+      350,
+      500,
+      700,
+      900,
+      1000,
+      1100
+    ],
+    "numerical_budgets": {
+      "cp_absolute_j_kg_k": 1e-09,
+      "enthalpy_absolute_j_kg": 1e-07,
+      "entropy_absolute_j_kg_k": 1e-09
+    },
+    "plot": {
+      "width_inches": 11,
+      "height_inches": 7,
+      "dpi": 170
+    },
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "source": {
+    "michot2008": {
+      "title": "Caract\u00e9ristiques thermophysiques de mat\u00e9riaux \u00e0 base d'argile : \u00e9volution avec des traitements thermiques jusqu'\u00e0 1400\u00b0C",
+      "author": "Aur\u00e9lie Michot",
+      "institution": "Universit\u00e9 de Limoges",
+      "date": "2008-12-04",
+      "url": "https://cdn.unilim.fr/files/theses-doctorat/2008LIMO4040.pdf",
+      "local_full_pdf_cache": ".tools/source-cache/kaolinite-modern/michot2008.pdf",
+      "local_pdf_bytes": 2392826,
+      "full_pdf_acquired": true,
+      "source_read_date_utc": "2026-09-26",
+      "visual_pages_checked": [
+        73,
+        77
+      ],
+      "pdf_page_offset": 1,
+      "redistribution_license_not_established": true,
+      "formula_unit": "J kg^-1 K^-1; temperature in K",
+      "raw_kaolin_equation4_1": {
+        "A": 1062,
+        "B": 0.538,
+        "C": -24000000,
+        "form": "Cp=A+B*T+C/T^2",
+        "status": "handbook relation printed in thesis, not a new project fit",
+        "source_limit": "up to onset of dehydroxylation"
+      },
+      "calcined_equation4_2": {
+        "A": 896,
+        "B": 0.436,
+        "C": -24000000,
+        "form": "Cp=A+B*T+C/T^2",
+        "printed_temperature_domain_c": [
+          40,
+          1100
+        ],
+        "status": "oxide mixture rule printed in thesis; no formation energy or absolute entropy"
+      },
+      "table4_1_raw_KGa1B": [
+        {
+          "temperature_c": 40,
+          "handbook_cp_j_kg_k": 984,
+          "measured_cp_j_kg_k": 974
+        },
+        {
+          "temperature_c": 60,
+          "handbook_cp_j_kg_k": 1023,
+          "measured_cp_j_kg_k": 999
+        },
+        {
+          "temperature_c": 80,
+          "handbook_cp_j_kg_k": 1058,
+          "measured_cp_j_kg_k": 1043
+        },
+        {
+          "temperature_c": 100,
+          "handbook_cp_j_kg_k": 1089,
+          "measured_cp_j_kg_k": 1085
+        },
+        {
+          "temperature_c": 150,
+          "handbook_cp_j_kg_k": 1154,
+          "measured_cp_j_kg_k": 1176
+        },
+        {
+          "temperature_c": 200,
+          "handbook_cp_j_kg_k": 1208,
+          "measured_cp_j_kg_k": 1223
+        }
+      ],
+      "calorimetry": {
+        "low_temperature_instrument": "Setaram C80 adiabatic Calvet",
+        "temperature_range_c": [
+          40,
+          220
+        ],
+        "ramp_c_min": 0.2,
+        "hold_before_and_after_hours": 2,
+        "reported_low_temperature_accuracy_less_than_percent": 5,
+        "high_temperature_measurements": "350-1100 C on specimens pretreated at 1050 or 1400 C; Figure 4-10 caption says 350-1200 C",
+        "high_temperature_repeatability": "thesis Table 4-2 reports maximum deviations 1.3/3.5/7.4% for solid repeats, 4% mixed, 23% powder; these are comparisons to mixture calculation, not universal confidence intervals"
+      },
+      "pretreatment": "5 C/min to 500/600/700 C; 500/600 C powders air-quenched; 700 C held for one hour",
+      "phase_state_limit": "Same sensible Cp approximation after different prior firing temperatures does not define reaction heat during changing mineral phases.",
+      "appendix1_rows": [
+        {
+          "oxide": "SiO2",
+          "wt_percent": 52.25,
+          "a_prime": 0.6738,
+          "b_prime": 0.7421,
+          "c_prime": -0.0139
+        },
+        {
+          "oxide": "Al2O3",
+          "wt_percent": 45.42,
+          "a_prime": 1.1523,
+          "b_prime": 0.1018,
+          "c_prime": -0.0364
+        },
+        {
+          "oxide": "TiO2",
+          "wt_percent": 1.92,
+          "a_prime": 0.918,
+          "b_prime": 0.0382,
+          "c_prime": -0.0213
+        },
+        {
+          "oxide": "Fe2O3",
+          "wt_percent": 0.24,
+          "a_prime": 0.6158,
+          "b_prime": 0.4876,
+          "c_prime": -0.0093
+        },
+        {
+          "oxide": "K2O",
+          "wt_percent": 0.02,
+          "a_prime": 0.8168,
+          "b_prime": 0.3892,
+          "c_prime": -0.0032
+        },
+        {
+          "oxide": "Na2O",
+          "wt_percent": 0.03,
+          "a_prime": 1.2385,
+          "b_prime": 0.3243,
+          "c_prime": -0.0203
+        },
+        {
+          "oxide": "MgO",
+          "wt_percent": 0.07,
+          "a_prime": 1.2155,
+          "b_prime": 0.0851,
+          "c_prime": -0.0281
+        },
+        {
+          "oxide": "CaO",
+          "wt_percent": 0.03,
+          "a_prime": 0.9003,
+          "b_prime": 0.0747,
+          "c_prime": -0.0152
+        }
+      ],
+      "appendix1_printed_totals": {
+        "wt_percent": 100,
+        "a_prime": 0.8964,
+        "b_prime": 0.4362,
+        "c_prime": -0.0242
+      },
+      "open_source_questions": [
+        "Figure 4-10 appears lower than printed Equation 4-2 at high temperature; requires quantitative chart review.",
+        "Oxide Cp phase identities and original handbook temperature ranges have not been verified from that handbook.",
+        "2011 journal abstract gives a different post-dehydroxylation expression; no formal correction or full journal article obtained."
+      ]
+    },
+    "michot2011": {
+      "doi": "10.1016/j.jeurceramsoc.2011.01.007",
+      "title": "Effect of dehydroxylation on the specific heat of simple clay mixtures",
+      "authors": [
+        "A. Michot",
+        "D. S. Smith",
+        "S. Degot",
+        "G. L. Lecomte"
+      ],
+      "publisher_url": "https://www.sciencedirect.com/science/article/abs/pii/S0955221911000215",
+      "accessed_content": "publisher abstract and preview; full journal article not acquired",
+      "abstract_formula": {
+        "A": 1128,
+        "B": 0.102,
+        "C": -36000000,
+        "form": "Cp=A+B*T+C/T^2",
+        "unit": "J kg^-1 K^-1; T in K",
+        "printed_temperature_domain_c": [
+          40,
+          1100
+        ]
+      },
+      "exact_experimental_covariance_and_fit_residuals_acquired": false
+    },
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "models": {
+    "thesis_raw": {
+      "rows": [
+        {
+          "temperature_c": 40,
+          "cp_j_kg_k": 985.7338806551553,
+          "relative_enthalpy_j_kg": 0.0,
+          "relative_entropy_j_kg_k": 0.0,
+          "independent_errors": [
+            6.377859549083356e-14,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "temperature_c": 60,
+          "cp_j_kg_k": 1024.996903836153,
+          "relative_enthalpy_j_kg": 20116.1282141475,
+          "relative_entropy_j_kg_k": 62.25747130892722,
+          "independent_errors": [
+            8.41789753333565e-14,
+            3.1941109950695316e-12,
+            1.0780330933436119e-13
+          ]
+        },
+        {
+          "temperature_c": 80,
+          "cp_j_kg_k": 1059.5558200415892,
+          "relative_enthalpy_j_kg": 40968.59087947466,
+          "relative_entropy_j_kg_k": 123.03267357707,
+          "independent_errors": [
+            6.319795294407165e-14,
+            2.4471745477744037e-12,
+            4.94449979827754e-14
+          ]
+        },
+        {
+          "temperature_c": 100,
+          "cp_j_kg_k": 1090.3915788062288,
+          "relative_enthalpy_j_kg": 62473.593095617616,
+          "relative_entropy_j_kg_k": 182.25781235600832,
+          "independent_errors": [
+            1.3109402261156524e-14,
+            1.9013457750176383e-12,
+            4.401336855132872e-14
+          ]
+        },
+        {
+          "temperature_c": 150,
+          "cp_j_kg_k": 1155.6183628327667,
+          "relative_enthalpy_j_kg": 118684.00549447667,
+          "relative_entropy_j_kg_k": 323.53692991885845,
+          "independent_errors": [
+            3.27857243820135e-14,
+            1.0876030383252796e-11,
+            3.504078053855685e-15
+          ]
+        },
+        {
+          "temperature_c": 200,
+          "cp_j_kg_k": 1209.350067384078,
+          "relative_enthalpy_j_kg": 177845.6363443853,
+          "relative_entropy_j_kg_k": 455.63133016529326,
+          "independent_errors": [
+            1.0504559292730196e-13,
+            4.628228720341014e-12,
+            1.6822312044624165e-14
+          ]
+        }
+      ],
+      "maximum_cp_h_s_errors": [
+        1.0504559292730196e-13,
+        1.0876030383252796e-11,
+        1.0780330933436119e-13
+      ],
+      "within_numerical_budgets": {
+        "cp_absolute_j_kg_k": true,
+        "enthalpy_absolute_j_kg": true,
+        "entropy_absolute_j_kg_k": true
+      },
+      "positive_cp_certificate": {
+        "basis": "B>0 and C<0 imply Cp increases for positive T; minimum Cp at lower endpoint",
+        "minimum_cp_j_kg_k": 985.7338806551554,
+        "minimum_cp_slope_j_kg_k2": 0.9911528378565858
+      }
+    },
+    "thesis_calcined": {
+      "rows": [
+        {
+          "temperature_c": 40,
+          "cp_j_kg_k": 787.7925806551553,
+          "relative_enthalpy_j_kg": 0.0,
+          "relative_entropy_j_kg_k": 0.0,
+          "independent_errors": [
+            1.9395254044314666e-14,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "temperature_c": 100,
+          "cp_j_kg_k": 886.3302788062289,
+          "relative_enthalpy_j_kg": 50413.51509561762,
+          "relative_entropy_j_kg_k": 147.03831537141653,
+          "independent_errors": [
+            5.294527019881078e-14,
+            4.035835638156037e-12,
+            3.8217668809801916e-14
+          ]
+        },
+        {
+          "temperature_c": 200,
+          "cp_j_kg_k": 995.0887673840782,
+          "relative_enthalpy_j_kg": 144869.4283443853,
+          "relative_entropy_j_kg_k": 370.79812460414513,
+          "independent_errors": [
+            3.00237764332192e-15,
+            8.643117967929555e-12,
+            2.397168225750988e-14
+          ]
+        },
+        {
+          "temperature_c": 350,
+          "cp_j_kg_k": 1105.8880538645992,
+          "relative_enthalpy_j_kg": 302908.5678664369,
+          "relative_entropy_j_kg_k": 660.2342997609419,
+          "independent_errors": [
+            8.788977615464763e-14,
+            5.310529376043895e-11,
+            2.6366656443451546e-14
+          ]
+        },
+        {
+          "temperature_c": 500,
+          "cp_j_kg_k": 1192.94356902807,
+          "relative_enthalpy_j_kg": 475495.4182381096,
+          "relative_entropy_j_kg_k": 908.0610356887587,
+          "independent_errors": [
+            7.363864091425675e-14,
+            3.1514493362219e-11,
+            1.7516222928983164e-13
+          ]
+        },
+        {
+          "temperature_c": 700,
+          "cp_j_kg_k": 1294.950770888234,
+          "relative_enthalpy_j_kg": 724454.4359422771,
+          "relative_entropy_j_kg_k": 1193.995812534038,
+          "independent_errors": [
+            5.412334178919039e-14,
+            8.603575185132392e-11,
+            9.565642112987466e-14
+          ]
+        },
+        {
+          "temperature_c": 900,
+          "cp_j_kg_k": 1390.055099717232,
+          "relative_enthalpy_j_kg": 993028.6783988915,
+          "relative_entropy_j_kg_k": 1444.7145467038622,
+          "independent_errors": [
+            3.019294086346585e-14,
+            2.4678965485874107e-10,
+            2.9797513093082443e-13
+          ]
+        },
+        {
+          "temperature_c": 1000,
+          "cp_j_kg_k": 1436.2869108420496,
+          "relative_enthalpy_j_kg": 1134351.158093607,
+          "relative_entropy_j_kg_k": 1560.2929695321695,
+          "independent_errors": [
+            1.9256709202322467e-13,
+            3.083846332870374e-10,
+            2.5231010045262225e-13
+          ]
+        },
+        {
+          "temperature_c": 1100,
+          "cp_j_kg_k": 1481.9649570828456,
+          "relative_enthalpy_j_kg": 1280267.6778138527,
+          "relative_entropy_j_kg_k": 1670.603397005992,
+          "independent_errors": [
+            1.1890752014650539e-14,
+            1.299791977546244e-10,
+            2.3706015400963305e-13
+          ]
+        }
+      ],
+      "maximum_cp_h_s_errors": [
+        1.9256709202322467e-13,
+        3.083846332870374e-10,
+        2.9797513093082443e-13
+      ],
+      "within_numerical_budgets": {
+        "cp_absolute_j_kg_k": true,
+        "enthalpy_absolute_j_kg": true,
+        "entropy_absolute_j_kg_k": true
+      },
+      "positive_cp_certificate": {
+        "basis": "B>0 and C<0 imply Cp increases for positive T; minimum Cp at lower endpoint",
+        "minimum_cp_j_kg_k": 787.7925806551553,
+        "minimum_cp_slope_j_kg_k2": 0.4545390422272213
+      }
+    },
+    "journal_abstract_calcined": {
+      "rows": [
+        {
+          "temperature_c": 40,
+          "cp_j_kg_k": 792.8300709827329,
+          "relative_enthalpy_j_kg": 0.0,
+          "relative_entropy_j_kg_k": 0.0,
+          "independent_errors": [
+            1.734296902378357e-13,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "temperature_c": 100,
+          "cp_j_kg_k": 907.5166182093433,
+          "relative_enthalpy_j_kg": 51295.14464342642,
+          "relative_entropy_j_kg_k": 149.57306734223425,
+          "independent_errors": [
+            4.422046033960385e-14,
+            5.471363403632491e-12,
+            2.3589197871199243e-14
+          ]
+        },
+        {
+          "temperature_c": 200,
+          "cp_j_kg_k": 1015.4543510761172,
+          "relative_enthalpy_j_kg": 148021.13451657796,
+          "relative_entropy_j_kg_k": 378.7274736459287,
+          "independent_errors": [
+            1.3301203244308388e-13,
+            1.4509338999262284e-11,
+            3.6633030545395346e-14
+          ]
+        },
+        {
+          "temperature_c": 350,
+          "cp_j_kg_k": 1098.8532807968988,
+          "relative_enthalpy_j_kg": 307293.02379965544,
+          "relative_entropy_j_kg_k": 670.6007801604046,
+          "independent_errors": [
+            1.5348063813416713e-13,
+            9.61183085650493e-13,
+            3.3640564035817644e-14
+          ]
+        },
+        {
+          "temperature_c": 500,
+          "cp_j_kg_k": 1146.6365535421048,
+          "relative_enthalpy_j_kg": 475966.47935716447,
+          "relative_entropy_j_kg_k": 912.952747223934,
+          "independent_errors": [
+            4.979500508100482e-14,
+            4.663732254670364e-12,
+            4.118841682563841e-14
+          ]
+        },
+        {
+          "temperature_c": 700,
+          "cp_j_kg_k": 1189.2473563323508,
+          "relative_enthalpy_j_kg": 709809.2459134154,
+          "relative_entropy_j_kg_k": 1181.76083927815,
+          "independent_errors": [
+            1.700174239458972e-13,
+            4.137840337764669e-11,
+            7.043297832111919e-14
+          ]
+        },
+        {
+          "temperature_c": 900,
+          "cp_j_kg_k": 1221.5038495758479,
+          "relative_enthalpy_j_kg": 950994.849598337,
+          "relative_entropy_j_kg_k": 1407.0664917670224,
+          "independent_errors": [
+            6.948882006854477e-14,
+            1.3223156447385684e-10,
+            1.3323176791726082e-13
+          ]
+        },
+        {
+          "temperature_c": 1000,
+          "cp_j_kg_k": 1235.651566263074,
+          "relative_enthalpy_j_kg": 1073860.6891404102,
+          "relative_entropy_j_kg_k": 1507.5649575581501,
+          "independent_errors": [
+            1.4910833860831012e-14,
+            4.534443650282171e-11,
+            1.2702213340731033e-13
+          ]
+        },
+        {
+          "temperature_c": 1100,
+          "cp_j_kg_k": 1248.9686356242685,
+          "relative_enthalpy_j_kg": 1198097.588720779,
+          "relative_entropy_j_kg_k": 1601.4981419292055,
+          "independent_errors": [
+            1.5316893964578753e-13,
+            1.223256358119293e-10,
+            9.696013478742557e-14
+          ]
+        }
+      ],
+      "maximum_cp_h_s_errors": [
+        1.734296902378357e-13,
+        1.3223156447385684e-10,
+        1.3323176791726082e-13
+      ],
+      "within_numerical_budgets": {
+        "cp_absolute_j_kg_k": true,
+        "enthalpy_absolute_j_kg": true,
+        "entropy_absolute_j_kg_k": true
+      },
+      "positive_cp_certificate": {
+        "basis": "B>0 and C<0 imply Cp increases for positive T; minimum Cp at lower endpoint",
+        "minimum_cp_j_kg_k": 792.8300709827331,
+        "minimum_cp_slope_j_kg_k2": 0.12980856334083193
+      }
+    }
+  },
+  "version_comparison": [
+    {
+      "temperature_c": 40,
+      "thesis_minus_journal_cp_j_kg_k": -5.03749032757753,
+      "thesis_cp_relative_to_journal_minus_one": -0.006353808353072976,
+      "thesis_minus_journal_sensible_enthalpy_j_kg": 0.0
+    },
+    {
+      "temperature_c": 100,
+      "thesis_minus_journal_cp_j_kg_k": -21.186339403114403,
+      "thesis_cp_relative_to_journal_minus_one": -0.023345401040609004,
+      "thesis_minus_journal_sensible_enthalpy_j_kg": -881.6295478087995
+    },
+    {
+      "temperature_c": 200,
+      "thesis_minus_journal_cp_j_kg_k": -20.365583692038967,
+      "thesis_cp_relative_to_journal_minus_one": -0.020055636839269808,
+      "thesis_minus_journal_sensible_enthalpy_j_kg": -3151.706172192673
+    },
+    {
+      "temperature_c": 350,
+      "thesis_minus_journal_cp_j_kg_k": 7.034773067700371,
+      "thesis_cp_relative_to_journal_minus_one": 0.006401922067883925,
+      "thesis_minus_journal_sensible_enthalpy_j_kg": -4384.455933218531
+    },
+    {
+      "temperature_c": 500,
+      "thesis_minus_journal_cp_j_kg_k": 46.30701548596517,
+      "thesis_cp_relative_to_journal_minus_one": 0.04038508570385013,
+      "thesis_minus_journal_sensible_enthalpy_j_kg": -471.0611190548516
+    },
+    {
+      "temperature_c": 700,
+      "thesis_minus_journal_cp_j_kg_k": 105.70341455588323,
+      "thesis_cp_relative_to_journal_minus_one": 0.08888261470000103,
+      "thesis_minus_journal_sensible_enthalpy_j_kg": 14645.19002886163
+    },
+    {
+      "temperature_c": 900,
+      "thesis_minus_journal_cp_j_kg_k": 168.55125014138412,
+      "thesis_cp_relative_to_journal_minus_one": 0.13798667126584285,
+      "thesis_minus_journal_sensible_enthalpy_j_kg": 42033.828800554504
+    },
+    {
+      "temperature_c": 1000,
+      "thesis_minus_journal_cp_j_kg_k": 200.6353445789755,
+      "thesis_cp_relative_to_journal_minus_one": 0.16237210396272794,
+      "thesis_minus_journal_sensible_enthalpy_j_kg": 60490.46895319689
+    },
+    {
+      "temperature_c": 1100,
+      "thesis_minus_journal_cp_j_kg_k": 232.99632145857709,
+      "thesis_cp_relative_to_journal_minus_one": 0.18655097879389038,
+      "thesis_minus_journal_sensible_enthalpy_j_kg": 82170.08909307374
+    }
+  ],
+  "raw_measurement_comparison": [
+    {
+      "temperature_c": 40,
+      "handbook_cp_j_kg_k": 984,
+      "measured_cp_j_kg_k": 974,
+      "equation_cp_j_kg_k": 985.7338806551553,
+      "relative_difference_from_measurement": 0.012047105395436741
+    },
+    {
+      "temperature_c": 60,
+      "handbook_cp_j_kg_k": 1023,
+      "measured_cp_j_kg_k": 999,
+      "equation_cp_j_kg_k": 1024.996903836153,
+      "relative_difference_from_measurement": 0.026022926762915954
+    },
+    {
+      "temperature_c": 80,
+      "handbook_cp_j_kg_k": 1058,
+      "measured_cp_j_kg_k": 1043,
+      "equation_cp_j_kg_k": 1059.5558200415892,
+      "relative_difference_from_measurement": 0.01587326945502321
+    },
+    {
+      "temperature_c": 100,
+      "handbook_cp_j_kg_k": 1089,
+      "measured_cp_j_kg_k": 1085,
+      "equation_cp_j_kg_k": 1090.3915788062288,
+      "relative_difference_from_measurement": 0.004969197056432062
+    },
+    {
+      "temperature_c": 150,
+      "handbook_cp_j_kg_k": 1154,
+      "measured_cp_j_kg_k": 1176,
+      "equation_cp_j_kg_k": 1155.6183628327667,
+      "relative_difference_from_measurement": -0.017331324121797054
+    },
+    {
+      "temperature_c": 200,
+      "handbook_cp_j_kg_k": 1208,
+      "measured_cp_j_kg_k": 1223,
+      "equation_cp_j_kg_k": 1209.350067384078,
+      "relative_difference_from_measurement": -0.011161024215798787
+    }
+  ],
+  "appendix_arithmetic": {
+    "unnormalized_weight_sum_percent": 99.98,
+    "unnormalized_weighted_coefficients": {
+      "a_prime": 0.89619453,
+      "b_prime": 0.4361456,
+      "c_prime": -0.02425787
+    },
+    "printed_total_coefficients": {
+      "wt_percent": 100,
+      "a_prime": 0.8964,
+      "b_prime": 0.4362,
+      "c_prime": -0.0242
+    },
+    "weights_renormalized": false
+  },
+  "all_numerical_budgets_met": true,
+  "formation_enthalpy_supplied": false,
+  "absolute_entropy_supplied": false,
+  "changing_phase_reaction_heat_supplied": false,
+  "material_qualified": false,
+  "training_eligible": false
+}
