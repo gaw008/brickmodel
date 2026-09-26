@@ -1,0 +1,1369 @@
+{
+  "settings": {
+    "mechanical_source": "data/sandbox/research/viscous-spherical-pore-source-v1/source.json",
+    "thermal_source": "data/sandbox/research/carbon-gas-thermochemistry-v1/source.json",
+    "gas_species": "N2",
+    "temperature_domain_k": [
+      650.0,
+      1200.0
+    ],
+    "model": {
+      "matrix_volume_m3": 7.779181808889016e-15,
+      "viscosity_pa_s": 10000.0,
+      "surface_tension_n_m": 0.3,
+      "outside_pressure_pa": 100000.0,
+      "gas_constant_j_mol_k": 8.31451,
+      "reference_radius_m": 1e-05,
+      "matrix_volumetric_cv_j_m3_k": 2000000.0,
+      "reference_temperature_k": 298.15,
+      "standard_pressure_pa": 100000.0
+    },
+    "parameter_basis": "USGS1995 N2 heat functions and historicalR preserved. Molecular mass and nominal LJ diameter from existing source pack. All geometry, viscosity, surface tension, heat capacities/conductances and boundary programmes are virtual inputs, not the Wadsworth specimen or realbrick. No transfer of glass fit coefficients.",
+    "numerics": {
+      "relative_tolerance": 1e-10,
+      "refinement_factor": 0.1,
+      "absolute_tolerances_normalized": [
+        1e-12,
+        1e-12,
+        1e-12,
+        1e-12,
+        1e-12,
+        1e-12,
+        1e-12,
+        1e-12,
+        1e-12,
+        1e-12,
+        1e-12,
+        1e-12
+      ],
+      "first_step_s": 1e-05,
+      "maximum_step_s": 0.05,
+      "observation_interval_s": 0.05,
+      "progress_every_steps": 200
+    },
+    "normalization": {
+      "temperature_k": 1000.0,
+      "energy_j": 1e-05,
+      "entropy_j_k": 1e-08,
+      "amount_mol": 1e-13,
+      "time_s": 1.0
+    },
+    "scope": "Finite ideal-N2 exchange between a deforming viscous spherical pore and a rigid gas reservoir, each with lumped body heat storage. USGS1995 gas reference, constant virtual matrix coefficients, molecular effusion port. No reaction, pore connectivity law, solid thermal expansion or real-brick qualification.",
+    "effusion_source": "parameters.molecular_effusion_source_review.json",
+    "molecular_source": "parameters.nonpolar_gas_transport.json",
+    "connection": {
+      "aperture_radius_m": 5e-09,
+      "molar_mass_species": "N2",
+      "interpretation": "Ideal zero-thickness ballistic port with negligible area relative to the spherical cavity. Port traction and rim energy perturbations are omitted, so spherical mechanics is a declared leading-order lumped approximation."
+    },
+    "reservoir": {
+      "volume_m3": 4.188790204786391e-15,
+      "body_heat_capacity_j_k": 1.5e-08
+    },
+    "cases": {
+      "initial-inflow-adiabatic": {
+        "initial_pressures_pa": [
+          100000.0,
+          300000.0
+        ],
+        "initial_temperatures_k": [
+          800.0,
+          800.0
+        ],
+        "segments": [
+          {
+            "end_time_s": 30.0,
+            "pore_bath_temperature_k": 800.0,
+            "reservoir_bath_temperature_k": 800.0,
+            "pore_heat_conductance_w_k": 0.0,
+            "reservoir_heat_conductance_w_k": 0.0
+          }
+        ]
+      },
+      "initial-inflow-cycle": {
+        "initial_pressures_pa": [
+          100000.0,
+          300000.0
+        ],
+        "initial_temperatures_k": [
+          800.0,
+          800.0
+        ],
+        "segments": [
+          {
+            "end_time_s": 10.0,
+            "pore_bath_temperature_k": 1100.0,
+            "reservoir_bath_temperature_k": 950.0,
+            "pore_heat_conductance_w_k": 2e-09,
+            "reservoir_heat_conductance_w_k": 2e-09
+          },
+          {
+            "end_time_s": 20.0,
+            "pore_bath_temperature_k": 750.0,
+            "reservoir_bath_temperature_k": 850.0,
+            "pore_heat_conductance_w_k": 2e-09,
+            "reservoir_heat_conductance_w_k": 2e-09
+          },
+          {
+            "end_time_s": 30.0,
+            "pore_bath_temperature_k": 1000.0,
+            "reservoir_bath_temperature_k": 1000.0,
+            "pore_heat_conductance_w_k": 2e-09,
+            "reservoir_heat_conductance_w_k": 2e-09
+          }
+        ]
+      },
+      "initial-outflow-adiabatic": {
+        "initial_pressures_pa": [
+          300000.0,
+          100000.0
+        ],
+        "initial_temperatures_k": [
+          800.0,
+          800.0
+        ],
+        "segments": [
+          {
+            "end_time_s": 30.0,
+            "pore_bath_temperature_k": 800.0,
+            "reservoir_bath_temperature_k": 800.0,
+            "pore_heat_conductance_w_k": 0.0,
+            "reservoir_heat_conductance_w_k": 0.0
+          }
+        ]
+      },
+      "initial-outflow-cycle": {
+        "initial_pressures_pa": [
+          300000.0,
+          100000.0
+        ],
+        "initial_temperatures_k": [
+          800.0,
+          800.0
+        ],
+        "segments": [
+          {
+            "end_time_s": 10.0,
+            "pore_bath_temperature_k": 1100.0,
+            "reservoir_bath_temperature_k": 950.0,
+            "pore_heat_conductance_w_k": 2e-09,
+            "reservoir_heat_conductance_w_k": 2e-09
+          },
+          {
+            "end_time_s": 20.0,
+            "pore_bath_temperature_k": 750.0,
+            "reservoir_bath_temperature_k": 850.0,
+            "pore_heat_conductance_w_k": 2e-09,
+            "reservoir_heat_conductance_w_k": 2e-09
+          },
+          {
+            "end_time_s": 30.0,
+            "pore_bath_temperature_k": 1000.0,
+            "reservoir_bath_temperature_k": 1000.0,
+            "pore_heat_conductance_w_k": 2e-09,
+            "reservoir_heat_conductance_w_k": 2e-09
+          }
+        ]
+      }
+    },
+    "static_review": {
+      "decimal_digits": 60,
+      "radii_m": [
+        7e-06,
+        1e-05,
+        1.5e-05
+      ],
+      "pore_temperatures_k": [
+        750.0,
+        950.0,
+        1100.0
+      ],
+      "reservoir_temperatures_k": [
+        750.0,
+        1100.0
+      ],
+      "initial_pressures_pa": [
+        [
+          100000.0,
+          300000.0
+        ],
+        [
+          300000.0,
+          100000.0
+        ]
+      ],
+      "initial_temperature_k": 800.0,
+      "boundary": {
+        "pore_bath_temperature_k": 1000.0,
+        "reservoir_bath_temperature_k": 900.0,
+        "pore_heat_conductance_w_k": 2e-09,
+        "reservoir_heat_conductance_w_k": 2e-09
+      },
+      "budgets": {
+        "radius_rate_m_s": 1e-17,
+        "pore_temperature_rate_k_s": 1e-11,
+        "reservoir_temperature_rate_k_s": 1e-11,
+        "gas_transfer_mol_s": 1e-26,
+        "effusive_energy_w": 1e-19,
+        "source_energy_j": 1e-18,
+        "source_entropy_j_k": 1e-20,
+        "source_pressure_pa": 1e-06,
+        "energy_rate_w": 1e-18,
+        "entropy_rate_w_k": 1e-20
+      }
+    },
+    "verification": {
+      "quadrature_orders": [
+        2,
+        4
+      ],
+      "energy_j": 1e-13,
+      "entropy_j_k": 1e-16,
+      "gas_amount_mol": 1e-22,
+      "local_radius_m": 1e-12,
+      "local_temperature_k": 1e-05,
+      "local_amount_mol": 1e-22,
+      "time_radius_m": 1e-12,
+      "time_temperature_k": 1e-05,
+      "time_amount_mol": 1e-22,
+      "time_pressure_pa": 0.05,
+      "negative_step_entropy_j_k": 1e-19,
+      "negative_entropy_rate_w_k": 1e-30
+    }
+  },
+  "sources": {
+    "mechanical_source": {
+      "sources": [
+        {
+          "id": "brennen1995",
+          "title": "Cavitation and Bubble Dynamics",
+          "url": "https://authors.library.caltech.edu/records/4g53z-vj984",
+          "pdf_url": "https://authors.library.caltech.edu/records/4g53z-vj984/files/BUBBOOK.pdf?download=1",
+          "equations": [
+            "2.10",
+            "2.11"
+          ],
+          "pdf_one_based_page": 50,
+          "visual_reviewed": true,
+          "use": "Full Rayleigh-Plesset surface traction and closed ideal-gas pressure; creeping infinite-matrix limit derived separately."
+        },
+        {
+          "id": "wadsworth2016",
+          "doi": "10.1098/rspa.2015.0780",
+          "url": "https://strathprints.strath.ac.uk/70131/1/Wadsworth_etal_PRSA_2016_Sintering_of_viscous_droplets_under_surface_tension.pdf",
+          "equations": [
+            "2.11",
+            "2.12",
+            "2.13",
+            "2.15"
+          ],
+          "pdf_one_based_pages": [
+            5,
+            9
+          ],
+          "visual_reviewed": true,
+          "use": "Vented spherical-shell porosity law only; experimental glass viscosity and glass-bead qualification not transferred to brick."
+        }
+      ],
+      "selected_model": "Finite spherical incompressible Newtonian shell, fixed matrix volume, outer normal traction -p_out, no exterior surface energy, constantT and gamma; closed ideal gas or prescribed pressure venting.",
+      "derivation": {
+        "velocity": "v(r)=a^2*adot/r^2",
+        "normal_stress": "sigma_rr=-p_l-4*eta*a^2*adot/r^3",
+        "outer_pressure": "p_l=p_out-4*eta*a^2*adot/S^3",
+        "force_balance": "4*eta*(1-phi)*adot/a=p_g-p_out-2*gamma/a",
+        "dissipation": "Integral[2*eta*(err^2+2*ett^2)4*pi*r^2 dr,a,S]=16*pi*eta*a*(1-phi)*adot^2",
+        "closed_potential": "Phi=gamma*A+p_out*V-n*R*T*ln(V/V_ref)+constant; dPhi/dt=-D",
+        "vented_potential": "Omega=gamma*A+(p_out-p_g)*V+constant; dOmega/dt=-D",
+        "source_vented_limit": "Whenp_g=p_out, dphi/dt=-3gamma/(2eta*a_i)*(phi_i/(1-phi_i))^(1/3)*phi^(2/3)*(1-phi)^(1/3), WadsworthEq2.12."
+      },
+      "literal_source_cautions": [
+        "Wadsworthp5prose describeszero porosityat infinite time, but its Eq2.12 has an integrable phi^(-2/3) closure time for constant finite positive viscosity. Distinguish prose from the equation actually used.",
+        "Wadsworthp8viscosity prose writes mu=A+B/(T-C); no logarithm is printed while p9figure uses viscosity of10^5to10^13Pa*s. No empirical viscosity parameter admitted until original2014source is checked."
+      ],
+      "not_admitted": [
+        "targetbrick viscosity",
+        "targetbrick surface tension",
+        "pore network or permeability evolution",
+        "non-Newtonian yield stress",
+        "matrix temperature evolution",
+        "reaction-gas coupling",
+        "material validation"
+      ],
+      "material_qualified": false,
+      "training_eligible": false,
+      "additional_visual_review": {
+        "pdf": "wadsworth2016.pdf",
+        "one_based_page": 8,
+        "scope": "Confirmed the literal viscosity expression without log and material/method statements; empirical fit remains unadmitted."
+      },
+      "viscosity_source_followup": {
+        "wadsworth2014": {
+          "url": "https://agupubs.onlinelibrary.wiley.com/doi/10.1002/2014JB011453",
+          "reviewed": "Publisher fulltext HTML section3 Table2; PDF download not obtained.",
+          "glass_beads_vft_coefficients": {
+            "A": -2.6387,
+            "B": 4303.36,
+            "C": 530.754
+          },
+          "DGG_coefficients": {
+            "A": -2.818,
+            "B": 4551.0,
+            "C": 510.07
+          },
+          "basis": "Glass-bead viscosity is predicted using Fluegel2007; DGG is a separate viscosity standard. Do not interchange these materials."
+        },
+        "fluegel2007": {
+          "url": "https://glassproperties.com/viscosity/Viscosity_2006_AFluegel.pdf",
+          "title": "Glass viscosity calculation based on a global statistical modelling approach",
+          "pdf_one_based_pages_reviewed": [
+            1,
+            3
+          ],
+          "printed_pages": [
+            13,
+            15
+          ],
+          "equation": "log10(eta/(Pa s))=A+B/(T-T0)",
+          "temperature_policy": "Isokom temperatures in the composition regression are Celsius; Celsius/Kelvin conversion requires the same shift of fitted T0.",
+          "classification": "Empirical composition-viscosity model; not a physical law or target-brick viscosity measurement."
+        },
+        "unresolved": [
+          "2016 printed viscosity equation omits logarithm. Primary Fluegel2007 supports logarithmic form, but the2016 literal expression is retained as a source discrepancy.",
+          "2014 glass-bead A=-2.6387 andC=530.754 differ from2016 A=-2.63 andC=530.60. No silent replacement or mixing.",
+          "No target-brick viscosity applicability or uncertainty demonstrated."
+        ],
+        "admitted_to_material_model": false,
+        "figure_axis_discrepancy": {
+          "source": "Wadsworth2016 PDFpage9 Figure2a, re-viewed visually",
+          "observed": "Near lower-axis T/Tg=1, upper axis is approximately550 although labelled T(K); caption gives Tg approximately824K.",
+          "inference": "550 Celsius is approximately823.15K, suggesting a Celsius-axis/normalization annotation issue. This is an inference, not a source-issued correction.",
+          "consequence": "Do not digitize or admit viscosity-temperature observations using the two axes as literally labelled."
+        }
+      }
+    },
+    "thermal_source": {
+      "source_id": "usgs1995-selected-carbon-oxygen-nitrogen-phases",
+      "source_url": "https://pubs.usgs.gov/bul/2131/report.pdf",
+      "year": 1995,
+      "authors": [
+        "Richard A. Robie",
+        "Bruce S. Hemingway"
+      ],
+      "reference_temperature_k": "298.15",
+      "reference_pressure_pa": "100000",
+      "gas_constant_j_mol_k": "8.31451",
+      "gas_constant_policy": "Historical book R retained for separate same-source nominal calculation.",
+      "cp_formula": "A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2",
+      "phases": {
+        "C": {
+          "id": "graphite",
+          "formula": "C",
+          "cp_coefficient_strings": [
+            "6.086E+01",
+            "-1.024E-02",
+            "7.139E+05",
+            "-9.922E+02",
+            "1.669E-06"
+          ],
+          "reference_enthalpy_j_mol": "0",
+          "reference_entropy_j_mol_k": "5.74",
+          "cp_pdf_one_based_page": 47,
+          "thermal_pdf_one_based_page": 82,
+          "source_domain_k": [
+            298.15,
+            2500.0
+          ],
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "8.52",
+              "entropy_j_mol_k": "5.74",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "300",
+              "cp_j_mol_k": "8.59",
+              "entropy_j_mol_k": "5.79",
+              "sensible_enthalpy_over_t_j_mol_k": "0.05"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "11.88",
+              "entropy_j_mol_k": "8.72",
+              "sensible_enthalpy_over_t_j_mol_k": "2.60"
+            },
+            {
+              "temperature_k": "500",
+              "cp_j_mol_k": "14.64",
+              "entropy_j_mol_k": "11.68",
+              "sensible_enthalpy_over_t_j_mol_k": "4.75"
+            },
+            {
+              "temperature_k": "600",
+              "cp_j_mol_k": "16.79",
+              "entropy_j_mol_k": "14.55",
+              "sensible_enthalpy_over_t_j_mol_k": "6.58"
+            },
+            {
+              "temperature_k": "700",
+              "cp_j_mol_k": "18.47",
+              "entropy_j_mol_k": "17.27",
+              "sensible_enthalpy_over_t_j_mol_k": "8.17"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "19.77",
+              "entropy_j_mol_k": "19.82",
+              "sensible_enthalpy_over_t_j_mol_k": "9.54"
+            },
+            {
+              "temperature_k": "900",
+              "cp_j_mol_k": "20.80",
+              "entropy_j_mol_k": "22.21",
+              "sensible_enthalpy_over_t_j_mol_k": "10.73"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "21.63",
+              "entropy_j_mol_k": "24.45",
+              "sensible_enthalpy_over_t_j_mol_k": "11.78"
+            },
+            {
+              "temperature_k": "1100",
+              "cp_j_mol_k": "22.29",
+              "entropy_j_mol_k": "26.54",
+              "sensible_enthalpy_over_t_j_mol_k": "12.71"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "22.83",
+              "entropy_j_mol_k": "28.51",
+              "sensible_enthalpy_over_t_j_mol_k": "13.53"
+            }
+          ]
+        },
+        "O2": {
+          "id": "oxygen",
+          "formula": "O2",
+          "cp_coefficient_strings": [
+            "5.658E+01",
+            "-5.255E-03",
+            "6.856E+05",
+            "-5.780E+02",
+            "1.113E-06"
+          ],
+          "reference_enthalpy_j_mol": "0",
+          "reference_entropy_j_mol_k": "205.15",
+          "cp_pdf_one_based_page": 49,
+          "thermal_pdf_one_based_page": 106,
+          "source_domain_k": [
+            298.15,
+            2500.0
+          ],
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "29.35",
+              "entropy_j_mol_k": "205.15",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "300",
+              "cp_j_mol_k": "29.35",
+              "entropy_j_mol_k": "205.33",
+              "sensible_enthalpy_over_t_j_mol_k": "0.18"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "30.04",
+              "entropy_j_mol_k": "213.85",
+              "sensible_enthalpy_over_t_j_mol_k": "7.54"
+            },
+            {
+              "temperature_k": "500",
+              "cp_j_mol_k": "31.12",
+              "entropy_j_mol_k": "220.67",
+              "sensible_enthalpy_over_t_j_mol_k": "12.15"
+            },
+            {
+              "temperature_k": "600",
+              "cp_j_mol_k": "32.14",
+              "entropy_j_mol_k": "226.43",
+              "sensible_enthalpy_over_t_j_mol_k": "15.40"
+            },
+            {
+              "temperature_k": "700",
+              "cp_j_mol_k": "33.00",
+              "entropy_j_mol_k": "231.45",
+              "sensible_enthalpy_over_t_j_mol_k": "17.85"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "33.72",
+              "entropy_j_mol_k": "235.91",
+              "sensible_enthalpy_over_t_j_mol_k": "19.79"
+            },
+            {
+              "temperature_k": "900",
+              "cp_j_mol_k": "34.33",
+              "entropy_j_mol_k": "239.92",
+              "sensible_enthalpy_over_t_j_mol_k": "21.37"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "34.85",
+              "entropy_j_mol_k": "243.56",
+              "sensible_enthalpy_over_t_j_mol_k": "22.70"
+            },
+            {
+              "temperature_k": "1100",
+              "cp_j_mol_k": "35.29",
+              "entropy_j_mol_k": "246.90",
+              "sensible_enthalpy_over_t_j_mol_k": "23.82"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "35.67",
+              "entropy_j_mol_k": "249.99",
+              "sensible_enthalpy_over_t_j_mol_k": "24.79"
+            }
+          ]
+        },
+        "CO": {
+          "id": "carbon_monoxide",
+          "formula": "CO",
+          "cp_coefficient_strings": [
+            "3.976E+01",
+            "3.188E-03",
+            "5.292E+05",
+            "-3.013E+02",
+            "-8.078E-07"
+          ],
+          "reference_enthalpy_j_mol": "-110500",
+          "reference_entropy_j_mol_k": "197.27",
+          "cp_pdf_one_based_page": 53,
+          "thermal_pdf_one_based_page": 186,
+          "source_domain_k": [
+            298.15,
+            2200.0
+          ],
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "29.14",
+              "entropy_j_mol_k": "197.27",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "300",
+              "cp_j_mol_k": "29.13",
+              "entropy_j_mol_k": "197.45",
+              "sensible_enthalpy_over_t_j_mol_k": "0.18"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "29.15",
+              "entropy_j_mol_k": "205.80",
+              "sensible_enthalpy_over_t_j_mol_k": "7.39"
+            },
+            {
+              "temperature_k": "500",
+              "cp_j_mol_k": "29.79",
+              "entropy_j_mol_k": "212.37",
+              "sensible_enthalpy_over_t_j_mol_k": "11.81"
+            },
+            {
+              "temperature_k": "600",
+              "cp_j_mol_k": "30.55",
+              "entropy_j_mol_k": "217.87",
+              "sensible_enthalpy_over_t_j_mol_k": "14.87"
+            },
+            {
+              "temperature_k": "700",
+              "cp_j_mol_k": "31.29",
+              "entropy_j_mol_k": "222.64",
+              "sensible_enthalpy_over_t_j_mol_k": "17.16"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "31.97",
+              "entropy_j_mol_k": "226.86",
+              "sensible_enthalpy_over_t_j_mol_k": "18.97"
+            },
+            {
+              "temperature_k": "900",
+              "cp_j_mol_k": "32.58",
+              "entropy_j_mol_k": "230.66",
+              "sensible_enthalpy_over_t_j_mol_k": "20.45"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "33.14",
+              "entropy_j_mol_k": "234.12",
+              "sensible_enthalpy_over_t_j_mol_k": "21.69"
+            },
+            {
+              "temperature_k": "1100",
+              "cp_j_mol_k": "33.64",
+              "entropy_j_mol_k": "237.31",
+              "sensible_enthalpy_over_t_j_mol_k": "22.75"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "34.09",
+              "entropy_j_mol_k": "240.25",
+              "sensible_enthalpy_over_t_j_mol_k": "23.68"
+            }
+          ],
+          "domain_note": "Cp coefficient table prints upper2500K; individual ideal-gas table states2200K. Selected1200K is within both; preserve conflict."
+        },
+        "CO2": {
+          "id": "carbon_dioxide",
+          "formula": "CO2",
+          "cp_coefficient_strings": [
+            "8.811E+01",
+            "-2.698E-03",
+            "7.232E+05",
+            "-1.007E+03",
+            "0"
+          ],
+          "reference_enthalpy_j_mol": "-393500",
+          "reference_entropy_j_mol_k": "213.79",
+          "source_domain_k": [
+            298.15,
+            2200.0
+          ],
+          "cp_pdf_one_based_page": 53,
+          "thermal_pdf_one_based_page": 187,
+          "prior_source_record": "data/sandbox/research/calcite-thermochemistry-v1/facts.json",
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "37.12",
+              "entropy_j_mol_k": "213.79",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "41.20",
+              "entropy_j_mol_k": "225.28",
+              "sensible_enthalpy_over_t_j_mol_k": "9.98"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "51.48",
+              "entropy_j_mol_k": "257.47",
+              "sensible_enthalpy_over_t_j_mol_k": "28.51"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "54.29",
+              "entropy_j_mol_k": "269.28",
+              "sensible_enthalpy_over_t_j_mol_k": "33.40"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "56.31",
+              "entropy_j_mol_k": "279.37",
+              "sensible_enthalpy_over_t_j_mol_k": "37.06"
+            }
+          ]
+        },
+        "N2": {
+          "id": "nitrogen",
+          "formula": "N2",
+          "cp_coefficient_strings": [
+            "2.479E+01",
+            "9.648E-03",
+            "1.459E+05",
+            "0",
+            "-2.003E-06"
+          ],
+          "reference_enthalpy_j_mol": "0",
+          "reference_entropy_j_mol_k": "191.61",
+          "source_domain_k": [
+            298.15,
+            2500.0
+          ],
+          "cp_pdf_one_based_page": 48,
+          "thermal_pdf_one_based_page": 103,
+          "prior_source_record": "parameters.calcite_nitrogen_source.json",
+          "source_table": [
+            {
+              "temperature_k": "298.15",
+              "cp_j_mol_k": "29.13",
+              "entropy_j_mol_k": "191.61",
+              "sensible_enthalpy_over_t_j_mol_k": "0.00"
+            },
+            {
+              "temperature_k": "300",
+              "cp_j_mol_k": "29.13",
+              "entropy_j_mol_k": "191.79",
+              "sensible_enthalpy_over_t_j_mol_k": "0.18"
+            },
+            {
+              "temperature_k": "400",
+              "cp_j_mol_k": "29.24",
+              "entropy_j_mol_k": "200.17",
+              "sensible_enthalpy_over_t_j_mol_k": "7.42"
+            },
+            {
+              "temperature_k": "500",
+              "cp_j_mol_k": "29.70",
+              "entropy_j_mol_k": "206.74",
+              "sensible_enthalpy_over_t_j_mol_k": "11.83"
+            },
+            {
+              "temperature_k": "600",
+              "cp_j_mol_k": "30.26",
+              "entropy_j_mol_k": "212.21",
+              "sensible_enthalpy_over_t_j_mol_k": "14.85"
+            },
+            {
+              "temperature_k": "700",
+              "cp_j_mol_k": "30.86",
+              "entropy_j_mol_k": "216.91",
+              "sensible_enthalpy_over_t_j_mol_k": "17.09"
+            },
+            {
+              "temperature_k": "800",
+              "cp_j_mol_k": "31.45",
+              "entropy_j_mol_k": "221.07",
+              "sensible_enthalpy_over_t_j_mol_k": "18.85"
+            },
+            {
+              "temperature_k": "900",
+              "cp_j_mol_k": "32.03",
+              "entropy_j_mol_k": "224.81",
+              "sensible_enthalpy_over_t_j_mol_k": "20.29"
+            },
+            {
+              "temperature_k": "1000",
+              "cp_j_mol_k": "32.58",
+              "entropy_j_mol_k": "228.22",
+              "sensible_enthalpy_over_t_j_mol_k": "21.49"
+            },
+            {
+              "temperature_k": "1100",
+              "cp_j_mol_k": "33.10",
+              "entropy_j_mol_k": "231.35",
+              "sensible_enthalpy_over_t_j_mol_k": "22.52"
+            },
+            {
+              "temperature_k": "1200",
+              "cp_j_mol_k": "33.58",
+              "entropy_j_mol_k": "234.25",
+              "sensible_enthalpy_over_t_j_mol_k": "23.42"
+            }
+          ]
+        }
+      },
+      "readback": {
+        "utc_date": "2026-09-25",
+        "official_pdf_cache": ".tools/source-cache/usgs1995/report.pdf",
+        "new_pages_rendered_and_visually_read": [
+          47,
+          49,
+          53,
+          82,
+          106,
+          186
+        ],
+        "existing_source_records_reused": [
+          "parameters.calcite_nitrogen_source.json",
+          "data/sandbox/research/calcite-thermochemistry-v1/facts.json",
+          "parameters.calcite_affinity_source.json"
+        ],
+        "new_network_pdf_access": "403; already available official PDF inspected locally, no new retrieval claimed."
+      },
+      "source_choice": "Preserve the complete selected USGS nominal source. Do not silently replace CO entropy with another compilation. Published coefficient-fit covariance and relevant real-char properties remain unknown.",
+      "nist_co_cross_source_comparison": {
+        "url": "https://janaf.nist.gov/tables/C-093.html",
+        "reference_temperature_k": "298.15",
+        "reference_pressure_pa": "100000",
+        "enthalpy_j_mol": "-110527",
+        "entropy_j_mol_k": "197.653",
+        "cp_j_mol_k": "29.142",
+        "formation_gibbs_j_mol": "-137163",
+        "classification": "Independent published compilation value, not an experimental holdout and not substituted into the USGS model."
+      },
+      "scope": "Pure reference graphite and ideal gases; not measured sludge char, finite reaction rate, volatile inventory, or actual brick atmosphere.",
+      "material_qualified": false,
+      "training_eligible": false
+    },
+    "effusion_source": {
+      "sources": {
+        "effusion": {
+          "authors": "Cleuren, Van den Broeck, Kawai",
+          "year": 2006,
+          "doi": "10.1103/PhysRevE.74.021117",
+          "public_preprint": "https://arxiv.org/abs/cond-mat/0606141",
+          "pdf": "https://arxiv.org/pdf/cond-mat/0606141",
+          "local_reading_copy": ".tools/source-cache/effusion2006/cleuren2006.pdf",
+          "locator": "PDFpage2 Eqs3-5; page3 Eqs13/20/21. Page3 visually checked.",
+          "source_scope": "Monatomic ideal-gas effusion; mean translational crossing energy2kBT. Polyatomic internal energy below is a separately derived local-equilibrium extension, not asserted as a result of that paper."
+        },
+        "molecular_flux": {
+          "url": "https://farside.ph.utexas.edu/teaching/355/Surveyhtml/node213.html",
+          "locator": "Eqs5.167-5.172"
+        },
+        "thermal_pressure_ratio": {
+          "url": "https://farside.ph.utexas.edu/teaching/355/Surveyhtml/node224.html",
+          "locator": "Eqs5.284-5.286; held-temperature mass-stationary state, not isolated thermal equilibrium"
+        },
+        "caloric_urls": {
+          "CO2": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C124389&Units=SI&Mask=1#Thermo-Gas",
+          "O2": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7782447&Units=SI&Mask=1#Thermo-Gas",
+          "N2": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7727379&Units=SI&Mask=1#Thermo-Gas"
+        }
+      },
+      "thermochemistry_file": "data/sandbox/thermochemistry/nist_gases_v1.json",
+      "molecular_constants_file": "parameters.nonpolar_gas_transport.json",
+      "species_order": [
+        "CO2",
+        "O2",
+        "N2"
+      ],
+      "reference_pressure_pa": 100000,
+      "area_m2": 1e-08,
+      "source_temperature_interval_k": [
+        300,
+        450
+      ],
+      "internal_mode_extension": "Internal mode energy is statistically independent of center-of-mass speed in an equilibrated ideal gas. Crossing energy is bulku-3RT/2+2RT=h-RT/2. No reaction, adsorption or velocity-selective membrane.",
+      "cases": [
+        {
+          "name": "equilibrium",
+          "left": {
+            "temperature_k": 330,
+            "partial_pressures_pa": [
+              0.3,
+              0.2,
+              0.5
+            ]
+          },
+          "right": {
+            "temperature_k": 330,
+            "partial_pressures_pa": [
+              0.3,
+              0.2,
+              0.5
+            ]
+          }
+        },
+        {
+          "name": "isothermal_pressure",
+          "left": {
+            "temperature_k": 330,
+            "partial_pressures_pa": [
+              0.3,
+              0.2,
+              0.5
+            ]
+          },
+          "right": {
+            "temperature_k": 330,
+            "partial_pressures_pa": [
+              0.15,
+              0.1,
+              0.25
+            ]
+          }
+        },
+        {
+          "name": "equal_pressure_temperature",
+          "left": {
+            "temperature_k": 450,
+            "partial_pressures_pa": [
+              0.3,
+              0.2,
+              0.5
+            ]
+          },
+          "right": {
+            "temperature_k": 300,
+            "partial_pressures_pa": [
+              0.3,
+              0.2,
+              0.5
+            ]
+          }
+        },
+        {
+          "name": "thermal_mass_stationary",
+          "left": {
+            "temperature_k": 450,
+            "partial_pressures_pa": [
+              0.36742346141747667,
+              0.2449489742783178,
+              0.6123724356957945
+            ]
+          },
+          "right": {
+            "temperature_k": 300,
+            "partial_pressures_pa": [
+              0.3,
+              0.2,
+              0.5
+            ]
+          }
+        },
+        {
+          "name": "mixed_driving",
+          "left": {
+            "temperature_k": 450,
+            "partial_pressures_pa": [
+              0.6,
+              0.1,
+              0.3
+            ]
+          },
+          "right": {
+            "temperature_k": 300,
+            "partial_pressures_pa": [
+              0.1,
+              0.15,
+              0.25
+            ]
+          }
+        },
+        {
+          "name": "reversed_driving",
+          "left": {
+            "temperature_k": 300,
+            "partial_pressures_pa": [
+              0.1,
+              0.15,
+              0.25
+            ]
+          },
+          "right": {
+            "temperature_k": 450,
+            "partial_pressures_pa": [
+              0.6,
+              0.1,
+              0.3
+            ]
+          }
+        },
+        {
+          "name": "near_equilibrium",
+          "left": {
+            "temperature_k": 330.0001,
+            "partial_pressures_pa": [
+              0.3000004000001,
+              0.2000002,
+              0.5000003999999
+            ]
+          },
+          "right": {
+            "temperature_k": 330,
+            "partial_pressures_pa": [
+              0.3,
+              0.2,
+              0.5
+            ]
+          }
+        },
+        {
+          "name": "isothermal_counterdiffusion",
+          "left": {
+            "temperature_k": 330,
+            "partial_pressures_pa": [
+              0.6,
+              0.1,
+              0.3
+            ]
+          },
+          "right": {
+            "temperature_k": 330,
+            "partial_pressures_pa": [
+              0.2,
+              0.3,
+              0.5
+            ]
+          }
+        }
+      ],
+      "review": {
+        "decimal_precision": 80,
+        "absolute_species_flux_budget_mol_s": 1e-21,
+        "absolute_energy_flux_budget_w": 1e-16,
+        "absolute_entropy_rate_budget_w_k": 1e-18,
+        "velocity_moment_relative_budget": 1e-14,
+        "gauge_energy_shifts_j_mol": [
+          10000,
+          -50000,
+          20000
+        ],
+        "gauge_entropy_rate_budget_w_k": 1e-18,
+        "thermal_mass_stationary_flux_budget_mol_s": 1e-21,
+        "nonnegative_entropy_allowance_w_k": 1e-20,
+        "reference_quadrature_relative_budget": 1e-13
+      },
+      "physical_scope": "Reservoirs internally equilibrated; molecular mean free path far exceeds zero-thickness aperture diameter. No finite-length pore geometry, intermolecular collision correction, continuum advection, radiative/wall conduction, reaction or brick validation.",
+      "material_qualified": false,
+      "training_eligible": false
+    },
+    "molecular_source": {
+      "source_files": {
+        "collision_integrals": "data/sandbox/research/gas-transport-source-v1/source/MMCollisionInt.cpp",
+        "collision_header": "data/sandbox/research/gas-transport-source-v1/source/MMCollisionInt.h",
+        "gas_transport": "data/sandbox/research/gas-transport-source-v1/source/GasTransport.cpp",
+        "gri30": "data/sandbox/research/gas-transport-source-v1/source/gri30.yaml",
+        "nist_tables": "data/sandbox/research/gas-transport-source-v1/source/nist-selected-tables.json"
+      },
+      "source_version": "Cantera v3.2.0, source collision formulas before temperature polynomial fitting",
+      "constants": {
+        "boltzmann_j_k": "1.380649e-23",
+        "avogadro_mol_inverse": "6.02214076e23",
+        "angstrom_m": "1e-10",
+        "gram_kg": "1e-3",
+        "micropascal_pa": "1e-6",
+        "source": "https://physics.nist.gov/cuu/Constants/Table/allascii.txt",
+        "classification": "kB and NA exact SI; metric prefixes exact; molecular masses taken from the selected historical NIST compilation"
+      },
+      "species": {
+        "CO": {
+          "well_depth_over_kb_k": "98.1",
+          "diameter_angstrom": "3.65",
+          "molar_mass_g_mol": "28.0104",
+          "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+          "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-5"
+        },
+        "CO2": {
+          "well_depth_over_kb_k": "244.0",
+          "diameter_angstrom": "3.763",
+          "molar_mass_g_mol": "44.010",
+          "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+          "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-4"
+        },
+        "O2": {
+          "well_depth_over_kb_k": "107.4",
+          "diameter_angstrom": "3.458",
+          "molar_mass_g_mol": "31.999",
+          "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+          "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+        },
+        "N2": {
+          "well_depth_over_kb_k": "97.53",
+          "diameter_angstrom": "3.621",
+          "molar_mass_g_mol": "28.0135",
+          "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+          "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+        }
+      },
+      "collision_tables": {
+        "reduced_temperature": [
+          "0.1",
+          "0.2",
+          "0.3",
+          "0.4",
+          "0.5",
+          "0.6",
+          "0.7",
+          "0.8",
+          "0.9",
+          "1.0",
+          "1.2",
+          "1.4",
+          "1.6",
+          "1.8",
+          "2.0",
+          "2.5",
+          "3.0",
+          "3.5",
+          "4.0",
+          "5.0",
+          "6.0",
+          "7.0",
+          "8.0",
+          "9.0",
+          "10.0",
+          "12.0",
+          "14.0",
+          "16.0",
+          "18.0",
+          "20.0",
+          "25.0",
+          "30.0",
+          "35.0",
+          "40.0",
+          "50.0",
+          "75.0",
+          "100.0"
+        ],
+        "omega22_delta_zero": [
+          "4.1005",
+          "3.2626",
+          "2.8399",
+          "2.531",
+          "2.2837",
+          "2.0838",
+          "1.922",
+          "1.7902",
+          "1.6823",
+          "1.5929",
+          "1.4551",
+          "1.3551",
+          "1.28",
+          "1.2219",
+          "1.1757",
+          "1.0933",
+          "1.0388",
+          "0.99963",
+          "0.96988",
+          "0.92676",
+          "0.89616",
+          "0.87272",
+          "0.85379",
+          "0.83795",
+          "0.82435",
+          "0.80184",
+          "0.78363",
+          "0.76834",
+          "0.75518",
+          "0.74364",
+          "0.71982",
+          "0.70097",
+          "0.68545",
+          "0.67232",
+          "0.65099",
+          "0.61397",
+          "0.5887"
+        ],
+        "astar_delta_zero": [
+          "1.0231",
+          "1.0424",
+          "1.0719",
+          "1.0936",
+          "1.1053",
+          "1.1104",
+          "1.1114",
+          "1.1104",
+          "1.1086",
+          "1.1063",
+          "1.1020",
+          "1.0985",
+          "1.0960",
+          "1.0943",
+          "1.0934",
+          "1.0926",
+          "1.0934",
+          "1.0948",
+          "1.0965",
+          "1.0997",
+          "1.1025",
+          "1.1050",
+          "1.1072",
+          "1.1091",
+          "1.1107",
+          "1.1133",
+          "1.1154",
+          "1.1172",
+          "1.1186",
+          "1.1199",
+          "1.1223",
+          "1.1243",
+          "1.1259",
+          "1.1273",
+          "1.1297",
+          "1.1339",
+          "1.1364"
+        ]
+      },
+      "review": {
+        "decimal_precision": 80,
+        "temperatures_k": [
+          300,
+          400,
+          500,
+          600,
+          700,
+          800,
+          900,
+          1000,
+          1100,
+          1200
+        ],
+        "pressures_pa": [
+          50000,
+          100000,
+          200000
+        ],
+        "relative_arithmetic_budget": 1e-13,
+        "relative_symmetry_budget": 1e-14,
+        "relative_pressure_scaling_budget": 1e-14,
+        "nist_uncertainty_fraction": {
+          "CO": 0.05,
+          "CO2": 0.05,
+          "O2": 0.005,
+          "N2": 0.03
+        },
+        "nist_rounding_half_unit_micro_pa_s": {
+          "CO": 0.05,
+          "CO2": 0.005,
+          "O2": 0.005,
+          "N2": 0.05
+        },
+        "selected_calculation_temperature_domain_k": [
+          300,
+          1200
+        ],
+        "table_comparison_temperature_domain_k": [
+          300,
+          1000
+        ]
+      },
+      "scope": "Pure dilute-gas viscosity and first-order binary molecular diffusion only; explicit zero-dipole LJ approximation. No mixture-viscosity, porous effective diffusivity, Darcy permeability, multicomponent flux, Soret or brick qualification. GRI NASA thermo and reactions are not imported. No post-fit calibration to NIST tables. NIST comparison pressure is unspecified on selected pages; agreement is not pressure-matched experimental validation.",
+      "material_qualified": false,
+      "training_eligible": false
+    }
+  },
+  "records": [
+    {
+      "inputs": {
+        "radius_m": 7e-06,
+        "temperatures_k": [
+          750.0,
+          750.0
+        ],
+        "amounts_mol": [
+          6.29740989665415e-14,
+          1.8892229689962448e-13
+        ]
+      },
+      "state": {
+        "pore": {
+          "radius_m": 7e-06,
+          "outer_radius_m": 1.3006195975720924e-05,
+          "pore_volume_m3": 1.4367550402417322e-15,
+          "total_volume_m3": 9.215936849130748e-15,
+          "porosity": 0.15589896759950647,
+          "gas_pressure_pa": 273323.6151603499,
+          "laplace_pressure_pa": 85714.28571428571,
+          "radius_rate_m_s": 1.8163267268445838e-05,
+          "outer_radius_rate_m_s": 5.261256391332478e-06,
+          "radial_velocity_constant_m3_s": 8.90000096153846e-16,
+          "matrix_pressure_pa": 83819.23076923081,
+          "pore_volume_rate_m3_s": 1.1184071055084529e-14,
+          "porosity_rate_s": 1.0243653009544829,
+          "surface_energy_j": 1.8472564803107983e-10,
+          "surface_energy_rate_w": 9.586346618643883e-10,
+          "external_work_in_w": -1.118407105508453e-09,
+          "viscous_dissipation_w": 9.798289656130905e-10,
+          "temperature_k": 750.0,
+          "bath_temperature_k": 1000.0,
+          "heat_in_w": 5.000000000000001e-07,
+          "gas_compression_work_w": -3.056870732985932e-09,
+          "temperature_rate_k_s": 32.000596892568254,
+          "cv_j_k": 1.555980220944765e-08,
+          "gas_internal_energy_j": 4.585143183635219e-10,
+          "matrix_internal_energy_j": 7.0300466006930035e-06,
+          "internal_energy_j": 7.030689840659398e-06,
+          "gas_entropy_j_k": 1.3268274555680576e-11,
+          "matrix_entropy_j_k": 1.435222467522692e-08,
+          "entropy_j_k": 1.4365492949782601e-08,
+          "entropy_rate_w_k": 6.679731052874842e-10,
+          "bath_entropy_rate_w_k": -5.000000000000001e-10,
+          "viscous_entropy_production_w_k": 1.306438620817454e-12,
+          "heat_entropy_production_w_k": 1.6666666666666666e-10,
+          "entropy_production_w_k": 1.679731052874841e-10,
+          "gas_amount_mol": 6.29740989665415e-14
+        },
+        "gases": [
+          {
+            "temperature_k": 750.0,
+            "pressure_pa": 273323.6151603499,
+            "partial_pressures_pa": [
+              273323.6151603499
+            ],
+            "enthalpies_j_mol": [
+              13516.880972199391
+            ],
+            "chemical_potentials_j_mol": [
+              -144503.73512343643
+            ],
+            "molar_internal_energy_j_mol": 7280.998472199391,
+            "molar_entropy_j_mol_k": 210.69415479418112,
+            "cv_j_k": 1.438591669622293e-12,
+            "amount_mol": 6.29740989665415e-14,
+            "volume_m3": 1.4367550402417322e-15
+          },
+          {
+            "temperature_k": 750.0,
+            "pressure_pa": 281250.0,
+            "partial_pressures_pa": [
+              281250.0
+            ],
+            "enthalpies_j_mol": [
+              13516.880972199391
+            ],
+            "chemical_potentials_j_mol": [
+              -144325.46710153407
+            ],
+            "molar_internal_energy_j_mol": 7280.998472199391,
+            "molar_entropy_j_mol_k": 210.4564640983113,
+            "cv_j_k": 4.3157750088668785e-12,
+            "amount_mol": 1.8892229689962448e-13,
+            "volume_m3": 4.188790204786391e-15
+          }
+        ],
+        "radius_m": 7e-06,
+        "pore_temperature_k": 750.0,
+        "reservoir_temperature_k": 750.0,
+        "pore_amount_mol": 6.29740989665415e-14,
+        "reservoir_amount_mol": 1.8892229689962448e-13,
+        "radius_rate_m_s": 1.8163267268445838e-05,
+        "pore_temperature_rate_k_s": 32.00436225087085,
+        "reservoir_temperature_rate_k_s": 19.990342529923637,
+        "gas_transfer_mol_s": -1.879067812329601e-14,
+        "effusive_energy_w": -1.9540312914340573e-10,
+        "one_way_species_mol_s": [
+          6.479544180446903e-13,
+          6.667450961679863e-13
+        ],
+        "pore_heat_in_w": 5.000000000000001e-07,
+        "reservoir_heat_in_w": 3.0000000000000004e-07,
+        "external_work_in_w": -1.118407105508453e-09,
+        "viscous_dissipation_w": 9.798289656130905e-10,
+        "internal_energy_j": 1.3809815383614488e-05,
+        "entropy_j_k": 2.8242400232796045e-08,
+        "bath_entropy_rate_w_k": -8.333333333333336e-10,
+        "effusion_entropy_production_w_k": 4.466369358991535e-15,
+        "heat_entropy_production_w_k": 2.333333333333333e-10,
+        "entropy_production_w_k": 2.346442383235097e-10,
+        "port_area_over_pore_area": 1.2755102040816326e-07,
+        "nominal_mean_free_paths_m": [
+          6.503511978263471e-08,
+          6.320225440489282e-08
+        ],
+        "nominal_mean_free_path_over_port_radius": [
+          13.007023956526941,
+          12.640450880978564
+        ]
+      },
+      "errors": {
+        "radius_rate_m_s": 1.4337088120542448e-20,
+        "pore_temperature_rate_k_s": 4.50474301053458e-15,
+        "reservoir_temperature_rate_k_s": 5.275439139328823e-16,
+        "gas_transfer_mol_s": 1.1117313324020837e-28,
+        "effusive_energy_w": 8.836032510855146e-25,
+        "source_energy_j": 5.011731617151117e-22,
+        "source_entropy_j_k": 1.6100345824961177e-24,
+        "source_pressure_pa": 5.1934552160731817e-11,
+        "energy_rate_w": 6.207403138740376e-23,
+        "entropy_rate_w_k": 8.770491746811323e-26
+      },
+      "within_budgets": {
+        "radius_rate_m_s": true,
+        "pore_temperature_rate_k_s": true,
+        "reservoir_temperature_rate_k_s": true,
+        "gas_transfer_mol_s": true,
+        "effusive_energy_w": true,
+        "source_energy_j": true,
+        "source_entropy_j_k": true,
+        "source_pressure_pa": true,
+        "energy_rate_w": true,
+        "entropy_rate_w_k": true,
+        "nonnegative_effusion": 

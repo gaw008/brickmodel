@@ -1,0 +1,232 @@
+{
+  "mechanical_source": "data/sandbox/research/viscous-spherical-pore-source-v1/source.json",
+  "thermal_source": "data/sandbox/research/carbon-gas-thermochemistry-v1/source.json",
+  "gas_species": "N2",
+  "temperature_domain_k": [
+    650.0,
+    1200.0
+  ],
+  "model": {
+    "matrix_volume_m3": 7.779181808889016e-15,
+    "viscosity_pa_s": 10000.0,
+    "surface_tension_n_m": 0.3,
+    "outside_pressure_pa": 100000.0,
+    "gas_constant_j_mol_k": 8.31451,
+    "reference_radius_m": 1e-05,
+    "matrix_volumetric_cv_j_m3_k": 2000000.0,
+    "reference_temperature_k": 298.15,
+    "standard_pressure_pa": 100000.0
+  },
+  "parameter_basis": "USGS1995 N2 heat functions and historicalR preserved. Molecular mass and nominal LJ diameter from existing source pack. All geometry, viscosity, surface tension, heat capacities/conductances and boundary programmes are virtual inputs, not the Wadsworth specimen or realbrick. No transfer of glass fit coefficients.",
+  "numerics": {
+    "relative_tolerance": 1e-10,
+    "refinement_factor": 0.1,
+    "absolute_tolerances_normalized": [
+      1e-12,
+      1e-12,
+      1e-12,
+      1e-12,
+      1e-12,
+      1e-12,
+      1e-12,
+      1e-12,
+      1e-12,
+      1e-12,
+      1e-12,
+      1e-12
+    ],
+    "first_step_s": 1e-05,
+    "maximum_step_s": 0.05,
+    "observation_interval_s": 0.05,
+    "progress_every_steps": 200
+  },
+  "normalization": {
+    "temperature_k": 1000.0,
+    "energy_j": 1e-05,
+    "entropy_j_k": 1e-08,
+    "amount_mol": 1e-13,
+    "time_s": 1.0
+  },
+  "scope": "Finite ideal-N2 exchange between a deforming viscous spherical pore and a rigid gas reservoir, each with lumped body heat storage. USGS1995 gas reference, constant virtual matrix coefficients, molecular effusion port. No reaction, pore connectivity law, solid thermal expansion or real-brick qualification.",
+  "effusion_source": "parameters.molecular_effusion_source_review.json",
+  "molecular_source": "parameters.nonpolar_gas_transport.json",
+  "connection": {
+    "aperture_radius_m": 5e-09,
+    "molar_mass_species": "N2",
+    "interpretation": "Ideal zero-thickness ballistic port with negligible area relative to the spherical cavity. Port traction and rim energy perturbations are omitted, so spherical mechanics is a declared leading-order lumped approximation."
+  },
+  "reservoir": {
+    "volume_m3": 4.188790204786391e-15,
+    "body_heat_capacity_j_k": 1.5e-08
+  },
+  "cases": {
+    "initial-inflow-adiabatic": {
+      "initial_pressures_pa": [
+        100000.0,
+        300000.0
+      ],
+      "initial_temperatures_k": [
+        800.0,
+        800.0
+      ],
+      "segments": [
+        {
+          "end_time_s": 30.0,
+          "pore_bath_temperature_k": 800.0,
+          "reservoir_bath_temperature_k": 800.0,
+          "pore_heat_conductance_w_k": 0.0,
+          "reservoir_heat_conductance_w_k": 0.0
+        }
+      ]
+    },
+    "initial-inflow-cycle": {
+      "initial_pressures_pa": [
+        100000.0,
+        300000.0
+      ],
+      "initial_temperatures_k": [
+        800.0,
+        800.0
+      ],
+      "segments": [
+        {
+          "end_time_s": 10.0,
+          "pore_bath_temperature_k": 1100.0,
+          "reservoir_bath_temperature_k": 950.0,
+          "pore_heat_conductance_w_k": 2e-09,
+          "reservoir_heat_conductance_w_k": 2e-09
+        },
+        {
+          "end_time_s": 20.0,
+          "pore_bath_temperature_k": 750.0,
+          "reservoir_bath_temperature_k": 850.0,
+          "pore_heat_conductance_w_k": 2e-09,
+          "reservoir_heat_conductance_w_k": 2e-09
+        },
+        {
+          "end_time_s": 30.0,
+          "pore_bath_temperature_k": 1000.0,
+          "reservoir_bath_temperature_k": 1000.0,
+          "pore_heat_conductance_w_k": 2e-09,
+          "reservoir_heat_conductance_w_k": 2e-09
+        }
+      ]
+    },
+    "initial-outflow-adiabatic": {
+      "initial_pressures_pa": [
+        300000.0,
+        100000.0
+      ],
+      "initial_temperatures_k": [
+        800.0,
+        800.0
+      ],
+      "segments": [
+        {
+          "end_time_s": 30.0,
+          "pore_bath_temperature_k": 800.0,
+          "reservoir_bath_temperature_k": 800.0,
+          "pore_heat_conductance_w_k": 0.0,
+          "reservoir_heat_conductance_w_k": 0.0
+        }
+      ]
+    },
+    "initial-outflow-cycle": {
+      "initial_pressures_pa": [
+        300000.0,
+        100000.0
+      ],
+      "initial_temperatures_k": [
+        800.0,
+        800.0
+      ],
+      "segments": [
+        {
+          "end_time_s": 10.0,
+          "pore_bath_temperature_k": 1100.0,
+          "reservoir_bath_temperature_k": 950.0,
+          "pore_heat_conductance_w_k": 2e-09,
+          "reservoir_heat_conductance_w_k": 2e-09
+        },
+        {
+          "end_time_s": 20.0,
+          "pore_bath_temperature_k": 750.0,
+          "reservoir_bath_temperature_k": 850.0,
+          "pore_heat_conductance_w_k": 2e-09,
+          "reservoir_heat_conductance_w_k": 2e-09
+        },
+        {
+          "end_time_s": 30.0,
+          "pore_bath_temperature_k": 1000.0,
+          "reservoir_bath_temperature_k": 1000.0,
+          "pore_heat_conductance_w_k": 2e-09,
+          "reservoir_heat_conductance_w_k": 2e-09
+        }
+      ]
+    }
+  },
+  "static_review": {
+    "decimal_digits": 60,
+    "radii_m": [
+      7e-06,
+      1e-05,
+      1.5e-05
+    ],
+    "pore_temperatures_k": [
+      750.0,
+      950.0,
+      1100.0
+    ],
+    "reservoir_temperatures_k": [
+      750.0,
+      1100.0
+    ],
+    "initial_pressures_pa": [
+      [
+        100000.0,
+        300000.0
+      ],
+      [
+        300000.0,
+        100000.0
+      ]
+    ],
+    "initial_temperature_k": 800.0,
+    "boundary": {
+      "pore_bath_temperature_k": 1000.0,
+      "reservoir_bath_temperature_k": 900.0,
+      "pore_heat_conductance_w_k": 2e-09,
+      "reservoir_heat_conductance_w_k": 2e-09
+    },
+    "budgets": {
+      "radius_rate_m_s": 1e-17,
+      "pore_temperature_rate_k_s": 1e-11,
+      "reservoir_temperature_rate_k_s": 1e-11,
+      "gas_transfer_mol_s": 1e-26,
+      "effusive_energy_w": 1e-19,
+      "source_energy_j": 1e-18,
+      "source_entropy_j_k": 1e-20,
+      "source_pressure_pa": 1e-06,
+      "energy_rate_w": 1e-18,
+      "entropy_rate_w_k": 1e-20
+    }
+  },
+  "verification": {
+    "quadrature_orders": [
+      2,
+      4
+    ],
+    "energy_j": 1e-13,
+    "entropy_j_k": 1e-16,
+    "gas_amount_mol": 1e-22,
+    "local_radius_m": 1e-12,
+    "local_temperature_k": 1e-05,
+    "local_amount_mol": 1e-22,
+    "time_radius_m": 1e-12,
+    "time_temperature_k": 1e-05,
+    "time_amount_mol": 1e-22,
+    "time_pressure_pa": 0.05,
+    "negative_step_entropy_j_k": 1e-19,
+    "negative_entropy_rate_w_k": 1e-30
+  }
+}
