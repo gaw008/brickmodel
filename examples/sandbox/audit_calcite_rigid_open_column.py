@@ -11,6 +11,7 @@ from audit_sorptive_gas_cell import polynomial
 from calcite_affinity_setup import from_records
 from calcite_closed_setup import nitrogen_from_record
 from calcite_rigid_source_review import source_cell_errors, independent_face
+from calcite_exact_thermal_cache import cached_thermochemistry
 from sludge_sandbox.rigid_reactive_open_column import OpenRigidReactiveColumn
 
 
@@ -29,6 +30,9 @@ def main():
     policy = header['settings'];budget = policy['verification'];n = header['cell_count'];base = 3*n
     reaction = from_records(header['affinity_parameters'],header['source'],header['reference_facts'])
     nitrogen = nitrogen_from_record(header['nitrogen_source'])
+    if 'exact_thermal_cache' in settings:
+        cache = settings['exact_thermal_cache']
+        reaction, nitrogen = cached_thermochemistry(reaction, nitrogen, cache['phase_entries'], cache['reaction_entries'])
     model = OpenRigidReactiveColumn(reaction,nitrogen,header['volume_source'],header['model_parameters'],policy,header['surface_parameters'],n,header.get('cell_widths_m'))
     v0 = np.array(initial['values'][:base]).reshape(n,3);s0 = np.array([s['entropy_j_k'] for s in initial['states']])
     def wall_at(segment,time_s):
