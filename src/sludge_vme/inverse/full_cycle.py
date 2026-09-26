@@ -9,7 +9,7 @@ import time
 import numpy as np
 from scipy.optimize import least_squares
 
-from ..models.full_cycle import FullCycle, changed, run_cycle, write_json
+from ..models.full_cycle import make_cycle, changed, run_cycle, write_json
 
 
 UNITS = {'tg':'1', 'dsc':'W/kg', 'dilatometry':'1', 'kiln':'K',
@@ -20,7 +20,7 @@ def predict(config: dict, observations: list[dict]):
     report, fields = run_cycle(config)
     rows = fields['rows']
     time_s = np.array([r['time_s'] for r in rows])
-    model = FullCycle(config)
+    model = make_cycle(config)
     dry_mass = model.n*model.md
     curves = {'tg':np.array([r['mass_kg']/dry_mass for r in rows]),
               'dsc':np.array([r['dsc_endothermic_w_per_initial_dry_kg'] for r in rows]),
@@ -106,7 +106,7 @@ def fit(config: dict, dataset: dict, out: Path) -> dict:
 
 
 def synthetic_demo(config: dict, out: Path) -> dict:
-    model = FullCycle(config)
+    model = make_cycle(config)
     p = config['parameters']
     times = np.unique(np.r_[np.linspace(0,model.times[-1],int(p['calibration.sample_count']['value'])), model.times])
     rows = []

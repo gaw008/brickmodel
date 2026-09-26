@@ -78,6 +78,7 @@ class FullCycle:
         self.Tr = self.p("reference.temperature", "K")
         self.Pr = self.p("reference.pressure", "Pa")
         self.P = self.p("gas.pressure", "Pa")
+        self.storage = self.p("gas.storage", "1")
         self.cp = np.array([self.p(f"species.{s}.cp", "J/mol/K") for s in self.names])
         if np.any(self.cp <= 0) or np.any(self.cp[len(self.ns):] <= self.R):
             raise ValueError('positive condensed Cp and ideal-gas Cv are required')
@@ -325,8 +326,18 @@ class FullCycle:
         return report, {'schema':'sludge_vme_full_cycle_fields_v1','cell_count':self.n,'rows':rows}
 
 
+def make_cycle(config: dict):
+    mode = config['parameters']['gas.storage']['value']
+    if mode == 0:
+        return FullCycle(config)
+    if mode == 1:
+        from .full_cycle_gas import FiniteGasFullCycle
+        return FiniteGasFullCycle(config)
+    raise ValueError('gas.storage must explicitly select 0 (swept) or 1 (stored)')
+
+
 def run_cycle(config: dict):
-    return FullCycle(config).integrate()
+    return make_cycle(config).integrate()
 
 
 def run_acceptance(config: dict, out: Path):
@@ -336,6 +347,8 @@ def run_acceptance(config: dict, out: Path):
     refined_time,_=run_cycle(changed(config,{'numerics.max_step':config['parameters']['numerics.max_step']['value']/2}))
     refined_grid,_=run_cycle(changed(config,{'numerics.cells':2*config['parameters']['numerics.cells']['value']}))
     metrics=['porosity','residual_carbon_kg','shrinkage','peak_temperature_difference_k']
+    if config['parameters']['gas.storage']['value'] == 1:
+        metrics.append('peak_overpressure_pa')
     differences={kind:{m:abs(base['summary'][m]-r['summary'][m])/max(abs(r['summary'][m]),config['parameters']['acceptance.floor.'+m]['value']) for m in metrics} for kind,r in [('time',refined_time),('grid',refined_grid)]}
     passed=all(v<config['parameters']['acceptance.convergence_relative']['value'] for d in differences.values() for v in d.values())
     result={'passed':passed and all(r['physical_consistency_passed'] and r['example_endpoints']['passed'] for r in (base,refined_time,refined_grid)),

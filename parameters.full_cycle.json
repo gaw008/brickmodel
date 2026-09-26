@@ -1,6 +1,6 @@
 {
-  "schema": "sludge_vme_full_cycle_v1",
-  "scope": "Approximate ventilated incompressible half-slab; plane-strain thickness contraction; literature reference thermochemistry plus assumed caloric/kinetic material closures. No plant validation.",
+  "schema": "sludge_vme_full_cycle_v2",
+  "scope": "Approximate finite-gas half-slab with pressure-resisted viscous sintering, common-D molar diffusion and Darcy flow; assumed material properties, no plant validation.",
   "sources": {
     "policy": {
       "identity": "assumed",
@@ -45,6 +45,11 @@
     "si": {
       "identity": "literature",
       "location": "SI gas constant and Stefan-Boltzmann constant; standard thermodynamic definitions"
+    },
+    "porous_transport": {
+      "identity": "assumed",
+      "location": "parameters.dusty_gas_isothermal.json and parameters.dusty_gas_four_species_column.json; src/sludge_sandbox/dusty_gas_isothermal.py; local Cantera3.2 source preserved under data/sandbox/research/dusty-gas-source-v1/source",
+      "note": "Darcy and mixture-diffusion relations from existing gas_transport.py and pore source records. Common molar-frame D, viscosity power laws and evolving brick properties are assumed. No Knudsen or Soret prediction; reciprocal-logarithmic carried-enthalpy mean preserves the stated ideal-gas entropy inequality."
     }
   },
   "parameters": {
@@ -1643,6 +1648,149 @@
       "source": "policy",
       "status": "assumed",
       "note": "Finite-difference perturbation / synthetic recovery acceptance; numerical setting, not material evidence."
+    },
+    "gas.storage": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        0,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "1: explicit finite pore gas; 0: historical per-cell swept approximation. No implicit mode."
+    },
+    "transport.diffusivity_ref": {
+      "value": 2e-05,
+      "unit": "m2/s",
+      "range": [
+        1e-05,
+        4e-05
+      ],
+      "source": "porous_transport",
+      "status": "assumed",
+      "note": "Common free-gas binary diffusivity at reference T/P for all pairs. Assumed four-species analogy, not an empirical interval."
+    },
+    "transport.diffusivity_exponent": {
+      "value": 1.75,
+      "unit": "1",
+      "range": [
+        1.5,
+        2.0
+      ],
+      "source": "porous_transport",
+      "status": "assumed",
+      "note": "Assumed temperature power; pressure scaling Pr/P. Effective coefficient includes current porosity/tortuosity."
+    },
+    "transport.viscosity_ref": {
+      "value": 1.8e-05,
+      "unit": "Pa*s",
+      "range": [
+        1.4e-05,
+        2.4e-05
+      ],
+      "source": "porous_transport",
+      "status": "assumed",
+      "note": "Assumed mixture viscosity at reference temperature, shared by species."
+    },
+    "transport.viscosity_exponent": {
+      "value": 0.7,
+      "unit": "1",
+      "range": [
+        0.5,
+        1.0
+      ],
+      "source": "porous_transport",
+      "status": "assumed",
+      "note": "Assumed power law, not a fitted viscosity curve."
+    },
+    "transport.tortuosity": {
+      "value": 2.5,
+      "unit": "1",
+      "range": [
+        1.5,
+        4.0
+      ],
+      "source": "porous_transport",
+      "status": "assumed",
+      "note": "Assumed geometric transport tortuosity, fixed during a run."
+    },
+    "transport.permeability_ref": {
+      "value": 3.75e-14,
+      "unit": "m2",
+      "range": [
+        3.75e-16,
+        3.75e-12
+      ],
+      "source": "porous_transport",
+      "status": "assumed",
+      "note": "Borrowed virtual pore coefficient from existing Dusty Gas setups; evolving phi^3/(1-phi)^2 scaling is assumed. Not a measured brick permeability range."
+    },
+    "kinetics.oxygen_order": {
+      "value": 1.0,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Oxidation rate proportional to local O2 partial pressure relative to inlet O2 pressure; replaces carrier-throughput caps in stored-gas mode."
+    },
+    "acceptance.entropy_relative": {
+      "value": 0.001,
+      "unit": "1",
+      "range": [
+        0.001,
+        0.001
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Maximum sampled entropy closure residual divided by initial thermal capacity scale E_scale/T_ref."
+    },
+    "acceptance.floor.peak_overpressure_pa": {
+      "value": 100.0,
+      "unit": "Pa",
+      "range": [
+        100,
+        100
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Predeclared absolute denominator scale when the reference overpressure is near zero."
+    },
+    "numerics.jacobian_step": {
+      "value": 1e-24,
+      "unit": "1",
+      "range": [
+        1e-24,
+        1e-24
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Imaginary perturbation for complex-step differentiation on each active branch. Avoids subtractive Jacobian error in the stiff gas system; physical acceptance tolerances are unchanged."
+    },
+    "numerics.jacobian_state_scale": {
+      "value": 1.0,
+      "unit": "1",
+      "range": [
+        1.0,
+        1.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Dimensionless scale for near-zero physical coordinates in Jacobian differencing."
+    },
+    "acceptance.inventory_roundoff_factor": {
+      "value": 8.0,
+      "unit": "1",
+      "range": [
+        8.0,
+        8.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Condensed inventory roundoff allowance = factor * float epsilon * initial total condensed molar scale. Accepted inventory values remain unchanged and raw negative minima are reported. This is an arithmetic-domain budget, not a physical negative-inventory allowance."
     }
   },
   "species": [
@@ -1715,7 +1863,7 @@
         "water": -1,
         "H2O": 1
       },
-      "kinetics_basis": "assumed first order; surface-energy-aware affinity gate with worst-case outlet partial pressures"
+      "kinetics_basis": "Stored-gas mode uses local chemical affinity including surface energy, with explicit oxygen-order factor; swept mode retains conservative carrier bounds."
     },
     {
       "id": "dehydroxylation",
@@ -1725,7 +1873,7 @@
         "metakaolin": 1,
         "H2O": 2
       },
-      "kinetics_basis": "assumed first order; surface-energy-aware affinity gate with worst-case outlet partial pressures"
+      "kinetics_basis": "Stored-gas mode uses local chemical affinity including surface energy, with explicit oxygen-order factor; swept mode retains conservative carrier bounds."
     },
     {
       "id": "decarbonation",
@@ -1735,7 +1883,7 @@
         "lime": 1,
         "CO2": 1
       },
-      "kinetics_basis": "assumed first order; surface-energy-aware affinity gate with worst-case outlet partial pressures"
+      "kinetics_basis": "Stored-gas mode uses local chemical affinity including surface energy, with explicit oxygen-order factor; swept mode retains conservative carrier bounds."
     },
     {
       "id": "organic_oxidation",
@@ -1746,7 +1894,7 @@
         "CO2": 1,
         "H2O": 1
       },
-      "kinetics_basis": "assumed first order; surface-energy-aware affinity gate with worst-case outlet partial pressures"
+      "kinetics_basis": "Stored-gas mode uses local chemical affinity including surface energy, with explicit oxygen-order factor; swept mode retains conservative carrier bounds."
     },
     {
       "id": "char_oxidation",
@@ -1756,7 +1904,7 @@
         "O2": -1,
         "CO2": 1
       },
-      "kinetics_basis": "assumed first order; surface-energy-aware affinity gate with worst-case outlet partial pressures"
+      "kinetics_basis": "Stored-gas mode uses local chemical affinity including surface energy, with explicit oxygen-order factor; swept mode retains conservative carrier bounds."
     }
   ],
   "stages": [

@@ -26,7 +26,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="sludge-vme", description="Research-only synthetic sludge fired-brick forward/inverse virtual materials engine")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    cycle = sub.add_parser("full-cycle", help="run the traceable ventilated full-cycle approximation")
+    cycle = sub.add_parser("full-cycle", help="run the traceable brick full-cycle approximation")
     cycle.add_argument("parameters", type=Path)
     cycle.add_argument("--out", type=Path, required=True)
     operation = cycle.add_mutually_exclusive_group()
