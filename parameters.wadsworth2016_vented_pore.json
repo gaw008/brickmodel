@@ -1,0 +1,126 @@
+{
+  "observations": "data/sandbox/research/wadsworth2016-sintering-data-v1/observations.json",
+  "source": "data/sandbox/research/wadsworth2016-sintering-data-v1/source.json",
+  "model": {
+    "initial_porosity": 0.45,
+    "initial_pore_radius_m": 5.9e-06,
+    "surface_tension_n_m": 0.3,
+    "vft": {
+      "A": -2.63,
+      "B_k": 4303.36,
+      "C_k": 530.6
+    }
+  },
+  "sensitivity_variants": [
+    {
+      "id": "central-2016",
+      "initial_porosity": 0.45,
+      "initial_pore_radius_m": 5.9e-06,
+      "vft": {
+        "A": -2.63,
+        "B_k": 4303.36,
+        "C_k": 530.6
+      }
+    },
+    {
+      "id": "radius-minus-published",
+      "initial_porosity": 0.45,
+      "initial_pore_radius_m": 5.37e-06,
+      "vft": {
+        "A": -2.63,
+        "B_k": 4303.36,
+        "C_k": 530.6
+      }
+    },
+    {
+      "id": "radius-plus-published",
+      "initial_porosity": 0.45,
+      "initial_pore_radius_m": 6.43e-06,
+      "vft": {
+        "A": -2.63,
+        "B_k": 4303.36,
+        "C_k": 530.6
+      }
+    },
+    {
+      "id": "porosity-minus-published",
+      "initial_porosity": 0.43,
+      "initial_pore_radius_m": 5.9e-06,
+      "vft": {
+        "A": -2.63,
+        "B_k": 4303.36,
+        "C_k": 530.6
+      }
+    },
+    {
+      "id": "porosity-plus-published",
+      "initial_porosity": 0.47,
+      "initial_pore_radius_m": 5.9e-06,
+      "vft": {
+        "A": -2.63,
+        "B_k": 4303.36,
+        "C_k": 530.6
+      }
+    },
+    {
+      "id": "prior-2014-coefficients",
+      "initial_porosity": 0.45,
+      "initial_pore_radius_m": 5.9e-06,
+      "vft": {
+        "A": -2.6387,
+        "B_k": 4303.36,
+        "C_k": 530.754
+      }
+    }
+  ],
+  "numerics": {
+    "method": "DOP853",
+    "relative_tolerance": 1e-10,
+    "absolute_tolerance": 1e-12,
+    "refinement_factor": 0.1,
+    "maximum_clock_step": 0.02,
+    "first_clock_step": 0.0001,
+    "clock_gauss_orders": [
+      16,
+      32
+    ],
+    "refined_maximum_step_factor": 0.5,
+    "refinement_note": "Initial tolerance-only comparison used identical capped steps; preserved as comparison.same-step.json. Reduce maximum clock step in the refined solve to obtain a distinct temporal resolution without changing physics."
+  },
+  "independent_review": {
+    "decimal_digits": 50,
+    "radius_fractions": [
+      0.01,
+      0.1,
+      0.3,
+      0.6,
+      0.9,
+      1.0
+    ],
+    "porosities": [
+      0.43,
+      0.45,
+      0.47
+    ],
+    "temperatures_k": [
+      823.0,
+      900.0,
+      1000.0,
+      1164.0
+    ],
+    "time_budget_normalized_porosity": 1e-08,
+    "clock_budget": 1e-10,
+    "closure_clock_budget": 1e-09,
+    "radius_implicit_clock_budget": 1e-09,
+    "mechanical_rate_budget_m_s": 1e-15,
+    "vft_relative_budget": 1e-12,
+    "reference_sample_stride": 50,
+    "outside_pressure_pa": 100000.0
+  },
+  "comparison": {
+    "early_capillary_clock_max": 1.0,
+    "printed_error_policy": "Diagnostic coverage only; no invented confidence level or total-accuracy pass criterion. Parameter sensitivities are separate one-factor variants, not a confidence envelope.",
+    "fitting_permitted": false
+  },
+  "scope": "Prescribed measured-near-sample temperature, literature-average initial porosity and interpreted published viscosity. Stop at finite radius-zero endpoint; subsequent observations remain visible with unsupported model state. Not a brick model."
+}

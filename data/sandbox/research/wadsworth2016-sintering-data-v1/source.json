@@ -1,0 +1,109 @@
+{
+  "citation": "Wadsworth FB et al. (2016), Sintering of viscous droplets under surface tension, Proc R Soc A 472:20150780",
+  "doi": "10.1098/rspa.2015.0780",
+  "primary_article_url": "https://strathprints.strath.ac.uk/70131/1/Wadsworth_etal_PRSA_2016_Sintering_of_viscous_droplets_under_surface_tension.pdf",
+  "xml_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4892276/fullTextXML",
+  "supplementary_download_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4892276/supplementaryFiles",
+  "retrieved_utc": "2026-09-26",
+  "license": "CC BY 4.0; authors retain copyright; original files copied unchanged, observations.json is a format conversion.",
+  "material": "Spheriglass A-glass microspheres product 2530, Potters Industries; soda-lime silica. Not clay, sludge or MIA3.",
+  "records": {
+    "file": "rspa20150780supp2.txt",
+    "groups": 12,
+    "points": 2283,
+    "group_columns": [
+      "time_s",
+      "temperature_k",
+      "normalized_porosity",
+      "printed_error",
+      "length_m",
+      "printed_error_m"
+    ],
+    "source_state": "author-processed observations, not raw camera frames",
+    "repeated_994K_groups": "kept as five distinct column groups; no invented specimen IDs or pooling"
+  },
+  "published_parameters": {
+    "initial_porosity": {
+      "value": 0.45,
+      "plus_minus": 0.02,
+      "locator": "main PDF p14 section4b; average across samples, no group-specific values in the data file",
+      "classification": "published measurement summary"
+    },
+    "initial_pore_radius_m": {
+      "value": 5.9e-06,
+      "plus_minus": 5.3e-07,
+      "locator": "main PDF p8 section3a",
+      "classification": "source-derived from measured particle-size distribution, not an independently measured pore radius"
+    },
+    "particle_radius_m": {
+      "value": 2.47e-05,
+      "plus_minus": 1.6e-06,
+      "locator": "main PDF p8 section3a",
+      "classification": "published measured distribution summary"
+    },
+    "surface_tension_n_m": {
+      "value": 0.3,
+      "locator": "main PDF p8 section3a references34,35",
+      "classification": "author-selected dry-silicate literature value, not direct same-sample measurement"
+    },
+    "vft_2016": {
+      "A": -2.63,
+      "B_k": 4303.36,
+      "C_k": 530.6,
+      "locator": "main PDF p8 section3a",
+      "literal_equation": "mu=A+B/(T-C)",
+      "interpreted_equation": "log10(mu/(Pa s))=A+B/(T/K-C)",
+      "classification": "explicit interpreted correction of missing logarithm using VFT source; not a publisher erratum"
+    },
+    "vft_2014": {
+      "A": -2.6387,
+      "B_k": 4303.36,
+      "C_k": 530.754,
+      "locator": "Wadsworth2014 DOI10.1002/2014JB011453 Table2 glass-bead column; coefficients kept together",
+      "classification": "prior published version sensitivity; viscosity predicted from composition using Fluegel2007, not direct same-sample viscosity observations"
+    }
+  },
+  "equations": {
+    "clock": "main Eq2.6: tau=Gamma/a_i * integral(dt/mu(T))",
+    "vented_radius": "supplement EqS5, constant incompressible matrix: da/dt=-Gamma*(a^3+c)/(2*mu*c), c=a_i^3*(1-phi_i)/phi_i",
+    "normalized_porosity": "phi/phi_i=x^3/(1-phi_i+phi_i*x^3), x=a/a_i",
+    "endpoint": "finite closure at tau=2*integral_0^1 dx/(1+k*x^3), k=phi_i/(1-phi_i); main text statement of zero only at infinite time is inconsistent with EqS5. Stop the positive-radius domain at closure; no negative-radius continuation."
+  },
+  "observational_limits": [
+    "Supplement Figure3 thermocouple lies within1.5mm of sample base; not an internal sample temperature measurement.",
+    "Temperature history is prescribed from each data column and linearly interpolated; nominal header temperature is never substituted for recorded temperature.",
+    "Initial recorded823K is near approximately824K glass-transition onset; use of equilibrium VFT viscosity near that onset is conditional.",
+    "Main section3c reconstructs porosity using calibrated final volume/porosity; raw silhouettes and group-specific initial porosity are unavailable here.",
+    "Printed Error columns are preserved without assigning statistical confidence or complete model uncertainty.",
+    "Normalized porosities above1 and fluctuations are kept, not clipped.",
+    "Main Eq2.20 nonzero-final-porosity correction explicitly violates strict derivation; not imported into this mechanics benchmark.",
+    "Main Figure2 upper temperature axis labelled K is inconsistent with T/Tg and Tg824K. No curve is digitized using that axis.",
+    "Supplement Figure3 temperature axis is also labelled K while curves are around568-891, inconsistent with recorded841-1164K by about273K. Use the explicit tabulated K values and preserve the figure-label discrepancy.",
+    "Group09 source lines284 and303 contain negative normalized porosity and negative printed Error. Retained unchanged; no physical or confidence-interval interpretation assigned. See observation-quality.json."
+  ],
+  "scope": "Fixed-source-parameter conditional comparison of a vented-pore law with public processed glass observations; no fitted radii, no real-brick qualification, no complete late-stage permeability model.",
+  "material_qualified": false,
+  "training_eligible": false,
+  "published_fitted_radius_not_used": {
+    "value_m": 1.101e-05,
+    "plus_minus_m": 1.18e-06,
+    "locator": "main PDF p12 Table1, vented bubble phi->0; section4b(ii) p13",
+    "classification": "fit to these experiments; not an independent prediction and not substituted for distribution-derived5.9um. Difference does not alone identify the missing mechanism."
+  },
+  "visual_review": {
+    "main_pdf_pages_one_based": [
+      8,
+      12
+    ],
+    "supplement_pdf_pages_one_based": [
+      4,
+      7
+    ],
+    "date_utc": "2026-09-26"
+  },
+  "later_primary_vft_confirmation": {
+    "doi": "10.1103/PhysRevE.95.033114",
+    "locator": "SectionIII printed033114-3, PDFpage4 visuallyread",
+    "finding": "Explicit log10(mu) and exactly the2016 coefficients with T in Kelvin. Confirms interpretation, not a formal erratum or brick-material property."
+  }
+}
