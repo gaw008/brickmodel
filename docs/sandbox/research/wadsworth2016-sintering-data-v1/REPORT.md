@@ -42,3 +42,11 @@
 复现入口：`extract_wadsworth2016_sintering_data.py`、`compare_wadsworth2016_vented_pore.py`、`plot_wadsworth2016_comparison.py`；参数统一在根文件 `parameters.wadsworth2016_vented_pore.json`。处理数据及逐点比较位于 `data/sandbox/research/wadsworth2016-sintering-data-v1/`。
 
 补充来源核查：2017 年同作者原文 DOI 10.1103/PhysRevE.95.033114，正文033114-3明确打印 log10(μ) 及同一组系数、Kelvin 温标，为上述对数解释提供直接后续文献依据。其033114-5也明确承认未调整的球孔模型普遍收缩偏快，并把后续修正称为经验拟合。详情见 [2017来源核查](../wadsworth2017-source-review-v1/REPORT.md)。
+
+## 孔径来源追查补充
+
+原文第7页的 Eq2.27 已包含后续2017文献同样的 `(1+ζ)` 概率归一化问题。以原文明示的单粒径极限与 Schulz m=0 分布作为数学例子、分别取三种孔隙率，六个打印多粒径式全部不能归一化；独立积分与边界概率恒等式达到60位核查预算。相反，独立的 Eq2.24 单粒径式包含常数 y3，三个例子均可归一化，不能把整节所有公式一概判错。
+
+Eq2.26下方还打印 `a=〈ζ〉/〈R〉`，右侧单位是长度的倒数，与前文 `ζ=a/R` 不相容；维度一致的关系应是 `〈a〉=〈R〉〈ζ〉`。这些均已视觉核对原始PDF第7页，并保留在 `pore-radius-provenance.json`。没有据此自行修改公开5.9μm数值。
+
+因此5.9±0.53μm的状态进一步明确为“作者报告的推导参数，尚未独立复算”，不是直接孔径测量或已通过来源重建的参数。当前取得的补充时间序列没有给出复算所需的实测粒径矩；数学示例不得当作该试样的粒径分布。前述固定参数对照仍有效地回答“使用作者报告值会得到什么”，不能宣称孔径来源已全面验证。新增复现入口为 `review_wadsworth2016_pore_radius.py`，参数为 `parameters.wadsworth2016_pore_radius_provenance.json`。
