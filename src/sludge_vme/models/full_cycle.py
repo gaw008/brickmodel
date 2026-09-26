@@ -22,7 +22,14 @@ from ..chemistry.formula import parse_formula
 
 def read_parameters(path: str | Path) -> dict:
     config = json.loads(Path(path).read_text())
-    for name, item in config["parameters"].items():
+    entries = list(config["parameters"].items())
+    for scenario in config['scenarios']:
+        for name, item in scenario['overrides'].items():
+            if item['unit'] != config['parameters'][name]['unit']:
+                raise ValueError(f'scenario override unit mismatch: {name}')
+            entries.append((scenario['id']+'.'+name,item))
+    entries += list(config['synthetic_truth_overrides'].items())
+    for name, item in entries:
         value = np.asarray(item["value"])
         lower, upper = np.asarray(item["range"])
         if not np.all(np.isfinite(value)) or np.any(value < lower) or np.any(value > upper):
@@ -64,12 +71,16 @@ class FullCycle:
             raise ValueError("reaction stoichiometry does not conserve elements")
         self.snu = self.nu[:, :len(self.ns)]
         self.gnu = self.nu[:, len(self.ns):]
+        if np.any(self.gnu.sum(axis=1)<0):
+            raise ValueError('the declared partial-pressure bound requires nonnegative net gas production')
         self.reactants = [self.ns.index(r["reactant"]) for r in config["reactions"]]
         self.R = self.p("reference.R", "J/mol/K")
         self.Tr = self.p("reference.temperature", "K")
         self.Pr = self.p("reference.pressure", "Pa")
         self.P = self.p("gas.pressure", "Pa")
         self.cp = np.array([self.p(f"species.{s}.cp", "J/mol/K") for s in self.names])
+        if np.any(self.cp <= 0) or np.any(self.cp[len(self.ns):] <= self.R):
+            raise ValueError('positive condensed Cp and ideal-gas Cv are required')
         self.h0 = np.array([self.p(f"species.{s}.h_ref", "J/mol") for s in self.names])
         self.s0 = np.array([self.p(f"species.{s}.s_ref", "J/mol/K") for s in self.names])
         self.v = np.array([self.p(f"species.{s}.volume", "m3/mol") for s in self.ns])
@@ -133,8 +144,8 @@ class FullCycle:
         extents = conversion * self.extent_scale
         ns = self.initial + extents @ self.snu
         ns[:, self.reactants] = self.extent_scale * np.exp(-fields[1:1+self.nr].T)
-        bulk = fields[6] * self.b0
-        pore = bulk - ns @ self.v
+        pore = self.vp0 * np.exp(fields[6])
+        bulk = pore + ns @ self.v
         surface_energy = self.es0 * (pore / self.vp0) ** (2/3)
         capillary_pressure = 2/3 * surface_energy / pore
         return fields, T, ns, bulk, pore, surface_energy, capillary_pressure
@@ -205,7 +216,8 @@ class FullCycle:
         d[0] = dT/self.Tr
         # A zero reactant inventory is an explicitly absent recipe component.
         d[1:6] = (hazard * (self.extent_scale != 0)).T
-        d[6] = db/self.b0
+        pore = self.vp0 * np.exp(y[:self.last].reshape(9, self.n)[6])
+        d[6] = (db - (rates@self.snu)@self.v)/pore
         d[7] = heat/self.escale
         d[8] = flow/self.escale
         g = len(self.ng)
@@ -218,7 +230,6 @@ class FullCycle:
         y = np.zeros(self.last+2*len(self.ng)+2)
         f = y[:self.last].reshape(9, self.n)
         f[0] = self.temperatures[0]/self.Tr
-        f[6] = 1.
         return y
 
     def integrate(self):
@@ -260,7 +271,8 @@ class FullCycle:
                 "pressure_pa":[self.P]*self.n,"porosity":(pore/bulk).tolist(),"thickness_shrinkage":(1-bulk/self.b0).tolist(),
                 "temperature_difference_k":temperature_span,"mass_kg":float(np.sum(ns@mw_s)),
                 "net_heat_and_flow_w":float(rate[3].sum()+rate[4].sum()),
-                "dsc_endothermic_w_per_initial_dry_kg":float(np.sum(rate[1]*(h@self.nu.T)))/(self.n*self.md),
+                "dsc_endothermic_w_per_initial_dry_kg":float(np.sum((ns@self.cp[:len(self.ns)])*rate[0]) + np.sum(rate[1]*(h@self.nu.T))
+                    + np.sum(cap*(rate[2]-(rate[1]@self.snu)@self.v)))/(self.n*self.md),
                 "entropy_production_w_k":rate[10]})
         inventories=np.array(inventories); energies=np.array(energies); gasin=np.array(gasin); gasout=np.array(gasout);heat=np.array(heat);flow=np.array(flow);vs=np.array(vs);bulks=np.array(bulks)
         mass=inventories@mw_s; elements=inventories@self.atom[:len(self.ns)]
@@ -294,6 +306,9 @@ class FullCycle:
             'defect_indicator':float(-np.expm1(-peak/self.p('product.gradient_scale','K'))),
             'minimum_sampled_entropy_production_w_k':minimum_production}
         all_balance=balance(0,len(times)-1)
+        drying_index=int(np.where(times==self.times[self.config['stages'].index('drying')+1])[0][0])
+        remaining_fraction=max(rows[drying_index]['water_kg_per_initial_dry_kg'])/self.p('material.water_dry_ratio','kg/kg')
+        cooled_error=max(abs(t-self.temperatures[-1]) for t in final['temperature_k'])
         report={'schema':'sludge_vme_full_cycle_result_v1','scope':self.config['scope'],'material_applicability':'待实测','real_world_validation':'待实测',
             'gas_approximation':'Quasi-steady local swept pores at imposed pressure. No stored gas, pressure accumulation, Darcy or species diffusion prediction.',
             'summary':summary,'whole_cycle':all_balance,'stages':stages,
@@ -303,6 +318,10 @@ class FullCycle:
             'parameter_status_counts':dict(Counter(x['status'] for x in self.config['parameters'].values())),
             'state_domain':{'minimum_condensed_moles':float(inventories.min()),'minimum_temperature_k':min(min(r['temperature_k']) for r in rows),
                             'minimum_porosity':min(min(r['porosity']) for r in rows)}}
+        report['example_endpoints']={'drying_remaining_fraction':remaining_fraction,'cooling_maximum_temperature_difference_k':cooled_error,
+            'passed':bool(remaining_fraction < self.p('acceptance.drying_remaining_fraction','1') and cooled_error < self.p('acceptance.cooling_temperature_difference','K'))}
+        report['physical_consistency_passed']=bool(report['conservation_passed'] and report['state_domain']['minimum_condensed_moles']>=0
+            and report['state_domain']['minimum_porosity']>0 and minimum_production>=0)
         return report, {'schema':'sludge_vme_full_cycle_fields_v1','cell_count':self.n,'rows':rows}
 
 
@@ -319,7 +338,7 @@ def run_acceptance(config: dict, out: Path):
     metrics=['porosity','residual_carbon_kg','shrinkage','peak_temperature_difference_k']
     differences={kind:{m:abs(base['summary'][m]-r['summary'][m])/max(abs(r['summary'][m]),config['parameters']['acceptance.floor.'+m]['value']) for m in metrics} for kind,r in [('time',refined_time),('grid',refined_grid)]}
     passed=all(v<config['parameters']['acceptance.convergence_relative']['value'] for d in differences.values() for v in d.values())
-    result={'passed':passed and all(r['conservation_passed'] for r in (base,refined_time,refined_grid)),
+    result={'passed':passed and all(r['physical_consistency_passed'] and r['example_endpoints']['passed'] for r in (base,refined_time,refined_grid)),
         'relative_differences':differences,'denominator':'max(abs(refined output), predeclared per-metric floor)',
         'refined_time':refined_time,'refined_grid':refined_grid}
     write_json(out/'acceptance.json',result)

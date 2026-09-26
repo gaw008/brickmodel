@@ -29,7 +29,11 @@ def build_parser() -> argparse.ArgumentParser:
     cycle = sub.add_parser("full-cycle", help="run the traceable ventilated full-cycle approximation")
     cycle.add_argument("parameters", type=Path)
     cycle.add_argument("--out", type=Path, required=True)
-    cycle.add_argument("--acceptance", action="store_true")
+    operation = cycle.add_mutually_exclusive_group()
+    operation.add_argument("--acceptance", action="store_true")
+    operation.add_argument("--compare", action="store_true")
+    operation.add_argument("--synthetic-calibration", action="store_true")
+    operation.add_argument("--calibrate", type=Path)
 
     validate = sub.add_parser("validate", help="validate and normalize a JSON case")
     validate.add_argument("case", type=Path)
@@ -211,6 +215,16 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "full-cycle":
         from .models.full_cycle import read_parameters, run_acceptance, run_cycle, write_json
         config = read_parameters(args.parameters)
+        if args.synthetic_calibration or args.calibrate:
+            from .inverse.full_cycle import fit, synthetic_demo
+            result = synthetic_demo(config, args.out) if args.synthetic_calibration else fit(config, json.loads(args.calibrate.read_text()), args.out)
+            print(json.dumps({"qualified_fit":result["qualified_fit"], "measurement_kind":result["measurement_kind"], "elapsed_s":result["elapsed_s"]}))
+            return 0 if result['qualified_fit'] else EXIT_SOLVER
+        if args.compare:
+            from .uq.full_cycle import compare
+            result = compare(config, args.out)
+            print(json.dumps({"all_conservation_passed":result["all_conservation_passed"], "elapsed_s":result["elapsed_s"]}))
+            return 0 if result["all_conservation_passed"] else EXIT_SOLVER
         if args.acceptance:
             result = run_acceptance(config, args.out)
             print(json.dumps({"passed":result["passed"], "relative_differences":result["relative_differences"]}))
