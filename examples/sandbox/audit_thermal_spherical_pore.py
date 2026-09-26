@@ -13,11 +13,19 @@ from audit_water_gas_shift_cycle import polynomial
 from thermal_pore_reference import ThermalPoreReference
 
 
-def audit(path, policy):
+def source_differences(actual, computed, reference, policy):
+    return {key:float(abs(mp.mpf(actual[key])-computed[key])) for key in policy['source_budgets']}
+
+
+def reference_factory(header):
+    return ThermalPoreReference(header['settings'], header['sources'], header['gas_amount_mol'])
+
+
+def audit(path, policy, make_reference, compare_source):
     with path.open() as stream:
         rows = [json.loads(line) for line in stream]
     header = rows[0]; p = header['settings']; case = header['case']
-    ref = ThermalPoreReference(p, header['sources'], header['gas_amount_mol'])
+    ref = make_reference(header)
     a0 = ref.p['reference_radius_m']; ts, es, ss = [mp.mpf(str(p['normalization'][k])) for k in ['temperature_k','energy_j','entropy_j_k']]
     scales = np.array(list(map(float, [a0, ts, es, es, es, ss, ss])))
     accepted = [row for row in rows if row['kind'] == 'accepted']; ends = [row['time_s'] for row in accepted]
@@ -60,8 +68,8 @@ def audit(path, policy):
         if 'state' not in row:
             continue
         computed = state(row['values'], row['segment_index']); actual = row['state']
-        for key in source_errors:
-            source_errors[key] = max(source_errors[key], float(abs(mp.mpf(actual[key])-computed[key])))
+        for key, error in compare_source(actual, computed, ref, policy).items():
+            source_errors[key] = max(source_errors[key], error)
         a, outer = mp.mpf(actual['radius_m']), mp.mpf(actual['outer_radius_m'])
         c, pressure = mp.mpf(actual['radial_velocity_constant_m3_s']), mp.mpf(actual['matrix_pressure_pa'])
         inner = -pressure-4*ref.p['viscosity_pa_s']*c/a**3
@@ -133,7 +141,7 @@ def audit(path, policy):
     return result, times, at_time
 
 
-def main():
+def main(make_reference, compare_source):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--parameters',type=Path,required=True)
     parser.add_argument('--output',type=Path,required=True)
@@ -143,7 +151,7 @@ def main():
     for case, paths in p['trajectories'].items():
         reviews, functions, nodes = {}, {}, set()
         for name, path in paths.items():
-            reviews[name], times, functions[name] = audit(root/path,p); nodes.update(times)
+            reviews[name], times, functions[name] = audit(root/path,p,make_reference,compare_source); nodes.update(times)
         maxima = {key:0. for key in p['time_budgets']}
         with (root/paths['base']).open() as stream:
             header = json.loads(next(stream))
@@ -165,4 +173,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(reference_factory, source_differences)

@@ -1,3 +1,11 @@
+## 2026-09-26 01:50 UTC 增量：变温反应孔隙耦合，输运与大网格进展
+
+[受限反应球孔](research/equilibrium-spherical-pore-v1/REPORT.md)完成 54 个独立静态核查及 8 条 20000 s 轨迹，元素、功热、熵、时间比较和绝热终态独立求解均通过冻结预算；[纯 N₂ 变温孔](research/thermal-spherical-pore-v1/REPORT.md)的共享热平衡接口也完成原轨迹复查。反应限于 CO+H₂O⇌CO₂+H₂，黏度、几何和基体热容仍为虚拟输入，没有授予真实砖烧结资格。
+
+[CO₂/N₂ 来源动理学输运](research/co2-n2-kinetic-dusty-gas-v1/REPORT.md)256 格通过完整、时间和 128→256 空间要求；[低温来源吸附列](research/sorptive-128-qualification-v1/REPORT.md)128 格最紧档完成来源、局部/整体能量、时间及空间核查。已经达到要求的路径停止继续加密，旧失败均保留。高温共同反应显式表面 32 格完整及时间通过，16→32 空间四项失败，64 格继续；封闭高温 128 格、开放方解石 128 格和低温显式表面 128 格的剩余审查仍在运行，尚不报通过。
+
+[玻璃黏度来源复核](research/viscous-spherical-pore-source-v1/REPORT.md)记录 2016 公式漏写对数、2014/2016 系数差异，以及 2016 图的温度轴疑点；未将修正解释静默当作已测砖参数。M1 同材料干燥、实际高温有限速率、同配方热储/收缩/孔连通和全周期留出对照仍未闭合，详见 [材料阻塞](FULL_CYCLE_BLOCKERS.md)。material_qualified=false，training_eligible=false。
+
 ## 2026-09-25 17:41 UTC 增量：等温共享扩散面数值资格
 
 [MS有限面](research/maxwell-stefan-entropy-face-v1/REPORT.md)32阶在三组四气体端点和六个二元对上通过独立高精度积分、Fick极限、反向交换和熵核查。8/16阶大跳跃失败保留；这是明确的熵变量路径离散，不是精确稳态孔道解。下一二元闭列以解析解先验证时间和空间行为。原热反应/低温高格数完整审查仍进行中，真实材料及全周期限制保持。

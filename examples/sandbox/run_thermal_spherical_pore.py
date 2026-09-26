@@ -11,14 +11,14 @@ from scipy.integrate import BDF
 from thermal_pore_setup import build
 
 
-def main():
+def main(builder):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--parameters', type=Path, required=True)
     parser.add_argument('--case', required=True)
     parser.add_argument('--tolerance', choices=['base', 'refined'], required=True)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args(); root = args.parameters.resolve().parent
-    p = json.loads(args.parameters.read_text()); model, sources = build(root, p)
+    p = json.loads(args.parameters.read_text()); model, sources = builder(root, p)
     case = p['cases'][args.case]; a0 = p['model']['reference_radius_m']
     amount = case['initial_gas_pressure_pa']*4*math.pi*a0**3/(3*model.r*case['initial_temperature_k'])
     ts, es, ss = [p['normalization'][k] for k in ['temperature_k', 'energy_j', 'entropy_j_k']]
@@ -88,4 +88,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(build)

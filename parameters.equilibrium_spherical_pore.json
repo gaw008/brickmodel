@@ -1,0 +1,161 @@
+{
+  "mechanical_source": "data/sandbox/research/viscous-spherical-pore-source-v1/source.json",
+  "temperature_domain_k": [
+    650.0,
+    1200.0
+  ],
+  "model": {
+    "matrix_volume_m3": 7.779181808889016e-15,
+    "viscosity_pa_s": 100000000.0,
+    "surface_tension_n_m": 0.3,
+    "outside_pressure_pa": 100000.0,
+    "gas_constant_j_mol_k": 8.31451,
+    "reference_radius_m": 1e-05,
+    "matrix_volumetric_cv_j_m3_k": 2000000.0,
+    "reference_temperature_k": 298.15,
+    "standard_pressure_pa": 100000.0
+  },
+  "parameter_basis": "USGS1995 CO/H2O/CO2/H2/N2 thermochemistry and restricted water-gas-shift equilibrium; gas feed, geometry, constant viscosity, surface tension, matrix heat capacity and heat conductance are explicit virtual scenario definitions.",
+  "cases": {
+    "contracting-cycle": {
+      "initial_gas_pressure_pa": 100000.0,
+      "initial_temperature_k": 800.0,
+      "segments": [
+        {
+          "end_time_s": 6000.0,
+          "bath_temperature_k": 1100.0,
+          "conductance_w_k": 1e-11
+        },
+        {
+          "end_time_s": 14000.0,
+          "bath_temperature_k": 750.0,
+          "conductance_w_k": 1e-11
+        },
+        {
+          "end_time_s": 20000.0,
+          "bath_temperature_k": 1000.0,
+          "conductance_w_k": 1e-11
+        }
+      ]
+    },
+    "contracting-adiabatic": {
+      "initial_gas_pressure_pa": 100000.0,
+      "initial_temperature_k": 800.0,
+      "segments": [
+        {
+          "end_time_s": 20000.0,
+          "bath_temperature_k": 800.0,
+          "conductance_w_k": 0.0
+        }
+      ]
+    },
+    "expanding-cycle": {
+      "initial_gas_pressure_pa": 300000.0,
+      "initial_temperature_k": 800.0,
+      "segments": [
+        {
+          "end_time_s": 6000.0,
+          "bath_temperature_k": 1100.0,
+          "conductance_w_k": 1e-11
+        },
+        {
+          "end_time_s": 14000.0,
+          "bath_temperature_k": 750.0,
+          "conductance_w_k": 1e-11
+        },
+        {
+          "end_time_s": 20000.0,
+          "bath_temperature_k": 1000.0,
+          "conductance_w_k": 1e-11
+        }
+      ]
+    },
+    "expanding-adiabatic": {
+      "initial_gas_pressure_pa": 300000.0,
+      "initial_temperature_k": 800.0,
+      "segments": [
+        {
+          "end_time_s": 20000.0,
+          "bath_temperature_k": 800.0,
+          "conductance_w_k": 0.0
+        }
+      ]
+    }
+  },
+  "numerics": {
+    "relative_tolerance": 1e-10,
+    "refinement_factor": 0.1,
+    "absolute_tolerances_normalized": [
+      1e-12,
+      1e-12,
+      1e-12,
+      1e-12,
+      1e-12,
+      1e-12,
+      1e-12
+    ],
+    "first_step_s": 0.001,
+    "maximum_step_s": 20.0,
+    "observation_interval_s": 20.0,
+    "progress_every_steps": 200
+  },
+  "normalization": {
+    "temperature_k": 1000.0,
+    "energy_j": 1e-05,
+    "entropy_j_k": 1e-08
+  },
+  "static_review": {
+    "radii_m": [
+      7e-06,
+      1e-05,
+      1.5e-05
+    ],
+    "temperatures_k": [
+      750.0,
+      950.0,
+      1100.0
+    ],
+    "bath_temperatures_k": [
+      750.0,
+      950.0,
+      1100.0
+    ],
+    "initial_pressures_pa": [
+      100000.0,
+      300000.0
+    ],
+    "initial_temperature_k": 800.0,
+    "conductance_w_k": 1e-11,
+    "decimal_digits": 60,
+    "budgets": {
+      "radius_rate_m_s": 1e-20,
+      "temperature_rate_k_s": 1e-12,
+      "source_energy_j": 1e-18,
+      "source_entropy_j_k": 1e-21,
+      "source_cv_j_k": 1e-21,
+      "source_pressure_pa": 1e-07,
+      "dissipation_w": 1e-21,
+      "energy_rate_w": 1e-20,
+      "entropy_rate_w_k": 1e-23,
+      "gas_amount_mol": 1e-25,
+      "element_mol": 1e-25,
+      "gas_cv_j_k": 1e-23,
+      "reaction_gibbs_j_mol": 1e-07
+    }
+  },
+  "scope": "Closed spherical pore with ideal gas CO+H2O<=>CO2+H2 equilibrium and inertN2. Initial gas is equilibrated at initial T before timezero; preparation heat is outside the ledger. No finite reaction kinetics, graphite, methane, gas escape, actual brick or fullC/H/O equilibrium qualification.",
+  "equilibrium_parameters": "parameters.restricted_water_gas_shift_review.json",
+  "gas_feed_fractions": {
+    "CO": 0.35,
+    "H2O": 0.35,
+    "CO2": 0.05,
+    "H2": 0.05,
+    "N2": 0.2
+  },
+  "independent_reference": {
+    "gas_cache_entries": 20000,
+    "temperature_difference_k": "0.001",
+    "gas_extent_tolerance": "1e-55",
+    "gas_extent_iterations": 240
+  }
+}

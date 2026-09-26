@@ -9,6 +9,37 @@ import math
 from .viscous_spherical_pore import spherical_pore_mechanics
 
 
+def pore_caloric_balance(state, parameters, temperature, bath_temperature, conductance,
+                         gas_energy, gas_entropy, gas_cv):
+    """Ideal-gas heat balance when gas U(T) is independent of pore volume.
+
+    Includes fixed-composition gases and volume-independent equilibrium
+    composition with zero change in total gas moles. Not a general EOS.
+    """
+    capacity = parameters['matrix_volume_m3']*parameters['matrix_volumetric_cv_j_m3_k']
+    cv = gas_cv+capacity
+    heat = conductance*(bath_temperature-temperature)
+    compression_work = -state['gas_pressure_pa']*state['pore_volume_rate_m3_s']
+    temperature_rate = (heat+compression_work+state['viscous_dissipation_w'])/cv
+    matrix_energy = capacity*(temperature-parameters['reference_temperature_k'])
+    matrix_entropy = capacity*math.log(temperature/parameters['reference_temperature_k'])
+    viscous_entropy = state['viscous_dissipation_w']/temperature
+    heat_entropy = heat*(1/temperature-1/bath_temperature)
+    return {**state, 'temperature_k': temperature,
+            'bath_temperature_k': bath_temperature, 'heat_in_w': heat,
+            'gas_compression_work_w': compression_work,
+            'temperature_rate_k_s': temperature_rate, 'cv_j_k': cv,
+            'gas_internal_energy_j': gas_energy, 'matrix_internal_energy_j': matrix_energy,
+            'internal_energy_j': gas_energy+matrix_energy+state['surface_energy_j'],
+            'gas_entropy_j_k': gas_entropy, 'matrix_entropy_j_k': matrix_entropy,
+            'entropy_j_k': gas_entropy+matrix_entropy,
+            'entropy_rate_w_k': heat/temperature+viscous_entropy,
+            'bath_entropy_rate_w_k': -heat/bath_temperature,
+            'viscous_entropy_production_w_k': viscous_entropy,
+            'heat_entropy_production_w_k': heat_entropy,
+            'entropy_production_w_k': viscous_entropy+heat_entropy}
+
+
 class ThermalSphericalPore:
     def __init__(self, parameters, gas_phase):
         self.p = parameters
@@ -24,26 +55,9 @@ class ThermalSphericalPore:
             viscosity=p['viscosity_pa_s'], surface_tension=p['surface_tension_n_m'],
             outside_pressure=p['outside_pressure_pa'])
         gas = self.phase.standard(temperature)
-        cv = gas_amount*(gas['cp_j_mol_k']-self.r)+self.capacity
-        heat = conductance*(bath_temperature-temperature)
-        compression_work = -pressure*state['pore_volume_rate_m3_s']
-        temperature_rate = (heat+compression_work+state['viscous_dissipation_w'])/cv
+        gas_cv = gas_amount*(gas['cp_j_mol_k']-self.r)
         gas_energy = gas_amount*(gas['enthalpy_j_mol']-self.r*temperature)
-        matrix_energy = self.capacity*(temperature-p['reference_temperature_k'])
         gas_entropy = gas_amount*(gas['entropy_j_mol_k']-self.r*math.log(pressure/p['standard_pressure_pa']))
-        matrix_entropy = self.capacity*math.log(temperature/p['reference_temperature_k'])
-        viscous_entropy = state['viscous_dissipation_w']/temperature
-        heat_entropy = heat*(1/temperature-1/bath_temperature)
-        return {**state, 'temperature_k': temperature, 'gas_amount_mol': gas_amount,
-                'bath_temperature_k': bath_temperature, 'heat_in_w': heat,
-                'gas_compression_work_w': compression_work,
-                'temperature_rate_k_s': temperature_rate, 'cv_j_k': cv,
-                'gas_internal_energy_j': gas_energy, 'matrix_internal_energy_j': matrix_energy,
-                'internal_energy_j': gas_energy+matrix_energy+state['surface_energy_j'],
-                'gas_entropy_j_k': gas_entropy, 'matrix_entropy_j_k': matrix_entropy,
-                'entropy_j_k': gas_entropy+matrix_entropy,
-                'entropy_rate_w_k': heat/temperature+viscous_entropy,
-                'bath_entropy_rate_w_k': -heat/bath_temperature,
-                'viscous_entropy_production_w_k': viscous_entropy,
-                'heat_entropy_production_w_k': heat_entropy,
-                'entropy_production_w_k': viscous_entropy+heat_entropy}
+        thermal = pore_caloric_balance(state, p, temperature, bath_temperature, conductance,
+                                       gas_energy, gas_entropy, gas_cv)
+        return {**thermal, 'gas_amount_mol': gas_amount}

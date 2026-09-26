@@ -1,0 +1,2072 @@
+{
+  "settings": {
+    "trajectories": {
+      "contracting-cycle": {
+        "base": "data/sandbox/research/equilibrium-spherical-pore-v1/contracting-cycle-base.jsonl",
+        "refined": "data/sandbox/research/equilibrium-spherical-pore-v1/contracting-cycle-refined.jsonl"
+      },
+      "contracting-adiabatic": {
+        "base": "data/sandbox/research/equilibrium-spherical-pore-v1/contracting-adiabatic-base.jsonl",
+        "refined": "data/sandbox/research/equilibrium-spherical-pore-v1/contracting-adiabatic-refined.jsonl"
+      },
+      "expanding-cycle": {
+        "base": "data/sandbox/research/equilibrium-spherical-pore-v1/expanding-cycle-base.jsonl",
+        "refined": "data/sandbox/research/equilibrium-spherical-pore-v1/expanding-cycle-refined.jsonl"
+      },
+      "expanding-adiabatic": {
+        "base": "data/sandbox/research/equilibrium-spherical-pore-v1/expanding-adiabatic-base.jsonl",
+        "refined": "data/sandbox/research/equilibrium-spherical-pore-v1/expanding-adiabatic-refined.jsonl"
+      }
+    },
+    "decimal_digits": 60,
+    "quadrature_orders": [
+      2,
+      4
+    ],
+    "source_budgets": {
+      "radius_rate_m_s": 1e-20,
+      "temperature_rate_k_s": 1e-12,
+      "internal_energy_j": 1e-18,
+      "entropy_j_k": 1e-21,
+      "gas_pressure_pa": 1e-06,
+      "cv_j_k": 1e-21,
+      "viscous_dissipation_w": 1e-21,
+      "entropy_production_w_k": 1e-23,
+      "reaction_gibbs_j_mol": 1e-07,
+      "gas_amount_mol": 1e-25,
+      "element_mol": 1e-25
+    },
+    "global_budgets": {
+      "energy_j": 1e-14,
+      "entropy_j_k": 1e-17,
+      "external_work_j": 1e-17,
+      "matrix_volume_m3": 1e-27,
+      "normal_traction_pa": 1e-06,
+      "negative_step_entropy_j_k": 1e-19,
+      "negative_entropy_rate_w_k": 1e-35
+    },
+    "integral_budgets": [
+      1e-13,
+      1e-05,
+      1e-14,
+      1e-14,
+      1e-14,
+      1e-17,
+      1e-17
+    ],
+    "integral_coordinate_order": [
+      "radius_m",
+      "temperature_k",
+      "work_in_j",
+      "heat_in_j",
+      "dissipation_j",
+      "bath_entropy_j_k",
+      "entropy_production_j_k"
+    ],
+    "time_budgets": {
+      "radius_m": 1e-13,
+      "temperature_k": 1e-05,
+      "gas_pressure_pa": 0.01,
+      "porosity": 1e-08,
+      "energy_j": 1e-14,
+      "entropy_j_k": 1e-17
+    },
+    "adiabatic_equilibrium": {
+      "root_tolerance": "1e-45",
+      "root_maximum_steps": 100,
+      "radius_ratio_start": 1.0,
+      "temperature_start_k": 800.0,
+      "radius_m": 1e-11,
+      "temperature_k": 1e-05,
+      "equilibrium_force_pa": 1e-07,
+      "energy_j": 1e-18
+    },
+    "scope": "Independent source reconstruction on every recorded state and 2/4 Gauss nodes, with local/global heat, work and entropy accounting. Recorded reactive species/element/source comparisons; dense values use independent source equilibrium. Union-node time comparison and adiabatic endpoint. No continuous-time error bound."
+  },
+  "cases": {
+    "contracting-cycle": {
+      "trajectory_reviews": {
+        "base": {
+          "trajectory": "/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/equilibrium-spherical-pore-v1/contracting-cycle-base.jsonl",
+          "counts": {
+            "recorded": 4273,
+            "dense": 6540
+          },
+          "source_maxima": {
+            "radius_rate_m_s": 3.670162832157452e-24,
+            "temperature_rate_k_s": 1.0787133043199956e-16,
+            "internal_energy_j": 4.338094062907107e-21,
+            "entropy_j_k": 6.87944554951321e-24,
+            "gas_pressure_pa": 1.4227119064908632e-10,
+            "cv_j_k": 3.710744922853736e-24,
+            "viscous_dissipation_w": 3.745322911342198e-28,
+            "entropy_production_w_k": 1.0362082944925333e-27,
+            "reaction_gibbs_j_mol": 2.0372681319713593e-10,
+            "gas_amount_mol": 4.1774061772946553e-29,
+            "element_mol": 1.5777218104420236e-30
+          },
+          "global_maxima": {
+            "energy_j": 5.409613177458621e-19,
+            "entropy_j_k": 4.173749074567624e-18,
+            "external_work_j": 1.623181191065682e-18,
+            "matrix_volume_m3": 2.537038795514423e-29,
+            "normal_traction_pa": 1.3627235007235846e-10
+          },
+          "minima": {
+            "entropy_rate_w_k": 7.173656782360871e-17,
+            "viscous_dissipation_w": 2.311703710695227e-23,
+            "cv_j_k": 1.556066590833669e-08
+          },
+          "integral_reviews": [
+            {
+              "order": 2,
+              "maximum_local_residuals": [
+                9.235370575556937e-16,
+                5.975936243247937e-09,
+                6.589175356755368e-20,
+                9.297834723759655e-17,
+                2.2103301182364744e-19,
+                1.239698701106649e-19,
+                2.576329207221616e-19
+              ],
+              "maximum_cumulative_residuals": [
+                7.600632994114612e-15,
+                1.4340230336529203e-08,
+                2.1438137904740617e-18,
+                2.202522832086412e-16,
+                3.3011207379309308e-18,
+                1.9910816370580163e-19,
+                4.109417153141497e-18
+              ],
+              "minimum_step_entropy_j_k": 4.568190154068308e-16,
+              "within_budgets": {
+                "local_integrals": true,
+                "cumulative_integrals": true,
+                "nonnegative_step_entropy": true
+              }
+            },
+            {
+              "order": 4,
+              "maximum_local_residuals": [
+                9.220179314685485e-16,
+                5.975936243247937e-09,
+                6.710643154248051e-20,
+                9.297834723759655e-17,
+                2.2069637375285477e-19,
+                1.2396987013590845e-19,
+                2.5721623495093655e-19
+              ],
+              "maximum_cumulative_residuals": [
+                7.769477577204969e-15,
+                1.5086243365658447e-08,
+                2.1950786191297653e-18,
+                2.3181216535629427e-16,
+                3.3987897268666116e-18,
+                2.063410309819653e-19,
+                4.3342295407920774e-18
+              ],
+              "minimum_step_entropy_j_k": 4.568190154068308e-16,
+              "within_budgets": {
+                "local_integrals": true,
+                "cumulative_integrals": true,
+                "nonnegative_step_entropy": true
+              }
+            }
+          ],
+          "quadrature_differences": [
+            1.819189549733789e-16,
+            1.38931501906755e-09,
+            5.3232348205639877e-20,
+            2.1544819803951372e-17,
+            9.789068056569078e-20,
+            2.2320556554705053e-20,
+            2.248097535553699e-19
+          ],
+          "adiabatic_equilibrium": null,
+          "final": {
+            "kind": "final",
+            "time_s": 20000.0,
+            "segment_index": 2,
+            "values": [
+              0.9066841706976408,
+              0.9947525311406978,
+              1.0666190100392284e-05,
+              0.3030333230823771,
+              6.240359511679454e-06,
+              -0.08428003248858304,
+              0.2547470838517772
+            ],
+            "state": {
+              "radius_m": 9.066841706976408e-06,
+              "outer_radius_m": 1.3755105668081608e-05,
+              "pore_volume_m3": 3.1221711787008678e-15,
+              "total_volume_m3": 1.0901352987589884e-14,
+              "porosity": 0.2864021724876859,
+              "gas_pressure_pa": 166823.3986918372,
+              "laplace_pressure_pa": 66175.19301548353,
+              "radius_rate_m_s": 2.058995289248186e-11,
+              "outer_radius_rate_m_s": 8.946219679432047e-12,
+              "radial_velocity_constant_m3_s": 1.6926509931286823e-21,
+              "matrix_pressure_pa": 99739.84293846054,
+              "pore_volume_rate_m3_s": 2.127047970041814e-20,
+              "porosity_rate_s": 1.3923563544490732e-06,
+              "surface_energy_j": 3.099154205668644e-10,
+              "surface_energy_rate_w": 1.407578099707095e-15,
+              "external_work_in_w": -2.127047970041814e-15,
+              "viscous_dissipation_w": 1.3787645680576716e-17,
+              "temperature_k": 994.7525311406978,
+              "bath_temperature_k": 1000.0,
+              "heat_in_w": 5.247468859302216e-11,
+              "gas_compression_work_w": -3.5484137154294856e-15,
+              "temperature_rate_k_s": 0.0033720245326037527,
+              "cv_j_k": 1.556072723066345e-08,
+              "gas_internal_energy_j": -8.422039169626137e-09,
+              "matrix_internal_energy_j": 1.083799547655152e-05,
+              "internal_energy_j": 1.0829883352802461e-05,
+              "gas_entropy_j_k": 1.4755629859739714e-11,
+              "matrix_entropy_j_k": 1.874622997683572e-08,
+              "entropy_j_k": 1.876098560669546e-08,
+              "entropy_rate_w_k": 5.275151430928686e-14,
+              "bath_entropy_rate_w_k": -5.2474688593022163e-14,
+              "viscous_entropy_production_w_k": 1.386037758030755e-20,
+              "heat_entropy_production_w_k": 2.768118558871172e-16,
+              "entropy_production_w_k": 2.768257162646975e-16,
+              "gas_equilibrium": {
+                "temperature_k": 994.7525311406978,
+                "volume_m3": 3.1221711787008678e-15,
+                "extent_mol": 1.0830373584216413e-14,
+                "amounts_mol": {
+                  "CO": 1.1210561054073112e-14,
+                  "H2O": 1.1210561054073112e-14,
+                  "CO2": 1.3979078532543487e-14,
+                  "H2": 1.3979078532543487e-14,
+                  "N2": 1.2594819793308301e-14
+                },
+                "partial_pressures_pa": {
+                  "CO": 29697.668199690495,
+                  "H2O": 29697.668199690495,
+                  "CO2": 37031.69127704438,
+                  "H2": 37031.69127704438,
+                  "N2": 33364.67973836744
+                },
+                "pressure_pa": 166823.3986918372,
+                "chemical_potentials_j_mol": {
+                  "CO": -331747.27991296956,
+                  "H2O": -457323.4153716103,
+                  "CO2": -636182.5288254991,
+                  "H2": -152888.16645908073,
+                  "N2": -214610.58876804836
+                },
+                "internal_energy_j": -8.422039169626137e-09,
+                "entropy_j_k": 1.4755629859739714e-11,
+                "helmholtz_j": -2.3100239321177478e-08,
+                "frozen_cv_j_k": 1.9030271074167035e-12,
+                "reaction_gibbs_j_mol": 2.9103830456733704e-11,
+                "helmholtz_extent_curvature_j_mol2": 2.658874073336527e+18,
+                "standard_reaction": {
+                  "enthalpy_j_mol": -34902.912852787704,
+                  "entropy_j_mol_k": -31.41691418102056,
+                  "cp_j_mol_k": 9.867282892403246,
+                  "gibbs_j_mol": -3650.8579505874222,
+                  "log_equilibrium": 0.4414110722182491,
+                  "gibbs_temperature_derivative_j_mol_k": 31.41691418102056,
+                  "vant_hoff_derivative_per_k": -0.00424223680144804
+                },
+                "extent_temperature_derivative_mol_k": -1.3196198837299744e-17,
+                "equilibrium_cv_j_k": 2.363612885423035e-12
+              },
+              "gas_reference_amounts_mol": {
+                "CO": 2.2040934638289524e-14,
+                "H2O": 2.2040934638289524e-14,
+                "CO2": 3.1487049483270753e-15,
+                "H2": 3.1487049483270753e-15,
+                "N2": 1.2594819793308301e-14
+              },
+              "gas_amount_mol": 6.29740989665415e-14,
+              "gas_amounts_mol": {
+                "CO": 1.1210561054073112e-14,
+                "H2O": 1.1210561054073112e-14,
+                "CO2": 1.3979078532543487e-14,
+                "H2": 1.3979078532543487e-14,
+                "N2": 1.2594819793308301e-14
+              },
+              "reaction_extent_mol": 1.0830373584216413e-14,
+              "reaction_gibbs_j_mol": 2.9103830456733704e-11,
+              "reaction_extent_rate_mol_s": -4.4497906216491854e-20
+            },
+            "energy_balance_j": -5.221958119822762e-19,
+            "entropy_balance_j_k": 4.1737465757894394e-18
+          },
+          "within_budgets": {
+            "energy_j": true,
+            "entropy_j_k": true,
+            "external_work_j": true,
+            "matrix_volume_m3": true,
+            "normal_traction_pa": true,
+            "source": true,
+            "completed": true,
+            "local_integrals": true,
+            "quadrature": true,
+            "positive_cv": true,
+            "nonnegative_dissipation": true,
+            "nonnegative_entropy_rate": true
+          },
+          "all_requested_budgets_met": true
+        },
+        "refined": {
+          "trajectory": "/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/equilibrium-spherical-pore-v1/contracting-cycle-refined.jsonl",
+          "counts": {
+            "recorded": 4438,
+            "dense": 6870
+          },
+          "source_maxima": {
+            "radius_rate_m_s": 3.2857085139102327e-24,
+            "temperature_rate_k_s": 1.1650844809814178e-16,
+            "internal_energy_j": 5.198615939835885e-21,
+            "entropy_j_k": 8.069419420264131e-24,
+            "gas_pressure_pa": 1.2984195690628245e-10,
+            "cv_j_k": 3.7100216163252466e-24,
+            "viscous_dissipation_w": 3.4912003298656064e-28,
+            "entropy_production_w_k": 1.0677683997062024e-27,
+            "reaction_gibbs_j_mol": 1.7462298274040222e-10,
+            "gas_amount_mol": 4.516849077790882e-29,
+            "element_mol": 1.5777218104420236e-30
+          },
+          "global_maxima": {
+            "energy_j": 1.9966497903913283e-19,
+            "entropy_j_k": 2.2458512009986727e-18,
+            "external_work_j": 4.3040904325130395e-19,
+            "matrix_volume_m3": 2.6342309787870565e-29,
+            "normal_traction_pa": 1.2867665757468465e-10
+          },
+          "minima": {
+            "entropy_rate_w_k": 7.17365678220507e-17,
+            "viscous_dissipation_w": 1.9491321194583914e-23,
+            "cv_j_k": 1.556066590833669e-08
+          },
+          "integral_reviews": [
+            {
+              "order": 2,
+              "maximum_local_residuals": [
+                1.3884975107778626e-16,
+                5.631877186829115e-10,
+                8.38211316437428e-21,
+                8.750353270949355e-18,
+                4.390198911117959e-20,
+                1.1668158021884724e-20,
+                3.496714915609985e-20
+              ],
+              "maximum_cumulative_residuals": [
+                1.988165686432424e-15,
+                9.057998795469757e-09,
+                4.712972304674775e-19,
+                1.4025933870289234e-16,
+                1.2893059480662435e-18,
+                1.729105265256347e-19,
+                2.1831670373632428e-18
+              ],
+              "minimum_step_entropy_j_k": 8.177826582948185e-16,
+              "within_budgets": {
+                "local_integrals": true,
+                "cumulative_integrals": true,
+                "nonnegative_step_entropy": true
+              }
+            },
+            {
+              "order": 4,
+              "maximum_local_residuals": [
+                1.3861646122623036e-16,
+                5.622440291119801e-10,
+                8.612726918627517e-21,
+                8.735682395605114e-18,
+                4.450254030080782e-20,
+                1.1648590030519016e-20,
+                3.491015931995179e-20
+              ],
+              "maximum_cumulative_residuals": [
+                2.066286476366504e-15,
+                9.915936516335933e-09,
+                4.8774844405917645e-19,
+                1.5358147289730797e-16,
+                1.3213725092406566e-18,
+                1.980977625875681e-19,
+                2.3112472698206473e-18
+              ],
+              "minimum_step_entropy_j_k": 8.177826582948185e-16,
+              "within_budgets": {
+                "local_integrals": true,
+                "cumulative_integrals": true,
+                "nonnegative_step_entropy": true
+              }
+            }
+          ],
+          "quadrature_differences": [
+            8.035281910254854e-17,
+            9.409436111404521e-10,
+            1.6848374470825956e-20,
+            1.464570094078717e-17,
+            3.228497544852894e-20,
+            2.524067662117569e-20,
+            1.2807931361815593e-19
+          ],
+          "adiabatic_equilibrium": null,
+          "final": {
+            "kind": "final",
+            "time_s": 20000.0,
+            "segment_index": 2,
+            "values": [
+              0.906684170697793,
+              0.9947525311409606,
+              1.0666190219600778e-05,
+              0.303033323082634,
+              6.24035971152676e-06,
+              -0.08428003248871402,
+              0.2547470840448475
+            ],
+            "state": {
+              "radius_m": 9.06684170697793e-06,
+              "outer_radius_m": 1.375510566808227e-05,
+              "pore_volume_m3": 3.122171178702439e-15,
+              "total_volume_m3": 1.0901352987591455e-14,
+              "porosity": 0.28640217248778876,
+              "gas_pressure_pa": 166823.3986917973,
+              "laplace_pressure_pa": 66175.19301547243,
+              "radius_rate_m_s": 2.0589952891573513e-11,
+              "outer_radius_rate_m_s": 8.946219679039517e-12,
+              "radial_velocity_constant_m3_s": 1.6926509930545774e-21,
+              "matrix_pressure_pa": 99739.84293847198,
+              "pore_volume_rate_m3_s": 2.1270479699486912e-20,
+              "porosity_rate_s": 1.392356354387714e-06,
+              "surface_energy_j": 3.099154205669685e-10,
+              "surface_energy_rate_w": 1.4075780996452345e-15,
+              "external_work_in_w": -2.1270479699486914e-15,
+              "viscous_dissipation_w": 1.378764567936053e-17,
+              "temperature_k": 994.7525311409606,
+              "bath_temperature_k": 1000.0,
+              "heat_in_w": 5.2474688590393725e-11,
+              "gas_compression_work_w": -3.548413715273286e-15,
+              "temperature_rate_k_s": 0.003372024532434848,
+              "cv_j_k": 1.556072723066345e-08,
+              "gas_internal_energy_j": -8.422039169625516e-09,
+              "matrix_internal_energy_j": 1.083799547655561e-05,
+              "internal_energy_j": 1.082988335280655e-05,
+              "gas_entropy_j_k": 1.4755629859740606e-11,
+              "matrix_entropy_j_k": 1.874622997683983e-08,
+              "entropy_j_k": 1.876098560669957e-08,
+              "entropy_rate_w_k": 5.275151430663062e-14,
+              "bath_entropy_rate_w_k": -5.247468859039372e-14,
+              "viscous_entropy_production_w_k": 1.3860377579081287e-20,
+              "heat_entropy_production_w_k": 2.7681185585931296e-16,
+              "entropy_production_w_k": 2.7682571623689203e-16,
+              "gas_equilibrium": {
+                "temperature_k": 994.7525311409606,
+                "volume_m3": 3.122171178702439e-15,
+                "extent_mol": 1.083037358421295e-14,
+                "amounts_mol": {
+                  "CO": 1.1210561054076575e-14,
+                  "H2O": 1.1210561054076575e-14,
+                  "CO2": 1.3979078532540026e-14,
+                  "H2": 1.3979078532540026e-14,
+                  "N2": 1.2594819793308301e-14
+                },
+                "partial_pressures_pa": {
+                  "CO": 29697.668199692565,
+                  "H2O": 29697.668199692565,
+                  "CO2": 37031.69127702636,
+                  "H2": 37031.69127702636,
+                  "N2": 33364.67973835946
+                },
+                "pressure_pa": 166823.3986917973,
+                "chemical_potentials_j_mol": {
+                  "CO": -331747.2799130331,
+                  "H2O": -457323.4153716735,
+                  "CO2": -636182.5288255761,
+                  "H2": -152888.1664591306,
+                  "N2": -214610.5887681127
+                },
+                "internal_energy_j": -8.422039169625516e-09,
+                "entropy_j_k": 1.4755629859740606e-11,
+                "helmholtz_j": -2.310023932118162e-08,
+                "frozen_cv_j_k": 1.9030271074167964e-12,
+                "reaction_gibbs_j_mol": -5.820766091346741e-11,
+                "helmholtz_extent_curvature_j_mol2": 2.658874073337066e+18,
+                "standard_reaction": {
+                  "enthalpy_j_mol": -34902.91285278511,
+                  "entropy_j_mol_k": -31.416914181017944,
+                  "cp_j_mol_k": 9.867282892402638,
+                  "gibbs_j_mol": -3650.857950579175,
+                  "log_equilibrium": 0.4414110722171352,
+                  "gibbs_temperature_derivative_j_mol_k": 31.416914181017944,
+                  "vant_hoff_derivative_per_k": -0.004242236801445484
+                },
+                "extent_temperature_derivative_mol_k": -1.3196198837292603e-17,
+                "equilibrium_cv_j_k": 2.3636128854228444e-12
+              },
+              "gas_reference_amounts_mol": {
+                "CO": 2.2040934638289524e-14,
+                "H2O": 2.2040934638289524e-14,
+                "CO2": 3.1487049483270753e-15,
+                "H2": 3.1487049483270753e-15,
+                "N2": 1.2594819793308301e-14
+              },
+              "gas_amount_mol": 6.29740989665415e-14,
+              "gas_amounts_mol": {
+                "CO": 1.1210561054076575e-14,
+                "H2O": 1.1210561054076575e-14,
+                "CO2": 1.3979078532540026e-14,
+                "H2": 1.3979078532540026e-14,
+                "N2": 1.2594819793308301e-14
+              },
+              "reaction_extent_mol": 1.083037358421295e-14,
+              "reaction_gibbs_j_mol": -5.820766091346741e-11,
+              "reaction_extent_rate_mol_s": -4.449790621423887e-20
+            },
+            "energy_balance_j": -1.9354702844760763e-19,
+            "entropy_balance_j_k": 2.245845821098836e-18
+          },
+          "within_budgets": {
+            "energy_j": true,
+            "entropy_j_k": true,
+            "external_work_j": true,
+            "matrix_volume_m3": true,
+            "normal_traction_pa": true,
+            "source": true,
+            "completed": true,
+            "local_integrals": true,
+            "quadrature": true,
+            "positive_cv": true,
+            "nonnegative_dissipation": true,
+            "nonnegative_entropy_rate": true
+          },
+          "all_requested_budgets_met": true
+        }
+      },
+      "time_comparison": {
+        "union_nodes": 16598,
+        "maxima": {
+          "radius_m": 2.9216640218265864e-15,
+          "temperature_k": 1.70237157703923e-08,
+          "gas_pressure_pa": 0.00014947530510032178,
+          "porosity": 1.9908723237116216e-10,
+          "energy_j": 2.664812814856532e-16,
+          "entropy_j_k": 1.9442039644879118e-18
+        },
+        "within_budgets": {
+          "radius_m": true,
+          "temperature_k": true,
+          "gas_pressure_pa": true,
+          "porosity": true,
+          "energy_j": true,
+          "entropy_j_k": true
+        }
+      },
+      "all_requested_budgets_met": true
+    },
+    "contracting-adiabatic": {
+      "trajectory_reviews": {
+        "base": {
+          "trajectory": "/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/equilibrium-spherical-pore-v1/contracting-adiabatic-base.jsonl",
+          "counts": {
+            "recorded": 4070,
+            "dense": 6138
+          },
+          "source_maxima": {
+            "radius_rate_m_s": 3.8661743760108004e-24,
+            "temperature_rate_k_s": 6.326559441912444e-20,
+            "internal_energy_j": 3.45672766152172e-21,
+            "entropy_j_k": 5.803002247994255e-24,
+            "gas_pressure_pa": 1.3015251808046935e-10,
+            "cv_j_k": 3.707071386340912e-24,
+            "viscous_dissipation_w": 5.343132247060765e-28,
+            "entropy_production_w_k": 6.87781842428911e-31,
+            "reaction_gibbs_j_mol": 1.7462298274040222e-10,
+            "gas_amount_mol": 4.1479405445033133e-29,
+            "element_mol": 1.5777218104420236e-30
+          },
+          "global_maxima": {
+            "energy_j": 8.785319446117547e-19,
+            "entropy_j_k": 1.3665025751990062e-21,
+            "external_work_j": 3.3612015492191214e-18,
+            "matrix_volume_m3": 2.515448068093744e-29,
+            "normal_traction_pa": 1.5178685112695751e-10
+          },
+          "minima": {
+            "entropy_rate_w_k": 1.4789858665221457e-41,
+            "viscous_dissipation_w": 1.1832161991577904e-38,
+            "cv_j_k": 1.556089765676104e-08
+          },
+          "integral_reviews": [
+            {
+              "order": 2,
+              "maximum_local_residuals": [
+                3.47154990976852e-15,
+                1.1010201420285498e-10,
+                1.2672097712467343e-18,
+                0.0,
+                1.5681445008601765e-18,
+                0.0,
+                1.9603682233515973e-21
+              ],
+              "maximum_cumulative_residuals": [
+                1.730631766858065e-14,
+                4.925413349746166e-10,
+                5.493306402728217e-18,
+                0.0,
+                6.5550638661662304e-18,
+                0.0,
+                8.19439049066817e-21
+              ],
+              "minimum_step_entropy_j_k": -4.6276935546823216e-24,
+              "within_budgets": {
+                "local_integrals": true,
+                "cumulative_integrals": true,
+                "nonnegative_step_entropy": true
+              }
+            },
+            {
+              "order": 4,
+              "maximum_local_residuals": [
+                3.4715498725453924e-15,
+                1.0990314431094661e-10,
+                1.264929328809773e-18,
+                0.0,
+                1.5653218859603329e-18,
+                0.0,
+                1.9568396343230474e-21
+              ],
+              "maximum_cumulative_residuals": [
+                1.7280411907042706e-14,
+                4.916098214277631e-10,
+                5.482630389689953e-18,
+                0.0,
+                6.5417767347398204e-18,
+                0.0,
+                8.177780128162753e-21
+              ],
+              "minimum_step_entropy_j_k": -4.6276935546823216e-24,
+              "within_budgets": {
+                "local_integrals": true,
+                "cumulative_integrals": true,
+                "nonnegative_step_entropy": true
+              }
+            }
+          ],
+          "quadrature_differences": [
+            2.2266483946250994e-16,
+            6.530282572720925e-12,
+            7.254169036754227e-20,
+            0.0,
+            9.05105054188594e-20,
+            0.0,
+            1.1314357667230216e-22
+          ],
+          "adiabatic_equilibrium": {
+            "radius_m": 8.348400907994941e-06,
+            "temperature_k": 800.0185978382747,
+            "errors": {
+              "radius_m": 7.400865518310324e-19,
+              "temperature_k": 7.976792429756782e-11,
+              "equilibrium_force_pa": 0.0,
+              "energy_j": 7.36968203744283e-50
+            },
+            "within_budgets": {
+              "radius_m": true,
+              "temperature_k": true,
+              "equilibrium_force_pa": true,
+              "energy_j": true
+            },
+            "method": "Independent simultaneous constant U+pV and mechanical equilibrium, not a second time integrator."
+          },
+          "final": {
+            "kind": "final",
+            "time_s": 20000.0,
+            "segment_index": 0,
+            "values": [
+              0.8348400907995682,
+              0.8000185978383544,
+              1.7515490808499566e-05,
+              0.0,
+              6.255427695850849e-06,
+              0.0,
+              7.81921946286842e-06
+            ],
+            "state": {
+              "radius_m": 8.348400907995683e-06,
+              "outer_radius_m": 1.346077561425196e-05,
+              "pore_volume_m3": 2.437241133999326e-15,
+              "total_volume_m3": 1.0216422942888342e-14,
+              "porosity": 0.23856110378592843,
+              "gas_pressure_pa": 171870.0511166353,
+              "laplace_pressure_pa": 71870.05111665755,
+              "radius_rate_m_s": -6.098332805931728e-22,
+              "outer_radius_rate_m_s": -2.3457274239710708e-22,
+              "radial_velocity_constant_m3_s": -4.2502816967525795e-32,
+              "matrix_pressure_pa": 100000.00000000697,
+              "pore_volume_rate_m3_s": -5.341061501682026e-31,
+              "porosity_rate_s": -3.980739635767722e-17,
+              "surface_energy_j": 2.6274696732622795e-10,
+              "surface_energy_rate_w": -3.8386236314309893e-26,
+              "external_work_in_w": 5.341061501682026e-26,
+              "viscous_dissipation_w": 1.188311918380877e-38,
+              "temperature_k": 800.0185978383544,
+              "bath_temperature_k": 800.0,
+              "heat_in_w": -0.0,
+              "gas_compression_work_w": 9.179685133111827e-26,
+              "temperature_rate_k_s": 5.8992002489808445e-18,
+              "cv_j_k": 1.5560897656761038e-08,
+              "gas_internal_energy_j": -8.898265494323968e-09,
+              "matrix_internal_energy_j": 7.808254133513526e-06,
+              "internal_energy_j": 7.799618614986528e-06,
+              "gas_entropy_j_k": 1.4092491162898458e-11,
+              "matrix_entropy_j_k": 1.5356700140149344e-08,
+              "entropy_j_k": 1.5370792631312243e-08,
+              "entropy_rate_w_k": 1.4853553674773172e-41,
+              "bath_entropy_rate_w_k": 0.0,
+              "viscous_entropy_production_w_k": 1.4853553674773172e-41,
+              "heat_entropy_production_w_k": 0.0,
+              "entropy_production_w_k": 1.4853553674773172e-41,
+              "gas_equilibrium": {
+                "temperature_k": 800.0185978383544,
+                "volume_m3": 2.437241133999326e-15,
+                "extent_mol": 1.3957730987317183e-14,
+                "amounts_mol": {
+                  "CO": 8.083203650972341e-15,
+                  "H2O": 8.083203650972341e-15,
+                  "CO2": 1.7106435935644257e-14,
+                  "H2": 1.7106435935644257e-14,
+                  "N2": 1.2594819793308301e-14
+                },
+                "partial_pressures_pa": {
+                  "CO": 22060.825759760555,
+                  "H2O": 22060.825759760555,
+                  "CO2": 46687.194686893556,
+                  "H2": 46687.194686893556,
+                  "N2": 34374.010223327066
+                },
+                "pressure_pa": 171870.0511166353,
+                "chemical_potentials_j_mol": {
+                  "CO": -286870.05953509547,
+                  "H2O": -412884.19994558423,
+                  "CO2": -581741.4439542099,
+                  "H2": -118012.81552646989,
+                  "N2": -168884.8427861885
+                },
+                "internal_energy_j": -8.898265494323968e-09,
+                "entropy_j_k": 1.4092491162898458e-11,
+                "helmholtz_j": -2.017252051451539e-08,
+                "frozen_cv_j_k": 1.8333255645432513e-12,
+                "reaction_gibbs_j_mol": -1.0186340659856796e-10,
+                "helmholtz_extent_curvature_j_mol2": 2.423514577607124e+18,
+                "standard_reaction": {
+                  "enthalpy_j_mol": -36858.95997104062,
+                  "entropy_j_mol_k": -33.6064100470621,
+                  "cp_j_mol_k": 10.158788461270198,
+                  "gibbs_j_mol": -9973.206926809213,
+                  "log_equilibrium": 1.4993329555930088,
+                  "gibbs_temperature_derivative_j_mol_k": 33.6064100470621,
+                  "vant_hoff_derivative_per_k": -0.006926378983914483
+                },
+                "extent_temperature_derivative_mol_k": -1.9010667121779767e-17,
+                "equilibrium_cv_j_k": 2.5340389830077095e-12
+              },
+              "gas_reference_amounts_mol": {
+                "CO": 2.2040934638289524e-14,
+                "H2O": 2.2040934638289524e-14,
+                "CO2": 3.1487049483270753e-15,
+                "H2": 3.1487049483270753e-15,
+                "N2": 1.2594819793308301e-14
+              },
+              "gas_amount_mol": 6.29740989665415e-14,
+              "gas_amounts_mol": {
+                "CO": 8.083203650972341e-15,
+                "H2O": 8.083203650972341e-15,
+                "CO2": 1.7106435935644257e-14,
+                "H2": 1.7106435935644257e-14,
+                "N2": 1.2594819793308301e-14
+              },
+              "reaction_extent_mol": 1.3957730987317183e-14,
+              "reaction_gibbs_j_mol": -1.0186340659856796e-10,
+              "reaction_extent_rate_mol_s": -1.1214773221809515e-34
+            },
+            "energy_balance_j": 2.349040428225159e-19,
+            "entropy_balance_j_k": -4.954387146481265e-22
+          },
+          "within_budgets": {
+            "energy_j": true,
+            "entropy_j_k": true,
+            "external_work_j": true,
+            "matrix_volume_m3": true,
+            "normal_traction_pa": true,
+            "source": true,
+            "completed": true,
+            "local_integrals": true,
+            "quadrature": true,
+            "positive_cv": true,
+            "nonnegative_dissipation": true,
+            "nonnegative_entropy_rate": true,
+            "adiabatic_equilibrium": true
+          },
+          "all_requested_budgets_met": true
+        },
+        "refined": {
+          "trajectory": "/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/equilibrium-spherical-pore-v1/contracting-adiabatic-refined.jsonl",
+          "counts": {
+            "recorded": 4112,
+            "dense": 6222
+          },
+          "source_maxima": {
+            "radius_rate_m_s": 3.1380382599861452e-24,
+            "temperature_rate_k_s": 4.6041323545901805e-20,
+            "internal_energy_j": 3.781161245276395e-21,
+            "entropy_j_k": 5.839064458984827e-24,
+            "gas_pressure_pa": 1.2340815044234517e-10,
+            "cv_j_k": 3.707278331823976e-24,
+            "viscous_dissipation_w": 3.675491812805681e-28,
+            "entropy_production_w_k": 4.739749176385547e-31,
+            "reaction_gibbs_j_mol": 1.4551915228366852e-10,
+            "gas_amount_mol": 4.3679121274886745e-29,
+            "element_mol": 1.5777218104420236e-30
+          },
+          "global_maxima": {
+            "energy_j": 3.2030725757144302e-19,
+            "entropy_j_k": 4.917893214555856e-22,
+            "external_work_j": 1.0505659975672017e-18,
+            "matrix_volume_m3": 2.575259927831656e-29,
+            "normal_traction_pa": 1.3391047487543363e-10
+          },
+          "minima": {
+            "entropy_rate_w_k": 1.417678703029284e-41,
+            "viscous_dissipation_w": 1.1341693281825466e-38,
+            "cv_j_k": 1.556089765676104e-08
+          },
+          "integral_reviews": [
+            {
+              "order": 2,
+              "maximum_local_residuals": [
+                1.2115073863397835e-16,
+                4.543035435691789e-12,
+                5.135347147887567e-20,
+                0.0,
+                6.354566316104533e-20,
+                0.0,
+                7.943984464794123e-23
+              ],
+              "maximum_cumulative_residuals": [
+                3.771916276429257e-15,
+                1.272205570057583e-10,
+                1.4115273119437233e-18,
+                0.0,
+                1.788357763497169e-18,
+                0.0,
+                2.2355862786557853e-21
+              ],
+              "minimum_step_entropy_j_k": -4.310907112072572e-24,
+              "within_budgets": {
+                "local_integrals": true,
+                "cumulative_integrals": true,
+                "nonnegative_step_entropy": true
+              }
+            },
+            {
+              "order": 4,
+              "maximum_local_residuals": [
+                1.2095198036767166e-16,
+                4.535804322197343e-12,
+                5.192680255911903e-20,
+                0.0,
+                6.344286799652875e-20,
+                0.0,
+                7.93113382204046e-23
+              ],
+              "maximum_cumulative_residuals": [
+                3.914598764636007e-15,
+                1.3098250609133721e-10,
+                1.4527201309670398e-18,
+                0.0,
+                1.838624198078218e-18,
+                0.0,
+                2.2984217508163784e-21
+              ],
+              "minimum_step_entropy_j_k": -4.310907112072572e-24,
+              "within_budgets": {
+                "local_integrals": true,
+                "cumulative_integrals": true,
+                "nonnegative_step_entropy": true
+              }
+            }
+          ],
+          "quadrature_differences": [
+            1.4268656924507203e-16,
+            3.761919706941675e-12,
+            4.119261884203564e-20,
+            0.0,
+            5.0266508659015286e-20,
+            0.0,
+            6.2835526344951e-23
+          ],
+          "adiabatic_equilibrium": {
+            "radius_m": 8.348400907994941e-06,
+            "temperature_k": 800.0185978382747,
+            "errors": {
+              "radius_m": 5.2858499588060473e-20,
+              "temperature_k": 8.809779702575584e-11,
+              "equilibrium_force_pa": 0.0,
+              "energy_j": 7.36968203744283e-50
+            },
+            "within_budgets": {
+              "radius_m": true,
+              "temperature_k": true,
+              "equilibrium_force_pa": true,
+              "energy_j": true
+            },
+            "method": "Independent simultaneous constant U+pV and mechanical equilibrium, not a second time integrator."
+          },
+          "final": {
+            "kind": "final",
+            "time_s": 20000.0,
+            "segment_index": 0,
+            "values": [
+              0.8348400907994995,
+              0.8000185978381865,
+              1.751549060282012e-05,
+              0.0,
+              6.255427360340514e-06,
+              0.0,
+              7.819219043451979e-06
+            ],
+            "state": {
+              "radius_m": 8.348400907994996e-06,
+              "outer_radius_m": 1.3460775614251696e-05,
+              "pore_volume_m3": 2.4372411339987236e-15,
+              "total_volume_m3": 1.0216422942887739e-14,
+              "porosity": 0.23856110378588355,
+              "gas_pressure_pa": 171870.05111664173,
+              "laplace_pressure_pa": 71870.05111666345,
+              "radius_rate_m_s": -5.956172029224064e-22,
+              "outer_radius_rate_m_s": -2.2910451947208742e-22,
+              "radial_velocity_constant_m3_s": -4.151201609379654e-32,
+              "matrix_pressure_pa": 100000.00000000681,
+              "pore_volume_rate_m3_s": -5.216553791838899e-31,
+              "porosity_rate_s": -3.8879429556746983e-17,
+              "surface_energy_j": 2.627469673261846e-10,
+              "surface_energy_rate_w": -3.7491398767228635e-26,
+              "external_work_in_w": 5.216553791838899e-26,
+              "viscous_dissipation_w": 1.1335552049916539e-38,
+              "temperature_k": 800.0185978381866,
+              "bath_temperature_k": 800.0,
+              "heat_in_w": -0.0,
+              "gas_compression_work_w": 8.965693668560628e-26,
+              "temperature_rate_k_s": 5.7616815342695e-18,
+              "cv_j_k": 1.5560897656761038e-08,
+              "gas_internal_energy_j": -8.898265494324393e-09,
+              "matrix_internal_energy_j": 7.808254133510916e-06,
+              "internal_energy_j": 7.799618614983918e-06,
+              "gas_entropy_j_k": 1.40924911628978e-11,
+              "matrix_entropy_j_k": 1.5356700140146078e-08,
+              "entropy_j_k": 1.5370792631308977e-08,
+              "entropy_rate_w_k": 1.416911066886134e-41,
+              "bath_entropy_rate_w_k": 0.0,
+              "viscous_entropy_production_w_k": 1.416911066886134e-41,
+              "heat_entropy_production_w_k": 0.0,
+              "entropy_production_w_k": 1.416911066886134e-41,
+              "gas_equilibrium": {
+                "temperature_k": 800.0185978381866,
+                "volume_m3": 2.4372411339987236e-15,
+                "extent_mol": 1.3957730987320375e-14,
+                "amounts_mol": {
+                  "CO": 8.08320365096915e-15,
+                  "H2O": 8.08320365096915e-15,
+                  "CO2": 1.710643593564745e-14,
+                  "H2": 1.710643593564745e-14,
+                  "N2": 1.2594819793308301e-14
+                },
+                "partial_pressures_pa": {
+                  "CO": 22060.825759752668,
+                  "H2O": 22060.825759752668,
+                  "CO2": 46687.19468690402,
+                  "H2": 46687.19468690402,
+                  "N2": 34374.01022332835
+                },
+                "pressure_pa": 171870.05111664173,
+                "chemical_potentials_j_mol": {
+                  "CO": -286870.05953505775,
+                  "H2O": -412884.199945547,
+                  "CO2": -581741.4439541642,
+                  "H2": -118012.81552644054,
+                  "N2": -168884.84278614967
+                },
+                "internal_energy_j": -8.898265494324393e-09,
+                "entropy_j_k": 1.40924911628978e-11,
+                "helmholtz_j": -2.0172520514512926e-08,
+                "frozen_cv_j_k": 1.8333255645431895e-12,
+                "reaction_gibbs_j_mol": 2.9103830456733704e-11,
+                "helmholtz_extent_curvature_j_mol2": 2.4235145776071204e+18,
+                "standard_reaction": {
+                  "enthalpy_j_mol": -36858.959971042284,
+                  "entropy_j_mol_k": -33.60641004706417,
+                  "cp_j_mol_k": 10.158788461270259,
+                  "gibbs_j_mol": -9973.206926814859,
+                  "log_equilibrium": 1.4993329555941721,
+                  "gibbs_temperature_derivative_j_mol_k": 33.60641004706417,
+                  "vant_hoff_derivative_per_k": -0.006926378983917702
+                },
+                "extent_temperature_derivative_mol_k": -1.9010667121784642e-17,
+                "equilibrium_cv_j_k": 2.5340389830078594e-12
+              },
+              "gas_reference_amounts_mol": {
+                "CO": 2.2040934638289524e-14,
+                "H2O": 2.2040934638289524e-14,
+                "CO2": 3.1487049483270753e-15,
+                "H2": 3.1487049483270753e-15,
+                "N2": 1.2594819793308301e-14
+              },
+              "gas_amount_mol": 6.29740989665415e-14,
+              "gas_amounts_mol": {
+                "CO": 8.08320365096915e-15,
+                "H2O": 8.08320365096915e-15,
+                "CO2": 1.710643593564745e-14,
+                "H2": 1.710643593564745e-14,
+                "N2": 1.2594819793308301e-14
+              },
+              "reaction_extent_mol": 1.3957730987320375e-14,
+              "reaction_gibbs_j_mol": 2.9103830456733704e-11,
+              "reaction_extent_rate_mol_s": -1.0953340970973089e-34
+            },
+            "energy_balance_j": -3.1885703303357207e-19,
+            "entropy_balance_j_k": 4.330166434671927e-22
+          },
+          "within_budgets": {
+            "energy_j": true,
+            "entropy_j_k": true,
+            "external_work_j": true,
+            "matrix_volume_m3": true,
+            "normal_traction_pa": true,
+            "source": true,
+            "completed": true,
+            "local_integrals": true,
+            "quadrature": true,
+            "positive_cv": true,
+            "nonnegative_dissipation": true,
+            "nonnegative_entropy_rate": true,
+            "adiabatic_equilibrium": true
+          },
+          "all_requested_budgets_met": true
+        }
+      },
+      "time_comparison": {
+        "union_nodes": 15391,
+        "maxima": {
+          "radius_m": 1.470374044743039e-14,
+          "temperature_k": 4.4930725806580085e-10,
+          "gas_pressure_pa": 0.0005130220134502211,
+          "porosity": 1.0044409779318145e-09,
+          "energy_j": 6.16307948685807e-18,
+          "entropy_j_k": 7.704398299449878e-21
+        },
+        "within_budgets": {
+          "radius_m": true,
+          "temperature_k": true,
+          "gas_pressure_pa": true,
+          "porosity": true,
+          "energy_j": true,
+          "entropy_j_k": true
+        }
+      },
+      "all_requested_budgets_met": true
+    },
+    "expanding-cycle": {
+      "trajectory_reviews": {
+        "base": {
+          "trajectory": "/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/equilibrium-spherical-pore-v1/expanding-cycle-base.jsonl",
+          "counts": {
+            "recorded": 4291,
+            "dense": 6576
+          },
+          "source_maxima": {
+            "radius_rate_m_s": 7.204200334924481e-24,
+            "temperature_rate_k_s": 1.0754669617398731e-16,
+            "internal_energy_j": 4.82272660442391e-21,
+            "entropy_j_k": 7.445742896419593e-24,
+            "gas_pressure_pa": 1.8276519969163265e-10,
+            "cv_j_k": 3.707888011834267e-24,
+            "viscous_dissipation_w": 1.8690014420346665e-27,
+            "entropy_production_w_k": 1.0220663308661435e-27,
+            "reaction_gibbs_j_mol": 2.3283064365386963e-10,
+            "gas_amount_mol": 1.3034893329182752e-28,
+            "element_mol": 3.1554436208840472e-30
+          },
+          "global_maxima": {
+            "energy_j": 2.3931028355635537e-18,
+            "entropy_j_k": 4.195897222487779e-18,
+            "external_work_j": 6.399069126092058e-18,
+            "matrix_volume_m3": 4.5414719983867247e-29,
+            "normal_traction_pa": 1.9514190461008145e-10
+          },
+          "minima": {
+            "entropy_rate_w_k": 7.203814888951217e-17,
+            "viscous_dissipation_w": 1.528353108704167e-21,
+            "cv_j_k": 1.5565270507269322e-08
+          },
+          "integral_reviews": [
+            {
+              "order": 2,
+              "maximum_local_residuals": [
+                1.737652401757488e-15,
+                5.972082628771802e-09,
+                2.461451060472203e-19,
+                9.29150169069569e-17,
+                6.588362456071367e-19,
+                1.2388692962849965e-19,
+                2.3156750965538097e-19
+              ],
+              "maximum_cumulative_residuals": [
+                3.935581041288917e-14,
+                1.563435603202379e-08,
+                2.3858491383031563e-18,
+                2.4026216603810317e-16,
+                2.128393825536972e-17,
+                3.9183338821483783e-19,
+                4.2126521887202585e-18
+              ],
+              "minimum_step_entropy_j_k": 5.749794629461132e-16,
+              "within_budgets": {
+                "local_integrals": true,
+                "cumulative_integrals": true,
+                "nonnegative_step_entropy": true
+              }
+            },
+            {
+              "order": 4,
+              "maximum_local_residuals": [
+                1.7347112155057678e-15,
+                5.972082628771802e-09,
+                2.4568435241061504e-19,
+                9.29150169069569e-17,
+                6.578432249910668e-19,
+                1.2388692962849965e-19,
+                2.311924026346338e-19
+              ],
+              "maximum_cumulative_residuals": [
+                4.042773738390307e-14,
+                1.6276075598398165e-08,
+                2.490780669619476e-18,
+                2.5005354927100766e-16,
+                2.169477741062767e-17,
+                4.1364448660663606e-19,
+                4.425310398040291e-18
+              ],
+              "minimum_step_entropy_j_k": 5.749794629461132e-16,
+              "within_budgets": {
+                "local_integrals": true,
+                "cumulative_integrals": true,
+                "nonnegative_step_entropy": true
+              }
+            }
+          ],
+          "quadrature_differences": [
+            1.0829610492554214e-15,
+            1.3223393219167004e-09,
+            1.0823616356840133e-19,
+            2.0569917369503347e-17,
+            4.119110445378289e-19,
+            2.180143383793947e-20,
+            2.1265586974416742e-19
+          ],
+          "adiabatic_equilibrium": null,
+          "final": {
+            "kind": "final",
+            "time_s": 20000.0,
+            "segment_index": 2,
+            "values": [
+              1.3734596167400126,
+              0.9947445883122799,
+              -6.66387224846302e-05,
+              0.3032336430474886,
+              3.6377833483852886e-05,
+              -0.08439730699772419,
+              0.2548890123873897
+            ],
+            "state": {
+              "radius_m": 1.3734596167400127e-05,
+              "outer_radius_m": 1.6445828039317563e-05,
+              "pore_volume_m3": 1.0852662390620727e-14,
+              "total_volume_m3": 1.8631844199509743e-14,
+              "porosity": 0.5824792368597785,
+              "gas_pressure_pa": 143977.67931769782,
+              "laplace_pressure_pa": 43685.30335272145,
+              "radius_rate_m_s": 2.4044707248821022e-11,
+              "outer_radius_rate_m_s": 1.6770259897559457e-11,
+              "radial_velocity_constant_m3_s": 4.535772701763905e-21,
+              "matrix_pressure_pa": 99592.10907818162,
+              "pore_volume_rate_m3_s": 5.699820079285844e-20,
+              "porosity_rate_s": 1.2772719671668368e-06,
+              "surface_energy_j": 7.111527730784065e-10,
+              "surface_energy_rate_w": 2.48998369219535e-15,
+              "external_work_in_w": -5.699820079285844e-15,
+              "viscous_dissipation_w": 1.6664903958728975e-17,
+              "temperature_k": 994.7445883122798,
+              "bath_temperature_k": 1000.0,
+              "heat_in_w": 5.2554116877201975e-11,
+              "gas_compression_work_w": -8.206468675439922e-15,
+              "temperature_rate_k_s": 0.003375804231225634,
+              "cv_j_k": 1.5565454473748598e-08,
+              "gas_internal_energy_j": -2.5266173830261955e-08,
+              "matrix_internal_energy_j": 1.0837871899138839e-05,
+              "internal_energy_j": 1.0813316878081656e-05,
+              "gas_entropy_j_k": 4.4498163338264106e-11,
+              "matrix_entropy_j_k": 1.8746105747037672e-08,
+              "entropy_j_k": 1.8790603910375936e-08,
+              "entropy_rate_w_k": 5.283178632946494e-14,
+              "bath_entropy_rate_w_k": -5.255411687720198e-14,
+              "viscous_entropy_production_w_k": 1.675294759532521e-20,
+              "heat_entropy_production_w_k": 2.776526993153668e-16,
+              "entropy_production_w_k": 2.776694522629621e-16,
+              "gas_equilibrium": {
+                "temperature_k": 994.7445883122798,
+                "volume_m3": 1.0852662390620727e-14,
+                "extent_mol": 3.249143520065125e-14,
+                "amounts_mol": {
+                  "CO": 3.363136871421732e-14,
+                  "H2O": 3.363136871421732e-14,
+                  "CO2": 4.1937550045632475e-14,
+                  "H2": 4.1937550045632475e-14,
+                  "N2": 3.77844593799249e-14
+                },
+                "partial_pressures_pa": {
+                  "CO": 25630.465536439606,
+                  "H2O": 25630.465536439606,
+                  "CO2": 31960.606190639523,
+                  "H2": 31960.606190639523,
+                  "N2": 28795.535863539568
+                },
+                "pressure_pa": 143977.67931769782,
+                "chemical_potentials_j_mol": {
+                  "CO": -332963.5234335718,
+                  "H2O": -458539.67018741777,
+                  "CO2": -637398.3692298797,
+                  "H2": -154104.82439110996,
+                  "N2": -215826.8095491809
+                },
+                "internal_energy_j": -2.5266173830261955e-08,
+                "entropy_j_k": 4.4498163338264106e-11,
+                "helmholtz_j": -6.953048100083606e-08,
+                "frozen_cv_j_k": 5.7090729235548736e-12,
+                "reaction_gibbs_j_mol": -8.731149137020111e-11,
+                "helmholtz_extent_curvature_j_mol2": 8.862859221748788e+17,
+                "standard_reaction": {
+                  "enthalpy_j_mol": -34902.99122699644,
+                  "entropy_j_mol_k": -31.416992968979628,
+                  "cp_j_mol_k": 9.867301469254212,
+                  "gibbs_j_mol": -3651.10749005901,
+                  "log_equilibrium": 0.44144476788414466,
+                  "gibbs_temperature_derivative_j_mol_k": 31.416992968979628,
+                  "vant_hoff_derivative_per_k": -0.004242314074534224
+                },
+                "extent_temperature_derivative_mol_k": -3.9589244315083124e-17,
+                "equilibrium_cv_j_k": 7.090855970567639e-12
+              },
+              "gas_reference_amounts_mol": {
+                "CO": 6.612280391486857e-14,
+                "H2O": 6.612280391486857e-14,
+                "CO2": 9.446114844981225e-15,
+                "H2": 9.446114844981225e-15,
+                "N2": 3.77844593799249e-14
+              },
+              "gas_amount_mol": 1.8892229689962448e-13,
+              "gas_amounts_mol": {
+                "CO": 3.363136871421732e-14,
+                "H2O": 3.363136871421732e-14,
+                "CO2": 4.1937550045632475e-14,
+                "H2": 4.1937550045632475e-14,
+                "N2": 3.77844593799249e-14
+              },
+              "reaction_extent_mol": 3.249143520065125e-14,
+              "reaction_gibbs_j_mol": -8.731149137020111e-11,
+              "reaction_extent_rate_mol_s": -1.3364553846988298e-19
+            },
+            "energy_balance_j": -2.3390814838427504e-18,
+            "entropy_balance_j_k": 4.195893095919628e-18
+          },
+          "within_budgets": {
+            "energy_j": true,
+            "entropy_j_k": true,
+            "external_work_j": true,
+            "matrix_volume_m3": true,
+            "normal_traction_pa": true,
+            "source": true,
+            "completed": true,
+            "local_integrals": true,
+            "quadrature": true,
+            "positive_cv": true,
+            "nonnegative_dissipation": true,
+            "nonnegative_entropy_rate": true
+          },
+          "all_requested_budgets_met": true
+        },
+        "refined": {
+          "trajectory": "/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/equilibrium-spherical-pore-v1/expanding-cycle-refined.jsonl",
+          "counts": {
+            "recorded": 4498,
+            "dense": 6990
+          },
+          "source_maxima": {
+            "radius_rate_m_s": 6.926612996654604e-24,
+            "temperature_rate_k_s": 8.366071345212567e-17,
+            "internal_energy_j": 5.0152359463302266e-21,
+            "entropy_j_k": 7.500503222106324e-24,
+            "gas_pressure_pa": 1.6005820149178747e-10,
+            "cv_j_k": 3.7072396501686306e-24,
+            "viscous_dissipation_w": 1.730638031843579e-27,
+            "entropy_production_w_k": 1.019882308144973e-27,
+            "reaction_gibbs_j_mol": 2.0372681319713593e-10,
+            "gas_amount_mol": 1.2925726152649834e-28,
+            "element_mol": 3.1554436208840472e-30
+          },
+          "global_maxima": {
+            "energy_j": 5.904184202114344e-19,
+            "entropy_j_k": 2.0638028541492535e-18,
+            "external_work_j": 1.7354653060653854e-18,
+            "matrix_volume_m3": 4.584245628832289e-29,
+            "normal_traction_pa": 2.188892893212e-10
+          },
+          "minima": {
+            "entropy_rate_w_k": 7.203814888172167e-17,
+            "viscous_dissipation_w": 3.8113073380528213e-23,
+            "cv_j_k": 1.5565270507269322e-08
+          },
+          "integral_reviews": [
+            {
+              "order": 2,
+              "maximum_local_residuals": [
+                2.2323774843855127e-16,
+                1.8495616149749594e-10,
+                3.890261944980839e-20,
+                2.867838492443797e-18,
+                1.850788540925706e-19,
+                3.824148060299279e-21,
+                3.1636204304861046e-20
+              ],
+              "maximum_cumulative_residuals": [
+                1.234895008922791e-14,
+                7.287894732144196e-09,
+                1.2246354685119876e-18,
+                1.1320087120285371e-16,
+                5.624524745172146e-18,
+                1.2977967502589472e-19,
+                2.008401558313958e-18
+              ],
+              "minimum_step_entropy_j_k": 6.709326065574418e-16,
+              "within_budgets": {
+                "local_integrals": true,
+                "cumulative_integrals": true,
+                "nonnegative_step_entropy": true
+              }
+            },
+            {
+              "order": 4,
+              "maximum_local_residuals": [
+                2.2285872869841034e-16,
+                1.8495621700864717e-10,
+                3.9684468605894114e-20,
+                2.8678401468050223e-18,
+                1.8694726590855015e-19,
+                3.8241512914735466e-21,
+                3.1584639610308595e-20
+              ],
+              "maximum_cumulative_residuals": [
+                1.2779464325548802e-14,
+                8.130882633849978e-09,
+                1.2836595615061683e-18,
+                1.2633157595118988e-16,
+                5.7484047612741595e-18,
+                1.469796550930161e-19,
+                2.1202132160739758e-18
+              ],
+              "minimum_step_entropy_j_k": 6.709326065574418e-16,
+              "within_budgets": {
+                "local_integrals": true,
+                "cumulative_integrals": true,
+                "nonnegative_step_entropy": true
+              }
+            }
+          ],
+          "quadrature_differences": [
+            4.327350302964785e-16,
+            8.47695638347707e-10,
+            5.977377767501123e-20,
+            1.320263309274241e-17,
+            1.2467860670983653e-19,
+            1.7243883707832772e-20,
+            1.1180729179799804e-19
+          ],
+          "adiabatic_equilibrium": null,
+          "final": {
+            "kind": "final",
+            "time_s": 20000.0,
+            "segment_index": 2,
+            "values": [
+              1.373459616740208,
+              0.9947445883125564,
+              -6.663872202037117e-05,
+              0.30323364304727374,
+              3.63778349162262e-05,
+              -0.08439730699735802,
+              0.25488901260139785
+            ],
+            "state": {
+              "radius_m": 1.373459616740208e-05,
+              "outer_radius_m": 1.6445828039318925e-05,
+              "pore_volume_m3": 1.085266239062536e-14,
+              "total_volume_m3": 1.8631844199514375e-14,
+              "porosity": 0.5824792368598823,
+              "gas_pressure_pa": 143977.6793176764,
+              "laplace_pressure_pa": 43685.30335271524,
+              "radius_rate_m_s": 2.404470724757989e-11,
+              "outer_radius_rate_m_s": 1.6770259896695806e-11,
+              "radial_velocity_constant_m3_s": 4.535772701531069e-21,
+              "matrix_pressure_pa": 99592.10907820266,
+              "pore_volume_rate_m3_s": 5.699820078993254e-20,
+              "porosity_rate_s": 1.2772719671006354e-06,
+              "surface_energy_j": 7.111527730786089e-10,
+              "surface_energy_rate_w": 2.4899836920671765e-15,
+              "external_work_in_w": -5.699820078993254e-15,
+              "viscous_dissipation_w": 1.6664903957006797e-17,
+              "temperature_k": 994.7445883125564,
+              "bath_temperature_k": 1000.0,
+              "heat_in_w": 5.2554116874435974e-11,
+              "gas_compression_work_w": -8.206468675017437e-15,
+              "temperature_rate_k_s": 0.00337580423104796,
+              "cv_j_k": 1.5565454473748598e-08,
+              "gas_internal_energy_j": -2.5266173830259993e-08,
+              "matrix_internal_energy_j": 1.0837871899143143e-05,
+              "internal_energy_j": 1.0813316878085962e-05,
+              "gas_entropy_j_k": 4.449816333826674e-11,
+              "matrix_entropy_j_k": 1.8746105747041997e-08,
+              "entropy_j_k": 1.8790603910380263e-08,
+              "entropy_rate_w_k": 5.283178632666963e-14,
+              "bath_entropy_rate_w_k": -5.255411687443597e-14,
+              "viscous_entropy_production_w_k": 1.6752947593589277e-20,
+              "heat_entropy_production_w_k": 2.7765269928606426e-16,
+              "entropy_production_w_k": 2.7766945223365786e-16,
+              "gas_equilibrium": {
+                "temperature_k": 994.7445883125564,
+                "volume_m3": 1.085266239062536e-14,
+                "extent_mol": 3.2491435200640324e-14,
+                "amounts_mol": {
+                  "CO": 3.363136871422824e-14,
+                  "H2O": 3.363136871422824e-14,
+                  "CO2": 4.193755004562155e-14,
+                  "H2": 4.193755004562155e-14,
+                  "N2": 3.77844593799249e-14
+                },
+                "partial_pressures_pa": {
+                  "CO": 25630.46553644412,
+                  "H2O": 25630.46553644412,
+                  "CO2": 31960.606190626444,
+                  "H2": 31960.606190626444,
+                  "N2": 28795.535863535286
+                },
+                "pressure_pa": 143977.6793176764,
+                "chemical_potentials_j_mol": {
+                  "CO": -332963.5234336382,
+                  "H2O": -458539.67018748366,
+                  "CO2": -637398.36922996,
+                  "H2": -154104.8243911619,
+                  "N2": -215826.80954924808
+                },
+                "internal_energy_j": -2.5266173830259993e-08,
+                "entropy_j_k": 4.449816333826674e-11,
+                "helmholtz_j": -6.953048100084903e-08,
+                "frozen_cv_j_k": 5.709072923555167e-12,
+                "reaction_gibbs_j_mol": -5.820766091346741e-11,
+                "helmholtz_extent_curvature_j_mol2": 8.862859221750684e+17,
+                "standard_reaction": {
+                  "enthalpy_j_mol": -34902.99122699372,
+                  "entropy_j_mol_k": -31.41699296897687,
+                  "cp_j_mol_k": 9.867301469253587,
+                  "gibbs_j_mol": -3651.1074900503445,
+                  "log_equilibrium": 0.4414447678829741,
+                  "gibbs_temperature_derivative_j_mol_k": 31.41699296897687,
+                  "vant_hoff_derivative_per_k": -0.004242314074531533
+                },
+                "extent_temperature_derivative_mol_k": -3.958924431506056e-17,
+                "equilibrium_cv_j_k": 7.090855970567036e-12
+              },
+              "gas_reference_amounts_mol": {
+                "CO": 6.612280391486857e-14,
+                "H2O": 6.612280391486857e-14,
+                "CO2": 9.446114844981225e-15,
+                "H2": 9.446114844981225e-15,
+                "N2": 3.77844593799249e-14
+              },
+              "gas_amount_mol": 1.8892229689962448e-13,
+              "gas_amounts_mol": {
+                "CO": 3.363136871422824e-14,
+                "H2O": 3.363136871422824e-14,
+                "CO2": 4.193755004562155e-14,
+                "H2": 4.193755004562155e-14,
+                "N2": 3.77844593799249e-14
+              },
+              "reaction_extent_mol": 3.2491435200640324e-14,
+              "reaction_gibbs_j_mol": -5.820766091346741e-11,
+              "reaction_extent_rate_mol_s": -1.3364553846277284e-19
+            },
+            "energy_balance_j": -5.260074602449205e-19,
+            "entropy_balance_j_k": 2.063800739068778e-18
+          },
+          "within_budgets": {
+            "energy_j": true,
+            "entropy_j_k": true,
+            "external_work_j": true,
+            "matrix_volume_m3": true,
+            "normal_traction_pa": true,
+            "source": true,
+            "completed": true,
+            "local_integrals": true,
+            "quadrature": true,
+            "positive_cv": true,
+            "nonnegative_dissipation": true,
+            "nonnegative_entropy_rate": true
+          },
+          "all_requested_budgets_met": true
+        }
+      },
+      "time_comparison": {
+        "union_nodes": 16780,
+        "maxima": {
+          "radius_m": 8.248155491941133e-15,
+          "temperature_k": 1.7011947406331274e-08,
+          "gas_pressure_pa": 0.0003936962680475383,
+          "porosity": 5.121611541256438e-10,
+          "energy_j": 2.7037205807545206e-16,
+          "entropy_j_k": 2.1520754622805784e-18
+        },
+        "within_budgets": {
+          "radius_m": true,
+          "temperature_k": true,
+          "gas_pressure_pa": true,
+          "porosity": true,
+          "energy_j": true,
+          "entropy_j_k": true
+        }
+      },
+      "all_requested_budgets_met": true
+    },
+    "expanding-adiabatic": {
+      "trajectory_reviews": {
+        "base": {
+          "trajectory": "/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/equilibrium-spherical-pore-v1/expanding-adiabatic-base.jsonl",
+          "counts": {
+            "recorded": 4121,
+            "dense": 6240
+          },
+          "source_maxima": {
+            "radius_rate_m_s": 5.766112965063105e-24,
+            "temperature_rate_k_s": 1.1017648388611176e-19,
+            "internal_energy_j": 3.3550082636520003e-21,
+            "entropy_j_k": 5.831633461730957e-24,
+            "gas_pressure_pa": 1.3214321063781493e-10,
+            "cv_j_k": 3.711900984868886e-24,
+            "viscous_dissipation_w": 1.1997663198280786e-27,
+            "entropy_production_w_k": 1.494284085963681e-30,
+            "reaction_gibbs_j_mol": 1.7462298274040222e-10,
+            "gas_amount_mol": 1.1348506468444435e-28,
+            "element_mol": 3.1554436208840472e-30
+          },
+          "global_maxima": {
+            "energy_j": 2.4451943683556686e-18,
+            "entropy_j_k": 1.7303054043027066e-20,
+            "external_work_j": 7.525680738151668e-18,
+            "matrix_volume_m3": 3.87571196622298e-29,
+            "normal_traction_pa": 1.8244873863980048e-10
+          },
+          "minima": {
+            "entropy_rate_w_k": 9.348131609092766e-44,
+            "viscous_dissipation_w": 7.478107383884258e-41,
+            "cv_j_k": 1.556596578497903e-08
+          },
+          "integral_reviews": [
+            {
+              "order": 2,
+              "maximum_local_residuals": [
+                3.331239630801965e-15,
+                8.223512907960806e-12,
+                1.1511462225768477e-19,
+                0.0,
+                2.038152448164213e-18,
+                0.0,
+                2.5475846600936932e-21
+              ],
+              "maximum_cumulative_residuals": [
+                2.7230098821525448e-14,
+                1.7695176574017424e-10,
+                2.65081230420039e-18,
+                0.0,
+                2.4225746340115307e-17,
+                0.0,
+                3.028058018596692e-20
+              ],
+              "minimum_step_entropy_j_k": -4.3136384571237815e-24,
+              "within_budgets": {
+                "local_integrals": true,
+                "cumulative_integrals": true,
+                "nonnegative_step_entropy": true
+              }
+            },
+            {
+              "order": 4,
+              "maximum_local_residuals": [
+                3.3312395497382648e-15,
+                8.314203492343353e-12,
+                1.1675716627069997e-19,
+                0.0,
+                2.038152381016373e-18,
+                0.0,
+                2.5475845758827916e-21
+              ],
+              "maximum_cumulative_residuals": [
+                2.802669265083665e-14,
+                1.785123784903142e-10,
+                2.686769328440187e-18,
+                0.0,
+                2.4720103155937563e-17,
+                0.0,
+                3.089850576250905e-20
+              ],
+              "minimum_step_entropy_j_k": -4.3136384571237815e-24,
+              "within_budgets": {
+                "local_integrals": true,
+                "cumulative_integrals": true,
+                "nonnegative_step_entropy": true
+              }
+            }
+          ],
+          "quadrature_differences": [
+            7.965931791705561e-16,
+            2.3397118549735803e-12,
+            4.3103452838000096e-20,
+            0.0,
+            4.943568531762631e-19,
+            0.0,
+            6.179250396403943e-22
+          ],
+          "adiabatic_equilibrium": {
+            "radius_m": 1.2674363736652486e-05,
+            "temperature_k": 799.9574349826652,
+            "errors": {
+              "radius_m": 3.800769099281633e-18,
+              "temperature_k": 6.381643230709699e-10,
+              "equilibrium_force_pa": 0.0,
+              "energy_j": 1.4302563990916816e-51
+            },
+            "within_budgets": {
+              "radius_m": true,
+              "temperature_k": true,
+              "equilibrium_force_pa": true,
+              "energy_j": true
+            },
+            "method": "Independent simultaneous constant U+pV and mechanical equilibrium, not a second time integrator."
+          },
+          "final": {
+            "kind": "final",
+            "time_s": 20000.0,
+            "segment_index": 0,
+            "values": [
+              1.2674363736648686,
+              0.799957434982027,
+              -4.339600987771977e-05,
+              0.0,
+              2.3086791609021713e-05,
+              0.0,
+              2.8858947874957185e-05
+            ],
+            "state": {
+              "radius_m": 1.2674363736648687e-05,
+              "outer_radius_m": 1.5731383074333897e-05,
+              "pore_volume_m3": 8.528391117301561e-15,
+              "total_volume_m3": 1.6307572926190577e-14,
+              "porosity": 0.5229712082786179,
+              "gas_pressure_pa": 147339.65447630908,
+              "laplace_pressure_pa": 47339.65447630825,
+              "radius_rate_m_s": 5.469322089457796e-23,
+              "outer_radius_rate_m_s": 3.550193460599963e-23,
+              "radial_velocity_constant_m3_s": 8.785891446170275e-33,
+              "matrix_pressure_pa": 99999.9999999991,
+              "pore_volume_rate_m3_s": 1.1040676809010376e-31,
+              "porosity_rate_s": 3.2296165357200106e-18,
+              "surface_energy_j": 6.055966330978086e-10,
+              "surface_energy_rate_w": 5.226618253231408e-27,
+              "external_work_in_w": -1.1040676809010377e-26,
+              "viscous_dissipation_w": 9.090915350206346e-41,
+              "temperature_k": 799.9574349820269,
+              "bath_temperature_k": 800.0,
+              "heat_in_w": 0.0,
+              "gas_compression_work_w": -1.6267295062241874e-26,
+              "temperature_rate_k_s": -1.0450552935014924e-18,
+              "cv_j_k": 1.556596589998379e-08,
+              "gas_internal_energy_j": -2.6695261455212535e-08,
+              "matrix_internal_energy_j": 7.807302539554883e-06,
+              "internal_energy_j": 7.781212874732768e-06,
+              "gas_entropy_j_k": 4.2518671942752666e-11,
+              "matrix_entropy_j_k": 1.5355510629882202e-08,
+              "entropy_j_k": 1.5398029301824953e-08,
+              "entropy_rate_w_k": 1.1364248837077933e-43,
+              "bath_entropy_rate_w_k": -0.0,
+              "viscous_entropy_production_w_k": 1.1364248837077933e-43,
+              "heat_entropy_production_w_k": 0.0,
+              "entropy_production_w_k": 1.1364248837077933e-43,
+              "gas_equilibrium": {
+                "temperature_k": 799.9574349820269,
+                "volume_m3": 8.528391117301561e-15,
+                "extent_mol": 4.187668136579654e-14,
+                "amounts_mol": {
+                  "CO": 2.4246122549072025e-14,
+                  "H2O": 2.4246122549072025e-14,
+                  "CO2": 5.132279621077777e-14,
+                  "H2": 5.132279621077777e-14,
+                  "N2": 3.77844593799249e-14
+                },
+                "partial_pressures_pa": {
+                  "CO": 18909.442545410948,
+                  "H2O": 18909.442545410948,
+                  "CO2": 40026.41924511268,
+                  "H2": 40026.41924511268,
+                  "N2": 29467.930895261812
+                },
+                "pressure_pa": 147339.65447630908,
+                "chemical_potentials_j_mol": {
+                  "CO": -287880.65343668393,
+                  "H2O": -413894.98272966815,
+                  "CO2": -582749.1378491978,
+                  "H2": -119026.49831715418,
+                  "N2": -169895.05921661787
+                },
+                "internal_energy_j": -2.6695261455212535e-08,
+                "entropy_j_k": 4.2518671942752666e-11,
+                "helmholtz_j": -6.070838920137924e-08,
+                "frozen_cv_j_k": 5.499909164348377e-12,
+                "reaction_gibbs_j_mol": 5.820766091346741e-11,
+                "helmholtz_extent_curvature_j_mol2": 8.078377380976973e+17,
+                "standard_reaction": {
+                  "enthalpy_j_mol": -36859.581312229486,
+                  "entropy_j_mol_k": -33.60718673518295,
+                  "cp_j_mol_k": 10.15881035195154,
+                  "gibbs_j_mol": -9975.262414590532,
+                  "log_equilibrium": 1.4997566286770103,
+                  "gibbs_temperature_derivative_j_mol_k": 33.60718673518295,
+                  "vant_hoff_derivative_per_k": -0.006927554951213012
+                },
+                "extent_temperature_derivative_mol_k": -5.703735546000432e-17,
+                "equilibrium_cv_j_k": 7.602282205760942e-12
+              },
+              "gas_reference_amounts_mol": {
+                "CO": 6.612280391486857e-14,
+                "H2O": 6.612280391486857e-14,
+                "CO2": 9.446114844981225e-15,
+                "H2": 9.446114844981225e-15,
+                "N2": 3.77844593799249e-14
+              },
+              "gas_amount_mol": 1.8892229689962448e-13,
+              "gas_amounts_mol": {
+                "CO": 2.4246122549072025e-14,
+                "H2O": 2.4246122549072025e-14,
+                "CO2": 5.132279621077777e-14,
+                "H2": 5.132279621077777e-14,
+                "N2": 3.77844593799249e-14
+              },
+              "reaction_extent_mol": 4.187668136579654e-14,
+              "reaction_gibbs_j_mol": 5.820766091346741e-11,
+              "reaction_extent_rate_mol_s": 5.960719025080377e-35
+            },
+            "energy_balance_j": -2.4089110371787113e-18,
+            "entropy_balance_j_k": 1.730008154301478e-20
+          },
+          "within_budgets": {
+            "energy_j": true,
+            "entropy_j_k": true,
+            "external_work_j": true,
+            "matrix_volume_m3": true,
+            "normal_traction_pa": true,
+            "source": true,
+            "completed": true,
+            "local_integrals": true,
+            "quadrature": true,
+            "positive_cv": true,
+            "nonnegative_dissipation": true,
+            "nonnegative_entropy_rate": true,
+            "adiabatic_equilibrium": true
+          },
+          "all_requested_budgets_met": true
+        },
+        "refined": {
+          "trajectory": "/Users/wanggaoying/Desktop/brickmodel-github/data/sandbox/research/equilibrium-spherical-pore-v1/expanding-adiabatic-refined.jsonl",
+          "counts": {
+            "recorded": 4217,
+            "dense": 6432
+          },
+          "source_maxima": {
+            "radius_rate_m_s": 6.2384933726557256e-24,
+            "temperature_rate_k_s": 1.192025339873212e-19,
+            "internal_energy_j": 3.483129137450575e-21,
+            "entropy_j_k": 6.092703913752755e-24,
+            "gas_pressure_pa": 1.5070610151540138e-10,
+            "cv_j_k": 3.7104333109252244e-24,
+            "viscous_dissipation_w": 1.6005382375217055e-27,
+            "entropy_production_w_k": 2.0865881560738526e-30,
+            "reaction_gibbs_j_mol": 1.4551915228366852e-10,
+            "gas_amount_mol": 1.0516555985091489e-28,
+            "element_mol": 3.1554436208840472e-30
+          },
+          "global_maxima": {
+            "energy_j": 6.920584384139443e-19,
+            "entropy_j_k": 4.577050680718003e-21,
+            "external_work_j": 2.2776497358691736e-18,
+            "matrix_volume_m3": 3.881990433975161e-29,
+            "normal_traction_pa": 2.0757256643590798e-10
+          },
+          "minima": {
+            "entropy_rate_w_k": 1.0657944229391113e-43,
+            "viscous_dissipation_w": 8.525901727930002e-41,
+            "cv_j_k": 1.556596578497903e-08
+          },
+          "integral_reviews": [
+            {
+              "order": 2,
+              "maximum_local_residuals": [
+                1.1536542357450722e-16,
+                1.7717869814533327e-12,
+                2.08055755389155e-20,
+                0.0,
+                9.27388388021386e-20,
+                0.0,
+                1.1591985843618398e-22
+              ],
+              "maximum_cumulative_residuals": [
+                1.0113008419240527e-14,
+                4.360846406203933e-11,
+                7.104372005833921e-19,
+                0.0,
+                6.924892140130361e-18,
+                0.0,
+                8.655795038494435e-21
+              ],
+              "minimum_step_entropy_j_k": -4.594034800834387e-24,
+              "within_budgets": {
+                "local_integrals": true,
+                "cumulative_integrals": true,
+                "nonnegative_step_entropy": true
+              }
+            },
+            {
+              "order": 4,
+              "maximum_local_residuals": [
+                1.1536542295412176e-16,
+                1.7782089819715075e-12,
+                2.0875663343854813e-20,
+                0.0,
+                9.452194475230581e-20,
+                0.0,
+                1.1814873552147176e-22
+              ],
+              "maximum_cumulative_residuals": [
+                1.044844151316623e-14,
+                4.3678491379317563e-11,
+                7.163261578580985e-19,
+                0.0,
+                7.076516983049533e-18,
+                0.0,
+                8.845321382706905e-21
+              ],
+              "minimum_step_entropy_j_k": -4.594034800834387e-24,
+              "within_budgets": {
+                "local_integrals": true,
+                "cumulative_integrals": true,
+                "nonnegative_step_entropy": true
+              }
+            }
+          ],
+          "quadrature_differences": [
+            3.354370703158711e-16,
+            1.6172213644601582e-12,
+            1.095830342376992e-20,
+            0.0,
+            1.516246845063466e-19,
+            0.0,
+            1.8952619889577601e-22
+          ],
+          "adiabatic_equilibrium": {
+            "radius_m": 1.2674363736652486e-05,
+            "temperature_k": 799.9574349826652,
+            "errors": {
+              "radius_m": 1.1428951783290078e-18,
+              "temperature_k": 1.8852399809778152e-10,
+              "equilibrium_force_pa": 0.0,
+              "energy_j": 1.4302563990916816e-51
+            },
+            "within_budgets": {
+              "radius_m": true,
+              "temperature_k": true,
+              "equilibrium_force_pa": true,
+              "energy_j": true
+            },
+            "method": "Independent simultaneous constant U+pV and mechanical equilibrium, not a second time integrator."
+          },
+          "final": {
+            "kind": "final",
+            "time_s": 20000.0,
+            "segment_index": 0,
+            "values": [
+              1.2674363736651344,
+              0.7999574349824766,
+              -4.3396009352970325e-05,
+              0.0,
+              2.3086793327234955e-05,
+              0.0,
+              2.885895002258864e-05
+            ],
+            "state": {
+              "radius_m": 1.2674363736651345e-05,
+              "outer_radius_m": 1.5731383074335625e-05,
+              "pore_volume_m3": 8.528391117306927e-15,
+              "total_volume_m3": 1.6307572926195944e-14,
+              "porosity": 0.5229712082787747,
+              "gas_pressure_pa": 147339.65447629915,
+              "laplace_pressure_pa": 47339.654476298325,
+              "radius_rate_m_s": 5.527506367007038e-23,
+              "outer_radius_rate_m_s": 3.587961476140157e-23,
+              "radial_velocity_constant_m3_s": 8.879358376455328e-33,
+              "matrix_pressure_pa": 99999.99999999908,
+              "pore_volume_rate_m3_s": 1.1158130817625221e-31,
+              "porosity_rate_s": 3.2639741584407307e-18,
+              "surface_energy_j": 6.055966330980626e-10,
+              "surface_energy_rate_w": 5.28222057507714e-27,
+              "external_work_in_w": -1.1158130817625221e-26,
+              "viscous_dissipation_w": 9.285367930699013e-41,
+              "temperature_k": 799.9574349824766,
+              "bath_temperature_k": 800.0,
+              "heat_in_w": 0.0,
+              "gas_compression_work_w": -1.6440351392702454e-26,
+              "temperature_rate_k_s": -1.056172903007547e-18,
+              "cv_j_k": 1.556596589998379e-08,
+              "gas_internal_energy_j": -2.669526145520912e-08,
+              "matrix_internal_energy_j": 7.807302539561877e-06,
+              "internal_energy_j": 7.781212874739766e-06,
+              "gas_entropy_j_k": 4.251867194275793e-11,
+              "matrix_entropy_j_k": 1.5355510629890947e-08,
+              "entropy_j_k": 1.5398029301833705e-08,
+              "entropy_rate_w_k": 1.16073274959966e-43,
+              "bath_entropy_rate_w_k": -0.0,
+              "viscous_entropy_production_w_k": 1.16073274959966e-43,
+              "heat_entropy_production_w_k": 0.0,
+              "entropy_production_w_k": 1.16073274959966e-43,
+              "gas_equilibrium": {
+                "temperature_k": 799.9574349824766,
+                "volume_m3": 8.528391117306927e-15,
+                "extent_mol": 4.1876681365770977e-14,
+                "amounts_mol": {
+                  "CO": 2.424612254909759e-14,
+                  "H2O": 2.424612254909759e-14,
+                  "CO2": 5.1322796210752203e-14,
+                  "H2": 5.1322796210752203e-14,
+                  "N2": 3.77844593799249e-14
+                },
+                "partial_pressures_pa": {
+                  "CO": 18909.442545429614,
+                  "H2O": 18909.442545429614,
+                  "CO2": 40026.41924509005,
+                  "H2": 40026.41924509005,
+                  "N2": 29467.930895259833
+                },
+                "pressure_pa": 147339.65447629915,
+                "chemical_potentials_j_mol": {
+                  "CO": -287880.65343678556,
+                  "H2O": -413894.9827297684,
+                  "CO2": -582749.1378493209,
+                  "H2": -119026.49831723313,
+                  "N2": -169895.0592167223
+                },
+                "internal_energy_j": -2.669526145520912e-08,
+                "entropy_j_k": 4.251867194275793e-11,
+                "helmholtz_j": -6.070838920139915e-08,
+                "frozen_cv_j_k": 5.499909164348874e-12,
+                "reaction_gibbs_j_mol": -7.275957614183426e-11,
+                "helmholtz_extent_curvature_j_mol2": 8.078377380977019e+17,
+                "standard_reaction": {
+                  "enthalpy_j_mol": -36859.58131222495,
+                  "entropy_j_mol_k": -33.60718673517721,
+                  "cp_j_mol_k": 10.158810351951391,
+                  "gibbs_j_mol": -9975.262414575482,
+                  "log_equilibrium": 1.4997566286739048,
+                  "gibbs_temperature_derivative_j_mol_k": 33.60718673517721,
+                  "vant_hoff_derivative_per_k": -0.006927554951204373
+                },
+                "extent_temperature_derivative_mol_k": -5.703735545996493e-17,
+                "equilibrium_cv_j_k": 7.602282205759729e-12
+              },
+              "gas_reference_amounts_mol": {
+                "CO": 6.612280391486857e-14,
+                "H2O": 6.612280391486857e-14,
+                "CO2": 9.446114844981225e-15,
+                "H2": 9.446114844981225e-15,
+                "N2": 3.77844593799249e-14
+              },
+              "gas_amount_mol": 1.8892229689962448e-13,
+              "gas_amounts_mol": {
+                "CO": 2.424612254909759e-14,
+                "H2O": 2.424612254909759e-14,
+                "CO2": 5.1322796210752203e-14,
+                "H2": 5.1322796210752203e-14,
+                "N2": 3.77844593799249e-14
+              },
+              "reaction_extent_mol": 4.1876681365770977e-14,
+              "reaction_gibbs_j_mol": -7.275957614183426e-11,
+              "reaction_extent_rate_mol_s": 6.024130929602452e-35
+            },
+            "energy_balance_j": -6.582193047656626e-19,
+            "entropy_balance_j_k": 4.575337865935435e-21
+          },
+          "within_budgets": {
+            "energy_j": true,
+            "entropy_j_k": true,
+            "external_work_j": true,
+            "matrix_volume_m3": true,
+            "normal_traction_pa": true,
+            "source": true,
+            "completed": true,
+            "local_integrals": true,
+            "quadrature": true,
+            "positive_cv": true,
+            "nonnegative_dissipation": true,
+            "nonnegative_entropy_rate": true,
+            "adiabatic_equilibrium": true
+          },
+          "all_requested_budgets_met": true
+        }
+      },
+      "time_comparison": {
+        "union_nodes": 15769,
+        "maxima": {
+          "radius_m": 9.659932853622876e-15,
+          "temperature_k": 4.4986236957811343e-10,
+          "gas_pressure_pa": 0.0008133304905395873,
+          "porosity": 6.426140301346736e-10,
+          "energy_j": 1.7214070236794018e-17,
+          "entropy_j_k": 2.1516239480476752e-20
+        },
+        "within_budgets": {
+          "radius_m": true,
+          "temperature_k": true,
+          "gas_pressure_pa": true,
+          "porosity": true,
+          "energy_j": true,
+          "entropy_j_k": true
+        }
+      },
+      "all_requested_budgets_met": true
+    }
+  },
+  "all_requested_budgets_met": true,
+  "elapsed_s": 444.4337458750233,
+  "material_qualified": false,
+  "training_eligible": false
+}
