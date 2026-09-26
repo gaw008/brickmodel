@@ -1,0 +1,145 @@
+{
+  "mechanical_source": "data/sandbox/research/viscous-spherical-pore-source-v1/source.json",
+  "thermal_source": "data/sandbox/research/carbon-gas-thermochemistry-v1/source.json",
+  "gas_species": "N2",
+  "temperature_domain_k": [
+    650.0,
+    1200.0
+  ],
+  "model": {
+    "matrix_volume_m3": 7.779181808889016e-15,
+    "viscosity_pa_s": 100000000.0,
+    "surface_tension_n_m": 0.3,
+    "outside_pressure_pa": 100000.0,
+    "gas_constant_j_mol_k": 8.31451,
+    "reference_radius_m": 1e-05,
+    "matrix_volumetric_cv_j_m3_k": 2000000.0,
+    "reference_temperature_k": 298.15,
+    "standard_pressure_pa": 100000.0
+  },
+  "parameter_basis": "Gas Cp and standard H,S from USGS1995 with historical R. Geometry, matrix heat capacity, constant viscosity/surface tension and heat conductance are virtual inputs, not measured brick or glass material parameters.",
+  "cases": {
+    "contracting-cycle": {
+      "initial_gas_pressure_pa": 100000.0,
+      "initial_temperature_k": 800.0,
+      "segments": [
+        {
+          "end_time_s": 6000.0,
+          "bath_temperature_k": 1100.0,
+          "conductance_w_k": 1e-11
+        },
+        {
+          "end_time_s": 14000.0,
+          "bath_temperature_k": 750.0,
+          "conductance_w_k": 1e-11
+        },
+        {
+          "end_time_s": 20000.0,
+          "bath_temperature_k": 1000.0,
+          "conductance_w_k": 1e-11
+        }
+      ]
+    },
+    "contracting-adiabatic": {
+      "initial_gas_pressure_pa": 100000.0,
+      "initial_temperature_k": 800.0,
+      "segments": [
+        {
+          "end_time_s": 20000.0,
+          "bath_temperature_k": 800.0,
+          "conductance_w_k": 0.0
+        }
+      ]
+    },
+    "expanding-cycle": {
+      "initial_gas_pressure_pa": 300000.0,
+      "initial_temperature_k": 800.0,
+      "segments": [
+        {
+          "end_time_s": 6000.0,
+          "bath_temperature_k": 1100.0,
+          "conductance_w_k": 1e-11
+        },
+        {
+          "end_time_s": 14000.0,
+          "bath_temperature_k": 750.0,
+          "conductance_w_k": 1e-11
+        },
+        {
+          "end_time_s": 20000.0,
+          "bath_temperature_k": 1000.0,
+          "conductance_w_k": 1e-11
+        }
+      ]
+    },
+    "expanding-adiabatic": {
+      "initial_gas_pressure_pa": 300000.0,
+      "initial_temperature_k": 800.0,
+      "segments": [
+        {
+          "end_time_s": 20000.0,
+          "bath_temperature_k": 800.0,
+          "conductance_w_k": 0.0
+        }
+      ]
+    }
+  },
+  "numerics": {
+    "relative_tolerance": 1e-10,
+    "refinement_factor": 0.1,
+    "absolute_tolerances_normalized": [
+      1e-12,
+      1e-12,
+      1e-12,
+      1e-12,
+      1e-12,
+      1e-12,
+      1e-12
+    ],
+    "first_step_s": 0.001,
+    "maximum_step_s": 20.0,
+    "observation_interval_s": 20.0,
+    "progress_every_steps": 200
+  },
+  "normalization": {
+    "temperature_k": 1000.0,
+    "energy_j": 1e-05,
+    "entropy_j_k": 1e-08
+  },
+  "static_review": {
+    "radii_m": [
+      7e-06,
+      1e-05,
+      1.5e-05
+    ],
+    "temperatures_k": [
+      750.0,
+      950.0,
+      1100.0
+    ],
+    "bath_temperatures_k": [
+      750.0,
+      950.0,
+      1100.0
+    ],
+    "initial_pressures_pa": [
+      100000.0,
+      300000.0
+    ],
+    "initial_temperature_k": 800.0,
+    "conductance_w_k": 1e-11,
+    "decimal_digits": 60,
+    "budgets": {
+      "radius_rate_m_s": 1e-20,
+      "temperature_rate_k_s": 1e-12,
+      "source_energy_j": 1e-18,
+      "source_entropy_j_k": 1e-21,
+      "source_cv_j_k": 1e-21,
+      "source_pressure_pa": 1e-07,
+      "dissipation_w": 1e-21,
+      "energy_rate_w": 1e-20,
+      "entropy_rate_w_k": 1e-23
+    }
+  },
+  "scope": "One closed ideal N2 pore, finite incompressible constant-viscosity Newtonian matrix, constant surface tension, uniform gas/matrix temperature. Finite prescribed heat conductance or adiabatic boundary. No reaction, gas escape, matrix thermal expansion or real-brick qualification."
+}
