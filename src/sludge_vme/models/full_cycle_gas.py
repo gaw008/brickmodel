@@ -118,17 +118,12 @@ class FiniteGasFullCycle(FullCycle):
             surface_T -= (surface_T-T[-1]-resistance*q)/(1+resistance*(self.h+4*self.emissivity*self.sigma*surface_T**3))
         qext = self.area*(surface_T-T[-1])/resistance
         heat[-1] += qext
-        mechanical_force = pressure-self.P-cap
-        db = self.ks*np.exp(-self.Es/self.R*(1/T-1/self.Tsref))*pore/cap*mechanical_force
-        dpore = db-dns@self.v
-        dsurface = cap*dpore
-        capacity = ns@self.cp[:len(self.ns)]+ng@(self.cp[len(self.ns):]-self.R)
-        dT = (heat+flow-self.P*db-np.sum(us*dns, axis=1)-np.sum(ug*dng, axis=1)-dsurface)/capacity
+        mechanical = self.mechanical_rates(fields,T,ns,ng,bulk,pore,cap,pressure,dns,dng,heat,flow,us,ug)
+        dT,db,dpore,capacity,extra_sdot,mechanical_entropy,coordinate_rate = mechanical
         sg = s[:, len(self.ns):]-self.R*np.log(partial/self.Pr)
-        sdot = np.sum(capacity*dT/T)+np.sum(s[:, :len(self.ns)]*dns)+np.sum((sg-self.R)*dng)+np.sum(ng.sum(axis=1)*self.R*dpore/pore)
+        sdot = np.sum(capacity*dT/T)+np.sum(s[:, :len(self.ns)]*dns)+np.sum((sg-self.R)*dng)+np.sum(ng.sum(axis=1)*self.R*dpore/pore)+extra_sdot
         exchange = qext/tf-energy_flux[-1]/tf+flux[-1]@reservoir_mu_over_t
         reaction_entropy = -np.sum(rate*dg/T[:, None])
-        mechanical_entropy = np.sum(mechanical_force*db/T)
         thermal_entropy = np.sum(conductance*np.diff(T)**2/(T[:-1]*T[1:]))+qext*(1/T[-1]-1/tf)
         production = reaction_entropy+mechanical_entropy+thermal_entropy+face_entropy.sum()
         return {'dT':dT, 'hazard':hazard, 'rate':rate, 'dns':dns, 'dng':dng, 'db':db, 'dpore':dpore,
@@ -137,7 +132,28 @@ class FiniteGasFullCycle(FullCycle):
                 'production':production, 'exchange':exchange, 'entropy_identity_residual':sdot-production-exchange,
                 'minimum_face_entropy':float(face_entropy.real.min()), 'permeability':permeability,
                 'molecular_flux':molecular, 'darcy_flux':darcy, 'energy_flux':energy_flux, 'capacity':capacity,
-                'dsc':float(heat.real.sum())/(self.n*self.md)}
+                'dsc':float(heat.real.sum())/(self.n*self.md), 'coordinate_rate':coordinate_rate,
+                'pore':pore, 'effective_capacity':self.effective_capacity,
+                'mechanical_residual':self.mechanical_residual}
+
+    def caloric_capacity(self,T,ns,ng):
+        return ns@self.cp[:len(self.ns)]+ng@(self.cp[len(self.ns):]-self.R)
+
+    def mechanical_rates(self,f,T,ns,ng,bulk,pore,cap,pressure,dns,dng,heat,flow,us,ug):
+        force=pressure-self.P-cap
+        db=self.ks*np.exp(-self.Es/self.R*(1/T-1/self.Tsref))*pore/cap*force
+        dpore=db-dns@self.v
+        capacity=self.caloric_capacity(T,ns,ng)
+        dT=(heat+flow-self.P*db-np.sum(us*dns,axis=1)-np.sum(ug*dng,axis=1)-cap*dpore)/capacity
+        self.effective_capacity=capacity
+        self.mechanical_residual=np.zeros_like(T)
+        return dT,db,dpore,capacity,0.,np.sum(force*db/T),dpore/pore
+
+    def additional_storage(self,f,T,bulk):
+        return np.zeros_like(T),np.zeros_like(T)
+
+    def solid_fields(self,f,T,bulk):
+        return {}
 
     def initial_state(self):
         y = np.zeros(self.last+2*self.g+3)
@@ -151,8 +167,7 @@ class FiniteGasFullCycle(FullCycle):
         f = dy[:9*self.n].reshape(9, self.n)
         f[0] = r['dT']/self.Tr
         f[1:6] = (r['hazard']*(self.extent_scale != 0)).T
-        pore = self.unpack(y)[4]
-        f[6] = r['dpore']/pore
+        f[6] = r['coordinate_rate']
         f[7] = r['heat']/self.escale
         f[8] = r['flow']/self.escale
         dy[9*self.n:self.last] = (r['dng']/r['gas']).T.ravel()
@@ -204,6 +219,7 @@ class FiniteGasFullCycle(FullCycle):
 
     def summarize(self, times, states):
         rows=[]; inventories=[]; energies=[]; entropies=[]; heat=[]; flow=[]; bulks=[]
+        minimum_capacity=float('inf'); maximum_mechanical_residual=0.
         min_entropy=float('inf'); min_face=float('inf'); identity_residual=0.; min_condensed=float('inf'); min_gas=float('inf')
         for t,y in zip(times, states):
             f,T,ns,bulk,pore,surface,cap = self.unpack(y)
@@ -212,6 +228,10 @@ class FiniteGasFullCycle(FullCycle):
             inventories.append(np.r_[ns.sum(axis=0),ng.sum(axis=0)])
             energy=np.sum(ns*(h[:, :len(self.ns)]-self.P*self.v))+np.sum(ng*(h[:, len(self.ns):]-self.R*T[:, None]))+surface.sum()
             entropy=np.sum(ns*s[:, :len(self.ns)])+np.sum(ng*(s[:, len(self.ns):]-self.R*np.log(r['partial']/self.Pr)))
+            extra_u,extra_s=self.additional_storage(f,T,bulk)
+            energy+=extra_u.sum(); entropy+=extra_s.sum()
+            minimum_capacity=min(minimum_capacity,float(np.min(r['effective_capacity'])))
+            maximum_mechanical_residual=max(maximum_mechanical_residual,float(np.max(np.abs(r['mechanical_residual']))))
             energies.append(float(energy)); entropies.append(float(entropy)); bulks.append(float(bulk.sum()))
             heat.append(float(f[7].sum()*self.escale)); flow.append(float(f[8].sum()*self.escale))
             center=float((9*T[0]-T[1])/8)
@@ -232,7 +252,7 @@ class FiniteGasFullCycle(FullCycle):
                 'temperature_difference_k':span,'mass_kg':float(np.sum(ns@self.mw[:len(self.ns)])),
                 'total_mass_including_pore_gas_kg':float(inventories[-1]@self.mw),
                 'net_heat_and_flow_w':float(r['heat'].sum()+r['flow'].sum()),
-                'dsc_endothermic_w_per_initial_dry_kg':r['dsc'],'entropy_production_w_k':r['production']})
+                'dsc_endothermic_w_per_initial_dry_kg':r['dsc'],'entropy_production_w_k':r['production'], **self.solid_fields(f,T,bulk)})
         inventories=np.array(inventories); energies=np.array(energies); entropies=np.array(entropies)
         heat=np.array(heat); flow=np.array(flow); bulks=np.array(bulks)
         gasin=states[:, self.last:self.last+self.g]*self.nscale
@@ -269,6 +289,8 @@ class FiniteGasFullCycle(FullCycle):
         entropy_error=entropies-entropies[0]-states[:,-2:].sum(axis=1)*self.escale/self.Tr
         entropy_relative=float(np.max(np.abs(entropy_error))/(self.escale/self.Tr))
         inventory_roundoff = self.p('acceptance.inventory_roundoff_factor','1')*np.finfo(float).eps*self.nscale
+        inventory_solver_budget=self.p('numerics.atol','1')*float(np.max(self.extent_scale@np.abs(self.snu)))
+        inventory_budget=inventory_roundoff+inventory_solver_budget
         drying=int(np.where(times==self.times[self.config['stages'].index('drying')+1])[0][0])
         remaining=max(rows[drying]['water_kg_per_initial_dry_kg'])/self.p('material.water_dry_ratio','kg/kg')
         cooled=max(abs(t-self.temperatures[-1]) for t in final['temperature_k'])
@@ -279,13 +301,17 @@ class FiniteGasFullCycle(FullCycle):
                 'reaction_heat_counted_once':True,'maximum_entropy_balance_residual_j_k':float(np.max(np.abs(entropy_error))),
                 'entropy_balance_relative':entropy_relative,'maximum_entropy_rate_identity_residual_w_k':identity_residual},
             'parameter_status_counts':dict(Counter(x['status'] for x in self.config['parameters'].values())),
-            'state_domain':{'minimum_condensed_moles':min_condensed,'minimum_gas_moles':min_gas,
-                'condensed_inventory_roundoff_bound_mol':inventory_roundoff,'inventory_values_clipped':False,
+            'state_domain':{'minimum_effective_heat_capacity_j_k_per_cell':minimum_capacity,
+                'maximum_mechanical_equilibrium_residual_pa':maximum_mechanical_residual,
+                'minimum_condensed_moles':min_condensed,'minimum_gas_moles':min_gas,
+                'condensed_inventory_roundoff_bound_mol':inventory_roundoff,
+                'condensed_inventory_solver_resolution_mol':inventory_solver_budget,
+                'condensed_inventory_acceptance_bound_mol':inventory_budget,'inventory_values_clipped':False,
                 'minimum_temperature_k':min(min(r['temperature_k']) for r in rows),
                 'minimum_porosity':min(min(r['porosity']) for r in rows),'minimum_pressure_pa':min(min(r['pressure_pa']) for r in rows)}}
         report['example_endpoints']={'drying_remaining_fraction':remaining,'cooling_maximum_temperature_difference_k':cooled,
             'passed':bool(remaining<self.p('acceptance.drying_remaining_fraction','1') and cooled<self.p('acceptance.cooling_temperature_difference','K'))}
-        report['physical_consistency_passed']=bool(report['conservation_passed'] and min_condensed>=-inventory_roundoff and min_gas>0
-            and report['state_domain']['minimum_porosity']>0 and min_entropy>=0 and min_face>=0
+        report['physical_consistency_passed']=bool(report['conservation_passed'] and min_condensed>=-inventory_budget and min_gas>0
+            and minimum_capacity>0 and report['state_domain']['minimum_porosity']>0 and min_entropy>=0 and min_face>=0
             and entropy_relative<self.p('acceptance.entropy_relative','1'))
         return report,{'schema':'sludge_vme_full_cycle_fields_v2','cell_count':self.n,'rows':rows}

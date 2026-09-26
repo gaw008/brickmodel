@@ -224,8 +224,8 @@ def main(argv: list[str] | None = None) -> int:
         if args.compare:
             from .uq.full_cycle import compare
             result = compare(config, args.out)
-            print(json.dumps({"all_conservation_passed":result["all_conservation_passed"], "elapsed_s":result["elapsed_s"]}))
-            return 0 if result["all_conservation_passed"] else EXIT_SOLVER
+            print(json.dumps({"all_conservation_passed":result["all_conservation_passed"], "all_physical_consistency_passed":result["all_physical_consistency_passed"], "elapsed_s":result["elapsed_s"]}))
+            return 0 if result["all_physical_consistency_passed"] else EXIT_SOLVER
         if args.acceptance:
             result = run_acceptance(config, args.out)
             print(json.dumps({"passed":result["passed"], "relative_differences":result["relative_differences"]}))
@@ -233,8 +233,8 @@ def main(argv: list[str] | None = None) -> int:
         report, fields = run_cycle(config)
         write_json(args.out / "summary.json", report)
         write_json(args.out / "fields.json", fields)
-        print(json.dumps({"summary":report["summary"], "conservation_passed":report["conservation_passed"], "elapsed_s":report["elapsed_s"]}))
-        return 0 if report["conservation_passed"] else EXIT_SOLVER
+        print(json.dumps({"summary":report["summary"], "conservation_passed":report["conservation_passed"], "physical_consistency_passed":report["physical_consistency_passed"], "elapsed_s":report["elapsed_s"]}))
+        return 0 if report["physical_consistency_passed"] else EXIT_SOLVER
     try:
         if args.command == "validate":
             return command_validate(args)

@@ -63,11 +63,12 @@ def fit(config: dict, dataset: dict, out: Path) -> dict:
     def residual(x):
         overrides = dict(zip(keys, bounds[:,0]+x*widths))
         values, report = predict(changed(config, overrides), rows)
-        if not report['conservation_passed']:
-            raise ValueError('calibration forward calculation failed the balance budget')
+        if not report['physical_consistency_passed']:
+            raise ValueError('calibration forward calculation failed the declared physical consistency budget')
         values = (values-target)/scale
         evaluations.append({'evaluation':len(evaluations)+1,'normalized_residual_norm':float(np.linalg.norm(values)),
                             'parameters':{k:float(v) for k,v in overrides.items()}})
+        write_json(out/'calibration.progress.json',{'completed':False,'evaluation_history':evaluations})
         print(f"calibration evaluation {len(evaluations)}: residual={np.linalg.norm(values):.6g}",flush=True)
         return values
 
@@ -78,7 +79,7 @@ def fit(config: dict, dataset: dict, out: Path) -> dict:
     fitted = dict(zip(keys, map(float, bounds[:,0]+opt.x*widths)))
     values, forward = predict(changed(config, fitted), rows)
     rank = int(np.linalg.matrix_rank(opt.jac))
-    qualified = bool(opt.success and rank == len(keys) and forward['conservation_passed'])
+    qualified = bool(opt.success and rank == len(keys) and forward['physical_consistency_passed'])
     updated = changed(config, fitted)
     source_id = 'calibration_observations'
     updated['sources'][source_id] = {'identity':kind,'location':dataset['source'],'note':'Parameter estimate fitted to labelled observations; not a direct measurement of each constitutive constant.'}
@@ -96,12 +97,15 @@ def fit(config: dict, dataset: dict, out: Path) -> dict:
     result = {'schema':'sludge_vme_full_cycle_calibration_v1','measurement_kind':kind,'source':dataset['source'],
         'optimizer_success':bool(opt.success),'qualified_fit':qualified,'message':opt.message,'jacobian_rank':rank,
         'parameter_count':len(keys),'fitted_parameters':fitted,'residuals':residual_rows,
+        'forward_physical_consistency_passed':forward['physical_consistency_passed'],
+        'forward_summary':forward['summary'],'forward_thermodynamics':forward['thermodynamics'],
         'normalized_rmse':float(np.sqrt(np.mean(((values-target)/scale)**2))),
         'parameter_statuses':{k:updated['parameters'][k]['status'] for k in keys},
         'evaluation_history':evaluations,'elapsed_s':time.monotonic()-started,
-        'limitations':'Same-model synthetic data establish software recoverability only. Jacobian rank is local identifiability, not global uniqueness. Defects/strength/absorption are unvalidated proxies; DSC is the declared apparent heat-demand operator, not an instrument-specific prediction.'}
+        'limitations':'Same-model synthetic data establish software recoverability only. Jacobian rank is local identifiability, not global uniqueness. Defects/strength/absorption are unvalidated proxies; DSC is net thermal boundary power per initial dry mass in stored-gas mode, not an instrument-specific prediction.'}
     write_json(out/'calibration.json',result)
     write_json(out/'fitted.parameters.json',updated)
+    (out/'calibration.progress.json').unlink()
     return result
 
 

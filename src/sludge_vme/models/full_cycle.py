@@ -330,10 +330,13 @@ def make_cycle(config: dict):
     mode = config['parameters']['gas.storage']['value']
     if mode == 0:
         return FullCycle(config)
-    if mode == 1:
+    if mode == 1 and config['parameters']['solid.thermoelastic']['value'] == 1:
+        from .full_cycle_solid import ThermoelasticFullCycle
+        return ThermoelasticFullCycle(config)
+    if mode == 1 and config['parameters']['solid.thermoelastic']['value'] == 0:
         from .full_cycle_gas import FiniteGasFullCycle
         return FiniteGasFullCycle(config)
-    raise ValueError('gas.storage must explicitly select 0 (swept) or 1 (stored)')
+    raise ValueError('gas.storage and solid.thermoelastic must explicitly select 0 or 1')
 
 
 def run_cycle(config: dict):

@@ -1,6 +1,6 @@
 {
-  "schema": "sludge_vme_full_cycle_v2",
-  "scope": "Approximate finite-gas half-slab with pressure-resisted viscous sintering, common-D molar diffusion and Darcy flow; assumed material properties, no plant validation.",
+  "schema": "sludge_vme_full_cycle_v3",
+  "scope": "Source-traceable approximate full firing cycle with stored pore gas, quartz caloric transition and axial thermo-viscoelastic skeleton; material applicability and real-world accuracy pending measurements.",
   "sources": {
     "policy": {
       "identity": "assumed",
@@ -50,6 +50,16 @@
       "identity": "assumed",
       "location": "parameters.dusty_gas_isothermal.json and parameters.dusty_gas_four_species_column.json; src/sludge_sandbox/dusty_gas_isothermal.py; local Cantera3.2 source preserved under data/sandbox/research/dusty-gas-source-v1/source",
       "note": "Darcy and mixture-diffusion relations from existing gas_transport.py and pore source records. Common molar-frame D, viscosity power laws and evolving brick properties are assumed. No Knudsen or Soret prediction; reciprocal-logarithmic carried-enthalpy mean preserves the stated ideal-gas entropy inequality."
+    },
+    "quartz_nist": {
+      "identity": "literature",
+      "location": "data/sandbox/solids/quartz/facts.json; https://janaf.nist.gov/tables/O-037.html; https://webbook.nist.gov/cgi/cbook.cgi?ID=C14808607&Mask=2&Table=on&Type=JANAFS",
+      "note": "Existing local source. Source alpha/beta Cp, 847 K transition, 728 J/mol rounded JANAF latent increment. Metastable quartz extrapolation across actual high-T polymorph region remains an approximation."
+    },
+    "solid_effective": {
+      "identity": "assumed",
+      "location": "src/sludge_sandbox/cooling_thermoelastic_plate.py; docs/FULL_CYCLE_REPORT.md",
+      "note": "Thermodynamic free-energy construction reused in an axial effective skeleton. Coefficients are explicit engineering assumptions, not measured brick properties. Pure quartz phase volume jump is omitted: USGS volumes at different temperatures cannot identify it."
     }
   },
   "parameters": {
@@ -216,29 +226,29 @@
       ],
       "source": "policy",
       "status": "assumed",
-      "note": "Incompressible pure condensed phase; zero thermal expansion."
+      "note": "Reference incompressible constituent volume. Effective reversible bulk expansion is represented by the axial skeleton; separate phase volume jumps are omitted."
     },
     "species.silica.h_ref": {
-      "value": -910700,
+      "value": -910856.8,
       "unit": "J/mol",
       "range": [
-        -928914.0,
-        -892486.0
+        -910856.8,
+        -910856.8
       ],
-      "source": "usgs_clay",
+      "source": "quartz_nist",
       "status": "literature",
-      "note": ""
+      "note": "Reference anchor of quartz caloric storage."
     },
     "species.silica.s_ref": {
-      "value": 41.46,
+      "value": 41.463,
       "unit": "J/mol/K",
       "range": [
-        37.314,
-        45.606
+        41.463,
+        41.463
       ],
-      "source": "usgs_clay",
+      "source": "quartz_nist",
       "status": "literature",
-      "note": ""
+      "note": "Reference anchor of quartz caloric storage."
     },
     "species.silica.cp": {
       "value": 60.0,
@@ -249,7 +259,7 @@
       ],
       "source": "legacy",
       "status": "assumed",
-      "note": "Positive constant Cp, assumed full-temperature approximation; phase transitions of inert silica omitted."
+      "note": "Only legacy caloric mode and fixed solver energy normalization; solid.thermoelastic=1 replaces silica storage Cp by the explicit NIST/latent law."
     },
     "species.silica.volume": {
       "value": 2.27e-05,
@@ -260,7 +270,7 @@
       ],
       "source": "policy",
       "status": "assumed",
-      "note": "Incompressible pure condensed phase; zero thermal expansion."
+      "note": "Reference incompressible constituent volume. Effective reversible bulk expansion is represented by the axial skeleton; separate phase volume jumps are omitted."
     },
     "species.kaolin.h_ref": {
       "value": -4119000,
@@ -304,7 +314,7 @@
       ],
       "source": "policy",
       "status": "assumed",
-      "note": "Incompressible pure condensed phase; zero thermal expansion."
+      "note": "Reference incompressible constituent volume. Effective reversible bulk expansion is represented by the axial skeleton; separate phase volume jumps are omitted."
     },
     "species.metakaolin.h_ref": {
       "value": -3487000,
@@ -348,7 +358,7 @@
       ],
       "source": "policy",
       "status": "assumed",
-      "note": "Incompressible pure condensed phase; zero thermal expansion."
+      "note": "Reference incompressible constituent volume. Effective reversible bulk expansion is represented by the axial skeleton; separate phase volume jumps are omitted."
     },
     "species.calcite.h_ref": {
       "value": -1207400,
@@ -392,7 +402,7 @@
       ],
       "source": "usgs_calcite",
       "status": "literature",
-      "note": "Incompressible pure condensed phase; zero thermal expansion."
+      "note": "Reference incompressible constituent volume. Effective reversible bulk expansion is represented by the axial skeleton; separate phase volume jumps are omitted."
     },
     "species.lime.h_ref": {
       "value": -635100,
@@ -436,7 +446,7 @@
       ],
       "source": "usgs_calcite",
       "status": "literature",
-      "note": "Incompressible pure condensed phase; zero thermal expansion."
+      "note": "Reference incompressible constituent volume. Effective reversible bulk expansion is represented by the axial skeleton; separate phase volume jumps are omitted."
     },
     "species.organic.h_ref": {
       "value": -170000,
@@ -480,7 +490,7 @@
       ],
       "source": "policy",
       "status": "assumed",
-      "note": "Incompressible pure condensed phase; zero thermal expansion."
+      "note": "Reference incompressible constituent volume. Effective reversible bulk expansion is represented by the axial skeleton; separate phase volume jumps are omitted."
     },
     "species.char.h_ref": {
       "value": 0.0,
@@ -524,7 +534,7 @@
       ],
       "source": "policy",
       "status": "assumed",
-      "note": "Incompressible pure condensed phase; zero thermal expansion."
+      "note": "Reference incompressible constituent volume. Effective reversible bulk expansion is represented by the axial skeleton; separate phase volume jumps are omitted."
     },
     "species.O2.h_ref": {
       "value": 0.0,
@@ -1791,6 +1801,204 @@
       "source": "policy",
       "status": "assumed",
       "note": "Condensed inventory roundoff allowance = factor * float epsilon * initial total condensed molar scale. Accepted inventory values remain unchanged and raw negative minima are reported. This is an arithmetic-domain budget, not a physical negative-inventory allowance."
+    },
+    "solid.thermoelastic": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        0,
+        1
+      ],
+      "source": "solid_effective",
+      "status": "assumed",
+      "note": "0 retains prior finite-gas closure; 1 selects coupled quartz/axial skeleton."
+    },
+    "solid.axial_modulus": {
+      "value": 1000000000.0,
+      "unit": "Pa",
+      "range": [
+        100000000.0,
+        2000000000.0
+      ],
+      "source": "solid_effective",
+      "status": "assumed",
+      "note": "Effective fixed-area axial modulus, not independently measured Young modulus; constant through firing."
+    },
+    "solid.thermal_expansion": {
+      "value": 1e-05,
+      "unit": "1/K",
+      "range": [
+        2e-06,
+        2e-05
+      ],
+      "source": "solid_effective",
+      "status": "assumed",
+      "note": "Effective reversible axial strain coefficient; no quartz phase strain jump."
+    },
+    "quartz.transition_temperature": {
+      "value": 847.0,
+      "unit": "K",
+      "range": [
+        847.0,
+        847.0
+      ],
+      "source": "quartz_nist",
+      "status": "literature",
+      "note": ""
+    },
+    "quartz.latent_heat": {
+      "value": 728.0,
+      "unit": "J/mol",
+      "range": [
+        728.0,
+        728.0
+      ],
+      "source": "quartz_nist",
+      "status": "literature",
+      "note": "JANAF h increments 34.924 - 34.196 kJ/mol; use L/Tc entropy join."
+    },
+    "quartz.transition_width": {
+      "value": 5.0,
+      "unit": "K",
+      "range": [
+        2.0,
+        10.0
+      ],
+      "source": "solid_effective",
+      "status": "assumed",
+      "note": "Smooth two-state free energy width: mixing entropy coefficient a=L*w/Tc^2. No measured hysteresis or phase-volume relation."
+    },
+    "quartz.shomate_scale": {
+      "value": 1000.0,
+      "unit": "K",
+      "range": [
+        1000.0,
+        1000.0
+      ],
+      "source": "quartz_nist",
+      "status": "literature",
+      "note": "t=T/(1000 K); Shomate entropy primitive omits constants because anchored to reference."
+    },
+    "quartz.alpha.A": {
+      "value": -6.076591,
+      "unit": "J/mol/K",
+      "range": [
+        -6.076591,
+        -6.076591
+      ],
+      "source": "quartz_nist",
+      "status": "literature",
+      "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+    },
+    "quartz.alpha.B": {
+      "value": 251.6755,
+      "unit": "J/mol/K",
+      "range": [
+        251.6755,
+        251.6755
+      ],
+      "source": "quartz_nist",
+      "status": "literature",
+      "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+    },
+    "quartz.alpha.C": {
+      "value": -324.7964,
+      "unit": "J/mol/K",
+      "range": [
+        -324.7964,
+        -324.7964
+      ],
+      "source": "quartz_nist",
+      "status": "literature",
+      "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+    },
+    "quartz.alpha.D": {
+      "value": 168.5604,
+      "unit": "J/mol/K",
+      "range": [
+        168.5604,
+        168.5604
+      ],
+      "source": "quartz_nist",
+      "status": "literature",
+      "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+    },
+    "quartz.alpha.E": {
+      "value": 0.002548,
+      "unit": "J/mol/K",
+      "range": [
+        0.002548,
+        0.002548
+      ],
+      "source": "quartz_nist",
+      "status": "literature",
+      "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+    },
+    "quartz.beta.A": {
+      "value": 58.7534,
+      "unit": "J/mol/K",
+      "range": [
+        58.7534,
+        58.7534
+      ],
+      "source": "quartz_nist",
+      "status": "literature",
+      "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+    },
+    "quartz.beta.B": {
+      "value": 10.27925,
+      "unit": "J/mol/K",
+      "range": [
+        10.27925,
+        10.27925
+      ],
+      "source": "quartz_nist",
+      "status": "literature",
+      "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+    },
+    "quartz.beta.C": {
+      "value": -0.131384,
+      "unit": "J/mol/K",
+      "range": [
+        -0.131384,
+        -0.131384
+      ],
+      "source": "quartz_nist",
+      "status": "literature",
+      "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+    },
+    "quartz.beta.D": {
+      "value": 0.02521,
+      "unit": "J/mol/K",
+      "range": [
+        0.02521,
+        0.02521
+      ],
+      "source": "quartz_nist",
+      "status": "literature",
+      "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+    },
+    "quartz.beta.E": {
+      "value": 0.025601,
+      "unit": "J/mol/K",
+      "range": [
+        0.025601,
+        0.025601
+      ],
+      "source": "quartz_nist",
+      "status": "literature",
+      "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+    },
+    "numerics.mechanical_iterations": {
+      "value": 8,
+      "unit": "1",
+      "range": [
+        8,
+        8
+      ],
+      "source": "solid_effective",
+      "status": "assumed",
+      "note": "Fixed Newton iterations for positive pore-volume mechanical equilibrium; actual final force residual reported."
     }
   },
   "species": [
@@ -1994,7 +2202,11 @@
     "sintering.rate_ref",
     "kinetics.char_oxidation.A",
     "kinetics.decarbonation.A",
-    "material.water_dry_ratio"
+    "material.water_dry_ratio",
+    "transport.diffusivity_ref",
+    "transport.permeability_ref",
+    "solid.axial_modulus",
+    "solid.thermal_expansion"
   ],
   "calibration_parameters": [
     "thermal.h",

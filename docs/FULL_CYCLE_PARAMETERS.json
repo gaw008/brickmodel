@@ -1,14 +1,14 @@
 {
   "schema": "full_cycle_parameter_inventory_v1",
   "root_file": "parameters.full_cycle.json",
-  "total_parameter_entries": 144,
+  "total_parameter_entries": 175,
   "status_counts": {
-    "literature": 25,
-    "assumed": 119
+    "literature": 38,
+    "assumed": 137
   },
   "scenario_override_entries": 5,
   "synthetic_truth_entries": 2,
-  "metadata_entries_reviewed": 151,
+  "metadata_entries_reviewed": 182,
   "all_required_metadata_present": true,
   "sources_resolve": true,
   "material_applicability": "待实测",
@@ -23,7 +23,10 @@
     "parameters.wadsworth2016_vented_pore.json; glass-to-brick radius/surface tension analogy, not brick data",
     "data/sandbox/research/metakaolin-reference-enthalpy-v1/source.json Table4 liquid water enthalpy; constant Cp and entropy approximations explicitly assumed",
     "src/sludge_vme/chemistry/formula.py ATOMIC_WEIGHTS_KG_PER_MOL; inherited rounded atomic weights, same for all species",
-    "SI gas constant and Stefan-Boltzmann constant; standard thermodynamic definitions"
+    "SI gas constant and Stefan-Boltzmann constant; standard thermodynamic definitions",
+    "parameters.dusty_gas_isothermal.json and parameters.dusty_gas_four_species_column.json; src/sludge_sandbox/dusty_gas_isothermal.py; local Cantera3.2 source preserved under data/sandbox/research/dusty-gas-source-v1/source",
+    "data/sandbox/solids/quartz/facts.json; https://janaf.nist.gov/tables/O-037.html; https://webbook.nist.gov/cgi/cbook.cgi?ID=C14808607&Mask=2&Table=on&Type=JANAFS",
+    "src/sludge_sandbox/cooling_thermoelastic_plate.py; docs/FULL_CYCLE_REPORT.md"
   ],
-  "note": "Counts classify each parameter entry, not every scalar component. Ranges are assumed engineering uncertainty intervals unless explicitly stated otherwise. Stoichiometric integers are chemical definitions, not fitted material parameters."
+  "note": "Current finite-gas/quartz/axial-skeleton parameter inventory. Literature identities apply to source quantities, not automatic validation of their transfer to a brick. Only declared uncertain_parameters are sampled in UQ."
 }
