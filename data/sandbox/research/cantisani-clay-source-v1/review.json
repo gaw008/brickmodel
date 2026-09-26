@@ -1,0 +1,2946 @@
+{
+  "settings": {
+    "source_file": "data/sandbox/research/cantisani-clay-source-v1/source.json",
+    "usgs_kaolinite_file": "data/sandbox/research/kaolinite-source-review-v1/usgs1995-source.json",
+    "usgs_steam_file": "data/sandbox/research/hydrogen-steam-thermochemistry-v1/source.json",
+    "output_directory": "data/sandbox/research/cantisani-clay-source-v1",
+    "reference_temperature_k": 298.15,
+    "kelvin_offset": 273.15,
+    "cp_review_temperatures_k": [
+      298.15,
+      300,
+      400,
+      500,
+      600,
+      700
+    ],
+    "metakaolin_additional_temperatures_k": [
+      800,
+      1000,
+      1200,
+      1400,
+      1600,
+      1800
+    ],
+    "molar_masses_g_mol": {
+      "kaolinite": 258.16,
+      "metakaolin": 222.13,
+      "H2O": 18.015
+    },
+    "molar_mass_basis": "USGS kaolinite formula and source molar mass; metakaolin is kaolinite minus two H2O using the declared rounded steam molar mass. This is the chemically standard identity, not acceptance of the printed Al2O2 formula.",
+    "cp_domain_basis": "Only compare both source caloric functions within 298.15-700 K. No extension of kaolinite to source reactor output temperatures.",
+    "f3_diagnostic": {
+      "activation_energy_j_mol": 202000,
+      "frequency_factor_per_s": 2900000000000000,
+      "gas_constant_j_mol_k": 8.31446261815324,
+      "parameter_basis": "Ptacek2010 publisher abstract confirms these F3 values above410 C within its370-500 C study. No original full TG data acquired and no material transfer qualification.",
+      "temperatures_k": [
+        693.15,
+        723.15,
+        773.15
+      ],
+      "formula_unit_pools_mol": [
+        1e-08,
+        1e-05,
+        1
+      ],
+      "unreacted_fractions": [
+        1,
+        0.9,
+        0.5,
+        0.1,
+        1e-12,
+        0
+      ],
+      "volume_representation_m3": [
+        0.0001,
+        0.001,
+        0.01
+      ],
+      "amount_rescaling_factors": [
+        0.001,
+        1000
+      ],
+      "chemical_pool_assumption": "Kaolinite plus one metakaolin formula unit per reacted kaolinite. Pure algebraic diagnostic, no real reactor volume or mixture input admission."
+    },
+    "numerical_review": {
+      "digits": 70,
+      "cp_absolute_j_mol_k": 1e-09,
+      "enthalpy_absolute_j_mol": 1e-06,
+      "relative_entropy_absolute_j_mol_k": 1e-09,
+      "rate_relative": 1e-12,
+      "rate_absolute_mol_s": 1e-40
+    },
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "source": {
+    "primary_sources": [
+      {
+        "id": "cantisani2024",
+        "doi": "10.1016/j.ifacol.2024.08.350",
+        "url": "https://backend.orbit.dtu.dk/ws/portalfiles/portal/377542543/1-s2.0-S2405896324011029-main.pdf",
+        "access": "Downloaded publisher version via author university; PDF pages3,4 visually inspected.",
+        "license": "CC BY-NC-ND; keep PDF and rendered pages in local research cache only"
+      },
+      {
+        "id": "cantisani2025v1",
+        "url": "https://arxiv.org/html/2509.11209v1",
+        "access": "Author full HTML read, sections3.3-3.4 and Tables1-2; current abstract lists only v1 dated2025-09-14.",
+        "license": "arXiv perpetual non-exclusive license; no full text redistributed"
+      },
+      {
+        "id": "ptacek2010",
+        "doi": "10.1016/j.tca.2009.12.018",
+        "url": "https://www.sciencedirect.com/science/article/pii/S0040603110000055",
+        "access": "Publisher abstract and introduction read; original full experimental tables/graphs not acquired."
+      },
+      {
+        "id": "gariz2026",
+        "doi": "10.1016/j.clet.2026.101197",
+        "url": "https://orbit.dtu.dk/en/publications/electrification-of-clay-calcination-for-cement-decarbonization-mo/",
+        "access": "University metadata marks full text OA, but linked PDF and publisher retrieval returned403; no fulltext interpretation or retry/bypass.",
+        "pdf_url": "https://orbit.dtu.dk/files/437010211/1-s2.0-S266679082600056X-main.pdf"
+      }
+    ],
+    "table1": {
+      "locator": "Cantisani2024 printedp285/PDFp4 and2025 Table1",
+      "cp_formula": "k1+k2*T+k3*T^2+k4/T+k5/T^2+k6/sqrt(T), T in K, Cp in J/(mol K)",
+      "kaolinite": {
+        "coefficients": [
+          1430.3,
+          -0.7886,
+          0.0003034,
+          0,
+          8334000,
+          -18620
+        ],
+        "domain_k": [
+          298,
+          700
+        ],
+        "formation_enthalpy_j_mol": -4119590
+      },
+      "metakaolin": {
+        "coefficients": [
+          229.4924,
+          0.0368192,
+          0,
+          0,
+          -1456032,
+          0
+        ],
+        "domain_k": [
+          298,
+          1800
+        ],
+        "formation_enthalpy_j_mol": -3211000
+      },
+      "upstream_references": [
+        "Gariz2023 technical report, Simulation of electrically heated clay calcination process and comparison of aspen and pro-calc; not acquired",
+        "Bale etal2016 FactSage thermochemical software and databases2010-2016; specific database record/version not identified"
+      ],
+      "absolute_entropy_provided": false
+    },
+    "table2": {
+      "locator": "Cantisani2024 printedp285/PDFp4 and2025 Table2",
+      "volume_formula": "v1+v2*T",
+      "literal_printed_units": "m3/mol for v1 and m3/(mol K) for v2",
+      "kaolinite": {
+        "v1": 30,
+        "v2": 0
+      },
+      "metakaolin": {
+        "v1": 41.4736,
+        "v2": 0.00339116
+      },
+      "unit_correction_admitted": false
+    },
+    "printed_formula": {
+      "kaolinite_atoms": {
+        "Al": 2,
+        "Si": 2,
+        "O": 8,
+        "H": 4
+      },
+      "metakaolin_atoms": {
+        "Al": 2,
+        "Si": 2,
+        "O": 6
+      },
+      "locator": "2024 Eq2/PDFp3 and2025 Eq6 use Al2O2 instead of Al2O3; visually confirmed in2024 and confirmed in2025 HTML"
+    },
+    "standard_formula": {
+      "kaolinite_atoms": {
+        "Al": 2,
+        "Si": 2,
+        "O": 9,
+        "H": 4
+      },
+      "metakaolin_atoms": {
+        "Al": 2,
+        "Si": 2,
+        "O": 7
+      },
+      "water_atoms": {
+        "H": 2,
+        "O": 1
+      }
+    },
+    "printed_kinetics": {
+      "frequency_factor_unit": "s^-1",
+      "concentration_unit": "mol/m3",
+      "rate_expression": "k*c_kaolinite^3",
+      "required_volumetric_rate_unit": "mol/(m3 s)",
+      "locator": "2024 Eq1,4,5;2025 Eq3,8,9; no concentration normalization stated"
+    },
+    "source_reaction_temperature_c": [
+      450,
+      700
+    ],
+    "source_initial_condition": {
+      "temperature_k": 600,
+      "kaolinite_concentration_mol_m3": 0.1,
+      "metakaolin_concentration_mol_m3": 0.1,
+      "quartz_concentration_mol_m3": 0.1,
+      "locator": "2024 section5, paragraph after Eq49"
+    },
+    "source_input_condition": {
+      "solid_temperature_k": 657.15,
+      "gas_temperature_k": 1261.15,
+      "kaolinite_concentration_mol_m3": 0.15,
+      "metakaolin_concentration_mol_m3": 0.31,
+      "locator": "2024 Eq49"
+    },
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "thermal": [
+    {
+      "phase": "kaolinite",
+      "temperature_k": 298.15,
+      "calculated": {
+        "cp_j_mol_k": 237.54561782350584,
+        "sensible_enthalpy_j_mol": 0.0,
+        "relative_entropy_j_mol_k": 0.0
+      },
+      "independent": {
+        "cp_j_mol_k": 237.54561782350575,
+        "sensible_enthalpy_j_mol": 0.0,
+        "relative_entropy_j_mol_k": 0.0
+      },
+      "within_source_temperature_interval": true,
+      "absolute_differences": {
+        "cp_j_mol_k": 8.526512829121202e-14,
+        "sensible_enthalpy_j_mol": 0.0,
+        "relative_entropy_j_mol_k": 0.0
+      }
+    },
+    {
+      "phase": "kaolinite",
+      "temperature_k": 300,
+      "calculated": {
+        "cp_j_mol_k": 238.5997987689168,
+        "sensible_enthalpy_j_mol": 440.4356558844472,
+        "relative_entropy_j_mol_k": 1.4726608876041976
+      },
+      "independent": {
+        "cp_j_mol_k": 238.59979876891683,
+        "sensible_enthalpy_j_mol": 440.4356558845104,
+        "relative_entropy_j_mol_k": 1.4726608876044245
+      },
+      "within_source_temperature_interval": true,
+      "absolute_differences": {
+        "cp_j_mol_k": 2.842170943040401e-14,
+        "sensible_enthalpy_j_mol": 6.320988177321851e-11,
+        "relative_entropy_j_mol_k": 2.26929586233382e-13
+      }
+    },
+    {
+      "phase": "kaolinite",
+      "temperature_k": 400,
+      "calculated": {
+        "cp_j_mol_k": 284.4915000000001,
+        "sensible_enthalpy_j_mol": 26772.089727867744,
+        "relative_entropy_j_mol_k": 76.90717665322035
+      },
+      "independent": {
+        "cp_j_mol_k": 284.4915,
+        "sensible_enthalpy_j_mol": 26772.089727867748,
+        "relative_entropy_j_mol_k": 76.90717665322033
+      },
+      "within_source_temperature_interval": true,
+      "absolute_differences": {
+        "cp_j_mol_k": 1.1368683772161603e-13,
+        "sensible_enthalpy_j_mol": 3.637978807091713e-12,
+        "relative_entropy_j_mol_k": 1.4210854715202004e-14
+      }
+    },
+    {
+      "phase": "kaolinite",
+      "temperature_k": 500,
+      "calculated": {
+        "cp_j_mol_k": 312.47428517907827,
+        "sensible_enthalpy_j_mol": 56739.50824027939,
+        "relative_entropy_j_mol_k": 143.66157773977795
+      },
+      "independent": {
+        "cp_j_mol_k": 312.4742851790783,
+        "sensible_enthalpy_j_mol": 56739.5082402794,
+        "relative_entropy_j_mol_k": 143.66157773977793
+      },
+      "within_source_temperature_interval": true,
+      "absolute_differences": {
+        "cp_j_mol_k": 5.684341886080802e-14,
+        "sensible_enthalpy_j_mol": 7.275957614183426e-12,
+        "relative_entropy_j_mol_k": 2.842170943040401e-14
+      }
+    },
+    {
+      "phase": "kaolinite",
+      "temperature_k": 600,
+      "calculated": {
+        "cp_j_mol_k": 329.3556831562872,
+        "sensible_enthalpy_j_mol": 88899.37618207885,
+        "relative_entropy_j_mol_k": 202.24930446775375
+      },
+      "independent": {
+        "cp_j_mol_k": 329.35568315628706,
+        "sensible_enthalpy_j_mol": 88899.3761820789,
+        "relative_entropy_j_mol_k": 202.24930446775372
+      },
+      "within_source_temperature_interval": true,
+      "absolute_differences": {
+        "cp_j_mol_k": 1.7053025658242404e-13,
+        "sensible_enthalpy_j_mol": 4.3655745685100555e-11,
+        "relative_entropy_j_mol_k": 2.842170943040401e-14
+      }
+    },
+    {
+      "phase": "kaolinite",
+      "temperature_k": 700,
+      "calculated": {
+        "cp_j_mol_k": 340.18431452212496,
+        "sensible_enthalpy_j_mol": 122410.78720170003,
+        "relative_entropy_j_mol_k": 253.88600399096435
+      },
+      "independent": {
+        "cp_j_mol_k": 340.184314522125,
+        "sensible_enthalpy_j_mol": 122410.78720169993,
+        "relative_entropy_j_mol_k": 253.88600399096453
+      },
+      "within_source_temperature_interval": true,
+      "absolute_differences": {
+        "cp_j_mol_k": 5.684341886080802e-14,
+        "sensible_enthalpy_j_mol": 1.0186340659856796e-10,
+        "relative_entropy_j_mol_k": 1.7053025658242404e-13
+      }
+    },
+    {
+      "phase": "metakaolin",
+      "temperature_k": 298.15,
+      "calculated": {
+        "cp_j_mol_k": 224.09051988694029,
+        "sensible_enthalpy_j_mol": 0.0,
+        "relative_entropy_j_mol_k": 0.0
+      },
+      "independent": {
+        "cp_j_mol_k": 224.09051988694026,
+        "sensible_enthalpy_j_mol": 0.0,
+        "relative_entropy_j_mol_k": 0.0
+      },
+      "within_source_temperature_interval": true,
+      "absolute_differences": {
+        "cp_j_mol_k": 2.842170943040401e-14,
+        "sensible_enthalpy_j_mol": 0.0,
+        "relative_entropy_j_mol_k": 0.0
+      }
+    },
+    {
+      "phase": "metakaolin",
+      "temperature_k": 300,
+      "calculated": {
+        "cp_j_mol_k": 224.36002666666667,
+        "sensible_enthalpy_j_mol": 414.8173317232439,
+        "relative_entropy_j_mol_k": 1.387004588854046
+      },
+      "independent": {
+        "cp_j_mol_k": 224.36002666666667,
+        "sensible_enthalpy_j_mol": 414.8173317232386,
+        "relative_entropy_j_mol_k": 1.3870045888540075
+      },
+      "within_source_temperature_interval": true,
+      "absolute_differences": {
+        "cp_j_mol_k": 0.0,
+        "sensible_enthalpy_j_mol": 5.286437954055145e-12,
+        "relative_entropy_j_mol_k": 3.863576125695545e-14
+      }
+    },
+    {
+      "phase": "metakaolin",
+      "temperature_k": 400,
+      "calculated": {
+        "cp_j_mol_k": 235.11988,
+        "sensible_enthalpy_j_mol": 23439.369331723243,
+        "relative_entropy_j_mol_k": 67.55080716612045
+      },
+      "independent": {
+        "cp_j_mol_k": 235.11988,
+        "sensible_enthalpy_j_mol": 23439.36933172324,
+        "relative_entropy_j_mol_k": 67.55080716612044
+      },
+      "within_source_temperature_interval": true,
+      "absolute_differences": {
+        "cp_j_mol_k": 0.0,
+        "sensible_enthalpy_j_mol": 3.637978807091713e-12,
+        "relative_entropy_j_mol_k": 1.4210854715202004e-14
+      }
+    },
+    {
+      "phase": "metakaolin",
+      "temperature_k": 500,
+      "calculated": {
+        "cp_j_mol_k": 242.077872,
+        "sensible_enthalpy_j_mol": 47317.45733172324,
+        "relative_entropy_j_mol_k": 120.8044403017416
+      },
+      "independent": {
+        "cp_j_mol_k": 242.077872,
+        "sensible_enthalpy_j_mol": 47317.457331723235,
+        "relative_entropy_j_mol_k": 120.80444030174158
+      },
+      "within_source_temperature_interval": true,
+      "absolute_differences": {
+        "cp_j_mol_k": 0.0,
+        "sensible_enthalpy_j_mol": 7.275957614183426e-12,
+        "relative_entropy_j_mol_k": 1.4210854715202004e-14
+      }
+    },
+    {
+      "phase": "metakaolin",
+      "temperature_k": 600,
+      "calculated": {
+        "cp_j_mol_k": 247.53938666666667,
+        "sensible_enthalpy_j_mol": 71806.40933172325,
+        "relative_entropy_j_mol_k": 165.43797460878923
+      },
+      "independent": {
+        "cp_j_mol_k": 247.53938666666667,
+        "sensible_enthalpy_j_mol": 71806.40933172323,
+        "relative_entropy_j_mol_k": 165.4379746087892
+      },
+      "within_source_temperature_interval": true,
+      "absolute_differences": {
+        "cp_j_mol_k": 0.0,
+        "sensible_enthalpy_j_mol": 1.4551915228366852e-11,
+        "relative_entropy_j_mol_k": 2.842170943040401e-14
+      }
+    },
+    {
+      "phase": "metakaolin",
+      "temperature_k": 700,
+      "calculated": {
+        "cp_j_mol_k": 252.29434612244899,
+        "sensible_enthalpy_j_mol": 96802.22304600895,
+        "relative_entropy_j_mol_k": 203.95978435608714
+      },
+      "independent": {
+        "cp_j_mol_k": 252.29434612244899,
+        "sensible_enthalpy_j_mol": 96802.22304600895,
+        "relative_entropy_j_mol_k": 203.95978435608714
+      },
+      "within_source_temperature_interval": true,
+      "absolute_differences": {
+        "cp_j_mol_k": 0.0,
+        "sensible_enthalpy_j_mol": 0.0,
+        "relative_entropy_j_mol_k": 0.0
+      }
+    },
+    {
+      "phase": "metakaolin",
+      "temperature_k": 800,
+      "calculated": {
+        "cp_j_mol_k": 256.67271,
+        "sensible_enthalpy_j_mol": 122252.89733172324,
+        "relative_entropy_j_mol_k": 237.93792218605563
+      },
+      "independent": {
+        "cp_j_mol_k": 256.67271,
+        "sensible_enthalpy_j_mol": 122252.89733172324,
+        "relative_entropy_j_mol_k": 237.93792218605563
+      },
+      "within_source_temperature_interval": true,
+      "absolute_differences": {
+        "cp_j_mol_k": 0.0,
+        "sensible_enthalpy_j_mol": 0.0,
+        "relative_entropy_j_mol_k": 0.0
+      }
+    },
+    {
+      "phase": "metakaolin",
+      "temperature_k": 1000,
+      "calculated": {
+        "cp_j_mol_k": 264.855568,
+        "sensible_enthalpy_j_mol": 174414.82533172326,
+        "relative_entropy_j_mol_k": 296.10200232167676
+      },
+      "independent": {
+        "cp_j_mol_k": 264.855568,
+        "sensible_enthalpy_j_mol": 174414.82533172323,
+        "relative_entropy_j_mol_k": 296.10200232167676
+      },
+      "within_source_temperature_interval": true,
+      "absolute_differences": {
+        "cp_j_mol_k": 0.0,
+        "sensible_enthalpy_j_mol": 2.9103830456733704e-11,
+        "relative_entropy_j_mol_k": 0.0
+      }
+    },
+    {
+      "phase": "metakaolin",
+      "temperature_k": 1200,
+      "calculated": {
+        "cp_j_mol_k": 272.6643066666667,
+        "sensible_enthalpy_j_mol": 228170.85733172324,
+        "relative_entropy_j_mol_k": 345.08480462872444
+      },
+      "independent": {
+        "cp_j_mol_k": 272.6643066666667,
+        "sensible_enthalpy_j_mol": 228170.85733172324,
+        "relative_entropy_j_mol_k": 345.0848046287244
+      },
+      "within_source_temperature_interval": true,
+      "absolute_differences": {
+        "cp_j_mol_k": 0.0,
+        "sensible_enthalpy_j_mol": 0.0,
+        "relative_entropy_j_mol_k": 5.684341886080802e-14
+      }
+    },
+    {
+      "phase": "metakaolin",
+      "temperature_k": 1400,
+      "calculated": {
+        "cp_j_mol_k": 280.2964065306123,
+        "sensible_enthalpy_j_mol": 283468.9921888661,
+        "relative_entropy_j_mol_k": 387.6909241719407
+      },
+      "independent": {
+        "cp_j_mol_k": 280.2964065306122,
+        "sensible_enthalpy_j_mol": 283468.9921888661,
+        "relative_entropy_j_mol_k": 387.6909241719407
+      },
+      "within_source_temperature_interval": true,
+      "absolute_differences": {
+        "cp_j_mol_k": 5.684341886080802e-14,
+        "sensible_enthalpy_j_mol": 0.0,
+        "relative_entropy_j_mol_k": 0.0
+      }
+    },
+    {
+      "phase": "metakaolin",
+      "temperature_k": 1600,
+      "calculated": {
+        "cp_j_mol_k": 287.8343575,
+        "sensible_enthalpy_j_mol": 340283.22933172324,
+        "relative_entropy_j_mol_k": 425.6121484559908
+      },
+      "independent": {
+        "cp_j_mol_k": 287.8343575,
+        "sensible_enthalpy_j_mol": 340283.22933172324,
+        "relative_entropy_j_mol_k": 425.6121484559908
+      },
+      "within_source_temperature_interval": true,
+      "absolute_differences": {
+        "cp_j_mol_k": 0.0,
+        "sensible_enthalpy_j_mol": 0.0,
+        "relative_entropy_j_mol_k": 0.0
+      }
+    },
+    {
+      "phase": "metakaolin",
+      "temperature_k": 1800,
+      "calculated": {
+        "cp_j_mol_k": 295.31756740740747,
+        "sensible_enthalpy_j_mol": 398599.12399838987,
+        "relative_entropy_j_mol_k": 459.94661503435617
+      },
+      "independent": {
+        "cp_j_mol_k": 295.3175674074074,
+        "sensible_enthalpy_j_mol": 398599.1239983899,
+        "relative_entropy_j_mol_k": 459.9466150343561
+      },
+      "within_source_temperature_interval": true,
+      "absolute_differences": {
+        "cp_j_mol_k": 5.684341886080802e-14,
+        "sensible_enthalpy_j_mol": 5.820766091346741e-11,
+        "relative_entropy_j_mol_k": 5.684341886080802e-14
+      }
+    }
+  ],
+  "usgs_kaolinite_comparison": [
+    {
+      "temperature_k": 298.15,
+      "paper_cp_j_mol_k": 237.54561782350584,
+      "usgs_cp_j_mol_k": 243.3668199066496,
+      "relative_difference": -0.023919456585645697
+    },
+    {
+      "temperature_k": 300,
+      "paper_cp_j_mol_k": 238.5997987689168,
+      "usgs_cp_j_mol_k": 244.40330146081303,
+      "relative_difference": -0.023745598595470468
+    },
+    {
+      "temperature_k": 400,
+      "paper_cp_j_mol_k": 284.4915000000001,
+      "usgs_cp_j_mol_k": 289.53150000000016,
+      "relative_difference": -0.017407432351920514
+    },
+    {
+      "temperature_k": 500,
+      "paper_cp_j_mol_k": 312.47428517907827,
+      "usgs_cp_j_mol_k": 316.9964211340779,
+      "relative_difference": -0.014265574162702974
+    },
+    {
+      "temperature_k": 600,
+      "paper_cp_j_mol_k": 329.3556831562872,
+      "usgs_cp_j_mol_k": 333.4981660609257,
+      "relative_difference": -0.012421306400472702
+    },
+    {
+      "temperature_k": 700,
+      "paper_cp_j_mol_k": 340.18431452212496,
+      "usgs_cp_j_mol_k": 344.03395925221736,
+      "relative_difference": -0.011189723068210691
+    }
+  ],
+  "f3_amount_diagnostic": [
+    {
+      "temperature_k": 693.15,
+      "precursor_mol": 1e-08,
+      "product_mol": 0.0,
+      "rate_mol_s": 1.7390361205950067e-08,
+      "independent_rate_mol_s": 1.739036120595014e-08,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 1.7390361205950067e-08,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 1.739036120595007e-08,
+          "absolute_difference_mol_s": 3.308722450212111e-24
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.00017390361205950065,
+          "amount_rate_mol_s": 1.7390361205950067e-08,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 1.739036120595007e-05,
+          "amount_rate_mol_s": 1.739036120595007e-08,
+          "absolute_difference_mol_s": 3.308722450212111e-24
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 1.7390361205950065e-06,
+          "amount_rate_mol_s": 1.7390361205950064e-08,
+          "absolute_difference_mol_s": 3.308722450212111e-24
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 7.279189390466644e-23,
+      "allowed_difference_mol_s": 1.739036120595014e-20,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 693.15,
+      "precursor_mol": 9.000000000000001e-09,
+      "product_mol": 9.999999999999999e-10,
+      "rate_mol_s": 1.2677573319137605e-08,
+      "independent_rate_mol_s": 1.2677573319137655e-08,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 1.2677573319137602e-08,
+          "absolute_difference_mol_s": 3.308722450212111e-24
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 1.26775733191376e-08,
+          "absolute_difference_mol_s": 4.963083675318166e-24
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.000126775733191376,
+          "amount_rate_mol_s": 1.26775733191376e-08,
+          "absolute_difference_mol_s": 4.963083675318166e-24
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 1.2677573319137605e-05,
+          "amount_rate_mol_s": 1.2677573319137605e-08,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 1.2677573319137604e-06,
+          "amount_rate_mol_s": 1.2677573319137603e-08,
+          "absolute_difference_mol_s": 1.6543612251060553e-24
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 4.963083675318166e-23,
+      "allowed_difference_mol_s": 1.2677573319137654e-20,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 693.15,
+      "precursor_mol": 5e-09,
+      "product_mol": 5e-09,
+      "rate_mol_s": 2.1737951507437584e-09,
+      "independent_rate_mol_s": 2.1737951507437675e-09,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 2.1737951507437584e-09,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 2.173795150743759e-09,
+          "absolute_difference_mol_s": 4.1359030627651384e-25
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 2.173795150743758e-05,
+          "amount_rate_mol_s": 2.1737951507437584e-09,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 2.1737951507437587e-06,
+          "amount_rate_mol_s": 2.173795150743759e-09,
+          "absolute_difference_mol_s": 4.1359030627651384e-25
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 2.173795150743758e-07,
+          "amount_rate_mol_s": 2.173795150743758e-09,
+          "absolute_difference_mol_s": 4.1359030627651384e-25
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 9.098986738083304e-24,
+      "allowed_difference_mol_s": 2.1737951507437674e-21,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 693.15,
+      "precursor_mol": 1e-09,
+      "product_mol": 9.000000000000001e-09,
+      "rate_mol_s": 1.7390361205950065e-11,
+      "independent_rate_mol_s": 1.7390361205950136e-11,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 1.739036120595007e-11,
+          "absolute_difference_mol_s": 6.462348535570529e-27
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 1.7390361205950068e-11,
+          "absolute_difference_mol_s": 3.2311742677852644e-27
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 1.7390361205950072e-07,
+          "amount_rate_mol_s": 1.7390361205950074e-11,
+          "absolute_difference_mol_s": 9.693522803355793e-27
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 1.7390361205950064e-08,
+          "amount_rate_mol_s": 1.7390361205950065e-11,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 1.7390361205950066e-09,
+          "amount_rate_mol_s": 1.7390361205950068e-11,
+          "absolute_difference_mol_s": 3.2311742677852644e-27
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 7.108583389127582e-26,
+      "allowed_difference_mol_s": 1.7390361205950136e-23,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 693.15,
+      "precursor_mol": 1e-20,
+      "product_mol": 9.999999999990001e-09,
+      "rate_mol_s": 1.739036120595006e-44,
+      "independent_rate_mol_s": 1.7390361205950137e-44,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 1.7390361205950057e-44,
+          "absolute_difference_mol_s": 2.4892061111444567e-60
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 1.7390361205950057e-44,
+          "absolute_difference_mol_s": 2.4892061111444567e-60
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 1.739036120595005e-40,
+          "amount_rate_mol_s": 1.7390361205950052e-44,
+          "absolute_difference_mol_s": 7.46761833343337e-60
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 1.7390361205950058e-41,
+          "amount_rate_mol_s": 1.739036120595006e-44,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 1.7390361205950064e-42,
+          "amount_rate_mol_s": 1.7390361205950064e-44,
+          "absolute_difference_mol_s": 4.9784122222889134e-60
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 7.716538944547816e-59,
+      "allowed_difference_mol_s": 1.0000000000000001e-40,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 693.15,
+      "precursor_mol": 0.0,
+      "product_mol": 1e-08,
+      "rate_mol_s": 0.0,
+      "independent_rate_mol_s": 0.0,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 0.0,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 0.0,
+      "allowed_difference_mol_s": 1e-40,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 693.15,
+      "precursor_mol": 1e-05,
+      "product_mol": 0.0,
+      "rate_mol_s": 1.739036120595007e-05,
+      "independent_rate_mol_s": 1.739036120595014e-05,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 1.7390361205950066e-05,
+          "absolute_difference_mol_s": 3.3881317890172014e-21
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 1.7390361205950066e-05,
+          "absolute_difference_mol_s": 3.3881317890172014e-21
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.17390361205950067,
+          "amount_rate_mol_s": 1.7390361205950066e-05,
+          "absolute_difference_mol_s": 3.3881317890172014e-21
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.017390361205950066,
+          "amount_rate_mol_s": 1.7390361205950066e-05,
+          "absolute_difference_mol_s": 3.3881317890172014e-21
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.0017390361205950066,
+          "amount_rate_mol_s": 1.7390361205950066e-05,
+          "absolute_difference_mol_s": 3.3881317890172014e-21
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 7.115076756936123e-20,
+      "allowed_difference_mol_s": 1.739036120595014e-17,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 693.15,
+      "precursor_mol": 9e-06,
+      "product_mol": 1e-06,
+      "rate_mol_s": 1.2677573319137598e-05,
+      "independent_rate_mol_s": 1.2677573319137652e-05,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 1.2677573319137598e-05,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 1.2677573319137596e-05,
+          "absolute_difference_mol_s": 1.6940658945086007e-21
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.12677573319137597,
+          "amount_rate_mol_s": 1.2677573319137598e-05,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.0126775733191376,
+          "amount_rate_mol_s": 1.26775733191376e-05,
+          "absolute_difference_mol_s": 1.6940658945086007e-21
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.0012677573319137595,
+          "amount_rate_mol_s": 1.2677573319137594e-05,
+          "absolute_difference_mol_s": 3.3881317890172014e-21
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 5.421010862427522e-20,
+      "allowed_difference_mol_s": 1.2677573319137652e-17,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 693.15,
+      "precursor_mol": 5e-06,
+      "product_mol": 5e-06,
+      "rate_mol_s": 2.1737951507437587e-06,
+      "independent_rate_mol_s": 2.1737951507437676e-06,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 2.1737951507437583e-06,
+          "absolute_difference_mol_s": 4.235164736271502e-22
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 2.1737951507437583e-06,
+          "absolute_difference_mol_s": 4.235164736271502e-22
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.021737951507437583,
+          "amount_rate_mol_s": 2.1737951507437583e-06,
+          "absolute_difference_mol_s": 4.235164736271502e-22
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.0021737951507437583,
+          "amount_rate_mol_s": 2.1737951507437583e-06,
+          "absolute_difference_mol_s": 4.235164736271502e-22
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.00021737951507437583,
+          "amount_rate_mol_s": 2.1737951507437583e-06,
+          "absolute_difference_mol_s": 4.235164736271502e-22
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 8.893845946170154e-21,
+      "allowed_difference_mol_s": 2.1737951507437675e-18,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 693.15,
+      "precursor_mol": 1.0000000000000002e-06,
+      "product_mol": 9e-06,
+      "rate_mol_s": 1.7390361205950074e-08,
+      "independent_rate_mol_s": 1.739036120595015e-08,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 1.7390361205950074e-08,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 1.7390361205950074e-08,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.00017390361205950076,
+          "amount_rate_mol_s": 1.7390361205950077e-08,
+          "absolute_difference_mol_s": 3.308722450212111e-24
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 1.7390361205950076e-05,
+          "amount_rate_mol_s": 1.7390361205950077e-08,
+          "absolute_difference_mol_s": 3.308722450212111e-24
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 1.7390361205950078e-06,
+          "amount_rate_mol_s": 1.7390361205950077e-08,
+          "absolute_difference_mol_s": 3.308722450212111e-24
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 7.610061635487855e-23,
+      "allowed_difference_mol_s": 1.7390361205950148e-20,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 693.15,
+      "precursor_mol": 1e-17,
+      "product_mol": 9.99999999999e-06,
+      "rate_mol_s": 1.7390361205950068e-41,
+      "independent_rate_mol_s": 1.739036120595014e-41,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 1.7390361205950068e-41,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 1.7390361205950058e-41,
+          "absolute_difference_mol_s": 1.0195788231247695e-56
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 1.7390361205950065e-37,
+          "amount_rate_mol_s": 1.7390361205950066e-41,
+          "absolute_difference_mol_s": 2.5489470578119236e-57
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 1.7390361205950057e-38,
+          "amount_rate_mol_s": 1.7390361205950058e-41,
+          "absolute_difference_mol_s": 1.0195788231247695e-56
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 1.7390361205950068e-39,
+          "amount_rate_mol_s": 1.7390361205950068e-41,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 7.137051761873386e-56,
+      "allowed_difference_mol_s": 1.0000000000001739e-40,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 693.15,
+      "precursor_mol": 0.0,
+      "product_mol": 1e-05,
+      "rate_mol_s": 0.0,
+      "independent_rate_mol_s": 0.0,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 0.0,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 0.0,
+      "allowed_difference_mol_s": 1e-40,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 693.15,
+      "precursor_mol": 1,
+      "product_mol": 0,
+      "rate_mol_s": 1.7390361205950067,
+      "independent_rate_mol_s": 1.739036120595014,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 1.7390361205950067,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 1.7390361205950067,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 17390.361205950067,
+          "amount_rate_mol_s": 1.7390361205950067,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 1739.0361205950067,
+          "amount_rate_mol_s": 1.7390361205950067,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 173.90361205950066,
+          "amount_rate_mol_s": 1.7390361205950067,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 7.327471962526033e-15,
+      "allowed_difference_mol_s": 1.739036120595014e-12,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 693.15,
+      "precursor_mol": 0.9,
+      "product_mol": 0.09999999999999998,
+      "rate_mol_s": 1.26775733191376,
+      "independent_rate_mol_s": 1.2677573319137652,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 1.26775733191376,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 1.26775733191376,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 12677.573319137598,
+          "amount_rate_mol_s": 1.2677573319137598,
+          "absolute_difference_mol_s": 2.220446049250313e-16
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 1267.75733191376,
+          "amount_rate_mol_s": 1.26775733191376,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 126.77573319137599,
+          "amount_rate_mol_s": 1.2677573319137598,
+          "absolute_difference_mol_s": 2.220446049250313e-16
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 5.10702591327572e-15,
+      "allowed_difference_mol_s": 1.2677573319137651e-12,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 693.15,
+      "precursor_mol": 0.5,
+      "product_mol": 0.5,
+      "rate_mol_s": 0.21737951507437583,
+      "independent_rate_mol_s": 0.21737951507437675,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 0.21737951507437583,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 0.21737951507437583,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 2173.7951507437583,
+          "amount_rate_mol_s": 0.21737951507437583,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 217.37951507437583,
+          "amount_rate_mol_s": 0.21737951507437583,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 21.737951507437582,
+          "amount_rate_mol_s": 0.21737951507437583,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 9.159339953157541e-16,
+      "allowed_difference_mol_s": 2.1737951507437676e-13,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 693.15,
+      "precursor_mol": 0.1,
+      "product_mol": 0.9,
+      "rate_mol_s": 0.001739036120595007,
+      "independent_rate_mol_s": 0.001739036120595014,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 0.001739036120595007,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 0.0017390361205950069,
+          "absolute_difference_mol_s": 2.168404344971009e-19
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 17.39036120595007,
+          "amount_rate_mol_s": 0.0017390361205950073,
+          "absolute_difference_mol_s": 2.168404344971009e-19
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 1.739036120595007,
+          "amount_rate_mol_s": 0.0017390361205950069,
+          "absolute_difference_mol_s": 2.168404344971009e-19
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.17390361205950072,
+          "amount_rate_mol_s": 0.0017390361205950073,
+          "absolute_difference_mol_s": 2.168404344971009e-19
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 6.938893903907228e-18,
+      "allowed_difference_mol_s": 1.739036120595014e-15,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 693.15,
+      "precursor_mol": 1e-12,
+      "product_mol": 0.999999999999,
+      "rate_mol_s": 1.7390361205950065e-36,
+      "independent_rate_mol_s": 1.739036120595014e-36,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 1.739036120595007e-36,
+          "absolute_difference_mol_s": 3.3409558876152446e-52
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 1.739036120595007e-36,
+          "absolute_difference_mol_s": 3.3409558876152446e-52
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 1.7390361205950057e-32,
+          "amount_rate_mol_s": 1.739036120595006e-36,
+          "absolute_difference_mol_s": 6.681911775230489e-52
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 1.7390361205950068e-33,
+          "amount_rate_mol_s": 1.739036120595007e-36,
+          "absolute_difference_mol_s": 3.3409558876152446e-52
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 1.7390361205950064e-34,
+          "amount_rate_mol_s": 1.7390361205950065e-36,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 7.350102952753538e-51,
+      "allowed_difference_mol_s": 1.000000017390361e-40,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 693.15,
+      "precursor_mol": 0,
+      "product_mol": 1,
+      "rate_mol_s": 0.0,
+      "independent_rate_mol_s": 0.0,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 0.0,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 0.0,
+      "allowed_difference_mol_s": 1e-40,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 723.15,
+      "precursor_mol": 1e-08,
+      "product_mol": 0.0,
+      "rate_mol_s": 7.443883274963192e-08,
+      "independent_rate_mol_s": 7.443883274963221e-08,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 7.443883274963192e-08,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 7.443883274963192e-08,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.0007443883274963191,
+          "amount_rate_mol_s": 7.443883274963192e-08,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 7.443883274963193e-05,
+          "amount_rate_mol_s": 7.443883274963194e-08,
+          "absolute_difference_mol_s": 1.3234889800848443e-23
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 7.443883274963192e-06,
+          "amount_rate_mol_s": 7.443883274963192e-08,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.9116757561866574e-22,
+      "allowed_difference_mol_s": 7.443883274963221e-20,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 723.15,
+      "precursor_mol": 9.000000000000001e-09,
+      "product_mol": 9.999999999999999e-10,
+      "rate_mol_s": 5.4265909074481697e-08,
+      "independent_rate_mol_s": 5.4265909074481895e-08,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 5.4265909074481683e-08,
+          "absolute_difference_mol_s": 1.3234889800848443e-23
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 5.426590907448167e-08,
+          "absolute_difference_mol_s": 2.6469779601696886e-23
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.0005426590907448168,
+          "amount_rate_mol_s": 5.426590907448169e-08,
+          "absolute_difference_mol_s": 6.617444900424222e-24
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 5.426590907448169e-05,
+          "amount_rate_mol_s": 5.426590907448169e-08,
+          "absolute_difference_mol_s": 6.617444900424222e-24
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 5.426590907448169e-06,
+          "amount_rate_mol_s": 5.4265909074481697e-08,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 1.9852334701272664e-22,
+      "allowed_difference_mol_s": 5.42659090744819e-20,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 723.15,
+      "precursor_mol": 5e-09,
+      "product_mol": 5e-09,
+      "rate_mol_s": 9.30485409370399e-09,
+      "independent_rate_mol_s": 9.304854093704027e-09,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 9.30485409370399e-09,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 9.30485409370399e-09,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 9.304854093703989e-05,
+          "amount_rate_mol_s": 9.30485409370399e-09,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 9.304854093703991e-06,
+          "amount_rate_mol_s": 9.304854093703992e-09,
+          "absolute_difference_mol_s": 1.6543612251060553e-24
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 9.30485409370399e-07,
+          "amount_rate_mol_s": 9.30485409370399e-09,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 3.639594695233322e-23,
+      "allowed_difference_mol_s": 9.304854093704026e-21,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 723.15,
+      "precursor_mol": 1e-09,
+      "product_mol": 9.000000000000001e-09,
+      "rate_mol_s": 7.443883274963191e-11,
+      "independent_rate_mol_s": 7.44388327496322e-11,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 7.443883274963195e-11,
+          "absolute_difference_mol_s": 3.877409121342317e-26
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 7.443883274963193e-11,
+          "absolute_difference_mol_s": 1.2924697071141057e-26
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 7.443883274963194e-07,
+          "amount_rate_mol_s": 7.443883274963194e-11,
+          "absolute_difference_mol_s": 2.5849394142282115e-26
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 7.443883274963191e-08,
+          "amount_rate_mol_s": 7.443883274963191e-11,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 7.443883274963192e-09,
+          "amount_rate_mol_s": 7.443883274963193e-11,
+          "absolute_difference_mol_s": 1.2924697071141057e-26
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.8434333556510326e-25,
+      "allowed_difference_mol_s": 7.443883274963219e-23,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 723.15,
+      "precursor_mol": 1e-20,
+      "product_mol": 9.999999999990001e-09,
+      "rate_mol_s": 7.443883274963188e-44,
+      "independent_rate_mol_s": 7.44388327496322e-44,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 7.443883274963189e-44,
+          "absolute_difference_mol_s": 9.956824444577827e-60
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 7.443883274963187e-44,
+          "absolute_difference_mol_s": 9.956824444577827e-60
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 7.443883274963185e-40,
+          "amount_rate_mol_s": 7.443883274963185e-44,
+          "absolute_difference_mol_s": 2.987047333373348e-59
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 7.443883274963188e-41,
+          "amount_rate_mol_s": 7.443883274963188e-44,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 7.44388327496319e-42,
+          "amount_rate_mol_s": 7.44388327496319e-44,
+          "absolute_difference_mol_s": 1.9913648889155653e-59
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 3.1861838222649046e-58,
+      "allowed_difference_mol_s": 1.0000000000000007e-40,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 723.15,
+      "precursor_mol": 0.0,
+      "product_mol": 1e-08,
+      "rate_mol_s": 0.0,
+      "independent_rate_mol_s": 0.0,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 0.0,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 0.0,
+      "allowed_difference_mol_s": 1e-40,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 723.15,
+      "precursor_mol": 1e-05,
+      "product_mol": 0.0,
+      "rate_mol_s": 7.443883274963193e-05,
+      "independent_rate_mol_s": 7.443883274963221e-05,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 7.443883274963191e-05,
+          "absolute_difference_mol_s": 1.3552527156068805e-20
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 7.443883274963193e-05,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.7443883274963192,
+          "amount_rate_mol_s": 7.443883274963193e-05,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.07443883274963192,
+          "amount_rate_mol_s": 7.443883274963193e-05,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.007443883274963192,
+          "amount_rate_mol_s": 7.443883274963193e-05,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.846030702774449e-19,
+      "allowed_difference_mol_s": 7.443883274963221e-17,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 723.15,
+      "precursor_mol": 9e-06,
+      "product_mol": 1e-06,
+      "rate_mol_s": 5.426590907448166e-05,
+      "independent_rate_mol_s": 5.426590907448189e-05,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 5.426590907448167e-05,
+          "absolute_difference_mol_s": 6.776263578034403e-21
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 5.426590907448166e-05,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.5426590907448168,
+          "amount_rate_mol_s": 5.426590907448168e-05,
+          "absolute_difference_mol_s": 1.3552527156068805e-20
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.054265909074481665,
+          "amount_rate_mol_s": 5.426590907448166e-05,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.0054265909074481655,
+          "amount_rate_mol_s": 5.4265909074481656e-05,
+          "absolute_difference_mol_s": 6.776263578034403e-21
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.236166980751353e-19,
+      "allowed_difference_mol_s": 5.4265909074481887e-17,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 723.15,
+      "precursor_mol": 5e-06,
+      "product_mol": 5e-06,
+      "rate_mol_s": 9.304854093703991e-06,
+      "independent_rate_mol_s": 9.304854093704027e-06,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 9.30485409370399e-06,
+          "absolute_difference_mol_s": 1.6940658945086007e-21
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 9.304854093703991e-06,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.0930485409370399,
+          "amount_rate_mol_s": 9.304854093703991e-06,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.00930485409370399,
+          "amount_rate_mol_s": 9.304854093703991e-06,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.000930485409370399,
+          "amount_rate_mol_s": 9.304854093703991e-06,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 3.5575383784680614e-20,
+      "allowed_difference_mol_s": 9.304854093704026e-18,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 723.15,
+      "precursor_mol": 1.0000000000000002e-06,
+      "product_mol": 9e-06,
+      "rate_mol_s": 7.443883274963195e-08,
+      "independent_rate_mol_s": 7.443883274963225e-08,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 7.443883274963196e-08,
+          "absolute_difference_mol_s": 1.3234889800848443e-23
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 7.443883274963195e-08,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.0007443883274963197,
+          "amount_rate_mol_s": 7.443883274963198e-08,
+          "absolute_difference_mol_s": 2.6469779601696886e-23
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 7.443883274963197e-05,
+          "amount_rate_mol_s": 7.443883274963198e-08,
+          "absolute_difference_mol_s": 2.6469779601696886e-23
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 7.443883274963196e-06,
+          "amount_rate_mol_s": 7.443883274963196e-08,
+          "absolute_difference_mol_s": 1.3234889800848443e-23
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 3.044024654195142e-22,
+      "allowed_difference_mol_s": 7.443883274963225e-20,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 723.15,
+      "precursor_mol": 1e-17,
+      "product_mol": 9.99999999999e-06,
+      "rate_mol_s": 7.443883274963192e-41,
+      "independent_rate_mol_s": 7.443883274963222e-41,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 7.443883274963192e-41,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 7.443883274963189e-41,
+          "absolute_difference_mol_s": 3.0587364693743084e-56
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 7.443883274963192e-37,
+          "amount_rate_mol_s": 7.443883274963193e-41,
+          "absolute_difference_mol_s": 1.0195788231247695e-56
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 7.443883274963189e-38,
+          "amount_rate_mol_s": 7.443883274963189e-41,
+          "absolute_difference_mol_s": 3.0587364693743084e-56
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 7.443883274963193e-39,
+          "amount_rate_mol_s": 7.443883274963193e-41,
+          "absolute_difference_mol_s": 1.0195788231247695e-56
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.9567785870618314e-55,
+      "allowed_difference_mol_s": 1.0000000000007442e-40,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 723.15,
+      "precursor_mol": 0.0,
+      "product_mol": 1e-05,
+      "rate_mol_s": 0.0,
+      "independent_rate_mol_s": 0.0,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 0.0,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 0.0,
+      "allowed_difference_mol_s": 1e-40,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 723.15,
+      "precursor_mol": 1,
+      "product_mol": 0,
+      "rate_mol_s": 7.443883274963192,
+      "independent_rate_mol_s": 7.4438832749632216,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 7.443883274963192,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 7.443883274963192,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 74438.83274963193,
+          "amount_rate_mol_s": 7.443883274963193,
+          "absolute_difference_mol_s": 8.881784197001252e-16
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 7443.883274963192,
+          "amount_rate_mol_s": 7.443883274963192,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 744.3883274963192,
+          "amount_rate_mol_s": 7.443883274963192,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.930988785010413e-14,
+      "allowed_difference_mol_s": 7.443883274963222e-12,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 723.15,
+      "precursor_mol": 0.9,
+      "product_mol": 0.09999999999999998,
+      "rate_mol_s": 5.426590907448168,
+      "independent_rate_mol_s": 5.426590907448189,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 5.426590907448168,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 5.426590907448167,
+          "absolute_difference_mol_s": 8.881784197001252e-16
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 54265.90907448167,
+          "amount_rate_mol_s": 5.426590907448167,
+          "absolute_difference_mol_s": 8.881784197001252e-16
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 5426.590907448167,
+          "amount_rate_mol_s": 5.426590907448167,
+          "absolute_difference_mol_s": 8.881784197001252e-16
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 542.6590907448167,
+          "amount_rate_mol_s": 5.426590907448167,
+          "absolute_difference_mol_s": 8.881784197001252e-16
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.042810365310288e-14,
+      "allowed_difference_mol_s": 5.426590907448189e-12,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 723.15,
+      "precursor_mol": 0.5,
+      "product_mol": 0.5,
+      "rate_mol_s": 0.930485409370399,
+      "independent_rate_mol_s": 0.9304854093704027,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 0.930485409370399,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 0.930485409370399,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 9304.85409370399,
+          "amount_rate_mol_s": 0.9304854093703991,
+          "absolute_difference_mol_s": 1.1102230246251565e-16
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 930.485409370399,
+          "amount_rate_mol_s": 0.930485409370399,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 93.0485409370399,
+          "amount_rate_mol_s": 0.930485409370399,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 3.6637359812630166e-15,
+      "allowed_difference_mol_s": 9.304854093704027e-13,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 723.15,
+      "precursor_mol": 0.1,
+      "product_mol": 0.9,
+      "rate_mol_s": 0.007443883274963194,
+      "independent_rate_mol_s": 0.0074438832749632216,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 0.007443883274963194,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 0.007443883274963194,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 74.43883274963193,
+          "amount_rate_mol_s": 0.007443883274963193,
+          "absolute_difference_mol_s": 8.673617379884035e-19
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 7.443883274963194,
+          "amount_rate_mol_s": 0.007443883274963194,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.7443883274963194,
+          "amount_rate_mol_s": 0.007443883274963195,
+          "absolute_difference_mol_s": 8.673617379884035e-19
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.7755575615628914e-17,
+      "allowed_difference_mol_s": 7.443883274963222e-15,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 723.15,
+      "precursor_mol": 1e-12,
+      "product_mol": 0.999999999999,
+      "rate_mol_s": 7.443883274963193e-36,
+      "independent_rate_mol_s": 7.443883274963222e-36,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 7.443883274963193e-36,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 7.443883274963193e-36,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 7.443883274963188e-32,
+          "amount_rate_mol_s": 7.443883274963187e-36,
+          "absolute_difference_mol_s": 5.345529420184391e-51
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 7.443883274963193e-33,
+          "amount_rate_mol_s": 7.443883274963193e-36,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 7.443883274963191e-34,
+          "amount_rate_mol_s": 7.443883274963191e-36,
+          "absolute_difference_mol_s": 1.3363823550460978e-51
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.940041181101415e-50,
+      "allowed_difference_mol_s": 1.0000000744388328e-40,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 723.15,
+      "precursor_mol": 0,
+      "product_mol": 1,
+      "rate_mol_s": 0.0,
+      "independent_rate_mol_s": 0.0,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 0.0,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 0.0,
+      "allowed_difference_mol_s": 1e-40,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 773.15,
+      "precursor_mol": 1e-08,
+      "product_mol": 0.0,
+      "rate_mol_s": 6.537036446324248e-07,
+      "independent_rate_mol_s": 6.53703644632427e-07,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 6.537036446324248e-07,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 6.537036446324248e-07,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.006537036446324248,
+          "amount_rate_mol_s": 6.537036446324248e-07,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.0006537036446324249,
+          "amount_rate_mol_s": 6.537036446324248e-07,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 6.537036446324248e-05,
+          "amount_rate_mol_s": 6.537036446324248e-07,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.117582368135751e-21,
+      "allowed_difference_mol_s": 6.537036446324269e-19,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 773.15,
+      "precursor_mol": 9.000000000000001e-09,
+      "product_mol": 9.999999999999999e-10,
+      "rate_mol_s": 4.765499569370379e-07,
+      "independent_rate_mol_s": 4.765499569370393e-07,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 4.765499569370378e-07,
+          "absolute_difference_mol_s": 1.0587911840678754e-22
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 4.765499569370377e-07,
+          "absolute_difference_mol_s": 2.117582368135751e-22
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.0047654995693703775,
+          "amount_rate_mol_s": 4.765499569370378e-07,
+          "absolute_difference_mol_s": 1.0587911840678754e-22
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.00047654995693703785,
+          "amount_rate_mol_s": 4.7654995693703784e-07,
+          "absolute_difference_mol_s": 5.293955920339377e-23
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 4.765499569370379e-05,
+          "amount_rate_mol_s": 4.7654995693703794e-07,
+          "absolute_difference_mol_s": 5.293955920339377e-23
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 1.4293680984916318e-21,
+      "allowed_difference_mol_s": 4.765499569370393e-19,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 773.15,
+      "precursor_mol": 5e-09,
+      "product_mol": 5e-09,
+      "rate_mol_s": 8.17129555790531e-08,
+      "independent_rate_mol_s": 8.171295557905337e-08,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 8.17129555790531e-08,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 8.17129555790531e-08,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.000817129555790531,
+          "amount_rate_mol_s": 8.17129555790531e-08,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 8.171295557905311e-05,
+          "amount_rate_mol_s": 8.17129555790531e-08,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 8.17129555790531e-06,
+          "amount_rate_mol_s": 8.17129555790531e-08,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.6469779601696886e-22,
+      "allowed_difference_mol_s": 8.171295557905336e-20,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 773.15,
+      "precursor_mol": 1e-09,
+      "product_mol": 9.000000000000001e-09,
+      "rate_mol_s": 6.537036446324247e-10,
+      "independent_rate_mol_s": 6.537036446324268e-10,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 6.537036446324251e-10,
+          "absolute_difference_mol_s": 3.101927297073854e-25
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 6.537036446324249e-10,
+          "absolute_difference_mol_s": 1.0339757656912846e-25
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 6.53703644632425e-06,
+          "amount_rate_mol_s": 6.537036446324251e-10,
+          "absolute_difference_mol_s": 3.101927297073854e-25
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 6.537036446324247e-07,
+          "amount_rate_mol_s": 6.537036446324247e-10,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 6.537036446324248e-08,
+          "amount_rate_mol_s": 6.537036446324249e-10,
+          "absolute_difference_mol_s": 1.0339757656912846e-25
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.0679515313825692e-24,
+      "allowed_difference_mol_s": 6.537036446324268e-22,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 773.15,
+      "precursor_mol": 1e-20,
+      "product_mol": 9.999999999990001e-09,
+      "rate_mol_s": 6.537036446324245e-43,
+      "independent_rate_mol_s": 6.537036446324268e-43,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 6.537036446324245e-43,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 6.537036446324244e-43,
+          "absolute_difference_mol_s": 7.965459555662261e-59
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 6.537036446324242e-39,
+          "amount_rate_mol_s": 6.537036446324243e-43,
+          "absolute_difference_mol_s": 2.3896378666986784e-58
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 6.5370364463242446e-40,
+          "amount_rate_mol_s": 6.537036446324244e-43,
+          "absolute_difference_mol_s": 7.965459555662261e-59
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 6.537036446324247e-41,
+          "amount_rate_mol_s": 6.537036446324247e-43,
+          "absolute_difference_mol_s": 1.5930919111324523e-58
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.3099832711420558e-57,
+      "allowed_difference_mol_s": 1.0000000000000065e-40,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 773.15,
+      "precursor_mol": 0.0,
+      "product_mol": 1e-08,
+      "rate_mol_s": 0.0,
+      "independent_rate_mol_s": 0.0,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 0.0,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 0.0,
+      "allowed_difference_mol_s": 1e-40,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 773.15,
+      "precursor_mol": 1e-05,
+      "product_mol": 0.0,
+      "rate_mol_s": 0.0006537036446324249,
+      "independent_rate_mol_s": 0.0006537036446324269,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 0.0006537036446324249,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 0.0006537036446324249,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 6.537036446324248,
+          "amount_rate_mol_s": 0.0006537036446324249,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.6537036446324248,
+          "amount_rate_mol_s": 0.0006537036446324249,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.06537036446324249,
+          "amount_rate_mol_s": 0.0006537036446324249,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.0599841277224584e-18,
+      "allowed_difference_mol_s": 6.537036446324269e-16,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 773.15,
+      "precursor_mol": 9e-06,
+      "product_mol": 1e-06,
+      "rate_mol_s": 0.00047654995693703763,
+      "independent_rate_mol_s": 0.00047654995693703926,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 0.00047654995693703763,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 0.0004765499569370377,
+          "absolute_difference_mol_s": 5.421010862427522e-20
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 4.765499569370378,
+          "amount_rate_mol_s": 0.0004765499569370378,
+          "absolute_difference_mol_s": 1.6263032587282567e-19
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.47654995693703767,
+          "amount_rate_mol_s": 0.0004765499569370377,
+          "absolute_difference_mol_s": 5.421010862427522e-20
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.04765499569370376,
+          "amount_rate_mol_s": 0.00047654995693703763,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 1.6263032587282567e-18,
+      "allowed_difference_mol_s": 4.765499569370392e-16,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 773.15,
+      "precursor_mol": 5e-06,
+      "product_mol": 5e-06,
+      "rate_mol_s": 8.171295557905311e-05,
+      "independent_rate_mol_s": 8.171295557905336e-05,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 8.171295557905311e-05,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 8.171295557905311e-05,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.817129555790531,
+          "amount_rate_mol_s": 8.171295557905311e-05,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.0817129555790531,
+          "amount_rate_mol_s": 8.171295557905311e-05,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.00817129555790531,
+          "amount_rate_mol_s": 8.171295557905311e-05,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.574980159653073e-19,
+      "allowed_difference_mol_s": 8.171295557905336e-17,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 773.15,
+      "precursor_mol": 1.0000000000000002e-06,
+      "product_mol": 9e-06,
+      "rate_mol_s": 6.53703644632425e-07,
+      "independent_rate_mol_s": 6.537036446324273e-07,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 6.53703644632425e-07,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 6.53703644632425e-07,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.006537036446324251,
+          "amount_rate_mol_s": 6.537036446324252e-07,
+          "absolute_difference_mol_s": 1.0587911840678754e-22
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.0006537036446324253,
+          "amount_rate_mol_s": 6.537036446324253e-07,
+          "absolute_difference_mol_s": 2.117582368135751e-22
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 6.537036446324252e-05,
+          "amount_rate_mol_s": 6.537036446324253e-07,
+          "absolute_difference_mol_s": 2.117582368135751e-22
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.2234614865425384e-21,
+      "allowed_difference_mol_s": 6.537036446324273e-19,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 773.15,
+      "precursor_mol": 1e-17,
+      "product_mol": 9.99999999999e-06,
+      "rate_mol_s": 6.537036446324248e-40,
+      "independent_rate_mol_s": 6.53703644632427e-40,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 6.537036446324248e-40,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 6.537036446324245e-40,
+          "absolute_difference_mol_s": 2.4469891754994467e-55
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 6.537036446324248e-36,
+          "amount_rate_mol_s": 6.537036446324249e-40,
+          "absolute_difference_mol_s": 8.156630584998156e-56
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 6.537036446324245e-37,
+          "amount_rate_mol_s": 6.537036446324245e-40,
+          "absolute_difference_mol_s": 2.4469891754994467e-55
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 6.537036446324248e-38,
+          "amount_rate_mol_s": 6.537036446324249e-40,
+          "absolute_difference_mol_s": 8.156630584998156e-56
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.202290257949502e-54,
+      "allowed_difference_mol_s": 1.000000000006537e-40,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 773.15,
+      "precursor_mol": 0.0,
+      "product_mol": 1e-05,
+      "rate_mol_s": 0.0,
+      "independent_rate_mol_s": 0.0,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 0.0,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 0.0,
+      "allowed_difference_mol_s": 1e-40,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 773.15,
+      "precursor_mol": 1,
+      "product_mol": 0,
+      "rate_mol_s": 65.37036446324248,
+      "independent_rate_mol_s": 65.3703644632427,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 65.37036446324248,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 65.37036446324248,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 653703.6446324248,
+          "amount_rate_mol_s": 65.37036446324248,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 65370.364463242484,
+          "amount_rate_mol_s": 65.37036446324248,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 6537.036446324248,
+          "amount_rate_mol_s": 65.37036446324248,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.1316282072803006e-13,
+      "allowed_difference_mol_s": 6.53703644632427e-11,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 773.15,
+      "precursor_mol": 0.9,
+      "product_mol": 0.09999999999999998,
+      "rate_mol_s": 47.654995693703775,
+      "independent_rate_mol_s": 47.654995693703924,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 47.65499569370378,
+          "absolute_difference_mol_s": 7.105427357601002e-15
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 47.654995693703775,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 476549.9569370377,
+          "amount_rate_mol_s": 47.654995693703775,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 47654.99569370377,
+          "amount_rate_mol_s": 47.654995693703775,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 4765.499569370377,
+          "amount_rate_mol_s": 47.65499569370377,
+          "absolute_difference_mol_s": 7.105427357601002e-15
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 1.4921397450962104e-13,
+      "allowed_difference_mol_s": 4.7654995693703924e-11,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 773.15,
+      "precursor_mol": 0.5,
+      "product_mol": 0.5,
+      "rate_mol_s": 8.17129555790531,
+      "independent_rate_mol_s": 8.171295557905337,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 8.17129555790531,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 8.17129555790531,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 81712.9555790531,
+          "amount_rate_mol_s": 8.17129555790531,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 8171.2955579053105,
+          "amount_rate_mol_s": 8.17129555790531,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 817.129555790531,
+          "amount_rate_mol_s": 8.17129555790531,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.6645352591003757e-14,
+      "allowed_difference_mol_s": 8.171295557905337e-12,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 773.15,
+      "precursor_mol": 0.1,
+      "product_mol": 0.9,
+      "rate_mol_s": 0.0653703644632425,
+      "independent_rate_mol_s": 0.0653703644632427,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 0.0653703644632425,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 0.0653703644632425,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 653.7036446324249,
+          "amount_rate_mol_s": 0.0653703644632425,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 65.3703644632425,
+          "amount_rate_mol_s": 0.0653703644632425,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 6.537036446324249,
+          "amount_rate_mol_s": 0.06537036446324249,
+          "absolute_difference_mol_s": 1.3877787807814457e-17
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 1.942890293094024e-16,
+      "allowed_difference_mol_s": 6.537036446324269e-14,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 773.15,
+      "precursor_mol": 1e-12,
+      "product_mol": 0.999999999999,
+      "rate_mol_s": 6.537036446324247e-35,
+      "independent_rate_mol_s": 6.537036446324269e-35,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 6.537036446324249e-35,
+          "absolute_difference_mol_s": 2.1382117680737565e-50
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 6.537036446324248e-35,
+          "absolute_difference_mol_s": 1.0691058840368783e-50
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 6.537036446324244e-31,
+          "amount_rate_mol_s": 6.537036446324244e-35,
+          "absolute_difference_mol_s": 2.1382117680737565e-50
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 6.537036446324248e-32,
+          "amount_rate_mol_s": 6.537036446324248e-35,
+          "absolute_difference_mol_s": 1.0691058840368783e-50
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 6.537036446324247e-33,
+          "amount_rate_mol_s": 6.537036446324247e-35,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 2.2451223564774443e-49,
+      "allowed_difference_mol_s": 1.0000006537036445e-40,
+      "within_numeric_budget": true
+    },
+    {
+      "temperature_k": 773.15,
+      "precursor_mol": 0,
+      "product_mol": 1,
+      "rate_mol_s": 0.0,
+      "independent_rate_mol_s": 0.0,
+      "amount_rescaling": [
+        {
+          "factor": 0.001,
+          "rate_back_in_original_amount_unit": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "factor": 1000,
+          "rate_back_in_original_amount_unit": 0.0,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "concentration_representation": [
+        {
+          "volume_m3": 0.0001,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.001,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        },
+        {
+          "volume_m3": 0.01,
+          "volumetric_rate_mol_m3_s": 0.0,
+          "amount_rate_mol_s": 0.0,
+          "absolute_difference_mol_s": 0.0
+        }
+      ],
+      "maximum_absolute_difference_mol_s": 0.0,
+      "allowed_difference_mol_s": 1e-40,
+      "within_numeric_budget": true
+    }
+  ],
+  "summary": {
+    "thermal_records": 18,
+    "thermal_arithmetic_maximum_differences": {
+      "cp_j_mol_k": 1.7053025658242404e-13,
+      "sensible_enthalpy_j_mol": 1.0186340659856796e-10,
+      "relative_entropy_j_mol_k": 2.26929586233382e-13
+    },
+    "thermal_arithmetic_within_budgets": {
+      "cp_j_mol_k": true,
+      "sensible_enthalpy_j_mol": true,
+      "relative_entropy_j_mol_k": true
+    },
+    "f3_amount_records": 54,
+    "all_f3_amount_arithmetic_budgets_met": true,
+    "standard_formula_reaction_atom_residuals": {
+      "Al": 0,
+      "Si": 0,
+      "O": 0,
+      "H": 0
+    },
+    "literal_volume_constraints": [
+      {
+        "condition": "initial",
+        "temperature_k": 600,
+        "literal_molar_volumes_m3_mol": {
+          "kaolinite": 30,
+          "metakaolin": 43.508295999999994
+        },
+        "kaolinite_plus_metakaolin_occupied_volume_fraction": 7.3508296,
+        "can_add_nonnegative_quartz_and_gas_volume_to_equal_one": false
+      },
+      {
+        "condition": "inlet",
+        "temperature_k": 657.15,
+        "literal_molar_volumes_m3_mol": {
+          "kaolinite": 30.0,
+          "metakaolin": 43.702100793999996
+        },
+        "kaolinite_plus_metakaolin_occupied_volume_fraction": 18.04765124614,
+        "can_add_nonnegative_quartz_and_gas_volume_to_equal_one": false
+      }
+    ],
+    "common_caloric_domain_k": [
+      298,
+      700
+    ],
+    "paper_reaction_temperature_domain_k": [
+      723.15,
+      973.15
+    ],
+    "caloric_and_paper_reaction_temperature_domains_overlap": false,
+    "printed_enthalpies_plus_borrowed_USGS_steam_reaction_heat_at_reference_j_mol": 424990.0,
+    "reaction_heat_is_qualified_measurement": false,
+    "absolute_entropy_or_affinity_qualification": false
+  },
+  "scope": "Literal source audit and algebraic conversion-to-amount coupling only. No repaired source reactor, qualified thermal mechanism, transient specimen prediction or mineral Gibbs function.",
+  "material_qualified": false,
+  "training_eligible": false
+}
