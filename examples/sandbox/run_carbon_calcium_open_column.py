@@ -8,6 +8,7 @@ import numpy as np
 from scipy.integrate import BDF
 
 from carbon_calcium_inventory_setup import build
+from carbon_calcium_exact_thermal_cache import cached_inventory_model
 from sludge_sandbox.carbon_calcium_open_column import CarbonCalciumOpenColumn
 from sludge_sandbox.carbon_calcium_open_colored_jacobian import OpenColumnColoredJacobian, OpenColumnAdaptiveBodyJacobian
 
@@ -26,6 +27,8 @@ def main():
     rigid = json.loads((root / face['rigid_parameters']).read_text())
     pressure = json.loads((root / rigid['pressure_parameters']).read_text())
     model, sources, _ = build(root, pressure)
+    if 'exact_thermal_cache' in p:
+        model = cached_inventory_model(model, p['exact_thermal_cache']['phase_entries'])
     count = p['meshes'][args.mesh]
     cell = CarbonCalciumOpenColumn(model, p, cell_p, face, rigid['numerics'], count)
     policy = p['numerics']
