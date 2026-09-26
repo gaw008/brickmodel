@@ -1,5 +1,17 @@
 # 全流程近似模型交付报告
 
+## 当前运行入口
+
+```sh
+.venv/bin/python examples/run_full_cycle.py parameters.full_cycle.json --out runs/full-cycle/current
+.venv/bin/python examples/run_full_cycle.py parameters.full_cycle.json --out runs/full-cycle/current --acceptance
+.venv/bin/python examples/run_full_cycle.py parameters.full_cycle.json --out runs/full-cycle/current --compare
+.venv/bin/python examples/run_full_cycle.py parameters.full_cycle.json --out runs/full-cycle/current --synthetic-calibration
+.venv/bin/python examples/run_full_cycle.py parameters.full_cycle.json --out runs/full-cycle/current --calibrate docs/FULL_CYCLE_SOLID_SYNTHETIC_OBSERVATIONS.json
+```
+
+旧充分通气版DSC定义不同，不把历史合成数据文件用于当前版本的标定。下方历史章节中的数据仅代表当时版本。
+
 ## 石英与轴向热弹性：当前开发
 
 当前主机继续为VME。有限孔气升级之后，加入已有NIST来源的石英Cp、728 J/mol转变热和可逆骨架热膨胀；旧UQ与合成标定结果不代替此版本的结果。
@@ -14,6 +26,12 @@
 
 正式三档验收已经实际退出0：[FULL_CYCLE_SOLID_RESULTS.json](FULL_CYCLE_SOLID_RESULTS.json)。全程和每阶段质量/元素/能量最大相对残差0.00276659%；时间加密关键量最大变化0.000412537%，空间加密最大0.398467%，均低于2%。三档有效热容正、熵预算通过，机械平衡残差低于规定0.1%外压尺度。石英dH/dT=Cp=T dS/dT的采样相对差约4.14e-16。基准半砖终态密度1352.62kg/m³、孔隙率0.485625、厚度收缩0.95084%、峰值温差20.679K、超压418.30Pa；最高可逆热应变约0.925%。175项主参数：38 literature、137 assumed、0 measured。实现文件建立至本记录约8.7分钟；基准/时间/空间运行分别61.9/55.3/130.9秒。接下来在此版本运行三方案UQ和明确合成标定，旧版本结果不继承。 材料和真实砖预测仍待实测。
 
+
+
+
+**工程容差更新**：十参数抽样的第四次运行（高渗透率约3.476e-12m²）在长干燥段耗时过长，已保存前三次完成结果、设置和停止证据，准确的新UQ进程退出130。没有中断受保护的旧审计，也没有缩小材料参数范围。把无量纲ODE容差从rtol=2e-6/atol=1e-9调整为1e-5/1e-7后，同一慢工况119.64s完成且物理一致性通过。随后对默认案例重新完成基准、时间减半、网格加倍：最大差异0.000901%/0.39468%，全程/每阶段守恒及熵预算仍通过。现行结果与先前较紧设置均在FULL_CYCLE_SOLID_RESULTS.json保留；0.1%和2%物理门槛未改，库存实际数值未裁剪。
+
+**升级合成标定**：[FULL_CYCLE_SOLID_CALIBRATION.json](FULL_CYCLE_SOLID_CALIBRATION.json)已保存完整七类合成观测的拟合结果；首次使用较紧ODE设置，耗时899.02s。换热系数与烧结速率相对真值误差分别约0.0000667%和0.000000969%，局部参数Jacobian秩2，物理一致性通过。高恢复精度只是无噪声、同模型生成数据的数值可恢复性，不是现实精度目标或测量验证。状态仍为assumed。目前再用实际观测文件、当前工程ODE设置及该拟合值作为初值演示导入，不声称这是独立材料验证。新版24次UQ重跑中，尚不继承旧UQ通过结论。
 
 ## 有限孔隙气体耦合：当前开发验收
 
@@ -117,3 +135,5 @@
 当前项目148.31GB，私有备份3.10GB，合计151.41GB；本地Git按需缓存现3.85GB。两条原低温审计仍在运行且尚无最终JSON，启动身份和Desktop工作目录一致，因此继续保留现场。迁出Desktop、总占用20GB及完整云端下载恢复仍未通过；后续只处理这些收尾，不重开已完成模型验收或旧计算。本轮归档/备份收尾到此约85.9分钟，未新增模型功能。
 
 2026-09-26 21:10 UTC：原base128低温审计PID92880/session9947已正常退出0，最终JSON completed=true、原数值预算通过、material_qualified=false；耗时67479.81s。未重开计算。迁移现在只等待原refined审计PID99759（启动身份与Desktop cwd一致），用户的保留现场选择继续生效。
+
+2026-09-26 21:16 UTC：base128原始轨迹7,435,022,233字节与现存1,746,456,078字节gzip分片逐字节复核一致，并确认未被Git跟踪、无人打开后仅去掉原始副本。压缩档、最终审计和恢复清单保留。refined输入仍在使用，未清理。云端完整恢复和20GB目标仍未达。
