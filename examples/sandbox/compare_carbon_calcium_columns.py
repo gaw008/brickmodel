@@ -4,19 +4,22 @@ import json
 from pathlib import Path
 
 import numpy as np
+import sys
+
+sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'src'))
+from sludge_sandbox.research_trajectory import trajectory_records
 
 
 def load(path):
     samples={}
-    with path.open() as stream:
-        header=json.loads(next(stream))
-        for line in stream:
-            row=json.loads(line);terminal=row
-            if row['kind'] not in ('initial','sample'):continue
-            states=row['states'];names=list(states[0]['amounts_mol'])
-            samples[row['time_s']]={'temperature':np.array([s['temperature_k'] for s in states]),
-                'pressure':np.array([s['pressure_pa'] for s in states]),
-                'amounts':np.array([[s['amounts_mol'][k] for k in names] for s in states])}
+    stream=trajectory_records(path);header=next(stream)
+    for row in stream:
+        terminal=row
+        if row['kind'] not in ('initial','sample'):continue
+        states=row['states'];names=list(states[0]['amounts_mol'])
+        samples[row['time_s']]={'temperature':np.array([s['temperature_k'] for s in states]),
+            'pressure':np.array([s['pressure_pa'] for s in states]),
+            'amounts':np.array([[s['amounts_mol'][k] for k in names] for s in states])}
     return header,samples,names,terminal
 
 

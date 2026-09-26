@@ -9,11 +9,11 @@ from numpy.polynomial.legendre import leggauss
 from audit_carbon_gas_cycle import polynomial
 from carbon_calcium_pressure_setup import build
 from carbon_calcium_source_audit import SourceState,independent_exchange
+from sludge_sandbox.research_trajectory import trajectory_records
 
 
 def records(path):
-    with path.open() as stream:
-        for line in stream:yield json.loads(line)
+    yield from trajectory_records(path)
 
 
 def audit(path,root,integration_coordinates):

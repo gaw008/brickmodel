@@ -11,11 +11,13 @@ from scipy.integrate import BDF
 from carbon_calcium_pressure_setup import build
 from sludge_sandbox.carbon_calcium_temperature_column import CarbonCalciumTemperatureColumn
 from sludge_sandbox.carbon_calcium_temperature_jacobian import TemperatureColumnJacobian
+from sludge_sandbox.research_trajectory import PartitionedTrajectoryWriter
 
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--parameters',type=Path,required=True)
     parser.add_argument('--mesh',required=True);parser.add_argument('--tolerance',choices=['base','refined'],required=True);parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--archive-parameters',type=Path)
     args=parser.parse_args();root=args.parameters.resolve().parent;p=json.loads(args.parameters.read_text())
     face=json.loads((root/p['exchange_parameters']).read_text());rigid=json.loads((root/face['rigid_parameters']).read_text());pressure=json.loads((root/rigid['pressure_parameters']).read_text())
     model,sources,_=build(root,pressure);n=p['meshes'][args.mesh];column=CarbonCalciumTemperatureColumn(model,p,face,rigid['numerics'],n)
@@ -24,7 +26,9 @@ def main():
     atol=np.array(cell_atol*n+[policy['production_absolute_tolerance_j_k']])*factor
     times=np.arange(policy['observation_interval_s'],p['duration_s']+policy['observation_interval_s'],policy['observation_interval_s'])
     sample=steps=0;started=time.monotonic()
-    with args.output.open('x') as stream:
+    storage = (args.output.open('x') if args.archive_parameters is None else
+               PartitionedTrajectoryWriter(args.output,root,json.loads(args.archive_parameters.read_text())))
+    with storage as stream:
         def emit(row):stream.write(json.dumps(row,allow_nan=False)+'\n');stream.flush()
         def record(kind,at,values):
             states,faces=column.observe(values)
