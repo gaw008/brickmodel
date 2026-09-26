@@ -1,0 +1,1360 @@
+{
+  "settings": {
+    "plateau_parameters": "parameters.giammaria2019_steam_plateau.json",
+    "source_file": "data/sandbox/research/giammaria2019-temperature-v1/source.json",
+    "output_directory": "data/sandbox/research/giammaria2019-temperature-v1",
+    "figure_directory": "docs/sandbox/research/giammaria2019-temperature-v1",
+    "reference_temperature_c": 630,
+    "gas_constant_j_mol_k": 8.31446261815324,
+    "gas_constant_basis": "Explicit SI numerical convention; source does not print the numerical R used in its regressions.",
+    "inverse_temperature_coordinate_scale_k": 1000,
+    "fit": {
+      "method": "highs",
+      "objective": "Minimize the maximum absolute log residual divided by each printed asymmetric log margin; energy slopes constrained to the source's reported marginal intervals. Source table re-calibration, not new experimental validation.",
+      "primal_feasibility_tolerance": 1e-09,
+      "dual_feasibility_tolerance": 1e-09,
+      "margin_comparison_roundoff": 1e-08,
+      "source_uncertainty_covariance_known": false,
+      "confidence_interpretation": false
+    },
+    "review_temperatures_c": [
+      590,
+      600,
+      610,
+      620,
+      630,
+      640,
+      650
+    ],
+    "review_water_pressures_bar": [
+      0,
+      2.5e-06,
+      0.00015,
+      0.00075,
+      0.0025,
+      0.0125
+    ],
+    "numerical_review": {
+      "decimal_digits": 70,
+      "rate_budget_mol_s": 1e-20,
+      "temperature_derivative_budget_mol_s_k": 1e-21,
+      "pressure_derivative_budget_mol_s_pa": 1e-21
+    },
+    "figure": {
+      "width_inches": 11,
+      "height_inches": 7,
+      "dpi": 150
+    },
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "source": {
+    "paper_doi": "10.1016/j.jcou.2019.06.017",
+    "inspected_source_doi": "10.3990/1.9789036549431",
+    "inspected_pdf_url": "https://www.utwente.nl/en/tnw/cpm/publications/Dissertations/2015-now/thesis-guido-giammaria.pdf",
+    "source_pages_visually_reviewed": [
+      51,
+      56,
+      57
+    ],
+    "page_numbering": "One-based PDF pages; printed pages 46,51,52 respectively.",
+    "source_scope": "Thermal experiments in Chapter 2, no plasma. Same fixed, aged specimen and plateau conditions as the preceding source contract.",
+    "printed_temperature_relations": {
+      "dry": {
+        "activation_energy_j_mol": 201000,
+        "energy_margin_j_mol": 7000,
+        "log_prefactor": 8.6,
+        "log_prefactor_margin": 0.9,
+        "prefactor_unit": "mol/s",
+        "locator": "Figure 2.9, PDF page 51; dry experiment fit, not necessarily identical to extrapolated k2 in Table 2.1"
+      },
+      "wet": {
+        "activation_energy_j_mol": 181000,
+        "energy_margin_j_mol": 14000,
+        "log_prefactor": 20.0,
+        "log_prefactor_margin": 1.9,
+        "prefactor_unit": "m2/s",
+        "locator": "Figure 2.10, PDF page 56; multiply by site density to obtain whole-specimen mol/s"
+      },
+      "adsorption": {
+        "enthalpy_j_mol": -110000,
+        "enthalpy_margin_j_mol": 60000,
+        "entropy_j_mol_k": -66,
+        "entropy_margin_j_mol_k": 60,
+        "reference_pressure_pa": 100000,
+        "locator": "Figure 2.11, PDF page 57; interpret log K as log(K_per_bar times 1 bar), not log of a dimensioned numerical quantity in Pa"
+      }
+    },
+    "known_source_qualifications": [
+      "Text on printed page 52 says wet activation energy 180 +/- 14 kJ/mol, while Figure 2.10 and printed page 51 say 181 +/- 14; retain the graph-specific value and record the difference.",
+      "The printed prefactors and slopes are separately rounded and their covariance is unavailable; their marginal intervals must not be treated as independent confidence distributions.",
+      "The adsorption enthalpy is a proposed surface-path fit, not an independently measured calorimetric reaction heat or a complete intermediate thermodynamic state.",
+      "Source-rate observations and Table 2.1 were already used for fitting; leaving out one table row is an internal consistency exercise, not an independent real-world prediction.",
+      "No transient temperature program, CO2 inhibition law, active-area evolution or reverse-carbonation rate is provided by these relations."
+    ],
+    "redistribution": "Only required numerical facts and locators are recorded; copyrighted PDF, page images and complete source scripts are not redistributed.",
+    "material_qualified": false,
+    "training_eligible": false
+  },
+  "relations": {
+    "dry": {
+      "rows": [
+        {
+          "temperature_c": 590,
+          "temperature_k": 863.15,
+          "coordinate": -0.0513113959733811,
+          "value": 1.1016000000000001e-08,
+          "margin": 1.134e-09,
+          "printed_central_prediction": 3.727303468438974e-09,
+          "printed_prediction_inside_table_margin": false,
+          "printed_relative_difference": -0.6616463808606596,
+          "reconciled_prediction": 1.1767340847495892e-08,
+          "reconciled_relative_difference": 0.06820450685329438,
+          "reconciled_inside_source_margin": true
+        },
+        {
+          "temperature_c": 610,
+          "temperature_k": 883.15,
+          "coordinate": -0.025074693672889024,
+          "value": 2.0655e-08,
+          "margin": 2.025e-09,
+          "printed_central_prediction": 7.028340275873367e-09,
+          "printed_prediction_inside_table_margin": false,
+          "printed_relative_difference": -0.6597269292726522,
+          "reconciled_prediction": 2.2236807897627536e-08,
+          "reconciled_relative_difference": 0.07658232377765856,
+          "reconciled_inside_source_margin": true
+        },
+        {
+          "temperature_c": 630,
+          "temperature_k": 903.15,
+          "coordinate": 0.0,
+          "value": 4.2200999999999995e-08,
+          "margin": 1.7009999999999998e-09,
+          "printed_central_prediction": 1.2885786352785068e-08,
+          "printed_prediction_inside_table_margin": false,
+          "printed_relative_difference": -0.6946568481129578,
+          "reconciled_prediction": 4.085311882760321e-08,
+          "reconciled_relative_difference": -0.0319395552806044,
+          "reconciled_inside_source_margin": true
+        },
+        {
+          "temperature_c": 650,
+          "temperature_k": 923.15,
+          "coordinate": 0.02398820962705092,
+          "value": 7.0875e-08,
+          "margin": 2.835e-09,
+          "printed_central_prediction": 2.3012411073256356e-08,
+          "printed_prediction_inside_table_margin": false,
+          "printed_relative_difference": -0.6753098966736317,
+          "reconciled_prediction": 7.310250786792511e-08,
+          "reconciled_relative_difference": 0.03142868243986038,
+          "reconciled_inside_source_margin": true
+        }
+      ],
+      "fit": {
+        "log_reference_value": -17.01328267026584,
+        "coordinate_slope": 24.256896029008516,
+        "reference_value": 4.085311882760321e-08,
+        "energy_j_mol": 201683.05526562105,
+        "maximum_log_margin_factor": 0.7889941051594019,
+        "solver_success": true,
+        "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+        "all_fitted_rows_inside_source_margins": true
+      },
+      "withheld_table_rows": [
+        {
+          "temperature_c": 590,
+          "fit": {
+            "log_reference_value": -17.01328267026584,
+            "coordinate_slope": 24.25689602900849,
+            "reference_value": 4.085311882760321e-08,
+            "energy_j_mol": 201683.05526562085,
+            "maximum_log_margin_factor": 0.788994105159412,
+            "solver_success": true,
+            "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "all_fitted_rows_inside_source_margins": true
+          },
+          "predicted": 1.1767340847495892e-08,
+          "source_value": 1.1016000000000001e-08,
+          "source_margin": 1.134e-09,
+          "relative_difference": 0.06820450685329438,
+          "inside_withheld_source_margin": true
+        },
+        {
+          "temperature_c": 610,
+          "fit": {
+            "log_reference_value": -17.01178435963036,
+            "coordinate_slope": 24.134892186299066,
+            "reference_value": 4.091437536923929e-08,
+            "energy_j_mol": 200668.6588761423,
+            "maximum_log_margin_factor": 0.7525760238981809,
+            "solver_success": true,
+            "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "all_fitted_rows_inside_source_margins": true
+          },
+          "predicted": 2.2338383877310813e-08,
+          "source_value": 2.0655e-08,
+          "source_margin": 2.025e-09,
+          "relative_difference": 0.08150006668171454,
+          "inside_withheld_source_margin": true
+        },
+        {
+          "temperature_c": 630,
+          "fit": {
+            "log_reference_value": -17.062388340970337,
+            "coordinate_slope": 24.823143820205573,
+            "reference_value": 3.8895458509305346e-08,
+            "energy_j_mol": 206391.10135814085,
+            "maximum_log_margin_factor": 0.11213289708426172,
+            "solver_success": true,
+            "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "all_fitted_rows_inside_source_margins": true
+          },
+          "predicted": 3.8895458509305346e-08,
+          "source_value": 4.2200999999999995e-08,
+          "source_margin": 1.7009999999999998e-09,
+          "relative_difference": -0.07832851095222032,
+          "inside_withheld_source_margin": false
+        },
+        {
+          "temperature_c": 650,
+          "fit": {
+            "log_reference_value": -17.00746259078656,
+            "coordinate_slope": 25.016649848887017,
+            "reference_value": 4.10915804859348e-08,
+            "energy_j_mol": 208000.0,
+            "maximum_log_margin_factor": 0.6475306980365702,
+            "solver_success": true,
+            "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "all_fitted_rows_inside_source_margins": true
+          },
+          "predicted": 7.488157659494065e-08,
+          "source_value": 7.0875e-08,
+          "source_margin": 2.835e-09,
+          "relative_difference": 0.05653018123373042,
+          "inside_withheld_source_margin": false
+        }
+      ],
+      "internal_fitted_table_comparison_only": true
+    },
+    "wet": {
+      "rows": [
+        {
+          "temperature_c": 590,
+          "temperature_k": 863.15,
+          "coordinate": -0.0513113959733811,
+          "value": 4.9004999999999994e-08,
+          "margin": 2.592e-09,
+          "printed_central_prediction": 4.3766229541436106e-08,
+          "printed_prediction_inside_table_margin": false,
+          "printed_relative_difference": -0.10690277438146902,
+          "reconciled_prediction": 4.765170421365085e-08,
+          "reconciled_relative_difference": -0.02761546344963048,
+          "reconciled_inside_source_margin": true
+        },
+        {
+          "temperature_c": 610,
+          "temperature_k": 883.15,
+          "coordinate": -0.025074693672889024,
+          "value": 8.180999999999999e-08,
+          "margin": 4.05e-09,
+          "printed_central_prediction": 7.74797839674267e-08,
+          "printed_prediction_inside_table_margin": false,
+          "printed_relative_difference": -0.0529301556359038,
+          "reconciled_prediction": 8.387260564404695e-08,
+          "reconciled_relative_difference": 0.02521214575292704,
+          "reconciled_inside_source_margin": true
+        },
+        {
+          "temperature_c": 630,
+          "temperature_k": 903.15,
+          "coordinate": 0.0,
+          "value": 1.458e-07,
+          "margin": 2.268e-08,
+          "printed_central_prediction": 1.337370402241001e-07,
+          "printed_prediction_inside_table_margin": true,
+          "printed_relative_difference": -0.08273634962894302,
+          "reconciled_prediction": 1.4397494824884445e-07,
+          "reconciled_relative_difference": -0.012517501722603193,
+          "reconciled_inside_source_margin": true
+        },
+        {
+          "temperature_c": 650,
+          "temperature_k": 923.15,
+          "coordinate": 0.02398820962705092,
+          "value": 2.4948e-07,
+          "margin": 1.5389999999999998e-08,
+          "printed_central_prediction": 2.2544628526332025e-07,
+          "printed_prediction_inside_table_margin": false,
+          "printed_relative_difference": -0.09633523623809417,
+          "reconciled_prediction": 2.4142688856530545e-07,
+          "reconciled_relative_difference": -0.03227958728032121,
+          "reconciled_inside_source_margin": true
+        }
+      ],
+      "fit": {
+        "log_reference_value": -15.753626522999168,
+        "coordinate_slope": 21.549226994739076,
+        "reference_value": 1.4397494824884445e-07,
+        "energy_j_mol": 179170.24229785672,
+        "maximum_log_margin_factor": 0.5153206912830083,
+        "solver_success": true,
+        "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+        "all_fitted_rows_inside_source_margins": true
+      },
+      "withheld_table_rows": [
+        {
+          "temperature_c": 590,
+          "fit": {
+            "log_reference_value": -15.74708850807668,
+            "coordinate_slope": 22.7339347521233,
+            "reference_value": 1.4491934247667827e-07,
+            "energy_j_mol": 189020.450660064,
+            "maximum_log_margin_factor": 0.03583287325463184,
+            "solver_success": true,
+            "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "all_fitted_rows_inside_source_margins": true
+          },
+          "predicted": 4.513542436218587e-08,
+          "source_value": 4.9004999999999994e-08,
+          "source_margin": 2.592e-09,
+          "relative_difference": -0.07896287394784457,
+          "inside_withheld_source_margin": false
+        },
+        {
+          "temperature_c": 610,
+          "fit": {
+            "log_reference_value": -15.727870889361617,
+            "coordinate_slope": 21.601802539128578,
+            "reference_value": 1.4773127997538628e-07,
+            "energy_j_mol": 179607.37969631227,
+            "maximum_log_margin_factor": 0.09101546665804468,
+            "solver_success": true,
+            "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "all_fitted_rows_inside_source_margins": true
+          },
+          "predicted": 8.594747605557813e-08,
+          "source_value": 8.180999999999999e-08,
+          "source_margin": 4.05e-09,
+          "relative_difference": 0.05057420921132069,
+          "inside_withheld_source_margin": false
+        },
+        {
+          "temperature_c": 630,
+          "fit": {
+            "log_reference_value": -15.753626522999168,
+            "coordinate_slope": 21.549226994739076,
+            "reference_value": 1.4397494824884445e-07,
+            "energy_j_mol": 179170.24229785672,
+            "maximum_log_margin_factor": 0.5153206912830083,
+            "solver_success": true,
+            "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "all_fitted_rows_inside_source_margins": true
+          },
+          "predicted": 1.4397494824884445e-07,
+          "source_value": 1.458e-07,
+          "source_margin": 2.268e-08,
+          "relative_difference": -0.012517501722603193,
+          "inside_withheld_source_margin": true
+        },
+        {
+          "temperature_c": 650,
+          "fit": {
+            "log_reference_value": -15.788218056259458,
+            "coordinate_slope": 20.624894560059438,
+            "reference_value": 1.3907978770111947e-07,
+            "energy_j_mol": 171484.91482296633,
+            "maximum_log_margin_factor": 0.2790931106402756,
+            "solver_success": true,
+            "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "all_fitted_rows_inside_source_margins": true
+          },
+          "predicted": 2.2810409343701702e-07,
+          "source_value": 2.4948e-07,
+          "source_margin": 1.5389999999999998e-08,
+          "relative_difference": -0.08568184448846786,
+          "inside_withheld_source_margin": false
+        }
+      ],
+      "internal_fitted_table_comparison_only": true
+    },
+    "adsorption": {
+      "rows": [
+        {
+          "temperature_c": 590,
+          "temperature_k": 863.15,
+          "coordinate": -0.0513113959733811,
+          "value": 0.0342,
+          "margin": 0.0091,
+          "printed_central_prediction": 0.01618987682863106,
+          "printed_prediction_inside_table_margin": false,
+          "printed_relative_difference": -0.5266117886365188,
+          "reconciled_prediction": 0.03584862839820766,
+          "reconciled_relative_difference": 0.048205508719522235,
+          "reconciled_inside_source_margin": true
+        },
+        {
+          "temperature_c": 610,
+          "temperature_k": 883.15,
+          "coordinate": -0.025074693672889024,
+          "value": 0.027500000000000004,
+          "margin": 0.0094,
+          "printed_central_prediction": 0.011441826847021464,
+          "printed_prediction_inside_table_margin": false,
+          "printed_relative_difference": -0.5839335691992196,
+          "reconciled_prediction": 0.025297830708087908,
+          "reconciled_relative_difference": -0.080078883342258,
+          "reconciled_inside_source_margin": true
+        },
+        {
+          "temperature_c": 630,
+          "temperature_k": 903.15,
+          "coordinate": 0.0,
+          "value": 0.017900000000000003,
+          "margin": 0.0082,
+          "printed_central_prediction": 0.008211523659259676,
+          "printed_prediction_inside_table_margin": false,
+          "printed_relative_difference": -0.5412556614938729,
+          "reconciled_prediction": 0.018130048440534095,
+          "reconciled_relative_difference": 0.012851868186262116,
+          "reconciled_inside_source_margin": true
+        },
+        {
+          "temperature_c": 650,
+          "temperature_k": 923.15,
+          "coordinate": 0.02398820962705092,
+          "value": 0.012600000000000002,
+          "margin": 0.0032,
+          "printed_central_prediction": 0.005978534439171945,
+          "printed_prediction_inside_table_margin": false,
+          "printed_relative_difference": -0.5255131397482584,
+          "reconciled_prediction": 0.013182075793832156,
+          "reconciled_relative_difference": 0.04619649157398048,
+          "reconciled_inside_source_margin": true
+        }
+      ],
+      "fit": {
+        "log_reference_value": -4.010184582374816,
+        "coordinate_slope": -13.286222237957421,
+        "reference_value": 0.018130048440534095,
+        "energy_j_mol": -110467.79813397327,
+        "maximum_log_margin_factor": 0.1995518299681673,
+        "solver_success": true,
+        "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+        "all_fitted_rows_inside_source_margins": true
+      },
+      "withheld_table_rows": [
+        {
+          "temperature_c": 590,
+          "fit": {
+            "log_reference_value": -4.007227857678474,
+            "coordinate_slope": -15.801442803626658,
+            "reference_value": 0.018183733329111603,
+            "energy_j_mol": -131380.50550364036,
+            "maximum_log_margin_factor": 0.04170051858184347,
+            "solver_success": true,
+            "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "all_fitted_rows_inside_source_margins": true
+          },
+          "predicted": 0.0409078309278929,
+          "source_value": 0.0342,
+          "source_margin": 0.0091,
+          "relative_difference": 0.1961354072483304,
+          "inside_withheld_source_margin": true
+        },
+        {
+          "temperature_c": 610,
+          "fit": {
+            "log_reference_value": -4.046967050127923,
+            "coordinate_slope": -13.265748433715702,
+            "reference_value": 0.017475296041840175,
+            "energy_j_mol": -110297.5694539541,
+            "maximum_log_margin_factor": 0.03919286858389636,
+            "solver_success": true,
+            "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "all_fitted_rows_inside_source_margins": true
+          },
+          "predicted": 0.024371704486051488,
+          "source_value": 0.027500000000000004,
+          "source_margin": 0.0094,
+          "relative_difference": -0.11375620050721873,
+          "inside_withheld_source_margin": true
+        },
+        {
+          "temperature_c": 630,
+          "fit": {
+            "log_reference_value": -4.010184582374816,
+            "coordinate_slope": -13.286222237957421,
+            "reference_value": 0.018130048440534095,
+            "energy_j_mol": -110467.79813397327,
+            "maximum_log_margin_factor": 0.1995518299681673,
+            "solver_success": true,
+            "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "all_fitted_rows_inside_source_margins": true
+          },
+          "predicted": 0.018130048440534095,
+          "source_value": 0.017900000000000003,
+          "source_margin": 0.0082,
+          "relative_difference": 0.012851868186262116,
+          "inside_withheld_source_margin": true
+        },
+        {
+          "temperature_c": 650,
+          "fit": {
+            "log_reference_value": -3.9642852667915114,
+            "coordinate_slope": -12.189452742005276,
+            "reference_value": 0.018981598544100812,
+            "energy_j_mol": -101348.74915914837,
+            "maximum_log_margin_factor": 0.1555659414791886,
+            "solver_success": true,
+            "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+            "all_fitted_rows_inside_source_margins": true
+          },
+          "predicted": 0.014169147145748047,
+          "source_value": 0.012600000000000002,
+          "source_margin": 0.0032,
+          "relative_difference": 0.12453548775778137,
+          "inside_withheld_source_margin": true
+        }
+      ],
+      "internal_fitted_table_comparison_only": true
+    }
+  },
+  "numerical": [
+    {
+      "temperature_c": 590,
+      "water_pressure_bar": 0,
+      "calculated": {
+        "rate_mol_s": 1.1767340847495882e-08,
+        "temperature_derivative_mol_s_k": 3.8312545725507697e-10,
+        "pressure_derivative_mol_s_pa": 1.2864052076195467e-09
+      },
+      "independent": {
+        "rate_mol_s": 1.1767340847495864e-08,
+        "temperature_derivative_mol_s_k": 3.8312545725507635e-10,
+        "pressure_derivative_mol_s_pa": 1.2864052076195465e-09
+      },
+      "absolute_differences": {
+        "rate_mol_s": 1.819797347616661e-23,
+        "temperature_derivative_mol_s_k": 6.203854594147708e-25,
+        "pressure_derivative_mol_s_pa": 2.0679515313825692e-25
+      }
+    },
+    {
+      "temperature_c": 590,
+      "water_pressure_bar": 2.5e-06,
+      "calculated": {
+        "rate_mol_s": 1.2086085509663776e-08,
+        "temperature_derivative_mol_s_k": 3.863312285027173e-10,
+        "pressure_derivative_mol_s_pa": 1.2636535867080875e-09
+      },
+      "independent": {
+        "rate_mol_s": 1.2086085509663758e-08,
+        "temperature_derivative_mol_s_k": 3.863312285027167e-10,
+        "pressure_derivative_mol_s_pa": 1.2636535867080872e-09
+      },
+      "absolute_differences": {
+        "rate_mol_s": 1.819797347616661e-23,
+        "temperature_derivative_mol_s_k": 6.203854594147708e-25,
+        "pressure_derivative_mol_s_pa": 2.0679515313825692e-25
+      }
+    },
+    {
+      "temperature_c": 590,
+      "water_pressure_bar": 0.00015,
+      "calculated": {
+        "rate_mol_s": 2.431576307859297e-08,
+        "temperature_derivative_mol_s_k": 5.855965400464608e-10,
+        "pressure_derivative_mol_s_pa": 5.440238496728651e-10
+      },
+      "independent": {
+        "rate_mol_s": 2.4315763078592943e-08,
+        "temperature_derivative_mol_s_k": 5.8559654004646e-10,
+        "pressure_derivative_mol_s_pa": 5.440238496728647e-10
+      },
+      "absolute_differences": {
+        "rate_mol_s": 2.6469779601696886e-23,
+        "temperature_derivative_mol_s_k": 8.271806125530277e-25,
+        "pressure_derivative_mol_s_pa": 4.1359030627651384e-25
+      }
+    },
+    {
+      "temperature_c": 590,
+      "water_pressure_bar": 0.00075,
+      "calculated": {
+        "rate_mol_s": 3.7923377783179136e-08,
+        "temperature_derivative_mol_s_k": 9.820374522970525e-10,
+        "pressure_derivative_mol_s_pa": 9.454608881363848e-11
+      },
+      "independent": {
+        "rate_mol_s": 3.792337778317909e-08,
+        "temperature_derivative_mol_s_k": 9.820374522970509e-10,
+        "pressure_derivative_mol_s_pa": 9.454608881363832e-11
+      },
+      "absolute_differences": {
+        "rate_mol_s": 4.632211430296955e-23,
+        "temperature_derivative_mol_s_k": 1.6543612251060553e-24,
+        "pressure_derivative_mol_s_pa": 1.550963648536927e-25
+      }
+    },
+    {
+      "temperature_c": 590,
+      "water_pressure_bar": 0.0025,
+      "calculated": {
+        "rate_mol_s": 4.4049636608456314e-08,
+        "temperature_derivative_mol_s_k": 1.2205985797028411e-09,
+        "pressure_derivative_mol_s_pa": 1.2961970159018049e-11
+      },
+      "independent": {
+        "rate_mol_s": 4.4049636608456255e-08,
+        "temperature_derivative_mol_s_k": 1.2205985797028393e-09,
+        "pressure_derivative_mol_s_pa": 1.2961970159018018e-11
+      },
+      "absolute_differences": {
+        "rate_mol_s": 5.955700410381799e-23,
+        "temperature_derivative_mol_s_k": 1.8611563782443123e-24,
+        "pressure_derivative_mol_s_pa": 3.069615554396001e-26
+      }
+    },
+    {
+      "temperature_c": 590,
+      "water_pressure_bar": 0.0125,
+      "calculated": {
+        "rate_mol_s": 4.686838729436535e-08,
+        "temperature_derivative_mol_s_k": 1.3428931438563194e-09,
+        "pressure_derivative_mol_s_pa": 6.129743651496411e-13
+      },
+      "independent": {
+        "rate_mol_s": 4.6868387294365285e-08,
+        "temperature_derivative_mol_s_k": 1.3428931438563173e-09,
+        "pressure_derivative_mol_s_pa": 6.129743651496398e-13
+      },
+      "absolute_differences": {
+        "rate_mol_s": 6.617444900424221e-23,
+        "temperature_derivative_mol_s_k": 2.0679515313825692e-24,
+        "pressure_derivative_mol_s_pa": 1.3126645462877636e-27
+      }
+    },
+    {
+      "temperature_c": 600,
+      "water_pressure_bar": 0,
+      "calculated": {
+        "rate_mol_s": 1.6235218204968778e-08,
+        "temperature_derivative_mol_s_k": 5.165538943129191e-10,
+        "pressure_derivative_mol_s_pa": 1.41824768843595e-09
+      },
+      "independent": {
+        "rate_mol_s": 1.6235218204968738e-08,
+        "temperature_derivative_mol_s_k": 5.165538943129177e-10,
+        "pressure_derivative_mol_s_pa": 1.4182476884359489e-09
+      },
+      "absolute_differences": {
+        "rate_mol_s": 3.970466940254533e-23,
+        "temperature_derivative_mol_s_k": 1.34416849539867e-24,
+        "pressure_derivative_mol_s_pa": 1.0339757656912846e-24
+      }
+    },
+    {
+      "temperature_c": 600,
+      "water_pressure_bar": 2.5e-06,
+      "calculated": {
+        "rate_mol_s": 1.6587135940105743e-08,
+        "temperature_derivative_mol_s_k": 5.199838057479666e-10,
+        "pressure_derivative_mol_s_pa": 1.3971730699932552e-09
+      },
+      "independent": {
+        "rate_mol_s": 1.65871359401057e-08,
+        "temperature_derivative_mol_s_k": 5.199838057479651e-10,
+        "pressure_derivative_mol_s_pa": 1.3971730699932542e-09
+      },
+      "absolute_differences": {
+        "rate_mol_s": 4.301339185275744e-23,
+        "temperature_derivative_mol_s_k": 1.4475660719677984e-24,
+        "pressure_derivative_mol_s_pa": 1.0339757656912846e-24
+      }
+    },
+    {
+      "temperature_c": 600,
+      "water_pressure_bar": 0.00015,
+      "calculated": {
+        "rate_mol_s": 3.089846332583619e-08,
+        "temperature_derivative_mol_s_k": 7.369653281058932e-10,
+        "pressure_derivative_mol_s_pa": 6.737915910921098e-10
+      },
+      "independent": {
+        "rate_mol_s": 3.089846332583614e-08,
+        "temperature_derivative_mol_s_k": 7.369653281058916e-10,
+        "pressure_derivative_mol_s_pa": 6.737915910921086e-10
+      },
+      "absolute_differences": {
+        "rate_mol_s": 5.293955920339377e-23,
+        "temperature_derivative_mol_s_k": 1.5509636485369269e-24,
+        "pressure_derivative_mol_s_pa": 1.137373342260413e-24
+      }
+    },
+    {
+      "temperature_c": 600,
+      "water_pressure_bar": 0.00075,
+      "calculated": {
+        "rate_mol_s": 4.8922822221172125e-08,
+        "temperature_derivative_mol_s_k": 1.2254828745323384e-09,
+        "pressure_derivative_mol_s_pa": 1.3393422382748797e-10
+      },
+      "independent": {
+        "rate_mol_s": 4.892282222117203e-08,
+        "temperature_derivative_mol_s_k": 1.225482874532336e-09,
+        "pressure_derivative_mol_s_pa": 1.339342238274876e-10
+      },
+      "absolute_differences": {
+        "rate_mol_s": 9.26442286059391e-23,
+        "temperature_derivative_mol_s_k": 2.481541837659083e-24,
+        "pressure_derivative_mol_s_pa": 3.618915179919496e-25
+      }
+    },
+    {
+      "temperature_c": 600,
+      "water_pressure_bar": 0.0025,
+      "calculated": {
+        "rate_mol_s": 5.7881502560862206e-08,
+        "temperature_derivative_mol_s_k": 1.5575641347140561e-09,
+        "pressure_derivative_mol_s_pa": 1.9566827597677555e-11
+      },
+      "independent": {
+        "rate_mol_s": 5.7881502560862094e-08,
+        "temperature_derivative_mol_s_k": 1.557564134714053e-09,
+        "pressure_derivative_mol_s_pa": 1.95668275976775e-11
+      },
+      "absolute_differences": {
+        "rate_mol_s": 1.1249656330721176e-22,
+        "temperature_derivative_mol_s_k": 3.1019272970738538e-24,
+        "pressure_derivative_mol_s_pa": 5.492996255234949e-26
+      }
+    },
+    {
+      "temperature_c": 600,
+      "water_pressure_bar": 0.0125,
+      "calculated": {
+        "rate_mol_s": 6.220073198284074e-08,
+        "temperature_derivative_mol_s_k": 1.7388494095004318e-09,
+        "pressure_derivative_mol_s_pa": 9.534372757441369e-13
+      },
+      "independent": {
+        "rate_mol_s": 6.22007319828406e-08,
+        "temperature_derivative_mol_s_k": 1.7388494095004279e-09,
+        "pressure_derivative_mol_s_pa": 9.534372757441336e-13
+      },
+      "absolute_differences": {
+        "rate_mol_s": 1.3234889800848443e-22,
+        "temperature_derivative_mol_s_k": 3.9291079096268815e-24,
+        "pressure_derivative_mol_s_pa": 3.2311742677852644e-27
+      }
+    },
+    {
+      "temperature_c": 610,
+      "water_pressure_bar": 0,
+      "calculated": {
+        "rate_mol_s": 2.223680789762756e-08,
+        "temperature_derivative_mol_s_k": 6.915741066611369e-10,
+        "pressure_derivative_mol_s_pa": 1.5592519769468647e-09
+      },
+      "independent": {
+        "rate_mol_s": 2.223680789762754e-08,
+        "temperature_derivative_mol_s_k": 6.915741066611363e-10,
+        "pressure_derivative_mol_s_pa": 1.559251976946864e-09
+      },
+      "absolute_differences": {
+        "rate_mol_s": 1.9852334701272664e-23,
+        "temperature_derivative_mol_s_k": 6.203854594147708e-25,
+        "pressure_derivative_mol_s_pa": 6.203854594147708e-25
+      }
+    },
+    {
+      "temperature_c": 610,
+      "water_pressure_bar": 2.5e-06,
+      "calculated": {
+        "rate_mol_s": 2.2624171030127142e-08,
+        "temperature_derivative_mol_s_k": 6.952342284813335e-10,
+        "pressure_derivative_mol_s_pa": 1.539714669734907e-09
+      },
+      "independent": {
+        "rate_mol_s": 2.2624171030127122e-08,
+        "temperature_derivative_mol_s_k": 6.95234228481333e-10,
+        "pressure_derivative_mol_s_pa": 1.5397146697349066e-09
+      },
+      "absolute_differences": {
+        "rate_mol_s": 1.9852334701272664e-23,
+        "temperature_derivative_mol_s_k": 5.169878828456423e-25,
+        "pressure_derivative_mol_s_pa": 4.1359030627651384e-25
+      }
+    },
+    {
+      "temperature_c": 610,
+      "water_pressure_bar": 0.00015,
+      "calculated": {
+        "rate_mol_s": 3.9191741828195634e-08,
+        "temperature_derivative_mol_s_k": 9.294125577638815e-10,
+        "pressure_derivative_mol_s_pa": 8.193951368707406e-10
+      },
+      "independent": {
+        "rate_mol_s": 3.91917418281956e-08,
+        "temperature_derivative_mol_s_k": 9.294125577638808e-10,
+        "pressure_derivative_mol_s_pa": 8.193951368707399e-10
+      },
+      "absolute_differences": {
+        "rate_mol_s": 3.3087224502121107e-23,
+        "temperature_derivative_mol_s_k": 7.237830359838992e-25,
+        "pressure_derivative_mol_s_pa": 7.237830359838992e-25
+      }
+    },
+    {
+      "temperature_c": 610,
+      "water_pressure_bar": 0.00075,
+      "calculated": {
+        "rate_mol_s": 6.259934978932406e-08,
+        "temperature_derivative_mol_s_k": 1.51888404407096e-09,
+        "pressure_derivative_mol_s_pa": 1.8574545139966435e-10
+      },
+      "independent": {
+        "rate_mol_s": 6.259934978932402e-08,
+        "temperature_derivative_mol_s_k": 1.5188840440709587e-09,
+        "pressure_derivative_mol_s_pa": 1.8574545139966412e-10
+      },
+      "absolute_differences": {
+        "rate_mol_s": 3.970466940254533e-23,
+        "temperature_derivative_mol_s_k": 1.2407709188295415e-24,
+        "pressure_derivative_mol_s_pa": 2.3264454728053903e-25
+      }
+    },
+    {
+      "temperature_c": 610,
+      "water_pressure_bar": 0.0025,
+      "calculated": {
+        "rate_mol_s": 7.545753923718097e-08,
+        "temperature_derivative_mol_s_k": 1.971567912339182e-09,
+        "pressure_derivative_mol_s_pa": 2.9064667275785115e-11
+      },
+      "independent": {
+        "rate_mol_s": 7.545753923718092e-08,
+        "temperature_derivative_mol_s_k": 1.9715679123391804e-09,
+        "pressure_derivative_mol_s_pa": 2.9064667275785076e-11
+      },
+      "absolute_differences": {
+        "rate_mol_s": 5.293955920339377e-23,
+        "temperature_derivative_mol_s_k": 1.6543612251060553e-24,
+        "pressure_derivative_mol_s_pa": 3.877409121342317e-26
+      }
+    },
+    {
+      "temperature_c": 610,
+      "water_pressure_bar": 0.0125,
+      "calculated": {
+        "rate_mol_s": 8.198322875488452e-08,
+        "temperature_derivative_mol_s_k": 2.2362701661169184e-09,
+        "pressure_derivative_mol_s_pa": 1.4651681121065098e-12
+      },
+      "independent": {
+        "rate_mol_s": 8.198322875488445e-08,
+        "temperature_derivative_mol_s_k": 2.2362701661169167e-09,
+        "pressure_derivative_mol_s_pa": 1.4651681121065078e-12
+      },
+      "absolute_differences": {
+        "rate_mol_s": 6.617444900424221e-23,
+        "temperature_derivative_mol_s_k": 1.6543612251060553e-24,
+        "pressure_derivative_mol_s_pa": 2.0194839173657902e-27
+      }
+    },
+    {
+      "temperature_c": 620,
+      "water_pressure_bar": 0,
+      "calculated": {
+        "rate_mol_s": 3.0243190233314957e-08,
+        "temperature_derivative_mol_s_k": 9.196318899390613e-10,
+        "pressure_derivative_mol_s_pa": 1.709639901629226e-09
+      },
+      "independent": {
+        "rate_mol_s": 3.024319023331501e-08,
+        "temperature_derivative_mol_s_k": 9.196318899390627e-10,
+        "pressure_derivative_mol_s_pa": 1.7096399016292266e-09
+      },
+      "absolute_differences": {
+        "rate_mol_s": 5.293955920339377e-23,
+        "temperature_derivative_mol_s_k": 1.4475660719677984e-24,
+        "pressure_derivative_mol_s_pa": 6.203854594147708e-25
+      }
+    },
+    {
+      "temperature_c": 620,
+      "water_pressure_bar": 2.5e-06,
+      "calculated": {
+        "rate_mol_s": 3.0668328246509126e-08,
+        "temperature_derivative_mol_s_k": 9.235275723972387e-10,
+        "pressure_derivative_mol_s_pa": 1.6915125117559678e-09
+      },
+      "independent": {
+        "rate_mol_s": 3.0668328246509185e-08,
+        "temperature_derivative_mol_s_k": 9.235275723972404e-10,
+        "pressure_derivative_mol_s_pa": 1.6915125117559689e-09
+      },
+      "absolute_differences": {
+        "rate_mol_s": 5.955700410381799e-23,
+        "temperature_derivative_mol_s_k": 1.6543612251060553e-24,
+        "pressure_derivative_mol_s_pa": 1.0339757656912846e-24
+      }
+    },
+    {
+      "temperature_c": 620,
+      "water_pressure_bar": 0.00015,
+      "calculated": {
+        "rate_mol_s": 4.966145025445806e-08,
+        "temperature_derivative_mol_s_k": 1.1743722934741644e-09,
+        "pressure_derivative_mol_s_pa": 9.802423484732188e-10
+      },
+      "independent": {
+        "rate_mol_s": 4.966145025445813e-08,
+        "temperature_derivative_mol_s_k": 1.174372293474166e-09,
+        "pressure_derivative_mol_s_pa": 9.802423484732194e-10
+      },
+      "absolute_differences": {
+        "rate_mol_s": 6.617444900424221e-23,
+        "temperature_derivative_mol_s_k": 1.6543612251060553e-24,
+        "pressure_derivative_mol_s_pa": 6.203854594147708e-25
+      }
+    },
+    {
+      "temperature_c": 620,
+      "water_pressure_bar": 0.00075,
+      "calculated": {
+        "rate_mol_s": 7.949877379838096e-08,
+        "temperature_derivative_mol_s_k": 1.8718477605982016e-09,
+        "pressure_derivative_mol_s_pa": 2.5228054789244885e-10
+      },
+      "independent": {
+        "rate_mol_s": 7.949877379838107e-08,
+        "temperature_derivative_mol_s_k": 1.8718477605982036e-09,
+        "pressure_derivative_mol_s_pa": 2.522805478924492e-10
+      },
+      "absolute_differences": {
+        "rate_mol_s": 1.0587911840678754e-22,
+        "temperature_derivative_mol_s_k": 2.0679515313825692e-24,
+        "pressure_derivative_mol_s_pa": 3.618915179919496e-25
+      }
+    },
+    {
+      "temperature_c": 620,
+      "water_pressure_bar": 0.0025,
+      "calculated": {
+        "rate_mol_s": 9.761489039876623e-08,
+        "temperature_derivative_mol_s_k": 2.4762396380755934e-09,
+        "pressure_derivative_mol_s_pa": 4.2478615328133276e-11
+      },
+      "independent": {
+        "rate_mol_s": 9.761489039876637e-08,
+        "temperature_derivative_mol_s_k": 2.476239638075596e-09,
+        "pressure_derivative_mol_s_pa": 4.247861532813335e-11
+      },
+      "absolute_differences": {
+        "rate_mol_s": 1.4558378780933287e-22,
+        "temperature_derivative_mol_s_k": 2.481541837659083e-24,
+        "pressure_derivative_mol_s_pa": 7.754818242684634e-26
+      }
+    },
+    {
+      "temperature_c": 620,
+      "water_pressure_bar": 0.0125,
+      "calculated": {
+        "rate_mol_s": 1.0733653469684131e-07,
+        "temperature_derivative_mol_s_k": 2.856931904019712e-09,
+        "pressure_derivative_mol_s_pa": 2.224892857929428e-12
+      },
+      "independent": {
+        "rate_mol_s": 1.0733653469684144e-07,
+        "temperature_derivative_mol_s_k": 2.8569319040197154e-09,
+        "pressure_derivative_mol_s_pa": 2.224892857929432e-12
+      },
+      "absolute_differences": {
+        "rate_mol_s": 1.3234889800848443e-22,
+        "temperature_derivative_mol_s_k": 3.308722450212111e-24,
+        "pressure_derivative_mol_s_pa": 4.0389678347315804e-27
+      }
+    },
+    {
+      "temperature_c": 630,
+      "water_pressure_bar": 0,
+      "calculated": {
+        "rate_mol_s": 4.085311882760321e-08,
+        "temperature_derivative_mol_s_k": 1.2149003898792191e-09,
+        "pressure_derivative_mol_s_pa": 1.8696037626835977e-09
+      },
+      "independent": {
+        "rate_mol_s": 4.085311882760321e-08,
+        "temperature_derivative_mol_s_k": 1.2149003898792191e-09,
+        "pressure_derivative_mol_s_pa": 1.8696037626835977e-09
+      },
+      "absolute_differences": {
+        "rate_mol_s": 0.0,
+        "temperature_derivative_mol_s_k": 0.0,
+        "pressure_derivative_mol_s_pa": 0.0
+      }
+    },
+    {
+      "temperature_c": 630,
+      "water_pressure_bar": 2.5e-06,
+      "calculated": {
+        "rate_mol_s": 4.1318410826653664e-08,
+        "temperature_derivative_mol_s_k": 1.2190361959998009e-09,
+        "pressure_derivative_mol_s_pa": 1.8527702924141569e-09
+      },
+      "independent": {
+        "rate_mol_s": 4.1318410826653664e-08,
+        "temperature_derivative_mol_s_k": 1.2190361959998009e-09,
+        "pressure_derivative_mol_s_pa": 1.8527702924141573e-09
+      },
+      "absolute_differences": {
+        "rate_mol_s": 0.0,
+        "temperature_derivative_mol_s_k": 0.0,
+        "pressure_derivative_mol_s_pa": 4.1359030627651384e-25
+      }
+    },
+    {
+      "temperature_c": 630,
+      "water_pressure_bar": 0.00015,
+      "calculated": {
+        "rate_mol_s": 6.290118708496469e-08,
+        "temperature_derivative_mol_s_k": 1.4860412461282537e-09,
+        "pressure_derivative_mol_s_pa": 1.1556038975481598e-09
+      },
+      "independent": {
+        "rate_mol_s": 6.290118708496469e-08,
+        "temperature_derivative_mol_s_k": 1.4860412461282537e-09,
+        "pressure_derivative_mol_s_pa": 1.15560389754816e-09
+      },
+      "absolute_differences": {
+        "rate_mol_s": 0.0,
+        "temperature_derivative_mol_s_k": 0.0,
+        "pressure_derivative_mol_s_pa": 2.0679515313825692e-25
+      }
+    },
+    {
+      "temperature_c": 630,
+      "water_pressure_bar": 0.00075,
+      "calculated": {
+        "rate_mol_s": 1.0027469582529378e-07,
+        "temperature_derivative_mol_s_k": 2.2964335155567233e-09,
+        "pressure_derivative_mol_s_pa": 3.3575017417468334e-10
+      },
+      "independent": {
+        "rate_mol_s": 1.0027469582529379e-07,
+        "temperature_derivative_mol_s_k": 2.2964335155567237e-09,
+        "pressure_derivative_mol_s_pa": 3.3575017417468334e-10
+      },
+      "absolute_differences": {
+        "rate_mol_s": 1.3234889800848443e-23,
+        "temperature_derivative_mol_s_k": 4.1359030627651384e-25,
+        "pressure_derivative_mol_s_pa": 0.0
+      }
+    },
+    {
+      "temperature_c": 630,
+      "water_pressure_bar": 0.0025,
+      "calculated": {
+        "rate_mol_s": 1.2533570673098856e-07,
+        "temperature_derivative_mol_s_k": 3.086993003964208e-09,
+        "pressure_derivative_mol_s_pa": 6.108081552945498e-11
+      },
+      "independent": {
+        "rate_mol_s": 1.2533570673098856e-07,
+        "temperature_derivative_mol_s_k": 3.086993003964208e-09,
+        "pressure_derivative_mol_s_pa": 6.108081552945496e-11
+      },
+      "absolute_differences": {
+        "rate_mol_s": 0.0,
+        "temperature_derivative_mol_s_k": 0.0,
+        "pressure_derivative_mol_s_pa": 1.2924697071141057e-26
+      }
+    },
+    {
+      "temperature_c": 630,
+      "water_pressure_bar": 0.0125,
+      "calculated": {
+        "rate_mol_s": 1.396169317442303e-07,
+        "temperature_derivative_mol_s_k": 3.626247286781144e-09,
+        "pressure_derivative_mol_s_pa": 3.339074406766704e-12
+      },
+      "independent": {
+        "rate_mol_s": 1.396169317442303e-07,
+        "temperature_derivative_mol_s_k": 3.6262472867811446e-09,
+        "pressure_derivative_mol_s_pa": 3.339074406766703e-12
+      },
+      "absolute_differences": {
+        "rate_mol_s": 0.0,
+        "temperature_derivative_mol_s_k": 4.1359030627651384e-25,
+        "pressure_derivative_mol_s_pa": 1.2116903504194741e-27
+      }
+    },
+    {
+      "temperature_c": 640,
+      "water_pressure_bar": 0,
+      "calculated": {
+        "rate_mol_s": 5.482295709957143e-08,
+        "temperature_derivative_mol_s_k": 1.594826476886117e-09,
+        "pressure_derivative_mol_s_pa": 2.039303637744579e-09
+      },
+      "independent": {
+        "rate_mol_s": 5.4822957099571406e-08,
+        "temperature_derivative_mol_s_k": 1.594826476886116e-09,
+        "pressure_derivative_mol_s_pa": 2.0393036377445786e-09
+      },
+      "absolute_differences": {
+        "rate_mol_s": 2.6469779601696886e-23,
+        "temperature_derivative_mol_s_k": 1.0339757656912846e-24,
+        "pressure_derivative_mol_s_pa": 4.1359030627651384e-25
+      }
+    },
+    {
+      "temperature_c": 640,
+      "water_pressure_bar": 2.5e-06,
+      "calculated": {
+        "rate_mol_s": 5.5330823609165556e-08,
+        "temperature_derivative_mol_s_k": 1.599206116730318e-09,
+        "pressure_derivative_mol_s_pa": 2.0236585610377545e-09
+      },
+      "independent": {
+        "rate_mol_s": 5.533082360916554e-08,
+        "temperature_derivative_mol_s_k": 1.5992061167303172e-09,
+        "pressure_derivative_mol_s_pa": 2.0236585610377545e-09
+      },
+      "absolute_differences": {
+        "rate_mol_s": 1.3234889800848443e-23,
+        "temperature_derivative_mol_s_k": 8.271806125530277e-25,
+        "pressure_derivative_mol_s_pa": 0.0
+      }
+    },
+    {
+      "temperature_c": 640,
+      "water_pressure_bar": 0.00015,
+      "calculated": {
+        "rate_mol_s": 7.966250410712548e-08,
+        "temperature_derivative_mol_s_k": 1.881908920467043e-09,
+        "pressure_derivative_mol_s_pa": 1.3446923397894733e-09
+      },
+      "independent": {
+        "rate_mol_s": 7.966250410712544e-08,
+        "temperature_derivative_mol_s_k": 1.8819089204670414e-09,
+        "pressure_derivative_mol_s_pa": 1.3446923397894731e-09
+      },
+      "absolute_differences": {
+        "rate_mol_s": 3.970466940254533e-23,
+        "temperature_derivative_mol_s_k": 1.6543612251060553e-24,
+        "pressure_derivative_mol_s_pa": 2.0679515313825692e-25
+      }
+    },
+    {
+      "temperature_c": 640,
+      "water_pressure_bar": 0.00075,
+      "calculated": {
+        "rate_mol_s": 1.257164601387658e-07,
+        "temperature_derivative_mol_s_k": 2.8078553537778844e-09,
+        "pressure_derivative_mol_s_pa": 4.381355090604926e-10
+      },
+      "independent": {
+        "rate_mol_s": 1.2571646013876577e-07,
+        "temperature_derivative_mol_s_k": 2.807855353777883e-09,
+        "pressure_derivative_mol_s_pa": 4.381355090604926e-10
+      },
+      "absolute_differences": {
+        "rate_mol_s": 2.6469779601696886e-23,
+        "temperature_derivative_mol_s_k": 1.2407709188295415e-24,
+        "pressure_derivative_mol_s_pa": 0.0
+      }
+    },
+    {
+      "temperature_c": 640,
+      "water_pressure_bar": 0.0025,
+      "calculated": {
+        "rate_mol_s": 1.5976643227708773e-07,
+        "temperature_derivative_mol_s_k": 3.821334932088269e-09,
+        "pressure_derivative_mol_s_pa": 8.640700896911452e-11
+      },
+      "independent": {
+        "rate_mol_s": 1.597664322770877e-07,
+        "temperature_derivative_mol_s_k": 3.821334932088268e-09,
+        "pressure_derivative_mol_s_pa": 8.640700896911452e-11
+      },
+      "absolute_differences": {
+        "rate_mol_s": 2.6469779601696886e-23,
+        "temperature_derivative_mol_s_k": 8.271806125530277e-25,
+        "pressure_derivative_mol_s_pa": 0.0
+      }
+    },
+    {
+      "temperature_c": 640,
+      "water_pressure_bar": 0.0125,
+      "calculated": {
+        "rate_mol_s": 1.8045463060710916e-07,
+        "temperature_derivative_mol_s_k": 4.573655202277023e-09,
+        "pressure_derivative_mol_s_pa": 4.953319820331778e-12
+      },
+      "independent": {
+        "rate_mol_s": 1.804546306071091e-07,
+        "temperature_derivative_mol_s_k": 4.573655202277022e-09,
+        "pressure_derivative_mol_s_pa": 4.9533198203317756e-12
+      },
+      "absolute_differences": {
+        "rate_mol_s": 5.293955920339377e-23,
+        "temperature_derivative_mol_s_k": 1.6543612251060553e-24,
+        "pressure_derivative_mol_s_pa": 2.4233807008389483e-27
+      }
+    },
+    {
+      "temperature_c": 650,
+      "water_pressure_bar": 0,
+      "calculated": {
+        "rate_mol_s": 7.310250786792508e-08,
+        "temperature_derivative_mol_s_k": 2.0807646203749958e-09,
+        "pressure_derivative_mol_s_pa": 2.2188647443027255e-09
+      },
+      "independent": {
+        "rate_mol_s": 7.310250786792494e-08,
+        "temperature_derivative_mol_s_k": 2.0807646203749916e-09,
+        "pressure_derivative_mol_s_pa": 2.2188647443027242e-09
+      },
+      "absolute_differences": {
+        "rate_mol_s": 1.4558378780933287e-22,
+        "temperature_derivative_mol_s_k": 4.1359030627651384e-24,
+        "pressure_derivative_mol_s_pa": 1.2407709188295415e-24
+      }
+    },
+    {
+      "temperature_c": 650,
+      "water_pressure_bar": 2.5e-06,
+      "calculated": {
+        "rate_mol_s": 7.365540198097471e-08,
+        "temperature_derivative_mol_s_k": 2.085390887004835e-09,
+        "pressure_derivative_mol_s_pa": 2.2043120999049893e-09
+      },
+      "independent": {
+        "rate_mol_s": 7.365540198097458e-08,
+        "temperature_derivative_mol_s_k": 2.0853908870048303e-09,
+        "pressure_derivative_mol_s_pa": 2.204312099904988e-09
+      },
+      "absolute_differences": {
+        "rate_mol_s": 1.3234889800848443e-22,
+        "temperature_derivative_mol_s_k": 4.549493369041652e-24,
+        "pressure_derivative_mol_s_pa": 1.2407709188295415e-24
+      }
+    },
+    {
+      "temperature_c": 650,
+      "water_pressure_bar": 0.00015,
+      "calculated": {
+        "rate_mol_s": 1.0089085713842734e-07,
+        "temperature_derivative_mol_s_k": 2.383378144560656e-09,
+        "pressure_derivative_mol_s_pa": 1.546721597984626e-09
+      },
+      "independent": {
+        "rate_mol_s": 1.0089085713842718e-07,
+        "temperature_derivative_mol_s_k": 2.3833781445606513e-09,
+        "pressure_derivative_mol_s_pa": 1.5467215979846246e-09
+      },
+      "absolute_differences": {
+        "rate_mol_s": 1.5881867761018131e-22,
+        "temperature_derivative_mol_s_k": 4.549493369041652e-24,
+        "pressure_derivative_mol_s_pa": 1.4475660719677984e-24
+      }
+    },
+    {
+      "temperature_c": 650,
+      "water_pressure_bar": 0.00075,
+      "calculated": {
+        "rate_mol_s": 1.5678459376979642e-07,
+        "temperature_derivative_mol_s_k": 3.4252748092769732e-09,
+        "pressure_derivative_mol_s_pa": 5.610630105723028e-10
+      },
+      "independent": {
+        "rate_mol_s": 1.5678459376979616e-07,
+        "temperature_derivative_mol_s_k": 3.4252748092769674e-09,
+        "pressure_derivative_mol_s_pa": 5.61063010572302e-10
+      },
+      "absolute_differences": {
+        "rate_mol_s": 2.6469779601696886e-22,
+        "temperature_derivative_mol_s_k": 5.790264287871194e-24,
+        "pressure_derivative_mol_s_pa": 8.271806125530277e-25
+      }
+    },
+    {
+      "temperature_c": 650,
+      "water_pressure_bar": 0.0025,
+      "calculated": {
+        "rate_mol_s": 2.0224084778254877e-07,
+        "temperature_derivative_mol_s_k": 4.699314382640441e-09,
+        "pressure_derivative_mol_s_pa": 1.2025400559434654e-10
+      },
+      "independent": {
+        "rate_mol_s": 2.0224084778254845e-07,
+        "temperature_derivative_mol_s_k": 4.699314382640433e-09,
+        "pressure_derivative_mol_s_pa": 1.202540055943463e-10
+      },
+      "absolute_differences": {
+        "rate_mol_s": 3.1763735522036263e-22,
+        "temperature_derivative_mol_s_k": 7.444625512977249e-24,
+        "pressure_derivative_mol_s_pa": 2.3264454728053903e-25
+      }
+    },
+    {
+      "temperature_c": 650,
+      "water_pressure_bar": 0.0125,
+      "calculated": {
+        "rate_mol_s": 2.3179602212290585e-07,
+        "temperature_derivative_mol_s_k": 5.733020146754218e-09,
+        "pressure_derivative_mol_s_pa": 7.263860575551307e-12
+      },
+      "independent": {
+        "rate_mol_s": 2.3179602212290545e-07,
+        "temperature_derivative_mol_s_k": 5.733020146754208e-09,
+        "pressure_derivative_mol_s_pa": 7.263860575551289e-12
+      },
+      "absolute_differences": {
+        "rate_mol_s": 3.970466940254533e-22,
+        "temperature_derivative_mol_s_k": 9.926167350636332e-24,
+        "pressure_derivative_mol_s_pa": 1.7771458472818954e-26
+      }
+    }
+  ],
+  "summary": {
+    "printed_central_relations_inside_table_margins": {
+      "dry": 0,
+      "wet": 1,
+      "adsorption": 0
+    },
+    "total_table_rows_per_relation": 4,
+    "reconciled_relations_inside_fitted_source_margins": {
+      "dry": true,
+      "wet": true,
+      "adsorption": true
+    },
+    "reconciled_predictions_inside_source_margins_direct": {
+      "dry": true,
+      "wet": true,
+      "adsorption": true
+    },
+    "withheld_table_rows_inside_margins": {
+      "dry": 2,
+      "wet": 1,
+      "adsorption": 4
+    },
+    "maximum_numerical_differences": {
+      "rate_mol_s": 3.970466940254533e-22,
+      "temperature_derivative_mol_s_k": 9.926167350636332e-24,
+      "pressure_derivative_mol_s_pa": 1.4475660719677984e-24
+    },
+    "numerical_budgets_met": {
+      "rate_mol_s": true,
+      "temperature_derivative_mol_s_k": true,
+      "pressure_derivative_mol_s_pa": true
+    }
+  },
+  "scope": "Conditional temperature parameterization of source plateau tables. Calibration consistency and derivative arithmetic, not experimental transient qualification.",
+  "material_qualified": false,
+  "training_eligible": false
+}
