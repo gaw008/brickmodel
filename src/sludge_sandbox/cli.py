@@ -24,6 +24,8 @@ def _cancellation():
 def main(argv=None):
     parser = argparse.ArgumentParser(description='烧结砖物理沙盒；来源热化学计算与明确标记的数值验证案例。')
     commands = parser.add_subparsers(dest='command', required=True)
+    research = commands.add_parser('research-status', help='离线读取声明的研究结果、失败和待产出文件；不重算或授予材料资格')
+    research.add_argument('--parameters', required=True, type=Path, help='根目录研究结果索引参数文件')
     desorption = commands.add_parser('arlabosse95', help='查询95°C原污泥离散活动度、总解吸热及相对摩尔化学势；无插值或动态模拟')
     desorption.add_argument('--source', required=True, type=Path, help='已审核arlabosse95/source.json')
     desorption.add_argument('--assets-root', required=True, type=Path, help='包含原图和来源记录的显式本地根目录')
@@ -161,6 +163,11 @@ def main(argv=None):
         command.add_argument('directory', type=Path)
     args = parser.parse_args(argv)
     try:
+        if args.command == 'research-status':
+            from .research_status import read_research_status
+            value = read_research_status(args.parameters)
+            print(json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2))
+            return 0
         if args.command == 'source-execute':
             from .job_supervisor import supervise, SupervisionPolicy
             with _cancellation() as cancel:

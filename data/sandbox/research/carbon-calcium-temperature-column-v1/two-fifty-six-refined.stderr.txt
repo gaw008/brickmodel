@@ -1,0 +1,31 @@
+Traceback (most recent call last):
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_carbon_calcium_temperature_column.py", line 63, in main
+    'denominators_s':dense.denom.tolist(),'differences':dense.D.tolist()};emit(row)
+                                                                          ^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_carbon_calcium_temperature_column.py", line 32, in emit
+    def emit(row):stream.write(json.dumps(row,allow_nan=False)+'\n');stream.flush()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/research_trajectory.py", line 60, in write
+    self._finish_part()
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/research_trajectory.py", line 55, in _finish_part
+    spool.unlink()
+  File "/Users/wanggaoying/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/pathlib.py", line 1342, in unlink
+    os.unlink(self)
+PermissionError: [Errno 1] Operation not permitted: '/Users/wanggaoying/Desktop/brickmodel-github/.tools/trajectory-spool/trajectory-bop1551_.raw'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_carbon_calcium_temperature_column.py", line 71, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/examples/sandbox/run_carbon_calcium_temperature_column.py", line 31, in main
+    with storage as stream:
+         ^^^^^^^
+  File "/Users/wanggaoying/Desktop/brickmodel-github/src/sludge_sandbox/research_trajectory.py", line 82, in __exit__
+    with self.manifest.open('x') as stream:
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wanggaoying/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 1] Operation not permitted: 'data/sandbox/research/carbon-calcium-temperature-column-v1/two-fifty-six-refined.archive.json'

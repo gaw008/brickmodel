@@ -1,5 +1,13 @@
 # 沙盒统一入口
 
+## 离线读取研究验证状态
+
+```sh
+.venv/bin/python -c 'import sys; sys.path.insert(0,"src"); from sludge_sandbox.cli import main; raise SystemExit(main())' research-status --parameters parameters.research_status.json
+```
+
+读取七条主要研究线的原始结果、失败和待产出文件，保留每项来源路径；退出0只表示成功读取。[入口说明及实际结果](research/research-status-v1/REPORT.md)。
+
 ## 固定液态水库存的低温湿单元
 
 ```sh

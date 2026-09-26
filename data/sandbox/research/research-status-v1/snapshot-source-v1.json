@@ -1,0 +1,1000 @@
+{
+  "snapshot_utc": "2026-09-26T05:23:53.595608+00:00",
+  "parameters_file": "/Users/wanggaoying/Desktop/brickmodel-github/parameters.research_status.json",
+  "scope": "离线读取七条已声明研究线的保存证据索引，不是全项目完成比例或真实烧砖认证。",
+  "cases": [
+    {
+      "id": "sorptive-column",
+      "name": "低温来源吸附列",
+      "physical_scope": "128格共同气体/水分/热量交换；虚拟几何与输运，来源高含水量热偏差保留",
+      "report_file": "docs/sandbox/research/sorptive-128-qualification-v1/REPORT.md",
+      "material_status": "仅有声明条件下的数值证据；未取得真实砖材料资格",
+      "checks": [
+        {
+          "label": "128格最细档完整审计",
+          "result_file": "data/sandbox/research/sorptive-128-qualification-v1/finest-full-audit.json",
+          "availability": "required",
+          "selectors": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ]
+            }
+          ],
+          "result_state": "result_file_read",
+          "recorded_values": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ],
+              "value": true
+            }
+          ]
+        },
+        {
+          "label": "128格时间比较",
+          "result_file": "data/sandbox/research/sorptive-128-qualification-v1/finest-time-comparison-v2.json",
+          "availability": "required",
+          "selectors": [
+            {
+              "label": "逐项预算",
+              "path": [
+                "comparisons",
+                0,
+                "within_budgets"
+              ]
+            },
+            {
+              "label": "两个轨迹均完成",
+              "path": [
+                "comparisons",
+                0,
+                "both_completed"
+              ]
+            }
+          ],
+          "result_state": "result_file_read",
+          "recorded_values": [
+            {
+              "label": "逐项预算",
+              "path": [
+                "comparisons",
+                0,
+                "within_budgets"
+              ],
+              "value": {
+                "temperature": true,
+                "water": true,
+                "mean_moisture_event": true
+              }
+            },
+            {
+              "label": "两个轨迹均完成",
+              "path": [
+                "comparisons",
+                0,
+                "both_completed"
+              ],
+              "value": true
+            }
+          ]
+        },
+        {
+          "label": "64到128格空间比较",
+          "result_file": "data/sandbox/research/sorptive-128-qualification-v1/sixty-four-to-finest-comparison.json",
+          "availability": "required",
+          "selectors": [
+            {
+              "label": "逐项预算",
+              "path": [
+                "comparisons",
+                0,
+                "within_budgets"
+              ]
+            },
+            {
+              "label": "两个轨迹均完成",
+              "path": [
+                "comparisons",
+                0,
+                "both_completed"
+              ]
+            }
+          ],
+          "result_state": "result_file_read",
+          "recorded_values": [
+            {
+              "label": "逐项预算",
+              "path": [
+                "comparisons",
+                0,
+                "within_budgets"
+              ],
+              "value": {
+                "temperature": true,
+                "water": true,
+                "mean_moisture_event": true
+              }
+            },
+            {
+              "label": "两个轨迹均完成",
+              "path": [
+                "comparisons",
+                0,
+                "both_completed"
+              ],
+              "value": true
+            }
+          ]
+        },
+        {
+          "label": "旧精细档完整审计，失败保留",
+          "result_file": "data/sandbox/research/sorptive-128-qualification-v1/refined-full-audit.json",
+          "availability": "required",
+          "selectors": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ]
+            }
+          ],
+          "result_state": "result_file_read",
+          "recorded_values": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ],
+              "value": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "co2-n2-dusty-gas",
+      "name": "CO₂/N₂多孔气体输运",
+      "physical_scope": "来源气体动理学物性；声明孔径和几何的等温条件模型",
+      "report_file": "docs/sandbox/research/co2-n2-kinetic-dusty-gas-v1/REPORT.md",
+      "material_status": "仅有声明条件下的数值证据；未取得真实砖材料资格",
+      "checks": [
+        {
+          "label": "256格完整及时间审计",
+          "result_file": "data/sandbox/research/co2-n2-kinetic-dusty-gas-v1/two-fifty-six-full-audit.json",
+          "availability": "required",
+          "selectors": [
+            {
+              "label": "全部声明预算",
+              "path": [
+                "all_requested_budgets_met"
+              ]
+            },
+            {
+              "label": "时间比较",
+              "path": [
+                "time_comparison"
+              ]
+            }
+          ],
+          "result_state": "result_file_read",
+          "recorded_values": [
+            {
+              "label": "全部声明预算",
+              "path": [
+                "all_requested_budgets_met"
+              ],
+              "value": true
+            },
+            {
+              "label": "时间比较",
+              "path": [
+                "time_comparison"
+              ],
+              "value": {
+                "times_compared": 4273,
+                "maximum_concentration_difference_mol_m3": 1.669110005764196e-08,
+                "maximum_at_time_s": 0.000596774453953031,
+                "maximum_pressure_difference_pa": 8.293895255276991e-05,
+                "concentration_budget_mol_m3": 1e-07,
+                "pressure_budget_pa": 0.001,
+                "within_budget": true,
+                "scope": "Union of both accepted endpoints, both 2/4-point dense quadrature nodes and common observations; compare native BDF polynomials. No continuous-time supremum claim."
+              }
+            }
+          ]
+        },
+        {
+          "label": "128到256格空间比较",
+          "result_file": "data/sandbox/research/co2-n2-kinetic-dusty-gas-v1/one-twenty-eight-to-two-fifty-six-comparison.json",
+          "availability": "required",
+          "selectors": [
+            {
+              "label": "全部声明预算",
+              "path": [
+                "all_requested_budgets_met"
+              ]
+            },
+            {
+              "label": "详细比较",
+              "path": [
+                "comparisons"
+              ]
+            }
+          ],
+          "result_state": "result_file_read",
+          "recorded_values": [
+            {
+              "label": "全部声明预算",
+              "path": [
+                "all_requested_budgets_met"
+              ],
+              "value": true
+            },
+            {
+              "label": "详细比较",
+              "path": [
+                "comparisons"
+              ],
+              "value": [
+                {
+                  "coarse": "one-twenty-eight",
+                  "fine": "two-fifty-six",
+                  "union_times_compared": 4805,
+                  "maximum_parent_concentration_difference_mol_m3": 2.584864687804611e-05,
+                  "maximum_at_time_s": 0.36850200254044496,
+                  "maximum_at_coarse_cell_and_species_zero_based": [
+                    91,
+                    0
+                  ],
+                  "maximum_mean_concentration_difference_mol_m3": 2.842170943040401e-14,
+                  "budget": 0.0001,
+                  "within_budget": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "calcite-ramp",
+      "name": "方解石开放升温降温列",
+      "physical_scope": "纯方解石/石灰与理想CO₂/N₂、刚性单元和声明表面交换；平衡反应",
+      "report_file": "docs/sandbox/research/calcite-rigid-ramp-v1/REPORT.md",
+      "material_status": "仅有声明条件下的数值证据；未取得真实砖材料资格",
+      "checks": [
+        {
+          "label": "128格基础档完整审计",
+          "result_file": "data/sandbox/research/calcite-rigid-ramp-v1/one-twenty-eight-base-full-audit.json",
+          "availability": "pending",
+          "selectors": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ]
+            }
+          ],
+          "result_state": "awaiting_result_file",
+          "recorded_values": null
+        },
+        {
+          "label": "128格精细档完整审计",
+          "result_file": "data/sandbox/research/calcite-rigid-ramp-v1/one-twenty-eight-refined-full-audit.json",
+          "availability": "pending",
+          "selectors": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ]
+            }
+          ],
+          "result_state": "awaiting_result_file",
+          "recorded_values": null
+        },
+        {
+          "label": "128格时间比较",
+          "result_file": "data/sandbox/research/calcite-rigid-ramp-v1/one-twenty-eight-comparison.json",
+          "availability": "required",
+          "selectors": [
+            {
+              "label": "详细时间比较",
+              "path": [
+                "comparisons",
+                0
+              ]
+            }
+          ],
+          "result_state": "result_file_read",
+          "recorded_values": [
+            {
+              "label": "详细时间比较",
+              "path": [
+                "comparisons",
+                0
+              ],
+              "value": {
+                "observations": 9001,
+                "cell_counts": [
+                  128,
+                  128
+                ],
+                "maximum_differences": {
+                  "mean_temperature_k": 2.053866410278715e-09,
+                  "cell_temperature_k": 1.6579650718995254e-07,
+                  "mean_pressure_pa": 2.4373432097490877e-05,
+                  "cell_pressure_pa": 0.011053291149437428,
+                  "total_lime_mol": 2.1277738685571146e-14,
+                  "surface_temperature_k": 1.637322384340223e-07,
+                  "surface_pressure_pa": 0.01034222450107336
+                },
+                "maximum_difference_times_s": {
+                  "mean_temperature_k": 6030.0,
+                  "cell_temperature_k": 12.0,
+                  "mean_pressure_pa": 15020.0,
+                  "cell_pressure_pa": 6506.0,
+                  "total_lime_mol": 8364.0,
+                  "surface_temperature_k": 12.0,
+                  "surface_pressure_pa": 6506.0
+                },
+                "pair": {
+                  "kind": "time",
+                  "left": "one-twenty-eight-base",
+                  "right": "one-twenty-eight-refined"
+                },
+                "event_differences_s": {
+                  "heat_mean_900K": 1.064108801074326e-10,
+                  "cool_mean_500K": 2.3532265913672745e-08
+                },
+                "within_budgets": {
+                  "cell_temperature_k": true,
+                  "cell_pressure_pa": true,
+                  "total_lime_mol": true,
+                  "surface_temperature_k": true,
+                  "both_completed": true
+                },
+                "all_requested_budgets_met": true
+              }
+            }
+          ]
+        },
+        {
+          "label": "64到128格空间比较",
+          "result_file": "data/sandbox/research/calcite-rigid-ramp-v1/one-twenty-eight-comparison.json",
+          "availability": "required",
+          "selectors": [
+            {
+              "label": "详细空间比较",
+              "path": [
+                "comparisons",
+                1
+              ]
+            }
+          ],
+          "result_state": "result_file_read",
+          "recorded_values": [
+            {
+              "label": "详细空间比较",
+              "path": [
+                "comparisons",
+                1
+              ],
+              "value": {
+                "observations": 9001,
+                "cell_counts": [
+                  64,
+                  128
+                ],
+                "maximum_differences": {
+                  "mean_temperature_k": 0.08105958305441163,
+                  "cell_temperature_k": 0.41437098717108256,
+                  "mean_pressure_pa": 2368.900741229765,
+                  "cell_pressure_pa": 177403.7893543942,
+                  "total_lime_mol": 3.2834496784090404e-06,
+                  "surface_temperature_k": 0.3935651793266288,
+                  "surface_pressure_pa": 167186.56832884857
+                },
+                "maximum_difference_times_s": {
+                  "mean_temperature_k": 12064.0,
+                  "cell_temperature_k": 12974.0,
+                  "mean_pressure_pa": 5780.0,
+                  "cell_pressure_pa": 8000.0,
+                  "total_lime_mol": 6504.0,
+                  "surface_temperature_k": 12974.0,
+                  "surface_pressure_pa": 6504.0
+                },
+                "pair": {
+                  "kind": "space",
+                  "left": "sixty-four-further-refined",
+                  "right": "one-twenty-eight-refined"
+                },
+                "event_differences_s": {
+                  "heat_mean_900K": 0.4220719234763237,
+                  "cool_mean_500K": 0.05587015620585589
+                },
+                "within_budgets": {
+                  "mean_temperature_k": false,
+                  "cell_temperature_k": false,
+                  "mean_pressure_pa": false,
+                  "total_lime_mol": false,
+                  "surface_temperature_k": false,
+                  "heat_mean_900K": true,
+                  "cool_mean_500K": true,
+                  "both_completed": true
+                },
+                "all_requested_budgets_met": false
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sorptive-surface",
+      "name": "低温显式蒸发表面列",
+      "physical_scope": "与直接外格接触分开的无储量表面模型；128格更紧精度分支",
+      "report_file": "docs/sandbox/research/sorptive-surface-tight-128-v1/REPORT.md",
+      "material_status": "仅有声明条件下的数值证据；未取得真实砖材料资格",
+      "checks": [
+        {
+          "label": "128格基础档完整审计",
+          "result_file": "data/sandbox/research/sorptive-surface-tight-128-v1/base-full-audit.json",
+          "availability": "pending",
+          "selectors": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ]
+            }
+          ],
+          "result_state": "awaiting_result_file",
+          "recorded_values": null
+        },
+        {
+          "label": "128格精细档完整审计",
+          "result_file": "data/sandbox/research/sorptive-surface-tight-128-v1/refined-full-audit.json",
+          "availability": "pending",
+          "selectors": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ]
+            }
+          ],
+          "result_state": "awaiting_result_file",
+          "recorded_values": null
+        },
+        {
+          "label": "128格时间比较",
+          "result_file": "data/sandbox/research/sorptive-surface-tight-128-v1/time-comparison.json",
+          "availability": "required",
+          "selectors": [
+            {
+              "label": "逐项预算",
+              "path": [
+                "comparisons",
+                0,
+                "within_budgets"
+              ]
+            },
+            {
+              "label": "两个轨迹均完成",
+              "path": [
+                "comparisons",
+                0,
+                "both_completed"
+              ]
+            }
+          ],
+          "result_state": "result_file_read",
+          "recorded_values": [
+            {
+              "label": "逐项预算",
+              "path": [
+                "comparisons",
+                0,
+                "within_budgets"
+              ],
+              "value": {
+                "temperature": true,
+                "water": true,
+                "mean_moisture_event": true
+              }
+            },
+            {
+              "label": "两个轨迹均完成",
+              "path": [
+                "comparisons",
+                0,
+                "both_completed"
+              ],
+              "value": true
+            }
+          ]
+        },
+        {
+          "label": "128格远端轨迹存档",
+          "result_file": "data/sandbox/research/sorptive-surface-tight-128-v1/release-publication.json",
+          "availability": "required",
+          "selectors": [
+            {
+              "label": "发布记录",
+              "path": [
+                "remote_publication_completed"
+              ]
+            }
+          ],
+          "result_state": "result_file_read",
+          "recorded_values": [
+            {
+              "label": "发布记录",
+              "path": [
+                "remote_publication_completed"
+              ],
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "carbon-calcium-closed",
+      "name": "高温封闭共同反应列",
+      "physical_scope": "Ca/C/O纯相平衡与理想CO/CO₂/O₂/N₂；常固相体积、声明几何和输运，无实际砖有限速率",
+      "report_file": "docs/sandbox/research/carbon-calcium-temperature-column-v1/REPORT.md",
+      "material_status": "仅有声明条件下的数值证据；未取得真实砖材料资格",
+      "checks": [
+        {
+          "label": "one-twenty-eight完整及时间审计",
+          "result_file": "data/sandbox/research/carbon-calcium-temperature-column-v1/one-twenty-eight-full-audit.json",
+          "availability": "required",
+          "selectors": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ]
+            }
+          ],
+          "result_state": "result_file_read",
+          "recorded_values": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ],
+              "value": true
+            }
+          ]
+        },
+        {
+          "label": "上一组空间比较",
+          "result_file": "data/sandbox/research/carbon-calcium-temperature-column-v1/sixty-four-to-one-twenty-eight-comparison.json",
+          "availability": "required",
+          "selectors": [
+            {
+              "label": "全部声明空间预算",
+              "path": [
+                "all_requested_budgets_met"
+              ]
+            },
+            {
+              "label": "详细空间比较",
+              "path": [
+                "comparisons"
+              ]
+            }
+          ],
+          "result_state": "result_file_read",
+          "recorded_values": [
+            {
+              "label": "全部声明空间预算",
+              "path": [
+                "all_requested_budgets_met"
+              ],
+              "value": false
+            },
+            {
+              "label": "详细空间比较",
+              "path": [
+                "comparisons"
+              ],
+              "value": [
+                {
+                  "pair": [
+                    "sixty-four-colored-refined",
+                    "one-twenty-eight-colored-refined"
+                  ],
+                  "cell_counts": [
+                    64,
+                    128
+                  ],
+                  "observations": 1001,
+                  "maximum_differences": {
+                    "mean_temperature_k": 0.014717571893925196,
+                    "coarse_cell_temperature_k": 0.09465626753012657,
+                    "mean_pressure_pa": 2.213044586824253,
+                    "coarse_cell_pressure_pa": 548.4792105576489,
+                    "total_species_mol": 2.1002943520953207e-07
+                  },
+                  "maximum_difference_times_s": {
+                    "mean_temperature_k": 20.0,
+                    "coarse_cell_temperature_k": 20.0,
+                    "mean_pressure_pa": 20.0,
+                    "coarse_cell_pressure_pa": 80.0,
+                    "total_species_mol": 20.0
+                  },
+                  "maximum_total_species_differences_mol": {
+                    "calcite": 1.4531853779857495e-07,
+                    "lime": 1.4531853779835811e-07,
+                    "C": 6.471089740271718e-08,
+                    "CO": 1.294217948115059e-07,
+                    "CO2": 2.1002943520953207e-07,
+                    "O2": 2.288988916548388e-25,
+                    "N2": 1.214306433183765e-17
+                  },
+                  "within_budgets": {
+                    "mean_temperature_k": true,
+                    "coarse_cell_temperature_k": true,
+                    "mean_pressure_pa": true,
+                    "total_species_mol": false,
+                    "same_observation_times": true,
+                    "same_species_order": true,
+                    "both_completed": true
+                  },
+                  "all_requested_budgets_met": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "two-fifty-six基础档完整审计",
+          "result_file": "data/sandbox/research/carbon-calcium-temperature-column-v1/two-fifty-six-base-full-audit.json",
+          "availability": "pending",
+          "selectors": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ]
+            }
+          ],
+          "result_state": "awaiting_result_file",
+          "recorded_values": null
+        },
+        {
+          "label": "two-fifty-six精细档完整审计",
+          "result_file": "data/sandbox/research/carbon-calcium-temperature-column-v1/two-fifty-six-refined-full-audit.json",
+          "availability": "pending",
+          "selectors": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ]
+            }
+          ],
+          "result_state": "awaiting_result_file",
+          "recorded_values": null
+        }
+      ]
+    },
+    {
+      "id": "carbon-calcium-open",
+      "name": "高温开放共同反应列",
+      "physical_scope": "Ca/C/O纯相平衡与理想CO/CO₂/O₂/N₂；常固相体积、声明几何和输运，无实际砖有限速率",
+      "report_file": "docs/sandbox/research/carbon-calcium-open-column-v1/REPORT.md",
+      "material_status": "仅有声明条件下的数值证据；未取得真实砖材料资格",
+      "checks": [
+        {
+          "label": "thirty-two完整及时间审计",
+          "result_file": "data/sandbox/research/carbon-calcium-open-column-v1/thirty-two-full-audit.json",
+          "availability": "required",
+          "selectors": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ]
+            }
+          ],
+          "result_state": "result_file_read",
+          "recorded_values": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ],
+              "value": true
+            }
+          ]
+        },
+        {
+          "label": "上一组空间比较",
+          "result_file": "data/sandbox/research/carbon-calcium-open-column-v1/sixteen-to-thirty-two-comparison.json",
+          "availability": "required",
+          "selectors": [
+            {
+              "label": "全部声明空间预算",
+              "path": [
+                "all_requested_budgets_met"
+              ]
+            },
+            {
+              "label": "详细空间比较",
+              "path": [
+                "comparisons"
+              ]
+            }
+          ],
+          "result_state": "result_file_read",
+          "recorded_values": [
+            {
+              "label": "全部声明空间预算",
+              "path": [
+                "all_requested_budgets_met"
+              ],
+              "value": false
+            },
+            {
+              "label": "详细空间比较",
+              "path": [
+                "comparisons"
+              ],
+              "value": [
+                {
+                  "pair": [
+                    "sixteen",
+                    "thirty-two"
+                  ],
+                  "cell_counts": [
+                    16,
+                    32
+                  ],
+                  "observations": 6001,
+                  "maximum_differences": {
+                    "mean_temperature_k": 1.8907625980306193,
+                    "coarse_cell_temperature_k": 5.416630127371263,
+                    "mean_pressure_pa": 2159.1308284924016,
+                    "coarse_cell_pressure_pa": 20665.210151801293,
+                    "total_species_mol": 0.00012952864890340506
+                  },
+                  "maximum_difference_times_s": {
+                    "mean_temperature_k": 585.0,
+                    "coarse_cell_temperature_k": 580.0,
+                    "mean_pressure_pa": 5165.0,
+                    "coarse_cell_pressure_pa": 5165.0,
+                    "total_species_mol": 325.0
+                  },
+                  "maximum_total_species_differences_mol": {
+                    "calcite": 2.310895282858598e-05,
+                    "lime": 2.3108952828585438e-05,
+                    "C": 8.131554471242893e-07,
+                    "CO": 7.24990999752546e-05,
+                    "CO2": 0.00012952864890340506,
+                    "O2": 5.728741136244359e-05,
+                    "N2": 1.166913459342122e-05
+                  },
+                  "within_budgets": {
+                    "mean_temperature_k": false,
+                    "coarse_cell_temperature_k": false,
+                    "mean_pressure_pa": false,
+                    "total_species_mol": false,
+                    "same_observation_times": true,
+                    "same_species_order": true,
+                    "both_completed": true
+                  },
+                  "all_requested_budgets_met": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "sixty-four基础档完整审计",
+          "result_file": "data/sandbox/research/carbon-calcium-open-column-v1/sixty-four-base-full-audit.json",
+          "availability": "pending",
+          "selectors": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ]
+            }
+          ],
+          "result_state": "awaiting_result_file",
+          "recorded_values": null
+        },
+        {
+          "label": "sixty-four精细档完整审计",
+          "result_file": "data/sandbox/research/carbon-calcium-open-column-v1/sixty-four-refined-full-audit.json",
+          "availability": "pending",
+          "selectors": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ]
+            }
+          ],
+          "result_state": "awaiting_result_file",
+          "recorded_values": null
+        }
+      ]
+    },
+    {
+      "id": "carbon-calcium-surface",
+      "name": "高温显式表面共同反应列",
+      "physical_scope": "Ca/C/O纯相平衡与理想CO/CO₂/O₂/N₂；常固相体积、声明几何和输运，无实际砖有限速率",
+      "report_file": "docs/sandbox/research/carbon-calcium-surface-column-v1/REPORT.md",
+      "material_status": "仅有声明条件下的数值证据；未取得真实砖材料资格",
+      "checks": [
+        {
+          "label": "thirty-two完整及时间审计",
+          "result_file": "data/sandbox/research/carbon-calcium-surface-column-v1/thirty-two-full-audit.json",
+          "availability": "required",
+          "selectors": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ]
+            }
+          ],
+          "result_state": "result_file_read",
+          "recorded_values": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ],
+              "value": true
+            }
+          ]
+        },
+        {
+          "label": "上一组空间比较",
+          "result_file": "data/sandbox/research/carbon-calcium-surface-column-v1/sixteen-to-thirty-two-comparison.json",
+          "availability": "required",
+          "selectors": [
+            {
+              "label": "全部声明空间预算",
+              "path": [
+                "all_requested_budgets_met"
+              ]
+            },
+            {
+              "label": "详细空间比较",
+              "path": [
+                "comparisons"
+              ]
+            }
+          ],
+          "result_state": "result_file_read",
+          "recorded_values": [
+            {
+              "label": "全部声明空间预算",
+              "path": [
+                "all_requested_budgets_met"
+              ],
+              "value": false
+            },
+            {
+              "label": "详细空间比较",
+              "path": [
+                "comparisons"
+              ],
+              "value": [
+                {
+                  "pair": [
+                    "sixteen",
+                    "thirty-two"
+                  ],
+                  "cell_counts": [
+                    16,
+                    32
+                  ],
+                  "observations": 6001,
+                  "maximum_differences": {
+                    "mean_temperature_k": 0.707473744571189,
+                    "coarse_cell_temperature_k": 2.1726110147106965,
+                    "mean_pressure_pa": 1302.702473182464,
+                    "coarse_cell_pressure_pa": 22001.275238875125,
+                    "total_species_mol": 1.2085659462410681e-05
+                  },
+                  "maximum_difference_times_s": {
+                    "mean_temperature_k": 20740.0,
+                    "coarse_cell_temperature_k": 20740.0,
+                    "mean_pressure_pa": 5295.0,
+                    "coarse_cell_pressure_pa": 5295.0,
+                    "total_species_mol": 5290.0
+                  },
+                  "maximum_total_species_differences_mol": {
+                    "calcite": 1.0865631612129662e-05,
+                    "lime": 1.0865631612129987e-05,
+                    "C": 5.288189847000839e-07,
+                    "CO": 1.237356490342578e-06,
+                    "CO2": 1.2085659462410681e-05,
+                    "O2": 3.4818260770408133e-07,
+                    "N2": 1.7115993828577432e-06
+                  },
+                  "within_budgets": {
+                    "mean_temperature_k": false,
+                    "coarse_cell_temperature_k": false,
+                    "mean_pressure_pa": false,
+                    "total_species_mol": false,
+                    "same_observation_times": true,
+                    "same_species_order": true,
+                    "both_completed": true
+                  },
+                  "all_requested_budgets_met": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "sixty-four基础档完整审计",
+          "result_file": "data/sandbox/research/carbon-calcium-surface-column-v1/sixty-four-base-full-audit.json",
+          "availability": "pending",
+          "selectors": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ]
+            }
+          ],
+          "result_state": "awaiting_result_file",
+          "recorded_values": null
+        },
+        {
+          "label": "sixty-four精细档完整审计",
+          "result_file": "data/sandbox/research/carbon-calcium-surface-column-v1/sixty-four-refined-full-audit.json",
+          "availability": "pending",
+          "selectors": [
+            {
+              "label": "全部声明数值预算",
+              "path": [
+                "all_requested_numerical_budgets_met"
+              ]
+            }
+          ],
+          "result_state": "awaiting_result_file",
+          "recorded_values": null
+        }
+      ]
+    }
+  ],
+  "material_dependencies": [
+    {
+      "name": "M1同材料真实黏土干燥",
+      "status": "现有输入尚未满足独立误差评价要求",
+      "report_file": "docs/sandbox/research/real-clay-drying-m1/REPORT.md"
+    },
+    {
+      "name": "MIA3含预处理污泥配方全周期",
+      "status": "仍缺同材料反应产物/热储、动态结构、冷却和独立全历程对照",
+      "report_file": "docs/sandbox/FULL_CYCLE_BLOCKERS.md"
+    },
+    {
+      "name": "偏高岭土热化学",
+      "status": "已有参考焓候选和算术复现；来源质量基准、高温Cp/S及样品适用性仍未闭合",
+      "report_file": "docs/sandbox/research/metakaolin-reference-enthalpy-v1/REPORT.md"
+    }
+  ],
+  "interpretation": {
+    "result_file_read": "只表示成功读取对应文件；布尔值和预算保留原值。",
+    "awaiting_result_file": "该索引明确声明结果待产出；不证明进程正在运行，也不推断成功或失败。",
+    "failed_result": "原文件中的false保持false，不以其他模型、时间比较或存档完成替代。",
+    "materials": "数值、来源适用、真实实验对照是不同问题；本入口不计算材料资格或训练资格。",
+    "exit_code": "0表示查询完成，不表示物理预算全部通过。"
+  }
+}
