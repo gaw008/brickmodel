@@ -26,6 +26,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="sludge-vme", description="Research-only synthetic sludge fired-brick forward/inverse virtual materials engine")
     sub = parser.add_subparsers(dest="command", required=True)
 
+    cycle = sub.add_parser("full-cycle", help="run the traceable ventilated full-cycle approximation")
+    cycle.add_argument("parameters", type=Path)
+    cycle.add_argument("--out", type=Path, required=True)
+    cycle.add_argument("--acceptance", action="store_true")
+
     validate = sub.add_parser("validate", help="validate and normalize a JSON case")
     validate.add_argument("case", type=Path)
     validate.add_argument("--json", action="store_true")
@@ -203,6 +208,18 @@ def command_benchmark(args: argparse.Namespace) -> int:
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    if args.command == "full-cycle":
+        from .models.full_cycle import read_parameters, run_acceptance, run_cycle, write_json
+        config = read_parameters(args.parameters)
+        if args.acceptance:
+            result = run_acceptance(config, args.out)
+            print(json.dumps({"passed":result["passed"], "relative_differences":result["relative_differences"]}))
+            return 0 if result["passed"] else EXIT_SOLVER
+        report, fields = run_cycle(config)
+        write_json(args.out / "summary.json", report)
+        write_json(args.out / "fields.json", fields)
+        print(json.dumps({"summary":report["summary"], "conservation_passed":report["conservation_passed"], "elapsed_s":report["elapsed_s"]}))
+        return 0 if report["conservation_passed"] else EXIT_SOLVER
     try:
         if args.command == "validate":
             return command_validate(args)
