@@ -67,6 +67,8 @@ def compare(config: dict, out: Path) -> dict:
             'median_ties':[[names[i],names[j]] for i in range(len(names)) for j in range(i+1,len(names)) if medians[i]==medians[j]]}
     result = {'schema':'sludge_vme_full_cycle_uq_v1','measurement_kind':'simulation',
         'sampling':'Paired iid uniform draws inside declared parameter ranges. Not experimental confidence intervals. No aggregate score across conflicting objectives.',
+        'scope_note':config['uncertainty_scope_note'],
+        'conditioned_parameter_values':{k:p[k]['value'] for k in config['uncertainty_fixed_parameters']},
         'samples_per_scenario':count,'scenario_count':len(names),'distributions':distributions,'rankings':rankings,
         'all_physical_consistency_passed':all(r['physical_consistency_passed'] for r in records),
         'sampled_parameter_names':parameters,
