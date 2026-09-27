@@ -1,3 +1,16 @@
+## 2026-09-27 06:19 UTC：两档完整审计均已结束
+
+两档最终JSON均标记`completed=true`、`all_requested_numerical_budgets_met=true`，真实进程退出码均为0：
+
+| 档位 | 审计耗时（秒） | 材料资格 | 训练资格 |
+|---|---:|---|---|
+| base | 67,479.81 | false | false |
+| refined | 98,368.60 | false | false |
+
+最终审计分别为`base-full-audit.json`与`refined-full-audit.json`，均保留本地并增量备份私人Drive（只声明本次名称/大小/父目录核对）。本轮不重复审计、不新增空间对照；既有时间比较与本次审计完成不能取代尚未完成的新版空间资格或现实材料验证。
+
+两档未跟踪原始jsonl已分别与保留gzip分片逐字节比较后去重；需恢复时按`complete-archive.json`顺序解压。refined此次删除11,405,243,387字节，171分片2,702,119,753字节仍在本地。项目实体已迁至`~/Research/brickmodel-github`；下方“仍在运行/保留原始轨迹”等为对应时间的历史记录，以本节终态为准。详见[迁移记录](../storage-migration-20260926/REPORT.md)。
+
 ## 2026-09-26 04:05 UTC：研究附件远端回读完成
 
 两档轨迹共283个gzip分片，组成5个tar包（合计4,449,105,920字节），已发布为[GitHub研究预发布附件](https://github.com/gaw008/brickmodel/releases/tag/research-sorptive-surface-tight-128-20260926)。5包和3份清单均实际下载并与本地逐字节相同，未生成或比对SHA。原轨迹、分片和完整性清单保留；本地临时tar/回读大包已删除。发布证据见`release-publication.json`。
