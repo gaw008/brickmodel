@@ -1,6 +1,6 @@
 {
   "schema": "sludge_vme_full_cycle_v3",
-  "scope": "Source-traceable full firing-cycle approximation with stored pore gas, thermoelasticity, conservative water migration, seeded phase exchange and kinetic liquid/glass proxy, plus thermodynamic water binding; real material applicability pending measurements.",
+  "scope": "Source-traceable full firing-cycle approximation with thermodynamic water binding, stored pore gas and prescribed staged kiln atmosphere; real material applicability pending measurements.",
   "sources": {
     "policy": {
       "identity": "assumed",
@@ -105,6 +105,11 @@
       "identity": "assumed",
       "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py water_binding",
       "note": "Declared saturating water-binding Helmholtz energy g(n)*a(T), g=N*n/(n+N); a=-E+C*(T-Tr-T*ln(T/Tr)). Positive excess capacity and convex composition free energy. Coefficients are engineering assumptions, not measured sorption heats."
+    },
+    "gas_program": {
+      "identity": "assumed",
+      "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py boundary_composition",
+      "note": "Predeclared virtual kiln reservoir composition at thermal-stage endpoints, linearly interpolated with process time. No plant atmosphere measurements, kiln circulation/combustion solution or recipe optimization."
     }
   },
   "parameters": {
@@ -2264,6 +2269,369 @@
       "source": "policy",
       "status": "assumed",
       "note": "Predeclared additional virtual dry hold for one bounded response to binding-induced endpoint failure. Original nominal schedule and 0.1% criterion unchanged; all subsequent stage endpoints shift by the same duration. Not a recommendation for unmeasured real bricks."
+    },
+    "gas.program_scale": {
+      "value": 1.0,
+      "unit": "1",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Blend fraction from initial fixed inlet to declared stage endpoint compositions. Zero exactly restores the preceding constant reservoir. Applies to finite stored-gas host only."
+    },
+    "gas.stage.drying_ramp.O2": {
+      "value": 0.209,
+      "unit": "1",
+      "range": [
+        0.209,
+        0.209
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.drying_ramp.N2": {
+      "value": 0.775,
+      "unit": "1",
+      "range": [
+        0.775,
+        0.775
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.drying_ramp.H2O": {
+      "value": 0.015,
+      "unit": "1",
+      "range": [
+        0.015,
+        0.015
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.drying_ramp.CO2": {
+      "value": 0.001,
+      "unit": "1",
+      "range": [
+        0.001,
+        0.001
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.drying.O2": {
+      "value": 0.209,
+      "unit": "1",
+      "range": [
+        0.209,
+        0.209
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.drying.N2": {
+      "value": 0.775,
+      "unit": "1",
+      "range": [
+        0.775,
+        0.775
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.drying.H2O": {
+      "value": 0.015,
+      "unit": "1",
+      "range": [
+        0.015,
+        0.015
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.drying.CO2": {
+      "value": 0.001,
+      "unit": "1",
+      "range": [
+        0.001,
+        0.001
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.heating.O2": {
+      "value": 0.1,
+      "unit": "1",
+      "range": [
+        0.1,
+        0.1
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.heating.N2": {
+      "value": 0.78,
+      "unit": "1",
+      "range": [
+        0.78,
+        0.78
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.heating.H2O": {
+      "value": 0.1,
+      "unit": "1",
+      "range": [
+        0.1,
+        0.1
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.heating.CO2": {
+      "value": 0.02,
+      "unit": "1",
+      "range": [
+        0.02,
+        0.02
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.reactions.O2": {
+      "value": 0.04,
+      "unit": "1",
+      "range": [
+        0.04,
+        0.04
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.reactions.N2": {
+      "value": 0.8,
+      "unit": "1",
+      "range": [
+        0.8,
+        0.8
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.reactions.H2O": {
+      "value": 0.12,
+      "unit": "1",
+      "range": [
+        0.12,
+        0.12
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.reactions.CO2": {
+      "value": 0.04,
+      "unit": "1",
+      "range": [
+        0.04,
+        0.04
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.sintering.O2": {
+      "value": 0.06,
+      "unit": "1",
+      "range": [
+        0.06,
+        0.06
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.sintering.N2": {
+      "value": 0.81,
+      "unit": "1",
+      "range": [
+        0.81,
+        0.81
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.sintering.H2O": {
+      "value": 0.1,
+      "unit": "1",
+      "range": [
+        0.1,
+        0.1
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.sintering.CO2": {
+      "value": 0.03,
+      "unit": "1",
+      "range": [
+        0.03,
+        0.03
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.hold.O2": {
+      "value": 0.08,
+      "unit": "1",
+      "range": [
+        0.08,
+        0.08
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.hold.N2": {
+      "value": 0.8,
+      "unit": "1",
+      "range": [
+        0.8,
+        0.8
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.hold.H2O": {
+      "value": 0.09,
+      "unit": "1",
+      "range": [
+        0.09,
+        0.09
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.hold.CO2": {
+      "value": 0.03,
+      "unit": "1",
+      "range": [
+        0.03,
+        0.03
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.cooling.O2": {
+      "value": 0.209,
+      "unit": "1",
+      "range": [
+        0.209,
+        0.209
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.cooling.N2": {
+      "value": 0.775,
+      "unit": "1",
+      "range": [
+        0.775,
+        0.775
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.cooling.H2O": {
+      "value": 0.015,
+      "unit": "1",
+      "range": [
+        0.015,
+        0.015
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.cooling.CO2": {
+      "value": 0.001,
+      "unit": "1",
+      "range": [
+        0.001,
+        0.001
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.cooling_hold.O2": {
+      "value": 0.209,
+      "unit": "1",
+      "range": [
+        0.209,
+        0.209
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.cooling_hold.N2": {
+      "value": 0.775,
+      "unit": "1",
+      "range": [
+        0.775,
+        0.775
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.cooling_hold.H2O": {
+      "value": 0.015,
+      "unit": "1",
+      "range": [
+        0.015,
+        0.015
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "gas.stage.cooling_hold.CO2": {
+      "value": 0.001,
+      "unit": "1",
+      "range": [
+        0.001,
+        0.001
+      ],
+      "source": "gas_program",
+      "status": "assumed",
+      "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
     }
   },
   "species": [
@@ -2550,9 +2918,42 @@
     "sintering.radius",
     "kinetics.condensation.factor",
     "kinetics.evaporation.A",
-    "kinetics.evaporation.E"
+    "kinetics.evaporation.E",
+    "gas.program_scale",
+    "gas.stage.drying_ramp.O2",
+    "gas.stage.drying_ramp.N2",
+    "gas.stage.drying_ramp.H2O",
+    "gas.stage.drying_ramp.CO2",
+    "gas.stage.drying.O2",
+    "gas.stage.drying.N2",
+    "gas.stage.drying.H2O",
+    "gas.stage.drying.CO2",
+    "gas.stage.heating.O2",
+    "gas.stage.heating.N2",
+    "gas.stage.heating.H2O",
+    "gas.stage.heating.CO2",
+    "gas.stage.reactions.O2",
+    "gas.stage.reactions.N2",
+    "gas.stage.reactions.H2O",
+    "gas.stage.reactions.CO2",
+    "gas.stage.sintering.O2",
+    "gas.stage.sintering.N2",
+    "gas.stage.sintering.H2O",
+    "gas.stage.sintering.CO2",
+    "gas.stage.hold.O2",
+    "gas.stage.hold.N2",
+    "gas.stage.hold.H2O",
+    "gas.stage.hold.CO2",
+    "gas.stage.cooling.O2",
+    "gas.stage.cooling.N2",
+    "gas.stage.cooling.H2O",
+    "gas.stage.cooling.CO2",
+    "gas.stage.cooling_hold.O2",
+    "gas.stage.cooling_hold.N2",
+    "gas.stage.cooling_hold.H2O",
+    "gas.stage.cooling_hold.CO2"
   ],
-  "uncertainty_scope_note": "Twenty-four selected parameters include water binding energy and excess heat capacity, liquid relaxation, retention scale and liquid mobility. Permeability, pore radius, condensation factor and evaporation A/E remain fixed, as do liquid latent contrast and transition width. Eight paired samples do not establish all-parameter, sorption-heat, glass-yield or permeability-range robustness. Added sampled dimensions change other draws; cross-ensemble differences cannot be assigned to binding alone.",
+  "uncertainty_scope_note": "Twenty-four selected parameters include water binding energy and excess heat capacity, liquid relaxation, retention scale and liquid mobility. Permeability, pore radius, condensation factor and evaporation A/E remain fixed, as do liquid latent contrast and transition width. Eight paired samples do not establish all-parameter, sorption-heat, glass-yield or permeability-range robustness. Added sampled dimensions change other draws; cross-ensemble differences cannot be assigned to binding alone. Stage composition endpoints and program scale are fixed at the predeclared virtual recipe; the same 24-dimensional paired draws as the water-binding stage are retained. This is not robustness to kiln-atmosphere uncertainty or optimization over endpoint-qualified processes.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -2594,6 +2995,17 @@
           "status": "assumed",
           "source": "lumped_carbonization",
           "note": "Declared virtual mechanism calculation; not measured operating data."
+        },
+        "gas.program_scale": {
+          "value": 0.0,
+          "unit": "1",
+          "range": [
+            0.0,
+            1.0
+          ],
+          "source": "gas_program",
+          "status": "assumed",
+          "note": "Keep the existing oxygen-poor comparison a constant reservoir, including the original O2/N2 overrides."
         }
       }
     },
@@ -2842,6 +3254,22 @@
           "source": "policy",
           "status": "assumed",
           "note": "Separate virtual binding response: two-hour dry-hold extension, subsequent stage durations preserved. Original nominal schedule remains unchanged."
+        }
+      }
+    },
+    {
+      "id": "fixed_atmosphere",
+      "overrides": {
+        "gas.program_scale": {
+          "value": 0.0,
+          "unit": "1",
+          "range": [
+            0.0,
+            1.0
+          ],
+          "source": "gas_program",
+          "status": "assumed",
+          "note": "Constant-reservoir limiting comparison; recover preceding water-binding model."
         }
       }
     }
