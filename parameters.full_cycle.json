@@ -89,7 +89,7 @@
     "water_retention": {
       "identity": "assumed",
       "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py water_retention",
-      "note": "Explicit ideal-mixing free energy RT*[n*ln(n/(n+N))+N*ln(N/(n+N))], where N is an immobile dry-matrix equivalent scale, not an extra mass inventory or measured maximum sorption capacity. Gives water activity n/(n+N), mixing entropy and zero excess internal energy/enthalpy. No energetic binding, fitted isotherm, hysteresis or evolving matrix sites."
+      "note": "Ideal-mixing free energy RT*[n*ln(n/(n+N))+N*ln(N/(n+N))]. Current immobile equivalents N follow water_site_evolution; neither an extra mass inventory nor measured capacity. U_mix=0; entropy composition derivatives with respect to water and carrier are both retained. Energetic binding is separately declared."
     },
     "water_phase_exchange": {
       "identity": "assumed",
@@ -110,6 +110,11 @@
       "identity": "assumed",
       "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py boundary_composition",
       "note": "Predeclared virtual kiln reservoir composition at thermal-stage endpoints, linearly interpolated with process time. No plant atmosphere measurements, kiln circulation/combustion solution or recipe optimization."
+    },
+    "water_site_evolution": {
+      "identity": "assumed",
+      "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py retention_sites and water_binding",
+      "note": "Declared immobile site equivalents N=N0*(r+(1-r)*n_kaolin/n_kaolin_initial). A persistent fraction r remains after dehydroxylation; r is unmeasured and positive over the declared domain, not an inventory floor. Composition derivatives of the existing mixing and binding free energies enter kaolin reaction affinity and caloric/entropy ledgers. No site regeneration, independent kinetics, measured site count or sintering loss."
     }
   },
   "parameters": {
@@ -2202,7 +2207,7 @@
       ],
       "source": "water_retention",
       "status": "assumed",
-      "note": "Water-equivalent mass scale per initial dry mass defining fixed matrix equivalents N for mixing and saturated binding. Not added matter, a measured site count or maximum sorption capacity. Zero N recovers pure liquid and removes binding."
+      "note": "Water-equivalent mass scale per initial dry mass defining initial matrix equivalents N0 for mixing and saturated binding. Current N follows the separately declared kaolin-carried site hypothesis. Not added matter, a measured site count or maximum sorption capacity. Zero N0 removes all retention."
     },
     "kinetics.condensation.factor": {
       "value": 1.0,
@@ -2632,6 +2637,17 @@
       "source": "gas_program",
       "status": "assumed",
       "note": "Declared endpoint mole fraction; four species sum to one. Virtual boundary condition, fixed in this conditional UQ, not a measured or optimized firing atmosphere."
+    },
+    "water.site_survival_fraction": {
+      "value": 0.2,
+      "unit": "1",
+      "range": [
+        0.1,
+        1.0
+      ],
+      "source": "water_site_evolution",
+      "status": "assumed",
+      "note": "Persistent fraction of initial matrix equivalents after kaolin depletion. Nominal 20 percent, range 10 to 100 percent are declared hypotheses, not measured. Evolving mode requires positive initial kaolin. At one recover fixed sites exactly; complete site loss is outside this model domain. No new mass or independent state."
     }
   },
   "species": [
@@ -2863,7 +2879,8 @@
     "liquid.relaxation_time_ref",
     "liquid.relaxation_activation_energy",
     "water.binding_energy",
-    "water.binding_heat_capacity"
+    "water.binding_heat_capacity",
+    "water.site_survival_fraction"
   ],
   "calibration_parameters": [
     "thermal.h",
@@ -2953,7 +2970,7 @@
     "gas.stage.cooling_hold.H2O",
     "gas.stage.cooling_hold.CO2"
   ],
-  "uncertainty_scope_note": "Twenty-four selected parameters include water binding energy and excess heat capacity, liquid relaxation, retention scale and liquid mobility. Permeability, pore radius, condensation factor and evaporation A/E remain fixed, as do liquid latent contrast and transition width. Eight paired samples do not establish all-parameter, sorption-heat, glass-yield or permeability-range robustness. Added sampled dimensions change other draws; cross-ensemble differences cannot be assigned to binding alone. Stage composition endpoints and program scale are fixed at the predeclared virtual recipe; the same 24-dimensional paired draws as the water-binding stage are retained. This is not robustness to kiln-atmosphere uncertainty or optimization over endpoint-qualified processes.",
+  "uncertainty_scope_note": "Twenty-five selected parameters include the new persistent site fraction along with water binding, liquid relaxation, retention and liquid mobility. Permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere remain fixed; liquid latent contrast and transition width are also not sampled. Added sampled dimension changes other draws, so cross-ensemble differences cannot be assigned to site evolution alone. Eight paired samples do not establish all-parameter or permeability/atmosphere-range robustness, measured site survival or qualified-process optimization.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -3270,6 +3287,22 @@
           "source": "gas_program",
           "status": "assumed",
           "note": "Constant-reservoir limiting comparison; recover preceding water-binding model."
+        }
+      }
+    },
+    {
+      "id": "fixed_retention_sites",
+      "overrides": {
+        "water.site_survival_fraction": {
+          "value": 1.0,
+          "unit": "1",
+          "range": [
+            0.1,
+            1.0
+          ],
+          "source": "water_site_evolution",
+          "status": "assumed",
+          "note": "Declared fixed-site limit, recovering the preceding staged-atmosphere model."
         }
       }
     }

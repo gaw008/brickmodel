@@ -38,6 +38,13 @@ class FiniteGasFullCycle(FullCycle):
         self.permeability = self.p('transport.permeability_ref', 'm2')
         self.water_mobility = self.p('transport.liquid_water_mobility', 'm2/s')
         self.retention_matrix = self.p('water.retention_scale', 'kg/kg')*self.md/self.mw[self.water_index]
+        self.site_survival = self.p('water.site_survival_fraction', '1')
+        self.kaolin = self.ns.index('kaolin')
+        self.site_slope = np.zeros(self.n)
+        if self.retention_matrix != 0 and self.site_survival != 1:
+            if np.any(self.initial[:,self.kaolin] <= 0):
+                raise ValueError('evolving retention sites require positive initial kaolin')
+            self.site_slope = self.retention_matrix*(1-self.site_survival)/self.initial[:,self.kaolin]
         self.binding_energy = self.p('water.binding_energy', 'J/mol')
         self.binding_cp = self.p('water.binding_heat_capacity', 'J/mol/K')
         self.evaporation = [r['id'] for r in config['reactions']].index('evaporation')
@@ -105,33 +112,43 @@ class FiniteGasFullCycle(FullCycle):
         reservoir_mu_over_t = hin[len(self.ns):]/tf-sin[len(self.ns):]+self.R*np.log(inlet*self.P/self.Pr)
         return flux, energy, entropy, permeability, molecular, darcy, reservoir_mu_over_t
 
-    def water_retention(self, fields):
-        """Ideal water/matrix mixing: F=-T*S, mu_excess=R*T*log(activity).
+    def retention_sites(self, fields):
+        """Immobile equivalents: persistent sites plus kaolin-carried sites.
 
-        Matrix equivalents are fixed per initial dry mass, not added matter.
-        The excess internal energy and partial water enthalpy are zero.
-        Log activity remains finite even when water inventory underflows;
-        the zero-matrix case explicitly selects the pure-liquid limit.
+        N=N0*(r+(1-r)*n_kaolin/n_kaolin_initial), with declared positive r.
+        Sites add no mass or state; their composition derivative is site_slope.
         """
+        return self.retention_matrix*(self.site_survival+(1-self.site_survival)*np.exp(-fields[2]))
+
+    def water_fractions(self, fields):
+        """Stable mixing logs, including the explicit zero-retention limit."""
         log_water = np.log(self.initial[:,self.water_index])-fields[1]
+        sites = self.retention_sites(fields)
         if self.retention_matrix == 0:
-            return np.zeros_like(log_water), np.zeros_like(log_water)
-        q = log_water-np.log(self.retention_matrix)
+            return np.zeros_like(log_water), np.zeros_like(log_water), sites
+        q = log_water-np.log(sites)
         positive = q.real >= 0
         correction = np.log1p(np.exp(np.where(positive, -q, q)))
         log_activity = np.where(positive, -correction, q-correction)
         log_matrix_fraction = np.where(positive, -q-correction, -correction)
-        entropy = -self.R*(np.exp(log_water)*log_activity+self.retention_matrix*log_matrix_fraction)
+        return log_activity, log_matrix_fraction, sites
+
+    def water_retention(self, fields):
+        """Ideal mixing F=-T*S with current immobile matrix equivalents."""
+        log_activity, log_matrix_fraction, sites = self.water_fractions(fields)
+        water = np.exp(np.log(self.initial[:,self.water_index])-fields[1])
+        entropy = -self.R*(water*log_activity+sites*log_matrix_fraction)
         return log_activity, entropy
 
     def water_binding(self,T,fields):
         """Saturating binding F=g*a(T), distinct from ideal mixing.
 
-        g=N*n/(n+N), a=-E+C*(T-Tr-T*log(T/Tr)). Matrix equivalents
-        are fixed, so g is an energy weight, not a second water inventory.
-        Storage uses g; partial water properties use dg/dn=(N/(n+N))**2.
+        Storage uses g=N*n/(n+N); water and site derivatives use
+        dg/dn=(N/(n+N))**2 and dg/dN=(n/(n+N))**2. The kaolin
+        derivative includes both mixing and binding, via dN/dn_kaolin.
+        g is an energy weight, not a second water inventory.
         """
-        log_activity,_=self.water_retention(fields)
+        log_activity,log_matrix_fraction,sites=self.water_fractions(fields)
         matrix_fraction=-np.expm1(log_activity)
         water=np.exp(np.log(self.initial[:,self.water_index])-fields[1])
         amount=water*matrix_fraction
@@ -139,10 +156,15 @@ class FiniteGasFullCycle(FullCycle):
         entropy_coefficient=self.binding_cp*np.log(T/self.Tr)
         enthalpy_coefficient=-self.binding_energy+self.binding_cp*(T-self.Tr)
         free_coefficient=enthalpy_coefficient-T*entropy_coefficient
+        site_weight=self.site_slope*np.exp(2*log_activity)
+        site_entropy=-self.R*self.site_slope*log_matrix_fraction+site_weight*entropy_coefficient
+        site_enthalpy=site_weight*enthalpy_coefficient
         return {'amount':amount,'slope':slope,'free_coefficient':free_coefficient,
                 'energy':amount*enthalpy_coefficient,'entropy':amount*entropy_coefficient,
                 'capacity':amount*self.binding_cp,'mu':slope*free_coefficient,
-                'partial_h':slope*enthalpy_coefficient,'partial_s':slope*entropy_coefficient}
+                'partial_h':slope*enthalpy_coefficient,'partial_s':slope*entropy_coefficient,
+                'sites':sites,'kaolin_mu':site_enthalpy-T*site_entropy,
+                'kaolin_h':site_enthalpy,'kaolin_s':site_entropy}
 
     def water_phase_drive(self, affinity):
         """Signed seeded phase exchange, with affinity=(mu_vapor-mu_water)/(RT).
@@ -219,7 +241,9 @@ class FiniteGasFullCycle(FullCycle):
         log_activity, retention_entropy = self.water_retention(fields)
         binding=self.water_binding(T,fields)
         mu[:,self.water_index] += self.R*T*log_activity+binding['mu']
+        mu[:,self.kaolin] += binding['kaolin_mu']
         us[:,self.water_index] += binding['partial_h']
+        us[:,self.kaolin] += binding['kaolin_h']
         dg = mu@self.nu.T
         affinity = dg/(self.R*T[:, None])
         drive = -np.expm1(np.where(affinity.real < 0, affinity, 0))
@@ -245,6 +269,7 @@ class FiniteGasFullCycle(FullCycle):
         sdot = np.sum(capacity*dT/T)+np.sum(s[:, :len(self.ns)]*dns)+np.sum((sg-self.R)*dng)+np.sum(ng.sum(axis=1)*self.R*dpore/pore)+extra_sdot
         sdot -= self.R*np.sum(log_activity*dns[:,self.water_index])
         sdot += np.sum(binding['partial_s']*dns[:,self.water_index])
+        sdot += np.sum(binding['kaolin_s']*dns[:,self.kaolin])
         exchange = qext/tf-energy_flux[-1]/tf+flux[-1]@reservoir_mu_over_t
         reaction_entropy = -np.sum(rate*dg/T[:, None])
         thermal_entropy = np.sum(conductance*np.diff(T)**2/(T[:-1]*T[1:]))+qext*(1/T[-1]-1/tf)
@@ -261,6 +286,7 @@ class FiniteGasFullCycle(FullCycle):
                 'water_log_activity':log_activity+binding['mu']/(self.R*T),
                 'water_mixing_log_activity':log_activity,
                 'water_retention_entropy':retention_entropy+binding['entropy'], 'water_binding':binding,
+                'retention_site_rate':self.site_slope*dns[:,self.kaolin],
                 'water_phase_affinity':dg[:,self.evaporation],
                 'water_phase_entropy':-rate[:,self.evaporation]*dg[:,self.evaporation]/T,
                 'dsc':float(heat.real.sum())/(self.n*self.md), 'coordinate_rate':coordinate_rate,
@@ -274,7 +300,8 @@ class FiniteGasFullCycle(FullCycle):
         capacity=ns@self.cp[:len(self.ns)]+ng@(self.cp[len(self.ns):]-self.R)
         if self.retention_matrix != 0:
             water=ns[:,self.water_index]
-            capacity+=self.binding_cp*water*self.retention_matrix/(water+self.retention_matrix)
+            sites=self.retention_matrix*self.site_survival+self.site_slope*ns[:,self.kaolin]
+            capacity+=self.binding_cp*water*sites/(water+sites)
         return capacity
 
     def mechanical_rates(self,f,T,ns,ng,bulk,pore,cap,pressure,dns,dng,heat,flow,us,ug):
@@ -363,6 +390,8 @@ class FiniteGasFullCycle(FullCycle):
                 'liquid_flux=mobility*force=mol/s; liquid_flux*carried_enthalpy=W; liquid_flux*force=W/K',
                 'retention_scale*initial_dry_mass/M_water=mol; n/(n+N)=1; R*T*log(activity)=J/mol',
                 'F_mix=R*T*(n*log(activity)+N*log(matrix_fraction))=J; S_mix=-F_mix/T=J/K; U_mix=0',
+                'N=N0*r+c*n_kaolin=mol; c=N0*(1-r)/n_kaolin_initial=1; dN/dt=c*dn_kaolin/dt=mol/s',
+                'partial_kaolin_h=c*(n/(n+N))^2*h_binding=J/mol; partial_kaolin_s=c*(-R*log(N/(n+N))+(n/(n+N))^2*s_binding)=J/mol/K',
                 'phase_affinity=delta_mu/(R*T)=1; Arrhenius_rate*water_moles*phase_drive=mol/s',
                 '-net_phase_rate*delta_mu/T=W/K; signed phase extent has units mol',
                 'area/(half_width_left/k_left+half_width_right/k_right)=W/K',
@@ -416,6 +445,9 @@ class FiniteGasFullCycle(FullCycle):
                 'water_binding_capacity_j_k':r['water_binding']['capacity'].tolist(),
                 'water_binding_effective_moles':r['water_binding']['amount'].tolist(),
                 'water_binding_partial_enthalpy_j_mol':r['water_binding']['partial_h'].tolist(),
+                'water_retention_sites_mol':r['water_binding']['sites'].tolist(),
+                'water_retention_site_rate_mol_s':r['retention_site_rate'].tolist(),
+                'water_site_kaolin_mu_j_mol':r['water_binding']['kaolin_mu'].tolist(),
                 'water_net_phase_change_mol_s':r['rate'][:,self.evaporation].tolist(),
                 'water_phase_affinity_j_mol':r['water_phase_affinity'].tolist(),
                 'water_phase_entropy_w_k':r['water_phase_entropy'].tolist(),
@@ -473,6 +505,9 @@ class FiniteGasFullCycle(FullCycle):
             'initial_water_binding_energy_j':sum(rows[0]['water_binding_energy_j']),
             'final_water_binding_energy_j':sum(final['water_binding_energy_j']),
             'peak_water_binding_excess_capacity_j_k':max(sum(r['water_binding_capacity_j_k']) for r in rows),
+            'initial_retention_sites_mol':sum(rows[0]['water_retention_sites_mol']),
+            'final_retention_sites_mol':sum(final['water_retention_sites_mol']),
+            'peak_retention_site_loss_mol_s':max(-sum(r['water_retention_site_rate_mol_s']) for r in rows),
             'peak_net_condensation_mol_s':max(sum(max(-x,0.) for x in r['water_net_phase_change_mol_s']) for r in rows),
             'peak_net_evaporation_mol_s':max(sum(max(x,0.) for x in r['water_net_phase_change_mol_s']) for r in rows),
             'initial_volume_mean_conductivity_w_m_k':float(np.average(rows[0]['effective_conductivity_w_m_k'],weights=self.unpack(states[0])[3])),
@@ -504,7 +539,7 @@ class FiniteGasFullCycle(FullCycle):
             'gas_approximation':'Stored ideal O2/N2/H2O/CO2 gas, common-D molar diffusion plus donor Darcy flow with entropy-compatible carried enthalpy; assumed diffusivity and pore properties. No imposed internal pressure or independent per-cell sweep.',
             'thermal_approximation':'Background k=k_ref*(dry_solid_fraction/initial_dry_solid_fraction)^m*(1+b*liquid_water_volume_fraction), plus local pore-wall radiative k=4*sigma*factor*length*gas_porosity*T^3. Length is 2*r_initial*(pore_volume/initial_pore_volume)^(1/3), independent of mesh width. The assumed exchange factor includes wall emissivity and geometry; one local equilibrium temperature, no spectral/nonlocal photon or participating-gas radiation. Shared face and external half-cell resistances use total k; exterior furnace radiation remains a separate boundary exchange. No extra stored photon energy or separate radiation heat source. No intrinsic mineral conductivity law; coefficients unmeasured.',
             'liquid_water_transport_approximation':'Migration and seeded phase exchange share mechanical, ideal-mixing and energetic-binding water potential. Positive series availability multiplies the shared-face entropy force. Carried enthalpy uses reciprocal-log thermal mean, arithmetic mean mechanical potential times molar volume, and mean binding composition derivative times binding enthalpy at the thermal mean. Binding force is difference(g_prime)*mean(a(T)/T), satisfying the same nonisothermal entropy identity. No independent heat of transport. Log water inventory permits influx/loss; zero exterior/center liquid flow. No measured hydraulic law, dry-surface nucleation, hysteresis or humidity-cycle validation.',
-            'water_retention_approximation':'Ideal-mixing free energy plus binding F_b=g*a(T), g=N*n/(n+N), a=-E+C*(T-Tr-T*ln(T/Tr)). Fixed matrix equivalents N are an assumed scale, not added matter or measured sites. Binding U=g*(-E+C*(T-Tr)), S=g*C*ln(T/Tr), Cp=g*C; partial water h/s and mu use g_prime=(N/(n+N))^2, distinct from storage coefficient g. Reported water activity includes exp(mu_binding/(R*T)); mixing activity is also separately retained. Binding is an assumed saturating equilibrium free energy with constant excess Cp, not measured adsorption heat, a separate bound-water phase or site evolution. Zero E and C restore preceding mixing-only model; zero N removes mixing and binding.',
+            'water_retention_approximation':'Ideal mixing plus F_b=g*a(T), g=N*n/(n+N), a=-E+C*(T-Tr-T*ln(T/Tr)). Sites N=N0*(r+(1-r)*n_kaolin/n_kaolin_initial) have a declared persistent fraction r and a fraction lost with kaolin dehydroxylation. They add no matter or independent state. Both mixing and binding composition derivatives enter kaolin chemical potential, partial energy and entropy; no separate site-loss heat source. Storage U/S/Cp uses g, water partials use (N/(n+N))^2, site partials use (n/(n+N))^2 times dN/dn_kaolin. Positive residual sites are a physical hypothesis over the declared range, not a numerical inventory floor. No measured site counts, complete site disappearance, independent site kinetics, regeneration, sintering-dependent sites or hysteresis. r=1 recovers preceding fixed sites; zero N removes all retention; E=C=0 removes energetic binding only.',
             'water_phase_exchange_approximation':'Let a=(mu_vapor-mu_water)/(R*T), k=A_evap*exp(-E_evap/(R*T)). Net vapor source is k*n_water*(1-exp(a)) for a<=0, and -factor*k*n_water*(1-exp(-a)) for a>0. Unit factor gives paired forward/backward flux ratio exp(-a). Both directions use the same stoichiometry and formation-energy ledger, without extra latent heat. Reverse prefactor is proportional to existing liquid: positive seeded water can regrow, but exactly dry-surface nucleation is absent. Log water inventory and its finite signed hazard are retained without floors. No measured condensation coefficient, interface area or accommodation law; reverse factor fixed in UQ.',
             'reaction_approximation':'Competing organic oxidation and lumped CH2O -> C + H2O carbonization share the organic inventory. Char inventory receives carbonization products and loses oxidation products; it is not overwritten by an initial-char depletion formula. All pathways use the same stoichiometry, formation-energy reference and affinity. No complete pyrolysis spectrum or distinct char reactivity populations. Conversion denominators are initial reactant moles, except char oxidation uses initial char plus potential organic carbon.',
             'summary':summary,'whole_cycle':whole,'stages':stages,'conservation_passed':whole['passed'] and all(s['passed'] for s in stages.values()),
@@ -513,6 +548,7 @@ class FiniteGasFullCycle(FullCycle):
                 'minimum_water_phase_entropy_production_w_k':min(min(r['water_phase_entropy_w_k']) for r in rows),
                 'evaporation_extent_is_signed_net_phase_transfer':True,
                 'water_binding_energy_counted_once':True,
+                'site_composition_derivatives_counted_once':True,
                 'reaction_heat_counted_once':True,'maximum_entropy_balance_residual_j_k':float(np.max(np.abs(entropy_error))),
                 'entropy_balance_relative':entropy_relative,'maximum_entropy_rate_identity_residual_w_k':identity_residual},
             'parameter_status_counts':dict(Counter(x['status'] for x in self.config['parameters'].values())),
