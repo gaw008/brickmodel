@@ -275,6 +275,7 @@ class FiniteGasFullCycle(FullCycle):
         ug = h[:, len(self.ns):]-self.R*T[:, None]
         mu = h-T[:, None]*s
         mu[:, :len(self.ns)] += (pressure-self.P-cap)[:, None]*self.v
+        mu[:, :len(self.ns)] += self.skeleton_chemical_potential(fields,T,ns,bulk)
         mu[:, len(self.ns):] += self.R*T[:, None]*np.log(partial/self.Pr)
         log_activity, retention_entropy = self.water_retention(fields)
         binding=self.water_binding(T,fields)
@@ -337,6 +338,9 @@ class FiniteGasFullCycle(FullCycle):
 
     def state_thermo(self,T,fields):
         return self.thermo(T)
+
+    def skeleton_chemical_potential(self,fields,T,ns,bulk):
+        return np.zeros_like(ns)
 
     def caloric_capacity(self,T,ns,ng):
         capacity=ns@self.cp[:len(self.ns)]+ng@(self.cp[len(self.ns):]-self.R)
