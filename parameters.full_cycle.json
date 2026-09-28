@@ -1,6 +1,6 @@
 {
   "schema": "sludge_vme_full_cycle_v3",
-  "scope": "Source-traceable full firing-cycle approximation with competing organic carbonization, stored pore gas, quartz thermoelasticity and a reversible effective liquid-phase caloric/sintering proxy; real material applicability pending measurements.",
+  "scope": "Source-traceable full firing-cycle approximation with competing carbonization, stored pore gas, quartz thermoelasticity, effective reversible liquid phase and local pore-wall radiative heat diffusion; real material applicability pending measurements.",
   "sources": {
     "policy": {
       "identity": "assumed",
@@ -75,6 +75,11 @@
       "identity": "assumed",
       "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_solid.py liquid_phase",
       "note": "Engineering fluxed-matrix proxy carried by a fraction of current metakaolin, with unchanged Al2Si2O7 composition and molar volume. Two-state free energy gives equilibrium liquid fraction, latent enthalpy and entropy; these parameters are not pure metakaolin melting properties, measured mineral fractions or a phase diagram. No kinetic hysteresis or quenched glass."
+    },
+    "pore_radiation": {
+      "identity": "assumed",
+      "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle.py pore_radiative_conductivity",
+      "note": "Declared local equilibrium pore-wall radiation closure: k_rad=4*sigma*exchange_factor*current_pore_diameter*gas_porosity*T^3. The factor represents unmeasured wall exchange and geometry, not a spectral emissivity measurement. Pore diameter inherits the assumed sintering-radius geometry; no independent optical length or spectral transport."
     }
   },
   "parameters": {
@@ -912,7 +917,7 @@
       ],
       "source": "legacy",
       "status": "assumed",
-      "note": "Effective dry conductivity at the initial dry-recipe solid fraction and initial bulk volume. The previous constant value is retained as the reference magnitude; current local conductivity varies with solid and liquid fractions. Not a pure mineral conductivity."
+      "note": "Nonradiative dry background conductivity at the initial dry-recipe solid fraction and initial bulk volume. Solid/liquid-water fractions modify this background; pore radiation is added separately. This nominal value is assumed, not a measured total high-temperature conductivity or pure-mineral property."
     },
     "thermal.h": {
       "value": 20.0,
@@ -2046,7 +2051,7 @@
       ],
       "source": "effective_conductivity",
       "status": "assumed",
-      "note": "Dimensionless multiplier of liquid water volume/bulk volume. At fixed total pore fraction, replacing gas with liquid raises k. Zero removes the moisture correction. With both correction coefficients zero, k equals the former constant reference."
+      "note": "Dimensionless liquid-water volume correction to the nonradiative background. At fixed total pore fraction, replacing gas with liquid increases the background conductivity. Setting this coefficient and the solid-fraction exponent to zero restores constant background k, while pore radiation requires its own zero factor."
     },
     "kinetics.organic_carbonization.A": {
       "value": 1000000.0,
@@ -2135,6 +2140,17 @@
       "source": "effective_liquid_phase",
       "status": "assumed",
       "note": "Existing sintering mobility multiplied by exp(gain*effective_liquid_volume/dry_condensed_volume). Zero keeps latent storage but disables this kinetic multiplier."
+    },
+    "thermal.pore_radiation_factor": {
+      "value": 0.5,
+      "unit": "1",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "source": "pore_radiation",
+      "status": "assumed",
+      "note": "Effective wall-exchange/geometry factor in the local diffusion approximation. Zero removes only internal pore radiation, preserving exterior furnace radiation. Optical length is an evolving pore diameter, not a mesh-cell width."
     }
   },
   "species": [
@@ -2359,7 +2375,8 @@
     "kinetics.organic_carbonization.E",
     "liquid.active_matrix_fraction",
     "liquid.transition_temperature",
-    "liquid.mobility_gain"
+    "liquid.mobility_gain",
+    "thermal.pore_radiation_factor"
   ],
   "calibration_parameters": [
     "thermal.h",
@@ -2410,9 +2427,10 @@
     "absorption_kg_kg": "minimize"
   },
   "uncertainty_fixed_parameters": [
-    "transport.permeability_ref"
+    "transport.permeability_ref",
+    "sintering.radius"
   ],
-  "uncertainty_scope_note": "Seventeen selected parameters including effective-liquid active fraction, transition temperature and mobility gain. Permeability remains fixed at 3.75e-14 m2, inlet atmosphere and oxygen reference fixed; liquid latent contrast and transition width fixed. Eight paired samples do not prove all-parameter, phase-model, permeability-range or low-oxygen robustness. Previous ensembles remain historical.",
+  "uncertainty_scope_note": "Eighteen selected parameters, now including the assumed pore-wall radiation exchange factor. Permeability fixed at 3.75e-14 m2 and initial pore radius at 5.9e-6 m; inlet atmosphere, liquid latent contrast and transition width also fixed. Eight paired samples do not establish all-parameter, optical-model, pore-size-range or permeability-range robustness. Earlier ensembles remain historical.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -2513,6 +2531,22 @@
           "source": "effective_liquid_phase",
           "status": "assumed",
           "note": "Declared virtual mechanism calculation; not a measured material or operation."
+        }
+      }
+    },
+    {
+      "id": "pore_radiation_disabled",
+      "overrides": {
+        "thermal.pore_radiation_factor": {
+          "value": 0.0,
+          "unit": "1",
+          "range": [
+            0.0,
+            1.0
+          ],
+          "source": "pore_radiation",
+          "status": "assumed",
+          "note": "Declared virtual mechanism calculation; internal pore radiation removed, external furnace radiation retained."
         }
       }
     }

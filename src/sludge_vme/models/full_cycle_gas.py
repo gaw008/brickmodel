@@ -210,6 +210,7 @@ class FiniteGasFullCycle(FullCycle):
                 '(m2/Pa/s)*(Pa/m)=m/s','D*c*area/distance=mol/s','molar_flux*(chemical_potential/T)=W/K',
                 'solid_volume/bulk_volume=1; liquid_volume/bulk_volume=1',
                 'k_ref*(solid_fraction/reference_fraction)^m*(1+b*liquid_fraction)=W/m/K',
+                'sigma*(pore_diameter)*T^3=W/m/K; gas_porosity*exchange_factor=1',
                 'area/(half_width_left/k_left+half_width_right/k_right)=W/K']}
         return report, fields
 
@@ -220,6 +221,7 @@ class FiniteGasFullCycle(FullCycle):
         for t,y in zip(times, states):
             f,T,ns,bulk,pore,surface,cap = self.unpack(y)
             r = self.rates(t,y)
+            radiative_conductivity = self.pore_radiative_conductivity(T,ns,bulk)
             ng = r['gas']; h,s = self.thermo(T)
             inventories.append(np.r_[ns.sum(axis=0),ng.sum(axis=0)])
             energy=np.sum(ns*(h[:, :len(self.ns)]-self.P*self.v))+np.sum(ng*(h[:, len(self.ns):]-self.R*T[:, None]))+surface.sum()
@@ -246,6 +248,8 @@ class FiniteGasFullCycle(FullCycle):
                 'gas_face_flux_mol_s':{s:r['gas_flux'][:,i].tolist() for i,s in enumerate(self.ng)},
                 'pressure_pa':r['pressure'].tolist(),'permeability_m2':r['permeability'].tolist(),
                 'effective_conductivity_w_m_k':r['conductivity'].tolist(),
+                'pore_radiative_conductivity_w_m_k':radiative_conductivity.tolist(),
+                'background_conductivity_w_m_k':(r['conductivity']-radiative_conductivity).tolist(),
                 'liquid_water_volume_fraction':(ns[:,self.water_index]*self.v[self.water_index]/bulk).tolist(),
                 'total_pore_volume_fraction':((pore+ns[:,self.water_index]*self.v[self.water_index])/bulk).tolist(),
                 'porosity':(pore/bulk).tolist(),'thickness_shrinkage':(1-bulk/self.b0).tolist(),
@@ -285,6 +289,8 @@ class FiniteGasFullCycle(FullCycle):
             'final_volume_mean_conductivity_w_m_k':float(np.average(final['effective_conductivity_w_m_k'],weights=self.unpack(states[-1])[3])),
             'minimum_sampled_conductivity_w_m_k':min(min(r['effective_conductivity_w_m_k']) for r in rows),
             'maximum_sampled_conductivity_w_m_k':max(max(r['effective_conductivity_w_m_k']) for r in rows),
+            'peak_pore_radiative_conductivity_w_m_k':max(max(r['pore_radiative_conductivity_w_m_k']) for r in rows),
+            'peak_pore_radiative_fraction_of_conductivity':max(max(np.array(r['pore_radiative_conductivity_w_m_k'])/r['effective_conductivity_w_m_k']) for r in rows),
             'absorption_kg_kg':self.p('product.connectivity','1')*phi*self.p('product.water_density','kg/m3')/density,
             'strength_pa':self.p('product.dense_strength','Pa')*float(np.exp(-self.p('product.porosity_coefficient','1')*phi)),
             'defect_indicator':float(-np.expm1(-peak/self.p('product.gradient_scale','K'))),
@@ -302,7 +308,7 @@ class FiniteGasFullCycle(FullCycle):
         cooled=max(abs(t-self.temperatures[-1]) for t in final['temperature_k'])
         report={'schema':'sludge_vme_full_cycle_result_v2','scope':self.config['scope'],'material_applicability':'待实测','real_world_validation':'待实测',
             'gas_approximation':'Stored ideal O2/N2/H2O/CO2 gas, common-D molar diffusion plus donor Darcy flow with entropy-compatible carried enthalpy; assumed diffusivity and pore properties. No imposed internal pressure or independent per-cell sweep.',
-            'thermal_approximation':'Assumed k=k_ref*(dry_solid_fraction/initial_dry_solid_fraction)^m*(1+b*liquid_water_volume_fraction). Total pores include liquid water plus stored gas; existing porosity output remains gas-filled volume/bulk. Shared face conductance uses two half-cell resistances. No explicit intrinsic temperature/mineral dependence, pore radiation or liquid migration; coefficients unmeasured.',
+            'thermal_approximation':'Background k=k_ref*(dry_solid_fraction/initial_dry_solid_fraction)^m*(1+b*liquid_water_volume_fraction), plus local pore-wall radiative k=4*sigma*factor*length*gas_porosity*T^3. Length is 2*r_initial*(pore_volume/initial_pore_volume)^(1/3), independent of mesh width. The assumed exchange factor includes wall emissivity and geometry; one local equilibrium temperature, no spectral/nonlocal photon or participating-gas radiation. Shared face and external half-cell resistances use total k; exterior furnace radiation remains a separate boundary exchange. No extra stored photon energy or separate radiation heat source. No intrinsic mineral conductivity law or liquid migration; coefficients unmeasured.',
             'reaction_approximation':'Competing organic oxidation and lumped CH2O -> C + H2O carbonization share the organic inventory. Char inventory receives carbonization products and loses oxidation products; it is not overwritten by an initial-char depletion formula. All pathways use the same stoichiometry, formation-energy reference and affinity. No complete pyrolysis spectrum or distinct char reactivity populations. Conversion denominators are initial reactant moles, except char oxidation uses initial char plus potential organic carbon.',
             'summary':summary,'whole_cycle':whole,'stages':stages,'conservation_passed':whole['passed'] and all(s['passed'] for s in stages.values()),
             'thermodynamics':{'minimum_sampled_entropy_production_w_k':min_entropy,'minimum_face_entropy_production_w_k':min_face,

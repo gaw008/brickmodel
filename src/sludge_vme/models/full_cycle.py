@@ -89,6 +89,7 @@ class FullCycle:
         self.k = self.p("thermal.conductivity", "W/m/K")
         self.conductivity_exponent = self.p("thermal.solid_fraction_exponent", "1")
         self.conductivity_moisture_gain = self.p("thermal.liquid_volume_gain", "1")
+        self.pore_radiation_factor = self.p("thermal.pore_radiation_factor", "1")
         self.h = self.p("thermal.h", "W/m2/K")
         self.emissivity = self.p("thermal.emissivity", "1")
         self.sigma = self.p("reference.sigma", "W/m2/K4")
@@ -190,7 +191,7 @@ class FullCycle:
         return self.h0 + (T[..., None] - self.Tr) * self.cp, self.s0 + np.log(T[..., None] / self.Tr) * self.cp
 
     def effective_conductivity(self, ns, bulk):
-        """Assumed dry-skeleton power law with a liquid-volume correction.
+        """Nonradiative background: dry-skeleton law plus liquid water.
 
         Liquid water occupies pores for this transport closure, although it is
         counted as condensed matter in the energy and volume inventories. The
@@ -201,8 +202,19 @@ class FullCycle:
         solid = (ns@self.v)/bulk-liquid
         return self.k*(solid/self.dry_solid_fraction0)**self.conductivity_exponent*(1+self.conductivity_moisture_gain*liquid)
 
+    def pore_radiative_conductivity(self, T, ns, bulk):
+        """Local equilibrium pore-wall exchange reduced to positive heat diffusion.
+
+        The assumed exchange factor includes wall emissivity and geometry.
+        The optical distance is one evolving pore diameter, not a grid width.
+        This is not a spectral or nonlocal radiation-transport solution.
+        """
+        pore = bulk-ns@self.v
+        length = 2*self.radius*(pore/self.vp0)**(1/3)
+        return 4*self.sigma*self.pore_radiation_factor*length*(pore/bulk)*T**3
+
     def heat_transfer(self, T, ns, bulk, tf):
-        conductivity = self.effective_conductivity(ns, bulk)
+        conductivity = self.effective_conductivity(ns, bulk)+self.pore_radiative_conductivity(T, ns, bulk)
         widths = bulk/self.area
         # Two half-cell resistances in series define a single shared face flux.
         conductance = self.area/(widths[:-1]/(2*conductivity[:-1])+widths[1:]/(2*conductivity[1:]))
