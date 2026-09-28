@@ -157,7 +157,12 @@ class FullCycle:
         return item["value"]
 
     def condensed_state(self, fields):
-        """Four depletion coordinates plus a produced/consumed char inventory."""
+        """Log water/three depleted species plus produced/consumed char.
+
+        Water's coordinate may decrease under liquid influx. Its evaporation
+        route has no condensed products, so this changes only water inventory;
+        cumulative evaporation remains in the separate reaction ledger.
+        """
         consumed = self.initial[:,self.depleted]*(-np.expm1(-fields[1:5].T))
         ns = self.initial + consumed@self.depletion_products
         ns[:,self.depleted] = self.initial[:,self.depleted]*np.exp(-fields[1:5].T)

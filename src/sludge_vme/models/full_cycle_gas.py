@@ -29,6 +29,7 @@ class FiniteGasFullCycle(FullCycle):
         self.viscosity_exponent = self.p('transport.viscosity_exponent', '1')
         self.tortuosity = self.p('transport.tortuosity', '1')
         self.permeability = self.p('transport.permeability_ref', 'm2')
+        self.water_mobility = self.p('transport.liquid_water_mobility', 'm2/s')
         self.oxygen_order = self.p('kinetics.oxygen_order', '1')
         self.oxygen_reference = self.p('kinetics.oxygen_reference_pressure', 'Pa')
         self.phi0 = self.vp0/self.b0
@@ -84,6 +85,45 @@ class FiniteGasFullCycle(FullCycle):
         reservoir_mu_over_t = hin[len(self.ns):]/tf-sin[len(self.ns):]+self.R*np.log(self.inlet*self.P/self.Pr)
         return flux, energy, entropy, permeability, molecular, darcy, reservoir_mu_over_t
 
+    def water_transport(self, fields, T, bulk, pressure, cap):
+        """Closed liquid boundary, shared internal flux down mechanical potential.
+
+        The same mu=h-T*s+v*(p-P-cap) governs evaporation and migration.
+        Carried enthalpy includes the arithmetic mean mechanical contribution;
+        the reciprocal-log temperature mean cancels constant-Cp caloric terms.
+        Thus F=v*mean(1/T)*difference(p-P-cap), and J=L*F gives L*F**2.
+        This pure-liquid closure has no water activity or retention curve.
+
+        Harmonic availability is evaluated in scaled log inventory coordinates.
+        J/n on each side is obtained algebraically before multiplying by n,
+        retaining finite coordinate rates even after physical water underflows.
+        """
+        tl, tr = T[:-1], T[1:]
+        ratio = (tl-tr)/tr
+        thermal_mean = tl*np.divide(np.log1p(ratio), ratio, out=np.ones_like(ratio), where=ratio != 0)
+        potential = pressure-self.P-cap
+        force = self.v[self.water_index]*(potential[:-1]-potential[1:])*(1/tl+1/tr)/2
+        carried_h = (self.h0[self.water_index]+self.cp[self.water_index]*(thermal_mean-self.Tr)
+                     +self.v[self.water_index]*(potential[:-1]+potential[1:])/2)
+        log_water = np.log(self.initial[:,self.water_index])-fields[1]
+        scale = np.where(log_water[:-1].real >= log_water[1:].real, log_water[:-1], log_water[1:])
+        left, right = np.exp(log_water[:-1]-scale), np.exp(log_water[1:]-scale)
+        width = bulk/self.area
+        denominator = width[:-1]*bulk[:-1]*right+width[1:]*bulk[1:]*left
+        common = 2*self.area*self.water_mobility/self.R*force/denominator
+        flux = common*np.exp(scale)*left*right
+        coordinate_rate = np.zeros_like(T)
+        coordinate_rate[:-1] += common*right
+        coordinate_rate[1:] -= common*left
+        inventory_rate = np.zeros_like(T)
+        inventory_rate[:-1] -= flux
+        inventory_rate[1:] += flux
+        energy = flux*carried_h
+        power = np.zeros_like(T)
+        power[:-1] -= energy
+        power[1:] += energy
+        return flux, energy, flux*force, inventory_rate, power, coordinate_rate
+
     def rates(self, t, y):
         fields, T, ns, bulk, pore, surface, cap = self.unpack(y)
         ng, partial, pressure = self.gas_state(y, T, pore)
@@ -108,6 +148,9 @@ class FiniteGasFullCycle(FullCycle):
         dng[1:] += flux[:-1]
         flow = -energy_flux.copy()
         flow[1:] += energy_flux[:-1]
+        water_flux, water_energy, water_entropy, water_rate, water_power, water_coordinate = self.water_transport(fields,T,bulk,pressure,cap)
+        dns[:,self.water_index] += water_rate
+        flow += water_power
         heat, surface_T, qext, conductance, conductivity = self.heat_transfer(T, ns, bulk, tf)
         mechanical = self.mechanical_rates(fields,T,ns,ng,bulk,pore,cap,pressure,dns,dng,heat,flow,us,ug)
         dT,db,dpore,capacity,extra_sdot,mechanical_entropy,coordinate_rate = mechanical
@@ -116,13 +159,15 @@ class FiniteGasFullCycle(FullCycle):
         exchange = qext/tf-energy_flux[-1]/tf+flux[-1]@reservoir_mu_over_t
         reaction_entropy = -np.sum(rate*dg/T[:, None])
         thermal_entropy = np.sum(conductance*np.diff(T)**2/(T[:-1]*T[1:]))+qext*(1/T[-1]-1/tf)
-        production = reaction_entropy+mechanical_entropy+thermal_entropy+face_entropy.sum()
+        production = reaction_entropy+mechanical_entropy+thermal_entropy+face_entropy.sum()+water_entropy.sum()
         return {'dT':dT, 'hazard':hazard, 'rate':rate, 'dns':dns, 'dng':dng, 'db':db, 'dpore':dpore,
                 'heat':heat, 'flow':flow, 'gas_flux':flux, 'pressure':pressure, 'gas':ng, 'partial':partial,
                 'gas_fractions':ng/ng.sum(axis=1)[:, None], 'kiln_T':tf, 'surface_T':surface_T,
                 'production':production, 'exchange':exchange, 'entropy_identity_residual':sdot-production-exchange,
                 'minimum_face_entropy':float(face_entropy.real.min()), 'permeability':permeability,
                 'molecular_flux':molecular, 'darcy_flux':darcy, 'energy_flux':energy_flux, 'capacity':capacity,
+                'water_flux':water_flux, 'water_energy_flux':water_energy, 'water_entropy':water_entropy,
+                'water_coordinate_rate':water_coordinate,
                 'dsc':float(heat.real.sum())/(self.n*self.md), 'coordinate_rate':coordinate_rate,
                 'pore':pore, 'conductivity':conductivity, 'effective_capacity':self.effective_capacity,
                 'mechanical_residual':self.mechanical_residual}
@@ -159,6 +204,7 @@ class FiniteGasFullCycle(FullCycle):
         f = dy[:9*self.n].reshape(9, self.n)
         f[0] = r['dT']/self.Tr
         f[1:5], f[5] = self.chemical_coordinate_rates(r['hazard'],r['rate'])
+        f[1] += r['water_coordinate_rate']
         f[6] = r['coordinate_rate']
         f[7] = r['heat']/self.escale
         f[8] = r['flow']/self.escale
@@ -211,13 +257,15 @@ class FiniteGasFullCycle(FullCycle):
                 'solid_volume/bulk_volume=1; liquid_volume/bulk_volume=1',
                 'k_ref*(solid_fraction/reference_fraction)^m*(1+b*liquid_fraction)=W/m/K',
                 'sigma*(pore_diameter)*T^3=W/m/K; gas_porosity*exchange_factor=1',
+                'liquid_force=m3/mol*Pa/K=J/mol/K; mobility=D*area*concentration/(R*distance)=mol2*K/J/s',
+                'liquid_flux=mobility*force=mol/s; liquid_flux*carried_enthalpy=W; liquid_flux*force=W/K',
                 'area/(half_width_left/k_left+half_width_right/k_right)=W/K']}
         return report, fields
 
     def summarize(self, times, states):
         rows=[]; inventories=[]; energies=[]; entropies=[]; heat=[]; flow=[]; bulks=[]
         minimum_capacity=float('inf'); maximum_mechanical_residual=0.
-        min_entropy=float('inf'); min_face=float('inf'); identity_residual=0.; min_condensed=float('inf'); min_gas=float('inf')
+        min_entropy=float('inf'); min_face=float('inf'); min_water_face=float('inf'); identity_residual=0.; min_condensed=float('inf'); min_gas=float('inf')
         for t,y in zip(times, states):
             f,T,ns,bulk,pore,surface,cap = self.unpack(y)
             r = self.rates(t,y)
@@ -235,11 +283,15 @@ class FiniteGasFullCycle(FullCycle):
             center=float((9*T[0]-T[1])/8)
             span=max(float(T.max()),r['surface_T'],center)-min(float(T.min()),r['surface_T'],center)
             min_entropy=min(min_entropy,r['production']); min_face=min(min_face,r['minimum_face_entropy'])
+            min_water_face=min(min_water_face,float(r['water_entropy'].min()))
             identity_residual=max(identity_residual,abs(r['entropy_identity_residual']))
             min_condensed=min(min_condensed,float(ns.min())); min_gas=min(min_gas,float(ng.min()))
             rows.append({'time_s':float(t),'kiln_temperature_k':r['kiln_T'],'temperature_k':T.tolist(),
                 'x_m':(np.cumsum(bulk/self.area)-bulk/self.area/2).tolist(),
                 'water_kg_per_initial_dry_kg':(ns[:,self.ns.index('water')]*self.mw[self.ns.index('water')]/self.md).tolist(),
+                'internal_liquid_water_face_flux_mol_s':r['water_flux'].tolist(),
+                'internal_liquid_water_face_energy_flux_w':r['water_energy_flux'].tolist(),
+                'internal_liquid_water_face_entropy_w_k':r['water_entropy'].tolist(),
                 **self.reaction_fields(y),
                 'char_inventory_mol':ns[:,self.char].tolist(),
                 'residual_carbon_kg':((ns[:,self.ns.index('organic')]+ns[:,self.ns.index('char')])*self.atomic[self.elements.index('C')]).tolist(),
@@ -285,6 +337,7 @@ class FiniteGasFullCycle(FullCycle):
             'loss_on_ignition_dry_fraction':float(1-product_mass/(self.n*self.md)),'porosity':phi,
             'residual_carbon_kg':float(sum(final['residual_carbon_kg'])),'shrinkage':float(1-bulks[-1]/bulks[0]),'peak_temperature_difference_k':peak,
             'peak_overpressure_pa':max(max(r['pressure_pa'])-self.P for r in rows),
+            'peak_internal_liquid_water_flux_mol_s':max(max(abs(x) for x in r['internal_liquid_water_face_flux_mol_s']) for r in rows),
             'initial_volume_mean_conductivity_w_m_k':float(np.average(rows[0]['effective_conductivity_w_m_k'],weights=self.unpack(states[0])[3])),
             'final_volume_mean_conductivity_w_m_k':float(np.average(final['effective_conductivity_w_m_k'],weights=self.unpack(states[-1])[3])),
             'minimum_sampled_conductivity_w_m_k':min(min(r['effective_conductivity_w_m_k']) for r in rows),
@@ -308,10 +361,12 @@ class FiniteGasFullCycle(FullCycle):
         cooled=max(abs(t-self.temperatures[-1]) for t in final['temperature_k'])
         report={'schema':'sludge_vme_full_cycle_result_v2','scope':self.config['scope'],'material_applicability':'待实测','real_world_validation':'待实测',
             'gas_approximation':'Stored ideal O2/N2/H2O/CO2 gas, common-D molar diffusion plus donor Darcy flow with entropy-compatible carried enthalpy; assumed diffusivity and pore properties. No imposed internal pressure or independent per-cell sweep.',
-            'thermal_approximation':'Background k=k_ref*(dry_solid_fraction/initial_dry_solid_fraction)^m*(1+b*liquid_water_volume_fraction), plus local pore-wall radiative k=4*sigma*factor*length*gas_porosity*T^3. Length is 2*r_initial*(pore_volume/initial_pore_volume)^(1/3), independent of mesh width. The assumed exchange factor includes wall emissivity and geometry; one local equilibrium temperature, no spectral/nonlocal photon or participating-gas radiation. Shared face and external half-cell resistances use total k; exterior furnace radiation remains a separate boundary exchange. No extra stored photon energy or separate radiation heat source. No intrinsic mineral conductivity law or liquid migration; coefficients unmeasured.',
+            'thermal_approximation':'Background k=k_ref*(dry_solid_fraction/initial_dry_solid_fraction)^m*(1+b*liquid_water_volume_fraction), plus local pore-wall radiative k=4*sigma*factor*length*gas_porosity*T^3. Length is 2*r_initial*(pore_volume/initial_pore_volume)^(1/3), independent of mesh width. The assumed exchange factor includes wall emissivity and geometry; one local equilibrium temperature, no spectral/nonlocal photon or participating-gas radiation. Shared face and external half-cell resistances use total k; exterior furnace radiation remains a separate boundary exchange. No extra stored photon energy or separate radiation heat source. No intrinsic mineral conductivity law; coefficients unmeasured.',
+            'liquid_water_transport_approximation':'Internal pure-liquid redistribution uses the same mechanical chemical potential as evaporation. J=L*F with positive series availability mobility, F=v*mean(1/T)*difference(p_gas-P_ext-p_cap). Shared carried enthalpy uses reciprocal-log thermal mean plus mean mechanical potential times molar volume. Water log inventory permits both influx and loss; reaction extents remain reaction-only. Zero liquid flux at center and exterior; external drying occurs through pore vapor. No moisture-retention/activity law, saturation-gradient wicking, liquid boundary supply, hydraulic measurements or hysteresis. Mobility scale is assumed, not a measured drying diffusivity.',
             'reaction_approximation':'Competing organic oxidation and lumped CH2O -> C + H2O carbonization share the organic inventory. Char inventory receives carbonization products and loses oxidation products; it is not overwritten by an initial-char depletion formula. All pathways use the same stoichiometry, formation-energy reference and affinity. No complete pyrolysis spectrum or distinct char reactivity populations. Conversion denominators are initial reactant moles, except char oxidation uses initial char plus potential organic carbon.',
             'summary':summary,'whole_cycle':whole,'stages':stages,'conservation_passed':whole['passed'] and all(s['passed'] for s in stages.values()),
             'thermodynamics':{'minimum_sampled_entropy_production_w_k':min_entropy,'minimum_face_entropy_production_w_k':min_face,
+                'minimum_liquid_water_face_entropy_production_w_k':min_water_face,
                 'reaction_heat_counted_once':True,'maximum_entropy_balance_residual_j_k':float(np.max(np.abs(entropy_error))),
                 'entropy_balance_relative':entropy_relative,'maximum_entropy_rate_identity_residual_w_k':identity_residual},
             'parameter_status_counts':dict(Counter(x['status'] for x in self.config['parameters'].values())),
@@ -326,6 +381,6 @@ class FiniteGasFullCycle(FullCycle):
         report['example_endpoints']={'drying_remaining_fraction':remaining,'cooling_maximum_temperature_difference_k':cooled,
             'passed':bool(remaining<self.p('acceptance.drying_remaining_fraction','1') and cooled<self.p('acceptance.cooling_temperature_difference','K'))}
         report['physical_consistency_passed']=bool(report['conservation_passed'] and min_condensed>=-inventory_budget and min_gas>0
-            and minimum_capacity>0 and report['state_domain']['minimum_porosity']>0 and min_entropy>=0 and min_face>=0
+            and minimum_capacity>0 and report['state_domain']['minimum_porosity']>0 and min_entropy>=0 and min_face>=0 and min_water_face>=0
             and entropy_relative<self.p('acceptance.entropy_relative','1'))
         return report,{'schema':'sludge_vme_full_cycle_fields_v2','cell_count':self.n,'rows':rows}

@@ -1,6 +1,6 @@
 {
   "schema": "sludge_vme_full_cycle_v3",
-  "scope": "Source-traceable full firing-cycle approximation with competing carbonization, stored pore gas, quartz thermoelasticity, effective reversible liquid phase and local pore-wall radiative heat diffusion; real material applicability pending measurements.",
+  "scope": "Source-traceable full firing-cycle approximation with competing carbonization, stored pore gas, quartz thermoelasticity, effective reversible liquid phase, pore-wall radiative heat diffusion and pressure-potential-driven internal liquid-water redistribution; real material applicability pending measurements.",
   "sources": {
     "policy": {
       "identity": "assumed",
@@ -80,6 +80,11 @@
       "identity": "assumed",
       "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle.py pore_radiative_conductivity",
       "note": "Declared local equilibrium pore-wall radiation closure: k_rad=4*sigma*exchange_factor*current_pore_diameter*gas_porosity*T^3. The factor represents unmeasured wall exchange and geometry, not a spectral emissivity measurement. Pore diameter inherits the assumed sintering-radius geometry; no independent optical length or spectral transport."
+    },
+    "liquid_water_transport": {
+      "identity": "assumed",
+      "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py water_transport",
+      "note": "Declared pure-liquid Onsager closure driven by the existing mechanical water potential, with availability-weighted positive mobility and shared transported enthalpy. No moisture-retention/activity curve, wetting hysteresis, measured hydraulic conductivity or saturation-driven wicking. The diffusivity-dimensional coefficient is a mobility scale, not a measured Fick diffusivity."
     }
   },
   "parameters": {
@@ -2151,6 +2156,17 @@
       "source": "pore_radiation",
       "status": "assumed",
       "note": "Effective wall-exchange/geometry factor in the local diffusion approximation. Zero removes only internal pore radiation, preserving exterior furnace radiation. Optical length is an evolving pore diameter, not a mesh-cell width."
+    },
+    "transport.liquid_water_mobility": {
+      "value": 1e-07,
+      "unit": "m2/s",
+      "range": [
+        0.0,
+        2e-07
+      ],
+      "source": "liquid_water_transport",
+      "status": "assumed",
+      "note": "Mobility scale D in L=2*A*D/[R*(dx_left/c_left+dx_right/c_right)]. Internal liquid-water flux J=L*F, F=volume*mean(1/T)*difference(p_gas-P_ext-p_cap). Zero removes only liquid-water redistribution; boundary liquid flux is zero. Not measured hydraulic or drying diffusivity."
     }
   },
   "species": [
@@ -2376,7 +2392,8 @@
     "liquid.active_matrix_fraction",
     "liquid.transition_temperature",
     "liquid.mobility_gain",
-    "thermal.pore_radiation_factor"
+    "thermal.pore_radiation_factor",
+    "transport.liquid_water_mobility"
   ],
   "calibration_parameters": [
     "thermal.h",
@@ -2430,7 +2447,7 @@
     "transport.permeability_ref",
     "sintering.radius"
   ],
-  "uncertainty_scope_note": "Eighteen selected parameters, now including the assumed pore-wall radiation exchange factor. Permeability fixed at 3.75e-14 m2 and initial pore radius at 5.9e-6 m; inlet atmosphere, liquid latent contrast and transition width also fixed. Eight paired samples do not establish all-parameter, optical-model, pore-size-range or permeability-range robustness. Earlier ensembles remain historical.",
+  "uncertainty_scope_note": "Nineteen selected parameters, including assumed pressure-driven liquid-water mobility and pore-wall radiation. Permeability fixed at 3.75e-14 m2 and pore radius at 5.9e-6 m; inlet atmosphere, liquid latent contrast and transition width also fixed. Eight paired samples do not establish all-parameter, retention-model, pore-size-range or permeability-range robustness. Earlier ensembles remain historical.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -2547,6 +2564,22 @@
           "source": "pore_radiation",
           "status": "assumed",
           "note": "Declared virtual mechanism calculation; internal pore radiation removed, external furnace radiation retained."
+        }
+      }
+    },
+    {
+      "id": "liquid_water_transport_disabled",
+      "overrides": {
+        "transport.liquid_water_mobility": {
+          "value": 0.0,
+          "unit": "m2/s",
+          "range": [
+            0.0,
+            2e-07
+          ],
+          "source": "liquid_water_transport",
+          "status": "assumed",
+          "note": "Declared virtual mechanism comparison: no internal liquid-water migration; local evaporation, vapor transport and all other mechanisms retained."
         }
       }
     }
