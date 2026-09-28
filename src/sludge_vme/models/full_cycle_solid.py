@@ -41,6 +41,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         self.liquid_latent=self.p('liquid.latent_heat','J/mol')
         self.liquid_width=self.p('liquid.transition_width','K')
         self.liquid_gain=self.p('liquid.mobility_gain','1')
+        self.ordered_barrier=self.p('sintering.ordered_structure_barrier','J/mol')
         self.liquid_mixing=self.liquid_latent*self.liquid_width/self.liquid_tc**2
         self.liquid_reference=self.liquid_phase(np.asarray(self.Tr))
         self.liquid_tau=self.p('liquid.relaxation_time_ref','s')
@@ -105,6 +106,20 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         dry_volume=ns@self.v-ns[:,self.water_index]*self.v[self.water_index]
         fraction=liquid_moles*self.v[self.matrix]/dry_volume
         return liquid_moles,fraction,np.exp(self.liquid_gain*fraction)
+
+    def sintering_response(self,T,ns,fields,pore,cap):
+        """Inverse effective axial viscosity and ordered-structure penalty.
+
+        The active carrier's ordered volume raises the kinetic barrier; the
+        preceding disordered-volume multiplier remains a prefactor. This
+        positive kinetic coefficient adds no stored energy or phase heat.
+        """
+        liquid,_,multiplier=self.liquid_state(T,ns,fields)
+        dry_volume=ns@self.v-ns[:,self.water_index]*self.v[self.water_index]
+        ordered=(self.liquid_active*ns[:,self.matrix]-liquid)*self.v[self.matrix]/dry_volume
+        viscosity_ratio=np.exp(self.ordered_barrier*ordered/(self.R*T))
+        mobility=self.ks*np.exp(-self.Es/self.R*(1/T-1/self.Tsref))*multiplier*pore/(cap*self.b0)
+        return mobility/viscosity_ratio,ordered,viscosity_ratio
 
     def phase(self,T):
         q=self.latent/self.mixing*(1/self.tc-1/T)
@@ -205,8 +220,8 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         eps=self.elastic_strain(f,T,bulk)
         _,beta_prime,beta_second,_=self.thermal_strain(T)
         force=pressure-self.P-cap
-        mobility=self.liquid_state(T,ns,f)[2]
-        eta_dot=self.ks*np.exp(-self.Es/self.R*(1/T-1/self.Tsref))*mobility*pore/(cap*self.b0)*force
+        mobility,_,_=self.sintering_response(T,ns,f,pore,cap)
+        eta_dot=mobility*force
         dvs=dns@self.v
         d=self.modulus/self.b0+(pressure-cap/3)/pore
         a=self.modulus*beta_prime+pressure/T
@@ -252,6 +267,9 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         thermal,slope,_,transition=self.thermal_strain(T)
         ns=self.condensed_state(f)
         liquid,fraction,mobility=self.liquid_state(T,ns,f)
+        pore=bulk-ns@self.v
+        cap=2/3*self.es0*(pore/self.vp0)**(2/3)/pore
+        inverse_viscosity,ordered,viscosity_ratio=self.sintering_response(T,ns,f,pore,cap)
         phase_fields={}
         if self.kinetic_liquid:
             power,_,production,xdot=self.liquid_relaxation(T,ns,f)
@@ -263,6 +281,10 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
                 'liquid_relaxation_entropy_w_k':production.tolist(),
                 'liquid_relaxation_entropy_per_active_mole_w_mol_k':(-self.liquid_mixing*(f[9]-self.liquid_equilibrium_log_odds(T))*xdot).tolist()}
         return {**phase_fields,'quartz_beta_fraction':self.phase(T)[0].tolist(),
+                'ordered_active_fraction_of_dry_condensed_volume':ordered.tolist(),
+                'structure_viscosity_ratio':viscosity_ratio.tolist(),
+                'effective_axial_sintering_viscosity_pa_s':(1/inverse_viscosity).tolist(),
+                'sintering_dissipation_coefficient_w_k_pa2':(self.b0*inverse_viscosity/T).tolist(),
                 'effective_liquid_moles':liquid.tolist(),
                 'effective_liquid_fraction_of_dry_condensed_volume':fraction.tolist(),
                 'liquid_sintering_mobility_multiplier':mobility.tolist(),
@@ -287,7 +309,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         report['summary']['final_effective_liquid_moles']=float(sum(fields['rows'][-1]['effective_liquid_moles']))
         report['liquid_kinetic_mode']=self.kinetic_liquid
         if self.kinetic_liquid:
-            report['liquid_approximation']='Finite-rate disordered/ordered two-state proxy carried by an assumed fraction of current metakaolin, sharing composition and molar volume. Log-odds q relaxes toward q_eq(T) with Arrhenius rate; x=logistic(q). Phase energy N*L*x and entropy N*[x*L/Tm-b*(x*log(x)+(1-x)*log(1-x))] use the preceding reference offsets. Carrier formation inherits the local x, accounted for through averaged molar h/s and reaction affinity; only N*dx is internal phase relaxation. No independent crystallization/nucleation law, measured glass transition, mineral phase diagram, phase volume jump or liquid transport. Retained disordered material on cooling is a glass proxy, not measured glass yield; the original temperature-dependent sintering mobility remains in force.'
+            report['liquid_approximation']='Finite-rate disordered/ordered two-state proxy carried by an assumed fraction of current metakaolin, sharing composition and molar volume. Log-odds q relaxes toward q_eq(T) with Arrhenius rate; x=logistic(q). Phase energy N*L*x and entropy N*[x*L/Tm-b*(x*log(x)+(1-x)*log(1-x))] use the preceding reference offsets. Carrier formation inherits the local x, accounted for through averaged molar h/s and reaction affinity; only N*dx is internal phase relaxation. No independent crystallization/nucleation law, measured glass transition, mineral phase diagram, phase volume jump or liquid transport. Retained disordered material on cooling is a glass proxy, not measured glass yield; sintering uses the separately declared effective structure-dependent viscosity.'
             phase_min=min(min(r['liquid_relaxation_entropy_w_k']) for r in fields['rows'])
             coefficient_min=min(min(r['liquid_relaxation_entropy_per_active_mole_w_mol_k']) for r in fields['rows'])
             report['thermodynamics']['minimum_liquid_relaxation_entropy_production_w_k']=phase_min
@@ -304,6 +326,12 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         report['summary']['peak_quartz_transition_strain']=max(max(r['quartz_transition_strain']) for r in fields['rows'])
         report['summary']['final_quartz_transition_strain']=float(np.mean(fields['rows'][-1]['quartz_transition_strain']))
         report['summary']['peak_effective_expansion_coefficient_per_k']=max(max(r['effective_expansion_coefficient_per_k']) for r in fields['rows'])
+        report['sintering_viscosity_approximation']='Effective axial viscosity zeta=(cap*V0/(ks*pore))*exp(Es/R*(1/T-1/Tref)-gain*phi_disordered+E_order*phi_ordered/(R*T)). phi_ordered is the active carrier ordered volume divided by dry condensed volume. Kinetic barrier and existing disordered prefactor are assumed, not measured melt viscosity, glass transition, non-Arrhenius rheology or independent crystal kinetics. No new storage or heat source; dissipation V0*force^2/(zeta*T) uses the original mechanical energy/entropy equations. E_order=0 recovers the preceding law.'
+        report['summary']['peak_ordered_active_volume_fraction']=max(max(r['ordered_active_fraction_of_dry_condensed_volume']) for r in fields['rows'])
+        report['summary']['peak_structure_viscosity_ratio']=max(max(r['structure_viscosity_ratio']) for r in fields['rows'])
+        report['summary']['minimum_effective_axial_sintering_viscosity_pa_s']=min(min(r['effective_axial_sintering_viscosity_pa_s']) for r in fields['rows'])
+        report['thermodynamics']['minimum_sintering_dissipation_coefficient_w_k_pa2']=min(min(r['sintering_dissipation_coefficient_w_k_pa2']) for r in fields['rows'])
+        report['thermodynamics']['structure_viscosity_adds_no_storage']=True
         report['mechanical_equilibrium_relative']=residual/self.P
         report['physical_consistency_passed']=bool(report['physical_consistency_passed'] and residual/self.P<self.p('acceptance.balance_relative','1'))
         return report,fields
@@ -312,6 +340,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         report,fields=super().integrate()
         report['dimension_check']['identities'] += ['K*V0*epsilon^2=J','K*V0*beta_prime*epsilon=J/K','K*V0*T*(epsilon*beta_second-beta_prime^2)=J/K','n_q*v_q/V0=1','L*w/Tc^2=J/mol/K','dh_quartz/dT=Cp_quartz=T*ds_quartz/dT']
         report['dimension_check']['identities'] += ['L_liquid*w_liquid/Tm^2=J/mol/K','n_matrix*active_fraction*x*volume/dry_condensed_volume=1','exp(gain*liquid_fraction)=1']
+        report['dimension_check']['identities'] += ['E_order*phi_ordered/(R*T)=1; zeta=cap*V0/(ks*pore)*dimensionless=Pa*s','eta_dot=force/zeta=1/s; V0*force*eta_dot/T=W/K; positive zeta implies nonnegative mechanical dissipation']
         if self.kinetic_liquid:
             report['dimension_check']['identities'] += ['q=log(x/(1-x))=1; dq/dt=(q_eq-q)*exp(-E/R*(1/T-1/Tm))/tau=1/s','N*L*dx/dt=W; -N*b*(q-q_eq)*dx/dt=W/K','dU=U_T*dT+U_n*dn+N*L*dx; fixed-x latent Cp=0; no double-counted equilibrium Cp']
         else:

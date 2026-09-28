@@ -120,6 +120,11 @@
       "identity": "assumed",
       "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py carbonate_rate and condensed_state",
       "note": "Phenomenological reverse carbonate reaction uses the existing decarbonation Arrhenius rate, local CaO inventory, dimensionless CO2 pressure and the same pure-phase affinity. No measured reverse kinetics or product-layer model; a conserved calcite/lime inventory permits regeneration at either pure-phase endpoint."
+    },
+    "structure_viscosity": {
+      "identity": "assumed",
+      "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_solid.py sintering_response",
+      "note": "Declared activated effective axial rheology: ordered active-matrix dry-volume fraction raises the barrier by E_order*phi_ordered. Existing disordered-volume gain is retained as a prefactor. No measured melt viscosity, glass transition, separate crystal kinetics, new storage or additional heat source."
     }
   },
   "parameters": {
@@ -1078,7 +1083,7 @@
       ],
       "source": "legacy",
       "status": "assumed",
-      "note": "This is the uncoupled Arrhenius reference mobility; the effective-liquid multiplier may increase the actual rate even at the reference temperature."
+      "note": "Uncoupled Arrhenius reference mobility. The disordered prefactor and ordered-structure barrier both alter actual effective axial viscosity, including at the reference temperature."
     },
     "sintering.temperature_ref": {
       "value": 1273.0,
@@ -2179,7 +2184,7 @@
       ],
       "source": "effective_liquid_phase",
       "status": "assumed",
-      "note": "Existing sintering mobility multiplied by exp(gain*effective_liquid_volume/dry_condensed_volume). Zero keeps latent storage but disables this kinetic multiplier."
+      "note": "Original sintering prefactor exp(gain*disordered volume/dry condensed volume). Zero removes this prefactor only; the separate ordered-structure activation barrier remains."
     },
     "thermal.pore_radiation_factor": {
       "value": 0.5,
@@ -2664,6 +2669,17 @@
       "source": "reversible_carbonate",
       "status": "assumed",
       "note": "Assumed reverse-rate multiplier, fixed at one for this stage UQ. Zero restores the preceding irreversible logarithmic calcite coordinate exactly; positive mode requires a nonzero initial calcite/lime pool. No fitted or measured carbonation coefficient."
+    },
+    "sintering.ordered_structure_barrier": {
+      "value": 80000.0,
+      "unit": "J/mol",
+      "range": [
+        0.0,
+        160000.0
+      ],
+      "source": "structure_viscosity",
+      "status": "assumed",
+      "note": "Additional activation barrier weighted by ordered active-matrix volume/dry condensed volume. Positive viscosity multiplier exp(E_order*phi_ordered/(R*T)); zero recovers preceding kinetics. Fixed in this paired 25-parameter UQ, not calibrated or measured."
     }
   },
   "species": [
@@ -2985,9 +3001,10 @@
     "gas.stage.cooling_hold.N2",
     "gas.stage.cooling_hold.H2O",
     "gas.stage.cooling_hold.CO2",
-    "kinetics.carbonation.factor"
+    "kinetics.carbonation.factor",
+    "sintering.ordered_structure_barrier"
   ],
-  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization.",
+  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -3336,6 +3353,22 @@
           "source": "reversible_carbonate",
           "status": "assumed",
           "note": "Zero inverse-rate limit with the previous log-depletion coordinate and equations."
+        }
+      }
+    },
+    {
+      "id": "structure_viscosity_disabled",
+      "overrides": {
+        "sintering.ordered_structure_barrier": {
+          "value": 0.0,
+          "unit": "J/mol",
+          "range": [
+            0.0,
+            160000.0
+          ],
+          "source": "structure_viscosity",
+          "status": "assumed",
+          "note": "Declared zero-barrier comparison recovering preceding carbonate-stage kinetics."
         }
       }
     }
