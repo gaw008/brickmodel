@@ -87,6 +87,8 @@ class FullCycle:
         self.v = np.array([self.p(f"species.{s}.volume", "m3/mol") for s in self.ns])
         self.h0[:len(self.ns)] += (self.P - self.Pr) * self.v
         self.k = self.p("thermal.conductivity", "W/m/K")
+        self.conductivity_exponent = self.p("thermal.solid_fraction_exponent", "1")
+        self.conductivity_moisture_gain = self.p("thermal.liquid_volume_gain", "1")
         self.h = self.p("thermal.h", "W/m2/K")
         self.emissivity = self.p("thermal.emissivity", "1")
         self.sigma = self.p("reference.sigma", "W/m2/K4")
@@ -104,6 +106,8 @@ class FullCycle:
         self.initial[:, self.ns.index("water")] = self.md * self.p("material.water_dry_ratio", "kg/kg") / self.mw[self.ns.index("water")]
         self.extent_scale = self.initial[0, self.reactants]
         self.vs0 = self.initial @ self.v
+        self.water_index = self.ns.index("water")
+        self.dry_solid_fraction0 = (self.vs0-self.initial[:, self.water_index]*self.v[self.water_index])/self.b0
         self.vp0 = self.b0 - self.vs0
         if np.any(self.vp0 <= 0):
             raise ValueError("specified wet condensed volumes do not fit the brick geometry")
@@ -154,6 +158,36 @@ class FullCycle:
     def thermo(self, T):
         return self.h0 + (T[..., None] - self.Tr) * self.cp, self.s0 + np.log(T[..., None] / self.Tr) * self.cp
 
+    def effective_conductivity(self, ns, bulk):
+        """Assumed dry-skeleton power law with a liquid-volume correction.
+
+        Liquid water occupies pores for this transport closure, although it is
+        counted as condensed matter in the energy and volume inventories. The
+        reference solid fraction is the initial dry recipe at the initial bulk
+        volume; changing initial water loading does not change that reference.
+        """
+        liquid = ns[:, self.water_index]*self.v[self.water_index]/bulk
+        solid = (ns@self.v)/bulk-liquid
+        return self.k*(solid/self.dry_solid_fraction0)**self.conductivity_exponent*(1+self.conductivity_moisture_gain*liquid)
+
+    def heat_transfer(self, T, ns, bulk, tf):
+        conductivity = self.effective_conductivity(ns, bulk)
+        widths = bulk/self.area
+        # Two half-cell resistances in series define a single shared face flux.
+        conductance = self.area/(widths[:-1]/(2*conductivity[:-1])+widths[1:]/(2*conductivity[1:]))
+        internal = conductance*np.diff(T)
+        heat = np.zeros(self.n, dtype=T.dtype)
+        heat[:-1] += internal
+        heat[1:] -= internal
+        surface_T = T[-1]
+        resistance = widths[-1]/(2*conductivity[-1])
+        for _ in range(self.surface_iterations):
+            q = self.h*(tf-surface_T)+self.emissivity*self.sigma*(tf**4-surface_T**4)
+            surface_T -= (surface_T-T[-1]-resistance*q)/(1+resistance*(self.h+4*self.emissivity*self.sigma*surface_T**3))
+        qext = self.area*(surface_T-T[-1])/resistance
+        heat[-1] += qext
+        return heat, surface_T, qext, conductance, conductivity
+
     def rates(self, t, y):
         fields, T, ns, bulk, pore, surface, cap = self.unpack(y)
         tf = float(np.interp(t, self.times, self.temperatures))
@@ -185,22 +219,7 @@ class FullCycle:
         fout = fin + rate @ self.gnu
         yf = fout / fout.sum(axis=1)[:, None]
         flow_energy = fin @ hin[len(self.ns):] - np.sum(fout * hs[:, len(self.ns):], axis=1)
-        widths = bulk / self.area
-        conductance = self.k*self.area / ((widths[:-1] + widths[1:])/2)
-        internal = conductance * np.diff(T)
-        heat = np.zeros(self.n)
-        heat[:-1] += internal
-        heat[1:] -= internal
-        # Surface conduction and convection/radiation use the same face flux.
-        surface_T = float(T[-1])
-        resistance = widths[-1] / (2*self.k)
-        for _ in range(self.surface_iterations):
-            q = self.h*(tf-surface_T) + self.emissivity*self.sigma*(tf**4-surface_T**4)
-            residual = surface_T-T[-1]-resistance*q
-            slope = 1 + resistance*(self.h+4*self.emissivity*self.sigma*surface_T**3)
-            surface_T -= residual/slope
-        qext = self.area * (surface_T-T[-1]) / resistance
-        heat[-1] += qext
+        heat, surface_T, qext, _, _ = self.heat_transfer(T, ns, bulk, tf)
         db = -self.ks * np.exp(-self.Es/self.R*(1/T-1/self.Tsref)) * pore
         dsurf = cap * (db - dn @ self.v)
         dT = (heat + flow_energy - np.sum(hs[:, :len(self.ns)]*dn, axis=1) - dsurf) / (ns @ self.cp[:len(self.ns)])

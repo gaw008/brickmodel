@@ -1,6 +1,6 @@
 {
   "schema": "sludge_vme_full_cycle_v3",
-  "scope": "Source-traceable approximate full firing cycle with stored pore gas, quartz caloric transition and effective transition eigenstrain coupled to an axial thermo-viscoelastic skeleton; material applicability and real-world accuracy pending measurements.",
+  "scope": "Source-traceable approximate full firing cycle with stored pore gas, quartz caloric transition and effective eigenstrain, axial thermo-viscoelastic skeleton and porosity/moisture-dependent conductivity; material applicability and real-world accuracy pending measurements.",
   "sources": {
     "policy": {
       "identity": "assumed",
@@ -60,6 +60,11 @@
       "identity": "assumed",
       "location": "src/sludge_sandbox/cooling_thermoelastic_plate.py; docs/FULL_CYCLE_REPORT.md",
       "note": "Thermodynamic free-energy construction reused in an axial effective skeleton. Modulus, background expansion and quartz transition eigenstrain are explicit engineering assumptions, not measured brick properties. The transition eigenstrain follows the existing caloric phase fraction and initial quartz reference-volume fraction; not a pure-phase molar-volume or stress-dependent equilibrium law. USGS volumes at different temperatures cannot identify the isothermal phase jump."
+    },
+    "effective_conductivity": {
+      "identity": "assumed",
+      "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle.py effective_conductivity",
+      "note": "Engineering closure for effective dry-solid connectivity and liquid pore filling, not a measured homogenization law. Fourier transport uses positive state-dependent k and series half-cell resistances; no extra stored or reaction energy. Exponent and liquid-volume gain are uncalibrated assumptions. Initial dry reference fraction is derived from root recipe and constituent molar volumes."
     }
   },
   "parameters": {
@@ -897,7 +902,7 @@
       ],
       "source": "legacy",
       "status": "assumed",
-      "note": ""
+      "note": "Effective dry conductivity at the initial dry-recipe solid fraction and initial bulk volume. The previous constant value is retained as the reference magnitude; current local conductivity varies with solid and liquid fractions. Not a pure mineral conductivity."
     },
     "thermal.h": {
       "value": 20.0,
@@ -2010,6 +2015,28 @@
       "source": "solid_effective",
       "status": "assumed",
       "note": "Assumed effective axial eigenstrain amplitude per unit initial quartz reference-volume fraction. Actual strain=e_q*(n_q_initial*v_q/V0)*(x_beta(T)-x_beta(T_initial)). Zero recovers the previous background-only skeleton. This engineering range is not a measured quartz volume jump, a confidence interval or a calibrated brick property."
+    },
+    "thermal.solid_fraction_exponent": {
+      "value": 1.5,
+      "unit": "1",
+      "range": [
+        0.0,
+        3.0
+      ],
+      "source": "effective_conductivity",
+      "status": "assumed",
+      "note": "Power of current dry-solid volume fraction divided by initial dry reference fraction. Porosity includes liquid plus gas for this closure. Zero removes the solid-fraction correction."
+    },
+    "thermal.liquid_volume_gain": {
+      "value": 3.0,
+      "unit": "1",
+      "range": [
+        0.0,
+        6.0
+      ],
+      "source": "effective_conductivity",
+      "status": "assumed",
+      "note": "Dimensionless multiplier of liquid water volume/bulk volume. At fixed total pore fraction, replacing gas with liquid raises k. Zero removes the moisture correction. With both correction coefficients zero, k equals the former constant reference."
     }
   },
   "species": [
@@ -2217,7 +2244,9 @@
     "transport.diffusivity_ref",
     "solid.axial_modulus",
     "solid.thermal_expansion",
-    "quartz.axial_transition_strain"
+    "quartz.axial_transition_strain",
+    "thermal.solid_fraction_exponent",
+    "thermal.liquid_volume_gain"
   ],
   "calibration_parameters": [
     "thermal.h",
@@ -2270,5 +2299,5 @@
   "uncertainty_fixed_parameters": [
     "transport.permeability_ref"
   ],
-  "uncertainty_scope_note": "Ten selected parameters including quartz transition eigenstrain sampled in their declared ranges; permeability conditioned on its nominal value after two cost-limited broad-permeability attempts. All other parameters fixed except scenario controls. Results apply only to this constitutive model and selected ranges, not permeability-range robustness or all assumed material parameters. The previous nine-parameter ensemble remains historical."
+  "uncertainty_scope_note": "Twelve selected parameters including conductivity solid-fraction exponent, liquid-volume gain and quartz transition eigenstrain sampled in declared assumed ranges. Permeability remains fixed at its nominal value after two cost-limited broad-permeability attempts. All other parameters fixed except scenario controls. Results apply only to this constitutive closure and selected ranges; they do not prove permeability-range robustness, all-parameter robustness or measured material validity. Prior nine- and ten-parameter ensembles remain historical."
 }

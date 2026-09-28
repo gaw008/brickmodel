@@ -106,18 +106,7 @@ class FiniteGasFullCycle(FullCycle):
         dng[1:] += flux[:-1]
         flow = -energy_flux.copy()
         flow[1:] += energy_flux[:-1]
-        conductance = self.k*self.area/((widths[:-1]+widths[1:])/2)
-        internal = conductance*np.diff(T)
-        heat = np.zeros(self.n, dtype=T.dtype)
-        heat[:-1] += internal
-        heat[1:] -= internal
-        surface_T = T[-1]
-        resistance = widths[-1]/(2*self.k)
-        for _ in range(self.surface_iterations):
-            q = self.h*(tf-surface_T)+self.emissivity*self.sigma*(tf**4-surface_T**4)
-            surface_T -= (surface_T-T[-1]-resistance*q)/(1+resistance*(self.h+4*self.emissivity*self.sigma*surface_T**3))
-        qext = self.area*(surface_T-T[-1])/resistance
-        heat[-1] += qext
+        heat, surface_T, qext, conductance, conductivity = self.heat_transfer(T, ns, bulk, tf)
         mechanical = self.mechanical_rates(fields,T,ns,ng,bulk,pore,cap,pressure,dns,dng,heat,flow,us,ug)
         dT,db,dpore,capacity,extra_sdot,mechanical_entropy,coordinate_rate = mechanical
         sg = s[:, len(self.ns):]-self.R*np.log(partial/self.Pr)
@@ -133,7 +122,7 @@ class FiniteGasFullCycle(FullCycle):
                 'minimum_face_entropy':float(face_entropy.real.min()), 'permeability':permeability,
                 'molecular_flux':molecular, 'darcy_flux':darcy, 'energy_flux':energy_flux, 'capacity':capacity,
                 'dsc':float(heat.real.sum())/(self.n*self.md), 'coordinate_rate':coordinate_rate,
-                'pore':pore, 'effective_capacity':self.effective_capacity,
+                'pore':pore, 'conductivity':conductivity, 'effective_capacity':self.effective_capacity,
                 'mechanical_residual':self.mechanical_residual}
 
     def caloric_capacity(self,T,ns,ng):
@@ -214,7 +203,10 @@ class FiniteGasFullCycle(FullCycle):
             'restart_policy':'Carry all states and ledgers continuously across declared process-segment endpoints; restart BDF history.'}
         report['dimension_check'] = {'passed':True,'consumed_parameter_units':self.used_units,
             'identities':['nRT/V=Pa','Cp-R=Cv (J/mol/K)','mol*(kg/mol)=kg','J=mol*(J/mol)','W*s=J','Pa*m3=J',
-                '(m2/Pa/s)*(Pa/m)=m/s','D*c*area/distance=mol/s','molar_flux*(chemical_potential/T)=W/K']}
+                '(m2/Pa/s)*(Pa/m)=m/s','D*c*area/distance=mol/s','molar_flux*(chemical_potential/T)=W/K',
+                'solid_volume/bulk_volume=1; liquid_volume/bulk_volume=1',
+                'k_ref*(solid_fraction/reference_fraction)^m*(1+b*liquid_fraction)=W/m/K',
+                'area/(half_width_left/k_left+half_width_right/k_right)=W/K']}
         return report, fields
 
     def summarize(self, times, states):
@@ -248,6 +240,9 @@ class FiniteGasFullCycle(FullCycle):
                 'gas_inventory_mol':{s:ng[:,i].tolist() for i,s in enumerate(self.ng)},
                 'gas_face_flux_mol_s':{s:r['gas_flux'][:,i].tolist() for i,s in enumerate(self.ng)},
                 'pressure_pa':r['pressure'].tolist(),'permeability_m2':r['permeability'].tolist(),
+                'effective_conductivity_w_m_k':r['conductivity'].tolist(),
+                'liquid_water_volume_fraction':(ns[:,self.water_index]*self.v[self.water_index]/bulk).tolist(),
+                'total_pore_volume_fraction':((pore+ns[:,self.water_index]*self.v[self.water_index])/bulk).tolist(),
                 'porosity':(pore/bulk).tolist(),'thickness_shrinkage':(1-bulk/self.b0).tolist(),
                 'temperature_difference_k':span,'mass_kg':float(np.sum(ns@self.mw[:len(self.ns)])),
                 'total_mass_including_pore_gas_kg':float(inventories[-1]@self.mw),
@@ -281,6 +276,10 @@ class FiniteGasFullCycle(FullCycle):
             'loss_on_ignition_dry_fraction':float(1-product_mass/(self.n*self.md)),'porosity':phi,
             'residual_carbon_kg':float(sum(final['residual_carbon_kg'])),'shrinkage':float(1-bulks[-1]/bulks[0]),'peak_temperature_difference_k':peak,
             'peak_overpressure_pa':max(max(r['pressure_pa'])-self.P for r in rows),
+            'initial_volume_mean_conductivity_w_m_k':float(np.average(rows[0]['effective_conductivity_w_m_k'],weights=self.unpack(states[0])[3])),
+            'final_volume_mean_conductivity_w_m_k':float(np.average(final['effective_conductivity_w_m_k'],weights=self.unpack(states[-1])[3])),
+            'minimum_sampled_conductivity_w_m_k':min(min(r['effective_conductivity_w_m_k']) for r in rows),
+            'maximum_sampled_conductivity_w_m_k':max(max(r['effective_conductivity_w_m_k']) for r in rows),
             'absorption_kg_kg':self.p('product.connectivity','1')*phi*self.p('product.water_density','kg/m3')/density,
             'strength_pa':self.p('product.dense_strength','Pa')*float(np.exp(-self.p('product.porosity_coefficient','1')*phi)),
             'defect_indicator':float(-np.expm1(-peak/self.p('product.gradient_scale','K'))),
@@ -296,6 +295,7 @@ class FiniteGasFullCycle(FullCycle):
         cooled=max(abs(t-self.temperatures[-1]) for t in final['temperature_k'])
         report={'schema':'sludge_vme_full_cycle_result_v2','scope':self.config['scope'],'material_applicability':'待实测','real_world_validation':'待实测',
             'gas_approximation':'Stored ideal O2/N2/H2O/CO2 gas, common-D molar diffusion plus donor Darcy flow with entropy-compatible carried enthalpy; assumed diffusivity and pore properties. No imposed internal pressure or independent per-cell sweep.',
+            'thermal_approximation':'Assumed k=k_ref*(dry_solid_fraction/initial_dry_solid_fraction)^m*(1+b*liquid_water_volume_fraction). Total pores include liquid water plus stored gas; existing porosity output remains gas-filled volume/bulk. Shared face conductance uses two half-cell resistances. No explicit intrinsic temperature/mineral dependence, pore radiation or liquid migration; coefficients unmeasured.',
             'summary':summary,'whole_cycle':whole,'stages':stages,'conservation_passed':whole['passed'] and all(s['passed'] for s in stages.values()),
             'thermodynamics':{'minimum_sampled_entropy_production_w_k':min_entropy,'minimum_face_entropy_production_w_k':min_face,
                 'reaction_heat_counted_once':True,'maximum_entropy_balance_residual_j_k':float(np.max(np.abs(entropy_error))),
