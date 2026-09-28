@@ -30,6 +30,7 @@ class FiniteGasFullCycle(FullCycle):
         self.tortuosity = self.p('transport.tortuosity', '1')
         self.permeability = self.p('transport.permeability_ref', 'm2')
         self.water_mobility = self.p('transport.liquid_water_mobility', 'm2/s')
+        self.retention_matrix = self.p('water.retention_scale', 'kg/kg')*self.md/self.mw[self.water_index]
         self.oxygen_order = self.p('kinetics.oxygen_order', '1')
         self.oxygen_reference = self.p('kinetics.oxygen_reference_pressure', 'Pa')
         self.phi0 = self.vp0/self.b0
@@ -85,14 +86,33 @@ class FiniteGasFullCycle(FullCycle):
         reservoir_mu_over_t = hin[len(self.ns):]/tf-sin[len(self.ns):]+self.R*np.log(self.inlet*self.P/self.Pr)
         return flux, energy, entropy, permeability, molecular, darcy, reservoir_mu_over_t
 
-    def water_transport(self, fields, T, bulk, pressure, cap):
-        """Closed liquid boundary, shared internal flux down mechanical potential.
+    def water_retention(self, fields):
+        """Ideal water/matrix mixing: F=-T*S, mu_excess=R*T*log(activity).
 
-        The same mu=h-T*s+v*(p-P-cap) governs evaporation and migration.
+        Matrix equivalents are fixed per initial dry mass, not added matter.
+        The excess internal energy and partial water enthalpy are zero.
+        Log activity remains finite even when water inventory underflows;
+        the zero-matrix case explicitly selects the pure-liquid limit.
+        """
+        log_water = np.log(self.initial[:,self.water_index])-fields[1]
+        if self.retention_matrix == 0:
+            return np.zeros_like(log_water), np.zeros_like(log_water)
+        q = log_water-np.log(self.retention_matrix)
+        positive = q.real >= 0
+        correction = np.log1p(np.exp(np.where(positive, -q, q)))
+        log_activity = np.where(positive, -correction, q-correction)
+        log_matrix_fraction = np.where(positive, -q-correction, -correction)
+        entropy = -self.R*(np.exp(log_water)*log_activity+self.retention_matrix*log_matrix_fraction)
+        return log_activity, entropy
+
+    def water_transport(self, fields, T, bulk, pressure, cap):
+        """Closed liquid boundary, shared flux down the same water potential.
+
+        mu=h-T*s+v*(p-P-cap)+R*T*log(activity) governs evaporation and migration.
         Carried enthalpy includes the arithmetic mean mechanical contribution;
         the reciprocal-log temperature mean cancels constant-Cp caloric terms.
-        Thus F=v*mean(1/T)*difference(p-P-cap), and J=L*F gives L*F**2.
-        This pure-liquid closure has no water activity or retention curve.
+        Ideal mixing adds R*difference(log(activity)) to the entropy force,
+        but no carried excess enthalpy. J=L*F gives nonnegative L*F**2.
 
         Harmonic availability is evaluated in scaled log inventory coordinates.
         J/n on each side is obtained algebraically before multiplying by n,
@@ -103,6 +123,8 @@ class FiniteGasFullCycle(FullCycle):
         thermal_mean = tl*np.divide(np.log1p(ratio), ratio, out=np.ones_like(ratio), where=ratio != 0)
         potential = pressure-self.P-cap
         force = self.v[self.water_index]*(potential[:-1]-potential[1:])*(1/tl+1/tr)/2
+        log_activity, _ = self.water_retention(fields)
+        force += self.R*(log_activity[:-1]-log_activity[1:])
         carried_h = (self.h0[self.water_index]+self.cp[self.water_index]*(thermal_mean-self.Tr)
                      +self.v[self.water_index]*(potential[:-1]+potential[1:])/2)
         log_water = np.log(self.initial[:,self.water_index])-fields[1]
@@ -134,6 +156,8 @@ class FiniteGasFullCycle(FullCycle):
         mu = h-T[:, None]*s
         mu[:, :len(self.ns)] += (pressure-self.P-cap)[:, None]*self.v
         mu[:, len(self.ns):] += self.R*T[:, None]*np.log(partial/self.Pr)
+        log_activity, retention_entropy = self.water_retention(fields)
+        mu[:,self.water_index] += self.R*T*log_activity
         dg = mu@self.nu.T
         affinity = dg/(self.R*T[:, None])
         drive = -np.expm1(np.where(affinity.real < 0, affinity, 0))
@@ -156,6 +180,7 @@ class FiniteGasFullCycle(FullCycle):
         dT,db,dpore,capacity,extra_sdot,mechanical_entropy,coordinate_rate = mechanical
         sg = s[:, len(self.ns):]-self.R*np.log(partial/self.Pr)
         sdot = np.sum(capacity*dT/T)+np.sum(s[:, :len(self.ns)]*dns)+np.sum((sg-self.R)*dng)+np.sum(ng.sum(axis=1)*self.R*dpore/pore)+extra_sdot
+        sdot -= self.R*np.sum(log_activity*dns[:,self.water_index])
         exchange = qext/tf-energy_flux[-1]/tf+flux[-1]@reservoir_mu_over_t
         reaction_entropy = -np.sum(rate*dg/T[:, None])
         thermal_entropy = np.sum(conductance*np.diff(T)**2/(T[:-1]*T[1:]))+qext*(1/T[-1]-1/tf)
@@ -168,6 +193,7 @@ class FiniteGasFullCycle(FullCycle):
                 'molecular_flux':molecular, 'darcy_flux':darcy, 'energy_flux':energy_flux, 'capacity':capacity,
                 'water_flux':water_flux, 'water_energy_flux':water_energy, 'water_entropy':water_entropy,
                 'water_coordinate_rate':water_coordinate,
+                'water_log_activity':log_activity, 'water_retention_entropy':retention_entropy,
                 'dsc':float(heat.real.sum())/(self.n*self.md), 'coordinate_rate':coordinate_rate,
                 'pore':pore, 'conductivity':conductivity, 'effective_capacity':self.effective_capacity,
                 'mechanical_residual':self.mechanical_residual}
@@ -259,6 +285,8 @@ class FiniteGasFullCycle(FullCycle):
                 'sigma*(pore_diameter)*T^3=W/m/K; gas_porosity*exchange_factor=1',
                 'liquid_force=m3/mol*Pa/K=J/mol/K; mobility=D*area*concentration/(R*distance)=mol2*K/J/s',
                 'liquid_flux=mobility*force=mol/s; liquid_flux*carried_enthalpy=W; liquid_flux*force=W/K',
+                'retention_scale*initial_dry_mass/M_water=mol; n/(n+N)=1; R*T*log(activity)=J/mol',
+                'F_mix=R*T*(n*log(activity)+N*log(matrix_fraction))=J; S_mix=-F_mix/T=J/K; U_mix=0',
                 'area/(half_width_left/k_left+half_width_right/k_right)=W/K']}
         return report, fields
 
@@ -274,6 +302,7 @@ class FiniteGasFullCycle(FullCycle):
             inventories.append(np.r_[ns.sum(axis=0),ng.sum(axis=0)])
             energy=np.sum(ns*(h[:, :len(self.ns)]-self.P*self.v))+np.sum(ng*(h[:, len(self.ns):]-self.R*T[:, None]))+surface.sum()
             entropy=np.sum(ns*s[:, :len(self.ns)])+np.sum(ng*(s[:, len(self.ns):]-self.R*np.log(r['partial']/self.Pr)))
+            entropy+=r['water_retention_entropy'].sum()
             extra_u,extra_s=self.additional_storage(f,T,bulk)
             energy+=extra_u.sum(); entropy+=extra_s.sum()
             minimum_capacity=min(minimum_capacity,float(np.min(r['effective_capacity'])))
@@ -289,6 +318,9 @@ class FiniteGasFullCycle(FullCycle):
             rows.append({'time_s':float(t),'kiln_temperature_k':r['kiln_T'],'temperature_k':T.tolist(),
                 'x_m':(np.cumsum(bulk/self.area)-bulk/self.area/2).tolist(),
                 'water_kg_per_initial_dry_kg':(ns[:,self.ns.index('water')]*self.mw[self.ns.index('water')]/self.md).tolist(),
+                'water_activity':np.exp(r['water_log_activity']).tolist(),
+                'water_log_activity':r['water_log_activity'].tolist(),
+                'water_retention_entropy_j_k':r['water_retention_entropy'].tolist(),
                 'internal_liquid_water_face_flux_mol_s':r['water_flux'].tolist(),
                 'internal_liquid_water_face_energy_flux_w':r['water_energy_flux'].tolist(),
                 'internal_liquid_water_face_entropy_w_k':r['water_entropy'].tolist(),
@@ -338,6 +370,8 @@ class FiniteGasFullCycle(FullCycle):
             'residual_carbon_kg':float(sum(final['residual_carbon_kg'])),'shrinkage':float(1-bulks[-1]/bulks[0]),'peak_temperature_difference_k':peak,
             'peak_overpressure_pa':max(max(r['pressure_pa'])-self.P for r in rows),
             'peak_internal_liquid_water_flux_mol_s':max(max(abs(x) for x in r['internal_liquid_water_face_flux_mol_s']) for r in rows),
+            'final_retained_liquid_water_kg':sum(final['water_kg_per_initial_dry_kg'])*self.md,
+            'peak_water_retention_entropy_j_k':max(sum(r['water_retention_entropy_j_k']) for r in rows),
             'initial_volume_mean_conductivity_w_m_k':float(np.average(rows[0]['effective_conductivity_w_m_k'],weights=self.unpack(states[0])[3])),
             'final_volume_mean_conductivity_w_m_k':float(np.average(final['effective_conductivity_w_m_k'],weights=self.unpack(states[-1])[3])),
             'minimum_sampled_conductivity_w_m_k':min(min(r['effective_conductivity_w_m_k']) for r in rows),
@@ -362,7 +396,8 @@ class FiniteGasFullCycle(FullCycle):
         report={'schema':'sludge_vme_full_cycle_result_v2','scope':self.config['scope'],'material_applicability':'待实测','real_world_validation':'待实测',
             'gas_approximation':'Stored ideal O2/N2/H2O/CO2 gas, common-D molar diffusion plus donor Darcy flow with entropy-compatible carried enthalpy; assumed diffusivity and pore properties. No imposed internal pressure or independent per-cell sweep.',
             'thermal_approximation':'Background k=k_ref*(dry_solid_fraction/initial_dry_solid_fraction)^m*(1+b*liquid_water_volume_fraction), plus local pore-wall radiative k=4*sigma*factor*length*gas_porosity*T^3. Length is 2*r_initial*(pore_volume/initial_pore_volume)^(1/3), independent of mesh width. The assumed exchange factor includes wall emissivity and geometry; one local equilibrium temperature, no spectral/nonlocal photon or participating-gas radiation. Shared face and external half-cell resistances use total k; exterior furnace radiation remains a separate boundary exchange. No extra stored photon energy or separate radiation heat source. No intrinsic mineral conductivity law; coefficients unmeasured.',
-            'liquid_water_transport_approximation':'Internal pure-liquid redistribution uses the same mechanical chemical potential as evaporation. J=L*F with positive series availability mobility, F=v*mean(1/T)*difference(p_gas-P_ext-p_cap). Shared carried enthalpy uses reciprocal-log thermal mean plus mean mechanical potential times molar volume. Water log inventory permits both influx and loss; reaction extents remain reaction-only. Zero liquid flux at center and exterior; external drying occurs through pore vapor. No moisture-retention/activity law, saturation-gradient wicking, liquid boundary supply, hydraulic measurements or hysteresis. Mobility scale is assumed, not a measured drying diffusivity.',
+            'liquid_water_transport_approximation':'Internal liquid-water migration and evaporation share mechanical potential plus R*T*log(activity), with ideal-mixing activity n_water/(n_water+fixed_matrix_equivalents). Positive series availability mobility multiplies the combined mechanical and log-activity force. Shared carried enthalpy uses reciprocal-log thermal mean plus mean mechanical potential times molar volume; ideal mixing adds no excess enthalpy. Log water inventory permits influx/loss, with separate reaction extents. Zero liquid flux at center/exterior; external drying occurs through pore vapor. No measured hydraulic/retention law, liquid boundary supply or hysteresis. Evaporation remains one-way, without condensation or humidity-cycle validation.',
+            'water_retention_approximation':'Assumed ideal-mixing free energy F=R*T*[n*ln(n/(n+N))+N*ln(N/(n+N))], fixed immobile matrix equivalents N per initial dry mass. S=-F/T; excess U, Cp and partial enthalpy are zero. N is not added material or a measured saturation capacity. No energetic binding, temperature-dependent sorption heat, matrix-site evolution or fitted isotherm. Zero N selects pure-liquid activity one.',
             'reaction_approximation':'Competing organic oxidation and lumped CH2O -> C + H2O carbonization share the organic inventory. Char inventory receives carbonization products and loses oxidation products; it is not overwritten by an initial-char depletion formula. All pathways use the same stoichiometry, formation-energy reference and affinity. No complete pyrolysis spectrum or distinct char reactivity populations. Conversion denominators are initial reactant moles, except char oxidation uses initial char plus potential organic carbon.',
             'summary':summary,'whole_cycle':whole,'stages':stages,'conservation_passed':whole['passed'] and all(s['passed'] for s in stages.values()),
             'thermodynamics':{'minimum_sampled_entropy_production_w_k':min_entropy,'minimum_face_entropy_production_w_k':min_face,

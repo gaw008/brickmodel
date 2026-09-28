@@ -1,6 +1,6 @@
 {
   "schema": "sludge_vme_full_cycle_v3",
-  "scope": "Source-traceable full firing-cycle approximation with competing carbonization, stored pore gas, quartz thermoelasticity, effective reversible liquid phase, pore-wall radiative heat diffusion and pressure-potential-driven internal liquid-water redistribution; real material applicability pending measurements.",
+  "scope": "Source-traceable full firing-cycle approximation with competing carbonization, stored pore gas, quartz thermoelasticity, effective reversible liquid phase, pore radiation and conservative liquid-water migration with an assumed ideal-mixing retention free energy; real material applicability pending measurements.",
   "sources": {
     "policy": {
       "identity": "assumed",
@@ -84,7 +84,12 @@
     "liquid_water_transport": {
       "identity": "assumed",
       "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py water_transport",
-      "note": "Declared pure-liquid Onsager closure driven by the existing mechanical water potential, with availability-weighted positive mobility and shared transported enthalpy. No moisture-retention/activity curve, wetting hysteresis, measured hydraulic conductivity or saturation-driven wicking. The diffusivity-dimensional coefficient is a mobility scale, not a measured Fick diffusivity."
+      "note": "Declared Onsager liquid-water closure with availability-weighted positive mobility and shared transported enthalpy. Mechanical potential is supplemented by the separately declared water_retention free energy in the current model. No wetting hysteresis or measured hydraulic conductivity. The diffusivity-dimensional coefficient is a mobility scale, not a measured Fick diffusivity."
+    },
+    "water_retention": {
+      "identity": "assumed",
+      "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py water_retention",
+      "note": "Explicit ideal-mixing free energy RT*[n*ln(n/(n+N))+N*ln(N/(n+N))], where N is an immobile dry-matrix equivalent scale, not an extra mass inventory or measured maximum sorption capacity. Gives water activity n/(n+N), mixing entropy and zero excess internal energy/enthalpy. No energetic binding, fitted isotherm, hysteresis or reversible condensation."
     }
   },
   "parameters": {
@@ -2166,7 +2171,18 @@
       ],
       "source": "liquid_water_transport",
       "status": "assumed",
-      "note": "Mobility scale D in L=2*A*D/[R*(dx_left/c_left+dx_right/c_right)]. Internal liquid-water flux J=L*F, F=volume*mean(1/T)*difference(p_gas-P_ext-p_cap). Zero removes only liquid-water redistribution; boundary liquid flux is zero. Not measured hydraulic or drying diffusivity."
+      "note": "Mobility scale D in L=2*A*D/[R*(dx_left/c_left+dx_right/c_right)]. Internal liquid-water flux J=L*F, F=volume*mean(1/T)*difference(p_gas-P_ext-p_cap)+R*difference(log(water_activity)). Zero removes only liquid-water redistribution; boundary liquid flux is zero. Not measured hydraulic or drying diffusivity."
+    },
+    "water.retention_scale": {
+      "value": 0.001,
+      "unit": "kg/kg",
+      "range": [
+        0.0,
+        0.002
+      ],
+      "source": "water_retention",
+      "status": "assumed",
+      "note": "Water-equivalent mass scale per initial dry mass defining fixed matrix equivalents N=scale*initial_dry_mass/M_water for ideal-mixing retention. Not an actual added species or a measured maximum sorption capacity. Zero recovers pure-liquid activity one; no temperature-dependent binding enthalpy."
     }
   },
   "species": [
@@ -2393,7 +2409,8 @@
     "liquid.transition_temperature",
     "liquid.mobility_gain",
     "thermal.pore_radiation_factor",
-    "transport.liquid_water_mobility"
+    "transport.liquid_water_mobility",
+    "water.retention_scale"
   ],
   "calibration_parameters": [
     "thermal.h",
@@ -2447,7 +2464,7 @@
     "transport.permeability_ref",
     "sintering.radius"
   ],
-  "uncertainty_scope_note": "Nineteen selected parameters, including assumed pressure-driven liquid-water mobility and pore-wall radiation. Permeability fixed at 3.75e-14 m2 and pore radius at 5.9e-6 m; inlet atmosphere, liquid latent contrast and transition width also fixed. Eight paired samples do not establish all-parameter, retention-model, pore-size-range or permeability-range robustness. Earlier ensembles remain historical.",
+  "uncertainty_scope_note": "Twenty selected parameters, including assumed water retention scale and liquid mobility. Gas permeability fixed at 3.75e-14 m2 and pore radius at 5.9e-6 m; inlet atmosphere, liquid latent contrast and transition width also fixed. Eight paired samples do not establish all-parameter, retention-model, hysteresis, pore-size-range or permeability-range robustness. Earlier ensembles remain historical.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -2580,6 +2597,22 @@
           "source": "liquid_water_transport",
           "status": "assumed",
           "note": "Declared virtual mechanism comparison: no internal liquid-water migration; local evaporation, vapor transport and all other mechanisms retained."
+        }
+      }
+    },
+    {
+      "id": "water_retention_disabled",
+      "overrides": {
+        "water.retention_scale": {
+          "value": 0.0,
+          "unit": "kg/kg",
+          "range": [
+            0.0,
+            0.002
+          ],
+          "source": "water_retention",
+          "status": "assumed",
+          "note": "Declared virtual mechanism comparison: pure-liquid activity one; internal mechanical-potential-driven liquid transport and all other mechanisms retained."
         }
       }
     }
