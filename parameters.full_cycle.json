@@ -115,6 +115,11 @@
       "identity": "assumed",
       "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py retention_sites and water_binding",
       "note": "Declared immobile site equivalents N=N0*(r+(1-r)*n_kaolin/n_kaolin_initial). A persistent fraction r remains after dehydroxylation; r is unmeasured and positive over the declared domain, not an inventory floor. Composition derivatives of the existing mixing and binding free energies enter kaolin reaction affinity and caloric/entropy ledgers. No site regeneration, independent kinetics, measured site count or sintering loss."
+    },
+    "reversible_carbonate": {
+      "identity": "assumed",
+      "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py carbonate_rate and condensed_state",
+      "note": "Phenomenological reverse carbonate reaction uses the existing decarbonation Arrhenius rate, local CaO inventory, dimensionless CO2 pressure and the same pure-phase affinity. No measured reverse kinetics or product-layer model; a conserved calcite/lime inventory permits regeneration at either pure-phase endpoint."
     }
   },
   "parameters": {
@@ -2648,6 +2653,17 @@
       "source": "water_site_evolution",
       "status": "assumed",
       "note": "Persistent fraction of initial matrix equivalents after kaolin depletion. Nominal 20 percent, range 10 to 100 percent are declared hypotheses, not measured. Evolving mode requires positive initial kaolin. At one recover fixed sites exactly; complete site loss is outside this model domain. No new mass or independent state."
+    },
+    "kinetics.carbonation.factor": {
+      "value": 1.0,
+      "unit": "1",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "source": "reversible_carbonate",
+      "status": "assumed",
+      "note": "Assumed reverse-rate multiplier, fixed at one for this stage UQ. Zero restores the preceding irreversible logarithmic calcite coordinate exactly; positive mode requires a nonzero initial calcite/lime pool. No fitted or measured carbonation coefficient."
     }
   },
   "species": [
@@ -2740,7 +2756,7 @@
         "lime": 1,
         "CO2": 1
       },
-      "kinetics_basis": "Stored-gas mode uses local chemical affinity including surface energy, with explicit oxygen-order factor; swept mode retains conservative carrier bounds."
+      "kinetics_basis": "Finite-gas mode permits signed net calcite-to-lime/CO2 extent. Positive affinity allows reverse consumption of local lime and CO2 with the same thermodynamic ledger; zero reverse factor and historical swept mode remain irreversible."
     },
     {
       "id": "organic_oxidation",
@@ -2968,9 +2984,10 @@
     "gas.stage.cooling_hold.O2",
     "gas.stage.cooling_hold.N2",
     "gas.stage.cooling_hold.H2O",
-    "gas.stage.cooling_hold.CO2"
+    "gas.stage.cooling_hold.CO2",
+    "kinetics.carbonation.factor"
   ],
-  "uncertainty_scope_note": "Twenty-five selected parameters include the new persistent site fraction along with water binding, liquid relaxation, retention and liquid mobility. Permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere remain fixed; liquid latent contrast and transition width are also not sampled. Added sampled dimension changes other draws, so cross-ensemble differences cannot be assigned to site evolution alone. Eight paired samples do not establish all-parameter or permeability/atmosphere-range robustness, measured site survival or qualified-process optimization.",
+  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -3303,6 +3320,22 @@
           "source": "water_site_evolution",
           "status": "assumed",
           "note": "Declared fixed-site limit, recovering the preceding staged-atmosphere model."
+        }
+      }
+    },
+    {
+      "id": "irreversible_carbonate",
+      "overrides": {
+        "kinetics.carbonation.factor": {
+          "value": 0.0,
+          "unit": "1",
+          "range": [
+            0.0,
+            1.0
+          ],
+          "source": "reversible_carbonate",
+          "status": "assumed",
+          "note": "Zero inverse-rate limit with the previous log-depletion coordinate and equations."
         }
       }
     }
