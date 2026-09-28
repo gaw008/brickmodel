@@ -1,6 +1,6 @@
 {
   "schema": "sludge_vme_full_cycle_v3",
-  "scope": "Source-traceable approximate full firing cycle with stored pore gas, competing organic oxidation/carbonization and produced-char inventory, quartz thermoelastic skeleton and state-dependent conductivity; material applicability and real-world accuracy pending measurements.",
+  "scope": "Source-traceable full firing-cycle approximation with competing organic carbonization, stored pore gas, quartz thermoelasticity and a reversible effective liquid-phase caloric/sintering proxy; real material applicability pending measurements.",
   "sources": {
     "policy": {
       "identity": "assumed",
@@ -70,6 +70,11 @@
       "identity": "assumed",
       "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle.py condensed_state and chemical_coordinate_rates",
       "note": "Explicit engineering CH2O -> C + H2O pathway using existing proxy species, atom-balanced stoichiometry and the same formation enthalpy/entropy reference. Not a fitted sludge pyrolysis spectrum. Arrhenius coefficients and common reactivity of initial/generated char are assumed; no new independent reaction heat."
+    },
+    "effective_liquid_phase": {
+      "identity": "assumed",
+      "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_solid.py liquid_phase",
+      "note": "Engineering fluxed-matrix proxy carried by a fraction of current metakaolin, with unchanged Al2Si2O7 composition and molar volume. Two-state free energy gives equilibrium liquid fraction, latent enthalpy and entropy; these parameters are not pure metakaolin melting properties, measured mineral fractions or a phase diagram. No kinetic hysteresis or quenched glass."
     }
   },
   "parameters": {
@@ -357,7 +362,7 @@
       ],
       "source": "legacy",
       "status": "assumed",
-      "note": "Positive constant Cp, assumed full-temperature approximation; phase transitions of inert silica omitted."
+      "note": "Assumed positive background Cp of the metakaolin carrier. The effective-liquid model adds its equilibrium latent-capacity contribution from the same phase free energy; this constant is not the total temperature-dependent Cp."
     },
     "species.metakaolin.volume": {
       "value": 8.8e-05,
@@ -1028,7 +1033,7 @@
       ],
       "source": "legacy",
       "status": "assumed",
-      "note": ""
+      "note": "This is the uncoupled Arrhenius reference mobility; the effective-liquid multiplier may increase the actual rate even at the reference temperature."
     },
     "sintering.temperature_ref": {
       "value": 1273.0,
@@ -2075,6 +2080,61 @@
       "source": "lumped_carbonization",
       "status": "assumed",
       "note": "Fixed kinetic normalization pressure. Unlike inlet pressure normalization, it does not change when oxygen-poor reservoir conditions are selected."
+    },
+    "liquid.active_matrix_fraction": {
+      "value": 0.3,
+      "unit": "1",
+      "range": [
+        0,
+        0.4
+      ],
+      "source": "effective_liquid_phase",
+      "status": "assumed",
+      "note": "Fraction of current metakaolin inventory carrying the assumed reversible matrix transition; zero removes latent storage and mobility coupling."
+    },
+    "liquid.transition_temperature": {
+      "value": 1223.15,
+      "unit": "K",
+      "range": [
+        1173.15,
+        1273.15
+      ],
+      "source": "effective_liquid_phase",
+      "status": "assumed",
+      "note": "Effective equal-free-energy temperature of the two-state matrix proxy, not a pure mineral melting temperature."
+    },
+    "liquid.latent_heat": {
+      "value": 30000.0,
+      "unit": "J/mol",
+      "range": [
+        20000.0,
+        40000.0
+      ],
+      "source": "effective_liquid_phase",
+      "status": "assumed",
+      "note": "Enthalpy contrast per mole of active proxy matrix. Shared by caloric storage and chemical potentials; no separate heat source."
+    },
+    "liquid.transition_width": {
+      "value": 40.0,
+      "unit": "K",
+      "range": [
+        30.0,
+        60.0
+      ],
+      "source": "effective_liquid_phase",
+      "status": "assumed",
+      "note": "Sets ideal two-state mixing coefficient b=L*width/Tm^2; fraction slope at Tm is 1/(4*width). Not a fitted distribution."
+    },
+    "liquid.mobility_gain": {
+      "value": 6.0,
+      "unit": "1",
+      "range": [
+        0,
+        10.0
+      ],
+      "source": "effective_liquid_phase",
+      "status": "assumed",
+      "note": "Existing sintering mobility multiplied by exp(gain*effective_liquid_volume/dry_condensed_volume). Zero keeps latent storage but disables this kinetic multiplier."
     }
   },
   "species": [
@@ -2296,7 +2356,10 @@
     "thermal.solid_fraction_exponent",
     "thermal.liquid_volume_gain",
     "kinetics.organic_carbonization.A",
-    "kinetics.organic_carbonization.E"
+    "kinetics.organic_carbonization.E",
+    "liquid.active_matrix_fraction",
+    "liquid.transition_temperature",
+    "liquid.mobility_gain"
   ],
   "calibration_parameters": [
     "thermal.h",
@@ -2349,7 +2412,7 @@
   "uncertainty_fixed_parameters": [
     "transport.permeability_ref"
   ],
-  "uncertainty_scope_note": "Fourteen selected parameters including assumed carbonization prefactor and activation energy sampled in declared ranges. Permeability fixed at 3.75e-14 m2; oxygen kinetic reference and inlet atmosphere fixed. These small paired ensembles do not prove all-parameter, permeability-range or oxygen-poor robustness. Previous ensembles belong to their historical model versions.",
+  "uncertainty_scope_note": "Seventeen selected parameters including effective-liquid active fraction, transition temperature and mobility gain. Permeability remains fixed at 3.75e-14 m2, inlet atmosphere and oxygen reference fixed; liquid latent contrast and transition width fixed. Eight paired samples do not prove all-parameter, phase-model, permeability-range or low-oxygen robustness. Previous ensembles remain historical.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -2418,6 +2481,38 @@
           "status": "assumed",
           "source": "lumped_carbonization",
           "note": "Declared virtual mechanism calculation; not measured operating data."
+        }
+      }
+    },
+    {
+      "id": "liquid_disabled",
+      "overrides": {
+        "liquid.active_matrix_fraction": {
+          "value": 0.0,
+          "unit": "1",
+          "range": [
+            0,
+            0.4
+          ],
+          "source": "effective_liquid_phase",
+          "status": "assumed",
+          "note": "Declared virtual mechanism calculation; not a measured material or operation."
+        }
+      }
+    },
+    {
+      "id": "liquid_mobility_disabled",
+      "overrides": {
+        "liquid.mobility_gain": {
+          "value": 0.0,
+          "unit": "1",
+          "range": [
+            0,
+            10.0
+          ],
+          "source": "effective_liquid_phase",
+          "status": "assumed",
+          "note": "Declared virtual mechanism calculation; not a measured material or operation."
         }
       }
     }

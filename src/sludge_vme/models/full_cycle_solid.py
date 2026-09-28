@@ -1,10 +1,12 @@
-"""Quartz caloric storage and equilibrated axial thermo-viscoelastic skeleton.
+"""Phase caloric storage and equilibrated axial thermo-viscoelastic skeleton.
 
 The only strain direction is the slab thickness, at fixed face area. Elastic
 Helmholtz energy gives entropy and internal energy by differentiation. Quartz
 latent heat is a declared smooth two-state free-energy approximation. Its
 temperature-dependent fraction also drives an assumed effective axial
 eigenstrain, not a measured pure-phase volume jump or hysteresis law.
+An assumed metakaolin-carried liquid proxy contributes to the same molar
+thermodynamic properties and increases the positive sintering mobility.
 """
 import numpy as np
 
@@ -31,6 +33,33 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         self.mechanical_iterations=int(self.p('numerics.mechanical_iterations','1'))
         self.initial_prestress=-2/3*self.es0/self.vp0
         self.phase0=self.phase(np.asarray(self.Tr))
+        self.matrix=self.ns.index('metakaolin')
+        self.liquid_active=self.p('liquid.active_matrix_fraction','1')
+        self.liquid_tc=self.p('liquid.transition_temperature','K')
+        self.liquid_latent=self.p('liquid.latent_heat','J/mol')
+        self.liquid_width=self.p('liquid.transition_width','K')
+        self.liquid_gain=self.p('liquid.mobility_gain','1')
+        self.liquid_mixing=self.liquid_latent*self.liquid_width/self.liquid_tc**2
+        self.liquid_reference=self.liquid_phase(np.asarray(self.Tr))
+
+    def liquid_phase(self,T):
+        """Equilibrium two-state proxy carried by the metakaolin inventory.
+
+        The phases share composition and molar volume. This assumed fluxed
+        matrix proxy is not the melting curve of pure metakaolin.
+        """
+        q=self.liquid_latent/self.liquid_mixing*(1/self.liquid_tc-1/T)
+        x=np.where(q.real>=0,1/(1+np.exp(-q)),np.exp(q)/(1+np.exp(q)))
+        softplus=np.where(q.real>=0,q+np.log1p(np.exp(-q)),np.log1p(np.exp(q)))
+        entropy=x*self.liquid_latent/self.liquid_tc+self.liquid_mixing*(softplus-x*q)
+        cp=self.liquid_latent**2/(self.liquid_mixing*T**2)*x*(1-x)
+        return x,entropy,cp
+
+    def liquid_state(self,T,ns):
+        liquid_moles=self.liquid_active*ns[:,self.matrix]*self.liquid_phase(T)[0]
+        dry_volume=ns@self.v-ns[:,self.water_index]*self.v[self.water_index]
+        fraction=liquid_moles*self.v[self.matrix]/dry_volume
+        return liquid_moles,fraction,np.exp(self.liquid_gain*fraction)
 
     def phase(self,T):
         q=self.latent/self.mixing*(1/self.tc-1/T)
@@ -66,11 +95,15 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         _,hq,sq=self.quartz_thermo(T)
         h[...,self.quartz]=self.h0[self.quartz]+hq
         s[...,self.quartz]=self.s0[self.quartz]+sq
+        x,phase_s,_=self.liquid_phase(T)
+        h[...,self.matrix]+=self.liquid_active*self.liquid_latent*(x-self.liquid_reference[0])
+        s[...,self.matrix]+=self.liquid_active*(phase_s-self.liquid_reference[1])
         return h,s
 
     def caloric_capacity(self,T,ns,ng):
         cpq,_,_=self.quartz_thermo(T)
-        return super().caloric_capacity(T,ns,ng)+ns[:,self.quartz]*(cpq-self.cp[self.quartz])
+        return (super().caloric_capacity(T,ns,ng)+ns[:,self.quartz]*(cpq-self.cp[self.quartz])
+                +ns[:,self.matrix]*self.liquid_active*self.liquid_phase(T)[2])
 
     def thermal_strain(self,T):
         """Effective eigenstrain and its first two temperature derivatives.
@@ -116,7 +149,8 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         eps=self.elastic_strain(f,T,bulk)
         _,beta_prime,beta_second,_=self.thermal_strain(T)
         force=pressure-self.P-cap
-        eta_dot=self.ks*np.exp(-self.Es/self.R*(1/T-1/self.Tsref))*pore/(cap*self.b0)*force
+        mobility=self.liquid_state(T,ns)[2]
+        eta_dot=self.ks*np.exp(-self.Es/self.R*(1/T-1/self.Tsref))*mobility*pore/(cap*self.b0)*force
         dvs=dns@self.v
         d=self.modulus/self.b0+(pressure-cap/3)/pore
         a=self.modulus*beta_prime+pressure/T
@@ -142,7 +176,12 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
 
     def solid_fields(self,f,T,bulk):
         thermal,slope,_,transition=self.thermal_strain(T)
+        ns=self.condensed_state(f)
+        liquid,fraction,mobility=self.liquid_state(T,ns)
         return {'quartz_beta_fraction':self.phase(T)[0].tolist(),
+                'effective_liquid_moles':liquid.tolist(),
+                'effective_liquid_fraction_of_dry_condensed_volume':fraction.tolist(),
+                'liquid_sintering_mobility_multiplier':mobility.tolist(),
                 'reversible_thermal_strain':thermal.tolist(),
                 'quartz_transition_strain':transition.tolist(),
                 'effective_expansion_coefficient_per_k':slope.tolist(),
@@ -156,6 +195,12 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         report['thermodynamics']['elastic_storage']="F_el=K*V0*epsilon^2/2; epsilon=V/V0-1-beta(T)-eta+prestress/K; S_el=K*V0*beta'(T)*epsilon; U_el=F_el+T*S_el"
         report['thermodynamics']['thermal_eigenstrain']='beta(T)=alpha*(T-T_initial)+e_q*(n_q_initial*v_q/V0)*(x_beta(T)-x_beta(T_initial)); fixed-strain elastic heat capacity=K*V0*T*(epsilon*beta_second-beta_prime^2)'
         report['thermodynamics']['quartz_latent_heat_counted_once']=True
+        report['thermodynamics']['liquid_latent_heat_counted_once']=True
+        report['liquid_approximation']='Reversible equilibrium two-state fluxed-matrix proxy carried by a declared fraction of current metakaolin. Both states retain the same Al2Si2O7 composition and molar volume. State-dependent h, s, Cp and reaction affinity share one free energy; positive exp(gain*liquid dry-condensed volume fraction) multiplies existing sintering mobility. Assumed parameters; not pure metakaolin melting, a mineral phase diagram, finite-rate vitrification or quenched-glass retention.'
+        report['summary']['peak_effective_liquid_moles']=max(sum(r['effective_liquid_moles']) for r in fields['rows'])
+        report['summary']['peak_local_effective_liquid_fraction']=max(max(r['effective_liquid_fraction_of_dry_condensed_volume']) for r in fields['rows'])
+        report['summary']['peak_liquid_mobility_multiplier']=max(max(r['liquid_sintering_mobility_multiplier']) for r in fields['rows'])
+        report['summary']['final_effective_liquid_moles']=float(sum(fields['rows'][-1]['effective_liquid_moles']))
         report['summary']['peak_reversible_thermal_strain']=max(max(r['reversible_thermal_strain']) for r in fields['rows'])
         report['summary']['peak_quartz_beta_fraction']=max(max(r['quartz_beta_fraction']) for r in fields['rows'])
         report['summary']['peak_quartz_transition_strain']=max(max(r['quartz_transition_strain']) for r in fields['rows'])
@@ -168,4 +213,5 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
     def integrate(self):
         report,fields=super().integrate()
         report['dimension_check']['identities'] += ['K*V0*epsilon^2=J','K*V0*beta_prime*epsilon=J/K','K*V0*T*(epsilon*beta_second-beta_prime^2)=J/K','n_q*v_q/V0=1','L*w/Tc^2=J/mol/K','dh_quartz/dT=Cp_quartz=T*ds_quartz/dT']
+        report['dimension_check']['identities'] += ['L_liquid*w_liquid/Tm^2=J/mol/K','dh_matrix/dT=Cp_matrix=T*ds_matrix/dT','n_matrix*active_fraction*x*volume/dry_condensed_volume=1','exp(gain*liquid_fraction)=1']
         return report,fields
