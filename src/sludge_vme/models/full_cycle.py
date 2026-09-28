@@ -159,9 +159,10 @@ class FullCycle:
     def condensed_state(self, fields):
         """Log water/three depleted species plus produced/consumed char.
 
-        Water's coordinate may decrease under liquid influx. Its evaporation
-        route has no condensed products, so this changes only water inventory;
-        cumulative evaporation remains in the separate reaction ledger.
+        Water's coordinate may decrease under liquid influx or condensation.
+        Its phase-exchange route has no other condensed products, so this
+        changes only water inventory. The separate evaporation ledger is net
+        signed liquid-to-vapor transfer, not gross evaporation or conversion.
         """
         consumed = self.initial[:,self.depleted]*(-np.expm1(-fields[1:5].T))
         ns = self.initial + consumed@self.depletion_products

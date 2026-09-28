@@ -1,6 +1,6 @@
 {
   "schema": "sludge_vme_full_cycle_v3",
-  "scope": "Source-traceable full firing-cycle approximation with competing carbonization, stored pore gas, quartz thermoelasticity, effective reversible liquid phase, pore radiation and conservative liquid-water migration with an assumed ideal-mixing retention free energy; real material applicability pending measurements.",
+  "scope": "Source-traceable full firing-cycle approximation with stored pore gas, thermoelasticity, effective liquid phase, pore radiation, liquid migration and ideal-mixing water retention with seeded bidirectional evaporation/condensation; real material applicability pending measurements.",
   "sources": {
     "policy": {
       "identity": "assumed",
@@ -89,7 +89,12 @@
     "water_retention": {
       "identity": "assumed",
       "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py water_retention",
-      "note": "Explicit ideal-mixing free energy RT*[n*ln(n/(n+N))+N*ln(N/(n+N))], where N is an immobile dry-matrix equivalent scale, not an extra mass inventory or measured maximum sorption capacity. Gives water activity n/(n+N), mixing entropy and zero excess internal energy/enthalpy. No energetic binding, fitted isotherm, hysteresis or reversible condensation."
+      "note": "Explicit ideal-mixing free energy RT*[n*ln(n/(n+N))+N*ln(N/(n+N))], where N is an immobile dry-matrix equivalent scale, not an extra mass inventory or measured maximum sorption capacity. Gives water activity n/(n+N), mixing entropy and zero excess internal energy/enthalpy. No energetic binding, fitted isotherm, hysteresis or evolving matrix sites."
+    },
+    "water_phase_exchange": {
+      "identity": "assumed",
+      "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py water_phase_drive",
+      "note": "Declared seeded phase kinetics: both signed directions oppose the same water/vapor chemical-potential difference and share the evaporation Arrhenius rate. Bounded driving functions give finite log-inventory rates. Reverse prefactor proportional to existing liquid; no exactly dry nucleation, measured condensation law or resolved interface area. At unit factor paired one-way flux ratio exp(-affinity)."
     }
   },
   "parameters": {
@@ -2183,6 +2188,17 @@
       "source": "water_retention",
       "status": "assumed",
       "note": "Water-equivalent mass scale per initial dry mass defining fixed matrix equivalents N=scale*initial_dry_mass/M_water for ideal-mixing retention. Not an actual added species or a measured maximum sorption capacity. Zero recovers pure-liquid activity one; no temperature-dependent binding enthalpy."
+    },
+    "kinetics.condensation.factor": {
+      "value": 1.0,
+      "unit": "1",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "source": "water_phase_exchange",
+      "status": "assumed",
+      "note": "Reverse phase-exchange factor multiplying the evaporation Arrhenius coefficient and existing liquid inventory for positive vapor-minus-liquid affinity. One gives symmetric bounded driving and paired flux ratio exp(-affinity); zero disables condensation and recovers the previous one-way law. Fixed at one in this conditional UQ; not a measured accommodation coefficient."
     }
   },
   "species": [
@@ -2255,7 +2271,7 @@
         "water": -1,
         "H2O": 1
       },
-      "kinetics_basis": "Stored-gas mode uses local chemical affinity including surface energy, with explicit oxygen-order factor; swept mode retains conservative carrier bounds."
+      "kinetics_basis": "Stored-gas water exchange uses signed net liquid-to-vapor rate from the shared chemical potential; negative evaporation extent increments mean condensation. Bounded reverse kinetics are proportional to existing liquid. Swept-gas host retains its prior one-way law."
     },
     {
       "id": "dehydroxylation",
@@ -2462,9 +2478,12 @@
   },
   "uncertainty_fixed_parameters": [
     "transport.permeability_ref",
-    "sintering.radius"
+    "sintering.radius",
+    "kinetics.condensation.factor",
+    "kinetics.evaporation.A",
+    "kinetics.evaporation.E"
   ],
-  "uncertainty_scope_note": "Twenty selected parameters, including assumed water retention scale and liquid mobility. Gas permeability fixed at 3.75e-14 m2 and pore radius at 5.9e-6 m; inlet atmosphere, liquid latent contrast and transition width also fixed. Eight paired samples do not establish all-parameter, retention-model, hysteresis, pore-size-range or permeability-range robustness. Earlier ensembles remain historical.",
+  "uncertainty_scope_note": "Twenty selected parameters, including retention scale and liquid mobility. Gas permeability fixed at 3.75e-14 m2 and pore radius at 5.9e-6 m; reverse phase factor fixed at 1, evaporation A/E and inlet atmosphere also fixed, as are liquid latent contrast and transition width. Eight paired samples do not establish condensation-kinetic-range, dry-nucleation, all-parameter, hysteresis or permeability-range robustness. Earlier ensembles remain historical.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -2613,6 +2632,22 @@
           "source": "water_retention",
           "status": "assumed",
           "note": "Declared virtual mechanism comparison: pure-liquid activity one; internal mechanical-potential-driven liquid transport and all other mechanisms retained."
+        }
+      }
+    },
+    {
+      "id": "condensation_disabled",
+      "overrides": {
+        "kinetics.condensation.factor": {
+          "value": 0.0,
+          "unit": "1",
+          "range": [
+            0.0,
+            1.0
+          ],
+          "source": "water_phase_exchange",
+          "status": "assumed",
+          "note": "Declared virtual mechanism comparison: disable reverse phase exchange, retain water retention and internal migration; previous one-way model."
         }
       }
     }
