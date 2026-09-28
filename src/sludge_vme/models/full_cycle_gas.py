@@ -20,7 +20,8 @@ class FiniteGasFullCycle(FullCycle):
     def __init__(self, config):
         super().__init__(config)
         self.g = len(self.ng)
-        self.extent_offset = (9 + self.g) * self.n
+        self.gas_offset = 9 * self.n
+        self.extent_offset = self.gas_offset + self.g * self.n
         self.last = self.extent_offset + self.nr*self.n
         self.initial_gas = self.vp0[:, None] * self.P / (self.R*self.temperatures[0]) * self.inlet
         self.diffusion = self.p('transport.diffusivity_ref', 'm2/s')
@@ -44,7 +45,7 @@ class FiniteGasFullCycle(FullCycle):
         return super().unpack(y[:9*self.n])
 
     def gas_state(self, y, temperature, pore):
-        inventory = self.initial_gas * np.exp(y[9*self.n:self.extent_offset].reshape(self.g, self.n).T)
+        inventory = self.initial_gas * np.exp(y[self.gas_offset:self.extent_offset].reshape(self.g, self.n).T)
         partial = inventory*self.R*temperature[:, None]/pore[:, None]
         return inventory, partial, partial.sum(axis=1)
 
@@ -166,7 +167,7 @@ class FiniteGasFullCycle(FullCycle):
         fields, T, ns, bulk, pore, surface, cap = self.unpack(y)
         ng, partial, pressure = self.gas_state(y, T, pore)
         tf = float(np.interp(t, self.times, self.temperatures))
-        h, s = self.thermo(T)
+        h, s = self.state_thermo(T, fields)
         us = h[:, :len(self.ns)]-self.P*self.v
         ug = h[:, len(self.ns):]-self.R*T[:, None]
         mu = h-T[:, None]*s
@@ -217,6 +218,9 @@ class FiniteGasFullCycle(FullCycle):
                 'pore':pore, 'conductivity':conductivity, 'effective_capacity':self.effective_capacity,
                 'mechanical_residual':self.mechanical_residual}
 
+    def state_thermo(self,T,fields):
+        return self.thermo(T)
+
     def caloric_capacity(self,T,ns,ng):
         return ns@self.cp[:len(self.ns)]+ng@(self.cp[len(self.ns):]-self.R)
 
@@ -246,14 +250,14 @@ class FiniteGasFullCycle(FullCycle):
         self.rhs_calls += 1
         r = self.rates(t, y)
         dy = np.zeros_like(y)
-        f = dy[:9*self.n].reshape(9, self.n)
+        f = dy[:self.gas_offset].reshape(-1, self.n)
         f[0] = r['dT']/self.Tr
         f[1:5], f[5] = self.chemical_coordinate_rates(r['hazard'],r['rate'])
         f[1] += r['water_coordinate_rate']
         f[6] = r['coordinate_rate']
         f[7] = r['heat']/self.escale
         f[8] = r['flow']/self.escale
-        dy[9*self.n:self.extent_offset] = (r['dng']/r['gas']).T.ravel()
+        dy[self.gas_offset:self.extent_offset] = (r['dng']/r['gas']).T.ravel()
         dy[self.extent_offset:self.last] = r['rate'].T.ravel()/self.chemical_scale
         boundary = r['gas_flux'][-1]
         dy[self.last:self.last+self.g] = np.where(boundary.real < 0, -boundary, 0)/self.nscale
@@ -319,7 +323,7 @@ class FiniteGasFullCycle(FullCycle):
             f,T,ns,bulk,pore,surface,cap = self.unpack(y)
             r = self.rates(t,y)
             radiative_conductivity = self.pore_radiative_conductivity(T,ns,bulk)
-            ng = r['gas']; h,s = self.thermo(T)
+            ng = r['gas']; h,s = self.state_thermo(T,f)
             inventories.append(np.r_[ns.sum(axis=0),ng.sum(axis=0)])
             energy=np.sum(ns*(h[:, :len(self.ns)]-self.P*self.v))+np.sum(ng*(h[:, len(self.ns):]-self.R*T[:, None]))+surface.sum()
             entropy=np.sum(ns*s[:, :len(self.ns)])+np.sum(ng*(s[:, len(self.ns):]-self.R*np.log(r['partial']/self.Pr)))

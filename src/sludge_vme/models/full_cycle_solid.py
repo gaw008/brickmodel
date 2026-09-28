@@ -5,8 +5,10 @@ Helmholtz energy gives entropy and internal energy by differentiation. Quartz
 latent heat is a declared smooth two-state free-energy approximation. Its
 temperature-dependent fraction also drives an assumed effective axial
 eigenstrain, not a measured pure-phase volume jump or hysteresis law.
-An assumed metakaolin-carried liquid proxy contributes to the same molar
-thermodynamic properties and increases the positive sintering mobility.
+An assumed metakaolin-carried disordered phase contributes to the same molar
+thermodynamic properties and positive sintering mobility. Finite log-odds
+relaxation can retain a nonequilibrium glass proxy on cooling; zero relaxation
+time selects the preceding equilibrium model.
 """
 import numpy as np
 
@@ -41,6 +43,48 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         self.liquid_gain=self.p('liquid.mobility_gain','1')
         self.liquid_mixing=self.liquid_latent*self.liquid_width/self.liquid_tc**2
         self.liquid_reference=self.liquid_phase(np.asarray(self.Tr))
+        self.liquid_tau=self.p('liquid.relaxation_time_ref','s')
+        self.liquid_activation=self.p('liquid.relaxation_activation_energy','J/mol')
+        self.kinetic_liquid=self.liquid_tau>0 and self.liquid_active>0
+        if self.kinetic_liquid:
+            # The log-odds is a physical coordinate before gas and extents.
+            # Zero relaxation time retains the previous equilibrium system.
+            self.gas_offset+=self.n
+            self.extent_offset+=self.n
+            self.last+=self.n
+
+    def liquid_equilibrium_log_odds(self,T):
+        return self.liquid_latent/self.liquid_mixing*(1/self.liquid_tc-1/T)
+
+    def liquid_order(self,q):
+        """Disordered fraction, molar entropy and dx/dq without clipping."""
+        positive=q.real>=0
+        small=np.exp(np.where(positive,-q,q))
+        x=np.where(positive,1/(1+small),small/(1+small))
+        other=np.where(positive,small/(1+small),1/(1+small))
+        correction=np.log1p(small)
+        log_x=np.where(positive,-correction,q-correction)
+        log_other=np.where(positive,-q-correction,-correction)
+        entropy=x*self.liquid_latent/self.liquid_tc-self.liquid_mixing*(x*log_x+other*log_other)
+        return x,entropy,small/(1+small)**2
+
+    def liquid_coordinate_rate(self,T,fields):
+        rate=np.exp(-self.liquid_activation/self.R*(1/T-1/self.liquid_tc))/self.liquid_tau
+        return rate*(self.liquid_equilibrium_log_odds(T)-fields[9])
+
+    def liquid_relaxation(self,T,ns,fields):
+        """Internal relaxation at fixed carrier amount; carrier birth inherits x.
+
+        U_phase=N*L*(x-x_ref), S_phase=N*(s(x)-s_ref), N=active*n_matrix.
+        The same averaged molar properties account for x*dN when chemical
+        reactions create carrier. Only N*dx is an internal relaxation source.
+        """
+        _,_,slope=self.liquid_order(fields[9])
+        xdot=slope*self.liquid_coordinate_rate(T,fields)
+        amount=self.liquid_active*ns[:,self.matrix]
+        entropy_rate=amount*(self.liquid_latent/self.liquid_tc-self.liquid_mixing*fields[9])*xdot
+        production=-amount*self.liquid_mixing*(fields[9]-self.liquid_equilibrium_log_odds(T))*xdot
+        return -amount*self.liquid_latent*xdot,entropy_rate,production,xdot
 
     def liquid_phase(self,T):
         """Equilibrium two-state proxy carried by the metakaolin inventory.
@@ -55,8 +99,9 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         cp=self.liquid_latent**2/(self.liquid_mixing*T**2)*x*(1-x)
         return x,entropy,cp
 
-    def liquid_state(self,T,ns):
-        liquid_moles=self.liquid_active*ns[:,self.matrix]*self.liquid_phase(T)[0]
+    def liquid_state(self,T,ns,fields):
+        x=self.liquid_order(fields[9])[0] if self.kinetic_liquid else self.liquid_phase(T)[0]
+        liquid_moles=self.liquid_active*ns[:,self.matrix]*x
         dry_volume=ns@self.v-ns[:,self.water_index]*self.v[self.water_index]
         fraction=liquid_moles*self.v[self.matrix]/dry_volume
         return liquid_moles,fraction,np.exp(self.liquid_gain*fraction)
@@ -100,10 +145,21 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         s[...,self.matrix]+=self.liquid_active*(phase_s-self.liquid_reference[1])
         return h,s
 
+    def state_thermo(self,T,fields):
+        h,s=self.thermo(T)
+        if self.kinetic_liquid:
+            x,entropy,_=self.liquid_order(fields[9])
+            eq_x,eq_entropy,_=self.liquid_phase(T)
+            h[:,self.matrix]+=self.liquid_active*self.liquid_latent*(x-eq_x)
+            s[:,self.matrix]+=self.liquid_active*(entropy-eq_entropy)
+        return h,s
+
     def caloric_capacity(self,T,ns,ng):
         cpq,_,_=self.quartz_thermo(T)
-        return (super().caloric_capacity(T,ns,ng)+ns[:,self.quartz]*(cpq-self.cp[self.quartz])
-                +ns[:,self.matrix]*self.liquid_active*self.liquid_phase(T)[2])
+        capacity=super().caloric_capacity(T,ns,ng)+ns[:,self.quartz]*(cpq-self.cp[self.quartz])
+        if not self.kinetic_liquid:
+            capacity+=ns[:,self.matrix]*self.liquid_active*self.liquid_phase(T)[2]
+        return capacity
 
     def thermal_strain(self,T):
         """Effective eigenstrain and its first two temperature derivatives.
@@ -122,11 +178,11 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
                 self.alpha+amplitude*dx,amplitude*ddx,transition)
 
     def unpack(self,y):
-        f=y[:9*self.n].reshape(9,self.n)
+        f=y[:self.gas_offset].reshape(-1,self.n)
         T=f[0]*self.Tr
         ns=self.condensed_state(f)
         vs=ns@self.v
-        ng=self.initial_gas*np.exp(y[9*self.n:self.extent_offset].reshape(self.g,self.n).T)
+        ng=self.initial_gas*np.exp(y[self.gas_offset:self.extent_offset].reshape(self.g,self.n).T)
         thermal=self.thermal_strain(T)[0]
         z=f[6]+thermal
         for _ in range(self.mechanical_iterations):
@@ -149,7 +205,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         eps=self.elastic_strain(f,T,bulk)
         _,beta_prime,beta_second,_=self.thermal_strain(T)
         force=pressure-self.P-cap
-        mobility=self.liquid_state(T,ns)[2]
+        mobility=self.liquid_state(T,ns,f)[2]
         eta_dot=self.ks*np.exp(-self.Es/self.R*(1/T-1/self.Tsref))*mobility*pore/(cap*self.b0)*force
         dvs=dns@self.v
         d=self.modulus/self.b0+(pressure-cap/3)/pore
@@ -159,14 +215,32 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         effective=capacity+self.modulus*self.b0*T*(eps*beta_second-beta_prime**2)+T*a**2/d
         power=heat+flow-np.sum(us*dns,axis=1)-np.sum(ug*dng,axis=1)+cap*dvs
         power+=self.modulus*self.b0*(eps+T*beta_prime)*eta_dot-T*a*rest/d
+        phase_sdot=0.;phase_production=0.
+        if self.kinetic_liquid:
+            phase_power,phase_entropy,phase_production,_=self.liquid_relaxation(T,ns,f)
+            power+=phase_power
+            phase_sdot=phase_entropy.sum()
         dT=power/effective
         db=(a*dT+rest)/d
         dpore=db-dvs
         elastic_sdot=self.modulus*self.b0*(beta_prime*(db/self.b0-beta_prime*dT-eta_dot)+eps*beta_second*dT)
         self.effective_capacity=effective
         self.mechanical_residual=self.modulus*eps-force
-        production=np.sum(self.modulus*self.b0*eps*eta_dot/T)
-        return dT,db,dpore,capacity,elastic_sdot.sum(),production,eta_dot
+        production=np.sum(self.modulus*self.b0*eps*eta_dot/T)+np.sum(phase_production)
+        return dT,db,dpore,capacity,elastic_sdot.sum()+phase_sdot,production,eta_dot
+
+    def initial_state(self):
+        state=super().initial_state()
+        if self.kinetic_liquid:
+            state[9*self.n:self.gas_offset]=self.liquid_equilibrium_log_odds(self.temperatures[0])
+        return state
+
+    def rhs(self,t,y):
+        dy=super().rhs(t,y)
+        if self.kinetic_liquid:
+            f=y[:self.gas_offset].reshape(-1,self.n)
+            dy[9*self.n:self.gas_offset]=self.liquid_coordinate_rate(f[0]*self.Tr,f)
+        return dy
 
     def additional_storage(self,f,T,bulk):
         eps=self.elastic_strain(f,T,bulk)
@@ -177,8 +251,18 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
     def solid_fields(self,f,T,bulk):
         thermal,slope,_,transition=self.thermal_strain(T)
         ns=self.condensed_state(f)
-        liquid,fraction,mobility=self.liquid_state(T,ns)
-        return {'quartz_beta_fraction':self.phase(T)[0].tolist(),
+        liquid,fraction,mobility=self.liquid_state(T,ns,f)
+        phase_fields={}
+        if self.kinetic_liquid:
+            power,_,production,xdot=self.liquid_relaxation(T,ns,f)
+            phase_fields={'liquid_log_odds':f[9].tolist(),
+                'liquid_disordered_fraction':self.liquid_order(f[9])[0].tolist(),
+                'liquid_equilibrium_fraction':self.liquid_phase(T)[0].tolist(),
+                'liquid_relaxation_fraction_rate_per_s':xdot.tolist(),
+                'liquid_relaxation_power_w':power.tolist(),
+                'liquid_relaxation_entropy_w_k':production.tolist(),
+                'liquid_relaxation_entropy_per_active_mole_w_mol_k':(-self.liquid_mixing*(f[9]-self.liquid_equilibrium_log_odds(T))*xdot).tolist()}
+        return {**phase_fields,'quartz_beta_fraction':self.phase(T)[0].tolist(),
                 'effective_liquid_moles':liquid.tolist(),
                 'effective_liquid_fraction_of_dry_condensed_volume':fraction.tolist(),
                 'liquid_sintering_mobility_multiplier':mobility.tolist(),
@@ -201,6 +285,20 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         report['summary']['peak_local_effective_liquid_fraction']=max(max(r['effective_liquid_fraction_of_dry_condensed_volume']) for r in fields['rows'])
         report['summary']['peak_liquid_mobility_multiplier']=max(max(r['liquid_sintering_mobility_multiplier']) for r in fields['rows'])
         report['summary']['final_effective_liquid_moles']=float(sum(fields['rows'][-1]['effective_liquid_moles']))
+        report['liquid_kinetic_mode']=self.kinetic_liquid
+        if self.kinetic_liquid:
+            report['liquid_approximation']='Finite-rate disordered/ordered two-state proxy carried by an assumed fraction of current metakaolin, sharing composition and molar volume. Log-odds q relaxes toward q_eq(T) with Arrhenius rate; x=logistic(q). Phase energy N*L*x and entropy N*[x*L/Tm-b*(x*log(x)+(1-x)*log(1-x))] use the preceding reference offsets. Carrier formation inherits the local x, accounted for through averaged molar h/s and reaction affinity; only N*dx is internal phase relaxation. No independent crystallization/nucleation law, measured glass transition, mineral phase diagram, phase volume jump or liquid transport. Retained disordered material on cooling is a glass proxy, not measured glass yield; the original temperature-dependent sintering mobility remains in force.'
+            phase_min=min(min(r['liquid_relaxation_entropy_w_k']) for r in fields['rows'])
+            coefficient_min=min(min(r['liquid_relaxation_entropy_per_active_mole_w_mol_k']) for r in fields['rows'])
+            report['thermodynamics']['minimum_liquid_relaxation_entropy_production_w_k']=phase_min
+            report['thermodynamics']['minimum_liquid_relaxation_entropy_per_active_mole_w_mol_k']=coefficient_min
+            report['thermodynamics']['liquid_relaxation_entropy_domain']='Nonnegative per-active-mole kinetic dissipation, with carrier inventory subject to the existing declared inventory error budget. Raw extensive entropy is retained, including signed values from near-zero carrier roundoff; no clipping or new tolerance.'
+            report['thermodynamics']['liquid_fixed_state_heat_capacity_excludes_equilibrium_latent_peak']=True
+            report['summary']['final_retained_disordered_moles']=report['summary']['final_effective_liquid_moles']
+            report['summary']['final_retained_disordered_mass_kg']=report['summary']['final_effective_liquid_moles']*self.mw[self.matrix]
+            report['summary']['maximum_liquid_fraction_lag']=max(max(abs(np.array(r['liquid_disordered_fraction'])-r['liquid_equilibrium_fraction'])) for r in fields['rows'])
+            report['summary']['peak_liquid_relaxation_power_w']=max(sum(abs(v) for v in r['liquid_relaxation_power_w']) for r in fields['rows'])
+            report['physical_consistency_passed']=bool(report['physical_consistency_passed'] and coefficient_min>=0)
         report['summary']['peak_reversible_thermal_strain']=max(max(r['reversible_thermal_strain']) for r in fields['rows'])
         report['summary']['peak_quartz_beta_fraction']=max(max(r['quartz_beta_fraction']) for r in fields['rows'])
         report['summary']['peak_quartz_transition_strain']=max(max(r['quartz_transition_strain']) for r in fields['rows'])
@@ -213,5 +311,9 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
     def integrate(self):
         report,fields=super().integrate()
         report['dimension_check']['identities'] += ['K*V0*epsilon^2=J','K*V0*beta_prime*epsilon=J/K','K*V0*T*(epsilon*beta_second-beta_prime^2)=J/K','n_q*v_q/V0=1','L*w/Tc^2=J/mol/K','dh_quartz/dT=Cp_quartz=T*ds_quartz/dT']
-        report['dimension_check']['identities'] += ['L_liquid*w_liquid/Tm^2=J/mol/K','dh_matrix/dT=Cp_matrix=T*ds_matrix/dT','n_matrix*active_fraction*x*volume/dry_condensed_volume=1','exp(gain*liquid_fraction)=1']
+        report['dimension_check']['identities'] += ['L_liquid*w_liquid/Tm^2=J/mol/K','n_matrix*active_fraction*x*volume/dry_condensed_volume=1','exp(gain*liquid_fraction)=1']
+        if self.kinetic_liquid:
+            report['dimension_check']['identities'] += ['q=log(x/(1-x))=1; dq/dt=(q_eq-q)*exp(-E/R*(1/T-1/Tm))/tau=1/s','N*L*dx/dt=W; -N*b*(q-q_eq)*dx/dt=W/K','dU=U_T*dT+U_n*dn+N*L*dx; fixed-x latent Cp=0; no double-counted equilibrium Cp']
+        else:
+            report['dimension_check']['identities'] += ['dh_matrix/dT=Cp_matrix=T*ds_matrix/dT']
         return report,fields

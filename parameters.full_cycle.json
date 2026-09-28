@@ -1,6 +1,6 @@
 {
   "schema": "sludge_vme_full_cycle_v3",
-  "scope": "Source-traceable full firing-cycle approximation with stored pore gas, thermoelasticity, effective liquid phase, pore radiation, liquid migration and ideal-mixing water retention with seeded bidirectional evaporation/condensation; real material applicability pending measurements.",
+  "scope": "Source-traceable full firing-cycle approximation with stored pore gas, thermoelasticity, conservative water transport and seeded phase exchange, plus finite-rate effective liquid/glass retention; real material applicability pending measurements.",
   "sources": {
     "policy": {
       "identity": "assumed",
@@ -95,6 +95,11 @@
       "identity": "assumed",
       "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py water_phase_drive",
       "note": "Declared seeded phase kinetics: both signed directions oppose the same water/vapor chemical-potential difference and share the evaporation Arrhenius rate. Bounded driving functions give finite log-inventory rates. Reverse prefactor proportional to existing liquid; no exactly dry nucleation, measured condensation law or resolved interface area. At unit factor paired one-way flux ratio exp(-affinity)."
+    },
+    "liquid_relaxation": {
+      "identity": "assumed",
+      "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_solid.py liquid_relaxation",
+      "note": "Declared nonequilibrium extension of the existing two-state free energy: log-odds q relaxes toward its equilibrium value, with positive Arrhenius rate. Carrier birth inherits local disordered fraction; phase energy and entropy derivatives are explicit. No measured glass-transition or crystallization kinetics."
     }
   },
   "parameters": {
@@ -2110,7 +2115,7 @@
       ],
       "source": "effective_liquid_phase",
       "status": "assumed",
-      "note": "Fraction of current metakaolin inventory carrying the assumed reversible matrix transition; zero removes latent storage and mobility coupling."
+      "note": "Fraction of current metakaolin carrying the declared two-state matrix proxy; carrier birth inherits local phase fraction. Zero removes latent storage, kinetic phase state and mobility coupling."
     },
     "liquid.transition_temperature": {
       "value": 1223.15,
@@ -2199,6 +2204,28 @@
       "source": "water_phase_exchange",
       "status": "assumed",
       "note": "Reverse phase-exchange factor multiplying the evaporation Arrhenius coefficient and existing liquid inventory for positive vapor-minus-liquid affinity. One gives symmetric bounded driving and paired flux ratio exp(-affinity); zero disables condensation and recovers the previous one-way law. Fixed at one in this conditional UQ; not a measured accommodation coefficient."
+    },
+    "liquid.relaxation_time_ref": {
+      "value": 600.0,
+      "unit": "s",
+      "range": [
+        0.0,
+        1200.0
+      ],
+      "source": "liquid_relaxation",
+      "status": "assumed",
+      "note": "Log-odds relaxation time at the existing effective transition temperature. Zero selects the previous algebraic equilibrium model; positive values define kinetic mode. Not an experimentally measured crystallization time."
+    },
+    "liquid.relaxation_activation_energy": {
+      "value": 180000.0,
+      "unit": "J/mol",
+      "range": [
+        120000.0,
+        240000.0
+      ],
+      "source": "liquid_relaxation",
+      "status": "assumed",
+      "note": "Assumed Arrhenius barrier for log-odds relaxation; cooling reduces rate and may retain disordered proxy material. Not fitted to measured viscosity or glass transition."
     }
   },
   "species": [
@@ -2426,7 +2453,9 @@
     "liquid.mobility_gain",
     "thermal.pore_radiation_factor",
     "transport.liquid_water_mobility",
-    "water.retention_scale"
+    "water.retention_scale",
+    "liquid.relaxation_time_ref",
+    "liquid.relaxation_activation_energy"
   ],
   "calibration_parameters": [
     "thermal.h",
@@ -2483,7 +2512,7 @@
     "kinetics.evaporation.A",
     "kinetics.evaporation.E"
   ],
-  "uncertainty_scope_note": "Twenty selected parameters, including retention scale and liquid mobility. Gas permeability fixed at 3.75e-14 m2 and pore radius at 5.9e-6 m; reverse phase factor fixed at 1, evaporation A/E and inlet atmosphere also fixed, as are liquid latent contrast and transition width. Eight paired samples do not establish condensation-kinetic-range, dry-nucleation, all-parameter, hysteresis or permeability-range robustness. Earlier ensembles remain historical.",
+  "uncertainty_scope_note": "Twenty-two selected parameters include finite liquid relaxation time and activation energy, retention scale and liquid mobility. Gas permeability, initial pore radius, water reverse factor and evaporation A/E remain fixed, as do liquid latent contrast and transition width. Eight paired samples do not establish all-parameter, glass-yield, condensation-kinetic-range or permeability-range robustness. Adding sampled dimensions changes the draws for other parameters; differences from older ensembles cannot be solely assigned to the new phase mechanism.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -2648,6 +2677,22 @@
           "source": "water_phase_exchange",
           "status": "assumed",
           "note": "Declared virtual mechanism comparison: disable reverse phase exchange, retain water retention and internal migration; previous one-way model."
+        }
+      }
+    },
+    {
+      "id": "equilibrium_liquid",
+      "overrides": {
+        "liquid.relaxation_time_ref": {
+          "value": 0.0,
+          "unit": "s",
+          "range": [
+            0.0,
+            1200.0
+          ],
+          "source": "liquid_relaxation",
+          "status": "assumed",
+          "note": "Declared virtual mechanism comparison: exact prior algebraic phase equilibrium, without independent phase state."
         }
       }
     }
