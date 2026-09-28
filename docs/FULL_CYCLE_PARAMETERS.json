@@ -1,15 +1,15 @@
 {
   "schema": "full_cycle_parameter_inventory_v1",
   "root_file": "parameters.full_cycle.json",
-  "total_parameter_entries": 192,
+  "total_parameter_entries": 195,
   "status_counts": {
     "literature": 38,
-    "assumed": 154,
+    "assumed": 157,
     "measured": 0
   },
   "scenario_override_entries": 5,
   "synthetic_truth_entries": 3,
-  "metadata_entries_reviewed": 212,
+  "metadata_entries_reviewed": 224,
   "all_required_metadata_present": true,
   "sources_resolve": true,
   "material_applicability": "待实测",
@@ -35,8 +35,9 @@
     "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py water_transport",
     "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py water_retention",
     "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py water_phase_drive",
-    "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_solid.py liquid_relaxation"
+    "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_solid.py liquid_relaxation",
+    "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py water_binding"
   ],
-  "note": "Two assumed finite phase-relaxation parameters added and included in 22-parameter conditional sampling. Carrier creation inherits local disordered fraction. Energy/entropy and reaction affinity share the nonequilibrium two-state free energy; retained disordered material is an unmeasured glass proxy, not a mineral phase diagram or measured glass yield.",
-  "mechanism_case_override_entries": 12
+  "note": "Two assumed saturating-water-binding coefficients added and sampled in 24-parameter conditional UQ. Binding storage and partial thermodynamic properties use their distinct composition coefficients; shared-face carrying enthalpy includes binding. No measured sorption heat or independent bound-water population. A separate predeclared two-hour dry-hold extension is parameterized after the original schedule endpoint failure; original schedule remains unchanged.",
+  "mechanism_case_override_entries": 21
 }

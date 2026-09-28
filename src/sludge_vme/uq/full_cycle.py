@@ -27,6 +27,7 @@ def compare(config: dict, out: Path) -> dict:
             records.append({'sample':sample, 'scenario':scenario['id'], 'parameters':draw,
                             'summary':report['summary'], 'conservation_passed':report['conservation_passed'],
                             'physical_consistency_passed':report['physical_consistency_passed'],
+                            'example_endpoints':report['example_endpoints'],
                             'thermodynamics':report['thermodynamics'],
                             'worst_stage_balance':max(max(x['relative_residuals'].values()) for x in report['stages'].values())})
             write_json(out/'uncertainty.progress.json', {'completed':False,'records':records})
@@ -85,6 +86,7 @@ def summarize_comparison(config: dict, records: list, elapsed_s: float) -> dict:
         'conditioned_parameter_values':{k:p[k]['value'] for k in config['uncertainty_fixed_parameters']},
         'samples_per_scenario':count,'scenario_count':len(names),'distributions':distributions,'rankings':rankings,
         'all_physical_consistency_passed':all(r['physical_consistency_passed'] for r in records),
+        'all_example_endpoints_passed':all(r['example_endpoints']['passed'] for r in records),
         'sampled_parameter_names':config['uncertain_parameters'],
         'all_conservation_passed':all(r['conservation_passed'] for r in records),'records':records,
         'elapsed_s':elapsed_s,'limitation':'Small sample ensemble is exploratory. Wilson bounds do not establish robustness for small unanimous samples. Residual-carbon differences at or below the declared acceptance floor are ties, not evidence of process improvement.'}

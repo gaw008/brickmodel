@@ -1,6 +1,6 @@
 {
   "schema": "sludge_vme_full_cycle_v3",
-  "scope": "Source-traceable full firing-cycle approximation with stored pore gas, thermoelasticity, conservative water transport and seeded phase exchange, plus finite-rate effective liquid/glass retention; real material applicability pending measurements.",
+  "scope": "Source-traceable full firing-cycle approximation with stored pore gas, thermoelasticity, conservative water migration, seeded phase exchange and kinetic liquid/glass proxy, plus thermodynamic water binding; real material applicability pending measurements.",
   "sources": {
     "policy": {
       "identity": "assumed",
@@ -100,6 +100,11 @@
       "identity": "assumed",
       "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_solid.py liquid_relaxation",
       "note": "Declared nonequilibrium extension of the existing two-state free energy: log-odds q relaxes toward its equilibrium value, with positive Arrhenius rate. Carrier birth inherits local disordered fraction; phase energy and entropy derivatives are explicit. No measured glass-transition or crystallization kinetics."
+    },
+    "water_binding": {
+      "identity": "assumed",
+      "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py water_binding",
+      "note": "Declared saturating water-binding Helmholtz energy g(n)*a(T), g=N*n/(n+N); a=-E+C*(T-Tr-T*ln(T/Tr)). Positive excess capacity and convex composition free energy. Coefficients are engineering assumptions, not measured sorption heats."
     }
   },
   "parameters": {
@@ -1451,7 +1456,7 @@
       "unit": "s",
       "range": [
         86400.0,
-        86400.0
+        93600.0
       ],
       "source": "policy",
       "status": "assumed",
@@ -1473,7 +1478,7 @@
       "unit": "s",
       "range": [
         97200.0,
-        97200.0
+        104400.0
       ],
       "source": "policy",
       "status": "assumed",
@@ -1495,7 +1500,7 @@
       "unit": "s",
       "range": [
         115200.0,
-        115200.0
+        122400.0
       ],
       "source": "policy",
       "status": "assumed",
@@ -1517,7 +1522,7 @@
       "unit": "s",
       "range": [
         126000.0,
-        126000.0
+        133200.0
       ],
       "source": "policy",
       "status": "assumed",
@@ -2192,7 +2197,7 @@
       ],
       "source": "water_retention",
       "status": "assumed",
-      "note": "Water-equivalent mass scale per initial dry mass defining fixed matrix equivalents N=scale*initial_dry_mass/M_water for ideal-mixing retention. Not an actual added species or a measured maximum sorption capacity. Zero recovers pure-liquid activity one; no temperature-dependent binding enthalpy."
+      "note": "Water-equivalent mass scale per initial dry mass defining fixed matrix equivalents N for mixing and saturated binding. Not added matter, a measured site count or maximum sorption capacity. Zero N recovers pure liquid and removes binding."
     },
     "kinetics.condensation.factor": {
       "value": 1.0,
@@ -2226,6 +2231,39 @@
       "source": "liquid_relaxation",
       "status": "assumed",
       "note": "Assumed Arrhenius barrier for log-odds relaxation; cooling reduces rate and may retain disordered proxy material. Not fitted to measured viscosity or glass transition."
+    },
+    "water.binding_energy": {
+      "value": 12000.0,
+      "unit": "J/mol",
+      "range": [
+        0.0,
+        20000.0
+      ],
+      "source": "water_binding",
+      "status": "assumed",
+      "note": "Positive binding-energy magnitude at the existing thermodynamic reference temperature. The free-energy term is -E*g at that temperature; not a measured adsorption enthalpy."
+    },
+    "water.binding_heat_capacity": {
+      "value": 5.0,
+      "unit": "J/mol/K",
+      "range": [
+        0.0,
+        10.0
+      ],
+      "source": "water_binding",
+      "status": "assumed",
+      "note": "Positive excess heat capacity per effective bound equivalent. Constant over the virtual schedule; no experimental high-temperature adsorption law. With zero binding energy and zero capacity, recover preceding ideal-mixing retention."
+    },
+    "process.binding_drying_extension": {
+      "value": 7200.0,
+      "unit": "s",
+      "range": [
+        7200.0,
+        7200.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Predeclared additional virtual dry hold for one bounded response to binding-induced endpoint failure. Original nominal schedule and 0.1% criterion unchanged; all subsequent stage endpoints shift by the same duration. Not a recommendation for unmeasured real bricks."
     }
   },
   "species": [
@@ -2455,7 +2493,9 @@
     "transport.liquid_water_mobility",
     "water.retention_scale",
     "liquid.relaxation_time_ref",
-    "liquid.relaxation_activation_energy"
+    "liquid.relaxation_activation_energy",
+    "water.binding_energy",
+    "water.binding_heat_capacity"
   ],
   "calibration_parameters": [
     "thermal.h",
@@ -2512,7 +2552,7 @@
     "kinetics.evaporation.A",
     "kinetics.evaporation.E"
   ],
-  "uncertainty_scope_note": "Twenty-two selected parameters include finite liquid relaxation time and activation energy, retention scale and liquid mobility. Gas permeability, initial pore radius, water reverse factor and evaporation A/E remain fixed, as do liquid latent contrast and transition width. Eight paired samples do not establish all-parameter, glass-yield, condensation-kinetic-range or permeability-range robustness. Adding sampled dimensions changes the draws for other parameters; differences from older ensembles cannot be solely assigned to the new phase mechanism.",
+  "uncertainty_scope_note": "Twenty-four selected parameters include water binding energy and excess heat capacity, liquid relaxation, retention scale and liquid mobility. Permeability, pore radius, condensation factor and evaporation A/E remain fixed, as do liquid latent contrast and transition width. Eight paired samples do not establish all-parameter, sorption-heat, glass-yield or permeability-range robustness. Added sampled dimensions change other draws; cross-ensemble differences cannot be assigned to binding alone.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -2693,6 +2733,115 @@
           "source": "liquid_relaxation",
           "status": "assumed",
           "note": "Declared virtual mechanism comparison: exact prior algebraic phase equilibrium, without independent phase state."
+        }
+      }
+    },
+    {
+      "id": "water_binding_disabled",
+      "overrides": {
+        "water.binding_energy": {
+          "value": 0.0,
+          "unit": "J/mol",
+          "range": [
+            0.0,
+            20000.0
+          ],
+          "source": "water_binding",
+          "status": "assumed",
+          "note": "Declared virtual mechanism comparison: remove energetic binding, retain preceding ideal-mixing retention and phase kinetics."
+        },
+        "water.binding_heat_capacity": {
+          "value": 0.0,
+          "unit": "J/mol/K",
+          "range": [
+            0.0,
+            10.0
+          ],
+          "source": "water_binding",
+          "status": "assumed",
+          "note": "Declared virtual mechanism comparison: remove energetic binding, retain preceding ideal-mixing retention and phase kinetics."
+        }
+      }
+    },
+    {
+      "id": "binding_extended_drying",
+      "overrides": {
+        "process.drying.end": {
+          "value": 93600.0,
+          "unit": "s",
+          "range": [
+            86400.0,
+            93600.0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Separate virtual binding response: two-hour dry-hold extension, subsequent stage durations preserved. Original nominal schedule remains unchanged."
+        },
+        "process.heating.end": {
+          "value": 104400.0,
+          "unit": "s",
+          "range": [
+            97200.0,
+            104400.0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Separate virtual binding response: two-hour dry-hold extension, subsequent stage durations preserved. Original nominal schedule remains unchanged."
+        },
+        "process.reactions.end": {
+          "value": 122400.0,
+          "unit": "s",
+          "range": [
+            115200.0,
+            122400.0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Separate virtual binding response: two-hour dry-hold extension, subsequent stage durations preserved. Original nominal schedule remains unchanged."
+        },
+        "process.sintering.end": {
+          "value": 133200.0,
+          "unit": "s",
+          "range": [
+            126000.0,
+            133200.0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Separate virtual binding response: two-hour dry-hold extension, subsequent stage durations preserved. Original nominal schedule remains unchanged."
+        },
+        "process.hold.end": {
+          "value": 140400.0,
+          "unit": "s",
+          "range": [
+            133200.0,
+            140400.0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Separate virtual binding response: two-hour dry-hold extension, subsequent stage durations preserved. Original nominal schedule remains unchanged."
+        },
+        "process.cooling.end": {
+          "value": 162000.0,
+          "unit": "s",
+          "range": [
+            154800.0,
+            162000.0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Separate virtual binding response: two-hour dry-hold extension, subsequent stage durations preserved. Original nominal schedule remains unchanged."
+        },
+        "process.cooling_hold.end": {
+          "value": 169200.0,
+          "unit": "s",
+          "range": [
+            162000.0,
+            180000.0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Separate virtual binding response: two-hour dry-hold extension, subsequent stage durations preserved. Original nominal schedule remains unchanged."
         }
       }
     }
