@@ -1,0 +1,4087 @@
+{
+  "schema": "full_cycle_quartz_eigenstrain_delivery_v1",
+  "implementation_started_utc": "2026-09-28T06:31:13Z",
+  "host": "src/sludge_vme/models/full_cycle_solid.py",
+  "root_parameters": "parameters.full_cycle.json",
+  "material_applicability": "待实测",
+  "real_world_validation": "待实测",
+  "constitutive_calculations": {
+    "scope": "Direct constitutive calculations, not real-material validation or a software test suite. Fixed bulk/viscous strain for temperature derivatives; previous HEAD constitutive equations for zero-amplitude limit.",
+    "temperature_k": [
+      837.0,
+      838.8181818181819,
+      840.6363636363636,
+      842.4545454545455,
+      844.2727272727273,
+      846.0909090909091,
+      847.9090909090909,
+      849.7272727272727,
+      851.5454545454545,
+      853.3636363636364,
+      855.1818181818181,
+      857.0
+    ],
+    "result": {
+      "minus_dF_dT_minus_S_max_abs_j_k": 1.3552527156068805e-20,
+      "U_minus_F_minus_TS_max_abs_j": 0.0,
+      "dU_dT_identity_max_abs_j_k": 1.3877787807814457e-17,
+      "beta_prime_derivative_max_abs_per_k": 1.3552527156068805e-20,
+      "beta_second_derivative_max_abs_per_k2": 1.6940658945086007e-21,
+      "initial_transition_strain_max_abs": 0.0,
+      "quartz_reference_fraction": [
+        0.31168707965308745,
+        0.31168707965308745,
+        0.31168707965308745,
+        0.31168707965308745,
+        0.31168707965308745,
+        0.31168707965308745,
+        0.31168707965308745,
+        0.31168707965308745,
+        0.31168707965308745,
+        0.31168707965308745,
+        0.31168707965308745,
+        0.31168707965308745
+      ],
+      "zero_amplitude_rhs_max_abs_difference": 0.0,
+      "coupled_entropy_rate_identity_residual_w_k": 3.268496584496461e-13,
+      "coupled_minimum_effective_heat_capacity_j_k": 35.80248815372876,
+      "coupled_maximum_force_residual_pa": 1.9598519429564476e-07
+    },
+    "invocation_failure": {
+      "command": "python3 direct constitutive calculation",
+      "error": "ModuleNotFoundError: No module named 'numpy'",
+      "resolved_with": "existing .venv/bin/python; no dependency installation"
+    },
+    "fixed_state_description": {
+      "viscous_strain": -0.01,
+      "elastic_strain": 0.0001,
+      "bulk_volume": "V0*(1+beta(T)+viscous_strain+elastic_strain-prestress/K), held fixed for the complex temperature perturbation",
+      "perturbation_parameter": "numerics.jacobian_step",
+      "zero_amplitude_rhs_state": "Initial fields and gas inventories, replacing only cell temperatures by the recorded temperature array; kiln time=process.heating.end."
+    }
+  },
+  "baseline": {
+    "schema": "sludge_vme_full_cycle_result_v2",
+    "scope": "Source-traceable approximate full firing cycle with stored pore gas, quartz caloric transition and effective transition eigenstrain coupled to an axial thermo-viscoelastic skeleton; material applicability and real-world accuracy pending measurements.",
+    "material_applicability": "待实测",
+    "real_world_validation": "待实测",
+    "gas_approximation": "Stored ideal O2/N2/H2O/CO2 gas, common-D molar diffusion plus donor Darcy flow with entropy-compatible carried enthalpy; assumed diffusivity and pore properties. No imposed internal pressure or independent per-cell sweep.",
+    "summary": {
+      "mass_kg": 0.2009639797742588,
+      "total_mass_including_pore_gas_kg": 0.20104768888915808,
+      "density_kg_m3": 1352.6536314737375,
+      "loss_on_ignition_dry_fraction": 0.10682675655884966,
+      "porosity": 0.4856125664641685,
+      "residual_carbon_kg": 0.0,
+      "shrinkage": 0.00953220100992469,
+      "peak_temperature_difference_k": 20.679558583413836,
+      "peak_overpressure_pa": 418.2950958095462,
+      "absorption_kg_kg": 0.25130512986873077,
+      "strength_pa": 4410376.999003496,
+      "defect_indicator": 0.18681414029161572,
+      "minimum_sampled_entropy_production_w_k": 2.2245841663952064e-11,
+      "peak_reversible_thermal_strain": 0.010496748391175263,
+      "peak_quartz_beta_fraction": 1.0,
+      "peak_quartz_transition_strain": 0.0012467483186123498,
+      "final_quartz_transition_strain": 2.239805013597076e-141,
+      "peak_effective_expansion_coefficient_per_k": 7.234070184953792e-05
+    },
+    "whole_cycle": {
+      "relative_residuals": {
+        "mass": 2.0257258328919414e-06,
+        "elements": 1.4203659579316862e-05,
+        "energy": 7.723093752767184e-06
+      },
+      "passed": true,
+      "energy_scale_j": 1048682.3429793615,
+      "maximum_energy_residual_j": 8.09907205170116,
+      "outer_pressure_work_j": 0.1429799797770447,
+      "total_internal_and_surface_energy_change_j": 850326.6205045767,
+      "pressure_work_integration_residual_j": -3.0353718257769557e-06
+    },
+    "stages": {
+      "drying_ramp": {
+        "relative_residuals": {
+          "mass": 1.0828150868083859e-09,
+          "elements": 1.021143989290991e-06,
+          "energy": 4.269264553114199e-08
+        },
+        "passed": true,
+        "energy_scale_j": 114147.47988818285,
+        "maximum_energy_residual_j": 0.0048732578971393496,
+        "outer_pressure_work_j": -0.010438855798434754,
+        "total_internal_and_surface_energy_change_j": 88983.34900199389,
+        "pressure_work_integration_residual_j": -1.3366117500995811e-09
+      },
+      "drying": {
+        "relative_residuals": {
+          "mass": 1.7235308901128072e-08,
+          "elements": 3.959827571738381e-06,
+          "energy": 1.5206966456900225e-07
+        },
+        "passed": true,
+        "energy_scale_j": 464892.96338516416,
+        "maximum_energy_residual_j": 0.07069611700247136,
+        "outer_pressure_work_j": -0.002657130435215177,
+        "total_internal_and_surface_energy_change_j": 464893.0220144759,
+        "pressure_work_integration_residual_j": 1.2585836860548594e-09
+      },
+      "heating": {
+        "relative_residuals": {
+          "mass": 1.659890682031037e-07,
+          "elements": 4.1630735237149286e-05,
+          "energy": 8.926034331266022e-07
+        },
+        "passed": true,
+        "energy_scale_j": 198794.32923098133,
+        "maximum_energy_residual_j": 0.17744450075767398,
+        "outer_pressure_work_j": -0.042130762091449225,
+        "total_internal_and_surface_energy_change_j": 92365.31552915275,
+        "pressure_work_integration_residual_j": -1.5291324956256958e-08
+      },
+      "reactions": {
+        "relative_residuals": {
+          "mass": 1.741050085692647e-06,
+          "elements": 1.930045627059367e-05,
+          "energy": 1.8595663801137786e-05
+        },
+        "passed": true,
+        "energy_scale_j": 360181.9593158988,
+        "maximum_energy_residual_j": 6.6978226226735424,
+        "outer_pressure_work_j": -0.07370270941948018,
+        "total_internal_and_surface_energy_change_j": 360188.3557353653,
+        "pressure_work_integration_residual_j": -3.6709989260225173e-06
+      },
+      "sintering": {
+        "relative_residuals": {
+          "mass": 1.6568033346949342e-07,
+          "elements": 2.364171135861561e-06,
+          "energy": 4.484239611756638e-06
+        },
+        "passed": true,
+        "energy_scale_j": 114147.47988818285,
+        "maximum_energy_residual_j": 0.5118646508967837,
+        "outer_pressure_work_j": 0.02634841102326191,
+        "total_internal_and_surface_energy_change_j": 41689.99455737788,
+        "pressure_work_integration_residual_j": -9.603989152562331e-09
+      },
+      "hold": {
+        "relative_residuals": {
+          "mass": 2.770732309703188e-11,
+          "elements": 2.1436454090836411e-07,
+          "energy": 5.048564782005069e-09
+        },
+        "passed": true,
+        "energy_scale_j": 114147.47988818285,
+        "maximum_energy_residual_j": 0.0005762809469181118,
+        "outer_pressure_work_j": 0.06696469190423751,
+        "total_internal_and_surface_energy_change_j": 556.9677737141028,
+        "pressure_work_integration_residual_j": -4.852188095760823e-11
+      },
+      "cooling": {
+        "relative_residuals": {
+          "mass": 8.47291971495787e-09,
+          "elements": 4.00895619532544e-05,
+          "energy": 5.939240325952328e-06
+        },
+        "passed": true,
+        "energy_scale_j": 192759.84193440535,
+        "maximum_energy_residual_j": 1.1448470264410169,
+        "outer_pressure_work_j": 0.17375082852499044,
+        "total_internal_and_surface_energy_change_j": -192735.43918780843,
+        "pressure_work_integration_residual_j": 6.583661915360306e-07
+      },
+      "cooling_hold": {
+        "relative_residuals": {
+          "mass": 1.7657329228027225e-09,
+          "elements": 1.3661040956306704e-05,
+          "energy": 2.7958133768171165e-07
+        },
+        "passed": true,
+        "energy_scale_j": 114147.47988818285,
+        "maximum_energy_residual_j": 0.03191350512013444,
+        "outer_pressure_work_j": 0.004845506069134198,
+        "total_internal_and_surface_energy_change_j": -5614.944919694681,
+        "pressure_work_integration_residual_j": 2.28277276248523e-09
+      }
+    },
+    "conservation_passed": true,
+    "thermodynamics": {
+      "minimum_sampled_entropy_production_w_k": 2.2245841663952064e-11,
+      "minimum_face_entropy_production_w_k": 0.0,
+      "reaction_heat_counted_once": true,
+      "maximum_entropy_balance_residual_j_k": 0.0023054602407484026,
+      "entropy_balance_relative": 6.021797164970058e-06,
+      "maximum_entropy_rate_identity_residual_w_k": 4.163336342344337e-17,
+      "elastic_storage": "F_el=K*V0*epsilon^2/2; epsilon=V/V0-1-beta(T)-eta+prestress/K; S_el=K*V0*beta'(T)*epsilon; U_el=F_el+T*S_el",
+      "thermal_eigenstrain": "beta(T)=alpha*(T-T_initial)+e_q*(n_q_initial*v_q/V0)*(x_beta(T)-x_beta(T_initial)); fixed-strain elastic heat capacity=K*V0*T*(epsilon*beta_second-beta_prime^2)",
+      "quartz_latent_heat_counted_once": true
+    },
+    "parameter_status_counts": {
+      "literature": 38,
+      "assumed": 138
+    },
+    "state_domain": {
+      "minimum_effective_heat_capacity_j_k_per_cell": 14.206992488784582,
+      "maximum_mechanical_equilibrium_residual_pa": 4.1909515857696533e-07,
+      "minimum_condensed_moles": -4.505378824332605e-14,
+      "minimum_gas_moles": 5.409703787832504e-08,
+      "condensed_inventory_roundoff_bound_mol": 8.260412757867165e-15,
+      "condensed_inventory_solver_resolution_mol": 1.5611747361128993e-08,
+      "condensed_inventory_acceptance_bound_mol": 1.561175562154175e-08,
+      "inventory_values_clipped": false,
+      "minimum_temperature_k": 298.1470691188353,
+      "minimum_porosity": 0.1921900317366727,
+      "minimum_pressure_pa": 99999.91535802024
+    },
+    "example_endpoints": {
+      "drying_remaining_fraction": 0.0007095138682798229,
+      "cooling_maximum_temperature_difference_k": 0.0031606925122105167,
+      "passed": true
+    },
+    "physical_consistency_passed": true,
+    "solid_approximation": "Effective constant-area axial equilibrium skeleton with assumed modulus, background expansion and quartz transition eigenstrain. Transition strain follows the caloric fraction weighted by inert quartz reference volume; not a measured pure-phase molar-volume law. No stress-dependent phase equilibrium, hysteresis, bending or fracture.",
+    "mechanical_equilibrium_relative": 4.190951585769653e-12,
+    "elapsed_s": 36.52254583290778,
+    "solver": {
+      "method": "BDF",
+      "jacobian": "physical-state complex step on active constitutive branches; exact zero ledger columns",
+      "nfev": 8185,
+      "njev": 369,
+      "actual_rhs_calls_including_jacobian": 56893,
+      "cells": 12,
+      "restart_policy": "Carry all states and ledgers continuously across declared process-segment endpoints; restart BDF history."
+    },
+    "dimension_check": {
+      "passed": true,
+      "consumed_parameter_units": {
+        "atomic.H": "kg/mol",
+        "atomic.C": "kg/mol",
+        "atomic.N": "kg/mol",
+        "atomic.O": "kg/mol",
+        "atomic.Al": "kg/mol",
+        "atomic.Si": "kg/mol",
+        "atomic.Ca": "kg/mol",
+        "reference.R": "J/mol/K",
+        "reference.temperature": "K",
+        "reference.pressure": "Pa",
+        "gas.pressure": "Pa",
+        "gas.storage": "1",
+        "species.water.cp": "J/mol/K",
+        "species.silica.cp": "J/mol/K",
+        "species.kaolin.cp": "J/mol/K",
+        "species.metakaolin.cp": "J/mol/K",
+        "species.calcite.cp": "J/mol/K",
+        "species.lime.cp": "J/mol/K",
+        "species.organic.cp": "J/mol/K",
+        "species.char.cp": "J/mol/K",
+        "species.O2.cp": "J/mol/K",
+        "species.N2.cp": "J/mol/K",
+        "species.H2O.cp": "J/mol/K",
+        "species.CO2.cp": "J/mol/K",
+        "species.water.h_ref": "J/mol",
+        "species.silica.h_ref": "J/mol",
+        "species.kaolin.h_ref": "J/mol",
+        "species.metakaolin.h_ref": "J/mol",
+        "species.calcite.h_ref": "J/mol",
+        "species.lime.h_ref": "J/mol",
+        "species.organic.h_ref": "J/mol",
+        "species.char.h_ref": "J/mol",
+        "species.O2.h_ref": "J/mol",
+        "species.N2.h_ref": "J/mol",
+        "species.H2O.h_ref": "J/mol",
+        "species.CO2.h_ref": "J/mol",
+        "species.water.s_ref": "J/mol/K",
+        "species.silica.s_ref": "J/mol/K",
+        "species.kaolin.s_ref": "J/mol/K",
+        "species.metakaolin.s_ref": "J/mol/K",
+        "species.calcite.s_ref": "J/mol/K",
+        "species.lime.s_ref": "J/mol/K",
+        "species.organic.s_ref": "J/mol/K",
+        "species.char.s_ref": "J/mol/K",
+        "species.O2.s_ref": "J/mol/K",
+        "species.N2.s_ref": "J/mol/K",
+        "species.H2O.s_ref": "J/mol/K",
+        "species.CO2.s_ref": "J/mol/K",
+        "species.water.volume": "m3/mol",
+        "species.silica.volume": "m3/mol",
+        "species.kaolin.volume": "m3/mol",
+        "species.metakaolin.volume": "m3/mol",
+        "species.calcite.volume": "m3/mol",
+        "species.lime.volume": "m3/mol",
+        "species.organic.volume": "m3/mol",
+        "species.char.volume": "m3/mol",
+        "thermal.conductivity": "W/m/K",
+        "thermal.h": "W/m2/K",
+        "thermal.emissivity": "1",
+        "reference.sigma": "W/m2/K4",
+        "numerics.cells": "1",
+        "geometry.area": "m2",
+        "geometry.half_thickness": "m",
+        "material.dry_density": "kg/m3",
+        "recipe.silica": "kg/kg",
+        "recipe.kaolin": "kg/kg",
+        "recipe.calcite": "kg/kg",
+        "recipe.organic": "kg/kg",
+        "recipe.char": "kg/kg",
+        "material.water_dry_ratio": "kg/kg",
+        "sintering.gamma": "N/m",
+        "sintering.radius": "m",
+        "kinetics.evaporation.A": "1/s",
+        "kinetics.dehydroxylation.A": "1/s",
+        "kinetics.decarbonation.A": "1/s",
+        "kinetics.organic_oxidation.A": "1/s",
+        "kinetics.char_oxidation.A": "1/s",
+        "kinetics.evaporation.E": "J/mol",
+        "kinetics.dehydroxylation.E": "J/mol",
+        "kinetics.decarbonation.E": "J/mol",
+        "kinetics.organic_oxidation.E": "J/mol",
+        "kinetics.char_oxidation.E": "J/mol",
+        "sintering.rate_ref": "1/s",
+        "sintering.temperature_ref": "K",
+        "sintering.E": "J/mol",
+        "gas.inlet.O2": "1",
+        "gas.inlet.N2": "1",
+        "gas.inlet.H2O": "1",
+        "gas.inlet.CO2": "1",
+        "gas.sweep": "mol/s/kg",
+        "gas.max_generated_per_carrier": "1",
+        "gas.max_oxygen_use_fraction": "1",
+        "process.drying_ramp.end": "s",
+        "process.drying.end": "s",
+        "process.heating.end": "s",
+        "process.reactions.end": "s",
+        "process.sintering.end": "s",
+        "process.hold.end": "s",
+        "process.cooling.end": "s",
+        "process.cooling_hold.end": "s",
+        "process.time_scale": "1",
+        "initial.temperature": "K",
+        "process.drying_ramp.temperature": "K",
+        "process.drying.temperature": "K",
+        "process.heating.temperature": "K",
+        "process.reactions.temperature": "K",
+        "process.sintering.temperature": "K",
+        "process.hold.temperature": "K",
+        "process.cooling.temperature": "K",
+        "process.cooling_hold.temperature": "K",
+        "numerics.surface_iterations": "1",
+        "transport.diffusivity_ref": "m2/s",
+        "transport.diffusivity_exponent": "1",
+        "transport.viscosity_ref": "Pa*s",
+        "transport.viscosity_exponent": "1",
+        "transport.tortuosity": "1",
+        "transport.permeability_ref": "m2",
+        "kinetics.oxygen_order": "1",
+        "numerics.jacobian_step": "1",
+        "numerics.jacobian_state_scale": "1",
+        "solid.thermoelastic": "1",
+        "quartz.transition_temperature": "K",
+        "quartz.latent_heat": "J/mol",
+        "quartz.transition_width": "K",
+        "quartz.shomate_scale": "K",
+        "quartz.alpha.A": "J/mol/K",
+        "quartz.alpha.B": "J/mol/K",
+        "quartz.alpha.C": "J/mol/K",
+        "quartz.alpha.D": "J/mol/K",
+        "quartz.alpha.E": "J/mol/K",
+        "quartz.beta.A": "J/mol/K",
+        "quartz.beta.B": "J/mol/K",
+        "quartz.beta.C": "J/mol/K",
+        "quartz.beta.D": "J/mol/K",
+        "quartz.beta.E": "J/mol/K",
+        "solid.axial_modulus": "Pa",
+        "solid.thermal_expansion": "1/K",
+        "quartz.axial_transition_strain": "1",
+        "numerics.mechanical_iterations": "1",
+        "numerics.output_step": "s",
+        "numerics.max_step": "s",
+        "numerics.rtol": "1",
+        "numerics.atol": "1",
+        "acceptance.balance_relative": "1",
+        "product.connectivity": "1",
+        "product.water_density": "kg/m3",
+        "product.dense_strength": "Pa",
+        "product.porosity_coefficient": "1",
+        "product.gradient_scale": "K",
+        "acceptance.inventory_roundoff_factor": "1",
+        "acceptance.drying_remaining_fraction": "1",
+        "acceptance.cooling_temperature_difference": "K",
+        "acceptance.entropy_relative": "1"
+      },
+      "identities": [
+        "nRT/V=Pa",
+        "Cp-R=Cv (J/mol/K)",
+        "mol*(kg/mol)=kg",
+        "J=mol*(J/mol)",
+        "W*s=J",
+        "Pa*m3=J",
+        "(m2/Pa/s)*(Pa/m)=m/s",
+        "D*c*area/distance=mol/s",
+        "molar_flux*(chemical_potential/T)=W/K",
+        "K*V0*epsilon^2=J",
+        "K*V0*beta_prime*epsilon=J/K",
+        "K*V0*T*(epsilon*beta_second-beta_prime^2)=J/K",
+        "n_q*v_q/V0=1",
+        "L*w/Tc^2=J/mol/K",
+        "dh_quartz/dT=Cp_quartz=T*ds_quartz/dT"
+      ]
+    }
+  },
+  "acceptance": {
+    "passed": true,
+    "relative_differences": {
+      "time": {
+        "porosity": 1.2413216914823839e-08,
+        "residual_carbon_kg": 0.0,
+        "shrinkage": 1.217675639283813e-06,
+        "peak_temperature_difference_k": 9.014077107073585e-06,
+        "peak_overpressure_pa": 5.901304306494542e-06
+      },
+      "grid": {
+        "porosity": 7.454236430822362e-08,
+        "residual_carbon_kg": 0.0,
+        "shrinkage": 7.3121763846527184e-06,
+        "peak_temperature_difference_k": 0.002451480714593967,
+        "peak_overpressure_pa": 0.003946774670083915
+      }
+    },
+    "denominator": "max(abs(refined output), predeclared per-metric floor)",
+    "refined_time": {
+      "schema": "sludge_vme_full_cycle_result_v2",
+      "scope": "Source-traceable approximate full firing cycle with stored pore gas, quartz caloric transition and effective transition eigenstrain coupled to an axial thermo-viscoelastic skeleton; material applicability and real-world accuracy pending measurements.",
+      "material_applicability": "待实测",
+      "real_world_validation": "待实测",
+      "gas_approximation": "Stored ideal O2/N2/H2O/CO2 gas, common-D molar diffusion plus donor Darcy flow with entropy-compatible carried enthalpy; assumed diffusivity and pore properties. No imposed internal pressure or independent per-cell sweep.",
+      "summary": {
+        "mass_kg": 0.2009639797742588,
+        "total_mass_including_pore_gas_kg": 0.20104768889374536,
+        "density_kg_m3": 1352.6536156222319,
+        "loss_on_ignition_dry_fraction": 0.10682675655884966,
+        "porosity": 0.4856125724921827,
+        "residual_carbon_kg": 0.0,
+        "shrinkage": 0.009532189402809865,
+        "peak_temperature_difference_k": 20.6793721779585,
+        "peak_overpressure_pa": 418.29756431076385,
+        "absorption_kg_kg": 0.2513051359332358,
+        "strength_pa": 4410376.866074422,
+        "defect_indicator": 0.1868126244673984,
+        "minimum_sampled_entropy_production_w_k": 2.2110087338442967e-11,
+        "peak_reversible_thermal_strain": 0.010496748391170839,
+        "peak_quartz_beta_fraction": 1.0,
+        "peak_quartz_transition_strain": 0.0012467483186123498,
+        "final_quartz_transition_strain": 2.2329438871103606e-141,
+        "peak_effective_expansion_coefficient_per_k": 7.234053069755439e-05
+      },
+      "whole_cycle": {
+        "relative_residuals": {
+          "mass": 1.6592572755342555e-06,
+          "elements": 1.925114798856081e-05,
+          "energy": 7.070839663354531e-06
+        },
+        "passed": true,
+        "energy_scale_j": 1048682.5919732703,
+        "maximum_energy_residual_j": 7.415066465594036,
+        "outer_pressure_work_j": 0.14298073114883608,
+        "total_internal_and_surface_energy_change_j": 850326.618944996,
+        "pressure_work_integration_residual_j": -2.109893312007838e-06
+      },
+      "stages": {
+        "drying_ramp": {
+          "relative_residuals": {
+            "mass": 5.0206005939774245e-09,
+            "elements": 9.148128425919126e-07,
+            "energy": 1.773688735806431e-07
+          },
+          "passed": true,
+          "energy_scale_j": 114147.47988818285,
+          "maximum_energy_residual_j": 0.0202462099298361,
+          "outer_pressure_work_j": -0.010438853180174835,
+          "total_internal_and_surface_energy_change_j": 88983.37722822884,
+          "pressure_work_integration_residual_j": 1.4078465910422056e-09
+        },
+        "drying": {
+          "relative_residuals": {
+            "mass": 1.7684729135133402e-08,
+            "elements": 2.3884217849721703e-06,
+            "energy": 1.5947110506097994e-07
+          },
+          "passed": true,
+          "energy_scale_j": 464892.9254788474,
+          "maximum_energy_residual_j": 0.07413698856114359,
+          "outer_pressure_work_j": -0.0026571329734924667,
+          "total_internal_and_surface_energy_change_j": 464892.99386127666,
+          "pressure_work_integration_residual_j": -1.4049785857297992e-09
+        },
+        "heating": {
+          "relative_residuals": {
+            "mass": 4.329583382070571e-08,
+            "elements": 1.989567436468516e-06,
+            "energy": 2.2786348806880436e-07
+          },
+          "passed": true,
+          "energy_scale_j": 198795.39310418363,
+          "maximum_energy_residual_j": 0.04529821168472842,
+          "outer_pressure_work_j": -0.042130786915042726,
+          "total_internal_and_surface_energy_change_j": 92365.38718176726,
+          "pressure_work_integration_residual_j": -8.214231940473216e-09
+        },
+        "reactions": {
+          "relative_residuals": {
+            "mass": 1.5088710553242624e-06,
+            "elements": 4.652774625994399e-05,
+            "energy": 1.7500591324634598e-05
+          },
+          "passed": true,
+          "energy_scale_j": 360182.04906883446,
+          "maximum_energy_residual_j": 6.303398843223158,
+          "outer_pressure_work_j": -0.0737030343822423,
+          "total_internal_and_surface_energy_change_j": 360188.2050616089,
+          "pressure_work_integration_residual_j": -4.029764778132328e-06
+        },
+        "sintering": {
+          "relative_residuals": {
+            "mass": 9.219991504162479e-08,
+            "elements": 7.456364139383854e-06,
+            "energy": 2.4928275293079836e-06
+          },
+          "passed": true,
+          "energy_scale_j": 114147.47988818285,
+          "maximum_energy_residual_j": 0.2845499802663916,
+          "outer_pressure_work_j": 0.02634840177428195,
+          "total_internal_and_surface_energy_change_j": 41690.073505495675,
+          "pressure_work_integration_residual_j": -1.7492818509684538e-08
+        },
+        "hold": {
+          "relative_residuals": {
+            "mass": 1.21560896928081e-11,
+            "elements": 9.404825479756218e-08,
+            "energy": 2.911361995066971e-09
+          },
+          "passed": true,
+          "energy_scale_j": 114147.47988818285,
+          "maximum_energy_residual_j": 0.000332324634779127,
+          "outer_pressure_work_j": 0.06696444197128795,
+          "total_internal_and_surface_energy_change_j": 556.9677742924541,
+          "pressure_work_integration_residual_j": -7.577363736466225e-11
+        },
+        "cooling": {
+          "relative_residuals": {
+            "mass": 7.567307255577279e-10,
+            "elements": 3.581049942874071e-06,
+            "energy": 3.6785772527828345e-06
+          },
+          "passed": true,
+          "energy_scale_j": 192759.7259433362,
+          "maximum_energy_residual_j": 0.7090815431078098,
+          "outer_pressure_work_j": 0.17375218880140977,
+          "total_internal_and_surface_energy_change_j": -192735.43918243377,
+          "pressure_work_integration_residual_j": 1.944761786998317e-06
+        },
+        "cooling_hold": {
+          "relative_residuals": {
+            "mass": 9.114359044375356e-10,
+            "elements": 7.0515552841858276e-06,
+            "energy": 1.0873100080859479e-07
+          },
+          "passed": true,
+          "energy_scale_j": 114147.47988818285,
+          "maximum_energy_residual_j": 0.012411369728021066,
+          "outer_pressure_work_j": 0.004845506052808729,
+          "total_internal_and_surface_energy_change_j": -5614.946485240012,
+          "pressure_work_integration_residual_j": 8.896352179238454e-10
+        }
+      },
+      "conservation_passed": true,
+      "thermodynamics": {
+        "minimum_sampled_entropy_production_w_k": 2.2110087338442967e-11,
+        "minimum_face_entropy_production_w_k": 0.0,
+        "reaction_heat_counted_once": true,
+        "maximum_entropy_balance_residual_j_k": 0.0016017996017581027,
+        "entropy_balance_relative": 4.183855409966169e-06,
+        "maximum_entropy_rate_identity_residual_w_k": 4.163336342344337e-17,
+        "elastic_storage": "F_el=K*V0*epsilon^2/2; epsilon=V/V0-1-beta(T)-eta+prestress/K; S_el=K*V0*beta'(T)*epsilon; U_el=F_el+T*S_el",
+        "thermal_eigenstrain": "beta(T)=alpha*(T-T_initial)+e_q*(n_q_initial*v_q/V0)*(x_beta(T)-x_beta(T_initial)); fixed-strain elastic heat capacity=K*V0*T*(epsilon*beta_second-beta_prime^2)",
+        "quartz_latent_heat_counted_once": true
+      },
+      "parameter_status_counts": {
+        "literature": 38,
+        "assumed": 138
+      },
+      "state_domain": {
+        "minimum_effective_heat_capacity_j_k_per_cell": 14.206992343643973,
+        "maximum_mechanical_equilibrium_residual_pa": 4.130415618419647e-07,
+        "minimum_condensed_moles": -1.5928204407412553e-20,
+        "minimum_gas_moles": 5.4097018411075654e-08,
+        "condensed_inventory_roundoff_bound_mol": 8.260412757867165e-15,
+        "condensed_inventory_solver_resolution_mol": 1.5611747361128993e-08,
+        "condensed_inventory_acceptance_bound_mol": 1.561175562154175e-08,
+        "inventory_values_clipped": false,
+        "minimum_temperature_k": 298.1470691188353,
+        "minimum_porosity": 0.1921900317366727,
+        "minimum_pressure_pa": 99999.91535802431
+      },
+      "example_endpoints": {
+        "drying_remaining_fraction": 0.0007095136792308472,
+        "cooling_maximum_temperature_difference_k": 0.0031510345245351346,
+        "passed": true
+      },
+      "physical_consistency_passed": true,
+      "solid_approximation": "Effective constant-area axial equilibrium skeleton with assumed modulus, background expansion and quartz transition eigenstrain. Transition strain follows the caloric fraction weighted by inert quartz reference volume; not a measured pure-phase molar-volume law. No stress-dependent phase equilibrium, hysteresis, bending or fracture.",
+      "mechanical_equilibrium_relative": 4.130415618419647e-12,
+      "elapsed_s": 32.66488420800306,
+      "solver": {
+        "method": "BDF",
+        "jacobian": "physical-state complex step on active constitutive branches; exact zero ledger columns",
+        "nfev": 12691,
+        "njev": 284,
+        "actual_rhs_calls_including_jacobian": 50179,
+        "cells": 12,
+        "restart_policy": "Carry all states and ledgers continuously across declared process-segment endpoints; restart BDF history."
+      },
+      "dimension_check": {
+        "passed": true,
+        "consumed_parameter_units": {
+          "atomic.H": "kg/mol",
+          "atomic.C": "kg/mol",
+          "atomic.N": "kg/mol",
+          "atomic.O": "kg/mol",
+          "atomic.Al": "kg/mol",
+          "atomic.Si": "kg/mol",
+          "atomic.Ca": "kg/mol",
+          "reference.R": "J/mol/K",
+          "reference.temperature": "K",
+          "reference.pressure": "Pa",
+          "gas.pressure": "Pa",
+          "gas.storage": "1",
+          "species.water.cp": "J/mol/K",
+          "species.silica.cp": "J/mol/K",
+          "species.kaolin.cp": "J/mol/K",
+          "species.metakaolin.cp": "J/mol/K",
+          "species.calcite.cp": "J/mol/K",
+          "species.lime.cp": "J/mol/K",
+          "species.organic.cp": "J/mol/K",
+          "species.char.cp": "J/mol/K",
+          "species.O2.cp": "J/mol/K",
+          "species.N2.cp": "J/mol/K",
+          "species.H2O.cp": "J/mol/K",
+          "species.CO2.cp": "J/mol/K",
+          "species.water.h_ref": "J/mol",
+          "species.silica.h_ref": "J/mol",
+          "species.kaolin.h_ref": "J/mol",
+          "species.metakaolin.h_ref": "J/mol",
+          "species.calcite.h_ref": "J/mol",
+          "species.lime.h_ref": "J/mol",
+          "species.organic.h_ref": "J/mol",
+          "species.char.h_ref": "J/mol",
+          "species.O2.h_ref": "J/mol",
+          "species.N2.h_ref": "J/mol",
+          "species.H2O.h_ref": "J/mol",
+          "species.CO2.h_ref": "J/mol",
+          "species.water.s_ref": "J/mol/K",
+          "species.silica.s_ref": "J/mol/K",
+          "species.kaolin.s_ref": "J/mol/K",
+          "species.metakaolin.s_ref": "J/mol/K",
+          "species.calcite.s_ref": "J/mol/K",
+          "species.lime.s_ref": "J/mol/K",
+          "species.organic.s_ref": "J/mol/K",
+          "species.char.s_ref": "J/mol/K",
+          "species.O2.s_ref": "J/mol/K",
+          "species.N2.s_ref": "J/mol/K",
+          "species.H2O.s_ref": "J/mol/K",
+          "species.CO2.s_ref": "J/mol/K",
+          "species.water.volume": "m3/mol",
+          "species.silica.volume": "m3/mol",
+          "species.kaolin.volume": "m3/mol",
+          "species.metakaolin.volume": "m3/mol",
+          "species.calcite.volume": "m3/mol",
+          "species.lime.volume": "m3/mol",
+          "species.organic.volume": "m3/mol",
+          "species.char.volume": "m3/mol",
+          "thermal.conductivity": "W/m/K",
+          "thermal.h": "W/m2/K",
+          "thermal.emissivity": "1",
+          "reference.sigma": "W/m2/K4",
+          "numerics.cells": "1",
+          "geometry.area": "m2",
+          "geometry.half_thickness": "m",
+          "material.dry_density": "kg/m3",
+          "recipe.silica": "kg/kg",
+          "recipe.kaolin": "kg/kg",
+          "recipe.calcite": "kg/kg",
+          "recipe.organic": "kg/kg",
+          "recipe.char": "kg/kg",
+          "material.water_dry_ratio": "kg/kg",
+          "sintering.gamma": "N/m",
+          "sintering.radius": "m",
+          "kinetics.evaporation.A": "1/s",
+          "kinetics.dehydroxylation.A": "1/s",
+          "kinetics.decarbonation.A": "1/s",
+          "kinetics.organic_oxidation.A": "1/s",
+          "kinetics.char_oxidation.A": "1/s",
+          "kinetics.evaporation.E": "J/mol",
+          "kinetics.dehydroxylation.E": "J/mol",
+          "kinetics.decarbonation.E": "J/mol",
+          "kinetics.organic_oxidation.E": "J/mol",
+          "kinetics.char_oxidation.E": "J/mol",
+          "sintering.rate_ref": "1/s",
+          "sintering.temperature_ref": "K",
+          "sintering.E": "J/mol",
+          "gas.inlet.O2": "1",
+          "gas.inlet.N2": "1",
+          "gas.inlet.H2O": "1",
+          "gas.inlet.CO2": "1",
+          "gas.sweep": "mol/s/kg",
+          "gas.max_generated_per_carrier": "1",
+          "gas.max_oxygen_use_fraction": "1",
+          "process.drying_ramp.end": "s",
+          "process.drying.end": "s",
+          "process.heating.end": "s",
+          "process.reactions.end": "s",
+          "process.sintering.end": "s",
+          "process.hold.end": "s",
+          "process.cooling.end": "s",
+          "process.cooling_hold.end": "s",
+          "process.time_scale": "1",
+          "initial.temperature": "K",
+          "process.drying_ramp.temperature": "K",
+          "process.drying.temperature": "K",
+          "process.heating.temperature": "K",
+          "process.reactions.temperature": "K",
+          "process.sintering.temperature": "K",
+          "process.hold.temperature": "K",
+          "process.cooling.temperature": "K",
+          "process.cooling_hold.temperature": "K",
+          "numerics.surface_iterations": "1",
+          "transport.diffusivity_ref": "m2/s",
+          "transport.diffusivity_exponent": "1",
+          "transport.viscosity_ref": "Pa*s",
+          "transport.viscosity_exponent": "1",
+          "transport.tortuosity": "1",
+          "transport.permeability_ref": "m2",
+          "kinetics.oxygen_order": "1",
+          "numerics.jacobian_step": "1",
+          "numerics.jacobian_state_scale": "1",
+          "solid.thermoelastic": "1",
+          "quartz.transition_temperature": "K",
+          "quartz.latent_heat": "J/mol",
+          "quartz.transition_width": "K",
+          "quartz.shomate_scale": "K",
+          "quartz.alpha.A": "J/mol/K",
+          "quartz.alpha.B": "J/mol/K",
+          "quartz.alpha.C": "J/mol/K",
+          "quartz.alpha.D": "J/mol/K",
+          "quartz.alpha.E": "J/mol/K",
+          "quartz.beta.A": "J/mol/K",
+          "quartz.beta.B": "J/mol/K",
+          "quartz.beta.C": "J/mol/K",
+          "quartz.beta.D": "J/mol/K",
+          "quartz.beta.E": "J/mol/K",
+          "solid.axial_modulus": "Pa",
+          "solid.thermal_expansion": "1/K",
+          "quartz.axial_transition_strain": "1",
+          "numerics.mechanical_iterations": "1",
+          "numerics.output_step": "s",
+          "numerics.max_step": "s",
+          "numerics.rtol": "1",
+          "numerics.atol": "1",
+          "acceptance.balance_relative": "1",
+          "product.connectivity": "1",
+          "product.water_density": "kg/m3",
+          "product.dense_strength": "Pa",
+          "product.porosity_coefficient": "1",
+          "product.gradient_scale": "K",
+          "acceptance.inventory_roundoff_factor": "1",
+          "acceptance.drying_remaining_fraction": "1",
+          "acceptance.cooling_temperature_difference": "K",
+          "acceptance.entropy_relative": "1"
+        },
+        "identities": [
+          "nRT/V=Pa",
+          "Cp-R=Cv (J/mol/K)",
+          "mol*(kg/mol)=kg",
+          "J=mol*(J/mol)",
+          "W*s=J",
+          "Pa*m3=J",
+          "(m2/Pa/s)*(Pa/m)=m/s",
+          "D*c*area/distance=mol/s",
+          "molar_flux*(chemical_potential/T)=W/K",
+          "K*V0*epsilon^2=J",
+          "K*V0*beta_prime*epsilon=J/K",
+          "K*V0*T*(epsilon*beta_second-beta_prime^2)=J/K",
+          "n_q*v_q/V0=1",
+          "L*w/Tc^2=J/mol/K",
+          "dh_quartz/dT=Cp_quartz=T*ds_quartz/dT"
+        ]
+      }
+    },
+    "refined_grid": {
+      "schema": "sludge_vme_full_cycle_result_v2",
+      "scope": "Source-traceable approximate full firing cycle with stored pore gas, quartz caloric transition and effective transition eigenstrain coupled to an axial thermo-viscoelastic skeleton; material applicability and real-world accuracy pending measurements.",
+      "material_applicability": "待实测",
+      "real_world_validation": "待实测",
+      "gas_approximation": "Stored ideal O2/N2/H2O/CO2 gas, common-D molar diffusion plus donor Darcy flow with entropy-compatible carried enthalpy; assumed diffusivity and pore properties. No imposed internal pressure or independent per-cell sweep.",
+      "summary": {
+        "mass_kg": 0.20096397977425884,
+        "total_mass_including_pore_gas_kg": 0.20104768888200314,
+        "density_kg_m3": 1352.6537266632936,
+        "loss_on_ignition_dry_fraction": 0.10682675655884954,
+        "porosity": 0.48561253026546236,
+        "residual_carbon_kg": 0.0,
+        "shrinkage": 0.00953227071156948,
+        "peak_temperature_difference_k": 20.628987019573742,
+        "peak_overpressure_pa": 416.6506695008866,
+        "absorption_kg_kg": 0.25130509345089747,
+        "strength_pa": 4410377.797253273,
+        "defect_indicator": 0.18640279548245,
+        "minimum_sampled_entropy_production_w_k": 2.198936371306624e-11,
+        "peak_reversible_thermal_strain": 0.010496748391176841,
+        "peak_quartz_beta_fraction": 1.0,
+        "peak_quartz_transition_strain": 0.0012467483186123498,
+        "final_quartz_transition_strain": 2.2265069947035002e-141,
+        "peak_effective_expansion_coefficient_per_k": 7.23460258506081e-05
+      },
+      "whole_cycle": {
+        "relative_residuals": {
+          "mass": 2.224487314629202e-06,
+          "elements": 2.8059501465310215e-05,
+          "energy": 8.44682244807548e-06
+        },
+        "passed": true,
+        "energy_scale_j": 1048681.4836805481,
+        "maximum_energy_residual_j": 8.858026297233954,
+        "outer_pressure_work_j": 0.14298168826517546,
+        "total_internal_and_surface_energy_change_j": 850326.6174837188,
+        "pressure_work_integration_residual_j": -2.3724083672016505e-06
+      },
+      "stages": {
+        "drying_ramp": {
+          "relative_residuals": {
+            "mass": 5.484215433426137e-10,
+            "elements": 8.231409480859202e-06,
+            "energy": 2.413575838144326e-08
+          },
+          "passed": true,
+          "energy_scale_j": 114147.47988818285,
+          "maximum_energy_residual_j": 0.002755035994431835,
+          "outer_pressure_work_j": -0.010441354569428966,
+          "total_internal_and_surface_energy_change_j": 88938.84165082825,
+          "pressure_work_integration_residual_j": 3.977679519096e-09
+        },
+        "drying": {
+          "relative_residuals": {
+            "mass": 1.5321289607745986e-08,
+            "elements": 3.0543102264655324e-05,
+            "energy": 9.767239544913451e-08
+          },
+          "passed": true,
+          "energy_scale_j": 464936.58013918815,
+          "maximum_energy_residual_j": 0.045411469514123004,
+          "outer_pressure_work_j": -0.0026546221120596868,
+          "total_internal_and_surface_energy_change_j": 464936.60236963956,
+          "pressure_work_integration_residual_j": -5.888880711193978e-09
+        },
+        "heating": {
+          "relative_residuals": {
+            "mass": 2.2836337220076284e-07,
+            "elements": 6.854200430180335e-05,
+            "energy": 1.1812691321774185e-06
+          },
+          "passed": true,
+          "energy_scale_j": 198786.1220596275,
+          "maximum_energy_residual_j": 0.23481990989429058,
+          "outer_pressure_work_j": -0.04213305202181893,
+          "total_internal_and_surface_energy_change_j": 92367.82643771963,
+          "pressure_work_integration_residual_j": -4.1260291336331356e-08
+        },
+        "reactions": {
+          "relative_residuals": {
+            "mass": 1.5714047628235558e-06,
+            "elements": 2.601217737174526e-05,
+            "energy": 1.8298028237469688e-05
+          },
+          "passed": true,
+          "energy_scale_j": 360186.0397062438,
+          "maximum_energy_residual_j": 6.590694325287227,
+          "outer_pressure_work_j": -0.0736989758207374,
+          "total_internal_and_surface_energy_change_j": 360192.42226592265,
+          "pressure_work_integration_residual_j": -1.092528503707224e-06
+        },
+        "sintering": {
+          "relative_residuals": {
+            "mass": 4.460755800195924e-07,
+            "elements": 6.357074791792357e-06,
+            "energy": 1.2092037231045304e-05
+          },
+          "passed": true,
+          "energy_scale_j": 114147.47988818285,
+          "maximum_energy_residual_j": 1.380275576637902,
+          "outer_pressure_work_j": 0.02635242501066462,
+          "total_internal_and_surface_energy_change_j": 41685.26909564715,
+          "pressure_work_integration_residual_j": -1.7046322416114368e-08
+        },
+        "hold": {
+          "relative_residuals": {
+            "mass": 3.741612136598862e-11,
+            "elements": 2.8947905801716956e-07,
+            "energy": 4.7575197983861965e-09
+          },
+          "passed": true,
+          "energy_scale_j": 114147.47988818285,
+          "maximum_energy_residual_j": 0.0005430588955039201,
+          "outer_pressure_work_j": 0.06696543895247249,
+          "total_internal_and_surface_energy_change_j": 556.0427817567252,
+          "pressure_work_integration_residual_j": -3.9550029917734264e-11
+        },
+        "cooling": {
+          "relative_residuals": {
+            "mass": 1.3609198701426103e-08,
+            "elements": 6.450243653678398e-05,
+            "energy": 7.261911436156016e-06
+          },
+          "passed": true,
+          "energy_scale_j": 192760.11352907642,
+          "maximum_energy_residual_j": 1.399806872871532,
+          "outer_pressure_work_j": 0.17374780950771235,
+          "total_internal_and_surface_energy_change_j": -192737.19413796905,
+          "pressure_work_integration_residual_j": -1.221311140386927e-06
+        },
+        "cooling_hold": {
+          "relative_residuals": {
+            "mass": 2.0302265206613e-09,
+            "elements": 1.5707363921432998e-05,
+            "energy": 2.0681631844619653e-07
+          },
+          "passed": true,
+          "energy_scale_j": 114147.47988818285,
+          "maximum_energy_residual_j": 0.023607561550385237,
+          "outer_pressure_work_j": 0.0048440193183709734,
+          "total_internal_and_surface_energy_change_j": -5613.192979826126,
+          "pressure_work_integration_residual_j": 1.6886418660946867e-09
+        }
+      },
+      "conservation_passed": true,
+      "thermodynamics": {
+        "minimum_sampled_entropy_production_w_k": 2.198936371306624e-11,
+        "minimum_face_entropy_production_w_k": 0.0,
+        "reaction_heat_counted_once": true,
+        "maximum_entropy_balance_residual_j_k": 0.0024827445742445775,
+        "entropy_balance_relative": 6.484858846959557e-06,
+        "maximum_entropy_rate_identity_residual_w_k": 4.163336342344337e-17,
+        "elastic_storage": "F_el=K*V0*epsilon^2/2; epsilon=V/V0-1-beta(T)-eta+prestress/K; S_el=K*V0*beta'(T)*epsilon; U_el=F_el+T*S_el",
+        "thermal_eigenstrain": "beta(T)=alpha*(T-T_initial)+e_q*(n_q_initial*v_q/V0)*(x_beta(T)-x_beta(T_initial)); fixed-strain elastic heat capacity=K*V0*T*(epsilon*beta_second-beta_prime^2)",
+        "quartz_latent_heat_counted_once": true
+      },
+      "parameter_status_counts": {
+        "literature": 38,
+        "assumed": 138
+      },
+      "state_domain": {
+        "minimum_effective_heat_capacity_j_k_per_cell": 7.103495923859131,
+        "maximum_mechanical_equilibrium_residual_pa": 4.1628663893789053e-07,
+        "minimum_condensed_moles": -1.7429743088821407e-20,
+        "minimum_gas_moles": 2.690021545413526e-08,
+        "condensed_inventory_roundoff_bound_mol": 8.260412757867165e-15,
+        "condensed_inventory_solver_resolution_mol": 7.805873680564496e-09,
+        "condensed_inventory_acceptance_bound_mol": 7.805881940977255e-09,
+        "inventory_values_clipped": false,
+        "minimum_temperature_k": 298.1469467740863,
+        "minimum_porosity": 0.1921900317366727,
+        "minimum_pressure_pa": 99999.91490709133
+      },
+      "example_endpoints": {
+        "drying_remaining_fraction": 0.0007135579749596295,
+        "cooling_maximum_temperature_difference_k": 0.00314288803792806,
+        "passed": true
+      },
+      "physical_consistency_passed": true,
+      "solid_approximation": "Effective constant-area axial equilibrium skeleton with assumed modulus, background expansion and quartz transition eigenstrain. Transition strain follows the caloric fraction weighted by inert quartz reference volume; not a measured pure-phase molar-volume law. No stress-dependent phase equilibrium, hysteresis, bending or fracture.",
+      "mechanical_equilibrium_relative": 4.162866389378905e-12,
+      "elapsed_s": 75.96811050013639,
+      "solver": {
+        "method": "BDF",
+        "jacobian": "physical-state complex step on active constitutive branches; exact zero ledger columns",
+        "nfev": 8293,
+        "njev": 394,
+        "actual_rhs_calls_including_jacobian": 112309,
+        "cells": 24,
+        "restart_policy": "Carry all states and ledgers continuously across declared process-segment endpoints; restart BDF history."
+      },
+      "dimension_check": {
+        "passed": true,
+        "consumed_parameter_units": {
+          "atomic.H": "kg/mol",
+          "atomic.C": "kg/mol",
+          "atomic.N": "kg/mol",
+          "atomic.O": "kg/mol",
+          "atomic.Al": "kg/mol",
+          "atomic.Si": "kg/mol",
+          "atomic.Ca": "kg/mol",
+          "reference.R": "J/mol/K",
+          "reference.temperature": "K",
+          "reference.pressure": "Pa",
+          "gas.pressure": "Pa",
+          "gas.storage": "1",
+          "species.water.cp": "J/mol/K",
+          "species.silica.cp": "J/mol/K",
+          "species.kaolin.cp": "J/mol/K",
+          "species.metakaolin.cp": "J/mol/K",
+          "species.calcite.cp": "J/mol/K",
+          "species.lime.cp": "J/mol/K",
+          "species.organic.cp": "J/mol/K",
+          "species.char.cp": "J/mol/K",
+          "species.O2.cp": "J/mol/K",
+          "species.N2.cp": "J/mol/K",
+          "species.H2O.cp": "J/mol/K",
+          "species.CO2.cp": "J/mol/K",
+          "species.water.h_ref": "J/mol",
+          "species.silica.h_ref": "J/mol",
+          "species.kaolin.h_ref": "J/mol",
+          "species.metakaolin.h_ref": "J/mol",
+          "species.calcite.h_ref": "J/mol",
+          "species.lime.h_ref": "J/mol",
+          "species.organic.h_ref": "J/mol",
+          "species.char.h_ref": "J/mol",
+          "species.O2.h_ref": "J/mol",
+          "species.N2.h_ref": "J/mol",
+          "species.H2O.h_ref": "J/mol",
+          "species.CO2.h_ref": "J/mol",
+          "species.water.s_ref": "J/mol/K",
+          "species.silica.s_ref": "J/mol/K",
+          "species.kaolin.s_ref": "J/mol/K",
+          "species.metakaolin.s_ref": "J/mol/K",
+          "species.calcite.s_ref": "J/mol/K",
+          "species.lime.s_ref": "J/mol/K",
+          "species.organic.s_ref": "J/mol/K",
+          "species.char.s_ref": "J/mol/K",
+          "species.O2.s_ref": "J/mol/K",
+          "species.N2.s_ref": "J/mol/K",
+          "species.H2O.s_ref": "J/mol/K",
+          "species.CO2.s_ref": "J/mol/K",
+          "species.water.volume": "m3/mol",
+          "species.silica.volume": "m3/mol",
+          "species.kaolin.volume": "m3/mol",
+          "species.metakaolin.volume": "m3/mol",
+          "species.calcite.volume": "m3/mol",
+          "species.lime.volume": "m3/mol",
+          "species.organic.volume": "m3/mol",
+          "species.char.volume": "m3/mol",
+          "thermal.conductivity": "W/m/K",
+          "thermal.h": "W/m2/K",
+          "thermal.emissivity": "1",
+          "reference.sigma": "W/m2/K4",
+          "numerics.cells": "1",
+          "geometry.area": "m2",
+          "geometry.half_thickness": "m",
+          "material.dry_density": "kg/m3",
+          "recipe.silica": "kg/kg",
+          "recipe.kaolin": "kg/kg",
+          "recipe.calcite": "kg/kg",
+          "recipe.organic": "kg/kg",
+          "recipe.char": "kg/kg",
+          "material.water_dry_ratio": "kg/kg",
+          "sintering.gamma": "N/m",
+          "sintering.radius": "m",
+          "kinetics.evaporation.A": "1/s",
+          "kinetics.dehydroxylation.A": "1/s",
+          "kinetics.decarbonation.A": "1/s",
+          "kinetics.organic_oxidation.A": "1/s",
+          "kinetics.char_oxidation.A": "1/s",
+          "kinetics.evaporation.E": "J/mol",
+          "kinetics.dehydroxylation.E": "J/mol",
+          "kinetics.decarbonation.E": "J/mol",
+          "kinetics.organic_oxidation.E": "J/mol",
+          "kinetics.char_oxidation.E": "J/mol",
+          "sintering.rate_ref": "1/s",
+          "sintering.temperature_ref": "K",
+          "sintering.E": "J/mol",
+          "gas.inlet.O2": "1",
+          "gas.inlet.N2": "1",
+          "gas.inlet.H2O": "1",
+          "gas.inlet.CO2": "1",
+          "gas.sweep": "mol/s/kg",
+          "gas.max_generated_per_carrier": "1",
+          "gas.max_oxygen_use_fraction": "1",
+          "process.drying_ramp.end": "s",
+          "process.drying.end": "s",
+          "process.heating.end": "s",
+          "process.reactions.end": "s",
+          "process.sintering.end": "s",
+          "process.hold.end": "s",
+          "process.cooling.end": "s",
+          "process.cooling_hold.end": "s",
+          "process.time_scale": "1",
+          "initial.temperature": "K",
+          "process.drying_ramp.temperature": "K",
+          "process.drying.temperature": "K",
+          "process.heating.temperature": "K",
+          "process.reactions.temperature": "K",
+          "process.sintering.temperature": "K",
+          "process.hold.temperature": "K",
+          "process.cooling.temperature": "K",
+          "process.cooling_hold.temperature": "K",
+          "numerics.surface_iterations": "1",
+          "transport.diffusivity_ref": "m2/s",
+          "transport.diffusivity_exponent": "1",
+          "transport.viscosity_ref": "Pa*s",
+          "transport.viscosity_exponent": "1",
+          "transport.tortuosity": "1",
+          "transport.permeability_ref": "m2",
+          "kinetics.oxygen_order": "1",
+          "numerics.jacobian_step": "1",
+          "numerics.jacobian_state_scale": "1",
+          "solid.thermoelastic": "1",
+          "quartz.transition_temperature": "K",
+          "quartz.latent_heat": "J/mol",
+          "quartz.transition_width": "K",
+          "quartz.shomate_scale": "K",
+          "quartz.alpha.A": "J/mol/K",
+          "quartz.alpha.B": "J/mol/K",
+          "quartz.alpha.C": "J/mol/K",
+          "quartz.alpha.D": "J/mol/K",
+          "quartz.alpha.E": "J/mol/K",
+          "quartz.beta.A": "J/mol/K",
+          "quartz.beta.B": "J/mol/K",
+          "quartz.beta.C": "J/mol/K",
+          "quartz.beta.D": "J/mol/K",
+          "quartz.beta.E": "J/mol/K",
+          "solid.axial_modulus": "Pa",
+          "solid.thermal_expansion": "1/K",
+          "quartz.axial_transition_strain": "1",
+          "numerics.mechanical_iterations": "1",
+          "numerics.output_step": "s",
+          "numerics.max_step": "s",
+          "numerics.rtol": "1",
+          "numerics.atol": "1",
+          "acceptance.balance_relative": "1",
+          "product.connectivity": "1",
+          "product.water_density": "kg/m3",
+          "product.dense_strength": "Pa",
+          "product.porosity_coefficient": "1",
+          "product.gradient_scale": "K",
+          "acceptance.inventory_roundoff_factor": "1",
+          "acceptance.drying_remaining_fraction": "1",
+          "acceptance.cooling_temperature_difference": "K",
+          "acceptance.entropy_relative": "1"
+        },
+        "identities": [
+          "nRT/V=Pa",
+          "Cp-R=Cv (J/mol/K)",
+          "mol*(kg/mol)=kg",
+          "J=mol*(J/mol)",
+          "W*s=J",
+          "Pa*m3=J",
+          "(m2/Pa/s)*(Pa/m)=m/s",
+          "D*c*area/distance=mol/s",
+          "molar_flux*(chemical_potential/T)=W/K",
+          "K*V0*epsilon^2=J",
+          "K*V0*beta_prime*epsilon=J/K",
+          "K*V0*T*(epsilon*beta_second-beta_prime^2)=J/K",
+          "n_q*v_q/V0=1",
+          "L*w/Tc^2=J/mol/K",
+          "dh_quartz/dT=Cp_quartz=T*ds_quartz/dT"
+        ]
+      }
+    }
+  },
+  "acceptance_exit_code": 0,
+  "worst_whole_cycle_balance_relative": 2.8059501465310215e-05,
+  "worst_stage_balance_relative": 6.854200430180335e-05,
+  "parameter_metadata_counts": {
+    "literature": 38,
+    "assumed": 138
+  },
+  "parameter_snapshot": {
+    "schema": "sludge_vme_full_cycle_v3",
+    "scope": "Source-traceable approximate full firing cycle with stored pore gas, quartz caloric transition and effective transition eigenstrain coupled to an axial thermo-viscoelastic skeleton; material applicability and real-world accuracy pending measurements.",
+    "sources": {
+      "policy": {
+        "identity": "assumed",
+        "location": "docs/BRICK_PHYSICS_PROJECT_SPEC.md first section; explicit engineering scenario, not measured"
+      },
+      "legacy": {
+        "identity": "assumed",
+        "location": "data/parameter_pack_synthetic_v1.json; retained approximate intervals, not experimental uncertainties"
+      },
+      "usgs_calcite": {
+        "identity": "literature",
+        "location": "data/sandbox/research/calcite-thermochemistry-v1/facts.json; USGS Bulletin 2131 (1995), reference_298 entries",
+        "url": "https://pubs.usgs.gov/bul/2131/report.pdf"
+      },
+      "usgs_clay": {
+        "identity": "literature",
+        "location": "data/sandbox/research/kaolinite-source-review-v1/usgs1995-source.json; phase reference_enthalpy/reference_entropy and thermal pages",
+        "url": "https://pubs.usgs.gov/bul/2131/report.pdf"
+      },
+      "usgs_steam": {
+        "identity": "literature",
+        "location": "data/sandbox/research/hydrogen-steam-thermochemistry-v1/source.json; steam standard state p194",
+        "url": "https://pubs.usgs.gov/bul/2131/report.pdf"
+      },
+      "metakaolin": {
+        "identity": "assumed",
+        "location": "data/sandbox/research/metakaolin-reference-enthalpy-v1/source.json; Muzenda reported -3487 +/-8 kJ/mol, cross-material borrowing; Cp/S not supplied",
+        "url": "https://doi.org/10.1016/j.cemconres.2025.108060"
+      },
+      "pore": {
+        "identity": "assumed",
+        "location": "parameters.wadsworth2016_vented_pore.json; glass-to-brick radius/surface tension analogy, not brick data"
+      },
+      "water": {
+        "identity": "assumed",
+        "location": "data/sandbox/research/metakaolin-reference-enthalpy-v1/source.json Table4 liquid water enthalpy; constant Cp and entropy approximations explicitly assumed"
+      },
+      "atomic": {
+        "identity": "literature",
+        "location": "src/sludge_vme/chemistry/formula.py ATOMIC_WEIGHTS_KG_PER_MOL; inherited rounded atomic weights, same for all species"
+      },
+      "si": {
+        "identity": "literature",
+        "location": "SI gas constant and Stefan-Boltzmann constant; standard thermodynamic definitions"
+      },
+      "porous_transport": {
+        "identity": "assumed",
+        "location": "parameters.dusty_gas_isothermal.json and parameters.dusty_gas_four_species_column.json; src/sludge_sandbox/dusty_gas_isothermal.py; local Cantera3.2 source preserved under data/sandbox/research/dusty-gas-source-v1/source",
+        "note": "Darcy and mixture-diffusion relations from existing gas_transport.py and pore source records. Common molar-frame D, viscosity power laws and evolving brick properties are assumed. No Knudsen or Soret prediction; reciprocal-logarithmic carried-enthalpy mean preserves the stated ideal-gas entropy inequality."
+      },
+      "quartz_nist": {
+        "identity": "literature",
+        "location": "data/sandbox/solids/quartz/facts.json; https://janaf.nist.gov/tables/O-037.html; https://webbook.nist.gov/cgi/cbook.cgi?ID=C14808607&Mask=2&Table=on&Type=JANAFS",
+        "note": "Existing local source. Source alpha/beta Cp, 847 K transition, 728 J/mol rounded JANAF latent increment. Metastable quartz extrapolation across actual high-T polymorph region remains an approximation."
+      },
+      "solid_effective": {
+        "identity": "assumed",
+        "location": "src/sludge_sandbox/cooling_thermoelastic_plate.py; docs/FULL_CYCLE_REPORT.md",
+        "note": "Thermodynamic free-energy construction reused in an axial effective skeleton. Modulus, background expansion and quartz transition eigenstrain are explicit engineering assumptions, not measured brick properties. The transition eigenstrain follows the existing caloric phase fraction and initial quartz reference-volume fraction; not a pure-phase molar-volume or stress-dependent equilibrium law. USGS volumes at different temperatures cannot identify the isothermal phase jump."
+      }
+    },
+    "parameters": {
+      "reference.temperature": {
+        "value": 298.15,
+        "unit": "K",
+        "range": [
+          298.15,
+          298.15
+        ],
+        "source": "si",
+        "status": "literature",
+        "note": ""
+      },
+      "reference.pressure": {
+        "value": 100000.0,
+        "unit": "Pa",
+        "range": [
+          100000.0,
+          100000.0
+        ],
+        "source": "si",
+        "status": "literature",
+        "note": ""
+      },
+      "reference.R": {
+        "value": 8.31446261815324,
+        "unit": "J/mol/K",
+        "range": [
+          8.31446261815324,
+          8.31446261815324
+        ],
+        "source": "si",
+        "status": "literature",
+        "note": ""
+      },
+      "reference.sigma": {
+        "value": 5.670374419e-08,
+        "unit": "W/m2/K4",
+        "range": [
+          5.670374419e-08,
+          5.670374419e-08
+        ],
+        "source": "si",
+        "status": "literature",
+        "note": ""
+      },
+      "atomic.H": {
+        "value": 0.00100794,
+        "unit": "kg/mol",
+        "range": [
+          0.00100794,
+          0.00100794
+        ],
+        "source": "atomic",
+        "status": "literature",
+        "note": ""
+      },
+      "atomic.C": {
+        "value": 0.0120107,
+        "unit": "kg/mol",
+        "range": [
+          0.0120107,
+          0.0120107
+        ],
+        "source": "atomic",
+        "status": "literature",
+        "note": ""
+      },
+      "atomic.N": {
+        "value": 0.0140067,
+        "unit": "kg/mol",
+        "range": [
+          0.0140067,
+          0.0140067
+        ],
+        "source": "atomic",
+        "status": "literature",
+        "note": ""
+      },
+      "atomic.O": {
+        "value": 0.0159994,
+        "unit": "kg/mol",
+        "range": [
+          0.0159994,
+          0.0159994
+        ],
+        "source": "atomic",
+        "status": "literature",
+        "note": ""
+      },
+      "atomic.Al": {
+        "value": 0.02698154,
+        "unit": "kg/mol",
+        "range": [
+          0.02698154,
+          0.02698154
+        ],
+        "source": "atomic",
+        "status": "literature",
+        "note": ""
+      },
+      "atomic.Si": {
+        "value": 0.0280855,
+        "unit": "kg/mol",
+        "range": [
+          0.0280855,
+          0.0280855
+        ],
+        "source": "atomic",
+        "status": "literature",
+        "note": ""
+      },
+      "atomic.Ca": {
+        "value": 0.040078,
+        "unit": "kg/mol",
+        "range": [
+          0.040078,
+          0.040078
+        ],
+        "source": "atomic",
+        "status": "literature",
+        "note": ""
+      },
+      "species.water.h_ref": {
+        "value": -285880,
+        "unit": "J/mol",
+        "range": [
+          -291597.6,
+          -280162.4
+        ],
+        "source": "water",
+        "status": "assumed",
+        "note": ""
+      },
+      "species.water.s_ref": {
+        "value": 69.9,
+        "unit": "J/mol/K",
+        "range": [
+          62.910000000000004,
+          76.89000000000001
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "species.water.cp": {
+        "value": 75.3,
+        "unit": "J/mol/K",
+        "range": [
+          60.24,
+          90.36
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": "Positive constant Cp, assumed full-temperature approximation; phase transitions of inert silica omitted."
+      },
+      "species.water.volume": {
+        "value": 1.8015e-05,
+        "unit": "m3/mol",
+        "range": [
+          1.62135e-05,
+          1.9816500000000002e-05
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Reference incompressible constituent volume. Effective reversible bulk expansion is represented by the axial skeleton; separate phase volume jumps are omitted."
+      },
+      "species.silica.h_ref": {
+        "value": -910856.8,
+        "unit": "J/mol",
+        "range": [
+          -910856.8,
+          -910856.8
+        ],
+        "source": "quartz_nist",
+        "status": "literature",
+        "note": "Reference anchor of quartz caloric storage."
+      },
+      "species.silica.s_ref": {
+        "value": 41.463,
+        "unit": "J/mol/K",
+        "range": [
+          41.463,
+          41.463
+        ],
+        "source": "quartz_nist",
+        "status": "literature",
+        "note": "Reference anchor of quartz caloric storage."
+      },
+      "species.silica.cp": {
+        "value": 60.0,
+        "unit": "J/mol/K",
+        "range": [
+          48.0,
+          72.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": "Only legacy caloric mode and fixed solver energy normalization; solid.thermoelastic=1 replaces silica storage Cp by the explicit NIST/latent law."
+      },
+      "species.silica.volume": {
+        "value": 2.27e-05,
+        "unit": "m3/mol",
+        "range": [
+          2.043e-05,
+          2.497e-05
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Reference incompressible constituent volume. Effective reversible bulk expansion is represented by the axial skeleton; separate phase volume jumps are omitted."
+      },
+      "species.kaolin.h_ref": {
+        "value": -4119000,
+        "unit": "J/mol",
+        "range": [
+          -4201380.0,
+          -4036620.0
+        ],
+        "source": "usgs_clay",
+        "status": "literature",
+        "note": ""
+      },
+      "species.kaolin.s_ref": {
+        "value": 200.4,
+        "unit": "J/mol/K",
+        "range": [
+          180.36,
+          220.44000000000003
+        ],
+        "source": "usgs_clay",
+        "status": "literature",
+        "note": ""
+      },
+      "species.kaolin.cp": {
+        "value": 300.0,
+        "unit": "J/mol/K",
+        "range": [
+          240.0,
+          360.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": "Positive constant Cp, assumed full-temperature approximation; phase transitions of inert silica omitted."
+      },
+      "species.kaolin.volume": {
+        "value": 9.9e-05,
+        "unit": "m3/mol",
+        "range": [
+          8.91e-05,
+          0.0001089
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Reference incompressible constituent volume. Effective reversible bulk expansion is represented by the axial skeleton; separate phase volume jumps are omitted."
+      },
+      "species.metakaolin.h_ref": {
+        "value": -3487000,
+        "unit": "J/mol",
+        "range": [
+          -3556740.0,
+          -3417260.0
+        ],
+        "source": "metakaolin",
+        "status": "assumed",
+        "note": ""
+      },
+      "species.metakaolin.s_ref": {
+        "value": 170.0,
+        "unit": "J/mol/K",
+        "range": [
+          153.0,
+          187.00000000000003
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "species.metakaolin.cp": {
+        "value": 230.0,
+        "unit": "J/mol/K",
+        "range": [
+          184.0,
+          276.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": "Positive constant Cp, assumed full-temperature approximation; phase transitions of inert silica omitted."
+      },
+      "species.metakaolin.volume": {
+        "value": 8.8e-05,
+        "unit": "m3/mol",
+        "range": [
+          7.92e-05,
+          9.680000000000001e-05
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Reference incompressible constituent volume. Effective reversible bulk expansion is represented by the axial skeleton; separate phase volume jumps are omitted."
+      },
+      "species.calcite.h_ref": {
+        "value": -1207400,
+        "unit": "J/mol",
+        "range": [
+          -1231548.0,
+          -1183252.0
+        ],
+        "source": "usgs_calcite",
+        "status": "literature",
+        "note": ""
+      },
+      "species.calcite.s_ref": {
+        "value": 91.7,
+        "unit": "J/mol/K",
+        "range": [
+          82.53,
+          100.87
+        ],
+        "source": "usgs_calcite",
+        "status": "literature",
+        "note": ""
+      },
+      "species.calcite.cp": {
+        "value": 110.0,
+        "unit": "J/mol/K",
+        "range": [
+          88.0,
+          132.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": "Positive constant Cp, assumed full-temperature approximation; phase transitions of inert silica omitted."
+      },
+      "species.calcite.volume": {
+        "value": 3.693e-05,
+        "unit": "m3/mol",
+        "range": [
+          3.3237e-05,
+          4.0623e-05
+        ],
+        "source": "usgs_calcite",
+        "status": "literature",
+        "note": "Reference incompressible constituent volume. Effective reversible bulk expansion is represented by the axial skeleton; separate phase volume jumps are omitted."
+      },
+      "species.lime.h_ref": {
+        "value": -635100,
+        "unit": "J/mol",
+        "range": [
+          -647802.0,
+          -622398.0
+        ],
+        "source": "usgs_calcite",
+        "status": "literature",
+        "note": ""
+      },
+      "species.lime.s_ref": {
+        "value": 38.1,
+        "unit": "J/mol/K",
+        "range": [
+          34.29,
+          41.910000000000004
+        ],
+        "source": "usgs_calcite",
+        "status": "literature",
+        "note": ""
+      },
+      "species.lime.cp": {
+        "value": 50.0,
+        "unit": "J/mol/K",
+        "range": [
+          40.0,
+          60.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": "Positive constant Cp, assumed full-temperature approximation; phase transitions of inert silica omitted."
+      },
+      "species.lime.volume": {
+        "value": 1.676e-05,
+        "unit": "m3/mol",
+        "range": [
+          1.5084e-05,
+          1.8436e-05
+        ],
+        "source": "usgs_calcite",
+        "status": "literature",
+        "note": "Reference incompressible constituent volume. Effective reversible bulk expansion is represented by the axial skeleton; separate phase volume jumps are omitted."
+      },
+      "species.organic.h_ref": {
+        "value": -170000,
+        "unit": "J/mol",
+        "range": [
+          -173400.0,
+          -166600.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "species.organic.s_ref": {
+        "value": 70.0,
+        "unit": "J/mol/K",
+        "range": [
+          63.0,
+          77.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "species.organic.cp": {
+        "value": 45.0,
+        "unit": "J/mol/K",
+        "range": [
+          36.0,
+          54.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": "Positive constant Cp, assumed full-temperature approximation; phase transitions of inert silica omitted."
+      },
+      "species.organic.volume": {
+        "value": 2.5e-05,
+        "unit": "m3/mol",
+        "range": [
+          2.25e-05,
+          2.7500000000000004e-05
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Reference incompressible constituent volume. Effective reversible bulk expansion is represented by the axial skeleton; separate phase volume jumps are omitted."
+      },
+      "species.char.h_ref": {
+        "value": 0.0,
+        "unit": "J/mol",
+        "range": [
+          0.0,
+          0.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "species.char.s_ref": {
+        "value": 5.74,
+        "unit": "J/mol/K",
+        "range": [
+          5.166,
+          6.314000000000001
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "species.char.cp": {
+        "value": 15.0,
+        "unit": "J/mol/K",
+        "range": [
+          12.0,
+          18.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": "Positive constant Cp, assumed full-temperature approximation; phase transitions of inert silica omitted."
+      },
+      "species.char.volume": {
+        "value": 5.3e-06,
+        "unit": "m3/mol",
+        "range": [
+          4.77e-06,
+          5.830000000000001e-06
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Reference incompressible constituent volume. Effective reversible bulk expansion is represented by the axial skeleton; separate phase volume jumps are omitted."
+      },
+      "species.O2.h_ref": {
+        "value": 0.0,
+        "unit": "J/mol",
+        "range": [
+          0.0,
+          0.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "species.O2.s_ref": {
+        "value": 205.15,
+        "unit": "J/mol/K",
+        "range": [
+          184.63500000000002,
+          225.66500000000002
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "species.O2.cp": {
+        "value": 32.0,
+        "unit": "J/mol/K",
+        "range": [
+          25.6,
+          38.4
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": "Positive constant Cp, assumed full-temperature approximation; phase transitions of inert silica omitted."
+      },
+      "species.N2.h_ref": {
+        "value": 0.0,
+        "unit": "J/mol",
+        "range": [
+          0.0,
+          0.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "species.N2.s_ref": {
+        "value": 191.61,
+        "unit": "J/mol/K",
+        "range": [
+          172.449,
+          210.77100000000004
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "species.N2.cp": {
+        "value": 31.0,
+        "unit": "J/mol/K",
+        "range": [
+          24.8,
+          37.199999999999996
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": "Positive constant Cp, assumed full-temperature approximation; phase transitions of inert silica omitted."
+      },
+      "species.H2O.h_ref": {
+        "value": -241800,
+        "unit": "J/mol",
+        "range": [
+          -246636.0,
+          -236964.0
+        ],
+        "source": "usgs_steam",
+        "status": "literature",
+        "note": ""
+      },
+      "species.H2O.s_ref": {
+        "value": 188.84,
+        "unit": "J/mol/K",
+        "range": [
+          169.95600000000002,
+          207.72400000000002
+        ],
+        "source": "usgs_steam",
+        "status": "literature",
+        "note": ""
+      },
+      "species.H2O.cp": {
+        "value": 38.0,
+        "unit": "J/mol/K",
+        "range": [
+          30.400000000000002,
+          45.6
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": "Positive constant Cp, assumed full-temperature approximation; phase transitions of inert silica omitted."
+      },
+      "species.CO2.h_ref": {
+        "value": -393500,
+        "unit": "J/mol",
+        "range": [
+          -401370.0,
+          -385630.0
+        ],
+        "source": "usgs_calcite",
+        "status": "literature",
+        "note": ""
+      },
+      "species.CO2.s_ref": {
+        "value": 213.8,
+        "unit": "J/mol/K",
+        "range": [
+          192.42000000000002,
+          235.18000000000004
+        ],
+        "source": "usgs_calcite",
+        "status": "literature",
+        "note": ""
+      },
+      "species.CO2.cp": {
+        "value": 45.0,
+        "unit": "J/mol/K",
+        "range": [
+          36.0,
+          54.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": "Positive constant Cp, assumed full-temperature approximation; phase transitions of inert silica omitted."
+      },
+      "kinetics.evaporation.A": {
+        "value": 20000.0,
+        "unit": "1/s",
+        "range": [
+          10000.0,
+          40000.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": "Assumed effective first order kinetics. Organic CH2O and carbon are separate proxies."
+      },
+      "kinetics.evaporation.E": {
+        "value": 60000,
+        "unit": "J/mol",
+        "range": [
+          54000.0,
+          66000.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "kinetics.dehydroxylation.A": {
+        "value": 2000000.0,
+        "unit": "1/s",
+        "range": [
+          1000000.0,
+          4000000.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": "Assumed effective first order kinetics. Organic CH2O and carbon are separate proxies."
+      },
+      "kinetics.dehydroxylation.E": {
+        "value": 150000,
+        "unit": "J/mol",
+        "range": [
+          135000.0,
+          165000.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "kinetics.decarbonation.A": {
+        "value": 5000000.0,
+        "unit": "1/s",
+        "range": [
+          2500000.0,
+          10000000.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": "Assumed effective first order kinetics. Organic CH2O and carbon are separate proxies."
+      },
+      "kinetics.decarbonation.E": {
+        "value": 180000,
+        "unit": "J/mol",
+        "range": [
+          162000.0,
+          198000.00000000003
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "kinetics.organic_oxidation.A": {
+        "value": 1000000.0,
+        "unit": "1/s",
+        "range": [
+          500000.0,
+          2000000.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": "Assumed effective first order kinetics. Organic CH2O and carbon are separate proxies."
+      },
+      "kinetics.organic_oxidation.E": {
+        "value": 100000,
+        "unit": "J/mol",
+        "range": [
+          90000.0,
+          110000.00000000001
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "kinetics.char_oxidation.A": {
+        "value": 1000000.0,
+        "unit": "1/s",
+        "range": [
+          500000.0,
+          2000000.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": "Assumed effective first order kinetics. Organic CH2O and carbon are separate proxies."
+      },
+      "kinetics.char_oxidation.E": {
+        "value": 100000,
+        "unit": "J/mol",
+        "range": [
+          90000.0,
+          110000.00000000001
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "geometry.half_thickness": {
+        "value": 0.015,
+        "unit": "m",
+        "range": [
+          0.008,
+          0.025
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "geometry.area": {
+        "value": 0.01,
+        "unit": "m2",
+        "range": [
+          0.005,
+          0.02
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "material.dry_density": {
+        "value": 1500.0,
+        "unit": "kg/m3",
+        "range": [
+          1300.0,
+          1700.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "material.water_dry_ratio": {
+        "value": 0.15,
+        "unit": "kg/kg",
+        "range": [
+          0.08,
+          0.2
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "initial.temperature": {
+        "value": 298.15,
+        "unit": "K",
+        "range": [
+          298.15,
+          298.15
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "recipe.silica": {
+        "value": 0.55,
+        "unit": "kg/kg",
+        "range": [
+          0.0,
+          1.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Explicit virtual dry-mass recipe, fractions must sum to one."
+      },
+      "recipe.kaolin": {
+        "value": 0.35,
+        "unit": "kg/kg",
+        "range": [
+          0.0,
+          1.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Explicit virtual dry-mass recipe, fractions must sum to one."
+      },
+      "recipe.calcite": {
+        "value": 0.075,
+        "unit": "kg/kg",
+        "range": [
+          0.0,
+          1.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Explicit virtual dry-mass recipe, fractions must sum to one."
+      },
+      "recipe.organic": {
+        "value": 0.02,
+        "unit": "kg/kg",
+        "range": [
+          0.0,
+          1.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Explicit virtual dry-mass recipe, fractions must sum to one."
+      },
+      "recipe.char": {
+        "value": 0.005,
+        "unit": "kg/kg",
+        "range": [
+          0.0,
+          1.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Explicit virtual dry-mass recipe, fractions must sum to one."
+      },
+      "thermal.conductivity": {
+        "value": 1.0,
+        "unit": "W/m/K",
+        "range": [
+          0.4,
+          1.8
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "thermal.h": {
+        "value": 20.0,
+        "unit": "W/m2/K",
+        "range": [
+          10.0,
+          40.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "thermal.emissivity": {
+        "value": 0.8,
+        "unit": "1",
+        "range": [
+          0.6,
+          0.95
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "gas.pressure": {
+        "value": 100000.0,
+        "unit": "Pa",
+        "range": [
+          100000.0,
+          100000.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "gas.sweep": {
+        "value": 0.001,
+        "unit": "mol/s/kg",
+        "range": [
+          0.0005,
+          0.002
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Uniform local carrier supply per initial dry mass; no gas storage or pore-pressure dynamics."
+      },
+      "gas.inlet.O2": {
+        "value": 0.209,
+        "unit": "1",
+        "range": [
+          0.209,
+          0.209
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "gas.inlet.N2": {
+        "value": 0.78,
+        "unit": "1",
+        "range": [
+          0.78,
+          0.78
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "gas.inlet.H2O": {
+        "value": 0.01,
+        "unit": "1",
+        "range": [
+          0.01,
+          0.01
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "gas.inlet.CO2": {
+        "value": 0.001,
+        "unit": "1",
+        "range": [
+          0.001,
+          0.001
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "gas.max_generated_per_carrier": {
+        "value": 5.0,
+        "unit": "1",
+        "range": [
+          5.0,
+          5.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Prescribed finite evacuation capacity, caps total generated molar rate."
+      },
+      "gas.max_oxygen_use_fraction": {
+        "value": 0.8,
+        "unit": "1",
+        "range": [
+          0.8,
+          0.8
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Finite oxygen supply; common scaling preserves competing reaction ratios."
+      },
+      "sintering.rate_ref": {
+        "value": 2e-06,
+        "unit": "1/s",
+        "range": [
+          2e-07,
+          1e-05
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "sintering.temperature_ref": {
+        "value": 1273.0,
+        "unit": "K",
+        "range": [
+          1273.0,
+          1273.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "sintering.E": {
+        "value": 120000.0,
+        "unit": "J/mol",
+        "range": [
+          80000.0,
+          300000.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "sintering.gamma": {
+        "value": 0.3,
+        "unit": "N/m",
+        "range": [
+          0.2,
+          0.4
+        ],
+        "source": "pore",
+        "status": "assumed",
+        "note": ""
+      },
+      "sintering.radius": {
+        "value": 5.9e-06,
+        "unit": "m",
+        "range": [
+          5.37e-06,
+          6.43e-06
+        ],
+        "source": "pore",
+        "status": "assumed",
+        "note": ""
+      },
+      "product.connectivity": {
+        "value": 0.7,
+        "unit": "1",
+        "range": [
+          0.45,
+          0.9
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "product.dense_strength": {
+        "value": 50000000.0,
+        "unit": "Pa",
+        "range": [
+          10000000.0,
+          200000000.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "product.porosity_coefficient": {
+        "value": 5.0,
+        "unit": "1",
+        "range": [
+          2.0,
+          9.0
+        ],
+        "source": "legacy",
+        "status": "assumed",
+        "note": ""
+      },
+      "product.gradient_scale": {
+        "value": 100.0,
+        "unit": "K",
+        "range": [
+          50.0,
+          200.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Dimensionless defect indicator 1-exp(-peak_deltaT/scale); not measured defect probability."
+      },
+      "numerics.cells": {
+        "value": 12,
+        "unit": "1",
+        "range": [
+          12,
+          12
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "numerics.max_step": {
+        "value": 60.0,
+        "unit": "s",
+        "range": [
+          60.0,
+          60.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "numerics.rtol": {
+        "value": 1e-05,
+        "unit": "1",
+        "range": [
+          1e-05,
+          1e-05
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Engineering solver-coordinate resolution; physical conservation and convergence acceptance thresholds unchanged. Replaces over-resolved settings that stalled a high-permeability UQ drying case."
+      },
+      "numerics.atol": {
+        "value": 1e-07,
+        "unit": "1",
+        "range": [
+          1e-07,
+          1e-07
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Engineering solver-coordinate resolution; physical conservation and convergence acceptance thresholds unchanged. Replaces over-resolved settings that stalled a high-permeability UQ drying case."
+      },
+      "numerics.output_step": {
+        "value": 120.0,
+        "unit": "s",
+        "range": [
+          120.0,
+          120.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "numerics.surface_iterations": {
+        "value": 6,
+        "unit": "1",
+        "range": [
+          6,
+          6
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "acceptance.balance_relative": {
+        "value": 0.001,
+        "unit": "1",
+        "range": [
+          0.001,
+          0.001
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "acceptance.convergence_relative": {
+        "value": 0.02,
+        "unit": "1",
+        "range": [
+          0.02,
+          0.02
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "acceptance.floor.porosity": {
+        "value": 0.01,
+        "unit": "1",
+        "range": [
+          0.01,
+          0.01
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Declared before runs: denominator=max(abs(refined value),floor)."
+      },
+      "acceptance.floor.residual_carbon_kg": {
+        "value": 1e-07,
+        "unit": "kg",
+        "range": [
+          1e-07,
+          1e-07
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Declared before runs: denominator=max(abs(refined value),floor)."
+      },
+      "acceptance.floor.shrinkage": {
+        "value": 0.001,
+        "unit": "1",
+        "range": [
+          0.001,
+          0.001
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Declared before runs: denominator=max(abs(refined value),floor)."
+      },
+      "acceptance.floor.peak_temperature_difference_k": {
+        "value": 1.0,
+        "unit": "K",
+        "range": [
+          1.0,
+          1.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Declared before runs: denominator=max(abs(refined value),floor)."
+      },
+      "uq.samples": {
+        "value": 8,
+        "unit": "1",
+        "range": [
+          8,
+          8
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "uq.seed": {
+        "value": 20260926,
+        "unit": "1",
+        "range": [
+          20260926,
+          20260926
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "uq.robust_fraction": {
+        "value": 0.9,
+        "unit": "1",
+        "range": [
+          0.9,
+          0.9
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "uq.quantiles": {
+        "value": [
+          0.05,
+          0.5,
+          0.95
+        ],
+        "unit": "1",
+        "range": [
+          [
+            0.05,
+            0.5,
+            0.95
+          ],
+          [
+            0.05,
+            0.5,
+            0.95
+          ]
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "calibration.max_nfev": {
+        "value": 18,
+        "unit": "1",
+        "range": [
+          18,
+          18
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "calibration.tolerance": {
+        "value": 0.001,
+        "unit": "1",
+        "range": [
+          0.001,
+          0.001
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Optimizer stopping tolerance matched to approximate forward solver; first 1e-6 attempt reached evaluation cap despite <0.2% parameter error; no extra precision target."
+      },
+      "calibration.sample_count": {
+        "value": 13,
+        "unit": "1",
+        "range": [
+          13,
+          13
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "calibration.scale.tg": {
+        "value": 0.005,
+        "unit": "1",
+        "range": [
+          0.005,
+          0.005
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "calibration.scale.dsc": {
+        "value": 10.0,
+        "unit": "W/kg",
+        "range": [
+          10.0,
+          10.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "calibration.scale.dilatometry": {
+        "value": 0.002,
+        "unit": "1",
+        "range": [
+          0.002,
+          0.002
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "calibration.scale.kiln": {
+        "value": 2.0,
+        "unit": "K",
+        "range": [
+          2.0,
+          2.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "calibration.scale.absorption": {
+        "value": 0.005,
+        "unit": "kg/kg",
+        "range": [
+          0.005,
+          0.005
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "calibration.scale.strength": {
+        "value": 1000000.0,
+        "unit": "Pa",
+        "range": [
+          1000000.0,
+          1000000.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "calibration.scale.defects": {
+        "value": 0.01,
+        "unit": "1",
+        "range": [
+          0.01,
+          0.01
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "process.drying.end": {
+        "value": 86400.0,
+        "unit": "s",
+        "range": [
+          86400.0,
+          86400.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "process.drying.temperature": {
+        "value": 383.15,
+        "unit": "K",
+        "range": [
+          298.15,
+          1373.15
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "process.heating.end": {
+        "value": 97200.0,
+        "unit": "s",
+        "range": [
+          97200.0,
+          97200.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "process.heating.temperature": {
+        "value": 673.15,
+        "unit": "K",
+        "range": [
+          298.15,
+          1373.15
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "process.reactions.end": {
+        "value": 115200.0,
+        "unit": "s",
+        "range": [
+          115200.0,
+          115200.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "process.reactions.temperature": {
+        "value": 1073.15,
+        "unit": "K",
+        "range": [
+          298.15,
+          1373.15
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "process.sintering.end": {
+        "value": 126000.0,
+        "unit": "s",
+        "range": [
+          126000.0,
+          126000.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "process.sintering.temperature": {
+        "value": 1223.15,
+        "unit": "K",
+        "range": [
+          298.15,
+          1373.15
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "process.hold.end": {
+        "value": 133200.0,
+        "unit": "s",
+        "range": [
+          133200.0,
+          140400.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "process.hold.temperature": {
+        "value": 1223.15,
+        "unit": "K",
+        "range": [
+          298.15,
+          1373.15
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "process.cooling.end": {
+        "value": 154800.0,
+        "unit": "s",
+        "range": [
+          154800.0,
+          162000.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "process.cooling.temperature": {
+        "value": 298.15,
+        "unit": "K",
+        "range": [
+          298.15,
+          1373.15
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "process.time_scale": {
+        "value": 1.0,
+        "unit": "1",
+        "range": [
+          1.0,
+          1.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "product.water_density": {
+        "value": 1000.0,
+        "unit": "kg/m3",
+        "range": [
+          990.0,
+          1000.0
+        ],
+        "source": "water",
+        "status": "assumed",
+        "note": "Ambient water density approximation used only for absorption proxy."
+      },
+      "process.drying_ramp.end": {
+        "value": 14400.0,
+        "unit": "s",
+        "range": [
+          14400.0,
+          14400.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "process.drying_ramp.temperature": {
+        "value": 383.15,
+        "unit": "K",
+        "range": [
+          298.15,
+          1373.15
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "process.cooling_hold.end": {
+        "value": 162000.0,
+        "unit": "s",
+        "range": [
+          162000.0,
+          180000.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Ambient final hold to complete cooling."
+      },
+      "process.cooling_hold.temperature": {
+        "value": 298.15,
+        "unit": "K",
+        "range": [
+          298.15,
+          298.15
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "uq.confidence_level": {
+        "value": 0.95,
+        "unit": "1",
+        "range": [
+          0.95,
+          0.95
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Wilson lower bound for pairwise win probabilities, paired iid Monte Carlo draws."
+      },
+      "acceptance.drying_remaining_fraction": {
+        "value": 0.001,
+        "unit": "1",
+        "range": [
+          0.001,
+          0.001
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Engineering endpoint reporting criterion for the example."
+      },
+      "acceptance.cooling_temperature_difference": {
+        "value": 1.0,
+        "unit": "K",
+        "range": [
+          1.0,
+          1.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Engineering endpoint reporting criterion for the example."
+      },
+      "calibration.difference_step": {
+        "value": 0.01,
+        "unit": "1",
+        "range": [
+          0.001,
+          0.1
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Finite-difference perturbation / synthetic recovery acceptance; numerical setting, not material evidence."
+      },
+      "calibration.recovery_relative": {
+        "value": 0.02,
+        "unit": "1",
+        "range": [
+          0.02,
+          0.02
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Finite-difference perturbation / synthetic recovery acceptance; numerical setting, not material evidence."
+      },
+      "gas.storage": {
+        "value": 1,
+        "unit": "1",
+        "range": [
+          0,
+          1
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "1: explicit finite pore gas; 0: historical per-cell swept approximation. No implicit mode."
+      },
+      "transport.diffusivity_ref": {
+        "value": 2e-05,
+        "unit": "m2/s",
+        "range": [
+          1e-05,
+          4e-05
+        ],
+        "source": "porous_transport",
+        "status": "assumed",
+        "note": "Common free-gas binary diffusivity at reference T/P for all pairs. Assumed four-species analogy, not an empirical interval."
+      },
+      "transport.diffusivity_exponent": {
+        "value": 1.75,
+        "unit": "1",
+        "range": [
+          1.5,
+          2.0
+        ],
+        "source": "porous_transport",
+        "status": "assumed",
+        "note": "Assumed temperature power; pressure scaling Pr/P. Effective coefficient includes current porosity/tortuosity."
+      },
+      "transport.viscosity_ref": {
+        "value": 1.8e-05,
+        "unit": "Pa*s",
+        "range": [
+          1.4e-05,
+          2.4e-05
+        ],
+        "source": "porous_transport",
+        "status": "assumed",
+        "note": "Assumed mixture viscosity at reference temperature, shared by species."
+      },
+      "transport.viscosity_exponent": {
+        "value": 0.7,
+        "unit": "1",
+        "range": [
+          0.5,
+          1.0
+        ],
+        "source": "porous_transport",
+        "status": "assumed",
+        "note": "Assumed power law, not a fitted viscosity curve."
+      },
+      "transport.tortuosity": {
+        "value": 2.5,
+        "unit": "1",
+        "range": [
+          1.5,
+          4.0
+        ],
+        "source": "porous_transport",
+        "status": "assumed",
+        "note": "Assumed geometric transport tortuosity, fixed during a run."
+      },
+      "transport.permeability_ref": {
+        "value": 3.75e-14,
+        "unit": "m2",
+        "range": [
+          3.75e-16,
+          3.75e-12
+        ],
+        "source": "porous_transport",
+        "status": "assumed",
+        "note": "Borrowed virtual pore coefficient from existing Dusty Gas setups; evolving phi^3/(1-phi)^2 scaling is assumed. Not a measured brick permeability range."
+      },
+      "kinetics.oxygen_order": {
+        "value": 1.0,
+        "unit": "1",
+        "range": [
+          1,
+          1
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Oxidation rate proportional to local O2 partial pressure relative to inlet O2 pressure; replaces carrier-throughput caps in stored-gas mode."
+      },
+      "acceptance.entropy_relative": {
+        "value": 0.001,
+        "unit": "1",
+        "range": [
+          0.001,
+          0.001
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Maximum sampled entropy closure residual divided by initial thermal capacity scale E_scale/T_ref."
+      },
+      "acceptance.floor.peak_overpressure_pa": {
+        "value": 100.0,
+        "unit": "Pa",
+        "range": [
+          100,
+          100
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Predeclared absolute denominator scale when the reference overpressure is near zero."
+      },
+      "numerics.jacobian_step": {
+        "value": 1e-24,
+        "unit": "1",
+        "range": [
+          1e-24,
+          1e-24
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Imaginary perturbation for complex-step differentiation on each active branch. Avoids subtractive Jacobian error in the stiff gas system; physical acceptance tolerances are unchanged."
+      },
+      "numerics.jacobian_state_scale": {
+        "value": 1.0,
+        "unit": "1",
+        "range": [
+          1.0,
+          1.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Dimensionless scale for near-zero physical coordinates in Jacobian differencing."
+      },
+      "acceptance.inventory_roundoff_factor": {
+        "value": 8.0,
+        "unit": "1",
+        "range": [
+          8.0,
+          8.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Condensed inventory roundoff allowance = factor * float epsilon * initial total condensed molar scale. Accepted inventory values remain unchanged and raw negative minima are reported. This is an arithmetic-domain budget, not a physical negative-inventory allowance."
+      },
+      "solid.thermoelastic": {
+        "value": 1,
+        "unit": "1",
+        "range": [
+          0,
+          1
+        ],
+        "source": "solid_effective",
+        "status": "assumed",
+        "note": "0 retains prior finite-gas closure; 1 selects coupled quartz/axial skeleton."
+      },
+      "solid.axial_modulus": {
+        "value": 1000000000.0,
+        "unit": "Pa",
+        "range": [
+          100000000.0,
+          2000000000.0
+        ],
+        "source": "solid_effective",
+        "status": "assumed",
+        "note": "Effective fixed-area axial modulus, not independently measured Young modulus; constant through firing."
+      },
+      "solid.thermal_expansion": {
+        "value": 1e-05,
+        "unit": "1/K",
+        "range": [
+          2e-06,
+          2e-05
+        ],
+        "source": "solid_effective",
+        "status": "assumed",
+        "note": "Effective background reversible axial strain coefficient. The quartz transition contribution is separate in quartz.axial_transition_strain."
+      },
+      "quartz.transition_temperature": {
+        "value": 847.0,
+        "unit": "K",
+        "range": [
+          847.0,
+          847.0
+        ],
+        "source": "quartz_nist",
+        "status": "literature",
+        "note": ""
+      },
+      "quartz.latent_heat": {
+        "value": 728.0,
+        "unit": "J/mol",
+        "range": [
+          728.0,
+          728.0
+        ],
+        "source": "quartz_nist",
+        "status": "literature",
+        "note": "JANAF h increments 34.924 - 34.196 kJ/mol; use L/Tc entropy join."
+      },
+      "quartz.transition_width": {
+        "value": 5.0,
+        "unit": "K",
+        "range": [
+          2.0,
+          10.0
+        ],
+        "source": "solid_effective",
+        "status": "assumed",
+        "note": "Smooth two-state free energy width: mixing entropy coefficient a=L*w/Tc^2. No measured hysteresis or phase-volume relation."
+      },
+      "quartz.shomate_scale": {
+        "value": 1000.0,
+        "unit": "K",
+        "range": [
+          1000.0,
+          1000.0
+        ],
+        "source": "quartz_nist",
+        "status": "literature",
+        "note": "t=T/(1000 K); Shomate entropy primitive omits constants because anchored to reference."
+      },
+      "quartz.alpha.A": {
+        "value": -6.076591,
+        "unit": "J/mol/K",
+        "range": [
+          -6.076591,
+          -6.076591
+        ],
+        "source": "quartz_nist",
+        "status": "literature",
+        "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+      },
+      "quartz.alpha.B": {
+        "value": 251.6755,
+        "unit": "J/mol/K",
+        "range": [
+          251.6755,
+          251.6755
+        ],
+        "source": "quartz_nist",
+        "status": "literature",
+        "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+      },
+      "quartz.alpha.C": {
+        "value": -324.7964,
+        "unit": "J/mol/K",
+        "range": [
+          -324.7964,
+          -324.7964
+        ],
+        "source": "quartz_nist",
+        "status": "literature",
+        "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+      },
+      "quartz.alpha.D": {
+        "value": 168.5604,
+        "unit": "J/mol/K",
+        "range": [
+          168.5604,
+          168.5604
+        ],
+        "source": "quartz_nist",
+        "status": "literature",
+        "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+      },
+      "quartz.alpha.E": {
+        "value": 0.002548,
+        "unit": "J/mol/K",
+        "range": [
+          0.002548,
+          0.002548
+        ],
+        "source": "quartz_nist",
+        "status": "literature",
+        "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+      },
+      "quartz.beta.A": {
+        "value": 58.7534,
+        "unit": "J/mol/K",
+        "range": [
+          58.7534,
+          58.7534
+        ],
+        "source": "quartz_nist",
+        "status": "literature",
+        "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+      },
+      "quartz.beta.B": {
+        "value": 10.27925,
+        "unit": "J/mol/K",
+        "range": [
+          10.27925,
+          10.27925
+        ],
+        "source": "quartz_nist",
+        "status": "literature",
+        "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+      },
+      "quartz.beta.C": {
+        "value": -0.131384,
+        "unit": "J/mol/K",
+        "range": [
+          -0.131384,
+          -0.131384
+        ],
+        "source": "quartz_nist",
+        "status": "literature",
+        "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+      },
+      "quartz.beta.D": {
+        "value": 0.02521,
+        "unit": "J/mol/K",
+        "range": [
+          0.02521,
+          0.02521
+        ],
+        "source": "quartz_nist",
+        "status": "literature",
+        "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+      },
+      "quartz.beta.E": {
+        "value": 0.025601,
+        "unit": "J/mol/K",
+        "range": [
+          0.025601,
+          0.025601
+        ],
+        "source": "quartz_nist",
+        "status": "literature",
+        "note": "Cp coefficient with dimensionless t. Alpha 298-847K, beta847-1996K."
+      },
+      "numerics.mechanical_iterations": {
+        "value": 8,
+        "unit": "1",
+        "range": [
+          8,
+          8
+        ],
+        "source": "solid_effective",
+        "status": "assumed",
+        "note": "Fixed Newton iterations for positive pore-volume mechanical equilibrium; actual final force residual reported."
+      },
+      "quartz.axial_transition_strain": {
+        "value": 0.004,
+        "unit": "1",
+        "range": [
+          0.0,
+          0.008
+        ],
+        "source": "solid_effective",
+        "status": "assumed",
+        "note": "Assumed effective axial eigenstrain amplitude per unit initial quartz reference-volume fraction. Actual strain=e_q*(n_q_initial*v_q/V0)*(x_beta(T)-x_beta(T_initial)). Zero recovers the previous background-only skeleton. This engineering range is not a measured quartz volume jump, a confidence interval or a calibrated brick property."
+      }
+    },
+    "species": [
+      {
+        "id": "water",
+        "formula": "H2O",
+        "phase": "condensed"
+      },
+      {
+        "id": "silica",
+        "formula": "SiO2",
+        "phase": "condensed"
+      },
+      {
+        "id": "kaolin",
+        "formula": "Al2Si2O9H4",
+        "phase": "condensed"
+      },
+      {
+        "id": "metakaolin",
+        "formula": "Al2Si2O7",
+        "phase": "condensed"
+      },
+      {
+        "id": "calcite",
+        "formula": "CaCO3",
+        "phase": "condensed"
+      },
+      {
+        "id": "lime",
+        "formula": "CaO",
+        "phase": "condensed"
+      },
+      {
+        "id": "organic",
+        "formula": "CH2O",
+        "phase": "condensed"
+      },
+      {
+        "id": "char",
+        "formula": "C",
+        "phase": "condensed"
+      },
+      {
+        "id": "O2",
+        "formula": "O2",
+        "phase": "gas"
+      },
+      {
+        "id": "N2",
+        "formula": "N2",
+        "phase": "gas"
+      },
+      {
+        "id": "H2O",
+        "formula": "H2O",
+        "phase": "gas"
+      },
+      {
+        "id": "CO2",
+        "formula": "CO2",
+        "phase": "gas"
+      }
+    ],
+    "reactions": [
+      {
+        "id": "evaporation",
+        "reactant": "water",
+        "stoichiometry": {
+          "water": -1,
+          "H2O": 1
+        },
+        "kinetics_basis": "Stored-gas mode uses local chemical affinity including surface energy, with explicit oxygen-order factor; swept mode retains conservative carrier bounds."
+      },
+      {
+        "id": "dehydroxylation",
+        "reactant": "kaolin",
+        "stoichiometry": {
+          "kaolin": -1,
+          "metakaolin": 1,
+          "H2O": 2
+        },
+        "kinetics_basis": "Stored-gas mode uses local chemical affinity including surface energy, with explicit oxygen-order factor; swept mode retains conservative carrier bounds."
+      },
+      {
+        "id": "decarbonation",
+        "reactant": "calcite",
+        "stoichiometry": {
+          "calcite": -1,
+          "lime": 1,
+          "CO2": 1
+        },
+        "kinetics_basis": "Stored-gas mode uses local chemical affinity including surface energy, with explicit oxygen-order factor; swept mode retains conservative carrier bounds."
+      },
+      {
+        "id": "organic_oxidation",
+        "reactant": "organic",
+        "stoichiometry": {
+          "organic": -1,
+          "O2": -1,
+          "CO2": 1,
+          "H2O": 1
+        },
+        "kinetics_basis": "Stored-gas mode uses local chemical affinity including surface energy, with explicit oxygen-order factor; swept mode retains conservative carrier bounds."
+      },
+      {
+        "id": "char_oxidation",
+        "reactant": "char",
+        "stoichiometry": {
+          "char": -1,
+          "O2": -1,
+          "CO2": 1
+        },
+        "kinetics_basis": "Stored-gas mode uses local chemical affinity including surface energy, with explicit oxygen-order factor; swept mode retains conservative carrier bounds."
+      }
+    ],
+    "stages": [
+      "drying_ramp",
+      "drying",
+      "heating",
+      "reactions",
+      "sintering",
+      "hold",
+      "cooling",
+      "cooling_hold"
+    ],
+    "scenarios": [
+      {
+        "id": "standard",
+        "overrides": {}
+      },
+      {
+        "id": "lower_peak",
+        "overrides": {
+          "process.sintering.temperature": {
+            "value": 1173.15,
+            "unit": "K",
+            "range": [
+              298.15,
+              1373.15
+            ],
+            "source": "policy",
+            "status": "assumed",
+            "note": "Virtual firing schedule alternative."
+          },
+          "process.hold.temperature": {
+            "value": 1173.15,
+            "unit": "K",
+            "range": [
+              298.15,
+              1373.15
+            ],
+            "source": "policy",
+            "status": "assumed",
+            "note": "Virtual firing schedule alternative."
+          }
+        }
+      },
+      {
+        "id": "longer_hold",
+        "overrides": {
+          "process.hold.end": {
+            "value": 140400.0,
+            "unit": "s",
+            "range": [
+              133200.0,
+              140400.0
+            ],
+            "source": "policy",
+            "status": "assumed",
+            "note": "Virtual firing schedule alternative."
+          },
+          "process.cooling.end": {
+            "value": 162000.0,
+            "unit": "s",
+            "range": [
+              154800.0,
+              162000.0
+            ],
+            "source": "policy",
+            "status": "assumed",
+            "note": "Virtual firing schedule alternative."
+          },
+          "process.cooling_hold.end": {
+            "value": 169200.0,
+            "unit": "s",
+            "range": [
+              162000.0,
+              180000.0
+            ],
+            "source": "policy",
+            "status": "assumed",
+            "note": "Ambient final hold to complete cooling."
+          }
+        }
+      }
+    ],
+    "uncertain_parameters": [
+      "thermal.conductivity",
+      "thermal.h",
+      "sintering.rate_ref",
+      "kinetics.char_oxidation.A",
+      "kinetics.decarbonation.A",
+      "material.water_dry_ratio",
+      "transport.diffusivity_ref",
+      "solid.axial_modulus",
+      "solid.thermal_expansion",
+      "quartz.axial_transition_strain"
+    ],
+    "calibration_parameters": [
+      "thermal.h",
+      "sintering.rate_ref",
+      "quartz.axial_transition_strain"
+    ],
+    "synthetic_truth_overrides": {
+      "thermal.h": {
+        "value": 26.0,
+        "unit": "W/m2/K",
+        "range": [
+          10.0,
+          40.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Synthetic demonstration truth, not a measurement."
+      },
+      "sintering.rate_ref": {
+        "value": 3.2e-06,
+        "unit": "1/s",
+        "range": [
+          2e-07,
+          1e-05
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Synthetic demonstration truth, not a measurement."
+      },
+      "quartz.axial_transition_strain": {
+        "value": 0.006,
+        "unit": "1",
+        "range": [
+          0.0,
+          0.008
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Synthetic transition-eigenstrain truth for software recoverability demonstration; not a measurement or fitted real material property."
+      }
+    },
+    "ranking_metrics": {
+      "porosity": "minimize",
+      "residual_carbon_kg": "minimize",
+      "shrinkage": "minimize",
+      "peak_temperature_difference_k": "minimize",
+      "strength_pa": "maximize",
+      "absorption_kg_kg": "minimize"
+    },
+    "uncertainty_fixed_parameters": [
+      "transport.permeability_ref"
+    ],
+    "uncertainty_scope_note": "Ten selected parameters including quartz transition eigenstrain sampled in their declared ranges; permeability conditioned on its nominal value after two cost-limited broad-permeability attempts. All other parameters fixed except scenario controls. Results apply only to this constitutive model and selected ranges, not permeability-range robustness or all assumed material parameters. The previous nine-parameter ensemble remains historical."
+  },
+  "uq_status": {
+    "completed": true,
+    "exit_code": 0,
+    "evidence": "FULL_CYCLE_STRAIN_UQ.json",
+    "all_24_physical_consistency_passed": true,
+    "elapsed_s": 775.8437599160243,
+    "worst_stage_balance_relative": 0.00024232307331021683
+  },
+  "calibration_status": {
+    "completed": true,
+    "exit_code": 0,
+    "evidence": "FULL_CYCLE_STRAIN_CALIBRATION.json",
+    "synthetic_observations": "FULL_CYCLE_STRAIN_SYNTHETIC_OBSERVATIONS.json",
+    "demonstration_passed": true,
+    "elapsed_s": 773.9906224578153,
+    "max_parameter_relative_error": 4.1112035383678025e-05,
+    "measurement_kind": "synthetic",
+    "parameters_remain_assumed": true
+  },
+  "representative_field_samples": [
+    {
+      "time_s": 0.0,
+      "temperature_k": [
+        298.15,
+        298.15,
+        298.15,
+        298.15,
+        298.15,
+        298.15,
+        298.15,
+        298.15,
+        298.15,
+        298.15,
+        298.15,
+        298.15
+      ],
+      "pressure_pa": [
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0
+      ],
+      "porosity": [
+        0.1921900317366727,
+        0.1921900317366727,
+        0.1921900317366727,
+        0.1921900317366727,
+        0.1921900317366727,
+        0.1921900317366727,
+        0.1921900317366727,
+        0.1921900317366727,
+        0.1921900317366727,
+        0.1921900317366727,
+        0.1921900317366727,
+        0.1921900317366727
+      ],
+      "quartz_beta_fraction": [
+        3.710836673454804e-136,
+        3.710836673454804e-136,
+        3.710836673454804e-136,
+        3.710836673454804e-136,
+        3.710836673454804e-136,
+        3.710836673454804e-136,
+        3.710836673454804e-136,
+        3.710836673454804e-136,
+        3.710836673454804e-136,
+        3.710836673454804e-136,
+        3.710836673454804e-136,
+        3.710836673454804e-136
+      ],
+      "quartz_transition_strain": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "reversible_thermal_strain": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "permanent_sintering_strain": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "effective_expansion_coefficient_per_k": [
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05
+      ]
+    },
+    {
+      "time_s": 94440.0,
+      "temperature_k": [
+        654.9979556807587,
+        654.8372292382086,
+        654.463756565424,
+        653.7802063238457,
+        652.6722630534018,
+        651.0689005949342,
+        649.0003174621556,
+        646.5877198814164,
+        643.9711181157945,
+        641.2537581943878,
+        638.4947263036287,
+        635.724076679208
+      ],
+      "pressure_pa": [
+        100052.90235963071,
+        100052.35939734672,
+        100051.14535991695,
+        100049.03863796401,
+        100045.82000874853,
+        100041.42002781024,
+        100036.00568263413,
+        100029.89863779597,
+        100023.40944392196,
+        100016.74685005253,
+        100010.02333450904,
+        100003.29255757236
+      ],
+      "porosity": [
+        0.4278456257668274,
+        0.4288295712851245,
+        0.4308555310668855,
+        0.4339000827209033,
+        0.43762552913855557,
+        0.44129847195560634,
+        0.4441515908825348,
+        0.4459003126967977,
+        0.44677307648546366,
+        0.4471443791256314,
+        0.44728320213888806,
+        0.44732677735334214
+      ],
+      "quartz_beta_fraction": [
+        2.718295805344991e-22,
+        2.576002442082433e-22,
+        2.273231283873099e-22,
+        1.807570493634945e-22,
+        1.2453682032558743e-22,
+        7.24731513951637e-23,
+        3.590205164842324e-23,
+        1.5734868491627704e-23,
+        6.3867385476847985e-24,
+        2.4844696972913498e-24,
+        9.447765942043564e-25,
+        3.548040768818325e-25
+      ],
+      "quartz_transition_strain": [
+        3.389030724804871e-25,
+        3.2116267134075804e-25,
+        2.8341472809857796e-25,
+        2.2535854737126627e-25,
+        1.5526607134625445e-25,
+        9.035577964645861e-26,
+        4.4760822527405417e-26,
+        1.961742083552328e-26,
+        7.962655545742704e-27,
+        3.0975084177413242e-27,
+        1.1778986302885836e-27,
+        4.423513862892316e-28
+      ],
+      "reversible_thermal_strain": [
+        0.003568479556807587,
+        0.0035668722923820864,
+        0.00356313756565424,
+        0.0035563020632384578,
+        0.003545222630534019,
+        0.003529189005949343,
+        0.003508503174621557,
+        0.0034843771988141647,
+        0.003458211181157946,
+        0.003431037581943879,
+        0.003403447263036287,
+        0.0033757407667920803
+      ],
+      "permanent_sintering_strain": [
+        -1.7351092032930246e-08,
+        -1.7356610896520082e-08,
+        -1.735188972748527e-08,
+        -1.7303154013867407e-08,
+        -1.7157871910224665e-08,
+        -1.685328021173466e-08,
+        -1.6338586418165583e-08,
+        -1.559872051036427e-08,
+        -1.465922376570574e-08,
+        -1.357123547944695e-08,
+        -1.2392903701600396e-08,
+        -1.1177856539247943e-08
+      ],
+      "effective_expansion_coefficient_per_k": [
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05
+      ]
+    },
+    {
+      "time_s": 105600.0,
+      "temperature_k": [
+        836.1253640590672,
+        836.2889193648542,
+        836.6161019792538,
+        837.1070594419708,
+        837.7620217844673,
+        838.5813106490067,
+        839.5653460806263,
+        840.7146399269345,
+        842.0298020907969,
+        843.5114295911453,
+        845.1598888618892,
+        846.9750386481577
+      ],
+      "pressure_pa": [
+        100189.55020684094,
+        100186.86855871299,
+        100181.50904892827,
+        100173.478864839,
+        100162.78900450465,
+        100149.45486794735,
+        100133.49701526387,
+        100114.94208254147,
+        100093.82324210141,
+        100070.18133459447,
+        100044.065885959,
+        100015.53557464296
+      ],
+      "porosity": [
+        0.46557569675194593,
+        0.46560725937528685,
+        0.46567047210193363,
+        0.4657654933617865,
+        0.46589253359540583,
+        0.4660518444418325,
+        0.4662437043771514,
+        0.46646842910563646,
+        0.4667262898850184,
+        0.4670168793313858,
+        0.4673386217644226,
+        0.4676879826304045
+      ],
+      "quartz_beta_fraction": [
+        0.09946221828638144,
+        0.10250892068803122,
+        0.10884862574525728,
+        0.11899612571510101,
+        0.13377689784033148,
+        0.15438153150701137,
+        0.18241089415687683,
+        0.21986210291649044,
+        0.26895969908374395,
+        0.33167928719833656,
+        0.40882533642632257,
+        0.4987518982181925
+      ],
+      "quartz_transition_strain": [
+        0.00012400435341400058,
+        0.00012780282451056965,
+        0.00013570684113116445,
+        0.000148358219656686,
+        0.00016678612245160936,
+        0.00019247491483116594,
+        0.0002274204755866615,
+        0.0002741127071377099,
+        0.00033532505260714133,
+        0.00041352059363306877,
+        0.0005097023007956459,
+        0.0006218180905082493
+      ],
+      "reversible_thermal_strain": [
+        0.0055037579940046735,
+        0.005509192018159113,
+        0.005520367860923703,
+        0.005537928814076395,
+        0.005562906340296283,
+        0.005596788021321234,
+        0.005641573936392925,
+        0.0056997591064070555,
+        0.0057741230735151115,
+        0.005867134889544523,
+        0.005979801189414539,
+        0.006110068476989827
+      ],
+      "permanent_sintering_strain": [
+        -5.207645583572952e-06,
+        -5.22311405038126e-06,
+        -5.254189750203715e-06,
+        -5.301195037151672e-06,
+        -5.364666716783121e-06,
+        -5.44535216426291e-06,
+        -5.544198329061378e-06,
+        -5.66235244378978e-06,
+        -5.8011733116089785e-06,
+        -5.962249224658813e-06,
+        -6.147420916072393e-06,
+        -6.358808331542984e-06
+      ],
+      "effective_expansion_coefficient_per_k": [
+        3.291885360727794e-05,
+        3.353177698881387e-05,
+        3.479120296728134e-05,
+        3.676234954712441e-05,
+        3.953555617244558e-05,
+        4.3208943073709624e-05,
+        4.784883070594441e-05,
+        5.3411034974968845e-05,
+        5.9607713658926754e-05,
+        6.573101295084455e-05,
+        7.052732330349552e-05,
+        7.234070184953792e-05
+      ]
+    },
+    {
+      "time_s": 116040.0,
+      "temperature_k": [
+        1079.6258852012477,
+        1079.680126359143,
+        1079.7870360622899,
+        1079.9443180230473,
+        1080.1498418711226,
+        1080.4019737683323,
+        1080.6994433327416,
+        1081.0411106216395,
+        1081.425824530354,
+        1081.852373408929,
+        1082.3194788585815,
+        1082.8258026724172
+      ],
+      "pressure_pa": [
+        100002.31526230372,
+        100002.2294892459,
+        100002.07703902495,
+        100001.88420117465,
+        100001.67217824569,
+        100001.45285586927,
+        100001.23111922877,
+        100001.00847356376,
+        100000.78526887315,
+        100000.56156486692,
+        100000.33736438942,
+        100000.11265717677
+      ],
+      "porosity": [
+        0.49485689808444333,
+        0.4948670433777777,
+        0.4948808396163385,
+        0.4948916282284487,
+        0.4948971869764198,
+        0.49489885657996024,
+        0.49489865148459145,
+        0.4948977978501646,
+        0.49489677067064064,
+        0.4948956984246159,
+        0.49489460363687277,
+        0.49489348367716646
+      ],
+      "quartz_beta_fraction": [
+        0.9999999999999998,
+        0.9999999999999998,
+        0.9999999999999998,
+        0.9999999999999998,
+        0.9999999999999998,
+        0.9999999999999998,
+        0.9999999999999998,
+        0.9999999999999998,
+        0.9999999999999998,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "quartz_transition_strain": [
+        0.0012467483186123496,
+        0.0012467483186123496,
+        0.0012467483186123496,
+        0.0012467483186123496,
+        0.0012467483186123496,
+        0.0012467483186123496,
+        0.0012467483186123496,
+        0.0012467483186123496,
+        0.0012467483186123496,
+        0.0012467483186123498,
+        0.0012467483186123498,
+        0.0012467483186123498
+      ],
+      "reversible_thermal_strain": [
+        0.009061507170624827,
+        0.00906204958220378,
+        0.009063118679235248,
+        0.009064691498842823,
+        0.009066746737323576,
+        0.009069268056295673,
+        0.009072242751939765,
+        0.009075659424828745,
+        0.00907950656391589,
+        0.009083772052701642,
+        0.009088443107198165,
+        0.009093506345336524
+      ],
+      "permanent_sintering_strain": [
+        -0.0004028014888394736,
+        -0.0004039109646029416,
+        -0.0004060536110831519,
+        -0.0004091002364379776,
+        -0.00041290809265792606,
+        -0.0004173547526014669,
+        -0.0004223535420480679,
+        -0.00042785093849129034,
+        -0.000433815991545774,
+        -0.00044023152097221293,
+        -0.0004470894380067167,
+        -0.00045438891374797346
+      ],
+      "effective_expansion_coefficient_per_k": [
+        1.0000000000000035e-05,
+        1.0000000000000035e-05,
+        1.0000000000000035e-05,
+        1.0000000000000035e-05,
+        1.0000000000000035e-05,
+        1.0000000000000035e-05,
+        1.0000000000000035e-05,
+        1.0000000000000035e-05,
+        1.0000000000000035e-05,
+        1e-05,
+        1e-05,
+        1e-05
+      ]
+    },
+    {
+      "time_s": 162000.0,
+      "temperature_k": [
+        298.1531606925122,
+        298.1531535077038,
+        298.15313915443187,
+        298.15311766534745,
+        298.1530890893298,
+        298.153053491372,
+        298.15301095243296,
+        298.15296156925257,
+        298.1529054541344,
+        298.15284273469143,
+        298.15277355355863,
+        298.1526980680694
+      ],
+      "pressure_pa": [
+        99999.99999143298,
+        99999.99999155526,
+        99999.99999179947,
+        99999.9999921651,
+        99999.99999265138,
+        99999.99999325712,
+        99999.999993981,
+        99999.99999482132,
+        99999.99999577623,
+        99999.99999684357,
+        99999.99999802088,
+        99999.99999930554
+      ],
+      "porosity": [
+        0.4856196517388809,
+        0.4856192351776027,
+        0.4856184395312832,
+        0.4856173276587802,
+        0.48561596760512044,
+        0.48561441533050903,
+        0.4856127069162204,
+        0.48561085995150927,
+        0.48560887894746885,
+        0.4856067598613205,
+        0.4856044925215128,
+        0.48560206156656377
+      ],
+      "quartz_beta_fraction": [
+        3.729816180919705e-136,
+        3.729772927734781e-136,
+        3.7296865212577934e-136,
+        3.729557161025783e-136,
+        3.729385145714513e-136,
+        3.729170872401364e-136,
+        3.728914835605573e-136,
+        3.728617626095415e-136,
+        3.72827992948159e-136,
+        3.727902524577592e-136,
+        3.727486281543823e-136,
+        3.7270321598069156e-136
+      ],
+      "quartz_transition_strain": [
+        2.366266901995619e-141,
+        2.3608743184377302e-141,
+        2.3501016054475834e-141,
+        2.3339736402721796e-141,
+        2.3125276602620555e-141,
+        2.2858131709728436e-141,
+        2.2538918265072384e-141,
+        2.2168372808007718e-141,
+        2.1747350122520538e-141,
+        2.1276821193024405e-141,
+        2.0757870890539428e-141,
+        2.019169537860449e-141
+      ],
+      "reversible_thermal_strain": [
+        3.160692512210517e-08,
+        3.1535077038142845e-08,
+        3.1391544318921663e-08,
+        3.1176653474744855e-08,
+        3.089089329819217e-08,
+        3.053491372043027e-08,
+        3.010952432987324e-08,
+        2.9615692525908347e-08,
+        2.9054541344066822e-08,
+        2.842734691455462e-08,
+        2.7735535586543848e-08,
+        2.698068069435067e-08
+      ],
+      "permanent_sintering_strain": [
+        -0.009545382114150586,
+        -0.009546184122836898,
+        -0.009547715977006268,
+        -0.009549856637729181,
+        -0.009552475080026598,
+        -0.009555463548812863,
+        -0.00955875256623763,
+        -0.009562308260645483,
+        -0.009566121941747508,
+        -0.009570201388763548,
+        -0.00957456618053203,
+        -0.009579245887309427
+      ],
+      "effective_expansion_coefficient_per_k": [
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05,
+        1e-05
+      ]
+    }
+  ],
+  "field_retention": "Only initial, final and diagnostic-peak representative fields retained here. Full fields are regenerable from parameter_snapshot and are temporary local output, not a historical archive.",
+  "remaining_mechanisms": [
+    "Effective conductivity currently constant; next implement state-dependent heat transport using shared positive face conductances.",
+    "Full pyrolysis product spectrum and mineral liquid-phase kinetics not represented.",
+    "Constrained stress-dependent quartz phase equilibrium, hysteresis and real fracture not represented.",
+    "Same-material experimental validation and parameter estimation remain pending."
+  ],
+  "recorded_utc": "2026-09-28T06:53:14.108356+00:00",
+  "validation_warnings": {
+    "quartz-strain-acceptance": [],
+    "quartz-strain-uq": [],
+    "quartz-strain-calibration": []
+  },
+  "temporary_fields_cleanup": {
+    "path": "runs/full-cycle/quartz-strain/fields.json",
+    "removed_bytes": 16787130,
+    "verified_untracked": true,
+    "all_current_run_sessions_exited_zero": true,
+    "representative_samples_retained": 5,
+    "historical_archives_untouched": true,
+    "removed_utc": "2026-09-28T06:53:14.108356+00:00"
+  },
+  "implementation_and_validation_elapsed_s": 1321.108356
+}

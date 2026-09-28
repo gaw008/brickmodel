@@ -2,8 +2,9 @@
 
 The only strain direction is the slab thickness, at fixed face area. Elastic
 Helmholtz energy gives entropy and internal energy by differentiation. Quartz
-latent heat is a declared smooth two-state free-energy approximation, with no
-phase-volume jump or new claim about high-temperature polymorph stability.
+latent heat is a declared smooth two-state free-energy approximation. Its
+temperature-dependent fraction also drives an assumed effective axial
+eigenstrain, not a measured pure-phase volume jump or hysteresis law.
 """
 import numpy as np
 
@@ -24,6 +25,9 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         self.mixing=self.latent*self.width/self.tc**2
         self.modulus=self.p('solid.axial_modulus','Pa')
         self.alpha=self.p('solid.thermal_expansion','1/K')
+        self.quartz_strain=self.p('quartz.axial_transition_strain','1')
+        self.quartz_reference_fraction=self.initial[:,self.quartz]*self.v[self.quartz]/self.b0
+        self.initial_phase_fraction=self.phase(np.asarray(self.temperatures[0]))[0]
         self.mechanical_iterations=int(self.p('numerics.mechanical_iterations','1'))
         self.initial_prestress=-2/3*self.es0/self.vp0
         self.phase0=self.phase(np.asarray(self.Tr))
@@ -68,6 +72,22 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         cpq,_,_=self.quartz_thermo(T)
         return super().caloric_capacity(T,ns,ng)+ns[:,self.quartz]*(cpq-self.cp[self.quartz])
 
+    def thermal_strain(self,T):
+        """Effective eigenstrain and its first two temperature derivatives.
+
+        The silica inventory is inert in the declared reaction network, so
+        its reference-volume fraction is constant. The phase fraction follows
+        the existing caloric law; stress-induced transition shifts are omitted.
+        """
+        x=self.phase(T)[0]
+        slope=self.latent/(self.mixing*T**2)
+        dx=x*(1-x)*slope
+        ddx=dx*((1-2*x)*slope-2/T)
+        amplitude=self.quartz_strain*self.quartz_reference_fraction
+        transition=amplitude*(x-self.initial_phase_fraction)
+        return (self.alpha*(T-self.temperatures[0])+transition,
+                self.alpha+amplitude*dx,amplitude*ddx,transition)
+
     def unpack(self,y):
         f=y[:9*self.n].reshape(9,self.n)
         T=f[0]*self.Tr
@@ -75,7 +95,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         ns[:,self.reactants]=self.extent_scale*np.exp(-f[1:6].T)
         vs=ns@self.v
         ng=self.initial_gas*np.exp(y[9*self.n:self.last].reshape(self.g,self.n).T)
-        thermal=self.alpha*(T-self.temperatures[0])
+        thermal=self.thermal_strain(T)[0]
         z=f[6]+thermal
         for _ in range(self.mechanical_iterations):
             pore=self.vp0*np.exp(z)
@@ -91,24 +111,25 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         return f,T,ns,vs+pore,pore,surface,2/3*surface/pore
 
     def elastic_strain(self,f,T,bulk):
-        return bulk/self.b0-1-self.alpha*(T-self.temperatures[0])-f[6]+self.initial_prestress/self.modulus
+        return bulk/self.b0-1-self.thermal_strain(T)[0]-f[6]+self.initial_prestress/self.modulus
 
     def mechanical_rates(self,f,T,ns,ng,bulk,pore,cap,pressure,dns,dng,heat,flow,us,ug):
         eps=self.elastic_strain(f,T,bulk)
+        _,beta_prime,beta_second,_=self.thermal_strain(T)
         force=pressure-self.P-cap
         eta_dot=self.ks*np.exp(-self.Es/self.R*(1/T-1/self.Tsref))*pore/(cap*self.b0)*force
         dvs=dns@self.v
         d=self.modulus/self.b0+(pressure-cap/3)/pore
-        a=self.modulus*self.alpha+pressure/T
+        a=self.modulus*beta_prime+pressure/T
         rest=self.modulus*eta_dot+self.R*T/pore*dng.sum(axis=1)+(pressure-cap/3)/pore*dvs
         capacity=self.caloric_capacity(T,ns,ng)
-        effective=capacity-self.modulus*self.b0*T*self.alpha**2+T*a**2/d
+        effective=capacity+self.modulus*self.b0*T*(eps*beta_second-beta_prime**2)+T*a**2/d
         power=heat+flow-np.sum(us*dns,axis=1)-np.sum(ug*dng,axis=1)+cap*dvs
-        power+=self.modulus*self.b0*(eps+T*self.alpha)*eta_dot-T*a*rest/d
+        power+=self.modulus*self.b0*(eps+T*beta_prime)*eta_dot-T*a*rest/d
         dT=power/effective
         db=(a*dT+rest)/d
         dpore=db-dvs
-        elastic_sdot=self.modulus*self.b0*self.alpha*(db/self.b0-self.alpha*dT-eta_dot)
+        elastic_sdot=self.modulus*self.b0*(beta_prime*(db/self.b0-beta_prime*dT-eta_dot)+eps*beta_second*dT)
         self.effective_capacity=effective
         self.mechanical_residual=self.modulus*eps-force
         production=np.sum(self.modulus*self.b0*eps*eta_dot/T)
@@ -116,29 +137,36 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
 
     def additional_storage(self,f,T,bulk):
         eps=self.elastic_strain(f,T,bulk)
-        entropy=self.modulus*self.b0*self.alpha*eps
+        entropy=self.modulus*self.b0*self.thermal_strain(T)[1]*eps
         energy=self.modulus*self.b0*eps**2/2+T*entropy
         return energy,entropy
 
     def solid_fields(self,f,T,bulk):
+        thermal,slope,_,transition=self.thermal_strain(T)
         return {'quartz_beta_fraction':self.phase(T)[0].tolist(),
-                'reversible_thermal_strain':(self.alpha*(T-self.temperatures[0])).tolist(),
+                'reversible_thermal_strain':thermal.tolist(),
+                'quartz_transition_strain':transition.tolist(),
+                'effective_expansion_coefficient_per_k':slope.tolist(),
                 'permanent_sintering_strain':f[6].tolist(),
                 'effective_axial_stress_pa':(self.modulus*self.elastic_strain(f,T,bulk)).tolist()}
 
     def summarize(self,times,states):
         report,fields=super().summarize(times,states)
         residual=report['state_domain']['maximum_mechanical_equilibrium_residual_pa']
-        report['solid_approximation']='Effective constant-area axial equilibrium skeleton; constant assumed modulus and expansion. NIST quartz Cp plus a smooth two-state latent free energy; no phase volume jump, hysteresis, bending or fracture.'
-        report['thermodynamics']['elastic_storage']='F_el=K*V0*epsilon^2/2; S_el=K*V0*alpha*epsilon; U_el=F_el+T*S_el'
+        report['solid_approximation']='Effective constant-area axial equilibrium skeleton with assumed modulus, background expansion and quartz transition eigenstrain. Transition strain follows the caloric fraction weighted by inert quartz reference volume; not a measured pure-phase molar-volume law. No stress-dependent phase equilibrium, hysteresis, bending or fracture.'
+        report['thermodynamics']['elastic_storage']="F_el=K*V0*epsilon^2/2; epsilon=V/V0-1-beta(T)-eta+prestress/K; S_el=K*V0*beta'(T)*epsilon; U_el=F_el+T*S_el"
+        report['thermodynamics']['thermal_eigenstrain']='beta(T)=alpha*(T-T_initial)+e_q*(n_q_initial*v_q/V0)*(x_beta(T)-x_beta(T_initial)); fixed-strain elastic heat capacity=K*V0*T*(epsilon*beta_second-beta_prime^2)'
         report['thermodynamics']['quartz_latent_heat_counted_once']=True
         report['summary']['peak_reversible_thermal_strain']=max(max(r['reversible_thermal_strain']) for r in fields['rows'])
         report['summary']['peak_quartz_beta_fraction']=max(max(r['quartz_beta_fraction']) for r in fields['rows'])
+        report['summary']['peak_quartz_transition_strain']=max(max(r['quartz_transition_strain']) for r in fields['rows'])
+        report['summary']['final_quartz_transition_strain']=float(np.mean(fields['rows'][-1]['quartz_transition_strain']))
+        report['summary']['peak_effective_expansion_coefficient_per_k']=max(max(r['effective_expansion_coefficient_per_k']) for r in fields['rows'])
         report['mechanical_equilibrium_relative']=residual/self.P
         report['physical_consistency_passed']=bool(report['physical_consistency_passed'] and residual/self.P<self.p('acceptance.balance_relative','1'))
         return report,fields
 
     def integrate(self):
         report,fields=super().integrate()
-        report['dimension_check']['identities'] += ['K*V0*epsilon^2=J','K*V0*alpha*epsilon=J/K','L*w/Tc^2=J/mol/K','dh_quartz/dT=Cp_quartz=T*ds_quartz/dT']
+        report['dimension_check']['identities'] += ['K*V0*epsilon^2=J','K*V0*beta_prime*epsilon=J/K','K*V0*T*(epsilon*beta_second-beta_prime^2)=J/K','n_q*v_q/V0=1','L*w/Tc^2=J/mol/K','dh_quartz/dT=Cp_quartz=T*ds_quartz/dT']
         return report,fields
