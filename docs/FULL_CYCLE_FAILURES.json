@@ -9306,6 +9306,40 @@
         }
       },
       "exit_code": 130
+    },
+    {
+      "stage": "carbonization_20260928",
+      "kind": "evidence_processing",
+      "failures": [
+        {
+          "recorded_utc": "2026-09-28T08:34:25.198887+00:00",
+          "step": "write constitutive calculation evidence",
+          "error": "TypeError: Object of type bool is not JSON serializable",
+          "cause": "NumPy boolean from equality of inventory-resolution expressions was passed to JSON",
+          "impact": "Evidence serialization failed; model runs unaffected",
+          "resolution": "Convert the scalar explicitly to Python bool; one retry, no model/tolerance changes"
+        },
+        {
+          "recorded_utc": "2026-09-28T08:41:20.499592+00:00",
+          "step": "extract disabled-path comparison",
+          "error": "KeyError: acceptance.scale.porosity",
+          "cause": "Evidence extraction used scale instead of existing root key prefix acceptance.floor",
+          "impact": "Model integrations and saved reports unaffected",
+          "resolution": "Read existing acceptance implementation, use declared acceptance.floor keys; one retry succeeded"
+        },
+        {
+          "step": "residual-carbon UQ ranking",
+          "kind": "postprocessing defect",
+          "impact": "Exact comparisons ranked signed near-zero residual carbon; physics results and distributions unchanged.",
+          "resolution": "Use root acceptance.floor.residual_carbon_kg for ties; recompute statistics from the same 24 saved runs, zero repeated integrations.",
+          "evidence": "docs/FULL_CYCLE_CARBONIZATION_UQ.json statistics_revision"
+        }
+      ],
+      "model_numerical_failures": [],
+      "acceptance_passed": true,
+      "details": "docs/FULL_CYCLE_CARBONIZATION_RESULTS.json",
+      "uq_passed": true,
+      "synthetic_calibration_passed": true
     }
   ]
 }

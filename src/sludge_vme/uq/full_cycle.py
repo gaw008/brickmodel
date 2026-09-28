@@ -31,6 +31,16 @@ def compare(config: dict, out: Path) -> dict:
                             'worst_stage_balance':max(max(x['relative_residuals'].values()) for x in report['stages'].values())})
             write_json(out/'uncertainty.progress.json', {'completed':False,'records':records})
             print(f"UQ {len(records)}/{count*len(config['scenarios'])}: {scenario['id']}", flush=True)
+    result = summarize_comparison(config, records, time.monotonic()-started)
+    write_json(out/'uncertainty.json',result)
+    (out/'uncertainty.progress.json').unlink()
+    return result
+
+
+def summarize_comparison(config: dict, records: list, elapsed_s: float) -> dict:
+    """Summarize saved paired runs without repeating their integrations."""
+    p = config['parameters']
+    count = int(p['uq.samples']['value'])
     names = [s['id'] for s in config['scenarios']]
     metrics = config['ranking_metrics']
     distributions = {}
@@ -43,13 +53,15 @@ def compare(config: dict, out: Path) -> dict:
             'quantiles':dict(zip(map(str,p['uq.quantiles']['value']), map(float,np.quantile(values[:,i],p['uq.quantiles']['value']))))}
             for i,name in enumerate(names)}
         sign = 1 if direction == 'minimize' else -1
+        tie = p['acceptance.floor.residual_carbon_kg']['value'] if metric == 'residual_carbon_kg' else 0.
         medians = np.median(values,axis=0)
         order = list(np.argsort(sign*medians))
         pairwise = []
         for i in range(len(names)):
             for j in range(i+1,len(names)):
-                wins = sign*values[:,i] < sign*values[:,j]
-                losses = sign*values[:,j] < sign*values[:,i]
+                difference = sign*(values[:,j]-values[:,i])
+                wins = difference > tie
+                losses = difference < -tie
                 f = float(wins.mean())
                 lower = (f+z*z/(2*count)-z*np.sqrt(f*(1-f)/count+z*z/(4*count*count)))/(1+z*z/count)
                 pairwise.append({'first':names[i],'second':names[j], 'first_win_fraction':f,
@@ -59,21 +71,21 @@ def compare(config: dict, out: Path) -> dict:
         best = order[0]
         robust = True
         for other in order[1:]:
-            fraction = float((sign*values[:,best] < sign*values[:,other]).mean())
+            fraction = float((sign*(values[:,other]-values[:,best]) > tie).mean())
             lower = (fraction+z*z/(2*count)-z*np.sqrt(fraction*(1-fraction)/count+z*z/(4*count*count)))/(1+z*z/count)
             robust = robust and lower >= p['uq.robust_fraction']['value']
         rankings[metric] = {'direction':direction,'order_by_median':[names[i] for i in order],
             'winner_robust_under_declared_sampling':bool(robust),'pairwise':pairwise,
-            'median_ties':[[names[i],names[j]] for i in range(len(names)) for j in range(i+1,len(names)) if medians[i]==medians[j]]}
+            'absolute_tie_threshold':tie,
+            'ordering_note':'Raw median order does not distinguish pairs listed in median_ties; raw signed inventories remain unchanged.',
+            'median_ties':[[names[i],names[j]] for i in range(len(names)) for j in range(i+1,len(names)) if abs(medians[i]-medians[j])<=tie]}
     result = {'schema':'sludge_vme_full_cycle_uq_v1','measurement_kind':'simulation',
         'sampling':'Paired iid uniform draws inside declared parameter ranges. Not experimental confidence intervals. No aggregate score across conflicting objectives.',
         'scope_note':config['uncertainty_scope_note'],
         'conditioned_parameter_values':{k:p[k]['value'] for k in config['uncertainty_fixed_parameters']},
         'samples_per_scenario':count,'scenario_count':len(names),'distributions':distributions,'rankings':rankings,
         'all_physical_consistency_passed':all(r['physical_consistency_passed'] for r in records),
-        'sampled_parameter_names':parameters,
+        'sampled_parameter_names':config['uncertain_parameters'],
         'all_conservation_passed':all(r['conservation_passed'] for r in records),'records':records,
-        'elapsed_s':time.monotonic()-started,'limitation':'Small sample ensemble is exploratory. Wilson bounds explicitly prevent calling a small unanimous sample a proven robust ranking.'}
-    write_json(out/'uncertainty.json',result)
-    (out/'uncertainty.progress.json').unlink()
+        'elapsed_s':elapsed_s,'limitation':'Small sample ensemble is exploratory. Wilson bounds do not establish robustness for small unanimous samples. Residual-carbon differences at or below the declared acceptance floor are ties, not evidence of process improvement.'}
     return result

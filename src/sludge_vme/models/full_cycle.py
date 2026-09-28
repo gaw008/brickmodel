@@ -23,7 +23,7 @@ from ..chemistry.formula import parse_formula
 def read_parameters(path: str | Path) -> dict:
     config = json.loads(Path(path).read_text())
     entries = list(config["parameters"].items())
-    for scenario in config['scenarios']:
+    for scenario in config['scenarios'] + config['mechanism_cases']:
         for name, item in scenario['overrides'].items():
             if item['unit'] != config['parameters'][name]['unit']:
                 raise ValueError(f'scenario override unit mismatch: {name}')
@@ -105,6 +105,18 @@ class FullCycle:
             self.initial[:, self.ns.index(s)] = self.md * x / self.mw[self.names.index(s)]
         self.initial[:, self.ns.index("water")] = self.md * self.p("material.water_dry_ratio", "kg/kg") / self.mw[self.ns.index("water")]
         self.extent_scale = self.initial[0, self.reactants]
+        self.depleted = [self.ns.index(s) for s in ('water', 'kaolin', 'calcite', 'organic')]
+        self.char = self.ns.index('char')
+        self.organic = self.ns.index('organic')
+        self.depletion_loss = -self.snu[:, self.depleted]
+        # Reference routes reconstruct non-carbon products from depletion.
+        # The competing organic routes differ only in char/gas production;
+        # char has its own inventory coordinate, including when initially zero.
+        reference_routes = [self.reactants.index(s) for s in self.depleted]
+        self.depletion_products = self.snu[reference_routes]
+        self.chemical_scale = self.md/self.mw[self.char]
+        self.conversion_scale = self.extent_scale.copy()
+        self.conversion_scale[np.array(self.reactants) == self.char] = self.initial[0,self.char]+self.initial[0,self.organic]
         self.vs0 = self.initial @ self.v
         self.water_index = self.ns.index("water")
         self.dry_solid_fraction0 = (self.vs0-self.initial[:, self.water_index]*self.v[self.water_index])/self.b0
@@ -133,7 +145,8 @@ class FullCycle:
         self.surface_iterations = int(self.p("numerics.surface_iterations", "1"))
         self.nscale = float(self.initial.sum())
         self.escale = float(np.sum(self.initial * self.cp[:len(self.ns)]) * self.Tr)
-        self.last = 9 * self.n
+        self.extent_offset = 9 * self.n
+        self.last = self.extent_offset + self.nr*self.n
 
     def p(self, key: str, unit: str):
         item = self.config["parameters"][key]
@@ -142,13 +155,31 @@ class FullCycle:
         self.used_units[key] = unit
         return item["value"]
 
+    def condensed_state(self, fields):
+        """Four depletion coordinates plus a produced/consumed char inventory."""
+        consumed = self.initial[:,self.depleted]*(-np.expm1(-fields[1:5].T))
+        ns = self.initial + consumed@self.depletion_products
+        ns[:,self.depleted] = self.initial[:,self.depleted]*np.exp(-fields[1:5].T)
+        ns[:,self.char] = fields[5]*self.chemical_scale
+        return ns
+
+    def chemical_coordinate_rates(self, hazard, rate):
+        # Both organic routes add to its log-depletion rate. Char instead
+        # follows the net molar source, so no initial char seed is required.
+        depletion = hazard@self.depletion_loss*(self.initial[:,self.depleted] != 0)
+        char = (rate@self.snu)[:,self.char]/self.chemical_scale
+        return depletion.T, char
+
+    def reaction_fields(self, y):
+        extent = y[self.extent_offset:self.last].reshape(self.nr,self.n).T*self.chemical_scale
+        conversion = np.divide(extent,self.conversion_scale,out=np.zeros_like(extent),where=self.conversion_scale != 0)
+        return {'reaction_extent_mol':{r['id']:extent[:,i].tolist() for i,r in enumerate(self.config['reactions'])},
+                'conversion':{r['id']:conversion[:,i].tolist() for i,r in enumerate(self.config['reactions'])}}
+
     def unpack(self, y):
-        fields = y[:self.last].reshape(9, self.n)
+        fields = y[:9*self.n].reshape(9, self.n)
         T = fields[0] * self.Tr
-        conversion = -np.expm1(-fields[1:1+self.nr].T)
-        extents = conversion * self.extent_scale
-        ns = self.initial + extents @ self.snu
-        ns[:, self.reactants] = self.extent_scale * np.exp(-fields[1:1+self.nr].T)
+        ns = self.condensed_state(fields)
         pore = self.vp0 * np.exp(fields[6])
         bulk = pore + ns @ self.v
         surface_energy = self.es0 * (pore / self.vp0) ** (2/3)
@@ -232,11 +263,11 @@ class FullCycle:
     def rhs(self, t, y):
         dT, rates, db, heat, flow, fin, fout, _, _, _, production, exchange, hazard = self.rates(t, y)
         dy = np.zeros_like(y)
-        d = dy[:self.last].reshape(9, self.n)
+        d = dy[:9*self.n].reshape(9, self.n)
         d[0] = dT/self.Tr
-        # A zero reactant inventory is an explicitly absent recipe component.
-        d[1:6] = (hazard * (self.extent_scale != 0)).T
-        pore = self.vp0 * np.exp(y[:self.last].reshape(9, self.n)[6])
+        d[1:5], d[5] = self.chemical_coordinate_rates(hazard, rates)
+        dy[self.extent_offset:self.last] = rates.T.ravel()/self.chemical_scale
+        pore = self.vp0 * np.exp(y[:9*self.n].reshape(9, self.n)[6])
         d[6] = (db - (rates@self.snu)@self.v)/pore
         d[7] = heat/self.escale
         d[8] = flow/self.escale
@@ -248,8 +279,9 @@ class FullCycle:
 
     def initial_state(self):
         y = np.zeros(self.last+2*len(self.ng)+2)
-        f = y[:self.last].reshape(9, self.n)
+        f = y[:9*self.n].reshape(9, self.n)
         f[0] = self.temperatures[0]/self.Tr
+        f[5] = self.initial[:,self.char]/self.chemical_scale
         return y
 
     def integrate(self):
@@ -285,7 +317,8 @@ class FullCycle:
             rows.append({"time_s":float(t),"kiln_temperature_k":rate[8],"temperature_k":T.tolist(),
                 "x_m":(np.cumsum(bulk/self.area)-bulk/self.area/2).tolist(),
                 "water_kg_per_initial_dry_kg":(ns[:,self.ns.index('water')]*mw_s[self.ns.index('water')]/self.md).tolist(),
-                "conversion":{r['id']:(-np.expm1(-f[1+i])).tolist() for i,r in enumerate(self.config['reactions'])},
+                **self.reaction_fields(y),
+                "char_inventory_mol":ns[:,self.char].tolist(),
                 "residual_carbon_kg":((ns[:,self.ns.index('organic')]+ns[:,self.ns.index('char')])*self.atomic[self.elements.index('C')]).tolist(),
                 "gas_mole_fractions":{s:rate[7][:,i].tolist() for i,s in enumerate(self.ng)},
                 "pressure_pa":[self.P]*self.n,"porosity":(pore/bulk).tolist(),"thickness_shrinkage":(1-bulk/self.b0).tolist(),

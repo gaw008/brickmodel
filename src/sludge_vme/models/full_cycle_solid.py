@@ -91,10 +91,9 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
     def unpack(self,y):
         f=y[:9*self.n].reshape(9,self.n)
         T=f[0]*self.Tr
-        ns=self.initial+(-np.expm1(-f[1:6].T)*self.extent_scale)@self.snu
-        ns[:,self.reactants]=self.extent_scale*np.exp(-f[1:6].T)
+        ns=self.condensed_state(f)
         vs=ns@self.v
-        ng=self.initial_gas*np.exp(y[9*self.n:self.last].reshape(self.g,self.n).T)
+        ng=self.initial_gas*np.exp(y[9*self.n:self.extent_offset].reshape(self.g,self.n).T)
         thermal=self.thermal_strain(T)[0]
         z=f[6]+thermal
         for _ in range(self.mechanical_iterations):

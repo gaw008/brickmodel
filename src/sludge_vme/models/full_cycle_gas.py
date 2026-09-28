@@ -20,7 +20,8 @@ class FiniteGasFullCycle(FullCycle):
     def __init__(self, config):
         super().__init__(config)
         self.g = len(self.ng)
-        self.last = (9 + self.g) * self.n
+        self.extent_offset = (9 + self.g) * self.n
+        self.last = self.extent_offset + self.nr*self.n
         self.initial_gas = self.vp0[:, None] * self.P / (self.R*self.temperatures[0]) * self.inlet
         self.diffusion = self.p('transport.diffusivity_ref', 'm2/s')
         self.diffusion_exponent = self.p('transport.diffusivity_exponent', '1')
@@ -29,6 +30,7 @@ class FiniteGasFullCycle(FullCycle):
         self.tortuosity = self.p('transport.tortuosity', '1')
         self.permeability = self.p('transport.permeability_ref', 'm2')
         self.oxygen_order = self.p('kinetics.oxygen_order', '1')
+        self.oxygen_reference = self.p('kinetics.oxygen_reference_pressure', 'Pa')
         self.phi0 = self.vp0/self.b0
         self.jacobian_step = self.p('numerics.jacobian_step', '1')
         self.jacobian_scale = self.p('numerics.jacobian_state_scale', '1')
@@ -38,7 +40,7 @@ class FiniteGasFullCycle(FullCycle):
         return super().unpack(y[:9*self.n])
 
     def gas_state(self, y, temperature, pore):
-        inventory = self.initial_gas * np.exp(y[9*self.n:self.last].reshape(self.g, self.n).T)
+        inventory = self.initial_gas * np.exp(y[9*self.n:self.extent_offset].reshape(self.g, self.n).T)
         partial = inventory*self.R*temperature[:, None]/pore[:, None]
         return inventory, partial, partial.sum(axis=1)
 
@@ -96,7 +98,7 @@ class FiniteGasFullCycle(FullCycle):
         affinity = dg/(self.R*T[:, None])
         drive = -np.expm1(np.where(affinity.real < 0, affinity, 0))
         hazard = self.A*np.exp(-self.Ea/(self.R*T[:, None]))*drive
-        oxygen_factor = (partial[:, self.oxygen]/(self.P*self.inlet[self.oxygen]))**self.oxygen_order
+        oxygen_factor = (partial[:, self.oxygen]/self.oxygen_reference)**self.oxygen_order
         hazard[:, self.gnu[:, self.oxygen] < 0] *= oxygen_factor[:, None]
         rate = hazard*ns[:, self.reactants]
         dns = rate@self.snu
@@ -147,6 +149,7 @@ class FiniteGasFullCycle(FullCycle):
     def initial_state(self):
         y = np.zeros(self.last+2*self.g+3)
         y[:self.n] = self.temperatures[0]/self.Tr
+        y[5*self.n:6*self.n] = self.initial[:,self.char]/self.chemical_scale
         return y
 
     def rhs(self, t, y):
@@ -155,11 +158,12 @@ class FiniteGasFullCycle(FullCycle):
         dy = np.zeros_like(y)
         f = dy[:9*self.n].reshape(9, self.n)
         f[0] = r['dT']/self.Tr
-        f[1:6] = (r['hazard']*(self.extent_scale != 0)).T
+        f[1:5], f[5] = self.chemical_coordinate_rates(r['hazard'],r['rate'])
         f[6] = r['coordinate_rate']
         f[7] = r['heat']/self.escale
         f[8] = r['flow']/self.escale
-        dy[9*self.n:self.last] = (r['dng']/r['gas']).T.ravel()
+        dy[9*self.n:self.extent_offset] = (r['dng']/r['gas']).T.ravel()
+        dy[self.extent_offset:self.last] = r['rate'].T.ravel()/self.chemical_scale
         boundary = r['gas_flux'][-1]
         dy[self.last:self.last+self.g] = np.where(boundary.real < 0, -boundary, 0)/self.nscale
         dy[self.last+self.g:self.last+2*self.g] = np.where(boundary.real > 0, boundary, 0)/self.nscale
@@ -171,7 +175,7 @@ class FiniteGasFullCycle(FullCycle):
         # The integrated diagnostic ledgers never feed back into physical RHS.
         # Their exact zero columns are supplied, not repeatedly differentiated.
         result = np.zeros((len(y), len(y)))
-        for index in np.r_[np.arange(7*self.n), np.arange(9*self.n, self.last)]:
+        for index in np.r_[np.arange(7*self.n), np.arange(9*self.n, self.extent_offset)]:
             trial = y.astype(complex)
             step = self.jacobian_step*max(abs(y[index]), self.jacobian_scale)
             trial[index] += 1j*step
@@ -234,7 +238,8 @@ class FiniteGasFullCycle(FullCycle):
             rows.append({'time_s':float(t),'kiln_temperature_k':r['kiln_T'],'temperature_k':T.tolist(),
                 'x_m':(np.cumsum(bulk/self.area)-bulk/self.area/2).tolist(),
                 'water_kg_per_initial_dry_kg':(ns[:,self.ns.index('water')]*self.mw[self.ns.index('water')]/self.md).tolist(),
-                'conversion':{reaction['id']:(-np.expm1(-f[1+i])).tolist() for i,reaction in enumerate(self.config['reactions'])},
+                **self.reaction_fields(y),
+                'char_inventory_mol':ns[:,self.char].tolist(),
                 'residual_carbon_kg':((ns[:,self.ns.index('organic')]+ns[:,self.ns.index('char')])*self.atomic[self.elements.index('C')]).tolist(),
                 'gas_mole_fractions':{s:r['gas_fractions'][:,i].tolist() for i,s in enumerate(self.ng)},
                 'gas_inventory_mol':{s:ng[:,i].tolist() for i,s in enumerate(self.ng)},
@@ -284,11 +289,13 @@ class FiniteGasFullCycle(FullCycle):
             'strength_pa':self.p('product.dense_strength','Pa')*float(np.exp(-self.p('product.porosity_coefficient','1')*phi)),
             'defect_indicator':float(-np.expm1(-peak/self.p('product.gradient_scale','K'))),
             'minimum_sampled_entropy_production_w_k':min_entropy}
+        summary['peak_char_inventory_kg'] = max(sum(r['char_inventory_mol'])*self.mw[self.char] for r in rows)
+        summary['reaction_totals_mol'] = {name:float(sum(values)) for name,values in final['reaction_extent_mol'].items()}
         whole=balance(0,len(times)-1)
         entropy_error=entropies-entropies[0]-states[:,-2:].sum(axis=1)*self.escale/self.Tr
         entropy_relative=float(np.max(np.abs(entropy_error))/(self.escale/self.Tr))
         inventory_roundoff = self.p('acceptance.inventory_roundoff_factor','1')*np.finfo(float).eps*self.nscale
-        inventory_solver_budget=self.p('numerics.atol','1')*float(np.max(self.extent_scale@np.abs(self.snu)))
+        inventory_solver_budget=self.p('numerics.atol','1')*max(self.chemical_scale,float(np.max(self.extent_scale@np.abs(self.snu))))
         inventory_budget=inventory_roundoff+inventory_solver_budget
         drying=int(np.where(times==self.times[self.config['stages'].index('drying')+1])[0][0])
         remaining=max(rows[drying]['water_kg_per_initial_dry_kg'])/self.p('material.water_dry_ratio','kg/kg')
@@ -296,6 +303,7 @@ class FiniteGasFullCycle(FullCycle):
         report={'schema':'sludge_vme_full_cycle_result_v2','scope':self.config['scope'],'material_applicability':'待实测','real_world_validation':'待实测',
             'gas_approximation':'Stored ideal O2/N2/H2O/CO2 gas, common-D molar diffusion plus donor Darcy flow with entropy-compatible carried enthalpy; assumed diffusivity and pore properties. No imposed internal pressure or independent per-cell sweep.',
             'thermal_approximation':'Assumed k=k_ref*(dry_solid_fraction/initial_dry_solid_fraction)^m*(1+b*liquid_water_volume_fraction). Total pores include liquid water plus stored gas; existing porosity output remains gas-filled volume/bulk. Shared face conductance uses two half-cell resistances. No explicit intrinsic temperature/mineral dependence, pore radiation or liquid migration; coefficients unmeasured.',
+            'reaction_approximation':'Competing organic oxidation and lumped CH2O -> C + H2O carbonization share the organic inventory. Char inventory receives carbonization products and loses oxidation products; it is not overwritten by an initial-char depletion formula. All pathways use the same stoichiometry, formation-energy reference and affinity. No complete pyrolysis spectrum or distinct char reactivity populations. Conversion denominators are initial reactant moles, except char oxidation uses initial char plus potential organic carbon.',
             'summary':summary,'whole_cycle':whole,'stages':stages,'conservation_passed':whole['passed'] and all(s['passed'] for s in stages.values()),
             'thermodynamics':{'minimum_sampled_entropy_production_w_k':min_entropy,'minimum_face_entropy_production_w_k':min_face,
                 'reaction_heat_counted_once':True,'maximum_entropy_balance_residual_j_k':float(np.max(np.abs(entropy_error))),

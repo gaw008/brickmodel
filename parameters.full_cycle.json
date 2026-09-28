@@ -1,6 +1,6 @@
 {
   "schema": "sludge_vme_full_cycle_v3",
-  "scope": "Source-traceable approximate full firing cycle with stored pore gas, quartz caloric transition and effective eigenstrain, axial thermo-viscoelastic skeleton and porosity/moisture-dependent conductivity; material applicability and real-world accuracy pending measurements.",
+  "scope": "Source-traceable approximate full firing cycle with stored pore gas, competing organic oxidation/carbonization and produced-char inventory, quartz thermoelastic skeleton and state-dependent conductivity; material applicability and real-world accuracy pending measurements.",
   "sources": {
     "policy": {
       "identity": "assumed",
@@ -65,6 +65,11 @@
       "identity": "assumed",
       "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle.py effective_conductivity",
       "note": "Engineering closure for effective dry-solid connectivity and liquid pore filling, not a measured homogenization law. Fourier transport uses positive state-dependent k and series half-cell resistances; no extra stored or reaction energy. Exponent and liquid-volume gain are uncalibrated assumptions. Initial dry reference fraction is derived from root recipe and constituent molar volumes."
+    },
+    "lumped_carbonization": {
+      "identity": "assumed",
+      "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle.py condensed_state and chemical_coordinate_rates",
+      "note": "Explicit engineering CH2O -> C + H2O pathway using existing proxy species, atom-balanced stoichiometry and the same formation enthalpy/entropy reference. Not a fitted sludge pyrolysis spectrum. Arrhenius coefficients and common reactivity of initial/generated char are assumed; no new independent reaction heat."
     }
   },
   "parameters": {
@@ -952,7 +957,7 @@
       "value": 0.209,
       "unit": "1",
       "range": [
-        0.209,
+        0.01,
         0.209
       ],
       "source": "policy",
@@ -964,7 +969,7 @@
       "unit": "1",
       "range": [
         0.78,
-        0.78
+        0.979
       ],
       "source": "policy",
       "status": "assumed",
@@ -1221,7 +1226,7 @@
       ],
       "source": "policy",
       "status": "assumed",
-      "note": "Declared before runs: denominator=max(abs(refined value),floor)."
+      "note": "Declared denominator floor for near-zero residual carbon. Paired UQ residual-carbon differences at or below this same absolute floor are reported as ties; raw signed inventories are retained."
     },
     "acceptance.floor.shrinkage": {
       "value": 0.001,
@@ -1750,7 +1755,7 @@
       ],
       "source": "policy",
       "status": "assumed",
-      "note": "Oxidation rate proportional to local O2 partial pressure relative to inlet O2 pressure; replaces carrier-throughput caps in stored-gas mode."
+      "note": "Oxidation rate proportional to local oxygen partial pressure divided by a fixed, explicitly declared kinetics.oxygen_reference_pressure; changing inlet oxygen does not change the kinetic reference."
     },
     "acceptance.entropy_relative": {
       "value": 0.001,
@@ -2037,6 +2042,39 @@
       "source": "effective_conductivity",
       "status": "assumed",
       "note": "Dimensionless multiplier of liquid water volume/bulk volume. At fixed total pore fraction, replacing gas with liquid raises k. Zero removes the moisture correction. With both correction coefficients zero, k equals the former constant reference."
+    },
+    "kinetics.organic_carbonization.A": {
+      "value": 1000000.0,
+      "unit": "1/s",
+      "range": [
+        0.0,
+        2000000.0
+      ],
+      "source": "lumped_carbonization",
+      "status": "assumed",
+      "note": "Effective proxy Arrhenius prefactor; zero disables only this pathway for an explicit mechanism comparison."
+    },
+    "kinetics.organic_carbonization.E": {
+      "value": 110000.0,
+      "unit": "J/mol",
+      "range": [
+        99000.0,
+        121000.0
+      ],
+      "source": "lumped_carbonization",
+      "status": "assumed",
+      "note": "Effective activation energy for the single assumed CH2O carbonization pathway, not a measured pyrolysis distribution."
+    },
+    "kinetics.oxygen_reference_pressure": {
+      "value": 20900.0,
+      "unit": "Pa",
+      "range": [
+        10000.0,
+        40000.0
+      ],
+      "source": "lumped_carbonization",
+      "status": "assumed",
+      "note": "Fixed kinetic normalization pressure. Unlike inlet pressure normalization, it does not change when oxygen-poor reservoir conditions are selected."
     }
   },
   "species": [
@@ -2151,6 +2189,16 @@
         "CO2": 1
       },
       "kinetics_basis": "Stored-gas mode uses local chemical affinity including surface energy, with explicit oxygen-order factor; swept mode retains conservative carrier bounds."
+    },
+    {
+      "id": "organic_carbonization",
+      "reactant": "organic",
+      "stoichiometry": {
+        "organic": -1,
+        "char": 1,
+        "H2O": 1
+      },
+      "kinetics_basis": "Lumped oxygen-independent first-order carbonization competes for the same organic inventory as oxidation; affinity-limited. Produced char can subsequently oxidize."
     }
   ],
   "stages": [
@@ -2246,7 +2294,9 @@
     "solid.thermal_expansion",
     "quartz.axial_transition_strain",
     "thermal.solid_fraction_exponent",
-    "thermal.liquid_volume_gain"
+    "thermal.liquid_volume_gain",
+    "kinetics.organic_carbonization.A",
+    "kinetics.organic_carbonization.E"
   ],
   "calibration_parameters": [
     "thermal.h",
@@ -2299,5 +2349,77 @@
   "uncertainty_fixed_parameters": [
     "transport.permeability_ref"
   ],
-  "uncertainty_scope_note": "Twelve selected parameters including conductivity solid-fraction exponent, liquid-volume gain and quartz transition eigenstrain sampled in declared assumed ranges. Permeability remains fixed at its nominal value after two cost-limited broad-permeability attempts. All other parameters fixed except scenario controls. Results apply only to this constitutive closure and selected ranges; they do not prove permeability-range robustness, all-parameter robustness or measured material validity. Prior nine- and ten-parameter ensembles remain historical."
+  "uncertainty_scope_note": "Fourteen selected parameters including assumed carbonization prefactor and activation energy sampled in declared ranges. Permeability fixed at 3.75e-14 m2; oxygen kinetic reference and inlet atmosphere fixed. These small paired ensembles do not prove all-parameter, permeability-range or oxygen-poor robustness. Previous ensembles belong to their historical model versions.",
+  "mechanism_cases": [
+    {
+      "id": "carbonization_disabled",
+      "overrides": {
+        "kinetics.organic_carbonization.A": {
+          "value": 0.0,
+          "unit": "1/s",
+          "range": [
+            0.0,
+            2000000.0
+          ],
+          "status": "assumed",
+          "source": "lumped_carbonization",
+          "note": "Declared virtual mechanism calculation; not measured operating data."
+        }
+      }
+    },
+    {
+      "id": "oxygen_poor",
+      "overrides": {
+        "gas.inlet.O2": {
+          "value": 0.01,
+          "unit": "1",
+          "range": [
+            0.01,
+            0.209
+          ],
+          "status": "assumed",
+          "source": "lumped_carbonization",
+          "note": "Declared virtual mechanism calculation; not measured operating data."
+        },
+        "gas.inlet.N2": {
+          "value": 0.979,
+          "unit": "1",
+          "range": [
+            0.78,
+            0.979
+          ],
+          "status": "assumed",
+          "source": "lumped_carbonization",
+          "note": "Declared virtual mechanism calculation; not measured operating data."
+        }
+      }
+    },
+    {
+      "id": "initial_char_absent",
+      "overrides": {
+        "recipe.char": {
+          "value": 0.0,
+          "unit": "kg/kg",
+          "range": [
+            0.0,
+            1.0
+          ],
+          "status": "assumed",
+          "source": "lumped_carbonization",
+          "note": "Declared virtual mechanism calculation; not measured operating data."
+        },
+        "recipe.organic": {
+          "value": 0.025,
+          "unit": "kg/kg",
+          "range": [
+            0.0,
+            1.0
+          ],
+          "status": "assumed",
+          "source": "lumped_carbonization",
+          "note": "Declared virtual mechanism calculation; not measured operating data."
+        }
+      }
+    }
+  ]
 }
