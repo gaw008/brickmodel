@@ -590,6 +590,66 @@ class FiniteGasFullCycle(FullCycle):
                 'pair_flux=C_pair*(yLi*yRj-yRi*yLj)=mol/s; pair_entropy=R*pair_flux*log(yLi*yRj/(yRi*yLj))=W/K']}
         return report, fields
 
+    def water_phase_affinity_decomposition(self,fields,T,ns,bulk,cap,r,h,s):
+        """Report independently evaluated evaporation-affinity contributions.
+
+        Every sign comes from the existing evaporation stoichiometry. The
+        background h/s already include the model's reference conventions;
+        this adds no thermodynamic law or correction to the forward model.
+        """
+        vapor=self.ng.index('H2O')
+        vapor_column=len(self.ns)+vapor
+        water_stoich=self.snu[self.evaporation,self.water_index]
+        vapor_stoich=self.gnu[self.evaporation,vapor]
+        kaolin_stoich=self.snu[self.evaporation,self.kaolin]
+        reaction_volume=self.snu[self.evaporation]@self.v
+        skeleton=self.skeleton_chemical_potential(fields,T,ns,bulk)
+        binding=r['water_binding']
+        terms={
+            'liquid_water_background':water_stoich*(h[:,self.water_index]-T*s[:,self.water_index]),
+            'vapor_background':vapor_stoich*(h[:,vapor_column]-T*s[:,vapor_column]),
+            'vapor_partial_pressure':vapor_stoich*self.R*T*np.log(r['partial'][:,vapor]/self.Pr),
+            'mechanical_pressure':reaction_volume*(r['pressure']-self.P),
+            'capillary':-reaction_volume*cap,
+            'skeleton_composition':skeleton@self.snu[self.evaporation],
+            'ideal_water_mixing':water_stoich*self.R*T*r['water_mixing_log_activity'],
+            'water_binding':water_stoich*binding['mu'],
+            'retention_site_composition':kaolin_stoich*binding['kaolin_mu'],
+        }
+        summed=sum(terms.values())
+        cells=[]
+        for i in range(self.n):
+            cells.append({
+                'identity':'simulation', 'constitutive_identity':'assumed',
+                'sign_convention':'Evaporation affinity is mu_vapor-mu_liquid_water; each contribution is weighted by the existing signed reaction stoichiometry.',
+                'contribution_unit':'J/mol',
+                'stoichiometry':self.config['reactions'][self.evaporation]['stoichiometry'].copy(),
+                'inputs':{
+                    'temperature_k':float(T[i]), 'gas_constant_j_mol_k':self.R,
+                    'liquid_water_background_h_j_mol':float(h[i,self.water_index]),
+                    'liquid_water_background_s_j_mol_k':float(s[i,self.water_index]),
+                    'vapor_background_h_j_mol':float(h[i,vapor_column]),
+                    'vapor_background_s_j_mol_k':float(s[i,vapor_column]),
+                    'vapor_partial_pressure_pa':float(r['partial'][i,vapor]),
+                    'reference_pressure_pa':self.Pr, 'pore_gas_pressure_pa':float(r['pressure'][i]),
+                    'external_pressure_pa':self.P, 'capillary_pressure_pa':float(cap[i]),
+                    'liquid_water_molar_volume_m3_mol':float(self.v[self.water_index]),
+                    'reaction_condensed_volume_m3_mol':float(reaction_volume),
+                    'water_mixing_log_activity':float(r['water_mixing_log_activity'][i]),
+                    'water_binding_mu_j_mol':float(binding['mu'][i]),
+                    'water_binding_free_coefficient_j_mol':float(binding['free_coefficient'][i]),
+                    'water_binding_partial_weight':float(binding['slope'][i]),
+                    'retention_site_kaolin_mu_j_mol':float(binding['kaolin_mu'][i]),
+                    'skeleton_mu_j_mol':{name:float(skeleton[i,j]) for j,name in enumerate(self.ns)},
+                },
+                'contributions_j_mol':{name:float(value[i]) for name,value in terms.items()},
+                'summed_affinity_j_mol':float(summed[i]),
+                'original_affinity_j_mol':float(r['water_phase_affinity'][i]),
+                'reconstruction_residual_j_mol':float(summed[i]-r['water_phase_affinity'][i]),
+                'interpretation':'Same drying-end state, existing assumed constitutive laws; an arithmetic decomposition, not material validation or a new equilibrium calculation.',
+            })
+        return cells
+
     def summarize(self, times, states):
         rows=[]; inventories=[]; energies=[]; entropies=[]; heat=[]; flow=[]; bulks=[]
         minimum_capacity=float('inf'); maximum_mechanical_residual=0.
@@ -599,6 +659,8 @@ class FiniteGasFullCycle(FullCycle):
             r = self.rates(t,y)
             radiative_conductivity = self.pore_radiative_conductivity(T,ns,bulk)
             ng = r['gas']; h,s = self.state_thermo(T,f)
+            if t == self.times[self.config['stages'].index('drying')+1]:
+                drying_affinity_decomposition=self.water_phase_affinity_decomposition(f,T,ns,bulk,cap,r,h,s)
             inventories.append(np.r_[ns.sum(axis=0),ng.sum(axis=0)])
             energy=np.sum(ns*(h[:, :len(self.ns)]-self.P*self.v))+np.sum(ng*(h[:, len(self.ns):]-self.R*T[:, None]))+surface.sum()
             entropy=np.sum(ns*s[:, :len(self.ns)])+np.sum(ng*(s[:, len(self.ns):]-self.R*np.log(r['partial']/self.Pr)))
@@ -808,6 +870,8 @@ class FiniteGasFullCycle(FullCycle):
             self.config,rows[drying_start],rows[drying],
             boundary_in_mol=gasin[drying,vapor_index]-gasin[drying_start,vapor_index],
             boundary_out_mol=gasout[drying,vapor_index]-gasout[drying_start,vapor_index])
+        for cell,decomposition in zip(report['drying_water_diagnostics']['end_state_cells'],drying_affinity_decomposition):
+            cell['affinity_decomposition']=decomposition
         report['example_endpoints']={'drying_remaining_fraction':remaining,'cooling_maximum_temperature_difference_k':cooled,
             'passed':bool(remaining<self.p('acceptance.drying_remaining_fraction','1') and cooled<self.p('acceptance.cooling_temperature_difference','K'))}
         report['physical_consistency_passed']=bool(report['conservation_passed'] and min_condensed>=-inventory_budget and min_gas>0
