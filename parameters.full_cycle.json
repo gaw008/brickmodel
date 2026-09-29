@@ -160,6 +160,11 @@
       "identity": "assumed",
       "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py molecular_transport",
       "note": "Positive symmetric pair-mobility approximation derived for zero total molecular molar flux and nonnegative pair entropy. Six relative factors are declared illustrative hypotheses, not measured or literature binary diffusion. No Maxwell-Stefan friction inversion or Knudsen/Soret physics."
+    },
+    "mixture_viscosity": {
+      "identity": "assumed",
+      "location": "https://idaes-pse.readthedocs.io/en/stable/explanations/components/property_package/general/transport_properties/viscosity_wilke.html; docs/FULL_CYCLE_REPORT.md",
+      "note": "Wilke low-pressure mixing equation verified in official IDAES documentation. Four pure-species reference multipliers, shared temperature power, symmetric face composition and mixing interpolation are explicit assumptions, not measured viscosity curves. Original Wilke AIP page inaccessible during this narrow check; no original-paper full-text verification claimed."
     }
   },
   "parameters": {
@@ -1801,7 +1806,7 @@
       ],
       "source": "porous_transport",
       "status": "assumed",
-      "note": "Assumed mixture viscosity at reference temperature, shared by species."
+      "note": "Assumed common viscosity scale at reference temperature; new species multipliers and Wilke mixing determine the nominal mixture. Zero mixing restores preceding common gas viscosity."
     },
     "transport.viscosity_exponent": {
       "value": 0.7,
@@ -2847,6 +2852,61 @@
       "source": "pair_diffusion",
       "status": "assumed",
       "note": "Symmetric relative pair mobility for H2O_CO2. Illustrative contrast about the existing D_ref, not empirical binary diffusivity. Fixed in current paired UQ and three-parameter synthetic fit; range/correlations not covered or identified. All six factors equal one restore preceding common-D law."
+    },
+    "transport.viscosity_factor.O2": {
+      "value": 1.12,
+      "unit": "1",
+      "range": [
+        0.4,
+        1.4
+      ],
+      "source": "mixture_viscosity",
+      "status": "assumed",
+      "note": "Illustrative pure O2 viscosity relative to existing mu_ref at T_ref; not a measured property or fit. All gases share the existing temperature exponent. Fixed in paired UQ and three-parameter synthetic recovery; range and correlations not covered or identified."
+    },
+    "transport.viscosity_factor.N2": {
+      "value": 0.98,
+      "unit": "1",
+      "range": [
+        0.4,
+        1.4
+      ],
+      "source": "mixture_viscosity",
+      "status": "assumed",
+      "note": "Illustrative pure N2 viscosity relative to existing mu_ref at T_ref; not a measured property or fit. All gases share the existing temperature exponent. Fixed in paired UQ and three-parameter synthetic recovery; range and correlations not covered or identified."
+    },
+    "transport.viscosity_factor.H2O": {
+      "value": 0.55,
+      "unit": "1",
+      "range": [
+        0.4,
+        1.4
+      ],
+      "source": "mixture_viscosity",
+      "status": "assumed",
+      "note": "Illustrative pure H2O viscosity relative to existing mu_ref at T_ref; not a measured property or fit. All gases share the existing temperature exponent. Fixed in paired UQ and three-parameter synthetic recovery; range and correlations not covered or identified."
+    },
+    "transport.viscosity_factor.CO2": {
+      "value": 0.83,
+      "unit": "1",
+      "range": [
+        0.4,
+        1.4
+      ],
+      "source": "mixture_viscosity",
+      "status": "assumed",
+      "note": "Illustrative pure CO2 viscosity relative to existing mu_ref at T_ref; not a measured property or fit. All gases share the existing temperature exponent. Fixed in paired UQ and three-parameter synthetic recovery; range and correlations not covered or identified."
+    },
+    "transport.viscosity_mixing_fraction": {
+      "value": 1.0,
+      "unit": "1",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "source": "mixture_viscosity",
+      "status": "assumed",
+      "note": "Positive interpolation mu=(1-alpha)*mu_base+alpha*mu_Wilke. One enables Wilke at symmetric face mole fractions; zero exactly restores preceding common viscosity. Intermediate alpha is an assumed model interpolation, not species fraction. Fixed in UQ and synthetic fit."
     }
   },
   "species": [
@@ -3181,9 +3241,14 @@
     "transport.pair_factor.O2_CO2",
     "transport.pair_factor.N2_H2O",
     "transport.pair_factor.N2_CO2",
-    "transport.pair_factor.H2O_CO2"
+    "transport.pair_factor.H2O_CO2",
+    "transport.viscosity_factor.O2",
+    "transport.viscosity_factor.N2",
+    "transport.viscosity_factor.H2O",
+    "transport.viscosity_factor.CO2",
+    "transport.viscosity_mixing_fraction"
   ],
-  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope. Phase modulus contrast is fixed at four; neither its range nor its correlation with eigenstrain, porosity stiffness or phase kinetics is covered or identified. Disordered-minus-ordered heat capacity contrast is fixed at 10 J/mol/K; its range and correlations are neither covered nor identified. Phase conductivity contrast is fixed at two; its signed range and correlations with phase kinetics, baseline conductivity, moisture and pore radiation are not covered or identified. Tortuosity porosity exponent is fixed at one; its range and correlation with diffusivity, initial tortuosity, liquid occupancy and permeability are not covered or identified. Six positive gas-pair mobility factors are fixed at their declared nominal values; their ranges and correlations with the common diffusivity, tortuosity and permeability are not covered or identified.",
+  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope. Phase modulus contrast is fixed at four; neither its range nor its correlation with eigenstrain, porosity stiffness or phase kinetics is covered or identified. Disordered-minus-ordered heat capacity contrast is fixed at 10 J/mol/K; its range and correlations are neither covered nor identified. Phase conductivity contrast is fixed at two; its signed range and correlations with phase kinetics, baseline conductivity, moisture and pore radiation are not covered or identified. Tortuosity porosity exponent is fixed at one; its range and correlation with diffusivity, initial tortuosity, liquid occupancy and permeability are not covered or identified. Six positive gas-pair mobility factors are fixed at their declared nominal values; their ranges and correlations with the common diffusivity, tortuosity and permeability are not covered or identified. Mixture viscosity species factors and mixing fraction are fixed; their ranges, correlations and identifiability are not covered.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -3739,6 +3804,22 @@
           "source": "pair_diffusion",
           "status": "assumed",
           "note": "Common-D limit only; retain porosity/tortuosity evolution, Darcy, atmosphere and all other mechanisms."
+        }
+      }
+    },
+    {
+      "id": "mixture_viscosity_disabled",
+      "overrides": {
+        "transport.viscosity_mixing_fraction": {
+          "value": 0.0,
+          "unit": "1",
+          "range": [
+            0.0,
+            1.0
+          ],
+          "source": "mixture_viscosity",
+          "status": "assumed",
+          "note": "Disable only mixture viscosity; retain pair molecular diffusion, Darcy permeability, gas program and other physics."
         }
       }
     }

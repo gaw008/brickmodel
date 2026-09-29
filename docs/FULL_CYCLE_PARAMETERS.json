@@ -1,15 +1,15 @@
 {
   "schema": "full_cycle_parameter_inventory_v1",
   "root_file": "parameters.full_cycle.json",
-  "total_parameter_entries": 243,
+  "total_parameter_entries": 248,
   "status_counts": {
     "literature": 38,
-    "assumed": 205,
+    "assumed": 210,
     "measured": 0
   },
   "scenario_override_entries": 5,
   "synthetic_truth_entries": 3,
-  "metadata_entries_reviewed": 291,
+  "metadata_entries_reviewed": 297,
   "all_required_metadata_present": true,
   "sources_resolve": true,
   "material_applicability": "待实测",
@@ -47,8 +47,9 @@
     "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_solid.py liquid_contrast",
     "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_solid.py phase_conductivity",
     "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py gas_diffusivity",
-    "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py molecular_transport"
+    "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py molecular_transport",
+    "https://idaes-pse.readthedocs.io/en/stable/explanations/components/property_package/general/transport_properties/viscosity_wilke.html; docs/FULL_CYCLE_REPORT.md"
   ],
-  "note": "Six assumed positive symmetric pair-mobility factors distinguish gas species. Nominal O2_N2=1, O2_H2O=1.25, O2_CO2=0.8, N2_H2O=1.3, N2_CO2=0.85, H2O_CO2=1.05; each range [0.5,2]. Equal unit factors recover preceding common-D. Not measured binary coefficients or Maxwell-Stefan inversion. Fixed in unchanged 25-dimensional paired UQ and synthetic fit; ranges/correlations unqualified.",
-  "mechanism_case_override_entries": 40
+  "note": "Wilke face viscosity with four explicitly assumed pure-reference factors and a positive mixing interpolation. All gases retain the common temperature power. Five new parameters fixed in unchanged 25-dimensional paired UQ and synthetic fit; their ranges and correlations are not covered or identified; zero mixing recovers preceding common viscosity. Official IDAES mixing equation verified; pure numerical values are not literature fits or measurements.",
+  "mechanism_case_override_entries": 41
 }
