@@ -24,6 +24,8 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         super().__init__(config)
         self.p('solid.thermoelastic','1')
         self.quartz=self.ns.index('silica')
+        self.dry_caloric_indices=np.array([i for i in range(len(self.ns)) if i not in (self.water_index,self.quartz)])
+        self.dry_cp_slope=np.array([self.p('species.'+self.ns[i]+'.cp_slope','J/mol/K2') for i in self.dry_caloric_indices])
         self.tc=self.p('quartz.transition_temperature','K')
         self.latent=self.p('quartz.latent_heat','J/mol')
         self.width=self.p('quartz.transition_width','K')
@@ -255,8 +257,16 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         s=np.where(low,s_a-s0,sa-s0+s_b-sb)+phase_s-self.phase0[1]
         return cp,h,s
 
+    def dry_background_cp(self,T):
+        """Reference-anchored Cp of non-quartz dry species, before phase terms."""
+        return self.cp[self.dry_caloric_indices]+(T[...,None]-self.Tr)*self.dry_cp_slope
+
     def thermo(self,T):
         h,s=super().thermo(T)
+        if np.any(self.dry_cp_slope != 0):
+            delta=T[...,None]-self.Tr
+            h[...,self.dry_caloric_indices]+=self.dry_cp_slope*delta**2/2
+            s[...,self.dry_caloric_indices]+=self.dry_cp_slope*(delta-self.Tr*np.log(T[...,None]/self.Tr))
         _,hq,sq=self.quartz_thermo(T)
         h[...,self.quartz]=self.h0[self.quartz]+hq
         s[...,self.quartz]=self.s0[self.quartz]+sq
@@ -282,6 +292,8 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
     def state_caloric_capacity(self,T,ns,ng,fields):
         cpq,_,_=self.quartz_thermo(T)
         capacity=super().caloric_capacity(T,ns,ng)+ns[:,self.quartz]*(cpq-self.cp[self.quartz])
+        if np.any(self.dry_cp_slope != 0):
+            capacity+=np.sum(ns[:,self.dry_caloric_indices]*(T[:,None]-self.Tr)*self.dry_cp_slope,axis=1)
         if not self.kinetic_liquid:
             capacity+=ns[:,self.matrix]*self.liquid_active*self.liquid_phase(T)[2]
         elif self.liquid_cp != 0:
@@ -521,7 +533,8 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
                 'liquid_enthalpy_contrast_j_mol':contrast_h.tolist(),
                 'liquid_entropy_contrast_j_mol_k':contrast_s.tolist(),
                 'liquid_frozen_phase_capacity_j_k':(self.liquid_active*ns[:,self.matrix]*phase_x*self.liquid_cp).tolist(),
-                'matrix_fixed_phase_molar_cp_j_mol_k':(self.cp[self.matrix]+self.liquid_active*phase_x*self.liquid_cp).tolist(),
+                'dry_background_molar_cp_j_mol_k':{self.ns[i]:self.dry_background_cp(T)[:,j].tolist() for j,i in enumerate(self.dry_caloric_indices)},
+                'matrix_fixed_phase_molar_cp_j_mol_k':(self.dry_background_cp(T)[:,list(self.dry_caloric_indices).index(self.matrix)]+self.liquid_active*phase_x*self.liquid_cp).tolist(),
                 'ordered_active_fraction_of_dry_condensed_volume':ordered.tolist(),
                 'structure_viscosity_ratio':viscosity_ratio.tolist(),
                 'effective_axial_sintering_viscosity_pa_s':(1/inverse_viscosity).tolist(),
@@ -544,6 +557,10 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
 
     def summarize(self,times,states):
         report,fields=super().summarize(times,states)
+        report['dry_caloric_approximation']='Non-quartz dry species Cp_i=c_i+a_i*(T-Tr), h_i=h_ref_i+c_i*(T-Tr)+a_i*(T-Tr)^2/2, s_i=s_ref_i+c_i*ln(T/Tr)+a_i*((T-Tr)-Tr*ln(T/Tr)). Six nonnegative slopes are assumed, not measured mineral calorimetry. Reaction affinities, composition energy/entropy and fixed-state heat capacity use the same analytic integrals. Quartz retains its independent law; matrix phase contrast and elastic/retention contributions remain separate. No new inventory or additional reaction heat. Zero slopes exactly recover preceding thermoelastic host; gas-only and swept historical hosts are unchanged. Slopes fixed in current paired UQ and synthetic recovery; their ranges/correlations are not covered or identified.'
+        report['dry_cp_slopes_j_mol_k2']={self.ns[i]:float(a) for i,a in zip(self.dry_caloric_indices,self.dry_cp_slope)}
+        report['summary']['minimum_sampled_dry_background_cp_j_mol_k']=min(min(v) for r in fields['rows'] for v in r['dry_background_molar_cp_j_mol_k'].values())
+        report['summary']['maximum_sampled_dry_background_cp_j_mol_k']=max(max(v) for r in fields['rows'] for v in r['dry_background_molar_cp_j_mol_k'].values())
         residual=report['state_domain']['maximum_mechanical_equilibrium_residual_pa']
         report['solid_approximation']='Effective constant-area axial equilibrium skeleton with assumed dry-solid-fraction and matrix-phase-dependent stiffness and finite-rate matrix eigenstrain. D excludes liquid water; K0 is the initial effective modulus. Same Helmholtz energy supplies volume, composition and internal-phase derivatives. No measured porous stiffness, mineral phase diagram, bending, damage or fracture.'
         report['thermodynamics']['elastic_storage']="F_el=K(D/V,C)*V0*epsilon^2/2; K=K0*((D/V)/(D0/V0))^m*exp(-g*C); C=N*v_matrix*(x-x_ref)/V0; epsilon=V/V0-1-beta(T)-B(n,x)-eta+e0; K0*(e0-m*e0^2/2)=prestress; S_el=K*V0*beta'(T)*epsilon at fixed x,n; U_el=F_el+T*S_el. F_V=K*epsilon+V0*K_V*epsilon^2/2; mu_el_i=V0*K_D*epsilon^2*v_dry_i/2-V0*K*epsilon*B_ni-V0*g*K*epsilon^2*C_ni/2; -F_eta/V0=K*epsilon drives sintering. Direct D partials hold C and B fixed; Bdot and Cdot retain carrier birth and phase relaxation in U/S and equilibrium; Kdot=K_V*Vdot+K_D*Ddot-g*K*Cdot."
