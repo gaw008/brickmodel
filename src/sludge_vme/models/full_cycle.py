@@ -48,6 +48,20 @@ def changed(config: dict, overrides: dict) -> dict:
     return result
 
 
+def water_binding_disabled(config: dict) -> dict:
+    """Return the root-declared coupled binding-disabled hypothesis contrast.
+
+    The mechanism case removes both binding energy and binding heat capacity,
+    retaining ideal mixing, retention sites, migration and phase exchange.
+    This is a coupled assumption comparison, not a nominal-model correction.
+    Root metadata validation remains with read_parameters; changed returns
+    an independent configuration without modifying the input.
+    """
+    case = next(case for case in config['mechanism_cases']
+                if case['id'] == 'water_binding_disabled')
+    return changed(config, {name: item['value'] for name, item in case['overrides'].items()})
+
+
 def binding_extended_drying(config: dict) -> dict:
     """Return the declared binding-response schedule with a longer drying stage.
 
