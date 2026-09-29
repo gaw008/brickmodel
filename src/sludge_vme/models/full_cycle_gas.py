@@ -39,6 +39,7 @@ class FiniteGasFullCycle(FullCycle):
         self.viscosity = self.p('transport.viscosity_ref', 'Pa*s')
         self.viscosity_exponent = self.p('transport.viscosity_exponent', '1')
         self.gas_cp_slope = np.array([self.p('species.'+s+'.cp_slope', 'J/mol/K2') for s in self.ng])
+        self.water_cp_slope = self.p('species.water.cp_slope', 'J/mol/K2')
         self.viscosity_mixing = self.p('transport.viscosity_mixing_fraction', '1')
         self.viscosity_factors = np.array([self.p('transport.viscosity_factor.'+s, '1') for s in self.ng])
         gas_mw = self.mw[len(self.ns):]
@@ -174,19 +175,37 @@ class FiniteGasFullCycle(FullCycle):
     def gas_molar_cp(self, T):
         return self.cp[len(self.ns):]+(T[..., None]-self.Tr)*self.gas_cp_slope
 
+    def water_background_cp(self, T):
+        return self.cp[self.water_index]+self.water_cp_slope*(T-self.Tr)
+
     def thermo(self, T):
         """Reference-anchored integrals of Cp=c_ref+a*(T-T_ref).
 
-        The four slopes are assumed, not fitted calorimetric curves. Only
-        finite-inventory gas hosts use this extension; solid contributions
-        continue through the existing subclass thermodynamic potential.
+        Gas and liquid-water slopes are assumed, not fitted calorimetric
+        curves. Only finite-inventory hosts use this extension; binding
+        and solid subclass contributions remain separate.
         """
         h, s = super().thermo(T)
         if np.any(self.gas_cp_slope != 0):
             delta = T[..., None]-self.Tr
             h[..., len(self.ns):] += self.gas_cp_slope*delta**2/2
             s[..., len(self.ns):] += self.gas_cp_slope*(delta-self.Tr*np.log(T[..., None]/self.Tr))
+        if self.water_cp_slope != 0:
+            delta = T-self.Tr
+            h[..., self.water_index] += self.water_cp_slope*delta**2/2
+            s[..., self.water_index] += self.water_cp_slope*(delta-self.Tr*np.log(T/self.Tr))
         return h, s
+
+    def water_carried_enthalpy(self, tl, tr, thermal_mean):
+        """Background face h conjugate to the same integrated liquid h/s.
+
+        Mechanical and retention-binding contributions are added by
+        water_transport. The equal-temperature limit is the local h.
+        """
+        hw = self.h0[self.water_index]+self.cp[self.water_index]*(thermal_mean-self.Tr)
+        if self.water_cp_slope != 0:
+            hw += self.water_cp_slope*(tl*tr-2*self.Tr*thermal_mean+self.Tr**2)/2
+        return hw
 
     def gas_carried_enthalpy(self, tl, tr, thermal_mean):
         """Conjugate face enthalpy, not h evaluated at the thermal mean.
@@ -313,7 +332,7 @@ class FiniteGasFullCycle(FullCycle):
 
         mu=h-T*s+v*(p-P-cap)+R*T*log(mixing_activity)+mu_binding.
         Carried enthalpy includes the arithmetic mean mechanical contribution;
-        the reciprocal-log temperature mean cancels constant-Cp caloric terms.
+        the analytic linear-Cp face enthalpy cancels background caloric terms.
         Ideal mixing adds R*difference(log(activity)) to the entropy force,
         but no carried excess enthalpy. Binding adds mean(g')*h_binding(Tmean)
         to carried enthalpy and difference(g')*mean(a(T)/T) to the force.
@@ -331,7 +350,7 @@ class FiniteGasFullCycle(FullCycle):
         force = self.v[self.water_index]*(potential[:-1]-potential[1:])*(1/tl+1/tr)/2
         log_activity, _ = self.water_retention(fields)
         force += self.R*(log_activity[:-1]-log_activity[1:])
-        carried_h = (self.h0[self.water_index]+self.cp[self.water_index]*(thermal_mean-self.Tr)
+        carried_h = (self.water_carried_enthalpy(tl,tr,thermal_mean)
                      +self.v[self.water_index]*(potential[:-1]+potential[1:])/2)
         binding=self.water_binding(T,fields)
         force+=(binding['slope'][:-1]-binding['slope'][1:])*(binding['free_coefficient'][:-1]/tl+binding['free_coefficient'][1:]/tr)/2
@@ -443,6 +462,8 @@ class FiniteGasFullCycle(FullCycle):
         capacity=ns@self.cp[:len(self.ns)]+ng@(self.cp[len(self.ns):]-self.R)
         if np.any(self.gas_cp_slope != 0):
             capacity+=np.sum(ng*(T[:, None]-self.Tr)*self.gas_cp_slope,axis=1)
+        if self.water_cp_slope != 0:
+            capacity+=ns[:,self.water_index]*self.water_cp_slope*(T-self.Tr)
         if self.retention_matrix != 0:
             water=ns[:,self.water_index]
             sites=self.retention_matrix*self.site_survival+self.site_slope*ns[:,self.kaolin]
@@ -596,6 +617,7 @@ class FiniteGasFullCycle(FullCycle):
                 'water_binding_energy_j':r['water_binding']['energy'].tolist(),
                 'water_binding_entropy_j_k':r['water_binding']['entropy'].tolist(),
                 'water_binding_capacity_j_k':r['water_binding']['capacity'].tolist(),
+                'water_background_molar_cp_j_mol_k':self.water_background_cp(T).tolist(),
                 'water_binding_effective_moles':r['water_binding']['amount'].tolist(),
                 'water_binding_partial_enthalpy_j_mol':r['water_binding']['partial_h'].tolist(),
                 'water_retention_sites_mol':r['water_binding']['sites'].tolist(),
@@ -677,6 +699,8 @@ class FiniteGasFullCycle(FullCycle):
             'maximum_sampled_gas_face_viscosity_pa_s':max(max(r['gas_face_viscosity_pa_s']) for r in rows),
             'minimum_sampled_gas_molar_cp_j_mol_k':min(min(v) for r in rows for v in r['gas_molar_cp_j_mol_k'].values()),
             'maximum_sampled_gas_molar_cp_j_mol_k':max(max(v) for r in rows for v in r['gas_molar_cp_j_mol_k'].values()),
+            'minimum_sampled_water_background_cp_j_mol_k':min(min(r['water_background_molar_cp_j_mol_k']) for r in rows),
+            'maximum_sampled_water_background_cp_j_mol_k':max(max(r['water_background_molar_cp_j_mol_k']) for r in rows),
             'peak_internal_liquid_water_flux_mol_s':max(max(abs(x) for x in r['internal_liquid_water_face_flux_mol_s']) for r in rows),
             'final_retained_liquid_water_kg':sum(final['water_kg_per_initial_dry_kg'])*self.md,
             'peak_water_retention_entropy_j_k':max(sum(r['water_retention_entropy_j_k']) for r in rows),
@@ -726,9 +750,11 @@ class FiniteGasFullCycle(FullCycle):
             'gas_viscosity_factors':dict(zip(self.ng,self.viscosity_factors.tolist())),
             'gas_caloric_approximation':'Finite-inventory gas Cp_i=c_ref_i+a_i*(T-Tr); h_i=h_ref_i+c_ref_i*(T-Tr)+a_i*(T-Tr)^2/2; s_i=s_ref_i+c_ref_i*ln(T/Tr)+a_i*((T-Tr)-Tr*ln(T/Tr)). Ideal-gas stored u=h-RT and Cv=Cp-R; reaction affinities, reservoir mu/T and energy/entropy share these functions. Conjugate face enthalpy h*=h_ref+c_ref*(Theta-Tr)+a*(Tl*Tright-2*Tr*Theta+Tr^2)/2 cancels standard-state thermal mu/T differences exactly; it is not h(Theta). No extra reaction heat or new state. Four nonnegative slopes and reference Cp values remain assumed; new slopes fixed in paired UQ/synthetic fit, ranges and correlations not covered. Zero slopes exactly restore the previous constant-Cp host. No fitted spectroscopic/calorimetric curve, dissociation, nonideal gas or material validation. Historical gas-storage-zero host is unchanged.',
             'gas_cp_slopes_j_mol_k2':dict(zip(self.ng,self.gas_cp_slope.tolist())),
+            'water_caloric_approximation':'Liquid-water background Cp=c_ref+a*(T-Tr), with reference-anchored integrals h=h_ref+c_ref*(T-Tr)+a*(T-Tr)^2/2 and s=s_ref+c_ref*ln(T/Tr)+a*((T-Tr)-Tr*ln(T/Tr)). Same h/s enter stored u=h-P*v, phase-exchange affinity and energy/entropy accounts. Conjugate liquid-face background enthalpy h*=h_ref+c_ref*(Theta-Tr)+a*(Tl*Tright-2*Tr*Theta+Tr^2)/2 cancels standard-state mu/T differences; it is not h(Theta). Mechanical, mixing and retention-binding contributions remain separate. No new state, extra latent heat, or water equation of state. Reference Cp and slope are assumed; slope fixed in paired UQ and synthetic fit, its range and correlations not covered or identified. Zero water slope restores previous water calorics, preserving other slopes. No high-temperature liquid stability, critical-point behavior, hysteresis or material validation. Historical gas-storage-zero host is unchanged.',
+            'water_cp_slope_j_mol_k2':self.water_cp_slope,
             'carbonate_approximation':'Signed CaCO3 -> CaO + CO2 exchange with a conserved local calcite/lime pool. For positive carbonation factor the calcite fraction is a linear inventory coordinate, allowing regeneration from zero; raw numerical excursions are retained under the existing inventory budget, without clipping. For a=delta_mu/(R*T)<=0, rate=k*n_calcite*(1-exp(a)); for a>0, rate=-factor*k*n_lime*(p_CO2/P_ref)*(1-exp(-a)). Reverse k reuses the assumed decarbonation Arrhenius law. No separate carbonation heat, empirical equilibrium pressure, mixing entropy, interface barrier or product-layer diffusion. Pure-phase affinity uses the existing formation properties and mechanical potential. This is a phenomenological net-rate law, not measured kinetics or microscopic detailed balance. Zero factor exactly restores the previous irreversible log-depletion coordinates. Swept-gas historical mode remains irreversible.',
             'thermal_approximation':'Background k=k_ref*(dry_solid_fraction/initial_dry_solid_fraction)^m*(1+b*liquid_water_volume_fraction), plus local pore-wall radiative k=4*sigma*factor*length*gas_porosity*T^3. Length is 2*r_initial*(pore_volume/initial_pore_volume)^(1/3), independent of mesh width. The assumed exchange factor includes wall emissivity and geometry; one local equilibrium temperature, no spectral/nonlocal photon or participating-gas radiation. Shared face and external half-cell resistances use total k; exterior furnace radiation remains a separate boundary exchange. No extra stored photon energy or separate radiation heat source. No intrinsic mineral conductivity law; coefficients unmeasured.',
-            'liquid_water_transport_approximation':'Migration and seeded phase exchange share mechanical, ideal-mixing and energetic-binding water potential. Positive series availability multiplies the shared-face entropy force. Carried enthalpy uses reciprocal-log thermal mean, arithmetic mean mechanical potential times molar volume, and mean binding composition derivative times binding enthalpy at the thermal mean. Binding force is difference(g_prime)*mean(a(T)/T), satisfying the same nonisothermal entropy identity. No independent heat of transport. Log water inventory permits influx/loss; zero exterior/center liquid flow. No measured hydraulic law, dry-surface nucleation, hysteresis or humidity-cycle validation.',
+            'liquid_water_transport_approximation':'Migration and seeded phase exchange share mechanical, ideal-mixing and energetic-binding water potential. Positive series availability multiplies the shared-face entropy force. Carried enthalpy uses the analytic linear-Cp conjugate background with reciprocal-log thermal mean, arithmetic mean mechanical potential times molar volume, and mean binding composition derivative times binding enthalpy at the thermal mean. Binding force is difference(g_prime)*mean(a(T)/T), satisfying the same nonisothermal entropy identity. No independent heat of transport. Log water inventory permits influx/loss; zero exterior/center liquid flow. No measured hydraulic law, dry-surface nucleation, hysteresis or humidity-cycle validation.',
             'water_retention_approximation':'Ideal mixing plus F_b=g*a(T), g=N*n/(n+N), a=-E+C*(T-Tr-T*ln(T/Tr)). Sites N=N0*(r+(1-r)*n_kaolin/n_kaolin_initial) have a declared persistent fraction r and a fraction lost with kaolin dehydroxylation. They add no matter or independent state. Both mixing and binding composition derivatives enter kaolin chemical potential, partial energy and entropy; no separate site-loss heat source. Storage U/S/Cp uses g, water partials use (N/(n+N))^2, site partials use (n/(n+N))^2 times dN/dn_kaolin. Positive residual sites are a physical hypothesis over the declared range, not a numerical inventory floor. No measured site counts, complete site disappearance, independent site kinetics, regeneration, sintering-dependent sites or hysteresis. r=1 recovers preceding fixed sites; zero N removes all retention; E=C=0 removes energetic binding only.',
             'water_phase_exchange_approximation':'Let a=(mu_vapor-mu_water)/(R*T), k=A_evap*exp(-E_evap/(R*T)). Net vapor source is k*n_water*(1-exp(a)) for a<=0, and -factor*k*n_water*(1-exp(-a)) for a>0. Unit factor gives paired forward/backward flux ratio exp(-a). Both directions use the same stoichiometry and formation-energy ledger, without extra latent heat. Reverse prefactor is proportional to existing liquid: positive seeded water can regrow, but exactly dry-surface nucleation is absent. Log water inventory and its finite signed hazard are retained without floors. No measured condensation coefficient, interface area or accommodation law; reverse factor fixed in UQ.',
             'reaction_approximation':'Competing organic oxidation and lumped CH2O -> C + H2O carbonization share the organic inventory. Char inventory receives carbonization products and loses oxidation products; it is not overwritten by an initial-char depletion formula. All pathways use the same stoichiometry, formation-energy reference and affinity. No complete pyrolysis spectrum or distinct char reactivity populations. Conversion denominators are initial reactant moles, except char oxidation uses initial char plus potential organic carbon.',
