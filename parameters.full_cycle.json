@@ -135,6 +135,11 @@
       "identity": "assumed",
       "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_solid.py phase_eigenstrain",
       "note": "Effective axial eigenstrain B=a*N*v_matrix*(x-x_ref)/V0 of the finite-rate matrix proxy. Same Helmholtz energy supplies phase driving force and composition derivatives. No measured phase volume jump, mineral equilibrium or damage. Nonzero amplitude with active carrier requires positive relaxation time; algebraic stress-coupled phase equilibrium is outside this closure."
+    },
+    "phase_stiffness": {
+      "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_solid.py elastic_response",
+      "note": "Reference-volume weighted log-modulus contrast of the existing ordered/disordered matrix proxy: K=K_porosity*exp(-g*C), C=N*v_matrix*(x-x_ref)/V0. Same Helmholtz energy supplies phase, carrier and mechanical derivatives. No measured phase modulus, glass transition, damage or phase-resolved mixture law.",
+      "identity": "assumed"
     }
   },
   "parameters": {
@@ -2249,7 +2254,7 @@
       ],
       "source": "liquid_relaxation",
       "status": "assumed",
-      "note": "Log-odds relaxation time at the existing effective transition temperature. Zero selects the previous algebraic equilibrium model; positive values define kinetic mode. Not an experimentally measured crystallization time. With active carrier, zero time is allowed only when liquid.axial_transition_strain=0; the stress-coupled algebraic limit is not implemented."
+      "note": "Log-odds relaxation time at the existing effective transition temperature. Zero selects the previous algebraic equilibrium model; positive values define kinetic mode. Not an experimentally measured crystallization time. With active carrier, zero time is allowed only when liquid.axial_transition_strain=0; the stress-coupled algebraic limit is not implemented. Nonzero solid.phase_modulus_contrast also requires positive relaxation time with active carrier."
     },
     "liquid.relaxation_activation_energy": {
       "value": 180000.0,
@@ -2700,7 +2705,7 @@
       ],
       "source": "porosity_stiffness",
       "status": "assumed",
-      "note": "K=K0*((V_dry/V)/(V_dry_initial/V0))**m, with K0 the initial effective axial modulus. Dry volume excludes liquid water. Fixed in paired UQ and synthetic fit; zero restores constant modulus. Assumed small-strain scalar skeleton, not measured stiffness or fracture."
+      "note": "K=K0*((V_dry/V)/(V_dry_initial/V0))**m, with K0 the initial effective axial modulus. Dry volume excludes liquid water. Fixed in paired UQ and synthetic fit; zero removes porosity dependence; modulus is constant only if the phase contrast is also zero. Assumed small-strain scalar skeleton, not measured stiffness or fracture."
     },
     "liquid.axial_transition_strain": {
       "value": 0.02,
@@ -2711,7 +2716,18 @@
       ],
       "source": "phase_eigenstrain",
       "status": "assumed",
-      "note": "Signed axial eigenstrain per active carrier reference-volume fraction per unit disordered-fraction change. Nominal expansion 0.02; current amount weights by N*v_matrix/V0. Fixed in the paired conditional UQ and synthetic fit. Zero restores uncoupled matrix mechanics. Nonzero amplitude with nonzero active fraction requires positive relaxation time; not a measured molar-volume change."
+      "note": "Signed axial eigenstrain per active carrier reference-volume fraction per unit disordered-fraction change. Nominal expansion 0.02; current amount weights by N*v_matrix/V0. Fixed in the paired conditional UQ and synthetic fit. Zero removes eigenstrain and its reciprocal phase affinity; phase-dependent modulus remains unless its contrast is also zero. Nonzero amplitude with nonzero active fraction requires positive relaxation time; not a measured molar-volume change."
+    },
+    "solid.phase_modulus_contrast": {
+      "value": 4.0,
+      "unit": "1",
+      "range": [
+        0.0,
+        8.0
+      ],
+      "source": "phase_stiffness",
+      "status": "assumed",
+      "note": "Log effective axial modulus contrast per active carrier reference-volume fraction per change in disordered fraction. Fixed in conditional UQ and synthetic fit; zero restores preceding phase-eigenstrain model. Nonzero contrast with active carrier requires positive relaxation time. No measured elastic softening or independent glass transition."
     }
   },
   "species": [
@@ -3036,9 +3052,10 @@
     "kinetics.carbonation.factor",
     "sintering.ordered_structure_barrier",
     "solid.dry_fraction_modulus_exponent",
-    "liquid.axial_transition_strain"
+    "liquid.axial_transition_strain",
+    "solid.phase_modulus_contrast"
   ],
-  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope.",
+  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope. Phase modulus contrast is fixed at four; neither its range nor its correlation with eigenstrain, porosity stiffness or phase kinetics is covered or identified.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -3241,6 +3258,17 @@
           "source": "phase_eigenstrain",
           "status": "assumed",
           "note": "Historical uncoupled algebraic phase control: remove effective phase eigenstrain as well as relaxation time."
+        },
+        "solid.phase_modulus_contrast": {
+          "value": 0.0,
+          "unit": "1",
+          "range": [
+            0.0,
+            8.0
+          ],
+          "source": "phase_stiffness",
+          "status": "assumed",
+          "note": "Uncoupled algebraic control also removes phase modulus contrast; coupled algebraic equilibrium is not implemented."
         }
       }
     },
@@ -3429,13 +3457,14 @@
           ],
           "source": "porosity_stiffness",
           "status": "assumed",
-          "note": "Zero exponent recovers preceding constant-modulus model."
+          "note": "Zero dry-fraction exponent; phase-dependent modulus remains unless its contrast is also zero."
         }
-      }
+      },
+      "description": "Disable porosity dependence of modulus; current phase dependence and eigenstrain remain."
     },
     {
       "id": "phase_eigenstrain_disabled",
-      "description": "Zero effective matrix phase eigenstrain; preceding porosity-stiffness model recovered.",
+      "description": "Disable effective matrix eigenstrain; current phase-dependent modulus and its phase affinity remain.",
       "overrides": {
         "liquid.axial_transition_strain": {
           "value": 0.0,
@@ -3446,7 +3475,23 @@
           ],
           "source": "phase_eigenstrain",
           "status": "assumed",
-          "note": "Signed axial eigenstrain per active carrier reference-volume fraction per unit disordered-fraction change. Nominal expansion 0.02; current amount weights by N*v_matrix/V0. Fixed in the paired conditional UQ and synthetic fit. Zero restores uncoupled matrix mechanics. Nonzero amplitude with nonzero active fraction requires positive relaxation time; not a measured molar-volume change."
+          "note": "Zero effective eigenstrain only; set phase modulus contrast to zero as well for uncoupled matrix mechanics."
+        }
+      }
+    },
+    {
+      "id": "phase_stiffness_disabled",
+      "overrides": {
+        "solid.phase_modulus_contrast": {
+          "value": 0.0,
+          "unit": "1",
+          "range": [
+            0.0,
+            8.0
+          ],
+          "source": "phase_stiffness",
+          "status": "assumed",
+          "note": "Disable phase dependence of elastic modulus; retain preceding matrix eigenstrain and reciprocal stress feedback."
         }
       }
     }

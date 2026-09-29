@@ -9,8 +9,9 @@ An assumed metakaolin-carried disordered phase contributes to the same molar
 thermodynamic properties and positive sintering mobility. Finite log-odds
 relaxation can retain a nonequilibrium glass proxy on cooling. Its effective
 axial eigenstrain and reciprocal stress feedback follow the same Helmholtz
-energy. Zero relaxation time selects the preceding equilibrium model only
-with zero matrix eigenstrain amplitude.
+energy, including an assumed phase-dependent effective modulus. Zero
+relaxation time selects the uncoupled equilibrium model only with zero
+matrix eigenstrain amplitude and zero phase modulus contrast.
 """
 import numpy as np
 
@@ -31,6 +32,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         self.mixing=self.latent*self.width/self.tc**2
         self.modulus=self.p('solid.axial_modulus','Pa')
         self.modulus_exponent=self.p('solid.dry_fraction_modulus_exponent','1')
+        self.phase_modulus_contrast=self.p('solid.phase_modulus_contrast','1')
         self.dry_v=self.v.copy()
         self.dry_v[self.water_index]=0
         self.initial_dry_fraction=(self.initial@self.dry_v)/self.b0
@@ -58,8 +60,8 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         self.liquid_activation=self.p('liquid.relaxation_activation_energy','J/mol')
         self.liquid_strain=self.p('liquid.axial_transition_strain','1')
         self.kinetic_liquid=self.liquid_tau>0 and self.liquid_active>0
-        if self.liquid_strain != 0 and self.liquid_active > 0 and not self.kinetic_liquid:
-            raise ValueError('Matrix eigenstrain requires positive liquid.relaxation_time_ref; set its amplitude to zero for the uncoupled algebraic model')
+        if (self.liquid_strain != 0 or self.phase_modulus_contrast != 0) and self.liquid_active > 0 and not self.kinetic_liquid:
+            raise ValueError('Matrix elastic phase coupling requires positive liquid.relaxation_time_ref; set eigenstrain and phase modulus contrast to zero for the uncoupled algebraic model')
         if self.kinetic_liquid:
             # The log-odds is a physical coordinate before gas and extents.
             # Zero relaxation time retains the previous equilibrium system.
@@ -82,17 +84,25 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         entropy=x*self.liquid_latent/self.liquid_tc-self.liquid_mixing*(x*log_x+other*log_other)
         return x,entropy,small/(1+small)**2
 
-    def liquid_driving_log_odds(self,T,fields,elastic_force):
+    def elastic_phase_affinity(self,elastic):
+        """Elastic F_x/N, finite even when the active carrier amount is zero."""
+        force=elastic['modulus']*elastic['eps']
+        affinity=-self.liquid_strain*self.v[self.matrix]*force
+        if self.phase_modulus_contrast != 0:
+            affinity=affinity-self.v[self.matrix]*self.phase_modulus_contrast*elastic['modulus']*elastic['eps']**2/2
+        return affinity
+
+    def liquid_driving_log_odds(self,T,fields,elastic_affinity):
         drive=fields[9]-self.liquid_equilibrium_log_odds(T)
-        if self.liquid_strain != 0:
-            drive=drive-self.liquid_strain*self.v[self.matrix]*elastic_force/(self.liquid_mixing*T)
+        if self.liquid_strain != 0 or self.phase_modulus_contrast != 0:
+            drive=drive+elastic_affinity/(self.liquid_mixing*T)
         return drive
 
-    def liquid_coordinate_rate(self,T,fields,elastic_force):
+    def liquid_coordinate_rate(self,T,fields,elastic_affinity):
         rate=np.exp(-self.liquid_activation/self.R*(1/T-1/self.liquid_tc))/self.liquid_tau
-        return -rate*self.liquid_driving_log_odds(T,fields,elastic_force)
+        return -rate*self.liquid_driving_log_odds(T,fields,elastic_affinity)
 
-    def liquid_relaxation(self,T,ns,fields,elastic_force):
+    def liquid_relaxation(self,T,ns,fields,elastic_affinity):
         """Internal relaxation at fixed carrier amount; carrier birth inherits x.
 
         U_phase=N*L*(x-x_ref), S_phase=N*(s(x)-s_ref), N=active*n_matrix.
@@ -100,14 +110,29 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         reactions create carrier. Only N*dx is an internal relaxation source.
         The returned power and entropy rate are caloric; elastic storage is
         differentiated in mechanical_rates. Production uses the total phase
-        affinity, including -a*v_matrix*K*epsilon per active mole.
+        affinity, including -v_matrix*K*(a*epsilon+g*epsilon**2/2)
+        per active mole. g is the phase modulus contrast.
         """
         _,_,slope=self.liquid_order(fields[9])
-        xdot=slope*self.liquid_coordinate_rate(T,fields,elastic_force)
+        xdot=slope*self.liquid_coordinate_rate(T,fields,elastic_affinity)
         amount=self.liquid_active*ns[:,self.matrix]
         entropy_rate=amount*(self.liquid_latent/self.liquid_tc-self.liquid_mixing*fields[9])*xdot
-        production=-amount*self.liquid_mixing*self.liquid_driving_log_odds(T,fields,elastic_force)*xdot
+        production=-amount*self.liquid_mixing*self.liquid_driving_log_odds(T,fields,elastic_affinity)*xdot
         return -amount*self.liquid_latent*xdot,entropy_rate,production,xdot
+
+    def phase_reference_volume(self,fields,ns):
+        """C=N*v_matrix*(x-x_ref)/V0 and its carrier/x partials.
+
+        A fixed reference volume makes this an effective small-strain law,
+        not a current-volume mixture rule or independent phase inventory.
+        """
+        if self.liquid_active == 0:
+            zero=np.zeros_like(ns[:,self.matrix])
+            return zero,zero,zero
+        x=self.liquid_order(fields[9])[0]
+        coefficient=self.liquid_active*self.v[self.matrix]/self.b0
+        birth=coefficient*(x-self.liquid_reference[0])
+        return ns[:,self.matrix]*birth,birth,coefficient*ns[:,self.matrix]
 
     def phase_eigenstrain(self,fields,ns):
         """B, dB/dn_matrix and dB/dx at fixed reference volume V0.
@@ -247,7 +272,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
             stress=self.modulus*(strain-thermal-f[6])+self.initial_prestress
             force=stress+self.P-pressure+cap
             denominator=self.modulus*pore/self.b0+pressure-cap/3
-            if self.modulus_exponent != 0:
+            if self.modulus_exponent != 0 or (self.phase_modulus_contrast != 0 and self.liquid_active != 0):
                 elastic=self.elastic_response(f,T,ns,vs+pore)
                 force=elastic['stress']+self.P-pressure+cap
                 denominator=elastic['tangent']*pore+pressure-cap/3
@@ -265,17 +290,19 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         return strain
 
     def elastic_response(self,f,T,ns,bulk):
-        """Derivatives of F=V0*K(D/V)*e**2/2 at fixed phase eigenstrain B.
+        """V/D derivatives of F=V0*K(D/V,C)*e**2/2 at fixed C and B.
 
         D excludes liquid water. K0 refers to the initial dry-solid fraction;
         e0 balances the initial capillary traction. No dense-solid modulus,
         damage variable, clipping or extra dissipative heat is introduced.
-        Direct D derivatives hold B fixed; its carrier and x derivatives are
-        included separately in chemical potential and mechanical rates.
+        Direct D derivatives hold C and B fixed; their carrier and x partials
+        are included separately in chemical potential and mechanical rates.
         """
         dry=ns@self.dry_v
         exponent=self.modulus_exponent
         modulus=self.modulus*(dry/bulk/self.initial_dry_fraction)**exponent
+        if self.phase_modulus_contrast != 0:
+            modulus=modulus*np.exp(-self.phase_modulus_contrast*self.phase_reference_volume(f,ns)[0])
         kv=-exponent*modulus/bulk
         kd=exponent*modulus/dry
         kvv=exponent*(exponent+1)*modulus/bulk**2
@@ -290,16 +317,19 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
                 'free_dry_derivative':self.b0*kd*eps**2/2}
 
     def skeleton_chemical_potential(self,fields,T,ns,bulk):
-        if self.modulus_exponent == 0 and self.liquid_strain == 0:
+        if self.modulus_exponent == 0 and self.liquid_strain == 0 and self.phase_modulus_contrast == 0:
             return super().skeleton_chemical_potential(fields,T,ns,bulk)
         elastic=self.elastic_response(fields,T,ns,bulk)
         potential=elastic['free_dry_derivative'][:,None]*self.dry_v
         birth=self.phase_eigenstrain(fields,ns)[1]
         potential[:,self.matrix]-=self.b0*elastic['modulus']*elastic['eps']*birth
+        if self.phase_modulus_contrast != 0:
+            phase_birth=self.phase_reference_volume(fields,ns)[1]
+            potential[:,self.matrix]-=self.b0*self.phase_modulus_contrast*elastic['modulus']*elastic['eps']**2/2*phase_birth
         return potential
 
     def mechanical_rates(self,f,T,ns,ng,bulk,pore,cap,pressure,dns,dng,heat,flow,us,ug):
-        if self.modulus_exponent != 0 or (self.liquid_strain != 0 and self.liquid_active != 0):
+        if self.modulus_exponent != 0 or ((self.liquid_strain != 0 or self.phase_modulus_contrast != 0) and self.liquid_active != 0):
             return self.porous_mechanical_rates(f,T,ns,ng,bulk,pore,cap,pressure,dns,dng,heat,flow,us,ug)
         eps=self.elastic_strain(f,T,bulk)
         _,beta_prime,beta_second,_=self.thermal_strain(T)
@@ -316,7 +346,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         power+=self.modulus*self.b0*(eps+T*beta_prime)*eta_dot-T*a*rest/d
         phase_sdot=0.;phase_production=0.
         if self.kinetic_liquid:
-            phase_power,phase_entropy,phase_production,_=self.liquid_relaxation(T,ns,f,self.modulus*eps)
+            phase_power,phase_entropy,phase_production,_=self.liquid_relaxation(T,ns,f,0.)
             power+=phase_power
             phase_sdot=phase_entropy.sum()
         dT=power/effective
@@ -337,11 +367,17 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         sintering_force=modulus*eps
         eta_dot=mobility*sintering_force
         phase_sdot=0.;phase_production=0.;phase_power=0.;phase_strain_rate=0.
+        phase_modulus_rate=0.
         if self.kinetic_liquid:
-            phase_power,phase_entropy,phase_production,xdot=self.liquid_relaxation(T,ns,f,sintering_force)
+            phase_power,phase_entropy,phase_production,xdot=self.liquid_relaxation(T,ns,f,self.elastic_phase_affinity(elastic))
             phase_sdot=phase_entropy.sum()
             _,birth,state_derivative=self.phase_eigenstrain(f,ns)
             phase_strain_rate=birth*dns[:,self.matrix]+state_derivative*xdot
+            if self.phase_modulus_contrast != 0:
+                _,phase_birth,phase_derivative=self.phase_reference_volume(f,ns)
+                phase_rate=phase_birth*dns[:,self.matrix]+phase_derivative*xdot
+                # K_C*Cdot at fixed V,D; Bdot is already retained separately.
+                phase_modulus_rate=-self.phase_modulus_contrast*modulus*phase_rate
         # -F_eta and -F_B are identical; B has both carrier and phase rates.
         inelastic_rate=eta_dot+phase_strain_rate
         dvs=dns@self.v
@@ -350,17 +386,23 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         a=elastic['strain_coupling']*beta_prime+pressure/T
         rest=(elastic['strain_coupling']*inelastic_rate-elastic['stress_dry_derivative']*ddry
               +self.R*T/pore*dng.sum(axis=1)+(pressure-cap/3)/pore*dvs)
+        if self.phase_modulus_contrast != 0:
+            rest-=elastic['stress']/modulus*phase_modulus_rate
         capacity=self.caloric_capacity(T,ns,ng)
         effective=capacity+modulus*self.b0*T*(eps*beta_second-beta_prime**2)+T*a**2/d
         dry_energy_derivative=self.b0*elastic['kd']*(eps**2/2+T*beta_prime*eps)
         power=heat+flow-np.sum(us*dns,axis=1)-np.sum(ug*dng,axis=1)+cap*dvs
         power+=modulus*self.b0*(eps+T*beta_prime)*inelastic_rate-dry_energy_derivative*ddry-T*a*rest/d
+        if self.phase_modulus_contrast != 0:
+            power-=self.b0*(eps**2/2+T*beta_prime*eps)*phase_modulus_rate
         power+=phase_power
         dT=power/effective
         db=(a*dT+rest)/d
         dpore=db-dvs
         elastic_sdot=self.b0*((elastic['kv']*db+elastic['kd']*ddry)*beta_prime*eps
             +modulus*(beta_prime*(db/self.b0-beta_prime*dT-inelastic_rate)+eps*beta_second*dT))
+        if self.phase_modulus_contrast != 0:
+            elastic_sdot+=self.b0*phase_modulus_rate*beta_prime*eps
         self.effective_capacity=effective
         self.mechanical_residual=elastic['stress']-(pressure-self.P-cap)
         production=np.sum(self.b0*sintering_force*eta_dot/T)+np.sum(phase_production)
@@ -376,18 +418,18 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         dy=super().rhs(t,y)
         if self.kinetic_liquid:
             f=y[:self.gas_offset].reshape(-1,self.n)
-            force=0.
-            if self.liquid_strain != 0:
+            affinity=0.
+            if self.liquid_strain != 0 or self.phase_modulus_contrast != 0:
                 _,T,ns,bulk,_,_,_=self.unpack(y)
                 elastic=self.elastic_response(f,T,ns,bulk)
-                force=elastic['modulus']*elastic['eps']
-            dy[9*self.n:self.gas_offset]=self.liquid_coordinate_rate(f[0]*self.Tr,f,force)
+                affinity=self.elastic_phase_affinity(elastic)
+            dy[9*self.n:self.gas_offset]=self.liquid_coordinate_rate(f[0]*self.Tr,f,affinity)
         return dy
 
     def additional_storage(self,f,T,bulk):
         eps=self.elastic_strain(f,T,bulk)
         modulus=self.modulus
-        if self.modulus_exponent != 0:
+        if self.modulus_exponent != 0 or self.phase_modulus_contrast != 0:
             modulus=self.elastic_response(f,T,self.condensed_state(f),bulk)['modulus']
         entropy=modulus*self.b0*self.thermal_strain(T)[1]*eps
         energy=modulus*self.b0*eps**2/2+T*entropy
@@ -403,9 +445,9 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         elastic=self.elastic_response(f,T,ns,bulk)
         phase_fields={}
         if self.kinetic_liquid:
-            force=elastic['modulus']*elastic['eps']
-            power,_,production,xdot=self.liquid_relaxation(T,ns,f,force)
-            driving=self.liquid_driving_log_odds(T,f,force)
+            affinity=self.elastic_phase_affinity(elastic)
+            power,_,production,xdot=self.liquid_relaxation(T,ns,f,affinity)
+            driving=self.liquid_driving_log_odds(T,f,affinity)
             phase_fields={'liquid_log_odds':f[9].tolist(),
                 'liquid_disordered_fraction':self.liquid_order(f[9])[0].tolist(),
                 'liquid_equilibrium_fraction':self.liquid_phase(T)[0].tolist(),
@@ -414,7 +456,10 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
                 'liquid_relaxation_entropy_w_k':production.tolist(),
                 'liquid_relaxation_entropy_per_active_mole_w_mol_k':(-self.liquid_mixing*driving*xdot).tolist(),
                 'liquid_total_phase_affinity_j_per_active_mol':(self.liquid_mixing*T*driving).tolist(),
-                'liquid_elastic_phase_affinity_j_per_active_mol':(-self.liquid_strain*self.v[self.matrix]*force).tolist()}
+                'liquid_elastic_phase_affinity_j_per_active_mol':affinity.tolist()}
+        stiffness_ratio=np.ones_like(T)
+        if self.phase_modulus_contrast != 0:
+            stiffness_ratio=np.exp(-self.phase_modulus_contrast*self.phase_reference_volume(f,ns)[0])
         return {**phase_fields,'quartz_beta_fraction':self.phase(T)[0].tolist(),
                 'ordered_active_fraction_of_dry_condensed_volume':ordered.tolist(),
                 'structure_viscosity_ratio':viscosity_ratio.tolist(),
@@ -430,6 +475,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
                 'permanent_sintering_strain':f[6].tolist(),
                 'dry_solid_fraction_of_bulk':elastic['dry_fraction'].tolist(),
                 'effective_axial_modulus_pa':elastic['modulus'].tolist(),
+                'phase_modulus_ratio':stiffness_ratio.tolist(),
                 'elastic_bulk_tangent_pa_m3':elastic['tangent'].tolist(),
                 'elastic_composition_potential_j_mol':self.skeleton_chemical_potential(f,T,ns,bulk).tolist(),
                 'sintering_thermodynamic_force_pa':(elastic['modulus']*elastic['eps']).tolist(),
@@ -438,8 +484,8 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
     def summarize(self,times,states):
         report,fields=super().summarize(times,states)
         residual=report['state_domain']['maximum_mechanical_equilibrium_residual_pa']
-        report['solid_approximation']='Effective constant-area axial equilibrium skeleton with assumed dry-solid-fraction-dependent stiffness and finite-rate matrix eigenstrain. D excludes liquid water; K0 is the initial effective modulus. Same Helmholtz energy supplies volume, composition and internal-phase derivatives. No measured porous stiffness, mineral phase diagram, bending, damage or fracture.'
-        report['thermodynamics']['elastic_storage']="F_el=K(D/V)*V0*epsilon^2/2; epsilon=V/V0-1-beta(T)-B(n,x)-eta+e0; K0*(e0-m*e0^2/2)=prestress; S_el=K*V0*beta'(T)*epsilon at fixed x,n; U_el=F_el+T*S_el. F_V=K*epsilon+V0*K_V*epsilon^2/2; mu_el_i=V0*K_D*epsilon^2*v_dry_i/2-V0*K*epsilon*B_ni; -F_eta/V0=K*epsilon drives sintering. Direct D partials hold B fixed; Bdot=B_n*ndot+B_x*xdot is retained in U/S and equilibrium."
+        report['solid_approximation']='Effective constant-area axial equilibrium skeleton with assumed dry-solid-fraction and matrix-phase-dependent stiffness and finite-rate matrix eigenstrain. D excludes liquid water; K0 is the initial effective modulus. Same Helmholtz energy supplies volume, composition and internal-phase derivatives. No measured porous stiffness, mineral phase diagram, bending, damage or fracture.'
+        report['thermodynamics']['elastic_storage']="F_el=K(D/V,C)*V0*epsilon^2/2; K=K0*((D/V)/(D0/V0))^m*exp(-g*C); C=N*v_matrix*(x-x_ref)/V0; epsilon=V/V0-1-beta(T)-B(n,x)-eta+e0; K0*(e0-m*e0^2/2)=prestress; S_el=K*V0*beta'(T)*epsilon at fixed x,n; U_el=F_el+T*S_el. F_V=K*epsilon+V0*K_V*epsilon^2/2; mu_el_i=V0*K_D*epsilon^2*v_dry_i/2-V0*K*epsilon*B_ni-V0*g*K*epsilon^2*C_ni/2; -F_eta/V0=K*epsilon drives sintering. Direct D partials hold C and B fixed; Bdot and Cdot retain carrier birth and phase relaxation in U/S and equilibrium; Kdot=K_V*Vdot+K_D*Ddot-g*K*Cdot."
         report['thermodynamics']['thermal_eigenstrain']='beta(T)=alpha*(T-T_initial)+e_q*(n_q_initial*v_q/V0)*(x_beta(T)-x_beta(T_initial)); fixed-strain elastic heat capacity=K*V0*T*(epsilon*beta_second-beta_prime^2)'
         report['thermodynamics']['quartz_latent_heat_counted_once']=True
         report['thermodynamics']['liquid_latent_heat_counted_once']=True
@@ -478,7 +524,12 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         report['thermodynamics']['minimum_elastic_bulk_tangent_pa_m3']=min(min(r['elastic_bulk_tangent_pa_m3']) for r in fields['rows'])
         report['thermodynamics']['dry_fraction_modulus_exponent']=self.modulus_exponent
         report['thermodynamics']['water_direct_elastic_composition_derivative_zero']=True
-        report['matrix_phase_eigenstrain_approximation']='B=a*N*v_matrix*(x-x_ref)/V0, N=active*n_matrix, x_ref=stress-free phase fraction at Tr. Signed assumed effective axial strain; species composition and molar volumes unchanged. A_phase=b*T*(q-q_eq)-a*v_matrix*K*epsilon per active mole; qdot=-k*A_phase/(b*T), so production=N*k*x*(1-x)*A_phase^2/(b*T^2). Carrier birth enters mu_el_matrix and Bdot. Nonzero a with active carrier requires finite positive relaxation time; coupled algebraic equilibrium is outside scope. Quartz remains the preceding temperature-prescribed proxy. No measured molar-volume jump, crystallization or glass yield.'
+        report['matrix_phase_eigenstrain_approximation']='B=a*N*v_matrix*(x-x_ref)/V0, N=active*n_matrix, x_ref=stress-free phase fraction at Tr. Signed assumed effective axial strain; species composition and molar volumes unchanged. A_phase=b*T*(q-q_eq)-v_matrix*K*(a*epsilon+g*epsilon^2/2) per active mole; qdot=-k*A_phase/(b*T), so production=N*k*x*(1-x)*A_phase^2/(b*T^2). Carrier birth enters mu_el_matrix and Bdot. Nonzero a or g with active carrier requires finite positive relaxation time; coupled algebraic equilibrium is outside scope. Quartz remains the preceding temperature-prescribed proxy. No measured molar-volume jump, crystallization or glass yield.'
+        report['thermodynamics']['phase_modulus_contrast']=self.phase_modulus_contrast
+        report['phase_modulus_approximation']='K=K_porosity*exp(-g*C), C=N*v_matrix*(x-x_ref)/V0. Same fixed-reference-volume phase measure as B=a*C, with no direct temperature dependence at fixed x,n. g is assumed and fixed in the conditional UQ and synthetic fit. Distinguishes ordered/disordered contributions at fixed carrier amount; not a measured constituent modulus, glass transition, damage or phase-resolved mixture law. Zero g restores the preceding phase-eigenstrain model.'
+        report['summary']['minimum_phase_modulus_ratio']=min(min(r['phase_modulus_ratio']) for r in fields['rows'])
+        report['summary']['maximum_phase_modulus_ratio']=max(max(r['phase_modulus_ratio']) for r in fields['rows'])
+        report['summary']['final_mean_phase_modulus_ratio']=float(np.mean(fields['rows'][-1]['phase_modulus_ratio']))
         report['thermodynamics']['matrix_phase_eigenstrain_amplitude']=self.liquid_strain
         report['summary']['peak_absolute_matrix_phase_eigenstrain']=max(max(abs(np.array(r['matrix_phase_eigenstrain']))) for r in fields['rows'])
         report['summary']['final_mean_matrix_phase_eigenstrain']=float(np.mean(fields['rows'][-1]['matrix_phase_eigenstrain']))
@@ -495,8 +546,9 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         report['dimension_check']['identities'] += ['L_liquid*w_liquid/Tm^2=J/mol/K','n_matrix*active_fraction*x*volume/dry_condensed_volume=1','exp(gain*liquid_fraction)=1']
         report['dimension_check']['identities'] += ['E_order*phi_ordered/(R*T)=1; zeta=cap*V0/(ks*pore)*dimensionless=Pa*s','eta_dot=force/zeta=1/s; V0*force*eta_dot/T=W/K; positive zeta implies nonnegative mechanical dissipation']
         report['dimension_check']['identities'] += ['D/V=1; K0*((D/V)/(D0/V0))**m=Pa; F_V=Pa; F_VV=Pa/m3; F_D*v_dry=J/mol','S=-F_T; U=F+T*S; eta_dot=(-F_eta/V0)/zeta; production=V0*(K*epsilon)**2/(zeta*T)=W/K']
+        report['dimension_check']['identities'] += ['C=N*v_matrix*(x-x_ref)/V0=1; exp(-g*C)=1; K_C=-g*K=Pa; V0*K_C*Cdot=J/s']
         if self.kinetic_liquid:
-            report['dimension_check']['identities'] += ['q=log(x/(1-x))=1; A_phase=b*T*(q-q_eq)-a*v_matrix*K*epsilon=J/mol; dq/dt=-k*A_phase/(b*T)=1/s','N*L*dx/dt=W; -N*A_phase*dx/dt/T=W/K','B=a*N*v_matrix*(x-x_ref)/V0=1; Bdot=B_n*ndot+B_x*xdot=1/s; fixed-x latent Cp=0; no double-counted equilibrium Cp']
+            report['dimension_check']['identities'] += ['q=log(x/(1-x))=1; A_phase=b*T*(q-q_eq)-v_matrix*K*(a*epsilon+g*epsilon^2/2)=J/mol; dq/dt=-k*A_phase/(b*T)=1/s','N*L*dx/dt=W; -N*A_phase*dx/dt/T=W/K','B=a*N*v_matrix*(x-x_ref)/V0=1; Bdot=B_n*ndot+B_x*xdot=1/s; fixed-x latent Cp=0; no double-counted equilibrium Cp']
         else:
             report['dimension_check']['identities'] += ['dh_matrix/dT=Cp_matrix=T*ds_matrix/dT']
         return report,fields
