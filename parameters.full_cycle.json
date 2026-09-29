@@ -165,6 +165,11 @@
       "identity": "assumed",
       "location": "https://idaes-pse.readthedocs.io/en/stable/explanations/components/property_package/general/transport_properties/viscosity_wilke.html; docs/FULL_CYCLE_REPORT.md",
       "note": "Wilke low-pressure mixing equation verified in official IDAES documentation. Four pure-species reference multipliers, shared temperature power, symmetric face composition and mixing interpolation are explicit assumptions, not measured viscosity curves. Original Wilke AIP page inaccessible during this narrow check; no original-paper full-text verification claimed."
+    },
+    "gas_caloric": {
+      "identity": "assumed",
+      "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py thermo and gas_carried_enthalpy",
+      "note": "Explicit linear ideal-gas Cp approximation anchored at existing reference Cp. h and s analytically integrated; face enthalpy derived from exact standard-state mu/T divided difference. Slopes are engineering assumptions, not literature fits or measurements."
     }
   },
   "parameters": {
@@ -672,7 +677,7 @@
       ],
       "source": "legacy",
       "status": "assumed",
-      "note": "Positive constant Cp, assumed full-temperature approximation; phase transitions of inert silica omitted."
+      "note": "Reference Cp at reference.temperature for finite-inventory gas with linear temperature slope; historical swept-gas host retains constant Cp. Assumed, not a measured calorimetric fit."
     },
     "species.N2.h_ref": {
       "value": 0.0,
@@ -705,7 +710,7 @@
       ],
       "source": "legacy",
       "status": "assumed",
-      "note": "Positive constant Cp, assumed full-temperature approximation; phase transitions of inert silica omitted."
+      "note": "Reference Cp at reference.temperature for finite-inventory gas with linear temperature slope; historical swept-gas host retains constant Cp. Assumed, not a measured calorimetric fit."
     },
     "species.H2O.h_ref": {
       "value": -241800,
@@ -738,7 +743,7 @@
       ],
       "source": "legacy",
       "status": "assumed",
-      "note": "Positive constant Cp, assumed full-temperature approximation; phase transitions of inert silica omitted."
+      "note": "Reference Cp at reference.temperature for finite-inventory gas with linear temperature slope; historical swept-gas host retains constant Cp. Assumed, not a measured calorimetric fit."
     },
     "species.CO2.h_ref": {
       "value": -393500,
@@ -771,7 +776,7 @@
       ],
       "source": "legacy",
       "status": "assumed",
-      "note": "Positive constant Cp, assumed full-temperature approximation; phase transitions of inert silica omitted."
+      "note": "Reference Cp at reference.temperature for finite-inventory gas with linear temperature slope; historical swept-gas host retains constant Cp. Assumed, not a measured calorimetric fit."
     },
     "kinetics.evaporation.A": {
       "value": 20000.0,
@@ -2907,6 +2912,50 @@
       "source": "mixture_viscosity",
       "status": "assumed",
       "note": "Positive interpolation mu=(1-alpha)*mu_base+alpha*mu_Wilke. One enables Wilke at symmetric face mole fractions; zero exactly restores preceding common viscosity. Intermediate alpha is an assumed model interpolation, not species fraction. Fixed in UQ and synthetic fit."
+    },
+    "species.O2.cp_slope": {
+      "value": 0.006,
+      "unit": "J/mol/K2",
+      "range": [
+        0.0,
+        0.03
+      ],
+      "source": "gas_caloric",
+      "status": "assumed",
+      "note": "Linear Cp slope for finite-inventory gas host; no measured calibration. Zero restores constant reference Cp."
+    },
+    "species.N2.cp_slope": {
+      "value": 0.004,
+      "unit": "J/mol/K2",
+      "range": [
+        0.0,
+        0.03
+      ],
+      "source": "gas_caloric",
+      "status": "assumed",
+      "note": "Linear Cp slope for finite-inventory gas host; no measured calibration. Zero restores constant reference Cp."
+    },
+    "species.H2O.cp_slope": {
+      "value": 0.01,
+      "unit": "J/mol/K2",
+      "range": [
+        0.0,
+        0.03
+      ],
+      "source": "gas_caloric",
+      "status": "assumed",
+      "note": "Linear Cp slope for finite-inventory gas host; no measured calibration. Zero restores constant reference Cp."
+    },
+    "species.CO2.cp_slope": {
+      "value": 0.02,
+      "unit": "J/mol/K2",
+      "range": [
+        0.0,
+        0.03
+      ],
+      "source": "gas_caloric",
+      "status": "assumed",
+      "note": "Linear Cp slope for finite-inventory gas host; no measured calibration. Zero restores constant reference Cp."
     }
   },
   "species": [
@@ -3246,9 +3295,13 @@
     "transport.viscosity_factor.N2",
     "transport.viscosity_factor.H2O",
     "transport.viscosity_factor.CO2",
-    "transport.viscosity_mixing_fraction"
+    "transport.viscosity_mixing_fraction",
+    "species.O2.cp_slope",
+    "species.N2.cp_slope",
+    "species.H2O.cp_slope",
+    "species.CO2.cp_slope"
   ],
-  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope. Phase modulus contrast is fixed at four; neither its range nor its correlation with eigenstrain, porosity stiffness or phase kinetics is covered or identified. Disordered-minus-ordered heat capacity contrast is fixed at 10 J/mol/K; its range and correlations are neither covered nor identified. Phase conductivity contrast is fixed at two; its signed range and correlations with phase kinetics, baseline conductivity, moisture and pore radiation are not covered or identified. Tortuosity porosity exponent is fixed at one; its range and correlation with diffusivity, initial tortuosity, liquid occupancy and permeability are not covered or identified. Six positive gas-pair mobility factors are fixed at their declared nominal values; their ranges and correlations with the common diffusivity, tortuosity and permeability are not covered or identified. Mixture viscosity species factors and mixing fraction are fixed; their ranges, correlations and identifiability are not covered.",
+  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope. Phase modulus contrast is fixed at four; neither its range nor its correlation with eigenstrain, porosity stiffness or phase kinetics is covered or identified. Disordered-minus-ordered heat capacity contrast is fixed at 10 J/mol/K; its range and correlations are neither covered nor identified. Phase conductivity contrast is fixed at two; its signed range and correlations with phase kinetics, baseline conductivity, moisture and pore radiation are not covered or identified. Tortuosity porosity exponent is fixed at one; its range and correlation with diffusivity, initial tortuosity, liquid occupancy and permeability are not covered or identified. Six positive gas-pair mobility factors are fixed at their declared nominal values; their ranges and correlations with the common diffusivity, tortuosity and permeability are not covered or identified. Mixture viscosity species factors and mixing fraction are fixed; their ranges, correlations and identifiability are not covered. Four new gas Cp slopes are fixed; their ranges and correlations are not sampled or identified.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -3820,6 +3873,55 @@
           "source": "mixture_viscosity",
           "status": "assumed",
           "note": "Disable only mixture viscosity; retain pair molecular diffusion, Darcy permeability, gas program and other physics."
+        }
+      }
+    },
+    {
+      "id": "gas_caloric_disabled",
+      "overrides": {
+        "species.O2.cp_slope": {
+          "value": 0.0,
+          "unit": "J/mol/K2",
+          "range": [
+            0.0,
+            0.03
+          ],
+          "source": "gas_caloric",
+          "status": "assumed",
+          "note": "Linear Cp slope for finite-inventory gas host; no measured calibration. Zero restores constant reference Cp."
+        },
+        "species.N2.cp_slope": {
+          "value": 0.0,
+          "unit": "J/mol/K2",
+          "range": [
+            0.0,
+            0.03
+          ],
+          "source": "gas_caloric",
+          "status": "assumed",
+          "note": "Linear Cp slope for finite-inventory gas host; no measured calibration. Zero restores constant reference Cp."
+        },
+        "species.H2O.cp_slope": {
+          "value": 0.0,
+          "unit": "J/mol/K2",
+          "range": [
+            0.0,
+            0.03
+          ],
+          "source": "gas_caloric",
+          "status": "assumed",
+          "note": "Linear Cp slope for finite-inventory gas host; no measured calibration. Zero restores constant reference Cp."
+        },
+        "species.CO2.cp_slope": {
+          "value": 0.0,
+          "unit": "J/mol/K2",
+          "range": [
+            0.0,
+            0.03
+          ],
+          "source": "gas_caloric",
+          "status": "assumed",
+          "note": "Linear Cp slope for finite-inventory gas host; no measured calibration. Zero restores constant reference Cp."
         }
       }
     }
