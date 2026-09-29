@@ -140,6 +140,11 @@
       "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_solid.py elastic_response",
       "note": "Reference-volume weighted log-modulus contrast of the existing ordered/disordered matrix proxy: K=K_porosity*exp(-g*C), C=N*v_matrix*(x-x_ref)/V0. Same Helmholtz energy supplies phase, carrier and mechanical derivatives. No measured phase modulus, glass transition, damage or phase-resolved mixture law.",
       "identity": "assumed"
+    },
+    "phase_heat_capacity": {
+      "identity": "assumed",
+      "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_solid.py liquid_contrast",
+      "note": "Constant two-state Cp contrast: dh=L+c*(T-Tm), ds=L/Tm+c*ln(T/Tm), q_eq=(ds-dh/T)/b. State storage, carrier chemical potential and internal relaxation share this free energy. Nominal c=10 J/mol/K is an illustrative assumed increment, not a literature or measured value."
     }
   },
   "parameters": {
@@ -2177,7 +2182,7 @@
       ],
       "source": "effective_liquid_phase",
       "status": "assumed",
-      "note": "Enthalpy contrast per mole of active proxy matrix. Shared by caloric storage and chemical potentials; no separate heat source."
+      "note": "Enthalpy contrast per active proxy matrix mole at liquid.transition_temperature. Shared caloric storage and chemical potentials; its temperature dependence follows liquid.heat_capacity_contrast. No separate heat source."
     },
     "liquid.transition_width": {
       "value": 40.0,
@@ -2728,6 +2733,17 @@
       "source": "phase_stiffness",
       "status": "assumed",
       "note": "Log effective axial modulus contrast per active carrier reference-volume fraction per change in disordered fraction. Fixed in conditional UQ and synthetic fit; zero restores preceding phase-eigenstrain model. Nonzero contrast with active carrier requires positive relaxation time. No measured elastic softening or independent glass transition."
+    },
+    "liquid.heat_capacity_contrast": {
+      "value": 10.0,
+      "unit": "J/mol/K",
+      "range": [
+        0.0,
+        20.0
+      ],
+      "source": "phase_heat_capacity",
+      "status": "assumed",
+      "note": "Constant disordered-minus-ordered molar heat capacity per active matrix mole; enthalpy/entropy contrast referenced at the existing transition temperature. Effective illustrative closure, not measured glass Cp or calorimetry. Fixed in the existing 25-dimensional paired UQ and three-parameter synthetic fit; zero recovers the preceding phase-stiffness model."
     }
   },
   "species": [
@@ -3053,9 +3069,10 @@
     "sintering.ordered_structure_barrier",
     "solid.dry_fraction_modulus_exponent",
     "liquid.axial_transition_strain",
-    "solid.phase_modulus_contrast"
+    "solid.phase_modulus_contrast",
+    "liquid.heat_capacity_contrast"
   ],
-  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope. Phase modulus contrast is fixed at four; neither its range nor its correlation with eigenstrain, porosity stiffness or phase kinetics is covered or identified.",
+  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope. Phase modulus contrast is fixed at four; neither its range nor its correlation with eigenstrain, porosity stiffness or phase kinetics is covered or identified. Disordered-minus-ordered heat capacity contrast is fixed at 10 J/mol/K; its range and correlations are neither covered nor identified.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -3492,6 +3509,22 @@
           "source": "phase_stiffness",
           "status": "assumed",
           "note": "Disable phase dependence of elastic modulus; retain preceding matrix eigenstrain and reciprocal stress feedback."
+        }
+      }
+    },
+    {
+      "id": "phase_heat_capacity_disabled",
+      "overrides": {
+        "liquid.heat_capacity_contrast": {
+          "value": 0.0,
+          "unit": "J/mol/K",
+          "range": [
+            0.0,
+            20.0
+          ],
+          "source": "phase_heat_capacity",
+          "status": "assumed",
+          "note": "Zero two-state heat capacity contrast restores the preceding constant-enthalpy-contrast phase-stiffness model."
         }
       }
     }

@@ -1,3 +1,15 @@
+## 2026-09-29 UTC：两态基质热容差本轮开发交付
+
+本轮在src/sludge_vme/models/full_cycle_solid.py与根参数实现c=10J/(mol·K)、范围0–20的assumed热容对比；Δh=L+c*(T−Tm)、Δs=L/Tm+c*ln(T/Tm)，相亲和力、载体热力学、内部松弛与固定相态Cp共用同一自由能。235主参数（38 literature、197 assumed、0 measured），275条含覆盖项元数据。证据见docs/FULL_CYCLE_REPORT.md首节与docs/FULL_CYCLE_PHASE_CAPACITY_*.json。
+
+12/60、12/30、24/60物理及关键收敛通过，最大时间/网格差异0.009395%/0.402595%；含零c对照的全程/分段最坏守恒0.040633%/0.075375%，熵0.000949%。零c三个状态RHS及整周期全部既有summary精确恢复前版。干燥余水约0.14065%仍超0.1%，局部凝结峰值网格差异4.715259%仍超2%，完整工程验收未通过。235项参数中新增c未识别也未覆盖其范围。
+
+条件化UQ24次物理22/24、工艺终点15/24、同时13/24通过；样本5 standard/lower_peak分段残差0.100502%/0.146044%超限，全部失败保留，无积分重试。原25维配对取值一致，新c及名义渗透率等固定，六项排名稳健性均未证实。七类83项合成标定20次评估通过，三参数最大恢复误差0.004176%，拟合仍assumed，真值和拟合干燥仍失败。
+
+验收20217退出3、零c57164退出0、UQ96256退出3、标定39682退出0，全部关闭，勿再轮询。UQ4700.28s、拟合3307.26s（不含真值生成）；截至04:18:30 UTC实施墙钟5245.20s。9条代表场回读核对后仅清理本轮临时场54,610,018字节；首次复数类型修复及汇总路径读取错误保留。实际提交/推送/远端核对和最终耗时见runs/full-cycle/phase-capacity-git-delivery.json及私有latest_model_development_delivery，父提交2c3e808。
+
+下一项必要缺口：基于现有两态代理的非辐射有效热导相态依赖，沿用正热导共享面输运，仍属assumed；本轮未实现。整体模型与材料适用性未完成。迁移已完成，20GB目标仍未达：162,907,435,008字节是2026-09-27 06:19 UTC旧测量，本轮未重测或重试Drive。历史存储阻塞不停止模型开发，自动任务保持运行。
+
 ## 2026-09-29 UTC：相态相关有效刚度本轮开发交付
 
 本轮在src/sludge_vme/models/full_cycle_solid.py与根参数实现K=K_porosity*exp(-g*C)，C=N*v_matrix*(x-x_ref)/V0；相亲和力、载体组成势、机械平衡及完整U/S导数一致。g=4为assumed；234主参数（38 literature、196 assumed、0 measured），273条元数据。方程、影响及证据见docs/FULL_CYCLE_REPORT.md首节与docs/FULL_CYCLE_PHASE_STIFFNESS_RESULTS.json。
