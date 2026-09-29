@@ -15,6 +15,7 @@ from scipy.integrate import solve_ivp
 from scipy.sparse import csc_matrix
 
 from .full_cycle import FullCycle
+from .full_cycle_diagnostics import drying_water_diagnostics, free_water_ledger
 
 
 class FiniteGasFullCycle(FullCycle):
@@ -622,6 +623,7 @@ class FiniteGasFullCycle(FullCycle):
                 'boundary_entropy_exchange_w_k':float(r['exchange']),
                 'x_m':(np.cumsum(bulk/self.area)-bulk/self.area/2).tolist(),
                 'water_kg_per_initial_dry_kg':(ns[:,self.ns.index('water')]*self.mw[self.ns.index('water')]/self.md).tolist(),
+                'liquid_water_inventory_mol':ns[:,self.water_index].tolist(),
                 'water_activity':np.exp(r['water_log_activity']).tolist(),
                 'water_log_activity':r['water_log_activity'].tolist(),
                 'water_mixing_log_activity':r['water_mixing_log_activity'].tolist(),
@@ -691,9 +693,15 @@ class FiniteGasFullCycle(FullCycle):
                     'energy_scale_j':energy_scale,'maximum_energy_residual_j':float(np.max(np.abs(uerror))),
                     'outer_pressure_work_j':float(work[j]-work[i]),'total_internal_and_surface_energy_change_j':float(energies[j]-energies[i]),
                     'pressure_work_integration_residual_j':float(work[j]-work[i]+self.P*(bulks[j]-bulks[i]))}
+        vapor_index=self.ng.index('H2O')
+        def interval_free_water(a,b):
+            return free_water_ledger(self.config,rows[a],rows[b],
+                boundary_in_mol=gasin[b,vapor_index]-gasin[a,vapor_index],
+                boundary_out_mol=gasout[b,vapor_index]-gasout[a,vapor_index])
         stages={}
         for i,name in enumerate(self.config['stages']):
             a=int(np.where(times==self.times[i])[0][0]); b=int(np.where(times==self.times[i+1])[0][0]); stages[name]=balance(a,b)
+            stages[name]['free_water_ledger']=interval_free_water(a,b)
         final=rows[-1]; phi=float(np.average(final['porosity'],weights=self.unpack(states[-1])[3]))
         product_mass=final['mass_kg']; density=product_mass/bulks[-1]; peak=max(r['temperature_difference_k'] for r in rows)
         summary={'mass_kg':product_mass,'total_mass_including_pore_gas_kg':float(mass[-1]),'density_kg_m3':float(density),
@@ -746,6 +754,7 @@ class FiniteGasFullCycle(FullCycle):
         summary['peak_char_inventory_kg'] = max(sum(r['char_inventory_mol'])*self.mw[self.char] for r in rows)
         summary['reaction_totals_mol'] = {name:float(sum(values)) for name,values in final['reaction_extent_mol'].items()}
         whole=balance(0,len(times)-1)
+        whole['free_water_ledger']=interval_free_water(0,len(times)-1)
         entropy_error=entropies-entropies[0]-states[:,-2:].sum(axis=1)*self.escale/self.Tr
         entropy_relative=float(np.max(np.abs(entropy_error))/(self.escale/self.Tr))
         inventory_roundoff = self.p('acceptance.inventory_roundoff_factor','1')*np.finfo(float).eps*self.nscale
@@ -794,6 +803,11 @@ class FiniteGasFullCycle(FullCycle):
                 'condensed_inventory_acceptance_bound_mol':inventory_budget,'inventory_values_clipped':False,
                 'minimum_temperature_k':min(min(r['temperature_k']) for r in rows),
                 'minimum_porosity':min(min(r['porosity']) for r in rows),'minimum_pressure_pa':min(min(r['pressure_pa']) for r in rows)}}
+        drying_start=int(np.where(times==self.times[self.config['stages'].index('drying')])[0][0])
+        report['drying_water_diagnostics']=drying_water_diagnostics(
+            self.config,rows[drying_start],rows[drying],
+            boundary_in_mol=gasin[drying,vapor_index]-gasin[drying_start,vapor_index],
+            boundary_out_mol=gasout[drying,vapor_index]-gasout[drying_start,vapor_index])
         report['example_endpoints']={'drying_remaining_fraction':remaining,'cooling_maximum_temperature_difference_k':cooled,
             'passed':bool(remaining<self.p('acceptance.drying_remaining_fraction','1') and cooled<self.p('acceptance.cooling_temperature_difference','K'))}
         report['physical_consistency_passed']=bool(report['conservation_passed'] and min_condensed>=-inventory_budget and min_gas>0
