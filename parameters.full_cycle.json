@@ -150,6 +150,11 @@
       "identity": "assumed",
       "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_solid.py phase_conductivity",
       "note": "Effective dry-skeleton log conductivity contrast: multiply the dry term by exp(-gk*phi_disordered), with phi_disordered=N*x*v_matrix/V_dry. Water enhancement and pore radiation stay separate. Nominal gk=2 and signed range [-4,4] are illustrative assumptions, not measured constituent conductivities or a material-specific direction."
+    },
+    "porosity_diffusion": {
+      "identity": "assumed",
+      "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py gas_diffusivity",
+      "note": "Effective face transport tortuosity tau=1+(tau_initial-1)*(phi_initial/phi)^a with the preceding arithmetic gas porosity. a=1 and range [0,2] are illustrative assumptions, not a measured geometric or connected-pore law. Positive common-D, shared flux and conjugate carried enthalpy preserve the same entropy construction. No extra storage or Knudsen/percolation model."
     }
   },
   "parameters": {
@@ -1813,7 +1818,7 @@
       ],
       "source": "porous_transport",
       "status": "assumed",
-      "note": "Assumed geometric transport tortuosity, fixed during a run."
+      "note": "Assumed initial effective transport tortuosity. Current face value follows the separately declared porosity exponent; not a measured geometric path-length ratio."
     },
     "transport.permeability_ref": {
       "value": 3.75e-14,
@@ -2760,6 +2765,17 @@
       "source": "phase_conductivity",
       "status": "assumed",
       "note": "Positive gk lowers the dry-skeleton conduction at fixed state as the disordered fraction increases; negative gk raises it. Fixed in the unchanged 25-dimensional paired UQ and three-parameter synthetic fit; its range and correlations are not covered or identified. Zero restores preceding thermal transport."
+    },
+    "transport.tortuosity_porosity_exponent": {
+      "value": 1.0,
+      "unit": "1",
+      "range": [
+        0.0,
+        2.0
+      ],
+      "source": "porosity_diffusion",
+      "status": "assumed",
+      "note": "Exponent in tau=1+(tau_initial-1)*(phi_initial_face/phi_face)^a; initial gas porosity from root recipe. Fixed in current paired UQ and synthetic calibration; range and correlation with D_ref/permeability are not covered or identified. Zero restores preceding constant tortuosity exactly."
     }
   },
   "species": [
@@ -3087,9 +3103,10 @@
     "liquid.axial_transition_strain",
     "solid.phase_modulus_contrast",
     "liquid.heat_capacity_contrast",
-    "thermal.phase_conductivity_contrast"
+    "thermal.phase_conductivity_contrast",
+    "transport.tortuosity_porosity_exponent"
   ],
-  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope. Phase modulus contrast is fixed at four; neither its range nor its correlation with eigenstrain, porosity stiffness or phase kinetics is covered or identified. Disordered-minus-ordered heat capacity contrast is fixed at 10 J/mol/K; its range and correlations are neither covered nor identified. Phase conductivity contrast is fixed at two; its signed range and correlations with phase kinetics, baseline conductivity, moisture and pore radiation are not covered or identified.",
+  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope. Phase modulus contrast is fixed at four; neither its range nor its correlation with eigenstrain, porosity stiffness or phase kinetics is covered or identified. Disordered-minus-ordered heat capacity contrast is fixed at 10 J/mol/K; its range and correlations are neither covered nor identified. Phase conductivity contrast is fixed at two; its signed range and correlations with phase kinetics, baseline conductivity, moisture and pore radiation are not covered or identified. Tortuosity porosity exponent is fixed at one; its range and correlation with diffusivity, initial tortuosity, liquid occupancy and permeability are not covered or identified.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -3558,6 +3575,22 @@
           "source": "phase_conductivity",
           "status": "assumed",
           "note": "Disable only phase-dependent conductivity; retain the preceding phase heat capacity, mechanics and pore radiation."
+        }
+      }
+    },
+    {
+      "id": "porosity_diffusion_disabled",
+      "overrides": {
+        "transport.tortuosity_porosity_exponent": {
+          "value": 0.0,
+          "unit": "1",
+          "range": [
+            0.0,
+            2.0
+          ],
+          "source": "porosity_diffusion",
+          "status": "assumed",
+          "note": "Disable only evolution of effective gas diffusion tortuosity; preserve gas porosity and Darcy permeability evolution."
         }
       }
     }

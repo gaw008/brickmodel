@@ -35,6 +35,7 @@ class FiniteGasFullCycle(FullCycle):
         self.viscosity = self.p('transport.viscosity_ref', 'Pa*s')
         self.viscosity_exponent = self.p('transport.viscosity_exponent', '1')
         self.tortuosity = self.p('transport.tortuosity', '1')
+        self.tortuosity_exponent = self.p('transport.tortuosity_porosity_exponent', '1')
         self.permeability = self.p('transport.permeability_ref', 'm2')
         self.water_mobility = self.p('transport.liquid_water_mobility', 'm2/s')
         self.retention_matrix = self.p('water.retention_scale', 'kg/kg')*self.md/self.mw[self.water_index]
@@ -110,6 +111,20 @@ class FiniteGasFullCycle(FullCycle):
         """
         return np.array([np.interp(t,self.times,self.gas_knots[:,i]) for i in range(self.g)])
 
+    def gas_diffusivity(self, thermal_mean, pressure, phi):
+        """Positive face closure using the preceding arithmetic gas porosity.
+
+        tau=1+(tau_initial-1)*(phi_initial/phi)**a. For the declared
+        tau_initial>1 and a>=0, narrowing gas pores raises tau above one.
+        a=0 recovers constant tortuosity; this is an effective transport
+        factor, not a measured path-length ratio or a percolation model.
+        """
+        face_phi = np.r_[(phi[:-1]+phi[1:])/2, phi[-1]]
+        reference_phi = np.r_[(self.phi0[:-1]+self.phi0[1:])/2, self.phi0[-1]]
+        tortuosity = 1+(self.tortuosity-1)*(reference_phi/face_phi)**self.tortuosity_exponent
+        diffusion = self.diffusion*(thermal_mean/self.Tr)**self.diffusion_exponent*self.Pr/pressure*face_phi/tortuosity
+        return diffusion, tortuosity
+
     def transport(self, T, partial, widths, pore, bulk, tf, inlet):
         """Molar-frame common-D diffusion and pressure-driven donor advection.
 
@@ -133,9 +148,8 @@ class FiniteGasFullCycle(FullCycle):
         yr = pr/pressure_r[:, None]
         phi = pore/bulk
         permeability = self.permeability*(phi/self.phi0)**3*((1-self.phi0)/(1-phi))**2
-        face_phi = np.r_[(phi[:-1]+phi[1:])/2, phi[-1]]
         face_perm = np.r_[(widths[:-1]+widths[1:])/(widths[:-1]/permeability[:-1]+widths[1:]/permeability[1:]), permeability[-1]]
-        diffusion = self.diffusion*(thermal_mean/self.Tr)**self.diffusion_exponent*self.Pr/pressure*face_phi/self.tortuosity
+        diffusion, tortuosity = self.gas_diffusivity(thermal_mean, pressure, phi)
         concentration = pressure/(self.R*thermal_mean)
         molecular = self.area*(diffusion*concentration/distance)[:, None]*(yl-yr)
         viscosity = self.viscosity*(thermal_mean/self.Tr)**self.viscosity_exponent
@@ -148,7 +162,7 @@ class FiniteGasFullCycle(FullCycle):
         entropy = np.sum(flux*force, axis=1)
         hin,sin = self.thermo(np.asarray(tf))
         reservoir_mu_over_t = hin[len(self.ns):]/tf-sin[len(self.ns):]+self.R*np.log(inlet*self.P/self.Pr)
-        return flux, energy, entropy, permeability, molecular, darcy, reservoir_mu_over_t
+        return flux, energy, entropy, permeability, molecular, darcy, reservoir_mu_over_t, diffusion, tortuosity
 
     def retention_sites(self, fields):
         """Immobile equivalents: persistent sites plus kaolin-carried sites.
@@ -295,7 +309,7 @@ class FiniteGasFullCycle(FullCycle):
             rate[:,self.decarbonation] = self.carbonate_rate(T,ns,partial,affinity[:,self.decarbonation])
         dns = rate@self.snu
         widths = bulk/self.area
-        flux, energy_flux, face_entropy, permeability, molecular, darcy, reservoir_mu_over_t = self.transport(T, partial, widths, pore, bulk, tf, inlet)
+        flux, energy_flux, face_entropy, permeability, molecular, darcy, reservoir_mu_over_t, diffusion, tortuosity = self.transport(T, partial, widths, pore, bulk, tf, inlet)
         dng = rate@self.gnu-flux
         dng[1:] += flux[:-1]
         flow = -energy_flux.copy()
@@ -321,6 +335,7 @@ class FiniteGasFullCycle(FullCycle):
                 'boundary_gas_fractions':inlet, 'reservoir_mu_over_t':reservoir_mu_over_t,
                 'production':production, 'exchange':exchange, 'entropy_identity_residual':sdot-production-exchange,
                 'minimum_face_entropy':float(face_entropy.real.min()), 'permeability':permeability,
+                'gas_face_diffusivity':diffusion, 'gas_face_tortuosity':tortuosity,
                 'molecular_flux':molecular, 'darcy_flux':darcy, 'energy_flux':energy_flux, 'capacity':capacity,
                 'water_flux':water_flux, 'water_energy_flux':water_energy, 'water_entropy':water_entropy,
                 'water_coordinate_rate':water_coordinate,
@@ -453,7 +468,8 @@ class FiniteGasFullCycle(FullCycle):
                 'mu_binding=a*g_prime=J/mol; partial_h=g_prime*(-E+C*(T-Tr))=J/mol',
                 'binding_face_force=difference(g_prime)*mean(a(T)/T)=J/mol/K; J*force=W/K',
                 'reservoir_y(t)=linear_interpolation_of_mole_fractions=1; sum(y)=1; y*P=Pa',
-                'outward_boundary_molar_flux*reservoir_mu/T=W/K; changing external y creates no internal inventory source']}
+                'outward_boundary_molar_flux*reservoir_mu/T=W/K; changing external y creates no internal inventory source',
+                'tau_face=1+(tau_initial-1)*(phi_initial_face/phi_face)^a=1; D_eff=D_free*phi_face/tau_face=m2/s']}
         return report, fields
 
     def summarize(self, times, states):
@@ -519,6 +535,8 @@ class FiniteGasFullCycle(FullCycle):
                 'gas_inventory_mol':{s:ng[:,i].tolist() for i,s in enumerate(self.ng)},
                 'gas_face_flux_mol_s':{s:r['gas_flux'][:,i].tolist() for i,s in enumerate(self.ng)},
                 'pressure_pa':r['pressure'].tolist(),'permeability_m2':r['permeability'].tolist(),
+                'gas_face_diffusivity_m2_s':r['gas_face_diffusivity'].tolist(),
+                'gas_face_tortuosity':r['gas_face_tortuosity'].tolist(),
                 'effective_conductivity_w_m_k':r['conductivity'].tolist(),
                 'pore_radiative_conductivity_w_m_k':radiative_conductivity.tolist(),
                 'background_conductivity_w_m_k':(r['conductivity']-radiative_conductivity).tolist(),
@@ -557,6 +575,10 @@ class FiniteGasFullCycle(FullCycle):
             'loss_on_ignition_dry_fraction':float(1-product_mass/(self.n*self.md)),'porosity':phi,
             'residual_carbon_kg':float(sum(final['residual_carbon_kg'])),'shrinkage':float(1-bulks[-1]/bulks[0]),'peak_temperature_difference_k':peak,
             'peak_overpressure_pa':max(max(r['pressure_pa'])-self.P for r in rows),
+            'minimum_sampled_gas_face_diffusivity_m2_s':min(min(r['gas_face_diffusivity_m2_s']) for r in rows),
+            'maximum_sampled_gas_face_diffusivity_m2_s':max(max(r['gas_face_diffusivity_m2_s']) for r in rows),
+            'minimum_sampled_gas_face_tortuosity':min(min(r['gas_face_tortuosity']) for r in rows),
+            'maximum_sampled_gas_face_tortuosity':max(max(r['gas_face_tortuosity']) for r in rows),
             'peak_internal_liquid_water_flux_mol_s':max(max(abs(x) for x in r['internal_liquid_water_face_flux_mol_s']) for r in rows),
             'final_retained_liquid_water_kg':sum(final['water_kg_per_initial_dry_kg'])*self.md,
             'peak_water_retention_entropy_j_k':max(sum(r['water_retention_entropy_j_k']) for r in rows),
@@ -600,6 +622,7 @@ class FiniteGasFullCycle(FullCycle):
                 'mole_fractions':{s:self.gas_knots[:,i].tolist() for i,s in enumerate(self.ng)},
                 'status':'assumed','limitation':'No kiln combustion, circulation or finite external inventory. Reservoir composition enters boundary partial pressure, donor transport and entropy exchange at the same time; stored pore gas is never reset. External composition changes add no separate internal energy source. Gas-storage-zero historical host remains constant-inlet.'},
             'gas_approximation':'Stored ideal O2/N2/H2O/CO2 gas, common-D molar diffusion plus donor Darcy flow with entropy-compatible carried enthalpy; assumed diffusivity and pore properties. No imposed internal pressure or independent per-cell sweep.',
+            'gas_diffusion_approximation':'D_eff=D_ref*(T_face/T_ref)^b*(P_ref/P_face)*phi_face/tau_face; tau_face=1+(tau_initial-1)*(phi_initial_face/phi_face)^a. Face porosity retains the arithmetic gas-volume fraction; the external face uses the boundary cell, not reservoir porosity. Positive common D preserves zero total molar diffusion and the existing entropy-compatible carried enthalpy. No extra state, stored energy or heat source. a=0 exactly restores constant tortuosity. This assumed effective factor is not a measured geometric path ratio, connected-pore fraction, percolation threshold, species-dependent diffusion, Knudsen or Soret law. Darcy permeability remains a separate existing closure; no claim of independent parameter identifiability.',
             'carbonate_approximation':'Signed CaCO3 -> CaO + CO2 exchange with a conserved local calcite/lime pool. For positive carbonation factor the calcite fraction is a linear inventory coordinate, allowing regeneration from zero; raw numerical excursions are retained under the existing inventory budget, without clipping. For a=delta_mu/(R*T)<=0, rate=k*n_calcite*(1-exp(a)); for a>0, rate=-factor*k*n_lime*(p_CO2/P_ref)*(1-exp(-a)). Reverse k reuses the assumed decarbonation Arrhenius law. No separate carbonation heat, empirical equilibrium pressure, mixing entropy, interface barrier or product-layer diffusion. Pure-phase affinity uses the existing formation properties and mechanical potential. This is a phenomenological net-rate law, not measured kinetics or microscopic detailed balance. Zero factor exactly restores the previous irreversible log-depletion coordinates. Swept-gas historical mode remains irreversible.',
             'thermal_approximation':'Background k=k_ref*(dry_solid_fraction/initial_dry_solid_fraction)^m*(1+b*liquid_water_volume_fraction), plus local pore-wall radiative k=4*sigma*factor*length*gas_porosity*T^3. Length is 2*r_initial*(pore_volume/initial_pore_volume)^(1/3), independent of mesh width. The assumed exchange factor includes wall emissivity and geometry; one local equilibrium temperature, no spectral/nonlocal photon or participating-gas radiation. Shared face and external half-cell resistances use total k; exterior furnace radiation remains a separate boundary exchange. No extra stored photon energy or separate radiation heat source. No intrinsic mineral conductivity law; coefficients unmeasured.',
             'liquid_water_transport_approximation':'Migration and seeded phase exchange share mechanical, ideal-mixing and energetic-binding water potential. Positive series availability multiplies the shared-face entropy force. Carried enthalpy uses reciprocal-log thermal mean, arithmetic mean mechanical potential times molar volume, and mean binding composition derivative times binding enthalpy at the thermal mean. Binding force is difference(g_prime)*mean(a(T)/T), satisfying the same nonisothermal entropy identity. No independent heat of transport. Log water inventory permits influx/loss; zero exterior/center liquid flow. No measured hydraulic law, dry-surface nucleation, hysteresis or humidity-cycle validation.',
