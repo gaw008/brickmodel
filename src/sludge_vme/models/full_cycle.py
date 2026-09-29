@@ -48,6 +48,28 @@ def changed(config: dict, overrides: dict) -> dict:
     return result
 
 
+def binding_extended_drying(config: dict) -> dict:
+    """Return the declared binding-response schedule with a longer drying stage.
+
+    process.binding_drying_extension is elapsed simulation time in seconds.
+    Stored stage endpoints precede process.time_scale, so their common shift
+    is extension/time_scale. Temperature and reservoir-composition knots are
+    unchanged and follow the same shifted clock; later stage durations are
+    preserved. This stretches the existing drying segment, without inserting
+    a new temperature or gas segment. At the nominal time_scale=1, this
+    reproduces the existing binding_extended_drying mechanism-case endpoints.
+    The input configuration is unchanged.
+    """
+    parameters = config['parameters']
+    endpoint_shift = (parameters['process.binding_drying_extension']['value']
+                      /parameters['process.time_scale']['value'])
+    drying_index = config['stages'].index('drying')
+    return changed(config, {
+        'process.'+stage+'.end': parameters['process.'+stage+'.end']['value']+endpoint_shift
+        for stage in config['stages'][drying_index:]
+    })
+
+
 def write_json(path: str | Path, data: dict) -> None:
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     Path(path).write_text(json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False) + "\n")
