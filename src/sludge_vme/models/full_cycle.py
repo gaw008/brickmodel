@@ -221,6 +221,10 @@ class FullCycle:
 
     def heat_transfer(self, T, ns, bulk, tf):
         conductivity = self.effective_conductivity(ns, bulk)+self.pore_radiative_conductivity(T, ns, bulk)
+        return self.heat_transfer_from_conductivity(T, bulk, tf, conductivity)
+
+    def heat_transfer_from_conductivity(self, T, bulk, tf, conductivity):
+        """One shared face flux and outer half-cell resistance for local k."""
         widths = bulk/self.area
         # Two half-cell resistances in series define a single shared face flux.
         conductance = self.area/(widths[:-1]/(2*conductivity[:-1])+widths[1:]/(2*conductivity[1:]))

@@ -55,6 +55,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         self.liquid_cp=self.p('liquid.heat_capacity_contrast','J/mol/K')
         self.liquid_width=self.p('liquid.transition_width','K')
         self.liquid_gain=self.p('liquid.mobility_gain','1')
+        self.phase_conductivity_contrast=self.p('thermal.phase_conductivity_contrast','1')
         self.ordered_barrier=self.p('sintering.ordered_structure_barrier','J/mol')
         self.liquid_mixing=self.liquid_latent*self.liquid_width/self.liquid_tc**2
         self.liquid_reference=self.liquid_phase(np.asarray(self.Tr))
@@ -187,6 +188,29 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         dry_volume=ns@self.v-ns[:,self.water_index]*self.v[self.water_index]
         fraction=liquid_moles*self.v[self.matrix]/dry_volume
         return liquid_moles,fraction,np.exp(self.liquid_gain*fraction)
+
+    def phase_conductivity(self,T,ns,bulk,fields):
+        """Assumed phase effect on dry-skeleton conduction, without new storage.
+
+        phi_d is disordered active volume divided by current dry condensed
+        volume. The exponential changes only the dry term; liquid-water
+        enhancement and pore radiation retain their separate preceding laws.
+        This is an effective closure, not a constituent mixing rule.
+        """
+        _,fraction,_=self.liquid_state(T,ns,fields)
+        factor=np.exp(-self.phase_conductivity_contrast*fraction)
+        water_fraction=ns[:,self.water_index]*self.v[self.water_index]/bulk
+        dry_fraction=(ns@self.v)/bulk-water_fraction
+        dry_conductivity=self.k*(dry_fraction/self.dry_solid_fraction0)**self.conductivity_exponent
+        background=dry_conductivity*(factor+self.conductivity_moisture_gain*water_fraction)
+        return background,factor
+
+    def state_heat_transfer(self,T,ns,bulk,tf,fields):
+        if self.phase_conductivity_contrast == 0:
+            return super().state_heat_transfer(T,ns,bulk,tf,fields)
+        background,_=self.phase_conductivity(T,ns,bulk,fields)
+        conductivity=background+self.pore_radiative_conductivity(T,ns,bulk)
+        return self.heat_transfer_from_conductivity(T,bulk,tf,conductivity)
 
     def sintering_response(self,T,ns,fields,pore,cap):
         """Inverse effective axial viscosity and ordered-structure penalty.
@@ -488,7 +512,12 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
             stiffness_ratio=np.exp(-self.phase_modulus_contrast*self.phase_reference_volume(f,ns)[0])
         contrast_h,contrast_s=self.liquid_contrast(T)
         phase_x=self.liquid_order(f[9])[0] if self.kinetic_liquid else self.liquid_phase(T)[0]
+        background,phase_conductivity_factor=self.phase_conductivity(T,ns,bulk,f)
+        background_reference=self.effective_conductivity(ns,bulk)
         return {**phase_fields,'quartz_beta_fraction':self.phase(T)[0].tolist(),
+                'dry_phase_conductivity_factor':phase_conductivity_factor.tolist(),
+                'phase_background_conductivity_ratio':(background/background_reference).tolist(),
+                'phase_background_conductivity_change_w_m_k':(background-background_reference).tolist(),
                 'liquid_enthalpy_contrast_j_mol':contrast_h.tolist(),
                 'liquid_entropy_contrast_j_mol_k':contrast_s.tolist(),
                 'liquid_frozen_phase_capacity_j_k':(self.liquid_active*ns[:,self.matrix]*phase_x*self.liquid_cp).tolist(),
@@ -559,6 +588,12 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         report['matrix_phase_eigenstrain_approximation']='B=a*N*v_matrix*(x-x_ref)/V0, N=active*n_matrix, x_ref=stress-free phase fraction at Tr. Signed assumed effective axial strain; species composition and molar volumes unchanged. A_phase=b*T*(q-q_eq)-v_matrix*K*(a*epsilon+g*epsilon^2/2) per active mole; qdot=-k*A_phase/(b*T), so production=N*k*x*(1-x)*A_phase^2/(b*T^2). Carrier birth enters mu_el_matrix and Bdot. Nonzero a or g with active carrier requires finite positive relaxation time; coupled algebraic equilibrium is outside scope. Quartz remains the preceding temperature-prescribed proxy. No measured molar-volume jump, crystallization or glass yield.'
         report['thermodynamics']['phase_modulus_contrast']=self.phase_modulus_contrast
         report['thermodynamics']['liquid_heat_capacity_contrast_j_mol_k']=self.liquid_cp
+        report['thermal_approximation']='Nonradiative k=k_ref*(dry_solid_fraction/initial_dry_solid_fraction)^m*[exp(-gk*phi_disordered)+b*liquid_water_volume_fraction]. phi_disordered=N*x*v_matrix/V_dry uses the current dry condensed volume; gk is an assumed signed effective log contrast. Only the dry term changes. The preceding local pore-wall radiative k is added separately, with one shared face flux and outer half-cell resistance using total k. No new stored energy, phase heat or separate radiation source; no measured constituent conductivity, anisotropy or phase-resolved mixing rule.'
+        report['phase_conductivity_approximation']='gk=thermal.phase_conductivity_contrast is fixed in the paired UQ and synthetic fit. Positive gk lowers the dry-skeleton conductivity at fixed composition, volume and temperature as the disordered fraction rises; negative gk raises it. Zero gk exactly restores the preceding heat-transfer path; zero active carrier removes the phase factor. No empirical direction or magnitude is established for real brick.'
+        report['summary']['minimum_dry_phase_conductivity_factor']=min(min(r['dry_phase_conductivity_factor']) for r in fields['rows'])
+        report['summary']['maximum_dry_phase_conductivity_factor']=max(max(r['dry_phase_conductivity_factor']) for r in fields['rows'])
+        report['summary']['final_mean_phase_background_conductivity_ratio']=float(np.mean(fields['rows'][-1]['phase_background_conductivity_ratio']))
+        report['summary']['peak_absolute_phase_conductivity_change_w_m_k']=max(max(abs(np.asarray(r['phase_background_conductivity_change_w_m_k']))) for r in fields['rows'])
         report['phase_heat_capacity_approximation']='Constant assumed c=Cp_disordered-Cp_ordered per active matrix mole. dh=L+c*(T-Tm); ds=L/Tm+c*ln(T/Tm); q_eq=(ds-dh/T)/b. Fixed-phase Cp increment=x*c; stress-free equilibrium Cp increment=x*c+dh^2*x*(1-x)/(b*T^2). Carrier h/s, reaction potentials and phase relaxation use the same free energy and Tr reference offsets. No measured calorimetry, glass transition or new state. c is fixed in conditional UQ and synthetic fit.'
         report['summary']['peak_frozen_phase_capacity_j_k']=max(sum(r['liquid_frozen_phase_capacity_j_k']) for r in fields['rows'])
         report['summary']['final_frozen_phase_capacity_j_k']=sum(fields['rows'][-1]['liquid_frozen_phase_capacity_j_k'])
@@ -589,4 +624,5 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         else:
             report['dimension_check']['identities'] += ['dh_matrix/dT=Cp_matrix=T*ds_matrix/dT']
         report['dimension_check']['identities'] += ['dh=L+c*(T-Tm)=J/mol; ds=L/Tm+c*ln(T/Tm)=J/mol/K; d(dh)/dT=c=T*d(ds)/dT','q_eq=(ds-dh/T)/b=1; Cp_phase_equilibrium=x*c+dh^2*x*(1-x)/(b*T^2)=J/mol/K']
+        report['dimension_check']['identities'] += ['phi_disordered=N*x*v_matrix/V_dry=1; exp(-gk*phi_disordered)=1; dry_k*(phase_factor+b*phi_water)=W/m/K','G_face=area/(half_width_left/k_left+half_width_right/k_right)=W/K; shared heat cancels internally; G_face*(T_right-T_left)^2/(T_left*T_right)=W/K']
         return report,fields

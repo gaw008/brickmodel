@@ -303,7 +303,7 @@ class FiniteGasFullCycle(FullCycle):
         water_flux, water_energy, water_entropy, water_rate, water_power, water_coordinate = self.water_transport(fields,T,bulk,pressure,cap)
         dns[:,self.water_index] += water_rate
         flow += water_power
-        heat, surface_T, qext, conductance, conductivity = self.heat_transfer(T, ns, bulk, tf)
+        heat, surface_T, qext, conductance, conductivity = self.state_heat_transfer(T, ns, bulk, tf, fields)
         mechanical = self.mechanical_rates(fields,T,ns,ng,bulk,pore,cap,pressure,dns,dng,heat,flow,us,ug)
         dT,db,dpore,capacity,extra_sdot,mechanical_entropy,coordinate_rate = mechanical
         sg = s[:, len(self.ns):]-self.R*np.log(partial/self.Pr)
@@ -335,6 +335,9 @@ class FiniteGasFullCycle(FullCycle):
                 'dsc':float(heat.real.sum())/(self.n*self.md), 'coordinate_rate':coordinate_rate,
                 'pore':pore, 'conductivity':conductivity, 'effective_capacity':self.effective_capacity,
                 'mechanical_residual':self.mechanical_residual}
+
+    def state_heat_transfer(self,T,ns,bulk,tf,fields):
+        return self.heat_transfer(T,ns,bulk,tf)
 
     def state_thermo(self,T,fields):
         return self.thermo(T)
