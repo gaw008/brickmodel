@@ -185,6 +185,11 @@
       "identity": "assumed",
       "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_gas.py water_mobility_resistance and water_transport",
       "note": "Declared reference-anchored Arrhenius mobility, D(T)=D_ref*exp[-E/R*(1/T-1/Tr)], combined with concentration in half-cell series resistances. Activation and range are engineering assumptions, not a measured hydraulic or diffusion curve. Changes kinetics only; same water potential, conjugate enthalpy and entropy production."
+    },
+    "dry_conductivity_temperature": {
+      "identity": "assumed",
+      "location": "Declared effective dry-skeleton kinetic closure in this project; no material conductivity measurement.",
+      "note": "Positive reference-anchored power law (T/Tr)^a changes only nonradiative dry-skeleton conduction. Water-volume enhancement and pore radiation retain their separate laws; no added storage. Nominal and range are assumptions, not fitted or literature-derived mineral properties."
     }
   },
   "parameters": {
@@ -1022,7 +1027,7 @@
       ],
       "source": "legacy",
       "status": "assumed",
-      "note": "Nonradiative dry background conductivity at the initial dry-recipe solid fraction and initial bulk volume. Solid/liquid-water fractions modify this background; pore radiation is added separately. This nominal value is assumed, not a measured total high-temperature conductivity or pure-mineral property."
+      "note": "Nonradiative dry background conductivity at the initial dry-recipe solid fraction and initial bulk volume. Solid/liquid-water fractions modify this background; pore radiation is added separately. This nominal value is assumed, not a measured total high-temperature conductivity or pure-mineral property. Reference value is at reference.temperature; the dry temperature factor acts only on the dry contribution."
     },
     "thermal.h": {
       "value": 20.0,
@@ -2156,7 +2161,7 @@
       ],
       "source": "effective_conductivity",
       "status": "assumed",
-      "note": "Dimensionless liquid-water volume correction to the nonradiative background. At fixed total pore fraction, replacing gas with liquid increases the background conductivity. Setting this coefficient and the solid-fraction exponent to zero restores constant background k, while pore radiation requires its own zero factor."
+      "note": "Dimensionless liquid-water volume correction to the nonradiative background. At fixed total pore fraction, replacing gas with liquid increases the background conductivity. Setting this coefficient and the solid-fraction exponent to zero restores constant background k, while pore radiation requires its own zero factor. Intrinsic dry-temperature and phase factors have separate zero limits; neither multiplies the liquid enhancement."
     },
     "kinetics.organic_carbonization.A": {
       "value": 1000000.0,
@@ -2794,7 +2799,7 @@
       ],
       "source": "phase_conductivity",
       "status": "assumed",
-      "note": "Positive gk lowers the dry-skeleton conduction at fixed state as the disordered fraction increases; negative gk raises it. Fixed in the unchanged 25-dimensional paired UQ and three-parameter synthetic fit; its range and correlations are not covered or identified. Zero restores preceding thermal transport."
+      "note": "Positive gk lowers the dry-skeleton conduction at fixed state as the disordered fraction increases; negative gk raises it. Fixed in the unchanged 25-dimensional paired UQ and three-parameter synthetic fit; its range and correlations are not covered or identified. Zero removes only the phase contrast; the intrinsic dry-temperature law remains active unless its own exponent is zero."
     },
     "transport.tortuosity_porosity_exponent": {
       "value": 1.0,
@@ -3059,6 +3064,17 @@
       "source": "liquid_water_mobility_temperature",
       "status": "assumed",
       "note": "Kinetic activation for liquid-water mobility with existing reference temperature and D_ref. Fixed in current paired UQ and three-parameter synthetic fit; no range/identification claim. Zero activation restores preceding constant mobility, preserving water/gas/solid calorics."
+    },
+    "thermal.dry_temperature_exponent": {
+      "value": -0.2,
+      "unit": "1",
+      "range": [
+        -0.5,
+        0.5
+      ],
+      "source": "dry_conductivity_temperature",
+      "status": "assumed",
+      "note": "Intrinsic dry-skeleton temperature exponent anchored at reference.temperature in Kelvin. Fixed in the existing 25-dimensional paired UQ and three-parameter synthetic fit; range/correlations and identification unverified. Zero restores preceding thermal law; finite positive process-temperature closure, not a full-temperature material law."
     }
   },
   "species": [
@@ -3410,9 +3426,10 @@
     "species.organic.cp_slope",
     "species.char.cp_slope",
     "species.water.cp_slope",
-    "transport.liquid_water_activation_energy"
+    "transport.liquid_water_activation_energy",
+    "thermal.dry_temperature_exponent"
   ],
-  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope. Phase modulus contrast is fixed at four; neither its range nor its correlation with eigenstrain, porosity stiffness or phase kinetics is covered or identified. Disordered-minus-ordered heat capacity contrast is fixed at 10 J/mol/K; its range and correlations are neither covered nor identified. Phase conductivity contrast is fixed at two; its signed range and correlations with phase kinetics, baseline conductivity, moisture and pore radiation are not covered or identified. Tortuosity porosity exponent is fixed at one; its range and correlation with diffusivity, initial tortuosity, liquid occupancy and permeability are not covered or identified. Six positive gas-pair mobility factors are fixed at their declared nominal values; their ranges and correlations with the common diffusivity, tortuosity and permeability are not covered or identified. Mixture viscosity species factors and mixing fraction are fixed; their ranges, correlations and identifiability are not covered. Four new gas Cp slopes are fixed; their ranges and correlations are not sampled or identified. Six non-quartz dry background Cp slopes are fixed; ranges and correlations with kinetics, thermal and phase properties are not covered or identified. Liquid-water background Cp slope is fixed at 0.01 J/mol/K2; its range and correlation with retention, phase exchange and heat transfer are not covered or identified.",
+  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope. Phase modulus contrast is fixed at four; neither its range nor its correlation with eigenstrain, porosity stiffness or phase kinetics is covered or identified. Disordered-minus-ordered heat capacity contrast is fixed at 10 J/mol/K; its range and correlations are neither covered nor identified. Phase conductivity contrast is fixed at two; its signed range and correlations with phase kinetics, baseline conductivity, moisture and pore radiation are not covered or identified. Tortuosity porosity exponent is fixed at one; its range and correlation with diffusivity, initial tortuosity, liquid occupancy and permeability are not covered or identified. Six positive gas-pair mobility factors are fixed at their declared nominal values; their ranges and correlations with the common diffusivity, tortuosity and permeability are not covered or identified. Mixture viscosity species factors and mixing fraction are fixed; their ranges, correlations and identifiability are not covered. Four new gas Cp slopes are fixed; their ranges and correlations are not sampled or identified. Six non-quartz dry background Cp slopes are fixed; ranges and correlations with kinetics, thermal and phase properties are not covered or identified. Liquid-water background Cp slope is fixed at 0.01 J/mol/K2; its range and correlation with retention, phase exchange and heat transfer are not covered or identified. The intrinsic dry-solid conductivity temperature exponent is also fixed; its declared range and correlation are not sampled or identified.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -4136,6 +4153,22 @@
           "source": "liquid_water_mobility_temperature",
           "status": "assumed",
           "note": "Kinetic activation for liquid-water mobility with existing reference temperature and D_ref. Fixed in current paired UQ and three-parameter synthetic fit; no range/identification claim. Zero activation restores preceding constant mobility, preserving water/gas/solid calorics."
+        }
+      }
+    },
+    {
+      "id": "dry_conductivity_temperature_disabled",
+      "overrides": {
+        "thermal.dry_temperature_exponent": {
+          "value": 0.0,
+          "unit": "1",
+          "range": [
+            -0.5,
+            0.5
+          ],
+          "source": "dry_conductivity_temperature",
+          "status": "assumed",
+          "note": "Intrinsic dry-skeleton temperature exponent anchored at reference.temperature in Kelvin. Fixed in the existing 25-dimensional paired UQ and three-parameter synthetic fit; range/correlations and identification unverified. Zero restores preceding thermal law; finite positive process-temperature closure, not a full-temperature material law."
         }
       }
     }
