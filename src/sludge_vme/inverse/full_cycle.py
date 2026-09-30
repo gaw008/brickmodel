@@ -339,3 +339,142 @@ def joint_drying_sensitivity(config: dict, out: Path) -> dict:
     write_json(out/'joint_drying_sensitivity.json',result)
     (out/'joint_drying_sensitivity.progress.json').unlink()
     return result
+
+
+def joint_drying_sensitivity_half_step(config: dict, previous: dict, out: Path) -> dict:
+    """Compare one declared smaller physical step with a saved full-step result.
+
+    The caller supplies the preceding diagnostic for the same nominal model,
+    drying window, numerical settings, parameter order, observation times and
+    scales. Its nominal observations are reused without integration. Only one
+    new forward per declared parameter is performed; no fit or step search.
+    Column-relative differences use the saved full-step column L2 norm, never
+    a single observation as denominator. This is not a convergence proof.
+    """
+    started = time.monotonic()
+    window = deepcopy(config)
+    window['stages'] = window['stages'][:window['stages'].index('drying')+1]
+    p = window['parameters']
+    keys = window['local_sensitivity_parameters']
+    kinds = window['local_sensitivity_observation_kinds']
+    observations = previous['observations']
+    baseline_run = next(run for run in previous['runs'] if run['condition'] == 'nominal')
+    baseline = np.array([row['value'] for row in baseline_run['observations']])
+    nominal = {key:p[key]['value'] for key in keys}
+    factor = p['calibration.local_sensitivity.step_factor']['value']
+    relative_step = p['calibration.difference_step']['value']*factor
+    deltas = {key:relative_step*nominal[key] for key in keys}
+    runs = []
+    columns = []
+    for key in keys:
+        run_started = time.monotonic()
+        overrides = {key:nominal[key]+deltas[key]}
+        values, report = predict(changed(window,overrides),observations)
+        remaining = report['example_endpoints']['drying_remaining_fraction']
+        runs.append({
+            'condition':key, 'parameter_values':{**nominal, **overrides},
+            'observations':[dict(row,value=float(value)) for row,value in zip(observations,values)],
+            'physical_consistency_passed':report['physical_consistency_passed'],
+            'window_balance':report['whole_cycle'], 'stages':report['stages'],
+            'thermodynamics':report['thermodynamics'], 'state_domain':report['state_domain'],
+            'dimension_check':report['dimension_check'],
+            'drying_remaining_fraction':remaining,
+            'drying_remaining_fraction_threshold':p['acceptance.drying_remaining_fraction']['value'],
+            'drying_endpoint_passed':bool(remaining < p['acceptance.drying_remaining_fraction']['value']),
+            'forward_elapsed_s':report['elapsed_s'], 'elapsed_s':time.monotonic()-run_started,
+        })
+        write_json(out/'joint_drying_sensitivity_half_step.progress.json',{
+            'completed':False, 'actual_forward_count':len(runs),
+            'baseline_source':'Supplied preceding diagnostic nominal run; no baseline recomputation.',
+            'runs':runs})
+        if not report['physical_consistency_passed']:
+            raise ValueError('sensitivity half-step forward calculation failed the declared physical consistency budget')
+        columns.append((values-baseline)/deltas[key])
+    derivative = np.column_stack(columns)
+    widths = np.array([previous['declared_parameter_range_widths'][key] for key in keys])
+    scales = np.array([row['scale'] for row in observations])
+    normalized = derivative*widths[None,:]/scales[:,None]
+    old_derivative = np.asarray(previous['D'])
+    old_normalized = np.asarray(previous['joint']['J'])
+
+    def matrix_diagnostics(matrix):
+        singular = np.linalg.svd(matrix,compute_uv=False)
+        tolerance = singular.max()*max(matrix.shape)*np.finfo(singular.dtype).eps
+        denominator = np.linalg.norm(matrix[:,0])*np.linalg.norm(matrix[:,1])
+        return {
+            'shape':list(matrix.shape), 'J':matrix.tolist(),
+            'singular_values':singular.tolist(),
+            'machine_rank':int(np.linalg.matrix_rank(matrix)),
+            'machine_rank_tolerance':float(tolerance),
+            'condition_number':float(singular[0]/singular[-1]) if singular[-1] != 0 else None,
+            'uncentered_two_column_cosine':float(matrix[:,0]@matrix[:,1]/denominator) if denominator != 0 else None,
+        }
+
+    def compare_columns(old, new, indices):
+        comparisons = {}
+        for j,key in enumerate(keys):
+            old_column, new_column = old[indices,j], new[indices,j]
+            difference = new_column-old_column
+            old_norm = np.linalg.norm(old_column)
+            changed_sign = np.sign(old_column) != np.sign(new_column)
+            comparisons[key] = {
+                'signed_difference':difference.tolist(),
+                'absolute_difference':np.abs(difference).tolist(),
+                'maximum_absolute_difference':float(np.max(np.abs(difference))),
+                'full_step_column_l2_norm':float(old_norm),
+                'half_step_column_l2_norm':float(np.linalg.norm(new_column)),
+                'difference_l2_norm':float(np.linalg.norm(difference)),
+                'relative_l2_difference':float(np.linalg.norm(difference)/old_norm) if old_norm != 0 else None,
+                'full_step_sign':np.sign(old_column).tolist(),
+                'half_step_sign':np.sign(new_column).tolist(),
+                'sign_changed':changed_sign.tolist(),
+                'sign_changed_observation_indices':[i for i,changed_sign_i in zip(indices,changed_sign) if changed_sign_i],
+            }
+        return comparisons
+
+    channels = {}
+    comparisons = {}
+    for kind in kinds:
+        indices = [i for i,row in enumerate(observations) if row['kind'] == kind]
+        channels[kind] = {'observation_indices':indices, **matrix_diagnostics(normalized[indices])}
+        comparisons[kind] = {
+            'observation_indices':indices,
+            'D_by_parameter':compare_columns(old_derivative,derivative,indices),
+            'J_by_parameter':compare_columns(old_normalized,normalized,indices),
+        }
+    all_indices = list(range(len(observations)))
+    comparisons['joint'] = {
+        'observation_indices':all_indices,
+        'J_by_parameter':compare_columns(old_normalized,normalized,all_indices),
+    }
+    result = {
+        'schema':'full_cycle_joint_drying_sensitivity_half_step_v1',
+        'identity':'simulation', 'scope':'One drying-window physical-step comparison only.',
+        'parameters':keys, 'parameter_statuses':{key:p[key]['status'] for key in keys},
+        'observations':observations, 'baseline_source':'Supplied preceding diagnostic nominal run; reused unchanged without a new forward.',
+        'baseline_reuse_precondition':'Caller confirms unchanged nominal physical model, schedule, numerical settings, parameter order, observation times and scales; no new baseline is computed by this interface.',
+        'nominal_parameter_values':nominal,
+        'window_stages':window['stages'],
+        'numerical_parameter_values':{key:item['value'] for key,item in p.items() if key.startswith('numerics.')},
+        'step_factor':factor,
+        'full_step':previous,
+        'half_step':{
+            'relative_step':relative_step, 'parameter_increments':deltas,
+            'D':derivative.tolist(), 'joint':matrix_diagnostics(normalized),
+            'channels':channels, 'runs':runs,
+        },
+        'comparisons':comparisons,
+        'comparison_definitions':{
+            'difference':'Half-step minus saved full-step; D retains observation-unit/parameter-unit, J is dimensionless. D and J are compared per channel and per parameter. Joint comparisons use only dimensionless J; no joint D norm is taken across unlike observation units.',
+            'relative_l2_difference':'L2(half_step_column-full_step_column)/L2(full_step_column). Null denotes an exactly zero full-step column norm, so the ratio is undefined; absolute differences remain available. No pointwise relative denominator is used.',
+            'sign_changed':'Exact sign-class change among -1,0,+1; includes transitions to or from zero and uses no threshold. Indices address the common full observation list.',
+            'matrix_diagnostics':previous['definitions'],
+        },
+        'window_physical_passed':all(run['physical_consistency_passed'] for run in runs),
+        'actual_forward_count':len(runs), 'reused_previous_forward_count':previous['actual_forward_count'],
+        'elapsed_s':time.monotonic()-started,
+        'limitations':'One halving of a one-sided physical-parameter step at fixed model, discretization and scales. No baseline recomputation, fitting, further step search, strict derivative convergence, noise robustness or real-material identification is established. Machine rank is not a pass criterion; column norms, condition numbers and cosines depend on the declared scales.',
+    }
+    write_json(out/'joint_drying_sensitivity_half_step.json',result)
+    (out/'joint_drying_sensitivity_half_step.progress.json').unlink()
+    return result
