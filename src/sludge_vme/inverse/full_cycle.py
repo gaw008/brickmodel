@@ -83,12 +83,17 @@ def fit(config: dict, dataset: dict, out: Path) -> dict:
     def residual(x):
         overrides = dict(zip(keys, bounds[:,0]+x*widths))
         values, report = predict(changed(config, overrides), rows)
-        if not report['physical_consistency_passed']:
-            raise ValueError('calibration forward calculation failed the declared physical consistency budget')
         values = (values-target)/scale
         evaluations.append({'evaluation':len(evaluations)+1,'normalized_residual_norm':float(np.linalg.norm(values)),
-                            'parameters':{k:float(v) for k,v in overrides.items()}})
+                            'parameters':{k:float(v) for k,v in overrides.items()},
+                            'physical_consistency_passed':report['physical_consistency_passed'],
+                            'maximum_balance_relative_residual':max(
+                                value for budget in [report['whole_cycle'],*report['stages'].values()]
+                                for value in budget['relative_residuals'].values()),
+                            'forward_elapsed_s':report['elapsed_s']})
         write_json(out/'calibration.progress.json',{'completed':False,'evaluation_history':evaluations})
+        if not report['physical_consistency_passed']:
+            raise ValueError('calibration forward calculation failed the declared physical consistency budget')
         print(f"calibration evaluation {len(evaluations)}: residual={np.linalg.norm(values):.6g}",flush=True)
         return values
 
@@ -120,6 +125,9 @@ def fit(config: dict, dataset: dict, out: Path) -> dict:
         'forward_physical_consistency_passed':forward['physical_consistency_passed'],
         'forward_example_endpoints':forward['example_endpoints'],
         'forward_summary':forward['summary'],'forward_thermodynamics':forward['thermodynamics'],
+        'forward_whole_cycle':forward['whole_cycle'],'forward_stages':forward['stages'],
+        'forward_state_domain':forward['state_domain'],'forward_dimension_check':forward['dimension_check'],
+        'forward_elapsed_s':forward['elapsed_s'],
         'normalized_rmse':float(np.sqrt(np.mean(((values-target)/scale)**2))),
         'parameter_statuses':{k:updated['parameters'][k]['status'] for k in keys},
         'evaluation_history':evaluations,'elapsed_s':time.monotonic()-started,
@@ -151,5 +159,73 @@ def synthetic_demo(config: dict, out: Path) -> dict:
     result=fit(config,dataset,out)
     result['synthetic_parameter_relative_errors']={k:abs(result['fitted_parameters'][k]-v)/abs(v) for k,v in truth.items()}
     result['demonstration_passed']=result['qualified_fit'] and max(result['synthetic_parameter_relative_errors'].values()) < p['calibration.recovery_relative']['value']
+    write_json(out/'calibration.json',result)
+    return result
+
+
+def binding_synthetic_demo(config: dict, out: Path) -> dict:
+    """Recover one binding-energy hypothesis from a synthetic drying window.
+
+    Root-declared times are elapsed seconds and liquid-water observations are
+    kg/kg initial dry mass. Their scale normalizes residuals; it is not a
+    measurement-error estimate. Truth and fitting use the same model and
+    discretization with no added noise. Only binding energy is fitted; binding
+    heat capacity and every other constitutive parameter remain fixed. This
+    local recovery exercise supplies no measured identity or global uniqueness.
+    """
+    started = time.monotonic()
+    window = deepcopy(config)
+    window['stages'] = window['stages'][:window['stages'].index('drying')+1]
+    p = window['parameters']
+    key = 'water.binding_energy'
+    truth = {key:p['calibration.binding.truth']['value']}
+    initial = {key:p['calibration.binding.initial']['value']}
+    rows = [{'kind':'liquid_water','time_s':float(t),'unit':UNITS['liquid_water'],
+             'scale':p['calibration.scale.liquid_water']['value']}
+            for t in p['calibration.binding.observation_times']['value']]
+    values, truth_report = predict(changed(window,truth),rows)
+    threshold = p['acceptance.drying_remaining_fraction']['value']
+    truth_remaining = truth_report['example_endpoints']['drying_remaining_fraction']
+    truth_audit = {
+        'physical_consistency_passed':truth_report['physical_consistency_passed'],
+        'window_balance':truth_report['whole_cycle'], 'stages':truth_report['stages'],
+        'thermodynamics':truth_report['thermodynamics'],
+        'state_domain':truth_report['state_domain'], 'dimension_check':truth_report['dimension_check'],
+        'drying_remaining_fraction':truth_remaining,
+        'drying_endpoint_passed':bool(truth_remaining < threshold),
+        'forward_elapsed_s':truth_report['elapsed_s'],
+    }
+    dataset = {
+        'schema':'full_cycle_observations_v1', 'measurement_kind':'synthetic',
+        'source':'Same-model same-discretization synthetic liquid-water observations; no measurement or added noise.',
+        'scope':'Drying window only; no completed firing cycle or cooled-product result.',
+        'fit_parameters':[key], 'truth':truth, 'initial_guess':initial,
+        'stages':window['stages'], 'truth_window_audit':truth_audit,
+        'scale_interpretation':'Residual normalization in kg/kg, not measurement uncertainty.',
+        'observations':[dict(row,value=float(value)) for row,value in zip(rows,values)],
+    }
+    write_json(out/'synthetic.observations.json',dataset)
+    result = fit(changed(window,initial),dataset,out)
+    remaining = result.pop('forward_example_endpoints')['drying_remaining_fraction']
+    result.pop('forward_summary')
+    result['forward_window_balance'] = result.pop('forward_whole_cycle')
+    result['fit_elapsed_s'] = result['elapsed_s']
+    relative_error = abs(result['fitted_parameters'][key]-truth[key])/abs(truth[key])
+    result.update({
+        'scope':'Drying window only; no completed firing cycle or cooled-product result.',
+        'truth':truth, 'initial_guess':initial, 'truth_window_audit':truth_audit,
+        'window_physical_passed':bool(truth_report['physical_consistency_passed']
+            and result['forward_physical_consistency_passed']
+            and all(row['physical_consistency_passed'] for row in result['evaluation_history'])),
+        'synthetic_parameter_relative_errors':{key:relative_error},
+        'parameter_recovery_relative_threshold':p['calibration.recovery_relative']['value'],
+        'parameter_recovery_passed':bool(relative_error < p['calibration.recovery_relative']['value']),
+        'drying_remaining_fraction':remaining, 'drying_remaining_fraction_threshold':threshold,
+        'drying_endpoint_passed':bool(remaining < threshold),
+        'actual_forward_count':len(result['evaluation_history'])+2,
+        'forward_count_definition':'Truth plus every recorded residual evaluation including numerical differences plus final fitted readback; optimizer max_nfev is not the total forward count.',
+        'elapsed_s':time.monotonic()-started,
+        'limitations':'Noise-free same-model same-discretization synthetic recovery only. Parameter status remains assumed. Residual scale is not measurement uncertainty. Jacobian rank is local sensitivity, not global uniqueness. Optimizer success, window physics, parameter recovery and drying endpoint acceptance are separate results; this window makes no firing or cooled-product claim.',
+    })
     write_json(out/'calibration.json',result)
     return result
