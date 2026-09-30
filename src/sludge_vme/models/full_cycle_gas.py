@@ -65,6 +65,7 @@ class FiniteGasFullCycle(FullCycle):
         self.evaporation = [r['id'] for r in config['reactions']].index('evaporation')
         self.condensation_factor = self.p('kinetics.condensation.factor', '1')
         self.carbonation_factor = self.p('kinetics.carbonation.factor', '1')
+        self.carbonate_phase_resistance = self.p('kinetics.carbonate.phase_resistance', '1')
         self.decarbonation = [r['id'] for r in config['reactions']].index('decarbonation')
         self.calcite, self.lime = self.ns.index('calcite'), self.ns.index('lime')
         self.co2 = self.ng.index('CO2')
@@ -96,6 +97,12 @@ class FiniteGasFullCycle(FullCycle):
             depletion[2] = -rate[:,self.decarbonation]/self.calcium_pool
         return depletion, char
 
+    def carbonate_phase_mobility(self, ns):
+        """Assumed common kinetic multiplier for the reversible carbonate pool."""
+        if self.carbonate_phase_resistance == 0:
+            return np.ones_like(ns[:,self.lime])
+        return 1/(1+self.carbonate_phase_resistance*ns[:,self.lime]/self.calcium_pool)
+
     def carbonate_rate(self, T, ns, partial, affinity):
         """Signed CaCO3 -> CaO + CO2 exchange with donor availability.
 
@@ -103,14 +110,19 @@ class FiniteGasFullCycle(FullCycle):
         exchange consumes CaO and scales with local CO2 activity; it vanishes
         with either reactant. The conserved two-solid pool has inward rates
         at both pure-phase endpoints, without inventory floors or clipping.
-        This phenomenological net law is not a microscopic flux-ratio model.
+        A positive assumed phase-composition resistance multiplies the whole
+        signed rate. It adds no storage or affinity term and is not a resolved
+        product-layer diffusion or microscopic flux-ratio model.
         """
         forward = affinity.real <= 0
         drive = -np.expm1(np.where(forward,affinity,0))
         reverse = -np.expm1(np.where(forward,0,-affinity))
         kinetic = self.A[self.decarbonation]*np.exp(-self.Ea[self.decarbonation]/(self.R*T))
-        return kinetic*(ns[:,self.calcite]*drive-self.carbonation_factor*ns[:,self.lime]
+        rate = kinetic*(ns[:,self.calcite]*drive-self.carbonation_factor*ns[:,self.lime]
                         *partial[:,self.co2]/self.Pr*reverse)
+        if self.carbonate_phase_resistance == 0:
+            return rate
+        return rate*self.carbonate_phase_mobility(ns)
 
     def gas_state(self, y, temperature, pore):
         inventory = self.initial_gas * np.exp(y[self.gas_offset:self.extent_offset].reshape(self.g, self.n).T)
@@ -577,6 +589,7 @@ class FiniteGasFullCycle(FullCycle):
                 'phase_affinity=delta_mu/(R*T)=1; Arrhenius_rate*water_moles*phase_drive=mol/s',
                 '-net_phase_rate*delta_mu/T=W/K; signed phase extent has units mol',
                 'Ca_pool=n_calcite+n_lime=mol; dx_calcite/dt=-net_decarbonation_rate/Ca_pool=1/s',
+                'x_CaO=n_lime/Ca_pool=1; beta=1; M=1/(1+beta*x_CaO)=1; M*net_carbonate_rate=mol/s',
                 'carbonate_reverse_rate=k*n_lime*(p_CO2/P_ref)*factor*(1-exp(-affinity))=mol/s',
                 'area/(half_width_left/k_left+half_width_right/k_right)=W/K',
                 'g=N*n/(n+N)=mol; g_prime=(N/(n+N))^2=1; a(T)=J/mol; F_binding=g*a=J',
@@ -659,6 +672,11 @@ class FiniteGasFullCycle(FullCycle):
             r = self.rates(t,y)
             radiative_conductivity = self.pore_radiative_conductivity(T,ns,bulk)
             ng = r['gas']; h,s = self.state_thermo(T,f)
+            carbonate_fields={}
+            if self.carbonation_factor != 0:
+                carbonate_fields={
+                    'carbonate_lime_fraction':(ns[:,self.lime]/self.calcium_pool).tolist(),
+                    'carbonate_phase_mobility_multiplier':self.carbonate_phase_mobility(ns).tolist()}
             if t == self.times[self.config['stages'].index('drying')+1]:
                 drying_affinity_decomposition=self.water_phase_affinity_decomposition(f,T,ns,bulk,cap,r,h,s)
             inventories.append(np.r_[ns.sum(axis=0),ng.sum(axis=0)])
@@ -714,6 +732,7 @@ class FiniteGasFullCycle(FullCycle):
                 'net_decarbonation_rate_mol_s':r['rate'][:,self.decarbonation].tolist(),
                 'carbonate_affinity_j_mol':r['carbonate_affinity'].tolist(),
                 'carbonate_entropy_w_k':r['carbonate_entropy'].tolist(),
+                **carbonate_fields,
                 'residual_carbon_kg':((ns[:,self.ns.index('organic')]+ns[:,self.ns.index('char')])*self.atomic[self.elements.index('C')]).tolist(),
                 'gas_mole_fractions':{s:r['gas_fractions'][:,i].tolist() for i,s in enumerate(self.ng)},
                 'gas_inventory_mol':{s:ng[:,i].tolist() for i,s in enumerate(self.ng)},
@@ -815,6 +834,11 @@ class FiniteGasFullCycle(FullCycle):
             'defect_indicator':float(-np.expm1(-peak/self.p('product.gradient_scale','K'))),
             'minimum_sampled_entropy_production_w_k':min_entropy}
         summary['peak_char_inventory_kg'] = max(sum(r['char_inventory_mol'])*self.mw[self.char] for r in rows)
+        if self.carbonation_factor != 0:
+            summary['minimum_carbonate_phase_mobility_multiplier']=min(min(r['carbonate_phase_mobility_multiplier']) for r in rows)
+            summary['maximum_carbonate_phase_mobility_multiplier']=max(max(r['carbonate_phase_mobility_multiplier']) for r in rows)
+            summary['minimum_carbonate_lime_fraction']=min(min(r['carbonate_lime_fraction']) for r in rows)
+            summary['maximum_carbonate_lime_fraction']=max(max(r['carbonate_lime_fraction']) for r in rows)
         summary['reaction_totals_mol'] = {name:float(sum(values)) for name,values in final['reaction_extent_mol'].items()}
         whole=balance(0,len(times)-1)
         whole['free_water_ledger']=interval_free_water(0,len(times)-1)
@@ -840,7 +864,10 @@ class FiniteGasFullCycle(FullCycle):
             'gas_cp_slopes_j_mol_k2':dict(zip(self.ng,self.gas_cp_slope.tolist())),
             'water_caloric_approximation':'Liquid-water background Cp=c_ref+a*(T-Tr), with reference-anchored integrals h=h_ref+c_ref*(T-Tr)+a*(T-Tr)^2/2 and s=s_ref+c_ref*ln(T/Tr)+a*((T-Tr)-Tr*ln(T/Tr)). Same h/s enter stored u=h-P*v, phase-exchange affinity and energy/entropy accounts. Conjugate liquid-face background enthalpy h*=h_ref+c_ref*(Theta-Tr)+a*(Tl*Tright-2*Tr*Theta+Tr^2)/2 cancels standard-state mu/T differences; it is not h(Theta). Mechanical, mixing and retention-binding contributions remain separate. No new state, extra latent heat, or water equation of state. Reference Cp and slope are assumed; slope fixed in paired UQ and synthetic fit, its range and correlations not covered or identified. Zero water slope restores previous water calorics, preserving other slopes. No high-temperature liquid stability, critical-point behavior, hysteresis or material validation. Historical gas-storage-zero host is unchanged.',
             'water_cp_slope_j_mol_k2':self.water_cp_slope,
-            'carbonate_approximation':'Signed CaCO3 -> CaO + CO2 exchange with a conserved local calcite/lime pool. For positive carbonation factor the calcite fraction is a linear inventory coordinate, allowing regeneration from zero; raw numerical excursions are retained under the existing inventory budget, without clipping. For a=delta_mu/(R*T)<=0, rate=k*n_calcite*(1-exp(a)); for a>0, rate=-factor*k*n_lime*(p_CO2/P_ref)*(1-exp(-a)). Reverse k reuses the assumed decarbonation Arrhenius law. No separate carbonation heat, empirical equilibrium pressure, mixing entropy, interface barrier or product-layer diffusion. Pure-phase affinity uses the existing formation properties and mechanical potential. This is a phenomenological net-rate law, not measured kinetics or microscopic detailed balance. Zero factor exactly restores the previous irreversible log-depletion coordinates. Swept-gas historical mode remains irreversible.',
+            'carbonate_phase_resistance_approximation':'For positive carbonation factor, the entire preceding signed carbonate rate is multiplied by M=1/(1+beta*x_CaO), x_CaO=n_lime/(initial_calcite+initial_lime). beta=kinetics.carbonate.phase_resistance is an assumed dimensionless composition resistance. On the physical domain x_CaO in [0,1] and beta>=0, M is positive and preserves affinity zeros and the sign of -rate*delta_mu/T. No change to stoichiometry, U, S, affinity or separate reaction heat. This is not a resolved product-layer thickness, diffusion, interface area or history law; CaO is a decomposition product and a carbonation reactant. Raw inventory excursions are retained, not clipped; positivity is claimed only on the physical domain. beta=0 exactly restores the preceding signed-rate arithmetic. Zero carbonation factor and the historical gas-storage-zero host retain their preceding paths. No measured kinetics or material validation; this coefficient is not identified by earlier fixed-parameter UQ or calibration.',
+            'carbonate_phase_resistance':self.carbonate_phase_resistance,
+            'carbonate_phase_resistance_active':bool(self.carbonation_factor != 0 and self.carbonate_phase_resistance != 0),
+            'carbonate_approximation':'Signed CaCO3 -> CaO + CO2 exchange with a conserved local calcite/lime pool. For positive carbonation factor the calcite fraction is a linear inventory coordinate, allowing regeneration from zero; raw numerical excursions are retained under the existing inventory budget, without clipping. For a=delta_mu/(R*T)<=0, rate=k*n_calcite*(1-exp(a)); for a>0, rate=-factor*k*n_lime*(p_CO2/P_ref)*(1-exp(-a)). These branch expressions precede the common phase-composition multiplier M described separately. Reverse k reuses the assumed decarbonation Arrhenius law. No separate carbonation heat, empirical equilibrium pressure, mixing entropy, interface barrier or product-layer diffusion. Pure-phase affinity uses the existing formation properties and mechanical potential. This is a phenomenological net-rate law, not measured kinetics or microscopic detailed balance. Zero factor exactly restores the previous irreversible log-depletion coordinates. Swept-gas historical mode remains irreversible.',
             'thermal_approximation':'Background k=k_ref*(dry_solid_fraction/initial_dry_solid_fraction)^m*(1+b*liquid_water_volume_fraction), plus local pore-wall radiative k=4*sigma*factor*length*gas_porosity*T^3. Length is 2*r_initial*(pore_volume/initial_pore_volume)^(1/3), independent of mesh width. The assumed exchange factor includes wall emissivity and geometry; one local equilibrium temperature, no spectral/nonlocal photon or participating-gas radiation. Shared face and external half-cell resistances use total k; exterior furnace radiation remains a separate boundary exchange. No extra stored photon energy or separate radiation heat source. No intrinsic mineral conductivity law; coefficients unmeasured.',
             'liquid_water_transport_approximation':'Migration and seeded phase exchange share mechanical, ideal-mixing and energetic-binding water potential. D(T)=D_ref*exp[-E/R*(1/T-1/Tr)] enters each half-cell resistance, L=2*A/[R*(dx_left/(D_left*c_left)+dx_right/(D_right*c_right))]. Nonnegative L multiplies the unchanged shared-face entropy force, so J*F=L*F^2. E=0 restores constant mobility; D_ref=0 removes migration. Activation is assumed and fixed in paired UQ/synthetic fitting, not range-covered or identified. Temperature-dependent mobility adds no storage, heat of transport or Soret force. Carried enthalpy uses the analytic linear-Cp conjugate background with reciprocal-log thermal mean, arithmetic mean mechanical potential times molar volume, and mean binding composition derivative times binding enthalpy at the thermal mean. Binding force is difference(g_prime)*mean(a(T)/T), satisfying the same nonisothermal entropy identity. No independent heat of transport. Log water inventory permits influx/loss; zero exterior/center liquid flow. No measured hydraulic law, dry-surface nucleation, hysteresis or humidity-cycle validation.',
             'water_retention_approximation':'Ideal mixing plus F_b=g*a(T), g=N*n/(n+N), a=-E+C*(T-Tr-T*ln(T/Tr)). Sites N=N0*(r+(1-r)*n_kaolin/n_kaolin_initial) have a declared persistent fraction r and a fraction lost with kaolin dehydroxylation. They add no matter or independent state. Both mixing and binding composition derivatives enter kaolin chemical potential, partial energy and entropy; no separate site-loss heat source. Storage U/S/Cp uses g, water partials use (N/(n+N))^2, site partials use (n/(n+N))^2 times dN/dn_kaolin. Positive residual sites are a physical hypothesis over the declared range, not a numerical inventory floor. No measured site counts, complete site disappearance, independent site kinetics, regeneration, sintering-dependent sites or hysteresis. r=1 recovers preceding fixed sites; zero N removes all retention; E=C=0 removes energetic binding only.',
