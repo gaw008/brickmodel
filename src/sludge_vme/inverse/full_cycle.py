@@ -234,3 +234,108 @@ def binding_synthetic_demo(config: dict, out: Path) -> dict:
     })
     write_json(out/'calibration.json',result)
     return result
+
+
+def joint_drying_sensitivity(config: dict, out: Path) -> dict:
+    """Evaluate forward-difference sensitivity of root-declared drying channels.
+
+    One nominal solution is shared by all parameter perturbations and channels.
+    The difference step is relative to the physical parameter, not to the
+    optimizer coordinate used by fit. D uses physical parameter units; J is
+    transformed to the same range-normalized coordinates as fit and uses
+    observation normalization scales, not measurement sigmas.
+    No optimization, noise model or derivative-convergence claim is made.
+    """
+    started = time.monotonic()
+    window = deepcopy(config)
+    window['stages'] = window['stages'][:window['stages'].index('drying')+1]
+    p = window['parameters']
+    keys = window['local_sensitivity_parameters']
+    kinds = window['local_sensitivity_observation_kinds']
+    relative_step = p['calibration.difference_step']['value']
+    observations = [
+        {'kind':kind, 'time_s':float(t), 'unit':UNITS[kind],
+         'scale':p['calibration.scale.'+kind]['value']}
+        for kind in kinds for t in p['calibration.binding.observation_times']['value']]
+    nominal = {key:p[key]['value'] for key in keys}
+    deltas = {key:relative_step*nominal[key] for key in keys}
+    runs = []
+
+    def evaluate(label, overrides):
+        run_started = time.monotonic()
+        values, report = predict(changed(window,overrides),observations)
+        remaining = report['example_endpoints']['drying_remaining_fraction']
+        runs.append({
+            'condition':label, 'parameter_values':{**nominal, **overrides},
+            'observations':[dict(row,value=float(value)) for row,value in zip(observations,values)],
+            'physical_consistency_passed':report['physical_consistency_passed'],
+            'window_balance':report['whole_cycle'], 'stages':report['stages'],
+            'thermodynamics':report['thermodynamics'], 'state_domain':report['state_domain'],
+            'dimension_check':report['dimension_check'],
+            'drying_remaining_fraction':remaining,
+            'drying_remaining_fraction_threshold':p['acceptance.drying_remaining_fraction']['value'],
+            'drying_endpoint_passed':bool(remaining < p['acceptance.drying_remaining_fraction']['value']),
+            'forward_elapsed_s':report['elapsed_s'], 'elapsed_s':time.monotonic()-run_started,
+        })
+        write_json(out/'joint_drying_sensitivity.progress.json',{
+            'completed':False, 'actual_forward_count':len(runs), 'runs':runs})
+        if not report['physical_consistency_passed']:
+            raise ValueError('sensitivity forward calculation failed the declared physical consistency budget')
+        return values
+
+    baseline = evaluate('nominal', {})
+    columns = []
+    for key in keys:
+        perturbed = evaluate(key, {key:nominal[key]+deltas[key]})
+        columns.append((perturbed-baseline)/deltas[key])
+    derivative = np.column_stack(columns)
+    widths = np.array([p[key]['range'][1]-p[key]['range'][0] for key in keys])
+    scales = np.array([row['scale'] for row in observations])
+    normalized = derivative*widths[None,:]/scales[:,None]
+
+    def matrix_diagnostics(matrix):
+        singular = np.linalg.svd(matrix,compute_uv=False)
+        tolerance = singular.max()*max(matrix.shape)*np.finfo(singular.dtype).eps
+        denominator = np.linalg.norm(matrix[:,0])*np.linalg.norm(matrix[:,1])
+        return {
+            'shape':list(matrix.shape),
+            'J':matrix.tolist(), 'singular_values':singular.tolist(),
+            'machine_rank':int(np.linalg.matrix_rank(matrix)),
+            'machine_rank_tolerance':float(tolerance),
+            'condition_number':float(singular[0]/singular[-1]) if singular[-1] != 0 else None,
+            'uncentered_two_column_cosine':float(matrix[:,0]@matrix[:,1]/denominator) if denominator != 0 else None,
+        }
+
+    channels = {}
+    for kind in kinds:
+        indices = [i for i,row in enumerate(observations) if row['kind'] == kind]
+        channels[kind] = {'observation_indices':indices, **matrix_diagnostics(normalized[indices])}
+    result = {
+        'schema':'full_cycle_joint_drying_sensitivity_v1',
+        'identity':'simulation', 'parameter_identity':'assumed',
+        'scope':'Drying window only; no completed firing cycle or cooled-product result.',
+        'scope_note':window['local_sensitivity_scope_note'],
+        'parameters':keys, 'observation_kinds':kinds, 'observations':observations,
+        'nominal_parameter_values':nominal, 'relative_step':relative_step,
+        'difference_scheme':'One-sided physical-parameter relative step: delta_p=calibration.difference_step*p_nominal; transformed to the same range-normalized coordinates as fit, not the same optimizer-coordinate perturbation points.',
+        'parameter_increments':deltas,
+        'parameter_units':{key:p[key]['unit'] for key in keys},
+        'parameter_statuses':{key:p[key]['status'] for key in keys},
+        'declared_parameter_ranges':{key:p[key]['range'] for key in keys},
+        'declared_parameter_range_widths':dict(zip(keys,widths.tolist())),
+        'D':derivative.tolist(), 'channels':channels,
+        'joint':matrix_diagnostics(normalized), 'runs':runs,
+        'definitions':{
+            'D':'D[i,j]=(y_plus_j[i]-y_nominal[i])/delta_parameter[j]; units are observation unit divided by parameter unit. Rows follow observations and columns follow parameters.',
+            'J':'J[i,j]=D[i,j]*declared_parameter_range_width[j]/observation_scale[i]; dimensionless, using the same parameter coordinate as fit. Scales are residual normalization, not measurement uncertainty.',
+            'machine_rank':'NumPy matrix_rank default: count singular values greater than max(singular_values)*max(J.shape)*machine_epsilon. The actual tolerance is reported for each matrix.',
+            'condition_number':'Largest divided by smallest singular value (2-norm); null means an exactly zero smallest singular value, hence infinite condition number.',
+            'uncentered_two_column_cosine':'dot(J[:,0],J[:,1])/(norm(J[:,0])*norm(J[:,1])); columns are not mean-centered. Null means a zero column norm and undefined cosine.',
+        },
+        'window_physical_passed':all(run['physical_consistency_passed'] for run in runs),
+        'actual_forward_count':len(runs), 'elapsed_s':time.monotonic()-started,
+        'limitations':'Local one-sided finite differences at the declared nominal state and discretization, without optimization. Machine rank is not a pass criterion for real material, global identifiability, noise robustness or numerical derivative convergence. Condition numbers and column cosines depend on declared coordinate and observation scaling; stacking channels does not by itself establish statistical information gain. No parameter statuses or nominal model values are updated.',
+    }
+    write_json(out/'joint_drying_sensitivity.json',result)
+    (out/'joint_drying_sensitivity.progress.json').unlink()
+    return result

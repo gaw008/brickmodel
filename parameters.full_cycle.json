@@ -3126,6 +3126,17 @@
       "source": "policy",
       "status": "assumed",
       "note": "Fixed residual normalization scale for the synthetic liquid-water demonstration; not a measurement standard deviation or material uncertainty."
+    },
+    "calibration.scale.surface_temperature": {
+      "value": 2.0,
+      "unit": "K",
+      "range": [
+        2.0,
+        2.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Predeclared residual normalization for the local synthetic liquid-water and model-surface-temperature sensitivity comparison; not thermometer accuracy, measurement standard deviation or noise."
     }
   },
   "species": [
@@ -4223,5 +4234,14 @@
         }
       }
     }
-  ]
+  ],
+  "local_sensitivity_parameters": [
+    "water.binding_energy",
+    "thermal.h"
+  ],
+  "local_sensitivity_observation_kinds": [
+    "liquid_water",
+    "surface_temperature"
+  ],
+  "local_sensitivity_scope_note": "Assumed local diagnostic at original nominal drying configuration, using calibration.binding.observation_times and calibration.difference_step. One baseline and one positive relative perturbation per registered parameter. Rows normalized by calibration.scale.<kind>, parameter coordinates by their declared range widths. No fitting, noise model, global identifiability or step/grid convergence claim. The existing difference_step supplies only the relative fraction: perturb physical p by 1%, not optimizer normalized x by 1%. For nominal h=20 and lower bound10, this diagnostic uses20.2, whereas optimizer x-relative1% corresponds20.1."
 }
