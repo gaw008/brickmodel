@@ -37,6 +37,7 @@ class FiniteGasFullCycle(FullCycle):
         self.gas_pairs = list(combinations(range(self.g), 2))
         self.gas_pair_names = [self.ng[i]+'_'+self.ng[j] for i,j in self.gas_pairs]
         self.pair_factors = np.array([self.p('transport.pair_factor.'+name, '1') for name in self.gas_pair_names])
+        self.pore_resistance = self.p('transport.pore_resistance', '1')
         self.viscosity = self.p('transport.viscosity_ref', 'Pa*s')
         self.viscosity_exponent = self.p('transport.viscosity_exponent', '1')
         self.gas_cp_slope = np.array([self.p('species.'+s+'.cp_slope', 'J/mol/K2') for s in self.ng])
@@ -151,6 +152,25 @@ class FiniteGasFullCycle(FullCycle):
         diffusion = self.diffusion*(thermal_mean/self.Tr)**self.diffusion_exponent*self.Pr/pressure*face_phi/tortuosity
         return diffusion, tortuosity
 
+    def pore_limited_pair_diffusivity(self, diffusion, thermal_mean, phi, pore, tortuosity):
+        """Assumed positive symmetric pore-scale resistance, not dusty-gas.
+
+        Both preceding D and the species/pair scales already contain phi/tau.
+        The evolving pore diameter is independent of finite-volume mesh width.
+        """
+        length = 2*self.radius*(pore/self.vp0)**(1/3)
+        face_length = np.r_[(length[:-1]+length[1:])/2, length[-1]]
+        pair_diffusion = diffusion[:,None]*self.pair_factors[None,:]
+        if self.pore_resistance == 0:
+            return pair_diffusion, face_length, np.ones_like(pair_diffusion)
+        face_phi = np.r_[(phi[:-1]+phi[1:])/2, phi[-1]]
+        species_scale = (face_phi/tortuosity*face_length)[:,None]*np.sqrt(
+            self.R*thermal_mean[:,None]/self.mw[len(self.ns):][None,:])
+        pair_scale = np.column_stack([2/(1/species_scale[:,i]+1/species_scale[:,j])
+                                      for i,j in self.gas_pairs])
+        resistance = 1+self.pore_resistance*pair_diffusion/pair_scale
+        return pair_diffusion/resistance, face_length, 1/resistance
+
     def molecular_transport(self, yl, yr, conductance):
         """Positive symmetric pair exchange in the molar frame.
 
@@ -260,7 +280,16 @@ class FiniteGasFullCycle(FullCycle):
         face_perm = np.r_[(widths[:-1]+widths[1:])/(widths[:-1]/permeability[:-1]+widths[1:]/permeability[1:]), permeability[-1]]
         diffusion, tortuosity = self.gas_diffusivity(thermal_mean, pressure, phi)
         concentration = pressure/(self.R*thermal_mean)
-        molecular = self.molecular_transport(yl, yr, self.area*(diffusion*concentration/distance))
+        pair_diffusion, pore_length, pore_multiplier = self.pore_limited_pair_diffusivity(
+            diffusion, thermal_mean, phi, pore, tortuosity)
+        if self.pore_resistance == 0:
+            molecular = self.molecular_transport(yl, yr, self.area*(diffusion*concentration/distance))
+        else:
+            molecular = np.zeros_like(yl)
+            for column,(i,j) in enumerate(self.gas_pairs):
+                exchange = self.area*(pair_diffusion[:,column]*concentration/distance)*(yl[:,i]*yr[:,j]-yr[:,i]*yl[:,j])
+                molecular[:,i] += exchange
+                molecular[:,j] -= exchange
         viscosity = self.gas_viscosity(thermal_mean, (yl+yr)/2)
         velocity = face_perm/viscosity*(pressure_l-pressure_r)/distance
         donor_concentrations = np.where((velocity.real >= 0)[:, None], pl/(self.R*tl[:, None]), pr/(self.R*tr[:, None]))
@@ -271,7 +300,7 @@ class FiniteGasFullCycle(FullCycle):
         entropy = np.sum(flux*force, axis=1)
         hin,sin = self.thermo(np.asarray(tf))
         reservoir_mu_over_t = hin[len(self.ns):]/tf-sin[len(self.ns):]+self.R*np.log(inlet*self.P/self.Pr)
-        return flux, energy, entropy, permeability, molecular, darcy, reservoir_mu_over_t, diffusion, tortuosity, viscosity
+        return flux, energy, entropy, permeability, molecular, darcy, reservoir_mu_over_t, diffusion, tortuosity, viscosity, pair_diffusion, pore_length, pore_multiplier
 
     def retention_sites(self, fields):
         """Immobile equivalents: persistent sites plus kaolin-carried sites.
@@ -429,7 +458,7 @@ class FiniteGasFullCycle(FullCycle):
             rate[:,self.decarbonation] = self.carbonate_rate(T,ns,partial,affinity[:,self.decarbonation])
         dns = rate@self.snu
         widths = bulk/self.area
-        flux, energy_flux, face_entropy, permeability, molecular, darcy, reservoir_mu_over_t, diffusion, tortuosity, viscosity = self.transport(T, partial, widths, pore, bulk, tf, inlet)
+        flux, energy_flux, face_entropy, permeability, molecular, darcy, reservoir_mu_over_t, diffusion, tortuosity, viscosity, pair_diffusion, pore_length, pore_multiplier = self.transport(T, partial, widths, pore, bulk, tf, inlet)
         molecular_entropy = np.sum(molecular*self.R*np.log(partial/np.vstack((partial[1:],inlet*self.P))), axis=1)
         dng = rate@self.gnu-flux
         dng[1:] += flux[:-1]
@@ -457,6 +486,8 @@ class FiniteGasFullCycle(FullCycle):
                 'production':production, 'exchange':exchange, 'entropy_identity_residual':sdot-production-exchange,
                 'minimum_face_entropy':float(face_entropy.real.min()), 'permeability':permeability,
                 'gas_face_diffusivity':diffusion, 'gas_face_tortuosity':tortuosity,
+                'gas_pair_diffusivity':pair_diffusion, 'gas_face_pore_length':pore_length,
+                'gas_pair_pore_multiplier':pore_multiplier,
                 'gas_face_viscosity':viscosity,
                 'molecular_entropy':molecular_entropy,
                 'molecular_flux':molecular, 'darcy_flux':darcy, 'energy_flux':energy_flux, 'capacity':capacity,
@@ -599,7 +630,10 @@ class FiniteGasFullCycle(FullCycle):
                 'reservoir_y(t)=linear_interpolation_of_mole_fractions=1; sum(y)=1; y*P=Pa',
                 'outward_boundary_molar_flux*reservoir_mu/T=W/K; changing external y creates no internal inventory source',
                 'tau_face=1+(tau_initial-1)*(phi_initial_face/phi_face)^a=1; D_eff=D_free*phi_face/tau_face=m2/s',
-                'D_pair=f_pair*D_eff=m2/s; C_pair=area*D_pair*concentration/distance=mol/s',
+                'D_old_pair=f_pair*D_eff=m2/s; C_pair=area*D_new_pair*concentration/distance=mol/s',
+                'ell=2*radius*(pore/initial_pore)^(1/3)=m; sqrt(R*T/M)=m/s',
+                'K_i=(phi/tau)*ell*sqrt(R*T/M_i)=m2/s; K_ij=2/(1/K_i+1/K_j)=m2/s',
+                'D_new_pair=D_old_pair/(1+beta*D_old_pair/K_ij)=m2/s; beta and D_new_pair/D_old_pair are dimensionless',
                 'pair_flux=C_pair*(yLi*yRj-yRi*yLj)=mol/s; pair_entropy=R*pair_flux*log(yLi*yRj/(yRi*yLj))=W/K']}
         return report, fields
 
@@ -740,7 +774,9 @@ class FiniteGasFullCycle(FullCycle):
                 'pressure_pa':r['pressure'].tolist(),'permeability_m2':r['permeability'].tolist(),
                 'gas_face_diffusivity_m2_s':r['gas_face_diffusivity'].tolist(),
                 'gas_face_tortuosity':r['gas_face_tortuosity'].tolist(),
-                'gas_pair_diffusivity_m2_s':{name:(r['gas_face_diffusivity']*factor).tolist() for name,factor in zip(self.gas_pair_names,self.pair_factors)},
+                'gas_pair_diffusivity_m2_s':{name:r['gas_pair_diffusivity'][:,j].tolist() for j,name in enumerate(self.gas_pair_names)},
+                'gas_face_pore_length_m':r['gas_face_pore_length'].tolist(),
+                'gas_pair_pore_multiplier':{name:r['gas_pair_pore_multiplier'][:,j].tolist() for j,name in enumerate(self.gas_pair_names)},
                 'gas_molecular_face_flux_mol_s':{s:r['molecular_flux'][:,i].tolist() for i,s in enumerate(self.ng)},
                 'gas_molecular_face_molar_sum_mol_s':r['molecular_flux'].sum(axis=1).tolist(),
                 'gas_molecular_face_entropy_w_k':r['molecular_entropy'].tolist(),
@@ -790,6 +826,10 @@ class FiniteGasFullCycle(FullCycle):
             'loss_on_ignition_dry_fraction':float(1-product_mass/(self.n*self.md)),'porosity':phi,
             'residual_carbon_kg':float(sum(final['residual_carbon_kg'])),'shrinkage':float(1-bulks[-1]/bulks[0]),'peak_temperature_difference_k':peak,
             'peak_overpressure_pa':max(max(r['pressure_pa'])-self.P for r in rows),
+            'minimum_sampled_gas_face_pore_length_m':min(min(r['gas_face_pore_length_m']) for r in rows),
+            'maximum_sampled_gas_face_pore_length_m':max(max(r['gas_face_pore_length_m']) for r in rows),
+            'minimum_sampled_gas_pair_pore_multiplier':min(min(v) for r in rows for v in r['gas_pair_pore_multiplier'].values()),
+            'maximum_sampled_gas_pair_pore_multiplier':max(max(v) for r in rows for v in r['gas_pair_pore_multiplier'].values()),
             'minimum_sampled_gas_face_diffusivity_m2_s':min(min(r['gas_face_diffusivity_m2_s']) for r in rows),
             'maximum_sampled_gas_face_diffusivity_m2_s':max(max(r['gas_face_diffusivity_m2_s']) for r in rows),
             'minimum_sampled_gas_face_tortuosity':min(min(r['gas_face_tortuosity']) for r in rows),
@@ -856,8 +896,10 @@ class FiniteGasFullCycle(FullCycle):
                 'mole_fractions':{s:self.gas_knots[:,i].tolist() for i,s in enumerate(self.ng)},
                 'status':'assumed','limitation':'No kiln combustion, circulation or finite external inventory. Reservoir composition enters boundary partial pressure, donor transport and entropy exchange at the same time; stored pore gas is never reset. External composition changes add no separate internal energy source. Gas-storage-zero historical host remains constant-inlet.'},
             'gas_approximation':'Stored ideal O2/N2/H2O/CO2 gas, symmetric pair molar exchange plus donor Darcy flow with entropy-compatible carried enthalpy; assumed diffusivity and pore properties. No imposed internal pressure or independent per-cell sweep.',
-            'gas_diffusion_approximation':'D_base=D_ref*(T_face/T_ref)^b*(P_ref/P_face)*phi_face/tau_face; tau_face=1+(tau_initial-1)*(phi_initial_face/phi_face)^a. D_pair=f_pair*D_base, with positive symmetric assumed root factors. J_ij=area*D_pair*c/distance*(yLi*yRj-yRi*yLj), J_ji=-J_ij; species flux is its pair sum. Total molecular molar flux is zero algebraically, and each pair entropy is R*C_pair*(a-b)*log(a/b)>=0. Shared carried enthalpy is unchanged. Unit pair factors recover the preceding common-D law; a=0 removes only evolving tortuosity. Original gas_face_diffusivity output now denotes the common base scale, not every pair D. Arithmetic gas face porosity is retained, exterior porosity is the outer cell. No extra state, storage or heat source. This is a phenomenological pair mobility, not measured binary diffusion, full Maxwell-Stefan, dusty-gas, connected-pore, Knudsen or Soret transport. Darcy remains a separate closure; parameter ranges and correlations are not identified.',
+            'gas_diffusion_approximation':'D_base=D_ref*(T_face/T_ref)^b*(P_ref/P_face)*phi_face/tau_face; tau_face=1+(tau_initial-1)*(phi_initial_face/phi_face)^a. D_old_pair=f_pair*D_base, with positive symmetric assumed root factors; the actual D_pair includes the separately described pore-scale resistance. J_ij=area*D_pair*c/distance*(yLi*yRj-yRi*yLj), J_ji=-J_ij; species flux is its pair sum. Total molecular molar flux is zero algebraically, and each pair entropy is R*C_pair*(a-b)*log(a/b)>=0. Shared carried enthalpy is unchanged. Zero pore resistance with unit pair factors recovers the preceding common-D law; a=0 removes only evolving tortuosity. Original gas_face_diffusivity output now denotes the common base scale, not every pair D. Arithmetic gas face porosity is retained, exterior porosity is the outer cell. No extra state, storage or heat source. This is a phenomenological pair mobility, not measured binary diffusion, full Maxwell-Stefan, dusty-gas, connected-pore, Knudsen or Soret transport. Darcy remains a separate closure; parameter ranges and correlations are not identified.',
             'gas_pair_factors':dict(zip(self.gas_pair_names,self.pair_factors.tolist())),
+            'gas_pore_resistance':self.pore_resistance,
+            'gas_pore_resistance_approximation':'beta=transport.pore_resistance is an assumed dimensionless amplitude. Cell ell=2*radius*(pore/initial_pore)^(1/3); internal face ell is the arithmetic mean, exterior ell is the outer cell value, independent of mesh width. K_i=(phi_face/tau_face)*ell_face*sqrt(R*Theta_face/M_i), K_ij=2/(1/K_i+1/K_j), D_pair=D_old_pair/(1+beta*D_old_pair/K_ij). Both D_old and K already include phi/tau, which is not applied again. On the positive physical domain with beta>=0 the shared pair coefficient is positive and symmetric, preserving zero total molecular molar flux and nonnegative pair entropy. Only molecular transport coefficients change; Darcy, conjugate carried enthalpy, U and S retain their preceding laws, without new states or heat sources. beta=0 exactly restores the preceding molecular arithmetic including its unit-pair shortcut; nonzero beta uses pairs even with unit factors. This is a pore-scale mobility hypothesis using an assumed pore diameter, not measured wall accommodation, a pore-throat distribution, full Knudsen, Maxwell-Stefan or dusty-gas transport. Non-equimolar wall friction, slip and thermal transpiration are not resolved. Earlier fixed-parameter UQ/calibration do not identify beta or validate this extension.',
             'gas_viscosity_approximation':'Low-pressure Wilke mixture: mu_i=mu_ref*f_i*(T/T_ref)^b; Phi_ij=[1+sqrt(f_i/f_j)*(M_j/M_i)^(1/4)]^2/sqrt(8*(1+M_i/M_j)); mu_W=sum(y_i*mu_i/sum(y_j*Phi_ij)). Face composition is the arithmetic mean of adjacent mole fractions (including the external reservoir), evaluated at the existing reciprocal-log thermal mean. mu_face=(1-alpha)*mu_base+alpha*mu_W; alpha=0 exactly restores the preceding law. Nominal alpha=1. Positive coefficients preserve donor Darcy direction and its entropy structure, without extra storage or viscous heat addition. All pure reference factors and their common temperature exponent remain assumed. Face averaging is not a resolved variable-viscosity pore resistance; no pressure correction, slip, Knudsen, species-specific viscosity curves or material validation. New factors are fixed, not identified or range-covered by current UQ/calibration.',
             'gas_viscosity_factors':dict(zip(self.ng,self.viscosity_factors.tolist())),
             'gas_caloric_approximation':'Finite-inventory gas Cp_i=c_ref_i+a_i*(T-Tr); h_i=h_ref_i+c_ref_i*(T-Tr)+a_i*(T-Tr)^2/2; s_i=s_ref_i+c_ref_i*ln(T/Tr)+a_i*((T-Tr)-Tr*ln(T/Tr)). Ideal-gas stored u=h-RT and Cv=Cp-R; reaction affinities, reservoir mu/T and energy/entropy share these functions. Conjugate face enthalpy h*=h_ref+c_ref*(Theta-Tr)+a*(Tl*Tright-2*Tr*Theta+Tr^2)/2 cancels standard-state thermal mu/T differences exactly; it is not h(Theta). No extra reaction heat or new state. Four nonnegative slopes and reference Cp values remain assumed; new slopes fixed in paired UQ/synthetic fit, ranges and correlations not covered. Zero slopes exactly restore the previous constant-Cp host. No fitted spectroscopic/calorimetric curve, dissociation, nonideal gas or material validation. Historical gas-storage-zero host is unchanged.',
