@@ -12,9 +12,7 @@ from scipy.optimize import least_squares
 from ..models.full_cycle import make_cycle, changed, run_cycle, write_json
 
 
-UNITS = {'tg':'1', 'dsc':'W/kg', 'dilatometry':'1', 'kiln':'K',
-         'absorption':'kg/kg', 'strength':'Pa', 'defects':'1', 'liquid_water':'kg/kg',
-         'surface_temperature':'K'}
+from .observations import UNITS, prepare_dataset
 
 
 def predict(config: dict, observations: list[dict]):
@@ -109,9 +107,8 @@ def forward_audit(report: dict) -> dict:
 
 def fit(config: dict, dataset: dict, out: Path) -> dict:
     started = time.monotonic()
+    dataset = prepare_dataset(config, dataset, for_calibration=True)
     kind = dataset['measurement_kind']
-    if kind not in ('synthetic', 'measured') or not dataset['source']:
-        raise ValueError('observations require explicit synthetic/measured identity and source')
     rows = dataset['observations']
     target = np.array([r['value'] for r in rows])
     scale = np.array([r['scale'] for r in rows])
@@ -163,6 +160,7 @@ def fit(config: dict, dataset: dict, out: Path) -> dict:
     residual_rows = [dict(row,prediction=float(value),residual=float(value-row['value']),
                          normalized_residual=float((value-row['value'])/row['scale'])) for row,value in zip(rows,values)]
     result = {'schema':'sludge_vme_full_cycle_calibration_v1','measurement_kind':kind,'source':dataset['source'],
+        'observation_admission':dataset['admission'],
         'optimizer_success':bool(opt.success),'qualified_fit':qualified,'message':opt.message,'jacobian_rank':rank,
         'parameter_count':len(keys),'fitted_parameters':fitted,'residuals':residual_rows,
         **{'forward_'+key:value for key,value in audit.items() if key != 'forward_elapsed_s'},

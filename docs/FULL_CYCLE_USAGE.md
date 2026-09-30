@@ -1,5 +1,7 @@
 # 全流程近似模型：离线使用与结果解释
 
+基础版已完成：可运行与检查，并保留未来实测校准入口。当前没有目标材料数据，不阻塞本版交付；原名义干燥失败和真实预测限制见下文。P11实际完成58项纯数据回归、CLI负例和help启动验证；本次没有重新积分或拟合。
+
 项目保留在 `/Users/wanggaoying/Research/brickmodel-github`。统一输入是根目录 `parameters.full_cycle.json`；采用明确的一维半厚度、假设材料和给定炉温/窑气外库。模型用于研究近似和条件化比较，材料适用性、强度/吸水/缺陷代理与现实对照待实测。
 
 ## 已有环境与入口
@@ -86,3 +88,40 @@ del fields
 后续外部记录包装使用sludge_vme.inverse.full_cycle.forward_call_summary(report)，需要必要预算则使用forward_audit(report)；两者不积分。gas_ledger_status=present仅表示数据存在，missing对应明确诊断及审计中的null，不能据普通物理通过推断气体账本通过。缺少必需普通预算字段时直接报错。
 
 runs/full-cycle/final-inverse-20260930/entrypoint.py和原39次记录为历史快照，保留错误字段，不作新运行维护入口。旧完整真值预算未保存且不可从摘要恢复；新版留存只作用于后续真实调用。详见FULL_CYCLE_P10_INVERSE_EVIDENCE.md。
+
+## 未来实测数据的最小接入（P11）
+
+填写起点见 [`examples/full_cycle_observations.template.json`](../examples/full_cycle_observations.template.json)，只包含 `liquid_water` 与 `surface_temperature` 两种观测的占位行。复制到新的数据文件后，按实际采样增加行。模板身份为 `template`，来源、值、时间、材料/配方/批次、几何及边界条件未知项均为 `null`，`fit_parameters` 为空；它不是实测数据，也不能直接传给准备或拟合入口。两种通道不保证任意参数组合可辨识。
+
+根 `observation_contract.target` 当前未知不阻塞已有前向或合成计算。实测拟合前，需根据原始记录明确目标材料及条件，并在统一根配置与输入数据中如实声明；声明相符只表示准入条件相符，不证明材料有效性或实验真实。
+
+1. 填写数据集 `source`、逐行 `source_id` / `source_locator`，以及身份与条件相容性的 `identity_source` / `compatibility_source`。真实原始实验才可用 `measurement_kind="measured"`、`source_kind="raw_experiment"`；论文表格或曲线数字化使用 `reference` 与 `paper_table` / `digitized_curve`，不能仅凭材料名称相似改称目标实测。
+2. 从实验记录填写材料、配方、批次、几何、初态与边界程序。`conditions.configuration` 采用 `configured_conditions(config)` 返回的阶段列表与参数 value/unit 结构；该函数只是**配置快照**，不是实测条件或相容性证据。应逐项对照有来源的实验条件并处理差异，不能盲目复制快照制造匹配。不同批次、主干燥与后续调湿记录分别处理。
+3. 每行据原记录填写测量方式 `acquisition`、阶段 `segment`、值、时间及来源。模板预列的量、位置、基准和单位是目标语义，不证明实验采用了该定义。两类主干燥观测需对应 `in_situ` / `main_drying`。`time` 包含数值、单位、原点、到过程起点的偏移秒数与来源；映射为 `time_s = elapsed_seconds + offset_to_process_start_s`。原点为 `process_start` 时偏移必须为零，不能凭猜测对齐。
+4. 显式填写正的 `scale`、目标单位 `scale_unit` 与 `scale_source`。水分的目标单位是 kg/kg，表面温度是 K；即使原温度以 degC 输入，scale 仍按目标单位声明。scale 是残差归一化尺度，不自动解释为测量标准差 sigma，接口不替你传播不确定度。按研究问题选择根中有非零范围的 `fit_parameters`；已声明固定的几何、初态、配方和边界条件不能同时拟合。
+
+水分的分母必须明确：模型 `liquid_water` 是液水/初始干质量。当前干基、湿基以及 MR 不能直接填入该值；当前干基或湿基转换需同源且有身份记录的当前干质量/初始干质量因子。MR 只接受明确的 `water_over_initial_water` 公式及有来源的初水/初始干质量分母，不能借用根名义初水，也不能猜测包含平衡水分扣除的 MR。百分数须依据原记录显式换成比例，接口不自动猜测。最小模板采用初始干基，不含这些可选转换项。
+
+坯体内部温度不是 `surface_temperature` 的别名；炉温对应 `kiln`。烧后吸水率也不是干燥液水的别名：它对应独立 `absorption` 产品观测及烧后干质量基准，模型端仍为待实测代理。未知位置、干燥后的再调湿、称量方式与模型采集语义不符时，应保留差异，不能改标签制造符合。
+
+填好记录后可先做纯数据准备。下例仅供后续使用，本轮未执行；`prepare_dataset` 不调用前向、优化或求根，积分次数为零：
+
+```python
+import json
+from pathlib import Path
+import sys
+sys.path.insert(0, str(Path.cwd() / 'src'))
+from sludge_vme.models.full_cycle import read_parameters
+from sludge_vme.inverse.observations import prepare_dataset
+
+config = read_parameters('parameters.full_cycle.json')
+dataset = json.loads(Path('path/to/observations.json').read_text())
+prepared = prepare_dataset(config, dataset, for_calibration=False)
+print(prepared['admission'])  # 映射和声明问题；不是拟合成功或材料资格。
+# 只有拟用于目标标定的完整记录才作以下准入检查；仍然零积分。
+admitted = prepare_dataset(config, dataset, for_calibration=True)
+```
+
+`for_calibration=False` 可用于字段完整的文献 reference 映射，保留原行及转换说明；不能补齐未知测量值或修复来源缺失。文献 reference 不进入目标实测拟合。`for_calibration=True` 会检查身份、目标/输入条件、观测语义、窗口及拟合参数，失败直接报错。`fit` 及上方既有 CLI `--calibrate` 路径都会在优化和前向前调用该准入检查，用户不必靠手工预检查才能阻止不合格输入。准入通过后执行拟合才会发生新积分；本轮不执行该步骤。
+
+输入已由 `prepare_dataset` 归一后也可传给 `fit`；二次准备始终重新读取 `mapping.original`，不会把转换后的初始干基当成新的实测原值而丢掉假设分母限制。要更正数据，应修改原始输入再准备。文献烘干参考质量另用 `basis="dry_reference_mass"` 和显式 `dry_reference_over_initial_dry`，不能悄悄等同当前或初始干质量。所有转换因子/MR分母必须带 `status`；要用于目标实测拟合，还须是 `measured`，并在因子的 `material` 中给出与数据集一致的 material_id/recipe_id/batch_id。非实测因子仍只能参考。

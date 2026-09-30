@@ -4324,5 +4324,186 @@
     },
     "observation_times_parameter": "calibration.binding.observation_times",
     "scope_note": "One fixed joint synthetic recovery with existing fit settings and drying schedule. Reuse the numerical E truth/initial controls previously used in the single-parameter example, without inheriting that recovery evidence. Same model/discretization, no measurement or added noise. Scales are residual normalization, not sigma. No design, perturbation, tolerance or restart search."
+  },
+  "observation_contract": {
+    "schema": "full_cycle_observation_admission_v1",
+    "status": "assumed",
+    "source": "policy",
+    "note": "Observation semantics and explicit target metadata only. Null means unknown, not a matching identity. Forward operation and existing synthetic data do not require target measurements. Compatibility checks declarations, not experimental truth. Product outputs remain unvalidated proxies.",
+    "target": {
+      "material": {
+        "material_id": null,
+        "recipe_id": null,
+        "batch_id": null
+      },
+      "conditions": {
+        "geometry_id": null,
+        "boundary_program_id": null,
+        "initial_state_id": null
+      },
+      "identity_source": null,
+      "compatibility_source": null
+    },
+    "condition_parameter_keys": [
+      "geometry.half_thickness",
+      "geometry.area",
+      "material.dry_density",
+      "material.water_dry_ratio",
+      "initial.temperature",
+      "recipe.silica",
+      "recipe.kaolin",
+      "recipe.calcite",
+      "recipe.organic",
+      "recipe.char",
+      "gas.pressure",
+      "gas.inlet.O2",
+      "gas.inlet.N2",
+      "gas.inlet.H2O",
+      "gas.inlet.CO2",
+      "process.drying.end",
+      "process.drying.temperature",
+      "process.heating.end",
+      "process.heating.temperature",
+      "process.reactions.end",
+      "process.reactions.temperature",
+      "process.sintering.end",
+      "process.sintering.temperature",
+      "process.hold.end",
+      "process.hold.temperature",
+      "process.cooling.end",
+      "process.cooling.temperature",
+      "process.time_scale",
+      "process.drying_ramp.end",
+      "process.drying_ramp.temperature",
+      "process.cooling_hold.end",
+      "process.cooling_hold.temperature",
+      "gas.program_scale",
+      "gas.stage.drying_ramp.O2",
+      "gas.stage.drying_ramp.N2",
+      "gas.stage.drying_ramp.H2O",
+      "gas.stage.drying_ramp.CO2",
+      "gas.stage.drying.O2",
+      "gas.stage.drying.N2",
+      "gas.stage.drying.H2O",
+      "gas.stage.drying.CO2",
+      "gas.stage.heating.O2",
+      "gas.stage.heating.N2",
+      "gas.stage.heating.H2O",
+      "gas.stage.heating.CO2",
+      "gas.stage.reactions.O2",
+      "gas.stage.reactions.N2",
+      "gas.stage.reactions.H2O",
+      "gas.stage.reactions.CO2",
+      "gas.stage.sintering.O2",
+      "gas.stage.sintering.N2",
+      "gas.stage.sintering.H2O",
+      "gas.stage.sintering.CO2",
+      "gas.stage.hold.O2",
+      "gas.stage.hold.N2",
+      "gas.stage.hold.H2O",
+      "gas.stage.hold.CO2",
+      "gas.stage.cooling.O2",
+      "gas.stage.cooling.N2",
+      "gas.stage.cooling.H2O",
+      "gas.stage.cooling.CO2",
+      "gas.stage.cooling_hold.O2",
+      "gas.stage.cooling_hold.N2",
+      "gas.stage.cooling_hold.H2O",
+      "gas.stage.cooling_hold.CO2"
+    ],
+    "semantics": {
+      "tg": {
+        "quantity": "condensed_mass",
+        "basis": "initial_dry_mass",
+        "location": "whole_specimen",
+        "acquisition": "in_situ",
+        "segments": [
+          "full_cycle",
+          "main_drying"
+        ]
+      },
+      "dsc": {
+        "quantity": "net_boundary_power",
+        "basis": "initial_dry_mass",
+        "location": "whole_specimen",
+        "acquisition": "in_situ",
+        "segments": [
+          "full_cycle",
+          "main_drying"
+        ]
+      },
+      "dilatometry": {
+        "quantity": "axial_strain",
+        "basis": "initial_thickness",
+        "location": "whole_specimen",
+        "acquisition": "in_situ",
+        "segments": [
+          "full_cycle",
+          "main_drying"
+        ]
+      },
+      "kiln": {
+        "quantity": "temperature",
+        "basis": "no_mass_basis",
+        "location": "kiln",
+        "acquisition": "in_situ",
+        "segments": [
+          "full_cycle",
+          "main_drying"
+        ]
+      },
+      "liquid_water": {
+        "quantity": "liquid_water",
+        "basis": "initial_dry_mass",
+        "location": "whole_specimen",
+        "acquisition": "in_situ",
+        "segments": [
+          "full_cycle",
+          "main_drying"
+        ]
+      },
+      "surface_temperature": {
+        "quantity": "temperature",
+        "basis": "no_mass_basis",
+        "location": "outer_surface",
+        "acquisition": "in_situ",
+        "segments": [
+          "full_cycle",
+          "main_drying"
+        ]
+      },
+      "absorption": {
+        "quantity": "fired_water_absorption",
+        "basis": "fired_dry_mass",
+        "location": "whole_specimen",
+        "acquisition": "post_cooling",
+        "segments": [
+          "post_cooling"
+        ],
+        "terminal_stage": "cooling_hold"
+      },
+      "strength": {
+        "quantity": "compressive_strength",
+        "basis": "no_mass_basis",
+        "location": "whole_specimen",
+        "acquisition": "post_cooling",
+        "segments": [
+          "post_cooling"
+        ],
+        "terminal_stage": "cooling_hold"
+      },
+      "defects": {
+        "quantity": "defect_indicator",
+        "basis": "no_mass_basis",
+        "location": "whole_specimen",
+        "acquisition": "post_cooling",
+        "segments": [
+          "post_cooling"
+        ],
+        "terminal_stage": "cooling_hold"
+      }
+    },
+    "time_note": "Curve times are seconds since simulation start; other origins need an explicit sourced offset. Main drying and later conditioning cannot be pooled. Scale is explicitly in canonical target units and is not automatically an uncertainty.",
+    "reference_note": "External paper tables/digitized curves remain reference. Current/wet dry-mass conversion requires a sourced current/initial dry-mass ratio. MR accepts only explicitly sourced water/initial_water and an initial-dry denominator; unknown formulas are not inferred."
   }
 }
