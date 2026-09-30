@@ -3783,6 +3783,50 @@
       "source": "iapws2008_viscosity",
       "status": "literature",
       "note": "Eq11 normalized dilute viscosity; density and critical multipliers are one in the zero-density limit. Fixed source coefficients, not independently sampled or fitted to target material."
+    },
+    "validation.current_uq.concurrent_workers": {
+      "value": 3,
+      "unit": "1",
+      "range": [
+        3,
+        3
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P21 one final-kernel update of the existing8 paired25-dimensional draws and3 scenarios. Execution bound, not a physical parameter or accuracy criterion; no automatic retry/replacement."
+    },
+    "validation.current_uq.per_case_budget": {
+      "value": 900,
+      "unit": "s",
+      "range": [
+        900,
+        900
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P21 one final-kernel update of the existing8 paired25-dimensional draws and3 scenarios. Execution bound, not a physical parameter or accuracy criterion; no automatic retry/replacement."
+    },
+    "validation.current_uq.total_budget": {
+      "value": 2700,
+      "unit": "s",
+      "range": [
+        2700,
+        2700
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P21 one final-kernel update of the existing8 paired25-dimensional draws and3 scenarios. Execution bound, not a physical parameter or accuracy criterion; no automatic retry/replacement."
+    },
+    "validation.current_uq.watchdog_poll_interval": {
+      "value": 0.25,
+      "unit": "s",
+      "range": [
+        0.25,
+        0.25
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P21 one final-kernel update of the existing8 paired25-dimensional draws and3 scenarios. Execution bound, not a physical parameter or accuracy criterion; no automatic retry/replacement."
     }
   },
   "species": [
@@ -5570,6 +5614,19 @@
       "unchanged_evidence": "P16 source Cp/h/s and exact carried-enthalpy constitutive identity, P13 water activity/heat source comparison, P15 analytic carbonate shape and P17 DTU definitions are unaffected and not rerun.",
       "UQ": "No ensemble is part of P20; P21 budget decision remains pending.",
       "scope": "Positive dilute-source mu and same-temperature Wilke, unchanged shared Darcy flux and energy/entropy accounting; no raw fields saved."
+    },
+    "p21_current_kernel_uq": {
+      "sample_source": "docs/FULL_CYCLE_FINAL_UQ.json",
+      "sample_member": "execution.draws",
+      "parameter_file": "parameters.full_cycle.json",
+      "worker_parameter": "validation.current_uq.concurrent_workers",
+      "per_case_budget_parameter": "validation.current_uq.per_case_budget",
+      "total_budget_parameter": "validation.current_uq.total_budget",
+      "sample_count_parameter": "uq.samples",
+      "preserved_design": "Same saved8 independent-uniform25-dimensional assumed draws, same3root scenarios and unchanged statistics. Outputs recomputed only for final P20 kernel; previous outputs never reused.",
+      "scope": "Permeability3.75e-14m2 and source caloric/viscosity parameters remain fixed; no wide-permeability batch, source-parameter sweep, search, extra samples or raw fields.",
+      "authorization_basis": "Before launch, coordinator01a0f47c-2f66-7030-a6be-0f9befb47014 relayed actual human approval at2026-09-30 23:17UTC: user replied 允许 to one8x3 final-kernel update with45-minute total limit, no rawfields or automatic extra samples. This actual approval, not reinterpretation of earlier restrictions, is the execution basis.",
+      "failure_policy": "Keep failed/timed-out/not-started cases; no replacements, no repeated full batch, no sampling/statistic/tolerance adjustment to obtain a pass."
     }
   },
   "caloric_background": {

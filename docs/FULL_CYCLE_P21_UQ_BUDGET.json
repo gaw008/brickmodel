@@ -1,7 +1,7 @@
 {
   "schema": "current_kernel_uq_budget_decision_v1",
   "recorded_utc": "2026-09-30T23:02:06.934750+00:00",
-  "status": "awaiting_explicit_budget_decision_no_ensemble_started",
+  "status": "running_unique_approved_batch",
   "requirement": "Current SPEC requires three-scenario distributions and ranking robustness analysis. P18 fixed nominal outputs do not meet it.",
   "independent_review": "p02_scope_review; read-only, no computations",
   "current_root_design": {
@@ -129,7 +129,7 @@
     "proposed_concurrency": 3,
     "proposed_per_case_wall_limit_s": 900,
     "proposed_total_wall_limit_s": 2700,
-    "limits_status": "Proposal not executed, not entered into root until explicitly authorized; fixed timeout failures stay failures, no replacement samples.",
+    "limits_status": "Actual human approval received23:17UTC and budget registered before launch; no repeat approval required.",
     "P20_nominal_observed_s": 170.6650719579775,
     "P20_24_identical_nominal_ideal_three_worker_wall_s": 1365.32057566382,
     "P20_update_note": "One P20 nominal is 170.665s; ideal24/3 would be22.76min. Not a sampled-ensemble runtime bound; previous proposed900s/case2700s/batch remains an unexecuted proposal requiring explicit approval."
@@ -152,6 +152,36 @@
     "No SHA, new tests, scheduler, history deletion"
   ],
   "root_note_correction": "P19 corrected obsolete Cp-slope text; P20 replaced old4 viscosity factors with16 fixed source entries. Neither silently changes25 sampled parameters.",
-  "actual_new_integrations": 0,
-  "decision_request": "Question sent to user asynchronously; elapsed time is not approval."
+  "decision_request": "Question sent to user asynchronously; elapsed time is not approval.",
+  "historical_status_before_authorization_recheck": "awaiting_explicit_budget_decision_no_ensemble_started",
+  "decision_pending": false,
+  "authorization_correction": "Before launch, coordinator01a0f47c-2f66-7030-a6be-0f9befb47014 relayed actual human approval at2026-09-30 23:17UTC: user replied 允许 to one8x3 final-kernel update with45-minute total limit, no rawfields or automatic extra samples. This actual approval, not reinterpretation of earlier restrictions, is the execution basis.",
+  "execution_budget": {
+    "concurrent_workers": 3,
+    "per_case_s": 900,
+    "total_wall_s": 2700,
+    "source": "root validation.current_uq.*",
+    "watchdog_poll_interval_s": 0.25
+  },
+  "execution_declaration": {
+    "started_utc": "2026-09-30T23:26:52.503208+00:00",
+    "deadline_utc": "2026-10-01T00:11:52.503208+00:00",
+    "physical_kernel_commit": "d5fd9a2f919fc605cc85a91db5d4cf6a3f54a3cc",
+    "current_head": "d5fd9a2f919fc605cc85a91db5d4cf6a3f54a3cc",
+    "source_bytes_equal_committed_kernel": true,
+    "all_prior_scientific_parameter_entries_unchanged": true,
+    "root_snapshot": "runs/full-cycle/p21-current-uq/root-snapshot.json",
+    "root_additions": "Four declared execution/watchdog controls and P21 execution metadata only.",
+    "approval": "runs/full-cycle/p21-current-uq/approval.json",
+    "parent_pid": 80482,
+    "workers": 3,
+    "per_case_budget_s": 900,
+    "total_budget_s": 2700,
+    "watchdog_poll_interval_s": 0.25,
+    "watchdog_path": "runs/full-cycle/p21-current-uq/launch.py",
+    "watchdog_method": "One parent monotonic global deadline checks every active child and queue; kill/wait direct child on global/per-case deadline, no queued starts after deadline. Sleep bounded by nearest active/global deadline.",
+    "raw_fields_saved": false
+  },
+  "actual_count_source": "runs/full-cycle/p21-current-uq/progress.json; no forecast claimed as completed",
+  "prelaunch_actual_new_integrations": 0
 }
