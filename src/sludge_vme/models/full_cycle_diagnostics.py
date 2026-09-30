@@ -162,3 +162,63 @@ def drying_water_diagnostics(config, start, end, *, boundary_in_mol,
             config, start, end, boundary_in_mol=boundary_in_mol,
             boundary_out_mol=boundary_out_mol),
     }
+
+
+def gas_species_ledger(config, start, end, *, reference_inventory_mol) -> dict:
+    """Audit global gas-species endpoint balances using existing net ledgers.
+
+    Endpoint inputs hold scalar totals in mol. The physical host supplies
+    positive inventories, including the declared-process initial reference for each
+    gas species. Reaction extent changes are interval signed net progress,
+    not gross forward/reverse throughput. Internal faces cancel globally;
+    this is neither a local independent flux integral nor an interval-maximum
+    residual check. Its verdict is separate from existing physical verdicts.
+    """
+    extent_changes = {reaction['id']:
+        end['reaction_extent_mol'][reaction['id']]-start['reaction_extent_mol'][reaction['id']]
+        for reaction in config['reactions']}
+    threshold = config['parameters']['acceptance.balance_relative']['value']
+    species = {}
+    for item in config['species']:
+        if item['phase'] != 'gas':
+            continue
+        name = item['id']
+        initial = start['gas_inventory_mol'][name]
+        final = end['gas_inventory_mol'][name]
+        change = final-initial
+        sources = {reaction['id']:extent_changes[reaction['id']]*reaction['stoichiometry'].get(name,0)
+                   for reaction in config['reactions']}
+        source = sum(sources.values())
+        inflow = end['boundary_in_mol'][name]-start['boundary_in_mol'][name]
+        outflow = end['boundary_out_mol'][name]-start['boundary_out_mol'][name]
+        residual = change-source-inflow+outflow
+        budget = max(abs(initial),abs(final),sum(abs(value) for value in sources.values()),
+                     abs(inflow)+abs(outflow))
+        reference = reference_inventory_mol[name]
+        species[name] = {
+            'initial_inventory_mol':initial, 'final_inventory_mol':final,
+            'inventory_change_mol':change,
+            'reaction_sources_mol':sources, 'reaction_net_source_mol':source,
+            'boundary_in_mol':inflow, 'boundary_out_mol':outflow,
+            'boundary_net_out_mol':outflow-inflow,
+            'residual_mol':residual, 'absolute_residual_mol':abs(residual),
+            'budget_scale_mol':budget, 'reference_inventory_mol':reference,
+            'budget_relative_residual':abs(residual)/budget,
+            'reference_relative_residual':abs(residual)/reference,
+            'passed':bool(abs(residual)/budget < threshold),
+        }
+    return {
+        'identity':'simulation', 'start_time_s':start['time_s'], 'end_time_s':end['time_s'],
+        'reaction_extent_delta_mol':extent_changes, 'species':species,
+        'acceptance_balance_relative':threshold,
+        'passed':all(item['passed'] for item in species.values()),
+        'definitions':{
+            'residual':'End minus start inventory minus stoichiometric reaction net source minus boundary inflow plus boundary outflow; all amounts in mol.',
+            'budget_scale':'max(abs(start inventory),abs(end inventory),sum(abs(each reaction interval net source)),abs(boundary in)+abs(boundary out)); no floors.',
+            'reference_scale':'Initial inventory of this gas species at the start of the declared process window, reused for every stage; for a full-cycle configuration this is the full-cycle initial inventory. This normalization is distinct from the budget scale and is not the pass criterion.',
+            'boundary_direction':'In/out label the theoretical nonnegative directional flux integrals. Recorded cumulative endpoint differences are used unchanged, including any small negative numerical increments; no clipping or absolute-value replacement is applied to balance amounts.',
+            'reaction_progress':'Signed interval net reaction progress from cumulative extents; neither reaction sources nor their absolute sums measure gross forward/reverse traffic.',
+            'scope':'Global internal faces cancel; endpoint residual only, not a local independent flux integration or the maximum residual within the interval.',
+            'verdict':'Absolute residual divided by budget scale must be strictly below the existing acceptance.balance_relative. This report does not change prior conservation, physical or process-endpoint verdicts.',
+        },
+    }

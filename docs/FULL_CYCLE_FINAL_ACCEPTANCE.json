@@ -1,0 +1,143 @@
+{
+  "schema": "full_cycle_final_acceptance_matrix_v1",
+  "recorded_utc": "2026-09-30T18:27:11.264078+00:00",
+  "status": "in_progress",
+  "identity": "approximate_simulation_not_measured_material",
+  "parent_commit": "d8bc6f1b09e0b6d10cdcf4abf35e634035a36d08",
+  "parameter_file": "parameters.full_cycle.json",
+  "parameter_count": 271,
+  "parameter_status_counts": {
+    "literature": 38,
+    "assumed": 233,
+    "measured": 0
+  },
+  "implementation": {
+    "current_scope_necessary_couplings_present": true,
+    "new_mechanism_added_this_round": false,
+    "proof_scope": "Targeted independent source review, not a new global audit. Source continuity covers the current forward kernel and all 271 physical/numerical entries; root changes only describe fixed UQ conditions.",
+    "mechanisms": [
+      {
+        "process": "continuous_wet_to_cooled_cycle",
+        "source": "src/sludge_vme/models/full_cycle_gas.py:584",
+        "status": "implemented",
+        "scope": "State and cumulative ledgers carry continuously through all eight declared stages."
+      },
+      {
+        "process": "water_transport_phase_exchange_retention_binding",
+        "source": "src/sludge_vme/models/full_cycle_gas.py:431",
+        "status": "implemented",
+        "scope": "Shared chemical potentials and conjugate energy/entropy terms; no extra fictitious bound-water mass."
+      },
+      {
+        "process": "dehydroxylation_carbonate_organic_char_reactions",
+        "source": "src/sludge_vme/models/full_cycle_gas.py:453",
+        "status": "implemented",
+        "scope": "Current inventories, atom-balanced root stoichiometry and gas sources; reversible carbonate and competing carbonization."
+      },
+      {
+        "process": "finite_pore_gas_pressure_and_transport",
+        "source": "src/sludge_vme/models/full_cycle_gas.py:257",
+        "status": "implemented",
+        "scope": "Shared species/enthalpy/entropy fluxes, Darcy and positive symmetric gas-pair mobility."
+      },
+      {
+        "process": "thermoelastic_pore_geometry_and_densification",
+        "source": "src/sludge_vme/models/full_cycle_solid.py:329",
+        "status": "implemented",
+        "scope": "Same Helmholtz potential and current composition/phase derivatives."
+      },
+      {
+        "process": "finite_rate_matrix_phase_and_cooling_retention",
+        "source": "src/sludge_vme/models/full_cycle_solid.py:113",
+        "status": "implemented",
+        "scope": "Effective disordered-state proxy with phase energy/entropy and carrier birth, not a mineral phase diagram."
+      },
+      {
+        "process": "state_dependent_thermal_properties",
+        "source": "src/sludge_vme/models/full_cycle_solid.py:195",
+        "status": "implemented",
+        "scope": "Dry/water/phase/temperature conductivity and pore radiation use the existing shared heat flux."
+      }
+    ]
+  },
+  "P01": {
+    "status": "completed",
+    "evidence": "docs/FULL_CYCLE_GAS_LEDGER_RESULTS.json",
+    "dynamic_window_integrations": 2,
+    "old_three_full_cycle_integrations_repeated": 0,
+    "historical_arithmetic_repeated": false,
+    "old_full_cycle_endpoint_species_budgets_passed": true,
+    "inherited_maximum_gas_budget_relative": 0.0005297645089060436,
+    "inherited_maximum_gas_initial_inventory_relative": 0.01082387397969822,
+    "budget_threshold": 0.001,
+    "initial_inventory_normalization_is_pass_criterion": false,
+    "current_all_eight_stage_wiring": "Pending readback of the ongoing final UQ; no separate validation integration planned."
+  },
+  "P04": {
+    "status": "passed_by_forward_continuity_and_affected_diagnostic_verification",
+    "inherited_evidence": "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
+    "continuity_evidence": "runs/full-cycle/gas-ledger-source-continuity.json",
+    "inherited_all_physical_passed": true,
+    "inherited_maximum_balance_relative": 0.000597443384119587,
+    "inherited_maximum_convergence_relative": 0.0036031861257928197,
+    "inherited_convergence_passed": true,
+    "balance_threshold": 0.001,
+    "convergence_threshold": 0.02,
+    "new_three_grid_time_runs": false,
+    "mechanism_ranges_qualified": false
+  },
+  "P03": {
+    "bounded_handling_complete": true,
+    "nominal_drying_passed": false,
+    "nominal_remaining_fraction": 0.001350564570573356,
+    "threshold": 0.001,
+    "new_process_search_attempts": 0,
+    "historical_extended_and_disabled_controls_replace_nominal": false,
+    "evidence": "docs/FULL_CYCLE_REPORT.md historical binding and drying-extension sections; docs/FULL_CYCLE_PORE_GAS_RESULTS.json current nominal"
+  },
+  "P05": {
+    "status": "running",
+    "evidence": "docs/FULL_CYCLE_FINAL_UQ.json",
+    "sampled_dimensions": 25,
+    "paired_samples": 8,
+    "scenario_count": 3,
+    "permeability_fixed_m2": 3.75e-14,
+    "two_resistances_fixed": {
+      "kinetics.carbonate.phase_resistance": 1.0,
+      "transport.pore_resistance": 1.0
+    },
+    "range_qualification": "Only the declared 25-dimensional paired ensemble. Fixed assumptions and their correlations are not range-validated."
+  },
+  "P06": {
+    "status": "running",
+    "full_cycle_cli": "Existing full-cycle --synthetic-calibration, fixed three-parameter seven-channel design",
+    "joint_python": "Existing joint_drying_synthetic_demo, fixed two-parameter two-channel drying window",
+    "mapping": "Nine observation kinds checked on the full-cycle synthetic truth, without another integration",
+    "nominal_parameter_update": false
+  },
+  "P07": {
+    "status": "in_progress",
+    "usage": "docs/FULL_CYCLE_USAGE.md",
+    "environment": {
+      "python": "3.12.13",
+      "numpy": "2.5.2",
+      "scipy": "1.18.1"
+    },
+    "network_required_for_running_model": false,
+    "portable_offline_runtime_backup_qualified": false
+  },
+  "material_applicability": "pending_measurements",
+  "real_world_validation": "pending_measurements",
+  "excluded_mechanisms": [
+    "complete mineral phase diagram",
+    "measured glass yield and nucleation/crystallization",
+    "real carbonate product-layer diffusion",
+    "full Knudsen/Maxwell-Stefan/dusty-gas transport",
+    "resolved kiln combustion/circulation",
+    "cracks and damage"
+  ],
+  "model_capability_closeout_complete": false,
+  "physical_numerical_acceptance_complete": false,
+  "all_engineering_acceptance_passed": false,
+  "delivery_is_separate_from_model_acceptance": true
+}

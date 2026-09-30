@@ -15,7 +15,7 @@ from scipy.integrate import solve_ivp
 from scipy.sparse import csc_matrix
 
 from .full_cycle import FullCycle
-from .full_cycle_diagnostics import drying_water_diagnostics, free_water_ledger
+from .full_cycle_diagnostics import drying_water_diagnostics, free_water_ledger, gas_species_ledger
 
 
 class FiniteGasFullCycle(FullCycle):
@@ -947,4 +947,27 @@ class FiniteGasFullCycle(FullCycle):
         report['physical_consistency_passed']=bool(report['conservation_passed'] and min_condensed>=-inventory_budget and min_gas>0
             and minimum_capacity>0 and report['state_domain']['minimum_porosity']>0 and min_entropy>=0 and min_face>=0 and min_water_face>=0
             and entropy_relative<self.p('acceptance.entropy_relative','1'))
+        gas_endpoints=[]
+        for label,t in zip(['initial']+self.config['stages'],self.times):
+            index=int(np.where(times==t)[0][0])
+            row=rows[index]
+            gas_endpoints.append({
+                'endpoint':label, 'time_s':float(t),
+                'gas_inventory_mol':{name:float(sum(row['gas_inventory_mol'][name])) for name in self.ng},
+                'reaction_extent_mol':{name:float(sum(values)) for name,values in row['reaction_extent_mol'].items()},
+                'boundary_in_mol':dict(zip(self.ng,gasin[index].tolist())),
+                'boundary_out_mol':dict(zip(self.ng,gasout[index].tolist()))})
+        reference_inventory=gas_endpoints[0]['gas_inventory_mol']
+        report['gas_ledger_endpoint_totals']=gas_endpoints
+        report['gas_species_ledger']={
+            'scope':{
+                'stages':list(self.config['stages']),
+                'start_time_s':gas_endpoints[0]['time_s'],
+                'end_time_s':gas_endpoints[-1]['time_s'],
+                'whole_cycle_meaning':'Entire declared process window; a truncated stage configuration does not cover the omitted stages.',
+                'reference_inventory_time_s':gas_endpoints[0]['time_s']},
+            'whole_cycle':gas_species_ledger(self.config,gas_endpoints[0],gas_endpoints[-1],
+                reference_inventory_mol=reference_inventory),
+            'stages':{name:gas_species_ledger(self.config,gas_endpoints[i],gas_endpoints[i+1],
+                reference_inventory_mol=reference_inventory) for i,name in enumerate(self.config['stages'])}}
         return report,{'schema':'sludge_vme_full_cycle_fields_v2','cell_count':self.n,'rows':rows}
