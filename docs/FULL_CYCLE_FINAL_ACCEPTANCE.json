@@ -365,7 +365,7 @@
   },
   "timing_note": "Elapsed wall time from initial plan creation includes computation, parallel overlap, reviews and user-directed continuation; not summed CPU/scientific time. P16 and P18 execution receipts report separately measured batch times.",
   "delivery": {
-    "status": "P16-P18_current_commit_push_and_increment_pending_at_model_finalization; read current receipts for actual outcome",
+    "status": "current_model_commit_push_and_increment_metadata_passed_actual_increment_restore_and_history_pending",
     "evidence": "docs/FULL_CYCLE_FINAL_DELIVERY.json",
     "model_results_commit": "c26ce88a3f1b64b88b81be024eb843e7e0c33081",
     "model_results_remote_readback_passed": true,
@@ -402,7 +402,19 @@
     "current_receipts": [
       "runs/full-cycle/p16-p18-git-delivery.json",
       "runs/full-cycle/p12-p18-drive-delivery.json"
-    ]
+    ],
+    "current_model_commit": "5bce9170383968b65459e67b1a9c2e450ad0e5c8",
+    "current_model_remote_readback_passed": true,
+    "current_increment": {
+      "drive_file_id": "1tKkno4ybXWIOS-Lzlcf-Xgd5jnu-_CIa",
+      "drive_url": "https://drive.google.com/file/d/1tKkno4ybXWIOS-Lzlcf-Xgd5jnu-_CIa/view?usp=drivesdk",
+      "archive_size_bytes": 1206067,
+      "archive_member_count": 104,
+      "metadata_readback_passed": true,
+      "actual_cloud_byte_recovery_passed": false,
+      "restore_status": "Pending: connector returned a remote file reference, but this executor exposes no native file-reference materialization tool. Prior signed-download channel returned 403 under unchanged conditions; do not repeat it or claim current cloud bytes restored."
+    },
+    "current_evidence": "docs/FULL_CYCLE_P18_DELIVERY.json"
   },
   "P09": {
     "status": "completed_conditional_attribution_review",
@@ -1782,5 +1794,10 @@
       "item": "Git_Drive_recovery_historical_storage",
       "outcome": "separate_delivery_checklist"
     }
-  ]
+  ],
+  "final_matrix_independent_review": {
+    "status": "passed",
+    "reviewer": "p02_scope_review",
+    "scope": "Current and historical evidence, approximate-model completion, process failure, public-source mismatch, zero measured and separate delivery layers; read-only, no computations."
+  }
 }

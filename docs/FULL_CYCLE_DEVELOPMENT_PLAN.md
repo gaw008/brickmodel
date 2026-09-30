@@ -246,3 +246,12 @@ P16三档仍运行。并行独立工作仅一个预定DTU Y-Ref-1020/#0250/A配�
 - 最终变更：四个模型源文件full_cycle.py/full_cycle_gas.py/full_cycle_solid.py/full_cycle_diagnostics.py，根参数；CURRENT_MODEL、P16_SOURCE_CALORIC_RESULTS、P17_APPLICABILITY、P18_CURRENT_VALIDATION、FINAL_ACCEPTANCE、计划、规范、报告、GOAL_STATUS、USAGE。原始场未写盘或入Git，无新增软件测试/SHA/memory/定时任务。
 - 完成判断：当前约定单砖全流程近似实现与物理数值验收完成；原0.1%/2%门槛不变。名义干燥0.13602805%失败，异材公开曲线失配与目标材料/产品精度未测保留。304条=70文献/234假设/0实测，不能写成全部工程或真实材料PASS。
 - 下一步仅独立交付：当前Git提交/推送和P12–P18小型Drive增量/可用恢复，实际收据runs/full-cycle/p16-p18-git-delivery.json、p12-p18-drive-delivery.json。D01/D02原勾选只对应此前已完成检查点，新动作完成后按收据记录；D03/D04完整历史状态不升级，不删除原件。
+
+### D01/D02当前模型实际交付；D03/D04保持限制（2026-09-30T22:27:13.847432+00:00）
+
+- D01：15个显式文件及暂存字节核对通过，按write-tree --missing-ok、commit-tree、带旧HEAD约束update-ref生成5bce9170383968b65459e67b1a9c2e450ad0e5c8；普通push成功，ls-remote一致。提交工作0.340069s；GitHub容量警告仍在，无改史/删除。收据runs/full-cycle/p16-p18-git-delivery.json。
+- D02：P12–P18当前模型增量p12-p18-model-20260930-222459-5bce9170.tar.gz为1206067字节、103源文件加manifest共104成员，本地归档逐成员对快照字节一致；上传一次并核对云名称/大小/授权父目录一致。云ID1tKkno4ybXWIOS-Lzlcf-Xgd5jnu-_CIa；收据runs/full-cycle/p12-p18-drive-delivery.json。包不包含全部历史或可迁移Python环境。
+- D03部分历史成功保持：P11新鲜云副本429426字节/21成员曾实际恢复通过。当前新包fresh fetch只返回远端file_uri；本执行器无原生引用落地工具，未获得本地云字节。同条件旧signed URL通道403不重复，不把本次称为下载403或实际恢复通过。压缩原件、历史和独有Git均保留。
+- D04：刚复查卷可用299590064KiB；18:41:57UTC项目加全部私有备份163016282112字节是当时测量，未冒充最终总量，20GB未达。没有清理或全历史重扫。
+- 最终范围复核p02_scope_review通过：P01–P18完成有实际证据；物理数值通过、当前干燥失败、公开异材失配、0measured及独立交付层级一致。无新增模型计算。
+- 本条与最终交付JSON/矩阵的正常后继、薄增量收据另列runs/full-cycle/p18-delivery-note-git.json和p18-delivery-note-drive.json，以实际动作后收据为准，避免自指预写成功。
