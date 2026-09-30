@@ -3148,6 +3148,28 @@
       "source": "policy",
       "status": "assumed",
       "note": "One predeclared halving of the existing physical-parameter-relative local sensitivity step. Reuse the saved nominal baseline; exactly two perturbed drying windows. This is a two-step sensitivity check, not a convergence tolerance, material value or measurement."
+    },
+    "calibration.joint.h_truth": {
+      "value": 26.0,
+      "unit": "W/m2/K",
+      "range": [
+        10.0,
+        40.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Predeclared fixed truth, reused from the earlier synthetic demonstration for the two-parameter noise-free same-model drying recovery. Not measured and does not replace nominal thermal.h."
+    },
+    "calibration.joint.h_initial": {
+      "value": 20.0,
+      "unit": "W/m2/K",
+      "range": [
+        10.0,
+        40.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Predeclared fixed initial guess, copied from the nominal configuration for the two-parameter noise-free same-model drying recovery. Not measured and does not replace nominal thermal.h."
     }
   },
   "species": [
@@ -4254,5 +4276,29 @@
     "liquid_water",
     "surface_temperature"
   ],
-  "local_sensitivity_scope_note": "Assumed local diagnostic at original nominal drying configuration, using calibration.binding.observation_times and calibration.difference_step. One baseline and one positive relative perturbation per registered parameter. Rows normalized by calibration.scale.<kind>, parameter coordinates by their declared range widths. No fitting, noise model, global identifiability or step/grid convergence claim. The existing difference_step supplies only the relative fraction: perturb physical p by 1%, not optimizer normalized x by 1%. For nominal h=20 and lower bound10, this diagnostic uses20.2, whereas optimizer x-relative1% corresponds20.1."
+  "local_sensitivity_scope_note": "Assumed local diagnostic at original nominal drying configuration, using calibration.binding.observation_times and calibration.difference_step. One baseline and one positive relative perturbation per registered parameter. Rows normalized by calibration.scale.<kind>, parameter coordinates by their declared range widths. No fitting, noise model, global identifiability or step/grid convergence claim. The existing difference_step supplies only the relative fraction: perturb physical p by 1%, not optimizer normalized x by 1%. For nominal h=20 and lower bound10, this diagnostic uses20.2, whereas optimizer x-relative1% corresponds20.1.",
+  "joint_drying_calibration": {
+    "fit_parameters": [
+      "water.binding_energy",
+      "thermal.h"
+    ],
+    "observation_kinds": [
+      "liquid_water",
+      "surface_temperature"
+    ],
+    "stages": [
+      "drying_ramp",
+      "drying"
+    ],
+    "truth_parameter_entries": {
+      "water.binding_energy": "calibration.binding.truth",
+      "thermal.h": "calibration.joint.h_truth"
+    },
+    "initial_parameter_entries": {
+      "water.binding_energy": "calibration.binding.initial",
+      "thermal.h": "calibration.joint.h_initial"
+    },
+    "observation_times_parameter": "calibration.binding.observation_times",
+    "scope_note": "One fixed joint synthetic recovery with existing fit settings and drying schedule. Reuse the numerical E truth/initial controls previously used in the single-parameter example, without inheriting that recovery evidence. Same model/discretization, no measurement or added noise. Scales are residual normalization, not sigma. No design, perturbation, tolerance or restart search."
+  }
 }

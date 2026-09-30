@@ -478,3 +478,96 @@ def joint_drying_sensitivity_half_step(config: dict, previous: dict, out: Path) 
     write_json(out/'joint_drying_sensitivity_half_step.json',result)
     (out/'joint_drying_sensitivity_half_step.progress.json').unlink()
     return result
+
+
+def joint_drying_synthetic_demo(config: dict, out: Path) -> dict:
+    """Recover the root-declared parameter pair from synthetic drying channels.
+
+    One truth solution supplies all channels at elapsed-second observation
+    times. A single call to the existing fit uses its unchanged optimizer,
+    budgets and range-normalized coordinates. Data are noise-free and use the
+    same model and discretization as fitting. Channel scales normalize the
+    residuals and are not measurement-error estimates. No nominal parameter
+    is updated, and synthetic fitting preserves assumed parameter identity.
+    """
+    started = time.monotonic()
+    window = deepcopy(config)
+    design = window['joint_drying_calibration']
+    window['stages'] = list(design['stages'])
+    p = window['parameters']
+    keys = design['fit_parameters']
+    kinds = design['observation_kinds']
+    truth = {key:p[design['truth_parameter_entries'][key]]['value'] for key in keys}
+    initial = {key:p[design['initial_parameter_entries'][key]]['value'] for key in keys}
+    rows = [
+        {'kind':kind, 'time_s':float(t), 'unit':UNITS[kind],
+         'scale':p['calibration.scale.'+kind]['value']}
+        for kind in kinds for t in p[design['observation_times_parameter']]['value']]
+    truth_started = time.monotonic()
+    values, truth_report = predict(changed(window,truth),rows)
+    truth_elapsed = time.monotonic()-truth_started
+    threshold = p['acceptance.drying_remaining_fraction']['value']
+    truth_remaining = truth_report['example_endpoints']['drying_remaining_fraction']
+    truth_audit = {
+        'physical_consistency_passed':truth_report['physical_consistency_passed'],
+        'window_balance':truth_report['whole_cycle'], 'stages':truth_report['stages'],
+        'thermodynamics':truth_report['thermodynamics'],
+        'state_domain':truth_report['state_domain'], 'dimension_check':truth_report['dimension_check'],
+        'drying_remaining_fraction':truth_remaining,
+        'drying_endpoint_passed':bool(truth_remaining < threshold),
+        'forward_elapsed_s':truth_report['elapsed_s'], 'elapsed_s':truth_elapsed,
+    }
+    dataset = {
+        'schema':'full_cycle_observations_v1', 'measurement_kind':'synthetic',
+        'source':'Same-model same-discretization synthetic joint drying observations; no measurement or added noise.',
+        'scope':'Drying window only; no completed firing cycle or cooled-product result.',
+        'scope_note':design['scope_note'], 'design':design,
+        'fit_parameters':keys, 'truth':truth, 'initial_guess':initial,
+        'stages':window['stages'], 'truth_window_audit':truth_audit,
+        'scale_interpretation':'Channel residual normalization in each observation unit, not measurement uncertainty.',
+        'observations':[dict(row,value=float(value)) for row,value in zip(rows,values)],
+    }
+    write_json(out/'synthetic.observations.json',dataset)
+    result = fit(changed(window,initial),dataset,out)
+    remaining = result.pop('forward_example_endpoints')['drying_remaining_fraction']
+    result.pop('forward_summary')
+    result['forward_window_balance'] = result.pop('forward_whole_cycle')
+    result['fit_elapsed_s'] = result['elapsed_s']
+    errors = {key:abs(result['fitted_parameters'][key]-truth[key])/abs(truth[key]) for key in keys}
+    recovery_threshold = p['calibration.recovery_relative']['value']
+    recovered = {key:bool(error < recovery_threshold) for key,error in errors.items()}
+    channel_errors = {}
+    for kind in kinds:
+        residuals = [row for row in result['residuals'] if row['kind'] == kind]
+        physical = np.array([row['residual'] for row in residuals])
+        normalized = np.array([row['normalized_residual'] for row in residuals])
+        channel_errors[kind] = {
+            'unit':UNITS[kind], 'observation_count':len(residuals),
+            'rmse':float(np.sqrt(np.mean(physical**2))),
+            'maximum_absolute_residual':float(np.max(np.abs(physical))),
+            'normalized_rmse':float(np.sqrt(np.mean(normalized**2))),
+            'source':'Final fitted residual rows already returned by fit; no additional forward calculation.',
+        }
+    result.update({
+        'scope':'Drying window only; no completed firing cycle or cooled-product result.',
+        'scope_note':design['scope_note'], 'design':design,
+        'truth':truth, 'initial_guess':initial, 'truth_window_audit':truth_audit,
+        'window_physical_passed':bool(truth_report['physical_consistency_passed']
+            and result['forward_physical_consistency_passed']
+            and all(row['physical_consistency_passed'] for row in result['evaluation_history'])),
+        'local_rank_passed':bool(result['jacobian_rank'] == len(keys)),
+        'local_rank_interpretation':'Default NumPy machine rank of the local optimizer Jacobian equals the parameter count; not a real-material identifiability criterion.',
+        'synthetic_parameter_relative_errors':errors,
+        'parameter_recovery_relative_threshold':recovery_threshold,
+        'parameter_recovery_passed_by_parameter':recovered,
+        'parameter_recovery_passed':all(recovered.values()),
+        'channel_errors':channel_errors,
+        'drying_remaining_fraction':remaining, 'drying_remaining_fraction_threshold':threshold,
+        'drying_endpoint_passed':bool(remaining < threshold),
+        'actual_forward_count':len(result['evaluation_history'])+2,
+        'forward_count_definition':'One shared truth solution plus every recorded residual evaluation, including numerical differences, plus the final fitted readback. Channel error summaries use saved residuals; max_nfev is not total forward count.',
+        'elapsed_s':time.monotonic()-started,
+        'limitations':'One noise-free same-model same-discretization joint synthetic recovery. Parameter statuses remain assumed and nominal parameters are unchanged. Scales are residual normalization, not measurement uncertainty. Optimizer success, local Jacobian rank, window physics, parameter recovery and drying endpoint acceptance are separate results. Local machine rank does not establish real-material identification, global uniqueness or noise robustness; this window makes no firing or cooled-product claim.',
+    })
+    write_json(out/'calibration.json',result)
+    return result
