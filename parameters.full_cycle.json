@@ -190,6 +190,19 @@
       "identity": "assumed",
       "location": "Declared effective dry-skeleton kinetic closure in this project; no material conductivity measurement.",
       "note": "Positive reference-anchored power law (T/Tr)^a changes only nonradiative dry-skeleton conduction. Water-volume enhancement and pore radiation retain their separate laws; no added storage. Nominal and range are assumptions, not fitted or literature-derived mineral properties."
+    },
+    "arlabosse2005": {
+      "identity": "literature",
+      "location": "data/sandbox/research/arlabosse95/source.json and facts.json; Arlabosse, Chavez and Prevot2005 Fig1/2, Sorption Isotherm and Total Heat of Desorption sections",
+      "url": "https://doi.org/10.1590/S0104-66322005000200009",
+      "note": "Unincinerated activated sludge from85%industrial/15%municipal wastewater. Discrete digitized published curves at95C; raster bounds are not experimental uncertainty. Source material differs from nominal brick and prior sandbox used these observations. No blind-validation or target-measured identity."
+    },
+    "donat2025": {
+      "identity": "literature",
+      "doi": "10.1039/D5RA05023E",
+      "data_doi": "10.5281/zenodo.17395250",
+      "location": "data/sandbox/research/donat2025-carbonation-data-v1/source-contract.json",
+      "note": "High-purity limestone TGA; nominal dry feed15vol%CO2, source approximate capacity; actual particle pressure/active inventory unknown."
     }
   },
   "parameters": {
@@ -3192,6 +3205,119 @@
       "source": "policy",
       "status": "assumed",
       "note": "Assumed pore-scale resistance for molar-frame symmetric gas-pair mobility. K_i=(phi_face/tau_face)*ell_face*sqrt(R*Theta/M_i); K_ij is the harmonic mean and D_pair_new=D_pair_old/(1+beta*D_pair_old/K_ij). beta absorbs an uncalibrated geometric/collision prefactor. ell derives from the existing evolving pore diameter, not mesh width; effective porosity/tortuosity factor occurs once per scale. No extra storage/heat or Darcy change. beta=0 restores preceding arithmetic. Not full Knudsen, Maxwell-Stefan, dusty-gas, non-equimolar wall friction or thermal transpiration; no measured coefficient or validated range, not identified by prior UQ/calibration."
+    },
+    "validation.arlabosse.temperature": {
+      "value": 368.15,
+      "unit": "K",
+      "range": [
+        368.15,
+        368.15
+      ],
+      "source": "arlabosse2005",
+      "status": "literature",
+      "note": "Public source condition only,95degC. Does not alter the nominal process temperature or constitutive parameters."
+    },
+    "validation.caloric.gas_temperatures": {
+      "value": [
+        600.0,
+        900.0,
+        1200.0
+      ],
+      "unit": "K",
+      "range": [
+        600.0,
+        1200.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Fixed public-reference sampling design declared before execution; not process values or material measurement."
+    },
+    "validation.caloric.quartz_temperatures": {
+      "value": [
+        298.15,
+        600.0,
+        800.0,
+        900.0,
+        1200.0
+      ],
+      "unit": "K",
+      "range": [
+        298.15,
+        1200.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Fixed public-reference sampling design declared before execution; not process values or material measurement."
+    },
+    "validation.caloric.water_temperatures": {
+      "value": [
+        298.15,
+        373.15,
+        450.0
+      ],
+      "unit": "K",
+      "range": [
+        298.15,
+        450.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Fixed public-reference sampling design declared before execution; not process values or material measurement."
+    },
+    "validation.donat.capacity": {
+      "value": 0.77,
+      "unit": "kg/kg",
+      "range": [
+        0.77,
+        0.77
+      ],
+      "source": "donat2025",
+      "status": "literature",
+      "note": "Approximate paper capacity, not measured exact active CaO pool."
+    },
+    "validation.donat.scale_window": {
+      "value": [
+        30,
+        60
+      ],
+      "unit": "s",
+      "range": [
+        30,
+        60
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Earliest previously declared30-60s, only two endpoints establish one conditional scale; no window search."
+    },
+    "validation.donat.comparison_window": {
+      "value": [
+        61,
+        1200
+      ],
+      "unit": "s",
+      "range": [
+        61,
+        1200
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "All drycycle1 records after scale endpoint through nominal sorption end; no best subset."
+    },
+    "validation.donat.report_times": {
+      "value": [
+        120,
+        300,
+        600,
+        1200
+      ],
+      "unit": "s",
+      "range": [
+        120,
+        1200
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Fixed shape check points; old full curve previously exposed, not blind holdout."
     }
   },
   "species": [
@@ -4505,5 +4631,64 @@
     },
     "time_note": "Curve times are seconds since simulation start; other origins need an explicit sourced offset. Main drying and later conditioning cannot be pooled. Scale is explicitly in canonical target units and is not automatically an uncertainty.",
     "reference_note": "External paper tables/digitized curves remain reference. Current/wet dry-mass conversion requires a sourced current/initial dry-mass ratio. MR accepts only explicitly sourced water/initial_water and an initial-dry denominator; unknown formulas are not inferred."
+  },
+  "public_reference_cases": {
+    "arlabosse95": {
+      "source": "arlabosse2005",
+      "facts_path": "data/sandbox/research/arlabosse95/facts.json",
+      "temperature_parameter": "validation.arlabosse.temperature",
+      "moisture_basis": "kg water per kg fixed dry matter; compare current intrinsic host law at unchanged dry/site coordinates, not a full-volume state",
+      "activity_reference": "Host intrinsic mu shift relative to its pure liquid at reference.pressure; excludes skeleton/capillary. Published dynamic-method activity is a conditional source observable, not established in-brick equilibrium driving force.",
+      "heat_reference": "Total J/kg removed water includes pure-water vaporization exactly once; no source latent heat is added to the host.",
+      "numerical_relative_limit_parameter": "acceptance.balance_relative",
+      "numerical_energy_floor": "reference.R * reference.temperature",
+      "derivative_step": "numerics.jacobian_step * reference.temperature",
+      "comparison_policy": "Use all readable source points and preserve unknowns. Report signed residual, relative error and raster-bound membership; no new empirical fit or experimental-uncertainty pass threshold.",
+      "calibration": "none; nominal parameters fixed",
+      "source_applicability": "external_reference_only_not_target_material",
+      "previous_exposure": "8aw+6q used in older sandbox construction; W=.10 exposed in extension. No fresh holdout."
+    },
+    "pure_thermochemistry": {
+      "source_paths": {
+        "gas": "data/sandbox/thermochemistry/nist_gases_v1.json",
+        "carbonate": "data/sandbox/research/calcite-thermochemistry-v1/facts.json",
+        "quartz": "data/sandbox/solids/quartz/facts.json",
+        "water": "data/sandbox/water/properties_293_500.json",
+        "water_alignment": "data/sandbox/water/reference_alignment.json"
+      },
+      "gas_temperature_parameter": "validation.caloric.gas_temperatures",
+      "quartz_temperature_parameter": "validation.caloric.quartz_temperatures",
+      "water_temperature_parameter": "validation.caloric.water_temperatures",
+      "carbonate_points": "all five existing printed check_points for calcite and lime",
+      "pressure_policy": "Compare gas standard states at source 100000 Pa; subtract host condensed (P-Pr)*v then add (Psource-Pr)*v. Water checks use source saturation pressure with explicit incompressible correction; source real vapor vs host ideal kept separate.",
+      "budget": "30 distinct species-temperature reference states; zero integrations, optimizers, roots. Cp/H/S channels at each state do not create new states. Existing water EOS table reused, no EOS solving.",
+      "classification": "public_reference_comparison_not_target_measurement",
+      "tolerance_policy": "Report source deviations without inventing empirical accuracy threshold. Internal derivative check uses acceptance.balance_relative and root reference.R / reference.R*reference.temperature floors."
+    },
+    "donat_carbonation_shape": {
+      "csv": "data/sandbox/research/donat2025-carbonation-data-v1/observations.csv",
+      "source": "donat2025",
+      "atmosphere": "dry",
+      "cycle": "1",
+      "capacity_parameter": "validation.donat.capacity",
+      "scale_window_parameter": "validation.donat.scale_window",
+      "comparison_window_parameter": "validation.donat.comparison_window",
+      "report_times_parameter": "validation.donat.report_times",
+      "beta_parameter": "kinetics.carbonate.phase_resistance",
+      "source_temperature_c": 650,
+      "classification": "conditional_analytic_shape_comparison_not_intrinsic_kinetic_fit",
+      "budget": "zero integration, root or optimizer calls; exactly one endpoint time scale;1140 comparison values and4 saved detailed checkpoints",
+      "definition": "x=q/Q with original uptake, x30 retained, F=-ln(1-x)+beta*x; times are unchanged source clock. Fixed reverse-only T/affinity/gas/activepool assumptions.",
+      "unknowns": [
+        "actual total pressure",
+        "particle CO2 pressure",
+        "gas arrival delay",
+        "true active CaO capacity",
+        "particle temperature",
+        "evolving area",
+        "measurement covariance"
+      ],
+      "source_exposure": "Old whole curve examined; not blind holdout."
+    }
   }
 }

@@ -1,15 +1,14 @@
 {
   "schema": "full_cycle_final_acceptance_matrix_v1",
   "recorded_utc": "2026-09-30T21:07:49.648794+00:00",
-  "status": "completed_with_nominal_process_failure",
+  "status": "development_continues_capability_and_public_validation_gaps_under_review",
   "identity": "approximate_simulation_not_measured_material",
   "parent_commit": "d8bc6f1b09e0b6d10cdcf4abf35e634035a36d08",
   "parameter_file": "parameters.full_cycle.json",
-  "parameter_count": 271,
+  "parameter_count": 279,
   "parameter_status_counts": {
-    "literature": 38,
-    "assumed": 233,
-    "measured": 0
+    "literature": 40,
+    "assumed": 239
   },
   "implementation": {
     "current_scope_necessary_couplings_present": true,
@@ -286,7 +285,7 @@
     "resolved kiln combustion/circulation",
     "cracks and damage"
   ],
-  "model_capability_closeout_complete": true,
+  "model_capability_closeout_complete": false,
   "physical_numerical_acceptance_complete": true,
   "all_engineering_acceptance_passed": false,
   "delivery_is_separate_from_model_acceptance": true,
@@ -388,6 +387,13 @@
       "P11_fresh_restore": "Owned by follow-up thread after the latest increment upload; not attempted here.",
       "all_history_recovery_passed": false,
       "source_archives_retained": true
+    },
+    "P11_fresh_recovery": {
+      "passed": true,
+      "archive_size_bytes": 429426,
+      "member_count": 21,
+      "receipt": "/Users/wanggaoying/Documents/Codex/2026-09-30/task/p11-fresh-drive-native-recovery-20260930.json",
+      "whole_history_or_runtime_qualification": false
     }
   },
   "P09": {
@@ -442,7 +448,7 @@
     }
   },
   "base_model_complete": true,
-  "current_scope": "A runnable, inspectable base model now; calibrate/refine when real data become available. P11 closes this round; no P12, new mechanism, search or scheduler.",
+  "current_scope": "Develop the declared single-brick wet-to-cooled approximate model from physics/chemistry laws and public primary evidence; existing stage completion is not overall completion.",
   "P11": {
     "status": "base_model_complete_with_nominal_process_failure_and_future_material_calibration",
     "verification": {
@@ -1004,5 +1010,513 @@
       "drive": "runs/full-cycle/p11-drive-delivery.json",
       "status": "Actual subsequent actions recorded in these separate receipts, not predeclared successful."
     }
+  },
+  "scope_correction": {
+    "recorded_utc": "2026-09-30T21:25:41.988273+00:00",
+    "reason": "Assistant incorrectly interpreted base-model wording as user authorization to stop. User explicitly requires continued physics/chemistry and public-paper/data model development.",
+    "p11_stage_delivery_preserved": true,
+    "whole_project_complete": false,
+    "next_task": "P12 capability/validation matrix, then first evidence-supported gap",
+    "no_self_owned_data_required_to_continue_independent_work": true,
+    "previous_assistant_scope": "A runnable, inspectable base model now; calibrate/refine when real data become available. P11 closes this round; no P12, new mechanism, search or scheduler."
+  },
+  "whole_project_complete": false,
+  "prior_scope_note": "P01-P11 explicit completed checks remain valid within their recorded scopes. base_model_complete describes available interfaces only, not project stopping authorization.",
+  "P12": {
+    "status": "matrix_and_gap_review_completed",
+    "declared_utc": "2026-09-30T21:25:41.988273+00:00",
+    "output": "capability_validation_matrix and FULL_CYCLE_REPORT.md",
+    "initial_new_integrations": 0,
+    "initial_new_fits": 0,
+    "acceptance": "Stage-by-stage traceable mechanism/equation/input/output/coupling/domain/source/code/executed-validation/gap/criteria; then act on the highest-priority real gap.",
+    "completed_utc": "2026-09-30T21:32:10.536406+00:00",
+    "stage_rows": 8,
+    "cross_cutting_rows": 4,
+    "whole_project_complete": false
+  },
+  "capability_validation_matrix": {
+    "schema": "full_cycle_capability_validation_matrix_v1",
+    "recorded_utc": "2026-09-30T21:32:10.536406+00:00",
+    "scope_source": "docs/BRICK_PHYSICS_PROJECT_SPEC.md current goal and physical sections; latest explicit user continuation supersedes assistant stop interpretation",
+    "stage_rows": [
+      {
+        "id": "P12-S01",
+        "stage": "drying_ramp",
+        "mechanisms": [
+          "conduction, convection/radiation",
+          "liquid-water migration",
+          "ideal sorption mixing plus saturated binding",
+          "pore vapor storage and bidirectional phase exchange"
+        ],
+        "equations_and_closure": [
+          "U and S from same free energies; mu_water includes RT ln(n/(n+N)) and derivative of N*n/(n+N)*a(T)",
+          "Darcy and pair gas fluxes share carried enthalpy; liquid flux shares chemical-potential driving and energy"
+        ],
+        "inputs_outputs": {
+          "input": "wet composition, initial dry mass, geometry, kiln/gas ramp",
+          "output": "T, liquid water, gas pressure/composition, phase affinity and surface temperature"
+        },
+        "coupling_boundary": "1D half-thickness; closed symmetry face; prescribed outer kiln temperature and gas reservoir; convection/radiation and gas exchange; no liquid-water flux through external face. Stage names change clocks/boundaries, not reaction switches.",
+        "applicability": "Current declared effective single-brick approximation; nominal recipe is assumed, not any referenced experimental material.",
+        "primary_evidence": [
+          {
+            "source": "Arlabosse2005 Fig1/2 at95C",
+            "doi": "10.1590/S0104-66322005000200009",
+            "local": "data/sandbox/research/arlabosse95/facts.json",
+            "scope": "9 digitized activities + 6 readable total desorption heats; different activated sludge; old sandbox used these points, not blind data."
+          }
+        ],
+        "code": [
+          "src/sludge_vme/models/full_cycle_gas.py:water_retention",
+          "src/sludge_vme/models/full_cycle_gas.py:water_binding",
+          "src/sludge_vme/models/full_cycle_gas.py:water_transport",
+          "src/sludge_vme/models/full_cycle.py:heat_transfer"
+        ],
+        "implementation_status": "implemented_in_current_host",
+        "actual_numerical_checks": [
+          "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
+          "docs/FULL_CYCLE_FINAL_UQ.json",
+          "docs/FULL_CYCLE_GAS_LEDGER_RESULTS.json"
+        ],
+        "numerical_status": "Recorded nominal once-time/once-grid and conditional UQ checks passed in their declared scopes; not all parameter ranges or source accuracy.",
+        "external_validation_status": "current_host_public_constitutive_and_process_comparison_pending",
+        "specific_gaps": [
+          "Binding/retention parameters are assumed; no current-host joint aw/q source comparison",
+          "Geometry/boundary-compatible drying process data insufficient for target material"
+        ],
+        "completion_criterion": "Connect current mu and partial enthalpy to declared source observables; report all available point residuals and unresolved source conditions without duplicate latent heat. Dynamic qualification requires compatible process inputs, separately from this constitutive check.",
+        "next_priority": 1,
+        "P13_update": {
+          "evidence": "docs/FULL_CYCLE_P13_PUBLIC_WATER.json",
+          "result": "diagnostic implementation passed; source raster agreement 0/15, fixed three-parameter envelope 0/15; foreign material and fixed background limits retained"
+        }
+      },
+      {
+        "id": "P12-S02",
+        "stage": "drying",
+        "mechanisms": [
+          "same active coupled laws as ramp",
+          "kaolin-carried retention site hypothesis"
+        ],
+        "equations_and_closure": [
+          "Frozen water roots are conditional diagnostics, not dynamic endpoints",
+          "drying criterion=max(cell liquid at end / same-cell initial liquid)"
+        ],
+        "inputs_outputs": {
+          "input": "constant-temperature drying segment and staged gas",
+          "output": "signed water/gas balances, wettest-cell remaining fraction"
+        },
+        "coupling_boundary": "1D half-thickness; closed symmetry face; prescribed outer kiln temperature and gas reservoir; convection/radiation and gas exchange; no liquid-water flux through external face. Stage names change clocks/boundaries, not reaction switches.",
+        "applicability": "Current declared effective single-brick approximation; nominal recipe is assumed, not any referenced experimental material.",
+        "primary_evidence": [
+          {
+            "local": "docs/FULL_CYCLE_P09_DRYING_ATTRIBUTION.json",
+            "scope": "Existing frozen conditional explanation, not measured material cause."
+          },
+          {
+            "local": "data/sandbox/research/f0c-drying-candidates-v1/silva2018_70c_c1_c2.csv",
+            "scope": "Different hollow clay specimen; ex-situ temperature and unknown time/geometry compatibility."
+          }
+        ],
+        "code": [
+          "src/sludge_vme/models/full_cycle_gas.py:water_phase_affinity_decomposition",
+          "src/sludge_vme/models/full_cycle_diagnostics.py:drying_water_diagnostics"
+        ],
+        "implementation_status": "implemented_in_current_host",
+        "actual_numerical_checks": [
+          "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
+          "docs/FULL_CYCLE_FINAL_UQ.json",
+          "docs/FULL_CYCLE_GAS_LEDGER_RESULTS.json"
+        ],
+        "numerical_status": "Recorded nominal once-time/once-grid and conditional UQ checks passed in their declared scopes; not all parameter ranges or source accuracy.",
+        "external_validation_status": "nominal_process_failure_preserved_public_current_host_prediction_pending",
+        "specific_gaps": [
+          "0.13505646% initial water remains >0.1%; two bounded process attempts exhausted",
+          "Wang/Silva existing source readings do not establish current-host drying accuracy"
+        ],
+        "completion_criterion": "Keep nominal failure and search limits. Independently constrain sorption/thermal laws first; only use fully specified public process cases, never repeat exposed holdouts as new validation.",
+        "next_priority": 1,
+        "P13_update": {
+          "evidence": "docs/FULL_CYCLE_P13_PUBLIC_WATER.json",
+          "result": "diagnostic implementation passed; source raster agreement 0/15, fixed three-parameter envelope 0/15; foreign material and fixed background limits retained"
+        }
+      },
+      {
+        "id": "P12-S03",
+        "stage": "heating",
+        "mechanisms": [
+          "temperature-dependent effective conduction",
+          "gas and condensed caloric storage",
+          "quartz heat/strain coupling"
+        ],
+        "equations_and_closure": [
+          "dH/dT=Cp and dS/dT=Cp/T; pressure reference correction explicit",
+          "1D heat/gas coupling remains active across reaction onset"
+        ],
+        "inputs_outputs": {
+          "input": "temperature ramp, gas reservoir, material inventories",
+          "output": "thermal gradients, masses, chemical affinities"
+        },
+        "coupling_boundary": "1D half-thickness; closed symmetry face; prescribed outer kiln temperature and gas reservoir; convection/radiation and gas exchange; no liquid-water flux through external face. Stage names change clocks/boundaries, not reaction switches.",
+        "applicability": "Current declared effective single-brick approximation; nominal recipe is assumed, not any referenced experimental material.",
+        "primary_evidence": [
+          {
+            "local": "parameters.full_cycle.json:sources.usgs_steam/usgs_calcite/usgs_clay/quartz_nist",
+            "scope": "Primary thermochemical anchors; many Cp slopes remain assumed."
+          }
+        ],
+        "code": [
+          "src/sludge_vme/models/full_cycle_gas.py:thermo",
+          "src/sludge_vme/models/full_cycle_gas.py:gas_molar_cp",
+          "src/sludge_vme/models/full_cycle_solid.py:quartz_thermo",
+          "src/sludge_vme/models/full_cycle_solid.py:dry_background_cp"
+        ],
+        "implementation_status": "implemented_in_current_host",
+        "actual_numerical_checks": [
+          "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
+          "docs/FULL_CYCLE_FINAL_UQ.json",
+          "docs/FULL_CYCLE_GAS_LEDGER_RESULTS.json"
+        ],
+        "numerical_status": "Recorded nominal once-time/once-grid and conditional UQ checks passed in their declared scopes; not all parameter ranges or source accuracy.",
+        "external_validation_status": "current_host_external_caloric_error_not_quantified",
+        "specific_gaps": [
+          "Internal derivative/positive-capacity checks do not validate public Cp/H/S deviations",
+          "Matrix thermo column includes effective phase term; cannot compare it as pure metakaolin"
+        ],
+        "completion_criterion": "Bounded <=40-point current-host public Cp/H/S and source-pressure chemical-potential residual benchmark; separate smooth quartz-transition and pure phase domains.",
+        "next_priority": 2
+      },
+      {
+        "id": "P12-S04",
+        "stage": "reactions",
+        "mechanisms": [
+          "kaolin dehydroxylation",
+          "reversible carbonate/calcination",
+          "organic oxidation and carbonization",
+          "char oxidation with finite oxygen"
+        ],
+        "equations_and_closure": [
+          "atom-balanced stoichiometry",
+          "rates oppose the same chemical affinities; product/reactant inventories coupled",
+          "shared formation energies; no extra reaction source heat"
+        ],
+        "inputs_outputs": {
+          "input": "T, source composition, O2/CO2/H2O partial pressures",
+          "output": "reaction extents, residual char, gas and heat storage"
+        },
+        "coupling_boundary": "1D half-thickness; closed symmetry face; prescribed outer kiln temperature and gas reservoir; convection/radiation and gas exchange; no liquid-water flux through external face. Stage names change clocks/boundaries, not reaction switches.",
+        "applicability": "Current declared effective single-brick approximation; nominal recipe is assumed, not any referenced experimental material.",
+        "primary_evidence": [
+          {
+            "source": "Donat and Mueller2025 Figure2.xlsx",
+            "doi": "10.1039/D5RA05023E",
+            "data_doi": "10.5281/zenodo.17395250",
+            "local": "data/sandbox/research/donat2025-carbonation-data-v1/observations.csv",
+            "scope": "16000 author-normalized TGA rows, limestone-derived CaO; old one-rate shape diagnostic, not current-host validation."
+          },
+          {
+            "local": "docs/sandbox/research/nowicki2011-oxygen-interpolation-v1/REPORT.md",
+            "scope": "Prepared char differs from raw sludge and in-brick generated char; previous mismatch preserved."
+          }
+        ],
+        "code": [
+          "src/sludge_vme/models/full_cycle_gas.py:carbonate_rate",
+          "src/sludge_vme/models/full_cycle_gas.py:carbonate_phase_mobility",
+          "src/sludge_vme/models/full_cycle_gas.py:rates"
+        ],
+        "implementation_status": "implemented_in_current_host",
+        "actual_numerical_checks": [
+          "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
+          "docs/FULL_CYCLE_FINAL_UQ.json",
+          "docs/FULL_CYCLE_GAS_LEDGER_RESULTS.json"
+        ],
+        "numerical_status": "Recorded nominal once-time/once-grid and conditional UQ checks passed in their declared scopes; not all parameter ranges or source accuracy.",
+        "external_validation_status": "current_host_public_rate_and_thermal_comparison_pending",
+        "specific_gaps": [
+          "Intrinsic A/E, active inventory and product allocation not constrained for current recipe",
+          "Reversible phase resistance not yet confronted with public transient shape"
+        ],
+        "completion_criterion": "First conditional source-defined carbonation segment with one frozen time-scale policy and unrecalibrated remaining curve; report source conditions and shape residuals. Do not infer unique intrinsic rate or transfer limestone qualification to sludge bricks.",
+        "next_priority": 3
+      },
+      {
+        "id": "P12-S05",
+        "stage": "sintering",
+        "mechanisms": [
+          "surface-driven permanent shrinkage",
+          "finite-rate effective two-state matrix",
+          "porosity/phase-dependent elastic and transport feedback"
+        ],
+        "equations_and_closure": [
+          "positive effective viscosity gives nonnegative dissipation",
+          "same F_el yields stress, phase/composition potential and energy derivatives"
+        ],
+        "inputs_outputs": {
+          "input": "T, composition, porosity, elastic and effective viscosity parameters",
+          "output": "shrinkage, porosity, phase proxy and thermal/gas feedback"
+        },
+        "coupling_boundary": "1D half-thickness; closed symmetry face; prescribed outer kiln temperature and gas reservoir; convection/radiation and gas exchange; no liquid-water flux through external face. Stage names change clocks/boundaries, not reaction switches.",
+        "applicability": "Current declared effective single-brick approximation; nominal recipe is assumed, not any referenced experimental material.",
+        "primary_evidence": [
+          {
+            "local": "parameters.full_cycle.json:sources.pore/solid_effective/effective_liquid_phase",
+            "scope": "Glass/pore source analogies and effective assumed brick closures, not source-material validation."
+          },
+          {
+            "local": "docs/sandbox/research/mia3-closure-options-v1/REPORT.md",
+            "scope": "Existing final cold-state approximation does not qualify dynamic sintering."
+          }
+        ],
+        "code": [
+          "src/sludge_vme/models/full_cycle_solid.py:elastic_response",
+          "src/sludge_vme/models/full_cycle_solid.py:porous_mechanical_rates",
+          "src/sludge_vme/models/full_cycle_solid.py:liquid_phase"
+        ],
+        "implementation_status": "implemented_in_current_host",
+        "actual_numerical_checks": [
+          "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
+          "docs/FULL_CYCLE_FINAL_UQ.json",
+          "docs/FULL_CYCLE_GAS_LEDGER_RESULTS.json"
+        ],
+        "numerical_status": "Recorded nominal once-time/once-grid and conditional UQ checks passed in their declared scopes; not all parameter ranges or source accuracy.",
+        "external_validation_status": "dynamic_constitutive_source_domain_and_error_pending",
+        "specific_gaps": [
+          "Effective viscosity is not measured melt viscosity",
+          "Source shrinkage geometry/time/phase state not matched to current host",
+          "Open-pore approximation needs explicit connectivity domain"
+        ],
+        "completion_criterion": "Map existing public dynamic shrinkage source to this observable only where geometry/thermal history permits; otherwise state exact missing inputs and limit validity. Audit current closure at declared open-pore bounds without adding full phase diagrams.",
+        "next_priority": 4
+      },
+      {
+        "id": "P12-S06",
+        "stage": "hold",
+        "mechanisms": [
+          "all mechanisms continue under hold boundary",
+          "carbonate/O2 transport and phase relaxation"
+        ],
+        "equations_and_closure": [
+          "transient continuation, not equilibrium reset",
+          "same full energy/entropy and species ledgers"
+        ],
+        "inputs_outputs": {
+          "input": "hold duration, T and gas program",
+          "output": "residual carbon, gradients, porosity/shrinkage and reaction extents"
+        },
+        "coupling_boundary": "1D half-thickness; closed symmetry face; prescribed outer kiln temperature and gas reservoir; convection/radiation and gas exchange; no liquid-water flux through external face. Stage names change clocks/boundaries, not reaction switches.",
+        "applicability": "Current declared effective single-brick approximation; nominal recipe is assumed, not any referenced experimental material.",
+        "primary_evidence": [
+          {
+            "local": "docs/FULL_CYCLE_FINAL_UQ.json",
+            "scope": "Conditional25D/8x3 comparison only; fixed permeability and new resistance values."
+          }
+        ],
+        "code": [
+          "src/sludge_vme/models/full_cycle_gas.py:integrate",
+          "src/sludge_vme/models/full_cycle_gas.py:summarize"
+        ],
+        "implementation_status": "implemented_in_current_host",
+        "actual_numerical_checks": [
+          "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
+          "docs/FULL_CYCLE_FINAL_UQ.json",
+          "docs/FULL_CYCLE_GAS_LEDGER_RESULTS.json"
+        ],
+        "numerical_status": "Recorded nominal once-time/once-grid and conditional UQ checks passed in their declared scopes; not all parameter ranges or source accuracy.",
+        "external_validation_status": "no_independent_current_host_hold_process_validation",
+        "specific_gaps": [
+          "Coupled hold accuracy not established by stage labels or standalone material measurements"
+        ],
+        "completion_criterion": "Retain current stage continuity/conservation evidence; cross-stage source comparison must use one coherent material/thermal history. Do not run new all-range UQ merely to accumulate passes.",
+        "next_priority": 4
+      },
+      {
+        "id": "P12-S07",
+        "stage": "cooling",
+        "mechanisms": [
+          "cooling heat transfer",
+          "quartz transition heat/strain",
+          "effective thermoelastic matrix and finite-rate phase relaxation"
+        ],
+        "equations_and_closure": [
+          "same Helmholtz potential drives thermal/elastic/phase changes",
+          "reversible water/carbonate reactions remain available"
+        ],
+        "inputs_outputs": {
+          "input": "cooling temperature/gas schedule, end-of-hold state",
+          "output": "T gradients, strain, phase proxy, pressure and stored energy"
+        },
+        "coupling_boundary": "1D half-thickness; closed symmetry face; prescribed outer kiln temperature and gas reservoir; convection/radiation and gas exchange; no liquid-water flux through external face. Stage names change clocks/boundaries, not reaction switches.",
+        "applicability": "Current declared effective single-brick approximation; nominal recipe is assumed, not any referenced experimental material.",
+        "primary_evidence": [
+          {
+            "source": "NIST-JANAF quartz table O-037",
+            "url": "https://janaf.nist.gov/tables/O-037.html",
+            "local": "data/sandbox/solids/quartz/facts.json",
+            "scope": "Pure-phase caloric source; effective composite strain coefficient remains assumed."
+          }
+        ],
+        "code": [
+          "src/sludge_vme/models/full_cycle_solid.py:quartz_thermo",
+          "src/sludge_vme/models/full_cycle_solid.py:state_thermo",
+          "src/sludge_vme/models/full_cycle_solid.py:elastic_response"
+        ],
+        "implementation_status": "implemented_in_current_host",
+        "actual_numerical_checks": [
+          "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
+          "docs/FULL_CYCLE_FINAL_UQ.json",
+          "docs/FULL_CYCLE_GAS_LEDGER_RESULTS.json"
+        ],
+        "numerical_status": "Recorded nominal once-time/once-grid and conditional UQ checks passed in their declared scopes; not all parameter ranges or source accuracy.",
+        "external_validation_status": "pure_quartz_source_partly_linked_composite_cooling_external_validation_pending",
+        "specific_gaps": [
+          "Effective thermal expansion and modulus need source-domain and error limits",
+          "No crack/damage or actual failure-probability model"
+        ],
+        "completion_criterion": "Separate pure caloric source agreement from effective brick thermoelastic response. Report valid temperature/strain/domain and retain no damage/plant accuracy claim.",
+        "next_priority": 2
+      },
+      {
+        "id": "P12-S08",
+        "stage": "cooling_hold",
+        "mechanisms": [
+          "final transient relaxation",
+          "product observation proxies"
+        ],
+        "equations_and_closure": [
+          "unchanged mass and energy inventories",
+          "product proxies derived from final porosity/connectivity, not independent physical strength law"
+        ],
+        "inputs_outputs": {
+          "input": "final cool hold and current state",
+          "output": "mass,density,LOI,porosity,shrinkage,absorption/strength/defect proxies"
+        },
+        "coupling_boundary": "1D half-thickness; closed symmetry face; prescribed outer kiln temperature and gas reservoir; convection/radiation and gas exchange; no liquid-water flux through external face. Stage names change clocks/boundaries, not reaction switches.",
+        "applicability": "Current declared effective single-brick approximation; nominal recipe is assumed, not any referenced experimental material.",
+        "primary_evidence": [
+          {
+            "source": "DTU Brick Pellet Production data",
+            "doi": "10.11583/DTU.30157108.v1",
+            "local": "data/material_design_v2_inputs/public-data/30157108/DTU Data - Brick Pellet Production.xlsx",
+            "scope": "SSA/clay fired pellets and own denominator; neither raw sludge nor full brick/kiln."
+          }
+        ],
+        "code": [
+          "src/sludge_vme/models/full_cycle_gas.py:summarize",
+          "src/sludge_vme/inverse/full_cycle.py:map_observations"
+        ],
+        "implementation_status": "implemented_in_current_host",
+        "actual_numerical_checks": [
+          "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
+          "docs/FULL_CYCLE_FINAL_UQ.json",
+          "docs/FULL_CYCLE_GAS_LEDGER_RESULTS.json"
+        ],
+        "numerical_status": "Recorded nominal once-time/once-grid and conditional UQ checks passed in their declared scopes; not all parameter ranges or source accuracy.",
+        "external_validation_status": "product_proxy_real_accuracy_pending",
+        "specific_gaps": [
+          "Need suitable source observable/model-definition comparisons before predicting product qualification",
+          "P11 mapping admission is not product validation"
+        ],
+        "completion_criterion": "Keep proxies and denominator/specimen definitions explicit. Public endpoint comparison can qualify only its declared source material and geometry; actual target qualification awaits target data.",
+        "next_priority": 5
+      }
+    ],
+    "cross_cutting_rows": [
+      {
+        "id": "P12-X01",
+        "topic": "material, provenance and observables",
+        "status": "P11 implemented, target unknown; broad parameter-source coverage incomplete",
+        "evidence": [
+          "docs/FULL_CYCLE_P11_OBSERVATIONS.json",
+          "parameters.full_cycle.json"
+        ],
+        "criterion": "Every active material/constitutive assumption has units, range, source/domain and discrepancy/uncertainty statement. Never combine different materials as one measured recipe."
+      },
+      {
+        "id": "P12-X02",
+        "topic": "shared gas/liquid transport and thermodynamics",
+        "status": "internal balances and nominal numerics passed; external transport error pending",
+        "evidence": [
+          "docs/FULL_CYCLE_PAIR_DIFFUSION_RESULTS.json",
+          "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
+          "docs/FULL_CYCLE_MIXTURE_VISCOSITY_RESULTS.json"
+        ],
+        "criterion": "Quantify current constitutive/thermophysical approximations against applicable primary sources, distinct from mathematical conservation. Full dusty-gas/MS/Soret remains outside declared scope."
+      },
+      {
+        "id": "P12-X03",
+        "topic": "numerical and coupling consistency",
+        "status": "recorded nominal/time/grid and conditional batches preserved; no unbounded all-range guarantee",
+        "evidence": [
+          "docs/FULL_CYCLE_FINAL_ACCEPTANCE.json:P04",
+          "docs/FULL_CYCLE_FINAL_UQ.json"
+        ],
+        "criterion": "Only affected physics changes trigger minimal declared nominal/time/grid comparisons under unchanged0.1%/2% criteria. Report source/model-form error separately from conservation residual."
+      },
+      {
+        "id": "P12-X04",
+        "topic": "inverse and offline operation",
+        "status": "P06-P11 implemented and scoped checks passed; not actual material calibration",
+        "evidence": [
+          "docs/FULL_CYCLE_USAGE.md",
+          "docs/FULL_CYCLE_FINAL_INVERSE_READBACK.json",
+          "docs/FULL_CYCLE_P10_INVERSE_EVIDENCE.json"
+        ],
+        "criterion": "Preserve provenance, actual forward budgets and unknowns; no rerun22+17 or assumption-to-measured promotion."
+      }
+    ],
+    "source_reuse_policy": "Old sandbox benchmarks retain their own version/material/domain and failures; current-host evidence is required. Already exposed curves are not blind holdouts.",
+    "completion_layers": {
+      "implementation": "current mechanisms present, but evidence-supported corrections remain actionable",
+      "internal_physical_numerical": "existing scoped checks passed; affected checks after actual changes",
+      "public_external": "current-host constitutive and independent process gaps remain actionable without own data",
+      "target_material": "unknown and awaiting target measurements, not a prerequisite to independent development"
+    },
+    "excluded_expansion": [
+      "whole-kiln plant model",
+      "full mineral phase diagram",
+      "UI",
+      "multi-generation recipe search",
+      "full microscopic dusty-gas transport",
+      "damage/crack probability model"
+    ],
+    "selected_next": "P16 shared-source pure caloric correction",
+    "subsequent_candidates": [
+      {
+        "id": "P14",
+        "topic": "Bounded current-host pure thermochemical/public pressure reference audit",
+        "priority": 2
+      },
+      {
+        "id": "P15",
+        "topic": "Donat2025 source-defined carbonation shape using current reaction law",
+        "priority": 3
+      }
+    ],
+    "whole_project_complete": false
+  },
+  "P13": {
+    "status": "diagnostic_and_public_comparison_completed",
+    "implementation_passed": true,
+    "public_raster_agreement_passed": false,
+    "target_material_validated": false,
+    "evidence": "docs/FULL_CYCLE_P13_PUBLIC_WATER.json",
+    "new_integrations": 0
+  },
+  "P14": {
+    "status": "comparison_completed",
+    "reference_states": 30,
+    "internal_derivative_passed": true,
+    "source_accuracy_passed": null,
+    "evidence": "docs/FULL_CYCLE_PUBLIC_REFERENCE_RESULTS.json#P14",
+    "new_integrations": 0
+  },
+  "P15": {
+    "status": "conditional_shape_comparison_completed",
+    "source_points": 1140,
+    "implementation_passed": true,
+    "late_time_shape_agreement": false,
+    "target_material_validated": false,
+    "evidence": "docs/FULL_CYCLE_PUBLIC_REFERENCE_RESULTS.json#P15",
+    "new_integrations": 0
   }
 }

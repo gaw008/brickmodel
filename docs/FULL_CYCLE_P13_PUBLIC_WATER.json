@@ -1,0 +1,889 @@
+{
+  "schema": "full_cycle_p13_public_water_reference_v1",
+  "recorded_utc": "2026-09-30T21:40:16.278645+00:00",
+  "source_case": {
+    "source": "arlabosse2005",
+    "facts_path": "data/sandbox/research/arlabosse95/facts.json",
+    "temperature_parameter": "validation.arlabosse.temperature",
+    "moisture_basis": "kg water per kg fixed dry matter; compare current intrinsic host law at unchanged dry/site coordinates, not a full-volume state",
+    "activity_reference": "Host intrinsic mu shift relative to its pure liquid at reference.pressure; excludes skeleton/capillary. Published dynamic-method activity is a conditional source observable, not established in-brick equilibrium driving force.",
+    "heat_reference": "Total J/kg removed water includes pure-water vaporization exactly once; no source latent heat is added to the host.",
+    "numerical_relative_limit_parameter": "acceptance.balance_relative",
+    "numerical_energy_floor": "reference.R * reference.temperature",
+    "derivative_step": "numerics.jacobian_step * reference.temperature",
+    "comparison_policy": "Use all readable source points and preserve unknowns. Report signed residual, relative error and raster-bound membership; no new empirical fit or experimental-uncertainty pass threshold.",
+    "calibration": "none; nominal parameters fixed",
+    "source_applicability": "external_reference_only_not_target_material",
+    "previous_exposure": "8aw+6q used in older sandbox construction; W=.10 exposed in extension. No fresh holdout."
+  },
+  "source_doi": "10.1590/S0104-66322005000200009",
+  "source_material": "Arlabosse2005 characterized unincinerated activated sludge from 85% industrial/15% municipal wastewater; flotation and centrifugation; not MIA3",
+  "status": "reference_comparison_executed_source_agreement_not_assumed",
+  "implementation_verification_passed": true,
+  "reference_definition": "Fixed dry/site composition, intrinsic sorption and host pure liquid at root reference.pressure; no capillary/skeleton/geometry equilibrium. Moisture points are constitutive states, not full-brick states or the root initial-water parameter range.",
+  "thermodynamic_definition": "mu_shift=RT*ln_aw; h_des=g_v-g_l-T*d(g_v-g_l)/dT at fixed W/sites equals h_v-h_l-binding_partial_h. Includes vaporization once.",
+  "background_pressure_correction": "Subtract (gas.pressure-reference.pressure)*v_water from condensed h before reference comparison.",
+  "source_access": "Existing cached publisher HTML relevant sections and source facts read; two fresh web attempts inaccessible; no source redownload/digitization.",
+  "prior_exposure": "Old sandbox used8aw+6heat nodes; lowW=.10 also previously examined. Current-host comparison is new; not a blind holdout.",
+  "model_parameters": {
+    "water.retention_scale": {
+      "value": 0.001,
+      "unit": "kg/kg",
+      "range": [
+        0.0,
+        0.002
+      ],
+      "source": "water_retention",
+      "status": "assumed",
+      "note": "Water-equivalent mass scale per initial dry mass defining initial matrix equivalents N0 for mixing and saturated binding. Current N follows the separately declared kaolin-carried site hypothesis. Not added matter, a measured site count or maximum sorption capacity. Zero N0 removes all retention."
+    },
+    "water.binding_energy": {
+      "value": 12000.0,
+      "unit": "J/mol",
+      "range": [
+        0.0,
+        20000.0
+      ],
+      "source": "water_binding",
+      "status": "assumed",
+      "note": "Positive binding-energy magnitude at the existing thermodynamic reference temperature. The free-energy term is -E*g at that temperature; not a measured adsorption enthalpy."
+    },
+    "water.binding_heat_capacity": {
+      "value": 5.0,
+      "unit": "J/mol/K",
+      "range": [
+        0.0,
+        10.0
+      ],
+      "source": "water_binding",
+      "status": "assumed",
+      "note": "Positive excess heat capacity per effective bound equivalent. Constant over the virtual schedule; no experimental high-temperature adsorption law. With zero binding energy and zero capacity, recover preceding ideal-mixing retention."
+    },
+    "validation.arlabosse.temperature": {
+      "value": 368.15,
+      "unit": "K",
+      "range": [
+        368.15,
+        368.15
+      ],
+      "source": "arlabosse2005",
+      "status": "literature",
+      "note": "Public source condition only,95degC. Does not alter the nominal process temperature or constitutive parameters."
+    }
+  },
+  "predictions": [
+    {
+      "log_activity": -0.010335862393172088,
+      "activity": 0.989717369076961,
+      "mixing_log_activity": -0.009950330853168078,
+      "binding_mu_j_mol": -1.1801002516501418,
+      "chemical_shift_j_mol": -31.637758641165274,
+      "reference_liquid_mu_j_mol": -312222.3746745311,
+      "reference_vapor_mu_j_mol": -311613.50601944997,
+      "pure_vaporization_h_j_mol": 41469.0,
+      "binding_partial_h_j_mol": -1.1420448975590616,
+      "total_desorption_h_j_mol": 41470.14204489756,
+      "total_desorption_heat_j_kg_water": 2301942.6867024857,
+      "moisture_dry_ratio": 0.1,
+      "temperature_k": 368.15,
+      "partial_three_parameter_range_envelope": {
+        "activity": [
+          0.9779230551260737,
+          1.0
+        ],
+        "total_desorption_heat_j_kg_water": [
+          2301864.3547444865,
+          2302306.117376466
+        ]
+      }
+    },
+    {
+      "log_activity": -0.00681702669917737,
+      "activity": 0.9932061565172163,
+      "mixing_log_activity": -0.00664454271866858,
+      "binding_mu_j_mol": -0.5279681885480073,
+      "chemical_shift_j_mol": -20.8667102129213,
+      "reference_liquid_mu_j_mol": -312211.60362610285,
+      "reference_vapor_mu_j_mol": -311613.50601944997,
+      "pure_vaporization_h_j_mol": 41469.0,
+      "binding_partial_h_j_mol": -0.5109425025218195,
+      "total_desorption_h_j_mol": 41469.51094250252,
+      "total_desorption_heat_j_kg_water": 2301907.6551961736,
+      "moisture_dry_ratio": 0.15,
+      "temperature_k": 368.15,
+      "partial_three_parameter_range_envelope": {
+        "activity": [
+          0.9857221494264172,
+          1.0
+        ],
+        "total_desorption_heat_j_kg_water": [
+          2301872.566447164,
+          2302071.497299965
+        ]
+      }
+    },
+    {
+      "log_activity": -0.0050848858153776,
+      "activity": 0.9949280203318055,
+      "mixing_log_activity": -0.004987541511039071,
+      "binding_mu_j_mol": -0.2979679380976485,
+      "chemical_shift_j_mol": -15.564679948823203,
+      "reference_liquid_mu_j_mol": -312206.3015958388,
+      "reference_vapor_mu_j_mol": -311613.50601944997,
+      "pure_vaporization_h_j_mol": 41469.0,
+      "binding_partial_h_j_mol": -0.2883591990297267,
+      "total_desorption_h_j_mol": 41469.28835919903,
+      "total_desorption_heat_j_kg_water": 2301895.2999453256,
+      "moisture_dry_ratio": 0.2,
+      "temperature_k": 368.15,
+      "partial_three_parameter_range_envelope": {
+        "activity": [
+          0.989462620065372,
+          1.0
+        ],
+        "total_desorption_heat_j_kg_water": [
+          2301875.48454848,
+          2301988.1229766514
+        ]
+      }
+    },
+    {
+      "log_activity": -0.0033711980819858354,
+      "activity": 0.9966344780260484,
+      "mixing_log_activity": -0.0033277900926746698,
+      "binding_mu_j_mol": -0.13287052755580087,
+      "chemical_shift_j_mol": -10.319134213695152,
+      "reference_liquid_mu_j_mol": -312201.0560501036,
+      "reference_vapor_mu_j_mol": -311613.50601944997,
+      "pure_vaporization_h_j_mol": 41469.0,
+      "binding_partial_h_j_mol": -0.1285857771989272,
+      "total_desorption_h_j_mol": 41469.1285857772,
+      "total_desorption_heat_j_kg_water": 2301886.4311727155,
+      "moisture_dry_ratio": 0.3,
+      "temperature_k": 368.15,
+      "partial_three_parameter_range_envelope": {
+        "activity": [
+          0.9930917737862747,
+          1.0
+        ],
+        "total_desorption_heat_j_kg_water": [
+          2301877.5894458545,
+          2301927.983051652
+        ]
+      }
+    },
+    {
+      "log_activity": -0.002521337802952723,
+      "activity": 0.9974818380994706,
+      "mixing_log_activity": -0.0024968801985871974,
+      "binding_mu_j_mol": -0.07486397887502623,
+      "chemical_shift_j_mol": -7.717737894358986,
+      "reference_liquid_mu_j_mol": -312198.4546537843,
+      "reference_vapor_mu_j_mol": -311613.50601944997,
+      "pure_vaporization_h_j_mol": 41469.0,
+      "binding_partial_h_j_mol": -0.0724497981977723,
+      "total_desorption_h_j_mol": 41469.0724497982,
+      "total_desorption_heat_j_kg_water": 2301883.3151523704,
+      "moisture_dry_ratio": 0.4,
+      "temperature_k": 368.15,
+      "partial_three_parameter_range_envelope": {
+        "activity": [
+          0.9948633529325799,
+          1.0
+        ],
+        "total_desorption_heat_j_kg_water": [
+          2301878.3318214426,
+          2301906.772320583
+        ]
+      }
+    },
+    {
+      "log_activity": -0.002013671154988149,
+      "activity": 0.9979883549205939,
+      "mixing_log_activity": -0.001998002662673055,
+      "binding_mu_j_mol": -0.04796077572234013,
+      "chemical_shift_j_mol": -6.163785813003601,
+      "reference_liquid_mu_j_mol": -312196.900701703,
+      "reference_vapor_mu_j_mol": -311613.50601944997,
+      "pure_vaporization_h_j_mol": 41469.0,
+      "binding_partial_h_j_mol": -0.04641415771251902,
+      "total_desorption_h_j_mol": 41469.04641415771,
+      "total_desorption_heat_j_kg_water": 2301881.869954711,
+      "moisture_dry_ratio": 0.5,
+      "temperature_k": 368.15,
+      "partial_three_parameter_range_envelope": {
+        "activity": [
+          0.9959122495189809,
+          1.0
+        ],
+        "total_desorption_heat_j_kg_water": [
+          2301878.676826852,
+          2301896.915023163
+        ]
+      }
+    },
+    {
+      "log_activity": -0.0016761674595690743,
+      "activity": 0.9983252365245601,
+      "mixing_log_activity": -0.0016652793190612106,
+      "binding_mu_j_mol": -0.033328265057635816,
+      "chemical_shift_j_mol": -5.13069732459417,
+      "reference_liquid_mu_j_mol": -312195.86761321453,
+      "reference_vapor_mu_j_mol": -311613.50601944997,
+      "pure_vaporization_h_j_mol": 41469.0,
+      "binding_partial_h_j_mol": -0.03225350981863285,
+      "total_desorption_h_j_mol": 41469.03225350982,
+      "total_desorption_heat_j_kg_water": 2301881.083919307,
+      "moisture_dry_ratio": 0.6,
+      "temperature_k": 368.15,
+      "partial_three_parameter_range_envelope": {
+        "activity": [
+          0.9966055914156405,
+          1.0
+        ],
+        "total_desorption_heat_j_kg_water": [
+          2301878.864709067,
+          2301891.5469598784
+        ]
+      }
+    },
+    {
+      "log_activity": -0.0014355552456345954,
+      "activity": 0.9985654746709041,
+      "mixing_log_activity": -0.0014275519911854165,
+      "binding_mu_j_mol": -0.02449771707237693,
+      "chemical_shift_j_mol": -4.394190697377047,
+      "reference_liquid_mu_j_mol": -312195.1311065873,
+      "reference_vapor_mu_j_mol": -311613.50601944997,
+      "pure_vaporization_h_j_mol": 41469.0,
+      "binding_partial_h_j_mol": -0.023707725462504117,
+      "total_desorption_h_j_mol": 41469.023707725464,
+      "total_desorption_heat_j_kg_water": 2301880.609556191,
+      "moisture_dry_ratio": 0.7,
+      "temperature_k": 368.15,
+      "partial_three_parameter_range_envelope": {
+        "activity": [
+          0.997097913339268,
+          1.0
+        ],
+        "total_desorption_heat_j_kg_water": [
+          2301878.9781911764,
+          2301888.304613898
+        ]
+      }
+    },
+    {
+      "log_activity": -0.001255349077972297,
+      "activity": 0.9987454385430672,
+      "mixing_log_activity": -0.001249219400431924,
+      "binding_mu_j_mol": -0.01876275546185728,
+      "chemical_shift_j_mol": -3.842585130151668,
+      "reference_liquid_mu_j_mol": -312194.5795010201,
+      "reference_vapor_mu_j_mol": -311613.50601944997,
+      "pure_vaporization_h_j_mol": 41469.0,
+      "binding_partial_h_j_mol": -0.01815770237265837,
+      "total_desorption_h_j_mol": 41469.018157702376,
+      "total_desorption_heat_j_kg_water": 2301880.301483095,
+      "moisture_dry_ratio": 0.8,
+      "temperature_k": 368.15,
+      "partial_three_parameter_range_envelope": {
+        "activity": [
+          0.9974655484151772,
+          1.0
+        ],
+        "total_desorption_heat_j_kg_water": [
+          2301879.051937757,
+          2301886.197568728
+        ]
+      }
+    }
+  ],
+  "observations": [
+    {
+      "source_index": 0,
+      "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+      "figure": 1,
+      "moisture_dry_ratio": 0.1,
+      "source_unit": "dimensionless water activity",
+      "channel": "activity",
+      "source_status": "candidate_reading",
+      "source_value": 0.364680737376436,
+      "digitization_bounds": [
+        0.3421686746987952,
+        0.3870192307692308
+      ],
+      "unknown_reasons": [],
+      "prediction": 0.989717369076961,
+      "signed_residual": 0.6250366317005249,
+      "relative_difference": 1.7139282875128679,
+      "inside_raster_bounds": false,
+      "partial_declared_range_envelope": [
+        0.9779230551260737,
+        1.0
+      ],
+      "envelope_intersects_raster_bounds": false,
+      "experimental_uncertainty": null,
+      "material_qualification": false
+    },
+    {
+      "source_index": 1,
+      "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+      "figure": 1,
+      "moisture_dry_ratio": 0.15,
+      "source_unit": "dimensionless water activity",
+      "channel": "activity",
+      "source_status": "candidate_reading",
+      "source_value": 0.518567993588031,
+      "digitization_bounds": [
+        0.5108433734939759,
+        0.5264423076923077
+      ],
+      "unknown_reasons": [],
+      "prediction": 0.9932061565172163,
+      "signed_residual": 0.47463816292918537,
+      "relative_difference": 0.9152862667923446,
+      "inside_raster_bounds": false,
+      "partial_declared_range_envelope": [
+        0.9857221494264172,
+        1.0
+      ],
+      "envelope_intersects_raster_bounds": false,
+      "experimental_uncertainty": null,
+      "material_qualification": false
+    },
+    {
+      "source_index": 2,
+      "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+      "figure": 1,
+      "moisture_dry_ratio": 0.2,
+      "source_unit": "dimensionless water activity",
+      "channel": "activity",
+      "source_status": "candidate_reading",
+      "source_value": 0.5979161100721346,
+      "digitization_bounds": [
+        0.5927710843373494,
+        0.6033653846153846
+      ],
+      "unknown_reasons": [],
+      "prediction": 0.9949280203318055,
+      "signed_residual": 0.39701191025967086,
+      "relative_difference": 0.6639926631375996,
+      "inside_raster_bounds": false,
+      "partial_declared_range_envelope": [
+        0.989462620065372,
+        1.0
+      ],
+      "envelope_intersects_raster_bounds": false,
+      "experimental_uncertainty": null,
+      "material_qualification": false
+    },
+    {
+      "source_index": 3,
+      "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+      "figure": 1,
+      "moisture_dry_ratio": 0.3,
+      "source_unit": "dimensionless water activity",
+      "channel": "activity",
+      "source_status": "candidate_reading",
+      "source_value": 0.6940956452043815,
+      "digitization_bounds": [
+        0.6912,
+        0.6971153846153846
+      ],
+      "unknown_reasons": [],
+      "prediction": 0.9966344780260484,
+      "signed_residual": 0.30253883282166694,
+      "relative_difference": 0.4358748465171283,
+      "inside_raster_bounds": false,
+      "partial_declared_range_envelope": [
+        0.9930917737862747,
+        1.0
+      ],
+      "envelope_intersects_raster_bounds": false,
+      "experimental_uncertainty": null,
+      "material_qualification": false
+    },
+    {
+      "source_index": 4,
+      "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+      "figure": 1,
+      "moisture_dry_ratio": 0.4,
+      "source_unit": "dimensionless water activity",
+      "channel": "activity",
+      "source_status": "candidate_reading",
+      "source_value": 0.7638258081752605,
+      "digitization_bounds": [
+        0.7584,
+        0.7692307692307693
+      ],
+      "unknown_reasons": [],
+      "prediction": 0.9974818380994706,
+      "signed_residual": 0.23365602992421008,
+      "relative_difference": 0.30590224554260875,
+      "inside_raster_bounds": false,
+      "partial_declared_range_envelope": [
+        0.9948633529325799,
+        1.0
+      ],
+      "envelope_intersects_raster_bounds": false,
+      "experimental_uncertainty": null,
+      "material_qualification": false
+    },
+    {
+      "source_index": 5,
+      "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+      "figure": 1,
+      "moisture_dry_ratio": 0.5,
+      "source_unit": "dimensionless water activity",
+      "channel": "activity",
+      "source_status": "candidate_reading",
+      "source_value": 0.8299492385786802,
+      "digitization_bounds": [
+        0.8256,
+        0.8341346153846154
+      ],
+      "unknown_reasons": [],
+      "prediction": 0.9979883549205939,
+      "signed_residual": 0.1680391163419137,
+      "relative_difference": 0.20246914935386545,
+      "inside_raster_bounds": false,
+      "partial_declared_range_envelope": [
+        0.9959122495189809,
+        1.0
+      ],
+      "envelope_intersects_raster_bounds": false,
+      "experimental_uncertainty": null,
+      "material_qualification": false
+    },
+    {
+      "source_index": 6,
+      "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+      "figure": 1,
+      "moisture_dry_ratio": 0.6,
+      "source_unit": "dimensionless water activity",
+      "channel": "activity",
+      "source_status": "candidate_reading",
+      "source_value": 0.8816457387122629,
+      "digitization_bounds": [
+        0.8784,
+        0.8846153846153846
+      ],
+      "unknown_reasons": [],
+      "prediction": 0.9983252365245601,
+      "signed_residual": 0.11667949781229714,
+      "relative_difference": 0.13234283645800854,
+      "inside_raster_bounds": false,
+      "partial_declared_range_envelope": [
+        0.9966055914156405,
+        1.0
+      ],
+      "envelope_intersects_raster_bounds": false,
+      "experimental_uncertainty": null,
+      "material_qualification": false
+    },
+    {
+      "source_index": 7,
+      "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+      "figure": 1,
+      "moisture_dry_ratio": 0.7,
+      "source_unit": "dimensionless water activity",
+      "channel": "activity",
+      "source_status": "candidate_reading",
+      "source_value": 0.9333422388458456,
+      "digitization_bounds": [
+        0.9288,
+        0.9375
+      ],
+      "unknown_reasons": [],
+      "prediction": 0.9985654746709041,
+      "signed_residual": 0.06522323582505851,
+      "relative_difference": 0.06988137160246,
+      "inside_raster_bounds": false,
+      "partial_declared_range_envelope": [
+        0.997097913339268,
+        1.0
+      ],
+      "envelope_intersects_raster_bounds": false,
+      "experimental_uncertainty": null,
+      "material_qualification": false
+    },
+    {
+      "source_index": 8,
+      "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+      "figure": 1,
+      "moisture_dry_ratio": 0.8,
+      "source_unit": "dimensionless water activity",
+      "channel": "activity",
+      "source_status": "candidate_reading",
+      "source_value": 0.9754207854662036,
+      "digitization_bounds": [
+        0.972,
+        0.9783653846153846
+      ],
+      "unknown_reasons": [],
+      "prediction": 0.9987454385430672,
+      "signed_residual": 0.0233246530768636,
+      "relative_difference": 0.023912401113859342,
+      "inside_raster_bounds": false,
+      "partial_declared_range_envelope": [
+        0.9974655484151772,
+        1.0
+      ],
+      "envelope_intersects_raster_bounds": false,
+      "experimental_uncertainty": null,
+      "material_qualification": false
+    },
+    {
+      "source_index": 9,
+      "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+      "figure": 2,
+      "moisture_dry_ratio": 0.1,
+      "source_unit": "J per kg removed water",
+      "channel": "total_desorption_heat_j_kg_water",
+      "source_status": "unknown",
+      "source_value": null,
+      "digitization_bounds": null,
+      "unknown_reasons": [
+        "curve_pixel_footprint_touches_horizontal_grid_footprint"
+      ],
+      "prediction": 2301942.6867024857,
+      "signed_residual": null,
+      "relative_difference": null,
+      "inside_raster_bounds": null,
+      "partial_declared_range_envelope": [
+        2301864.3547444865,
+        2302306.117376466
+      ],
+      "envelope_intersects_raster_bounds": null,
+      "experimental_uncertainty": null,
+      "material_qualification": false
+    },
+    {
+      "source_index": 10,
+      "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+      "figure": 2,
+      "moisture_dry_ratio": 0.15,
+      "source_unit": "J per kg removed water",
+      "channel": "total_desorption_heat_j_kg_water",
+      "source_status": "candidate_reading",
+      "source_value": 2647301.587301587,
+      "digitization_bounds": [
+        2607619.0476190476,
+        2687619.0476190476
+      ],
+      "unknown_reasons": [],
+      "prediction": 2301907.6551961736,
+      "signed_residual": -345393.93210541364,
+      "relative_difference": -0.13047018660895227,
+      "inside_raster_bounds": false,
+      "partial_declared_range_envelope": [
+        2301872.566447164,
+        2302071.497299965
+      ],
+      "envelope_intersects_raster_bounds": false,
+      "experimental_uncertainty": null,
+      "material_qualification": false
+    },
+    {
+      "source_index": 11,
+      "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+      "figure": 2,
+      "moisture_dry_ratio": 0.2,
+      "source_unit": "J per kg removed water",
+      "channel": "total_desorption_heat_j_kg_water",
+      "source_status": "candidate_reading",
+      "source_value": 2536825.396825397,
+      "digitization_bounds": [
+        2515923.566878981,
+        2558095.238095238
+      ],
+      "unknown_reasons": [],
+      "prediction": 2301895.2999453256,
+      "signed_residual": -234930.09688007133,
+      "relative_difference": -0.09260790954476594,
+      "inside_raster_bounds": false,
+      "partial_declared_range_envelope": [
+        2301875.48454848,
+        2301988.1229766514
+      ],
+      "envelope_intersects_raster_bounds": false,
+      "experimental_uncertainty": null,
+      "material_qualification": false
+    },
+    {
+      "source_index": 12,
+      "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+      "figure": 2,
+      "moisture_dry_ratio": 0.3,
+      "source_unit": "J per kg removed water",
+      "channel": "total_desorption_heat_j_kg_water",
+      "source_status": "candidate_reading",
+      "source_value": 2453015.873015873,
+      "digitization_bounds": [
+        2439490.4458598727,
+        2466666.6666666665
+      ],
+      "unknown_reasons": [],
+      "prediction": 2301886.4311727155,
+      "signed_residual": -151129.44184315763,
+      "relative_difference": -0.06160964692713168,
+      "inside_raster_bounds": false,
+      "partial_declared_range_envelope": [
+        2301877.5894458545,
+        2301927.983051652
+      ],
+      "envelope_intersects_raster_bounds": false,
+      "experimental_uncertainty": null,
+      "material_qualification": false
+    },
+    {
+      "source_index": 13,
+      "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+      "figure": 2,
+      "moisture_dry_ratio": 0.4,
+      "source_unit": "J per kg removed water",
+      "channel": "total_desorption_heat_j_kg_water",
+      "source_status": "candidate_reading",
+      "source_value": 2422539.6825396824,
+      "digitization_bounds": [
+        2408917.1974522294,
+        2436190.476190476
+      ],
+      "unknown_reasons": [],
+      "prediction": 2301883.3151523704,
+      "signed_residual": -120656.367387312,
+      "relative_difference": -0.04980573414624988,
+      "inside_raster_bounds": false,
+      "partial_declared_range_envelope": [
+        2301878.3318214426,
+        2301906.772320583
+      ],
+      "envelope_intersects_raster_bounds": false,
+      "experimental_uncertainty": null,
+      "material_qualification": false
+    },
+    {
+      "source_index": 14,
+      "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+      "figure": 2,
+      "moisture_dry_ratio": 0.5,
+      "source_unit": "J per kg removed water",
+      "channel": "total_desorption_heat_j_kg_water",
+      "source_status": "unknown",
+      "source_value": null,
+      "digitization_bounds": null,
+      "unknown_reasons": [
+        "no_curve_pixels_visible_off_grid"
+      ],
+      "prediction": 2301881.869954711,
+      "signed_residual": null,
+      "relative_difference": null,
+      "inside_raster_bounds": null,
+      "partial_declared_range_envelope": [
+        2301878.676826852,
+        2301896.915023163
+      ],
+      "envelope_intersects_raster_bounds": null,
+      "experimental_uncertainty": null,
+      "material_qualification": false
+    },
+    {
+      "source_index": 15,
+      "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+      "figure": 2,
+      "moisture_dry_ratio": 0.6,
+      "source_unit": "J per kg removed water",
+      "channel": "total_desorption_heat_j_kg_water",
+      "source_status": "unknown",
+      "source_value": null,
+      "digitization_bounds": null,
+      "unknown_reasons": [
+        "curve_pixel_footprint_touches_horizontal_grid_footprint"
+      ],
+      "prediction": 2301881.083919307,
+      "signed_residual": null,
+      "relative_difference": null,
+      "inside_raster_bounds": null,
+      "partial_declared_range_envelope": [
+        2301878.864709067,
+        2301891.5469598784
+      ],
+      "envelope_intersects_raster_bounds": null,
+      "experimental_uncertainty": null,
+      "material_qualification": false
+    },
+    {
+      "source_index": 16,
+      "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+      "figure": 2,
+      "moisture_dry_ratio": 0.7,
+      "source_unit": "J per kg removed water",
+      "channel": "total_desorption_heat_j_kg_water",
+      "source_status": "candidate_reading",
+      "source_value": 2365396.8253968256,
+      "digitization_bounds": [
+        2355414.0127388537,
+        2375238.095238095
+      ],
+      "unknown_reasons": [],
+      "prediction": 2301880.609556191,
+      "signed_residual": -63516.215840634424,
+      "relative_difference": -0.026852245322506834,
+      "inside_raster_bounds": false,
+      "partial_declared_range_envelope": [
+        2301878.9781911764,
+        2301888.304613898
+      ],
+      "envelope_intersects_raster_bounds": false,
+      "experimental_uncertainty": null,
+      "material_qualification": false
+    },
+    {
+      "source_index": 17,
+      "source_id": "SRC_ARLABOSSE_2005_CONTACT_DRYING",
+      "figure": 2,
+      "moisture_dry_ratio": 0.8,
+      "source_unit": "J per kg removed water",
+      "channel": "total_desorption_heat_j_kg_water",
+      "source_status": "candidate_reading",
+      "source_value": 2353968.253968254,
+      "digitization_bounds": [
+        2340127.388535032,
+        2367619.0476190476
+      ],
+      "unknown_reasons": [],
+      "prediction": 2301880.301483095,
+      "signed_residual": -52087.95248515904,
+      "relative_difference": -0.02212772088041146,
+      "inside_raster_bounds": false,
+      "partial_declared_range_envelope": [
+        2301879.051937757,
+        2301886.197568728
+      ],
+      "envelope_intersects_raster_bounds": false,
+      "experimental_uncertainty": null,
+      "material_qualification": false
+    }
+  ],
+  "identity_checks": [
+    {
+      "W": 0.1,
+      "h_from_mu_minus_T_dmu_dT_j_mol": 41470.14204489755,
+      "h_direct_j_mol": 41470.14204489756,
+      "relative_difference": 3.509010220561157e-16,
+      "limit": 0.001,
+      "passed": true,
+      "same_active_rates_activity_expression": true
+    },
+    {
+      "W": 0.15,
+      "h_from_mu_minus_T_dmu_dT_j_mol": 41469.51094250249,
+      "h_direct_j_mol": 41469.51094250252,
+      "relative_difference": 7.018127244636708e-16,
+      "limit": 0.001,
+      "passed": true,
+      "same_active_rates_activity_expression": true
+    },
+    {
+      "W": 0.2,
+      "h_from_mu_minus_T_dmu_dT_j_mol": 41469.288359199054,
+      "h_direct_j_mol": 41469.28835919903,
+      "relative_difference": 5.263623685432319e-16,
+      "limit": 0.001,
+      "passed": true,
+      "same_active_rates_activity_expression": true
+    },
+    {
+      "W": 0.3,
+      "h_from_mu_minus_T_dmu_dT_j_mol": 41469.12858577717,
+      "h_direct_j_mol": 41469.1285857772,
+      "relative_difference": 7.018191953692399e-16,
+      "limit": 0.001,
+      "passed": true,
+      "same_active_rates_activity_expression": true
+    },
+    {
+      "W": 0.4,
+      "h_from_mu_minus_T_dmu_dT_j_mol": 41469.07244979817,
+      "h_direct_j_mol": 41469.0724497982,
+      "relative_difference": 7.018201454099639e-16,
+      "limit": 0.001,
+      "passed": true,
+      "same_active_rates_activity_expression": true
+    },
+    {
+      "W": 0.5,
+      "h_from_mu_minus_T_dmu_dT_j_mol": 41469.04641415774,
+      "h_direct_j_mol": 41469.04641415771,
+      "relative_difference": 7.018205860358904e-16,
+      "limit": 0.001,
+      "passed": true,
+      "same_active_rates_activity_expression": true
+    },
+    {
+      "W": 0.6,
+      "h_from_mu_minus_T_dmu_dT_j_mol": 41469.0322535098,
+      "h_direct_j_mol": 41469.03225350982,
+      "relative_difference": 3.5091041284512304e-16,
+      "limit": 0.001,
+      "passed": true,
+      "same_active_rates_activity_expression": true
+    },
+    {
+      "W": 0.7,
+      "h_from_mu_minus_T_dmu_dT_j_mol": 41469.023707725435,
+      "h_direct_j_mol": 41469.023707725464,
+      "relative_difference": 7.018209703189084e-16,
+      "limit": 0.001,
+      "passed": true,
+      "same_active_rates_activity_expression": true
+    },
+    {
+      "W": 0.8,
+      "h_from_mu_minus_T_dmu_dT_j_mol": 41469.01815770235,
+      "h_direct_j_mol": 41469.018157702376,
+      "relative_difference": 7.018210642474064e-16,
+      "limit": 0.001,
+      "passed": true,
+      "same_active_rates_activity_expression": true
+    }
+  ],
+  "summary": {
+    "activity": {
+      "readable_points": 9,
+      "inside_raster_bounds": 0,
+      "range_envelope_intersections": 0,
+      "max_abs_relative_difference": 1.7139282875128679
+    },
+    "total_desorption_heat_j_kg_water": {
+      "readable_points": 6,
+      "inside_raster_bounds": 0,
+      "range_envelope_intersections": 0,
+      "max_abs_relative_difference": 0.13047018660895227
+    }
+  },
+  "missing_heat_points_preserved": [
+    0.1,
+    0.5,
+    0.6
+  ],
+  "range_statement": "Exact monotonic envelope over ONLY retention_scale/binding_energy/binding_heat_capacity existing ranges at fixed initial sites and nominal caloric background; not all-parameter or temperature uncertainty. No search or parameter instances integrated.",
+  "public_raster_agreement_passed": false,
+  "target_material_validated": false,
+  "nominal_process_failure_unchanged": true,
+  "all_previous_271_parameter_entries_unchanged": true,
+  "new_parameter_count": 272,
+  "physics_core_files_byte_unchanged": [
+    "full_cycle.py",
+    "full_cycle_gas.py",
+    "full_cycle_solid.py"
+  ],
+  "new_integrations": 0,
+  "new_optimizations": 0,
+  "new_roots": 0,
+  "new_parameter_searches": 0,
+  "new_trajectories_saved": 0,
+  "elapsed_s": 0.05024199979379773,
+  "independent_review": "Read-only derivation and domain review by p06_inverse: no physical blocker; same pressure reference, no duplicate latent heat, monotonic envelope correct.",
+  "first_failure": "runs/full-cycle/p13-public-water/failure-01.json; serialization only; one explicit float conversion, second execution succeeded."
+}

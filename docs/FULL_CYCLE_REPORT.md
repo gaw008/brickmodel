@@ -1,6 +1,37 @@
 # 全流程近似模型交付报告
 
-2026-09-30 P11基础版收口：用户目标已收敛为“没有数据，先做基本模型，有数据后继续完善”。现有湿坯干燥至冷却能力与既有物理数值验收复用，P11完成纯数据观测映射、目标准入及未来数据模板；58项小数据回归通过，真实fit/CLI负例在计算前拒绝，新增积分/拟合/调参/求根0。271参数及物理核保持，38文献/233假设/0实测，名义剩余初水0.13505646%仍大于0.1%，总体工程验收仍False。基础版已完成，可在获得数据后继续校准；缺实材数据不阻塞基础版，不自动新增P12/研究/定时任务。证据docs/FULL_CYCLE_P11_OBSERVATIONS.json/.md，输入模板examples/full_cycle_observations.template.json。Git、Drive、实际恢复和历史存储独立判断。
+当前进度（2026-09-30T21:50:08.764814+00:00）：P14完成30个纯物性参考状态，内部导数通过，但calcite/lime和气体线性热容存在明确来源偏差。P15完成1140条drycycle1条件形状比较，晚期减速未被固定现有组成阻力描述；源压力/活性库存未知，不由此改写名义砖体参数。诊断比较均零积分，下一项P16进行有来源的纯物性改进与受影响三档验收。公开比较失败、名义干燥失败、未实测和历史备份限制保留。
+
+当前进度（2026-09-30T21:43:43.777976+00:00）：P12矩阵完成；P13公开水活度/总解吸热诊断完成、15个可读点均不符合来源读图区间，未据此授予目标材料资格。继续P14限定30状态纯热力学对照，零新积分。原名义工艺失败保持。见FULL_CYCLE_P13_PUBLIC_WATER.json/.md及计划最新记录。
+
+## 当前执行纠正：继续完整模型开发（2026-09-30 14:25:41 PDT）
+
+用户最新明确要求：“推进直到你根据物理化学定律，公开论文公开数据，开发完这个仿真模型”。此前将“做一个基本模型，当有数据了继续完善”解释为用户要求停止，是助手误判，现撤回“P11后收口/不新增阶段/等待自有数据才继续”的限制。P01–P11的具体实现、检查、失败和交付证据保持；它们不等于整个项目完成。继续在既定单砖湿坯干燥到冷却近似范围内核对公开依据、实现和验证缺口，不无限扩张完整相图、整窑或UI。目标材料校准与公开模块验证分开；缺少自有数据不阻塞独立可执行工作。
+
+当前任务P12：在既有FULL_CYCLE_FINAL_ACCEPTANCE.json与本报告中建立逐阶段完整能力/验证矩阵，按证据选择首个真实缺口并接续实施。P11零积分仅为P11预算；后续新计算事前登记最小工况/次数/成本，只运行受影响验收。原名义0.13505646%>0.1%失败、两次搜索上限和历史失败保持，不重新启动广渗透率或22+17反演批次。
+
+P11已交付观测映射/拟合前准入/模板及58项小数据回归，commit 99324b8；未新增物理积分。其新鲜Drive恢复429426字节/21成员已于2026-09-30T21:13:46Z通过，收据在跟进会话task目录；不代表全历史/离线环境恢复。
+
+## P12：完整模型能力与验证矩阵
+
+P01–P11记录的是已有机制和有限验收。以下矩阵把当前主机外部证据缺口重新列出；详细方程、源码函数、来源适用域和完成判据见 `FULL_CYCLE_FINAL_ACCEPTANCE.json.capability_validation_matrix`。八阶段只是温度/气氛时钟，反应不会因阶段名称而被自动关闭。
+
+| ID/阶段 | 当前机制与闭合 | 当前证据与明确缺口 | 下一可核查完成条件 |
+|---|---|---|---|
+| P12-S01/drying_ramp | conduction, convection/radiation; liquid-water migration; ideal sorption mixing plus saturated binding; pore vapor storage and bidirectional phase exchange | current_host_public_constitutive_and_process_comparison_pending；Binding/retention parameters are assumed; no current-host joint aw/q source comparison | Connect current mu and partial enthalpy to declared source observables; report all available point residuals and unresolved source conditions without duplicate latent heat. Dynamic qualification requires compatible process inputs, separately from this constitutive check. |
+| P12-S02/drying | same active coupled laws as ramp; kaolin-carried retention site hypothesis | nominal_process_failure_preserved_public_current_host_prediction_pending；0.13505646% initial water remains >0.1%; two bounded process attempts exhausted | Keep nominal failure and search limits. Independently constrain sorption/thermal laws first; only use fully specified public process cases, never repeat exposed holdouts as new validation. |
+| P12-S03/heating | temperature-dependent effective conduction; gas and condensed caloric storage; quartz heat/strain coupling | current_host_external_caloric_error_not_quantified；Internal derivative/positive-capacity checks do not validate public Cp/H/S deviations | Bounded <=40-point current-host public Cp/H/S and source-pressure chemical-potential residual benchmark; separate smooth quartz-transition and pure phase domains. |
+| P12-S04/reactions | kaolin dehydroxylation; reversible carbonate/calcination; organic oxidation and carbonization; char oxidation with finite oxygen | current_host_public_rate_and_thermal_comparison_pending；Intrinsic A/E, active inventory and product allocation not constrained for current recipe | First conditional source-defined carbonation segment with one frozen time-scale policy and unrecalibrated remaining curve; report source conditions and shape residuals. Do not infer unique intrinsic rate or transfer limestone qualification to sludge bricks. |
+| P12-S05/sintering | surface-driven permanent shrinkage; finite-rate effective two-state matrix; porosity/phase-dependent elastic and transport feedback | dynamic_constitutive_source_domain_and_error_pending；Effective viscosity is not measured melt viscosity | Map existing public dynamic shrinkage source to this observable only where geometry/thermal history permits; otherwise state exact missing inputs and limit validity. Audit current closure at declared open-pore bounds without adding full phase diagrams. |
+| P12-S06/hold | all mechanisms continue under hold boundary; carbonate/O2 transport and phase relaxation | no_independent_current_host_hold_process_validation；Coupled hold accuracy not established by stage labels or standalone material measurements | Retain current stage continuity/conservation evidence; cross-stage source comparison must use one coherent material/thermal history. Do not run new all-range UQ merely to accumulate passes. |
+| P12-S07/cooling | cooling heat transfer; quartz transition heat/strain; effective thermoelastic matrix and finite-rate phase relaxation | pure_quartz_source_partly_linked_composite_cooling_external_validation_pending；Effective thermal expansion and modulus need source-domain and error limits | Separate pure caloric source agreement from effective brick thermoelastic response. Report valid temperature/strain/domain and retain no damage/plant accuracy claim. |
+| P12-S08/cooling_hold | final transient relaxation; product observation proxies | product_proxy_real_accuracy_pending；Need suitable source observable/model-definition comparisons before predicting product qualification | Keep proxies and denominator/specimen definitions explicit. Public endpoint comparison can qualify only its declared source material and geometry; actual target qualification awaits target data. |
+
+共同耦合边界是半厚度中心封闭、外面热/气交换、无直接外液流；反应、相变、弹性和孔面能从共同自由能进入U/S，通量携焓不另加热源。已有守恒/数值通过继续按原范围成立，但dimension_check不是全方程符号证明，合成恢复不是公开或目标材料验证。
+
+优先顺序：P13共同水活度/总解吸热公开点检验 → P14当前主机纯物性与参考压力化学势误差 → P15公开CaO碳酸化形状。后续烧结/冷却/产品只在已约定近似范围内按具体输入域推进，不恢复完整相图、整窑、UI、多代搜索或既禁用批次。
+
+Arlabosse曲线已被旧sandbox构造/延拓使用，不是新盲留出；但尚未检验当前sludge_vme饱和结合自由能。当前water_activity实际上已包含binding项，不能把初步误读当代码缺陷；P13直接复用同一化学势与偏摩尔焓，不另加潜热。来源不同于当前砖配方，结果用于约束近似及域外误差，不授予目标材料资格。
 
 ## 当前接续P10（2026-09-30 13:22 PDT）：反演记录与必要预算留存修复
 

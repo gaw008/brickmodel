@@ -222,3 +222,82 @@ def gas_species_ledger(config, start, end, *, reference_inventory_mol) -> dict:
             'verdict':'Absolute residual divided by budget scale must be strictly below the existing acceptance.balance_relative. This report does not change prior conservation, physical or process-endpoint verdicts.',
         },
     }
+
+
+def water_reference_observables(model, fields, temperature_k) -> dict:
+    """Intrinsic sorption observables at the root pure-liquid pressure reference.
+
+    This uses the active host mixing/binding chemical potential and its partial
+    enthalpy. Dry composition/site coordinates are held fixed. The reference
+    excludes capillary, skeleton-stress and gas-mixture pressure contributions;
+    it is NOT a mechanically feasible full-brick equilibrium or drying path.
+    Total desorption enthalpy includes vaporization once. No integration,
+    equilibrium root, parameter fit, or additional heat source is introduced.
+    Arrays and complex temperatures are retained for derivative verification.
+    """
+    import numpy as np
+
+    temperature = np.asarray(temperature_k)
+    mixing_log_activity, _ = model.water_retention(fields)
+    binding = model.water_binding(temperature, fields)
+    h, s = model.thermo(temperature)
+    liquid = model.water_index
+    vapor = model.names.index('H2O')
+    # Host condensed h includes (P-Pr)*v; expose the declared Pr reference.
+    liquid_h = h[..., liquid]-(model.P-model.Pr)*model.v[liquid]
+    liquid_g = liquid_h-temperature*s[..., liquid]
+    vapor_g = h[..., vapor]-temperature*s[..., vapor]
+    chemical_shift = model.R*temperature*mixing_log_activity+binding['mu']
+    log_activity = mixing_log_activity+binding['mu']/(model.R*temperature)
+    pure_vaporization_h = h[..., vapor]-liquid_h
+    desorption_h = pure_vaporization_h-binding['partial_h']
+    return {
+        'log_activity':log_activity,
+        'activity':np.exp(log_activity),
+        'mixing_log_activity':mixing_log_activity,
+        'binding_mu_j_mol':binding['mu'],
+        'chemical_shift_j_mol':chemical_shift,
+        'reference_liquid_mu_j_mol':liquid_g+chemical_shift,
+        'reference_vapor_mu_j_mol':vapor_g,
+        'pure_vaporization_h_j_mol':pure_vaporization_h,
+        'binding_partial_h_j_mol':binding['partial_h'],
+        'total_desorption_h_j_mol':desorption_h,
+        'total_desorption_heat_j_kg_water':desorption_h/model.mw[liquid],
+    }
+
+
+def caloric_reference_observables(model, temperature_k):
+    """Pure background/phase caloric output at root reference pressure.
+
+    This uses the host's equilibrium caloric functions, excluding binding,
+    elasticity, gas mixing and the dynamic matrix phase coordinate. Matrix
+    output is therefore an effective equilibrium proxy, not pure metakaolin.
+    Condensed pressure offsets are removed explicitly. No trajectory is run.
+    """
+    import numpy as np
+
+    temperature = np.asarray(temperature_k)
+    h, s = model.thermo(temperature)
+    h[..., :len(model.ns)] -= (model.P-model.Pr)*model.v
+    cp = np.broadcast_to(model.cp, temperature.shape+(len(model.names),)).astype(
+        np.result_type(temperature, float), copy=True)
+    cp[..., len(model.ns):] = model.gas_molar_cp(temperature)
+    cp[..., model.water_index] = model.water_background_cp(temperature)
+    cp[..., model.dry_caloric_indices] = model.dry_background_cp(temperature)
+    cp[..., model.quartz] = model.quartz_thermo(temperature)[0]
+    cp[..., model.matrix] += model.liquid_active*model.liquid_phase(temperature)[2]
+    return {'cp_j_mol_k': cp, 'h_j_mol': h, 's_j_mol_k': s}
+
+
+def carbonate_reverse_time_coordinate(model, carbonate_fraction):
+    """Analytic clock for the fixed-condition reverse-only carbonate law.
+
+    For dx/dt=k*(1-x)/(1+beta*(1-x)), F(x)-F(x0)=k*(t-t0).
+    x must be the declared conserved-pool fraction below unity. Converting
+    source uptake with an approximate capacity yields only a conditional
+    shape diagnostic, not an identified active Ca inventory or full host.
+    """
+    import numpy as np
+
+    x = np.asarray(carbonate_fraction)
+    return -np.log1p(-x)+model.carbonate_phase_resistance*x
