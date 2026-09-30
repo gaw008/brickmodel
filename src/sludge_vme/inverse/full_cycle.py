@@ -66,6 +66,47 @@ def map_observations(config: dict, observations: list[dict], report: dict, field
     return np.array(values), report
 
 
+def forward_call_summary(report: dict) -> dict:
+    """Record one actual report; ledger availability is not ledger acceptance.
+
+    Read the gas ledger at report.gas_species_ledger. Older or non-stored-gas
+    reports without that field remain explicitly missing; no ledger is inferred
+    from a physical-consistency flag or a nested whole_cycle field.
+    """
+    ledger_present = bool(report.get('gas_species_ledger'))
+    return {
+        'physical_consistency_passed':report['physical_consistency_passed'],
+        'maximum_balance_relative_residual':max(
+            value for budget in [report['whole_cycle'], *report['stages'].values()]
+            for value in budget['relative_residuals'].values()),
+        'forward_elapsed_s':report['elapsed_s'],
+        'gas_ledger_present':ledger_present,
+        'gas_ledger_status':'present' if ledger_present else 'missing',
+        'gas_ledger_source':'report.gas_species_ledger',
+        'gas_ledger_diagnostic':None if ledger_present else
+            'Missing or empty report.gas_species_ledger; no gas-ledger acceptance evidence is retained.',
+    }
+
+
+def forward_audit(report: dict) -> dict:
+    """Keep independent-readback budgets without fields or another solution.
+
+    whole_cycle covers exactly the stages in this report, including truncated
+    drying windows. Availability and the input physical flag are separate; this
+    function copies evidence and does not recompute or upgrade acceptance.
+    """
+    audit = forward_call_summary(report)
+    audit.update({key:report[key] for key in (
+        'whole_cycle', 'stages', 'thermodynamics', 'state_domain', 'dimension_check')})
+    audit['scope'] = {
+        'stages':list(report['stages']),
+        'whole_cycle_meaning':'Entire declared process window; no claim for omitted stages.',
+    }
+    audit['gas_species_ledger'] = (report['gas_species_ledger']
+        if audit['gas_ledger_present'] else None)
+    return audit
+
+
 def fit(config: dict, dataset: dict, out: Path) -> dict:
     started = time.monotonic()
     kind = dataset['measurement_kind']
@@ -91,11 +132,7 @@ def fit(config: dict, dataset: dict, out: Path) -> dict:
         values = (values-target)/scale
         evaluations.append({'evaluation':len(evaluations)+1,'normalized_residual_norm':float(np.linalg.norm(values)),
                             'parameters':{k:float(v) for k,v in overrides.items()},
-                            'physical_consistency_passed':report['physical_consistency_passed'],
-                            'maximum_balance_relative_residual':max(
-                                value for budget in [report['whole_cycle'],*report['stages'].values()]
-                                for value in budget['relative_residuals'].values()),
-                            'forward_elapsed_s':report['elapsed_s']})
+                            **forward_call_summary(report)})
         write_json(out/'calibration.progress.json',{'completed':False,'evaluation_history':evaluations})
         if not report['physical_consistency_passed']:
             raise ValueError('calibration forward calculation failed the declared physical consistency budget')
@@ -122,17 +159,16 @@ def fit(config: dict, dataset: dict, out: Path) -> dict:
             entry['status']='measured'
             entry['source']=source_id
         # Synthetic fits retain their original parameter identity, never measured.
+    audit = forward_audit(forward)
     residual_rows = [dict(row,prediction=float(value),residual=float(value-row['value']),
                          normalized_residual=float((value-row['value'])/row['scale'])) for row,value in zip(rows,values)]
     result = {'schema':'sludge_vme_full_cycle_calibration_v1','measurement_kind':kind,'source':dataset['source'],
         'optimizer_success':bool(opt.success),'qualified_fit':qualified,'message':opt.message,'jacobian_rank':rank,
         'parameter_count':len(keys),'fitted_parameters':fitted,'residuals':residual_rows,
-        'forward_physical_consistency_passed':forward['physical_consistency_passed'],
+        **{'forward_'+key:value for key,value in audit.items() if key != 'forward_elapsed_s'},
+        'forward_elapsed_s':audit['forward_elapsed_s'],
         'forward_example_endpoints':forward['example_endpoints'],
-        'forward_summary':forward['summary'],'forward_thermodynamics':forward['thermodynamics'],
-        'forward_whole_cycle':forward['whole_cycle'],'forward_stages':forward['stages'],
-        'forward_state_domain':forward['state_domain'],'forward_dimension_check':forward['dimension_check'],
-        'forward_elapsed_s':forward['elapsed_s'],
+        'forward_summary':forward['summary'],
         'normalized_rmse':float(np.sqrt(np.mean(((values-target)/scale)**2))),
         'parameter_statuses':{k:updated['parameters'][k]['status'] for k in keys},
         'evaluation_history':evaluations,'elapsed_s':time.monotonic()-started,
@@ -159,6 +195,7 @@ def synthetic_demo(config: dict, out: Path) -> dict:
              'source':'Generated by this same approximate model from explicitly recorded synthetic truth; no measurement or added noise.',
              'fit_parameters':config['calibration_parameters'],'truth':truth,
              'truth_example_endpoints':truth_report['example_endpoints'],
+             'truth_audit':forward_audit(truth_report),
              'observations':[dict(row,value=float(value)) for row,value in zip(rows,values)]}
     write_json(out/'synthetic.observations.json',dataset)
     result=fit(config,dataset,out)
@@ -191,15 +228,12 @@ def binding_synthetic_demo(config: dict, out: Path) -> dict:
     values, truth_report = predict(changed(window,truth),rows)
     threshold = p['acceptance.drying_remaining_fraction']['value']
     truth_remaining = truth_report['example_endpoints']['drying_remaining_fraction']
-    truth_audit = {
-        'physical_consistency_passed':truth_report['physical_consistency_passed'],
-        'window_balance':truth_report['whole_cycle'], 'stages':truth_report['stages'],
-        'thermodynamics':truth_report['thermodynamics'],
-        'state_domain':truth_report['state_domain'], 'dimension_check':truth_report['dimension_check'],
+    truth_audit = forward_audit(truth_report)
+    truth_audit['window_balance'] = truth_audit.pop('whole_cycle')
+    truth_audit.update({
         'drying_remaining_fraction':truth_remaining,
         'drying_endpoint_passed':bool(truth_remaining < threshold),
-        'forward_elapsed_s':truth_report['elapsed_s'],
-    }
+    })
     dataset = {
         'schema':'full_cycle_observations_v1', 'measurement_kind':'synthetic',
         'source':'Same-model same-discretization synthetic liquid-water observations; no measurement or added noise.',
@@ -508,15 +542,13 @@ def joint_drying_synthetic_demo(config: dict, out: Path) -> dict:
     truth_elapsed = time.monotonic()-truth_started
     threshold = p['acceptance.drying_remaining_fraction']['value']
     truth_remaining = truth_report['example_endpoints']['drying_remaining_fraction']
-    truth_audit = {
-        'physical_consistency_passed':truth_report['physical_consistency_passed'],
-        'window_balance':truth_report['whole_cycle'], 'stages':truth_report['stages'],
-        'thermodynamics':truth_report['thermodynamics'],
-        'state_domain':truth_report['state_domain'], 'dimension_check':truth_report['dimension_check'],
+    truth_audit = forward_audit(truth_report)
+    truth_audit['window_balance'] = truth_audit.pop('whole_cycle')
+    truth_audit.update({
         'drying_remaining_fraction':truth_remaining,
         'drying_endpoint_passed':bool(truth_remaining < threshold),
-        'forward_elapsed_s':truth_report['elapsed_s'], 'elapsed_s':truth_elapsed,
-    }
+        'elapsed_s':truth_elapsed,
+    })
     dataset = {
         'schema':'full_cycle_observations_v1', 'measurement_kind':'synthetic',
         'source':'Same-model same-discretization synthetic joint drying observations; no measurement or added noise.',

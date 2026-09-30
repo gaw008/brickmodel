@@ -78,3 +78,11 @@ del fields
 `example_endpoints.drying_remaining_fraction`取最湿单元在drying末的液水/同单元t=0初水。0.1%门槛不是干基0.1%；对应干基门槛为根门槛乘`material.water_dry_ratio`。当前0.13505646%剩余初水相当于约0.02025847%干基，仍高于原等效0.015%干基门槛，不因换单位改判。
 
 恒温drying账本初水在drying_ramp末（当前14400s），冻结根`n_eq_over_n0`分母却是当前drying末的液水（86400s）。两者均不可直接当t=0初水分母；P09报告已统一到初水后比较。冻结根/单次细化/端点余额各有独立适用范围，详见FULL_CYCLE_P09_DRYING_ATTRIBUTION.md。
+
+## 反演输出留存（P10）
+
+既有CLI合成/标定命令和三个Python合成入口保持调用方式。完整合成的synthetic.observations.json新增truth_audit；两个窗口的truth_window_audit追加顶层气体账本与实际阶段范围。calibration.json保留原forward_*字段，并新增forward_gas_species_ledger及可用性诊断；窗口仍用forward_window_balance。
+
+后续外部记录包装使用sludge_vme.inverse.full_cycle.forward_call_summary(report)，需要必要预算则使用forward_audit(report)；两者不积分。gas_ledger_status=present仅表示数据存在，missing对应明确诊断及审计中的null，不能据普通物理通过推断气体账本通过。缺少必需普通预算字段时直接报错。
+
+runs/full-cycle/final-inverse-20260930/entrypoint.py和原39次记录为历史快照，保留错误字段，不作新运行维护入口。旧完整真值预算未保存且不可从摘要恢复；新版留存只作用于后续真实调用。详见FULL_CYCLE_P10_INVERSE_EVIDENCE.md。

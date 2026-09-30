@@ -1,0 +1,140 @@
+{
+  "schema": "full_cycle_p10_inverse_evidence_v1",
+  "recorded_utc": "2026-09-30T20:20:29.625039+00:00",
+  "baseline_commit": "96ce3884f4367bd166182215f1468e1dade22b52",
+  "identity": "serialization and source-wiring qualification using saved simulation evidence; not new physical or inverse runs",
+  "new_integrations": 0,
+  "new_optimizations": 0,
+  "new_root_solves": 0,
+  "software_test_files_added": false,
+  "raw_fields_written": false,
+  "cases": {
+    "saved_full_uq": {
+      "source": "runs/full-cycle/final-uq-0-standard.json",
+      "source_mapping": "Existing saved report",
+      "stage_count": 8,
+      "retained_fields_equal": {
+        "physical_consistency_passed": true,
+        "whole_cycle": true,
+        "stages": true,
+        "thermodynamics": true,
+        "state_domain": true,
+        "dimension_check": true,
+        "forward_elapsed_s": true,
+        "declared_stages": true,
+        "input_unchanged": true
+      },
+      "gas_ledger_status": "present",
+      "gas_ledger_present": true,
+      "gas_ledger_diagnostic": null,
+      "gas_species_ledger_equals_input": true,
+      "physical_flag_preserved_not_upgraded": true,
+      "output": "runs/full-cycle/p10-inverse-evidence/saved_full_uq.audit.json",
+      "bytes": 202001
+    },
+    "saved_missing_joint_truth": {
+      "source": "runs/full-cycle/final-inverse-20260930/joint/synthetic.observations.json#/truth_window_audit",
+      "source_mapping": "Rename only window_balance to whole_cycle and forward_elapsed_s to elapsed_s from this one saved truth audit; no values borrowed or invented.",
+      "stage_count": 2,
+      "retained_fields_equal": {
+        "physical_consistency_passed": true,
+        "whole_cycle": true,
+        "stages": true,
+        "thermodynamics": true,
+        "state_domain": true,
+        "dimension_check": true,
+        "forward_elapsed_s": true,
+        "declared_stages": true,
+        "input_unchanged": true
+      },
+      "gas_ledger_status": "missing",
+      "gas_ledger_present": false,
+      "gas_ledger_diagnostic": "Missing or empty report.gas_species_ledger; no gas-ledger acceptance evidence is retained.",
+      "gas_species_ledger_equals_input": true,
+      "physical_flag_preserved_not_upgraded": true,
+      "output": "runs/full-cycle/p10-inverse-evidence/saved_missing_joint_truth.audit.json",
+      "bytes": 59105
+    },
+    "saved_window_call_summary": {
+      "source": "runs/full-cycle/gas-ledger-dynamic-wiring-final.json",
+      "source_mapping": "Same saved window only; names explicitly mapped from window_physical_consistency_passed/window_balance/stage_balances/integrate_and_summarize_elapsed_s. The elapsed scope includes summarize.",
+      "gas_ledger_present": true,
+      "gas_ledger_status": "present",
+      "record_equals_input_summary": true,
+      "full_audit_not_claimed": "This saved window artifact has no dimension_check. It was not filled from another run; only the actual recorder inputs are qualified here.",
+      "output": "runs/full-cycle/p10-inverse-evidence/saved_window.call-summary.json"
+    }
+  },
+  "structural_missing_field_diagnostics": {
+    "absent": {
+      "identity": "structural data projection, not a physical run",
+      "nested_ledger_ignored": true,
+      "status": "missing",
+      "retained_ledger_is_null": true,
+      "diagnostic": "Missing or empty report.gas_species_ledger; no gas-ledger acceptance evidence is retained.",
+      "physical_flag_unchanged": true
+    },
+    "empty": {
+      "identity": "structural data projection, not a physical run",
+      "nested_ledger_ignored": true,
+      "status": "missing",
+      "retained_ledger_is_null": true,
+      "diagnostic": "Missing or empty report.gas_species_ledger; no gas-ledger acceptance evidence is retained.",
+      "physical_flag_unchanged": true
+    }
+  },
+  "unchanged_call_expressions": {
+    "predict": true,
+    "least_squares": true,
+    "run_cycle": true,
+    "map_observations": true
+  },
+  "files_unchanged_from_baseline": {
+    "parameters.full_cycle.json": true,
+    "src/sludge_vme/models/full_cycle.py": true,
+    "src/sludge_vme/models/full_cycle_gas.py": true,
+    "src/sludge_vme/models/full_cycle_solid.py": true,
+    "src/sludge_vme/models/full_cycle_diagnostics.py": true,
+    "docs/FULL_CYCLE_FINAL_INVERSE_READBACK.json": true,
+    "docs/FULL_CYCLE_FINAL_CALIBRATION.json": true,
+    "docs/FULL_CYCLE_FINAL_JOINT_RECOVERY.json": true,
+    "docs/FULL_CYCLE_FINAL_SYNTHETIC_OBSERVATIONS.json": true
+  },
+  "historical_preservation": {
+    "original_forward_count": 39,
+    "old_wrong_false_count": 39,
+    "original_entrypoint_retains_wrong_path_for_reproduction": true,
+    "old_full_truth_budgets": "Not saved in original batch and not reconstructible from retained scalar diagnostics; no replacement/recovery claimed."
+  },
+  "limitations": [
+    "Full saved report is a prior UQ sample, not the missing original synthetic truth.",
+    "No fresh end-to-end optimization/CLI execution is claimed. Shared extraction and actual saved-data serialization are executed; callers are checked by source review.",
+    "Missing ledger status is independent of physical/fit success. Existing fit qualification and all physical parameters remain unchanged."
+  ],
+  "data_retention_checks_passed": true,
+  "elapsed_s": 0.13879604102112353,
+  "independent_source_review": {
+    "passed": true,
+    "reviewer": "Astra p06_inverse",
+    "scope": "Required field compatibility, truth/final/window wiring, timing meanings, missing ledger scope and unchanged optimization calls; static review only.",
+    "old_entrypoint_preserved": true,
+    "predict_and_map_observations_function_bodies_unchanged": true,
+    "review_wall_s": null
+  },
+  "closed_utc": "2026-09-30T20:22:55.935253+00:00",
+  "closure_wall_s_since_declaration": 454.493672,
+  "maintained_entrypoints": [
+    "sludge_vme.inverse.full_cycle.forward_call_summary",
+    "sludge_vme.inverse.full_cycle.forward_audit",
+    "sludge_vme.inverse.full_cycle.fit",
+    "sludge_vme.inverse.full_cycle.synthetic_demo",
+    "sludge_vme.inverse.full_cycle.binding_synthetic_demo",
+    "sludge_vme.inverse.full_cycle.joint_drying_synthetic_demo",
+    "sludge_vme.cli.main full-cycle existing calibration routes"
+  ],
+  "delivery_receipts": {
+    "git": "runs/full-cycle/p10-git-delivery.json",
+    "drive": "runs/full-cycle/p10-drive-delivery.json",
+    "scope": "Actual delivery is recorded separately after the scientific/source qualification; no pending action is declared successful here."
+  }
+}
