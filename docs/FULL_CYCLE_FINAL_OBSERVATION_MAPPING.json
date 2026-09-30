@@ -1,0 +1,158 @@
+{
+  "schema": "full_cycle_final_observation_mapping_v1",
+  "identity": "synthetic_same_model",
+  "source_forward_call": 1,
+  "scope": "All eight stages of the shared three-parameter synthetic-truth solution.",
+  "parameter_identity": "runs/full-cycle/final-inverse-20260930/parameters.snapshot.json",
+  "forward_parameters": {
+    "thermal.h": 26.0,
+    "sintering.rate_ref": 3.2e-06,
+    "quartz.axial_transition_strain": 0.006
+  },
+  "time_definition": "Elapsed simulation seconds; piecewise linear interpolation between stored output rows, not dense integrator interpolation.",
+  "checks": {
+    "tg": {
+      "unit": "1",
+      "definition": "Condensed mass / initial dry mass, dimensionless; includes liquid and mineral-bound mass, excludes stored pore gas. Not mass divided by initial wet mass.",
+      "node_count": 1351,
+      "midpoint_count": 1350,
+      "maximum_node_absolute_difference": 0.0,
+      "maximum_midpoint_absolute_difference": 2.220446049250313e-16,
+      "maximum_difference_divided_by_declared_observation_scale": 4.440892098500626e-14,
+      "mapping_passed": true
+    },
+    "dsc": {
+      "unit": "W/kg",
+      "definition": "Net thermal boundary power / initial dry mass in W/kg, positive inward/endothermic. No additional reaction heat or gas-carried enthalpy is added; not instrument-specific DSC.",
+      "node_count": 1351,
+      "midpoint_count": 1350,
+      "maximum_node_absolute_difference": 0.0,
+      "maximum_midpoint_absolute_difference": 1.4210854715202004e-14,
+      "maximum_difference_divided_by_declared_observation_scale": 1.4210854715202005e-15,
+      "mapping_passed": true
+    },
+    "dilatometry": {
+      "unit": "1",
+      "definition": "Negative arithmetic mean axial thickness shrinkage, dimensionless; initial cell widths are equal. Reference is the model initial cell bulk volume, not isotropic linear strain.",
+      "node_count": 1351,
+      "midpoint_count": 1350,
+      "maximum_node_absolute_difference": 0.0,
+      "maximum_midpoint_absolute_difference": 1.734723475976807e-18,
+      "maximum_difference_divided_by_declared_observation_scale": 8.673617379884035e-16,
+      "mapping_passed": true
+    },
+    "kiln": {
+      "unit": "K",
+      "definition": "Prescribed reservoir temperature in K at elapsed simulation seconds; distinct from surface and cell-center temperatures.",
+      "node_count": 1351,
+      "midpoint_count": 1350,
+      "maximum_node_absolute_difference": 0.0,
+      "maximum_midpoint_absolute_difference": 2.2737367544323206e-13,
+      "maximum_difference_divided_by_declared_observation_scale": 1.1368683772161603e-13,
+      "mapping_passed": true
+    },
+    "liquid_water": {
+      "unit": "kg/kg",
+      "definition": "Total condensed liquid-water mol inventory times molar mass / initial total dry mass in kg/kg; excludes pore vapor and mineral-bound water; not maximum cell moisture.",
+      "node_count": 1351,
+      "midpoint_count": 1350,
+      "maximum_node_absolute_difference": 5.551115123125783e-17,
+      "maximum_midpoint_absolute_difference": 5.551115123125783e-17,
+      "maximum_difference_divided_by_declared_observation_scale": 5.551115123125783e-13,
+      "mapping_passed": true
+    },
+    "surface_temperature": {
+      "unit": "K",
+      "definition": "Outer-boundary temperature in K from the half-cell conduction and convection/radiation relation; distinct from outermost cell-center and furnace values.",
+      "node_count": 1351,
+      "midpoint_count": 1350,
+      "maximum_node_absolute_difference": 0.0,
+      "maximum_midpoint_absolute_difference": 2.2737367544323206e-13,
+      "maximum_difference_divided_by_declared_observation_scale": 1.1368683772161603e-13,
+      "mapping_passed": true
+    },
+    "absorption": {
+      "unit": "kg/kg",
+      "definition": "Final cooled proxy connectivity * porosity * water density / bulk density in kg/kg; not measured absorption.",
+      "mapped_value": 0.2506043551930185,
+      "independent_proxy_value": 0.2506043551930185,
+      "absolute_difference": 0.0,
+      "interpolation": "Final-product scalar; no time interpolation.",
+      "mapping_passed": true
+    },
+    "strength": {
+      "unit": "Pa",
+      "definition": "Final cooled proxy dense strength * exp(-porosity coefficient * porosity) in Pa; not measured strength.",
+      "mapped_value": 4426090.090729529,
+      "independent_proxy_value": 4426090.090729529,
+      "absolute_difference": 0.0,
+      "interpolation": "Final-product scalar; no time interpolation.",
+      "mapping_passed": true
+    },
+    "defects": {
+      "unit": "1",
+      "definition": "Proxy 1-exp(-peak temperature span / gradient scale), dimensionless; not a measured defect rate.",
+      "mapped_value": 0.2117657066936198,
+      "independent_proxy_value": 0.2117657066936198,
+      "absolute_difference": 0.0,
+      "interpolation": "Final-product scalar; no time interpolation.",
+      "mapping_passed": true
+    }
+  },
+  "extra_integrations": 0,
+  "raw_fields_written": false,
+  "maximum_boundary_relation_temperature_residual_k": 1.5659695762337833e-13,
+  "maximum_dsc_conduction_temperature_residual_k": 4.440892098500626e-16,
+  "maximum_boundary_residual_fraction_of_existing_temperature_budget": 1.2894318001252263e-11,
+  "mapping_threshold_source": "Existing numerics.atol on errors normalized by each root calibration.scale; no new tolerance.",
+  "mapping_passed": true,
+  "limitations": "Same-solution mapping and arithmetic only. No material measurement, DSC instrument model, surface sensor placement validation or proxy-product qualification.",
+  "truth_audit_retention": {
+    "saved": [
+      "physical_consistency_passed",
+      "maximum_balance_relative_residual",
+      "example_endpoints",
+      "nine_kind_same_solution_mapping"
+    ],
+    "source": "runs/full-cycle/final-inverse-20260930/execution.json",
+    "not_saved": [
+      "truth_complete_whole_cycle_budget",
+      "truth_complete_stage_budgets",
+      "truth_thermodynamics",
+      "truth_state_domain",
+      "truth_dimension_check",
+      "truth_top_level_gas_species_ledger"
+    ],
+    "limitation": "First full-cycle truth is supported by actually recorded summary diagnostics only. No reconstructed or separately rerun full truth budget. Final fitted forward mass/element/energy budgets, free-water ledger, thermodynamics, state domain and dimension check are retained by fit. The existing fit output does not retain the top-level gas-species ledger; this P06 run does not independently qualify that ledger."
+  },
+  "source_forward_summary": {
+    "call": 1,
+    "operation": "full_cycle_cli",
+    "started_utc": "2026-09-30T18:21:40.983428+00:00",
+    "stages": [
+      "drying_ramp",
+      "drying",
+      "heating",
+      "reactions",
+      "sintering",
+      "hold",
+      "cooling",
+      "cooling_hold"
+    ],
+    "overrides_from_root": {
+      "thermal.h": 26.0,
+      "sintering.rate_ref": 3.2e-06,
+      "quartz.axial_transition_strain": 0.006
+    },
+    "status": "completed",
+    "elapsed_s": 182.6490229999181,
+    "physical_consistency_passed": true,
+    "maximum_balance_relative_residual": 0.0003864670755128752,
+    "gas_ledger_present": false,
+    "example_endpoints": {
+      "drying_remaining_fraction": 0.0013168618785744247,
+      "cooling_maximum_temperature_difference_k": 0.000640825682353352,
+      "passed": false
+    }
+  }
+}

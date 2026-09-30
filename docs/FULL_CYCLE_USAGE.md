@@ -66,3 +66,9 @@ del fields
 最终运行、物理/数值验收、工艺失败、待实测、Git和备份分别见 `FULL_CYCLE_DEVELOPMENT_PLAN.md`、`FULL_CYCLE_REPORT.md` 以及最终验收矩阵。历史 d8bc6f1b 三档证据保留在 `FULL_CYCLE_PORE_GAS_RESULTS.json`；只有确认主机/根物理参数未变后，才可在原范围复用。
 
 旧 UQ 的渗透率固定为3.75e-14 m²，最终比较继续固定该值以及已声明固定系数。新的比较不会覆盖所有271参数的范围，不能写成全面不确定性验证。原名义干燥余水0.13505646%高于0.1%门槛；关闭结合能、历史延时、合成真值或拟合结果不得替代此失败。历史两次广渗透率成本失败与干燥两次有界处理均不重启。
+
+## 本轮已实际执行的入口
+
+完整周期 `sludge_vme.cli.main` 的 `full-cycle --synthetic-calibration` 分支已返回0，实际22前向；随后 `joint_drying_synthetic_demo` Python入口实际17窗口前向，包装进程exit0。源入口 `.venv/bin/python examples/run_full_cycle.py --help` 也已返回0，仅用于启动验证。其余上列命令是已有可选操作，不声称本轮全部执行。
+
+运行器、根参数快照、逐次执行记录位于 `runs/full-cycle/final-inverse-20260930/`，必要汇总见 `FULL_CYCLE_FINAL_INVERSE_READBACK.json`。原记录中的 `gas_ledger_present=False` 是运行器查错report层级，不能用于判定账本存在；账本本体及P01/P05证据以顶层 `report['gas_species_ledger']` 为准。

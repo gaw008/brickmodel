@@ -1,7 +1,7 @@
 {
   "schema": "full_cycle_final_acceptance_matrix_v1",
-  "recorded_utc": "2026-09-30T18:27:11.264078+00:00",
-  "status": "in_progress",
+  "recorded_utc": "2026-09-30T19:26:19.681177+00:00",
+  "status": "completed_with_nominal_process_failure",
   "identity": "approximate_simulation_not_measured_material",
   "parent_commit": "d8bc6f1b09e0b6d10cdcf4abf35e634035a36d08",
   "parameter_file": "parameters.full_cycle.json",
@@ -71,7 +71,15 @@
     "inherited_maximum_gas_initial_inventory_relative": 0.01082387397969822,
     "budget_threshold": 0.001,
     "initial_inventory_normalization_is_pass_criterion": false,
-    "current_all_eight_stage_wiring": "Pending readback of the ongoing final UQ; no separate validation integration planned."
+    "current_all_eight_stage_wiring": {
+      "passed": true,
+      "actual_full_cycle_runs": 24,
+      "endpoint_count_per_run": 9,
+      "stages_per_run": 8,
+      "gas_budget_rows": 864,
+      "source": "P05 completed full-cycle runs, no additional integration",
+      "all_budget_passed": true
+    }
   },
   "P04": {
     "status": "passed_by_forward_continuity_and_affected_diagnostic_verification",
@@ -96,7 +104,7 @@
     "evidence": "docs/FULL_CYCLE_REPORT.md historical binding and drying-extension sections; docs/FULL_CYCLE_PORE_GAS_RESULTS.json current nominal"
   },
   "P05": {
-    "status": "running",
+    "status": "completed",
     "evidence": "docs/FULL_CYCLE_FINAL_UQ.json",
     "sampled_dimensions": 25,
     "paired_samples": 8,
@@ -106,17 +114,145 @@
       "kinetics.carbonate.phase_resistance": 1.0,
       "transport.pore_resistance": 1.0
     },
-    "range_qualification": "Only the declared 25-dimensional paired ensemble. Fixed assumptions and their correlations are not range-validated."
+    "range_qualification": "Only the declared 25-dimensional paired ensemble. Fixed assumptions and their correlations are not range-validated.",
+    "completed_runs": 24,
+    "physical_pass_count": 24,
+    "process_pass_count": 15,
+    "all_conservation_passed": true,
+    "all_gas_budgets_passed": true,
+    "maximum_balance_relative": 0.0009755243758005863,
+    "maximum_gas_budget_relative": 0.0008621226082605802,
+    "all_rankings_robust": false,
+    "ranking_scope": "All 24 physical solutions passed, but 9 process endpoint failures remain. Six metrics have no proven robust winner; residual-carbon and peak-temperature-difference median ties must not be used as an ordering claim.",
+    "scientific_batch_wall_s": 820.108895082958,
+    "sum_individual_run_seconds": 5570.4159460815135,
+    "independent_readback": {
+      "passed": true,
+      "unique_paired_records": 24,
+      "fixed_parameter_values_checked": 72,
+      "endpoints": 216,
+      "species_budgets": 864,
+      "mass_element_energy_budgets": 648,
+      "process_passes_by_scenario": {
+        "standard": 5,
+        "lower_peak": 5,
+        "longer_hold": 5
+      },
+      "drying_failed_samples": [
+        0,
+        1,
+        3
+      ],
+      "cooling_pass_count": 24,
+      "maximum_cooling_difference_k": 0.08039142,
+      "maximum_mass_relative": 2.5173274563e-06,
+      "maximum_element_relative": 0.0009755243758,
+      "maximum_energy_relative": 5.529453227e-05,
+      "worst_element_location": "sample 5 / standard / cooling",
+      "worst_energy_location": "sample 4 / longer_hold / cooling",
+      "worst_gas_location": "sample 5 / standard / cooling / O2",
+      "distribution_maximum_absolute_roundoff_difference": 9.31e-10,
+      "distribution_roundoff_unit": "Pa (strength proxy)",
+      "wilson_maximum_absolute_roundoff_difference": 2.22e-16,
+      "all_six_robust_winners_unproven": true,
+      "method": "Independent reader recalculated new saved records only; no integrations, old arithmetic or software tests rerun."
+    },
+    "execution_entrypoint": "runs/full-cycle/final-uq-entrypoint.py",
+    "standard_python_api": "sludge_vme.uq.full_cycle.compare(config, out); execution used the same paired design and summarize_comparison with independent processes."
   },
   "P06": {
-    "status": "running",
-    "full_cycle_cli": "Existing full-cycle --synthetic-calibration, fixed three-parameter seven-channel design",
-    "joint_python": "Existing joint_drying_synthetic_demo, fixed two-parameter two-channel drying window",
-    "mapping": "Nine observation kinds checked on the full-cycle synthetic truth, without another integration",
-    "nominal_parameter_update": false
+    "status": "completed",
+    "measurement_kind": "synthetic",
+    "nominal_parameter_update": false,
+    "full_cycle": {
+      "evidence": "docs/FULL_CYCLE_FINAL_CALIBRATION.json",
+      "observations": "docs/FULL_CYCLE_FINAL_SYNTHETIC_OBSERVATIONS.json",
+      "parameter_count": 3,
+      "observation_count": 83,
+      "actual_forward_count": 22,
+      "residual_evaluations": 20,
+      "cli_exit_code": 0,
+      "optimizer_success": true,
+      "qualified_fit": true,
+      "recovery_passed": true,
+      "jacobian_machine_rank": 3,
+      "fitted_parameters": {
+        "thermal.h": 26.000012787738882,
+        "sintering.rate_ref": 3.199994814705209e-06,
+        "quartz.axial_transition_strain": 0.005999875973640419
+      },
+      "relative_errors": {
+        "thermal.h": 4.91836110847124e-07,
+        "sintering.rate_ref": 1.620404622133438e-06,
+        "quartz.axial_transition_strain": 2.0671059930161412e-05
+      },
+      "normalized_rmse": 4.898386609902367e-06,
+      "fitted_process_endpoints": {
+        "drying_remaining_fraction": 0.001316861837595789,
+        "cooling_maximum_temperature_difference_k": 0.0006408232535477509,
+        "passed": false
+      },
+      "all_actual_forward_physics_passed": true,
+      "cli_wall_s": 3388.4867551249918,
+      "fit_wall_s": 3205.589112292044
+    },
+    "joint_drying": {
+      "evidence": "docs/FULL_CYCLE_FINAL_JOINT_RECOVERY.json",
+      "parameter_count": 2,
+      "observation_count": 12,
+      "actual_forward_count": 17,
+      "residual_evaluations": 15,
+      "optimizer_success": true,
+      "qualified_fit": true,
+      "recovery_passed": true,
+      "jacobian_machine_rank": 2,
+      "fitted_parameters": {
+        "water.binding_energy": 9000.004652477372,
+        "thermal.h": 26.00002321198208
+      },
+      "relative_errors": {
+        "water.binding_energy": 5.169419301738445e-07,
+        "thermal.h": 8.927685414870614e-07
+      },
+      "normalized_rmse": 5.1373966477578636e-05,
+      "window_physics_passed": true,
+      "synthetic_drying_remaining_fraction": 0.000926669288707521,
+      "synthetic_drying_passed": true,
+      "wall_s": 396.11923804180697,
+      "fit_wall_s": 373.212874290999,
+      "scope": "Drying window only; no cooled-product or nominal-process qualification."
+    },
+    "observation_mapping": {
+      "evidence": "docs/FULL_CYCLE_FINAL_OBSERVATION_MAPPING.json",
+      "passed": true,
+      "observation_kinds": 9,
+      "extra_integrations": 0,
+      "independent_definition_review_passed": true,
+      "maximum_boundary_temperature_residual_k": 1.5659695762337833e-13,
+      "maximum_dsc_conduction_temperature_residual_k": 4.440892098500626e-16
+    },
+    "independent_readback_evidence": "docs/FULL_CYCLE_FINAL_INVERSE_READBACK.json",
+    "actual_forward_count": 39,
+    "all_actual_forward_physics_passed": true,
+    "maximum_balance_relative_residual": 0.0005978891560138323,
+    "execution_wall_s": 3784.6407612499315,
+    "root_parameters_unchanged": true,
+    "source_text_unchanged": {
+      "src/sludge_vme/inverse/full_cycle.py": true,
+      "src/sludge_vme/models/full_cycle.py": true,
+      "src/sludge_vme/models/full_cycle_gas.py": true,
+      "src/sludge_vme/models/full_cycle_solid.py": true,
+      "src/sludge_vme/models/full_cycle_diagnostics.py": true
+    },
+    "evidence_limitations": [
+      "Noise-free same-model same-discretization demonstrations; no real-material accuracy, noise robustness or global uniqueness.",
+      "Two resistance parameters fixed at nominal one; no range or identifiability qualification.",
+      "Full truth retains physical boolean, maximum balance residual and endpoints, not an independently reread detailed full-truth budget.",
+      "Original per-call gas_ledger_present=False is an invalid recorder probe in whole_cycle; the actual ledger is at report top level. Original records preserved; P01/P05 separately establish ledger wiring."
+    ]
   },
   "P07": {
-    "status": "in_progress",
+    "status": "completed",
     "usage": "docs/FULL_CYCLE_USAGE.md",
     "environment": {
       "python": "3.12.13",
@@ -124,7 +260,21 @@
       "scipy": "1.18.1"
     },
     "network_required_for_running_model": false,
-    "portable_offline_runtime_backup_qualified": false
+    "portable_offline_runtime_backup_qualified": false,
+    "source_cli_startup": {
+      "command": ".venv/bin/python examples/run_full_cycle.py --help",
+      "exit_code": 0,
+      "elapsed_s": 0.594775666,
+      "scope": "Parser/source-checkout startup only; no integration and not a substitute for physical acceptance."
+    },
+    "documentation_independent_review": {
+      "passed": true,
+      "scope": "CLI exit semantics, nine observation definitions/units, source entrypoint and separation of physical/process/material/backup evidence; no broad audit or rerun."
+    },
+    "actual_full_cycle_cli_exit_code": 0,
+    "actual_joint_python_completed": true,
+    "wrapper_process_exit_code": 0,
+    "actual_entrypoint_evidence": "docs/FULL_CYCLE_FINAL_INVERSE_READBACK.json"
   },
   "material_applicability": "pending_measurements",
   "real_world_validation": "pending_measurements",
@@ -136,8 +286,90 @@
     "resolved kiln combustion/circulation",
     "cracks and damage"
   ],
-  "model_capability_closeout_complete": false,
-  "physical_numerical_acceptance_complete": false,
+  "model_capability_closeout_complete": true,
+  "physical_numerical_acceptance_complete": true,
   "all_engineering_acceptance_passed": false,
-  "delivery_is_separate_from_model_acceptance": true
+  "delivery_is_separate_from_model_acceptance": true,
+  "ledger_implementation_commit": "8a203d6364df50af1fd18bd6645e621606289ca8",
+  "P02": {
+    "status": "completed",
+    "necessary_couplings_present": true,
+    "additional_mechanism_required_in_current_scope": false,
+    "scope_review": "Targeted independent source review; existing approximate full-cycle coupling is complete. Excluded mechanisms and material validation remain separate."
+  },
+  "P08": {
+    "status": "completed",
+    "decision": "Approximate model capability and declared physical/numerical acceptance complete; nominal process acceptance failed; material applicability and real-world comparison pending measurements.",
+    "criteria": [
+      {
+        "item": "necessary_full_cycle_couplings",
+        "outcome": "passed",
+        "scope": "Current explicitly approximate one-dimensional model"
+      },
+      {
+        "item": "O2_N2_H2O_CO2_window_and_eight_stage_ledgers",
+        "outcome": "passed",
+        "scope": "P01 dynamic window plus 24 complete P05 cycles"
+      },
+      {
+        "item": "whole_and_stage_mass_elements_complete_energy",
+        "outcome": "passed",
+        "limit_relative": 0.001,
+        "maximum_declared_relative": 0.0009755243758005863
+      },
+      {
+        "item": "thermodynamics_and_dimensions",
+        "outcome": "passed",
+        "scope": "Unchanged forward kernel and current successful physical audits; source continuity and inherited mechanism-level proofs"
+      },
+      {
+        "item": "one_time_step_and_one_grid_refinement",
+        "outcome": "passed",
+        "limit_relative": 0.02,
+        "maximum_relative": 0.0036031861257928197,
+        "scope": "Inherited unchanged nominal forward kernel, not new runs or parameter-range convergence"
+      },
+      {
+        "item": "three_scenario_conditional_comparison",
+        "outcome": "completed_without_robust_winner",
+        "scope": "25 dimensions, 8 paired samples, 3 scenarios, 72 fixed conditions"
+      },
+      {
+        "item": "nine_observation_mappings_and_two_recovery_demonstrations",
+        "outcome": "passed",
+        "scope": "Synthetic only"
+      },
+      {
+        "item": "existing_local_CLI_and_Python_entrypoints",
+        "outcome": "passed",
+        "scope": "Installed local dependencies and source checkout, not a portable offline runtime backup"
+      },
+      {
+        "item": "original_nominal_drying_endpoint",
+        "outcome": "failed",
+        "observed_fraction": 0.001350564570573356,
+        "limit_fraction": 0.001
+      },
+      {
+        "item": "measured_material_and_reality_comparison",
+        "outcome": "pending_measurements"
+      },
+      {
+        "item": "Git_Drive_restore_and_historical_storage",
+        "outcome": "separate_delivery_checklist"
+      }
+    ]
+  },
+  "model_closeout_wall_s_from_plan_creation": 4403.9089,
+  "timing_note": "Wall time from actual plan creation to model closeout includes overlapping UQ/calibration, reviews and waiting. It is not the sum of scientific run times; individual review durations were not separately timed.",
+  "delivery": {
+    "status": "final_model_commit_and_increment_pending",
+    "earlier_code_commit": "8a203d6364df50af1fd18bd6645e621606289ca8",
+    "earlier_code_push_readback_passed": true,
+    "p01_drive_metadata_passed": true,
+    "actual_cloud_recovery_passed": false,
+    "recovery_blocker": "One current P01 connector-issued download returned HTTP403; unchanged channel not repeated.",
+    "historical_storage_target_passed": false,
+    "storage_observation": "runs/full-cycle/final-storage-observation.json"
+  }
 }
