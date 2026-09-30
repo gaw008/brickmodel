@@ -72,3 +72,9 @@ del fields
 完整周期 `sludge_vme.cli.main` 的 `full-cycle --synthetic-calibration` 分支已返回0，实际22前向；随后 `joint_drying_synthetic_demo` Python入口实际17窗口前向，包装进程exit0。源入口 `.venv/bin/python examples/run_full_cycle.py --help` 也已返回0，仅用于启动验证。其余上列命令是已有可选操作，不声称本轮全部执行。
 
 运行器、根参数快照、逐次执行记录位于 `runs/full-cycle/final-inverse-20260930/`，必要汇总见 `FULL_CYCLE_FINAL_INVERSE_READBACK.json`。原记录中的 `gas_ledger_present=False` 是运行器查错report层级，不能用于判定账本存在；账本本体及P01/P05证据以顶层 `report['gas_species_ledger']` 为准。
+
+## 干燥判据的三个分母（P09澄清）
+
+`example_endpoints.drying_remaining_fraction`取最湿单元在drying末的液水/同单元t=0初水。0.1%门槛不是干基0.1%；对应干基门槛为根门槛乘`material.water_dry_ratio`。当前0.13505646%剩余初水相当于约0.02025847%干基，仍高于原等效0.015%干基门槛，不因换单位改判。
+
+恒温drying账本初水在drying_ramp末（当前14400s），冻结根`n_eq_over_n0`分母却是当前drying末的液水（86400s）。两者均不可直接当t=0初水分母；P09报告已统一到初水后比较。冻结根/单次细化/端点余额各有独立适用范围，详见FULL_CYCLE_P09_DRYING_ATTRIBUTION.md。
