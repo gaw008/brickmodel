@@ -679,6 +679,7 @@ class FiniteGasFullCycle(FullCycle):
             identity_residual=max(identity_residual,abs(r['entropy_identity_residual']))
             min_condensed=min(min_condensed,float(ns.min())); min_gas=min(min_gas,float(ng.min()))
             rows.append({'time_s':float(t),'kiln_temperature_k':r['kiln_T'],'temperature_k':T.tolist(),
+                'surface_temperature_k':float(r['surface_T']),
                 'kiln_gas_mole_fractions':dict(zip(self.ng,r['boundary_gas_fractions'].tolist())),
                 'outward_boundary_gas_enthalpy_w':float(r['energy_flux'][-1]),
                 'reservoir_mu_over_t_j_mol_k':dict(zip(self.ng,r['reservoir_mu_over_t'].tolist())),

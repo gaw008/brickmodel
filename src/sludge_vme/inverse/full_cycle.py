@@ -13,7 +13,8 @@ from ..models.full_cycle import make_cycle, changed, run_cycle, write_json
 
 
 UNITS = {'tg':'1', 'dsc':'W/kg', 'dilatometry':'1', 'kiln':'K',
-         'absorption':'kg/kg', 'strength':'Pa', 'defects':'1', 'liquid_water':'kg/kg'}
+         'absorption':'kg/kg', 'strength':'Pa', 'defects':'1', 'liquid_water':'kg/kg',
+         'surface_temperature':'K'}
 
 
 def predict(config: dict, observations: list[dict]):
@@ -32,8 +33,10 @@ def map_observations(config: dict, observations: list[dict], report: dict, field
     It is neither the wettest cell nor TG, uses no current-dry-mass denominator,
     and excludes pore vapor and mineral-bound water. Binding acts on this same
     condensed-water inventory; its energy weight is not added as extra water.
-    Observation time_s is
-    elapsed simulation time in seconds; the existing linear interpolation and
+    surface_temperature uses fields.rows.surface_temperature_k in K: the
+    model outer-boundary temperature, distinct from kiln temperature and the
+    outermost cell-center temperature. This field is read only when requested.
+    Observation time_s is elapsed simulation time in seconds; the existing linear interpolation and
     process-time range and unit errors apply. Dataset source and explicit
     synthetic/measured identity remain managed by fit, not this mapping.
     """
@@ -46,6 +49,8 @@ def map_observations(config: dict, observations: list[dict], report: dict, field
               'dilatometry':np.array([-np.mean(r['thickness_shrinkage']) for r in rows]),
               'kiln':np.array([r['kiln_temperature_k'] for r in rows]),
               'liquid_water':np.array([np.mean(r['water_kg_per_initial_dry_kg']) for r in rows])}
+    if any(row['kind'] == 'surface_temperature' for row in observations):
+        curves['surface_temperature'] = np.array([r['surface_temperature_k'] for r in rows])
     products = {'absorption':'absorption_kg_kg','strength':'strength_pa','defects':'defect_indicator'}
     values = []
     for row in observations:

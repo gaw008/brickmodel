@@ -373,6 +373,7 @@ class FullCycle:
             temperature_span=max(float(T.max()),rate[9],center_T)-min(float(T.min()),rate[9],center_T)
             minimum_production=min(minimum_production,rate[10])
             rows.append({"time_s":float(t),"kiln_temperature_k":rate[8],"temperature_k":T.tolist(),
+                "surface_temperature_k":float(rate[9]),
                 "x_m":(np.cumsum(bulk/self.area)-bulk/self.area/2).tolist(),
                 "water_kg_per_initial_dry_kg":(ns[:,self.ns.index('water')]*mw_s[self.ns.index('water')]/self.md).tolist(),
                 **self.reaction_fields(y),
