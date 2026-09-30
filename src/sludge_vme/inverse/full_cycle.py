@@ -13,11 +13,30 @@ from ..models.full_cycle import make_cycle, changed, run_cycle, write_json
 
 
 UNITS = {'tg':'1', 'dsc':'W/kg', 'dilatometry':'1', 'kiln':'K',
-         'absorption':'kg/kg', 'strength':'Pa', 'defects':'1'}
+         'absorption':'kg/kg', 'strength':'Pa', 'defects':'1', 'liquid_water':'kg/kg'}
 
 
 def predict(config: dict, observations: list[dict]):
+    """Run one physical solution and map its labelled observation requests."""
     report, fields = run_cycle(config)
+    return map_observations(config, observations, report, fields)
+
+
+def map_observations(config: dict, observations: list[dict], report: dict, fields: dict):
+    """Map an existing solution without integration; return (values, report).
+
+    report and fields must come from the supplied configuration. liquid_water
+    uses fields.rows.water_kg_per_initial_dry_kg: whole-domain liquid-water
+    mass divided by initial dry mass, in kg/kg. Its arithmetic cell mean is
+    valid because this model assigns every cell the same initial dry mass.
+    It is neither the wettest cell nor TG, uses no current-dry-mass denominator,
+    and excludes pore vapor and mineral-bound water. Binding acts on this same
+    condensed-water inventory; its energy weight is not added as extra water.
+    Observation time_s is
+    elapsed simulation time in seconds; the existing linear interpolation and
+    process-time range and unit errors apply. Dataset source and explicit
+    synthetic/measured identity remain managed by fit, not this mapping.
+    """
     rows = fields['rows']
     time_s = np.array([r['time_s'] for r in rows])
     model = make_cycle(config)
@@ -25,7 +44,8 @@ def predict(config: dict, observations: list[dict]):
     curves = {'tg':np.array([r['mass_kg']/dry_mass for r in rows]),
               'dsc':np.array([r['dsc_endothermic_w_per_initial_dry_kg'] for r in rows]),
               'dilatometry':np.array([-np.mean(r['thickness_shrinkage']) for r in rows]),
-              'kiln':np.array([r['kiln_temperature_k'] for r in rows])}
+              'kiln':np.array([r['kiln_temperature_k'] for r in rows]),
+              'liquid_water':np.array([np.mean(r['water_kg_per_initial_dry_kg']) for r in rows])}
     products = {'absorption':'absorption_kg_kg','strength':'strength_pa','defects':'defect_indicator'}
     values = []
     for row in observations:
