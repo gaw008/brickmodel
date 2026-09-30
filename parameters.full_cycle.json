@@ -209,6 +209,21 @@
       "url": "https://pubs.usgs.gov/bul/2131/report.pdf",
       "location": "data/sandbox/research/carbon-gas-thermochemistry-v1/source.json; data/sandbox/research/hydrogen-steam-thermochemistry-v1/source.json; data/sandbox/research/calcite-thermochemistry-v1/facts.json",
       "note": "Robie/Hemingway1995 standard-pressure Cp polynomials, original reference h/s anchors preserved. Coefficients are source values, not fits to brick data; source temperature domains and explicit engineering extrapolation separately declared."
+    },
+    "lemmon2004_viscosity": {
+      "kind": "primary_public_correlation",
+      "location": "https://trc.nist.gov/refprop/FAQ/NAO.PDF",
+      "note": "Lemmon/Jacobsen2004 Eq2 TablesI/II; pure zero-density viscosity, fitted prefactor with publication molar masses. Low-pressure data span covers current temperature selection; no pore confinement qualification."
+    },
+    "co2_2017_viscosity": {
+      "kind": "primary_public_correlation",
+      "location": "https://europepmc.org/article/PMC/PMC5514612",
+      "note": "Laesecke/Muzny2017 Eq4 Table2 only; pure zero-density,100–2000K admitted,1.0055 source scaling retained; no density/critical contribution."
+    },
+    "iapws2008_viscosity": {
+      "kind": "primary_public_correlation",
+      "location": "https://iapws.org/technical-guidance/release/viscosity.download",
+      "note": "IAPWS R12-08 Eq11 Table1 only; pure dilute limit. Recommended upper1173.15K; higherT explicit assumed extrapolation without equal precision qualification. Existing IAPWS95 EOS checks do not validate this viscosity."
     }
   },
   "parameters": {
@@ -1850,7 +1865,7 @@
       ],
       "source": "porous_transport",
       "status": "assumed",
-      "note": "Assumed common viscosity scale at reference temperature; new species multipliers and Wilke mixing determine the nominal mixture. Zero mixing restores preceding common gas viscosity."
+      "note": "Assumed common-law scale used only in explicit alpha0 or interpolated mixture control; nominalalpha1 uses source pure-species curves."
     },
     "transport.viscosity_exponent": {
       "value": 0.7,
@@ -1861,7 +1876,7 @@
       ],
       "source": "porous_transport",
       "status": "assumed",
-      "note": "Assumed power law, not a fitted viscosity curve."
+      "note": "Assumed common-law power for explicit alpha0/interpolated control; nominalalpha1 pure source curves do not use a shared power."
     },
     "transport.tortuosity": {
       "value": 2.5,
@@ -2897,50 +2912,6 @@
       "status": "assumed",
       "note": "Symmetric relative pair mobility for H2O_CO2. Illustrative contrast about the existing D_ref, not empirical binary diffusivity. Fixed in current paired UQ and three-parameter synthetic fit; range/correlations not covered or identified. All six factors equal one restore preceding common-D law."
     },
-    "transport.viscosity_factor.O2": {
-      "value": 1.12,
-      "unit": "1",
-      "range": [
-        0.4,
-        1.4
-      ],
-      "source": "mixture_viscosity",
-      "status": "assumed",
-      "note": "Illustrative pure O2 viscosity relative to existing mu_ref at T_ref; not a measured property or fit. All gases share the existing temperature exponent. Fixed in paired UQ and three-parameter synthetic recovery; range and correlations not covered or identified."
-    },
-    "transport.viscosity_factor.N2": {
-      "value": 0.98,
-      "unit": "1",
-      "range": [
-        0.4,
-        1.4
-      ],
-      "source": "mixture_viscosity",
-      "status": "assumed",
-      "note": "Illustrative pure N2 viscosity relative to existing mu_ref at T_ref; not a measured property or fit. All gases share the existing temperature exponent. Fixed in paired UQ and three-parameter synthetic recovery; range and correlations not covered or identified."
-    },
-    "transport.viscosity_factor.H2O": {
-      "value": 0.55,
-      "unit": "1",
-      "range": [
-        0.4,
-        1.4
-      ],
-      "source": "mixture_viscosity",
-      "status": "assumed",
-      "note": "Illustrative pure H2O viscosity relative to existing mu_ref at T_ref; not a measured property or fit. All gases share the existing temperature exponent. Fixed in paired UQ and three-parameter synthetic recovery; range and correlations not covered or identified."
-    },
-    "transport.viscosity_factor.CO2": {
-      "value": 0.83,
-      "unit": "1",
-      "range": [
-        0.4,
-        1.4
-      ],
-      "source": "mixture_viscosity",
-      "status": "assumed",
-      "note": "Illustrative pure CO2 viscosity relative to existing mu_ref at T_ref; not a measured property or fit. All gases share the existing temperature exponent. Fixed in paired UQ and three-parameter synthetic recovery; range and correlations not covered or identified."
-    },
     "transport.viscosity_mixing_fraction": {
       "value": 1.0,
       "unit": "1",
@@ -2950,7 +2921,7 @@
       ],
       "source": "mixture_viscosity",
       "status": "assumed",
-      "note": "Positive interpolation mu=(1-alpha)*mu_base+alpha*mu_Wilke. One enables Wilke at symmetric face mole fractions; zero exactly restores preceding common viscosity. Intermediate alpha is an assumed model interpolation, not species fraction. Fixed in UQ and synthetic fit."
+      "note": "mu=(1-alpha)*historical_common_power+alpha*source_curve_Wilke. One is nominal; zero preserves the previously declared common-law control, no fallback. Intermediate values remain assumed."
     },
     "species.kaolin.cp_slope": {
       "value": 0.06,
@@ -3599,6 +3570,219 @@
       "source": "policy",
       "status": "assumed",
       "note": "Predeclared wall budget per P16/P18 standalone forward job and the single bounded P18 CLI recovery job; not simulation duration or material parameter."
+    },
+    "validation.viscosity.temperatures": {
+      "value": [
+        298.15,
+        300.0,
+        600.0,
+        1000.0,
+        1173.15,
+        1223.15
+      ],
+      "unit": "K",
+      "range": [
+        298.15,
+        1223.15
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P19 fixed six-temperature reference design, declared before evaluation. Four pure species give24 states; six N2/O2 states reuse independent audit. Not a material parameter or accuracy threshold."
+    },
+    "transport.viscosity.lemmon.log_coefficients": {
+      "value": [
+        0.431,
+        -0.4623,
+        0.08406,
+        0.005341,
+        -0.00331
+      ],
+      "unit": "1",
+      "range": [
+        -0.4623,
+        0.431
+      ],
+      "source": "lemmon2004_viscosity",
+      "status": "literature",
+      "note": "Polynomial ln(Omega)=sum b_i ln(T/epsilon)^i. Fixed source coefficients, not independently sampled or fitted to target material."
+    },
+    "transport.viscosity.lemmon.prefactor": {
+      "value": 2.66958e-08,
+      "unit": "Pa*s*nm2/(g*K/mol)^0.5",
+      "range": [
+        2.66958e-08,
+        2.66958e-08
+      ],
+      "source": "lemmon2004_viscosity",
+      "status": "literature",
+      "note": "Published0.0266958 microPa*s prefactor converted toPa*s; M in g/mol, sigma in nm, T in K. Fixed source coefficients, not independently sampled or fitted to target material."
+    },
+    "transport.viscosity.N2.molar_mass": {
+      "value": 28.01348,
+      "unit": "g/mol",
+      "range": [
+        28.01348,
+        28.01348
+      ],
+      "source": "lemmon2004_viscosity",
+      "status": "literature",
+      "note": "Publication parameter for the fitted pure viscosity relation; does not replace chemical stoichiometric masses. Fixed source coefficients, not independently sampled or fitted to target material."
+    },
+    "transport.viscosity.N2.diameter": {
+      "value": 0.3656,
+      "unit": "nm",
+      "range": [
+        0.3656,
+        0.3656
+      ],
+      "source": "lemmon2004_viscosity",
+      "status": "literature",
+      "note": "Publication parameter for the fitted pure viscosity relation; does not replace chemical stoichiometric masses. Fixed source coefficients, not independently sampled or fitted to target material."
+    },
+    "transport.viscosity.N2.well_depth": {
+      "value": 98.94,
+      "unit": "K",
+      "range": [
+        98.94,
+        98.94
+      ],
+      "source": "lemmon2004_viscosity",
+      "status": "literature",
+      "note": "Publication parameter for the fitted pure viscosity relation; does not replace chemical stoichiometric masses. Fixed source coefficients, not independently sampled or fitted to target material."
+    },
+    "transport.viscosity.O2.molar_mass": {
+      "value": 31.9988,
+      "unit": "g/mol",
+      "range": [
+        31.9988,
+        31.9988
+      ],
+      "source": "lemmon2004_viscosity",
+      "status": "literature",
+      "note": "Publication parameter for the fitted pure viscosity relation; does not replace chemical stoichiometric masses. Fixed source coefficients, not independently sampled or fitted to target material."
+    },
+    "transport.viscosity.O2.diameter": {
+      "value": 0.3428,
+      "unit": "nm",
+      "range": [
+        0.3428,
+        0.3428
+      ],
+      "source": "lemmon2004_viscosity",
+      "status": "literature",
+      "note": "Publication parameter for the fitted pure viscosity relation; does not replace chemical stoichiometric masses. Fixed source coefficients, not independently sampled or fitted to target material."
+    },
+    "transport.viscosity.O2.well_depth": {
+      "value": 118.5,
+      "unit": "K",
+      "range": [
+        118.5,
+        118.5
+      ],
+      "source": "lemmon2004_viscosity",
+      "status": "literature",
+      "note": "Publication parameter for the fitted pure viscosity relation; does not replace chemical stoichiometric masses. Fixed source coefficients, not independently sampled or fitted to target material."
+    },
+    "transport.viscosity.CO2.coefficients": {
+      "value": [
+        1749.35489318835,
+        -369.069300007128,
+        5423856.34887691,
+        -2.21283852168356,
+        -269503.247933569,
+        73145.021531826,
+        5.34368649509278
+      ],
+      "unit": "1",
+      "range": [
+        -269503.247933569,
+        5423856.34887691
+      ],
+      "source": "co2_2017_viscosity",
+      "status": "literature",
+      "note": "Eq4 numeric temperature is T/(1K), so denominator coefficients are dimensionless; original mPa*s unit is explicit. Fixed source coefficients, not independently sampled or fitted to target material."
+    },
+    "transport.viscosity.CO2.factor": {
+      "value": 1.0055,
+      "unit": "1",
+      "range": [
+        1.0055,
+        1.0055
+      ],
+      "source": "co2_2017_viscosity",
+      "status": "literature",
+      "note": "Eq4 numeric temperature is T/(1K), so denominator coefficients are dimensionless; original mPa*s unit is explicit. Fixed source coefficients, not independently sampled or fitted to target material."
+    },
+    "transport.viscosity.CO2.unit_scale": {
+      "value": 0.001,
+      "unit": "Pa*s",
+      "range": [
+        0.001,
+        0.001
+      ],
+      "source": "co2_2017_viscosity",
+      "status": "literature",
+      "note": "Eq4 numeric temperature is T/(1K), so denominator coefficients are dimensionless; original mPa*s unit is explicit. Fixed source coefficients, not independently sampled or fitted to target material."
+    },
+    "transport.viscosity.CO2.temperature_scale": {
+      "value": 1.0,
+      "unit": "K",
+      "range": [
+        1.0,
+        1.0
+      ],
+      "source": "co2_2017_viscosity",
+      "status": "literature",
+      "note": "Eq4 numeric temperature is T/(1K), so denominator coefficients are dimensionless; original mPa*s unit is explicit. Fixed source coefficients, not independently sampled or fitted to target material."
+    },
+    "transport.viscosity.H2O.coefficients": {
+      "value": [
+        1.67752,
+        2.20462,
+        0.6366564,
+        -0.241605
+      ],
+      "unit": "1",
+      "range": [
+        -0.241605,
+        2.20462
+      ],
+      "source": "iapws2008_viscosity",
+      "status": "literature",
+      "note": "Eq11 normalized dilute viscosity; density and critical multipliers are one in the zero-density limit. Fixed source coefficients, not independently sampled or fitted to target material."
+    },
+    "transport.viscosity.H2O.temperature_scale": {
+      "value": 647.096,
+      "unit": "K",
+      "range": [
+        647.096,
+        647.096
+      ],
+      "source": "iapws2008_viscosity",
+      "status": "literature",
+      "note": "Eq11 normalized dilute viscosity; density and critical multipliers are one in the zero-density limit. Fixed source coefficients, not independently sampled or fitted to target material."
+    },
+    "transport.viscosity.H2O.unit_scale": {
+      "value": 1e-06,
+      "unit": "Pa*s",
+      "range": [
+        1e-06,
+        1e-06
+      ],
+      "source": "iapws2008_viscosity",
+      "status": "literature",
+      "note": "Eq11 normalized dilute viscosity; density and critical multipliers are one in the zero-density limit. Fixed source coefficients, not independently sampled or fitted to target material."
+    },
+    "transport.viscosity.H2O.prefactor": {
+      "value": 100.0,
+      "unit": "1",
+      "range": [
+        100.0,
+        100.0
+      ],
+      "source": "iapws2008_viscosity",
+      "status": "literature",
+      "note": "Eq11 normalized dilute viscosity; density and critical multipliers are one in the zero-density limit. Fixed source coefficients, not independently sampled or fitted to target material."
     }
   },
   "species": [
@@ -3934,10 +4118,6 @@
     "transport.pair_factor.N2_H2O",
     "transport.pair_factor.N2_CO2",
     "transport.pair_factor.H2O_CO2",
-    "transport.viscosity_factor.O2",
-    "transport.viscosity_factor.N2",
-    "transport.viscosity_factor.H2O",
-    "transport.viscosity_factor.CO2",
     "transport.viscosity_mixing_fraction",
     "species.kaolin.cp_slope",
     "species.metakaolin.cp_slope",
@@ -3977,9 +4157,25 @@
     "species.lime.caloric_A2",
     "species.lime.caloric_A3",
     "species.lime.caloric_A4",
-    "species.lime.caloric_A5"
+    "species.lime.caloric_A5",
+    "transport.viscosity.lemmon.log_coefficients",
+    "transport.viscosity.lemmon.prefactor",
+    "transport.viscosity.N2.molar_mass",
+    "transport.viscosity.N2.diameter",
+    "transport.viscosity.N2.well_depth",
+    "transport.viscosity.O2.molar_mass",
+    "transport.viscosity.O2.diameter",
+    "transport.viscosity.O2.well_depth",
+    "transport.viscosity.CO2.coefficients",
+    "transport.viscosity.CO2.factor",
+    "transport.viscosity.CO2.unit_scale",
+    "transport.viscosity.CO2.temperature_scale",
+    "transport.viscosity.H2O.coefficients",
+    "transport.viscosity.H2O.temperature_scale",
+    "transport.viscosity.H2O.unit_scale",
+    "transport.viscosity.H2O.prefactor"
   ],
-  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope. Phase modulus contrast is fixed at four; neither its range nor its correlation with eigenstrain, porosity stiffness or phase kinetics is covered or identified. Disordered-minus-ordered heat capacity contrast is fixed at 10 J/mol/K; its range and correlations are neither covered nor identified. Phase conductivity contrast is fixed at two; its signed range and correlations with phase kinetics, baseline conductivity, moisture and pore radiation are not covered or identified. Tortuosity porosity exponent is fixed at one; its range and correlation with diffusivity, initial tortuosity, liquid occupancy and permeability are not covered or identified. Six positive gas-pair mobility factors are fixed at their declared nominal values; their ranges and correlations with the common diffusivity, tortuosity and permeability are not covered or identified. Mixture viscosity species factors and mixing fraction are fixed; their ranges, correlations and identifiability are not covered. Four new gas Cp slopes are fixed; their ranges and correlations are not sampled or identified. Six non-quartz dry background Cp slopes are fixed; ranges and correlations with kinetics, thermal and phase properties are not covered or identified. Liquid-water background Cp slope is fixed at 0.01 J/mol/K2; its range and correlation with retention, phase exchange and heat transfer are not covered or identified. The intrinsic dry-solid conductivity temperature exponent is also fixed; its declared range and correlation are not sampled or identified. Final-model refresh: carbonate phase resistance and pore-scale gas-pair resistance are explicitly fixed at their nominal values of one. Their ranges and correlations are not sampled or identified. Reuse the same 25-dimensional paired draws and three schedules; nominal permeability remains 3.75e-14 m2. Current-run results must be recorded separately from earlier ensembles; process and physical failures remain explicit.",
+  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope. Phase modulus contrast is fixed at four; neither its range nor its correlation with eigenstrain, porosity stiffness or phase kinetics is covered or identified. Disordered-minus-ordered heat capacity contrast is fixed at 10 J/mol/K; its range and correlations are neither covered nor identified. Phase conductivity contrast is fixed at two; its signed range and correlations with phase kinetics, baseline conductivity, moisture and pore radiation are not covered or identified. Tortuosity porosity exponent is fixed at one; its range and correlation with diffusivity, initial tortuosity, liquid occupancy and permeability are not covered or identified. Six positive gas-pair mobility factors are fixed at their declared nominal values; their ranges and correlations with the common diffusivity, tortuosity and permeability are not covered or identified. P20 pure viscosity source coefficient groups and Wilke mixing fraction are fixed; source uncertainty and real mixture/pore errors are not sampled or identified. Historical four assumed species factors were removed, not silently retained as active parameters. P16 four-gas plus calcite/lime source-caloric coefficient sets (30 coefficients) are fixed together; their source uncertainty and correlations are not sampled or identified. Four remaining non-quartz dry background Cp slopes are fixed; ranges and correlations with kinetics, thermal and phase properties are not covered or identified. Liquid-water background Cp slope is fixed at 0.01 J/mol/K2; its range and correlation with retention, phase exchange and heat transfer are not covered or identified. The intrinsic dry-solid conductivity temperature exponent is also fixed; its declared range and correlation are not sampled or identified. Final-model refresh: carbonate phase resistance and pore-scale gas-pair resistance are explicitly fixed at their nominal values of one. Their ranges and correlations are not sampled or identified. Reuse the same 25-dimensional paired draws and three schedules; nominal permeability remains 3.75e-14 m2. Current-run results must be recorded separately from earlier ensembles; process and physical failures remain explicit.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -5338,6 +5534,42 @@
       "forward_call_upper_bound": "2*calibration.max_nfev+2 for one parameter finite differences plus truth and final readback; actual count recorded",
       "new_integrations": "2 full cycles plus actual single-fit drying prefix calls; no retries if same problem already fails twice",
       "output_policy": "No raw fields saved; full physics/gas budgets for truth/final and per-call summary history"
+    },
+    "pure_gas_viscosity": {
+      "temperature_parameter": "validation.viscosity.temperatures",
+      "current_host": "FiniteGasFullCycle.gas_viscosity at pure composition; current alpha1",
+      "source_paths": {
+        "N2_O2": "data/sandbox/research/lemmon2004-dilute-transport-v1/source-review.json",
+        "CO2": "data/sandbox/research/co2-viscosity2017-v1/review-v2.json",
+        "H2O_runtime": "data/sandbox/water/iapws-1.5.5-py3-none-any.whl"
+      },
+      "source_functions": {
+        "N2_O2": "sludge_sandbox.lemmon2004_dilute_transport.dilute_transport",
+        "CO2": "sludge_sandbox.co2_dilute_viscosity.CarbonDioxideDiluteViscosity",
+        "H2O": "iapws._iapws._Viscosity(rho=0,T); Eq11 only at zero density"
+      },
+      "reused_six_point_audit": "/Users/wanggaoying/Documents/Codex/2026-09-30/task/current-transport-gap-audit-20260930.json",
+      "source_urls": {
+        "N2_O2": "https://trc.nist.gov/refprop/FAQ/NAO.PDF",
+        "CO2": "https://doi.org/10.1063/1.4977429",
+        "H2O": "https://iapws.org/technical-guidance/release/viscosity.download"
+      },
+      "pressure_definition": "Pure rho->0 constitutive limit, not pure fluid at total mixture pressure, saturation curve or in-pore effective resistance.",
+      "domain_policy": "N2/O2 current298.15–1223.15K lies within cited dilute data spans; no uniform uncertainty proof. CO2 admitted100–2000K. Water above1173.15K is explicit high-T dilute extrapolation, even though source describes reasonable extrapolation to2500K.",
+      "budget": "24 reported states: reuse6 independent current-host/source values;18 new host/source evaluations. Zero integration, optimizer, root solve or parameter search.",
+      "accuracy_policy": "Report signed/relative deviations. No invented experimental pass limit; finite samples do not constitute uniform continuous error bounds.",
+      "coupling": "Changing pure curves requires temperature-dependent Wilke Phi; Darcy uses positive mu and existing common flux/enthalpy, no extra viscous heat."
+    },
+    "p20_source_viscosity_validation": {
+      "pure_reference_states": "Reuse P19 24 source values, evaluate changed host only; source errors separately from implementation residuals.",
+      "mixture_states": "six root P19 temperatures times initial/eight stage reservoir compositions, 54 states; same-T Wilke formula/pure limit/complex derivative/alpha0 common-law checks, no integrations.",
+      "time_grid_acceptance": "one nominal, one existing half max_step, one existing doubled cells; three complete cycles total, three concurrent tasks.",
+      "wall_budget_parameter": "validation.caloric.full_cycle_budget",
+      "full_cycle_count": 3,
+      "retries": "No grid/tolerance/parameter search. Keep failure and stop/simplify after two same-problem attempts.",
+      "unchanged_evidence": "P16 source Cp/h/s and exact carried-enthalpy constitutive identity, P13 water activity/heat source comparison, P15 analytic carbonate shape and P17 DTU definitions are unaffected and not rerun.",
+      "UQ": "No ensemble is part of P20; P21 budget decision remains pending.",
+      "scope": "Positive dilute-source mu and same-temperature Wilke, unchanged shared Darcy flux and energy/entropy accounting; no raw fields saved."
     }
   },
   "caloric_background": {
@@ -5399,5 +5631,63 @@
     "reference_policy": "Root species h_ref/s_ref and reference.temperature retained; replace only Cp and sensible integrals. Legacy species.cp entries still parameterize the swept historical host and inherited algebra before explicit current-host replacement; they are not current gas/mineral Cp.",
     "extrapolation_status": "assumed; report actual sampled temperatures outside each source range",
     "formation_heat_policy": "No separate reaction or phase heat added."
+  },
+  "viscosity_background": {
+    "model": "pure_zero_density_source_curves_with_temperature_dependent_Wilke",
+    "source_parameter_names": [
+      "transport.viscosity.lemmon.log_coefficients",
+      "transport.viscosity.lemmon.prefactor",
+      "transport.viscosity.N2.molar_mass",
+      "transport.viscosity.N2.diameter",
+      "transport.viscosity.N2.well_depth",
+      "transport.viscosity.O2.molar_mass",
+      "transport.viscosity.O2.diameter",
+      "transport.viscosity.O2.well_depth",
+      "transport.viscosity.CO2.coefficients",
+      "transport.viscosity.CO2.factor",
+      "transport.viscosity.CO2.unit_scale",
+      "transport.viscosity.CO2.temperature_scale",
+      "transport.viscosity.H2O.coefficients",
+      "transport.viscosity.H2O.temperature_scale",
+      "transport.viscosity.H2O.unit_scale",
+      "transport.viscosity.H2O.prefactor"
+    ],
+    "species_domains": {
+      "N2": {
+        "source_temperature_range_k": [
+          120.0,
+          1700.0
+        ],
+        "domain_kind": "selected conservative subset within published dilute-gas data span; not a uniform accuracy boundary",
+        "source": "lemmon2004_viscosity"
+      },
+      "O2": {
+        "source_temperature_range_k": [
+          120.0,
+          1700.0
+        ],
+        "domain_kind": "selected conservative subset within published dilute-gas data span; not a uniform accuracy boundary",
+        "source": "lemmon2004_viscosity"
+      },
+      "CO2": {
+        "source_temperature_range_k": [
+          100,
+          2000
+        ],
+        "domain_kind": "admitted source zero-density correlation domain",
+        "source": "co2_2017_viscosity"
+      },
+      "H2O": {
+        "source_temperature_range_k": [
+          273.16,
+          1173.15
+        ],
+        "domain_kind": "recommended dilute-limit temperature region; highT extrapolation explicitly assumed",
+        "source": "iapws2008_viscosity"
+      }
+    },
+    "outside_domain_status": "assumed mathematical continuation, no clipping or silent source qualification",
+    "pressure_definition": "rho->0 bulk constitutive limit; no finite-density/critical correction or pore confinement accuracy",
+    "face_definition": "Same reciprocal-log temperature and symmetric adjacent mole fractions as existing Darcy face; Phi recomputed from same-temperature pure viscosities."
   }
 }

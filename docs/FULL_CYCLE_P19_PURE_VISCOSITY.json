@@ -1,0 +1,368 @@
+{
+  "schema": "full_cycle_p19_pure_viscosity_v1",
+  "recorded_utc": "2026-09-30T22:52:21.540763+00:00",
+  "basis_head": "659cacf8e93d68cefbf9a4ed4a1e7fb56d31537c",
+  "host_call": "current make_cycle(config).gas_viscosity(T,unit species vector)",
+  "root_parameters_continuity_for_reuse": true,
+  "source_bytes_continuity_for_reuse": {
+    "src/sludge_vme/models/full_cycle.py": true,
+    "src/sludge_vme/models/full_cycle_gas.py": true,
+    "src/sludge_vme/models/full_cycle_solid.py": true
+  },
+  "source_metadata": {
+    "temperature_parameter": "validation.viscosity.temperatures",
+    "current_host": "FiniteGasFullCycle.gas_viscosity at pure composition; current alpha1",
+    "source_paths": {
+      "N2_O2": "data/sandbox/research/lemmon2004-dilute-transport-v1/source-review.json",
+      "CO2": "data/sandbox/research/co2-viscosity2017-v1/review-v2.json",
+      "H2O_runtime": "data/sandbox/water/iapws-1.5.5-py3-none-any.whl"
+    },
+    "source_functions": {
+      "N2_O2": "sludge_sandbox.lemmon2004_dilute_transport.dilute_transport",
+      "CO2": "sludge_sandbox.co2_dilute_viscosity.CarbonDioxideDiluteViscosity",
+      "H2O": "iapws._iapws._Viscosity(rho=0,T); Eq11 only at zero density"
+    },
+    "reused_six_point_audit": "/Users/wanggaoying/Documents/Codex/2026-09-30/task/current-transport-gap-audit-20260930.json",
+    "source_urls": {
+      "N2_O2": "https://trc.nist.gov/refprop/FAQ/NAO.PDF",
+      "CO2": "https://doi.org/10.1063/1.4977429",
+      "H2O": "https://iapws.org/technical-guidance/release/viscosity.download"
+    },
+    "pressure_definition": "Pure rho->0 constitutive limit, not pure fluid at total mixture pressure, saturation curve or in-pore effective resistance.",
+    "domain_policy": "N2/O2 current298.15–1223.15K lies within cited dilute data spans; no uniform uncertainty proof. CO2 admitted100–2000K. Water above1173.15K is explicit high-T dilute extrapolation, even though source describes reasonable extrapolation to2500K.",
+    "budget": "24 reported states: reuse6 independent current-host/source values;18 new host/source evaluations. Zero integration, optimizer, root solve or parameter search.",
+    "accuracy_policy": "Report signed/relative deviations. No invented experimental pass limit; finite samples do not constitute uniform continuous error bounds.",
+    "coupling": "Changing pure curves requires temperature-dependent Wilke Phi; Darcy uses positive mu and existing common flux/enthalpy, no extra viscous heat."
+  },
+  "records": [
+    {
+      "species": "O2",
+      "temperature_k": 298.15,
+      "host_viscosity_pa_s": 2.0160000000000003e-05,
+      "source_zero_density_pa_s": 2.052843303517251e-05,
+      "signed_difference_pa_s": -3.684330351725061e-07,
+      "signed_relative_difference": -0.017947450472291248,
+      "reused_independent_six_point_audit": false,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 300.0,
+      "host_viscosity_pa_s": 2.0247482696962026e-05,
+      "source_zero_density_pa_s": 2.063070981420999e-05,
+      "signed_difference_pa_s": -3.8322711724796466e-07,
+      "signed_relative_difference": -0.018575566265005873,
+      "reused_independent_six_point_audit": true,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 600.0,
+      "host_viscosity_pa_s": 3.289213268157764e-05,
+      "source_zero_density_pa_s": 3.4712567453826606e-05,
+      "signed_difference_pa_s": -1.820434772248964e-06,
+      "signed_relative_difference": -0.05244310363013165,
+      "reused_independent_six_point_audit": true,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 1000.0,
+      "host_viscosity_pa_s": 4.7031210644691344e-05,
+      "source_zero_density_pa_s": 4.910653715314898e-05,
+      "signed_difference_pa_s": -2.075326508457637e-06,
+      "signed_relative_difference": -0.0422617156242416,
+      "reused_independent_six_point_audit": true,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 1173.15,
+      "host_viscosity_pa_s": 5.2593689691555585e-05,
+      "source_zero_density_pa_s": 5.45250907272933e-05,
+      "signed_difference_pa_s": -1.931401035737712e-06,
+      "signed_relative_difference": -0.0354222434107922,
+      "reused_independent_six_point_audit": false,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "O2",
+      "temperature_k": 1223.15,
+      "host_viscosity_pa_s": 5.415293029988472e-05,
+      "source_zero_density_pa_s": 5.602818585296394e-05,
+      "signed_difference_pa_s": -1.8752555530792184e-06,
+      "signed_relative_difference": -0.03346986029496823,
+      "reused_independent_six_point_audit": false,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 298.15,
+      "host_viscosity_pa_s": 1.764e-05,
+      "source_zero_density_pa_s": 1.7791606371782724e-05,
+      "signed_difference_pa_s": -1.5160637178272354e-07,
+      "signed_relative_difference": -0.008521230102255941,
+      "reused_independent_six_point_audit": false,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 300.0,
+      "host_viscosity_pa_s": 1.7716547359841772e-05,
+      "source_zero_density_pa_s": 1.7877064146009666e-05,
+      "signed_difference_pa_s": -1.605167861678939e-07,
+      "signed_relative_difference": -0.008978923208916426,
+      "reused_independent_six_point_audit": true,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 600.0,
+      "host_viscosity_pa_s": 2.878061609638043e-05,
+      "source_zero_density_pa_s": 2.9571769781834953e-05,
+      "signed_difference_pa_s": -7.911536854545227e-07,
+      "signed_relative_difference": -0.02675368066541978,
+      "reused_independent_six_point_audit": true,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 1000.0,
+      "host_viscosity_pa_s": 4.115230931410492e-05,
+      "source_zero_density_pa_s": 4.154045702526074e-05,
+      "signed_difference_pa_s": -3.881477111558173e-07,
+      "signed_relative_difference": -0.009343847876295266,
+      "reused_independent_six_point_audit": true,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 1173.15,
+      "host_viscosity_pa_s": 4.601947848011113e-05,
+      "source_zero_density_pa_s": 4.608286934882804e-05,
+      "signed_difference_pa_s": -6.339086871691218e-08,
+      "signed_relative_difference": -0.0013755842379750667,
+      "reused_independent_six_point_audit": false,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "N2",
+      "temperature_k": 1223.15,
+      "host_viscosity_pa_s": 4.738381401239912e-05,
+      "source_zero_density_pa_s": 4.7347690849456634e-05,
+      "signed_difference_pa_s": 3.612316294248881e-08,
+      "signed_relative_difference": 0.000762933995183492,
+      "reused_independent_six_point_audit": false,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "H2O",
+      "temperature_k": 298.15,
+      "host_viscosity_pa_s": 9.900000000000002e-06,
+      "source_zero_density_pa_s": 9.709045219394555e-06,
+      "signed_difference_pa_s": 1.9095478060544668e-07,
+      "signed_relative_difference": 0.019667719769602063,
+      "reused_independent_six_point_audit": false,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "H2O",
+      "temperature_k": 300.0,
+      "host_viscosity_pa_s": 9.942960252972422e-06,
+      "source_zero_density_pa_s": 9.768413427846745e-06,
+      "signed_difference_pa_s": 1.7454682512567736e-07,
+      "signed_relative_difference": 0.01786849281256852,
+      "reused_independent_six_point_audit": false,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "H2O",
+      "temperature_k": 600.0,
+      "host_viscosity_pa_s": 1.6152386584703306e-05,
+      "source_zero_density_pa_s": 2.1433364284235077e-05,
+      "signed_difference_pa_s": -5.280977699531771e-06,
+      "signed_relative_difference": -0.2463905166496003,
+      "reused_independent_six_point_audit": false,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "H2O",
+      "temperature_k": 1000.0,
+      "host_viscosity_pa_s": 2.3095683798732357e-05,
+      "source_zero_density_pa_s": 3.761075450343471e-05,
+      "signed_difference_pa_s": -1.4515070704702356e-05,
+      "signed_relative_difference": -0.3859287295971901,
+      "reused_independent_six_point_audit": false,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "H2O",
+      "temperature_k": 1173.15,
+      "host_viscosity_pa_s": 2.582725833067462e-05,
+      "source_zero_density_pa_s": 4.41936611391528e-05,
+      "signed_difference_pa_s": -1.836640280847818e-05,
+      "signed_relative_difference": -0.4155890762398661,
+      "reused_independent_six_point_audit": false,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "H2O",
+      "temperature_k": 1223.15,
+      "host_viscosity_pa_s": 2.659295684369339e-05,
+      "source_zero_density_pa_s": 4.603907466697144e-05,
+      "signed_difference_pa_s": -1.9446117823278054e-05,
+      "signed_relative_difference": -0.4223828989601468,
+      "reused_independent_six_point_audit": false,
+      "source_domain": "explicit dilute high-T extrapolation beyond1173.15K",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 298.15,
+      "host_viscosity_pa_s": 1.494e-05,
+      "source_zero_density_pa_s": 1.4905417132203777e-05,
+      "signed_difference_pa_s": 3.458286779622225e-08,
+      "signed_relative_difference": 0.0023201543096371667,
+      "reused_independent_six_point_audit": false,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 300.0,
+      "host_viscosity_pa_s": 1.5004830927212928e-05,
+      "source_zero_density_pa_s": 1.4993786441418576e-05,
+      "signed_difference_pa_s": 1.1044485794351616e-08,
+      "signed_relative_difference": 0.0007366041818391197,
+      "reused_independent_six_point_audit": false,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 600.0,
+      "host_viscosity_pa_s": 2.437541975509771e-05,
+      "source_zero_density_pa_s": 2.7863731986991403e-05,
+      "signed_difference_pa_s": -3.488312231893692e-06,
+      "signed_relative_difference": -0.12519185274687045,
+      "reused_independent_six_point_audit": false,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 1000.0,
+      "host_viscosity_pa_s": 3.485348645990519e-05,
+      "source_zero_density_pa_s": 4.117617365376211e-05,
+      "signed_difference_pa_s": -6.322687193856925e-06,
+      "signed_relative_difference": -0.15355208201282794,
+      "reused_independent_six_point_audit": false,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 1173.15,
+      "host_viscosity_pa_s": 3.897568075356351e-05,
+      "source_zero_density_pa_s": 4.610430562322912e-05,
+      "signed_difference_pa_s": -7.1286248696656105e-06,
+      "signed_relative_difference": -0.15461950404202454,
+      "reused_independent_six_point_audit": false,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    },
+    {
+      "species": "CO2",
+      "temperature_k": 1223.15,
+      "host_viscosity_pa_s": 4.013118941866456e-05,
+      "source_zero_density_pa_s": 4.7462464966563306e-05,
+      "signed_difference_pa_s": -7.3312755478987425e-06,
+      "signed_relative_difference": -0.1544647028565316,
+      "reused_independent_six_point_audit": false,
+      "source_domain": "within selected source-temperature coverage; no pressure or pore qualification",
+      "reference_kind": "calculated public correlation, not measured material"
+    }
+  ],
+  "summary": {
+    "O2": {
+      "max_abs_relative_difference": 0.05244310363013165,
+      "signed_relative_range": [
+        -0.05244310363013165,
+        -0.017947450472291248
+      ]
+    },
+    "N2": {
+      "max_abs_relative_difference": 0.02675368066541978,
+      "signed_relative_range": [
+        -0.02675368066541978,
+        0.000762933995183492
+      ]
+    },
+    "H2O": {
+      "max_abs_relative_difference": 0.4223828989601468,
+      "signed_relative_range": [
+        -0.4223828989601468,
+        0.019667719769602063
+      ]
+    },
+    "CO2": {
+      "max_abs_relative_difference": 0.15461950404202454,
+      "signed_relative_range": [
+        -0.15461950404202454,
+        0.0023201543096371667
+      ]
+    }
+  },
+  "states_total": 24,
+  "states_reused": 6,
+  "new_host_source_states": 18,
+  "new_integrations": 0,
+  "new_optimizations": 0,
+  "new_roots": 0,
+  "new_parameter_searches": 0,
+  "raw_fields_saved": false,
+  "source_accuracy_passed": null,
+  "continuous_uniform_error_bound_established": false,
+  "target_material_validated": false,
+  "elapsed_s": 0.10525687504559755,
+  "limitations": [
+    "These sampled discrepancies are not a continuous maximum-error bound. No empirical tolerance was invented.",
+    "N2/O2 and CO2 previously passed source arithmetic/printed-anchor checks; water wheel Eq11 was checked against the official formula and constants, not granted the unrelated IAPWS95 EOS33/33 qualification.",
+    "All references are pure zero-density bulk viscosity. No finite-density, mixture, slip, Knudsen or pore-radius qualification follows.",
+    "Water1223.15K is beyond1173.15K recommended validity; source describes reasonable dilute extrapolation, not equal uncertainty."
+  ],
+  "failure_and_repair": {
+    "recorded_utc": "2026-09-30T22:52:17.125832+00:00",
+    "error": "NotADirectoryError importing iapws155 wheel directly: package __init__ reads VERSION with a filesystem open",
+    "tool_elapsed_s": 0.504427083,
+    "new_reference_states_before_failure": 0,
+    "new_integrations": 0,
+    "new_fits": 0,
+    "repair": "Unpack the same existing wheel into a temporary runtime directory; do not modify source formula or install/download dependencies. One corrected invocation."
+  },
+  "independent_review": "p06_inverse read-only: scope/counts/units/zero-density/domain passed; source curves require NumPy complex/broadcast support and same-temperature Wilke Phi.",
+  "decision": {
+    "replace_pure_curves": true,
+    "reason": "The shared temperature power cannot reproduce the different published dilute-gas temperature dependences. Sampled deviations reach about42.24% for water and15.46% forCO2; these are not uniform error bounds. All four available correlations provide a coherent cited bulk dilute-gas basis within the existing low-density Wilke assumption, without fitting brick parameters. Replacement is based on source/form applicability and available implementation, not an invented percent pass threshold.",
+    "what_improves": "Pure bulk constitutive provenance and temperature dependence only.",
+    "what_does_not_improve": "No pressure-density correction, measured pore permeability, slip/Knudsen correction, accurate mixed-gas collision solution or target material qualification.",
+    "affected_coupling": "Same reciprocal-log face temperature drives pure curves and Wilke Phi; mixture viscosity enters existing Darcy flux, then species/enthalpy/entropy ledgers. No new storage, state, reaction or viscous heat."
+  }
+}

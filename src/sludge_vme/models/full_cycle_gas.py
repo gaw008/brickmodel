@@ -15,7 +15,7 @@ from scipy.integrate import solve_ivp
 from scipy.sparse import csc_matrix
 
 from .full_cycle import FullCycle, source_caloric_coefficients, source_caloric_integrals
-from .full_cycle_diagnostics import drying_water_diagnostics, free_water_ledger, gas_species_ledger, caloric_source_domain_coverage
+from .full_cycle_diagnostics import drying_water_diagnostics, free_water_ledger, gas_species_ledger, caloric_source_domain_coverage, viscosity_source_domain_coverage
 
 
 class FiniteGasFullCycle(FullCycle):
@@ -43,11 +43,23 @@ class FiniteGasFullCycle(FullCycle):
         self.gas_caloric_coefficients = source_caloric_coefficients(self, self.ng)
         self.water_cp_slope = self.p('species.water.cp_slope', 'J/mol/K2')
         self.viscosity_mixing = self.p('transport.viscosity_mixing_fraction', '1')
-        self.viscosity_factors = np.array([self.p('transport.viscosity_factor.'+s, '1') for s in self.ng])
+        self.viscosity_log_coefficients = np.array(self.p('transport.viscosity.lemmon.log_coefficients', '1'))
+        self.viscosity_lemmon_prefactor = self.p('transport.viscosity.lemmon.prefactor', 'Pa*s*nm2/(g*K/mol)^0.5')
+        self.viscosity_lemmon_species = {
+            name: (self.p('transport.viscosity.'+name+'.molar_mass', 'g/mol'),
+                   self.p('transport.viscosity.'+name+'.diameter', 'nm'),
+                   self.p('transport.viscosity.'+name+'.well_depth', 'K'))
+            for name in ('N2', 'O2')}
+        self.viscosity_co2_coefficients = self.p('transport.viscosity.CO2.coefficients', '1')
+        self.viscosity_co2_factor = self.p('transport.viscosity.CO2.factor', '1')
+        self.viscosity_co2_unit = self.p('transport.viscosity.CO2.unit_scale', 'Pa*s')
+        self.viscosity_co2_temperature = self.p('transport.viscosity.CO2.temperature_scale', 'K')
+        self.viscosity_water_coefficients = self.p('transport.viscosity.H2O.coefficients', '1')
+        self.viscosity_water_temperature = self.p('transport.viscosity.H2O.temperature_scale', 'K')
+        self.viscosity_water_unit = self.p('transport.viscosity.H2O.unit_scale', 'Pa*s')
+        self.viscosity_water_prefactor = self.p('transport.viscosity.H2O.prefactor', '1')
         gas_mw = self.mw[len(self.ns):]
-        mass_ratio = gas_mw[:, None]/gas_mw[None, :]
-        viscosity_ratio = self.viscosity_factors[:, None]/self.viscosity_factors[None, :]
-        self.viscosity_phi = (1+np.sqrt(viscosity_ratio)/mass_ratio**0.25)**2/np.sqrt(8*(1+mass_ratio))
+        self.viscosity_mass_ratio = gas_mw[:, None]/gas_mw[None, :]
         self.tortuosity = self.p('transport.tortuosity', '1')
         self.tortuosity_exponent = self.p('transport.tortuosity_porosity_exponent', '1')
         self.permeability = self.p('transport.permeability_ref', 'm2')
@@ -190,21 +202,47 @@ class FiniteGasFullCycle(FullCycle):
             molecular[:,j] -= exchange
         return molecular
 
-    def gas_viscosity(self, temperature, fractions):
-        """Low-pressure Wilke mixture with declared common temperature power.
+    def pure_gas_viscosity(self, temperature):
+        """Published bulk dilute-gas curves with complex-temperature support.
 
-        Pure viscosities are base(T)*factor_i, so their ratios and Wilke
-        phi_ij are temperature independent. Positive mole fractions and
-        coefficients give positive mixture viscosity. The root mixing
-        fraction interpolates from the preceding base law (zero) to Wilke
-        (one); intermediate values are an assumed model interpolation.
-        Pure reference factors and the shared power are not measured fits.
+        N2/O2: Lemmon2004 Eq2; CO2: Laesecke2017 Eq4;
+        water: IAPWS2008 Eq11. Root metadata states source domains and
+        extrapolation. These coefficients do not describe pore confinement.
+        """
+        T = np.asarray(temperature)
+        values = {}
+        for name, (mass, diameter, well_depth) in self.viscosity_lemmon_species.items():
+            log_reduced = np.log(T/well_depth)
+            log_omega = np.polynomial.polynomial.polyval(log_reduced, self.viscosity_log_coefficients)
+            values[name] = self.viscosity_lemmon_prefactor*np.sqrt(mass*T)/(diameter**2*np.exp(log_omega))
+        t = T/self.viscosity_co2_temperature
+        a0, a1, a2, a3, a4, a5, a6 = self.viscosity_co2_coefficients
+        sixth = t**(1/6)
+        third = sixth*sixth
+        root = np.sqrt(t)
+        denominator = a0+a1*sixth+a2*np.exp(a3*third)+(a4+a5*third)*np.exp(-third)+a6*root
+        values['CO2'] = self.viscosity_co2_unit*self.viscosity_co2_factor*root/denominator
+        reduced = T/self.viscosity_water_temperature
+        denominator = np.polynomial.polynomial.polyval(1/reduced, self.viscosity_water_coefficients)
+        values['H2O'] = self.viscosity_water_unit*self.viscosity_water_prefactor*np.sqrt(reduced)/denominator
+        return np.stack([values[name] for name in self.ng], axis=-1)
+
+    def gas_viscosity(self, temperature, fractions):
+        """Wilke mixing from pure curves and Phi at the same face temperature.
+
+        Positive pure curves give positive mixture viscosity. Alpha zero
+        explicitly retains the existing common-power control; no additional
+        storage or viscous heat is introduced into the shared Darcy flux.
         """
         base = self.viscosity*(temperature/self.Tr)**self.viscosity_exponent
         if self.viscosity_mixing == 0:
             return base
-        relative = np.sum(fractions*self.viscosity_factors/(fractions@self.viscosity_phi.T), axis=-1)
-        return base*((1-self.viscosity_mixing)+self.viscosity_mixing*relative)
+        pure = self.pure_gas_viscosity(temperature)
+        ratio = pure[..., :, None]/pure[..., None, :]
+        mass_ratio = self.viscosity_mass_ratio
+        phi = (1+np.sqrt(ratio)/mass_ratio**0.25)**2/np.sqrt(8*(1+mass_ratio))
+        mixture = np.sum(fractions*pure/np.sum(fractions[..., None, :]*phi, axis=-1), axis=-1)
+        return (1-self.viscosity_mixing)*base+self.viscosity_mixing*mixture
 
     def gas_molar_cp(self, T):
         return source_caloric_integrals(T, self.gas_caloric_coefficients, self.Tr)[0]
@@ -601,7 +639,7 @@ class FiniteGasFullCycle(FullCycle):
         report['dimension_check'] = {'passed':True,'consumed_parameter_units':self.used_units,
             'identities':['A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2=Cp (J/mol/K); dh/dT=Cp=T*ds/dT', 'gas h_face=d(g/T)/d(1/T) caloric secant (J/mol); same source integrals as stored h/s', 'nRT/V=Pa','Cp-R=Cv (J/mol/K)','mol*(kg/mol)=kg','J=mol*(J/mol)','W*s=J','Pa*m3=J',
                 '(m2/Pa/s)*(Pa/m)=m/s','D*c*area/distance=mol/s','molar_flux*(chemical_potential/T)=W/K',
-                'Wilke Phi and species viscosity ratios are dimensionless; sum(y_i*mu_i/sum(y_j*Phi_ij))=Pa*s',
+                'Pure source formulas return Pa*s with root unit scales; same-T Wilke Phi and species viscosity ratios are dimensionless; sum(y_i*mu_i/sum(y_j*Phi_ij))=Pa*s',
                 'solid_volume/bulk_volume=1; liquid_volume/bulk_volume=1',
                 'k_ref*(solid_fraction/reference_fraction)^m*(1+b*liquid_fraction)=W/m/K',
                 'sigma*(pore_diameter)*T^3=W/m/K; gas_porosity*exchange_factor=1',
@@ -894,8 +932,8 @@ class FiniteGasFullCycle(FullCycle):
             'gas_pair_factors':dict(zip(self.gas_pair_names,self.pair_factors.tolist())),
             'gas_pore_resistance':self.pore_resistance,
             'gas_pore_resistance_approximation':'beta=transport.pore_resistance is an assumed dimensionless amplitude. Cell ell=2*radius*(pore/initial_pore)^(1/3); internal face ell is the arithmetic mean, exterior ell is the outer cell value, independent of mesh width. K_i=(phi_face/tau_face)*ell_face*sqrt(R*Theta_face/M_i), K_ij=2/(1/K_i+1/K_j), D_pair=D_old_pair/(1+beta*D_old_pair/K_ij). Both D_old and K already include phi/tau, which is not applied again. On the positive physical domain with beta>=0 the shared pair coefficient is positive and symmetric, preserving zero total molecular molar flux and nonnegative pair entropy. Only molecular transport coefficients change; Darcy, conjugate carried enthalpy, U and S retain their preceding laws, without new states or heat sources. beta=0 exactly restores the preceding molecular arithmetic including its unit-pair shortcut; nonzero beta uses pairs even with unit factors. This is a pore-scale mobility hypothesis using an assumed pore diameter, not measured wall accommodation, a pore-throat distribution, full Knudsen, Maxwell-Stefan or dusty-gas transport. Non-equimolar wall friction, slip and thermal transpiration are not resolved. Earlier fixed-parameter UQ/calibration do not identify beta or validate this extension.',
-            'gas_viscosity_approximation':'Low-pressure Wilke mixture: mu_i=mu_ref*f_i*(T/T_ref)^b; Phi_ij=[1+sqrt(f_i/f_j)*(M_j/M_i)^(1/4)]^2/sqrt(8*(1+M_i/M_j)); mu_W=sum(y_i*mu_i/sum(y_j*Phi_ij)). Face composition is the arithmetic mean of adjacent mole fractions (including the external reservoir), evaluated at the existing reciprocal-log thermal mean. mu_face=(1-alpha)*mu_base+alpha*mu_W; alpha=0 exactly restores the preceding law. Nominal alpha=1. Positive coefficients preserve donor Darcy direction and its entropy structure, without extra storage or viscous heat addition. All pure reference factors and their common temperature exponent remain assumed. Face averaging is not a resolved variable-viscosity pore resistance; no pressure correction, slip, Knudsen, species-specific viscosity curves or material validation. New factors are fixed, not identified or range-covered by current UQ/calibration.',
-            'gas_viscosity_factors':dict(zip(self.ng,self.viscosity_factors.tolist())),
+            'gas_viscosity_approximation':'Pure zero-density curves: Lemmon2004 N2/O2, Laesecke2017 CO2 Eq4, IAPWS2008 H2O Eq11. Wilke Phi_ij(T) and mu_i(T) share the existing reciprocal-log face temperature and symmetric adjacent mole fractions. mu=(1-alpha)*historical_common_power+alpha*source_Wilke; nominalalpha1, explicitalpha0 preserves the common-law control. Positive mobility changes Darcy species flux and its shared enthalpy/entropy accounting, without storage or extra viscous heat. Root source domains and assumed extrapolation are explicit; no density/critical correction, slip, Knudsen, measured permeability or mixed-gas/pore accuracy qualification.',
+            'gas_viscosity_source_parameters':{key:self.config['parameters'][key] for key in self.config['viscosity_background']['source_parameter_names']},
             'gas_caloric_approximation':'USGS five-term source Cp with analytic reference-anchored h/s and exact caloric secant face enthalpy. Original formation/entropy anchors retained. No additional heat; source domains and assumed extrapolation declared in root caloric_background. Old linear-Cp UQ/fit evidence is historical.',
             'gas_caloric_coefficients':dict(zip(self.ng,self.gas_caloric_coefficients.tolist())),
             'water_caloric_approximation':'Liquid-water background Cp=c_ref+a*(T-Tr), with reference-anchored integrals h=h_ref+c_ref*(T-Tr)+a*(T-Tr)^2/2 and s=s_ref+c_ref*ln(T/Tr)+a*((T-Tr)-Tr*ln(T/Tr)). Same h/s enter stored u=h-P*v, phase-exchange affinity and energy/entropy accounts. Conjugate liquid-face background enthalpy h*=h_ref+c_ref*(Theta-Tr)+a*(Tl*Tright-2*Tr*Theta+Tr^2)/2 cancels standard-state mu/T differences; it is not h(Theta). Mechanical, mixing and retention-binding contributions remain separate. No new state, extra latent heat, or water equation of state. Reference Cp and slope are assumed; slope fixed in paired UQ and synthetic fit, its range and correlations not covered or identified. Zero water slope restores previous water calorics, preserving other slopes. No high-temperature liquid stability, critical-point behavior, hysteresis or material validation. Historical gas-storage-zero host is unchanged.',
@@ -965,4 +1003,5 @@ class FiniteGasFullCycle(FullCycle):
             'stages':{name:gas_species_ledger(self.config,gas_endpoints[i],gas_endpoints[i+1],
                 reference_inventory_mol=reference_inventory) for i,name in enumerate(self.config['stages'])}}
         report['caloric_source_domains']=caloric_source_domain_coverage(self, rows, self.ng)
+        report['viscosity_source_domains']=viscosity_source_domain_coverage(self, rows)
         return report,{'schema':'sludge_vme_full_cycle_fields_v2','cell_count':self.n,'rows':rows}

@@ -1,6 +1,19 @@
 # 全流程近似模型：离线使用与结果解释
 
-当前P16–P18版本已经完成必要运行验证，详见FULL_CYCLE_CURRENT_MODEL.md；下方P06–P11的次数/版本为历史记录。当前根304条参数（70literature/234assumed/0measured），六种纯物质背景Cp使用根caloric_background的公开五项式，h/s、总容量与面携焓一致；report.caloric_source_domains记录采样温区及来源域外次数，域外延拓仍assumed。
+当前权威状态（2026-09-30T23:11:44.927781+00:00）：P19/P20已完成来源纯黏度改进及当前三档物理数值验收，**P21当前核三方案分布与排名稳健性仍未完成，整个模型不能判完成**。原8组配对×3=24次设计与禁止重启旧24批次存在授权冲突；前述预算决定仍待用户明确答复，尚未启动任何当前核UQ。
+
+根现317参数：86 literature / 231 assumed / 0 measured。来源μ(T)及同温度Wilke已接入原共享Darcy通量，未新增储能或热源。81项质量/元素/完整能量最大残差0.05451679%，108项气体预算0.04842094%，四项要求最大加密差0.13112792%、附加压差0.36178638%，均通过原门槛；批次墙钟442.228086s，无重跑。名义干燥余水0.13602835%仍高于0.1%，工艺失败保留。
+
+水黏度超过1173.15K推荐上限的面采样1198/1198/2398个，Calcite热容超过1200K亦保留assumed外推。数值负小库存/熵量未裁剪；目标材料及产品代理精度待实测。P20同场九类映射/Python前向与CLI导入通过；P18固定方案及合成恢复属于旧黏度核，不能自动升级为新核分布或拟合证据。详见FULL_CYCLE_P20_SOURCE_VISCOSITY_RESULTS.json/.md及FULL_CYCLE_P21_UQ_BUDGET.json/.md。
+
+P18两个增量实际云字节恢复已由协调会话完成并读回收据；本次P19/P20增量尚按独立交付收据推进。全部历史/独有Git/离线环境恢复及20GB目标仍未完成。下方P01–P18“完成”结论均为历史阶段记录，当前判断以本段和FINAL_ACCEPTANCE.current_acceptance_matrix为准。
+
+当前Python只存汇总入口见`runs/full-cycle/p20-source-viscosity/cycle-worker.py`；`report.viscosity_source_domains`列实际Darcy面温度的来源域统计。名义alpha1读取根公开μ0公式，alpha0仅原幂律显式对照。所有系数预存在根文件，前向不导入iapws或沙盒，不下载来源数据。已有CLI --compare将触发24个完整周期，P21预算未明确前不得据示例自行运行。以下旧次数属于各自历史核。
+
+
+## P16–P18历史入口和运行证据
+
+P16–P18版本当时完成了必要运行验证，详见FULL_CYCLE_CURRENT_MODEL.md；下方P06–P11的次数/版本为历史记录。当前根304条参数（70literature/234assumed/0measured），六种纯物质背景Cp使用根caloric_background的公开五项式，h/s、总容量与面携焓一致；report.caloric_source_domains记录采样温区及来源域外次数，域外延拓仍assumed。
 
 最新实际离线CLI命令与exit0、10次真实前向收据在runs/full-cycle/p18-current/recovery/execution.json，必要摘要已纳入FULL_CYCLE_P18_CURRENT_VALIDATION.json。派生window.parameters.json只含drying_ramp+drying，根配置没有被拟合写回。九类观测已在P16同一当前轨迹上读取，非重新完成九条实测曲线校准。新名义干燥0.13602805%>0.1%，合成窗口通过不能改判。旧--compare的24次UQ及旧三参数/双参数恢复没有在新热容核上重启，其历史结果不自动验证新核全部假设。
 

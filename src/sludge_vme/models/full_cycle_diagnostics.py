@@ -322,3 +322,33 @@ def caloric_source_domain_coverage(model, rows, names):
             'coverage_note': 'Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes.',
         }
     return result
+
+
+def viscosity_source_domain_coverage(model, rows):
+    """Reconstruct the same sampled Darcy face temperature from saved rows."""
+    import numpy as np
+
+    temperatures = []
+    for row in rows:
+        left = np.asarray(row['temperature_k'])
+        right = np.r_[left[1:], row['kiln_temperature_k']]
+        ratio = (left-right)/right
+        temperatures.append(left*np.divide(np.log1p(ratio), ratio,
+                                            out=np.ones_like(ratio), where=ratio != 0))
+    temperatures = np.asarray(temperatures)
+    result = {}
+    for name in model.ng:
+        domain = model.config['viscosity_background']['species_domains'][name]
+        lower, upper = domain['source_temperature_range_k']
+        result[name] = {
+            'source_temperature_range_k': [lower, upper],
+            'domain_kind': domain['domain_kind'],
+            'sampled_face_temperature_range_k': [float(temperatures.min()), float(temperatures.max())],
+            'face_time_samples': int(temperatures.size),
+            'below_source_samples': int(np.count_nonzero(temperatures < lower)),
+            'above_source_samples': int(np.count_nonzero(temperatures > upper)),
+            'source_law_weight': model.viscosity_mixing,
+            'outside_source_status': model.config['viscosity_background']['outside_domain_status'],
+            'coverage_note': 'Sampled reciprocal-log Darcy face temperatures, including reservoir face and species with small fractions; no statement about every solver evaluation or finite-density/pore validity.',
+        }
+    return result

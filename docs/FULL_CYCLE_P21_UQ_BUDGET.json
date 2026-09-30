@@ -1,0 +1,157 @@
+{
+  "schema": "current_kernel_uq_budget_decision_v1",
+  "recorded_utc": "2026-09-30T23:02:06.934750+00:00",
+  "status": "awaiting_explicit_budget_decision_no_ensemble_started",
+  "requirement": "Current SPEC requires three-scenario distributions and ranking robustness analysis. P18 fixed nominal outputs do not meet it.",
+  "independent_review": "p02_scope_review; read-only, no computations",
+  "current_root_design": {
+    "samples": {
+      "value": 8,
+      "unit": "1",
+      "range": [
+        8,
+        8
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": ""
+    },
+    "seed": {
+      "value": 20260926,
+      "unit": "1",
+      "range": [
+        20260926,
+        20260926
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": ""
+    },
+    "uncertain_parameters": [
+      "thermal.conductivity",
+      "thermal.h",
+      "sintering.rate_ref",
+      "kinetics.char_oxidation.A",
+      "kinetics.decarbonation.A",
+      "material.water_dry_ratio",
+      "transport.diffusivity_ref",
+      "solid.axial_modulus",
+      "solid.thermal_expansion",
+      "quartz.axial_transition_strain",
+      "thermal.solid_fraction_exponent",
+      "thermal.liquid_volume_gain",
+      "kinetics.organic_carbonization.A",
+      "kinetics.organic_carbonization.E",
+      "liquid.active_matrix_fraction",
+      "liquid.transition_temperature",
+      "liquid.mobility_gain",
+      "thermal.pore_radiation_factor",
+      "transport.liquid_water_mobility",
+      "water.retention_scale",
+      "liquid.relaxation_time_ref",
+      "liquid.relaxation_activation_energy",
+      "water.binding_energy",
+      "water.binding_heat_capacity",
+      "water.site_survival_fraction"
+    ],
+    "parameter_count": 25,
+    "marginals": "independent uniform over root ranges, assumed joint distribution",
+    "scenario_pairing": "same saved sample vector under standard,lower_peak,longer_hold",
+    "modelled_correlations": "independence assumption only; measured kinetics/phase/mechanics correlations unknown",
+    "source_property_groups": "P16 caloric and P20 pure-viscosity sources fixed jointly, not sampled as independent coefficients",
+    "fixed_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope. Phase modulus contrast is fixed at four; neither its range nor its correlation with eigenstrain, porosity stiffness or phase kinetics is covered or identified. Disordered-minus-ordered heat capacity contrast is fixed at 10 J/mol/K; its range and correlations are neither covered nor identified. Phase conductivity contrast is fixed at two; its signed range and correlations with phase kinetics, baseline conductivity, moisture and pore radiation are not covered or identified. Tortuosity porosity exponent is fixed at one; its range and correlation with diffusivity, initial tortuosity, liquid occupancy and permeability are not covered or identified. Six positive gas-pair mobility factors are fixed at their declared nominal values; their ranges and correlations with the common diffusivity, tortuosity and permeability are not covered or identified. P20 pure viscosity source coefficient groups and Wilke mixing fraction are fixed; source uncertainty and real mixture/pore errors are not sampled or identified. Historical four assumed species factors were removed, not silently retained as active parameters. P16 four-gas plus calcite/lime source-caloric coefficient sets (30 coefficients) are fixed together; their source uncertainty and correlations are not sampled or identified. Four remaining non-quartz dry background Cp slopes are fixed; ranges and correlations with kinetics, thermal and phase properties are not covered or identified. Liquid-water background Cp slope is fixed at 0.01 J/mol/K2; its range and correlation with retention, phase exchange and heat transfer are not covered or identified. The intrinsic dry-solid conductivity temperature exponent is also fixed; its declared range and correlation are not sampled or identified. Final-model refresh: carbonate phase resistance and pore-scale gas-pair resistance are explicitly fixed at their nominal values of one. Their ranges and correlations are not sampled or identified. Reuse the same 25-dimensional paired draws and three schedules; nominal permeability remains 3.75e-14 m2. Current-run results must be recorded separately from earlier ensembles; process and physical failures remain explicit."
+  },
+  "reuse": {
+    "valid": [
+      "Saved8 paired25-parameter draws and three schedules",
+      "Existing distribution/Wilson summarizer",
+      "P20 nominal/time/grid numerical evidence once actually complete"
+    ],
+    "invalid": [
+      "Old24 outputs have no rigorous current-kernel error bound after caloric and viscosity changes",
+      "P18 three nominal points are not any of the8 random draws",
+      "Numerical refinements and synthetic inverse forwards are not UQ samples"
+    ]
+  },
+  "alternatives": [
+    {
+      "id": "original_design_once",
+      "new_full_forwards": 24,
+      "samples": 8,
+      "scenarios": 3,
+      "scope": "Current final-kernel exploratory distribution and paired ranking confidence assessment; robust winner may remain unestablished.",
+      "authorization_needed": "Narrow exception to user prohibition on restarting old24UQ. No renamed/split batch bypass."
+    },
+    {
+      "id": "reduced_design_only_if_explicitly_selected",
+      "new_full_forwards": 12,
+      "samples": 4,
+      "scenarios": 3,
+      "scope": "Smaller exploratory empirical distribution only, not equivalent to current fixed8-sample design; four is not statistically sufficient in general.",
+      "authorization_needed": "Change both root sample value and allowed range before execution; not started."
+    },
+    {
+      "id": "keep_prohibition",
+      "new_full_forwards": 0,
+      "scope": "Current-kernel distribution requirement remains incomplete; historical UQ and nominal comparison retained."
+    }
+  ],
+  "statistics": {
+    "metrics": {
+      "porosity": "minimize",
+      "residual_carbon_kg": "minimize",
+      "shrinkage": "minimize",
+      "peak_temperature_difference_k": "minimize",
+      "strength_pa": "maximize",
+      "absorption_kg_kg": "minimize"
+    },
+    "tail_quantiles": "Existing empirical5/50/95 percentiles describe this tiny sample, not stable population tails.",
+    "paired_tests": "Existing win/loss/tie and Wilson interval; signed residual carbon and root tie scale retained.",
+    "eight_of_eight_win_wilson_95_lower_approx": 0.6756,
+    "root_robust_threshold": 0.9,
+    "claim_limit": "Eight samples cannot prove the existing90% robust-win criterion with95% Wilson confidence even at8/8 wins; no robust winner demonstrated differs from proof of instability. Do not auto-expand to chase PASS.",
+    "no_probability_transfer": "Assumed independent parameter marginals are not real production success probabilities; physical/process failures are retained."
+  },
+  "cost_proposal": {
+    "P16_nominal_reference_s_per_forward": [
+      143,
+      158
+    ],
+    "24_reference_sum_s": [
+      3432,
+      3792
+    ],
+    "three_worker_ideal_wall_s": [
+      1144,
+      1264
+    ],
+    "uncertainty": "Estimates only, actual sampled cases and P20 source viscosity may be slower. Old24 batch actual sum5570.415946s and8-worker wall820.108895s show variability.",
+    "proposed_concurrency": 3,
+    "proposed_per_case_wall_limit_s": 900,
+    "proposed_total_wall_limit_s": 2700,
+    "limits_status": "Proposal not executed, not entered into root until explicitly authorized; fixed timeout failures stay failures, no replacement samples.",
+    "P20_nominal_observed_s": 170.6650719579775,
+    "P20_24_identical_nominal_ideal_three_worker_wall_s": 1365.32057566382,
+    "P20_update_note": "One P20 nominal is 170.665s; ideal24/3 would be22.76min. Not a sampled-ensemble runtime bound; previous proposed900s/case2700s/batch remains an unexecuted proposal requiring explicit approval."
+  },
+  "summaries_to_keep": [
+    "parameter overrides and scenario",
+    "exit,elapsed and physical/process outcomes",
+    "six metrics and stage endpoint states",
+    "whole/eight-stage mass,element,complete energy budgets",
+    "gas endpoint inventories and whole/eight-stage species budgets",
+    "source-domain sampling flags",
+    "paired distribution and ranking results"
+  ],
+  "raw_fields_to_save": false,
+  "prohibitions_preserved": [
+    "No wide-permeability failed batches",
+    "No third drying search or altered acceptance threshold",
+    "No old22+17 recovery repeat",
+    "No default restart of old24 ensemble",
+    "No SHA, new tests, scheduler, history deletion"
+  ],
+  "root_note_correction": "P19 corrected obsolete Cp-slope text; P20 replaced old4 viscosity factors with16 fixed source entries. Neither silently changes25 sampled parameters.",
+  "actual_new_integrations": 0,
+  "decision_request": "Question sent to user asynchronously; elapsed time is not approval."
+}
