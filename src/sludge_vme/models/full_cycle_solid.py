@@ -17,6 +17,8 @@ matrix eigenstrain amplitude and zero phase modulus contrast.
 import numpy as np
 
 from .full_cycle_gas import FiniteGasFullCycle
+from .full_cycle import source_caloric_coefficients, source_caloric_integrals
+from .full_cycle_diagnostics import caloric_source_domain_coverage
 
 
 class ThermoelasticFullCycle(FiniteGasFullCycle):
@@ -25,7 +27,12 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         self.p('solid.thermoelastic','1')
         self.quartz=self.ns.index('silica')
         self.dry_caloric_indices=np.array([i for i in range(len(self.ns)) if i not in (self.water_index,self.quartz)])
-        self.dry_cp_slope=np.array([self.p('species.'+self.ns[i]+'.cp_slope','J/mol/K2') for i in self.dry_caloric_indices])
+        self.mineral_caloric_indices=np.array([self.ns.index(name) for name in config['caloric_background']['minerals']])
+        self.mineral_caloric_coefficients=source_caloric_coefficients(self, config['caloric_background']['minerals'])
+        self.linear_dry_indices=np.array([i for i in self.dry_caloric_indices if i not in self.mineral_caloric_indices])
+        self.dry_cp_slope=np.array([self.p('species.'+self.ns[i]+'.cp_slope','J/mol/K2') for i in self.linear_dry_indices])
+        self.linear_dry_columns=[list(self.dry_caloric_indices).index(i) for i in self.linear_dry_indices]
+        self.mineral_dry_columns=[list(self.dry_caloric_indices).index(i) for i in self.mineral_caloric_indices]
         self.tc=self.p('quartz.transition_temperature','K')
         self.latent=self.p('quartz.latent_heat','J/mol')
         self.width=self.p('quartz.transition_width','K')
@@ -269,14 +276,20 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
 
     def dry_background_cp(self,T):
         """Reference-anchored Cp of non-quartz dry species, before phase terms."""
-        return self.cp[self.dry_caloric_indices]+(T[...,None]-self.Tr)*self.dry_cp_slope
+        cp=np.broadcast_to(self.cp[self.dry_caloric_indices],T.shape+(len(self.dry_caloric_indices),)).astype(np.result_type(T,float),copy=True)
+        cp[...,self.linear_dry_columns]+=(T[...,None]-self.Tr)*self.dry_cp_slope
+        cp[...,self.mineral_dry_columns]=source_caloric_integrals(T,self.mineral_caloric_coefficients,self.Tr)[0]
+        return cp
 
     def thermo(self,T):
         h,s=super().thermo(T)
         if np.any(self.dry_cp_slope != 0):
             delta=T[...,None]-self.Tr
-            h[...,self.dry_caloric_indices]+=self.dry_cp_slope*delta**2/2
-            s[...,self.dry_caloric_indices]+=self.dry_cp_slope*(delta-self.Tr*np.log(T[...,None]/self.Tr))
+            h[...,self.linear_dry_indices]+=self.dry_cp_slope*delta**2/2
+            s[...,self.linear_dry_indices]+=self.dry_cp_slope*(delta-self.Tr*np.log(T[...,None]/self.Tr))
+        _,mineral_h,mineral_s=source_caloric_integrals(T,self.mineral_caloric_coefficients,self.Tr)
+        h[...,self.mineral_caloric_indices]=self.h0[self.mineral_caloric_indices]+mineral_h
+        s[...,self.mineral_caloric_indices]=self.s0[self.mineral_caloric_indices]+mineral_s
         _,hq,sq=self.quartz_thermo(T)
         h[...,self.quartz]=self.h0[self.quartz]+hq
         s[...,self.quartz]=self.s0[self.quartz]+sq
@@ -303,7 +316,9 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         cpq,_,_=self.quartz_thermo(T)
         capacity=super().caloric_capacity(T,ns,ng)+ns[:,self.quartz]*(cpq-self.cp[self.quartz])
         if np.any(self.dry_cp_slope != 0):
-            capacity+=np.sum(ns[:,self.dry_caloric_indices]*(T[:,None]-self.Tr)*self.dry_cp_slope,axis=1)
+            capacity+=np.sum(ns[:,self.linear_dry_indices]*(T[:,None]-self.Tr)*self.dry_cp_slope,axis=1)
+        mineral_cp=source_caloric_integrals(T,self.mineral_caloric_coefficients,self.Tr)[0]
+        capacity+=np.sum(ns[:,self.mineral_caloric_indices]*(mineral_cp-self.cp[self.mineral_caloric_indices]),axis=1)
         if not self.kinetic_liquid:
             capacity+=ns[:,self.matrix]*self.liquid_active*self.liquid_phase(T)[2]
         elif self.liquid_cp != 0:
@@ -579,8 +594,8 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
 
     def summarize(self,times,states):
         report,fields=super().summarize(times,states)
-        report['dry_caloric_approximation']='Non-quartz dry species Cp_i=c_i+a_i*(T-Tr), h_i=h_ref_i+c_i*(T-Tr)+a_i*(T-Tr)^2/2, s_i=s_ref_i+c_i*ln(T/Tr)+a_i*((T-Tr)-Tr*ln(T/Tr)). Six nonnegative slopes are assumed, not measured mineral calorimetry. Reaction affinities, composition energy/entropy and fixed-state heat capacity use the same analytic integrals. Quartz retains its independent law; matrix phase contrast and elastic/retention contributions remain separate. No new inventory or additional reaction heat. Zero slopes exactly recover preceding thermoelastic host; gas-only and swept historical hosts are unchanged. Slopes fixed in current paired UQ and synthetic recovery; their ranges/correlations are not covered or identified.'
-        report['dry_cp_slopes_j_mol_k2']={self.ns[i]:float(a) for i,a in zip(self.dry_caloric_indices,self.dry_cp_slope)}
+        report['dry_caloric_approximation']='Calcite/lime use source five-term Cp with reference-anchored analytic h/s; other non-quartz dry backgrounds retain their assumed linear Cp. Quartz, matrix phase, elasticity and binding remain separate. No added state or reaction heat. Source-domain extrapolation explicitly assumed; original linear-Cp UQ/fit evidence is historical.'
+        report['dry_cp_slopes_j_mol_k2']={self.ns[i]:float(a) for i,a in zip(self.linear_dry_indices,self.dry_cp_slope)}
         report['summary']['minimum_sampled_dry_background_cp_j_mol_k']=min(min(v) for r in fields['rows'] for v in r['dry_background_molar_cp_j_mol_k'].values())
         report['summary']['maximum_sampled_dry_background_cp_j_mol_k']=max(max(v) for r in fields['rows'] for v in r['dry_background_molar_cp_j_mol_k'].values())
         residual=report['state_domain']['maximum_mechanical_equilibrium_residual_pa']
@@ -654,6 +669,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
             report['summary']['peak_absolute_elastic_phase_affinity_j_per_active_mol']=max(max(abs(np.array(r['liquid_elastic_phase_affinity_j_per_active_mol']))) for r in fields['rows'])
         report['mechanical_equilibrium_relative']=residual/self.P
         report['physical_consistency_passed']=bool(report['physical_consistency_passed'] and residual/self.P<self.p('acceptance.balance_relative','1'))
+        report['caloric_source_domains'].update(caloric_source_domain_coverage(self, fields['rows'], self.config['caloric_background']['minerals']))
         return report,fields
 
     def integrate(self):

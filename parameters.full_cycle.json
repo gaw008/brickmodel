@@ -74,7 +74,7 @@
     "effective_liquid_phase": {
       "identity": "assumed",
       "location": "docs/FULL_CYCLE_REPORT.md; src/sludge_vme/models/full_cycle_solid.py liquid_phase",
-      "note": "Engineering fluxed-matrix proxy carried by a fraction of current metakaolin, with unchanged Al2Si2O7 composition and molar volume. Two-state free energy gives equilibrium liquid fraction, latent enthalpy and entropy; these parameters are not pure metakaolin melting properties, measured mineral fractions or a phase diagram. No kinetic hysteresis or quenched glass."
+      "note": "Engineering fluxed-matrix proxy carried by a fraction of current metakaolin, with unchanged Al2Si2O7 composition and molar volume. Two-state free energy gives equilibrium liquid fraction, latent enthalpy and entropy; these parameters are not pure metakaolin melting properties, measured mineral fractions or a phase diagram. The current host adds finite-rate phase relaxation and retained-disorder proxy on cooling; this is not a measured quenched-glass fraction, crystallization kinetics, or a mineral phase diagram."
     },
     "pore_radiation": {
       "identity": "assumed",
@@ -203,6 +203,12 @@
       "data_doi": "10.5281/zenodo.17395250",
       "location": "data/sandbox/research/donat2025-carbonation-data-v1/source-contract.json",
       "note": "High-purity limestone TGA; nominal dry feed15vol%CO2, source approximate capacity; actual particle pressure/active inventory unknown."
+    },
+    "usgs_caloric": {
+      "identity": "literature",
+      "url": "https://pubs.usgs.gov/bul/2131/report.pdf",
+      "location": "data/sandbox/research/carbon-gas-thermochemistry-v1/source.json; data/sandbox/research/hydrogen-steam-thermochemistry-v1/source.json; data/sandbox/research/calcite-thermochemistry-v1/facts.json",
+      "note": "Robie/Hemingway1995 standard-pressure Cp polynomials, original reference h/s anchors preserved. Coefficients are source values, not fits to brick data; source temperature domains and explicit engineering extrapolation separately declared."
     }
   },
   "parameters": {
@@ -534,7 +540,7 @@
       ],
       "source": "legacy",
       "status": "assumed",
-      "note": "Reference background Cp at reference.temperature for thermoelastic host; linear slope integrated into h/s. Quartz, matrix phase and mechanical contributions remain separate. Other historical hosts use constant Cp. Assumed, not a measured mineral fit."
+      "note": "Legacy constant background for the historical swept host and inherited algebra/energy coordinate scaling. Current finite-gas/thermoelastic source law explicitly replaces this species Cp/h/s/capacity with caloric_A1..A5; this entry is not its current source reference Cp."
     },
     "species.calcite.volume": {
       "value": 3.693e-05,
@@ -578,7 +584,7 @@
       ],
       "source": "legacy",
       "status": "assumed",
-      "note": "Reference background Cp at reference.temperature for thermoelastic host; linear slope integrated into h/s. Quartz, matrix phase and mechanical contributions remain separate. Other historical hosts use constant Cp. Assumed, not a measured mineral fit."
+      "note": "Legacy constant background for the historical swept host and inherited algebra/energy coordinate scaling. Current finite-gas/thermoelastic source law explicitly replaces this species Cp/h/s/capacity with caloric_A1..A5; this entry is not its current source reference Cp."
     },
     "species.lime.volume": {
       "value": 1.676e-05,
@@ -710,7 +716,7 @@
       ],
       "source": "legacy",
       "status": "assumed",
-      "note": "Reference Cp at reference.temperature for finite-inventory gas with linear temperature slope; historical swept-gas host retains constant Cp. Assumed, not a measured calorimetric fit."
+      "note": "Legacy constant background for the historical swept host and inherited algebra/energy coordinate scaling. Current finite-gas/thermoelastic source law explicitly replaces this species Cp/h/s/capacity with caloric_A1..A5; this entry is not its current source reference Cp."
     },
     "species.N2.h_ref": {
       "value": 0.0,
@@ -743,7 +749,7 @@
       ],
       "source": "legacy",
       "status": "assumed",
-      "note": "Reference Cp at reference.temperature for finite-inventory gas with linear temperature slope; historical swept-gas host retains constant Cp. Assumed, not a measured calorimetric fit."
+      "note": "Legacy constant background for the historical swept host and inherited algebra/energy coordinate scaling. Current finite-gas/thermoelastic source law explicitly replaces this species Cp/h/s/capacity with caloric_A1..A5; this entry is not its current source reference Cp."
     },
     "species.H2O.h_ref": {
       "value": -241800,
@@ -776,7 +782,7 @@
       ],
       "source": "legacy",
       "status": "assumed",
-      "note": "Reference Cp at reference.temperature for finite-inventory gas with linear temperature slope; historical swept-gas host retains constant Cp. Assumed, not a measured calorimetric fit."
+      "note": "Legacy constant background for the historical swept host and inherited algebra/energy coordinate scaling. Current finite-gas/thermoelastic source law explicitly replaces this species Cp/h/s/capacity with caloric_A1..A5; this entry is not its current source reference Cp."
     },
     "species.CO2.h_ref": {
       "value": -393500,
@@ -809,7 +815,7 @@
       ],
       "source": "legacy",
       "status": "assumed",
-      "note": "Reference Cp at reference.temperature for finite-inventory gas with linear temperature slope; historical swept-gas host retains constant Cp. Assumed, not a measured calorimetric fit."
+      "note": "Legacy constant background for the historical swept host and inherited algebra/energy coordinate scaling. Current finite-gas/thermoelastic source law explicitly replaces this species Cp/h/s/capacity with caloric_A1..A5; this entry is not its current source reference Cp."
     },
     "kinetics.evaporation.A": {
       "value": 20000.0,
@@ -2946,50 +2952,6 @@
       "status": "assumed",
       "note": "Positive interpolation mu=(1-alpha)*mu_base+alpha*mu_Wilke. One enables Wilke at symmetric face mole fractions; zero exactly restores preceding common viscosity. Intermediate alpha is an assumed model interpolation, not species fraction. Fixed in UQ and synthetic fit."
     },
-    "species.O2.cp_slope": {
-      "value": 0.006,
-      "unit": "J/mol/K2",
-      "range": [
-        0.0,
-        0.03
-      ],
-      "source": "gas_caloric",
-      "status": "assumed",
-      "note": "Linear Cp slope for finite-inventory gas host; no measured calibration. Zero restores constant reference Cp."
-    },
-    "species.N2.cp_slope": {
-      "value": 0.004,
-      "unit": "J/mol/K2",
-      "range": [
-        0.0,
-        0.03
-      ],
-      "source": "gas_caloric",
-      "status": "assumed",
-      "note": "Linear Cp slope for finite-inventory gas host; no measured calibration. Zero restores constant reference Cp."
-    },
-    "species.H2O.cp_slope": {
-      "value": 0.01,
-      "unit": "J/mol/K2",
-      "range": [
-        0.0,
-        0.03
-      ],
-      "source": "gas_caloric",
-      "status": "assumed",
-      "note": "Linear Cp slope for finite-inventory gas host; no measured calibration. Zero restores constant reference Cp."
-    },
-    "species.CO2.cp_slope": {
-      "value": 0.02,
-      "unit": "J/mol/K2",
-      "range": [
-        0.0,
-        0.03
-      ],
-      "source": "gas_caloric",
-      "status": "assumed",
-      "note": "Linear Cp slope for finite-inventory gas host; no measured calibration. Zero restores constant reference Cp."
-    },
     "species.kaolin.cp_slope": {
       "value": 0.06,
       "unit": "J/mol/K2",
@@ -3007,28 +2969,6 @@
       "range": [
         0.0,
         0.1
-      ],
-      "source": "dry_caloric",
-      "status": "assumed",
-      "note": "Linear background Cp slope for non-quartz dry species in thermoelastic host. No measured calorimetry. Phase and mechanical contributions separate; zero restores preceding background Cp."
-    },
-    "species.calcite.cp_slope": {
-      "value": 0.025,
-      "unit": "J/mol/K2",
-      "range": [
-        0.0,
-        0.08
-      ],
-      "source": "dry_caloric",
-      "status": "assumed",
-      "note": "Linear background Cp slope for non-quartz dry species in thermoelastic host. No measured calorimetry. Phase and mechanical contributions separate; zero restores preceding background Cp."
-    },
-    "species.lime.cp_slope": {
-      "value": 0.012,
-      "unit": "J/mol/K2",
-      "range": [
-        0.0,
-        0.05
       ],
       "source": "dry_caloric",
       "status": "assumed",
@@ -3318,6 +3258,347 @@
       "source": "policy",
       "status": "assumed",
       "note": "Fixed shape check points; old full curve previously exposed, not blind holdout."
+    },
+    "species.O2.caloric_A1": {
+      "value": 56.58,
+      "unit": "J/mol/K",
+      "range": [
+        56.58,
+        56.58
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.O2.caloric_A2": {
+      "value": -0.005255,
+      "unit": "J/mol/K2",
+      "range": [
+        -0.005255,
+        -0.005255
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.O2.caloric_A3": {
+      "value": 685600.0,
+      "unit": "J*K/mol",
+      "range": [
+        685600.0,
+        685600.0
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.O2.caloric_A4": {
+      "value": -578.0,
+      "unit": "J/mol/K0.5",
+      "range": [
+        -578.0,
+        -578.0
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.O2.caloric_A5": {
+      "value": 1.113e-06,
+      "unit": "J/mol/K3",
+      "range": [
+        1.113e-06,
+        1.113e-06
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.N2.caloric_A1": {
+      "value": 24.79,
+      "unit": "J/mol/K",
+      "range": [
+        24.79,
+        24.79
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.N2.caloric_A2": {
+      "value": 0.009648,
+      "unit": "J/mol/K2",
+      "range": [
+        0.009648,
+        0.009648
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.N2.caloric_A3": {
+      "value": 145900.0,
+      "unit": "J*K/mol",
+      "range": [
+        145900.0,
+        145900.0
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.N2.caloric_A4": {
+      "value": 0.0,
+      "unit": "J/mol/K0.5",
+      "range": [
+        0.0,
+        0.0
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.N2.caloric_A5": {
+      "value": -2.003e-06,
+      "unit": "J/mol/K3",
+      "range": [
+        -2.003e-06,
+        -2.003e-06
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.H2O.caloric_A1": {
+      "value": 27.057,
+      "unit": "J/mol/K",
+      "range": [
+        27.057,
+        27.057
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.H2O.caloric_A2": {
+      "value": 0.017584,
+      "unit": "J/mol/K2",
+      "range": [
+        0.017584,
+        0.017584
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.H2O.caloric_A3": {
+      "value": 276960.0,
+      "unit": "J*K/mol",
+      "range": [
+        276960.0,
+        276960.0
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.H2O.caloric_A4": {
+      "value": -27.656,
+      "unit": "J/mol/K0.5",
+      "range": [
+        -27.656,
+        -27.656
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.H2O.caloric_A5": {
+      "value": -2.5097e-06,
+      "unit": "J/mol/K3",
+      "range": [
+        -2.5097e-06,
+        -2.5097e-06
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.CO2.caloric_A1": {
+      "value": 88.11,
+      "unit": "J/mol/K",
+      "range": [
+        88.11,
+        88.11
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.CO2.caloric_A2": {
+      "value": -0.002698,
+      "unit": "J/mol/K2",
+      "range": [
+        -0.002698,
+        -0.002698
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.CO2.caloric_A3": {
+      "value": 723200.0,
+      "unit": "J*K/mol",
+      "range": [
+        723200.0,
+        723200.0
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.CO2.caloric_A4": {
+      "value": -1007.0,
+      "unit": "J/mol/K0.5",
+      "range": [
+        -1007.0,
+        -1007.0
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.CO2.caloric_A5": {
+      "value": 0.0,
+      "unit": "J/mol/K3",
+      "range": [
+        0.0,
+        0.0
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.calcite.caloric_A1": {
+      "value": 99.72,
+      "unit": "J/mol/K",
+      "range": [
+        99.72,
+        99.72
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.calcite.caloric_A2": {
+      "value": 0.02692,
+      "unit": "J/mol/K2",
+      "range": [
+        0.02692,
+        0.02692
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.calcite.caloric_A3": {
+      "value": -2158000.0,
+      "unit": "J*K/mol",
+      "range": [
+        -2158000.0,
+        -2158000.0
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.calcite.caloric_A4": {
+      "value": 0.0,
+      "unit": "J/mol/K0.5",
+      "range": [
+        0.0,
+        0.0
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.calcite.caloric_A5": {
+      "value": 0.0,
+      "unit": "J/mol/K3",
+      "range": [
+        0.0,
+        0.0
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.lime.caloric_A1": {
+      "value": 51.85,
+      "unit": "J/mol/K",
+      "range": [
+        51.85,
+        51.85
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.lime.caloric_A2": {
+      "value": 0.002444,
+      "unit": "J/mol/K2",
+      "range": [
+        0.002444,
+        0.002444
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.lime.caloric_A3": {
+      "value": -934000.0,
+      "unit": "J*K/mol",
+      "range": [
+        -934000.0,
+        -934000.0
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.lime.caloric_A4": {
+      "value": 0.0,
+      "unit": "J/mol/K0.5",
+      "range": [
+        0.0,
+        0.0
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "species.lime.caloric_A5": {
+      "value": 0.0,
+      "unit": "J/mol/K3",
+      "range": [
+        0.0,
+        0.0
+      ],
+      "source": "usgs_caloric",
+      "status": "literature",
+      "note": "Source coefficient of Cp=A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2; valid source temperature domain in caloric_background. Domain extrapolation is assumed, not source-qualified."
+    },
+    "validation.caloric.full_cycle_budget": {
+      "value": 900,
+      "unit": "s",
+      "range": [
+        900,
+        900
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Predeclared wall budget per P16/P18 standalone forward job and the single bounded P18 CLI recovery job; not simulation duration or material parameter."
     }
   },
   "species": [
@@ -3658,21 +3939,45 @@
     "transport.viscosity_factor.H2O",
     "transport.viscosity_factor.CO2",
     "transport.viscosity_mixing_fraction",
-    "species.O2.cp_slope",
-    "species.N2.cp_slope",
-    "species.H2O.cp_slope",
-    "species.CO2.cp_slope",
     "species.kaolin.cp_slope",
     "species.metakaolin.cp_slope",
-    "species.calcite.cp_slope",
-    "species.lime.cp_slope",
     "species.organic.cp_slope",
     "species.char.cp_slope",
     "species.water.cp_slope",
     "transport.liquid_water_activation_energy",
     "thermal.dry_temperature_exponent",
     "kinetics.carbonate.phase_resistance",
-    "transport.pore_resistance"
+    "transport.pore_resistance",
+    "species.O2.caloric_A1",
+    "species.O2.caloric_A2",
+    "species.O2.caloric_A3",
+    "species.O2.caloric_A4",
+    "species.O2.caloric_A5",
+    "species.N2.caloric_A1",
+    "species.N2.caloric_A2",
+    "species.N2.caloric_A3",
+    "species.N2.caloric_A4",
+    "species.N2.caloric_A5",
+    "species.H2O.caloric_A1",
+    "species.H2O.caloric_A2",
+    "species.H2O.caloric_A3",
+    "species.H2O.caloric_A4",
+    "species.H2O.caloric_A5",
+    "species.CO2.caloric_A1",
+    "species.CO2.caloric_A2",
+    "species.CO2.caloric_A3",
+    "species.CO2.caloric_A4",
+    "species.CO2.caloric_A5",
+    "species.calcite.caloric_A1",
+    "species.calcite.caloric_A2",
+    "species.calcite.caloric_A3",
+    "species.calcite.caloric_A4",
+    "species.calcite.caloric_A5",
+    "species.lime.caloric_A1",
+    "species.lime.caloric_A2",
+    "species.lime.caloric_A3",
+    "species.lime.caloric_A4",
+    "species.lime.caloric_A5"
   ],
   "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope. Phase modulus contrast is fixed at four; neither its range nor its correlation with eigenstrain, porosity stiffness or phase kinetics is covered or identified. Disordered-minus-ordered heat capacity contrast is fixed at 10 J/mol/K; its range and correlations are neither covered nor identified. Phase conductivity contrast is fixed at two; its signed range and correlations with phase kinetics, baseline conductivity, moisture and pore radiation are not covered or identified. Tortuosity porosity exponent is fixed at one; its range and correlation with diffusivity, initial tortuosity, liquid occupancy and permeability are not covered or identified. Six positive gas-pair mobility factors are fixed at their declared nominal values; their ranges and correlations with the common diffusivity, tortuosity and permeability are not covered or identified. Mixture viscosity species factors and mixing fraction are fixed; their ranges, correlations and identifiability are not covered. Four new gas Cp slopes are fixed; their ranges and correlations are not sampled or identified. Six non-quartz dry background Cp slopes are fixed; ranges and correlations with kinetics, thermal and phase properties are not covered or identified. Liquid-water background Cp slope is fixed at 0.01 J/mol/K2; its range and correlation with retention, phase exchange and heat transfer are not covered or identified. The intrinsic dry-solid conductivity temperature exponent is also fixed; its declared range and correlation are not sampled or identified. Final-model refresh: carbonate phase resistance and pore-scale gas-pair resistance are explicitly fixed at their nominal values of one. Their ranges and correlations are not sampled or identified. Reuse the same 25-dimensional paired draws and three schedules; nominal permeability remains 3.75e-14 m2. Current-run results must be recorded separately from earlier ensembles; process and physical failures remain explicit.",
   "mechanism_cases": [
@@ -4252,49 +4557,225 @@
     {
       "id": "gas_caloric_disabled",
       "overrides": {
-        "species.O2.cp_slope": {
-          "value": 0.0,
-          "unit": "J/mol/K2",
+        "species.O2.caloric_A1": {
+          "value": 32.0,
+          "unit": "J/mol/K",
           "range": [
-            0.0,
-            0.03
+            32.0,
+            32.0
           ],
-          "source": "gas_caloric",
+          "source": "policy",
           "status": "assumed",
-          "note": "Linear Cp slope for finite-inventory gas host; no measured calibration. Zero restores constant reference Cp."
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
         },
-        "species.N2.cp_slope": {
-          "value": 0.0,
+        "species.O2.caloric_A2": {
+          "value": 0,
           "unit": "J/mol/K2",
           "range": [
-            0.0,
-            0.03
+            0,
+            0
           ],
-          "source": "gas_caloric",
+          "source": "policy",
           "status": "assumed",
-          "note": "Linear Cp slope for finite-inventory gas host; no measured calibration. Zero restores constant reference Cp."
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
         },
-        "species.H2O.cp_slope": {
-          "value": 0.0,
-          "unit": "J/mol/K2",
+        "species.O2.caloric_A3": {
+          "value": 0,
+          "unit": "J*K/mol",
           "range": [
-            0.0,
-            0.03
+            0,
+            0
           ],
-          "source": "gas_caloric",
+          "source": "policy",
           "status": "assumed",
-          "note": "Linear Cp slope for finite-inventory gas host; no measured calibration. Zero restores constant reference Cp."
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
         },
-        "species.CO2.cp_slope": {
-          "value": 0.0,
+        "species.O2.caloric_A4": {
+          "value": 0,
+          "unit": "J/mol/K0.5",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.O2.caloric_A5": {
+          "value": 0,
+          "unit": "J/mol/K3",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.N2.caloric_A1": {
+          "value": 31.0,
+          "unit": "J/mol/K",
+          "range": [
+            31.0,
+            31.0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.N2.caloric_A2": {
+          "value": 0,
           "unit": "J/mol/K2",
           "range": [
-            0.0,
-            0.03
+            0,
+            0
           ],
-          "source": "gas_caloric",
+          "source": "policy",
           "status": "assumed",
-          "note": "Linear Cp slope for finite-inventory gas host; no measured calibration. Zero restores constant reference Cp."
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.N2.caloric_A3": {
+          "value": 0,
+          "unit": "J*K/mol",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.N2.caloric_A4": {
+          "value": 0,
+          "unit": "J/mol/K0.5",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.N2.caloric_A5": {
+          "value": 0,
+          "unit": "J/mol/K3",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.H2O.caloric_A1": {
+          "value": 38.0,
+          "unit": "J/mol/K",
+          "range": [
+            38.0,
+            38.0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.H2O.caloric_A2": {
+          "value": 0,
+          "unit": "J/mol/K2",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.H2O.caloric_A3": {
+          "value": 0,
+          "unit": "J*K/mol",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.H2O.caloric_A4": {
+          "value": 0,
+          "unit": "J/mol/K0.5",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.H2O.caloric_A5": {
+          "value": 0,
+          "unit": "J/mol/K3",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.CO2.caloric_A1": {
+          "value": 45.0,
+          "unit": "J/mol/K",
+          "range": [
+            45.0,
+            45.0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.CO2.caloric_A2": {
+          "value": 0,
+          "unit": "J/mol/K2",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.CO2.caloric_A3": {
+          "value": 0,
+          "unit": "J*K/mol",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.CO2.caloric_A4": {
+          "value": 0,
+          "unit": "J/mol/K0.5",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.CO2.caloric_A5": {
+          "value": 0,
+          "unit": "J/mol/K3",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
         }
       }
     },
@@ -4323,28 +4804,6 @@
           "status": "assumed",
           "note": "Linear background Cp slope for non-quartz dry species in thermoelastic host. No measured calorimetry. Phase and mechanical contributions separate; zero restores preceding background Cp."
         },
-        "species.calcite.cp_slope": {
-          "value": 0.0,
-          "unit": "J/mol/K2",
-          "range": [
-            0.0,
-            0.08
-          ],
-          "source": "dry_caloric",
-          "status": "assumed",
-          "note": "Linear background Cp slope for non-quartz dry species in thermoelastic host. No measured calorimetry. Phase and mechanical contributions separate; zero restores preceding background Cp."
-        },
-        "species.lime.cp_slope": {
-          "value": 0.0,
-          "unit": "J/mol/K2",
-          "range": [
-            0.0,
-            0.05
-          ],
-          "source": "dry_caloric",
-          "status": "assumed",
-          "note": "Linear background Cp slope for non-quartz dry species in thermoelastic host. No measured calorimetry. Phase and mechanical contributions separate; zero restores preceding background Cp."
-        },
         "species.organic.cp_slope": {
           "value": 0.0,
           "unit": "J/mol/K2",
@@ -4366,6 +4825,116 @@
           "source": "dry_caloric",
           "status": "assumed",
           "note": "Linear background Cp slope for non-quartz dry species in thermoelastic host. No measured calorimetry. Phase and mechanical contributions separate; zero restores preceding background Cp."
+        },
+        "species.calcite.caloric_A1": {
+          "value": 110.0,
+          "unit": "J/mol/K",
+          "range": [
+            110.0,
+            110.0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.calcite.caloric_A2": {
+          "value": 0,
+          "unit": "J/mol/K2",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.calcite.caloric_A3": {
+          "value": 0,
+          "unit": "J*K/mol",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.calcite.caloric_A4": {
+          "value": 0,
+          "unit": "J/mol/K0.5",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.calcite.caloric_A5": {
+          "value": 0,
+          "unit": "J/mol/K3",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.lime.caloric_A1": {
+          "value": 50.0,
+          "unit": "J/mol/K",
+          "range": [
+            50.0,
+            50.0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.lime.caloric_A2": {
+          "value": 0,
+          "unit": "J/mol/K2",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.lime.caloric_A3": {
+          "value": 0,
+          "unit": "J*K/mol",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.lime.caloric_A4": {
+          "value": 0,
+          "unit": "J/mol/K0.5",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
+        },
+        "species.lime.caloric_A5": {
+          "value": 0,
+          "unit": "J/mol/K3",
+          "range": [
+            0,
+            0
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Explicit legacy constant-Cp mechanism control in the source polynomial representation; not new source coefficients or nominal qualification."
         }
       }
     },
@@ -4689,6 +5258,146 @@
         "measurement covariance"
       ],
       "source_exposure": "Old whole curve examined; not blind holdout."
+    },
+    "dtu_product_definition": {
+      "source_doi": "10.11583/DTU.30157108.v1",
+      "workbook": "data/material_design_v2_inputs/public-data/30157108/DTU Data - Brick Pellet Production.xlsx",
+      "specimen": "Y-Ref-1020 / Mix4 / #0250 / specimenA",
+      "sample_identity": "Yellow brick clay reference disk, no SSA, stated firing1020C; not root nominal sludge brick",
+      "cells": {
+        "m_dry_fired_g": [
+          "Porosity and Density",
+          "E14"
+        ],
+        "m_saturated_surface_dry_g": [
+          "Porosity and Density",
+          "F14"
+        ],
+        "m_submerged_g": [
+          "Porosity and Density",
+          "G14"
+        ],
+        "water_temperature_c": [
+          "Porosity and Density",
+          "L9"
+        ],
+        "water_density_kg_m3": [
+          "Porosity and Density",
+          "L10"
+        ],
+        "bulk_volume_m3": [
+          "Porosity and Density",
+          "K14"
+        ],
+        "open_pore_volume_m3": [
+          "Porosity and Density",
+          "L14"
+        ],
+        "open_porosity": [
+          "Porosity and Density",
+          "M14"
+        ],
+        "dry_bulk_density_kg_m3": [
+          "Porosity and Density",
+          "N14"
+        ],
+        "water_absorption_dry_ratio": [
+          "Porosity and Density",
+          "Q14"
+        ],
+        "wet_mass_g": [
+          "Water and Burning",
+          "C9"
+        ],
+        "oven_dry_pre_firing_mass_g": [
+          "Water and Burning",
+          "D9"
+        ],
+        "fired_mass_g": [
+          "Water and Burning",
+          "F9"
+        ]
+      },
+      "physical_check": "One preselected complete same-specimen tuple; check formulas/cached arithmetic and common input dependence, not model prediction",
+      "new_integrations_budget": 0,
+      "source_access": "Existing original workbook and agent source read; DOI fresh access unavailable, not redownloaded",
+      "unknowns": [
+        "complete heating/hold/cooling program",
+        "measurement uncertainties",
+        "closed porosity",
+        "burnt specimen re-drying details",
+        "geometry unit declarations"
+      ]
+    },
+    "p18_current_validation": {
+      "comparison": "Reuse new P16 nominal; one original lower_peak and one original longer_hold. No newUQ or re-run of nominal.",
+      "synthetic_recovery": "One binding-energy drying-window recovery using existing root truth9000/initial12000, six water times, existing scales/max_nfev18/tolerances; same model synthetic. Python truth then actual existing CLI --calibrate; no full3parameter or joint2parameter repeat.",
+      "optimizer_limit_parameter": "calibration.max_nfev",
+      "recovery_limit_parameter": "calibration.recovery_relative",
+      "wall_budget_parameter": "validation.caloric.full_cycle_budget",
+      "forward_call_upper_bound": "2*calibration.max_nfev+2 for one parameter finite differences plus truth and final readback; actual count recorded",
+      "new_integrations": "2 full cycles plus actual single-fit drying prefix calls; no retries if same problem already fails twice",
+      "output_policy": "No raw fields saved; full physics/gas budgets for truth/final and per-call summary history"
     }
+  },
+  "caloric_background": {
+    "model": "source_five_term_reference_anchored",
+    "minerals": [
+      "calcite",
+      "lime"
+    ],
+    "species_domains": {
+      "O2": {
+        "source_temperature_range_k": [
+          298.15,
+          2500.0
+        ],
+        "outside_source_range": "same polynomial continuation is an explicit unvalidated engineering extrapolation, no clipping",
+        "target_material_qualified": false
+      },
+      "N2": {
+        "source_temperature_range_k": [
+          298.15,
+          2500.0
+        ],
+        "outside_source_range": "same polynomial continuation is an explicit unvalidated engineering extrapolation, no clipping",
+        "target_material_qualified": false
+      },
+      "H2O": {
+        "source_temperature_range_k": [
+          298.15,
+          2500
+        ],
+        "outside_source_range": "same polynomial continuation is an explicit unvalidated engineering extrapolation, no clipping",
+        "target_material_qualified": false
+      },
+      "CO2": {
+        "source_temperature_range_k": [
+          298.15,
+          2200.0
+        ],
+        "outside_source_range": "same polynomial continuation is an explicit unvalidated engineering extrapolation, no clipping",
+        "target_material_qualified": false
+      },
+      "calcite": {
+        "source_temperature_range_k": [
+          298.15,
+          1200.0
+        ],
+        "outside_source_range": "same polynomial continuation is an explicit unvalidated engineering extrapolation, no clipping",
+        "target_material_qualified": false
+      },
+      "lime": {
+        "source_temperature_range_k": [
+          298.15,
+          1800.0
+        ],
+        "outside_source_range": "same polynomial continuation is an explicit unvalidated engineering extrapolation, no clipping",
+        "target_material_qualified": false
+      }
+    },
+    "reference_policy": "Root species h_ref/s_ref and reference.temperature retained; replace only Cp and sensible integrals. Legacy species.cp entries still parameterize the swept historical host and inherited algebra before explicit current-host replacement; they are not current gas/mineral Cp.",
+    "extrapolation_status": "assumed; report actual sampled temperatures outside each source range",
+    "formation_heat_policy": "No separate reaction or phase heat added."
   }
 }

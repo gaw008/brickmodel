@@ -1,63 +1,66 @@
 {
   "schema": "full_cycle_final_acceptance_matrix_v1",
-  "recorded_utc": "2026-09-30T21:07:49.648794+00:00",
-  "status": "development_continues_capability_and_public_validation_gaps_under_review",
+  "recorded_utc": "2026-09-30T22:21:57.298355+00:00",
+  "status": "declared_approximate_model_and_physical_numerical_acceptance_complete_process_and_material_qualification_not_passed",
   "identity": "approximate_simulation_not_measured_material",
   "parent_commit": "d8bc6f1b09e0b6d10cdcf4abf35e634035a36d08",
   "parameter_file": "parameters.full_cycle.json",
-  "parameter_count": 279,
+  "parameter_count": 304,
   "parameter_status_counts": {
-    "literature": 40,
-    "assumed": 239
+    "literature": 70,
+    "assumed": 234,
+    "measured": 0
   },
   "implementation": {
     "current_scope_necessary_couplings_present": true,
     "new_mechanism_added_this_round": false,
-    "proof_scope": "Targeted independent source review, not a new global audit. Source continuity covers the current forward kernel and all 271 physical/numerical entries; root changes only describe fixed UQ conditions.",
     "mechanisms": [
       {
         "process": "continuous_wet_to_cooled_cycle",
-        "source": "src/sludge_vme/models/full_cycle_gas.py:584",
+        "source": "src/sludge_vme/models/full_cycle_gas.py",
         "status": "implemented",
         "scope": "State and cumulative ledgers carry continuously through all eight declared stages."
       },
       {
         "process": "water_transport_phase_exchange_retention_binding",
-        "source": "src/sludge_vme/models/full_cycle_gas.py:431",
+        "source": "src/sludge_vme/models/full_cycle_gas.py",
         "status": "implemented",
         "scope": "Shared chemical potentials and conjugate energy/entropy terms; no extra fictitious bound-water mass."
       },
       {
         "process": "dehydroxylation_carbonate_organic_char_reactions",
-        "source": "src/sludge_vme/models/full_cycle_gas.py:453",
+        "source": "src/sludge_vme/models/full_cycle_gas.py",
         "status": "implemented",
         "scope": "Current inventories, atom-balanced root stoichiometry and gas sources; reversible carbonate and competing carbonization."
       },
       {
         "process": "finite_pore_gas_pressure_and_transport",
-        "source": "src/sludge_vme/models/full_cycle_gas.py:257",
+        "source": "src/sludge_vme/models/full_cycle_gas.py",
         "status": "implemented",
         "scope": "Shared species/enthalpy/entropy fluxes, Darcy and positive symmetric gas-pair mobility."
       },
       {
         "process": "thermoelastic_pore_geometry_and_densification",
-        "source": "src/sludge_vme/models/full_cycle_solid.py:329",
+        "source": "src/sludge_vme/models/full_cycle_solid.py",
         "status": "implemented",
         "scope": "Same Helmholtz potential and current composition/phase derivatives."
       },
       {
         "process": "finite_rate_matrix_phase_and_cooling_retention",
-        "source": "src/sludge_vme/models/full_cycle_solid.py:113",
+        "source": "src/sludge_vme/models/full_cycle_solid.py",
         "status": "implemented",
         "scope": "Effective disordered-state proxy with phase energy/entropy and carrier birth, not a mineral phase diagram."
       },
       {
         "process": "state_dependent_thermal_properties",
-        "source": "src/sludge_vme/models/full_cycle_solid.py:195",
+        "source": "src/sludge_vme/models/full_cycle_solid.py",
         "status": "implemented",
         "scope": "Dry/water/phase/temperature conductivity and pore radiation use the existing shared heat flux."
       }
-    ]
+    ],
+    "historical_P01_proof_scope": "Targeted independent source review, not a new global audit. Source continuity covers the current forward kernel and all 271 physical/numerical entries; root changes only describe fixed UQ conditions.",
+    "current_proof_scope": "P16 replaces six pure-species linear backgrounds with source polynomial calorics, shared h/s/capacity/carried enthalpy; P13/P15 diagnostic mappings; P17 source applicability review; P18 current entrypoint/recovery checks. Same reactions and state variables, no new source heat.",
+    "current_caloric_evidence": "docs/FULL_CYCLE_P16_SOURCE_CALORIC_RESULTS.json"
   },
   "P01": {
     "status": "completed",
@@ -285,7 +288,7 @@
     "resolved kiln combustion/circulation",
     "cracks and damage"
   ],
-  "model_capability_closeout_complete": false,
+  "model_capability_closeout_complete": true,
   "physical_numerical_acceptance_complete": true,
   "all_engineering_acceptance_passed": false,
   "delivery_is_separate_from_model_acceptance": true,
@@ -357,12 +360,12 @@
         "item": "Git_Drive_restore_and_historical_storage",
         "outcome": "separate_delivery_checklist"
       }
-    ]
+    ],
+    "version_scope": "Historical P01-P08 decision; current decision is current_acceptance_matrix and P16-P18."
   },
-  "model_closeout_wall_s_from_plan_creation": 4403.9089,
-  "timing_note": "Wall time from actual plan creation to model closeout includes overlapping UQ/calibration, reviews and waiting. It is not the sum of scientific run times; individual review durations were not separately timed.",
+  "timing_note": "Elapsed wall time from initial plan creation includes computation, parallel overlap, reviews and user-directed continuation; not summed CPU/scientific time. P16 and P18 execution receipts report separately measured batch times.",
   "delivery": {
-    "status": "model_git_and_increment_metadata_complete_restore_and_historical_storage_unpassed",
+    "status": "P16-P18_current_commit_push_and_increment_pending_at_model_finalization; read current receipts for actual outcome",
     "evidence": "docs/FULL_CYCLE_FINAL_DELIVERY.json",
     "model_results_commit": "c26ce88a3f1b64b88b81be024eb843e7e0c33081",
     "model_results_remote_readback_passed": true,
@@ -394,7 +397,12 @@
       "member_count": 21,
       "receipt": "/Users/wanggaoying/Documents/Codex/2026-09-30/task/p11-fresh-drive-native-recovery-20260930.json",
       "whole_history_or_runtime_qualification": false
-    }
+    },
+    "historical_status": "model_git_and_increment_metadata_complete_restore_and_historical_storage_unpassed",
+    "current_receipts": [
+      "runs/full-cycle/p16-p18-git-delivery.json",
+      "runs/full-cycle/p12-p18-drive-delivery.json"
+    ]
   },
   "P09": {
     "status": "completed_conditional_attribution_review",
@@ -424,7 +432,7 @@
       "scope": "Actual normal successor/push and small increment metadata results are recorded separately from this scientific artifact; cloud recovery and historical storage remain unqualified."
     }
   },
-  "parameter_metadata_update": "After P01–P08, P09 clarifies only acceptance.drying_remaining_fraction.note; numerical settings, physical values/units/ranges/sources/identities and forward sources are unchanged. Prior results remain historical under this continuity.",
+  "parameter_metadata_update": "Current P16 source-caloric coefficients and P13-P18 explicit reference/execution controls are in the root file: 304 entries, 70 literature / 234 assumed / 0 measured. Historical 271-parameter continuity statements apply only to their recorded version.",
   "P10": {
     "status": "implemented_and_saved_report_readback_passed",
     "evidence": "docs/FULL_CYCLE_P10_INVERSE_EVIDENCE.json",
@@ -448,7 +456,7 @@
     }
   },
   "base_model_complete": true,
-  "current_scope": "Develop the declared single-brick wet-to-cooled approximate model from physics/chemistry laws and public primary evidence; existing stage completion is not overall completion.",
+  "current_scope": "Implemented one-dimensional single-brick wet-to-cooled approximate physics under prescribed kiln/gas histories. Current closure audit and required numerical checks complete; no whole-kiln, full mineral-phase diagram, fracture or experimentally calibrated product claims.",
   "P11": {
     "status": "base_model_complete_with_nominal_process_failure_and_future_material_calibration",
     "verification": {
@@ -1036,7 +1044,7 @@
   },
   "capability_validation_matrix": {
     "schema": "full_cycle_capability_validation_matrix_v1",
-    "recorded_utc": "2026-09-30T21:32:10.536406+00:00",
+    "recorded_utc": "2026-09-30T22:21:57.298355+00:00",
     "scope_source": "docs/BRICK_PHYSICS_PROJECT_SPEC.md current goal and physical sections; latest explicit user continuation supersedes assistant stop interpretation",
     "stage_rows": [
       {
@@ -1074,22 +1082,37 @@
         ],
         "implementation_status": "implemented_in_current_host",
         "actual_numerical_checks": [
+          "docs/FULL_CYCLE_P16_SOURCE_CALORIC_RESULTS.json",
+          "docs/FULL_CYCLE_P18_CURRENT_VALIDATION.json"
+        ],
+        "numerical_status": "Current three P16 full cycles and two additional P18 scenarios passed declared physical checks; P16 nominal time/grid refinement passed. No all-parameter-range qualification.",
+        "external_validation_status": "current_source_constitutive_comparison_complete_agreement_failed_target_process_unqualified",
+        "specific_gaps": [
+          "Current nominal remaining initial-water fraction 0.0013602804617140272 exceeds 0.001; bounded process handling complete, no third search.",
+          "Arlabosse foreign-material activities and six current heats disagree; compatible target drying geometry, boundaries and observations remain unmeasured."
+        ],
+        "completion_criterion": "Connect current mu and partial enthalpy to declared source observables; report all available point residuals and unresolved source conditions without duplicate latent heat. Dynamic qualification requires compatible process inputs, separately from this constitutive check.",
+        "next_priority": null,
+        "P13_update": {
+          "evidence": "docs/FULL_CYCLE_P13_PUBLIC_WATER.json",
+          "result": "diagnostic implementation passed; source raster agreement 0/15, fixed three-parameter envelope 0/15; foreign material and fixed background limits retained"
+        },
+        "P12_initial_specific_gaps": [
+          "Binding/retention parameters are assumed; no current-host joint aw/q source comparison",
+          "Geometry/boundary-compatible drying process data insufficient for target material"
+        ],
+        "historical_numerical_evidence": [
           "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
           "docs/FULL_CYCLE_FINAL_UQ.json",
           "docs/FULL_CYCLE_GAS_LEDGER_RESULTS.json"
         ],
-        "numerical_status": "Recorded nominal once-time/once-grid and conditional UQ checks passed in their declared scopes; not all parameter ranges or source accuracy.",
-        "external_validation_status": "current_host_public_constitutive_and_process_comparison_pending",
-        "specific_gaps": [
-          "Binding/retention parameters are assumed; no current-host joint aw/q source comparison",
-          "Geometry/boundary-compatible drying process data insufficient for target material"
+        "declared_implementation_work_complete": true,
+        "completion_evidence": [
+          "P13 common-mu/partial-h observable mapping",
+          "P16 affected six-heat update",
+          "P18 current drying-window recovery"
         ],
-        "completion_criterion": "Connect current mu and partial enthalpy to declared source observables; report all available point residuals and unresolved source conditions without duplicate latent heat. Dynamic qualification requires compatible process inputs, separately from this constitutive check.",
-        "next_priority": 1,
-        "P13_update": {
-          "evidence": "docs/FULL_CYCLE_P13_PUBLIC_WATER.json",
-          "result": "diagnostic implementation passed; source raster agreement 0/15, fixed three-parameter envelope 0/15; foreign material and fixed background limits retained"
-        }
+        "completion_decision": "Declared current approximation implementation and feasible scoped verification complete; remaining source mismatch and target qualification limits are explicit, not claimed PASS."
       },
       {
         "id": "P12-S02",
@@ -1124,22 +1147,37 @@
         ],
         "implementation_status": "implemented_in_current_host",
         "actual_numerical_checks": [
+          "docs/FULL_CYCLE_P16_SOURCE_CALORIC_RESULTS.json",
+          "docs/FULL_CYCLE_P18_CURRENT_VALIDATION.json"
+        ],
+        "numerical_status": "Current three P16 full cycles and two additional P18 scenarios passed declared physical checks; P16 nominal time/grid refinement passed. No all-parameter-range qualification.",
+        "external_validation_status": "current_source_constitutive_comparison_complete_agreement_failed_target_process_unqualified",
+        "specific_gaps": [
+          "Current nominal remaining initial-water fraction 0.0013602804617140272 exceeds 0.001; bounded process handling complete, no third search.",
+          "Arlabosse foreign-material activities and six current heats disagree; compatible target drying geometry, boundaries and observations remain unmeasured."
+        ],
+        "completion_criterion": "Keep nominal failure and search limits. Independently constrain sorption/thermal laws first; only use fully specified public process cases, never repeat exposed holdouts as new validation.",
+        "next_priority": null,
+        "P13_update": {
+          "evidence": "docs/FULL_CYCLE_P13_PUBLIC_WATER.json",
+          "result": "diagnostic implementation passed; source raster agreement 0/15, fixed three-parameter envelope 0/15; foreign material and fixed background limits retained"
+        },
+        "P12_initial_specific_gaps": [
+          "0.13505646% initial water remains >0.1%; two bounded process attempts exhausted",
+          "Wang/Silva existing source readings do not establish current-host drying accuracy"
+        ],
+        "historical_numerical_evidence": [
           "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
           "docs/FULL_CYCLE_FINAL_UQ.json",
           "docs/FULL_CYCLE_GAS_LEDGER_RESULTS.json"
         ],
-        "numerical_status": "Recorded nominal once-time/once-grid and conditional UQ checks passed in their declared scopes; not all parameter ranges or source accuracy.",
-        "external_validation_status": "nominal_process_failure_preserved_public_current_host_prediction_pending",
-        "specific_gaps": [
-          "0.13505646% initial water remains >0.1%; two bounded process attempts exhausted",
-          "Wang/Silva existing source readings do not establish current-host drying accuracy"
+        "declared_implementation_work_complete": true,
+        "completion_evidence": [
+          "P13 common-mu/partial-h observable mapping",
+          "P16 affected six-heat update",
+          "P18 current drying-window recovery"
         ],
-        "completion_criterion": "Keep nominal failure and search limits. Independently constrain sorption/thermal laws first; only use fully specified public process cases, never repeat exposed holdouts as new validation.",
-        "next_priority": 1,
-        "P13_update": {
-          "evidence": "docs/FULL_CYCLE_P13_PUBLIC_WATER.json",
-          "result": "diagnostic implementation passed; source raster agreement 0/15, fixed three-parameter envelope 0/15; foreign material and fixed background limits retained"
-        }
+        "completion_decision": "Declared current approximation implementation and feasible scoped verification complete; remaining source mismatch and target qualification limits are explicit, not claimed PASS."
       },
       {
         "id": "P12-S03",
@@ -1173,18 +1211,32 @@
         ],
         "implementation_status": "implemented_in_current_host",
         "actual_numerical_checks": [
+          "docs/FULL_CYCLE_P16_SOURCE_CALORIC_RESULTS.json",
+          "docs/FULL_CYCLE_P18_CURRENT_VALIDATION.json"
+        ],
+        "numerical_status": "Current three P16 full cycles and two additional P18 scenarios passed declared physical checks; P16 nominal time/grid refinement passed. No all-parameter-range qualification.",
+        "external_validation_status": "thirty_source_states_compared_six_pure_backgrounds_improved_not_composite_qualification",
+        "specific_gaps": [
+          "Effective matrix is not a pure metakaolin table.",
+          "Calcite above 1200 K uses explicit assumed continuation; public discrepancies and liquid-water limits retained."
+        ],
+        "completion_criterion": "Bounded <=40-point current-host public Cp/H/S and source-pressure chemical-potential residual benchmark; separate smooth quartz-transition and pure phase domains.",
+        "next_priority": null,
+        "P12_initial_specific_gaps": [
+          "Internal derivative/positive-capacity checks do not validate public Cp/H/S deviations",
+          "Matrix thermo column includes effective phase term; cannot compare it as pure metakaolin"
+        ],
+        "historical_numerical_evidence": [
           "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
           "docs/FULL_CYCLE_FINAL_UQ.json",
           "docs/FULL_CYCLE_GAS_LEDGER_RESULTS.json"
         ],
-        "numerical_status": "Recorded nominal once-time/once-grid and conditional UQ checks passed in their declared scopes; not all parameter ranges or source accuracy.",
-        "external_validation_status": "current_host_external_caloric_error_not_quantified",
-        "specific_gaps": [
-          "Internal derivative/positive-capacity checks do not validate public Cp/H/S deviations",
-          "Matrix thermo column includes effective phase term; cannot compare it as pure metakaolin"
+        "declared_implementation_work_complete": true,
+        "completion_evidence": [
+          "P14 reference benchmark",
+          "P16 source-caloric implementation and current reference benchmark"
         ],
-        "completion_criterion": "Bounded <=40-point current-host public Cp/H/S and source-pressure chemical-potential residual benchmark; separate smooth quartz-transition and pure phase domains.",
-        "next_priority": 2
+        "completion_decision": "Declared current approximation implementation and feasible scoped verification complete; remaining source mismatch and target qualification limits are explicit, not claimed PASS."
       },
       {
         "id": "P12-S04",
@@ -1226,18 +1278,32 @@
         ],
         "implementation_status": "implemented_in_current_host",
         "actual_numerical_checks": [
+          "docs/FULL_CYCLE_P16_SOURCE_CALORIC_RESULTS.json",
+          "docs/FULL_CYCLE_P18_CURRENT_VALIDATION.json"
+        ],
+        "numerical_status": "Current three P16 full cycles and two additional P18 scenarios passed declared physical checks; P16 nominal time/grid refinement passed. No all-parameter-range qualification.",
+        "external_validation_status": "conditional_public_carbonation_shape_comparison_complete_late_shape_mismatch",
+        "specific_gaps": [
+          "Donat late slowdown not represented by fixed current resistance; actual pressure/active pool/area are not fully known.",
+          "Intrinsic kinetics/product allocation remain assumed for nominal recipe; no transplant of foreign-material fit."
+        ],
+        "completion_criterion": "First conditional source-defined carbonation segment with one frozen time-scale policy and unrecalibrated remaining curve; report source conditions and shape residuals. Do not infer unique intrinsic rate or transfer limestone qualification to sludge bricks.",
+        "next_priority": null,
+        "P12_initial_specific_gaps": [
+          "Intrinsic A/E, active inventory and product allocation not constrained for current recipe",
+          "Reversible phase resistance not yet confronted with public transient shape"
+        ],
+        "historical_numerical_evidence": [
           "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
           "docs/FULL_CYCLE_FINAL_UQ.json",
           "docs/FULL_CYCLE_GAS_LEDGER_RESULTS.json"
         ],
-        "numerical_status": "Recorded nominal once-time/once-grid and conditional UQ checks passed in their declared scopes; not all parameter ranges or source accuracy.",
-        "external_validation_status": "current_host_public_rate_and_thermal_comparison_pending",
-        "specific_gaps": [
-          "Intrinsic A/E, active inventory and product allocation not constrained for current recipe",
-          "Reversible phase resistance not yet confronted with public transient shape"
+        "declared_implementation_work_complete": true,
+        "completion_evidence": [
+          "P15 1140 time-coordinate residuals under fixed early scale",
+          "P16 shared thermochemistry and full-cycle ledgers"
         ],
-        "completion_criterion": "First conditional source-defined carbonation segment with one frozen time-scale policy and unrecalibrated remaining curve; report source conditions and shape residuals. Do not infer unique intrinsic rate or transfer limestone qualification to sludge bricks.",
-        "next_priority": 3
+        "completion_decision": "Declared current approximation implementation and feasible scoped verification complete; remaining source mismatch and target qualification limits are explicit, not claimed PASS."
       },
       {
         "id": "P12-S05",
@@ -1274,19 +1340,34 @@
         ],
         "implementation_status": "implemented_in_current_host",
         "actual_numerical_checks": [
-          "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
-          "docs/FULL_CYCLE_FINAL_UQ.json",
-          "docs/FULL_CYCLE_GAS_LEDGER_RESULTS.json"
+          "docs/FULL_CYCLE_P16_SOURCE_CALORIC_RESULTS.json",
+          "docs/FULL_CYCLE_P18_CURRENT_VALIDATION.json"
         ],
-        "numerical_status": "Recorded nominal once-time/once-grid and conditional UQ checks passed in their declared scopes; not all parameter ranges or source accuracy.",
-        "external_validation_status": "dynamic_constitutive_source_domain_and_error_pending",
+        "numerical_status": "Current three P16 full cycles and two additional P18 scenarios passed declared physical checks; P16 nominal time/grid refinement passed. No all-parameter-range qualification.",
+        "external_validation_status": "source_domain_and_observable_audit_complete_target_prediction_unqualified",
         "specific_gaps": [
+          "Effective viscosity, composite mechanics/phase and connected-pore assumption remain assumed; compatible source-to-host dynamic transfer not established.",
+          "DTU paired product definitions audited but coherent thermal history, geometry SI and closed porosity are insufficient for a host process reproduction."
+        ],
+        "completion_criterion": "Map existing public dynamic shrinkage source to this observable only where geometry/thermal history permits; otherwise state exact missing inputs and limit validity. Audit current closure at declared open-pore bounds without adding full phase diagrams.",
+        "next_priority": null,
+        "P12_initial_specific_gaps": [
           "Effective viscosity is not measured melt viscosity",
           "Source shrinkage geometry/time/phase state not matched to current host",
           "Open-pore approximation needs explicit connectivity domain"
         ],
-        "completion_criterion": "Map existing public dynamic shrinkage source to this observable only where geometry/thermal history permits; otherwise state exact missing inputs and limit validity. Audit current closure at declared open-pore bounds without adding full phase diagrams.",
-        "next_priority": 4
+        "historical_numerical_evidence": [
+          "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
+          "docs/FULL_CYCLE_FINAL_UQ.json",
+          "docs/FULL_CYCLE_GAS_LEDGER_RESULTS.json"
+        ],
+        "declared_implementation_work_complete": true,
+        "completion_evidence": [
+          "P17 source/domain/definition audit",
+          "P16 current sampled state domains",
+          "P18 fixed original scenarios"
+        ],
+        "completion_decision": "Declared current approximation implementation and feasible scoped verification complete; remaining source mismatch and target qualification limits are explicit, not claimed PASS."
       },
       {
         "id": "P12-S06",
@@ -1317,17 +1398,32 @@
         ],
         "implementation_status": "implemented_in_current_host",
         "actual_numerical_checks": [
+          "docs/FULL_CYCLE_P16_SOURCE_CALORIC_RESULTS.json",
+          "docs/FULL_CYCLE_P18_CURRENT_VALIDATION.json"
+        ],
+        "numerical_status": "Current three P16 full cycles and two additional P18 scenarios passed declared physical checks; P16 nominal time/grid refinement passed. No all-parameter-range qualification.",
+        "external_validation_status": "source_domain_and_observable_audit_complete_target_prediction_unqualified",
+        "specific_gaps": [
+          "Effective viscosity, composite mechanics/phase and connected-pore assumption remain assumed; compatible source-to-host dynamic transfer not established.",
+          "DTU paired product definitions audited but coherent thermal history, geometry SI and closed porosity are insufficient for a host process reproduction."
+        ],
+        "completion_criterion": "Retain current stage continuity/conservation evidence; cross-stage source comparison must use one coherent material/thermal history. Do not run new all-range UQ merely to accumulate passes.",
+        "next_priority": null,
+        "P12_initial_specific_gaps": [
+          "Coupled hold accuracy not established by stage labels or standalone material measurements"
+        ],
+        "historical_numerical_evidence": [
           "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
           "docs/FULL_CYCLE_FINAL_UQ.json",
           "docs/FULL_CYCLE_GAS_LEDGER_RESULTS.json"
         ],
-        "numerical_status": "Recorded nominal once-time/once-grid and conditional UQ checks passed in their declared scopes; not all parameter ranges or source accuracy.",
-        "external_validation_status": "no_independent_current_host_hold_process_validation",
-        "specific_gaps": [
-          "Coupled hold accuracy not established by stage labels or standalone material measurements"
+        "declared_implementation_work_complete": true,
+        "completion_evidence": [
+          "P17 source/domain/definition audit",
+          "P16 current sampled state domains",
+          "P18 fixed original scenarios"
         ],
-        "completion_criterion": "Retain current stage continuity/conservation evidence; cross-stage source comparison must use one coherent material/thermal history. Do not run new all-range UQ merely to accumulate passes.",
-        "next_priority": 4
+        "completion_decision": "Declared current approximation implementation and feasible scoped verification complete; remaining source mismatch and target qualification limits are explicit, not claimed PASS."
       },
       {
         "id": "P12-S07",
@@ -1362,18 +1458,33 @@
         ],
         "implementation_status": "implemented_in_current_host",
         "actual_numerical_checks": [
+          "docs/FULL_CYCLE_P16_SOURCE_CALORIC_RESULTS.json",
+          "docs/FULL_CYCLE_P18_CURRENT_VALIDATION.json"
+        ],
+        "numerical_status": "Current three P16 full cycles and two additional P18 scenarios passed declared physical checks; P16 nominal time/grid refinement passed. No all-parameter-range qualification.",
+        "external_validation_status": "source_domain_and_observable_audit_complete_target_prediction_unqualified",
+        "specific_gaps": [
+          "Effective viscosity, composite mechanics/phase and connected-pore assumption remain assumed; compatible source-to-host dynamic transfer not established.",
+          "DTU paired product definitions audited but coherent thermal history, geometry SI and closed porosity are insufficient for a host process reproduction."
+        ],
+        "completion_criterion": "Separate pure caloric source agreement from effective brick thermoelastic response. Report valid temperature/strain/domain and retain no damage/plant accuracy claim.",
+        "next_priority": null,
+        "P12_initial_specific_gaps": [
+          "Effective thermal expansion and modulus need source-domain and error limits",
+          "No crack/damage or actual failure-probability model"
+        ],
+        "historical_numerical_evidence": [
           "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
           "docs/FULL_CYCLE_FINAL_UQ.json",
           "docs/FULL_CYCLE_GAS_LEDGER_RESULTS.json"
         ],
-        "numerical_status": "Recorded nominal once-time/once-grid and conditional UQ checks passed in their declared scopes; not all parameter ranges or source accuracy.",
-        "external_validation_status": "pure_quartz_source_partly_linked_composite_cooling_external_validation_pending",
-        "specific_gaps": [
-          "Effective thermal expansion and modulus need source-domain and error limits",
-          "No crack/damage or actual failure-probability model"
+        "declared_implementation_work_complete": true,
+        "completion_evidence": [
+          "P17 source/domain/definition audit",
+          "P16 current sampled state domains",
+          "P18 fixed original scenarios"
         ],
-        "completion_criterion": "Separate pure caloric source agreement from effective brick thermoelastic response. Report valid temperature/strain/domain and retain no damage/plant accuracy claim.",
-        "next_priority": 2
+        "completion_decision": "Declared current approximation implementation and feasible scoped verification complete; remaining source mismatch and target qualification limits are explicit, not claimed PASS."
       },
       {
         "id": "P12-S08",
@@ -1406,70 +1517,111 @@
         ],
         "implementation_status": "implemented_in_current_host",
         "actual_numerical_checks": [
+          "docs/FULL_CYCLE_P16_SOURCE_CALORIC_RESULTS.json",
+          "docs/FULL_CYCLE_P18_CURRENT_VALIDATION.json"
+        ],
+        "numerical_status": "Current three P16 full cycles and two additional P18 scenarios passed declared physical checks; P16 nominal time/grid refinement passed. No all-parameter-range qualification.",
+        "external_validation_status": "source_domain_and_observable_audit_complete_target_prediction_unqualified",
+        "specific_gaps": [
+          "Effective viscosity, composite mechanics/phase and connected-pore assumption remain assumed; compatible source-to-host dynamic transfer not established.",
+          "DTU paired product definitions audited but coherent thermal history, geometry SI and closed porosity are insufficient for a host process reproduction."
+        ],
+        "completion_criterion": "Keep proxies and denominator/specimen definitions explicit. Public endpoint comparison can qualify only its declared source material and geometry; actual target qualification awaits target data.",
+        "next_priority": null,
+        "P12_initial_specific_gaps": [
+          "Need suitable source observable/model-definition comparisons before predicting product qualification",
+          "P11 mapping admission is not product validation"
+        ],
+        "historical_numerical_evidence": [
           "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
           "docs/FULL_CYCLE_FINAL_UQ.json",
           "docs/FULL_CYCLE_GAS_LEDGER_RESULTS.json"
         ],
-        "numerical_status": "Recorded nominal once-time/once-grid and conditional UQ checks passed in their declared scopes; not all parameter ranges or source accuracy.",
-        "external_validation_status": "product_proxy_real_accuracy_pending",
-        "specific_gaps": [
-          "Need suitable source observable/model-definition comparisons before predicting product qualification",
-          "P11 mapping admission is not product validation"
+        "declared_implementation_work_complete": true,
+        "completion_evidence": [
+          "P17 source/domain/definition audit",
+          "P16 current sampled state domains",
+          "P18 fixed original scenarios"
         ],
-        "completion_criterion": "Keep proxies and denominator/specimen definitions explicit. Public endpoint comparison can qualify only its declared source material and geometry; actual target qualification awaits target data.",
-        "next_priority": 5
+        "completion_decision": "Declared current approximation implementation and feasible scoped verification complete; remaining source mismatch and target qualification limits are explicit, not claimed PASS."
       }
     ],
     "cross_cutting_rows": [
       {
         "id": "P12-X01",
         "topic": "material, provenance and observables",
-        "status": "P11 implemented, target unknown; broad parameter-source coverage incomplete",
+        "status": "Root metadata and source/observable audit complete; 304 entries, 70 literature / 234 assumed / 0 measured. Target recipe remains unmeasured.",
         "evidence": [
           "docs/FULL_CYCLE_P11_OBSERVATIONS.json",
           "parameters.full_cycle.json"
         ],
-        "criterion": "Every active material/constitutive assumption has units, range, source/domain and discrepancy/uncertainty statement. Never combine different materials as one measured recipe."
+        "criterion": "Every active material/constitutive assumption has units, range, source/domain and discrepancy/uncertainty statement. Never combine different materials as one measured recipe.",
+        "historical_status": "P11 implemented, target unknown; broad parameter-source coverage incomplete",
+        "current_evidence": [
+          "P11",
+          "P16",
+          "P17"
+        ],
+        "declared_implementation_work_complete": true
       },
       {
         "id": "P12-X02",
         "topic": "shared gas/liquid transport and thermodynamics",
-        "status": "internal balances and nominal numerics passed; external transport error pending",
+        "status": "Shared transport/thermodynamics current checks passed; source calorics improved and discrepancies quantified. Effective permeability/pore/mixture transport remains assumed, without full dusty-gas accuracy claim.",
         "evidence": [
           "docs/FULL_CYCLE_PAIR_DIFFUSION_RESULTS.json",
           "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
           "docs/FULL_CYCLE_MIXTURE_VISCOSITY_RESULTS.json"
         ],
-        "criterion": "Quantify current constitutive/thermophysical approximations against applicable primary sources, distinct from mathematical conservation. Full dusty-gas/MS/Soret remains outside declared scope."
+        "criterion": "Quantify current constitutive/thermophysical approximations against applicable primary sources, distinct from mathematical conservation. Full dusty-gas/MS/Soret remains outside declared scope.",
+        "historical_status": "internal balances and nominal numerics passed; external transport error pending",
+        "current_evidence": [
+          "P16",
+          "P17"
+        ],
+        "declared_implementation_work_complete": true
       },
       {
         "id": "P12-X03",
         "topic": "numerical and coupling consistency",
-        "status": "recorded nominal/time/grid and conditional batches preserved; no unbounded all-range guarantee",
+        "status": "Current P16 nominal/time/grid complete under unchanged 0.1%/2% thresholds; P18 affected scenarios passed physical checks.",
         "evidence": [
           "docs/FULL_CYCLE_FINAL_ACCEPTANCE.json:P04",
           "docs/FULL_CYCLE_FINAL_UQ.json"
         ],
-        "criterion": "Only affected physics changes trigger minimal declared nominal/time/grid comparisons under unchanged0.1%/2% criteria. Report source/model-form error separately from conservation residual."
+        "criterion": "Only affected physics changes trigger minimal declared nominal/time/grid comparisons under unchanged0.1%/2% criteria. Report source/model-form error separately from conservation residual.",
+        "historical_status": "recorded nominal/time/grid and conditional batches preserved; no unbounded all-range guarantee",
+        "current_evidence": [
+          "P16",
+          "P18"
+        ],
+        "declared_implementation_work_complete": true
       },
       {
         "id": "P12-X04",
         "topic": "inverse and offline operation",
-        "status": "P06-P11 implemented and scoped checks passed; not actual material calibration",
+        "status": "Current offline CLI/Python and one fixed scalar synthetic recovery complete; 10 actual forwards and window/ledger limitations retained.",
         "evidence": [
           "docs/FULL_CYCLE_USAGE.md",
           "docs/FULL_CYCLE_FINAL_INVERSE_READBACK.json",
           "docs/FULL_CYCLE_P10_INVERSE_EVIDENCE.json"
         ],
-        "criterion": "Preserve provenance, actual forward budgets and unknowns; no rerun22+17 or assumption-to-measured promotion."
+        "criterion": "Preserve provenance, actual forward budgets and unknowns; no rerun22+17 or assumption-to-measured promotion.",
+        "historical_status": "P06-P11 implemented and scoped checks passed; not actual material calibration",
+        "current_evidence": [
+          "P18"
+        ],
+        "declared_implementation_work_complete": true
       }
     ],
     "source_reuse_policy": "Old sandbox benchmarks retain their own version/material/domain and failures; current-host evidence is required. Already exposed curves are not blind holdouts.",
     "completion_layers": {
-      "implementation": "current mechanisms present, but evidence-supported corrections remain actionable",
-      "internal_physical_numerical": "existing scoped checks passed; affected checks after actual changes",
-      "public_external": "current-host constitutive and independent process gaps remain actionable without own data",
-      "target_material": "unknown and awaiting target measurements, not a prerequisite to independent development"
+      "implementation": "complete_for_declared_single_brick_approximation",
+      "internal_physical_numerical": "current_affected_acceptance_passed",
+      "public_external": "bounded_current_comparisons_complete_with_explicit_mismatches_and_domain_limits_not_universal_agreement",
+      "target_material": "unqualified_pending_measurements",
+      "engineering_process": "nominal_drying_failed",
+      "delivery": "separate_receipts_not_a_model_PASS"
     },
     "excluded_expansion": [
       "whole-kiln plant model",
@@ -1479,8 +1631,9 @@
       "full microscopic dusty-gas transport",
       "damage/crack probability model"
     ],
-    "selected_next": "P16 shared-source pure caloric correction",
-    "subsequent_candidates": [
+    "selected_next": null,
+    "whole_project_complete": false,
+    "historical_subsequent_candidates": [
       {
         "id": "P14",
         "topic": "Bounded current-host pure thermochemical/public pressure reference audit",
@@ -1492,7 +1645,7 @@
         "priority": 3
       }
     ],
-    "whole_project_complete": false
+    "declared_model_work_complete": true
   },
   "P13": {
     "status": "diagnostic_and_public_comparison_completed",
@@ -1500,7 +1653,8 @@
     "public_raster_agreement_passed": false,
     "target_material_validated": false,
     "evidence": "docs/FULL_CYCLE_P13_PUBLIC_WATER.json",
-    "new_integrations": 0
+    "new_integrations": 0,
+    "current_heat_update": "docs/FULL_CYCLE_P16_SOURCE_CALORIC_RESULTS.json:affected_public_water_heat_update; 0/6 raster agreement, max relative heat error 0.13738115485906066; unchanged nine activity points retain P13 evidence."
   },
   "P14": {
     "status": "comparison_completed",
@@ -1518,5 +1672,115 @@
     "target_material_validated": false,
     "evidence": "docs/FULL_CYCLE_PUBLIC_REFERENCE_RESULTS.json#P15",
     "new_integrations": 0
-  }
+  },
+  "P16": {
+    "status": "current_kernel_physical_numerical_passed",
+    "evidence": "docs/FULL_CYCLE_P16_SOURCE_CALORIC_RESULTS.json",
+    "new_full_cycles": 3,
+    "engineering_passed": false
+  },
+  "P17": {
+    "status": "applicability_and_source_definition_complete",
+    "evidence": "docs/FULL_CYCLE_P17_APPLICABILITY.json",
+    "material_qualified": false
+  },
+  "P18": {
+    "status": "completed",
+    "evidence": "docs/FULL_CYCLE_P18_CURRENT_VALIDATION.json",
+    "new_full_cycles": 2,
+    "actual_recovery_forwards": 10,
+    "recovery_passed": true,
+    "independent_review_passed": true,
+    "engineering_passed": false
+  },
+  "current_physics_numerical_evidence": "P16; priorP04 is historical",
+  "current_nominal_drying_remaining_fraction": 0.0013602804617140272,
+  "whole_project_complete_definition": "Includes engineering process qualification, target-material validation and complete historical delivery. False does not denote an unfinished declared model implementation item.",
+  "historical_model_closeout_wall_s_from_plan_creation": 4403.9089,
+  "current_model_completion_wall_s_from_plan_creation": 14941.526078,
+  "current_acceptance_matrix": [
+    {
+      "item": "declared_full_cycle_approximate_couplings",
+      "outcome": "implemented_and_reviewed",
+      "evidence": [
+        "P12",
+        "P16",
+        "P17"
+      ]
+    },
+    {
+      "item": "whole_and_eight_stage_mass_elements_complete_energy",
+      "outcome": "passed",
+      "maximum_relative": 0.0005587810932073032,
+      "limit_relative": 0.001,
+      "budget_count": 81,
+      "evidence": "P16"
+    },
+    {
+      "item": "O2_N2_H2O_CO2_whole_and_eight_stage_ledgers",
+      "outcome": "passed",
+      "maximum_budget_relative": 0.000496333675642491,
+      "limit_relative": 0.001,
+      "budget_count": 108,
+      "evidence": "P16"
+    },
+    {
+      "item": "shared_caloric_energy_entropy_dimensions",
+      "outcome": "passed_in_declared_scope",
+      "evidence": "P16",
+      "limitation": "Finite numerical inventory tolerances and raw tiny negative entropy/inventory values retained; dimensions are declared checks, not a formal proof of every equation."
+    },
+    {
+      "item": "one_time_step_and_one_grid_refinement",
+      "outcome": "passed",
+      "required_four_metric_maximum_relative": 0.0013141615287140219,
+      "additional_pressure_metric_maximum_relative": 0.0036282221801305337,
+      "limit_relative": 0.02,
+      "denominator": "max(abs(refined value), root acceptance.floor.metric)",
+      "evidence": "P16"
+    },
+    {
+      "item": "current_three_fixed_scenarios",
+      "outcome": "completed_no_overall_or_robust_winner",
+      "new_cycles": 2,
+      "reused_cycles": 1,
+      "evidence": "P18"
+    },
+    {
+      "item": "current_observations_and_offline_CLI_Python",
+      "outcome": "passed_with_declared_scope",
+      "evidence": [
+        "P16 nine-kind same-trajectory mapping",
+        "P18 actual CLI scalar recovery and Python forward"
+      ],
+      "recovery_relative_error": 0.00022802919027769045,
+      "limit_relative": 0.02
+    },
+    {
+      "item": "current_nominal_drying",
+      "outcome": "failed",
+      "observed_fraction": 0.0013602804617140272,
+      "limit_fraction": 0.001,
+      "denominator": "wettest cell liquid / same-cell initial liquid at 0 s"
+    },
+    {
+      "item": "public_sorption_and_carbonation_source_agreement",
+      "outcome": "not_passed_for_compared_foreign_sources",
+      "evidence": [
+        "P13 and P16 affected heat update",
+        "P15"
+      ],
+      "scope": "Discrepancies quantified; does not identify target-material parameters or justify transferring incompatible source laws."
+    },
+    {
+      "item": "target_material_and_product_accuracy",
+      "outcome": "pending_measurements",
+      "measured_parameter_count": 0,
+      "evidence": "P17"
+    },
+    {
+      "item": "Git_Drive_recovery_historical_storage",
+      "outcome": "separate_delivery_checklist"
+    }
+  ]
 }

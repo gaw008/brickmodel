@@ -1,7 +1,7 @@
 """Finite pore gas coupled to the full-cycle condensed-phase model.
 
 Symmetric pair molar diffusion and donor Darcy flow use analytic conjugate
-carried enthalpy for linear gas Cp, shared by energy and entropy accounts.
+carried enthalpy for source five-term gas Cp, shared by energy and entropy accounts.
 This is a continuum mixture approximation without a Knudsen or Soret model.
 Stored energy is U_s + U_g + pore surface energy; the only external mechanical
 power is -P_external*dV_bulk. Reaction and phase energies are not added twice.
@@ -14,8 +14,8 @@ import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.sparse import csc_matrix
 
-from .full_cycle import FullCycle
-from .full_cycle_diagnostics import drying_water_diagnostics, free_water_ledger, gas_species_ledger
+from .full_cycle import FullCycle, source_caloric_coefficients, source_caloric_integrals
+from .full_cycle_diagnostics import drying_water_diagnostics, free_water_ledger, gas_species_ledger, caloric_source_domain_coverage
 
 
 class FiniteGasFullCycle(FullCycle):
@@ -40,7 +40,7 @@ class FiniteGasFullCycle(FullCycle):
         self.pore_resistance = self.p('transport.pore_resistance', '1')
         self.viscosity = self.p('transport.viscosity_ref', 'Pa*s')
         self.viscosity_exponent = self.p('transport.viscosity_exponent', '1')
-        self.gas_cp_slope = np.array([self.p('species.'+s+'.cp_slope', 'J/mol/K2') for s in self.ng])
+        self.gas_caloric_coefficients = source_caloric_coefficients(self, self.ng)
         self.water_cp_slope = self.p('species.water.cp_slope', 'J/mol/K2')
         self.viscosity_mixing = self.p('transport.viscosity_mixing_fraction', '1')
         self.viscosity_factors = np.array([self.p('transport.viscosity_factor.'+s, '1') for s in self.ng])
@@ -207,23 +207,17 @@ class FiniteGasFullCycle(FullCycle):
         return base*((1-self.viscosity_mixing)+self.viscosity_mixing*relative)
 
     def gas_molar_cp(self, T):
-        return self.cp[len(self.ns):]+(T[..., None]-self.Tr)*self.gas_cp_slope
+        return source_caloric_integrals(T, self.gas_caloric_coefficients, self.Tr)[0]
 
     def water_background_cp(self, T):
         return self.cp[self.water_index]+self.water_cp_slope*(T-self.Tr)
 
     def thermo(self, T):
-        """Reference-anchored integrals of Cp=c_ref+a*(T-T_ref).
-
-        Gas and liquid-water slopes are assumed, not fitted calorimetric
-        curves. Only finite-inventory hosts use this extension; binding
-        and solid subclass contributions remain separate.
-        """
+        """Source gas calorics and unchanged assumed liquid-water background."""
         h, s = super().thermo(T)
-        if np.any(self.gas_cp_slope != 0):
-            delta = T[..., None]-self.Tr
-            h[..., len(self.ns):] += self.gas_cp_slope*delta**2/2
-            s[..., len(self.ns):] += self.gas_cp_slope*(delta-self.Tr*np.log(T[..., None]/self.Tr))
+        _, gas_h, gas_s = source_caloric_integrals(T, self.gas_caloric_coefficients, self.Tr)
+        h[..., len(self.ns):] = self.h0[len(self.ns):]+gas_h
+        s[..., len(self.ns):] = self.s0[len(self.ns):]+gas_s
         if self.water_cp_slope != 0:
             delta = T-self.Tr
             h[..., self.water_index] += self.water_cp_slope*delta**2/2
@@ -242,17 +236,19 @@ class FiniteGasFullCycle(FullCycle):
         return hw
 
     def gas_carried_enthalpy(self, tl, tr, thermal_mean):
-        """Conjugate face enthalpy, not h evaluated at the thermal mean.
+        """Exact caloric secant of g/T with respect to 1/T, without cancellation.
 
-        For linear Cp, cancellation of standard-state mu/T differences
-        requires h*=h_ref+c_ref*(Theta-Tr)+a*(Tl*Tright-2*Tr*Theta+Tr**2)/2.
-        Its equal-temperature limit is the local h. No division by the
-        face temperature difference is needed, including in the Jacobian.
+        The equal-temperature limit is h(T). The same five coefficients give
+        stored h/s, Cp and this entropy-compatible transported enthalpy.
         """
-        hg = self.h0[len(self.ns):]+(thermal_mean[:, None]-self.Tr)*self.cp[len(self.ns):]
-        if np.any(self.gas_cp_slope != 0):
-            hg += (tl*tr-2*self.Tr*thermal_mean+self.Tr**2)[:, None]*self.gas_cp_slope/2
-        return hg
+        left, right = tl[:, None], tr[:, None]
+        a1, a2, a3, a4, a5 = self.gas_caloric_coefficients.T
+        t0 = self.Tr
+        primitive_ref = a1*t0+a2*t0**2/2-a3/t0+2*a4*np.sqrt(t0)+a5*t0**3/3
+        return (self.h0[len(self.ns):]-primitive_ref+a1*thermal_mean[:, None]
+                +a2*left*right/2-a3*(1/left+1/right)/2
+                +4*a4*np.sqrt(left*right)/(np.sqrt(left)+np.sqrt(right))
+                +a5*left*right*(left+right)/6)
 
     def transport(self, T, partial, widths, pore, bulk, tf, inlet):
         """Molar-frame pair exchange and pressure-driven donor advection.
@@ -260,7 +256,7 @@ class FiniteGasFullCycle(FullCycle):
         Pair contributions conserve total diffusive moles. Donor Darcy
         entropy retains its pressure and nonnegative composition KL terms.
         The analytic carried enthalpy cancels the standard caloric part
-        of mu/T, including the new linear-Cp contribution.
+        of mu/T for the shared source caloric polynomial.
         """
         tl = T
         tr = np.r_[T[1:], tf]
@@ -515,9 +511,7 @@ class FiniteGasFullCycle(FullCycle):
         return np.zeros_like(ns)
 
     def caloric_capacity(self,T,ns,ng):
-        capacity=ns@self.cp[:len(self.ns)]+ng@(self.cp[len(self.ns):]-self.R)
-        if np.any(self.gas_cp_slope != 0):
-            capacity+=np.sum(ng*(T[:, None]-self.Tr)*self.gas_cp_slope,axis=1)
+        capacity=ns@self.cp[:len(self.ns)]+np.sum(ng*(self.gas_molar_cp(T)-self.R),axis=1)
         if self.water_cp_slope != 0:
             capacity+=ns[:,self.water_index]*self.water_cp_slope*(T-self.Tr)
         if self.retention_matrix != 0:
@@ -605,7 +599,7 @@ class FiniteGasFullCycle(FullCycle):
             'nfev':evaluations,'njev':jacobians,'actual_rhs_calls_including_jacobian':self.rhs_calls,'cells':self.n,
             'restart_policy':'Carry all states and ledgers continuously across declared process-segment endpoints; restart BDF history.'}
         report['dimension_check'] = {'passed':True,'consumed_parameter_units':self.used_units,
-            'identities':['nRT/V=Pa','Cp-R=Cv (J/mol/K)','mol*(kg/mol)=kg','J=mol*(J/mol)','W*s=J','Pa*m3=J',
+            'identities':['A1+A2*T+A3/T^2+A4/sqrt(T)+A5*T^2=Cp (J/mol/K); dh/dT=Cp=T*ds/dT', 'gas h_face=d(g/T)/d(1/T) caloric secant (J/mol); same source integrals as stored h/s', 'nRT/V=Pa','Cp-R=Cv (J/mol/K)','mol*(kg/mol)=kg','J=mol*(J/mol)','W*s=J','Pa*m3=J',
                 '(m2/Pa/s)*(Pa/m)=m/s','D*c*area/distance=mol/s','molar_flux*(chemical_potential/T)=W/K',
                 'Wilke Phi and species viscosity ratios are dimensionless; sum(y_i*mu_i/sum(y_j*Phi_ij))=Pa*s',
                 'solid_volume/bulk_volume=1; liquid_volume/bulk_volume=1',
@@ -902,8 +896,8 @@ class FiniteGasFullCycle(FullCycle):
             'gas_pore_resistance_approximation':'beta=transport.pore_resistance is an assumed dimensionless amplitude. Cell ell=2*radius*(pore/initial_pore)^(1/3); internal face ell is the arithmetic mean, exterior ell is the outer cell value, independent of mesh width. K_i=(phi_face/tau_face)*ell_face*sqrt(R*Theta_face/M_i), K_ij=2/(1/K_i+1/K_j), D_pair=D_old_pair/(1+beta*D_old_pair/K_ij). Both D_old and K already include phi/tau, which is not applied again. On the positive physical domain with beta>=0 the shared pair coefficient is positive and symmetric, preserving zero total molecular molar flux and nonnegative pair entropy. Only molecular transport coefficients change; Darcy, conjugate carried enthalpy, U and S retain their preceding laws, without new states or heat sources. beta=0 exactly restores the preceding molecular arithmetic including its unit-pair shortcut; nonzero beta uses pairs even with unit factors. This is a pore-scale mobility hypothesis using an assumed pore diameter, not measured wall accommodation, a pore-throat distribution, full Knudsen, Maxwell-Stefan or dusty-gas transport. Non-equimolar wall friction, slip and thermal transpiration are not resolved. Earlier fixed-parameter UQ/calibration do not identify beta or validate this extension.',
             'gas_viscosity_approximation':'Low-pressure Wilke mixture: mu_i=mu_ref*f_i*(T/T_ref)^b; Phi_ij=[1+sqrt(f_i/f_j)*(M_j/M_i)^(1/4)]^2/sqrt(8*(1+M_i/M_j)); mu_W=sum(y_i*mu_i/sum(y_j*Phi_ij)). Face composition is the arithmetic mean of adjacent mole fractions (including the external reservoir), evaluated at the existing reciprocal-log thermal mean. mu_face=(1-alpha)*mu_base+alpha*mu_W; alpha=0 exactly restores the preceding law. Nominal alpha=1. Positive coefficients preserve donor Darcy direction and its entropy structure, without extra storage or viscous heat addition. All pure reference factors and their common temperature exponent remain assumed. Face averaging is not a resolved variable-viscosity pore resistance; no pressure correction, slip, Knudsen, species-specific viscosity curves or material validation. New factors are fixed, not identified or range-covered by current UQ/calibration.',
             'gas_viscosity_factors':dict(zip(self.ng,self.viscosity_factors.tolist())),
-            'gas_caloric_approximation':'Finite-inventory gas Cp_i=c_ref_i+a_i*(T-Tr); h_i=h_ref_i+c_ref_i*(T-Tr)+a_i*(T-Tr)^2/2; s_i=s_ref_i+c_ref_i*ln(T/Tr)+a_i*((T-Tr)-Tr*ln(T/Tr)). Ideal-gas stored u=h-RT and Cv=Cp-R; reaction affinities, reservoir mu/T and energy/entropy share these functions. Conjugate face enthalpy h*=h_ref+c_ref*(Theta-Tr)+a*(Tl*Tright-2*Tr*Theta+Tr^2)/2 cancels standard-state thermal mu/T differences exactly; it is not h(Theta). No extra reaction heat or new state. Four nonnegative slopes and reference Cp values remain assumed; new slopes fixed in paired UQ/synthetic fit, ranges and correlations not covered. Zero slopes exactly restore the previous constant-Cp host. No fitted spectroscopic/calorimetric curve, dissociation, nonideal gas or material validation. Historical gas-storage-zero host is unchanged.',
-            'gas_cp_slopes_j_mol_k2':dict(zip(self.ng,self.gas_cp_slope.tolist())),
+            'gas_caloric_approximation':'USGS five-term source Cp with analytic reference-anchored h/s and exact caloric secant face enthalpy. Original formation/entropy anchors retained. No additional heat; source domains and assumed extrapolation declared in root caloric_background. Old linear-Cp UQ/fit evidence is historical.',
+            'gas_caloric_coefficients':dict(zip(self.ng,self.gas_caloric_coefficients.tolist())),
             'water_caloric_approximation':'Liquid-water background Cp=c_ref+a*(T-Tr), with reference-anchored integrals h=h_ref+c_ref*(T-Tr)+a*(T-Tr)^2/2 and s=s_ref+c_ref*ln(T/Tr)+a*((T-Tr)-Tr*ln(T/Tr)). Same h/s enter stored u=h-P*v, phase-exchange affinity and energy/entropy accounts. Conjugate liquid-face background enthalpy h*=h_ref+c_ref*(Theta-Tr)+a*(Tl*Tright-2*Tr*Theta+Tr^2)/2 cancels standard-state mu/T differences; it is not h(Theta). Mechanical, mixing and retention-binding contributions remain separate. No new state, extra latent heat, or water equation of state. Reference Cp and slope are assumed; slope fixed in paired UQ and synthetic fit, its range and correlations not covered or identified. Zero water slope restores previous water calorics, preserving other slopes. No high-temperature liquid stability, critical-point behavior, hysteresis or material validation. Historical gas-storage-zero host is unchanged.',
             'water_cp_slope_j_mol_k2':self.water_cp_slope,
             'carbonate_phase_resistance_approximation':'For positive carbonation factor, the entire preceding signed carbonate rate is multiplied by M=1/(1+beta*x_CaO), x_CaO=n_lime/(initial_calcite+initial_lime). beta=kinetics.carbonate.phase_resistance is an assumed dimensionless composition resistance. On the physical domain x_CaO in [0,1] and beta>=0, M is positive and preserves affinity zeros and the sign of -rate*delta_mu/T. No change to stoichiometry, U, S, affinity or separate reaction heat. This is not a resolved product-layer thickness, diffusion, interface area or history law; CaO is a decomposition product and a carbonation reactant. Raw inventory excursions are retained, not clipped; positivity is claimed only on the physical domain. beta=0 exactly restores the preceding signed-rate arithmetic. Zero carbonation factor and the historical gas-storage-zero host retain their preceding paths. No measured kinetics or material validation; this coefficient is not identified by earlier fixed-parameter UQ or calibration.',
@@ -970,4 +964,5 @@ class FiniteGasFullCycle(FullCycle):
                 reference_inventory_mol=reference_inventory),
             'stages':{name:gas_species_ledger(self.config,gas_endpoints[i],gas_endpoints[i+1],
                 reference_inventory_mol=reference_inventory) for i,name in enumerate(self.config['stages'])}}
+        report['caloric_source_domains']=caloric_source_domain_coverage(self, rows, self.ng)
         return report,{'schema':'sludge_vme_full_cycle_fields_v2','cell_count':self.n,'rows':rows}

@@ -301,3 +301,24 @@ def carbonate_reverse_time_coordinate(model, carbonate_fraction):
 
     x = np.asarray(carbonate_fraction)
     return -np.log1p(-x)+model.carbonate_phase_resistance*x
+
+
+def caloric_source_domain_coverage(model, rows, names):
+    """Actual sampled temperature coverage; no truncation or domain repair."""
+    import numpy as np
+
+    temperatures = np.asarray([row['temperature_k'] for row in rows])
+    result = {}
+    for name in names:
+        domain = model.config['caloric_background']['species_domains'][name]
+        lower, upper = domain['source_temperature_range_k']
+        result[name] = {
+            'source_temperature_range_k': [lower, upper],
+            'sampled_temperature_range_k': [float(temperatures.min()), float(temperatures.max())],
+            'cell_time_samples': int(temperatures.size),
+            'below_source_samples': int(np.count_nonzero(temperatures < lower)),
+            'above_source_samples': int(np.count_nonzero(temperatures > upper)),
+            'outside_source_status': 'assumed polynomial continuation; source accuracy not granted',
+            'coverage_note': 'Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes.',
+        }
+    return result

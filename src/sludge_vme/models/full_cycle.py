@@ -89,6 +89,30 @@ def write_json(path: str | Path, data: dict) -> None:
     Path(path).write_text(json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False) + "\n")
 
 
+def source_caloric_coefficients(model, names):
+    units = ('J/mol/K', 'J/mol/K2', 'J*K/mol', 'J/mol/K0.5', 'J/mol/K3')
+    return np.array([[model.p('species.'+name+'.caloric_A'+str(j), unit)
+                      for j, unit in enumerate(units, 1)] for name in names])
+
+
+def source_caloric_integrals(T, coefficients, reference_temperature):
+    """USGS five-term Cp and its exact reference-anchored h/s integrals.
+
+    Source coefficients and application domains are declared in the root.
+    This changes background properties, without a separate reaction heat.
+    Complex T remains available for the host's directional derivatives.
+    """
+    t = np.asarray(T)[..., None]
+    tr = reference_temperature
+    a1, a2, a3, a4, a5 = coefficients.T
+    cp = a1+a2*t+a3/t**2+a4/np.sqrt(t)+a5*t**2
+    h = (a1*(t-tr)+a2*(t*t-tr*tr)/2+a3*(1/tr-1/t)
+         +2*a4*(np.sqrt(t)-np.sqrt(tr))+a5*(t**3-tr**3)/3)
+    s = (a1*np.log(t/tr)+a2*(t-tr)+a3*(1/tr**2-1/t**2)/2
+         +2*a4*(1/np.sqrt(tr)-1/np.sqrt(t))+a5*(t*t-tr*tr)/2)
+    return cp, h, s
+
+
 class FullCycle:
     def __init__(self, config: dict):
         self.config = config

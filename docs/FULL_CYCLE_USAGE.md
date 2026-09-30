@@ -1,5 +1,11 @@
 # 全流程近似模型：离线使用与结果解释
 
+当前P16–P18版本已经完成必要运行验证，详见FULL_CYCLE_CURRENT_MODEL.md；下方P06–P11的次数/版本为历史记录。当前根304条参数（70literature/234assumed/0measured），六种纯物质背景Cp使用根caloric_background的公开五项式，h/s、总容量与面携焓一致；report.caloric_source_domains记录采样温区及来源域外次数，域外延拓仍assumed。
+
+最新实际离线CLI命令与exit0、10次真实前向收据在runs/full-cycle/p18-current/recovery/execution.json，必要摘要已纳入FULL_CYCLE_P18_CURRENT_VALIDATION.json。派生window.parameters.json只含drying_ramp+drying，根配置没有被拟合写回。九类观测已在P16同一当前轨迹上读取，非重新完成九条实测曲线校准。新名义干燥0.13602805%>0.1%，合成窗口通过不能改判。旧--compare的24次UQ及旧三参数/双参数恢复没有在新热容核上重启，其历史结果不自动验证新核全部假设。
+
+只保存必要汇总的当前原方案Python调用示例及实际运行包装器在runs/full-cycle/p18-current/scenario-worker.py；最终报告含完整质量/元素/能量和四气体预算，无原始场。使用现有CLI前应按所选选项阅读下方输出行为。
+
 P11已完成可运行与检查的接口及未来实测校准入口；这不是整个模型停止条件。当前按物理化学定律及公开论文/数据继续开发，缺少目标材料数据不阻塞独立验证；原名义干燥失败和真实预测限制见下文。P11实际完成58项纯数据回归、CLI负例和help启动验证；本次没有重新积分或拟合。
 
 项目保留在 `/Users/wanggaoying/Research/brickmodel-github`。统一输入是根目录 `parameters.full_cycle.json`；采用明确的一维半厚度、假设材料和给定炉温/窑气外库。模型用于研究近似和条件化比较，材料适用性、强度/吸水/缺陷代理与现实对照待实测。
