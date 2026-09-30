@@ -23,8 +23,8 @@
 
 ## 独立交付清单（不计入模型 PASS）
 
-- [ ] **D01 Git** 显式路径检查及 stage，确认暂存仅本轮文件；按 `--no-lazy-fetch`、`write-tree --missing-ok`、`commit-tree`、带旧 HEAD 的 `update-ref` 生成正常后继，普通 push 并读回。禁用普通 commit、无路径 diff --check、强推与全历史扫描。
-- [ ] **D02 Drive 增量** 授权目录 `1AmOyFBd6s0eJOgHiIK74Wyk8_M_QnlW2`；新代码、参数、计划、报告及必要汇总小型增量备份，读回名称、大小、父目录并留收据。
+- [x] **D01 Git** 显式路径检查及 stage，确认暂存仅本轮文件；按 `--no-lazy-fetch`、`write-tree --missing-ok`、`commit-tree`、带旧 HEAD 的 `update-ref` 生成正常后继，普通 push 并读回。禁用普通 commit、无路径 diff --check、强推与全历史扫描。
+- [x] **D02 Drive 增量** 授权目录 `1AmOyFBd6s0eJOgHiIK74Wyk8_M_QnlW2`；新代码、参数、计划、报告及必要汇总小型增量备份，读回名称、大小、父目录并留收据。
 - [ ] **D03 实际恢复** 与 D02 元数据验收分别记录；当前账本 WIP 未获得恢复验收，不删除唯一压缩源。
 - [ ] **D04 历史存储** 按私有备份最新 storage-20gb-plan.json / storage-closeout-20260926-continued.json 字段；保护历史、压缩原件、独有分支及未提交内容，条件不变不重复旧失败。备份阻塞不阻止独立模型工作。
 
@@ -91,3 +91,12 @@
 - P08：当前约定近似能力及物理数值验收完成；总体工程验收仍False（原名义干燥失败），38文献/233假设/0实测不变，材料适用性/现实对照待实测。完整矿物相图、真实产物层/完整孔尺度气体输运、整窑、裂纹/损伤仍在范围外。
 - 变更文件：P01两个model源文件、根参数的固定条件说明、计划/规范/报告/GOAL_STATUS/使用说明及FULL_CYCLE_GAS_LEDGER_RESULTS、FINAL_ACCEPTANCE、FINAL_UQ、FINAL_CALIBRATION、FINAL_SYNTHETIC_OBSERVATIONS、FINAL_JOINT_RECOVERY、FINAL_OBSERVATION_MAPPING、FINAL_INVERSE_READBACK。原始场未写盘或入Git，无新增软件测试、SHA或memory。
 - 从计划实际创建到本次模型收口墙钟4403.908900s；P05与P06部分并行，不能相加成总墙钟；审查耗时未独立计时。下一步直接完成独立Git/Drive最终交付；不启动第三次工艺搜索或定时任务。
+
+### D01/D02最终模型提交及增量；D03/D04未通过（2026-09-30T19:32:22.566385+00:00）
+
+- 模型结果正常后继c26ce88a3f1b64b88b81be024eb843e7e0c33081已普通push并ls-remote读回一致；12个显式文件暂存与字节核对通过，提交工作0.371258s。全部P01源代码/根固定条件说明已在前继8a203d6中正常同步，未强推或改史。
+- 最终模型增量A：final-model-increment-a-20260930-192929-50586a0b.tar.gz，1411173字节，31源文件+manifest共32成员；本地成员与快照逐字节一致，上传一次，云名称/大小/父目录全部读回通过。云ID 1mjDB3TyPo8_uIt52kKVfds2v0lb520qR，链接https://drive.google.com/file/d/1mjDB3TyPo8_uIt52kKVfds2v0lb520qR/view?usp=drivesdk，收据runs/full-cycle/final-model-drive-delivery.json。它依赖d8/P01基线，不是全部历史或可搬迁运行环境备份。
+- D01/D02勾选对应正常提交/推送和小型增量元数据交付；本条交付说明的正常后继及小增量B收据另存runs/full-cycle/final-closeout-git-delivery.json与final-closeout-drive-delivery.json，避免把文件本身的后续动作预写成既成事实。
+- D03仍未通过：P01当前实际下载HTTP403，没有云端字节恢复；最终增量同通道条件未变，不重复恢复调用。D04仍未通过：18:41:57 UTC实测总163016282112字节，20GB未达，完整历史/独有Git恢复未验收。所有源包/历史保留，GitHub容量警告仍未解决。
+- 收口核对：本次显式文件状态干净；全目录只读status扫描超过70s后中止（session6788 exit130），没有文件更改，不称全目录状态检查完成。普通ps被沙箱禁止，正式升级后定位唯一自有进程并中止成功，不是auto-review拒绝。19:28:59 UTC磁盘可用约286GiB。
+- 模型约定工作无剩余实现项。后续边界是材料实测/现实对照、已保留的名义工艺失败及实际备份恢复/历史存储；不自行开新搜索、定时任务或删除源数据。完整交付证据见docs/FULL_CYCLE_FINAL_DELIVERY.json。
