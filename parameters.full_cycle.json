@@ -6410,6 +6410,94 @@
       "source": "policy",
       "status": "assumed",
       "note": "P41 explicit pure saved-data/static-source diagnosis only. 0 new model instances/RHS/Jac/thermo/transport/rates/ODE/fit/UQ/recovery; no physical/numerical acceptance thresholds changed."
+    },
+    "validation.fixed_initial_partition.maximum_analysis_jobs": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P42 fixed initial representation admission only. Quadratic exponent fixed before the one job; mobility is synthetic positive diagonal demonstration, not real pore transport. 0 model/constitutive/RHS/Jac/ODE/fit/UQ/recovery; no physical/process/numerical acceptance threshold changed."
+    },
+    "validation.fixed_initial_partition.per_job_budget": {
+      "value": 60,
+      "unit": "s",
+      "range": [
+        60,
+        60
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P42 fixed initial representation admission only. Quadratic exponent fixed before the one job; mobility is synthetic positive diagonal demonstration, not real pore transport. 0 model/constitutive/RHS/Jac/ODE/fit/UQ/recovery; no physical/process/numerical acceptance threshold changed."
+    },
+    "validation.fixed_initial_partition.global_budget": {
+      "value": 120,
+      "unit": "s",
+      "range": [
+        120,
+        120
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P42 fixed initial representation admission only. Quadratic exponent fixed before the one job; mobility is synthetic positive diagonal demonstration, not real pore transport. 0 model/constitutive/RHS/Jac/ODE/fit/UQ/recovery; no physical/process/numerical acceptance threshold changed."
+    },
+    "validation.fixed_initial_partition.maximum_workers": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P42 fixed initial representation admission only. Quadratic exponent fixed before the one job; mobility is synthetic positive diagonal demonstration, not real pore transport. 0 model/constitutive/RHS/Jac/ODE/fit/UQ/recovery; no physical/process/numerical acceptance threshold changed."
+    },
+    "validation.fixed_initial_partition.maximum_attempts_per_issue": {
+      "value": 2,
+      "unit": "1",
+      "range": [
+        2,
+        2
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P42 fixed initial representation admission only. Quadratic exponent fixed before the one job; mobility is synthetic positive diagonal demonstration, not real pore transport. 0 model/constitutive/RHS/Jac/ODE/fit/UQ/recovery; no physical/process/numerical acceptance threshold changed."
+    },
+    "validation.fixed_initial_partition.summary_byte_limit": {
+      "value": 2097152,
+      "unit": "byte",
+      "range": [
+        2097152,
+        2097152
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P42 fixed initial representation admission only. Quadratic exponent fixed before the one job; mobility is synthetic positive diagonal demonstration, not real pore transport. 0 model/constitutive/RHS/Jac/ODE/fit/UQ/recovery; no physical/process/numerical acceptance threshold changed."
+    },
+    "validation.fixed_initial_partition.exterior_profile_exponent": {
+      "value": 2,
+      "unit": "1",
+      "range": [
+        2,
+        2
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P42 fixed initial representation admission only. Quadratic exponent fixed before the one job; mobility is synthetic positive diagonal demonstration, not real pore transport. 0 model/constitutive/RHS/Jac/ODE/fit/UQ/recovery; no physical/process/numerical acceptance threshold changed."
+    },
+    "validation.fixed_initial_partition.synthetic_face_mobility": {
+      "value": 1e-06,
+      "unit": "mol2/J/m/s",
+      "range": [
+        1e-06,
+        1e-06
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P42 fixed initial representation admission only. Quadratic exponent fixed before the one job; mobility is synthetic positive diagonal demonstration, not real pore transport. 0 model/constitutive/RHS/Jac/ODE/fit/UQ/recovery; no physical/process/numerical acceptance threshold changed."
     }
   },
   "species": [
@@ -9227,6 +9315,61 @@
       "grouping": "Adjacent finecells sumextensive inventories andindependentextents on sameinitialvolume materialinterval. Fineoriginalpeaks retained; T interpolation/coarsenedweighted T are visualizationcomparisons only, not heatenergy or replacementacceptance.",
       "forbidden": "No model imports/instances/constitutive reevaluation/ODEs/parametersearch/physicalfix beforeprovenbug. No SHA/tests/download/recovery.",
       "scope": "One puredata job reads3 existingfixed10s resultJSON plus originalroot/currentandfrozen source andsavedacceptance. Reports signed differences, boundaries andunknownsubflux components. Existing P40 originalmeshFAIL stays."
+    },
+    "fixed_initial_partition": {
+      "schema": "P42_fixed_initial_partition_contract_v1",
+      "recorded_utc": "2026-10-01T22:39:34.398796+00:00",
+      "budget_prefix": "validation.fixed_initial_partition.",
+      "physical_input_root": "runs/full-cycle/p40-direct-transient/root-snapshot.json",
+      "saved_reference": "runs/full-cycle/p40-direct-transient/baseline.json",
+      "source_files": [
+        "src/sludge_vme/models/full_cycle.py",
+        "src/sludge_vme/models/full_cycle_gas.py",
+        "src/sludge_vme/models/full_cycle_solid.py"
+      ],
+      "primitive": "src/sludge_vme/models/initial_finite_volume.py",
+      "source_basis_url": "https://pages.nist.gov/fipy/en/stable/numerical/discret.html",
+      "source_scope": "General control-volume extensive storage/source and shared face area/center-distance principles only. No FiPy dependency, material constants or coupled convergence claim.",
+      "exponent_parameter": "validation.fixed_initial_partition.exterior_profile_exponent",
+      "synthetic_face_mobility_parameter": "validation.fixed_initial_partition.synthetic_face_mobility",
+      "arithmetic_factor_parameter": "acceptance.inventory_roundoff_factor",
+      "fixtures": [
+        {
+          "id": "uniform12",
+          "profile": "uniform",
+          "cells_parameter": "validation.direct_carbonation_transient.baseline_cells"
+        },
+        {
+          "id": "quadratic12",
+          "profile": "exterior_power",
+          "cells_parameter": "validation.direct_carbonation_transient.baseline_cells"
+        },
+        {
+          "id": "quadratic24",
+          "profile": "exterior_power",
+          "cells_parameter": "validation.direct_carbonation_transient.mesh_cells"
+        },
+        {
+          "id": "invalid_composite",
+          "profile": "invalid",
+          "invalid_cells": 0,
+          "invalid_half_thickness_m": -1,
+          "invalid_area_m2": 0,
+          "invalid_exponent": 0,
+          "identity": "Intentionally compound-invalid synthetic input, status assumed, source policy; not a valid physical parameter or runtime host configuration.",
+          "units": {
+            "invalid_cells": "1",
+            "invalid_half_thickness_m": "m",
+            "invalid_area_m2": "m2",
+            "invalid_exponent": "1"
+          }
+        }
+      ],
+      "input_density_policy": "Saved P40 uniform initial inventories/gas/porosity and independent final extent totals become given homogeneous synthetic density fixtures only. No reconstruction of extents from species and no claim to resimulated P40 fields. Source rates for axis algebra are given extent-density/time, not actual host kinetic evaluations.",
+      "nominal_profile_changed": false,
+      "nominal_direct_enabled": false,
+      "initial_geometry": "x_j=L*(1-(1-j/N)^p), p=2 required root explicit; uniform uses x_j=L*j/N. N=12/24 analytic nested parent faces, unequal child widths, no spacing search.",
+      "limits": "Zero host instances and constitutive/thermo/transport/RHS/Jac/ODE/fit/UQ/recovery. Primitive only, no host integration or new mesh/phase/process qualification."
     }
   },
   "caloric_background": {

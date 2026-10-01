@@ -281,3 +281,9 @@ P40实际交付（2026-10-01T21:59:41.691049+00:00）：实现及失败矩阵提
 ## P41实际交付
 
 P41实际交付（2026-10-01T22:32:18.005710+00:00）：诊断实现提交816cdf0e已普通推送并核对远端；26明确新文件+manifest增量1,080,850B已上传，名称/大小/父目录回读一致。科学核仍为39c618f8，44源码不变，0新模型/积分。首版CO2重排符号失败已修正；两进程回收，第二回收超原120s截止0.208346s，P41资源FAIL/partial不勾选，无第三次/延时。原mesh7.33335%>2%、CaO/strictOH+carbonate/P34旧30/81、名义余水0.135892078740%失败保持，完整模型未完成。506=144literature/362assumed/0measured，旧500保持。收据FULL_CYCLE_P41_DELIVERY.json；未下载/解包/恢复，不将metadata当恢复；压缩原件/独有历史保留，20GB/历史完整备份/GitHub容量告警未解决。下一项固定嵌套初始分区先做每格尺度及守恒准入，不追加本项模型调用。
+
+## P42分区原语当前状态
+
+P42固定二次初始有限体积分区/逐格尺度原语已实现（2026-10-01T22:54:23.640845+00:00），准入partial/FAIL：实际一科学job、四fixture，64算术行63通过/1 uniform旧标量extent兼容FAIL，CPU0.010810083s、首监督0.263625s、子进程回收/首预算内。两修复启动gate均在改源/子进程前停止，原120s截止不延，0第二sciencejob；工作流收尾151.717013s，额度关闭。其后仅静态简化uniform恒宽L/N，修正版未执行且A*(L/N)与旧(A*L)/N运算顺序仍有舍入边界，不预判通过。旧44主机/506条保持，新原语未接主机，0物理算子/积分/fit/UQ/恢复；根514=144literature370assumed0measured，P40mesh/phase/strict、P34旧30/81、名义0.135892078740%失败及wholefalse保持。
+
+原语仅显式Python数据接口，未接CLI/完整周期。已关闭验证命令记录为 `.venv/bin/python scripts/verify_initial_partition_invariants.py parameters.full_cycle.json OUTPUT.json`，不得在本项预算再次运行。读取 `docs/FULL_CYCLE_P42_INITIAL_PARTITION.json` 及 `runs/full-cycle/p42-initial-partition/result.json/execution.json` 判断首次源码结果；当前uniform静态修正版未执行。`extent_coordinates` 输入(n,nr) mol或mol/s，化学尺度(n,) mol；结果为reaction-first flat。`nested_extensive_sum` 只相加广延量，不重建extent或热能。

@@ -1,0 +1,140 @@
+{
+  "schema": "P42_actual_initial_partition_admission_summary_v1",
+  "recorded_utc": "2026-10-01T22:54:23.640845+00:00",
+  "implementation": "Reusable initial partition, cell mass/chemical/retention scales, reaction-first encode/decode, extensive nested sums and signed shared-face balance; no host connection",
+  "primitive_evidence": "src/sludge_vme/models/initial_finite_volume.py",
+  "job_evidence": "scripts/verify_initial_partition_invariants.py",
+  "parameter_count": 514,
+  "status_counts": {
+    "literature": 144,
+    "assumed": 370,
+    "measured": 0
+  },
+  "old506_complete_entries_preserved": true,
+  "nominal_uniform_and_direct_disabled_preserved": true,
+  "original44_host_sources_byte_equal_to_P40": true,
+  "actual_source_comparison_record": "runs/full-cycle/p42-initial-partition/source-preservation.json",
+  "new_primitive_source_changed": true,
+  "P42_complete": false,
+  "P42_admission_passed": false,
+  "whole_project_complete": false,
+  "actual_scientific_job_attempts": 1,
+  "repair_prestart_gate_failures": 2,
+  "repair_prestart_children": 0,
+  "original_unique_deadline_extended": false,
+  "all_children_reaped": true,
+  "first_analysis_s": 0.010810083011165261,
+  "first_job_wall_s": 0.2604058750439435,
+  "first_supervision_to_reap_wall_s": 0.26362458313815296,
+  "workflow_closeout_wall_s": 151.717013,
+  "first_job_reap_budget_passed": true,
+  "full_item_semantic_passed": false,
+  "original_start_utc": "2026-10-01T22:45:50.974739+00:00",
+  "original_deadline_utc": "2026-10-01T22:47:50.974739+00:00",
+  "science_attempt2_executed": false,
+  "further_retry_permitted": false,
+  "arithmetic_rows": 64,
+  "arithmetic_rows_passed": 63,
+  "arithmetic_rows_failed": 1,
+  "failed_row": "uniform12.old_scalar_extent_encoding",
+  "first_uniform_width_min_m": 0.0012499999999999976,
+  "first_uniform_width_max_m": 0.0012500000000000011,
+  "quadratic12_outer_width_m": 0.0001041666666666656,
+  "quadratic24_outer_width_m": 2.6041666666667268e-05,
+  "composite_invalid_fixture_rejected": true,
+  "invalid_scope": "Only first positive-cell-count precondition exercised; not a complete invalid-branch qualification",
+  "given_synthetic_internal_face_dissipation_passed": true,
+  "boundary_reservoir_entropy_qualified": false,
+  "static_uniform_correction": {
+    "recorded_utc": "2026-10-01T22:49:12.945053+00:00",
+    "confirmed_new_primitive_issue": "Uniform widths formed by differencing rounded face positions vary and cause one old-scalar extent parity row to exceed unchanged arithmetic bound.",
+    "change": "Uniform branch generates analytic constant L/N widths directly. Quadratic branch and all other algebra unchanged.",
+    "first_executed_source": "primitive-attempt1.py",
+    "current_corrected_source": "src/sludge_vme/models/initial_finite_volume.py",
+    "scientific_job_or_primitive_evaluation_after_change": 0,
+    "source_parse_only": true,
+    "original_job_result_reused_as_corrected_verification": false,
+    "uniform_repair_dynamically_verified": false,
+    "original_physical_host_changed": false,
+    "acceptance_threshold_changed": false,
+    "no_new_deadline_or_third_launch": true,
+    "P42_complete": false,
+    "scope": "Static simplification after stopped execution; not an executed repair retry or PASS."
+  },
+  "current_primitive_equals_executed_primitive": false,
+  "analysis_script_equals_executed_script": true,
+  "partial_saved_evidence": [
+    "Given homogeneous density scaling, ideal pressure scaling arguments, independent 8-extent roundtrip/rate axes",
+    "Quadratic analytic nested parent faces, volume/inventory/gas/extent/dry/chemical/retention sums",
+    "Shared signed mass/heat face telescoping",
+    "Given positive diagonal mobility and conductivity internal-face dissipation only"
+  ],
+  "not_evaluated": [
+    "Complete chemical potential operators",
+    "Actual U/S/phase/surface/elastic/mechanical storage and derivatives",
+    "Current host nonuniform branch or RHS/Jacobian",
+    "MS/Darcy coupled transport",
+    "Any ODE/fit/UQ/recovery"
+  ],
+  "new_model_instances_constitutive_transport_thermo_RHS_Jac_ODE_fit_UQ_recovery": 0,
+  "source_dependency_audit": [
+    {
+      "path": "src/sludge_vme/models/full_cycle.py",
+      "lines": "160-190",
+      "required": "b0/md per cell, per-cell initial species, extent/conversion scales including char+organic, pore/surface reference; preserve total A*L and dry mass"
+    },
+    {
+      "path": "src/sludge_vme/models/full_cycle.py",
+      "lines": "231-245,352,367",
+      "required": "Cell-first extent scales[:,None] for decode, normalize before reaction-first flatten; same per-cell char scale in encoding and rate"
+    },
+    {
+      "path": "src/sludge_vme/models/full_cycle_gas.py",
+      "lines": "38,89-116,143-165,508-514,732-776",
+      "required": "Gas and OH per-cell references; retention global mechanism if uses original scalar coefficient, not array; Ca pool conversion per cell, not cell0; append reaction columns explicitly"
+    },
+    {
+      "path": "src/sludge_vme/models/full_cycle.py",
+      "lines": "318,332,397,412,439",
+      "required": "Sweep field broadcasting per cell, mass denominator sum(md), symmetric-center T diagnostic uses declared coordinate/weight; old 9/8 formula assumes uniform geometry"
+    },
+    {
+      "path": "src/sludge_vme/models/full_cycle_gas.py",
+      "lines": "715,960,1034,1073,1100,1140-1141",
+      "required": "DSC/LOI scalar total dry mass; retained water sum(ratio_i*md_i); solver-resolution scope must remain explicit per cell or declared maximum; no silent acceptance change"
+    },
+    {
+      "path": "src/sludge_vme/models/full_cycle_gas.py",
+      "lines": "239-240,274-275,452-500,669-674",
+      "required": "Current local width/half-cell face series resistance and signed shared flux already present; arithmetic face-property averages are not claimed fully reweighted for nonuniform geometry"
+    },
+    {
+      "path": "src/sludge_vme/models/full_cycle_solid.py",
+      "lines": "48-58,150-177,235-247,316-327,345-417,419-497,516-524",
+      "required": "Per-cell same-potential U/S, phase/carrier birth, elastic and mechanical derivatives; storage J/J/K scales with V0, intensive gradients cancel V0. No extra reaction heat or macro-grid pore-radius change"
+    }
+  ],
+  "source_basis": {
+    "url": "https://pages.nist.gov/fipy/en/stable/numerical/discret.html",
+    "scope": "General control-volume storage/source V, shared flux area and neighboring center distance only; no FiPy dependency, quadratic optimality or brick convergence guarantee",
+    "exterior_power_exponent": 2,
+    "fixed_before_job": true,
+    "design_status": "assumed numerical, not literature/measured"
+  },
+  "original_failures_preserved": [
+    "P41 deadline exceeded .208346s and first derived sign error",
+    "P40 original mesh peak contrast 7.333352694% > 2%, direct extent grid unqualified",
+    "P40 CaO 3 of 9 unique budgets and strict OH/carbonate negative minima",
+    "P34 30 of 81 expanded phase failures",
+    "Historical nominal drying .1358920787402553% > .1%"
+  ],
+  "current_comparison_inverse_UQ_original8stage_material_qualified": false,
+  "next_dependency": "Nonuniform host connection blocked by unverified current uniform-limit simplification and incomplete full-host admission. No relabeling/reallocation of this closed four-fixture deadline. Requires an explicit future resource decision before repeating affected verification; independent scope review may proceed without scientific evaluations.",
+  "execution_receipt": "runs/full-cycle/p42-initial-partition/execution.json",
+  "independent_review_evidence": "runs/full-cycle/p42-initial-partition/independent-review.json",
+  "scientific_result_evidence": "runs/full-cycle/p42-initial-partition/result.json",
+  "checksums_generated": false,
+  "tests_added": false,
+  "recovery_performed": false,
+  "necessary_numerical_summary_bytes": 177889
+}

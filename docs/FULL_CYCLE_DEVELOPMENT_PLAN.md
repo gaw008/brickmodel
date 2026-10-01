@@ -780,3 +780,18 @@ P41保存结果离散诊断已实现（2026-10-01T22:24:38.397446+00:00），资
 P41实际交付（2026-10-01T22:32:18.005710+00:00）：诊断实现提交816cdf0e已普通推送并核对远端；26明确新文件+manifest增量1,080,850B已上传，名称/大小/父目录回读一致。科学核仍为39c618f8，44源码不变，0新模型/积分。首版CO2重排符号失败已修正；两进程回收，第二回收超原120s截止0.208346s，P41资源FAIL/partial不勾选，无第三次/延时。原mesh7.33335%>2%、CaO/strictOH+carbonate/P34旧30/81、名义余水0.135892078740%失败保持，完整模型未完成。506=144literature/362assumed/0measured，旧500保持。收据FULL_CYCLE_P41_DELIVERY.json；未下载/解包/恢复，不将metadata当恢复；压缩原件/独有历史保留，20GB/历史完整备份/GitHub容量告警未解决。下一项固定嵌套初始分区先做每格尺度及守恒准入，不追加本项模型调用。
 
 D01本次正常Git/push及远端读回通过；D02本次增量metadata通过；D03恢复仍按用户停止，D04历史存储未通过。P41A实现完成、P41B资源验收失败，各自保留；P41主项未勾。
+
+- [ ] **P42** 固定初始有限体积分区与逐格尺度原语准入：P41实际Git/两小包metadata已完成，预算FAIL保持。固定x_j=L[1−(1−j/N)^2]仅12/24解析嵌套，指数2一次assumed登记，不搜索/不改名义uniform；旧506完整保持，新增8数值/操作/synthetic项至514=144literature370assumed0measured。先实现小型原语/核查真实标量依赖及解析不变量；四fixture一puredata job、60s每job/唯一120s/单worker/2MiB/同问题最多2attempt含失败。0主机/本构/transport/thermo/RHS/Jac/积分/fit/UQ/恢复，未接主机，原FAIL全部保持。
+
+### P42正式事前登记 2026-10-01T22:39:34.398796+00:00
+
+相关明确路径干净，HEAD0e7d191a；依据NIST FiPy一般有限体积原则，非砖速率/收敛保证。源码审查已识别extent广播轴、首格转换尺度、retention标量条件、sweep/全域md分母/中心温度诊断；其后续主机接入单独准入，不在本项改44源或追加周期。代码/解析证明及预审完成后才开始唯一job并冻结deadline，修复暂停不得排除。见p42-initial-partition/declaration.json。
+
+### P42实际一作业失败与静态简化 2026-10-01T22:54:23.640845+00:00
+
+P42固定二次初始有限体积分区/逐格尺度原语已实现（2026-10-01T22:54:23.640845+00:00），准入partial/FAIL：实际一科学job、四fixture，64算术行63通过/1 uniform旧标量extent兼容FAIL，CPU0.010810083s、首监督0.263625s、子进程回收/首预算内。两修复启动gate均在改源/子进程前停止，原120s截止不延，0第二sciencejob；工作流收尾151.717013s，额度关闭。其后仅静态简化uniform恒宽L/N，修正版未执行且A*(L/N)与旧(A*L)/N运算顺序仍有舍入边界，不预判通过。旧44主机/506条保持，新原语未接主机，0物理算子/积分/fit/UQ/恢复；根514=144literature370assumed0measured，P40mesh/phase/strict、P34旧30/81、名义0.135892078740%失败及wholefalse保持。
+
+- [x] **P42A** 原语、继承尺度依赖及解析推导已实现；首数据job实际执行、失败保留。
+- [ ] **P42B** 四fixture/旧uniform契约准入：首63/64、修正版未执行，P42主项[ ]partial；本项额度关闭，不换ID重跑。
+
+变更新initial_finite_volume.py/verify_initial_partition_invariants.py、根8条操作/数值/synthetic项及当前文档/矩阵；证据p42-initial-partition。一进程回收/两gate无child，真实CPU、首监督与151.717013s收尾分别记录。后续host接入被未完成准入阻塞；需要明确资源决定，非0measured阻塞。

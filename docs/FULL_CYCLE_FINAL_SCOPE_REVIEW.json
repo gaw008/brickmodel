@@ -1178,43 +1178,21 @@
     }
   },
   "current_root_parameter_metadata": {
-    "count": 506,
+    "count": 514,
     "status_counts": {
       "literature": 144,
-      "assumed": 362,
+      "assumed": 370,
       "measured": 0
     },
-    "old500complete_preserved": true,
-    "new6operationsonly": true
+    "old506complete_preserved": true,
+    "new8_operation_design_synthetic_only": true
   },
   "proposed_next_capability": {
     "id": "fixed_nested_nonuniform_initial_finite_volume",
-    "status": "necessary_numerical_capability_candidate_not_implemented_or_run",
-    "reason": "Existing12/24celluniform mesh shows strongboundary-layerresolutionfailure, with97.902%extraextent inouterinitialvolume bin. Savedtemperature on samecoarsereferenceposition stilldiffers. No sourcedx/area/indexbug confirmed.",
-    "same_physics_basis": "Currenttransport/heat already use local evolvingwidths, sharedfacefluxes andcellstoredU/S. A differentpartition of sameA*halfthickness is numericaldiscretization only if initialbulk/drymass/inventory/chemical/extent scales become consistentper-cell quantities andallglobalreferences remainunchanged.",
-    "implementation_boundary": [
-      "Explicitroot fixed12cellinitialwidth fractions and24cellnestedpairedhalves, samecellcounts asP40; no largergrid/search, no changingL/kinetics/thermophysicaldata.",
-      "First derive sumvolumes/inventory/source/energy, sharedface cancellation andentropy identities; audit scalarb0/md/chemical_scale assumptions beforehostimplementation.",
-      "Preserve originaluniformcaseFAIL; do not claim newnumericalscheme hasqualified actualcoupledtemperatureuntilaffectedchecks execute."
-    ],
-    "admission_requirements": [
-      "Complete percellscale dependency audit, includingretention_matrix branchconditions, extentflattening/chemical_scale, totaldrymassreporting, frozeninventoryresolution bounds.",
-      "Uniformpartition exactalgebraiclimit ofallnormalizations; splitpair sums preserve independentextent andboundaryledgers.",
-      "Materialreference mapping vs currentpositions explicitly separated.",
-      "No selectspacingbyrepeatedsimulation orhiddenfinecells."
-    ],
-    "next_minimum_budget_candidate": {
-      "scope": "One zero-model static/percell-discretization invariants and dependency audit task; actualcurrenthost RHS/ODE notpermitted untilregisteredimplementation andevidence review",
-      "maximum_jobs": 1,
-      "per_job_s": 60,
-      "global_unique_s": 120,
-      "workers": 1,
-      "summary_bytes": 2097152,
-      "maximum_attempts_per_issue": 2,
-      "RHS_Jac_ODE_fit_UQ": 0
-    },
-    "future_affected_transient_candidate_only_after_admission": "Samefixed10s originalphysicalconfiguration, baseline/time/gridonce boundedmax3starts/300sper/900sunique/1worker/2MiB; notallocatedorstartedhere.",
-    "optional_scalar_analytic_layer_operator": "A frozenisothermalconstant-coefficient scalar steadyreactiondiffusion exactflux operator couldproveconservation/dissipation/uniformlimits, but cannotreplace currenttransient4gas/nonisothermalhost. Notchosen asclaimedP40fix; internalgas/energy storage andcoupledfriction mustremain."
+    "status": "standalone_primitive_partial_admission_failed_current_uniform_correction_unverified",
+    "design": "Exactfixed quadratic12/24, not equal child halves; exponent2 assumed, no search",
+    "host_connected": false,
+    "next_dependency": "Nonuniform host connection blocked by unverified current uniform-limit simplification and incomplete full-host admission. No relabeling/reallocation of this closed four-fixture deadline. Requires an explicit future resource decision before repeating affected verification; independent scope review may proceed without scientific evaluations."
   },
   "P36": {
     "status": "source_admission_and_fixed_local_gap_check_complete",
@@ -1334,5 +1312,58 @@
       "actual_recovery_performed": false,
       "evidence": "docs/FULL_CYCLE_P41_DELIVERY.json"
     }
+  },
+  "P42": {
+    "P42_complete": false,
+    "P42_admission_passed": false,
+    "actual_scientific_job_attempts": 1,
+    "repair_prestart_gate_failures": 2,
+    "science_attempt2_executed": false,
+    "first_job_reap_budget_passed": true,
+    "full_item_semantic_passed": false,
+    "current_primitive_equals_executed_primitive": false,
+    "original44_host_sources_byte_equal_to_P40": true,
+    "new_model_instances_constitutive_transport_thermo_RHS_Jac_ODE_fit_UQ_recovery": 0,
+    "next_dependency": "Nonuniform host connection blocked by unverified current uniform-limit simplification and incomplete full-host admission. No relabeling/reallocation of this closed four-fixture deadline. Requires an explicit future resource decision before repeating affected verification; independent scope review may proceed without scientific evaluations.",
+    "evidence": "docs/FULL_CYCLE_P42_INITIAL_PARTITION.json"
+  },
+  "historical_pre_P42_root_parameter_metadata": {
+    "count": 506,
+    "status_counts": {
+      "literature": 144,
+      "assumed": 362,
+      "measured": 0
+    },
+    "old500complete_preserved": true,
+    "new6operationsonly": true
+  },
+  "historical_pre_P42_candidate": {
+    "id": "fixed_nested_nonuniform_initial_finite_volume",
+    "status": "necessary_numerical_capability_candidate_not_implemented_or_run",
+    "reason": "Existing12/24celluniform mesh shows strongboundary-layerresolutionfailure, with97.902%extraextent inouterinitialvolume bin. Savedtemperature on samecoarsereferenceposition stilldiffers. No sourcedx/area/indexbug confirmed.",
+    "same_physics_basis": "Currenttransport/heat already use local evolvingwidths, sharedfacefluxes andcellstoredU/S. A differentpartition of sameA*halfthickness is numericaldiscretization only if initialbulk/drymass/inventory/chemical/extent scales become consistentper-cell quantities andallglobalreferences remainunchanged.",
+    "implementation_boundary": [
+      "Explicitroot fixed12cellinitialwidth fractions and24cellnestedpairedhalves, samecellcounts asP40; no largergrid/search, no changingL/kinetics/thermophysicaldata.",
+      "First derive sumvolumes/inventory/source/energy, sharedface cancellation andentropy identities; audit scalarb0/md/chemical_scale assumptions beforehostimplementation.",
+      "Preserve originaluniformcaseFAIL; do not claim newnumericalscheme hasqualified actualcoupledtemperatureuntilaffectedchecks execute."
+    ],
+    "admission_requirements": [
+      "Complete percellscale dependency audit, includingretention_matrix branchconditions, extentflattening/chemical_scale, totaldrymassreporting, frozeninventoryresolution bounds.",
+      "Uniformpartition exactalgebraiclimit ofallnormalizations; splitpair sums preserve independentextent andboundaryledgers.",
+      "Materialreference mapping vs currentpositions explicitly separated.",
+      "No selectspacingbyrepeatedsimulation orhiddenfinecells."
+    ],
+    "next_minimum_budget_candidate": {
+      "scope": "One zero-model static/percell-discretization invariants and dependency audit task; actualcurrenthost RHS/ODE notpermitted untilregisteredimplementation andevidence review",
+      "maximum_jobs": 1,
+      "per_job_s": 60,
+      "global_unique_s": 120,
+      "workers": 1,
+      "summary_bytes": 2097152,
+      "maximum_attempts_per_issue": 2,
+      "RHS_Jac_ODE_fit_UQ": 0
+    },
+    "future_affected_transient_candidate_only_after_admission": "Samefixed10s originalphysicalconfiguration, baseline/time/gridonce boundedmax3starts/300sper/900sunique/1worker/2MiB; notallocatedorstartedhere.",
+    "optional_scalar_analytic_layer_operator": "A frozenisothermalconstant-coefficient scalar steadyreactiondiffusion exactflux operator couldproveconservation/dissipation/uniformlimits, but cannotreplace currenttransient4gas/nonisothermalhost. Notchosen asclaimedP40fix; internalgas/energy storage andcoupledfriction mustremain."
   }
 }
