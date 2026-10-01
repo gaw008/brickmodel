@@ -1,5 +1,7 @@
 # 全流程近似模型交付报告
 
+P38来源TG双DoC实际完成（2026-10-01T20:41:25.704315+00:00）：新增inverse/source_tg.py，原43周期/P37模块/9canonical/fit保持；Eq5/6来源CaO分母/舍入m独立登记，初始Cc不扣、两DoC/差值分别保留。4单行实际3.133894s，3mapped+1复合负例ValueError，全退出回收/0重试；全synthetic、非自动分峰/实砖率/fit资格。460=144literature/316assumed/0measured，旧448保持。原30/81、strictOH、0.135892078740%工艺失败及wholefalse保持，0主机/RHS/Jac/本构/积分/fit/UQ/恢复。见FULL_CYCLE_P38_SOURCE_TG.md/.json；P39条件主机通道仅候选未启动。
+
 P37实际交付（2026-10-01T20:23:49.426364+00:00）：局部实现提交4b8f5434已普通推送并确认远端；明确25文件小增量576,753B/26成员已上传，名称、大小、父目录读回一致，收据FULL_CYCLE_P37_DELIVERY.json。新增独立local科学模块及4标量2.088736s实际资格，原43周期主机保持、未接RHS/布局；显式L来源/域必填、L=1/s仅synthetic。448=141literature/307assumed/0measured，原440保持。原30/81、strictOH、名义0.135892078740%失败与wholefalse保留，0主机/RHS/Jac/积分/fit/UQ/恢复。未下载/解包/字节恢复，不宣称全恢复；历史/独有Git/20GB/容量告警未解决，原件保留。P38源TG双DoC候选未启动。
 
 P37局部算子实际完成（2026-10-01T20:18:18.780123+00:00）：新增direct_carbonation.py，原43全周期主机源码保持、尚未接RHS/布局；显式迁移率及来源/域必填，律assumed无默认砖A/E。4标量实际2.088736s/0重试/全回收，两条保存完整μ与合成A+1/A0各一条，正反向无种子、平衡/零供体均通过局部检查；L=1/s仅synthetic，非砖速率。448=141literature/307assumed/0measured，原440保持。原30/81、strictOH、名义0.135892078740%失败和wholefalse保持，未新增周期/fit/UQ/恢复。见FULL_CYCLE_P37_DIRECT_CARBONATION_OPERATOR.md/.json；P38来源TG双DoC仅候选未启动。

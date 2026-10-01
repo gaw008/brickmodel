@@ -1,0 +1,239 @@
+{
+  "schema": "P38_source_specific_paired_TG_adapter_v1",
+  "recorded_utc": "2026-10-01T20:41:25.704315+00:00",
+  "bounded_item_complete": true,
+  "whole_project_complete": false,
+  "implemented_module": "src/sludge_vme/inverse/source_tg.py",
+  "actual_python_API": "map_saeki2026_tg(*,config,record)",
+  "root_count": 460,
+  "parameter_status_counts": {
+    "literature": 144,
+    "assumed": 316,
+    "measured": 0
+  },
+  "old448_complete_entries_unchanged": true,
+  "new_parameter_scope": "3 independent literature observation molar masses;6 runtime budgets plus3 synthetic numeric arrays. Original host/material/process/acceptance/P37 parameters intact.",
+  "source_equations": {
+    "schema": "saeki2026_paired_TG_source_observation_v1",
+    "formula_source_id": "saeki2026_tg_observation",
+    "molar_mass_parameters": {
+      "CaO": "observation.saeki2026.molar_mass.CaO",
+      "CH": "observation.saeki2026.molar_mass.CH",
+      "Cc": "observation.saeki2026.molar_mass.Cc"
+    },
+    "molar_mass_unit": "g/mol",
+    "quantity": "phase_mass_ratio",
+    "basis": "ignited_CH_CaO_reference",
+    "sample_basis": "portlandite_powder",
+    "phase_separation": "phase_mass_from_separated_TG_peaks",
+    "phase_order": [
+      "portlandite",
+      "calcite"
+    ],
+    "mass_ratio_units": [
+      "g/g",
+      "kg/kg"
+    ],
+    "input_identity_pairs": {
+      "synthetic": "synthetic",
+      "reference": "paper_table",
+      "measured": "raw_experiment"
+    },
+    "definitions": {
+      "DoC_CH": "1-(mCaO/mCH)*M_CH",
+      "DoC_Cc": "(mCaO/mCc)*M_Cc",
+      "difference": "DoC_CH-DoC_Cc"
+    },
+    "assumptions": "Phase mass inputs already separated, same sample/time/source and same explicit CaO reference; no automatic peak integration, background subtraction, wholebrick basis inference, clipping/averaging, kinetic or canonicalfit qualification."
+  },
+  "root_parameter_validation_scope": "Explicit metadata/range integrity before scoped commit; no host construction.",
+  "source_evidence": "runs/full-cycle/p38-source-tg/source-equations.md; known original Eq5/Eq6 MathML read, no source expansion/digitization/fit.",
+  "interface_boundary": {
+    "input": "One already separated CH/Cc phase-mass pair, explicit g/g or kg/kg same ignitedCH(CaO) reference, source/sample/time/denominator and phase derivation plus applicability declarations. No defaults.",
+    "output": "DoC_CH,DoC_Cc,independentdifference,originalinput,sourceformulas/constants,source-relativetime and identity/applicability.",
+    "admission": "Required definition semantics reused_known/_number/convert; caller declarations checked, truth/material validation false. Independent module notcanonical fitkind, original9 unchanged.",
+    "identity": "All four executed rows synthetic; inputmeasured would produce source-derived, not targetmeasured by formula alone. Measured/reference path documented/code reviewed, not numerically exercised this batch.",
+    "no_extra_capabilities": "No TG peak integration, implicit percent or denominator inference, initialCc subtraction, remainingCH renormalization, averaging, clipping, nominalparameter overwrite, kinetics or cycle invocation.",
+    "signed_input_numerical_coverage": "Signed phase-mass and DoC outside[0,1] preservation is source-code behavior only; this batch uses nonnegative phase values/inrangeDoC. Tiny negative difference is not negative-phase or outofrange coverage."
+  },
+  "results": [
+    {
+      "id": "pure_CH_uncarbonated",
+      "input_identity": "synthetic",
+      "actual_outcome": "mapped",
+      "DoC_CH": 0.0,
+      "DoC_Cc": 0.0,
+      "DoC_CH_minus_DoC_Cc": 0.0,
+      "input_mass_units": [
+        "g/g",
+        "g/g"
+      ],
+      "actual_exception": null,
+      "qualification_passed": true
+    },
+    {
+      "id": "initial_Cc_contribution",
+      "input_identity": "synthetic",
+      "actual_outcome": "mapped",
+      "DoC_CH": 0.09999999999999998,
+      "DoC_Cc": 0.09999999999999999,
+      "DoC_CH_minus_DoC_Cc": -1.3877787807814457e-17,
+      "input_mass_units": [
+        "kg/kg",
+        "kg/kg"
+      ],
+      "actual_exception": null,
+      "qualification_passed": true
+    },
+    {
+      "id": "independent_DoC_disagreement",
+      "input_identity": "synthetic",
+      "actual_outcome": "mapped",
+      "DoC_CH": 0.35,
+      "DoC_Cc": 0.19999999999999998,
+      "DoC_CH_minus_DoC_Cc": 0.15,
+      "input_mass_units": [
+        "g/g",
+        "g/g"
+      ],
+      "actual_exception": null,
+      "qualification_passed": true
+    },
+    {
+      "id": "whole_brick_wrong_basis",
+      "input_identity": "synthetic",
+      "actual_outcome": "rejected",
+      "DoC_CH": null,
+      "DoC_Cc": null,
+      "DoC_CH_minus_DoC_Cc": null,
+      "input_mass_units": [
+        "g/g",
+        "g/g"
+      ],
+      "actual_exception": {
+        "type": "ValueError",
+        "message": "source TG semantics incompatible: quantity: requires phase_mass_ratio, got total_TG_mass_ratio; denominator.basis: requires ignited_CH_CaO_reference, got initial_dry_mass; sample.basis: requires portlandite_powder, got whole_brick; denominator.source_locator: explicit known declaration required",
+        "retained": true
+      },
+      "qualification_passed": true
+    }
+  ],
+  "execution": {
+    "schema": "P38_fixed4_scalar_execution_v1",
+    "started_utc": "2026-10-01T20:36:14.964565+00:00",
+    "hard_deadline_utc": "2026-10-01T20:38:14.964565+00:00",
+    "per_call_budget_s": 60.0,
+    "total_budget_s": 120.0,
+    "maximum_workers": 1,
+    "jobs": [
+      {
+        "id": "pure_CH_uncarbonated",
+        "pid": 27102,
+        "status": "finished",
+        "started_utc": "2026-10-01T20:36:14.966504+00:00",
+        "return_code": 0,
+        "child_reaped": true,
+        "finished_utc": "2026-10-01T20:36:15.746116+00:00",
+        "elapsed_s": 0.7796342079527676
+      },
+      {
+        "id": "initial_Cc_contribution",
+        "pid": 27103,
+        "status": "finished",
+        "started_utc": "2026-10-01T20:36:15.748506+00:00",
+        "return_code": 0,
+        "child_reaped": true,
+        "finished_utc": "2026-10-01T20:36:16.521964+00:00",
+        "elapsed_s": 0.7735710418783128
+      },
+      {
+        "id": "independent_DoC_disagreement",
+        "pid": 27114,
+        "status": "finished",
+        "started_utc": "2026-10-01T20:36:16.530066+00:00",
+        "return_code": 0,
+        "child_reaped": true,
+        "finished_utc": "2026-10-01T20:36:17.305084+00:00",
+        "elapsed_s": 0.775150332832709
+      },
+      {
+        "id": "whole_brick_wrong_basis",
+        "pid": 27116,
+        "status": "finished",
+        "started_utc": "2026-10-01T20:36:17.312814+00:00",
+        "return_code": 0,
+        "child_reaped": true,
+        "finished_utc": "2026-10-01T20:36:18.095647+00:00",
+        "elapsed_s": 0.7830260000191629
+      }
+    ],
+    "integrations": 0,
+    "host_RHS_Jacobian_calls": 0,
+    "deadline_extended": false,
+    "status": "completed",
+    "timeout_stop_path_exercised": false,
+    "recorded_utc": "2026-10-01T20:36:18.098492+00:00",
+    "wall_s": 3.13389362487942,
+    "summary_bytes": 658487,
+    "all_started_children_reaped": true
+  },
+  "supervisor_schema_naming_note": "Inherited scalar label denotes exactly one inputrecord per child, not any new physical/model scalar evaluation.",
+  "actual_source_mapping_calls": 4,
+  "actual_source_rows": 4,
+  "mapped_rows": 3,
+  "actual_semantic_rejected_rows": 1,
+  "expected_rejection_is_not_model_failure": true,
+  "unanticipated_evaluation_failures": 0,
+  "retries": 0,
+  "original_failures_and_limits": {
+    "existing_cycle43_source_unchanged": true,
+    "P37_local_operator_unchanged": true,
+    "old9_observation_and_fit_source_unchanged": true,
+    "original81ordinary108gas_four_refinement": "Inherited P34 evidence; no repeat or upgrade.",
+    "extended_phase_failed_count": 30,
+    "extended_phase_budget_total": 81,
+    "strict_OH_dissipation_qualified": false,
+    "nominal_remaining_water_fraction": 0.001358920787402553,
+    "nominal_remaining_water_percent": 0.1358920787402553,
+    "nominal_drying_passed": false,
+    "current_host_UQ_or_fit_qualified": false,
+    "target_material_measured_parameter_count": 0,
+    "actual_TG_peak_separation_implemented": false,
+    "real_source_measurement_points_evaluated": 0,
+    "whole_brick_DoC_mapping_qualified": false,
+    "direct_cycle_channel_implemented": false,
+    "restore_performed": false,
+    "historical_backup20GB_capacity_warning_resolved": false
+  },
+  "independent_review": "runs/full-cycle/p38-source-tg/independent-review.json",
+  "wall_s_from_registration_to_report": 513.73921,
+  "timing_scope": "3.1338936s actual supervision. Declaration-to-report includes reading/code/docs/review, not integration time.",
+  "next_candidate": {
+    "id": "P39",
+    "status": "proposed_not_started",
+    "ability": "Conditionally connect supplied-mobility direct carbonation to cycle RHS, independent accumulated extent and shared inventory/energy/entropy/mechanical ledger",
+    "basis": "P36 exact-donor pathway gap; P37 real local API exists but current full_cycle_gas.py RHS lacks direct channel; P38 source adapter supplies semantics only, not kinetics. First-principles nu_d=nu_h-nu_c and sharedmu/U/S/volume already defined.",
+    "source_evidence": [
+      "docs/FULL_CYCLE_P36_DIRECT_CARBONATION_ADMISSION.json",
+      "src/sludge_vme/models/direct_carbonation.py",
+      "src/sludge_vme/models/full_cycle_gas.py",
+      "docs/FULL_CYCLE_P38_SOURCE_TG.json"
+    ],
+    "required_input": "Macroscopic positive L1/s with explicit value/source/status/material/T/humidity/surface domain required. No inferred/default brickA/E or rate from endpointDoC/nm/s/atomistic barriers. Conditional assumed input does not establish measured nominal kinetics.",
+    "coupling": "One r@nu_d species source, one independent xi_d derivative; OH+xi_h+xi_d invariant; include calcite+OH through sameU/S/volume, no extra reaction heat or gas-source duplication.",
+    "first_minimum_budget_candidate": {
+      "maximum_single_state_RHS_evaluations": 4,
+      "per_call_s": 60,
+      "total_s": 120,
+      "summary_bytes": 2097152,
+      "workers": 1,
+      "integrations": 0,
+      "refinement_runs": 0,
+      "fits": 0,
+      "UQ": 0,
+      "recoveries": 0
+    },
+    "qualification_boundary": "Initial futureitem can qualify actual conditional local RHS/extent/ledger connection only. Integration/refinement require separately registered affected budgets; original P34 failedphase/strictOH/dry not reclassified. No implementation or parameters forP39 started inP38."
+  },
+  "delivery": "Pending actual explicit normal Git/push and reviewed smallincrement Drive metadata; no delivery PASS prefilled."
+}

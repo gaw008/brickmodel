@@ -247,3 +247,9 @@ admitted = prepare_dataset(config, dataset, for_calibration=True)
 直接导入 `sludge_vme.models.direct_carbonation.DirectCarbonationMobility` 与 `direct_carbonation_sources`。mobility必填 `value_per_s/source/status/identity/applicability`；算子必填 `temperature_k/delta_mu_j_mol/portlandite_mol/calcite_mol/co2_pressure_pa/water_vapor_pressure_pa/gas_constant_j_mol_k/reference_pressure_pa/mobility/stoichiometry`。全部物理参数从统一根配置或明确带身份的调用数据读取；无A/E或砖速率默认。计量必须是OH−1/CO2−1/calcite+1/H2O+1且Δμ同方向完整净势。
 
 实际离线Python调用证据是 `runs/full-cycle/p37-direct-carbonation-operator/probe.py` 与四份结果JSON。根 `public_reference_cases.direct_carbonation_operator` 及8个配套项只定义有限synthetic fixture；该脚本已经运行，后续使用不能自动重复耗用已登记4次预算。返回 `extent_rate_mol_s/species_sources_mol_s/entropy_production_w_k/mobility_contract/rate_law_identity`。瞬时导数不是累计ξ、全周期通道或CLI升级；不需外网及新增依赖。源码负库存保留，域外耗散未证明，不自动填来源或剪裁输出。当前全流程/材料/工艺未通过事项读P37报告。
+
+## P38 来源 TG 双 DoC 的离线单记录API
+
+从 `sludge_vme.inverse.source_tg` 导入 `map_saeki2026_tg`，显式传 `config=统一根配置` 和 `record=同源相质量记录`。根source_observation_contracts.saeki2026_tg及observation.saeki2026.molar_mass三项必需；不采用主机质量或隐藏默认。record字段见执行证据p38-source-tg四JSON的input，包含共同样品/时间/来源/分母、phase_separation与适用声明。两相value是已分峰归一相质量，unit明确g/g或kg/kg，denominator.basis=ignited_CH_CaO_reference，sample.basis=portlandite_powder，quantity=phase_mass_ratio。整砖总TG/initial_dry无法自动换算。
+
+返回DoC_CH、DoC_Cc及signed差值，保留original_input与来源相对时间；该API不做峰积分、kinetics、主机调用或fit准入，9旧种类不变。完整source/reference原始输入可用于来源映射，但公式导出量不是目标直接实测；当前实际四条全synthetic。执行脚本已经完成唯一4调用，本说明不授权自动重复已用预算；后续新数据按其声明/独立预算处理。未实现CLI自动输入或整砖拟合，不把本项叫周期恢复。

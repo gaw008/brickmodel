@@ -690,10 +690,22 @@ P37局部算子实际完成（2026-10-01T20:18:18.780123+00:00）：新增direct
 
 变更：新局部模块、根8操作/合成项、计划/报告/规范/当前模型/使用/矩阵/状态；计算4scalar、0主机/RHS/Jac/积分。原P34仍partial，物理数值完整验收未完成。下一未实现能力为P38纯数据来源TG双DoC；同一来源Eq5/6精确MathML已可读，候选4条/60/120s/2MiB，当前不启动。交付清单仍与模型分列。
 
-- [ ] **P38** 纯CH来源特定TG双DoC纯数据映射；仅候选未登记/未实施/未求值，不替代整砖观测或宏观动力学。
+- [x] **P38** 来源特定TG双DoC实际适配完成。新inverse/source_tg.py，旧43周期/P37/9canonical/fit保持；460=144literature/316assumed/0measured，旧448完整保持。4单行3.133894s/全退出回收/0重试：3mapped+1复合负例实际ValueError；原signed差值/输入/身份保持，非自动分峰/实砖/宏观率/fit资格。证据FULL_CYCLE_P38_SOURCE_TG.md/.json与p38-source-tg，Git/Drive后续实际收据，wholefalse。
 
 ### P37实际必要交付 2026-10-01T20:23:49.426364+00:00
 
 P37实际交付（2026-10-01T20:23:49.426364+00:00）：局部实现提交4b8f5434已普通推送并确认远端；明确25文件小增量576,753B/26成员已上传，名称、大小、父目录读回一致，收据FULL_CYCLE_P37_DELIVERY.json。新增独立local科学模块及4标量2.088736s实际资格，原43周期主机保持、未接RHS/布局；显式L来源/域必填、L=1/s仅synthetic。448=141literature/307assumed/0measured，原440保持。原30/81、strictOH、名义0.135892078740%失败与wholefalse保留，0主机/RHS/Jac/积分/fit/UQ/恢复。未下载/解包/字节恢复，不宣称全恢复；历史/独有Git/20GB/容量告警未解决，原件保留。P38源TG双DoC候选未启动。
 
 D01正常后继/push/远端读回通过；D02本轮小增量metadata通过；D03恢复继续停止。P37已完成本地算子限定项；P34/全流程仍partial，P38候选不在本轮启动。
+
+### P38正式事前登记 2026-10-01T20:32:51.965105+00:00
+
+HEAD64dec85d，相关路径干净；Research可用294958812KiB，非项目+历史总量。复用Saeki2026已知Eq5/6完整MathML：M为g/g灼烧CH(CaO基准)，m原舍入56.08/74.09/100.09g/mol独立literature参数；不扣起始Cc、不除起始剩余CH、不平均强制闭合。新source_tg仅4单行puredata，负例实际拒绝另判，0旧核/本构/积分。460=144literature/316assumed/0measured，旧448完整保持；独立根fixture明确synthetic。证据p38-source-tg/declaration.json，原P34扩展30/81与strictOH/0.135892078740%失败保持，wholefalse。
+
+### P38实际适配与核查完成 2026-10-01T20:41:25.704315+00:00
+
+P38来源TG双DoC实际完成（2026-10-01T20:41:25.704315+00:00）：新增inverse/source_tg.py，原43周期/P37模块/9canonical/fit保持；Eq5/6来源CaO分母/舍入m独立登记，初始Cc不扣、两DoC/差值分别保留。4单行实际3.133894s，3mapped+1复合负例ValueError，全退出回收/0重试；全synthetic、非自动分峰/实砖率/fit资格。460=144literature/316assumed/0measured，旧448保持。原30/81、strictOH、0.135892078740%工艺失败及wholefalse保持，0主机/RHS/Jac/本构/积分/fit/UQ/恢复。见FULL_CYCLE_P38_SOURCE_TG.md/.json；P39条件主机通道仅候选未启动。
+
+变更新source_tg、根3来源+9操作/合成项及计划/规范/报告/当前模型/使用/8+4矩阵/状态。纯数据4调用，无重复旧验收；四条全部证据和预期拒绝保存。下一能力P39条件化direct主机真实RHS/extent/同U/S/volume接线，先4单态/60/120s/2MiB候选，尚未启动，不以缺实材停止有条件接口开发，也不虚构名义L。
+
+- [ ] **P39** 条件化direct主机RHS/独立extent与共享账本接线：候选未登记/未实施/未运行，显式L及来源/域需事前冻结，周期/加密另须影响预算。
