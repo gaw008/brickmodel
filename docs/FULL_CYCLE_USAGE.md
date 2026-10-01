@@ -277,3 +277,7 @@ P40实际交付（2026-10-01T21:59:41.691049+00:00）：实现及失败矩阵提
 标准库脚本 scripts/analyze_saved_direct_transient.py 提供 analyze(Path(root_parameters))，CLI为 python3 scripts/analyze_saved_direct_transient.py parameters.full_cycle.json OUTPUT.json。合同和字段/路径仅取统一根 public_reference_cases.saved_direct_spatial_diagnosis；读取指定已保存baseline/time/mesh及冻结源，不导入模型、不构造新状态。输入times/配对必须已经相同，无隐式时间插值或数据默认。命令是可复用入口说明，当前两次额度已用完，不授权再次运行。
 
 保守映射只对库存/独立extent求和；温度参考插值和当前体积加权均仅比较，不改原细格峰及meshFAIL。P41第二结果可审阅但原120s回收超时，预算FAIL/partial，首CO2解释式符号错误保留且已修正，不涉及真实反应通道。source_static_anchors是部分方法索引，活动solid state_caloric_capacity/porous_mechanical_rates以P41报告手读引用补齐；没有完整模型源码缺陷证明。下一非均匀分区只是候选，不自动改主机。
+
+## P41实际交付
+
+P41实际交付（2026-10-01T22:32:18.005710+00:00）：诊断实现提交816cdf0e已普通推送并核对远端；26明确新文件+manifest增量1,080,850B已上传，名称/大小/父目录回读一致。科学核仍为39c618f8，44源码不变，0新模型/积分。首版CO2重排符号失败已修正；两进程回收，第二回收超原120s截止0.208346s，P41资源FAIL/partial不勾选，无第三次/延时。原mesh7.33335%>2%、CaO/strictOH+carbonate/P34旧30/81、名义余水0.135892078740%失败保持，完整模型未完成。506=144literature/362assumed/0measured，旧500保持。收据FULL_CYCLE_P41_DELIVERY.json；未下载/解包/恢复，不将metadata当恢复；压缩原件/独有历史保留，20GB/历史完整备份/GitHub容量告警未解决。下一项固定嵌套初始分区先做每格尺度及守恒准入，不追加本项模型调用。
