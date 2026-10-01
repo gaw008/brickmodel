@@ -261,3 +261,9 @@ admitted = prepare_dataset(config, dataset, for_calibration=True)
 本轮可审阅合同在public_reference_cases.direct_carbonation_host.channel；仅synthetic_P39_host_coupling_only，不能作为名义砖体默认。调用者明确复制该合同仅用于有预算的条件核查。主机扩展active8反应/独立xi_d，保留旧7Arrhenius，reaction_fields/summary active_reactions含direct；使用相同U/S/volume、质量/元素/气体、水及熵，无新热源。gas/solid布局统一offset，不能在旧长度state上隐式添加通道。
 
 本轮唯一4完整RHS已执行，脚本/输入/实际回调和signed结果在p39-direct-host，不授权重复旧四状态。真正周期summarize、CLI完整积分/加密/反演资格尚未更新；P40只为有界候选，未运行。P38来源TG映射继续独立，公式不识别L。
+
+## P40 单窗口摘要与实际使用边界
+
+FiniteGas.summarize支持真实已声明单阶段窗口；若不含drying/cooling，端点evaluated=false、值和passed=null，不能当作工艺通过。actual_initial_references来自真正初始solverinput，第八extent/active_reactions/气体和自由水账本保持。initial_output_provenance记录摘要t0原始有符号插值差，摘要copy原点使用真正y0，不改sol.y/末态/RHS/Jac。
+
+public_reference_cases.direct_carbonation_transient明确冻结10s synthetic配置：make_cycle前复制所有根override，原12/.1s，time12/.05s与更紧容差，mesh24原精度；不可对既有名义initial使用后置单点改相。运行本身已执行，总4starts（一个失败+明确追加mesh），当前不授权重复。原四指标time通过、mesh峰温差失败，direct extent空间未收敛、CaO及严格OH/carbonate失败保存；原八阶段/实材/当前比较和反演未资格。见P40报告与ignored runs/full-cycle/p40-direct-transient证据。离线所需代码/根/既有依赖仍本地，不增加在线服务。

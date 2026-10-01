@@ -806,11 +806,25 @@ class FiniteGasFullCycle(FullCycle):
             if not sol.success:
                 raise RuntimeError(f'{name}: {sol.message}')
             keep = slice(None) if i == 0 else slice(1,None)
-            observed_times.extend(sol.t[keep]); observed_states.extend(sol.y.T[keep])
+            sampled_states = sol.y.T[keep].copy()
+            if i == 0:
+                # t_eval evaluates a BDF polynomial even at the input endpoint.
+                # The declared initial condition is the supplied vector; retain
+                # the raw roundtrip rather than using it as an altered origin.
+                initial_output_roundtrip = sampled_states[0]-state
+                sampled_states[0] = state
+            observed_times.extend(sol.t[keep]); observed_states.extend(sampled_states)
             state = sol.y[:,-1]
             evaluations += sol.nfev; jacobians += sol.njev
             print(f'full-cycle {name}: t={b:g}s, elapsed={time.monotonic()-started:.2f}s, RHS calls={self.rhs_calls}',flush=True)
         report, fields = self.summarize(np.array(observed_times), np.array(observed_states))
+        report['initial_output_provenance'] = {
+            'basis':'Exact vector supplied to the first solver call; all later states are returned solver samples.',
+            'raw_solver_t0_minus_supplied_state':initial_output_roundtrip.tolist(),
+            'maximum_absolute_roundtrip_difference':float(np.max(np.abs(initial_output_roundtrip))),
+            'raw_signed_difference_retained':True,
+            'physical_initial_condition_or_rhs_changed':False,
+            'extents_reconstructed_from_inventories':False}
         report['elapsed_s'] = time.monotonic()-started
         report['solver'] = {'method':'BDF','jacobian':'physical-state complex step on active constitutive branches; exact zero ledger columns',
             'nfev':evaluations,'njev':jacobians,'actual_rhs_calls_including_jacobian':self.rhs_calls,'cells':self.n,
@@ -916,6 +930,8 @@ class FiniteGasFullCycle(FullCycle):
 
     def summarize(self, times, states):
         rows=[]; inventories=[]; energies=[]; entropies=[]; heat=[]; flow=[]; bulks=[]
+        has_drying = 'drying' in self.config['stages']
+        has_cooling = 'cooling' in self.config['stages'] or 'cooling_hold' in self.config['stages']
         minimum_capacity=float('inf'); maximum_mechanical_residual=0.
         min_entropy=float('inf'); min_face=float('inf'); min_water_face=float('inf'); identity_residual=0.; min_condensed=float('inf'); min_gas=float('inf')
         for t,y in zip(times, states):
@@ -928,7 +944,7 @@ class FiniteGasFullCycle(FullCycle):
                 carbonate_fields={
                     'carbonate_lime_fraction':(ns[:,self.lime]/self.calcium_pool).tolist(),
                     'carbonate_phase_mobility_multiplier':self.carbonate_phase_mobility(ns).tolist()}
-            if t == self.times[self.config['stages'].index('drying')+1]:
+            if has_drying and t == self.times[self.config['stages'].index('drying')+1]:
                 drying_affinity_decomposition=self.water_phase_affinity_decomposition(f,T,ns,bulk,cap,r,h,s)
             inventories.append(np.r_[ns.sum(axis=0),ng.sum(axis=0)])
             energy=np.sum(ns*(h[:, :len(self.ns)]-self.P*self.v))+np.sum(ng*(h[:, len(self.ns):]-self.R*T[:, None]))+surface.sum()
@@ -976,6 +992,11 @@ class FiniteGasFullCycle(FullCycle):
                 'internal_liquid_water_face_flux_mol_s':r['water_flux'].tolist(),
                 'internal_liquid_water_face_energy_flux_w':r['water_energy_flux'].tolist(),
                 'internal_liquid_water_face_entropy_w_k':r['water_entropy'].tolist(),
+                **({
+                    'direct_carbonation_rate_mol_s':r['direct_carbonation']['extent_rate_mol_s'].tolist(),
+                    'direct_carbonation_affinity_j_mol':(r['direct_carbonation']['dimensionless_affinity']*self.R*T).tolist(),
+                    'direct_carbonation_entropy_w_k':r['direct_carbonation']['entropy_production_w_k'].tolist(),
+                } if self.direct_carbonation_enabled else {}),
                 **self.reaction_fields(y),
                 'char_inventory_mol':ns[:,self.char].tolist(),
                 'calcite_inventory_mol':ns[:,self.calcite].tolist(),
@@ -1031,6 +1052,9 @@ class FiniteGasFullCycle(FullCycle):
             uerror=energies[i:j+1]-energies[i]-(heat[i:j+1]-heat[i])-(flow[i:j+1]-flow[i])-(work[i:j+1]-work[i])
             rel={'mass':float(np.max(np.abs(merror))/mass[0]),'elements':float(element_rel.max()),'energy':float(np.max(np.abs(uerror))/energy_scale)}
             return {'relative_residuals':rel,'passed':max(rel.values())<self.p('acceptance.balance_relative','1'),
+                    'signed_mass_residual_kg_by_output':merror.tolist(),
+                    'signed_element_residual_mol_by_output':eerror.tolist(),
+                    'signed_complete_energy_residual_j_by_output':uerror.tolist(),
                     'energy_scale_j':energy_scale,'maximum_energy_residual_j':float(np.max(np.abs(uerror))),
                     'outer_pressure_work_j':float(work[j]-work[i]),'total_internal_and_surface_energy_change_j':float(energies[j]-energies[i]),
                     'pressure_work_integration_residual_j':float(work[j]-work[i]+self.P*(bulks[j]-bulks[i]))}
@@ -1116,9 +1140,11 @@ class FiniteGasFullCycle(FullCycle):
         inventory_roundoff = self.p('acceptance.inventory_roundoff_factor','1')*np.finfo(float).eps*self.nscale
         inventory_solver_budget=self.p('numerics.atol','1')*max(self.chemical_scale,float(np.max(self.extent_scale[:self.kinetic_nr]@np.abs(self.snu[:self.kinetic_nr]))))
         inventory_budget=inventory_roundoff+inventory_solver_budget
-        drying=int(np.where(times==self.times[self.config['stages'].index('drying')+1])[0][0])
-        remaining=max(rows[drying]['water_kg_per_initial_dry_kg'])/self.p('material.water_dry_ratio','kg/kg')
-        cooled=max(abs(t-self.temperatures[-1]) for t in final['temperature_k'])
+        remaining = None
+        if has_drying:
+            drying=int(np.where(times==self.times[self.config['stages'].index('drying')+1])[0][0])
+            remaining=max(rows[drying]['water_kg_per_initial_dry_kg'])/self.p('material.water_dry_ratio','kg/kg')
+        cooled = max(abs(t-self.temperatures[-1]) for t in final['temperature_k']) if has_cooling else None
         report={'schema':'sludge_vme_full_cycle_result_v2','scope':self.config['scope'],'material_applicability':'待实测','real_world_validation':'待实测',
             'kiln_gas_program':{'mode':'prescribed piecewise-linear external reservoir',
                 'scale':self.gas_program_scale,'time_s':self.times.tolist(),
@@ -1172,15 +1198,44 @@ class FiniteGasFullCycle(FullCycle):
                 'condensed_inventory_acceptance_bound_mol':inventory_budget,'inventory_values_clipped':False,
                 'minimum_temperature_k':min(min(r['temperature_k']) for r in rows),
                 'minimum_porosity':min(min(r['porosity']) for r in rows),'minimum_pressure_pa':min(min(r['pressure_pa']) for r in rows)}}
-        drying_start=int(np.where(times==self.times[self.config['stages'].index('drying')])[0][0])
-        report['drying_water_diagnostics']=drying_water_diagnostics(
-            self.reaction_config,rows[drying_start],rows[drying],
-            boundary_in_mol=gasin[drying,vapor_index]-gasin[drying_start,vapor_index],
-            boundary_out_mol=gasout[drying,vapor_index]-gasout[drying_start,vapor_index])
-        for cell,decomposition in zip(report['drying_water_diagnostics']['end_state_cells'],drying_affinity_decomposition):
-            cell['affinity_decomposition']=decomposition
-        report['example_endpoints']={'drying_remaining_fraction':remaining,'cooling_maximum_temperature_difference_k':cooled,
-            'passed':bool(remaining<self.p('acceptance.drying_remaining_fraction','1') and cooled<self.p('acceptance.cooling_temperature_difference','K'))}
+        if has_drying:
+            drying_start=int(np.where(times==self.times[self.config['stages'].index('drying')])[0][0])
+            report['drying_water_diagnostics']=drying_water_diagnostics(
+                self.reaction_config,rows[drying_start],rows[drying],
+                boundary_in_mol=gasin[drying,vapor_index]-gasin[drying_start,vapor_index],
+                boundary_out_mol=gasout[drying,vapor_index]-gasout[drying_start,vapor_index])
+            for cell,decomposition in zip(report['drying_water_diagnostics']['end_state_cells'],drying_affinity_decomposition):
+                cell['affinity_decomposition']=decomposition
+        else:
+            report['drying_water_diagnostics']={'evaluated':False,'reason':'drying is not in the declared process window'}
+        endpoint_checks=[]
+        if has_drying:
+            endpoint_checks.append(remaining<self.p('acceptance.drying_remaining_fraction','1'))
+        if has_cooling:
+            endpoint_checks.append(cooled<self.p('acceptance.cooling_temperature_difference','K'))
+        report['example_endpoints']={
+            'drying_evaluated':has_drying,'cooling_evaluated':has_cooling,
+            'drying_remaining_fraction':remaining,'cooling_maximum_temperature_difference_k':cooled,
+            'passed':bool(all(endpoint_checks)) if endpoint_checks else None,
+            'scope':'Only declared drying/cooling stages; omitted endpoints are not qualified.'}
+        report['actual_initial_references']={
+            'time_s':float(times[0]),'inventory_totals_mol':dict(zip(self.names,inventories[0].tolist())),
+            'elements_mol':dict(zip(self.elements,elements[0].tolist())), 'total_mass_kg':float(mass[0]),
+            'complete_internal_surface_binding_skeleton_energy_j':float(energies[0]),
+            'complete_entropy_j_k':float(entropies[0]),'bulk_volume_m3':float(bulks[0]),
+            'cumulative_heat_j':float(heat[0]),'cumulative_flow_j':float(flow[0]),
+            'cumulative_pressure_work_j':float(work[0]),
+            'cumulative_entropy_production_exchange_j_k':(states[0,-2:]*self.escale/self.Tr).tolist(),
+            'boundary_in_mol':dict(zip(self.ng,gasin[0].tolist())),
+            'boundary_out_mol':dict(zip(self.ng,gasout[0].tolist())),
+            'reaction_extent_mol':rows[0]['reaction_extent_mol'],
+            'reference_basis':'All references are reconstructed from the actual first state, not a separate nominal recipe.'}
+        report['declared_process_window']={'stages':list(self.config['stages']),
+            'start_s':float(times[0]),'end_s':float(times[-1]),
+            'qualification':'whole_cycle means this declared window only; no omitted stage or fired-product qualification'}
+        if self.direct_carbonation_enabled:
+            report['thermodynamics']['minimum_direct_carbonation_entropy_w_k']=min(min(row['direct_carbonation_entropy_w_k']) for row in rows)
+            report['thermodynamics']['direct_reaction_heat_and_entropy_counted_once']=True
         report['physical_consistency_passed']=bool(report['conservation_passed'] and min_condensed>=-inventory_budget and min_gas>0
             and minimum_capacity>0 and report['state_domain']['minimum_porosity']>0 and min_entropy>=0 and min_face>=0 and min_water_face>=0
             and entropy_relative<self.p('acceptance.entropy_relative','1'))

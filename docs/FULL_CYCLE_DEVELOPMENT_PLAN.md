@@ -726,7 +726,7 @@ P39条件direct主机实际接线完成（2026-10-01T21:10:07.930204+00:00）：
 
 变更full_cycle.py/full_cycle_gas.py/direct_carbonation.py、根9项、计划/当前规范/报告/用法/8+4/状态。共享源和独立extent只授局部接线；原名义失败/未实测/历史交付限制保持。下一项最小动态前提/候选预算见FULL_CYCLE_P39_DIRECT_HOST.json，未启动。
 
-- [ ] **P40** direct条件通道最小动态baseline+time/grid各一次候选，最多3积分/300s每例/900s唯一总/2MiB/单并发，尚未登记或运行，原门槛及失败保持。
+- [ ] **P40** 正式事前登记固定10s synthetic直接通道：构造前recipeOH0.01/Cc0.065，其余旧配方；炉温298.15、边界CO2.03/H2O.015，其余根冻结。基准12格.1s/旧容差，time12格.05s/1e−6/1e−8，mesh24格原基准设置。最多3积分(失败也计)/300s每例/唯一900s/单并发/数值汇总2MiB。动态域290–350K、partial0–200kPa/total1–200kPa固定，越域停不拓域。根499旧469保持，真实y0/独立extent/账本零点一致；新单阶段摘要必要适配后执行，wholefalse。
 
 P40候选初始化前提：必须使实际动态y0、声明初始固相/总Ca/气体/phase coordinate与独立extent零点一致，账本initial/reference直接取实际y0。不得仅覆盖P39单点Ca分数就把原名义initial当动态起点；ξdirect仍独立积分，不从库存构造。现温域[298.15,298.15]K不能准入自热轨迹，若新synthetic动态域需事前根assumed登记，不能升为实砖/来源实验或八阶段资格。关闭direct的calcite表达式已恢复旧−rate，但并未因此给当前源码动态兼容PASS。
 
@@ -735,3 +735,21 @@ P40候选初始化前提：必须使实际动态y0、声明初始固相/总Ca/�
 P39实际交付（2026-10-01T21:15:42.402929+00:00）：条件direct主机实现提交398974e6已普通推送且远端一致；明确32文件703,203B/33成员新增量已上传，名称/大小/父目录回读一致，收据FULL_CYCLE_P39_DELIVERY.json。4完整12格RHS/4direct回调/48格，2.079101s/全退出回收/0重试，所选瞬时接线通过，0积分/Jac扫/fit/UQ/恢复；导数伪账本非动态闭合。根469=144literature/325assumed/0measured、旧460保持、名义未启用、Lsynthetic。P34旧30/81、strictOH/历史名义0.135892078740%工艺失败保持，完整模型未完成，新通道动态守恒/加密待验。预提交首次系统解释器缺NumPy、第二次既有venv通过，失败保留且无新科学调用。未下载/解包/恢复，原件/独有历史保留；完整备份/20GB/容量告警未解决。P40同一synthetic短瞬态3积分/300每例/900总候选未启动，actualy0/reference/extent零点与温域需事前冻结。
 
 D01正常后继/push/remote通过；D02本次明确增量metadata通过；D03恢复停止，D04历史/20GB未通过。本项限定接线完成，当前条件动态及完整模型仍未完成；P40未启动。
+
+### P40正式事前登记 2026-10-01T21:31:54.075615+00:00
+
+新根30项仅运行/synthetic组成边界/域与精度，499=144literature/355assumed/0measured，旧469完整保持、名义未启用。真实初态从诊断配置构造，未做单点坐标覆盖；窗口仅direct_transient，不伪造drying或七阶段。三积分唯一900s预算启动前由监督冻结，时步统计/dynamicRHS/Jac/summary分别计数，真实独立extent及有符号失败保留。原0.1%/2%及根四指标尺度不改，近零指标范围单列。见p40-direct-transient/declaration.json。
+
+### P40首基准输出失败与有界修复 2026-10-01T21:44:03.944958+00:00
+
+首solve到10s/2202RHS，但摘要后exactarray_equal/zero断言失败，无baselineJSON，rc1回收；失败计入3总数，原21:53:23.887003UTC截止不改。静态SciPy证明t_eval初点由BDF polynomial计算、不承诺逐位roundtrip，未保存首轮具体差值故不归为已证实科学缺陷。修复仅摘要t0采用真正供给solver的初始向量，原raw插值差signed保留、不回填xi/不改RHS/参数/门槛。余2次只基准重试+时间加密，网格需另1次未获额度；P40不能勾为完整三档验收。见initial-output-repair-registration.json。
+
+### P40原三次额度耗尽后明确追加一次网格 2026-10-01T21:49:16.098133+00:00
+
+原3次均计（首基准失败、基准重试、time），旧499完整条目及maximum_integrations=3保留。协调任务明确追加且仅追加原冻结mesh24一次，根另登记authorized_additional_mesh_starts=1；总授权启动4，不伪报3。原唯一21:53:23.887003UTC截止、每例300s、单并发、2MiB及同问题两次不改，物理配置/阈值/域/精度不改。原partial收据保留，不重算基准/time、不扩域、不延时、不搜索。若mesh失败或截止不足立即保留缺口，无第五次。见mesh-extension-registration.json。
+
+### P40实际三档及失败登记 2026-10-01T21:55:34.264370+00:00
+
+P40固定10s合成动态实际完成三档（2026-10-01T21:55:34.264370+00:00），验收仍partial：原三次启动含首摘要失败，明确追加冻结mesh一次后总4、全回收，原21:53:23.887003UTC截止不延。三档质量/元素/完整能量及四gas低于原0.1%，time四指标通过；mesh峰温差按原1K尺度差7.333352694%>2%，direct累计量较基准差27.875046911%，未获空间收敛资格。三档CaO近零无floor预算失败、strictOH及carbonate均微负保留，原八阶段未覆盖。根500=144literature/356assumed/0measured、旧469/冻结499完整条目保持、名义direct未启用；历史名义干燥0.135892078740%失败与完整模型wholefalse保持。Git/Drive独立收据，未恢复。
+
+P40保持[ ]部分完成：单窗口实际接线/三档执行及time加密完成，mesh温差失败、direct空间敏感、CaO预算/严格OH及carbonate未资格；首失败/追加额度/真实耗时/下一必要零积分离散诊断见FULL_CYCLE_P40_DIRECT_TRANSIENT.md/.json及p40-direct-transient。变更full_cycle_gas.py、根31新增项、计划/当前规范/报告/用法/矩阵/状态；原材料/工艺失败保持，无第五次积分。

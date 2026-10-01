@@ -1,5 +1,9 @@
 # 全流程近似烧结砖模型：当前执行规范（2026-09-26）
 
+P40固定10s合成动态实际完成三档（2026-10-01T21:55:34.264370+00:00），验收仍partial：原三次启动含首摘要失败，明确追加冻结mesh一次后总4、全回收，原21:53:23.887003UTC截止不延。三档质量/元素/完整能量及四gas低于原0.1%，time四指标通过；mesh峰温差按原1K尺度差7.333352694%>2%，direct累计量较基准差27.875046911%，未获空间收敛资格。三档CaO近零无floor预算失败、strictOH及carbonate均微负保留，原八阶段未覆盖。根500=144literature/356assumed/0measured、旧469/冻结499完整条目保持、名义direct未启用；历史名义干燥0.135892078740%失败与完整模型wholefalse保持。Git/Drive独立收据，未恢复。
+
+以下带时间内容为历史记录；当前判断以上述P40实际结果与矩阵为准。
+
 P39条件direct主机实际接线完成（2026-10-01T21:10:07.930204+00:00）：第八独立extent、同完整μ/物种U/S/volume/dns/dng/熵已接入，CaO净0、无额外反应热。4完整12格RHS/4direct回调/48格，2.079101s，退出回收/0重试，所选局部接线通过；0积分/Jac扫/fit/UQ/恢复，非动态守恒/加密资格。根469=144literature/325assumed/0measured、旧460保持，名义direct未启用、L单独synthetic。P34旧30/81、strictOH与历史名义0.135892078740%干燥失败保持，完整模型未完成。P40三次最小动态候选未启动；Git/Drive独立实际收据。
 
 P38来源TG双DoC实际完成（2026-10-01T20:41:25.704315+00:00）：新增inverse/source_tg.py，原43周期/P37模块/9canonical/fit保持；Eq5/6来源CaO分母/舍入m独立登记，初始Cc不扣、两DoC/差值分别保留。4单行实际3.133894s，3mapped+1复合负例ValueError，全退出回收/0重试；全synthetic、非自动分峰/实砖率/fit资格。460=144literature/316assumed/0measured，旧448保持。原30/81、strictOH、0.135892078740%工艺失败及wholefalse保持，0主机/RHS/Jac/本构/积分/fit/UQ/恢复。见FULL_CYCLE_P38_SOURCE_TG.md/.json；P39条件主机通道仅候选未启动。
