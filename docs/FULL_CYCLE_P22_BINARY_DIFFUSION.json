@@ -1,0 +1,806 @@
+{
+  "schema": "full_cycle_p22_binary_diffusion_source_comparison_v1",
+  "recorded_utc": "2026-10-01T00:14:54.968694+00:00",
+  "base_commit": "a31351c3609e22dc47716faca24a44c925002f94",
+  "scientific_kernel_commit": "d5fd9a2f919fc605cc85a91db5d4cf6a3f54a3cc",
+  "fixed_design": {
+    "temperature_parameter": "validation.binary_diffusion.temperatures",
+    "pressure_parameter": "validation.binary_diffusion.pressure",
+    "pairs": [
+      "O2_N2",
+      "O2_CO2",
+      "N2_CO2"
+    ],
+    "source_review": "data/sandbox/research/gas-transport-source-v1/source-review-v2.json",
+    "source_parameters": "parameters.nonpolar_gas_transport.json",
+    "source_function": "sludge_sandbox.nonpolar_gas_transport.NonpolarGasTransport.binary_diffusivity_m2_s",
+    "source_identity": "Existing Cantera v3.2.0/GRI30 zero-dipole first-order LJ source model; reuse saved source values, not binary experiments or measured brick properties.",
+    "current_host": "FiniteGasFullCycle.gas_diffusivity on unchanged phi0, remove its returned phi/tau once, multiply original pair factor; compare Dfree before pore resistance. No host phi=1 or beta change.",
+    "fixed_budget": {
+      "reported_points": 18,
+      "new_integrations": 0,
+      "new_optimizations": 0,
+      "new_UQ": 0,
+      "new_source_diffusivity_evaluations": 0,
+      "old180_point_arithmetic_repeats": 0,
+      "new_physics_kernel_changes": 0
+    },
+    "pressure_policy": "Both formulas have explicit1/P. One fixed pressure avoids counting repeated pressure scaling as independent evidence.",
+    "unknown_pairs": [
+      "O2_H2O",
+      "N2_H2O",
+      "H2O_CO2"
+    ],
+    "accuracy_policy": "Signed absolute and relative differences from source model only; no invented pass limit, experimental error bound or new fit.",
+    "continuation_policy": "A supported future kernel candidate must state minimal affected acceptance and P21 version dependency; P22 authorizes no second UQ or implicit kernel replacement."
+  },
+  "parameter_count": 323,
+  "parameter_status_counts": {
+    "literature": 86,
+    "assumed": 237,
+    "measured": 0
+  },
+  "records": [
+    {
+      "pair": "O2_N2",
+      "temperature_k": 300,
+      "total_pressure_pa": 100000,
+      "host_common_effective_diffusivity_m2_s": 1.5542544422251344e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_chi": 0.07687601269466908,
+      "assumed_pair_factor": 1.0,
+      "current_free_diffusivity_m2_s": 2.0217677631099527e-05,
+      "source_lj_diffusivity_m2_s": 2.114027983804559e-05,
+      "signed_difference_m2_s": -9.226022069460621e-07,
+      "signed_relative_difference": -0.0436419107984408,
+      "absolute_relative_difference": 0.0436419107984408,
+      "source_row_index_zero_based": 16,
+      "source_recomputed": false,
+      "source_row_prior_arithmetic_within_budget": true,
+      "source_reduced_temperature": 2.9312307092563255,
+      "source_collision_table_domain": [
+        "0.1",
+        "100.0"
+      ],
+      "source_inside_selected_temperature_domain": true,
+      "source_inside_collision_table": true,
+      "source_is_experimental": false
+    },
+    {
+      "pair": "O2_CO2",
+      "temperature_k": 300,
+      "total_pressure_pa": 100000,
+      "host_common_effective_diffusivity_m2_s": 1.5542544422251344e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_chi": 0.07687601269466908,
+      "assumed_pair_factor": 0.8,
+      "current_free_diffusivity_m2_s": 1.6174142104879623e-05,
+      "source_lj_diffusivity_m2_s": 1.5786956522578924e-05,
+      "signed_difference_m2_s": 3.8718558230069826e-07,
+      "signed_relative_difference": 0.024525663432779787,
+      "absolute_relative_difference": 0.024525663432779787,
+      "source_row_index_zero_based": 10,
+      "source_recomputed": false,
+      "source_row_prior_arithmetic_within_budget": true,
+      "source_reduced_temperature": 1.8532081474483717,
+      "source_collision_table_domain": [
+        "0.1",
+        "100.0"
+      ],
+      "source_inside_selected_temperature_domain": true,
+      "source_inside_collision_table": true,
+      "source_is_experimental": false
+    },
+    {
+      "pair": "N2_CO2",
+      "temperature_k": 300,
+      "total_pressure_pa": 100000,
+      "host_common_effective_diffusivity_m2_s": 1.5542544422251344e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_chi": 0.07687601269466908,
+      "assumed_pair_factor": 0.85,
+      "current_free_diffusivity_m2_s": 1.7185025986434598e-05,
+      "source_lj_diffusivity_m2_s": 1.5980603024702312e-05,
+      "signed_difference_m2_s": 1.2044229617322858e-06,
+      "signed_relative_difference": 0.07536780432318647,
+      "absolute_relative_difference": 0.07536780432318647,
+      "source_row_index_zero_based": 13,
+      "source_recomputed": false,
+      "source_row_prior_arithmetic_within_budget": true,
+      "source_reduced_temperature": 1.9447206664151997,
+      "source_collision_table_domain": [
+        "0.1",
+        "100.0"
+      ],
+      "source_inside_selected_temperature_domain": true,
+      "source_inside_collision_table": true,
+      "source_is_experimental": false
+    },
+    {
+      "pair": "O2_N2",
+      "temperature_k": 400,
+      "total_pressure_pa": 100000,
+      "host_common_effective_diffusivity_m2_s": 2.5713719754946373e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_chi": 0.07687601269466908,
+      "assumed_pair_factor": 1.0,
+      "current_free_diffusivity_m2_s": 3.344830052135297e-05,
+      "source_lj_diffusivity_m2_s": 3.499234388249361e-05,
+      "signed_difference_m2_s": -1.5440433611406371e-06,
+      "signed_relative_difference": -0.044125176819410195,
+      "absolute_relative_difference": 0.044125176819410195,
+      "source_row_index_zero_based": 34,
+      "source_recomputed": false,
+      "source_row_prior_arithmetic_within_budget": true,
+      "source_reduced_temperature": 3.9083076123417673,
+      "source_collision_table_domain": [
+        "0.1",
+        "100.0"
+      ],
+      "source_inside_selected_temperature_domain": true,
+      "source_inside_collision_table": true,
+      "source_is_experimental": false
+    },
+    {
+      "pair": "O2_CO2",
+      "temperature_k": 400,
+      "total_pressure_pa": 100000,
+      "host_common_effective_diffusivity_m2_s": 2.5713719754946373e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_chi": 0.07687601269466908,
+      "assumed_pair_factor": 0.8,
+      "current_free_diffusivity_m2_s": 2.675864041708238e-05,
+      "source_lj_diffusivity_m2_s": 2.6740104237141994e-05,
+      "signed_difference_m2_s": 1.853617994038441e-08,
+      "signed_relative_difference": 0.000693197744331814,
+      "absolute_relative_difference": 0.000693197744331814,
+      "source_row_index_zero_based": 28,
+      "source_recomputed": false,
+      "source_row_prior_arithmetic_within_budget": true,
+      "source_reduced_temperature": 2.470944196597829,
+      "source_collision_table_domain": [
+        "0.1",
+        "100.0"
+      ],
+      "source_inside_selected_temperature_domain": true,
+      "source_inside_collision_table": true,
+      "source_is_experimental": false
+    },
+    {
+      "pair": "N2_CO2",
+      "temperature_k": 400,
+      "total_pressure_pa": 100000,
+      "host_common_effective_diffusivity_m2_s": 2.5713719754946373e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_chi": 0.07687601269466908,
+      "assumed_pair_factor": 0.85,
+      "current_free_diffusivity_m2_s": 2.8431055443150023e-05,
+      "source_lj_diffusivity_m2_s": 2.69888068645155e-05,
+      "signed_difference_m2_s": 1.4422485786345244e-06,
+      "signed_relative_difference": 0.05343876762965659,
+      "absolute_relative_difference": 0.05343876762965659,
+      "source_row_index_zero_based": 31,
+      "source_recomputed": false,
+      "source_row_prior_arithmetic_within_budget": true,
+      "source_reduced_temperature": 2.5929608885535997,
+      "source_collision_table_domain": [
+        "0.1",
+        "100.0"
+      ],
+      "source_inside_selected_temperature_domain": true,
+      "source_inside_collision_table": true,
+      "source_is_experimental": false
+    },
+    {
+      "pair": "O2_N2",
+      "temperature_k": 600,
+      "total_pressure_pa": 100000,
+      "host_common_effective_diffusivity_m2_s": 5.227867955437108e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_chi": 0.07687601269466908,
+      "assumed_pair_factor": 1.0,
+      "current_free_diffusivity_m2_s": 6.800389057898722e-05,
+      "source_lj_diffusivity_m2_s": 7.001710370106151e-05,
+      "signed_difference_m2_s": -2.013213122074292e-06,
+      "signed_relative_difference": -0.028753161951252923,
+      "absolute_relative_difference": 0.028753161951252923,
+      "source_row_index_zero_based": 70,
+      "source_recomputed": false,
+      "source_row_prior_arithmetic_within_budget": true,
+      "source_reduced_temperature": 5.862461418512651,
+      "source_collision_table_domain": [
+        "0.1",
+        "100.0"
+      ],
+      "source_inside_selected_temperature_domain": true,
+      "source_inside_collision_table": true,
+      "source_is_experimental": false
+    },
+    {
+      "pair": "O2_CO2",
+      "temperature_k": 600,
+      "total_pressure_pa": 100000,
+      "host_common_effective_diffusivity_m2_s": 5.227867955437108e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_chi": 0.07687601269466908,
+      "assumed_pair_factor": 0.8,
+      "current_free_diffusivity_m2_s": 5.4403112463189776e-05,
+      "source_lj_diffusivity_m2_s": 5.4782402799541624e-05,
+      "signed_difference_m2_s": -3.7929033635184775e-07,
+      "signed_relative_difference": -0.006923579780531666,
+      "absolute_relative_difference": 0.006923579780531666,
+      "source_row_index_zero_based": 64,
+      "source_recomputed": false,
+      "source_row_prior_arithmetic_within_budget": true,
+      "source_reduced_temperature": 3.7064162948967434,
+      "source_collision_table_domain": [
+        "0.1",
+        "100.0"
+      ],
+      "source_inside_selected_temperature_domain": true,
+      "source_inside_collision_table": true,
+      "source_is_experimental": false
+    },
+    {
+      "pair": "N2_CO2",
+      "temperature_k": 600,
+      "total_pressure_pa": 100000,
+      "host_common_effective_diffusivity_m2_s": 5.227867955437108e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_chi": 0.07687601269466908,
+      "assumed_pair_factor": 0.85,
+      "current_free_diffusivity_m2_s": 5.780330699213913e-05,
+      "source_lj_diffusivity_m2_s": 5.513008772974494e-05,
+      "signed_difference_m2_s": 2.6732192623941904e-06,
+      "signed_relative_difference": 0.04848929817595554,
+      "absolute_relative_difference": 0.04848929817595554,
+      "source_row_index_zero_based": 67,
+      "source_recomputed": false,
+      "source_row_prior_arithmetic_within_budget": true,
+      "source_reduced_temperature": 3.8894413328303994,
+      "source_collision_table_domain": [
+        "0.1",
+        "100.0"
+      ],
+      "source_inside_selected_temperature_domain": true,
+      "source_inside_collision_table": true,
+      "source_is_experimental": false
+    },
+    {
+      "pair": "O2_N2",
+      "temperature_k": 800,
+      "total_pressure_pa": 100000,
+      "host_common_effective_diffusivity_m2_s": 8.649029905909212e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_chi": 0.07687601269466908,
+      "assumed_pair_factor": 1.0,
+      "current_free_diffusivity_m2_s": 0.00011250622401893866,
+      "source_lj_diffusivity_m2_s": 0.00011367287692277805,
+      "signed_difference_m2_s": -1.166652903839387e-06,
+      "signed_relative_difference": -0.010263247798610172,
+      "absolute_relative_difference": 0.010263247798610172,
+      "source_row_index_zero_based": 106,
+      "source_recomputed": false,
+      "source_row_prior_arithmetic_within_budget": true,
+      "source_reduced_temperature": 7.8166152246835345,
+      "source_collision_table_domain": [
+        "0.1",
+        "100.0"
+      ],
+      "source_inside_selected_temperature_domain": true,
+      "source_inside_collision_table": true,
+      "source_is_experimental": false
+    },
+    {
+      "pair": "O2_CO2",
+      "temperature_k": 800,
+      "total_pressure_pa": 100000,
+      "host_common_effective_diffusivity_m2_s": 8.649029905909212e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_chi": 0.07687601269466908,
+      "assumed_pair_factor": 0.8,
+      "current_free_diffusivity_m2_s": 9.000497921515094e-05,
+      "source_lj_diffusivity_m2_s": 8.990502577196806e-05,
+      "signed_difference_m2_s": 9.99534431828851e-08,
+      "signed_relative_difference": 0.0011117670266443556,
+      "absolute_relative_difference": 0.0011117670266443556,
+      "source_row_index_zero_based": 100,
+      "source_recomputed": false,
+      "source_row_prior_arithmetic_within_budget": true,
+      "source_reduced_temperature": 4.941888393195658,
+      "source_collision_table_domain": [
+        "0.1",
+        "100.0"
+      ],
+      "source_inside_selected_temperature_domain": true,
+      "source_inside_collision_table": true,
+      "source_is_experimental": false
+    },
+    {
+      "pair": "N2_CO2",
+      "temperature_k": 800,
+      "total_pressure_pa": 100000,
+      "host_common_effective_diffusivity_m2_s": 8.649029905909212e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_chi": 0.07687601269466908,
+      "assumed_pair_factor": 0.85,
+      "current_free_diffusivity_m2_s": 9.563029041609786e-05,
+      "source_lj_diffusivity_m2_s": 9.033432177548432e-05,
+      "signed_difference_m2_s": 5.295968640613543e-06,
+      "signed_relative_difference": 0.05862631762239905,
+      "absolute_relative_difference": 0.05862631762239905,
+      "source_row_index_zero_based": 103,
+      "source_recomputed": false,
+      "source_row_prior_arithmetic_within_budget": true,
+      "source_reduced_temperature": 5.1859217771071995,
+      "source_collision_table_domain": [
+        "0.1",
+        "100.0"
+      ],
+      "source_inside_selected_temperature_domain": true,
+      "source_inside_collision_table": true,
+      "source_is_experimental": false
+    },
+    {
+      "pair": "O2_N2",
+      "temperature_k": 1000,
+      "total_pressure_pa": 100000,
+      "host_common_effective_diffusivity_m2_s": 1.2780855405517442e-05,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_chi": 0.07687601269466908,
+      "assumed_pair_factor": 1.0,
+      "current_free_diffusivity_m2_s": 0.0001662528395727231,
+      "source_lj_diffusivity_m2_s": 0.00016509048231401298,
+      "signed_difference_m2_s": 1.16235725871011e-06,
+      "signed_relative_difference": 0.007040728468520855,
+      "absolute_relative_difference": 0.007040728468520855,
+      "source_row_index_zero_based": 142,
+      "source_recomputed": false,
+      "source_row_prior_arithmetic_within_budget": true,
+      "source_reduced_temperature": 9.770769030854419,
+      "source_collision_table_domain": [
+        "0.1",
+        "100.0"
+      ],
+      "source_inside_selected_temperature_domain": true,
+      "source_inside_collision_table": true,
+      "source_is_experimental": false
+    },
+    {
+      "pair": "O2_CO2",
+      "temperature_k": 1000,
+      "total_pressure_pa": 100000,
+      "host_common_effective_diffusivity_m2_s": 1.2780855405517442e-05,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_chi": 0.07687601269466908,
+      "assumed_pair_factor": 0.8,
+      "current_free_diffusivity_m2_s": 0.00013300227165817847,
+      "source_lj_diffusivity_m2_s": 0.0001313073325725052,
+      "signed_difference_m2_s": 1.6949390856732657e-06,
+      "signed_relative_difference": 0.01290818305776911,
+      "absolute_relative_difference": 0.01290818305776911,
+      "source_row_index_zero_based": 136,
+      "source_recomputed": false,
+      "source_row_prior_arithmetic_within_budget": true,
+      "source_reduced_temperature": 6.177360491494572,
+      "source_collision_table_domain": [
+        "0.1",
+        "100.0"
+      ],
+      "source_inside_selected_temperature_domain": true,
+      "source_inside_collision_table": true,
+      "source_is_experimental": false
+    },
+    {
+      "pair": "N2_CO2",
+      "temperature_k": 1000,
+      "total_pressure_pa": 100000,
+      "host_common_effective_diffusivity_m2_s": 1.2780855405517442e-05,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_chi": 0.07687601269466908,
+      "assumed_pair_factor": 0.85,
+      "current_free_diffusivity_m2_s": 0.00014131491363681464,
+      "source_lj_diffusivity_m2_s": 0.00013183219735560063,
+      "signed_difference_m2_s": 9.482716281214004e-06,
+      "signed_relative_difference": 0.07193019968889375,
+      "absolute_relative_difference": 0.07193019968889375,
+      "source_row_index_zero_based": 139,
+      "source_recomputed": false,
+      "source_row_prior_arithmetic_within_budget": true,
+      "source_reduced_temperature": 6.482402221384,
+      "source_collision_table_domain": [
+        "0.1",
+        "100.0"
+      ],
+      "source_inside_selected_temperature_domain": true,
+      "source_inside_collision_table": true,
+      "source_is_experimental": false
+    },
+    {
+      "pair": "O2_N2",
+      "temperature_k": 1200,
+      "total_pressure_pa": 100000,
+      "host_common_effective_diffusivity_m2_s": 1.758438169258732e-05,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_chi": 0.07687601269466908,
+      "assumed_pair_factor": 1.0,
+      "current_free_diffusivity_m2_s": 0.00022873691124470477,
+      "source_lj_diffusivity_m2_s": 0.00022365597988262224,
+      "signed_difference_m2_s": 5.080931362082535e-06,
+      "signed_relative_difference": 0.02271761910747514,
+      "absolute_relative_difference": 0.02271761910747514,
+      "source_row_index_zero_based": 178,
+      "source_recomputed": false,
+      "source_row_prior_arithmetic_within_budget": true,
+      "source_reduced_temperature": 11.724922837025302,
+      "source_collision_table_domain": [
+        "0.1",
+        "100.0"
+      ],
+      "source_inside_selected_temperature_domain": true,
+      "source_inside_collision_table": true,
+      "source_is_experimental": false
+    },
+    {
+      "pair": "O2_CO2",
+      "temperature_k": 1200,
+      "total_pressure_pa": 100000,
+      "host_common_effective_diffusivity_m2_s": 1.758438169258732e-05,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_chi": 0.07687601269466908,
+      "assumed_pair_factor": 0.8,
+      "current_free_diffusivity_m2_s": 0.00018298952899576383,
+      "source_lj_diffusivity_m2_s": 0.00017850611068446766,
+      "signed_difference_m2_s": 4.4834183112961695e-06,
+      "signed_relative_difference": 0.02511632959849304,
+      "absolute_relative_difference": 0.02511632959849304,
+      "source_row_index_zero_based": 172,
+      "source_recomputed": false,
+      "source_row_prior_arithmetic_within_budget": true,
+      "source_reduced_temperature": 7.412832589793487,
+      "source_collision_table_domain": [
+        "0.1",
+        "100.0"
+      ],
+      "source_inside_selected_temperature_domain": true,
+      "source_inside_collision_table": true,
+      "source_is_experimental": false
+    },
+    {
+      "pair": "N2_CO2",
+      "temperature_k": 1200,
+      "total_pressure_pa": 100000,
+      "host_common_effective_diffusivity_m2_s": 1.758438169258732e-05,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_chi": 0.07687601269466908,
+      "assumed_pair_factor": 0.85,
+      "current_free_diffusivity_m2_s": 0.00019442637455799905,
+      "source_lj_diffusivity_m2_s": 0.00017913903973243342,
+      "signed_difference_m2_s": 1.5287334825565634e-05,
+      "signed_relative_difference": 0.08533781831363606,
+      "absolute_relative_difference": 0.08533781831363606,
+      "source_row_index_zero_based": 175,
+      "source_recomputed": false,
+      "source_row_prior_arithmetic_within_budget": true,
+      "source_reduced_temperature": 7.778882665660799,
+      "source_collision_table_domain": [
+        "0.1",
+        "100.0"
+      ],
+      "source_inside_selected_temperature_domain": true,
+      "source_inside_collision_table": true,
+      "source_is_experimental": false
+    }
+  ],
+  "by_pair": {
+    "O2_N2": {
+      "count": 6,
+      "minimum_signed_relative_difference": -0.044125176819410195,
+      "maximum_signed_relative_difference": 0.02271761910747514,
+      "maximum_absolute_relative_difference": 0.044125176819410195,
+      "maximum_at_temperature_k": 400,
+      "reduced_temperature_min": 2.9312307092563255,
+      "reduced_temperature_max": 11.724922837025302,
+      "discrete_difference_only": true,
+      "experimental_accuracy_passed": false,
+      "continuous_error_bound_established": false,
+      "experimental_accuracy_status": "unknown_not_experimentally_evaluated"
+    },
+    "O2_CO2": {
+      "count": 6,
+      "minimum_signed_relative_difference": -0.006923579780531666,
+      "maximum_signed_relative_difference": 0.02511632959849304,
+      "maximum_absolute_relative_difference": 0.02511632959849304,
+      "maximum_at_temperature_k": 1200,
+      "reduced_temperature_min": 1.8532081474483717,
+      "reduced_temperature_max": 7.412832589793487,
+      "discrete_difference_only": true,
+      "experimental_accuracy_passed": false,
+      "continuous_error_bound_established": false,
+      "experimental_accuracy_status": "unknown_not_experimentally_evaluated"
+    },
+    "N2_CO2": {
+      "count": 6,
+      "minimum_signed_relative_difference": 0.04848929817595554,
+      "maximum_signed_relative_difference": 0.08533781831363606,
+      "maximum_absolute_relative_difference": 0.08533781831363606,
+      "maximum_at_temperature_k": 1200,
+      "reduced_temperature_min": 1.9447206664151997,
+      "reduced_temperature_max": 7.778882665660799,
+      "discrete_difference_only": true,
+      "experimental_accuracy_passed": false,
+      "continuous_error_bound_established": false,
+      "experimental_accuracy_status": "unknown_not_experimentally_evaluated"
+    }
+  },
+  "current_model_definition": {
+    "D_free": "f_ij*D_ref*(T/T_ref)^b*P_ref/P",
+    "D_ref_m2_s": 2e-05,
+    "temperature_exponent": 1.75,
+    "reference_temperature_k": 298.15,
+    "reference_pressure_pa": 100000.0,
+    "actual_pore_resistance_beta_unchanged": 1.0,
+    "comparison_excludes_pore_resistance": true,
+    "extraction": "Call current gas_diffusivity at phi0 and divide its outer-face diffusion by returned phi0/tau exactly once, then multiply original pair factor. No phi=1 state, no zero-species host, no beta override."
+  },
+  "source_definition": {
+    "identity": "Model-source comparison; fixed Cantera v3.2.0/GRI30 dilute first-order zero-dipole LJ, direct collision formula before temperature polynomial fits. Not binary experiments.",
+    "settings_file": "parameters.nonpolar_gas_transport.json",
+    "cached_result_file": "data/sandbox/research/gas-transport-source-v1/source-review-v2.json",
+    "cached_settings_equal_current_source_parameters": true,
+    "species": {
+      "O2": {
+        "well_depth_over_kb_k": "107.4",
+        "diameter_angstrom": "3.458",
+        "molar_mass_g_mol": "31.999",
+        "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+        "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-18"
+      },
+      "N2": {
+        "well_depth_over_kb_k": "97.53",
+        "diameter_angstrom": "3.621",
+        "molar_mass_g_mol": "28.0135",
+        "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+        "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-17"
+      },
+      "CO2": {
+        "well_depth_over_kb_k": "244.0",
+        "diameter_angstrom": "3.763",
+        "molar_mass_g_mol": "44.010",
+        "dipole_model": "zero, as the selected GRI30 transport entry; not a claim of exactly zero measured CO dipole",
+        "mass_source": "https://www.nist.gov/pml/sensor-science/fluid-metrology/database-thermophysical-properties-gases-used-semiconductor-4"
+      }
+    },
+    "constants": {
+      "boltzmann_j_k": "1.380649e-23",
+      "avogadro_mol_inverse": "6.02214076e23",
+      "angstrom_m": "1e-10",
+      "gram_kg": "1e-3",
+      "micropascal_pa": "1e-6",
+      "source": "https://physics.nist.gov/cuu/Constants/Table/allascii.txt",
+      "classification": "kB and NA exact SI; metric prefixes exact; molecular masses taken from the selected historical NIST compilation"
+    },
+    "reduced_temperature": "T/sqrt((epsilon_i/kB)*(epsilon_j/kB))",
+    "diameter": "(sigma_i+sigma_j)/2, Angstrom converted to m",
+    "reduced_mass": "m_i*m_j/(m_i+m_j), m_i=(M_i in g/mol)*1e-3/NA in kg per molecule",
+    "diffusivity": "(3/16)*sqrt(2*pi/m_reduced)*(kB*T)^(3/2)/(pi*sigma_ij^2*Omega11*P)",
+    "collision_integral": "Omega11=Omega22/Astar from cached zero-dipole tables; original arithmetic already checked, not repeated.",
+    "selected_temperature_domain_k": [
+      300,
+      1200
+    ],
+    "no_second_order_correction": true,
+    "source_R_j_mol_k": 8.31446261815324,
+    "host_R_j_mol_k": 8.31446261815324,
+    "constants_not_silently_replaced": true
+  },
+  "source_cache_coverage_review": {
+    "reviewer": "p02_scope_review",
+    "equivalent_current_full_cycle_comparison_found": false,
+    "direct_binary_experimental_points_found": 0,
+    "scope": "Six files in gas-transport-source-v1/source plus source-review-v2 and related report; no repository-wide claim that binary experiments do not exist.",
+    "files": [
+      "GasTransport.cpp",
+      "MMCollisionInt.cpp",
+      "MMCollisionInt.h",
+      "gri30.yaml",
+      "nist-selected-tables.json",
+      "License.txt"
+    ],
+    "nist_tables_are_pure_viscosity_not_binary_diffusion": true,
+    "water_pairs": "All three unknown under this source. GRI water dipole1.844 exists but zero-dipole source module does not cover it; no transplantation.",
+    "old_O2_viscosity_failure": "Old LJ viscosity vs historical NIST table only; not binary D accuracy and not the corrected P20 source-viscosity law."
+  },
+  "evidence_limits": [
+    "Strict binary is an algebraic coefficient limit; current full host retains four positive species and its log-entropy domain.",
+    "Free gas at finite dilute pressure; D diverges as1/P, so P=0 is not a finite diffusion comparison point.",
+    "No experimental diffusion uncertainty or pass threshold supplied. Differences do not alone identify which model is more accurate.",
+    "300–1200K selected source domain does not qualify current trajectories above1200K, pores, wall friction, multicomponent mixtures or target brick.",
+    "No H2O diffusion source accuracy, molecular slip/Knudsen/MS/Soret or whole-range UQ qualification."
+  ],
+  "identity": {
+    "source_files_equal_frozen_kernel": {
+      "src/sludge_vme/models/full_cycle.py": true,
+      "src/sludge_vme/models/full_cycle_gas.py": true,
+      "src/sludge_vme/models/full_cycle_solid.py": true,
+      "src/sludge_vme/models/full_cycle_diagnostics.py": true,
+      "src/sludge_vme/uq/full_cycle.py": true,
+      "src/sludge_vme/inverse/full_cycle.py": true
+    },
+    "all_prior_321_parameter_entries_unchanged": true,
+    "root_equal_predeclared_snapshot": true,
+    "new_root_entries_only_sampling_design": [
+      "validation.binary_diffusion.temperatures",
+      "validation.binary_diffusion.pressure"
+    ]
+  },
+  "execution": {
+    "host_gas_diffusivity_vector_calls": 6,
+    "reported_pair_states": 18,
+    "cached_source_rows_reused": 18,
+    "new_source_diffusivity_evaluations": 0,
+    "new_integrations": 0,
+    "new_fits": 0,
+    "new_UQ": 0,
+    "repeated_old180_arithmetic": 0,
+    "raw_fields_saved": false,
+    "software_tests_added_or_run": false,
+    "sha_generated_or_compared": false,
+    "script_elapsed_s": 0.09022970800288022,
+    "wall_s_since_P22_declaration_at_report_write": 283.47329,
+    "completed_utc": "2026-10-01T00:20:23.658067+00:00",
+    "wall_s_from_fixed_declaration_to_reviewed_evidence": 430.997672,
+    "whole_stage_science_retry_count": 0
+  },
+  "scientific_kernel_changed": false,
+  "source_difference_audit_completed": true,
+  "binary_experimental_validation_passed": false,
+  "material_qualified": false,
+  "binary_fick_semantics": {
+    "reviewer": "p01_ledger",
+    "method": "Read-only exact algebra from actual transport caller and both beta branches; historical binary arithmetic not rerun.",
+    "source_locations": {
+      "gas_state": "src/sludge_vme/models/full_cycle_gas.py:140",
+      "effective_diffusion": "src/sludge_vme/models/full_cycle_gas.py:153",
+      "pore_pair": "src/sludge_vme/models/full_cycle_gas.py:166",
+      "zero_beta_function": "src/sludge_vme/models/full_cycle_gas.py:186",
+      "actual_transport": "src/sludge_vme/models/full_cycle_gas.py:291",
+      "nonzero_beta_path": "src/sludge_vme/models/full_cycle_gas.py:319",
+      "inventory_wiring": "src/sludge_vme/models/full_cycle_gas.py:494"
+    },
+    "definitions": {
+      "chi": "phi_face/tau_face",
+      "free_coefficient": "f_ij*Dref*(T/Tr)^b*Pr/P",
+      "pore_length": "2*r0*(Vp/Vp0)^(1/3), face arithmetic mean; independent of grid distance",
+      "species_pore_scale": "K_i=chi*ell*sqrt(R*T/M_i)",
+      "pair_pore_scale": "K_ij=2/(1/K_i+1/K_j)=chi*kappa_ij",
+      "actual_pair_coefficient": "Dpair=chi/(1/Dfree+beta/kappa_ij)",
+      "face_transfer": "J_i=A*Dpair*c/d*(yLi*yRj-yRi*yLj); J_j=-J_i",
+      "strict_binary_identity": "yLi+yLj=yRi+yRj=1 => yLi*yRj-yRi*yLj=yLi-yRi exactly",
+      "isothermal_isobaric_fick": "j_i=J_i/A=-c*Dpair*(yRi-yLi)/d; continuum j_i=-c*Dpair*dy_i/dx=-Dpair*dc_i/dx",
+      "concentration": "c=P/(R*T)=sum(n_i)/Vp; c_i=n_i/Vp, not n_i/Vbulk",
+      "bulk_concentration": "C_i=n_i/Vbulk=phi*c_i; j_i=-Dpair*d(C_i/phi)/dx; only constant phi permits coefficient Dpair/phi against dC_i/dx",
+      "distance": "internal d=(widthL+widthR)/2; external d=widthL/2; width=Vbulk/A",
+      "sign": "PositiveJ left-to-right, subtract from left inventory and add to right. Equal pressure gives zero Darcy flux.",
+      "units": {
+        "D_and_K": "m2/s",
+        "c": "mol/m3 of pore gas",
+        "A": "m2 total geometrical cross-section",
+        "d": "m",
+        "J": "mol/s",
+        "j": "mol/(m2*s)"
+      }
+    },
+    "branch_conclusion": "beta0 calls molecular_transport; unit factors have exact common-D shortcut. beta nonzero actual caller loops pairs directly even when factors1; mass-dependent pore resistance prevents common-D shortcut. beta->0 restores same pair semantics.",
+    "free_comparison_condition": "Compare algebraic pre-pore Dfree; or set beta0 at coefficient-definition level then divide Dpair by chi. Dividing bychi with finitebeta still includes pore resistance. Do not set full-host phi1 or zero other gas fractions.",
+    "not_claimed": [
+      "Finite temperature/pressure gradients identical to isothermal isobaric Fick law",
+      "Four-species pair mobility is full Maxwell-Stefan inversion",
+      "Single bulk-concentration Fick coefficient under varying porosity",
+      "Binary zero fractions are valid inputs to full logarithmic-entropy host"
+    ]
+  },
+  "decision": {
+    "kernel_change_in_P22": false,
+    "confirmed_code_or_unit_fault": false,
+    "source_model_differences_quantified": true,
+    "mandatory_kernel_replacement_established": false,
+    "reason": "Finite differences relative to a first-order LJ model have no binary experimental uncertainty or project source-error threshold; they quantify this approximation, not empirical accuracy or a confirmed bug. Assumed labels alone do not justify replacement.",
+    "future_candidate": "If choosing closer agreement with this available nonpolar source model, replace only the three covered pre-pore Dfree curves using the existing traceable LJ formula/table; keep pore/phi-tau placement, shared flux/enthalpy and explicit water/domain unknowns. This is a candidate, not executed or authorized by P22 to alter the frozen kernel.",
+    "candidate_prerequisites": [
+      "Decide intended source-model accuracy/domain including >1200K and collision interpolation support",
+      "Do not infer a water-pair model from zero-dipole inputs; acquire/qualify an applicable polar source separately if pursued",
+      "Preserve positive symmetric coefficients and complex-step implementation needed by existing Jacobian",
+      "Do not silently transplant different LJ/viscosity masses or R into stored thermochemistry"
+    ],
+    "minimum_affected_acceptance_if_later_changed": {
+      "constitutive": "Reuse this fixed18 cached source values; evaluate changed host only; verify original binary/pair and pore coupling at necessary bounded states, not all historical checks",
+      "dynamic": "One nominal, one existing half-time-step, one doubled-grid full cycle;3 complete forwards, original root0.1% mass/element/complete-energy and2% required refinement thresholds",
+      "runtime_budget_parameter": "validation.caloric.full_cycle_budget",
+      "no_reintegration_now": true,
+      "new_UQ_authorized_by_P22": false,
+      "P21_dependency": "P21 remains valid only for unchanged d5fd9a2 scientific kernel. Any future changed kernel cannot inherit P21 current-output statistics or silently rerun its single special24-case batch.",
+      "unaffected_checks": "Static source Cp/h/s, prior exposed foreign-material curves and previous source-model180-point arithmetic are not repeated."
+    },
+    "remaining_unknowns": [
+      "All three water-pair source/experimental accuracy",
+      "Binary diffusion experiment uncertainty and precision for the three nonpolar pairs",
+      "Current trajectories outside selected300-1200K source-model review span",
+      "Pore-scale beta, diameter distribution, wall accommodation and real multi-species transport",
+      "Target material/process/product qualification"
+    ]
+  },
+  "current_scope_completion": "P22 limited binary semantics/source-model difference audit completed. P01-P21 evidence retains its exact version/scope; no claim that every constitutive source gap, target-material accuracy or whole development objective is complete.",
+  "independent_reviews": {
+    "semantics": {
+      "reviewer": "p01_ledger",
+      "status": "passed",
+      "execution": "zero numerical evaluations"
+    },
+    "source_coverage": {
+      "reviewer": "p02_scope_review",
+      "status": "passed_with_explicit_unknowns",
+      "execution": "cached sources only; zero science calls"
+    },
+    "new18_saved_results": {
+      "reviewer": "p06_inverse",
+      "status": "passed",
+      "findings": "18 unique frozen points and cached references exact; one chi removal and pair factor correct; signed/relative differences and maxima agree; six science files byte-identical and all321 prior entries unchanged. Zero source recalculation/integration/fit/UQ.",
+      "unknowns_preserved": true
+    },
+    "coordinator": {
+      "receipt_path": "/Users/wanggaoying/Documents/Codex/2026-09-30/task-3/p22-independent-saved-output-audit-20261001.json",
+      "receipt": {
+        "reviewed_utc": "2026-10-01T00:16:47.861002+00:00",
+        "method": "Independent standard-library arithmetic on 18 saved P22 rows, root parameters and cached source row lookup. No project imports, source LJ recomputation, integrations, software tests or cloud recovery.",
+        "science_kernel": "d5fd9a2f919fc605cc85a91db5d4cf6a3f54a3cc",
+        "row_count": 18,
+        "source_rows_exact": true,
+        "max_current_relative_arithmetic_difference": 1.5057530454701167e-16,
+        "max_deviation_absolute_arithmetic_difference": 1.5959455978986625e-16,
+        "all_prior_321_parameter_entries_identical": true,
+        "only_new_parameter_keys": [
+          "validation.binary_diffusion.pressure",
+          "validation.binary_diffusion.temperatures"
+        ],
+        "source_bytes_match_frozen_kernel": {
+          "src/sludge_vme/models/full_cycle.py": true,
+          "src/sludge_vme/models/full_cycle_gas.py": true,
+          "src/sludge_vme/models/full_cycle_solid.py": true,
+          "src/sludge_vme/models/full_cycle_diagnostics.py": true,
+          "src/sludge_vme/uq/full_cycle.py": true,
+          "src/sludge_vme/inverse/full_cycle.py": true
+        },
+        "by_pair_maximum_percent": {
+          "O2_N2": 4.4125176819410195,
+          "O2_CO2": 2.511632959849304,
+          "N2_CO2": 8.533781831363605
+        },
+        "interpretation": "Discrete source-model deviation only; no binary experimental validation or continuous error bound. Does not establish need to alter kernel. Water-related three pairs remain uncovered.",
+        "scientific_defect_found": false,
+        "documentation_pending": "P22 scientific report, matrix consistency and Git/Drive delivery remain developer work in progress."
+      },
+      "rechecked_here": false,
+      "scope": "Receipt read only; independent standard-library comparison already completed, no duplicate calculations by writer."
+    }
+  },
+  "binary_experimental_validation_status": "not_evaluated_no_direct_points_in_scoped_source_cache"
+}

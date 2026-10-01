@@ -3827,6 +3827,35 @@
       "source": "policy",
       "status": "assumed",
       "note": "P21 one final-kernel update of the existing8 paired25-dimensional draws and3 scenarios. Execution bound, not a physical parameter or accuracy criterion; no automatic retry/replacement."
+    },
+    "validation.binary_diffusion.temperatures": {
+      "value": [
+        300,
+        400,
+        600,
+        800,
+        1000,
+        1200
+      ],
+      "unit": "K",
+      "range": [
+        300,
+        1200
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P22 fixed six cached temperatures chosen before current-host evaluation; sampling design only, no continuous-domain accuracy claim."
+    },
+    "validation.binary_diffusion.pressure": {
+      "value": 100000,
+      "unit": "Pa",
+      "range": [
+        100000,
+        100000
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P22 single fixed cached total pressure for dilute free-gas coefficient comparison; no pressure sweep or production-pressure qualification."
     }
   },
   "species": [
@@ -5627,6 +5656,37 @@
       "scope": "Permeability3.75e-14m2 and source caloric/viscosity parameters remain fixed; no wide-permeability batch, source-parameter sweep, search, extra samples or raw fields.",
       "authorization_basis": "Before launch, coordinator01a0f47c-2f66-7030-a6be-0f9befb47014 relayed actual human approval at2026-09-30 23:17UTC: user replied 允许 to one8x3 final-kernel update with45-minute total limit, no rawfields or automatic extra samples. This actual approval, not reinterpretation of earlier restrictions, is the execution basis.",
       "failure_policy": "Keep failed/timed-out/not-started cases; no replacements, no repeated full batch, no sampling/statistic/tolerance adjustment to obtain a pass."
+    },
+    "binary_diffusion_source_comparison": {
+      "temperature_parameter": "validation.binary_diffusion.temperatures",
+      "pressure_parameter": "validation.binary_diffusion.pressure",
+      "pairs": [
+        "O2_N2",
+        "O2_CO2",
+        "N2_CO2"
+      ],
+      "source_review": "data/sandbox/research/gas-transport-source-v1/source-review-v2.json",
+      "source_parameters": "parameters.nonpolar_gas_transport.json",
+      "source_function": "sludge_sandbox.nonpolar_gas_transport.NonpolarGasTransport.binary_diffusivity_m2_s",
+      "source_identity": "Existing Cantera v3.2.0/GRI30 zero-dipole first-order LJ source model; reuse saved source values, not binary experiments or measured brick properties.",
+      "current_host": "FiniteGasFullCycle.gas_diffusivity on unchanged phi0, remove its returned phi/tau once, multiply original pair factor; compare Dfree before pore resistance. No host phi=1 or beta change.",
+      "fixed_budget": {
+        "reported_points": 18,
+        "new_integrations": 0,
+        "new_optimizations": 0,
+        "new_UQ": 0,
+        "new_source_diffusivity_evaluations": 0,
+        "old180_point_arithmetic_repeats": 0,
+        "new_physics_kernel_changes": 0
+      },
+      "pressure_policy": "Both formulas have explicit1/P. One fixed pressure avoids counting repeated pressure scaling as independent evidence.",
+      "unknown_pairs": [
+        "O2_H2O",
+        "N2_H2O",
+        "H2O_CO2"
+      ],
+      "accuracy_policy": "Signed absolute and relative differences from source model only; no invented pass limit, experimental error bound or new fit.",
+      "continuation_policy": "A supported future kernel candidate must state minimal affected acceptance and P21 version dependency; P22 authorizes no second UQ or implicit kernel replacement."
     }
   },
   "caloric_background": {

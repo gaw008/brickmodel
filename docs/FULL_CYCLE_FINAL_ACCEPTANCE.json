@@ -1,14 +1,14 @@
 {
   "schema": "full_cycle_final_acceptance_matrix_v1",
   "recorded_utc": "2026-09-30T23:55:36.990315+00:00",
-  "status": "declared_approximate_model_work_complete_physics_numerics_passed_process_failed",
+  "status": "P22_scoped_source_comparison_complete_existing_kernel_numerics_retained_constitutive_unknowns_open",
   "identity": "approximate_simulation_not_measured_material",
   "parent_commit": "d8bc6f1b09e0b6d10cdcf4abf35e634035a36d08",
   "parameter_file": "parameters.full_cycle.json",
-  "parameter_count": 321,
+  "parameter_count": 323,
   "parameter_status_counts": {
     "literature": 86,
-    "assumed": 235,
+    "assumed": 237,
     "measured": 0
   },
   "implementation": {
@@ -288,7 +288,7 @@
     "resolved kiln combustion/circulation",
     "cracks and damage"
   ],
-  "model_capability_closeout_complete": true,
+  "model_capability_closeout_complete": false,
   "physical_numerical_acceptance_complete": true,
   "all_engineering_acceptance_passed": false,
   "delivery_is_separate_from_model_acceptance": true,
@@ -496,7 +496,14 @@
     "followup_delivery_note_receipts": [
       "runs/full-cycle/p21-delivery-note-git.json",
       "runs/full-cycle/p21-delivery-note-drive.json"
-    ]
+    ],
+    "P22": {
+      "status": "pending_scoped_git_and_new_increment",
+      "receipts": [
+        "runs/full-cycle/p22-git-delivery.json",
+        "runs/full-cycle/p22-drive-delivery.json"
+      ]
+    }
   },
   "P09": {
     "status": "completed_conditional_attribution_review",
@@ -1676,7 +1683,7 @@
       {
         "id": "P12-X01",
         "topic": "material, provenance and observables",
-        "status": "Root321 entries=86literature/235assumed/0measured;four new assumed execution/watchdog controls do not alter physical parameters.",
+        "status": "Root323 entries=86literature/237assumed/0measured;P22 adds only2 fixed audit sampling controls, original321 entries unchanged.",
         "evidence": [
           "docs/FULL_CYCLE_P11_OBSERVATIONS.json",
           "parameters.full_cycle.json"
@@ -1688,7 +1695,8 @@
           "P16 unchanged caloric sources",
           "P17 applicability definitions",
           "P19",
-          "P20"
+          "P20",
+          "P22"
         ],
         "declared_implementation_work_complete": true,
         "pre_P20_status": "Root metadata and source/observable audit complete; 304 entries, 70 literature / 234 assumed / 0 measured. Target recipe remains unmeasured.",
@@ -1701,7 +1709,7 @@
       {
         "id": "P12-X02",
         "topic": "shared gas/liquid transport and thermodynamics",
-        "status": "P19 source-curve gap audited; P20 pure source laws, same-temperature Wilke and affected current numerical checks completed. Dilute bulk source equations do not establish confined-pore or measured-mixture accuracy.",
+        "status": "P19/P20 viscosity source work complete; P22 strictly binary/Fick semantics and18 current free-D vs cached nonpolar LJ differences quantified. No experimental binary accuracy or water-pair source coverage, pore/mixture validation or >1200K qualification. No confirmed implementation fault or automatic replacement.",
         "evidence": [
           "docs/FULL_CYCLE_PAIR_DIFFUSION_RESULTS.json",
           "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
@@ -1711,14 +1719,25 @@
         "historical_status": "internal balances and nominal numerics passed; external transport error pending",
         "current_evidence": [
           "P19",
-          "P20"
+          "P20",
+          "P22"
         ],
-        "declared_implementation_work_complete": true,
+        "declared_implementation_work_complete": false,
         "pre_P20_status": "Pure gas viscosity current-host curve comparison missing; P19 active. Pure caloric accuracy does not close transport evidence.",
         "pre_P20_current_evidence": [
           "P16",
           "P17"
-        ]
+        ],
+        "pre_P22_status": "P19 source-curve gap audited; P20 pure source laws, same-temperature Wilke and affected current numerical checks completed. Dilute bulk source equations do not establish confined-pore or measured-mixture accuracy.",
+        "P22_limited_audit_complete": true,
+        "remaining_source_evidence_gaps": [
+          "All three water-pair source/experimental accuracy",
+          "Binary diffusion experiment uncertainty and precision for the three nonpolar pairs",
+          "Current trajectories outside selected300-1200K source-model review span",
+          "Pore-scale beta, diameter distribution, wall accommodation and real multi-species transport",
+          "Target material/process/product qualification"
+        ],
+        "next_action_boundary": "A future applicable source decision is separate; no secondUQ or kernel change is part of P22."
       },
       {
         "id": "P12-X03",
@@ -1845,7 +1864,7 @@
   },
   "current_physics_numerical_evidence": "P20; P16 caloric constitutive/source evidence unchanged; P04/P16 trajectory evidence historical",
   "current_nominal_drying_remaining_fraction": 0.0013602834565710137,
-  "whole_project_complete_definition": "Overall process/material/history qualification remains false, separate from declared approximate model implementation and its physical/numerical acceptance. Real-material absence does not stop independently closable model work.",
+  "whole_project_complete_definition": "P01-P22 completed scoped items do not establish every constitutive/source capability or empirical/process qualification; current unknowns remain explicit and independent delivery does not grant model PASS.",
   "historical_model_closeout_wall_s_from_plan_creation": 4403.9089,
   "current_acceptance_matrix": [
     {
@@ -1963,13 +1982,22 @@
       "limit_relative": 0.001,
       "evidence": "P21",
       "scope": "Same fixedpermeability/source coefficients and assumed independent-uniform25D draws; no coverage of all added assumptions."
+    },
+    {
+      "item": "binary_diffusion_current_free_coefficients_vs_source_model",
+      "outcome": "limited18_point_source_model_difference_audit_complete",
+      "evidence": "P22",
+      "experimental_status": "unknown_no_direct_points_in_scoped_cache",
+      "water_pairs_status": "unknown_not_covered",
+      "kernel_unchanged": true,
+      "global_model_complete": false
     }
   ],
   "final_matrix_independent_review": {
-    "status": "passed_after_document_label_corrections",
-    "recorded_utc": "2026-10-01T00:01:27.894982+00:00",
-    "receipt": "runs/full-cycle/p21-current-uq/independent-review.json",
-    "science_reruns": 0
+    "status": "P22_saved_evidence_review_passed",
+    "recorded_utc": "2026-10-01T00:20:23.658067+00:00",
+    "receipt": "runs/full-cycle/p22-binary-diffusion/independent-review.json",
+    "scope": "P22 semantics, source coverage,18 points, original scientific continuity; no global-completion verdict."
   },
   "P18_scope_correction": {
     "reason": "Independent current-source audit finds missing pure-gas viscosity comparison and current-kernel distribution evidence; P18 fixed scenarios cannot satisfy current SPEC distribution/robustness requirement. Prior P16 numerical passes remain valid, not re-run.",
@@ -2059,5 +2087,75 @@
     "wall_s": 1675.3755775829777
   },
   "historical_P18_model_completion_wall_s_from_plan_creation": 14941.526078,
-  "current_model_completion_status": "Declared approximate implementation and affected physical/numerical work complete; process failure, public-material discrepancies, measured qualification and historical delivery remain separate."
+  "current_model_completion_status": "P22 limited binary semantics/source-model difference audit completed. P01-P21 evidence retains its exact version/scope; no claim that every constitutive source gap, target-material accuracy or whole development objective is complete.",
+  "historical_pre_P22_model_capability_closeout_complete": true,
+  "P22": {
+    "status": "completed_scoped_audit",
+    "evidence": [
+      "docs/FULL_CYCLE_P22_BINARY_DIFFUSION.json",
+      "docs/FULL_CYCLE_P22_BINARY_DIFFUSION.md"
+    ],
+    "reported_points": 18,
+    "source_values_recomputed": 0,
+    "new_integrations": 0,
+    "new_fits": 0,
+    "new_UQ": 0,
+    "scientific_kernel_changed": false,
+    "by_pair": {
+      "O2_N2": {
+        "count": 6,
+        "minimum_signed_relative_difference": -0.044125176819410195,
+        "maximum_signed_relative_difference": 0.02271761910747514,
+        "maximum_absolute_relative_difference": 0.044125176819410195,
+        "maximum_at_temperature_k": 400,
+        "reduced_temperature_min": 2.9312307092563255,
+        "reduced_temperature_max": 11.724922837025302,
+        "discrete_difference_only": true,
+        "experimental_accuracy_passed": false,
+        "continuous_error_bound_established": false,
+        "experimental_accuracy_status": "unknown_not_experimentally_evaluated"
+      },
+      "O2_CO2": {
+        "count": 6,
+        "minimum_signed_relative_difference": -0.006923579780531666,
+        "maximum_signed_relative_difference": 0.02511632959849304,
+        "maximum_absolute_relative_difference": 0.02511632959849304,
+        "maximum_at_temperature_k": 1200,
+        "reduced_temperature_min": 1.8532081474483717,
+        "reduced_temperature_max": 7.412832589793487,
+        "discrete_difference_only": true,
+        "experimental_accuracy_passed": false,
+        "continuous_error_bound_established": false,
+        "experimental_accuracy_status": "unknown_not_experimentally_evaluated"
+      },
+      "N2_CO2": {
+        "count": 6,
+        "minimum_signed_relative_difference": 0.04848929817595554,
+        "maximum_signed_relative_difference": 0.08533781831363606,
+        "maximum_absolute_relative_difference": 0.08533781831363606,
+        "maximum_at_temperature_k": 1200,
+        "reduced_temperature_min": 1.9447206664151997,
+        "reduced_temperature_max": 7.778882665660799,
+        "discrete_difference_only": true,
+        "experimental_accuracy_passed": false,
+        "continuous_error_bound_established": false,
+        "experimental_accuracy_status": "unknown_not_experimentally_evaluated"
+      }
+    },
+    "independent_reviews_passed": true,
+    "binary_experimental_validation_status": "not_evaluated_no_direct_points_in_scoped_source_cache",
+    "mandatory_kernel_replacement_established": false,
+    "remaining_unknowns": [
+      "All three water-pair source/experimental accuracy",
+      "Binary diffusion experiment uncertainty and precision for the three nonpolar pairs",
+      "Current trajectories outside selected300-1200K source-model review span",
+      "Pore-scale beta, diameter distribution, wall accommodation and real multi-species transport",
+      "Target material/process/product qualification"
+    ],
+    "whole_development_goal_completed": false,
+    "script_elapsed_s": 0.09022970800288022,
+    "declared_to_reviewed_wall_s": 430.997672
+  },
+  "historical_pre_P22_status": "declared_approximate_model_work_complete_physics_numerics_passed_process_failed",
+  "physical_numerical_acceptance_scope": "Existing unchanged d5fd9a2 physical kernel P20 nominal/time/grid and P21 fixed ensemble; P22 introduces no dynamic result or extension of parameter coverage."
 }
