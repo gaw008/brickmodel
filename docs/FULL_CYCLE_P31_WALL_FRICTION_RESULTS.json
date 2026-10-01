@@ -1,0 +1,1831 @@
+{
+  "schema": "full_cycle_p31_wall_friction_results_v1",
+  "recorded_utc": "2026-10-01T16:08:36.403210+00:00",
+  "status": "implemented_physical_numerical_acceptance_completed",
+  "base_commit": "3b6a90bfcff9535fd7a9bc8789926533008335e1",
+  "parameter_count": 401,
+  "parameter_status_counts": {
+    "literature": 132,
+    "assumed": 269,
+    "measured": 0
+  },
+  "source": "https://cantera.org/3.2/cxx/dc/de6/classCantera_1_1DustyGasTransport.html",
+  "source_cache": "data/sandbox/research/dusty-gas-source-v1/source/DustyGasTransport.cpp and DustyGasTransport.h",
+  "implementation": {
+    "files": [
+      "src/sludge_vme/models/full_cycle_gas.py",
+      "parameters.full_cycle.json"
+    ],
+    "mode": 1,
+    "matrix": "Aii=1/(ci*DKi)+sum_j cj/(ct*ci*Dij); Aij=-1/(ct*Dij); N=solve(A,log(pL/pR)/distance)",
+    "coefficient_units": {
+      "Dij": "m2/s",
+      "DKi": "m2/s",
+      "A": "m*s/mol",
+      "N": "mol/(m2*s)"
+    },
+    "wall_friction_once": true,
+    "legacy_pair_beta_inactive": true,
+    "Darcy_added_once": true,
+    "stored_state_and_energy_functions_unchanged": true,
+    "positive_proof": "N.A.N=sum_i Ni^2/(ci*DKi)+sum_i<j ci*cj/(ct*Dij)*(Ni/ci-Nj/cj)^2; face entropy=R*area*distance*N.A.N.",
+    "knudsen": "DK=(phi/tau)*(diameter/3)*sqrt(8*R*Theta/(pi*M)); existing evolving diameter2*5.9um*(pore/initial_pore)^(1/3) is an assumed proxy.",
+    "logmean": "Analytic symmetric L=(pL+pR)/2*tanh(ell/2)/(ell/2), equal correction1; log1p near equality. Equal-pressure derivatives both0.5."
+  },
+  "constitutive": {
+    "schema": "full_cycle_p31_constitutive_v1",
+    "recorded_utc": "2026-10-01T15:45:10.045002+00:00",
+    "elapsed_s": 0.03525349986739457,
+    "fixed_face_states": 24,
+    "rows": [
+      {
+        "temperatures_k": [
+          298.15,
+          298.15
+        ],
+        "case": 0,
+        "partial_pressure_left_pa": [
+          20000.0,
+          75000.0,
+          1000.0,
+          4000.0
+        ],
+        "partial_pressure_right_pa": [
+          20000.0,
+          75000.0,
+          1000.0,
+          4000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 2.3559708945276143e-17,
+          "wall_vector_identity": 2.753692887205252e-15,
+          "solve_force": 0.0,
+          "positive_quadratic_decomposition": 0.0,
+          "molecular_entropy_factor": 0.0,
+          "conjugate_caloric_force": 0.0,
+          "published_knudsen": 7.022685554854207e-17,
+          "free_pair_porosity_once": 2.700414055645701e-17,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 0.0,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 291.444292314592,
+        "molecular_mol_s": [
+          0.0,
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "molecular_sum_mol_s": 0.0,
+        "molecular_entropy_w_k": 0.0,
+        "darcy_entropy_w_k": 0.0,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          298.15,
+          298.15
+        ],
+        "case": 1,
+        "partial_pressure_left_pa": [
+          25000.0,
+          93750.0,
+          1250.0,
+          5000.0
+        ],
+        "partial_pressure_right_pa": [
+          20000.0,
+          75000.0,
+          1000.0,
+          4000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 5.380827579356016e-17,
+          "wall_vector_identity": 3.949052183300564e-15,
+          "solve_force": 6.280303963713014e-15,
+          "positive_quadratic_decomposition": 0.0,
+          "molecular_entropy_factor": 1.6500876103208516e-16,
+          "conjugate_caloric_force": 1.6807376534984797e-14,
+          "published_knudsen": 7.022685554854207e-17,
+          "free_pair_porosity_once": 6.075931625202828e-17,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 0.0,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 260.1998293125217,
+        "molecular_mol_s": [
+          0.0022654968809901173,
+          0.008501140432389682,
+          0.00011362079809950238,
+          0.0004524765996785163
+        ],
+        "molecular_sum_mol_s": 0.01133273471115782,
+        "molecular_entropy_w_k": 0.021025834811758858,
+        "darcy_entropy_w_k": 0.038781956555084825,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          298.15,
+          298.15
+        ],
+        "case": 2,
+        "partial_pressure_left_pa": [
+          20000.0,
+          75000.0,
+          1000.0,
+          4000.0
+        ],
+        "partial_pressure_right_pa": [
+          25000.0,
+          93750.0,
+          1250.0,
+          5000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 3.3085388432680303e-18,
+          "wall_vector_identity": 2.4145720644384617e-15,
+          "solve_force": 9.559353064195451e-15,
+          "positive_quadratic_decomposition": 9.131760270590783e-16,
+          "molecular_entropy_factor": 1.0725569467085496e-15,
+          "conjugate_caloric_force": 1.6720225796726237e-14,
+          "published_knudsen": 7.022685554854207e-17,
+          "free_pair_porosity_once": 6.075931625202828e-17,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 9.71546240209708e-17,
+          "total_entropy_flux": 5.800994941734311e-17
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 260.19982931259455,
+        "molecular_mol_s": [
+          -0.0022654968809901234,
+          -0.008501140432389703,
+          -0.00011362079809950273,
+          -0.00045247659967851767
+        ],
+        "molecular_sum_mol_s": -0.011332734711157847,
+        "molecular_entropy_w_k": 0.021025834811758907,
+        "darcy_entropy_w_k": 0.03878195655508482,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          298.15,
+          298.15
+        ],
+        "case": 3,
+        "partial_pressure_left_pa": [
+          40000.0,
+          50000.0,
+          8000.0,
+          2000.0
+        ],
+        "partial_pressure_right_pa": [
+          2000.0,
+          65000.0,
+          10000.0,
+          23000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 5.5201071978203665e-17,
+          "wall_vector_identity": 5.798485799116033e-15,
+          "solve_force": 8.252524449186359e-17,
+          "positive_quadratic_decomposition": 1.694521376667061e-16,
+          "molecular_entropy_factor": 1.3268494573046204e-16,
+          "conjugate_caloric_force": 3.0366773152330283e-15,
+          "published_knudsen": 7.022685554854207e-17,
+          "free_pair_porosity_once": 2.700414055645701e-17,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 0.0,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 425.9261758992059,
+        "molecular_mol_s": [
+          0.00018506958508191572,
+          -7.780861829111946e-05,
+          -1.6736492899727026e-05,
+          -8.502184015060346e-05
+        ],
+        "molecular_sum_mol_s": 5.5026337404657746e-06,
+        "molecular_entropy_w_k": 0.006537001867192783,
+        "darcy_entropy_w_k": 0.0,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          298.15,
+          298.15
+        ],
+        "case": 4,
+        "partial_pressure_left_pa": [
+          2000.0,
+          65000.0,
+          10000.0,
+          23000.0
+        ],
+        "partial_pressure_right_pa": [
+          40000.0,
+          50000.0,
+          8000.0,
+          2000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 2.3657602276372992e-17,
+          "wall_vector_identity": 4.312723487826568e-15,
+          "solve_force": 4.016895204929466e-17,
+          "positive_quadratic_decomposition": 2.259361835556082e-16,
+          "molecular_entropy_factor": 2.653698914609242e-16,
+          "conjugate_caloric_force": 3.040472832127698e-15,
+          "published_knudsen": 7.022685554854207e-17,
+          "free_pair_porosity_once": 2.700414055645701e-17,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 0.0,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 425.9261758992079,
+        "molecular_mol_s": [
+          -0.00018506958508191548,
+          7.780861829112031e-05,
+          1.6736492899727148e-05,
+          8.502184015060357e-05
+        ],
+        "molecular_sum_mol_s": -5.5026337404644464e-06,
+        "molecular_entropy_w_k": 0.00653700186719278,
+        "darcy_entropy_w_k": 0.0,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          298.15,
+          298.15
+        ],
+        "case": 5,
+        "partial_pressure_left_pa": [
+          0.0011,
+          88000.00000000001,
+          21999.9978,
+          0.0011
+        ],
+        "partial_pressure_right_pa": [
+          17100.0,
+          63000.0,
+          900.0000000000001,
+          9000.000000000002
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 7.243004809908336e-17,
+          "wall_vector_identity": 6.072272963346526e-16,
+          "solve_force": 1.2042108530720329e-16,
+          "positive_quadratic_decomposition": 1.5056741932676633e-16,
+          "molecular_entropy_factor": 2.652699919209354e-16,
+          "conjugate_caloric_force": 5.172207877296107e-16,
+          "published_knudsen": 7.022685554854207e-17,
+          "free_pair_porosity_once": 2.700414055645701e-17,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 0.0,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 250.56524424864133,
+        "molecular_mol_s": [
+          2.9974655869158843e-05,
+          0.008500135778138357,
+          0.0008725733813295586,
+          2.6034381897230905e-05
+        ],
+        "molecular_sum_mol_s": 0.009428718197234304,
+        "molecular_entropy_w_k": 0.039236782044171366,
+        "darcy_entropy_w_k": 0.11822989427631041,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          650.0,
+          700.0
+        ],
+        "case": 0,
+        "partial_pressure_left_pa": [
+          20000.0,
+          75000.0,
+          1000.0,
+          4000.0
+        ],
+        "partial_pressure_right_pa": [
+          20000.0,
+          75000.0,
+          1000.0,
+          4000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 3.5047100792572005e-17,
+          "wall_vector_identity": 1.4731632241438549e-15,
+          "solve_force": 0.0,
+          "positive_quadratic_decomposition": 0.0,
+          "molecular_entropy_factor": 0.0,
+          "conjugate_caloric_force": 5.99046926307071e-17,
+          "published_knudsen": 8.236168628574319e-17,
+          "free_pair_porosity_once": 5.52708443927502e-17,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 0.0,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 436.6202076548922,
+        "molecular_mol_s": [
+          0.0,
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "molecular_sum_mol_s": 0.0,
+        "molecular_entropy_w_k": 0.0,
+        "darcy_entropy_w_k": 0.0,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          650.0,
+          700.0
+        ],
+        "case": 1,
+        "partial_pressure_left_pa": [
+          25000.0,
+          93750.0,
+          1250.0,
+          5000.0
+        ],
+        "partial_pressure_right_pa": [
+          20000.0,
+          75000.0,
+          1000.0,
+          4000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 7.100820057850186e-17,
+          "wall_vector_identity": 1.7377315678845092e-15,
+          "solve_force": 1.9885575614731107e-15,
+          "positive_quadratic_decomposition": 3.1691703327519593e-16,
+          "molecular_entropy_factor": 7.444601161164409e-16,
+          "conjugate_caloric_force": 1.877582431835582e-14,
+          "published_knudsen": 8.236168628574319e-17,
+          "free_pair_porosity_once": 0.0,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 0.0,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 389.9753845591375,
+        "molecular_mol_s": [
+          0.001505225157689522,
+          0.005654608680301368,
+          7.592074228753396e-05,
+          0.00029990974871957663
+        ],
+        "molecular_sum_mol_s": 0.007535664328998001,
+        "molecular_entropy_w_k": 0.013981059066209106,
+        "darcy_entropy_w_k": 0.00974961844990201,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          650.0,
+          700.0
+        ],
+        "case": 2,
+        "partial_pressure_left_pa": [
+          20000.0,
+          75000.0,
+          1000.0,
+          4000.0
+        ],
+        "partial_pressure_right_pa": [
+          25000.0,
+          93750.0,
+          1250.0,
+          5000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 1.4067288551982204e-17,
+          "wall_vector_identity": 9.083867291175488e-16,
+          "solve_force": 2.2003539698933235e-15,
+          "positive_quadratic_decomposition": 4.225560443669272e-16,
+          "molecular_entropy_factor": 2.481533720388134e-16,
+          "conjugate_caloric_force": 2.3967532723657996e-14,
+          "published_knudsen": 8.236168628574319e-17,
+          "free_pair_porosity_once": 0.0,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 0.0,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 389.97538455915935,
+        "molecular_mol_s": [
+          -0.0015052251576895236,
+          -0.005654608680301373,
+          -7.592074228753402e-05,
+          -0.0002999097487195769
+        ],
+        "molecular_sum_mol_s": -0.007535664328998007,
+        "molecular_entropy_w_k": 0.013981059066209113,
+        "darcy_entropy_w_k": 0.009053217132051865,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          650.0,
+          700.0
+        ],
+        "case": 3,
+        "partial_pressure_left_pa": [
+          40000.0,
+          50000.0,
+          8000.0,
+          2000.0
+        ],
+        "partial_pressure_right_pa": [
+          2000.0,
+          65000.0,
+          10000.0,
+          23000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 5.437612569027561e-17,
+          "wall_vector_identity": 2.155390738098443e-16,
+          "solve_force": 1.8874245507774033e-17,
+          "positive_quadratic_decomposition": 1.2429861478832377e-16,
+          "molecular_entropy_factor": 7.299651918525545e-17,
+          "conjugate_caloric_force": 1.7873231916197033e-15,
+          "published_knudsen": 8.236168628574319e-17,
+          "free_pair_porosity_once": 5.52708443927502e-17,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 1.0522493098198973e-16,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 636.6790908396454,
+        "molecular_mol_s": [
+          0.00033534469713729603,
+          -0.00014052654166780287,
+          -2.7564675536405503e-05,
+          -0.00015619456719984714
+        ],
+        "molecular_sum_mol_s": 1.1058912733240511e-05,
+        "molecular_entropy_w_k": 0.011882234217047457,
+        "darcy_entropy_w_k": 0.0,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          650.0,
+          700.0
+        ],
+        "case": 4,
+        "partial_pressure_left_pa": [
+          2000.0,
+          65000.0,
+          10000.0,
+          23000.0
+        ],
+        "partial_pressure_right_pa": [
+          40000.0,
+          50000.0,
+          8000.0,
+          2000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 3.4588699176579245e-17,
+          "wall_vector_identity": 5.741290197823892e-16,
+          "solve_force": 3.802504043440883e-17,
+          "positive_quadratic_decomposition": 1.864479221824858e-16,
+          "molecular_entropy_factor": 7.299651918525551e-17,
+          "conjugate_caloric_force": 3.1543017961798118e-15,
+          "published_knudsen": 8.236168628574319e-17,
+          "free_pair_porosity_once": 5.52708443927502e-17,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 0.0,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 636.679090839594,
+        "molecular_mol_s": [
+          -0.00033534469713729516,
+          0.0001405265416678057,
+          2.7564675536405923e-05,
+          0.00015619456719984757
+        ],
+        "molecular_sum_mol_s": -1.1058912733235985e-05,
+        "molecular_entropy_w_k": 0.01188223421704745,
+        "darcy_entropy_w_k": 0.0,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          650.0,
+          700.0
+        ],
+        "case": 5,
+        "partial_pressure_left_pa": [
+          0.0011,
+          88000.00000000001,
+          21999.9978,
+          0.0011
+        ],
+        "partial_pressure_right_pa": [
+          17100.0,
+          63000.0,
+          900.0000000000001,
+          9000.000000000002
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 6.0648612597118e-17,
+          "wall_vector_identity": 2.022482723858775e-15,
+          "solve_force": 5.488969420950054e-17,
+          "positive_quadratic_decomposition": 5.912064491550969e-17,
+          "molecular_entropy_factor": 6.943924995735467e-17,
+          "conjugate_caloric_force": 3.7959541168597935e-16,
+          "published_knudsen": 8.236168628574319e-17,
+          "free_pair_porosity_once": 5.52708443927502e-17,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 6.008644864637003e-17,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 376.24085137231,
+        "molecular_mol_s": [
+          -7.95624616561904e-05,
+          0.005688713018822545,
+          0.0007366656586097614,
+          -2.738531617753159e-05
+        ],
+        "molecular_sum_mol_s": 0.006318430899598584,
+        "molecular_entropy_w_k": 0.049963773429066924,
+        "darcy_entropy_w_k": 0.028920137211612258,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          1300.0,
+          1275.0
+        ],
+        "case": 0,
+        "partial_pressure_left_pa": [
+          20000.0,
+          75000.0,
+          1000.0,
+          4000.0
+        ],
+        "partial_pressure_right_pa": [
+          20000.0,
+          75000.0,
+          1000.0,
+          4000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 8.55159846435261e-18,
+          "wall_vector_identity": 5.504706007727366e-16,
+          "solve_force": 0.0,
+          "positive_quadratic_decomposition": 0.0,
+          "molecular_entropy_factor": 0.0,
+          "conjugate_caloric_force": 5.516936353313327e-17,
+          "published_knudsen": 1.1921980682719387e-16,
+          "free_pair_porosity_once": 1.6396389712317354e-16,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 0.0,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 598.9416385131626,
+        "molecular_mol_s": [
+          0.0,
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "molecular_sum_mol_s": 0.0,
+        "molecular_entropy_w_k": 0.0,
+        "darcy_entropy_w_k": 0.0,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          1300.0,
+          1275.0
+        ],
+        "case": 1,
+        "partial_pressure_left_pa": [
+          25000.0,
+          93750.0,
+          1250.0,
+          5000.0
+        ],
+        "partial_pressure_right_pa": [
+          20000.0,
+          75000.0,
+          1000.0,
+          4000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 4.7082615426861994e-17,
+          "wall_vector_identity": 7.170635743382115e-16,
+          "solve_force": 1.2934446098605603e-15,
+          "positive_quadratic_decomposition": 7.297262418586133e-17,
+          "molecular_entropy_factor": 4.285444025625649e-16,
+          "conjugate_caloric_force": 1.5890285105368115e-14,
+          "published_knudsen": 1.1921980682719387e-16,
+          "free_pair_porosity_once": 2.0938062128729532e-16,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 4.199887161869717e-16,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 535.3539245318815,
+        "molecular_mol_s": [
+          0.001087909502242069,
+          0.004095392252667956,
+          5.5414971451251955e-05,
+          0.00021579540415374104
+        ],
+        "molecular_sum_mol_s": 0.005454512130515018,
+        "molecular_entropy_w_k": 0.010119858441760585,
+        "darcy_entropy_w_k": 0.0031700983322613305,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          1300.0,
+          1275.0
+        ],
+        "case": 2,
+        "partial_pressure_left_pa": [
+          20000.0,
+          75000.0,
+          1000.0,
+          4000.0
+        ],
+        "partial_pressure_right_pa": [
+          25000.0,
+          93750.0,
+          1250.0,
+          5000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 8.479872058753472e-17,
+          "wall_vector_identity": 1.035204621409477e-15,
+          "solve_force": 1.7657467813656677e-15,
+          "positive_quadratic_decomposition": 7.297262418586127e-17,
+          "molecular_entropy_factor": 8.570888051251295e-17,
+          "conjugate_caloric_force": 6.845538340530677e-15,
+          "published_knudsen": 1.1921980682719387e-16,
+          "free_pair_porosity_once": 2.0938062128729532e-16,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 5.573955488875851e-16,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 535.3539245318779,
+        "molecular_mol_s": [
+          -0.00108790950224207,
+          -0.0040953922526679575,
+          -5.541497145125199e-05,
+          -0.00021579540415374114
+        ],
+        "molecular_sum_mol_s": -0.005454512130515021,
+        "molecular_entropy_w_k": 0.010119858441760587,
+        "darcy_entropy_w_k": 0.0032322571230899827,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          1300.0,
+          1275.0
+        ],
+        "case": 3,
+        "partial_pressure_left_pa": [
+          40000.0,
+          50000.0,
+          8000.0,
+          2000.0
+        ],
+        "partial_pressure_right_pa": [
+          2000.0,
+          65000.0,
+          10000.0,
+          23000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 7.485540612980412e-17,
+          "wall_vector_identity": 5.580899334410189e-16,
+          "solve_force": 1.6612616006293288e-16,
+          "positive_quadratic_decomposition": 0.0,
+          "molecular_entropy_factor": 9.342555856705001e-17,
+          "conjugate_caloric_force": 1.9886916742114563e-15,
+          "published_knudsen": 1.1921980682719387e-16,
+          "free_pair_porosity_once": 1.6396389712317354e-16,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 0.0,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 869.9240244508908,
+        "molecular_mol_s": [
+          0.0005235072610437385,
+          -0.00021998440326853697,
+          -4.059592711480032e-05,
+          -0.00024490859070751584
+        ],
+        "molecular_sum_mol_s": 1.8018339952885357e-05,
+        "molecular_entropy_w_k": 0.018567975429676715,
+        "darcy_entropy_w_k": 0.0,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          1300.0,
+          1275.0
+        ],
+        "case": 4,
+        "partial_pressure_left_pa": [
+          2000.0,
+          65000.0,
+          10000.0,
+          23000.0
+        ],
+        "partial_pressure_right_pa": [
+          40000.0,
+          50000.0,
+          8000.0,
+          2000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 3.7008060531465385e-17,
+          "wall_vector_identity": 4.3956056795935246e-16,
+          "solve_force": 1.663152621845564e-16,
+          "positive_quadratic_decomposition": 7.954261138286832e-17,
+          "molecular_entropy_factor": 0.0,
+          "conjugate_caloric_force": 9.068782414369705e-16,
+          "published_knudsen": 1.1921980682719387e-16,
+          "free_pair_porosity_once": 1.6396389712317354e-16,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 0.0,
+          "total_entropy_flux": 9.342555856705001e-17
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 869.9240244508782,
+        "molecular_mol_s": [
+          -0.0005235072610437385,
+          0.00021998440326853646,
+          4.059592711480019e-05,
+          0.0002449085907075157
+        ],
+        "molecular_sum_mol_s": -1.801833995288617e-05,
+        "molecular_entropy_w_k": 0.018567975429676708,
+        "darcy_entropy_w_k": 0.0,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          1300.0,
+          1275.0
+        ],
+        "case": 5,
+        "partial_pressure_left_pa": [
+          0.0011,
+          88000.00000000001,
+          21999.9978,
+          0.0011
+        ],
+        "partial_pressure_right_pa": [
+          17100.0,
+          63000.0,
+          900.0000000000001,
+          9000.000000000002
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 9.168165692671636e-17,
+          "wall_vector_identity": 1.2287434046180254e-15,
+          "solve_force": 1.4705491095203222e-16,
+          "positive_quadratic_decomposition": 0.0,
+          "molecular_entropy_factor": 1.0295328937687343e-16,
+          "conjugate_caloric_force": 1.520817743198627e-16,
+          "published_knudsen": 1.1921980682719387e-16,
+          "free_pair_porosity_once": 1.6396389712317354e-16,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 9.5728954360238e-16,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 518.3936527422347,
+        "molecular_mol_s": [
+          -0.00018906820717160347,
+          0.004175760288265395,
+          0.0007276030541578869,
+          -7.878654541200897e-05
+        ],
+        "molecular_sum_mol_s": 0.004635508589839669,
+        "molecular_entropy_w_k": 0.06739846726515494,
+        "darcy_entropy_w_k": 0.00922399628283606,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          850.0,
+          850.0
+        ],
+        "case": 0,
+        "partial_pressure_left_pa": [
+          20000.0,
+          75000.0,
+          1000.0,
+          4000.0
+        ],
+        "partial_pressure_right_pa": [
+          20000.0,
+          75000.0,
+          1000.0,
+          4000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 7.328519514792125e-17,
+          "wall_vector_identity": 1.4220554645990507e-15,
+          "solve_force": 0.0,
+          "positive_quadratic_decomposition": 0.0,
+          "molecular_entropy_factor": 0.0,
+          "conjugate_caloric_force": 0.0,
+          "published_knudsen": 8.768391006966356e-17,
+          "free_pair_porosity_once": 4.6623790300038415e-17,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 0.0,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 489.21252378562315,
+        "molecular_mol_s": [
+          0.0,
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "molecular_sum_mol_s": 0.0,
+        "molecular_entropy_w_k": 0.0,
+        "darcy_entropy_w_k": 0.0,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          850.0,
+          850.0
+        ],
+        "case": 1,
+        "partial_pressure_left_pa": [
+          25000.0,
+          93750.0,
+          1250.0,
+          5000.0
+        ],
+        "partial_pressure_right_pa": [
+          20000.0,
+          75000.0,
+          1000.0,
+          4000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 7.157593298142475e-17,
+          "wall_vector_identity": 1.5424490071137637e-15,
+          "solve_force": 1.8292069094431787e-15,
+          "positive_quadratic_decomposition": 6.522767365486039e-16,
+          "molecular_entropy_factor": 6.268268227970166e-16,
+          "conjugate_caloric_force": 1.2842202898484024e-14,
+          "published_knudsen": 8.768391006966356e-17,
+          "free_pair_porosity_once": 4.1466760452614993e-17,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 0.0,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 437.040711174959,
+        "molecular_mol_s": [
+          0.0013402282856061296,
+          0.005037660608456748,
+          6.778686760982774e-05,
+          0.00026670635570484385
+        ],
+        "molecular_sum_mol_s": 0.00671238211737755,
+        "molecular_entropy_w_k": 0.012453608170535346,
+        "darcy_entropy_w_k": 0.0063736474728299086,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          850.0,
+          850.0
+        ],
+        "case": 2,
+        "partial_pressure_left_pa": [
+          20000.0,
+          75000.0,
+          1000.0,
+          4000.0
+        ],
+        "partial_pressure_right_pa": [
+          25000.0,
+          93750.0,
+          1250.0,
+          5000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 7.717773009887435e-17,
+          "wall_vector_identity": 5.099141774277838e-16,
+          "solve_force": 1.7221413651233498e-15,
+          "positive_quadratic_decomposition": 4.150851959854743e-16,
+          "molecular_entropy_factor": 2.785896990208956e-16,
+          "conjugate_caloric_force": 1.2817642124584195e-14,
+          "published_knudsen": 8.768391006966356e-17,
+          "free_pair_porosity_once": 4.1466760452614993e-17,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 5.913062649051179e-16,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 437.04071117488246,
+        "molecular_mol_s": [
+          -0.001340228285606132,
+          -0.005037660608456757,
+          -6.778686760982784e-05,
+          -0.00026670635570484434
+        ],
+        "molecular_sum_mol_s": -0.006712382117377562,
+        "molecular_entropy_w_k": 0.012453608170535365,
+        "darcy_entropy_w_k": 0.006373647472829908,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          850.0,
+          850.0
+        ],
+        "case": 3,
+        "partial_pressure_left_pa": [
+          40000.0,
+          50000.0,
+          8000.0,
+          2000.0
+        ],
+        "partial_pressure_right_pa": [
+          2000.0,
+          65000.0,
+          10000.0,
+          23000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 6.075043911931933e-17,
+          "wall_vector_identity": 1.0837837219271526e-15,
+          "solve_force": 7.352837908303476e-17,
+          "positive_quadratic_decomposition": 1.0557672959796439e-16,
+          "molecular_entropy_factor": 6.200176712136845e-17,
+          "conjugate_caloric_force": 9.695520684149234e-16,
+          "published_knudsen": 8.768391006966356e-17,
+          "free_pair_porosity_once": 4.6623790300038415e-17,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 0.0,
+          "total_entropy_flux": 6.200176712136845e-17
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 712.5803420227232,
+        "molecular_mol_s": [
+          0.00039463344514916425,
+          -0.0001654914295662875,
+          -3.172147301561728e-05,
+          -0.0001841725323965424
+        ],
+        "molecular_sum_mol_s": 1.3248010170717071e-05,
+        "molecular_entropy_w_k": 0.013989306728799247,
+        "darcy_entropy_w_k": 0.0,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          850.0,
+          850.0
+        ],
+        "case": 4,
+        "partial_pressure_left_pa": [
+          2000.0,
+          65000.0,
+          10000.0,
+          23000.0
+        ],
+        "partial_pressure_right_pa": [
+          40000.0,
+          50000.0,
+          8000.0,
+          2000.0
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 6.055566324406812e-17,
+          "wall_vector_identity": 1.6541028186592418e-15,
+          "solve_force": 8.970378151229274e-17,
+          "positive_quadratic_decomposition": 2.111534591959288e-16,
+          "molecular_entropy_factor": 6.200176712136847e-17,
+          "conjugate_caloric_force": 9.68941242243957e-16,
+          "published_knudsen": 8.768391006966356e-17,
+          "free_pair_porosity_once": 4.6623790300038415e-17,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 0.0,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 712.5803420227386,
+        "molecular_mol_s": [
+          -0.00039463344514916447,
+          0.00016549142956628644,
+          3.172147301561709e-05,
+          0.00018417253239654221
+        ],
+        "molecular_sum_mol_s": -1.3248010170718725e-05,
+        "molecular_entropy_w_k": 0.013989306728799243,
+        "darcy_entropy_w_k": 0.0,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      },
+      {
+        "temperatures_k": [
+          850.0,
+          850.0
+        ],
+        "case": 5,
+        "partial_pressure_left_pa": [
+          0.0011,
+          88000.00000000001,
+          21999.9978,
+          0.0011
+        ],
+        "partial_pressure_right_pa": [
+          17100.0,
+          63000.0,
+          900.0000000000001,
+          9000.000000000002
+        ],
+        "identity_relative_errors": {
+          "matrix_symmetry": 0.0,
+          "published_H_matrix": 5.2325944285679185e-17,
+          "wall_vector_identity": 1.2631809500990081e-15,
+          "solve_force": 5.0550125639761065e-17,
+          "positive_quadratic_decomposition": 0.0,
+          "molecular_entropy_factor": 6.2833727346104e-17,
+          "conjugate_caloric_force": 1.6076160488279768e-16,
+          "published_knudsen": 8.768391006966356e-17,
+          "free_pair_porosity_once": 4.6623790300038415e-17,
+          "donor_darcy_once": 0.0,
+          "energy_flux": 0.0,
+          "total_entropy_flux": 0.0
+        },
+        "minimum_matrix_eigenvalue_m_s_mol": 422.0667625836693,
+        "molecular_mol_s": [
+          -0.00011581166787505454,
+          0.005085987052306436,
+          0.0007240072509559759,
+          -4.455948934536415e-05
+        ],
+        "molecular_sum_mol_s": 0.005649623146041994,
+        "molecular_entropy_w_k": 0.05521631611702784,
+        "darcy_entropy_w_k": 0.01875850421826997,
+        "legacy_pair_multiplier_inactive": true,
+        "passed": true
+      }
+    ],
+    "maximum_identity_relative_error": 2.3967532723657996e-14,
+    "non_equimolar_molecular_flux_demonstrated": true,
+    "dimension_record": {
+      "A": "m*s/mol",
+      "N": "mol/(m2*s)",
+      "A_N": "1/m",
+      "D_pair_and_DK": "m2/s",
+      "molecular_flux": "mol/s",
+      "face_entropy": "J/(K*s)",
+      "proof": "N.A.N=sum N_i^2/(c_i*DK_i)+sum c_i*c_j/(c_total*Dij)*(N_i/c_i-N_j/c_j)^2; positive domain gives strict positive friction. Face entropy=R*area*distance*N.A.N."
+    },
+    "source_qualification": "Published continuous isothermal H/DK algebra. Log-mean finite faces, donor Darcy/nonisothermal and evolving geometry are assumed, not exact Cantera finite-volume replication or measurement.",
+    "integrations": 0,
+    "fits": 0,
+    "uq": 0,
+    "passed": true
+  },
+  "initial_complex_derivative": {
+    "recorded_utc": "2026-10-01T15:53:28.991049+00:00",
+    "elapsed_s": 0.5059634579811245,
+    "pressure_logmean_derivatives": [
+      0.5,
+      0.5
+    ],
+    "expected_each": 0.5,
+    "initial_rhs_finite": true,
+    "initial_complex_jacobian_finite": true,
+    "new_integrations": 0,
+    "unchanged_24_face_algebra_not_repeated": true,
+    "formula": "L=(pL+pR)/2*tanh(ell/2)/(ell/2); equal analytic limit1",
+    "passed": true
+  },
+  "acceptance": {
+    "schema": "full_cycle_p31_acceptance_v1",
+    "recorded_utc": "2026-10-01T16:08:09.993913+00:00",
+    "cases": {
+      "nominal": {
+        "path": "/Users/wanggaoying/Research/brickmodel-github/runs/full-cycle/p31-wall-friction/nominal.json",
+        "physical_consistency_passed": true,
+        "endpoints": {
+          "drying_remaining_fraction": 0.001358920744323834,
+          "cooling_maximum_temperature_difference_k": 0.004036114160328452,
+          "passed": false
+        },
+        "elapsed_s": 186.22132545802742,
+        "domain_coverage": {
+          "temperature_k": {
+            "minimum": 298.15,
+            "maximum": 1223.1499959556538
+          },
+          "porosity": {
+            "minimum": 0.1921900317366727,
+            "maximum": 0.4951890134823578
+          },
+          "total_pore_volume_fraction": {
+            "minimum": 0.41718653470526373,
+            "maximum": 0.49518920384741283
+          },
+          "thickness_shrinkage": {
+            "minimum": -0.009257712008974295,
+            "maximum": 0.006698196299247949
+          },
+          "reversible_thermal_strain": {
+            "minimum": 0.0,
+            "maximum": 0.010496748278168887
+          },
+          "permanent_sintering_strain": {
+            "minimum": -0.00679938000167963,
+            "maximum": 5.0411549745420156e-21
+          },
+          "matrix_phase_eigenstrain": {
+            "minimum": 0.0,
+            "maximum": 0.0005368391750633905
+          },
+          "effective_axial_stress_pa": {
+            "minimum": -101694.91525423726,
+            "maximum": -73952.31265233636
+          },
+          "effective_axial_sintering_viscosity_pa_s": {
+            "minimum": 130319662993.78429,
+            "maximum": 2.014412774384377e+28
+          },
+          "calcite_inventory_mol": {
+            "minimum": -2.690044071035412e-13,
+            "maximum": 0.01405029029773127
+          },
+          "carbonate_lime_fraction": {
+            "minimum": 0.0,
+            "maximum": 1.0000000000191458
+          },
+          "liquid_disordered_fraction": {
+            "minimum": 8.995761862850633e-33,
+            "maximum": 0.49996622526551926
+          },
+          "sampled_nodes": 1351,
+          "cells": 12,
+          "pore_geometry_and_connectivity": "assumed, not measured pore size/connectivity"
+        },
+        "observation_mapping": {
+          "observations": [
+            {
+              "kind": "tg",
+              "unit": "1",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "dsc",
+              "unit": "W/kg",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "dilatometry",
+              "unit": "1",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "kiln",
+              "unit": "K",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "absorption",
+              "unit": "kg/kg",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "strength",
+              "unit": "Pa",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "defects",
+              "unit": "1",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "liquid_water",
+              "unit": "kg/kg",
+              "time_s": 86400.0
+            },
+            {
+              "kind": "surface_temperature",
+              "unit": "K",
+              "time_s": 86400.0
+            }
+          ],
+          "values": [
+            0.8932755808873509,
+            -0.00360102518888863,
+            -0.006671000017673058,
+            298.15,
+            0.25272756941156926,
+            4379660.80000279,
+            0.21829335989686993,
+            0.0002038340916522193,
+            383.15026886034696
+          ],
+          "all_finite": true,
+          "basis": "same new trajectory, no extra integration or synthetic fit",
+          "additional_integrations": 0
+        },
+        "thermodynamics": {
+          "minimum_sampled_entropy_production_w_k": 5.147601146451956e-09,
+          "minimum_face_entropy_production_w_k": 0.0,
+          "minimum_liquid_water_face_entropy_production_w_k": 0.0,
+          "minimum_water_phase_entropy_production_w_k": 2.654728443976115e-22,
+          "evaporation_extent_is_signed_net_phase_transfer": true,
+          "water_binding_energy_counted_once": true,
+          "site_composition_derivatives_counted_once": true,
+          "carbonate_reaction_heat_counted_once": true,
+          "minimum_carbonate_entropy_production_w_k": -6.819293985608102e-14,
+          "reaction_heat_counted_once": true,
+          "maximum_entropy_balance_residual_j_k": 0.0021818054074174142,
+          "entropy_balance_relative": 5.698814225760632e-06,
+          "maximum_entropy_rate_identity_residual_w_k": 5.724587470723463e-17,
+          "elastic_storage": "F_el=K(D/V,C)*V0*epsilon^2/2; K=K0*((D/V)/(D0/V0))^m*exp(-g*C); C=N*v_matrix*(x-x_ref)/V0; epsilon=V/V0-1-beta(T)-B(n,x)-eta+e0; K0*(e0-m*e0^2/2)=prestress; S_el=K*V0*beta'(T)*epsilon at fixed x,n; U_el=F_el+T*S_el. F_V=K*epsilon+V0*K_V*epsilon^2/2; mu_el_i=V0*K_D*epsilon^2*v_dry_i/2-V0*K*epsilon*B_ni-V0*g*K*epsilon^2*C_ni/2; -F_eta/V0=K*epsilon drives sintering. Direct D partials hold C and B fixed; Bdot and Cdot retain carrier birth and phase relaxation in U/S and equilibrium; Kdot=K_V*Vdot+K_D*Ddot-g*K*Cdot.",
+          "thermal_eigenstrain": "beta(T)=alpha*(T-T_initial)+e_q*(n_q_initial*v_q/V0)*(x_beta(T)-x_beta(T_initial)); fixed-strain elastic heat capacity=K*V0*T*(epsilon*beta_second-beta_prime^2)",
+          "quartz_latent_heat_counted_once": true,
+          "liquid_latent_heat_counted_once": true,
+          "minimum_liquid_relaxation_entropy_production_w_k": -1.4158188847269015e-71,
+          "minimum_liquid_relaxation_entropy_per_active_mole_w_mol_k": 1.9230875771343212e-69,
+          "liquid_relaxation_entropy_domain": "Nonnegative per-active-mole kinetic dissipation, with carrier inventory subject to the existing declared inventory error budget. Raw extensive entropy is retained, including signed values from near-zero carrier roundoff; no clipping or new tolerance.",
+          "liquid_fixed_state_heat_capacity_excludes_equilibrium_latent_peak": true,
+          "minimum_sintering_dissipation_coefficient_w_k_pa2": 2.0812386619490433e-36,
+          "structure_viscosity_adds_no_storage": true,
+          "minimum_elastic_bulk_tangent_pa_m3": 54096822379239.086,
+          "dry_fraction_modulus_exponent": 2.0,
+          "water_direct_elastic_composition_derivative_zero": true,
+          "phase_modulus_contrast": 4.0,
+          "liquid_heat_capacity_contrast_j_mol_k": 10.0,
+          "minimum_matrix_fixed_phase_molar_cp_j_mol_k": 230.0,
+          "matrix_phase_eigenstrain_amplitude": 0.02
+        },
+        "state_domain": {
+          "minimum_effective_heat_capacity_j_k_per_cell": 14.10498371691372,
+          "maximum_mechanical_equilibrium_residual_pa": 4.205649020150304e-07,
+          "minimum_condensed_moles": -4.034718397272378e-13,
+          "minimum_gas_moles": 5.203040952693203e-08,
+          "condensed_inventory_roundoff_bound_mol": 8.260412757867165e-15,
+          "condensed_inventory_solver_resolution_mol": 1.561108012022613e-07,
+          "condensed_inventory_acceptance_bound_mol": 1.5611080946267407e-07,
+          "inventory_values_clipped": false,
+          "minimum_temperature_k": 298.15,
+          "minimum_porosity": 0.1921900317366727,
+          "minimum_pressure_pa": 99999.61765373389
+        }
+      },
+      "time": {
+        "path": "/Users/wanggaoying/Research/brickmodel-github/runs/full-cycle/p31-wall-friction/time.json",
+        "physical_consistency_passed": true,
+        "endpoints": {
+          "drying_remaining_fraction": 0.001358920588701233,
+          "cooling_maximum_temperature_difference_k": 0.004048158459454498,
+          "passed": false
+        },
+        "elapsed_s": 156.6841112920083,
+        "domain_coverage": {
+          "temperature_k": {
+            "minimum": 298.15,
+            "maximum": 1223.149995955849
+          },
+          "porosity": {
+            "minimum": 0.1921900317366727,
+            "maximum": 0.49518901347618915
+          },
+          "total_pore_volume_fraction": {
+            "minimum": 0.41718653470526373,
+            "maximum": 0.4951892038412442
+          },
+          "thickness_shrinkage": {
+            "minimum": -0.00925771199664105,
+            "maximum": 0.006698192403938652
+          },
+          "reversible_thermal_strain": {
+            "minimum": 0.0,
+            "maximum": 0.01049674827817084
+          },
+          "permanent_sintering_strain": {
+            "minimum": -0.006799376438192666,
+            "maximum": 5.0411549745420156e-21
+          },
+          "matrix_phase_eigenstrain": {
+            "minimum": 0.0,
+            "maximum": 0.0005368391751003142
+          },
+          "effective_axial_stress_pa": {
+            "minimum": -101694.91525423726,
+            "maximum": -73952.31265299363
+          },
+          "effective_axial_sintering_viscosity_pa_s": {
+            "minimum": 130319657888.34637,
+            "maximum": 2.0144075436121143e+28
+          },
+          "calcite_inventory_mol": {
+            "minimum": -5.532061089500011e-14,
+            "maximum": 0.01405029029773127
+          },
+          "carbonate_lime_fraction": {
+            "minimum": 0.0,
+            "maximum": 1.0000000000039373
+          },
+          "liquid_disordered_fraction": {
+            "minimum": 8.995761862850633e-33,
+            "maximum": 0.49996622529990675
+          },
+          "sampled_nodes": 1351,
+          "cells": 12,
+          "pore_geometry_and_connectivity": "assumed, not measured pore size/connectivity"
+        },
+        "observation_mapping": {
+          "observations": [
+            {
+              "kind": "tg",
+              "unit": "1",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "dsc",
+              "unit": "W/kg",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "dilatometry",
+              "unit": "1",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "kiln",
+              "unit": "K",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "absorption",
+              "unit": "kg/kg",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "strength",
+              "unit": "Pa",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "defects",
+              "unit": "1",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "liquid_water",
+              "unit": "kg/kg",
+              "time_s": 86400.0
+            },
+            {
+              "kind": "surface_temperature",
+              "unit": "K",
+              "time_s": 86400.0
+            }
+          ],
+          "values": [
+            0.8932755691807943,
+            -0.00361177056249885,
+            -0.006670995848832804,
+            298.15,
+            0.2527275791056677,
+            4379660.575448369,
+            0.2182954873437129,
+            0.00020383406831400524,
+            383.15026887200173
+          ],
+          "all_finite": true,
+          "basis": "same new trajectory, no extra integration or synthetic fit",
+          "additional_integrations": 0
+        },
+        "thermodynamics": {
+          "minimum_sampled_entropy_production_w_k": 5.147628918418228e-09,
+          "minimum_face_entropy_production_w_k": 0.0,
+          "minimum_liquid_water_face_entropy_production_w_k": 0.0,
+          "minimum_water_phase_entropy_production_w_k": 3.0860619239776623e-23,
+          "evaporation_extent_is_signed_net_phase_transfer": true,
+          "water_binding_energy_counted_once": true,
+          "site_composition_derivatives_counted_once": true,
+          "carbonate_reaction_heat_counted_once": true,
+          "minimum_carbonate_entropy_production_w_k": -1.927400070599792e-14,
+          "reaction_heat_counted_once": true,
+          "maximum_entropy_balance_residual_j_k": 0.002197162012336662,
+          "entropy_balance_relative": 5.738925244954037e-06,
+          "maximum_entropy_rate_identity_residual_w_k": 4.163336342344337e-17,
+          "elastic_storage": "F_el=K(D/V,C)*V0*epsilon^2/2; K=K0*((D/V)/(D0/V0))^m*exp(-g*C); C=N*v_matrix*(x-x_ref)/V0; epsilon=V/V0-1-beta(T)-B(n,x)-eta+e0; K0*(e0-m*e0^2/2)=prestress; S_el=K*V0*beta'(T)*epsilon at fixed x,n; U_el=F_el+T*S_el. F_V=K*epsilon+V0*K_V*epsilon^2/2; mu_el_i=V0*K_D*epsilon^2*v_dry_i/2-V0*K*epsilon*B_ni-V0*g*K*epsilon^2*C_ni/2; -F_eta/V0=K*epsilon drives sintering. Direct D partials hold C and B fixed; Bdot and Cdot retain carrier birth and phase relaxation in U/S and equilibrium; Kdot=K_V*Vdot+K_D*Ddot-g*K*Cdot.",
+          "thermal_eigenstrain": "beta(T)=alpha*(T-T_initial)+e_q*(n_q_initial*v_q/V0)*(x_beta(T)-x_beta(T_initial)); fixed-strain elastic heat capacity=K*V0*T*(epsilon*beta_second-beta_prime^2)",
+          "quartz_latent_heat_counted_once": true,
+          "liquid_latent_heat_counted_once": true,
+          "minimum_liquid_relaxation_entropy_production_w_k": -2.765962790852156e-72,
+          "minimum_liquid_relaxation_entropy_per_active_mole_w_mol_k": 1.9230875771343212e-69,
+          "liquid_relaxation_entropy_domain": "Nonnegative per-active-mole kinetic dissipation, with carrier inventory subject to the existing declared inventory error budget. Raw extensive entropy is retained, including signed values from near-zero carrier roundoff; no clipping or new tolerance.",
+          "liquid_fixed_state_heat_capacity_excludes_equilibrium_latent_peak": true,
+          "minimum_sintering_dissipation_coefficient_w_k_pa2": 2.081243996941326e-36,
+          "structure_viscosity_adds_no_storage": true,
+          "minimum_elastic_bulk_tangent_pa_m3": 54096820791459.02,
+          "dry_fraction_modulus_exponent": 2.0,
+          "water_direct_elastic_composition_derivative_zero": true,
+          "phase_modulus_contrast": 4.0,
+          "liquid_heat_capacity_contrast_j_mol_k": 10.0,
+          "minimum_matrix_fixed_phase_molar_cp_j_mol_k": 230.0,
+          "matrix_phase_eigenstrain_amplitude": 0.02
+        },
+        "state_domain": {
+          "minimum_effective_heat_capacity_j_k_per_cell": 14.104983814665923,
+          "maximum_mechanical_equilibrium_residual_pa": 4.1881867218762636e-07,
+          "minimum_condensed_moles": -1.254491948814169e-12,
+          "minimum_gas_moles": 5.203044275038667e-08,
+          "condensed_inventory_roundoff_bound_mol": 8.260412757867165e-15,
+          "condensed_inventory_solver_resolution_mol": 1.561108012022613e-07,
+          "condensed_inventory_acceptance_bound_mol": 1.5611080946267407e-07,
+          "inventory_values_clipped": false,
+          "minimum_temperature_k": 298.15,
+          "minimum_porosity": 0.1921900317366727,
+          "minimum_pressure_pa": 99999.61766410875
+        }
+      },
+      "grid": {
+        "path": "/Users/wanggaoying/Research/brickmodel-github/runs/full-cycle/p31-wall-friction/grid.json",
+        "physical_consistency_passed": true,
+        "endpoints": {
+          "drying_remaining_fraction": 0.0013588274517785715,
+          "cooling_maximum_temperature_difference_k": 0.0040236587806816715,
+          "passed": false
+        },
+        "elapsed_s": 496.46304724994116,
+        "domain_coverage": {
+          "temperature_k": {
+            "minimum": 298.15,
+            "maximum": 1223.1499965549385
+          },
+          "porosity": {
+            "minimum": 0.1921900317366727,
+            "maximum": 0.49518901070552873
+          },
+          "total_pore_volume_fraction": {
+            "minimum": 0.41718653470526373,
+            "maximum": 0.49518920107065195
+          },
+          "thickness_shrinkage": {
+            "minimum": -0.009257706457453718,
+            "maximum": 0.006700676674486927
+          },
+          "reversible_thermal_strain": {
+            "minimum": 0.0,
+            "maximum": 0.010496748284161736
+          },
+          "permanent_sintering_strain": {
+            "minimum": -0.006801847319050667,
+            "maximum": 8.364153659836903e-20
+          },
+          "matrix_phase_eigenstrain": {
+            "minimum": 0.0,
+            "maximum": 0.0005368392423962828
+          },
+          "effective_axial_stress_pa": {
+            "minimum": -101694.91525423726,
+            "maximum": -73952.31292891559
+          },
+          "effective_axial_sintering_viscosity_pa_s": {
+            "minimum": 130316471611.06747,
+            "maximum": 2.0145405977063837e+28
+          },
+          "calcite_inventory_mol": {
+            "minimum": -4.3744636176885684e-14,
+            "maximum": 0.007025145148865635
+          },
+          "carbonate_lime_fraction": {
+            "minimum": 0.0,
+            "maximum": 1.0000000000062268
+          },
+          "liquid_disordered_fraction": {
+            "minimum": 8.995761862850633e-33,
+            "maximum": 0.49996628797363285
+          },
+          "sampled_nodes": 1351,
+          "cells": 24,
+          "pore_geometry_and_connectivity": "assumed, not measured pore size/connectivity"
+        },
+        "observation_mapping": {
+          "observations": [
+            {
+              "kind": "tg",
+              "unit": "1",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "dsc",
+              "unit": "W/kg",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "dilatometry",
+              "unit": "1",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "kiln",
+              "unit": "K",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "absorption",
+              "unit": "kg/kg",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "strength",
+              "unit": "Pa",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "defects",
+              "unit": "1",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "liquid_water",
+              "unit": "kg/kg",
+              "time_s": 86400.0
+            },
+            {
+              "kind": "surface_temperature",
+              "unit": "K",
+              "time_s": 86400.0
+            }
+          ],
+          "values": [
+            0.8932755537468936,
+            -0.0035897938006767206,
+            -0.006671101398079642,
+            298.15,
+            0.25272753366335804,
+            4379661.544094046,
+            0.21822660883254477,
+            0.00020382008529980643,
+            383.15027567693795
+          ],
+          "all_finite": true,
+          "basis": "same new trajectory, no extra integration or synthetic fit",
+          "additional_integrations": 0
+        },
+        "thermodynamics": {
+          "minimum_sampled_entropy_production_w_k": 5.1475572220400515e-09,
+          "minimum_face_entropy_production_w_k": 0.0,
+          "minimum_liquid_water_face_entropy_production_w_k": 0.0,
+          "minimum_water_phase_entropy_production_w_k": 1.056088584399673e-23,
+          "evaporation_extent_is_signed_net_phase_transfer": true,
+          "water_binding_energy_counted_once": true,
+          "site_composition_derivatives_counted_once": true,
+          "carbonate_reaction_heat_counted_once": true,
+          "minimum_carbonate_entropy_production_w_k": -1.7760327878045388e-14,
+          "reaction_heat_counted_once": true,
+          "maximum_entropy_balance_residual_j_k": 0.008720751270963945,
+          "entropy_balance_relative": 2.2778356508482804e-05,
+          "maximum_entropy_rate_identity_residual_w_k": 3.469446951953614e-17,
+          "elastic_storage": "F_el=K(D/V,C)*V0*epsilon^2/2; K=K0*((D/V)/(D0/V0))^m*exp(-g*C); C=N*v_matrix*(x-x_ref)/V0; epsilon=V/V0-1-beta(T)-B(n,x)-eta+e0; K0*(e0-m*e0^2/2)=prestress; S_el=K*V0*beta'(T)*epsilon at fixed x,n; U_el=F_el+T*S_el. F_V=K*epsilon+V0*K_V*epsilon^2/2; mu_el_i=V0*K_D*epsilon^2*v_dry_i/2-V0*K*epsilon*B_ni-V0*g*K*epsilon^2*C_ni/2; -F_eta/V0=K*epsilon drives sintering. Direct D partials hold C and B fixed; Bdot and Cdot retain carrier birth and phase relaxation in U/S and equilibrium; Kdot=K_V*Vdot+K_D*Ddot-g*K*Cdot.",
+          "thermal_eigenstrain": "beta(T)=alpha*(T-T_initial)+e_q*(n_q_initial*v_q/V0)*(x_beta(T)-x_beta(T_initial)); fixed-strain elastic heat capacity=K*V0*T*(epsilon*beta_second-beta_prime^2)",
+          "quartz_latent_heat_counted_once": true,
+          "liquid_latent_heat_counted_once": true,
+          "minimum_liquid_relaxation_entropy_production_w_k": -4.718412398169573e-72,
+          "minimum_liquid_relaxation_entropy_per_active_mole_w_mol_k": 3.6250389663510733e-68,
+          "liquid_relaxation_entropy_domain": "Nonnegative per-active-mole kinetic dissipation, with carrier inventory subject to the existing declared inventory error budget. Raw extensive entropy is retained, including signed values from near-zero carrier roundoff; no clipping or new tolerance.",
+          "liquid_fixed_state_heat_capacity_excludes_equilibrium_latent_peak": true,
+          "minimum_sintering_dissipation_coefficient_w_k_pa2": 1.0405534475369117e-36,
+          "structure_viscosity_adds_no_storage": true,
+          "minimum_elastic_bulk_tangent_pa_m3": 108192166333382.12,
+          "dry_fraction_modulus_exponent": 2.0,
+          "water_direct_elastic_composition_derivative_zero": true,
+          "phase_modulus_contrast": 4.0,
+          "liquid_heat_capacity_contrast_j_mol_k": 10.0,
+          "minimum_matrix_fixed_phase_molar_cp_j_mol_k": 230.0,
+          "matrix_phase_eigenstrain_amplitude": 0.02
+        },
+        "state_domain": {
+          "minimum_effective_heat_capacity_j_k_per_cell": 7.052491253441045,
+          "maximum_mechanical_equilibrium_residual_pa": 4.202593117952347e-07,
+          "minimum_condensed_moles": -1.5077018692038812e-12,
+          "minimum_gas_moles": 2.5920222318313815e-08,
+          "condensed_inventory_roundoff_bound_mol": 8.260412757867165e-15,
+          "condensed_inventory_solver_resolution_mol": 7.805540060113066e-08,
+          "condensed_inventory_acceptance_bound_mol": 7.805540886154341e-08,
+          "inventory_values_clipped": false,
+          "minimum_temperature_k": 298.15,
+          "minimum_porosity": 0.1921900317366727,
+          "minimum_pressure_pa": 99999.61743265203
+        }
+      }
+    },
+    "mass_element_energy_budget_count": 81,
+    "maximum_mass_element_energy_relative_residual": 0.0007847497408358388,
+    "gas_species_budget_count": 108,
+    "maximum_gas_budget_relative_residual": 0.0006963961571312641,
+    "gas_budget_passed": true,
+    "relative_differences": {
+      "time": {
+        "porosity": 2.1055858062592973e-08,
+        "residual_carbon_kg": 3.3069251683060945e-14,
+        "shrinkage": 6.249202652049112e-07,
+        "peak_temperature_difference_k": 1.105068142351736e-05,
+        "peak_overpressure_pa": 1.6033872107133347e-06
+      },
+      "grid": {
+        "porosity": 6.977141436904103e-08,
+        "residual_carbon_kg": 6.506397324708258e-13,
+        "shrinkage": 1.5196951800545898e-05,
+        "peak_temperature_difference_k": 0.0003468365085904672,
+        "peak_overpressure_pa": 0.003007685289626884
+      }
+    },
+    "convergence_denominator": "max(abs(refined result),root acceptance.floor.metric)",
+    "balance_limit": 0.001,
+    "convergence_limit": 0.02,
+    "physical_numerical_passed": true,
+    "engineering_passed": false,
+    "nominal_change_from_historical_5917": {
+      "porosity": {
+        "old": 0.48701026729754815,
+        "new": 0.4870103453920773,
+        "signed_change": 7.809452917673099e-08
+      },
+      "residual_carbon_kg": {
+        "old": 2.5352084824925622e-21,
+        "new": -1.7710629929110136e-22,
+        "signed_change": -2.7123147817836635e-21
+      },
+      "shrinkage": {
+        "old": 0.006671104359515123,
+        "new": 0.006671000017673401,
+        "signed_change": -1.0434184172236627e-07
+      },
+      "peak_temperature_difference_k": {
+        "old": 25.476808983090677,
+        "new": 24.627574935272037,
+        "signed_change": -0.8492340478186406
+      },
+      "peak_overpressure_pa": {
+        "old": 433.14366789847554,
+        "new": 215.6608325111738,
+        "signed_change": -217.48283538730175
+      }
+    },
+    "nominal_drying_remaining_fraction": 0.001358920744323834,
+    "nominal_drying_original_limit": 0.001,
+    "constitutive_evidence": "constitutive.json",
+    "stable_complex_derivative_evidence": "stable-logmean-derivative.json",
+    "execution": {
+      "started_utc": "2026-10-01T15:47:26.990948+00:00",
+      "hard_deadline_utc": "2026-10-01T16:17:26.990948+00:00",
+      "supervisor_pid": 14361,
+      "concurrency": 1,
+      "budget_per_job_s": 900.0,
+      "budget_total_s": 1800.0,
+      "summary_limit_bytes": 16777216,
+      "jobs": [
+        {
+          "label": "nominal",
+          "pid": 14373,
+          "started_utc": "2026-10-01T15:53:29.066716+00:00",
+          "status": "finished",
+          "return_code": 0,
+          "elapsed_s": 187.0409234170802,
+          "finished_utc": "2026-10-01T15:56:36.110720+00:00",
+          "child_reaped": true
+        },
+        {
+          "label": "time",
+          "pid": 14525,
+          "started_utc": "2026-10-01T15:56:36.116573+00:00",
+          "status": "finished",
+          "return_code": 0,
+          "elapsed_s": 157.4731805829797,
+          "finished_utc": "2026-10-01T15:59:13.592333+00:00",
+          "child_reaped": true
+        },
+        {
+          "label": "grid",
+          "pid": 14701,
+          "started_utc": "2026-10-01T15:59:13.595442+00:00",
+          "status": "finished",
+          "return_code": 0,
+          "elapsed_s": 497.36412487505004,
+          "finished_utc": "2026-10-01T16:07:30.967741+00:00",
+          "child_reaped": true
+        }
+      ],
+      "status": "completed",
+      "new_uq": 0,
+      "new_fits": 0,
+      "raw_fields_saved": false,
+      "preflight_failure": "execution-preflight-failure.json",
+      "deadline_extended": false,
+      "recorded_utc": "2026-10-01T16:07:30.969687+00:00",
+      "wall_s": 1203.9649123339914,
+      "all_started_children_reaped": true
+    },
+    "new_completed_full_cycles": 3,
+    "initial_nominal_failed_integrations": 1,
+    "preflight_import_failures": 1,
+    "problem_retry": "One initial singular Jacobian failure, one stable analytic logmean repair and one final nominal retry. No physics/tolerance search or deadline extension.",
+    "new_uq": 0,
+    "new_fits": 0,
+    "old_UQ_and_recovery_qualify_new_kernel": false,
+    "material_measured_parameters": 0,
+    "raw_fields_saved": false,
+    "source_and_material_limitations": "Published wall/multicomponent algebra; finite logmean/upwind, nonisothermal, source composition extrapolation and grain/pore proxy remain assumed. No Soret, thermal transpiration, measured pore radius or material/product accuracy."
+  },
+  "failure_evidence": [
+    "constitutive-failure01.log",
+    "constitutive-failure02.log",
+    "metadata-edit-failure.log",
+    "execution-preflight-failure.json",
+    "nominal-integration-failure01.json"
+  ],
+  "new_kernel_old_qualification": "P24/P25/P26/P29 remain historical5917 results. No new UQ; affected fixed scenarios/recovery are P32/P33 next.",
+  "material_qualification": "0 measured. Continuous isothermal source algebra; finite logmean/upwind, nonisothermal, source pressure/composition extrapolation and grain/pore proxy remain assumed. No Soret, thermal transpiration, slip, wall accommodation or pore connectivity accuracy.",
+  "whole_project_complete": false,
+  "process_passed": false,
+  "delivery_separate": true,
+  "downloads": 0,
+  "independent_review": {
+    "recorded_utc": "2026-10-01T16:11:32.042364+00:00",
+    "reviewer": "/root/p01_ledger",
+    "basis": "Independent in-memory readback of new saved summaries/endpoints, no field rebuild, new integration or old P24/P26 repetition.",
+    "ordinary_intervals": 27,
+    "ordinary_scalars": 81,
+    "gas_species_budgets": 108,
+    "endpoints": 27,
+    "gas_field_comparisons": 2052,
+    "maximum_field_absolute_difference": 0.0,
+    "refinement_values_recomputed": 10,
+    "maximum_refinement_absolute_difference": 0.0,
+    "signed_negative_boundary_increments_by_case": {
+      "nominal": 1,
+      "time": 3,
+      "grid": 6
+    },
+    "maximum_ordinary_relative": 0.0007847497408358388,
+    "maximum_gas_budget_relative": 0.0006963961571312641,
+    "worst_gas_initial_inventory_relative": 0.0015769394800115152,
+    "initial_inventory_normalization_is_diagnostic_not_budget_pass_criterion": true,
+    "maximum_required_refinement": 0.0003468365085904672,
+    "maximum_additional_pressure_refinement": 0.003007685289626884,
+    "new_molecular_molar_sum_is_not_forced_zero": true,
+    "physical_numerical_passed": true,
+    "nominal_process_passed": false,
+    "scope": "Ordinary budgets checked from summaries; gas budgets recomputed from all new endpoints/reaction/boundary increments under original root budget denominator, with initial normalization retained separately."
+  }
+}

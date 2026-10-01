@@ -49,7 +49,7 @@
     "porous_transport": {
       "identity": "assumed",
       "location": "parameters.dusty_gas_isothermal.json and parameters.dusty_gas_four_species_column.json; src/sludge_sandbox/dusty_gas_isothermal.py; local Cantera3.2 source preserved under data/sandbox/research/dusty-gas-source-v1/source",
-      "note": "Darcy and mixture-diffusion relations from existing gas_transport.py and pore source records. Common molar-frame D, viscosity power laws and evolving brick properties are assumed. No Knudsen or Soret prediction; reciprocal-logarithmic carried-enthalpy mean preserves the stated ideal-gas entropy inequality."
+      "note": "Historical through P30: Darcy and mixture-diffusion relations from existing gas_transport.py and pore source records. Common molar-frame D, viscosity power laws and evolving brick properties are assumed. No Knudsen or Soret prediction; reciprocal-logarithmic carried-enthalpy mean preserves the stated ideal-gas entropy inequality. P31 host mode1 now adds separately sourced wall friction; all pore geometry and material applicability remain assumed. Current P31mode1 uses coupled wall/Maxwell-Stefan friction; legacy pair zero-total constraint and beta resistance are inactive. No Soret or measured pore accuracy."
     },
     "quartz_nist": {
       "identity": "literature",
@@ -159,7 +159,7 @@
     "pair_diffusion": {
       "identity": "assumed",
       "location": "docs/FULL_CYCLE_P24_SOURCE_DIFFUSION_RESULTS.md; src/sludge_vme/models/full_cycle_gas.py gas_pair_free_diffusivity, pore_limited_pair_diffusivity and molecular_transport",
-      "note": "Positive symmetric pair mobility preserves zero total molecular molar flux and pair entropy structure. P24 water pairs use source tables/ABC from binary_diffusion_background; three legacy water factors are inactive. Only three nonwater pairs retain assumed common Dref/temperature exponent and their relative factors. Pore resistance, tortuosity and finite mixture/pressure extensions are assumed; no full Maxwell-Stefan inversion, Knudsen or Soret qualification. P27 retained current nonwater law after the bounded original-source audit."
+      "note": "Historical through P30: Positive symmetric pair mobility preserves zero total molecular molar flux and pair entropy structure. P24 water pairs use source tables/ABC from binary_diffusion_background; three legacy water factors are inactive. Only three nonwater pairs retain assumed common Dref/temperature exponent and their relative factors. Pore resistance, tortuosity and finite mixture/pressure extensions are assumed; no full Maxwell-Stefan inversion, Knudsen or Soret qualification. P27 retained current nonwater law after the bounded original-source audit. Current P31mode1 uses coupled wall/Maxwell-Stefan friction; legacy pair zero-total constraint and beta resistance are inactive. No Soret or measured pore accuracy."
     },
     "mixture_viscosity": {
       "identity": "assumed",
@@ -252,6 +252,11 @@
       "url": "https://doi.org/10.1016/j.jece.2019.103652",
       "location": "runs/sandbox/source-cache/septien2020/fecal2019-original.xml Table2 tbl0010; Sections2.1,2.3,2.4,2.5",
       "note": "Public donor VIP faecal-sludge effective conductivity measurements. Not target-brick measured parameters; paired measurement temperature, bulk/dry volume and contact state unavailable. 85C is drying-zone air, not TCi measurement T."
+    },
+    "dusty_gas_host": {
+      "identity": "literature",
+      "location": "https://cantera.org/3.2/cxx/dc/de6/classCantera_1_1DustyGasTransport.html; data/sandbox/research/dusty-gas-source-v1/source/DustyGasTransport.cpp and DustyGasTransport.h",
+      "note": "Published multicomponent dusty-gas and Knudsen equations, not material measurements. Host log-mean force discretization, upwind Darcy, nonisothermal extension and evolving grain-size pore proxy remain assumed. No Soret or thermal transpiration qualification."
     }
   },
   "parameters": {
@@ -3143,7 +3148,7 @@
       ],
       "source": "policy",
       "status": "assumed",
-      "note": "Positive symmetric existing pore resistance amplitude. P24beta0 returns the current source-based pre-pore coefficients in actual pair exchanges; it no longer restores the earlier all-six common-D arithmetic. No fullKnudsen/dusty-gas or measuredwall qualification."
+      "note": "Positive symmetric existing pore resistance amplitude. P24beta0 returns the current source-based pre-pore coefficients in actual pair exchanges; it no longer restores the earlier all-six common-D arithmetic. No fullKnudsen/dusty-gas or measuredwall qualification. P31 mode1 leaves this legacy pair amplitude inactive; wall friction enters once through the coupled matrix, not through this pair multiplier."
     },
     "validation.arlabosse.temperature": {
       "value": 368.15,
@@ -4855,6 +4860,298 @@
       "source": "policy",
       "status": "assumed",
       "note": "Expected strict upper count for scalar2-point finite differences: rootmax_nfev18*2 plus truth and final. Actual count independently read after execution."
+    },
+    "transport.wall_friction_mode": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        0,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Explicit 1: symmetric four-species wall-friction/Maxwell-Stefan face law; 0: historical pair exchange. Only 1 is selected and qualified by P31; no hidden default."
+    },
+    "transport.knudsen_diameter_prefactor": {
+      "value": 0.5319230405352436,
+      "unit": "1",
+      "range": [
+        0.5319230405352436,
+        0.5319230405352436
+      ],
+      "source": "dusty_gas_host",
+      "status": "literature",
+      "note": "D_K=(phi/tau)*diameter*prefactor*sqrt(R*Theta/M), equivalent to (2*r/3)*sqrt(8RT/(pi*M)). Geometry is the existing assumed proxy, not measured pores."
+    },
+    "validation.wall_friction.maximum_face_states": {
+      "value": 24,
+      "unit": "1",
+      "range": [
+        24,
+        24
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Exactly six fixed pressure/composition pairs at four fixed temperature pairs; no searches or fitting."
+    },
+    "validation.wall_friction.constitutive_budget": {
+      "value": 60.0,
+      "unit": "s",
+      "range": [
+        60.0,
+        60.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": ""
+    },
+    "validation.wall_friction.per_cycle_budget": {
+      "value": 900.0,
+      "unit": "s",
+      "range": [
+        900.0,
+        900.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": ""
+    },
+    "validation.wall_friction.global_cycle_budget": {
+      "value": 1800.0,
+      "unit": "s",
+      "range": [
+        1800.0,
+        1800.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "One nominal, one half-step, one doubled-grid cycle in sequence. Hard parent deadline; no retries, UQ, optimization or resampling."
+    },
+    "validation.wall_friction.maximum_workers": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": ""
+    },
+    "validation.wall_friction.poll_interval": {
+      "value": 0.25,
+      "unit": "s",
+      "range": [
+        0.25,
+        0.25
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": ""
+    },
+    "validation.wall_friction.summary_byte_limit": {
+      "value": 16777216,
+      "unit": "byte",
+      "range": [
+        16777216,
+        16777216
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Required summaries and frozen source only; no raw fields."
+    },
+    "validation.wall_friction.refinement_factor": {
+      "value": 2,
+      "unit": "1",
+      "range": [
+        2,
+        2
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": ""
+    },
+    "validation.wall_friction.algebra_relative_tolerance": {
+      "value": 1e-11,
+      "unit": "1",
+      "range": [
+        1e-11,
+        1e-11
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Fixed floating-point identity check, separate from unchanged 0.1% physical and 2% refinement limits."
+    },
+    "validation.wall_friction.face_temperature_pairs": {
+      "value": [
+        [
+          298.15,
+          298.15
+        ],
+        [
+          650.0,
+          700.0
+        ],
+        [
+          1300.0,
+          1275.0
+        ],
+        [
+          850.0,
+          850.0
+        ]
+      ],
+      "unit": "K",
+      "range": [
+        298.15,
+        1300.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Synthetic finite-face states, not material measurements."
+    },
+    "validation.wall_friction.left_pressure_multipliers": {
+      "value": [
+        1.0,
+        1.25,
+        1.0,
+        1.0,
+        1.0,
+        1.1
+      ],
+      "unit": "1",
+      "range": [
+        0.9,
+        1.25
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": ""
+    },
+    "validation.wall_friction.right_pressure_multipliers": {
+      "value": [
+        1.0,
+        1.0,
+        1.25,
+        1.0,
+        1.0,
+        0.9
+      ],
+      "unit": "1",
+      "range": [
+        0.9,
+        1.25
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": ""
+    },
+    "validation.wall_friction.left_mole_fractions": {
+      "value": [
+        [
+          0.2,
+          0.75,
+          0.01,
+          0.04
+        ],
+        [
+          0.2,
+          0.75,
+          0.01,
+          0.04
+        ],
+        [
+          0.2,
+          0.75,
+          0.01,
+          0.04
+        ],
+        [
+          0.4,
+          0.5,
+          0.08,
+          0.02
+        ],
+        [
+          0.02,
+          0.65,
+          0.1,
+          0.23
+        ],
+        [
+          1e-08,
+          0.8,
+          0.19999998,
+          1e-08
+        ]
+      ],
+      "unit": "1",
+      "range": [
+        1e-08,
+        0.8
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Gas order O2/N2/H2O/CO2. Equilibrium, pressure directions, composition reversal and trace-species fixtures."
+    },
+    "validation.wall_friction.right_mole_fractions": {
+      "value": [
+        [
+          0.2,
+          0.75,
+          0.01,
+          0.04
+        ],
+        [
+          0.2,
+          0.75,
+          0.01,
+          0.04
+        ],
+        [
+          0.2,
+          0.75,
+          0.01,
+          0.04
+        ],
+        [
+          0.02,
+          0.65,
+          0.1,
+          0.23
+        ],
+        [
+          0.4,
+          0.5,
+          0.08,
+          0.02
+        ],
+        [
+          0.19,
+          0.7,
+          0.01,
+          0.1
+        ]
+      ],
+      "unit": "1",
+      "range": [
+        1e-08,
+        0.8
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": ""
+    },
+    "transport.logmean_pressure_relative_switch": {
+      "value": 0.5,
+      "unit": "1",
+      "range": [
+        0.5,
+        0.5
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Numerical evaluation branch for the same analytic logarithm. Near equal partial pressures use log1p((pL-pR)/pR), elsewhere log(pL/pR); prevents complex division roundoff from producing zero log-mean concentration. No concentration floors or changed physics."
     }
   },
   "species": [
@@ -5252,7 +5549,7 @@
     "transport.binary.H2O_CO2.C",
     "transport.binary.correlation_unit"
   ],
-  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope. Phase modulus contrast is fixed at four; neither its range nor its correlation with eigenstrain, porosity stiffness or phase kinetics is covered or identified. Disordered-minus-ordered heat capacity contrast is fixed at 10 J/mol/K; its range and correlations are neither covered nor identified. Phase conductivity contrast is fixed at two; its signed range and correlations with phase kinetics, baseline conductivity, moisture and pore radiation are not covered or identified. Tortuosity porosity exponent is fixed at one; its range and correlation with diffusivity, initial tortuosity, liquid occupancy and permeability are not covered or identified. Historical pre-P24 six positive gas-pair factors were fixed. In current P24, only three nonwater factors are active and fixed; three water factors are inactive because their pairs use source D. Active factor ranges/correlations with nonwater Dref, tortuosity and permeability are not covered or identified. P20 pure viscosity source coefficient groups and Wilke mixing fraction are fixed; source uncertainty and real mixture/pore errors are not sampled or identified. Historical four assumed species factors were removed, not silently retained as active parameters. P16 four-gas plus calcite/lime source-caloric coefficient sets (30 coefficients) are fixed together; their source uncertainty and correlations are not sampled or identified. Four remaining non-quartz dry background Cp slopes are fixed; ranges and correlations with kinetics, thermal and phase properties are not covered or identified. Liquid-water background Cp slope is fixed at 0.01 J/mol/K2; its range and correlation with retention, phase exchange and heat transfer are not covered or identified. The intrinsic dry-solid conductivity temperature exponent is also fixed; its declared range and correlation are not sampled or identified. Final-model refresh: carbonate phase resistance and pore-scale gas-pair resistance are explicitly fixed at their nominal values of one. Their ranges and correlations are not sampled or identified. Reuse the same 25-dimensional paired draws and three schedules; nominal permeability remains 3.75e-14 m2. Current-run results must be recorded separately from earlier ensembles; process and physical failures remain explicit. P24: P21 ensemble is d5fd9a2 historical. Common gas diffusivity now controls only nonwater pairs; sourcewater coefficients/interpolation/finite composition extension are fixed and uncalibrated. No new UQ authorized.",
+  "uncertainty_scope_note": "Historical P26/earlier distributions and P29 recovery qualify the preceding 5917 kernel only. P31mode1 wall friction is not ensemble-qualified; legacy transport.pore_resistance is inactive, not sampled as an effective coefficient. Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope. Phase modulus contrast is fixed at four; neither its range nor its correlation with eigenstrain, porosity stiffness or phase kinetics is covered or identified. Disordered-minus-ordered heat capacity contrast is fixed at 10 J/mol/K; its range and correlations are neither covered nor identified. Phase conductivity contrast is fixed at two; its signed range and correlations with phase kinetics, baseline conductivity, moisture and pore radiation are not covered or identified. Tortuosity porosity exponent is fixed at one; its range and correlation with diffusivity, initial tortuosity, liquid occupancy and permeability are not covered or identified. Historical pre-P24 six positive gas-pair factors were fixed. In current P24, only three nonwater factors are active and fixed; three water factors are inactive because their pairs use source D. Active factor ranges/correlations with nonwater Dref, tortuosity and permeability are not covered or identified. P20 pure viscosity source coefficient groups and Wilke mixing fraction are fixed; source uncertainty and real mixture/pore errors are not sampled or identified. Historical four assumed species factors were removed, not silently retained as active parameters. P16 four-gas plus calcite/lime source-caloric coefficient sets (30 coefficients) are fixed together; their source uncertainty and correlations are not sampled or identified. Four remaining non-quartz dry background Cp slopes are fixed; ranges and correlations with kinetics, thermal and phase properties are not covered or identified. Liquid-water background Cp slope is fixed at 0.01 J/mol/K2; its range and correlation with retention, phase exchange and heat transfer are not covered or identified. The intrinsic dry-solid conductivity temperature exponent is also fixed; its declared range and correlation are not sampled or identified. Final-model refresh: carbonate phase resistance and pore-scale gas-pair resistance are explicitly fixed at their nominal values of one. Their ranges and correlations are not sampled or identified. Reuse the same 25-dimensional paired draws and three schedules; nominal permeability remains 3.75e-14 m2. Current-run results must be recorded separately from earlier ensembles; process and physical failures remain explicit. P24: P21 ensemble is d5fd9a2 historical. Common gas diffusivity now controls only nonwater pairs; sourcewater coefficients/interpolation/finite composition extension are fixed and uncalibrated. No new UQ authorized.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -7185,6 +7482,52 @@
         "measured": 0
       },
       "scope_review": "/root/p02_scope_review confirmed current-kernel recovery is necessary P06/P07 gap. P18 historical10 forwards/257.176912s only cost evidence, not current qualification."
+    },
+    "wall_friction_host_implementation": {
+      "task": "P31",
+      "mode_parameter": "transport.wall_friction_mode",
+      "new_cycles": [
+        "nominal",
+        "time",
+        "grid"
+      ],
+      "new_uq": 0,
+      "new_fits": 0,
+      "source": "dusty_gas_host",
+      "previous_kernel": "5917fcd493c1836b0db33f9eea290ce4770a9dd1",
+      "qualification": "Continuous isothermal DGM-consistent diffusion and one donor Darcy; finite log-mean/upwind and nonisothermal extension assumed. No exact Cantera discrete replication, Soret, thermal transpiration or measured pore radius."
+    },
+    "wall_friction_fixed_scenarios": {
+      "id": "P32",
+      "recorded_utc": "2026-10-01T16:08:36.435791+00:00",
+      "new_cycles": [
+        "lower_peak",
+        "longer_hold"
+      ],
+      "reused_nominal": "runs/full-cycle/p31-wall-friction/nominal.json",
+      "cycle_budget_parameter": "validation.source_diffusion.full_cycle_budget",
+      "global_budget_parameter": "validation.source_diffusion.total_budget",
+      "poll_parameter": "validation.wall_friction.poll_interval",
+      "concurrency_parameter": "validation.wall_friction.maximum_workers",
+      "scope": "Existing two fixed scenarios once after P31. Same root scenario definitions, no optimization, UQ, process search or distribution refresh."
+    },
+    "wall_friction_scalar_recovery": {
+      "id": "P33",
+      "recorded_utc": "2026-10-01T16:08:36.435791+00:00",
+      "window": [
+        "drying_ramp",
+        "drying"
+      ],
+      "fit_parameters": [
+        "water.binding_energy"
+      ],
+      "truth_parameter": "calibration.binding.truth",
+      "initial_parameter": "calibration.binding.initial",
+      "observation_times_parameter": "calibration.binding.observation_times",
+      "scale_parameter": "calibration.scale.liquid_water",
+      "wall_budget_parameter": "validation.current_recovery.wall_budget",
+      "maximum_forwards_parameter": "validation.current_recovery.maximum_forward_calls",
+      "scope": "One scalar/no noise/same model two-stage recovery. Python truth and real existing CLI in one worker, total watchdog and actual started-call counter. No new design, nominal parameter updates, old multifit or UQ."
     }
   },
   "caloric_background": {
