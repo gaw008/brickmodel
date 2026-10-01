@@ -4,7 +4,7 @@
 
 根355项=110 literature /245 assumed /0 measured。N2/H2O、O2/H2O源表及H2O/CO2统一ABC已离线写入根参数；插值、逆压、有限水组成及孔尺度推广仍assumed。原水对factor闲置且D_ref仅影响非水三对，P21旧核d5fd9a2的24次分布不能授予本核资格；第二批UQ未获授权，当前分布/稳健性要求未完成，**整个开发目标仍未完成**。P18合成恢复也保持历史。
 
-名义干燥余水0.135819744246%>0.1%，三档及原两方案都保留失败，不做第三次搜索。水黏度/Calcite热容域外外推、公开异材曲线失配、烧结/产品代理待实测单列；内部数值通过不等于工艺或材料通过。Git/Drive增量正按单独收据交付；全部历史、独有Git、离线环境恢复及20GB目标仍未完成。详见FULL_CYCLE_P24_SOURCE_DIFFUSION_RESULTS.md/.json、FULL_CYCLE_P25_FIXED_SCENARIOS.md/.json与FINAL_ACCEPTANCE.current_acceptance_matrix。
+名义干燥余水0.135819744246%>0.1%，三档及原两方案都保留失败，不做第三次搜索。水黏度/Calcite热容域外外推、公开异材曲线失配、烧结/产品代理待实测单列；内部数值通过不等于工艺或材料通过。Git/Drive本次主增量已推送并实际字节恢复，收据见FULL_CYCLE_P24_P25_DELIVERY.json；全部历史、独有Git、离线环境恢复及20GB目标仍未完成。详见FULL_CYCLE_P24_SOURCE_DIFFUSION_RESULTS.md/.json、FULL_CYCLE_P25_FIXED_SCENARIOS.md/.json与FINAL_ACCEPTANCE.current_acceptance_matrix。
 
 以下均为此前带时间的阶段记录；旧“当前”只适用于当时版本。
 
