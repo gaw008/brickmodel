@@ -32,8 +32,9 @@ def initial_partition(*, cells: int, half_thickness_m: float, area_m2: float,
     if np.any(widths <= 0):
         raise ValueError('profile must yield strictly increasing faces')
     centers = (faces[:-1] + faces[1:]) / 2
+    bulk = np.full(cells, area_m2 * half_thickness_m / cells) if profile == 'uniform' else area_m2 * widths
     return {'faces_m': faces, 'centers_m': centers, 'widths_m': widths,
-            'initial_bulk_m3': area_m2 * widths,
+            'initial_bulk_m3': bulk,
             'internal_center_distance_m': np.diff(centers),
             'symmetry_half_width_m': widths[0] / 2,
             'exterior_half_width_m': widths[-1] / 2}
