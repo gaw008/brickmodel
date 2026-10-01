@@ -5627,6 +5627,94 @@
       "source": "policy",
       "status": "assumed",
       "note": "P36 fixed zero-integration admission budget, operational only; no change to materials, process or acceptance scales."
+    },
+    "validation.direct_carbonation_operator.maximum_evaluations": {
+      "value": 4,
+      "unit": "1",
+      "range": [
+        4,
+        4
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P37 bounded local component execution setting only; no physical/process/acceptance changes."
+    },
+    "validation.direct_carbonation_operator.per_call_budget": {
+      "value": 60.0,
+      "unit": "s",
+      "range": [
+        60.0,
+        60.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P37 bounded local component execution setting only; no physical/process/acceptance changes."
+    },
+    "validation.direct_carbonation_operator.global_budget": {
+      "value": 120.0,
+      "unit": "s",
+      "range": [
+        120.0,
+        120.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P37 bounded local component execution setting only; no physical/process/acceptance changes."
+    },
+    "validation.direct_carbonation_operator.summary_byte_limit": {
+      "value": 2097152,
+      "unit": "byte",
+      "range": [
+        2097152,
+        2097152
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P37 bounded local component execution setting only; no physical/process/acceptance changes."
+    },
+    "validation.direct_carbonation_operator.maximum_workers": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P37 bounded local component execution setting only; no physical/process/acceptance changes."
+    },
+    "validation.direct_carbonation_operator.maximum_attempts_per_issue": {
+      "value": 2,
+      "unit": "1",
+      "range": [
+        2,
+        2
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P37 bounded local component execution setting only; no physical/process/acceptance changes."
+    },
+    "validation.direct_carbonation_operator.cell_index": {
+      "value": 0,
+      "unit": "1",
+      "range": [
+        0,
+        0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P37 bounded local component execution setting only; no physical/process/acceptance changes."
+    },
+    "validation.direct_carbonation_operator.synthetic_mobility": {
+      "value": 1.0,
+      "unit": "1/s",
+      "range": [
+        1.0,
+        1.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P37 operational/synthetic constitutive fixture only. Positive unit mobility is not a nominal brick rate, measured calibration or literature macroscopic coefficient."
     }
   },
   "species": [
@@ -8140,6 +8228,70 @@
       "raw_donors": "Main result uses reconstructed host ns and preserves signs. Exact donor coefficient comparison at same frozen mu/T/partial is separate and not a mechanically re-equilibrated full host state.",
       "source_applicability": "298.15K synthetic states are not293.15K paper reproduction. High steam0.09 is imposed nonequilibrium inventory, not an equilibrium wet-film experiment. No wet-film availability law admitted.",
       "diagnostic_scope": "Complete current shared mu and old two rates only; no rates/rhs/jacobian/solve_ivp call, direct mobility or new phase heat."
+    },
+    "direct_carbonation_operator": {
+      "schema": "P37_explicit_local_operator_contract_v1",
+      "recorded_utc": "2026-10-01T20:06:10.015981+00:00",
+      "budget_prefix": "validation.direct_carbonation_operator.",
+      "cell_parameter": "validation.direct_carbonation_operator.cell_index",
+      "mobility_parameter": "validation.direct_carbonation_operator.synthetic_mobility",
+      "gas_constant_parameter": "reference.R",
+      "identity_scale_parameter": "validation.hydroxide.identity_tolerance",
+      "source_directory": "runs/full-cycle/p36-direct-carbonation-admission",
+      "direct_stoichiometry": {
+        "calcite": 1,
+        "portlandite": -1,
+        "H2O": 1,
+        "CO2": -1
+      },
+      "probes": [
+        {
+          "id": "forward_missing_calcite",
+          "saved_state": "pure_portlandite_humid",
+          "affinity_kind": "saved_full_mu",
+          "expected_rate_sign": 1,
+          "produced_initially_missing_species": "calcite"
+        },
+        {
+          "id": "reverse_missing_portlandite",
+          "saved_state": "pure_calcite_humid",
+          "affinity_kind": "synthetic_dimensionless",
+          "dimensionless_parameter": "validation.hydroxide.dimensionless_affinities",
+          "affinity_index": 2,
+          "expected_rate_sign": -1,
+          "produced_initially_missing_species": "portlandite"
+        },
+        {
+          "id": "equilibrium_nonzero_donors",
+          "saved_state": "mixed_high_CO2_low_H2O",
+          "affinity_kind": "synthetic_dimensionless",
+          "dimensionless_parameter": "validation.hydroxide.dimensionless_affinities",
+          "affinity_index": 1,
+          "expected_rate_sign": 0
+        },
+        {
+          "id": "zero_forward_donor",
+          "saved_state": "pure_calcite_humid",
+          "affinity_kind": "saved_full_mu",
+          "expected_rate_sign": 0
+        }
+      ],
+      "mobility_contract": {
+        "source": "policy",
+        "status": "assumed",
+        "identity": "synthetic_constitutive_unit_mobility",
+        "applicability": {
+          "material": "synthetic donor/activity inputs; not nominal brick",
+          "temperature": "Saved298.15K P36 scalar inputs only",
+          "humidity_surface_basis": "Copied positive gas activities, no water film, interface area or product-layer rate qualification",
+          "kinetic_basis": "Assumed affinity/donor local phenomenology; no A/E and no default bulk kinetics"
+        }
+      },
+      "law": "A=delta_mu/(R*T); A<=0:r=L*nOH*aCO2*(1-exp(A)); A>0:r=-L*nCalcite*aH2O*(1-exp(-A))",
+      "same_potential_scope": "Real forward and zero-donor use saved complete current delta_mu. Synthetic reverse/equilibrium overwrite the constitutive driving input only, not a new physical state or source experiment.",
+      "evaluation_count": "Exactly4scalar operator calls, one selectedcell each, no batching into more nodes. No host reconstruction, old RHS/Jac/rate or integration calls.",
+      "integration_scope": "New callable local module only. Full-cycle rates/state-layout unchanged, no direct reaction added to nominal reaction table.",
+      "future_coupling": "Explicit independent xi_d dot=r; sourceOH=-r,C=+r,CO2=-r,H2O=+r; no extra reaction heat; OH+xi_h+xi_d invariant. Future host activation requires separate affected verification budget."
     }
   },
   "caloric_background": {

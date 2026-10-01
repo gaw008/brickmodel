@@ -1,5 +1,7 @@
 # 全流程近似烧结砖模型：当前执行规范（2026-09-26）
 
+P37局部算子实际完成（2026-10-01T20:18:18.780123+00:00）：新增direct_carbonation.py，原43全周期主机源码保持、尚未接RHS/布局；显式迁移率及来源/域必填，律assumed无默认砖A/E。4标量实际2.088736s/0重试/全回收，两条保存完整μ与合成A+1/A0各一条，正反向无种子、平衡/零供体均通过局部检查；L=1/s仅synthetic，非砖速率。448=141literature/307assumed/0measured，原440保持。原30/81、strictOH、名义0.135892078740%失败和wholefalse保持，未新增周期/fit/UQ/恢复。见FULL_CYCLE_P37_DIRECT_CARBONATION_OPERATOR.md/.json；P38来源TG双DoC仅候选未启动。
+
 P36有限来源准入及4固定局部核查完成（2026-10-01T19:44:21.845454+00:00）：湿表面机制准入，两主文宏观迁移率不直接准入。298.15K纯OH精确零CaO供体系数对照两旧率均0且directΔμ−57.92008kJ/mol；raw主机微小CaO/非零率保留，不称严格主机阻断。实际2.100607s、16本构调用、0RHS/Jac/积分/fit/UQ/恢复。440=141literature/299assumed/0measured，原434/科学核保持，未新增通道或默认A/E。原30/81、strictOH及0.135892078740%干燥失败保持，wholefalse。P37具显式迁移率输入局部能力仅候选；详见FULL_CYCLE_P36_DIRECT_CARBONATION_ADMISSION.md/.json。
 
 P35有界零积分定位完成（2026-10-01T19:01:14.677712+00:00）：4固定RHS/Jacobian配对行和均0；432保存端点格揭示OH/extent偏离在最终投影前已存在，不能只归结为报告sum或CaO差值。3个calcite保温区间的小进度增量低于大累计量的binary64分辨率。未确认科学源码缺陷，源43保持，原427参数保持，仅新增7运行预算至434=141literature/293assumed/0measured。原30/81失败和严格OH耗散未资格、名义0.135892078740%干燥失败保持。P35诊断完成，P34及完整模型仍partial；无新周期/UQ/拟合/恢复，实际边界见FULL_CYCLE_P35_PHASE_LEDGER_DIAGNOSIS.md/.json。

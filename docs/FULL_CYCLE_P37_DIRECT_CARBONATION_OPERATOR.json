@@ -1,0 +1,250 @@
+{
+  "schema": "P37_explicit_local_direct_carbonation_operator_v1",
+  "recorded_utc": "2026-10-01T20:18:18.780123+00:00",
+  "bounded_item_complete": true,
+  "whole_project_complete": false,
+  "new_local_scientific_module": "src/sludge_vme/models/direct_carbonation.py",
+  "old43_cycle_source_unchanged": true,
+  "cycle_RHS_or_layout_changed": false,
+  "direct_cycle_channel_implemented": false,
+  "science_host_kernel": "f6694445be9b32d5dbc54906827607de7ae878d1",
+  "root_parameter_count": 448,
+  "parameter_status_counts": {
+    "literature": 141,
+    "assumed": 307,
+    "measured": 0
+  },
+  "old440_complete_entries_unchanged": true,
+  "new_entries": "Six operational budgets, scalar cell selector and synthetic unit-mobility fixture; no nominal kinetics or acceptance changes.",
+  "architecture_decision": {
+    "component": "Required-input pure local callable operator plus explicit mobility provenance/domain data value. Direct module import, no package-export/RHS/state-layout change.",
+    "law": "A=delta_mu/(RT); A<=0:r=L*nOH*(pCO2/Pr)*(1-exp(A)); A>0:r=-L*nC*(pH2O/Pr)*(1-exp(-A)). Selected expm1 arguments nonpositive, no clips.",
+    "law_status": "assumed; source mechanism does not validate chosen macroscopic law.",
+    "input_contract": "All keyword-only physical inputs and fixed canonical stoichiometry required; mobility value1/s/source/status/identity/applicability required. Same forward-oriented complete delta_mu from caller. No silent default or source validation claim.",
+    "outputs": "One instantaneous candidate independent extent mol/s, exactly nu*r species mol/s and -r*delta_mu/T W/K. No independent accumulated coordinate or heat.",
+    "physical_domain": "PositiveT/R/Pr/L and nonnegative donor inventories/partial pressures. Signed donor inputs preserved outside proof domain; no blanket finite-output guarantee at extreme floating inputs.",
+    "future_host_coupling": "Independent xi_d dot=r, dcalcite=+r,dOH=-r,CO2=-r,H2O=+r; preserve OH+xi_h+xi_d=OH0 and use same speciesU/S/volume. No extra reaction heat. Separate affected execution budget required before host integration."
+  },
+  "execution": {
+    "schema": "P37_fixed4_scalar_execution_v1",
+    "started_utc": "2026-10-01T20:13:49.057899+00:00",
+    "hard_deadline_utc": "2026-10-01T20:15:49.057899+00:00",
+    "per_call_budget_s": 60.0,
+    "total_budget_s": 120.0,
+    "maximum_workers": 1,
+    "jobs": [
+      {
+        "id": "forward_missing_calcite",
+        "pid": 25653,
+        "status": "finished",
+        "started_utc": "2026-10-01T20:13:49.059666+00:00",
+        "return_code": 0,
+        "child_reaped": true,
+        "finished_utc": "2026-10-01T20:13:49.580398+00:00",
+        "elapsed_s": 0.5207622919697315
+      },
+      {
+        "id": "reverse_missing_portlandite",
+        "pid": 25654,
+        "status": "finished",
+        "started_utc": "2026-10-01T20:13:49.582935+00:00",
+        "return_code": 0,
+        "child_reaped": true,
+        "finished_utc": "2026-10-01T20:13:50.103175+00:00",
+        "elapsed_s": 0.5202715408522636
+      },
+      {
+        "id": "equilibrium_nonzero_donors",
+        "pid": 25662,
+        "status": "finished",
+        "started_utc": "2026-10-01T20:13:50.105642+00:00",
+        "return_code": 0,
+        "child_reaped": true,
+        "finished_utc": "2026-10-01T20:13:50.627497+00:00",
+        "elapsed_s": 0.5219569581095129
+      },
+      {
+        "id": "zero_forward_donor",
+        "pid": 25667,
+        "status": "finished",
+        "started_utc": "2026-10-01T20:13:50.637083+00:00",
+        "return_code": 0,
+        "child_reaped": true,
+        "finished_utc": "2026-10-01T20:13:51.145181+00:00",
+        "elapsed_s": 0.508194416994229
+      }
+    ],
+    "integrations": 0,
+    "host_RHS_Jacobian_calls": 0,
+    "deadline_extended": false,
+    "status": "completed",
+    "timeout_stop_path_exercised": false,
+    "recorded_utc": "2026-10-01T20:13:51.146654+00:00",
+    "wall_s": 2.088736291974783,
+    "summary_bytes": 619578,
+    "all_started_children_reaped": true
+  },
+  "local_results": [
+    {
+      "id": "forward_missing_calcite",
+      "input_state_identity": "saved scalar P36 full-mu input",
+      "dimensionless_affinity": -23.3646970678607,
+      "extent_rate_mol_s": 1.3739529380707563e-05,
+      "species_sources_mol_s": {
+        "calcite": 1.3739529380707563e-05,
+        "portlandite": -1.3739529380707563e-05,
+        "H2O": 1.3739529380707563e-05,
+        "CO2": -1.3739529380707563e-05
+      },
+      "entropy_production_W_K": 0.0026691083060705304,
+      "signed_mass_residual_kg_s": 5.293955920339377e-23,
+      "mass_budget_relative": 1.6312501098724776e-17,
+      "initially_missing_product_inventory_mol": 0.0,
+      "checks": {
+        "expected_rate_sign": true,
+        "nonnegative_physical_domain_entropy": true,
+        "canonical_root_stoichiometry": true,
+        "element_budget_identity": true,
+        "mass_budget_identity": true,
+        "candidate_extent_OH_invariant": true,
+        "calcium_source_sum": true,
+        "gas_net_molar_source": true,
+        "missing_product_generated_without_seed": true,
+        "all_function_and_mobility_inputs_required": true
+      }
+    },
+    {
+      "id": "reverse_missing_portlandite",
+      "input_state_identity": "synthetic constitutive affinity only; not a new physical state",
+      "dimensionless_affinity": 1.0,
+      "extent_rate_mol_s": -0.00013322216032058025,
+      "species_sources_mol_s": {
+        "calcite": -0.00013322216032058025,
+        "portlandite": 0.00013322216032058025,
+        "H2O": -0.00013322216032058025,
+        "CO2": 0.00013322216032058025
+      },
+      "entropy_production_W_K": 0.0011076706718950822,
+      "signed_mass_residual_kg_s": 8.470329472543003e-22,
+      "mass_budget_relative": 2.6917574383051682e-17,
+      "initially_missing_product_inventory_mol": 0.0,
+      "checks": {
+        "expected_rate_sign": true,
+        "nonnegative_physical_domain_entropy": true,
+        "canonical_root_stoichiometry": true,
+        "element_budget_identity": true,
+        "mass_budget_identity": true,
+        "candidate_extent_OH_invariant": true,
+        "calcium_source_sum": true,
+        "gas_net_molar_source": true,
+        "missing_product_generated_without_seed": true,
+        "all_function_and_mobility_inputs_required": true
+      }
+    },
+    {
+      "id": "equilibrium_nonzero_donors",
+      "input_state_identity": "synthetic constitutive affinity only; not a new physical state",
+      "dimensionless_affinity": 0.0,
+      "extent_rate_mol_s": 0.0,
+      "species_sources_mol_s": {
+        "calcite": 0.0,
+        "portlandite": -0.0,
+        "H2O": 0.0,
+        "CO2": -0.0
+      },
+      "entropy_production_W_K": -0.0,
+      "signed_mass_residual_kg_s": 0.0,
+      "mass_budget_relative": null,
+      "initially_missing_product_inventory_mol": null,
+      "checks": {
+        "expected_rate_sign": true,
+        "nonnegative_physical_domain_entropy": true,
+        "canonical_root_stoichiometry": true,
+        "element_budget_identity": true,
+        "mass_budget_identity": true,
+        "candidate_extent_OH_invariant": true,
+        "calcium_source_sum": true,
+        "gas_net_molar_source": true,
+        "missing_product_generated_without_seed": true,
+        "all_function_and_mobility_inputs_required": true
+      }
+    },
+    {
+      "id": "zero_forward_donor",
+      "input_state_identity": "saved scalar P36 full-mu input",
+      "dimensionless_affinity": -23.364694795623542,
+      "extent_rate_mol_s": 0.0,
+      "species_sources_mol_s": {
+        "calcite": 0.0,
+        "portlandite": -0.0,
+        "H2O": 0.0,
+        "CO2": -0.0
+      },
+      "entropy_production_W_K": 0.0,
+      "signed_mass_residual_kg_s": 0.0,
+      "mass_budget_relative": null,
+      "initially_missing_product_inventory_mol": null,
+      "checks": {
+        "expected_rate_sign": true,
+        "nonnegative_physical_domain_entropy": true,
+        "canonical_root_stoichiometry": true,
+        "element_budget_identity": true,
+        "mass_budget_identity": true,
+        "candidate_extent_OH_invariant": true,
+        "calcium_source_sum": true,
+        "gas_net_molar_source": true,
+        "missing_product_generated_without_seed": true,
+        "all_function_and_mobility_inputs_required": true
+      }
+    }
+  ],
+  "local_qualification_scope": "Four selected scalar calls only. First2 generate initially absent product. Element/source/mass budgets and invariant are dependent instantaneous algebra, not independent integration or complete energy qualification. Zero flux ratios null/exact-zero policy.",
+  "maximum_nonzero_mass_budget_relative": 2.6917574383051682e-17,
+  "failure_and_limits": {
+    "new_local_evaluation_failures": 0,
+    "retries": 0,
+    "timeout_stop_path_exercised": false,
+    "original81_ordinary108_gas_and_required_refinement": "Inherited P34 evidence retained; not rerun or upgraded.",
+    "extended_phase_budget_failed": 30,
+    "extended_phase_budget_total": 81,
+    "strict_OH_dissipation_qualified": false,
+    "nominal_remaining_water_fraction": 0.001358920787402553,
+    "nominal_remaining_water_percent": 0.1358920787402553,
+    "nominal_drying_threshold_percent": 0.1,
+    "nominal_drying_passed": false,
+    "current_host_UQ_or_fit_qualified": false,
+    "measured_parameters": 0,
+    "macro_mobility_or_brick_rate_validated": false,
+    "actual_restore_performed": false,
+    "historical_uniqueGit20GB_and_capacity_warning_resolved": false
+  },
+  "independent_review": "runs/full-cycle/p37-direct-carbonation-operator/independent-review.json",
+  "wall_s_from_registration_to_report": 728.761137,
+  "timing_identity": "2.088736s actual process supervision; registration-to-report includes reading, code, review and documentation, not integration cost.",
+  "next_candidate": {
+    "id": "P38",
+    "status": "proposed_not_started",
+    "ability": "Source-specific pure-data paired TG DoC mapper from portlandite and calcite masses per same calcined-CaO reference",
+    "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12980848/",
+    "source_equations": [
+      "Eq5: DoC_CH=1-(mCaO/mCH)*M_CH",
+      "Eq6: DoC_Cc=(mCaO/mCc)*M_Cc"
+    ],
+    "formula_evidence": "Coordinator provided exact primary MathML readback; root read complete evidence note /Users/wanggaoying/Documents/Codex/2026-10-01/task-2/brickmodel-Saeki2026-Eq5-Eq6-source.md. No new source expansion or evaluation in P37.",
+    "basis": "M are g/g-calcinedCH(CaO reference), source molar masses56.08/74.09/100.09g/mol. Eq6 has no initialcalcite subtraction. Exact shared denominator and pure-CH sample applicability supplied explicitly; never substitute whole-brick total TG/initial_dry or background calcite.",
+    "next_budget_candidate": {
+      "maximum_pure_data_rows": 4,
+      "per_call_s": 60,
+      "total_s": 120,
+      "summary_bytes": 2097152,
+      "workers": 1,
+      "integrations": 0,
+      "host_calls": 0,
+      "fits": 0,
+      "UQ": 0,
+      "recoveries": 0
+    },
+    "candidate_only": "No P38 code/parameter additions/evaluation started. No unconditional target-material or kinetic qualification."
+  },
+  "delivery": "Pending actual scoped Git/push and explicit small Drive increment metadata; no prefilled delivery PASS."
+}

@@ -5,10 +5,10 @@
   "identity": "approximate_simulation_not_measured_material",
   "parent_commit": "d8bc6f1b09e0b6d10cdcf4abf35e634035a36d08",
   "parameter_file": "parameters.full_cycle.json",
-  "parameter_count": 440,
+  "parameter_count": 448,
   "parameter_status_counts": {
     "literature": 141,
-    "assumed": 299,
+    "assumed": 307,
     "measured": 0
   },
   "implementation": {
@@ -60,7 +60,9 @@
     ],
     "historical_P01_proof_scope": "Targeted independent source review, not a new global audit. Source continuity covers the current forward kernel and all 271 physical/numerical entries; root changes only describe fixed UQ conditions.",
     "current_proof_scope": "P31 source/positive matrix/units/24 faces, stable equal-pressure complex derivatives, three actual cycles and original mass/element/full-energy/gas/refinement budgets.",
-    "current_caloric_evidence": "docs/FULL_CYCLE_P16_SOURCE_CALORIC_RESULTS.json"
+    "current_caloric_evidence": "docs/FULL_CYCLE_P16_SOURCE_CALORIC_RESULTS.json",
+    "new_local_module_added_P37": true,
+    "direct_cycle_channel_implemented": false
   },
   "P01": {
     "status": "completed",
@@ -807,7 +809,7 @@
   },
   "capability_validation_matrix": {
     "schema": "full_cycle_capability_validation_matrix_v1",
-    "recorded_utc": "2026-10-01T18:11:49.179346+00:00",
+    "recorded_utc": "2026-10-01T20:19:57.940455+00:00",
     "scope_source": "Current P34 finite pore-gas/thermoelastic implementation and saved three-cycle evidence; old stage details retained in historical_pre_P34_capability_validation_matrix.",
     "stage_rows": [
       {
@@ -1040,7 +1042,8 @@
         "implementation_status": "P34_implemented_in_finite_pore_gas_thermoelastic_host",
         "actual_numerical_checks": [
           "docs/FULL_CYCLE_P34_LIME_HYDROXIDE.json",
-          "runs/full-cycle/p34-lime-hydroxide/acceptance.json"
+          "runs/full-cycle/p34-lime-hydroxide/acceptance.json",
+          "docs/FULL_CYCLE_P37_DIRECT_CARBONATION_OPERATOR.json"
         ],
         "original_physical_gate_passed": true,
         "failed_component_relative_budgets_for_stage": 3,
@@ -1050,8 +1053,9 @@
           "Target material and macro hydration kinetics unmeasured; assumed kinetics and >700K source continuation.",
           "P31/P32/P33 and P26 evidence retains its old kernel and does not qualify P34 comparison, fits or distributions.",
           "P35 bounded zero-integration localization complete; extended near-zero phase and strictOH numerical qualification remain unpassed, no confirmed code defect.",
-          "P36 exact-donor local direct-path gap demonstrated; macro mobility not directly admitted and independent direct channel remains absent. No direct-cycle/material qualification."
-        ]
+          "P36 exact-donor local direct-path gap demonstrated; macro mobility not directly admitted and independent direct channel remains absent in cycle RHS. No direct-cycle/material qualification."
+        ],
+        "P37_local_implementation": "Separate required-input local module implemented, four scalar constitutive cases qualified; no integrated extent or RHS connection, no dynamic gate upgrade."
       },
       {
         "id": "P12-S05",
@@ -1217,7 +1221,8 @@
         "implementation_status": "P34_implemented_in_finite_pore_gas_thermoelastic_host",
         "actual_numerical_checks": [
           "docs/FULL_CYCLE_P34_LIME_HYDROXIDE.json",
-          "runs/full-cycle/p34-lime-hydroxide/acceptance.json"
+          "runs/full-cycle/p34-lime-hydroxide/acceptance.json",
+          "docs/FULL_CYCLE_P37_DIRECT_CARBONATION_OPERATOR.json"
         ],
         "original_physical_gate_passed": true,
         "failed_component_relative_budgets_for_stage": 0,
@@ -1227,8 +1232,9 @@
           "Target material and macro hydration kinetics unmeasured; assumed kinetics and >700K source continuation.",
           "P31/P32/P33 and P26 evidence retains its old kernel and does not qualify P34 comparison, fits or distributions.",
           "P35 bounded zero-integration localization complete; extended near-zero phase and strictOH numerical qualification remain unpassed, no confirmed code defect.",
-          "P36 exact-donor local direct-path gap demonstrated; macro mobility not directly admitted and independent direct channel remains absent. No direct-cycle/material qualification."
-        ]
+          "P36 exact-donor local direct-path gap demonstrated; macro mobility not directly admitted and independent direct channel remains absent in cycle RHS. No direct-cycle/material qualification."
+        ],
+        "P37_local_implementation": "Separate required-input local module implemented, four scalar constitutive cases qualified; no integrated extent or RHS connection, no dynamic gate upgrade."
       },
       {
         "id": "P12-S08",
@@ -1274,7 +1280,8 @@
         "implementation_status": "P34_implemented_in_finite_pore_gas_thermoelastic_host",
         "actual_numerical_checks": [
           "docs/FULL_CYCLE_P34_LIME_HYDROXIDE.json",
-          "runs/full-cycle/p34-lime-hydroxide/acceptance.json"
+          "runs/full-cycle/p34-lime-hydroxide/acceptance.json",
+          "docs/FULL_CYCLE_P37_DIRECT_CARBONATION_OPERATOR.json"
         ],
         "original_physical_gate_passed": true,
         "failed_component_relative_budgets_for_stage": 0,
@@ -1284,40 +1291,44 @@
           "Target material and macro hydration kinetics unmeasured; assumed kinetics and >700K source continuation.",
           "P31/P32/P33 and P26 evidence retains its old kernel and does not qualify P34 comparison, fits or distributions.",
           "P35 bounded zero-integration localization complete; extended near-zero phase and strictOH numerical qualification remain unpassed, no confirmed code defect.",
-          "P36 exact-donor local direct-path gap demonstrated; macro mobility not directly admitted and independent direct channel remains absent. No direct-cycle/material qualification."
-        ]
+          "P36 exact-donor local direct-path gap demonstrated; macro mobility not directly admitted and independent direct channel remains absent in cycle RHS. No direct-cycle/material qualification."
+        ],
+        "P37_local_implementation": "Separate required-input local module implemented, four scalar constitutive cases qualified; no integrated extent or RHS connection, no dynamic gate upgrade."
       }
     ],
     "cross_cutting_rows": [
       {
         "id": "P12-X01",
         "topic": "material, provenance and observables",
-        "status": "440parameters:141literature/299assumed/0measured; original434 full entries unchanged,6 operational budgets only. Wet mechanism source admitted; macro coefficients not admitted.",
+        "status": "448=141literature/307assumed/0measured; old440 preserved. Explicit syntheticL/required caller provenance do not grant material mobility qualification.",
         "current_evidence": [
           "docs/FULL_CYCLE_P34_LIME_HYDROXIDE.json",
           "docs/FULL_CYCLE_P35_PHASE_LEDGER_DIAGNOSIS.json",
-          "docs/FULL_CYCLE_P36_DIRECT_CARBONATION_ADMISSION.json"
+          "docs/FULL_CYCLE_P36_DIRECT_CARBONATION_ADMISSION.json",
+          "docs/FULL_CYCLE_P37_DIRECT_CARBONATION_OPERATOR.json"
         ],
         "measured_parameter_count": 0
       },
       {
         "id": "P12-X02",
         "topic": "shared gas/liquid transport and thermodynamics",
-        "status": "Existing four-gas wall-friction plus P34 portlandite uses shared U/S/mu/volume. Local identities passed on nonnegative donors; sampled negative OH dissipation retained, strict pointwise qualification false.",
+        "status": "Existing four-gas wall-friction plus P34 portlandite uses shared U/S/mu/volume. Local identities passed on nonnegative donors; sampled negative OH dissipation retained, strict pointwise qualification false. P37 independent local module four-domain cases pass instantaneous signed source/dissipation checks, not a new integrated cycle or complete-energy gate.",
         "current_evidence": [
           "docs/FULL_CYCLE_P34_LIME_HYDROXIDE.json",
-          "docs/FULL_CYCLE_P36_DIRECT_CARBONATION_ADMISSION.json"
+          "docs/FULL_CYCLE_P36_DIRECT_CARBONATION_ADMISSION.json",
+          "docs/FULL_CYCLE_P37_DIRECT_CARBONATION_OPERATOR.json"
         ],
         "strict_sampled_hydroxide_entropy_passed": false
       },
       {
         "id": "P12-X03",
         "topic": "numerical and coupling consistency",
-        "status": "Original81 ordinary/108gas and four required refinement metrics pass unchanged0.1%/2%; new81 phase budgets30failed. No current UQ qualification.",
+        "status": "Original81 ordinary/108gas and four required refinement metrics pass unchanged0.1%/2%; new81 phase budgets30failed. No current UQ qualification. No cycle run/refinement/UQ repeated in P37; four scalar nu*r identities are dependent algebra only.",
         "current_evidence": [
           "docs/FULL_CYCLE_P34_LIME_HYDROXIDE.json",
           "docs/FULL_CYCLE_P35_PHASE_LEDGER_DIAGNOSIS.json",
-          "docs/FULL_CYCLE_P36_DIRECT_CARBONATION_ADMISSION.json"
+          "docs/FULL_CYCLE_P36_DIRECT_CARBONATION_ADMISSION.json",
+          "docs/FULL_CYCLE_P37_DIRECT_CARBONATION_OPERATOR.json"
         ],
         "original_criteria_passed": true,
         "extended_phase_criteria_passed": false,
@@ -1326,9 +1337,10 @@
       {
         "id": "P12-X04",
         "topic": "inverse and offline operation",
-        "status": "P34 actual Python forward and nine same-trajectory mappings executed. P33 scalar/no-noise/two-stage synthetic recovery and CLI evidence are historical; no P34 optimization/CLI recovery or multivariate qualification.",
+        "status": "P34 actual Python forward and nine same-trajectory mappings executed. P33 scalar/no-noise/two-stage synthetic recovery and CLI evidence are historical; no P34 optimization/CLI recovery or multivariate qualification. P37 actual offline required-input Python local API available; no new CLI or cycle inverse qualification. Source-specific pairedTG DoC remains candidate P38.",
         "current_evidence": [
-          "docs/FULL_CYCLE_P34_LIME_HYDROXIDE.json"
+          "docs/FULL_CYCLE_P34_LIME_HYDROXIDE.json",
+          "docs/FULL_CYCLE_P37_DIRECT_CARBONATION_OPERATOR.json"
         ],
         "historical_inverse_offline_evidence": [
           "P33"
@@ -1345,7 +1357,8 @@
       "engineering_process": "nominal_drying_failed",
       "delivery": "separate_actual_receipts",
       "scenario_distributions": "not_current_P34_qualified",
-      "minimum_inverse_offline": "P34_python_mapping_executed_P33_CLI_recovery_historical"
+      "minimum_inverse_offline": "P34_python_mapping_executed_P33_CLI_recovery_historical",
+      "local_P37": "explicit_mobility_operator_four_scalar_cases_qualified_not_cycle_channel"
     },
     "excluded_expansion": [
       "whole-kiln plant model",
@@ -1355,45 +1368,46 @@
       "Exact nonisothermal microscopic dusty-gas/Soret/thermal-transpiration/pore-network transport",
       "damage/crack probability model"
     ],
-    "selected_next": "P36 complete: mechanism admitted, macro rate not directly admitted, exact-donor local pathway gap demonstrated. Proposed P37 supplied-mobility conditional local operator, not started; no new cycle budget.",
+    "selected_next": "P37 local component implemented and four scalar calls qualified; cycle RHS direct channel unimplemented. Next candidate P38 source-specific pure-data paired TG DoC; not started.",
     "whole_project_complete": false,
     "declared_model_work_complete": false,
     "proposed_next_capability": {
-      "id": "P37",
-      "status": "proposed_not_started_not_current_science_implementation_authorization",
-      "ability": "Conditional local direct-carbonation operator with explicit macroscopic mobility input and independent stoichiometric/extent contract",
-      "why": "P36 proves a specific exact-donor pathway gap. First principles determine stoichiometry/shared affinity/dissipation, while reviewed sources do not identify bulk mobility. A supplied-input local operator can be implemented without inventing default brickA/E; whole-host activation remains separately unqualified.",
-      "input_contract": "Positive macroscopic mobility with1/s units, source/material/temperature/humidity/surface applicability and value supplied explicitly. No hidden/defaultA/E or direct rate inferred from nm/s, atomisticEa or finalDoC. Synthetic positive unit-mobility fixture is diagnostic only, not a nominal brick parameter.",
-      "suggested_law_status": "Assumed affinity/donor phenomenology, not a literature rate law; source admitted mechanism only. Selected law and gas activities must be specified before implementation.",
-      "shared_coupling": "nu_d=nu_h-nu_c, common fullmu/U/S/volume; dn_calcite=+r_d,dn_OH=-r_d; independent extent derivative+r_d, OH+xi_h+xi_d invariant. Gas source and heat counted once.",
-      "proposed_first_budget": {
-        "new_constitutive_evaluations_maximum": 4,
+      "id": "P38",
+      "status": "proposed_not_started",
+      "ability": "Source-specific pure-data paired TG DoC mapper from portlandite and calcite masses per same calcined-CaO reference",
+      "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12980848/",
+      "source_equations": [
+        "Eq5: DoC_CH=1-(mCaO/mCH)*M_CH",
+        "Eq6: DoC_Cc=(mCaO/mCc)*M_Cc"
+      ],
+      "formula_evidence": "Coordinator provided exact primary MathML readback; root read complete evidence note /Users/wanggaoying/Documents/Codex/2026-10-01/task-2/brickmodel-Saeki2026-Eq5-Eq6-source.md. No new source expansion or evaluation in P37.",
+      "basis": "M are g/g-calcinedCH(CaO reference), source molar masses56.08/74.09/100.09g/mol. Eq6 has no initialcalcite subtraction. Exact shared denominator and pure-CH sample applicability supplied explicitly; never substitute whole-brick total TG/initial_dry or background calcite.",
+      "next_budget_candidate": {
+        "maximum_pure_data_rows": 4,
         "per_call_s": 60,
         "total_s": 120,
         "summary_bytes": 2097152,
         "workers": 1,
-        "full_or_partial_integrations": 0,
-        "new_fits": 0,
-        "new_UQ": 0
+        "integrations": 0,
+        "host_calls": 0,
+        "fits": 0,
+        "UQ": 0,
+        "recoveries": 0
       },
-      "reuse": "Use already saved P36 mu/T/partial and donor cases; do not recompute these four host states or repeat old rates. Evaluate only new local operator under declared positive synthetic input.",
-      "qualification_boundary": "Positive-input local closure/dissipation is not disabled-channel dynamic acceptance. This first item cannot claim full-cycle direct-path implementation, macro speed or new original/extended gates. Any host activation/extra extent changes require separate registered affected verification budget before integration.",
-      "alternative_real_gap": "Current inverse TG is total mass/initial_dry, not source-specific OH-loss versus carbonate-gain DoC. Source-only paired TG mapping is implementable after exactEq5/6 images are read; no guess of denominator or automatic backgroundcalcite->purepowder mapping.",
-      "evidence": [
-        "docs/FULL_CYCLE_P36_DIRECT_CARBONATION_ADMISSION.json",
-        "src/sludge_vme/inverse/observations.py",
-        "src/sludge_vme/inverse/full_cycle.py"
-      ],
-      "candidate_local_law": {
-        "status": "proposed_assumed_phenomenology_not_executed",
-        "definition": "A=delta_mu_direct/(R*T); a_i=p_i/P_ref. IfA<=0, r_d=L*n_portlandite*a_CO2*(1-exp(A)); ifA>0, r_d=-L*n_calcite*a_H2O*(1-exp(-A)).",
-        "units": "L explicitly supplied in1/s; n in mol; a/A dimensionless; r in mol/s.",
-        "physical_domain": "Finite positiveT/partial pressures and nonnegative solid donors. PositiveL gives -r_d*delta_mu_direct/T>=0 and both branches vanish atA=0. This proves sign/unit/stoichiometry only, not macro kinetics.",
-        "mobility_identity": "No default value or brickA/E. Positive synthetic unitL would be a local fixture only, source/assumed identity explicit. Actual material/time/humidity/surface mobility remains supplied and unqualified until evidenced.",
-        "double_counting": "Independent kinetic pathway adds one rate@nu and one extent; same existing speciesU/S/volume, no separate reaction heat. Stoichiometric dependence is not duplicate source counting if every rate is accounted once.",
-        "not_implemented_in_P36": true
-      },
-      "first_budget_branch_qualification_limit": "All four saved P36 direct affinities are negative. Reusing these4 gives numerical forward-branch coverage only; reverse and equilibrium retain algebraic proof, not numerical coverage. Additional branch evaluations require separately declared inputs/budget."
+      "candidate_only": "No P38 code/parameter additions/evaluation started. No unconditional target-material or kinetic qualification."
+    },
+    "P37": {
+      "bounded_item_complete": true,
+      "whole_project_complete": false,
+      "new_local_scientific_module": "src/sludge_vme/models/direct_carbonation.py",
+      "old43_cycle_source_unchanged": true,
+      "cycle_RHS_or_layout_changed": false,
+      "direct_cycle_channel_implemented": false,
+      "local_qualification_scope": "Four selected scalar calls only. First2 generate initially absent product. Element/source/mass budgets and invariant are dependent instantaneous algebra, not independent integration or complete energy qualification. Zero flux ratios null/exact-zero policy.",
+      "maximum_nonzero_mass_budget_relative": 2.6917574383051682e-17,
+      "evidence": "docs/FULL_CYCLE_P37_DIRECT_CARBONATION_OPERATOR.json",
+      "actual_scalar_evaluations": 4,
+      "current_cycle_qualification_changed": false
     }
   },
   "P13": {
@@ -1519,6 +1533,13 @@
     {
       "item": "Git_Drive_history_storage",
       "outcome": "separate_delivery"
+    },
+    {
+      "item": "P37_supplied_mobility_local_direct_operator",
+      "outcome": "local_four_scalar_cases_passed",
+      "scope": "Dependent source/entropy algebra only; not cycle mass-energy, accumulated extent, kinetics or refinement.",
+      "cycle_channel_implemented": false,
+      "evidence": "P37"
     }
   ],
   "final_matrix_independent_review": {
@@ -2434,7 +2455,20 @@
       "current_kernel_UQ_qualified": false
     },
     "evidence": "docs/FULL_CYCLE_P34_LIME_HYDROXIDE.json",
-    "scope": "Current finite-gas eight-stage approximation with P34 hydroxide; original physical gate passed, extended phase-relative qualification unpassed. Historical swept nonzero hydroxide, kinetics/material/product/silicate capture/damage unqualified."
+    "scope": "Current finite-gas eight-stage approximation with P34 hydroxide; original physical gate passed, extended phase-relative qualification unpassed. Historical swept nonzero hydroxide, kinetics/material/product/silicate capture/damage unqualified.",
+    "P37": {
+      "bounded_item_complete": true,
+      "whole_project_complete": false,
+      "new_local_scientific_module": "src/sludge_vme/models/direct_carbonation.py",
+      "old43_cycle_source_unchanged": true,
+      "cycle_RHS_or_layout_changed": false,
+      "direct_cycle_channel_implemented": false,
+      "local_qualification_scope": "Four selected scalar calls only. First2 generate initially absent product. Element/source/mass budgets and invariant are dependent instantaneous algebra, not independent integration or complete energy qualification. Zero flux ratios null/exact-zero policy.",
+      "maximum_nonzero_mass_budget_relative": 2.6917574383051682e-17,
+      "evidence": "docs/FULL_CYCLE_P37_DIRECT_CARBONATION_OPERATOR.json",
+      "actual_scalar_evaluations": 4,
+      "current_cycle_qualification_changed": false
+    }
   },
   "final_complete_scope_review": {
     "evidence": "docs/FULL_CYCLE_FINAL_SCOPE_REVIEW.json",
@@ -5836,6 +5870,68 @@
       "literature": 141,
       "assumed": 293,
       "measured": 0
+    }
+  },
+  "historical_pre_P37_root_parameter_metadata": {
+    "count": 440,
+    "status_counts": {
+      "literature": 141,
+      "assumed": 299,
+      "measured": 0
+    }
+  },
+  "P37": {
+    "bounded_item_complete": true,
+    "whole_project_complete": false,
+    "new_local_scientific_module": "src/sludge_vme/models/direct_carbonation.py",
+    "old43_cycle_source_unchanged": true,
+    "cycle_RHS_or_layout_changed": false,
+    "direct_cycle_channel_implemented": false,
+    "local_qualification_scope": "Four selected scalar calls only. First2 generate initially absent product. Element/source/mass budgets and invariant are dependent instantaneous algebra, not independent integration or complete energy qualification. Zero flux ratios null/exact-zero policy.",
+    "maximum_nonzero_mass_budget_relative": 2.6917574383051682e-17,
+    "evidence": "docs/FULL_CYCLE_P37_DIRECT_CARBONATION_OPERATOR.json",
+    "actual_scalar_evaluations": 4,
+    "current_cycle_qualification_changed": false
+  },
+  "P37_parameter_scope": "Six operational budgets plus selected cell and synthetic unitL only; old440 unchanged. Nominal material/process/acceptance unchanged.",
+  "historical_pre_P37_matrix_proposal": {
+    "selected_next": "P36 complete: mechanism admitted, macro rate not directly admitted, exact-donor local pathway gap demonstrated. Proposed P37 supplied-mobility conditional local operator, not started; no new cycle budget.",
+    "proposed_next_capability": {
+      "id": "P37",
+      "status": "proposed_not_started_not_current_science_implementation_authorization",
+      "ability": "Conditional local direct-carbonation operator with explicit macroscopic mobility input and independent stoichiometric/extent contract",
+      "why": "P36 proves a specific exact-donor pathway gap. First principles determine stoichiometry/shared affinity/dissipation, while reviewed sources do not identify bulk mobility. A supplied-input local operator can be implemented without inventing default brickA/E; whole-host activation remains separately unqualified.",
+      "input_contract": "Positive macroscopic mobility with1/s units, source/material/temperature/humidity/surface applicability and value supplied explicitly. No hidden/defaultA/E or direct rate inferred from nm/s, atomisticEa or finalDoC. Synthetic positive unit-mobility fixture is diagnostic only, not a nominal brick parameter.",
+      "suggested_law_status": "Assumed affinity/donor phenomenology, not a literature rate law; source admitted mechanism only. Selected law and gas activities must be specified before implementation.",
+      "shared_coupling": "nu_d=nu_h-nu_c, common fullmu/U/S/volume; dn_calcite=+r_d,dn_OH=-r_d; independent extent derivative+r_d, OH+xi_h+xi_d invariant. Gas source and heat counted once.",
+      "proposed_first_budget": {
+        "new_constitutive_evaluations_maximum": 4,
+        "per_call_s": 60,
+        "total_s": 120,
+        "summary_bytes": 2097152,
+        "workers": 1,
+        "full_or_partial_integrations": 0,
+        "new_fits": 0,
+        "new_UQ": 0
+      },
+      "reuse": "Use already saved P36 mu/T/partial and donor cases; do not recompute these four host states or repeat old rates. Evaluate only new local operator under declared positive synthetic input.",
+      "qualification_boundary": "Positive-input local closure/dissipation is not disabled-channel dynamic acceptance. This first item cannot claim full-cycle direct-path implementation, macro speed or new original/extended gates. Any host activation/extra extent changes require separate registered affected verification budget before integration.",
+      "alternative_real_gap": "Current inverse TG is total mass/initial_dry, not source-specific OH-loss versus carbonate-gain DoC. Source-only paired TG mapping is implementable after exactEq5/6 images are read; no guess of denominator or automatic backgroundcalcite->purepowder mapping.",
+      "evidence": [
+        "docs/FULL_CYCLE_P36_DIRECT_CARBONATION_ADMISSION.json",
+        "src/sludge_vme/inverse/observations.py",
+        "src/sludge_vme/inverse/full_cycle.py"
+      ],
+      "candidate_local_law": {
+        "status": "proposed_assumed_phenomenology_not_executed",
+        "definition": "A=delta_mu_direct/(R*T); a_i=p_i/P_ref. IfA<=0, r_d=L*n_portlandite*a_CO2*(1-exp(A)); ifA>0, r_d=-L*n_calcite*a_H2O*(1-exp(-A)).",
+        "units": "L explicitly supplied in1/s; n in mol; a/A dimensionless; r in mol/s.",
+        "physical_domain": "Finite positiveT/partial pressures and nonnegative solid donors. PositiveL gives -r_d*delta_mu_direct/T>=0 and both branches vanish atA=0. This proves sign/unit/stoichiometry only, not macro kinetics.",
+        "mobility_identity": "No default value or brickA/E. Positive synthetic unitL would be a local fixture only, source/assumed identity explicit. Actual material/time/humidity/surface mobility remains supplied and unqualified until evidenced.",
+        "double_counting": "Independent kinetic pathway adds one rate@nu and one extent; same existing speciesU/S/volume, no separate reaction heat. Stoichiometric dependence is not duplicate source counting if every rate is accounted once.",
+        "not_implemented_in_P36": true
+      },
+      "first_budget_branch_qualification_limit": "All four saved P36 direct affinities are negative. Reusing these4 gives numerical forward-branch coverage only; reverse and equilibrium retain algebraic proof, not numerical coverage. Additional branch evaluations require separately declared inputs/budget."
     }
   }
 }

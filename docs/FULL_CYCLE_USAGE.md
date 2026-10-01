@@ -241,3 +241,9 @@ admitted = prepare_dataset(config, dataset, for_calibration=True)
 `for_calibration=False` 可用于字段完整的文献 reference 映射，保留原行及转换说明；不能补齐未知测量值或修复来源缺失。文献 reference 不进入目标实测拟合。`for_calibration=True` 会检查身份、目标/输入条件、观测语义、窗口及拟合参数，失败直接报错。`fit` 及上方既有 CLI `--calibrate` 路径都会在优化和前向前调用该准入检查，用户不必靠手工预检查才能阻止不合格输入。准入通过后执行拟合才会发生新积分；本轮不执行该步骤。
 
 输入已由 `prepare_dataset` 归一后也可传给 `fit`；二次准备始终重新读取 `mapping.original`，不会把转换后的初始干基当成新的实测原值而丢掉假设分母限制。要更正数据，应修改原始输入再准备。文献烘干参考质量另用 `basis="dry_reference_mass"` 和显式 `dry_reference_over_initial_dry`，不能悄悄等同当前或初始干质量。所有转换因子/MR分母必须带 `status`；要用于目标实测拟合，还须是 `measured`，并在因子的 `material` 中给出与数据集一致的 material_id/recipe_id/batch_id。非实测因子仍只能参考。
+
+## P37 必填输入局部API（尚未接周期）
+
+直接导入 `sludge_vme.models.direct_carbonation.DirectCarbonationMobility` 与 `direct_carbonation_sources`。mobility必填 `value_per_s/source/status/identity/applicability`；算子必填 `temperature_k/delta_mu_j_mol/portlandite_mol/calcite_mol/co2_pressure_pa/water_vapor_pressure_pa/gas_constant_j_mol_k/reference_pressure_pa/mobility/stoichiometry`。全部物理参数从统一根配置或明确带身份的调用数据读取；无A/E或砖速率默认。计量必须是OH−1/CO2−1/calcite+1/H2O+1且Δμ同方向完整净势。
+
+实际离线Python调用证据是 `runs/full-cycle/p37-direct-carbonation-operator/probe.py` 与四份结果JSON。根 `public_reference_cases.direct_carbonation_operator` 及8个配套项只定义有限synthetic fixture；该脚本已经运行，后续使用不能自动重复耗用已登记4次预算。返回 `extent_rate_mol_s/species_sources_mol_s/entropy_production_w_k/mobility_contract/rate_law_identity`。瞬时导数不是累计ξ、全周期通道或CLI升级；不需外网及新增依赖。源码负库存保留，域外耗散未证明，不自动填来源或剪裁输出。当前全流程/材料/工艺未通过事项读P37报告。
