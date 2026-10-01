@@ -1,0 +1,222 @@
+{
+  "schema": "P39_conditional_direct_host_RHS_v1",
+  "recorded_utc": "2026-10-01T21:10:07.930204+00:00",
+  "bounded_item_complete": true,
+  "whole_project_complete": false,
+  "implemented_modules": [
+    "src/sludge_vme/models/full_cycle.py",
+    "src/sludge_vme/models/full_cycle_gas.py",
+    "src/sludge_vme/models/direct_carbonation.py"
+  ],
+  "root_count": 469,
+  "parameter_status_counts": {
+    "literature": 144,
+    "assumed": 325,
+    "measured": 0
+  },
+  "old460_complete_entries_unchanged": true,
+  "new_entries": "6 bounded runtime parameters plus separately declared synthetic mobility and2 applicability arrays. No nominal material/process/acceptance overwrite.",
+  "channel_contract": {
+    "mobility_parameter": "validation.direct_carbonation_host.synthetic_mobility",
+    "identity": "synthetic_P39_host_coupling_only",
+    "material": "synthetic calcium phase fractions in existing brick host; no target-material kinetic qualification",
+    "temperature_range_parameter": "validation.direct_carbonation_host.temperature_domain",
+    "humidity_pressure_range_parameter": "validation.direct_carbonation_host.partial_pressure_domain",
+    "surface_basis": "bulk donor inventory phenomenology; no identified wet-film area, interface or product-layer coefficient"
+  },
+  "nominal_direct_enabled": false,
+  "actual_RHS_calls": 4,
+  "actual_host_cells_per_call": [
+    12,
+    12,
+    12,
+    12
+  ],
+  "actual_direct_callback_cells": 48,
+  "actual_callbacks": {
+    "rates": 4,
+    "state_thermo": 4,
+    "skeleton_chemical_potential": 4,
+    "direct_carbonation_sources": 4,
+    "transport": 4,
+    "water_transport": 4,
+    "state_heat_transfer": 4,
+    "mechanical_rates": 4,
+    "liquid_relaxation": 4,
+    "liquid_coordinate_rate": 8
+  },
+  "additional_isolated_operator_calls": 0,
+  "Jacobian_sweeps_integrations_fit_UQ_recovery": 0,
+  "execution": {
+    "schema": "P39_fixed4_complete_RHS_execution_v1",
+    "started_utc": "2026-10-01T21:04:38.867178+00:00",
+    "hard_deadline_utc": "2026-10-01T21:06:38.867178+00:00",
+    "per_call_budget_s": 60.0,
+    "total_budget_s": 120.0,
+    "maximum_workers": 1,
+    "jobs": [
+      {
+        "id": "pure_portlandite_humid",
+        "pid": 28613,
+        "status": "finished",
+        "started_utc": "2026-10-01T21:04:38.869997+00:00",
+        "return_code": 0,
+        "child_reaped": true,
+        "finished_utc": "2026-10-01T21:04:39.392191+00:00",
+        "elapsed_s": 0.5222102499101311
+      },
+      {
+        "id": "pure_calcite_humid",
+        "pid": 28617,
+        "status": "finished",
+        "started_utc": "2026-10-01T21:04:39.394654+00:00",
+        "return_code": 0,
+        "child_reaped": true,
+        "finished_utc": "2026-10-01T21:04:39.907780+00:00",
+        "elapsed_s": 0.5131514170207083
+      },
+      {
+        "id": "mixed_high_CO2_low_H2O",
+        "pid": 28621,
+        "status": "finished",
+        "started_utc": "2026-10-01T21:04:39.910358+00:00",
+        "return_code": 0,
+        "child_reaped": true,
+        "finished_utc": "2026-10-01T21:04:40.432360+00:00",
+        "elapsed_s": 0.522013165988028
+      },
+      {
+        "id": "mixed_low_CO2_high_H2O",
+        "pid": 28626,
+        "status": "finished",
+        "started_utc": "2026-10-01T21:04:40.434797+00:00",
+        "return_code": 0,
+        "child_reaped": true,
+        "finished_utc": "2026-10-01T21:04:40.945398+00:00",
+        "elapsed_s": 0.5106167090125382
+      }
+    ],
+    "integrations": 0,
+    "maximum_complete_RHS_calls": 4,
+    "Jacobian_sweeps": 0,
+    "deadline_extended": false,
+    "status": "completed",
+    "timeout_stop_path_exercised": false,
+    "recorded_utc": "2026-10-01T21:04:40.946299+00:00",
+    "wall_s": 2.079101041890681,
+    "summary_bytes": 1215044,
+    "all_started_children_reaped": true
+  },
+  "result_rows": [
+    {
+      "id": "pure_portlandite_humid",
+      "direct_rate_cell0_mol_s": 1.3739529380707563e-05,
+      "complete_delta_mu_cell0_J_mol": -57920.08004090382,
+      "direct_entropy_cell0_W_K": 0.0026691083060705408,
+      "max_local_identity_relative": 2.0099302650258942e-15,
+      "host_entropy_identity_residual_W_K": 0.0,
+      "local_wiring_passed": true,
+      "dynamic_qualification": false
+    },
+    {
+      "id": "pure_calcite_humid",
+      "direct_rate_cell0_mol_s": 0.0,
+      "complete_delta_mu_cell0_J_mol": -57920.07440812525,
+      "direct_entropy_cell0_W_K": 0.0,
+      "max_local_identity_relative": 1.7236296564055116e-14,
+      "host_entropy_identity_residual_W_K": 1.1926223897340549e-18,
+      "local_wiring_passed": true,
+      "dynamic_qualification": false
+    },
+    {
+      "id": "mixed_high_CO2_low_H2O",
+      "direct_rate_cell0_mol_s": 9.898328270477736e-05,
+      "complete_delta_mu_cell0_J_mol": -66351.51191121823,
+      "direct_entropy_cell0_W_K": 0.022028141745421826,
+      "max_local_identity_relative": 1.7525418722984845e-14,
+      "host_entropy_identity_residual_W_K": 4.440892098500626e-16,
+      "local_wiring_passed": true,
+      "dynamic_qualification": false
+    },
+    {
+      "id": "mixed_low_CO2_high_H2O",
+      "direct_rate_cell0_mol_s": 3.2994427554230624e-06,
+      "complete_delta_mu_cell0_J_mol": -53478.39502128202,
+      "direct_entropy_cell0_W_K": 0.0005918125206259324,
+      "max_local_identity_relative": 2.1768664108301436e-15,
+      "host_entropy_identity_residual_W_K": -1.3322676295501878e-15,
+      "local_wiring_passed": true,
+      "dynamic_qualification": false
+    }
+  ],
+  "maximum_local_identity_relative": 1.7525418722984845e-14,
+  "maximum_instantaneous_host_entropy_identity_absolute_W_K": 1.3322676295501878e-15,
+  "retries": 0,
+  "unanticipated_evaluation_failures": 0,
+  "scope": "Four actual full12cell ThermoelasticFullCycle RHS calls. Same completeμ, no artificialaffinity. νdirect h−c; source/donor/calcite/OH/extent/Ca/gas and shared mechanical argument/instantaneous entropy identities only. ZeroCaOdirect source, no extraheat or entropy source.",
+  "ledger_scope": "gas/freewater helper loops exercised with derivative-valued algebra fixtures and active independentextent output. Some derivative surrogate inventories need not be physical endpoints. Their helper PASS is neither a trajectory, independentfluxintegral nor fullenergy acceptance. Actual summarize stage endpoints not dynamically exercised; code review only. Original helper accounting_basis says solver-integrated but P39 has no solver/integration; this outer scope overrides that inherited string. Pseudo CO2 end inventories in three fixtures are approximately−1.584327288e−4/−1.116005731e−3/−2.188856394e−5mol, not actual evolved physical states.",
+  "real_branch_coverage": "3forward cases and1zeroOHdonor, allnegative realΔμ. Reverse/A0 only previousP37synthetic local scope, not new actualhost evidence. Realpart branch nonsmoothA0, complexstepactive branch convention remains; no Jacobian qualification.",
+  "interface_contract": "Optional direct_carbonation absent is explicitly notenabled with oldreaction/statecount. Ifpresent allmobility/provenance/material/T/humidity/surface field/parameter accesses required, missingkeys/unit errors expose. Rootreader retainsmetadata/range validation. Zero-storedgas explicitlyunsupported. PositiveCaPool coordinate prerequisite; no floor/nucleation/guard.",
+  "old_disabled_behavior": "Original numerical calcite expression and original inventory tolerance scale retained; no disabledtrajectory rerun. Newrates direct=None andsummaryactive/config fields change output schema, not promised byteequivalence.",
+  "wall_s_declaration_to_report": 561.670163,
+  "original_failures_and_limits": {
+    "whole_project_complete": false,
+    "actual_dynamic_direct_qualified": false,
+    "nominal_direct_enabled": false,
+    "nominal_material_rate_identified": false,
+    "current_host_cycle_refinement_qualified": false,
+    "historical_P34_original81ordinary108gas_four_refinements": "Preserved atf6694445; not rerun or promoted to P39 conditional kernel.",
+    "P34_extended_phase_failures": 30,
+    "P34_extended_phase_total": 81,
+    "P34_strict_OH_qualified": false,
+    "nominal_remaining_water_fraction_historical": 0.001358920787402553,
+    "nominal_drying_passed": false,
+    "target_material_measured_count": 0,
+    "current_UQ_fit_or_three_scheme_qualified": false,
+    "real_reverse_and_equilibrium_complete_host_coverage": false,
+    "nominal_disabled_dynamic_compatibility_rerun": false,
+    "gas_storage0_direct_supported": false,
+    "zero_Ca_pool_direct_qualified": false,
+    "source_domain_limits": "P39 only explicit298.15K synthetic host states; wetfilm/area/sourceexperiment/bulkbrick/macrorate not identified. PositiveT/R/Pr/L, nonnegative donor/partial and positiveCa pool required for stated domain.",
+    "recovery_performed": false,
+    "historical_backup20GB_capacity_warning_resolved": false
+  },
+  "next_candidate": {
+    "id": "P40",
+    "status": "proposed_not_started",
+    "ability": "Conditional direct channel minimum affected dynamic baseline and one time-step/one mesh refinement",
+    "prerequisites": [
+      "Freeze explicit positive synthetic/assumed L with source and material/T/humidity/surface domain covering entire chosen trajectory; no nominal brick coefficient inference.",
+      "Freeze chosen declared process window and Ca pool inventory; initial ξdirect zero. Same baseline configuration for time/grid comparisons; no channel-off reference replacing actual failure.",
+      "Register independent phase inventories, OH+ξh+ξd and calcite+ξc−ξd, 4gas, mass/elements/completeenergy and strict branch entropy. Retain signed values and original denominators.",
+      "Existing 460 entries/process/thresholds unchanged except explicit diagnostic mesh/maxstep overrides; refinement denominator scales use root. Missing admissible material coefficient remains assumption qualification, not a blocker for a bounded conditional dynamic interface.",
+      "Dynamic actual y0 must match declared condensed initial composition, total Ca, gas inventories, phase coordinate and all independentextent zeros; derive initial/reference inventories from actual y0. Do not merely overwrite Ca fractions in a single-point state then treat nominal.initial as matching dynamicorigin. Independently integratedextent only; no inventoryreconstruction.",
+      "P39 temperature domain[298.15,298.15]K cannot admit selfheating trajectories. Any new synthetic dynamic domain must be explicit root assumed metadata before running, no silent promotion to brick/sourceexperiment or eightstage qualification."
+    ],
+    "candidate_budget": {
+      "maximum_integrations": 3,
+      "runs": [
+        "fixed_synthetic_short_transient_baseline12cells_once",
+        "same_transient_time_step_refined12cells_once",
+        "same_transient_mesh_refined24cells_once"
+      ],
+      "per_run_s": 300,
+      "global_unique_s": 900,
+      "maximum_workers": 1,
+      "summary_byte_limit": 2097152,
+      "maximum_attempts_per_issue": 2,
+      "fits": 0,
+      "UQ": 0,
+      "backup_recovery": 0,
+      "extra_RHS_or_Jacobian_sweeps": 0
+    },
+    "budget_status": "Reviewable candidate only; P39 does not write runtime/rootP40 entries or launch. Actual integration internal RHS/Jacobian callback counts must be measured and reported; no four-call count relabeling.",
+    "acceptance": "Original<0.1% full/stage mass/elements/completeenergy and gas budgets; root<2% four terminal metrics for one time/grid refinement. New independent direct/H/Ca phase budgets and strict entropy reported separately, preserve failednearzero cases; no floor/clipping/threshold search.",
+    "failure_policy": "At mosttwo same-issue attempts inside unique deadline; no tolerance/grid/parameter search or original drying attempt restart. If unsupported full-range kinetics or proposed resources do not close, narrow declared interval/qualification before running, not by reclassifying failures.",
+    "not_started": true
+  },
+  "delivery": "Pending actual scopednormalGit/push and explicit smallincrementmetadata receipts; no restoration.",
+  "review": "runs/full-cycle/p39-direct-host/independent-review.json",
+  "instantaneous_entropy_identity_scope": "Saved signed residual only; not inlocal_pass gate, not independentenergy/entropy acceptance.",
+  "post_execution_source_amendment": "Only carbonate_approximation report string now limits zero-factor restoration to direct absent. Frozen source at execution preserved; no newmodel calls."
+}

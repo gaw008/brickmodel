@@ -1,4 +1,4 @@
-"""Conditional local portlandite carbonation; not connected to cycle RHS.
+"""Conditional portlandite carbonation, callable by the explicit host channel.
 
 The donor/affinity law is an assumed phenomenology. A caller supplies the
 macroscopic mobility and its provenance/applicability; no brick A/E or rate
@@ -47,7 +47,7 @@ def direct_carbonation_sources(
     r has mol/s units, species sources are nu*r, and production is W/K.
     This returns a candidate independent extent derivative, not an integrated
     extent or independent trajectory closure. No separate reaction heat is
-    added. Future host coupling must use the same species U/S/volume ledger.
+    added. Host coupling uses the same species U/S/volume ledger.
     The law is continuous but generally not smooth at zero affinity and is
     not a microscopic detailed-balance or measured wet-film kinetic law.
     """

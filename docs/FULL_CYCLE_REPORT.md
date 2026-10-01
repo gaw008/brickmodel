@@ -1,5 +1,7 @@
 # 全流程近似模型交付报告
 
+P39条件direct主机实际接线完成（2026-10-01T21:10:07.930204+00:00）：第八独立extent、同完整μ/物种U/S/volume/dns/dng/熵已接入，CaO净0、无额外反应热。4完整12格RHS/4direct回调/48格，2.079101s，退出回收/0重试，所选局部接线通过；0积分/Jac扫/fit/UQ/恢复，非动态守恒/加密资格。根469=144literature/325assumed/0measured、旧460保持，名义direct未启用、L单独synthetic。P34旧30/81、strictOH与历史名义0.135892078740%干燥失败保持，完整模型未完成。P40三次最小动态候选未启动；Git/Drive独立实际收据。
+
 P38实际交付（2026-10-01T20:47:43.095242+00:00）：sourceTG适配提交aa2221de已普通推送且远端一致；明确27文件小增量589,522B/28成员已上传，名称、大小、父目录读回通过，收据FULL_CYCLE_P38_DELIVERY.json。首次打包继承错目录在创建前失败，修正后一次成功，失败保留且0新科学调用。新source_tg离线4记录3.133894s/3mapped+1compoundreject/全退出回收，旧43主机/P37/9canonical/fit保持，460=144literature/316assumed/0measured、旧448完整保持。所有输入synthetic，未测真实peak/负相质量/越界DoC/实砖/宏观率/fit；旧30/81、strictOH、名义0.135892078740%工艺失败与wholefalse保持。0主机/RHS/Jac/本构/积分/fit/UQ/恢复；未下载/解包，原件保留，历史/独有Git/20GB/容量告警未解决。P39条件化主机通道仅候选未启动。
 
 P38来源TG双DoC实际完成（2026-10-01T20:41:25.704315+00:00）：新增inverse/source_tg.py，原43周期/P37模块/9canonical/fit保持；Eq5/6来源CaO分母/舍入m独立登记，初始Cc不扣、两DoC/差值分别保留。4单行实际3.133894s，3mapped+1复合负例ValueError，全退出回收/0重试；全synthetic、非自动分峰/实砖率/fit资格。460=144literature/316assumed/0measured，旧448保持。原30/81、strictOH、0.135892078740%工艺失败及wholefalse保持，0主机/RHS/Jac/本构/积分/fit/UQ/恢复。见FULL_CYCLE_P38_SOURCE_TG.md/.json；P39条件主机通道仅候选未启动。

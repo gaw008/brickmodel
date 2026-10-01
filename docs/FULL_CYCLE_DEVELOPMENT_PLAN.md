@@ -708,10 +708,24 @@ P38来源TG双DoC实际完成（2026-10-01T20:41:25.704315+00:00）：新增inve
 
 变更新source_tg、根3来源+9操作/合成项及计划/规范/报告/当前模型/使用/8+4矩阵/状态。纯数据4调用，无重复旧验收；四条全部证据和预期拒绝保存。下一能力P39条件化direct主机真实RHS/extent/同U/S/volume接线，先4单态/60/120s/2MiB候选，尚未启动，不以缺实材停止有条件接口开发，也不虚构名义L。
 
-- [ ] **P39** 条件化direct主机RHS/独立extent与共享账本接线：候选未登记/未实施/未运行，显式L及来源/域需事前冻结，周期/加密另须影响预算。
+- [x] **P39** 条件化direct主机RHS/独立extent与共享账本接线完成，仅所选4完整12格RHS瞬时资格；根469、旧460保持、名义未启用、L单独synthetic。4direct回调/48格，2.079101s/退出回收/0重试，0积分/Jac扫/fit/UQ/恢复。source/坐标/extent/同μ/储能体积熵链局部通过，动态守恒/加密未资格，wholefalse。见P39报告及p39-direct-host，Git/Drive独立收据。
 
 ### P38实际必要交付 2026-10-01T20:47:43.095242+00:00
 
 P38实际交付（2026-10-01T20:47:43.095242+00:00）：sourceTG适配提交aa2221de已普通推送且远端一致；明确27文件小增量589,522B/28成员已上传，名称、大小、父目录读回通过，收据FULL_CYCLE_P38_DELIVERY.json。首次打包继承错目录在创建前失败，修正后一次成功，失败保留且0新科学调用。新source_tg离线4记录3.133894s/3mapped+1compoundreject/全退出回收，旧43主机/P37/9canonical/fit保持，460=144literature/316assumed/0measured、旧448完整保持。所有输入synthetic，未测真实peak/负相质量/越界DoC/实砖/宏观率/fit；旧30/81、strictOH、名义0.135892078740%工艺失败与wholefalse保持。0主机/RHS/Jac/本构/积分/fit/UQ/恢复；未下载/解包，原件保留，历史/独有Git/20GB/容量告警未解决。P39条件化主机通道仅候选未启动。
 
 D01正常后继/push/remote读回通过；D02小增量metadata通过；D03恢复继续停止。P38仅限定来源适配完成，P34/完整模型仍partial；P39候选需正式输入/受影响预算后推进。
+
+### P39事前登记 2026-10-01T21:00:46.260041+00:00
+
+HEAD3fefca81相关路径干净、Research可用294861656KiB。条件化直接通道用P37已交付算子，但新增根单独synthetic mobility，不借用其旧局部fixture。四真实主机输入复用P36物理定义，重新构造受影响主机状态后各一次完整RHS；全部实际μ，不伪造逆向/平衡。独立extent、相/gas源、同U/S/volume接线；νr恒等式仅局部接线。预算/回调数见p39-direct-host/declaration.json；旧30/81、strictOH/工艺失败及wholefalse保持。
+
+### P39实际限定核查完成 2026-10-01T21:10:07.930204+00:00
+
+P39条件direct主机实际接线完成（2026-10-01T21:10:07.930204+00:00）：第八独立extent、同完整μ/物种U/S/volume/dns/dng/熵已接入，CaO净0、无额外反应热。4完整12格RHS/4direct回调/48格，2.079101s，退出回收/0重试，所选局部接线通过；0积分/Jac扫/fit/UQ/恢复，非动态守恒/加密资格。根469=144literature/325assumed/0measured、旧460保持，名义direct未启用、L单独synthetic。P34旧30/81、strictOH与历史名义0.135892078740%干燥失败保持，完整模型未完成。P40三次最小动态候选未启动；Git/Drive独立实际收据。
+
+变更full_cycle.py/full_cycle_gas.py/direct_carbonation.py、根9项、计划/当前规范/报告/用法/8+4/状态。共享源和独立extent只授局部接线；原名义失败/未实测/历史交付限制保持。下一项最小动态前提/候选预算见FULL_CYCLE_P39_DIRECT_HOST.json，未启动。
+
+- [ ] **P40** direct条件通道最小动态baseline+time/grid各一次候选，最多3积分/300s每例/900s唯一总/2MiB/单并发，尚未登记或运行，原门槛及失败保持。
+
+P40候选初始化前提：必须使实际动态y0、声明初始固相/总Ca/气体/phase coordinate与独立extent零点一致，账本initial/reference直接取实际y0。不得仅覆盖P39单点Ca分数就把原名义initial当动态起点；ξdirect仍独立积分，不从库存构造。现温域[298.15,298.15]K不能准入自热轨迹，若新synthetic动态域需事前根assumed登记，不能升为实砖/来源实验或八阶段资格。关闭direct的calcite表达式已恢复旧−rate，但并未因此给当前源码动态兼容PASS。

@@ -253,3 +253,11 @@ admitted = prepare_dataset(config, dataset, for_calibration=True)
 从 `sludge_vme.inverse.source_tg` 导入 `map_saeki2026_tg`，显式传 `config=统一根配置` 和 `record=同源相质量记录`。根source_observation_contracts.saeki2026_tg及observation.saeki2026.molar_mass三项必需；不采用主机质量或隐藏默认。record字段见执行证据p38-source-tg四JSON的input，包含共同样品/时间/来源/分母、phase_separation与适用声明。两相value是已分峰归一相质量，unit明确g/g或kg/kg，denominator.basis=ignited_CH_CaO_reference，sample.basis=portlandite_powder，quantity=phase_mass_ratio。整砖总TG/initial_dry无法自动换算。
 
 返回DoC_CH、DoC_Cc及signed差值，保留original_input与来源相对时间；该API不做峰积分、kinetics、主机调用或fit准入，9旧种类不变。完整source/reference原始输入可用于来源映射，但公式导出量不是目标直接实测；当前实际四条全synthetic。执行脚本已经完成唯一4调用，本说明不授权自动重复已用预算；后续新数据按其声明/独立预算处理。未实现CLI自动输入或整砖拟合，不把本项叫周期恢复。
+
+## P39 显式条件主机通道
+
+统一根名义配置没有direct_carbonation键，所以通道未启用。必须在make_cycle前给config['direct_carbonation']完整合同：mobility_parameter、identity、material、temperature_range_parameter、humidity_pressure_range_parameter、surface_basis。数值只取根parameters，L单位1/s且条目value/unit/range/source/status完整，域参数分别K/Pa。合同缺字段直接KeyError、单位不符ValueError；storage=0明确不支持。正CaPool及正T/R/Pr/L、非负供体/分压为当前理论域，不能据声明升为材料已测。
+
+本轮可审阅合同在public_reference_cases.direct_carbonation_host.channel；仅synthetic_P39_host_coupling_only，不能作为名义砖体默认。调用者明确复制该合同仅用于有预算的条件核查。主机扩展active8反应/独立xi_d，保留旧7Arrhenius，reaction_fields/summary active_reactions含direct；使用相同U/S/volume、质量/元素/气体、水及熵，无新热源。gas/solid布局统一offset，不能在旧长度state上隐式添加通道。
+
+本轮唯一4完整RHS已执行，脚本/输入/实际回调和signed结果在p39-direct-host，不授权重复旧四状态。真正周期summarize、CLI完整积分/加密/反演资格尚未更新；P40只为有界候选，未运行。P38来源TG映射继续独立，公式不识别L。

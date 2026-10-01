@@ -1,5 +1,7 @@
 # 全流程近似烧结砖模型：当前执行规范（2026-09-26）
 
+P39条件direct主机实际接线完成（2026-10-01T21:10:07.930204+00:00）：第八独立extent、同完整μ/物种U/S/volume/dns/dng/熵已接入，CaO净0、无额外反应热。4完整12格RHS/4direct回调/48格，2.079101s，退出回收/0重试，所选局部接线通过；0积分/Jac扫/fit/UQ/恢复，非动态守恒/加密资格。根469=144literature/325assumed/0measured、旧460保持，名义direct未启用、L单独synthetic。P34旧30/81、strictOH与历史名义0.135892078740%干燥失败保持，完整模型未完成。P40三次最小动态候选未启动；Git/Drive独立实际收据。
+
 P38来源TG双DoC实际完成（2026-10-01T20:41:25.704315+00:00）：新增inverse/source_tg.py，原43周期/P37模块/9canonical/fit保持；Eq5/6来源CaO分母/舍入m独立登记，初始Cc不扣、两DoC/差值分别保留。4单行实际3.133894s，3mapped+1复合负例ValueError，全退出回收/0重试；全synthetic、非自动分峰/实砖率/fit资格。460=144literature/316assumed/0measured，旧448保持。原30/81、strictOH、0.135892078740%工艺失败及wholefalse保持，0主机/RHS/Jac/本构/积分/fit/UQ/恢复。见FULL_CYCLE_P38_SOURCE_TG.md/.json；P39条件主机通道仅候选未启动。
 
 P37局部算子实际完成（2026-10-01T20:18:18.780123+00:00）：新增direct_carbonation.py，原43全周期主机源码保持、尚未接RHS/布局；显式迁移率及来源/域必填，律assumed无默认砖A/E。4标量实际2.088736s/0重试/全回收，两条保存完整μ与合成A+1/A0各一条，正反向无种子、平衡/零供体均通过局部检查；L=1/s仅synthetic，非砖速率。448=141literature/307assumed/0measured，原440保持。原30/81、strictOH、名义0.135892078740%失败和wholefalse保持，未新增周期/fit/UQ/恢复。见FULL_CYCLE_P37_DIRECT_CARBONATION_OPERATOR.md/.json；P38来源TG双DoC仅候选未启动。

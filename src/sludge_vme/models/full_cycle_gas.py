@@ -17,6 +17,7 @@ from scipy.integrate import solve_ivp
 from scipy.sparse import csc_matrix
 
 from .full_cycle import FullCycle, source_caloric_coefficients, source_caloric_integrals
+from .direct_carbonation import DirectCarbonationMobility, direct_carbonation_sources
 from .full_cycle_diagnostics import drying_water_diagnostics, free_water_ledger, gas_species_ledger, caloric_source_domain_coverage, viscosity_source_domain_coverage, binary_diffusion_source_domain_coverage
 
 
@@ -115,6 +116,33 @@ class FiniteGasFullCycle(FullCycle):
         self.phi0 = self.vp0/self.b0
         self.jacobian_step = self.p('numerics.jacobian_step', '1')
         self.jacobian_scale = self.p('numerics.jacobian_state_scale', '1')
+        self.kinetic_nr = self.nr
+        self.direct_carbonation_enabled = 'direct_carbonation' in config
+        self.calcium_fraction_coordinate = self.carbonation_factor != 0 or self.direct_carbonation_enabled
+        if self.direct_carbonation_enabled:
+            channel = config['direct_carbonation']
+            key = channel['mobility_parameter']
+            item = config['parameters'][key]
+            self.direct_mobility = DirectCarbonationMobility(
+                value_per_s=self.p(key, '1/s'), source=item['source'], status=item['status'],
+                identity=channel['identity'], applicability={
+                    'material':channel['material'],
+                    'temperature_range_k':self.p(channel['temperature_range_parameter'], 'K'),
+                    'humidity_partial_pressure_range_pa':self.p(channel['humidity_pressure_range_parameter'], 'Pa'),
+                    'surface_basis':channel['surface_basis']})
+            # h-c gives OH + CO2 -> calcite + H2O with the existing atoms.
+            direct_nu = self.nu[self.lime_dehydration]-self.nu[self.decarbonation]
+            self.direct_stoichiometry = {name:float(value) for name,value in zip(self.names,direct_nu) if value != 0}
+            self.direct_reaction = self.nr
+            self.reactions.append({'id':'direct_carbonation','stoichiometry':self.direct_stoichiometry})
+            self.nu = np.vstack((self.nu,direct_nu))
+            self.snu = self.nu[:, :len(self.ns)]
+            self.gnu = self.nu[:, len(self.ns):]
+            self.nr += 1
+            self.last += self.n
+            self.extent_scale = np.append(self.extent_scale,self.calcium_pool[0])
+            self.conversion_scale = np.append(self.conversion_scale,self.calcium_pool[0])
+        self.reaction_config = {**config, 'reactions':self.reactions}
         self.rhs_calls = 0
 
     def unpack(self, y):
@@ -128,7 +156,7 @@ class FiniteGasFullCycle(FullCycle):
 
     def condensed_state(self, fields):
         ns = super().condensed_state(fields)
-        if self.carbonation_factor != 0:
+        if self.calcium_fraction_coordinate:
             # Replace calcite log-depletion by its fraction of conserved Ca.
             # Either pure-phase endpoint can regenerate the missing phase.
             ns[:,self.calcite] = self.calcium_pool*fields[3]
@@ -138,7 +166,9 @@ class FiniteGasFullCycle(FullCycle):
 
     def chemical_coordinate_rates(self, hazard, rate):
         depletion, char = super().chemical_coordinate_rates(hazard,rate)
-        if self.carbonation_factor != 0:
+        if self.direct_carbonation_enabled:
+            depletion[2] = (rate@self.snu)[:,self.calcite]/self.calcium_pool
+        elif self.carbonation_factor != 0:
             depletion[2] = -rate[:,self.decarbonation]/self.calcium_pool
         return depletion, char
 
@@ -615,15 +645,25 @@ class FiniteGasFullCycle(FullCycle):
         us[:,self.kaolin] += binding['kaolin_h']
         dg = mu@self.nu.T
         affinity = dg/(self.R*T[:, None])
-        drive = -np.expm1(np.where(affinity.real < 0, affinity, 0))
+        kinetic_affinity = affinity[:, :self.kinetic_nr]
+        drive = -np.expm1(np.where(kinetic_affinity.real < 0, kinetic_affinity, 0))
         drive[:,self.evaporation] = self.water_phase_drive(affinity[:,self.evaporation])
         hazard = self.A*np.exp(-self.Ea/(self.R*T[:, None]))*drive
         oxygen_factor = (partial[:, self.oxygen]/self.oxygen_reference)**self.oxygen_order
-        hazard[:, self.gnu[:, self.oxygen] < 0] *= oxygen_factor[:, None]
+        hazard[:, self.gnu[:self.kinetic_nr, self.oxygen] < 0] *= oxygen_factor[:, None]
         rate = hazard*ns[:, self.reactants]
         if self.carbonation_factor != 0:
             rate[:,self.decarbonation] = self.carbonate_rate(T,ns,partial,affinity[:,self.decarbonation])
         rate[:,self.lime_dehydration] = self.hydroxide_rate(T,ns,partial,affinity[:,self.lime_dehydration])
+        direct = None
+        if self.direct_carbonation_enabled:
+            direct = direct_carbonation_sources(
+                temperature_k=T, delta_mu_j_mol=dg[:,self.direct_reaction],
+                portlandite_mol=ns[:,self.portlandite], calcite_mol=ns[:,self.calcite],
+                co2_pressure_pa=partial[:,self.co2], water_vapor_pressure_pa=partial[:,self.vapor],
+                gas_constant_j_mol_k=self.R, reference_pressure_pa=self.Pr,
+                mobility=self.direct_mobility, stoichiometry=self.direct_stoichiometry)
+            rate = np.column_stack((rate,direct['extent_rate_mol_s']))
         dns = rate@self.snu
         widths = bulk/self.area
         flux, energy_flux, face_entropy, permeability, molecular, darcy, reservoir_mu_over_t, diffusion, tortuosity, viscosity, pair_diffusion, pore_length, pore_multiplier, knudsen = self.transport(T, partial, widths, pore, bulk, tf, inlet)
@@ -647,7 +687,7 @@ class FiniteGasFullCycle(FullCycle):
         reaction_entropy = -np.sum(rate*dg/T[:, None])
         thermal_entropy = np.sum(conductance*np.diff(T)**2/(T[:-1]*T[1:]))+qext*(1/T[-1]-1/tf)
         production = reaction_entropy+mechanical_entropy+thermal_entropy+face_entropy.sum()+water_entropy.sum()
-        return {'dT':dT, 'hazard':hazard, 'rate':rate, 'dns':dns, 'dng':dng, 'db':db, 'dpore':dpore,
+        return {'direct_carbonation':direct, 'dT':dT, 'hazard':hazard, 'rate':rate, 'dns':dns, 'dng':dng, 'db':db, 'dpore':dpore,
                 'heat':heat, 'flow':flow, 'gas_flux':flux, 'pressure':pressure, 'gas':ng, 'partial':partial,
                 'gas_fractions':ng/ng.sum(axis=1)[:, None], 'kiln_T':tf, 'surface_T':surface_T,
                 'boundary_gas_fractions':inlet, 'reservoir_mu_over_t':reservoir_mu_over_t,
@@ -716,7 +756,7 @@ class FiniteGasFullCycle(FullCycle):
         y[:self.n] = self.temperatures[0]/self.Tr
         y[5*self.n:6*self.n] = self.initial[:,self.char]/self.chemical_scale
         y[self.hydroxide_coordinate*self.n:(self.hydroxide_coordinate+1)*self.n] = self.initial[:,self.portlandite]/self.chemical_scale
-        if self.carbonation_factor != 0:
+        if self.calcium_fraction_coordinate:
             y[3*self.n:4*self.n] = self.initial[:,self.calcite]/self.calcium_pool
         return y
 
@@ -790,7 +830,7 @@ class FiniteGasFullCycle(FullCycle):
                 'partial_kaolin_h=c*(n/(n+N))^2*h_binding=J/mol; partial_kaolin_s=c*(-R*log(N/(n+N))+(n/(n+N))^2*s_binding)=J/mol/K',
                 'phase_affinity=delta_mu/(R*T)=1; Arrhenius_rate*water_moles*phase_drive=mol/s',
                 '-net_phase_rate*delta_mu/T=W/K; signed phase extent has units mol',
-                'Ca_pool=n_calcite+n_lime+n_portlandite=mol; dx_calcite/dt=-net_decarbonation_rate/Ca_pool=1/s',
+                'Ca_pool=n_calcite+n_lime+n_portlandite=mol; dx_calcite/dt=net_calcite_source/Ca_pool=1/s',
                 'x_CaO=n_lime/Ca_pool=1; beta=1; M=1/(1+beta*x_CaO)=1; M*net_carbonate_rate=mol/s',
                 'carbonate_reverse_rate=k*n_lime*(p_CO2/P_ref)*factor*(1-exp(-affinity))=mol/s',
                 'area/(half_width_left/k_left+half_width_right/k_right)=W/K',
@@ -996,7 +1036,7 @@ class FiniteGasFullCycle(FullCycle):
                     'pressure_work_integration_residual_j':float(work[j]-work[i]+self.P*(bulks[j]-bulks[i]))}
         vapor_index=self.ng.index('H2O')
         def interval_free_water(a,b):
-            return free_water_ledger(self.config,rows[a],rows[b],
+            return free_water_ledger(self.reaction_config,rows[a],rows[b],
                 boundary_in_mol=gasin[b,vapor_index]-gasin[a,vapor_index],
                 boundary_out_mol=gasout[b,vapor_index]-gasout[a,vapor_index])
         stages={}
@@ -1074,7 +1114,7 @@ class FiniteGasFullCycle(FullCycle):
         entropy_error=entropies-entropies[0]-states[:,-2:].sum(axis=1)*self.escale/self.Tr
         entropy_relative=float(np.max(np.abs(entropy_error))/(self.escale/self.Tr))
         inventory_roundoff = self.p('acceptance.inventory_roundoff_factor','1')*np.finfo(float).eps*self.nscale
-        inventory_solver_budget=self.p('numerics.atol','1')*max(self.chemical_scale,float(np.max(self.extent_scale@np.abs(self.snu))))
+        inventory_solver_budget=self.p('numerics.atol','1')*max(self.chemical_scale,float(np.max(self.extent_scale[:self.kinetic_nr]@np.abs(self.snu[:self.kinetic_nr]))))
         inventory_budget=inventory_roundoff+inventory_solver_budget
         drying=int(np.where(times==self.times[self.config['stages'].index('drying')+1])[0][0])
         remaining=max(rows[drying]['water_kg_per_initial_dry_kg'])/self.p('material.water_dry_ratio','kg/kg')
@@ -1104,7 +1144,7 @@ class FiniteGasFullCycle(FullCycle):
             'carbonate_phase_resistance':self.carbonate_phase_resistance,
             'carbonate_phase_resistance_active':bool(self.carbonation_factor != 0 and self.carbonate_phase_resistance != 0),
             'hydroxide_approximation':'Explicit portlandite linear inventory with CaO=conserved calcite+lime+portlandite pool minus calcite minus portlandite. Signed portlandite->CaO+H2O gas extent; negative is hydration. Pure-phase potentials, reference-anchored formation/caloric storage and mechanical composition potential are shared with all reactions. Both branches use available solid donor, vapor activity and assumed common Arrhenius mobility; missing product can form without a seed. No separate reaction heat, empirical equilibrium pressure, liquid-water slaking, microscopic detailed balance, silicate trapping, measured free CaO, accessibility, damage/crack or real-brick swelling prediction. USGS portlandite calorics extrapolate beyond700K as assumed. Signed extent conversion uses initial conserved calcium pool, not zero initial hydroxide.',
-            'carbonate_approximation':'Signed CaCO3 -> CaO + CO2 exchange with a conserved local calcite/lime/portlandite pool. For positive carbonation factor the calcite fraction is a linear inventory coordinate, allowing regeneration from zero; raw numerical excursions are retained under the existing inventory budget, without clipping. For a=delta_mu/(R*T)<=0, rate=k*n_calcite*(1-exp(a)); for a>0, rate=-factor*k*n_lime*(p_CO2/P_ref)*(1-exp(-a)). These branch expressions precede the common phase-composition multiplier M described separately. Reverse k reuses the assumed decarbonation Arrhenius law. No separate carbonation heat, empirical equilibrium pressure, mixing entropy, interface barrier or product-layer diffusion. Pure-phase affinity uses the existing formation properties and mechanical potential. This is a phenomenological net-rate law, not measured kinetics or microscopic detailed balance. Zero factor exactly restores the previous irreversible log-depletion coordinates. Swept-gas historical mode remains irreversible.',
+            'carbonate_approximation':'Signed CaCO3 -> CaO + CO2 exchange with a conserved local calcite/lime/portlandite pool. For positive carbonation factor the calcite fraction is a linear inventory coordinate, allowing regeneration from zero; raw numerical excursions are retained under the existing inventory budget, without clipping. For a=delta_mu/(R*T)<=0, rate=k*n_calcite*(1-exp(a)); for a>0, rate=-factor*k*n_lime*(p_CO2/P_ref)*(1-exp(-a)). These branch expressions precede the common phase-composition multiplier M described separately. Reverse k reuses the assumed decarbonation Arrhenius law. No separate carbonation heat, empirical equilibrium pressure, mixing entropy, interface barrier or product-layer diffusion. Pure-phase affinity uses the existing formation properties and mechanical potential. This is a phenomenological net-rate law, not measured kinetics or microscopic detailed balance. Zero factor with direct channel absent exactly restores the previous irreversible log-depletion coordinates. Swept-gas historical mode remains irreversible.',
             'thermal_approximation':'Background k=k_ref*(dry_solid_fraction/initial_dry_solid_fraction)^m*(1+b*liquid_water_volume_fraction), plus local pore-wall radiative k=4*sigma*factor*length*gas_porosity*T^3. Length is 2*r_initial*(pore_volume/initial_pore_volume)^(1/3), independent of mesh width. The assumed exchange factor includes wall emissivity and geometry; one local equilibrium temperature, no spectral/nonlocal photon or participating-gas radiation. Shared face and external half-cell resistances use total k; exterior furnace radiation remains a separate boundary exchange. No extra stored photon energy or separate radiation heat source. No intrinsic mineral conductivity law; coefficients unmeasured.',
             'liquid_water_transport_approximation':'Migration and seeded phase exchange share mechanical, ideal-mixing and energetic-binding water potential. D(T)=D_ref*exp[-E/R*(1/T-1/Tr)] enters each half-cell resistance, L=2*A/[R*(dx_left/(D_left*c_left)+dx_right/(D_right*c_right))]. Nonnegative L multiplies the unchanged shared-face entropy force, so J*F=L*F^2. E=0 restores constant mobility; D_ref=0 removes migration. Activation is assumed and fixed in paired UQ/synthetic fitting, not range-covered or identified. Temperature-dependent mobility adds no storage, heat of transport or Soret force. Carried enthalpy uses the analytic linear-Cp conjugate background with reciprocal-log thermal mean, arithmetic mean mechanical potential times molar volume, and mean binding composition derivative times binding enthalpy at the thermal mean. Binding force is difference(g_prime)*mean(a(T)/T), satisfying the same nonisothermal entropy identity. No independent heat of transport. Log water inventory permits influx/loss; zero exterior/center liquid flow. No measured hydraulic law, dry-surface nucleation, hysteresis or humidity-cycle validation.',
             'water_retention_approximation':'Ideal mixing plus F_b=g*a(T), g=N*n/(n+N), a=-E+C*(T-Tr-T*ln(T/Tr)). Sites N=N0*(r+(1-r)*n_kaolin/n_kaolin_initial) have a declared persistent fraction r and a fraction lost with kaolin dehydroxylation. They add no matter or independent state. Both mixing and binding composition derivatives enter kaolin chemical potential, partial energy and entropy; no separate site-loss heat source. Storage U/S/Cp uses g, water partials use (N/(n+N))^2, site partials use (n/(n+N))^2 times dN/dn_kaolin. Positive residual sites are a physical hypothesis over the declared range, not a numerical inventory floor. No measured site counts, complete site disappearance, independent site kinetics, regeneration, sintering-dependent sites or hysteresis. r=1 recovers preceding fixed sites; zero N removes all retention; E=C=0 removes energetic binding only.',
@@ -1134,7 +1174,7 @@ class FiniteGasFullCycle(FullCycle):
                 'minimum_porosity':min(min(r['porosity']) for r in rows),'minimum_pressure_pa':min(min(r['pressure_pa']) for r in rows)}}
         drying_start=int(np.where(times==self.times[self.config['stages'].index('drying')])[0][0])
         report['drying_water_diagnostics']=drying_water_diagnostics(
-            self.config,rows[drying_start],rows[drying],
+            self.reaction_config,rows[drying_start],rows[drying],
             boundary_in_mol=gasin[drying,vapor_index]-gasin[drying_start,vapor_index],
             boundary_out_mol=gasout[drying,vapor_index]-gasout[drying_start,vapor_index])
         for cell,decomposition in zip(report['drying_water_diagnostics']['end_state_cells'],drying_affinity_decomposition):
@@ -1163,10 +1203,18 @@ class FiniteGasFullCycle(FullCycle):
                 'end_time_s':gas_endpoints[-1]['time_s'],
                 'whole_cycle_meaning':'Entire declared process window; a truncated stage configuration does not cover the omitted stages.',
                 'reference_inventory_time_s':gas_endpoints[0]['time_s']},
-            'whole_cycle':gas_species_ledger(self.config,gas_endpoints[0],gas_endpoints[-1],
+            'whole_cycle':gas_species_ledger(self.reaction_config,gas_endpoints[0],gas_endpoints[-1],
                 reference_inventory_mol=reference_inventory),
-            'stages':{name:gas_species_ledger(self.config,gas_endpoints[i],gas_endpoints[i+1],
+            'stages':{name:gas_species_ledger(self.reaction_config,gas_endpoints[i],gas_endpoints[i+1],
                 reference_inventory_mol=reference_inventory) for i,name in enumerate(self.config['stages'])}}
+        report['active_reactions'] = self.reactions
+        report['direct_carbonation_configuration'] = {
+            'enabled':self.direct_carbonation_enabled,
+            'mobility_contract':None if not self.direct_carbonation_enabled else {
+                'value_per_s':self.direct_mobility.value_per_s, 'unit':'1/s',
+                'source':self.direct_mobility.source, 'status':self.direct_mobility.status,
+                'identity':self.direct_mobility.identity, 'applicability':dict(self.direct_mobility.applicability)},
+            'interpretation':'Explicit conditional phenomenology; no nominal brick kinetic or dynamic qualification is inferred.'}
         report['caloric_source_domains']=caloric_source_domain_coverage(self, rows, self.ng)
         report['viscosity_source_domains']=viscosity_source_domain_coverage(self, rows)
         report['binary_diffusion_source_domains']=binary_diffusion_source_domain_coverage(self, rows)

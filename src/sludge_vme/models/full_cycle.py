@@ -125,7 +125,8 @@ class FullCycle:
         self.atom = np.array([[formulas[s].get(e, 0) for e in self.elements] for s in self.names])
         self.atomic = np.array([self.p("atomic." + e, "kg/mol") for e in self.elements])
         self.mw = self.atom @ self.atomic
-        self.nr = len(config["reactions"])
+        self.reactions = list(config["reactions"])
+        self.nr = len(self.reactions)
         self.nu = np.array([[r["stoichiometry"].get(s, 0) for s in self.names] for r in config["reactions"]])
         if np.any(self.nu @ self.atom != 0):
             raise ValueError("reaction stoichiometry does not conserve elements")
@@ -240,8 +241,8 @@ class FullCycle:
     def reaction_fields(self, y):
         extent = y[self.extent_offset:self.last].reshape(self.nr,self.n).T*self.chemical_scale
         conversion = np.divide(extent,self.conversion_scale,out=np.zeros_like(extent),where=self.conversion_scale != 0)
-        return {'reaction_extent_mol':{r['id']:extent[:,i].tolist() for i,r in enumerate(self.config['reactions'])},
-                'conversion':{r['id']:conversion[:,i].tolist() for i,r in enumerate(self.config['reactions'])}}
+        return {'reaction_extent_mol':{r['id']:extent[:,i].tolist() for i,r in enumerate(self.reactions)},
+                'conversion':{r['id']:conversion[:,i].tolist() for i,r in enumerate(self.reactions)}}
 
     def unpack(self, y):
         fields = y[:9*self.n].reshape(9, self.n)
@@ -464,6 +465,8 @@ class FullCycle:
 def make_cycle(config: dict):
     mode = config['parameters']['gas.storage']['value']
     if mode == 0:
+        if 'direct_carbonation' in config:
+            raise ValueError('direct_carbonation requires finite stored pore gas: gas.storage=1')
         return FullCycle(config)
     if mode == 1 and config['parameters']['solid.thermoelastic']['value'] == 1:
         from .full_cycle_solid import ThermoelasticFullCycle
