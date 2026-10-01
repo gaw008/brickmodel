@@ -795,3 +795,9 @@ P42固定二次初始有限体积分区/逐格尺度原语已实现（2026-10-01
 - [ ] **P42B** 四fixture/旧uniform契约准入：首63/64、修正版未执行，P42主项[ ]partial；本项额度关闭，不换ID重跑。
 
 变更新initial_finite_volume.py/verify_initial_partition_invariants.py、根8条操作/数值/synthetic项及当前文档/矩阵；证据p42-initial-partition。一进程回收/两gate无child，真实CPU、首监督与151.717013s收尾分别记录。后续host接入被未完成准入阻塞；需要明确资源决定，非0measured阻塞。
+
+### P42实际必要交付 2026-10-01T23:01:33.461636+00:00
+
+P42实际交付（2026-10-01T23:01:33.461636+00:00）：实现e36ac179及静态uniform表达式后继4eebc3bf已正常推送/远端确认；28明确新文件+manifest增量636,390B上传及名称/大小/父目录读回通过。唯一实际科学job63/64、uniform标量extent兼容FAIL；两retry gate均无修改/子进程，原截止关闭。恒width及uniform体积按旧A*L/N的当前修正版只读审查、未执行；P42仍partial，未接主机、0新物理/积分/fit/UQ，原44保持39c618f8。514=144literature370assumed0measured、旧506保持，P40mesh7.33335%/phase/strict、P34旧30/81、名义0.135892078740%工艺失败与wholefalse保持。收据FULL_CYCLE_P42_DELIVERY.json；未恢复下载/解包，原件/独有历史保留，20GB/历史全备份/GitHub容量告警未解决。下个必要资源决定仅当前uniform12受影响数据行单job候选，尚未授权/启动，不换ID刷本项截止，不重跑未受影响项。
+
+D01正常Git/push/远端通过，D02本增量metadata通过；D03恢复按用户停止，D04历史存储未通过。P42主项与B不勾，后续资源决定见交付JSON具体单fixture范围，当前不执行。

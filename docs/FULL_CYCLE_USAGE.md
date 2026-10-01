@@ -287,3 +287,7 @@ P41实际交付（2026-10-01T22:32:18.005710+00:00）：诊断实现提交816cdf
 P42固定二次初始有限体积分区/逐格尺度原语已实现（2026-10-01T22:54:23.640845+00:00），准入partial/FAIL：实际一科学job、四fixture，64算术行63通过/1 uniform旧标量extent兼容FAIL，CPU0.010810083s、首监督0.263625s、子进程回收/首预算内。两修复启动gate均在改源/子进程前停止，原120s截止不延，0第二sciencejob；工作流收尾151.717013s，额度关闭。其后仅静态简化uniform恒宽L/N，后续uniform体积已仅静态按旧(A*L)/N生成；修正版未执行，独立face/center舍入及完整兼容不预判通过。旧44主机/506条保持，新原语未接主机，0物理算子/积分/fit/UQ/恢复；根514=144literature370assumed0measured，P40mesh/phase/strict、P34旧30/81、名义0.135892078740%失败及wholefalse保持。
 
 原语仅显式Python数据接口，未接CLI/完整周期。已关闭验证命令记录为 `.venv/bin/python scripts/verify_initial_partition_invariants.py parameters.full_cycle.json OUTPUT.json`，不得在本项预算再次运行。读取 `docs/FULL_CYCLE_P42_INITIAL_PARTITION.json` 及 `runs/full-cycle/p42-initial-partition/result.json/execution.json` 判断首次源码结果；当前uniform静态修正版未执行。`extent_coordinates` 输入(n,nr) mol或mol/s，化学尺度(n,) mol；结果为reaction-first flat。`nested_extensive_sum` 只相加广延量，不重建extent或热能。
+
+## P42实际交付
+
+P42实际交付（2026-10-01T23:01:33.461636+00:00）：实现e36ac179及静态uniform表达式后继4eebc3bf已正常推送/远端确认；28明确新文件+manifest增量636,390B上传及名称/大小/父目录读回通过。唯一实际科学job63/64、uniform标量extent兼容FAIL；两retry gate均无修改/子进程，原截止关闭。恒width及uniform体积按旧A*L/N的当前修正版只读审查、未执行；P42仍partial，未接主机、0新物理/积分/fit/UQ，原44保持39c618f8。514=144literature370assumed0measured、旧506保持，P40mesh7.33335%/phase/strict、P34旧30/81、名义0.135892078740%工艺失败与wholefalse保持。收据FULL_CYCLE_P42_DELIVERY.json；未恢复下载/解包，原件/独有历史保留，20GB/历史全备份/GitHub容量告警未解决。下个必要资源决定仅当前uniform12受影响数据行单job候选，尚未授权/启动，不换ID刷本项截止，不重跑未受影响项。
