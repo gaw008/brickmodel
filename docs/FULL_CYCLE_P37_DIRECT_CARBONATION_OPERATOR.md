@@ -32,3 +32,7 @@
 P38真正未实现候选为纯CH来源TG双DoC映射。已收到同一论文Eq5/6精确MathML：DoC_CH=1−(mCaO/mCH)M_CH；DoC_Cc=(mCaO/mCc)M_Cc。M须同源g/g灼烧CH(CaO基准)，Eq6无初始calcite扣除；不得用整砖TG/initial_dry或背景calcite替代。候选最多4条纯数据映射、60/120s/2MiB/单并发、0主机/积分/fit/UQ/恢复；尚未登记参数、实施或运行。来源[Saeki2026](https://pmc.ncbi.nlm.nih.gov/articles/PMC12980848/)。
 
 Git/Drive交付在随后实际收据记录；未下载/解包/字节恢复，不宣称独立重放/完整恢复。历史轨迹、独有Git、20GB及容量警告另未通过，原件保留。
+
+## 实际交付
+
+P37实际交付（2026-10-01T20:23:49.426364+00:00）：局部实现提交4b8f5434已普通推送并确认远端；明确25文件小增量576,753B/26成员已上传，名称、大小、父目录读回一致，收据FULL_CYCLE_P37_DELIVERY.json。新增独立local科学模块及4标量2.088736s实际资格，原43周期主机保持、未接RHS/布局；显式L来源/域必填、L=1/s仅synthetic。448=141literature/307assumed/0measured，原440保持。原30/81、strictOH、名义0.135892078740%失败与wholefalse保留，0主机/RHS/Jac/积分/fit/UQ/恢复。未下载/解包/字节恢复，不宣称全恢复；历史/独有Git/20GB/容量告警未解决，原件保留。P38源TG双DoC候选未启动。
