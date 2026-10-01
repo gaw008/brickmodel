@@ -15,7 +15,7 @@ from scipy.integrate import solve_ivp
 from scipy.sparse import csc_matrix
 
 from .full_cycle import FullCycle, source_caloric_coefficients, source_caloric_integrals
-from .full_cycle_diagnostics import drying_water_diagnostics, free_water_ledger, gas_species_ledger, caloric_source_domain_coverage, viscosity_source_domain_coverage
+from .full_cycle_diagnostics import drying_water_diagnostics, free_water_ledger, gas_species_ledger, caloric_source_domain_coverage, viscosity_source_domain_coverage, binary_diffusion_source_domain_coverage
 
 
 class FiniteGasFullCycle(FullCycle):
@@ -37,6 +37,18 @@ class FiniteGasFullCycle(FullCycle):
         self.gas_pairs = list(combinations(range(self.g), 2))
         self.gas_pair_names = [self.ng[i]+'_'+self.ng[j] for i,j in self.gas_pairs]
         self.pair_factors = np.array([self.p('transport.pair_factor.'+name, '1') for name in self.gas_pair_names])
+        binary = config['binary_diffusion_background']
+        self.binary_source_pressure = self.p(binary['source_pressure_parameter'], 'Pa')
+        self.binary_temperatures = np.asarray(self.p(binary['temperature_parameter'], 'K'))
+        self.binary_tables = {}
+        for name, key in binary['tabulated_pair_parameters'].items():
+            values = np.asarray(self.p(key, 'm2/s'))
+            slopes = np.log(values[1:]/values[:-1])/np.log(self.binary_temperatures[1:]/self.binary_temperatures[:-1])
+            self.binary_tables[name] = (values, slopes)
+        self.binary_correlation_pair = binary['correlation_pair']
+        self.binary_correlation = [self.p(key, unit) for key, unit in
+                                   zip(binary['correlation_parameter_names'], ('1', 'K', '1'))]
+        self.binary_correlation_unit = self.p(binary['correlation_unit_parameter'], 'm2/s')
         self.pore_resistance = self.p('transport.pore_resistance', '1')
         self.viscosity = self.p('transport.viscosity_ref', 'Pa*s')
         self.viscosity_exponent = self.p('transport.viscosity_exponent', '1')
@@ -164,7 +176,28 @@ class FiniteGasFullCycle(FullCycle):
         diffusion = self.diffusion*(thermal_mean/self.Tr)**self.diffusion_exponent*self.Pr/pressure*face_phi/tortuosity
         return diffusion, tortuosity
 
-    def pore_limited_pair_diffusivity(self, diffusion, thermal_mean, phi, pore, tortuosity):
+    def gas_pair_free_diffusivity(self, temperature, pressure):
+        """Free dilute coefficients before porosity or pore resistance.
+
+        Source water pairs replace the old pair factors. Table intervals
+        use real temperature to select a branch while arithmetic retains
+        complex perturbations. Interior knots select the right derivative;
+        first/last intervals extend beyond source bounds as declared in root.
+        """
+        common = self.diffusion*(temperature/self.Tr)**self.diffusion_exponent*self.Pr/pressure
+        pairs = common[:, None]*self.pair_factors[None, :]
+        index = np.searchsorted(self.binary_temperatures, temperature.real, side='right')-1
+        # Select an endpoint interval for explicit extrapolation, never clip T.
+        index = np.minimum(np.maximum(index, 0), len(self.binary_temperatures)-2)
+        for name, (values, slopes) in self.binary_tables.items():
+            source = values[index]*np.exp(slopes[index]*np.log(temperature/self.binary_temperatures[index]))
+            pairs[:, self.gas_pair_names.index(name)] = source*self.binary_source_pressure/pressure
+        a, b, exponent = self.binary_correlation
+        source = self.binary_correlation_unit*np.exp(a+b/temperature+exponent*np.log(temperature))
+        pairs[:, self.gas_pair_names.index(self.binary_correlation_pair)] = source*self.binary_source_pressure/pressure
+        return pairs
+
+    def pore_limited_pair_diffusivity(self, diffusion, thermal_mean, phi, pore, tortuosity, pressure):
         """Assumed positive symmetric pore-scale resistance, not dusty-gas.
 
         Both preceding D and the species/pair scales already contain phi/tau.
@@ -172,10 +205,14 @@ class FiniteGasFullCycle(FullCycle):
         """
         length = 2*self.radius*(pore/self.vp0)**(1/3)
         face_length = np.r_[(length[:-1]+length[1:])/2, length[-1]]
+        face_phi = np.r_[(phi[:-1]+phi[1:])/2, phi[-1]]
         pair_diffusion = diffusion[:,None]*self.pair_factors[None,:]
+        source_pairs = self.gas_pair_free_diffusivity(thermal_mean, pressure)
+        for name in (*self.binary_tables, self.binary_correlation_pair):
+            column = self.gas_pair_names.index(name)
+            pair_diffusion[:,column] = source_pairs[:,column]*face_phi/tortuosity
         if self.pore_resistance == 0:
             return pair_diffusion, face_length, np.ones_like(pair_diffusion)
-        face_phi = np.r_[(phi[:-1]+phi[1:])/2, phi[-1]]
         species_scale = (face_phi/tortuosity*face_length)[:,None]*np.sqrt(
             self.R*thermal_mean[:,None]/self.mw[len(self.ns):][None,:])
         pair_scale = np.column_stack([2/(1/species_scale[:,i]+1/species_scale[:,j])
@@ -184,7 +221,7 @@ class FiniteGasFullCycle(FullCycle):
         return pair_diffusion/resistance, face_length, 1/resistance
 
     def molecular_transport(self, yl, yr, conductance):
-        """Positive symmetric pair exchange in the molar frame.
+        """Historical factor-only helper; current transport uses source pairs.
 
         Pair i,j transfers C*f_ij*(yLi*yRj-yRi*yLj) to species i and its
         opposite to j. Its entropy is C*f_ij*R*(a-b)*log(a/b)>=0.
@@ -315,15 +352,12 @@ class FiniteGasFullCycle(FullCycle):
         diffusion, tortuosity = self.gas_diffusivity(thermal_mean, pressure, phi)
         concentration = pressure/(self.R*thermal_mean)
         pair_diffusion, pore_length, pore_multiplier = self.pore_limited_pair_diffusivity(
-            diffusion, thermal_mean, phi, pore, tortuosity)
-        if self.pore_resistance == 0:
-            molecular = self.molecular_transport(yl, yr, self.area*(diffusion*concentration/distance))
-        else:
-            molecular = np.zeros_like(yl)
-            for column,(i,j) in enumerate(self.gas_pairs):
-                exchange = self.area*(pair_diffusion[:,column]*concentration/distance)*(yl[:,i]*yr[:,j]-yr[:,i]*yl[:,j])
-                molecular[:,i] += exchange
-                molecular[:,j] -= exchange
+            diffusion, thermal_mean, phi, pore, tortuosity, pressure)
+        molecular = np.zeros_like(yl, dtype=np.result_type(yl, pair_diffusion))
+        for column,(i,j) in enumerate(self.gas_pairs):
+            exchange = self.area*(pair_diffusion[:,column]*concentration/distance)*(yl[:,i]*yr[:,j]-yr[:,i]*yl[:,j])
+            molecular[:,i] += exchange
+            molecular[:,j] -= exchange
         viscosity = self.gas_viscosity(thermal_mean, (yl+yr)/2)
         velocity = face_perm/viscosity*(pressure_l-pressure_r)/distance
         donor_concentrations = np.where((velocity.real >= 0)[:, None], pl/(self.R*tl[:, None]), pr/(self.R*tr[:, None]))
@@ -662,7 +696,7 @@ class FiniteGasFullCycle(FullCycle):
                 'reservoir_y(t)=linear_interpolation_of_mole_fractions=1; sum(y)=1; y*P=Pa',
                 'outward_boundary_molar_flux*reservoir_mu/T=W/K; changing external y creates no internal inventory source',
                 'tau_face=1+(tau_initial-1)*(phi_initial_face/phi_face)^a=1; D_eff=D_free*phi_face/tau_face=m2/s',
-                'D_old_pair=f_pair*D_eff=m2/s; C_pair=area*D_new_pair*concentration/distance=mol/s',
+                'D_old_pair(nonwater)=f_pair*D_eff; D_old_pair(water)=D_source(T)*(P_source/P_face)*phi_face/tau_face=m2/s; C_pair=area*D_new_pair*concentration/distance=mol/s',
                 'ell=2*radius*(pore/initial_pore)^(1/3)=m; sqrt(R*T/M)=m/s',
                 'K_i=(phi/tau)*ell*sqrt(R*T/M_i)=m2/s; K_ij=2/(1/K_i+1/K_j)=m2/s',
                 'D_new_pair=D_old_pair/(1+beta*D_old_pair/K_ij)=m2/s; beta and D_new_pair/D_old_pair are dimensionless',
@@ -927,11 +961,13 @@ class FiniteGasFullCycle(FullCycle):
                 'scale':self.gas_program_scale,'time_s':self.times.tolist(),
                 'mole_fractions':{s:self.gas_knots[:,i].tolist() for i,s in enumerate(self.ng)},
                 'status':'assumed','limitation':'No kiln combustion, circulation or finite external inventory. Reservoir composition enters boundary partial pressure, donor transport and entropy exchange at the same time; stored pore gas is never reset. External composition changes add no separate internal energy source. Gas-storage-zero historical host remains constant-inlet.'},
-            'gas_approximation':'Stored ideal O2/N2/H2O/CO2 gas, symmetric pair molar exchange plus donor Darcy flow with entropy-compatible carried enthalpy; assumed diffusivity and pore properties. No imposed internal pressure or independent per-cell sweep.',
-            'gas_diffusion_approximation':'D_base=D_ref*(T_face/T_ref)^b*(P_ref/P_face)*phi_face/tau_face; tau_face=1+(tau_initial-1)*(phi_initial_face/phi_face)^a. D_old_pair=f_pair*D_base, with positive symmetric assumed root factors; the actual D_pair includes the separately described pore-scale resistance. J_ij=area*D_pair*c/distance*(yLi*yRj-yRi*yLj), J_ji=-J_ij; species flux is its pair sum. Total molecular molar flux is zero algebraically, and each pair entropy is R*C_pair*(a-b)*log(a/b)>=0. Shared carried enthalpy is unchanged. Zero pore resistance with unit pair factors recovers the preceding common-D law; a=0 removes only evolving tortuosity. Original gas_face_diffusivity output now denotes the common base scale, not every pair D. Arithmetic gas face porosity is retained, exterior porosity is the outer cell. No extra state, storage or heat source. This is a phenomenological pair mobility, not measured binary diffusion, full Maxwell-Stefan, dusty-gas, connected-pore, Knudsen or Soret transport. Darcy remains a separate closure; parameter ranges and correlations are not identified.',
+            'gas_approximation':'Stored ideal O2/N2/H2O/CO2 gas, symmetric pair molar exchange plus donor Darcy flow with entropy-compatible carried enthalpy; source-based water binary coefficients with assumed mixture extension, other diffusivity and pore properties. No imposed internal pressure or independent per-cell sweep.',
+            'gas_diffusion_approximation':'Nonwater pairs retain assumed f_pair*D_ref*(Theta/Tr)^b*Pr/Pface. WaterN2/O2 use S3 complete26-point logD-logT continuous interpolation; waterCO2 uses uniform S1ABC. SourcewaterD*101325/Pface replaces, not multiplies, old waterpair factors. Arbitrary composition and pressure extension, interpolation and declared extrapolation remain assumed. Multiply phi_face/tau_face once, then positive symmetric pore resistance. Every beta includingzero uses actualpairD in equal/opposite molar exchanges and shared enthalpy. gas_face_diffusivity remains historicalcommon base diagnostic, not all actualpairD. No new stored energy, reactionheat or state; not measured pores or fullMS/dusty-gas/Soret.',
             'gas_pair_factors':dict(zip(self.gas_pair_names,self.pair_factors.tolist())),
+            'gas_inactive_legacy_water_pair_factors':self.config['binary_diffusion_background']['inactive_legacy_water_pair_factors'],
+            'gas_binary_source_parameters':{key:self.config['parameters'][key] for key in self.config['binary_diffusion_background']['source_parameter_names']},
             'gas_pore_resistance':self.pore_resistance,
-            'gas_pore_resistance_approximation':'beta=transport.pore_resistance is an assumed dimensionless amplitude. Cell ell=2*radius*(pore/initial_pore)^(1/3); internal face ell is the arithmetic mean, exterior ell is the outer cell value, independent of mesh width. K_i=(phi_face/tau_face)*ell_face*sqrt(R*Theta_face/M_i), K_ij=2/(1/K_i+1/K_j), D_pair=D_old_pair/(1+beta*D_old_pair/K_ij). Both D_old and K already include phi/tau, which is not applied again. On the positive physical domain with beta>=0 the shared pair coefficient is positive and symmetric, preserving zero total molecular molar flux and nonnegative pair entropy. Only molecular transport coefficients change; Darcy, conjugate carried enthalpy, U and S retain their preceding laws, without new states or heat sources. beta=0 exactly restores the preceding molecular arithmetic including its unit-pair shortcut; nonzero beta uses pairs even with unit factors. This is a pore-scale mobility hypothesis using an assumed pore diameter, not measured wall accommodation, a pore-throat distribution, full Knudsen, Maxwell-Stefan or dusty-gas transport. Non-equimolar wall friction, slip and thermal transpiration are not resolved. Earlier fixed-parameter UQ/calibration do not identify beta or validate this extension.',
+            'gas_pore_resistance_approximation':'beta=transport.pore_resistance is an assumed dimensionless amplitude. Cell ell=2*radius*(pore/initial_pore)^(1/3); internal face ell is the arithmetic mean, exterior ell is the outer cell value, independent of mesh width. K_i=(phi_face/tau_face)*ell_face*sqrt(R*Theta_face/M_i), K_ij=2/(1/K_i+1/K_j), D_pair=D_old_pair/(1+beta*D_old_pair/K_ij). Both D_old and K already include phi/tau, which is not applied again. On the positive physical domain with beta>=0 the shared pair coefficient is positive and symmetric, preserving zero total molecular molar flux and nonnegative pair entropy. Only molecular transport coefficients change; Darcy, conjugate carried enthalpy, U and S retain their preceding laws, without new states or heat sources. beta=0 returns the current source-based pre-pore coefficients; allbeta use actual pair exchange, without a legacy common-D shortcut. Earlier common-D zero-beta numerical evidence remains historical. This is a pore-scale mobility hypothesis using an assumed pore diameter, not measured wall accommodation, a pore-throat distribution, full Knudsen, Maxwell-Stefan or dusty-gas transport. Non-equimolar wall friction, slip and thermal transpiration are not resolved. Earlier fixed-parameter UQ/calibration do not identify beta or validate this extension.',
             'gas_viscosity_approximation':'Pure zero-density curves: Lemmon2004 N2/O2, Laesecke2017 CO2 Eq4, IAPWS2008 H2O Eq11. Wilke Phi_ij(T) and mu_i(T) share the existing reciprocal-log face temperature and symmetric adjacent mole fractions. mu=(1-alpha)*historical_common_power+alpha*source_Wilke; nominalalpha1, explicitalpha0 preserves the common-law control. Positive mobility changes Darcy species flux and its shared enthalpy/entropy accounting, without storage or extra viscous heat. Root source domains and assumed extrapolation are explicit; no density/critical correction, slip, Knudsen, measured permeability or mixed-gas/pore accuracy qualification.',
             'gas_viscosity_source_parameters':{key:self.config['parameters'][key] for key in self.config['viscosity_background']['source_parameter_names']},
             'gas_caloric_approximation':'USGS five-term source Cp with analytic reference-anchored h/s and exact caloric secant face enthalpy. Original formation/entropy anchors retained. No additional heat; source domains and assumed extrapolation declared in root caloric_background. Old linear-Cp UQ/fit evidence is historical.',
@@ -1004,4 +1040,5 @@ class FiniteGasFullCycle(FullCycle):
                 reference_inventory_mol=reference_inventory) for i,name in enumerate(self.config['stages'])}}
         report['caloric_source_domains']=caloric_source_domain_coverage(self, rows, self.ng)
         report['viscosity_source_domains']=viscosity_source_domain_coverage(self, rows)
+        report['binary_diffusion_source_domains']=binary_diffusion_source_domain_coverage(self, rows)
         return report,{'schema':'sludge_vme_full_cycle_fields_v2','cell_count':self.n,'rows':rows}

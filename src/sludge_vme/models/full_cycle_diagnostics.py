@@ -352,3 +352,40 @@ def viscosity_source_domain_coverage(model, rows):
             'coverage_note': 'Sampled reciprocal-log Darcy face temperatures, including reservoir face and species with small fractions; no statement about every solver evaluation or finite-density/pore validity.',
         }
     return result
+
+
+def binary_diffusion_source_domain_coverage(model, rows):
+    """Sample actual pair-face conditions; no claim about every solver iterate."""
+    import numpy as np
+
+    temperatures, pressures, water = [], [], []
+    for row in rows:
+        left = np.asarray(row['temperature_k'])
+        right = np.r_[left[1:], row['kiln_temperature_k']]
+        ratio = (left-right)/right
+        temperatures.append(left*np.divide(np.log1p(ratio), ratio,
+                                            out=np.ones_like(ratio), where=ratio != 0))
+        pressure = np.asarray(row['pressure_pa'])
+        pressures.append((pressure+np.r_[pressure[1:], model.P])/2)
+        water.extend(row['gas_mole_fractions']['H2O'])
+    temperatures, pressures = np.asarray(temperatures), np.asarray(pressures)
+    background = model.config['binary_diffusion_background']
+    pairs = {}
+    for name, domain in background['pair_domains'].items():
+        lower, upper = domain['source_temperature_range_k']
+        pairs[name] = {
+            **domain,
+            'sampled_face_temperature_range_k': [float(temperatures.min()), float(temperatures.max())],
+            'face_time_samples': int(temperatures.size),
+            'below_source_samples': int(np.count_nonzero(temperatures < lower)),
+            'above_source_samples': int(np.count_nonzero(temperatures > upper)),
+            'outside_source_status': background['outside_domain_status'],
+        }
+    return {
+        'pairs': pairs,
+        'sampled_face_pressure_range_pa': [float(pressures.min()), float(pressures.max())],
+        'sampled_internal_water_mole_fraction_range': [float(min(water)), float(max(water))],
+        'composition_extension_status': background['composition_extension_status'],
+        'pressure_extension_status': background['pressure_extension_status'],
+        'coverage_note': 'Includes external reservoir face, strict source endpoints included. Saved nodes only; finitewater and pore applicability are not established by temperature coverage.',
+    }

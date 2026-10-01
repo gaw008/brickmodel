@@ -1,0 +1,2943 @@
+{
+  "schema": "full_cycle_p24_source_diffusion_results_v1",
+  "recorded_utc": "2026-10-01T01:19:44.423640+00:00",
+  "status": "implemented_constitutive_dynamic_and_independent_numerical_checks_passed",
+  "parameter_count": 355,
+  "parameter_status_counts": {
+    "literature": 110,
+    "assumed": 245
+  },
+  "implementation_files": [
+    "src/sludge_vme/models/full_cycle_gas.py",
+    "src/sludge_vme/models/full_cycle_diagnostics.py",
+    "parameters.full_cycle.json"
+  ],
+  "implementation": {
+    "source_pressure_parameter": "transport.binary.source_pressure",
+    "temperature_parameter": "transport.binary.water.temperature_knots",
+    "tabulated_pair_parameters": {
+      "N2_H2O": "transport.binary.N2_H2O.source_values",
+      "O2_H2O": "transport.binary.O2_H2O.source_values"
+    },
+    "correlation_pair": "H2O_CO2",
+    "correlation_parameter_names": [
+      "transport.binary.H2O_CO2.A",
+      "transport.binary.H2O_CO2.B",
+      "transport.binary.H2O_CO2.C"
+    ],
+    "correlation_unit_parameter": "transport.binary.correlation_unit",
+    "source_parameter_names": [
+      "transport.binary.water.temperature_knots",
+      "transport.binary.N2_H2O.source_values",
+      "transport.binary.O2_H2O.source_values",
+      "transport.binary.source_pressure",
+      "transport.binary.H2O_CO2.A",
+      "transport.binary.H2O_CO2.B",
+      "transport.binary.H2O_CO2.C",
+      "transport.binary.correlation_unit"
+    ],
+    "interpolation": {
+      "law": "Dk*exp(mk*log(T/Tk)); mk=log(Dk+1/Dk)/log(Tk+1/Tk)",
+      "status": "assumed",
+      "segment_selection": "Interior knots use right segment by realT. Ends use first/last segment. Keep complexT in arithmetic; no temperature orD clipping.",
+      "derivative": "Continuous but generally not differentiable at interior knots; complex step there is selected right derivative, not a two-sided derivative."
+    },
+    "pair_domains": {
+      "N2_H2O": {
+        "source_temperature_range_k": [
+          190,
+          2000
+        ],
+        "composition": "water mole fraction tends0",
+        "definition": "low-density binary tracer limit normalized to101325Pa",
+        "source": "hellmann_harvey2020_binary_diffusion"
+      },
+      "O2_H2O": {
+        "source_temperature_range_k": [
+          190,
+          2000
+        ],
+        "composition": "water mole fraction tends0",
+        "definition": "low-density binary tracer limit normalized to101325Pa",
+        "source": "hellmann_harvey2020_binary_diffusion"
+      },
+      "H2O_CO2": {
+        "source_temperature_range_k": [
+          250,
+          2000
+        ],
+        "composition": "not specified in TN2279 row",
+        "definition": "dilute binary source correlation at101325Pa",
+        "source": "nist_tn2279_binary_diffusion"
+      }
+    },
+    "outside_domain_policy": "S3 continue adjacent endpoint log-log slope; S1 continue ABC. Explicit assumed extrapolation, no clipping/fallback or equal source-accuracy claim; count strict domain violations in sampled actual face temperatures.",
+    "outside_domain_status": "assumed",
+    "composition_extension_status": "assumed: apply dilute binary coefficient at full-host finite water fraction without new correction or fullMS claim",
+    "pressure_extension_status": "assumed low-density Psource/Pface scaling, not dense gas qualification",
+    "inactive_legacy_water_pair_factors": [
+      "transport.pair_factor.O2_H2O",
+      "transport.pair_factor.N2_H2O",
+      "transport.pair_factor.H2O_CO2"
+    ],
+    "common_Dref_scope": "Only nonwater three pairs retain commonDref, exponent andpairfactor; sourcewater pairs do not. This changes meaning of previous25D UQ, which remains historical.",
+    "current_nominal_source_law": "always active; no blend parameter added"
+  },
+  "constitutive": {
+    "schema": "full_cycle_p24_constitutive_v1",
+    "recorded_utc": "2026-10-01T01:00:28.949848+00:00",
+    "source_points": [
+      {
+        "source": "S1",
+        "pair": "H2O_CO2",
+        "temperature_k": 298.15,
+        "current_source_law_m2_s": 1.6482643884909667e-05,
+        "P23_reference_m2_s": 1.66e-05,
+        "reference_method": "printed_Dref_separate_near_ambient_recommendation",
+        "signed_relative_source_difference": -0.007069645487369494,
+        "previous_power_law_signed_relative_difference": 0.24851738560459458,
+        "interpretation": "S1Dref remains separate recommendation; no forced interpolation through298.15K."
+      },
+      {
+        "source": "S1",
+        "pair": "H2O_CO2",
+        "temperature_k": 600,
+        "current_source_law_m2_s": 6.823562883469947e-05,
+        "P23_reference_m2_s": 6.823562883469947e-05,
+        "reference_method": "published_full_range_correlation",
+        "signed_relative_source_difference": 0.0,
+        "previous_power_law_signed_relative_difference": 0.03275010628695338,
+        "interpretation": "S1Dref remains separate recommendation; no forced interpolation through298.15K."
+      },
+      {
+        "source": "S1",
+        "pair": "H2O_CO2",
+        "temperature_k": 1200,
+        "current_source_law_m2_s": 0.00023984020587112257,
+        "P23_reference_m2_s": 0.00023984020587112257,
+        "reference_method": "published_full_range_correlation",
+        "signed_relative_source_difference": 0.0,
+        "previous_power_law_signed_relative_difference": -0.01170419785775421,
+        "interpretation": "S1Dref remains separate recommendation; no forced interpolation through298.15K."
+      },
+      {
+        "source": "S3",
+        "pair": "O2_H2O",
+        "temperature_k": 300,
+        "current_source_law_m2_s": 2.6830999999999998e-05,
+        "P23_reference_m2_s": 2.6831e-05,
+        "reference_method": "direct_DAT_value_no_interpolation",
+        "signed_relative_source_difference": -1.2627676154512321e-16,
+        "previous_power_law_signed_relative_difference": -0.07041777919682436,
+        "interpretation": "S1Dref remains separate recommendation; no forced interpolation through298.15K."
+      },
+      {
+        "source": "S3",
+        "pair": "O2_H2O",
+        "temperature_k": 400,
+        "current_source_law_m2_s": 4.5366e-05,
+        "P23_reference_m2_s": 4.5366000000000006e-05,
+        "reference_method": "direct_DAT_value_no_interpolation",
+        "signed_relative_source_difference": -1.4936876907892258e-16,
+        "previous_power_law_signed_relative_difference": -0.09042823875169236,
+        "interpretation": "S1Dref remains separate recommendation; no forced interpolation through298.15K."
+      },
+      {
+        "source": "S3",
+        "pair": "O2_H2O",
+        "temperature_k": 600,
+        "current_source_law_m2_s": 9.279600000000001e-05,
+        "P23_reference_m2_s": 9.279600000000001e-05,
+        "reference_method": "direct_DAT_value_no_interpolation",
+        "signed_relative_source_difference": 0.0,
+        "previous_power_law_signed_relative_difference": -0.09593864714518481,
+        "interpretation": "S1Dref remains separate recommendation; no forced interpolation through298.15K."
+      },
+      {
+        "source": "S3",
+        "pair": "O2_H2O",
+        "temperature_k": 800,
+        "current_source_law_m2_s": 0.00015243,
+        "P23_reference_m2_s": 0.00015243,
+        "reference_method": "direct_DAT_value_no_interpolation",
+        "signed_relative_source_difference": 0.0,
+        "previous_power_law_signed_relative_difference": -0.08945901286939512,
+        "interpretation": "S1Dref remains separate recommendation; no forced interpolation through298.15K."
+      },
+      {
+        "source": "S3",
+        "pair": "O2_H2O",
+        "temperature_k": 1000,
+        "current_source_law_m2_s": 0.00022312000000000002,
+        "P23_reference_m2_s": 0.00022312,
+        "reference_method": "direct_DAT_value_no_interpolation",
+        "signed_relative_source_difference": 1.2148195729713882e-16,
+        "previous_power_law_signed_relative_difference": -0.0807704624645645,
+        "interpretation": "S1Dref remains separate recommendation; no forced interpolation through298.15K."
+      },
+      {
+        "source": "S3",
+        "pair": "O2_H2O",
+        "temperature_k": 1500,
+        "current_source_law_m2_s": 0.00044382000000000004,
+        "P23_reference_m2_s": 0.00044382000000000004,
+        "reference_method": "direct_DAT_value_no_interpolation",
+        "signed_relative_source_difference": 0.0,
+        "previous_power_law_signed_relative_difference": -0.0604599305934572,
+        "interpretation": "S1Dref remains separate recommendation; no forced interpolation through298.15K."
+      },
+      {
+        "source": "S3",
+        "pair": "N2_H2O",
+        "temperature_k": 300,
+        "current_source_law_m2_s": 2.556e-05,
+        "P23_reference_m2_s": 2.556e-05,
+        "reference_method": "direct_DAT_value_no_interpolation",
+        "signed_relative_source_difference": 0.0,
+        "previous_power_law_signed_relative_difference": 0.014839021479843822,
+        "interpretation": "S1Dref remains separate recommendation; no forced interpolation through298.15K."
+      },
+      {
+        "source": "S3",
+        "pair": "N2_H2O",
+        "temperature_k": 800,
+        "current_source_law_m2_s": 0.00014892,
+        "P23_reference_m2_s": 0.00014892,
+        "reference_method": "direct_DAT_value_no_interpolation",
+        "signed_relative_source_difference": 0.0,
+        "previous_power_law_signed_relative_difference": -0.030717746608576204,
+        "interpretation": "S1Dref remains separate recommendation; no forced interpolation through298.15K."
+      },
+      {
+        "source": "S3",
+        "pair": "N2_H2O",
+        "temperature_k": 1500,
+        "current_source_law_m2_s": 0.00043532000000000005,
+        "P23_reference_m2_s": 0.00043532000000000005,
+        "reference_method": "direct_DAT_value_no_interpolation",
+        "signed_relative_source_difference": 0.0,
+        "previous_power_law_signed_relative_difference": -0.003799180951547578,
+        "interpretation": "S1Dref remains separate recommendation; no forced interpolation through298.15K."
+      }
+    ],
+    "node_records": [
+      {
+        "pair": "N2_H2O",
+        "T_k": 190.0,
+        "source_m2_s": 1.0337000000000001e-05,
+        "actual_m2_s": 1.0337000000000001e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 200.0,
+        "source_m2_s": 1.148e-05,
+        "actual_m2_s": 1.148e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 210.0,
+        "source_m2_s": 1.2676000000000002e-05,
+        "actual_m2_s": 1.2676000000000002e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 220.0,
+        "source_m2_s": 1.3923e-05,
+        "actual_m2_s": 1.3923e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 230.0,
+        "source_m2_s": 1.5218000000000002e-05,
+        "actual_m2_s": 1.5218e-05,
+        "relative_residual": 1.1131987741546855e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 240.0,
+        "source_m2_s": 1.6561000000000003e-05,
+        "actual_m2_s": 1.6561000000000003e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 250.0,
+        "source_m2_s": 1.7951e-05,
+        "actual_m2_s": 1.7951e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 260.0,
+        "source_m2_s": 1.9386e-05,
+        "actual_m2_s": 1.9386e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 270.0,
+        "source_m2_s": 2.0866000000000003e-05,
+        "actual_m2_s": 2.0866e-05,
+        "relative_residual": 1.6237572074270107e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 280.0,
+        "source_m2_s": 2.2389000000000002e-05,
+        "actual_m2_s": 2.2389000000000002e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 290.0,
+        "source_m2_s": 2.3953e-05,
+        "actual_m2_s": 2.3953e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 300.0,
+        "source_m2_s": 2.556e-05,
+        "actual_m2_s": 2.556e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 310.0,
+        "source_m2_s": 2.7207e-05,
+        "actual_m2_s": 2.7207e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 320.0,
+        "source_m2_s": 2.8893999999999998e-05,
+        "actual_m2_s": 2.8893999999999998e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 330.0,
+        "source_m2_s": 3.062e-05,
+        "actual_m2_s": 3.062e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 340.0,
+        "source_m2_s": 3.2384e-05,
+        "actual_m2_s": 3.2384e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 360.0,
+        "source_m2_s": 3.6027e-05,
+        "actual_m2_s": 3.6027e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 380.0,
+        "source_m2_s": 3.9816000000000006e-05,
+        "actual_m2_s": 3.9816000000000006e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 400.0,
+        "source_m2_s": 4.3749000000000004e-05,
+        "actual_m2_s": 4.3749000000000004e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 450.0,
+        "source_m2_s": 5.4186000000000006e-05,
+        "actual_m2_s": 5.4186000000000006e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 500.0,
+        "source_m2_s": 6.5454e-05,
+        "actual_m2_s": 6.5454e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 600.0,
+        "source_m2_s": 9.0348e-05,
+        "actual_m2_s": 9.034799999999998e-05,
+        "relative_residual": 1.5000362106597607e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 800.0,
+        "source_m2_s": 0.00014892,
+        "actual_m2_s": 0.00014892,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 1000.0,
+        "source_m2_s": 0.00021836000000000004,
+        "actual_m2_s": 0.00021836000000000004,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 1500.0,
+        "source_m2_s": 0.00043532000000000005,
+        "actual_m2_s": 0.00043532000000000005,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 2000.0,
+        "source_m2_s": 0.00070923,
+        "actual_m2_s": 0.00070923,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 190.0,
+        "source_m2_s": 1.1173e-05,
+        "actual_m2_s": 1.1173e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 200.0,
+        "source_m2_s": 1.2364e-05,
+        "actual_m2_s": 1.2364e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 210.0,
+        "source_m2_s": 1.3605000000000001e-05,
+        "actual_m2_s": 1.3605000000000001e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 220.0,
+        "source_m2_s": 1.4894e-05,
+        "actual_m2_s": 1.4894e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 230.0,
+        "source_m2_s": 1.6231e-05,
+        "actual_m2_s": 1.6231e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 240.0,
+        "source_m2_s": 1.7614e-05,
+        "actual_m2_s": 1.7614e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 250.0,
+        "source_m2_s": 1.9043e-05,
+        "actual_m2_s": 1.9043e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 260.0,
+        "source_m2_s": 2.0515e-05,
+        "actual_m2_s": 2.0515e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 270.0,
+        "source_m2_s": 2.2031000000000003e-05,
+        "actual_m2_s": 2.2031000000000003e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 280.0,
+        "source_m2_s": 2.3589e-05,
+        "actual_m2_s": 2.3589e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 290.0,
+        "source_m2_s": 2.5189000000000002e-05,
+        "actual_m2_s": 2.5189000000000002e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 300.0,
+        "source_m2_s": 2.6831e-05,
+        "actual_m2_s": 2.6830999999999998e-05,
+        "relative_residual": 1.2627676154512321e-16
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 310.0,
+        "source_m2_s": 2.8512e-05,
+        "actual_m2_s": 2.8512e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 320.0,
+        "source_m2_s": 3.0233e-05,
+        "actual_m2_s": 3.0233e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 330.0,
+        "source_m2_s": 3.1993000000000004e-05,
+        "actual_m2_s": 3.1993000000000004e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 340.0,
+        "source_m2_s": 3.3792000000000004e-05,
+        "actual_m2_s": 3.3792000000000004e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 360.0,
+        "source_m2_s": 3.7502999999999997e-05,
+        "actual_m2_s": 3.7502999999999997e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 380.0,
+        "source_m2_s": 4.1362e-05,
+        "actual_m2_s": 4.1362e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 400.0,
+        "source_m2_s": 4.5366000000000006e-05,
+        "actual_m2_s": 4.5366e-05,
+        "relative_residual": 1.4936876907892258e-16
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 450.0,
+        "source_m2_s": 5.5989e-05,
+        "actual_m2_s": 5.5989e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 500.0,
+        "source_m2_s": 6.7457e-05,
+        "actual_m2_s": 6.7457e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 600.0,
+        "source_m2_s": 9.279600000000001e-05,
+        "actual_m2_s": 9.279600000000001e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 800.0,
+        "source_m2_s": 0.00015243,
+        "actual_m2_s": 0.00015243,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 1000.0,
+        "source_m2_s": 0.00022312,
+        "actual_m2_s": 0.00022312000000000002,
+        "relative_residual": 1.2148195729713882e-16
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 1500.0,
+        "source_m2_s": 0.00044382000000000004,
+        "actual_m2_s": 0.00044382000000000004,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 2000.0,
+        "source_m2_s": 0.00072211,
+        "actual_m2_s": 0.00072211,
+        "relative_residual": 0.0
+      }
+    ],
+    "table_derivatives": [
+      {
+        "pair": "N2_H2O",
+        "T_k": 190.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.1123957805698572e-07,
+        "complex_m2_s_k": 1.1123957805698573e-07,
+        "relative_residual": 1.1897644734024868e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 200.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.165926087898344e-07,
+        "complex_m2_s_k": 1.1659260878983441e-07,
+        "relative_residual": 1.1351396918054364e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 210.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.2175104608685425e-07,
+        "complex_m2_s_k": 1.2175104608685428e-07,
+        "relative_residual": 2.1740905275519346e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 220.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.266200850730853e-07,
+        "complex_m2_s_k": 1.2662008507308528e-07,
+        "relative_residual": 2.0904882180752358e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 230.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.314790582847369e-07,
+        "complex_m2_s_k": 1.3147905828473688e-07,
+        "relative_residual": 2.0132316086697816e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 240.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.362356468540054e-07,
+        "complex_m2_s_k": 1.3623564685400542e-07,
+        "relative_residual": 1.9429407950815378e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 250.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.407957694379152e-07,
+        "complex_m2_s_k": 1.4079576943791523e-07,
+        "relative_residual": 1.8800124256126106e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 260.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.453480673547134e-07,
+        "complex_m2_s_k": 1.453480673547134e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 270.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.4970400468645558e-07,
+        "complex_m2_s_k": 1.4970400468645563e-07,
+        "relative_residual": 3.5362820997522357e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 280.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.5386289601979024e-07,
+        "complex_m2_s_k": 1.5386289601979024e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 290.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.5820548501306934e-07,
+        "complex_m2_s_k": 1.5820548501306931e-07,
+        "relative_residual": 1.673126541694191e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 300.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.6225676392041817e-07,
+        "complex_m2_s_k": 1.6225676392041822e-07,
+        "relative_residual": 3.2627027634643916e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 310.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.6630238184492215e-07,
+        "complex_m2_s_k": 1.6630238184492218e-07,
+        "relative_residual": 1.5916656940235585e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 320.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.702473007727767e-07,
+        "complex_m2_s_k": 1.7024730077277672e-07,
+        "relative_residual": 1.554784098282134e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 330.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.7409158328870895e-07,
+        "complex_m2_s_k": 1.7409158328870895e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 340.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.7764200004557206e-07,
+        "complex_m2_s_k": 1.7764200004557206e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 360.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.8509400334722243e-07,
+        "complex_m2_s_k": 1.8509400334722243e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 380.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.9242608478450436e-07,
+        "complex_m2_s_k": 1.9242608478450433e-07,
+        "relative_residual": 1.3755816749761381e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 400.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.98676012466936e-07,
+        "complex_m2_s_k": 1.9867601246693606e-07,
+        "relative_residual": 2.664617562334258e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 450.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 2.1591668257679524e-07,
+        "complex_m2_s_k": 2.1591668257679518e-07,
+        "relative_residual": 2.4518512683504536e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 500.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 2.314286592605985e-07,
+        "complex_m2_s_k": 2.314286592605985e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 600.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 2.6157662180542983e-07,
+        "complex_m2_s_k": 2.615766218054299e-07,
+        "relative_residual": 2.0238643208249756e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 800.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 3.1928448725343465e-07,
+        "complex_m2_s_k": 3.192844872534347e-07,
+        "relative_residual": 1.658068628977034e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 1000.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 3.7155970003430705e-07,
+        "complex_m2_s_k": 3.715597000343071e-07,
+        "relative_residual": 1.424792817910708e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 1500.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 4.923931691356877e-07,
+        "complex_m2_s_k": 4.923931691356877e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 2000.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 6.016608598492553e-07,
+        "complex_m2_s_k": 6.016608598492553e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 194.93588689617928,
+        "at_source_knot": false,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.1426015829978335e-07,
+        "complex_m2_s_k": 1.1426015829978335e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 314.96031496047243,
+        "at_source_knot": false,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.6868164710527303e-07,
+        "complex_m2_s_k": 1.68681647105273e-07,
+        "relative_residual": 1.5692151491251022e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 1732.0508075688772,
+        "at_source_knot": false,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 5.442919230762824e-07,
+        "complex_m2_s_k": 5.442919230762824e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 190.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.1612275576902144e-07,
+        "complex_m2_s_k": 1.1612275576902144e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 200.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.211920675381104e-07,
+        "complex_m2_s_k": 1.211920675381104e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 210.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.260634250697985e-07,
+        "complex_m2_s_k": 1.260634250697985e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 220.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.309239380076425e-07,
+        "complex_m2_s_k": 1.309239380076425e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 230.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.3558739370365177e-07,
+        "complex_m2_s_k": 1.3558739370365177e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 240.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.4024196091527392e-07,
+        "complex_m2_s_k": 1.4024196091527392e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 250.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.4460520459840253e-07,
+        "complex_m2_s_k": 1.4460520459840253e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 260.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.4905510849912936e-07,
+        "complex_m2_s_k": 1.4905510849912936e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 270.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.5330854972286537e-07,
+        "complex_m2_s_k": 1.5330854972286537e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 280.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.5755551792572276e-07,
+        "complex_m2_s_k": 1.5755551792572274e-07,
+        "relative_residual": 1.6800287257584766e-16
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 290.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.6179699427616449e-07,
+        "complex_m2_s_k": 1.6179699427616449e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 300.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.6574680237031352e-07,
+        "complex_m2_s_k": 1.6574680237031352e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 310.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.6978695306065285e-07,
+        "complex_m2_s_k": 1.697869530606529e-07,
+        "relative_residual": 3.117999248415879e-16
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 320.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.7372686712951719e-07,
+        "complex_m2_s_k": 1.7372686712951719e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 330.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.7766265880571076e-07,
+        "complex_m2_s_k": 1.7766265880571073e-07,
+        "relative_residual": 1.4898898721674452e-16
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 340.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.8117962909292684e-07,
+        "complex_m2_s_k": 1.811796290929268e-07,
+        "relative_residual": 1.4609688591492018e-16
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 360.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.8871086188540486e-07,
+        "complex_m2_s_k": 1.8871086188540484e-07,
+        "relative_residual": 1.4026632774201797e-16
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 380.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.9607892348111549e-07,
+        "complex_m2_s_k": 1.9607892348111546e-07,
+        "relative_residual": 1.3499553716310673e-16
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 400.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 2.0258982549516264e-07,
+        "complex_m2_s_k": 2.0258982549516264e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 450.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 2.20042725311446e-07,
+        "complex_m2_s_k": 2.20042725311446e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 500.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 2.3598883859356867e-07,
+        "complex_m2_s_k": 2.3598883859356864e-07,
+        "relative_residual": 1.1216538781855024e-16
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 600.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 2.668155759924025e-07,
+        "complex_m2_s_k": 2.6681557599240253e-07,
+        "relative_residual": 1.984125514655157e-16
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 800.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 3.253313863909582e-07,
+        "complex_m2_s_k": 3.2533138639095824e-07,
+        "relative_residual": 1.6272502874891723e-16
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 1000.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 3.784338108946857e-07,
+        "complex_m2_s_k": 3.7843381089468574e-07,
+        "relative_residual": 1.3989119808886822e-16
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 1500.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 5.006293101438524e-07,
+        "complex_m2_s_k": 5.006293101438524e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 2000.0,
+        "at_source_knot": true,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 6.109054872718285e-07,
+        "complex_m2_s_k": 6.109054872718286e-07,
+        "relative_residual": 1.733150554591034e-16
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 194.93588689617928,
+        "at_source_knot": false,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.1906215398004561e-07,
+        "complex_m2_s_k": 1.1906215398004561e-07,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 314.96031496047243,
+        "at_source_knot": false,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 1.7208259766743836e-07,
+        "complex_m2_s_k": 1.720825976674384e-07,
+        "relative_residual": 1.5382020006957114e-16
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 1732.0508075688772,
+        "at_source_knot": false,
+        "derivative_convention": "selectedrightsegment_at_interior_knots_not_twosided",
+        "analytic_m2_s_k": 5.530254900598973e-07,
+        "complex_m2_s_k": 5.530254900598972e-07,
+        "relative_residual": 1.9145431867041056e-16
+      }
+    ],
+    "table_continuity": [
+      {
+        "pair": "N2_H2O",
+        "T_k": 200.0,
+        "left_limit": 1.148e-05,
+        "right_limit": 1.148e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 210.0,
+        "left_limit": 1.2676000000000002e-05,
+        "right_limit": 1.2676000000000002e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 220.0,
+        "left_limit": 1.3922999999999999e-05,
+        "right_limit": 1.3923e-05,
+        "relative_residual": 1.2167391327361925e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 230.0,
+        "left_limit": 1.5218000000000002e-05,
+        "right_limit": 1.5218000000000002e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 240.0,
+        "left_limit": 1.6561000000000003e-05,
+        "right_limit": 1.6561000000000003e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 250.0,
+        "left_limit": 1.7951e-05,
+        "right_limit": 1.7951e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 260.0,
+        "left_limit": 1.9386e-05,
+        "right_limit": 1.9386e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 270.0,
+        "left_limit": 2.0866000000000003e-05,
+        "right_limit": 2.0866000000000003e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 280.0,
+        "left_limit": 2.2389000000000002e-05,
+        "right_limit": 2.2389000000000002e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 290.0,
+        "left_limit": 2.3952999999999996e-05,
+        "right_limit": 2.3953e-05,
+        "relative_residual": 1.4144916248558432e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 300.0,
+        "left_limit": 2.556e-05,
+        "right_limit": 2.556e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 310.0,
+        "left_limit": 2.7207000000000002e-05,
+        "right_limit": 2.7207e-05,
+        "relative_residual": 1.2453162013515645e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 320.0,
+        "left_limit": 2.8893999999999998e-05,
+        "right_limit": 2.8893999999999998e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 330.0,
+        "left_limit": 3.062e-05,
+        "right_limit": 3.062e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 340.0,
+        "left_limit": 3.2384e-05,
+        "right_limit": 3.2384e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 360.0,
+        "left_limit": 3.6027e-05,
+        "right_limit": 3.6027e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 380.0,
+        "left_limit": 3.9816000000000006e-05,
+        "right_limit": 3.9816000000000006e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 400.0,
+        "left_limit": 4.3749000000000004e-05,
+        "right_limit": 4.3749000000000004e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 450.0,
+        "left_limit": 5.418600000000001e-05,
+        "right_limit": 5.4186000000000006e-05,
+        "relative_residual": 1.250556154363563e-16
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 500.0,
+        "left_limit": 6.5454e-05,
+        "right_limit": 6.5454e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 600.0,
+        "left_limit": 9.0348e-05,
+        "right_limit": 9.0348e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 800.0,
+        "left_limit": 0.00014892,
+        "right_limit": 0.00014892,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 1000.0,
+        "left_limit": 0.00021836000000000004,
+        "right_limit": 0.00021836000000000004,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "N2_H2O",
+        "T_k": 1500.0,
+        "left_limit": 0.00043532000000000005,
+        "right_limit": 0.00043532000000000005,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 200.0,
+        "left_limit": 1.2364e-05,
+        "right_limit": 1.2364e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 210.0,
+        "left_limit": 1.3605000000000001e-05,
+        "right_limit": 1.3605000000000001e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 220.0,
+        "left_limit": 1.4894000000000002e-05,
+        "right_limit": 1.4894e-05,
+        "relative_residual": 1.1374149956416012e-16
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 230.0,
+        "left_limit": 1.6231e-05,
+        "right_limit": 1.6231e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 240.0,
+        "left_limit": 1.7614e-05,
+        "right_limit": 1.7614e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 250.0,
+        "left_limit": 1.9043e-05,
+        "right_limit": 1.9043e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 260.0,
+        "left_limit": 2.0515e-05,
+        "right_limit": 2.0515e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 270.0,
+        "left_limit": 2.2031000000000003e-05,
+        "right_limit": 2.2031000000000003e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 280.0,
+        "left_limit": 2.3588999999999997e-05,
+        "right_limit": 2.3589e-05,
+        "relative_residual": 1.4363185336458523e-16
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 290.0,
+        "left_limit": 2.5189000000000002e-05,
+        "right_limit": 2.5189000000000002e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 300.0,
+        "left_limit": 2.6831e-05,
+        "right_limit": 2.6831e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 310.0,
+        "left_limit": 2.8512000000000004e-05,
+        "right_limit": 2.8512e-05,
+        "relative_residual": 1.1883178272366726e-16
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 320.0,
+        "left_limit": 3.0233e-05,
+        "right_limit": 3.0233e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 330.0,
+        "left_limit": 3.1993000000000004e-05,
+        "right_limit": 3.1993000000000004e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 340.0,
+        "left_limit": 3.379200000000001e-05,
+        "right_limit": 3.3792000000000004e-05,
+        "relative_residual": 2.0052863334618851e-16
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 360.0,
+        "left_limit": 3.7502999999999997e-05,
+        "right_limit": 3.7502999999999997e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 380.0,
+        "left_limit": 4.1362e-05,
+        "right_limit": 4.1362e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 400.0,
+        "left_limit": 4.5366000000000006e-05,
+        "right_limit": 4.5366000000000006e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 450.0,
+        "left_limit": 5.5989e-05,
+        "right_limit": 5.5989e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 500.0,
+        "left_limit": 6.7457e-05,
+        "right_limit": 6.7457e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 600.0,
+        "left_limit": 9.279600000000001e-05,
+        "right_limit": 9.279600000000001e-05,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 800.0,
+        "left_limit": 0.00015243,
+        "right_limit": 0.00015243,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 1000.0,
+        "left_limit": 0.00022312,
+        "right_limit": 0.00022312,
+        "relative_residual": 0.0
+      },
+      {
+        "pair": "O2_H2O",
+        "T_k": 1500.0,
+        "left_limit": 0.00044382000000000004,
+        "right_limit": 0.00044382000000000004,
+        "relative_residual": 0.0
+      }
+    ],
+    "ABC_states": [
+      {
+        "T_k": 298.15,
+        "relative_formula_residual": 0.0,
+        "relative_derivative_residual": 0.0
+      },
+      {
+        "T_k": 300.0,
+        "relative_formula_residual": 0.0,
+        "relative_derivative_residual": 0.0
+      },
+      {
+        "T_k": 600.0,
+        "relative_formula_residual": 0.0,
+        "relative_derivative_residual": 1.2268745378313992e-16
+      },
+      {
+        "T_k": 1000.0,
+        "relative_formula_residual": 0.0,
+        "relative_derivative_residual": 1.7125445125014915e-16
+      },
+      {
+        "T_k": 1173.15,
+        "relative_formula_residual": 1.1757489249297752e-16,
+        "relative_derivative_residual": 0.0
+      },
+      {
+        "T_k": 1223.15,
+        "relative_formula_residual": 0.0,
+        "relative_derivative_residual": 0.0
+      }
+    ],
+    "transport_states": [
+      {
+        "beta": 0.0,
+        "maximum_pair_coefficient_relative": 3.443178004929542e-16,
+        "maximum_molecular_flux_relative": 1.0223418330988795e-13,
+        "molar_sum_relative": 2.733576986640209e-16,
+        "minimum_pair_entropy_w_k": 0.0,
+        "minimum_pair_D_m2_s": 1.230016203114705e-06,
+        "complex_molecular_derivative_retained": true,
+        "maximum_complex_molecular_derivative": 8.840922585197802e-10,
+        "darcy_relative_at_equal_nominal_pressure": 5.149484768421125e-11,
+        "phase_storage_heat_changed": false
+      },
+      {
+        "beta": 1.0,
+        "maximum_pair_coefficient_relative": 3.4614005931755685e-16,
+        "maximum_molecular_flux_relative": 1.0273600271629542e-13,
+        "molar_sum_relative": 3.434720953801852e-16,
+        "minimum_pair_entropy_w_k": 0.0,
+        "minimum_pair_D_m2_s": 1.2235407668853672e-06,
+        "complex_molecular_derivative_retained": true,
+        "maximum_complex_molecular_derivative": 8.691495621298637e-10,
+        "darcy_relative_at_equal_nominal_pressure": 5.1839689214401363e-11,
+        "phase_storage_heat_changed": false
+      }
+    ],
+    "checks": {
+      "maximum_node_relative": 1.6237572074270107e-16,
+      "maximum_table_derivative_relative": 3.5362820997522357e-16,
+      "maximum_continuity_relative": 2.0052863334618851e-16,
+      "maximum_ABC_formula_relative": 1.1757489249297752e-16,
+      "maximum_ABC_derivative_relative": 1.7125445125014915e-16,
+      "maximum_pair_coefficient_relative": 3.4614005931755685e-16,
+      "maximum_flux_relative": 1.0273600271629542e-13,
+      "maximum_molar_sum_relative": 3.434720953801852e-16,
+      "numerical_identity_limit": 0.001
+    },
+    "passed": true,
+    "elapsed_s": 0.014894749969244003,
+    "new_integrations": 0,
+    "new_fits": 0,
+    "new_UQ": 0,
+    "software_tests_added_or_run": false,
+    "limits": "Implementation identities only; sourceDref disagreement, arbitrary composition, pressure scaling, interpolation, extrapolation and target accuracy stay distinct."
+  },
+  "static_review": {
+    "recorded_utc": "2026-10-01T01:05:50.732128+00:00",
+    "passed": true,
+    "reviews": [
+      {
+        "reviewer": "p01_ledger",
+        "scope": "Analytic design and actual finite-gas coupling path",
+        "passed": true,
+        "findings": [
+          "Use actual reciprocal-log faceT and arithmetic face pressure, never storage pressure substitute.",
+          "Allbeta including0 must use new positive sourcepair coefficients.",
+          "Onephi/tau, shared energy and pair entropy, no heat/state changes.",
+          "Piecewise loglog positive continuous, internal right derivative only, endpoint extrapolation assumed."
+        ]
+      },
+      {
+        "reviewer": "p02_scope_review",
+        "scope": "Actual two-file code diff and root domains/current case semantics",
+        "passed": true,
+        "findings": [
+          "No blocking code or domain-statistic issue.",
+          "Legacy notes about common4gasD/all6unitfactors/beta0previous arithmetic corrected as metadata only."
+        ]
+      },
+      {
+        "reviewer": "p06_inverse",
+        "scope": "Independent standard-library saved static data arithmetic, not model execution",
+        "passed": true,
+        "source_comparison_rows": 12,
+        "node_rows": 52,
+        "table_derivative_rows": 58,
+        "continuity_rows": 48,
+        "ABC_rows": 6,
+        "beta_states": 2,
+        "source_DAT_values_equal": true,
+        "saved_residuals_and_maxima_consistent": true,
+        "Dref_vs_ABC_difference_retained": true,
+        "root_snapshot_equal": true,
+        "old343_parameter_values_preserved": true,
+        "first_audit_widthshape_failure_preserved": true,
+        "current_parameters": 355,
+        "new_model_calls": 0
+      }
+    ],
+    "no_new_tests_or_SHA": true,
+    "does_not_prejudge_dynamic_acceptance": true
+  },
+  "dynamic_acceptance": {
+    "schema": "full_cycle_p24_acceptance_v1",
+    "recorded_utc": "2026-10-01T01:12:23.650951+00:00",
+    "cases": {
+      "nominal": {
+        "path": "/Users/wanggaoying/Research/brickmodel-github/runs/full-cycle/p24-source-diffusion/nominal.json",
+        "physical_consistency_passed": true,
+        "endpoints": {
+          "drying_remaining_fraction": 0.0013581974424644394,
+          "cooling_maximum_temperature_difference_k": 0.00404733524663925,
+          "passed": false
+        },
+        "elapsed_s": 158.8416296672076,
+        "domain_coverage": {
+          "temperature_k": {
+            "minimum": 298.15,
+            "maximum": 1223.1499959561593
+          },
+          "porosity": {
+            "minimum": 0.1921900317366727,
+            "maximum": 0.49518897380950644
+          },
+          "total_pore_volume_fraction": {
+            "minimum": 0.41718653470526373,
+            "maximum": 0.49518916417453473
+          },
+          "thickness_shrinkage": {
+            "minimum": -0.009257632691821227,
+            "maximum": 0.0066982322481442536
+          },
+          "reversible_thermal_strain": {
+            "minimum": 0.0,
+            "maximum": 0.010496748278173942
+          },
+          "permanent_sintering_strain": {
+            "minimum": -0.006799416063211584,
+            "maximum": 5.767021836044307e-22
+          },
+          "matrix_phase_eigenstrain": {
+            "minimum": 0.0,
+            "maximum": 0.0005368391751038954
+          },
+          "effective_axial_stress_pa": {
+            "minimum": -101694.91525423726,
+            "maximum": -73952.31034132933
+          },
+          "effective_axial_sintering_viscosity_pa_s": {
+            "minimum": 130319671744.26826,
+            "maximum": 2.014409637983018e+28
+          },
+          "calcite_inventory_mol": {
+            "minimum": -3.1017516232324536e-13,
+            "maximum": 0.01405029029773127
+          },
+          "carbonate_lime_fraction": {
+            "minimum": 0.0,
+            "maximum": 1.0000000000220761
+          },
+          "liquid_disordered_fraction": {
+            "minimum": 8.995761862850633e-33,
+            "maximum": 0.4999662253032419
+          },
+          "calcite_above_source_maximum_moles_per_cell": 4.1629652422694976e-21,
+          "sampled_nodes": 1351,
+          "cells": 12,
+          "source_connectivity": "assumed continuum connectivity; positive pore volume does not prove connected pores"
+        },
+        "caloric_source_domains": {
+          "O2": {
+            "source_temperature_range_k": [
+              298.15,
+              2500.0
+            ],
+            "sampled_temperature_range_k": [
+              298.15,
+              1223.1499959561593
+            ],
+            "cell_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "outside_source_status": "assumed polynomial continuation; source accuracy not granted",
+            "coverage_note": "Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes."
+          },
+          "N2": {
+            "source_temperature_range_k": [
+              298.15,
+              2500.0
+            ],
+            "sampled_temperature_range_k": [
+              298.15,
+              1223.1499959561593
+            ],
+            "cell_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "outside_source_status": "assumed polynomial continuation; source accuracy not granted",
+            "coverage_note": "Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes."
+          },
+          "H2O": {
+            "source_temperature_range_k": [
+              298.15,
+              2500
+            ],
+            "sampled_temperature_range_k": [
+              298.15,
+              1223.1499959561593
+            ],
+            "cell_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "outside_source_status": "assumed polynomial continuation; source accuracy not granted",
+            "coverage_note": "Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes."
+          },
+          "CO2": {
+            "source_temperature_range_k": [
+              298.15,
+              2200.0
+            ],
+            "sampled_temperature_range_k": [
+              298.15,
+              1223.1499959561593
+            ],
+            "cell_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "outside_source_status": "assumed polynomial continuation; source accuracy not granted",
+            "coverage_note": "Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes."
+          },
+          "calcite": {
+            "source_temperature_range_k": [
+              298.15,
+              1200.0
+            ],
+            "sampled_temperature_range_k": [
+              298.15,
+              1223.1499959561593
+            ],
+            "cell_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 936,
+            "outside_source_status": "assumed polynomial continuation; source accuracy not granted",
+            "coverage_note": "Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes."
+          },
+          "lime": {
+            "source_temperature_range_k": [
+              298.15,
+              1800.0
+            ],
+            "sampled_temperature_range_k": [
+              298.15,
+              1223.1499959561593
+            ],
+            "cell_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "outside_source_status": "assumed polynomial continuation; source accuracy not granted",
+            "coverage_note": "Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes."
+          }
+        },
+        "viscosity_source_domains": {
+          "O2": {
+            "source_temperature_range_k": [
+              120.0,
+              1700.0
+            ],
+            "domain_kind": "selected conservative subset within published dilute-gas data span; not a uniform accuracy boundary",
+            "sampled_face_temperature_range_k": [
+              298.15,
+              1223.1499979780797
+            ],
+            "face_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "source_law_weight": 1.0,
+            "outside_source_status": "assumed mathematical continuation, no clipping or silent source qualification",
+            "coverage_note": "Sampled reciprocal-log Darcy face temperatures, including reservoir face and species with small fractions; no statement about every solver evaluation or finite-density/pore validity."
+          },
+          "N2": {
+            "source_temperature_range_k": [
+              120.0,
+              1700.0
+            ],
+            "domain_kind": "selected conservative subset within published dilute-gas data span; not a uniform accuracy boundary",
+            "sampled_face_temperature_range_k": [
+              298.15,
+              1223.1499979780797
+            ],
+            "face_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "source_law_weight": 1.0,
+            "outside_source_status": "assumed mathematical continuation, no clipping or silent source qualification",
+            "coverage_note": "Sampled reciprocal-log Darcy face temperatures, including reservoir face and species with small fractions; no statement about every solver evaluation or finite-density/pore validity."
+          },
+          "H2O": {
+            "source_temperature_range_k": [
+              273.16,
+              1173.15
+            ],
+            "domain_kind": "recommended dilute-limit temperature region; highT extrapolation explicitly assumed",
+            "sampled_face_temperature_range_k": [
+              298.15,
+              1223.1499979780797
+            ],
+            "face_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 1198,
+            "source_law_weight": 1.0,
+            "outside_source_status": "assumed mathematical continuation, no clipping or silent source qualification",
+            "coverage_note": "Sampled reciprocal-log Darcy face temperatures, including reservoir face and species with small fractions; no statement about every solver evaluation or finite-density/pore validity."
+          },
+          "CO2": {
+            "source_temperature_range_k": [
+              100,
+              2000
+            ],
+            "domain_kind": "admitted source zero-density correlation domain",
+            "sampled_face_temperature_range_k": [
+              298.15,
+              1223.1499979780797
+            ],
+            "face_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "source_law_weight": 1.0,
+            "outside_source_status": "assumed mathematical continuation, no clipping or silent source qualification",
+            "coverage_note": "Sampled reciprocal-log Darcy face temperatures, including reservoir face and species with small fractions; no statement about every solver evaluation or finite-density/pore validity."
+          }
+        },
+        "binary_diffusion_source_domains": {
+          "pairs": {
+            "N2_H2O": {
+              "source_temperature_range_k": [
+                190,
+                2000
+              ],
+              "composition": "water mole fraction tends0",
+              "definition": "low-density binary tracer limit normalized to101325Pa",
+              "source": "hellmann_harvey2020_binary_diffusion",
+              "sampled_face_temperature_range_k": [
+                298.15,
+                1223.1499979780797
+              ],
+              "face_time_samples": 16212,
+              "below_source_samples": 0,
+              "above_source_samples": 0,
+              "outside_source_status": "assumed"
+            },
+            "O2_H2O": {
+              "source_temperature_range_k": [
+                190,
+                2000
+              ],
+              "composition": "water mole fraction tends0",
+              "definition": "low-density binary tracer limit normalized to101325Pa",
+              "source": "hellmann_harvey2020_binary_diffusion",
+              "sampled_face_temperature_range_k": [
+                298.15,
+                1223.1499979780797
+              ],
+              "face_time_samples": 16212,
+              "below_source_samples": 0,
+              "above_source_samples": 0,
+              "outside_source_status": "assumed"
+            },
+            "H2O_CO2": {
+              "source_temperature_range_k": [
+                250,
+                2000
+              ],
+              "composition": "not specified in TN2279 row",
+              "definition": "dilute binary source correlation at101325Pa",
+              "source": "nist_tn2279_binary_diffusion",
+              "sampled_face_temperature_range_k": [
+                298.15,
+                1223.1499979780797
+              ],
+              "face_time_samples": 16212,
+              "below_source_samples": 0,
+              "above_source_samples": 0,
+              "outside_source_status": "assumed"
+            }
+          },
+          "sampled_face_pressure_range_pa": [
+            99999.57816239377,
+            100430.25076693256
+          ],
+          "sampled_internal_water_mole_fraction_range": [
+            0.010000000000000002,
+            0.33255117818979957
+          ],
+          "composition_extension_status": "assumed: apply dilute binary coefficient at full-host finite water fraction without new correction or fullMS claim",
+          "pressure_extension_status": "assumed low-density Psource/Pface scaling, not dense gas qualification",
+          "coverage_note": "Includes external reservoir face, strict source endpoints included. Saved nodes only; finitewater and pore applicability are not established by temperature coverage."
+        },
+        "observation_mapping": {
+          "observations": [
+            {
+              "kind": "tg",
+              "unit": "1",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "dsc",
+              "unit": "W/kg",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "dilatometry",
+              "unit": "1",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "kiln",
+              "unit": "K",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "absorption",
+              "unit": "kg/kg",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "strength",
+              "unit": "Pa",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "defects",
+              "unit": "1",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "liquid_water",
+              "unit": "kg/kg",
+              "time_s": 86400.0
+            },
+            {
+              "kind": "surface_temperature",
+              "unit": "K",
+              "time_s": 86400.0
+            }
+          ],
+          "values": [
+            0.8932756156710712,
+            -0.0036110404981506373,
+            -0.006671104359515105,
+            298.15,
+            0.25272749249720905,
+            4379662.510140864,
+            0.22490377018282673,
+            0.00020372564044017187,
+            383.1503216133757
+          ],
+          "all_finite": true,
+          "basis": "same new trajectory, not fresh synthetic fit or experimental calibration",
+          "additional_integrations": 0
+        }
+      },
+      "time": {
+        "path": "/Users/wanggaoying/Research/brickmodel-github/runs/full-cycle/p24-source-diffusion/time.json",
+        "physical_consistency_passed": true,
+        "endpoints": {
+          "drying_remaining_fraction": 0.0013581973914581983,
+          "cooling_maximum_temperature_difference_k": 0.004044041199790627,
+          "passed": false
+        },
+        "elapsed_s": 163.26522004115395,
+        "domain_coverage": {
+          "temperature_k": {
+            "minimum": 298.15,
+            "maximum": 1223.1499959563594
+          },
+          "porosity": {
+            "minimum": 0.1921900317366727,
+            "maximum": 0.49518897356024744
+          },
+          "total_pore_volume_fraction": {
+            "minimum": 0.41718653470526373,
+            "maximum": 0.4951891639252754
+          },
+          "thickness_shrinkage": {
+            "minimum": -0.009257632193482301,
+            "maximum": 0.006698229408808487
+          },
+          "reversible_thermal_strain": {
+            "minimum": 0.0,
+            "maximum": 0.010496748278175944
+          },
+          "permanent_sintering_strain": {
+            "minimum": -0.006799413385809728,
+            "maximum": 5.767021836044307e-22
+          },
+          "matrix_phase_eigenstrain": {
+            "minimum": 0.0,
+            "maximum": 0.0005368391751406111
+          },
+          "effective_axial_stress_pa": {
+            "minimum": -101694.91525423726,
+            "maximum": -73952.31036650113
+          },
+          "effective_axial_sintering_viscosity_pa_s": {
+            "minimum": 130319666869.60811,
+            "maximum": 2.0144091307617146e+28
+          },
+          "calcite_inventory_mol": {
+            "minimum": -9.164347805718245e-15,
+            "maximum": 0.01405029029773127
+          },
+          "carbonate_lime_fraction": {
+            "minimum": 0.0,
+            "maximum": 1.0000000000006521
+          },
+          "liquid_disordered_fraction": {
+            "minimum": 8.995761862850633e-33,
+            "maximum": 0.49996622533743584
+          },
+          "calcite_above_source_maximum_moles_per_cell": 8.480414857943998e-23,
+          "sampled_nodes": 1351,
+          "cells": 12,
+          "source_connectivity": "assumed continuum connectivity; positive pore volume does not prove connected pores"
+        },
+        "caloric_source_domains": {
+          "O2": {
+            "source_temperature_range_k": [
+              298.15,
+              2500.0
+            ],
+            "sampled_temperature_range_k": [
+              298.15,
+              1223.1499959563594
+            ],
+            "cell_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "outside_source_status": "assumed polynomial continuation; source accuracy not granted",
+            "coverage_note": "Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes."
+          },
+          "N2": {
+            "source_temperature_range_k": [
+              298.15,
+              2500.0
+            ],
+            "sampled_temperature_range_k": [
+              298.15,
+              1223.1499959563594
+            ],
+            "cell_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "outside_source_status": "assumed polynomial continuation; source accuracy not granted",
+            "coverage_note": "Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes."
+          },
+          "H2O": {
+            "source_temperature_range_k": [
+              298.15,
+              2500
+            ],
+            "sampled_temperature_range_k": [
+              298.15,
+              1223.1499959563594
+            ],
+            "cell_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "outside_source_status": "assumed polynomial continuation; source accuracy not granted",
+            "coverage_note": "Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes."
+          },
+          "CO2": {
+            "source_temperature_range_k": [
+              298.15,
+              2200.0
+            ],
+            "sampled_temperature_range_k": [
+              298.15,
+              1223.1499959563594
+            ],
+            "cell_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "outside_source_status": "assumed polynomial continuation; source accuracy not granted",
+            "coverage_note": "Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes."
+          },
+          "calcite": {
+            "source_temperature_range_k": [
+              298.15,
+              1200.0
+            ],
+            "sampled_temperature_range_k": [
+              298.15,
+              1223.1499959563594
+            ],
+            "cell_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 936,
+            "outside_source_status": "assumed polynomial continuation; source accuracy not granted",
+            "coverage_note": "Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes."
+          },
+          "lime": {
+            "source_temperature_range_k": [
+              298.15,
+              1800.0
+            ],
+            "sampled_temperature_range_k": [
+              298.15,
+              1223.1499959563594
+            ],
+            "cell_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "outside_source_status": "assumed polynomial continuation; source accuracy not granted",
+            "coverage_note": "Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes."
+          }
+        },
+        "viscosity_source_domains": {
+          "O2": {
+            "source_temperature_range_k": [
+              120.0,
+              1700.0
+            ],
+            "domain_kind": "selected conservative subset within published dilute-gas data span; not a uniform accuracy boundary",
+            "sampled_face_temperature_range_k": [
+              298.15,
+              1223.1499979781795
+            ],
+            "face_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "source_law_weight": 1.0,
+            "outside_source_status": "assumed mathematical continuation, no clipping or silent source qualification",
+            "coverage_note": "Sampled reciprocal-log Darcy face temperatures, including reservoir face and species with small fractions; no statement about every solver evaluation or finite-density/pore validity."
+          },
+          "N2": {
+            "source_temperature_range_k": [
+              120.0,
+              1700.0
+            ],
+            "domain_kind": "selected conservative subset within published dilute-gas data span; not a uniform accuracy boundary",
+            "sampled_face_temperature_range_k": [
+              298.15,
+              1223.1499979781795
+            ],
+            "face_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "source_law_weight": 1.0,
+            "outside_source_status": "assumed mathematical continuation, no clipping or silent source qualification",
+            "coverage_note": "Sampled reciprocal-log Darcy face temperatures, including reservoir face and species with small fractions; no statement about every solver evaluation or finite-density/pore validity."
+          },
+          "H2O": {
+            "source_temperature_range_k": [
+              273.16,
+              1173.15
+            ],
+            "domain_kind": "recommended dilute-limit temperature region; highT extrapolation explicitly assumed",
+            "sampled_face_temperature_range_k": [
+              298.15,
+              1223.1499979781795
+            ],
+            "face_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 1198,
+            "source_law_weight": 1.0,
+            "outside_source_status": "assumed mathematical continuation, no clipping or silent source qualification",
+            "coverage_note": "Sampled reciprocal-log Darcy face temperatures, including reservoir face and species with small fractions; no statement about every solver evaluation or finite-density/pore validity."
+          },
+          "CO2": {
+            "source_temperature_range_k": [
+              100,
+              2000
+            ],
+            "domain_kind": "admitted source zero-density correlation domain",
+            "sampled_face_temperature_range_k": [
+              298.15,
+              1223.1499979781795
+            ],
+            "face_time_samples": 16212,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "source_law_weight": 1.0,
+            "outside_source_status": "assumed mathematical continuation, no clipping or silent source qualification",
+            "coverage_note": "Sampled reciprocal-log Darcy face temperatures, including reservoir face and species with small fractions; no statement about every solver evaluation or finite-density/pore validity."
+          }
+        },
+        "binary_diffusion_source_domains": {
+          "pairs": {
+            "N2_H2O": {
+              "source_temperature_range_k": [
+                190,
+                2000
+              ],
+              "composition": "water mole fraction tends0",
+              "definition": "low-density binary tracer limit normalized to101325Pa",
+              "source": "hellmann_harvey2020_binary_diffusion",
+              "sampled_face_temperature_range_k": [
+                298.15,
+                1223.1499979781795
+              ],
+              "face_time_samples": 16212,
+              "below_source_samples": 0,
+              "above_source_samples": 0,
+              "outside_source_status": "assumed"
+            },
+            "O2_H2O": {
+              "source_temperature_range_k": [
+                190,
+                2000
+              ],
+              "composition": "water mole fraction tends0",
+              "definition": "low-density binary tracer limit normalized to101325Pa",
+              "source": "hellmann_harvey2020_binary_diffusion",
+              "sampled_face_temperature_range_k": [
+                298.15,
+                1223.1499979781795
+              ],
+              "face_time_samples": 16212,
+              "below_source_samples": 0,
+              "above_source_samples": 0,
+              "outside_source_status": "assumed"
+            },
+            "H2O_CO2": {
+              "source_temperature_range_k": [
+                250,
+                2000
+              ],
+              "composition": "not specified in TN2279 row",
+              "definition": "dilute binary source correlation at101325Pa",
+              "source": "nist_tn2279_binary_diffusion",
+              "sampled_face_temperature_range_k": [
+                298.15,
+                1223.1499979781795
+              ],
+              "face_time_samples": 16212,
+              "below_source_samples": 0,
+              "above_source_samples": 0,
+              "outside_source_status": "assumed"
+            }
+          },
+          "sampled_face_pressure_range_pa": [
+            99999.57817135885,
+            100430.2499675414
+          ],
+          "sampled_internal_water_mole_fraction_range": [
+            0.010000000000000002,
+            0.33255103702477323
+          ],
+          "composition_extension_status": "assumed: apply dilute binary coefficient at full-host finite water fraction without new correction or fullMS claim",
+          "pressure_extension_status": "assumed low-density Psource/Pface scaling, not dense gas qualification",
+          "coverage_note": "Includes external reservoir face, strict source endpoints included. Saved nodes only; finitewater and pore applicability are not established by temperature coverage."
+        },
+        "observation_mapping": {
+          "observations": [
+            {
+              "kind": "tg",
+              "unit": "1",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "dsc",
+              "unit": "W/kg",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "dilatometry",
+              "unit": "1",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "kiln",
+              "unit": "K",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "absorption",
+              "unit": "kg/kg",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "strength",
+              "unit": "Pa",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "defects",
+              "unit": "1",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "liquid_water",
+              "unit": "kg/kg",
+              "time_s": 86400.0
+            },
+            {
+              "kind": "surface_temperature",
+              "unit": "K",
+              "time_s": 86400.0
+            }
+          ],
+          "values": [
+            0.8932756043219133,
+            -0.003608097606907937,
+            -0.006671101259852911,
+            298.15,
+            0.2527275014022382,
+            4379662.303137761,
+            0.22490586611670774,
+            0.00020372563279095392,
+            383.15032161709007
+          ],
+          "all_finite": true,
+          "basis": "same new trajectory, not fresh synthetic fit or experimental calibration",
+          "additional_integrations": 0
+        }
+      },
+      "grid": {
+        "path": "/Users/wanggaoying/Research/brickmodel-github/runs/full-cycle/p24-source-diffusion/grid.json",
+        "physical_consistency_passed": true,
+        "endpoints": {
+          "drying_remaining_fraction": 0.001358285947916716,
+          "cooling_maximum_temperature_difference_k": 0.004023787463722783,
+          "passed": false
+        },
+        "elapsed_s": 453.6503210000228,
+        "domain_coverage": {
+          "temperature_k": {
+            "minimum": 298.15,
+            "maximum": 1223.1499965553796
+          },
+          "porosity": {
+            "minimum": 0.1921900317366727,
+            "maximum": 0.49518897156118147
+          },
+          "total_pore_volume_fraction": {
+            "minimum": 0.41718653470526373,
+            "maximum": 0.49518916192627677
+          },
+          "thickness_shrinkage": {
+            "minimum": -0.009257628196926548,
+            "maximum": 0.006700709436664232
+          },
+          "reversible_thermal_strain": {
+            "minimum": 0.0,
+            "maximum": 0.010496748284166146
+          },
+          "permanent_sintering_strain": {
+            "minimum": -0.006801879824731386,
+            "maximum": 2.2948661900681226e-20
+          },
+          "matrix_phase_eigenstrain": {
+            "minimum": 0.0,
+            "maximum": 0.0005368392424328834
+          },
+          "effective_axial_stress_pa": {
+            "minimum": -101694.91525423726,
+            "maximum": -73952.3105685418
+          },
+          "effective_axial_sintering_viscosity_pa_s": {
+            "minimum": 130316479076.99065,
+            "maximum": 2.014542621545341e+28
+          },
+          "calcite_inventory_mol": {
+            "minimum": -2.08960999398143e-14,
+            "maximum": 0.007025145148865635
+          },
+          "carbonate_lime_fraction": {
+            "minimum": 0.0,
+            "maximum": 1.0000000000029745
+          },
+          "liquid_disordered_fraction": {
+            "minimum": 8.995761862850633e-33,
+            "maximum": 0.49996628800771953
+          },
+          "calcite_above_source_maximum_moles_per_cell": 4.406024453697078e-21,
+          "sampled_nodes": 1351,
+          "cells": 24,
+          "source_connectivity": "assumed continuum connectivity; positive pore volume does not prove connected pores"
+        },
+        "caloric_source_domains": {
+          "O2": {
+            "source_temperature_range_k": [
+              298.15,
+              2500.0
+            ],
+            "sampled_temperature_range_k": [
+              298.15,
+              1223.1499965553796
+            ],
+            "cell_time_samples": 32424,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "outside_source_status": "assumed polynomial continuation; source accuracy not granted",
+            "coverage_note": "Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes."
+          },
+          "N2": {
+            "source_temperature_range_k": [
+              298.15,
+              2500.0
+            ],
+            "sampled_temperature_range_k": [
+              298.15,
+              1223.1499965553796
+            ],
+            "cell_time_samples": 32424,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "outside_source_status": "assumed polynomial continuation; source accuracy not granted",
+            "coverage_note": "Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes."
+          },
+          "H2O": {
+            "source_temperature_range_k": [
+              298.15,
+              2500
+            ],
+            "sampled_temperature_range_k": [
+              298.15,
+              1223.1499965553796
+            ],
+            "cell_time_samples": 32424,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "outside_source_status": "assumed polynomial continuation; source accuracy not granted",
+            "coverage_note": "Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes."
+          },
+          "CO2": {
+            "source_temperature_range_k": [
+              298.15,
+              2200.0
+            ],
+            "sampled_temperature_range_k": [
+              298.15,
+              1223.1499965553796
+            ],
+            "cell_time_samples": 32424,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "outside_source_status": "assumed polynomial continuation; source accuracy not granted",
+            "coverage_note": "Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes."
+          },
+          "calcite": {
+            "source_temperature_range_k": [
+              298.15,
+              1200.0
+            ],
+            "sampled_temperature_range_k": [
+              298.15,
+              1223.1499965553796
+            ],
+            "cell_time_samples": 32424,
+            "below_source_samples": 0,
+            "above_source_samples": 1875,
+            "outside_source_status": "assumed polynomial continuation; source accuracy not granted",
+            "coverage_note": "Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes."
+          },
+          "lime": {
+            "source_temperature_range_k": [
+              298.15,
+              1800.0
+            ],
+            "sampled_temperature_range_k": [
+              298.15,
+              1223.1499965553796
+            ],
+            "cell_time_samples": 32424,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "outside_source_status": "assumed polynomial continuation; source accuracy not granted",
+            "coverage_note": "Counts sampled constitutive evaluations, including depleted species; no guarantee between output nodes."
+          }
+        },
+        "viscosity_source_domains": {
+          "O2": {
+            "source_temperature_range_k": [
+              120.0,
+              1700.0
+            ],
+            "domain_kind": "selected conservative subset within published dilute-gas data span; not a uniform accuracy boundary",
+            "sampled_face_temperature_range_k": [
+              298.15,
+              1223.14999827769
+            ],
+            "face_time_samples": 32424,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "source_law_weight": 1.0,
+            "outside_source_status": "assumed mathematical continuation, no clipping or silent source qualification",
+            "coverage_note": "Sampled reciprocal-log Darcy face temperatures, including reservoir face and species with small fractions; no statement about every solver evaluation or finite-density/pore validity."
+          },
+          "N2": {
+            "source_temperature_range_k": [
+              120.0,
+              1700.0
+            ],
+            "domain_kind": "selected conservative subset within published dilute-gas data span; not a uniform accuracy boundary",
+            "sampled_face_temperature_range_k": [
+              298.15,
+              1223.14999827769
+            ],
+            "face_time_samples": 32424,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "source_law_weight": 1.0,
+            "outside_source_status": "assumed mathematical continuation, no clipping or silent source qualification",
+            "coverage_note": "Sampled reciprocal-log Darcy face temperatures, including reservoir face and species with small fractions; no statement about every solver evaluation or finite-density/pore validity."
+          },
+          "H2O": {
+            "source_temperature_range_k": [
+              273.16,
+              1173.15
+            ],
+            "domain_kind": "recommended dilute-limit temperature region; highT extrapolation explicitly assumed",
+            "sampled_face_temperature_range_k": [
+              298.15,
+              1223.14999827769
+            ],
+            "face_time_samples": 32424,
+            "below_source_samples": 0,
+            "above_source_samples": 2398,
+            "source_law_weight": 1.0,
+            "outside_source_status": "assumed mathematical continuation, no clipping or silent source qualification",
+            "coverage_note": "Sampled reciprocal-log Darcy face temperatures, including reservoir face and species with small fractions; no statement about every solver evaluation or finite-density/pore validity."
+          },
+          "CO2": {
+            "source_temperature_range_k": [
+              100,
+              2000
+            ],
+            "domain_kind": "admitted source zero-density correlation domain",
+            "sampled_face_temperature_range_k": [
+              298.15,
+              1223.14999827769
+            ],
+            "face_time_samples": 32424,
+            "below_source_samples": 0,
+            "above_source_samples": 0,
+            "source_law_weight": 1.0,
+            "outside_source_status": "assumed mathematical continuation, no clipping or silent source qualification",
+            "coverage_note": "Sampled reciprocal-log Darcy face temperatures, including reservoir face and species with small fractions; no statement about every solver evaluation or finite-density/pore validity."
+          }
+        },
+        "binary_diffusion_source_domains": {
+          "pairs": {
+            "N2_H2O": {
+              "source_temperature_range_k": [
+                190,
+                2000
+              ],
+              "composition": "water mole fraction tends0",
+              "definition": "low-density binary tracer limit normalized to101325Pa",
+              "source": "hellmann_harvey2020_binary_diffusion",
+              "sampled_face_temperature_range_k": [
+                298.15,
+                1223.14999827769
+              ],
+              "face_time_samples": 32424,
+              "below_source_samples": 0,
+              "above_source_samples": 0,
+              "outside_source_status": "assumed"
+            },
+            "O2_H2O": {
+              "source_temperature_range_k": [
+                190,
+                2000
+              ],
+              "composition": "water mole fraction tends0",
+              "definition": "low-density binary tracer limit normalized to101325Pa",
+              "source": "hellmann_harvey2020_binary_diffusion",
+              "sampled_face_temperature_range_k": [
+                298.15,
+                1223.14999827769
+              ],
+              "face_time_samples": 32424,
+              "below_source_samples": 0,
+              "above_source_samples": 0,
+              "outside_source_status": "assumed"
+            },
+            "H2O_CO2": {
+              "source_temperature_range_k": [
+                250,
+                2000
+              ],
+              "composition": "not specified in TN2279 row",
+              "definition": "dilute binary source correlation at101325Pa",
+              "source": "nist_tn2279_binary_diffusion",
+              "sampled_face_temperature_range_k": [
+                298.15,
+                1223.14999827769
+              ],
+              "face_time_samples": 32424,
+              "below_source_samples": 0,
+              "above_source_samples": 0,
+              "outside_source_status": "assumed"
+            }
+          },
+          "sampled_face_pressure_range_pa": [
+            99999.57567055855,
+            100430.90912129749
+          ],
+          "sampled_internal_water_mole_fraction_range": [
+            0.010000000000000002,
+            0.3347020260785947
+          ],
+          "composition_extension_status": "assumed: apply dilute binary coefficient at full-host finite water fraction without new correction or fullMS claim",
+          "pressure_extension_status": "assumed low-density Psource/Pface scaling, not dense gas qualification",
+          "coverage_note": "Includes external reservoir face, strict source endpoints included. Saved nodes only; finitewater and pore applicability are not established by temperature coverage."
+        },
+        "observation_mapping": {
+          "observations": [
+            {
+              "kind": "tg",
+              "unit": "1",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "dsc",
+              "unit": "W/kg",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "dilatometry",
+              "unit": "1",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "kiln",
+              "unit": "K",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "absorption",
+              "unit": "kg/kg",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "strength",
+              "unit": "Pa",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "defects",
+              "unit": "1",
+              "time_s": 162000.0
+            },
+            {
+              "kind": "liquid_water",
+              "unit": "kg/kg",
+              "time_s": 86400.0
+            },
+            {
+              "kind": "surface_temperature",
+              "unit": "K",
+              "time_s": 86400.0
+            }
+          ],
+          "values": [
+            0.8932756093509436,
+            -0.0035899090422368265,
+            -0.006671205888344777,
+            298.15,
+            0.2527274433048334,
+            4379663.571390593,
+            0.22464501378210877,
+            0.00020373889791786565,
+            383.1503147819016
+          ],
+          "all_finite": true,
+          "basis": "same new trajectory, not fresh synthetic fit or experimental calibration",
+          "additional_integrations": 0
+        }
+      }
+    },
+    "mass_element_energy_budget_count": 81,
+    "maximum_mass_element_energy_relative_residual": 0.0007627287981326598,
+    "gas_species_budget_count": 108,
+    "maximum_gas_budget_relative_residual": 0.0006777685528348598,
+    "gas_budget_passed": true,
+    "relative_differences": {
+      "time": {
+        "porosity": 1.9410114243208692e-08,
+        "residual_carbon_kg": 2.5282814747644146e-14,
+        "shrinkage": 4.646402388187003e-07,
+        "peak_temperature_difference_k": 1.0613848894499482e-05,
+        "peak_overpressure_pa": 1.8560015994785923e-06
+      },
+      "grid": {
+        "porosity": 9.951047874118158e-08,
+        "residual_carbon_kg": 1.4392501080827534e-14,
+        "shrinkage": 1.5218962115113952e-05,
+        "peak_temperature_difference_k": 0.0013118594989272897,
+        "peak_overpressure_pa": 0.003505111392333502
+      }
+    },
+    "convergence_denominator": "max(abs(refined result),root acceptance.floor.metric)",
+    "balance_limit": 0.001,
+    "convergence_limit": 0.02,
+    "physical_numerical_passed": true,
+    "engineering_passed": false,
+    "execution": {
+      "started_utc": "2026-10-01T01:01:29.080856+00:00",
+      "recorded_utc": "2026-10-01T01:09:03.810335+00:00",
+      "jobs": [
+        {
+          "label": "nominal",
+          "return_code": 0,
+          "status": "finished",
+          "elapsed_s": 159.96324937487952
+        },
+        {
+          "label": "time",
+          "return_code": 0,
+          "status": "finished",
+          "elapsed_s": 164.33750887517817
+        },
+        {
+          "label": "grid",
+          "return_code": 0,
+          "status": "finished",
+          "elapsed_s": 454.73457049997523
+        }
+      ],
+      "wall_s": 454.73976675001904,
+      "budget_per_job_s": 900,
+      "budget_total_s": 900,
+      "new_full_cycles": 3,
+      "new_UQ": 0,
+      "new_fits": 0,
+      "raw_fields_saved": false
+    },
+    "new_full_cycles": 3,
+    "same_problem_retry": "No full-cycle retries. P24constitutive audit first failed on scalarwidth input, repairedonce with saved evidence; no productionkernel repair or tolerance change.",
+    "raw_fields_saved": false
+  },
+  "independent_dynamic_review": {
+    "recorded_utc": "2026-10-01T01:19:44.423640+00:00",
+    "reviewer": "p06_inverse",
+    "method": "Independent standard-library readback, no model calls or writes.",
+    "passed": true,
+    "ordinary_count": 81,
+    "ordinary_max": 0.0007627287981326598,
+    "ordinary_max_at": "grid/cooling/elements",
+    "gas_count": 108,
+    "gas_max": 0.0006777685528348598,
+    "gas_max_at": "grid/cooling/O2",
+    "required_refinement_count": 8,
+    "required_refinement_max": 0.0013118594989272897,
+    "additional_pressure_count": 2,
+    "additional_pressure_max": 0.003505111392333502,
+    "refinement_floors": [
+      0.01,
+      1e-07,
+      0.001,
+      1,
+      100
+    ],
+    "negative_condensed_inventory_mol": [
+      -1.4487887865008919e-12,
+      -2.0016460402e-12,
+      -4.321413487467195e-12
+    ],
+    "inventory_note": "Within original solver inventory allowance, not necessarily machine-roundoff bound. Raw exact values in case reports.",
+    "minimum_carbonate_entropy_w_k": -7.862987660727976e-14,
+    "minimum_liquid_extensive_entropy_w_k": -2.0093236283163524e-71,
+    "clipped": false,
+    "finite_observation_values": 27,
+    "nodes_per_case": 1351,
+    "cells": [
+      12,
+      12,
+      24
+    ],
+    "water_pair_face_samples_per_case": [
+      16212,
+      16212,
+      32424
+    ],
+    "water_pair_outside_T_samples": 0,
+    "calcite_above_T_samples": [
+      936,
+      936,
+      1875
+    ],
+    "water_viscosity_above_T_samples": [
+      1198,
+      1198,
+      2398
+    ],
+    "physical_passes": 3,
+    "process_passes": 0,
+    "only_nonblocking_finding": "Unconditional legacy D_old_pair identity description, corrected separately after all dynamics; no numerical defect.",
+    "new_model_calls": 0
+  },
+  "CLI": {
+    "recorded_utc": "2026-10-01T01:02:55.277638+00:00",
+    "command": [
+      ".venv/bin/python",
+      "examples/run_full_cycle.py",
+      "--help"
+    ],
+    "return_code": 0,
+    "elapsed_s": 0.7296939590014517,
+    "scope": "Current CLI import/argument entry; Python actual forwards are concurrent nominal/time/grid. No new inverse optimization or synthetic-fit claim.",
+    "new_integrations": 0
+  },
+  "dimension_description_correction": {
+    "recorded_utc": "2026-10-01T01:19:44.423640+00:00",
+    "scope": "One dimension_check identity string only, corrected after P24 and P25 execution. All executable arithmetic unchanged.",
+    "before": "D_old_pair=f_pair*D_eff=m2/s; C_pair=area*D_new_pair*concentration/distance=mol/s",
+    "after": "D_old_pair(nonwater)=f_pair*D_eff; D_old_pair(water)=D_source(T)*(P_source/P_face)*phi_face/tau_face=m2/s; C_pair=area*D_new_pair*concentration/distance=mol/s",
+    "original_execution_snapshot_retained": true,
+    "original_reports_retained": true,
+    "new_model_calls": 0,
+    "verification": "Reversing the one string replacement reproduces exact pre-correction source text."
+  },
+  "case_signed_state_and_thermo": {
+    "nominal": {
+      "state_domain": {
+        "minimum_effective_heat_capacity_j_k_per_cell": 14.10498482785439,
+        "maximum_mechanical_equilibrium_residual_pa": 4.1900784708559513e-07,
+        "minimum_condensed_moles": -1.4487887865008919e-12,
+        "minimum_gas_moles": 5.206924808670654e-08,
+        "condensed_inventory_roundoff_bound_mol": 8.260412757867165e-15,
+        "condensed_inventory_solver_resolution_mol": 1.561108012022613e-07,
+        "condensed_inventory_acceptance_bound_mol": 1.5611080946267407e-07,
+        "inventory_values_clipped": false,
+        "minimum_temperature_k": 298.15,
+        "minimum_porosity": 0.1921900317366727,
+        "minimum_pressure_pa": 99999.57522834305
+      },
+      "thermodynamics": {
+        "minimum_sampled_entropy_production_w_k": 5.1475114213987e-09,
+        "minimum_face_entropy_production_w_k": 0.0,
+        "minimum_liquid_water_face_entropy_production_w_k": 0.0,
+        "minimum_water_phase_entropy_production_w_k": 3.0187821679210697e-22,
+        "evaporation_extent_is_signed_net_phase_transfer": true,
+        "water_binding_energy_counted_once": true,
+        "site_composition_derivatives_counted_once": true,
+        "carbonate_reaction_heat_counted_once": true,
+        "minimum_carbonate_entropy_production_w_k": -7.862987660727976e-14,
+        "reaction_heat_counted_once": true,
+        "maximum_entropy_balance_residual_j_k": 0.0031031020818517163,
+        "entropy_balance_relative": 8.105215170850826e-06,
+        "maximum_entropy_rate_identity_residual_w_k": 3.122502256758253e-17,
+        "elastic_storage": "F_el=K(D/V,C)*V0*epsilon^2/2; K=K0*((D/V)/(D0/V0))^m*exp(-g*C); C=N*v_matrix*(x-x_ref)/V0; epsilon=V/V0-1-beta(T)-B(n,x)-eta+e0; K0*(e0-m*e0^2/2)=prestress; S_el=K*V0*beta'(T)*epsilon at fixed x,n; U_el=F_el+T*S_el. F_V=K*epsilon+V0*K_V*epsilon^2/2; mu_el_i=V0*K_D*epsilon^2*v_dry_i/2-V0*K*epsilon*B_ni-V0*g*K*epsilon^2*C_ni/2; -F_eta/V0=K*epsilon drives sintering. Direct D partials hold C and B fixed; Bdot and Cdot retain carrier birth and phase relaxation in U/S and equilibrium; Kdot=K_V*Vdot+K_D*Ddot-g*K*Cdot.",
+        "thermal_eigenstrain": "beta(T)=alpha*(T-T_initial)+e_q*(n_q_initial*v_q/V0)*(x_beta(T)-x_beta(T_initial)); fixed-strain elastic heat capacity=K*V0*T*(epsilon*beta_second-beta_prime^2)",
+        "quartz_latent_heat_counted_once": true,
+        "liquid_latent_heat_counted_once": true,
+        "minimum_liquid_relaxation_entropy_production_w_k": -8.522997188630493e-72,
+        "minimum_liquid_relaxation_entropy_per_active_mole_w_mol_k": 2.9568337142701185e-69,
+        "liquid_relaxation_entropy_domain": "Nonnegative per-active-mole kinetic dissipation, with carrier inventory subject to the existing declared inventory error budget. Raw extensive entropy is retained, including signed values from near-zero carrier roundoff; no clipping or new tolerance.",
+        "liquid_fixed_state_heat_capacity_excludes_equilibrium_latent_peak": true,
+        "minimum_sintering_dissipation_coefficient_w_k_pa2": 2.0812418377928536e-36,
+        "structure_viscosity_adds_no_storage": true,
+        "minimum_elastic_bulk_tangent_pa_m3": 54096825151090.4,
+        "dry_fraction_modulus_exponent": 2.0,
+        "water_direct_elastic_composition_derivative_zero": true,
+        "phase_modulus_contrast": 4.0,
+        "liquid_heat_capacity_contrast_j_mol_k": 10.0,
+        "minimum_matrix_fixed_phase_molar_cp_j_mol_k": 230.0,
+        "matrix_phase_eigenstrain_amplitude": 0.02
+      }
+    },
+    "time": {
+      "state_domain": {
+        "minimum_effective_heat_capacity_j_k_per_cell": 14.104984661075706,
+        "maximum_mechanical_equilibrium_residual_pa": 4.159519448876381e-07,
+        "minimum_condensed_moles": -2.001646040184936e-12,
+        "minimum_gas_moles": 5.2069291950975204e-08,
+        "condensed_inventory_roundoff_bound_mol": 8.260412757867165e-15,
+        "condensed_inventory_solver_resolution_mol": 1.561108012022613e-07,
+        "condensed_inventory_acceptance_bound_mol": 1.5611080946267407e-07,
+        "inventory_values_clipped": false,
+        "minimum_temperature_k": 298.15,
+        "minimum_porosity": 0.1921900317366727,
+        "minimum_pressure_pa": 99999.5752373939
+      },
+      "thermodynamics": {
+        "minimum_sampled_entropy_production_w_k": 5.1471434368397855e-09,
+        "minimum_face_entropy_production_w_k": 0.0,
+        "minimum_liquid_water_face_entropy_production_w_k": 0.0,
+        "minimum_water_phase_entropy_production_w_k": 2.77132584948386e-23,
+        "evaporation_extent_is_signed_net_phase_transfer": true,
+        "water_binding_energy_counted_once": true,
+        "site_composition_derivatives_counted_once": true,
+        "carbonate_reaction_heat_counted_once": true,
+        "minimum_carbonate_entropy_production_w_k": -3.609121030098289e-15,
+        "reaction_heat_counted_once": true,
+        "maximum_entropy_balance_residual_j_k": 0.0014914113745305713,
+        "entropy_balance_relative": 3.895524471953969e-06,
+        "maximum_entropy_rate_identity_residual_w_k": 4.163336342344337e-17,
+        "elastic_storage": "F_el=K(D/V,C)*V0*epsilon^2/2; K=K0*((D/V)/(D0/V0))^m*exp(-g*C); C=N*v_matrix*(x-x_ref)/V0; epsilon=V/V0-1-beta(T)-B(n,x)-eta+e0; K0*(e0-m*e0^2/2)=prestress; S_el=K*V0*beta'(T)*epsilon at fixed x,n; U_el=F_el+T*S_el. F_V=K*epsilon+V0*K_V*epsilon^2/2; mu_el_i=V0*K_D*epsilon^2*v_dry_i/2-V0*K*epsilon*B_ni-V0*g*K*epsilon^2*C_ni/2; -F_eta/V0=K*epsilon drives sintering. Direct D partials hold C and B fixed; Bdot and Cdot retain carrier birth and phase relaxation in U/S and equilibrium; Kdot=K_V*Vdot+K_D*Ddot-g*K*Cdot.",
+        "thermal_eigenstrain": "beta(T)=alpha*(T-T_initial)+e_q*(n_q_initial*v_q/V0)*(x_beta(T)-x_beta(T_initial)); fixed-strain elastic heat capacity=K*V0*T*(epsilon*beta_second-beta_prime^2)",
+        "quartz_latent_heat_counted_once": true,
+        "liquid_latent_heat_counted_once": true,
+        "minimum_liquid_relaxation_entropy_production_w_k": -7.895854052095583e-72,
+        "minimum_liquid_relaxation_entropy_per_active_mole_w_mol_k": 2.9568337142701185e-69,
+        "liquid_relaxation_entropy_domain": "Nonnegative per-active-mole kinetic dissipation, with carrier inventory subject to the existing declared inventory error budget. Raw extensive entropy is retained, including signed values from near-zero carrier roundoff; no clipping or new tolerance.",
+        "liquid_fixed_state_heat_capacity_excludes_equilibrium_latent_peak": true,
+        "minimum_sintering_dissipation_coefficient_w_k_pa2": 2.0812423808271015e-36,
+        "structure_viscosity_adds_no_storage": true,
+        "minimum_elastic_bulk_tangent_pa_m3": 54096823632437.59,
+        "dry_fraction_modulus_exponent": 2.0,
+        "water_direct_elastic_composition_derivative_zero": true,
+        "phase_modulus_contrast": 4.0,
+        "liquid_heat_capacity_contrast_j_mol_k": 10.0,
+        "minimum_matrix_fixed_phase_molar_cp_j_mol_k": 230.0,
+        "matrix_phase_eigenstrain_amplitude": 0.02
+      }
+    },
+    "grid": {
+      "state_domain": {
+        "minimum_effective_heat_capacity_j_k_per_cell": 7.052492102264571,
+        "maximum_mechanical_equilibrium_residual_pa": 4.1768362279981375e-07,
+        "minimum_condensed_moles": -4.321413487467195e-12,
+        "minimum_gas_moles": 2.5840603562840065e-08,
+        "condensed_inventory_roundoff_bound_mol": 8.260412757867165e-15,
+        "condensed_inventory_solver_resolution_mol": 7.805540060113066e-08,
+        "condensed_inventory_acceptance_bound_mol": 7.805540886154341e-08,
+        "inventory_values_clipped": false,
+        "minimum_temperature_k": 298.15,
+        "minimum_porosity": 0.1921900317366727,
+        "minimum_pressure_pa": 99999.57493698673
+      },
+      "thermodynamics": {
+        "minimum_sampled_entropy_production_w_k": 5.147530766911315e-09,
+        "minimum_face_entropy_production_w_k": 0.0,
+        "minimum_liquid_water_face_entropy_production_w_k": 0.0,
+        "minimum_water_phase_entropy_production_w_k": 1.1889241615115059e-23,
+        "evaporation_extent_is_signed_net_phase_transfer": true,
+        "water_binding_energy_counted_once": true,
+        "site_composition_derivatives_counted_once": true,
+        "carbonate_reaction_heat_counted_once": true,
+        "minimum_carbonate_entropy_production_w_k": -5.297191718424337e-15,
+        "reaction_heat_counted_once": true,
+        "maximum_entropy_balance_residual_j_k": 0.0029953225291876606,
+        "entropy_balance_relative": 7.823698017267877e-06,
+        "maximum_entropy_rate_identity_residual_w_k": 4.163336342344337e-17,
+        "elastic_storage": "F_el=K(D/V,C)*V0*epsilon^2/2; K=K0*((D/V)/(D0/V0))^m*exp(-g*C); C=N*v_matrix*(x-x_ref)/V0; epsilon=V/V0-1-beta(T)-B(n,x)-eta+e0; K0*(e0-m*e0^2/2)=prestress; S_el=K*V0*beta'(T)*epsilon at fixed x,n; U_el=F_el+T*S_el. F_V=K*epsilon+V0*K_V*epsilon^2/2; mu_el_i=V0*K_D*epsilon^2*v_dry_i/2-V0*K*epsilon*B_ni-V0*g*K*epsilon^2*C_ni/2; -F_eta/V0=K*epsilon drives sintering. Direct D partials hold C and B fixed; Bdot and Cdot retain carrier birth and phase relaxation in U/S and equilibrium; Kdot=K_V*Vdot+K_D*Ddot-g*K*Cdot.",
+        "thermal_eigenstrain": "beta(T)=alpha*(T-T_initial)+e_q*(n_q_initial*v_q/V0)*(x_beta(T)-x_beta(T_initial)); fixed-strain elastic heat capacity=K*V0*T*(epsilon*beta_second-beta_prime^2)",
+        "quartz_latent_heat_counted_once": true,
+        "liquid_latent_heat_counted_once": true,
+        "minimum_liquid_relaxation_entropy_production_w_k": -2.0093236283163524e-71,
+        "minimum_liquid_relaxation_entropy_per_active_mole_w_mol_k": 3.251094912306369e-68,
+        "liquid_relaxation_entropy_domain": "Nonnegative per-active-mole kinetic dissipation, with carrier inventory subject to the existing declared inventory error budget. Raw extensive entropy is retained, including signed values from near-zero carrier roundoff; no clipping or new tolerance.",
+        "liquid_fixed_state_heat_capacity_excludes_equilibrium_latent_peak": true,
+        "minimum_sintering_dissipation_coefficient_w_k_pa2": 1.0405524018135246e-36,
+        "structure_viscosity_adds_no_storage": true,
+        "minimum_elastic_bulk_tangent_pa_m3": 108192171032824.75,
+        "dry_fraction_modulus_exponent": 2.0,
+        "water_direct_elastic_composition_derivative_zero": true,
+        "phase_modulus_contrast": 4.0,
+        "liquid_heat_capacity_contrast_j_mol_k": 10.0,
+        "minimum_matrix_fixed_phase_molar_cp_j_mol_k": 230.0,
+        "matrix_phase_eigenstrain_amplitude": 0.02
+      }
+    }
+  },
+  "failures_retained": [
+    "runs/full-cycle/p24-source-diffusion/failure-01.json",
+    "First constitutive audit scalar width argument repaired once; no production arithmetic fix or new full-cycle retry.",
+    "Original nominal drying remains failed."
+  ],
+  "source_scope": "N2/H2O and O2/H2O source tables are first-principles dilute-water limits; H2O/CO2 is government-reviewed correlation. Not direct target-material measurements.",
+  "extrapolation_scope": "Log-log interpolation and endpoint slopes, inverse-pressure scaling, finite-water application and pore closure remain assumed. No full Maxwell-Stefan or wall-accuracy claim.",
+  "historical_qualifications": "P21 UQ and P18 fit retain their earlier kernels; no new fit or UQ.",
+  "new_full_cycles": 3,
+  "new_fits": 0,
+  "new_UQ": 0,
+  "raw_fields_saved": false,
+  "whole_project_complete": false
+}

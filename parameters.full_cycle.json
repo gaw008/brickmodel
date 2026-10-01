@@ -1853,7 +1853,7 @@
       ],
       "source": "porous_transport",
       "status": "assumed",
-      "note": "Common free-gas reference mobility scale. Positive root pair factors distinguish O2/N2/H2O/CO2 pair exchanges; not measured binary diffusivity or empirical interval."
+      "note": "P24: common assumed scale for nonwaterO2_N2,O2_CO2,N2_CO2 only. Waterpair coefficients come from source laws and are independent of this scale. Earlier fourgas/UQ interpretation is historical."
     },
     "transport.diffusivity_exponent": {
       "value": 1.75,
@@ -2865,7 +2865,7 @@
       ],
       "source": "pair_diffusion",
       "status": "assumed",
-      "note": "Symmetric relative pair mobility for O2_N2. Illustrative contrast about the existing D_ref, not empirical binary diffusivity. Fixed in current paired UQ and three-parameter synthetic fit; range/correlations not covered or identified. All six factors equal one restore preceding common-D law."
+      "note": "P24: Active assumed factor for this nonwaterpair only. Three nonwater factors1 give common nonwaterD; water sourceD and pore resistance stay active."
     },
     "transport.pair_factor.O2_H2O": {
       "value": 1.25,
@@ -2876,7 +2876,7 @@
       ],
       "source": "pair_diffusion",
       "status": "assumed",
-      "note": "Symmetric relative pair mobility for O2_H2O. Illustrative contrast about the existing D_ref, not empirical binary diffusivity. Fixed in current paired UQ and three-parameter synthetic fit; range/correlations not covered or identified. All six factors equal one restore preceding common-D law."
+      "note": "P24: Historical inactive waterfactor, current sourcewaterD does not multiply this parameter."
     },
     "transport.pair_factor.O2_CO2": {
       "value": 0.8,
@@ -2887,7 +2887,7 @@
       ],
       "source": "pair_diffusion",
       "status": "assumed",
-      "note": "Symmetric relative pair mobility for O2_CO2. Illustrative contrast about the existing D_ref, not empirical binary diffusivity. Fixed in current paired UQ and three-parameter synthetic fit; range/correlations not covered or identified. All six factors equal one restore preceding common-D law."
+      "note": "P24: Active assumed factor for this nonwaterpair only. Three nonwater factors1 give common nonwaterD; water sourceD and pore resistance stay active."
     },
     "transport.pair_factor.N2_H2O": {
       "value": 1.3,
@@ -2898,7 +2898,7 @@
       ],
       "source": "pair_diffusion",
       "status": "assumed",
-      "note": "Symmetric relative pair mobility for N2_H2O. Illustrative contrast about the existing D_ref, not empirical binary diffusivity. Fixed in current paired UQ and three-parameter synthetic fit; range/correlations not covered or identified. All six factors equal one restore preceding common-D law."
+      "note": "P24: Historical inactive waterfactor, current sourcewaterD does not multiply this parameter."
     },
     "transport.pair_factor.N2_CO2": {
       "value": 0.85,
@@ -2909,7 +2909,7 @@
       ],
       "source": "pair_diffusion",
       "status": "assumed",
-      "note": "Symmetric relative pair mobility for N2_CO2. Illustrative contrast about the existing D_ref, not empirical binary diffusivity. Fixed in current paired UQ and three-parameter synthetic fit; range/correlations not covered or identified. All six factors equal one restore preceding common-D law."
+      "note": "P24: Active assumed factor for this nonwaterpair only. Three nonwater factors1 give common nonwaterD; water sourceD and pore resistance stay active."
     },
     "transport.pair_factor.H2O_CO2": {
       "value": 1.05,
@@ -2920,7 +2920,7 @@
       ],
       "source": "pair_diffusion",
       "status": "assumed",
-      "note": "Symmetric relative pair mobility for H2O_CO2. Illustrative contrast about the existing D_ref, not empirical binary diffusivity. Fixed in current paired UQ and three-parameter synthetic fit; range/correlations not covered or identified. All six factors equal one restore preceding common-D law."
+      "note": "P24: Historical inactive waterfactor, current sourcewaterD does not multiply this parameter."
     },
     "transport.viscosity_mixing_fraction": {
       "value": 1.0,
@@ -3125,7 +3125,7 @@
       ],
       "source": "policy",
       "status": "assumed",
-      "note": "Assumed pore-scale resistance for molar-frame symmetric gas-pair mobility. K_i=(phi_face/tau_face)*ell_face*sqrt(R*Theta/M_i); K_ij is the harmonic mean and D_pair_new=D_pair_old/(1+beta*D_pair_old/K_ij). beta absorbs an uncalibrated geometric/collision prefactor. ell derives from the existing evolving pore diameter, not mesh width; effective porosity/tortuosity factor occurs once per scale. No extra storage/heat or Darcy change. beta=0 restores preceding arithmetic. Not full Knudsen, Maxwell-Stefan, dusty-gas, non-equimolar wall friction or thermal transpiration; no measured coefficient or validated range, not identified by prior UQ/calibration."
+      "note": "Positive symmetric existing pore resistance amplitude. P24beta0 returns the current source-based pre-pore coefficients in actual pair exchanges; it no longer restores the earlier all-six common-D arithmetic. No fullKnudsen/dusty-gas or measuredwall qualification."
     },
     "validation.arlabosse.temperature": {
       "value": 368.15,
@@ -4116,6 +4116,219 @@
       "source": "hellmann_harvey2020_binary_diffusion",
       "status": "literature",
       "note": "Audit-only exact selected DAT values; paired to declared temperature array. Infinite dilution calculation; no absolute-D uncertainty assigned."
+    },
+    "transport.binary.water.temperature_knots": {
+      "value": [
+        190.0,
+        200.0,
+        210.0,
+        220.0,
+        230.0,
+        240.0,
+        250.0,
+        260.0,
+        270.0,
+        280.0,
+        290.0,
+        300.0,
+        310.0,
+        320.0,
+        330.0,
+        340.0,
+        360.0,
+        380.0,
+        400.0,
+        450.0,
+        500.0,
+        600.0,
+        800.0,
+        1000.0,
+        1500.0,
+        2000.0
+      ],
+      "unit": "K",
+      "range": [
+        190.0,
+        2000.0
+      ],
+      "source": "hellmann_harvey2020_binary_diffusion",
+      "status": "literature",
+      "note": "Complete26 direct S3 knots; source190–2000K. Log-log interpolation and end-segment extension are assumed, not the paper correlation."
+    },
+    "transport.binary.N2_H2O.source_values": {
+      "value": [
+        1.0337000000000001e-05,
+        1.148e-05,
+        1.2676000000000002e-05,
+        1.3923e-05,
+        1.5218000000000002e-05,
+        1.6561000000000003e-05,
+        1.7951e-05,
+        1.9386e-05,
+        2.0866000000000003e-05,
+        2.2389000000000002e-05,
+        2.3953e-05,
+        2.556e-05,
+        2.7207e-05,
+        2.8893999999999998e-05,
+        3.062e-05,
+        3.2384e-05,
+        3.6027e-05,
+        3.9816000000000006e-05,
+        4.3749000000000004e-05,
+        5.4186000000000006e-05,
+        6.5454e-05,
+        9.0348e-05,
+        0.00014892,
+        0.00021836000000000004,
+        0.00043532000000000005,
+        0.00070923
+      ],
+      "unit": "m2/s",
+      "range": [
+        1.0337000000000001e-05,
+        0.00070923
+      ],
+      "source": "hellmann_harvey2020_binary_diffusion",
+      "status": "literature",
+      "note": "S3 infinite-water-dilution free gas D at101325Pa, exact cm2/s to m2/s conversion; no absoluteD statistical band or target measurements."
+    },
+    "transport.binary.O2_H2O.source_values": {
+      "value": [
+        1.1173e-05,
+        1.2364e-05,
+        1.3605000000000001e-05,
+        1.4894e-05,
+        1.6231e-05,
+        1.7614e-05,
+        1.9043e-05,
+        2.0515e-05,
+        2.2031000000000003e-05,
+        2.3589e-05,
+        2.5189000000000002e-05,
+        2.6831e-05,
+        2.8512e-05,
+        3.0233e-05,
+        3.1993000000000004e-05,
+        3.3792000000000004e-05,
+        3.7502999999999997e-05,
+        4.1362e-05,
+        4.5366000000000006e-05,
+        5.5989e-05,
+        6.7457e-05,
+        9.279600000000001e-05,
+        0.00015243,
+        0.00022312,
+        0.00044382000000000004,
+        0.00072211
+      ],
+      "unit": "m2/s",
+      "range": [
+        1.1173e-05,
+        0.00072211
+      ],
+      "source": "hellmann_harvey2020_binary_diffusion",
+      "status": "literature",
+      "note": "S3 infinite-water-dilution free gas D at101325Pa, exact cm2/s to m2/s conversion; no absoluteD statistical band or target measurements."
+    },
+    "transport.binary.source_pressure": {
+      "value": 101325,
+      "unit": "Pa",
+      "range": [
+        101325,
+        101325
+      ],
+      "source": "nist_tn2279_binary_diffusion",
+      "status": "literature",
+      "note": "S1/S3 source total pressure; actual face pressure used with explicit assumed dilute1/P extension."
+    },
+    "transport.binary.H2O_CO2.A": {
+      "value": -10.298,
+      "unit": "1",
+      "range": [
+        -10.298,
+        -10.298
+      ],
+      "source": "nist_tn2279_binary_diffusion",
+      "status": "literature",
+      "note": "Uniform S1 ABC source expression250–2000K. Do not switch to printedDref at298.15K; source composition not specified."
+    },
+    "transport.binary.H2O_CO2.B": {
+      "value": -180.06,
+      "unit": "K",
+      "range": [
+        -180.06,
+        -180.06
+      ],
+      "source": "nist_tn2279_binary_diffusion",
+      "status": "literature",
+      "note": "Uniform S1 ABC source expression250–2000K. Do not switch to printedDref at298.15K; source composition not specified."
+    },
+    "transport.binary.H2O_CO2.C": {
+      "value": 1.597,
+      "unit": "1",
+      "range": [
+        1.597,
+        1.597
+      ],
+      "source": "nist_tn2279_binary_diffusion",
+      "status": "literature",
+      "note": "Uniform S1 ABC source expression250–2000K. Do not switch to printedDref at298.15K; source composition not specified."
+    },
+    "transport.binary.correlation_unit": {
+      "value": 0.0001,
+      "unit": "m2/s",
+      "range": [
+        0.0001,
+        0.0001
+      ],
+      "source": "nist_tn2279_binary_diffusion",
+      "status": "literature",
+      "note": "Exact area-unit conversion for exp(ln(D/(cm2/s))); not an empirical diffusivity scale."
+    },
+    "validation.source_diffusion.full_cycle_budget": {
+      "value": 900,
+      "unit": "s",
+      "range": [
+        900,
+        900
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P24 fixed execution/refinement setting before model evaluation; no retry/search or material interpretation."
+    },
+    "validation.source_diffusion.total_budget": {
+      "value": 900,
+      "unit": "s",
+      "range": [
+        900,
+        900
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P24 fixed execution/refinement setting before model evaluation; no retry/search or material interpretation."
+    },
+    "validation.source_diffusion.poll_interval": {
+      "value": 0.25,
+      "unit": "s",
+      "range": [
+        0.25,
+        0.25
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P24 fixed execution/refinement setting before model evaluation; no retry/search or material interpretation."
+    },
+    "validation.source_diffusion.refinement_factor": {
+      "value": 2,
+      "unit": "1",
+      "range": [
+        2,
+        2
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P24 fixed execution/refinement setting before model evaluation; no retry/search or material interpretation."
     }
   },
   "species": [
@@ -4446,11 +4659,8 @@
     "thermal.phase_conductivity_contrast",
     "transport.tortuosity_porosity_exponent",
     "transport.pair_factor.O2_N2",
-    "transport.pair_factor.O2_H2O",
     "transport.pair_factor.O2_CO2",
-    "transport.pair_factor.N2_H2O",
     "transport.pair_factor.N2_CO2",
-    "transport.pair_factor.H2O_CO2",
     "transport.viscosity_mixing_fraction",
     "species.kaolin.cp_slope",
     "species.metakaolin.cp_slope",
@@ -4506,9 +4716,17 @@
     "transport.viscosity.H2O.coefficients",
     "transport.viscosity.H2O.temperature_scale",
     "transport.viscosity.H2O.unit_scale",
-    "transport.viscosity.H2O.prefactor"
+    "transport.viscosity.H2O.prefactor",
+    "transport.binary.water.temperature_knots",
+    "transport.binary.N2_H2O.source_values",
+    "transport.binary.O2_H2O.source_values",
+    "transport.binary.source_pressure",
+    "transport.binary.H2O_CO2.A",
+    "transport.binary.H2O_CO2.B",
+    "transport.binary.H2O_CO2.C",
+    "transport.binary.correlation_unit"
   ],
-  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope. Phase modulus contrast is fixed at four; neither its range nor its correlation with eigenstrain, porosity stiffness or phase kinetics is covered or identified. Disordered-minus-ordered heat capacity contrast is fixed at 10 J/mol/K; its range and correlations are neither covered nor identified. Phase conductivity contrast is fixed at two; its signed range and correlations with phase kinetics, baseline conductivity, moisture and pore radiation are not covered or identified. Tortuosity porosity exponent is fixed at one; its range and correlation with diffusivity, initial tortuosity, liquid occupancy and permeability are not covered or identified. Six positive gas-pair mobility factors are fixed at their declared nominal values; their ranges and correlations with the common diffusivity, tortuosity and permeability are not covered or identified. P20 pure viscosity source coefficient groups and Wilke mixing fraction are fixed; source uncertainty and real mixture/pore errors are not sampled or identified. Historical four assumed species factors were removed, not silently retained as active parameters. P16 four-gas plus calcite/lime source-caloric coefficient sets (30 coefficients) are fixed together; their source uncertainty and correlations are not sampled or identified. Four remaining non-quartz dry background Cp slopes are fixed; ranges and correlations with kinetics, thermal and phase properties are not covered or identified. Liquid-water background Cp slope is fixed at 0.01 J/mol/K2; its range and correlation with retention, phase exchange and heat transfer are not covered or identified. The intrinsic dry-solid conductivity temperature exponent is also fixed; its declared range and correlation are not sampled or identified. Final-model refresh: carbonate phase resistance and pore-scale gas-pair resistance are explicitly fixed at their nominal values of one. Their ranges and correlations are not sampled or identified. Reuse the same 25-dimensional paired draws and three schedules; nominal permeability remains 3.75e-14 m2. Current-run results must be recorded separately from earlier ensembles; process and physical failures remain explicit.",
+  "uncertainty_scope_note": "Twenty-five selected parameters retain the preceding retention-site draws exactly. Reverse-carbonation factor is fixed at one, with permeability, pore radius, condensation factor, evaporation A/E and staged atmosphere also fixed. No reverse-kinetics or atmosphere-range robustness follows. Eight paired samples and unqualified physical/process cases yield exploratory rankings only; no measured material or qualified-process optimization. The ordered-structure viscosity barrier is fixed at 80000 J/mol; the same preceding 25 paired draws are retained. This does not establish robustness across the additional barrier range or identify that parameter. The dry-fraction modulus exponent is fixed at two; its range and correlation with reference modulus are not covered or identified. The matrix phase eigenstrain amplitude is fixed at 0.02; its signed range and correlation with phase kinetics or stiffness are not covered or identified. The coupled algebraic zero-relaxation limit is outside scope. Phase modulus contrast is fixed at four; neither its range nor its correlation with eigenstrain, porosity stiffness or phase kinetics is covered or identified. Disordered-minus-ordered heat capacity contrast is fixed at 10 J/mol/K; its range and correlations are neither covered nor identified. Phase conductivity contrast is fixed at two; its signed range and correlations with phase kinetics, baseline conductivity, moisture and pore radiation are not covered or identified. Tortuosity porosity exponent is fixed at one; its range and correlation with diffusivity, initial tortuosity, liquid occupancy and permeability are not covered or identified. Six positive gas-pair mobility factors are fixed at their declared nominal values; their ranges and correlations with the common diffusivity, tortuosity and permeability are not covered or identified. P20 pure viscosity source coefficient groups and Wilke mixing fraction are fixed; source uncertainty and real mixture/pore errors are not sampled or identified. Historical four assumed species factors were removed, not silently retained as active parameters. P16 four-gas plus calcite/lime source-caloric coefficient sets (30 coefficients) are fixed together; their source uncertainty and correlations are not sampled or identified. Four remaining non-quartz dry background Cp slopes are fixed; ranges and correlations with kinetics, thermal and phase properties are not covered or identified. Liquid-water background Cp slope is fixed at 0.01 J/mol/K2; its range and correlation with retention, phase exchange and heat transfer are not covered or identified. The intrinsic dry-solid conductivity temperature exponent is also fixed; its declared range and correlation are not sampled or identified. Final-model refresh: carbonate phase resistance and pore-scale gas-pair resistance are explicitly fixed at their nominal values of one. Their ranges and correlations are not sampled or identified. Reuse the same 25-dimensional paired draws and three schedules; nominal permeability remains 3.75e-14 m2. Current-run results must be recorded separately from earlier ensembles; process and physical failures remain explicit. P24: P21 ensemble is d5fd9a2 historical. Common gas diffusivity now controls only nonwater pairs; sourcewater coefficients/interpolation/finite composition extension are fixed and uncalibrated. No new UQ authorized.",
   "mechanism_cases": [
     {
       "id": "carbonization_disabled",
@@ -4997,7 +5215,7 @@
       }
     },
     {
-      "id": "pair_diffusion_disabled",
+      "id": "nonpolar_pair_factors_unity",
       "overrides": {
         "transport.pair_factor.O2_N2": {
           "value": 1.0,
@@ -5008,18 +5226,7 @@
           ],
           "source": "pair_diffusion",
           "status": "assumed",
-          "note": "Common-D limit only; retain porosity/tortuosity evolution, Darcy, atmosphere and all other mechanisms."
-        },
-        "transport.pair_factor.O2_H2O": {
-          "value": 1.0,
-          "unit": "1",
-          "range": [
-            0.5,
-            2.0
-          ],
-          "source": "pair_diffusion",
-          "status": "assumed",
-          "note": "Common-D limit only; retain porosity/tortuosity evolution, Darcy, atmosphere and all other mechanisms."
+          "note": "P24: make only three nonwater free coefficients equal; water sources and pore resistance remain. Not the old all-six commonD mechanism."
         },
         "transport.pair_factor.O2_CO2": {
           "value": 1.0,
@@ -5030,18 +5237,7 @@
           ],
           "source": "pair_diffusion",
           "status": "assumed",
-          "note": "Common-D limit only; retain porosity/tortuosity evolution, Darcy, atmosphere and all other mechanisms."
-        },
-        "transport.pair_factor.N2_H2O": {
-          "value": 1.0,
-          "unit": "1",
-          "range": [
-            0.5,
-            2.0
-          ],
-          "source": "pair_diffusion",
-          "status": "assumed",
-          "note": "Common-D limit only; retain porosity/tortuosity evolution, Darcy, atmosphere and all other mechanisms."
+          "note": "P24: make only three nonwater free coefficients equal; water sources and pore resistance remain. Not the old all-six commonD mechanism."
         },
         "transport.pair_factor.N2_CO2": {
           "value": 1.0,
@@ -5052,20 +5248,10 @@
           ],
           "source": "pair_diffusion",
           "status": "assumed",
-          "note": "Common-D limit only; retain porosity/tortuosity evolution, Darcy, atmosphere and all other mechanisms."
-        },
-        "transport.pair_factor.H2O_CO2": {
-          "value": 1.0,
-          "unit": "1",
-          "range": [
-            0.5,
-            2.0
-          ],
-          "source": "pair_diffusion",
-          "status": "assumed",
-          "note": "Common-D limit only; retain porosity/tortuosity evolution, Darcy, atmosphere and all other mechanisms."
+          "note": "P24: make only three nonwater free coefficients equal; water sources and pore resistance remain. Not the old all-six commonD mechanism."
         }
-      }
+      },
+      "historical_id": "pair_diffusion_disabled"
     },
     {
       "id": "mixture_viscosity_disabled",
@@ -6067,6 +6253,46 @@
       },
       "source_dependency": "S1 and S3 N2 share original theory; rows are comparisons, not independent experimental trials.",
       "source_pressure_policy": "Currenthost evaluated at101325Pa, avoiding rescaling source values; all total/partial/source-specific definitions retained."
+    },
+    "source_water_diffusion_implementation": {
+      "source_comparison": "docs/FULL_CYCLE_P23_WATER_DIFFUSION.json",
+      "groups": [
+        "S1:H2O_CO2",
+        "S3:O2_H2O",
+        "S3:N2_H2O"
+      ],
+      "reported_source_points": 12,
+      "exact_source_knots": 52,
+      "analytic_derivative_states": "All source knots (selected right derivative at interior knots) plus geometric midpoint of first/middle/last segment for two tables; six predeclared existing viscosity temperatures forABC.",
+      "transport_controls": "Existing first/last boundary compositions at existing referenceT, actual pressure andphi0; beta0andnominal positive. No dynamic disabled-control integration.",
+      "new_cycles": [
+        "nominal",
+        "time",
+        "grid"
+      ],
+      "full_cycle_budget_parameter": "validation.source_diffusion.full_cycle_budget",
+      "global_budget_parameter": "validation.source_diffusion.total_budget",
+      "poll_parameter": "validation.source_diffusion.poll_interval",
+      "refinement_parameter": "validation.source_diffusion.refinement_factor",
+      "new_fits": 0,
+      "new_UQ": 0,
+      "no_software_tests_or_SHA": true
+    },
+    "source_water_diffusion_fixed_scenarios": {
+      "dependency": "P24 source-water diffusion three-cycle physical/numerical acceptance",
+      "reused_nominal": "runs/full-cycle/p24-source-diffusion/nominal.json",
+      "new_cycles": [
+        "lower_peak",
+        "longer_hold"
+      ],
+      "scenario_definitions": "Existing root scenarios unchanged; each once, no optimization.",
+      "full_cycle_budget_parameter": "validation.source_diffusion.full_cycle_budget",
+      "global_budget_parameter": "validation.source_diffusion.total_budget",
+      "poll_parameter": "validation.source_diffusion.poll_interval",
+      "max_concurrency": 2,
+      "new_UQ": 0,
+      "new_fits": 0,
+      "distribution_scope": "P21 remains historical d5fd9a2; no second UQ authorized. Fixed points do not qualify distributions or ranking robustness."
     }
   },
   "caloric_background": {
@@ -6186,5 +6412,76 @@
     "outside_domain_status": "assumed mathematical continuation, no clipping or silent source qualification",
     "pressure_definition": "rho->0 bulk constitutive limit; no finite-density/critical correction or pore confinement accuracy",
     "face_definition": "Same reciprocal-log temperature and symmetric adjacent mole fractions as existing Darcy face; Phi recomputed from same-temperature pure viscosities."
+  },
+  "binary_diffusion_background": {
+    "source_pressure_parameter": "transport.binary.source_pressure",
+    "temperature_parameter": "transport.binary.water.temperature_knots",
+    "tabulated_pair_parameters": {
+      "N2_H2O": "transport.binary.N2_H2O.source_values",
+      "O2_H2O": "transport.binary.O2_H2O.source_values"
+    },
+    "correlation_pair": "H2O_CO2",
+    "correlation_parameter_names": [
+      "transport.binary.H2O_CO2.A",
+      "transport.binary.H2O_CO2.B",
+      "transport.binary.H2O_CO2.C"
+    ],
+    "correlation_unit_parameter": "transport.binary.correlation_unit",
+    "source_parameter_names": [
+      "transport.binary.water.temperature_knots",
+      "transport.binary.N2_H2O.source_values",
+      "transport.binary.O2_H2O.source_values",
+      "transport.binary.source_pressure",
+      "transport.binary.H2O_CO2.A",
+      "transport.binary.H2O_CO2.B",
+      "transport.binary.H2O_CO2.C",
+      "transport.binary.correlation_unit"
+    ],
+    "interpolation": {
+      "law": "Dk*exp(mk*log(T/Tk)); mk=log(Dk+1/Dk)/log(Tk+1/Tk)",
+      "status": "assumed",
+      "segment_selection": "Interior knots use right segment by realT. Ends use first/last segment. Keep complexT in arithmetic; no temperature orD clipping.",
+      "derivative": "Continuous but generally not differentiable at interior knots; complex step there is selected right derivative, not a two-sided derivative."
+    },
+    "pair_domains": {
+      "N2_H2O": {
+        "source_temperature_range_k": [
+          190,
+          2000
+        ],
+        "composition": "water mole fraction tends0",
+        "definition": "low-density binary tracer limit normalized to101325Pa",
+        "source": "hellmann_harvey2020_binary_diffusion"
+      },
+      "O2_H2O": {
+        "source_temperature_range_k": [
+          190,
+          2000
+        ],
+        "composition": "water mole fraction tends0",
+        "definition": "low-density binary tracer limit normalized to101325Pa",
+        "source": "hellmann_harvey2020_binary_diffusion"
+      },
+      "H2O_CO2": {
+        "source_temperature_range_k": [
+          250,
+          2000
+        ],
+        "composition": "not specified in TN2279 row",
+        "definition": "dilute binary source correlation at101325Pa",
+        "source": "nist_tn2279_binary_diffusion"
+      }
+    },
+    "outside_domain_policy": "S3 continue adjacent endpoint log-log slope; S1 continue ABC. Explicit assumed extrapolation, no clipping/fallback or equal source-accuracy claim; count strict domain violations in sampled actual face temperatures.",
+    "outside_domain_status": "assumed",
+    "composition_extension_status": "assumed: apply dilute binary coefficient at full-host finite water fraction without new correction or fullMS claim",
+    "pressure_extension_status": "assumed low-density Psource/Pface scaling, not dense gas qualification",
+    "inactive_legacy_water_pair_factors": [
+      "transport.pair_factor.O2_H2O",
+      "transport.pair_factor.N2_H2O",
+      "transport.pair_factor.H2O_CO2"
+    ],
+    "common_Dref_scope": "Only nonwater three pairs retain commonDref, exponent andpairfactor; sourcewater pairs do not. This changes meaning of previous25D UQ, which remains historical.",
+    "current_nominal_source_law": "always active; no blend parameter added"
   }
 }
