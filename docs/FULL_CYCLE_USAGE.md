@@ -271,3 +271,9 @@ public_reference_cases.direct_carbonation_transient明确冻结10s synthetic配�
 ## P40实际交付
 
 P40实际交付（2026-10-01T21:59:41.691049+00:00）：实现及失败矩阵提交39c618f8已普通推送并核对远端；39明确文件+manifest小增量1,064,643B已上传，名称/大小/父目录回读一致，收据FULL_CYCLE_P40_DELIVERY.json。三档实际10s、总4starts含首失败与明确追加mesh，全回收/原截止不延；time四指标PASS，mesh峰温差7.33335%>2%FAIL、directextent网格未资格，CaO/strictOH+carbonatefail保留。500=144literature356assumed0measured、名义direct未启用；历史0.135892078740%干燥/P34旧30/81保持。P40及完整模型仍partial/wholefalse。未下载/解包/恢复，不把metadata当恢复；原件/独有历史保留，20GB/历史全备份/GitHub容量告警未解决。后续仅必要零积分离散定位候选，不在本P40额度再积分。
+
+## P41 保存结果诊断入口
+
+标准库脚本 scripts/analyze_saved_direct_transient.py 提供 analyze(Path(root_parameters))，CLI为 python3 scripts/analyze_saved_direct_transient.py parameters.full_cycle.json OUTPUT.json。合同和字段/路径仅取统一根 public_reference_cases.saved_direct_spatial_diagnosis；读取指定已保存baseline/time/mesh及冻结源，不导入模型、不构造新状态。输入times/配对必须已经相同，无隐式时间插值或数据默认。命令是可复用入口说明，当前两次额度已用完，不授权再次运行。
+
+保守映射只对库存/独立extent求和；温度参考插值和当前体积加权均仅比较，不改原细格峰及meshFAIL。P41第二结果可审阅但原120s回收超时，预算FAIL/partial，首CO2解释式符号错误保留且已修正，不涉及真实反应通道。source_static_anchors是部分方法索引，活动solid state_caloric_capacity/porous_mechanical_rates以P41报告手读引用补齐；没有完整模型源码缺陷证明。下一非均匀分区只是候选，不自动改主机。

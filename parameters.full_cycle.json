@@ -6344,6 +6344,72 @@
       "source": "policy",
       "status": "assumed",
       "note": "Adds exactly one operational start to the historical maximum_integrations=3, including its failed baseline. No physical configuration, threshold, domain, time control or retry limit changes. Explicit authorization text is preserved in mesh-extension-registration.json; source registry entry policy is operational, not a physical literature source."
+    },
+    "validation.saved_direct_spatial_diagnosis.maximum_analysis_jobs": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P41 explicit pure saved-data/static-source diagnosis only. 0 new model instances/RHS/Jac/thermo/transport/rates/ODE/fit/UQ/recovery; no physical/numerical acceptance thresholds changed."
+    },
+    "validation.saved_direct_spatial_diagnosis.per_job_budget": {
+      "value": 60,
+      "unit": "s",
+      "range": [
+        60,
+        60
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P41 explicit pure saved-data/static-source diagnosis only. 0 new model instances/RHS/Jac/thermo/transport/rates/ODE/fit/UQ/recovery; no physical/numerical acceptance thresholds changed."
+    },
+    "validation.saved_direct_spatial_diagnosis.global_budget": {
+      "value": 120,
+      "unit": "s",
+      "range": [
+        120,
+        120
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P41 explicit pure saved-data/static-source diagnosis only. 0 new model instances/RHS/Jac/thermo/transport/rates/ODE/fit/UQ/recovery; no physical/numerical acceptance thresholds changed."
+    },
+    "validation.saved_direct_spatial_diagnosis.maximum_workers": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P41 explicit pure saved-data/static-source diagnosis only. 0 new model instances/RHS/Jac/thermo/transport/rates/ODE/fit/UQ/recovery; no physical/numerical acceptance thresholds changed."
+    },
+    "validation.saved_direct_spatial_diagnosis.maximum_attempts_per_issue": {
+      "value": 2,
+      "unit": "1",
+      "range": [
+        2,
+        2
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P41 explicit pure saved-data/static-source diagnosis only. 0 new model instances/RHS/Jac/thermo/transport/rates/ODE/fit/UQ/recovery; no physical/numerical acceptance thresholds changed."
+    },
+    "validation.saved_direct_spatial_diagnosis.summary_byte_limit": {
+      "value": 2097152,
+      "unit": "byte",
+      "range": [
+        2097152,
+        2097152
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P41 explicit pure saved-data/static-source diagnosis only. 0 new model instances/RHS/Jac/thermo/transport/rates/ODE/fit/UQ/recovery; no physical/numerical acceptance thresholds changed."
     }
   },
   "species": [
@@ -9119,6 +9185,48 @@
       "independent_extra_RHS_Jacobian_fit_UQ_recovery": 0,
       "summary_byte_scope": "Necessary numericaloutputs only ≤2MiB; frozenroot/code andexecutionmetadata identifiedseparately, no rawfields saved.",
       "source_basis": "P36 declaredwet mechanism, P37 phenomenological explicitL andP39sharedhost only; no new literature/fit or nominalrate inference"
+    },
+    "saved_direct_spatial_diagnosis": {
+      "schema": "P41_saved_only_spatial_comparison_v1",
+      "recorded_utc": "2026-10-01T22:10:12.323941+00:00",
+      "budget_prefix": "validation.saved_direct_spatial_diagnosis.",
+      "input_directory": "runs/full-cycle/p40-direct-transient",
+      "case_ids": [
+        "baseline",
+        "time_refined",
+        "mesh_refined"
+      ],
+      "coarse_case": "baseline",
+      "temporal_case": "time_refined",
+      "fine_case": "mesh_refined",
+      "physical_input_root": "root-snapshot.json",
+      "prior_acceptance": "acceptance.json",
+      "source_files": [
+        "src/sludge_vme/models/full_cycle.py",
+        "src/sludge_vme/models/full_cycle_gas.py",
+        "src/sludge_vme/models/full_cycle_solid.py",
+        "src/sludge_vme/models/direct_carbonation.py",
+        "src/sludge_vme/models/full_cycle_diagnostics.py"
+      ],
+      "extensive_profile_fields": [
+        "calcite_inventory_mol",
+        "lime_inventory_mol",
+        "portlandite_inventory_mol",
+        "residual_carbon_kg"
+      ],
+      "extensive_dictionary_fields": [
+        "gas_inventory_mol",
+        "reaction_extent_mol"
+      ],
+      "intensive_saved_fields": [
+        "temperature_k",
+        "pressure_pa",
+        "porosity",
+        "direct_carbonation_affinity_j_mol"
+      ],
+      "grouping": "Adjacent finecells sumextensive inventories andindependentextents on sameinitialvolume materialinterval. Fineoriginalpeaks retained; T interpolation/coarsenedweighted T are visualizationcomparisons only, not heatenergy or replacementacceptance.",
+      "forbidden": "No model imports/instances/constitutive reevaluation/ODEs/parametersearch/physicalfix beforeprovenbug. No SHA/tests/download/recovery.",
+      "scope": "One puredata job reads3 existingfixed10s resultJSON plus originalroot/currentandfrozen source andsavedacceptance. Reports signed differences, boundaries andunknownsubflux components. Existing P40 originalmeshFAIL stays."
     }
   },
   "caloric_background": {
