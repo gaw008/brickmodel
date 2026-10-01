@@ -245,6 +245,13 @@
       "kind": "cached_open_source_LJ_approximation",
       "location": "parameters.nonpolar_gas_transport.json",
       "note": "Unchanged P22 cached Cantera3.2/GRI30 zero-dipole collision formula; direct model approximation, not binary experiments. All reused numerical inputs mirrored into main root audit parameters."
+    },
+    "p28_septien_effective_conductivity": {
+      "identity": "literature",
+      "doi": "10.1016/j.jece.2019.103652",
+      "url": "https://doi.org/10.1016/j.jece.2019.103652",
+      "location": "runs/sandbox/source-cache/septien2020/fecal2019-original.xml Table2 tbl0010; Sections2.1,2.3,2.4,2.5",
+      "note": "Public donor VIP faecal-sludge effective conductivity measurements. Not target-brick measured parameters; paired measurement temperature, bulk/dry volume and contact state unavailable. 85C is drying-zone air, not TCi measurement T."
     }
   },
   "parameters": {
@@ -4703,6 +4710,129 @@
       "source": "p27_cached_nonpolar_LJ",
       "status": "literature",
       "note": "Exact saved zero-dipole collision table; original three-node logT interpolation, no new fit."
+    },
+    "validation.conductivity_admissibility.maximum_nodes": {
+      "value": 6,
+      "unit": "1",
+      "range": [
+        6,
+        6
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Single existing30%MIR source branch; no additional source search, fit or host evaluations."
+    },
+    "validation.conductivity_admissibility.research_budget": {
+      "value": 1800,
+      "unit": "s",
+      "range": [
+        1800,
+        1800
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Bounded source-to-state audit and independent review, zero model integration."
+    },
+    "validation.conductivity_admissibility.preparation_time": {
+      "value": [
+        4,
+        9,
+        13,
+        17,
+        25,
+        40
+      ],
+      "unit": "min",
+      "range": [
+        4,
+        40
+      ],
+      "source": "p28_septien_effective_conductivity",
+      "status": "literature",
+      "note": "Preparation drying residence time, not a conductivity measurement temperature or model trajectory time."
+    },
+    "validation.conductivity_admissibility.wet_moisture": {
+      "value": [
+        74.0,
+        71.0,
+        66.0,
+        61.0,
+        47.0,
+        23.0
+      ],
+      "unit": "% mass wet basis",
+      "range": [
+        0,
+        100
+      ],
+      "source": "p28_septien_effective_conductivity",
+      "status": "literature",
+      "note": "Original Table2 central moisture values in original printed order."
+    },
+    "validation.conductivity_admissibility.wet_moisture_half_interval": {
+      "value": [
+        1.0,
+        1.0,
+        1.0,
+        2.0,
+        2.0,
+        6.0
+      ],
+      "unit": "% mass wet basis",
+      "range": [
+        0,
+        100
+      ],
+      "source": "p28_septien_effective_conductivity",
+      "status": "literature",
+      "note": "Original90% Student-t marginal interval half-width, not target-material uncertainty."
+    },
+    "validation.conductivity_admissibility.conductivity": {
+      "value": [
+        0.372,
+        0.412,
+        0.27,
+        0.145,
+        0.062,
+        0.056
+      ],
+      "unit": "W/(m K)",
+      "range": [
+        0.056,
+        0.412
+      ],
+      "source": "p28_septien_effective_conductivity",
+      "status": "literature",
+      "note": "Public donor effective conductivity. Nonmonotone first pair retained; no host comparison admitted."
+    },
+    "validation.conductivity_admissibility.conductivity_half_interval": {
+      "value": [
+        0.033,
+        0.012,
+        0.018,
+        0.007,
+        0.002,
+        0.001
+      ],
+      "unit": "W/(m K)",
+      "range": [
+        0.001,
+        0.033
+      ],
+      "source": "p28_septien_effective_conductivity",
+      "status": "literature",
+      "note": "Source marginal intervals, no joint or cross-material coverage claim."
+    },
+    "validation.conductivity_admissibility.source_confidence_level": {
+      "value": 0.9,
+      "unit": "1",
+      "range": [
+        0.9,
+        0.9
+      ],
+      "source": "p28_septien_effective_conductivity",
+      "status": "literature",
+      "note": "Source uses at least duplicate measurements and Student-t90% confidence intervals."
     }
   },
   "species": [
@@ -6962,6 +7092,39 @@
       "source_validity_policy": "Table5 primary admitted inferred coefficient; Table7 author-rejected procedure diagnostic only. Neither is direct D measurement.",
       "attribution_policy": "Closeness to Table7 can support a branch-consistency observation, not prove NIST used that table or identify editorial cause. No silent correction of printed TN values.",
       "pre_evaluation_external_message": "Coordinator supplied one298.20K calculation before local evaluation. Selection remains all8 printed rows; no blind-validation claim and values will be independently recomputed."
+    },
+    "effective_conductivity_admissibility": {
+      "id": "P28",
+      "source": "p28_septien_effective_conductivity",
+      "selected_rows": [
+        "Dried at 30 % MIR, 4 min",
+        "Dried at 30 % MIR, 9 min",
+        "Dried at 30 % MIR, 13 min",
+        "Dried at 30 % MIR, 17 min",
+        "Dried at 30 % MIR, 25 min",
+        "Dried at 30 % MIR, 40 min"
+      ],
+      "selection_frozen_utc": "2026-10-01T01:56:39.382911+00:00",
+      "mode": "six_node_source_state_admissibility_audit_only",
+      "parameter_prefix": "validation.conductivity_admissibility.",
+      "transformation": "W = y/(1-y), y=wet_percent/100; transform original marginal interval endpoints monotonically. No joint interval inference.",
+      "host_evaluations": 0,
+      "new_integrations": 0,
+      "new_fits": 0,
+      "new_UQ": 0,
+      "source_measurement_temperature_K": null,
+      "scientific_kernel_commit": "5917fcd493c1836b0db33f9eea290ce4770a9dd1",
+      "material_transfer": "not admitted",
+      "missing_host_state": [
+        "T",
+        "phi_d",
+        "phi_w",
+        "f_liquid",
+        "phi_p",
+        "pore_optical_length"
+      ],
+      "old_wrapper": "data/sandbox/research/septien-conductivity-v1/model.json is historical assumed transfer; not executed",
+      "pure_gas_conductivity": "Different observable; not added to already-effective host background."
     }
   },
   "caloric_background": {
