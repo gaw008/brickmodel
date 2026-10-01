@@ -18,6 +18,7 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 from ..chemistry.formula import parse_formula
+from .initial_finite_volume import initial_partition
 
 
 def read_parameters(path: str | Path) -> dict:
@@ -157,8 +158,29 @@ class FullCycle:
         self.n = int(self.p("numerics.cells", "1"))
         self.area = self.p("geometry.area", "m2")
         self.length = self.p("geometry.half_thickness", "m")
-        self.b0 = self.area * self.length / self.n
+        # Existing configurations with no opt-in retain their scalar geometry.
+        if 'initial_partition' in config:
+            partition = config['initial_partition']
+            mode = self.p(partition['mode_parameter'], '1')
+            profile = partition['profile_by_mode'][str(mode)]
+            self.cellwise_partition = mode != 0
+        else:
+            self.cellwise_partition = False
+        if self.cellwise_partition:
+            self.initial_partition = initial_partition(
+                cells=self.n, half_thickness_m=self.length, area_m2=self.area,
+                profile=profile, exterior_exponent=self.p(partition['exponent_parameter'], '1'))
+            self.b0 = self.initial_partition['initial_bulk_m3']
+        else:
+            self.b0 = self.area*self.length/self.n
+            centers = (np.arange(self.n)+.5)*self.length/self.n
+            self.initial_partition = {
+                'faces_m':np.arange(self.n+1)*self.length/self.n,
+                'centers_m':centers, 'widths_m':np.full(self.n,self.length/self.n),
+                'initial_bulk_m3':np.full(self.n,self.b0)}
         self.md = self.p("material.dry_density", "kg/m3") * self.b0
+        self.cell_dry_mass = np.broadcast_to(self.md, (self.n,))
+        self.total_initial_dry_mass = float(self.md.sum()) if self.cellwise_partition else self.n*self.md
         self.initial = np.zeros((self.n, len(self.ns)))
         fractions = {s: self.p("recipe." + s, "kg/kg") for s in self.ns if "recipe." + s in config["parameters"]}
         if abs(sum(fractions.values()) - 1) > np.finfo(float).eps * len(fractions):
@@ -166,7 +188,7 @@ class FullCycle:
         for s, x in fractions.items():
             self.initial[:, self.ns.index(s)] = self.md * x / self.mw[self.names.index(s)]
         self.initial[:, self.ns.index("water")] = self.md * self.p("material.water_dry_ratio", "kg/kg") / self.mw[self.ns.index("water")]
-        self.extent_scale = self.initial[0, self.reactants]
+        self.extent_scale = self.initial[:, self.reactants] if self.cellwise_partition else self.initial[0, self.reactants]
         self.depleted = [self.ns.index(s) for s in ('water', 'kaolin', 'calcite', 'organic')]
         self.char = self.ns.index('char')
         self.organic = self.ns.index('organic')
@@ -177,8 +199,12 @@ class FullCycle:
         reference_routes = [self.reactants.index(s) for s in self.depleted]
         self.depletion_products = self.snu[reference_routes]
         self.chemical_scale = self.md/self.mw[self.char]
+        self.cell_chemical_scale = np.broadcast_to(self.chemical_scale, (self.n,))
         self.conversion_scale = self.extent_scale.copy()
-        self.conversion_scale[np.array(self.reactants) == self.char] = self.initial[0,self.char]+self.initial[0,self.organic]
+        if self.cellwise_partition:
+            self.conversion_scale[:, np.array(self.reactants) == self.char] = (self.initial[:,self.char]+self.initial[:,self.organic])[:, None]
+        else:
+            self.conversion_scale[np.array(self.reactants) == self.char] = self.initial[0,self.char]+self.initial[0,self.organic]
         self.vs0 = self.initial @ self.v
         self.water_index = self.ns.index("water")
         self.dry_solid_fraction0 = (self.vs0-self.initial[:, self.water_index]*self.v[self.water_index])/self.b0
@@ -239,7 +265,7 @@ class FullCycle:
         return depletion.T, char
 
     def reaction_fields(self, y):
-        extent = y[self.extent_offset:self.last].reshape(self.nr,self.n).T*self.chemical_scale
+        extent = y[self.extent_offset:self.last].reshape(self.nr,self.n).T*self.cell_chemical_scale[:, None]
         conversion = np.divide(extent,self.conversion_scale,out=np.zeros_like(extent),where=self.conversion_scale != 0)
         return {'reaction_extent_mol':{r['id']:extent[:,i].tolist() for i,r in enumerate(self.reactions)},
                 'conversion':{r['id']:conversion[:,i].tolist() for i,r in enumerate(self.reactions)}}
@@ -315,7 +341,7 @@ class FullCycle:
         # For this reaction set total outlet flow is at least the carrier flow.
         # Uninhibited positive production bounds actual product partial pressure,
         # allowing low-temperature drying without solving a gas storage problem.
-        partial = np.minimum(1., self.inlet + potential_rate @ np.maximum(self.gnu, 0) / self.sweep) * self.P/self.Pr
+        partial = np.minimum(1., self.inlet + potential_rate @ np.maximum(self.gnu, 0) / np.asarray(self.sweep).reshape(-1, 1)) * self.P/self.Pr
         partial[:, self.oxygen] = self.P/self.Pr*self.inlet[self.oxygen]*(1-self.oxygen_use)/(1+self.capacity)
         mu[:, len(self.ns):] += self.R * T[:, None] * np.log(partial)
         dg_bound = mu @ self.nu.T - cap[:, None] * (self.snu @ self.v)
@@ -329,7 +355,7 @@ class FullCycle:
         rate *= factor[:, None]
         hazard *= factor[:, None]
         dn = rate @ self.snu
-        fin = np.broadcast_to(self.sweep * self.inlet, (self.n, len(self.ng)))
+        fin = np.broadcast_to(np.asarray(self.sweep).reshape(-1, 1) * self.inlet, (self.n, len(self.ng)))
         fout = fin + rate @ self.gnu
         yf = fout / fout.sum(axis=1)[:, None]
         flow_energy = fin @ hin[len(self.ns):] - np.sum(fout * hs[:, len(self.ns):], axis=1)
@@ -349,7 +375,7 @@ class FullCycle:
         d = dy[:9*self.n].reshape(9, self.n)
         d[0] = dT/self.Tr
         d[1:5], d[5] = self.chemical_coordinate_rates(hazard, rates)
-        dy[self.extent_offset:self.last] = rates.T.ravel()/self.chemical_scale
+        dy[self.extent_offset:self.last] = (rates/self.cell_chemical_scale[:, None]).T.ravel()
         pore = self.vp0 * np.exp(y[:9*self.n].reshape(9, self.n)[6])
         d[6] = (db - (rates@self.snu)@self.v)/pore
         d[7] = heat/self.escale
@@ -382,6 +408,13 @@ class FullCycle:
             "identities":["mol*(kg/mol)=kg", "mol*(J/mol)=J", "W*s=J", "Pa*m3=J", "(N/m)*m2=J", "(W/m/K)*m2*K/m=W", "(J/mol)/(R*T)=1"]}
         return report, fields
 
+    def center_temperature(self, temperature):
+        """Symmetric quadratic diagnostic in the initial material coordinate."""
+        if not self.cellwise_partition:
+            return float((9*temperature[0]-temperature[1])/8)
+        x = self.initial_partition['centers_m'][:2]
+        return float((x[1]**2*temperature[0]-x[0]**2*temperature[1])/(x[1]**2-x[0]**2))
+
     def summarize(self, times, states):
         rows=[]; inventories=[]; energies=[]; entropies=[]; gasin=[]; gasout=[]; heat=[]; flow=[]; vs=[]; bulks=[]
         minimum_production = float("inf")
@@ -394,12 +427,13 @@ class FullCycle:
             inventories.append(ns.sum(axis=0)); energies.append(energy); entropies.append(float(np.sum(ns*s[:,:len(self.ns)])))
             g=len(self.ng); gasin.append(y[self.last:self.last+g]*self.nscale); gasout.append(y[self.last+g:self.last+2*g]*self.nscale)
             heat.append(f[7].sum()*self.escale);flow.append(f[8].sum()*self.escale);vs.append(float(np.sum(ns@self.v)));bulks.append(float(bulk.sum()))
-            center_T=float((9*T[0]-T[1])/8)
+            center_T=self.center_temperature(T)
             temperature_span=max(float(T.max()),rate[9],center_T)-min(float(T.min()),rate[9],center_T)
             minimum_production=min(minimum_production,rate[10])
             rows.append({"time_s":float(t),"kiln_temperature_k":rate[8],"temperature_k":T.tolist(),
                 "surface_temperature_k":float(rate[9]),
                 "x_m":(np.cumsum(bulk/self.area)-bulk/self.area/2).tolist(),
+                "initial_x_m":self.initial_partition['centers_m'].tolist(),
                 "water_kg_per_initial_dry_kg":(ns[:,self.ns.index('water')]*mw_s[self.ns.index('water')]/self.md).tolist(),
                 **self.reaction_fields(y),
                 "char_inventory_mol":ns[:,self.char].tolist(),
@@ -409,7 +443,7 @@ class FullCycle:
                 "temperature_difference_k":temperature_span,"mass_kg":float(np.sum(ns@mw_s)),
                 "net_heat_and_flow_w":float(rate[3].sum()+rate[4].sum()),
                 "dsc_endothermic_w_per_initial_dry_kg":float(np.sum((ns@self.cp[:len(self.ns)])*rate[0]) + np.sum(rate[1]*(h@self.nu.T))
-                    + np.sum(cap*(rate[2]-(rate[1]@self.snu)@self.v)))/(self.n*self.md),
+                    + np.sum(cap*(rate[2]-(rate[1]@self.snu)@self.v)))/self.total_initial_dry_mass,
                 "entropy_production_w_k":rate[10]})
         inventories=np.array(inventories); energies=np.array(energies); gasin=np.array(gasin); gasout=np.array(gasout);heat=np.array(heat);flow=np.array(flow);vs=np.array(vs);bulks=np.array(bulks)
         mass=inventories@mw_s; elements=inventories@self.atom[:len(self.ns)]
@@ -436,7 +470,7 @@ class FullCycle:
         final=rows[-1]; phi=float(np.average(final['porosity'],weights=self.unpack(states[-1])[3]))
         density=float(mass[-1]/bulks[-1]); carbon=float(sum(final['residual_carbon_kg']))
         peak=max(r['temperature_difference_k'] for r in rows)
-        summary={'mass_kg':float(mass[-1]),'density_kg_m3':density,'loss_on_ignition_dry_fraction':float(1-mass[-1]/(self.n*self.md)),
+        summary={'mass_kg':float(mass[-1]),'density_kg_m3':density,'loss_on_ignition_dry_fraction':float(1-mass[-1]/self.total_initial_dry_mass),
             'porosity':phi,'residual_carbon_kg':carbon,'shrinkage':float(1-bulks[-1]/bulks[0]),'peak_temperature_difference_k':peak,
             'absorption_kg_kg':self.p('product.connectivity','1')*phi*self.p('product.water_density','kg/m3')/density,
             'strength_pa':self.p('product.dense_strength','Pa')*float(np.exp(-self.p('product.porosity_coefficient','1')*phi)),

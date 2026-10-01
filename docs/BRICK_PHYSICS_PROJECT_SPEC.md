@@ -1,5 +1,9 @@
 # 全流程近似烧结砖模型：当前执行规范（2026-09-26）
 
+P43逐格主机接线及4固定瞬时上下文准入完成（2026-10-01T23:46:39.017915+00:00）：首旧reference1初始化/1RHS后汇总键KeyError失败保留；仅引用键修正到既有1e-11，第二4上下文52类向量/标量检查全PASS，累计5初始化/5RHS/2jobs回收、分析CPU0.1624s、原唯一120s窗口实际86.844847s、不延截止/无第三次，必要163703B。旧新uniform同y的RHS/库存差精确0，quad12/24非零内面通量及缓存导数U/S链通过；rawCaO约−1.73e−18/−8.67e−19mol保留。当前default/inverse/summarize仅静态，0Jac/积分/fit/UQ，不授新八阶段/时间网格/严格全支路资格。根534=144literature390assumed0measured，旧521完整保持，名义旧scalar/direct未启用；P40原mesh7.33335%/direct27.87505%/phase/strict、P34旧30/81和名义余水0.135892078740%失败保持，wholefalse。
+
+以下带时间段为历史资格，不自动验证当前新表示。
+
 P42明确追加uniform-only复核已完成（2026-10-01T23:12:12.452786+00:00）：仅5受影响行全PASS，实际第二sciencejob1次/累积2、原阈值与比较定义不变，CPU0.008507500s、监督0.257880250s/rc0/回收/新60–120s预算内，无第三次。原P42截止22:47:50.974739UTC、一job63/64FAIL、两prestart gate无child及151.717013s关闭永久保留；新窗口23:09:52.493403–23:11:52.493403UTC明示追加，不追溯延时或翻原PASS。当前uniform恒宽/旧A*L/N体积和每格md/chemical/原extent编码兼容获数据契约资格；旧63未受影响项不复评。根521=144literature377assumed0measured、旧514完整保持、primitive冻结4eeb不改、原44主机不改；非均匀主机/完整热力学未准入，0模型/物理算子/积分/fit/UQ/恢复。P42原operational仍partial，P40mesh7.33335%/phase/strict、P34旧30/81、名义0.135892078740%失败与wholefalse保持。
 
 P42固定二次初始有限体积分区/逐格尺度原语已实现（2026-10-01T22:54:23.640845+00:00），准入partial/FAIL：实际一科学job、四fixture，64算术行63通过/1 uniform旧标量extent兼容FAIL，CPU0.010810083s、首监督0.263625s、子进程回收/首预算内。两修复启动gate均在改源/子进程前停止，原120s截止不延，0第二sciencejob；工作流收尾151.717013s，额度关闭。其后仅静态简化uniform恒宽L/N，后续uniform体积已仅静态按旧(A*L)/N生成；修正版未执行，独立face/center舍入及完整兼容不预判通过。旧44主机/506条保持，新原语未接主机，0物理算子/积分/fit/UQ/恢复；根514=144literature370assumed0measured，P40mesh/phase/strict、P34旧30/81、名义0.135892078740%失败及wholefalse保持。

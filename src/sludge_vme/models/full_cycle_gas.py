@@ -86,11 +86,12 @@ class FiniteGasFullCycle(FullCycle):
         self.permeability = self.p('transport.permeability_ref', 'm2')
         self.water_mobility = self.p('transport.liquid_water_mobility', 'm2/s')
         self.water_mobility_activation = self.p('transport.liquid_water_activation_energy', 'J/mol')
-        self.retention_matrix = self.p('water.retention_scale', 'kg/kg')*self.md/self.mw[self.water_index]
+        self.retention_scale_value = self.p('water.retention_scale', 'kg/kg')
+        self.retention_matrix = self.retention_scale_value*self.md/self.mw[self.water_index]
         self.site_survival = self.p('water.site_survival_fraction', '1')
         self.kaolin = self.ns.index('kaolin')
         self.site_slope = np.zeros(self.n)
-        if self.retention_matrix != 0 and self.site_survival != 1:
+        if self.retention_scale_value != 0 and self.site_survival != 1:
             if np.any(self.initial[:,self.kaolin] <= 0):
                 raise ValueError('evolving retention sites require positive initial kaolin')
             self.site_slope = self.retention_matrix*(1-self.site_survival)/self.initial[:,self.kaolin]
@@ -108,7 +109,10 @@ class FiniteGasFullCycle(FullCycle):
         self.hydroxide_factor = self.p('kinetics.hydroxide.factor', '1')
         self.vapor = self.ng.index('H2O')
         self.calcium_pool = self.initial[:,self.calcite]+self.initial[:,self.lime]+self.initial[:,self.portlandite]
-        self.conversion_scale[self.lime_dehydration] = self.calcium_pool[0]
+        if self.cellwise_partition:
+            self.conversion_scale[:, self.lime_dehydration] = self.calcium_pool
+        else:
+            self.conversion_scale[self.lime_dehydration] = self.calcium_pool[0]
         if self.carbonation_factor != 0 and np.any(self.calcium_pool <= 0):
             raise ValueError('reversible carbonation requires a positive calcite/lime/portlandite pool')
         self.oxygen_order = self.p('kinetics.oxygen_order', '1')
@@ -140,8 +144,12 @@ class FiniteGasFullCycle(FullCycle):
             self.gnu = self.nu[:, len(self.ns):]
             self.nr += 1
             self.last += self.n
-            self.extent_scale = np.append(self.extent_scale,self.calcium_pool[0])
-            self.conversion_scale = np.append(self.conversion_scale,self.calcium_pool[0])
+            if self.cellwise_partition:
+                self.extent_scale = np.column_stack((self.extent_scale,self.calcium_pool))
+                self.conversion_scale = np.column_stack((self.conversion_scale,self.calcium_pool))
+            else:
+                self.extent_scale = np.append(self.extent_scale,self.calcium_pool[0])
+                self.conversion_scale = np.append(self.conversion_scale,self.calcium_pool[0])
         self.reaction_config = {**config, 'reactions':self.reactions}
         self.rhs_calls = 0
 
@@ -511,7 +519,7 @@ class FiniteGasFullCycle(FullCycle):
         """Stable mixing logs, including the explicit zero-retention limit."""
         log_water = np.log(self.initial[:,self.water_index])-fields[1]
         sites = self.retention_sites(fields)
-        if self.retention_matrix == 0:
+        if self.retention_scale_value == 0:
             return np.zeros_like(log_water), np.zeros_like(log_water), sites
         q = log_water-np.log(sites)
         positive = q.real >= 0
@@ -712,7 +720,7 @@ class FiniteGasFullCycle(FullCycle):
                 'carbonate_entropy':-rate[:,self.decarbonation]*dg[:,self.decarbonation]/T,
                 'hydroxide_affinity':dg[:,self.lime_dehydration],
                 'hydroxide_entropy':-rate[:,self.lime_dehydration]*dg[:,self.lime_dehydration]/T,
-                'dsc':float(heat.real.sum())/(self.n*self.md), 'coordinate_rate':coordinate_rate,
+                'dsc':float(heat.real.sum())/self.total_initial_dry_mass, 'coordinate_rate':coordinate_rate,
                 'pore':pore, 'conductivity':conductivity, 'effective_capacity':self.effective_capacity,
                 'mechanical_residual':self.mechanical_residual}
 
@@ -729,7 +737,7 @@ class FiniteGasFullCycle(FullCycle):
         capacity=ns@self.cp[:len(self.ns)]+np.sum(ng*(self.gas_molar_cp(T)-self.R),axis=1)
         if self.water_cp_slope != 0:
             capacity+=ns[:,self.water_index]*self.water_cp_slope*(T-self.Tr)
-        if self.retention_matrix != 0:
+        if self.retention_scale_value != 0:
             water=ns[:,self.water_index]
             sites=self.retention_matrix*self.site_survival+self.site_slope*ns[:,self.kaolin]
             capacity+=self.binding_cp*water*sites/(water+sites)
@@ -773,7 +781,7 @@ class FiniteGasFullCycle(FullCycle):
         f[8] = r['flow']/self.escale
         f[self.hydroxide_coordinate] = r['dns'][:,self.portlandite]/self.chemical_scale
         dy[self.gas_offset:self.extent_offset] = (r['dng']/r['gas']).T.ravel()
-        dy[self.extent_offset:self.last] = r['rate'].T.ravel()/self.chemical_scale
+        dy[self.extent_offset:self.last] = (r['rate']/self.cell_chemical_scale[:, None]).T.ravel()
         boundary = r['gas_flux'][-1]
         dy[self.last:self.last+self.g] = np.where(boundary.real < 0, -boundary, 0)/self.nscale
         dy[self.last+self.g:self.last+2*self.g] = np.where(boundary.real > 0, boundary, 0)/self.nscale
@@ -957,7 +965,7 @@ class FiniteGasFullCycle(FullCycle):
             maximum_mechanical_residual=max(maximum_mechanical_residual,float(np.max(np.abs(r['mechanical_residual']))))
             energies.append(float(energy)); entropies.append(float(entropy)); bulks.append(float(bulk.sum()))
             heat.append(float(f[7].sum()*self.escale)); flow.append(float(f[8].sum()*self.escale))
-            center=float((9*T[0]-T[1])/8)
+            center=self.center_temperature(T)
             span=max(float(T.max()),r['surface_T'],center)-min(float(T.min()),r['surface_T'],center)
             min_entropy=min(min_entropy,r['production']); min_face=min(min_face,r['minimum_face_entropy'])
             min_water_face=min(min_water_face,float(r['water_entropy'].min()))
@@ -970,6 +978,7 @@ class FiniteGasFullCycle(FullCycle):
                 'reservoir_mu_over_t_j_mol_k':dict(zip(self.ng,r['reservoir_mu_over_t'].tolist())),
                 'boundary_entropy_exchange_w_k':float(r['exchange']),
                 'x_m':(np.cumsum(bulk/self.area)-bulk/self.area/2).tolist(),
+                'initial_x_m':self.initial_partition['centers_m'].tolist(),
                 'water_kg_per_initial_dry_kg':(ns[:,self.ns.index('water')]*self.mw[self.ns.index('water')]/self.md).tolist(),
                 'liquid_water_inventory_mol':ns[:,self.water_index].tolist(),
                 'water_activity':np.exp(r['water_log_activity']).tolist(),
@@ -1070,7 +1079,7 @@ class FiniteGasFullCycle(FullCycle):
         final=rows[-1]; phi=float(np.average(final['porosity'],weights=self.unpack(states[-1])[3]))
         product_mass=final['mass_kg']; density=product_mass/bulks[-1]; peak=max(r['temperature_difference_k'] for r in rows)
         summary={'mass_kg':product_mass,'total_mass_including_pore_gas_kg':float(mass[-1]),'density_kg_m3':float(density),
-            'loss_on_ignition_dry_fraction':float(1-product_mass/(self.n*self.md)),'porosity':phi,
+            'loss_on_ignition_dry_fraction':float(1-product_mass/self.total_initial_dry_mass),'porosity':phi,
             'residual_carbon_kg':float(sum(final['residual_carbon_kg'])),'shrinkage':float(1-bulks[-1]/bulks[0]),'peak_temperature_difference_k':peak,
             'peak_overpressure_pa':max(max(r['pressure_pa'])-self.P for r in rows),
             'minimum_sampled_gas_face_pore_length_m':min(min(r['gas_face_pore_length_m']) for r in rows),
@@ -1097,7 +1106,7 @@ class FiniteGasFullCycle(FullCycle):
             'maximum_sampled_liquid_water_mobility_m2_s':max(max(r['liquid_water_cell_mobility_m2_s']) for r in rows),
             'liquid_water_activation_energy_j_mol':self.water_mobility_activation,
             'peak_internal_liquid_water_flux_mol_s':max(max(abs(x) for x in r['internal_liquid_water_face_flux_mol_s']) for r in rows),
-            'final_retained_liquid_water_kg':sum(final['water_kg_per_initial_dry_kg'])*self.md,
+            'final_retained_liquid_water_kg':float(np.asarray(final['water_kg_per_initial_dry_kg'])@self.md) if self.cellwise_partition else sum(final['water_kg_per_initial_dry_kg'])*self.md,
             'peak_water_retention_entropy_j_k':max(sum(r['water_retention_entropy_j_k']) for r in rows),
             'initial_water_binding_energy_j':sum(rows[0]['water_binding_energy_j']),
             'final_water_binding_energy_j':sum(final['water_binding_energy_j']),
@@ -1138,7 +1147,8 @@ class FiniteGasFullCycle(FullCycle):
         entropy_error=entropies-entropies[0]-states[:,-2:].sum(axis=1)*self.escale/self.Tr
         entropy_relative=float(np.max(np.abs(entropy_error))/(self.escale/self.Tr))
         inventory_roundoff = self.p('acceptance.inventory_roundoff_factor','1')*np.finfo(float).eps*self.nscale
-        inventory_solver_budget=self.p('numerics.atol','1')*max(self.chemical_scale,float(np.max(self.extent_scale[:self.kinetic_nr]@np.abs(self.snu[:self.kinetic_nr]))))
+        reaction_inventory_scale = (self.extent_scale[:, :self.kinetic_nr] if self.cellwise_partition else self.extent_scale[:self.kinetic_nr])@np.abs(self.snu[:self.kinetic_nr])
+        inventory_solver_budget=self.p('numerics.atol','1')*max(float(np.max(self.chemical_scale)),float(np.max(reaction_inventory_scale)))
         inventory_budget=inventory_roundoff+inventory_solver_budget
         remaining = None
         if has_drying:

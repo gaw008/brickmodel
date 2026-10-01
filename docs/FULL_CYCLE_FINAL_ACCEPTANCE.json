@@ -1,14 +1,14 @@
 {
   "schema": "full_cycle_final_acceptance_matrix_v1",
-  "recorded_utc": "2026-10-01T22:24:38.397446+00:00",
-  "status": "P41_saved_diagnosis_available_budgetfailed_modelstillpartial",
+  "recorded_utc": "2026-10-01T23:46:39.017915+00:00",
+  "status": "P43_per_cell_host_fixed4_local_pass_current_dynamic_unqualified",
   "identity": "approximate_simulation_not_measured_material",
   "parent_commit": "d8bc6f1b09e0b6d10cdcf4abf35e634035a36d08",
   "parameter_file": "parameters.full_cycle.json",
-  "parameter_count": 521,
+  "parameter_count": 534,
   "parameter_status_counts": {
     "literature": 144,
-    "assumed": 377,
+    "assumed": 390,
     "measured": 0
   },
   "implementation": {
@@ -221,7 +221,7 @@
     }
   },
   "base_model_complete": false,
-  "current_scope": "P41保存结果离散诊断已实现（2026-10-01T22:24:38.397446+00:00），资源验收partial：一puredata任务两次，首CO2重排残差符号错已证实修正，第二rc0/回收但比原120s截止晚0.208346s，无第三次/不延时。两次分析CPU0.074337/0.070420s、监督120.208628s含审查修复；0新模型/本构/RHS/Jac/积分/fit/UQ/恢复。三档物理配置相同，仅已声明numerics变化；额外direct与边界CO2供给对应，97.902%差在同初始外层区间。未确认面积/体积/索引/半格/重复热源缺陷，7.33335%网格温差与CaO/strictOH+carbonate/P34旧30/81/名义0.135892078740%失败保持，wholefalse。根506=144literature362assumed0measured，旧500完整保持，科学核不改；下一项固定嵌套非均匀初始有限体积仅候选，先证明尺度/守恒/熵不变量，不追加周期。",
+  "current_scope": "P43逐格主机接线及4固定瞬时上下文准入完成（2026-10-01T23:46:39.017915+00:00）：首旧reference1初始化/1RHS后汇总键KeyError失败保留；仅引用键修正到既有1e-11，第二4上下文52类向量/标量检查全PASS，累计5初始化/5RHS/2jobs回收、分析CPU0.1624s、原唯一120s窗口实际86.844847s、不延截止/无第三次，必要163703B。旧新uniform同y的RHS/库存差精确0，quad12/24非零内面通量及缓存导数U/S链通过；rawCaO约−1.73e−18/−8.67e−19mol保留。当前default/inverse/summarize仅静态，0Jac/积分/fit/UQ，不授新八阶段/时间网格/严格全支路资格。根534=144literature390assumed0measured，旧521完整保持，名义旧scalar/direct未启用；P40原mesh7.33335%/direct27.87505%/phase/strict、P34旧30/81和名义余水0.135892078740%失败保持，wholefalse。",
   "P11": {
     "status": "base_model_complete_with_nominal_process_failure_and_future_material_calibration",
     "verification": {
@@ -1577,7 +1577,8 @@
     "P34_historical_original_baseline": "docs/FULL_CYCLE_P34_LIME_HYDROXIDE.json",
     "current_conditional_all_dynamic_qualified": false,
     "P41_saved_only_diagnosis": "docs/FULL_CYCLE_P41_SPATIAL_DIAGNOSIS.json",
-    "new_physical_model_bug_confirmed": false
+    "new_physical_model_bug_confirmed": false,
+    "P43_fixed4_instantaneous": "docs/FULL_CYCLE_P43_CELL_HOST.json"
   },
   "current_nominal_drying_remaining_fraction": 0.001358920787402553,
   "whole_project_complete_definition": "Scoped implementation and physics/numerics, version-matched declared scenario evidence and observable interfaces are separate from process/material/delivery qualifications. P21 old kernel distribution cannot qualify P24 kernel.",
@@ -1586,34 +1587,39 @@
     {
       "item": "CaO_steam_portlandite_shared_inventory_energy_entropy_mechanics",
       "outcome": "implemented",
-      "evidence": "P34"
+      "evidence": "P34",
+      "current_P43_integrated_qualification": false
     },
     {
       "item": "original_whole_and_stage_mass_elements_complete_energy",
       "outcome": "passed",
       "maximum_relative": 0.0005086555604574911,
       "limit_relative": 0.001,
-      "budget_count": 81
+      "budget_count": 81,
+      "current_P43_integrated_qualification": false
     },
     {
       "item": "O2_N2_H2O_CO2_whole_and_stage_budgets",
       "outcome": "passed",
       "maximum_relative": 0.00045102941685340307,
       "limit_relative": 0.001,
-      "budget_count": 108
+      "budget_count": 108,
+      "current_P43_integrated_qualification": false
     },
     {
       "item": "original_time_grid_four_metrics",
       "outcome": "passed",
       "maximum_relative": 0.00037552301401407907,
-      "limit_relative": 0.02
+      "limit_relative": 0.02,
+      "current_P43_integrated_qualification": false
     },
     {
       "item": "new_portlandite_Ca_fraction_refinement",
       "outcome": "passed",
       "maximum_relative": 2.796151404398647e-05,
       "limit_relative": 0.02,
-      "normalization": "Initial conserved Ca from root recipe, refined OH diagnostic also retained"
+      "normalization": "Initial conserved Ca from root recipe, refined OH diagnostic also retained",
+      "current_P43_integrated_qualification": false
     },
     {
       "item": "three_solid_no_floor_relative_budgets",
@@ -1623,68 +1629,96 @@
       "maximum_relative": 1.5146178122171001,
       "maximum_raw_residual_mol": 5.464378949326942e-16,
       "initial_Ca_relative_diagnostic": 3.2409644412645382e-15,
-      "diagnostic_does_not_change_failed_qualification": true
+      "diagnostic_does_not_change_failed_qualification": true,
+      "current_P43_integrated_qualification": false
     },
     {
       "item": "strict_sampled_hydroxide_channel_dissipation",
       "outcome": "not_qualified",
-      "raw_signed_values_retained": true
+      "raw_signed_values_retained": true,
+      "current_P43_integrated_qualification": false
     },
     {
       "item": "nominal_drying",
       "outcome": "failed",
       "fraction": 0.001358920787402553,
-      "limit": 0.001
+      "limit": 0.001,
+      "current_P43_integrated_qualification": false
     },
     {
       "item": "current_nine_kind_observation_mapping",
       "outcome": "same_trajectory_finite",
       "evidence": "P34",
-      "extra_forward_calls": 0
+      "extra_forward_calls": 0,
+      "current_P43_integrated_qualification": false
     },
     {
       "item": "full_current_kernel_three_scenario_UQ_fit",
       "outcome": "not_qualified",
-      "historical_evidence": "P26 5917/P32 P33 830a original kernel only, not repeated"
+      "historical_evidence": "P26 5917/P32 P33 830a original kernel only, not repeated",
+      "current_P43_integrated_qualification": false
     },
     {
       "item": "target_material_kinetics_product_accuracy",
       "outcome": "pending_measurements",
-      "measured_parameters": 0
+      "measured_parameters": 0,
+      "current_P43_integrated_qualification": false
     },
     {
       "item": "Git_Drive_history_storage",
-      "outcome": "separate_delivery"
+      "outcome": "separate_delivery",
+      "current_P43_integrated_qualification": false
     },
     {
       "item": "P37_supplied_mobility_local_direct_operator",
       "outcome": "local_four_scalar_cases_passed",
       "scope": "Dependent source/entropy algebra only; not cycle mass-energy, accumulated extent, kinetics or refinement.",
       "cycle_channel_implemented": false,
-      "evidence": "P37"
+      "evidence": "P37",
+      "current_P43_integrated_qualification": false
     },
     {
       "item": "P38_source_specific_paired_TG_DoC",
       "outcome": "three_synthetic_mappings_one_compound_semantic_rejection_qualified",
       "scope": "Correctsourceformulas/basis/provenance only; no peakintegration/wholebrick/fit/trajectory qualification.",
-      "evidence": "P38"
+      "evidence": "P38",
+      "current_P43_integrated_qualification": false
     },
     {
       "item": "P39_conditional_direct_host_RHS",
       "outcome": "four_actual_complete_RHS_local_wiring_qualified",
       "scope": "No cycle/refinement/independentdynamicclosure, nominalactivation/materialrate/wholeproject qualification.",
-      "evidence": "P39"
+      "evidence": "P39",
+      "current_P43_integrated_qualification": false
     },
     {
       "item": "P40_direct_fixed_short_dynamic",
       "outcome": "implemented_and_threecases_saved_partial_requiredmeshfail",
       "evidence": "docs/FULL_CYCLE_P40_DIRECT_TRANSIENT.json",
-      "scope": "Fixed10s direct_transient, baseline12/time12/mesh24. Originaleightcycle stages notcovered; no nominalbrick/sourceexperiment qualification."
+      "scope": "Fixed10s direct_transient, baseline12/time12/mesh24. Originaleightcycle stages notcovered; no nominalbrick/sourceexperiment qualification.",
+      "current_P43_integrated_qualification": false
     },
     {
       "item": "P41_saved_spatial_diagnosis",
       "outcome": "implemented_corrected_savedresult_semantics_available_but_originaldeadlinebudgetFAIL",
-      "evidence": "docs/FULL_CYCLE_P41_SPATIAL_DIAGNOSIS.json"
+      "evidence": "docs/FULL_CYCLE_P41_SPATIAL_DIAGNOSIS.json",
+      "current_P43_integrated_qualification": false
+    },
+    {
+      "item": "P43_fixed4_percell_instantaneous",
+      "outcome": "passed_local_only",
+      "checks": 52,
+      "evidence": "P43"
+    },
+    {
+      "item": "P43_new_default_inverse_summary_execution",
+      "outcome": "unqualified_static_only",
+      "evidence": "P43"
+    },
+    {
+      "item": "P43_new_fullcycle_time_grid",
+      "outcome": "not_executed",
+      "evidence": "P43"
     }
   ],
   "final_matrix_independent_review": {
@@ -1795,16 +1829,22 @@
   },
   "historical_P18_model_completion_wall_s_from_plan_creation": 14941.526078,
   "current_model_completion_status": {
-    "implementation": "P40conditionalhostunchanged; P41reusablepuredata script only",
-    "physical_numerical": "OriginalP40ordinarygas/timepass meshcontrastFAIL; phase/strictFAIL remain; no P41new modelcalls",
-    "extended_phase": "3/9uniqueCaOnearzero phasebudgetfail, nofloor; originalP34 30/81remain",
-    "strict_entropy": "OH andcarbonate signednegative minima retained, directsamplepositive only",
-    "nominal_process": "OriginalP34 historicaldrying0.1358920787402553%>.1%fail, no newnominalattempt",
-    "material": "500=144literature356assumed0measured; L andwindow synthetic",
-    "comparison_inverse_UQ": "Notqualified currentconditionalkernel",
-    "delivery": "P42mainactualGit/twoincrementmetadata passed; uniformappendix single normal successor/increment pending actual readback receipt",
-    "P41_puredata_diagnosis": "Implementedcorrectedresult/source/spaceaccount diagnosis, budgetfailed secondreap afteroriginaldeadline, no third",
-    "numerical_representation": "Explicitcurrentuniformfive-row compatibilityPASS; oldP42operationalFAIL retained. Standalonequadratic/uniform algebra only; no hostlocalordynamicadmission"
+    "implementation": "P43per-cellhostandneededobservationweightsimplemented;onlyselectedfixed4instantstatesactualpass",
+    "physical_numerical": "No currentnew8stage/dynamic/time/grid qualification. P40previousordinary/timepass onlyhistorical; originalmesh/phase/strictFAIL retained.",
+    "nominal_process": "Historical0.1358920787402553%>0.1%FAIL; no new nominalattempt",
+    "material": "534=144literature390assumed0measured;synthetic/assumed only",
+    "comparison_inverse_UQ": "No currentnewrepresentation qualification",
+    "delivery": "P42appendixactualcd2/615942BmetadataPASS;P43implementation/incrementpendingactualreceipt",
+    "next_dependency": {
+      "id": "P44",
+      "scope": "Candidate:existingfixed10ssyntheticdirect case on frozenquadratic12 baseline/time-halfstep plusquadratic24 spatialrefinement,3smallODEs only after explicitresourceallocation. SameL/recipe/atmosphere/rootacceptance/floors; oldP40failure retained. No search/UQ/newnominaldrying.",
+      "proposed_budget_per_s": 300,
+      "proposed_budget_global_s": 900,
+      "workers": 1,
+      "summary_bytes": 2097152,
+      "actual_new_integrations": 0,
+      "authorized_started": false
+    }
   },
   "historical_pre_P22_model_capability_closeout_complete": true,
   "P22": {
@@ -1875,7 +1915,7 @@
     "declared_to_reviewed_wall_s": 430.997672
   },
   "historical_pre_P22_status": "declared_approximate_model_work_complete_physics_numerics_passed_process_failed",
-  "physical_numerical_acceptance_scope": "Fixed10s direct_transient, baseline12/time12/mesh24. Originaleightcycle stages notcovered; no nominalbrick/sourceexperiment qualification. MandatorymeshpeakcontrastFAIL, phase/strictentropyFAIL retained.",
+  "physical_numerical_acceptance_scope": "Cached same-RHS thermo/derivatives under independentlyexpandedelastic/phaseU/Schain; rr physicaldT/db/dpore, phaseq decodedfromdy. Not independentreevaluationcompletepotentials/allimplicitstatecoordinates; no ODE/fullstages/time/grid.",
   "P23": {
     "status": "completed_bounded_source_audit",
     "evidence": [
@@ -2602,7 +2642,7 @@
       "current_kernel_UQ_qualified": false
     },
     "evidence": "docs/FULL_CYCLE_P40_DIRECT_TRANSIENT.json",
-    "scope": "P41保存结果离散诊断已实现（2026-10-01T22:24:38.397446+00:00），资源验收partial：一puredata任务两次，首CO2重排残差符号错已证实修正，第二rc0/回收但比原120s截止晚0.208346s，无第三次/不延时。两次分析CPU0.074337/0.070420s、监督120.208628s含审查修复；0新模型/本构/RHS/Jac/积分/fit/UQ/恢复。三档物理配置相同，仅已声明numerics变化；额外direct与边界CO2供给对应，97.902%差在同初始外层区间。未确认面积/体积/索引/半格/重复热源缺陷，7.33335%网格温差与CaO/strictOH+carbonate/P34旧30/81/名义0.135892078740%失败保持，wholefalse。根506=144literature362assumed0measured，旧500完整保持，科学核不改；下一项固定嵌套非均匀初始有限体积仅候选，先证明尺度/守恒/熵不变量，不追加周期。",
+    "scope": "P43逐格主机接线及4固定瞬时上下文准入完成（2026-10-01T23:46:39.017915+00:00）：首旧reference1初始化/1RHS后汇总键KeyError失败保留；仅引用键修正到既有1e-11，第二4上下文52类向量/标量检查全PASS，累计5初始化/5RHS/2jobs回收、分析CPU0.1624s、原唯一120s窗口实际86.844847s、不延截止/无第三次，必要163703B。旧新uniform同y的RHS/库存差精确0，quad12/24非零内面通量及缓存导数U/S链通过；rawCaO约−1.73e−18/−8.67e−19mol保留。当前default/inverse/summarize仅静态，0Jac/积分/fit/UQ，不授新八阶段/时间网格/严格全支路资格。根534=144literature390assumed0measured，旧521完整保持，名义旧scalar/direct未启用；P40原mesh7.33335%/direct27.87505%/phase/strict、P34旧30/81和名义余水0.135892078740%失败保持，wholefalse。",
     "P37": {
       "bounded_item_complete": true,
       "whole_project_complete": false,
@@ -2670,6 +2710,11 @@
       "actual_one_job_attempts": 2,
       "attempt2_reaped_global_deadline_exceeded_s": 0.208346,
       "evidence": "docs/FULL_CYCLE_P41_SPATIAL_DIAGNOSIS.json"
+    },
+    "P43": {
+      "bounded_implementation_complete": true,
+      "selected_instantaneous_pass": true,
+      "dynamic_qualification": false
     }
   },
   "final_complete_scope_review": {
@@ -5985,7 +6030,7 @@
   },
   "original_physical_numerical_criteria_passed": false,
   "extended_current_acceptance_complete": false,
-  "capability_validation_matrix_current_kernel_note": "P40actual10s only; no originaleightstage qualification. Old stagePASS fields historicalP34 only.",
+  "capability_validation_matrix_current_kernel_note": "P43 source differsP40; 4instantstates only. Eightstage/4crossitem priorqualification historical, no currentintegrated inheritance.",
   "historical_pre_P34_final_matrix_independent_review": {
     "recorded_utc": "2026-10-01T05:30:07.223230+00:00",
     "reviewers": [
@@ -6492,6 +6537,204 @@
       "literature": 144,
       "assumed": 370,
       "measured": 0
+    }
+  },
+  "historical_pre_P43_current_model_completion_status": {
+    "implementation": "P40conditionalhostunchanged; P41reusablepuredata script only",
+    "physical_numerical": "OriginalP40ordinarygas/timepass meshcontrastFAIL; phase/strictFAIL remain; no P41new modelcalls",
+    "extended_phase": "3/9uniqueCaOnearzero phasebudgetfail, nofloor; originalP34 30/81remain",
+    "strict_entropy": "OH andcarbonate signednegative minima retained, directsamplepositive only",
+    "nominal_process": "OriginalP34 historicaldrying0.1358920787402553%>.1%fail, no newnominalattempt",
+    "material": "500=144literature356assumed0measured; L andwindow synthetic",
+    "comparison_inverse_UQ": "Notqualified currentconditionalkernel",
+    "delivery": "P42mainactualGit/twoincrementmetadata passed; uniformappendix single normal successor/increment pending actual readback receipt",
+    "P41_puredata_diagnosis": "Implementedcorrectedresult/source/spaceaccount diagnosis, budgetfailed secondreap afteroriginaldeadline, no third",
+    "numerical_representation": "Explicitcurrentuniformfive-row compatibilityPASS; oldP42operationalFAIL retained. Standalonequadratic/uniform algebra only; no hostlocalordynamicadmission"
+  },
+  "historical_pre_P43_current_scope": "P41保存结果离散诊断已实现（2026-10-01T22:24:38.397446+00:00），资源验收partial：一puredata任务两次，首CO2重排残差符号错已证实修正，第二rc0/回收但比原120s截止晚0.208346s，无第三次/不延时。两次分析CPU0.074337/0.070420s、监督120.208628s含审查修复；0新模型/本构/RHS/Jac/积分/fit/UQ/恢复。三档物理配置相同，仅已声明numerics变化；额外direct与边界CO2供给对应，97.902%差在同初始外层区间。未确认面积/体积/索引/半格/重复热源缺陷，7.33335%网格温差与CaO/strictOH+carbonate/P34旧30/81/名义0.135892078740%失败保持，wholefalse。根506=144literature362assumed0measured，旧500完整保持，科学核不改；下一项固定嵌套非均匀初始有限体积仅候选，先证明尺度/守恒/熵不变量，不追加周期。",
+  "P43": {
+    "schema": "P43_initial_partition_host_local_closeout_v1",
+    "recorded_utc": "2026-10-01T23:46:39.017915+00:00",
+    "status": "implemented_and_fixed4_instantaneous_admission_passed_only",
+    "old_head": "cd2f9a9597574745937220020e52f076e2ee591d",
+    "scientific_changed_paths": [
+      "src/sludge_vme/models/full_cycle.py",
+      "src/sludge_vme/models/full_cycle_gas.py",
+      "src/sludge_vme/inverse/full_cycle.py"
+    ],
+    "unmodified41_host_sources_and_primitive_preserved": true,
+    "root_count": 534,
+    "parameter_status_counts": {
+      "literature": 144,
+      "assumed": 390,
+      "measured": 0
+    },
+    "old521_complete_metadata_preserved": true,
+    "nominal_direct_not_enabled": true,
+    "scalar_default_and_missing_optin": "Originalscalargeometry/reference/scales/means preserved static; not a newdefaultRHS orinverse qualification. Explicitmode1uniformarray/mode2fixedquadratic admitted onlyfixed4states.",
+    "actual_execution": {
+      "schema": "P43_actual_unique_instantaneous_execution_v1",
+      "started_utc": "2026-10-01T23:40:05.799721+00:00",
+      "unique_hard_deadline_utc": "2026-10-01T23:42:05.799721+00:00",
+      "single_job_budget_s": 60,
+      "global_budget_s": 120,
+      "maximum_jobs_including_failure": 2,
+      "maximum_total_RHS": 8,
+      "maximum_total_instances": 8,
+      "workers": 1,
+      "jobs": [
+        {
+          "id": "fixed4_first_attempt",
+          "started_utc": "2026-10-01T23:40:05.800296+00:00",
+          "maximum_RHS": 4,
+          "maximum_instances": 4,
+          "pid": 36460,
+          "return_code": 1,
+          "child_reaped": true,
+          "finished_utc": "2026-10-01T23:40:06.569586+00:00",
+          "wall_s": 0.7676557081285864,
+          "within_original_budget": true,
+          "status": "failed"
+        },
+        {
+          "id": "fixed4_second_final_attempt",
+          "started_utc": "2026-10-01T23:41:32.129909+00:00",
+          "maximum_RHS": 4,
+          "maximum_instances": 4,
+          "pid": 36507,
+          "return_code": 0,
+          "child_reaped": true,
+          "finished_utc": "2026-10-01T23:41:32.642446+00:00",
+          "wall_s": 0.5112796248868108,
+          "within_original_budget": true,
+          "status": "passed"
+        }
+      ],
+      "deadline_extended": false,
+      "timeout_stop_path_exercised": false,
+      "retry_started": true,
+      "ODE_Jac_fit_UQ_calls": 0,
+      "recorded_utc": "2026-10-01T23:41:32.644567+00:00",
+      "elapsed_s": 86.84484679205343,
+      "necessary_numerical_bytes": 163703,
+      "actual_total_RHS_starts": 5,
+      "actual_total_instances": 5,
+      "actual_child_CPU_s": 0.16239999999999993,
+      "second_child_CPU_s": 0.11286799999999997,
+      "fixed4_passed": true,
+      "status": "completed",
+      "all_started_children_reaped": true,
+      "post_exit_summary_limit_passed": true
+    },
+    "fixed4_result_rows": [
+      {
+        "id": "old_uniform12",
+        "cells": 12,
+        "active_nr": 8,
+        "checks": 13,
+        "maximum_relative": 3.3640813971721054e-16,
+        "U_chain_relative": 6.551989197429039e-19,
+        "S_chain_relative": 3.3640813971721054e-16,
+        "minimum_condensed_mol": 0.0,
+        "gas_heat_nonzero": [
+          true,
+          true
+        ]
+      },
+      {
+        "id": "uniform12",
+        "cells": 12,
+        "active_nr": 8,
+        "checks": 13,
+        "maximum_relative": 3.3640813971721054e-16,
+        "U_chain_relative": 6.551989197429039e-19,
+        "S_chain_relative": 3.3640813971721054e-16,
+        "minimum_condensed_mol": 0.0,
+        "gas_heat_nonzero": [
+          true,
+          true
+        ]
+      },
+      {
+        "id": "quadratic12",
+        "cells": 12,
+        "active_nr": 8,
+        "checks": 13,
+        "maximum_relative": 1.250001630199718e-16,
+        "U_chain_relative": 9.406750456876541e-18,
+        "S_chain_relative": 1.250001630199718e-16,
+        "minimum_condensed_mol": -1.734723475976807e-18,
+        "gas_heat_nonzero": [
+          true,
+          true
+        ]
+      },
+      {
+        "id": "quadratic24",
+        "cells": 24,
+        "active_nr": 8,
+        "checks": 13,
+        "maximum_relative": 4.6602339837159646e-14,
+        "U_chain_relative": 5.663112229249983e-17,
+        "S_chain_relative": 0.0,
+        "minimum_condensed_mol": -8.673617379884035e-19,
+        "gas_heat_nonzero": [
+          true,
+          true
+        ]
+      }
+    ],
+    "local_check_count": 52,
+    "check_count_definition": "52 vector/scalar check categories, not52 independentscalar values. Four*13; rawcomponentarrays saved.",
+    "local_maximum_relative": 4.6602339837159646e-14,
+    "existing_identity_tolerance": 1e-11,
+    "old_new_uniform_same_y_and_RHS_inventory_exact_zero": true,
+    "physics_scope": "Cached same-RHS thermo/derivatives under independentlyexpandedelastic/phaseU/Schain; rr physicaldT/db/dpore, phaseq decodedfromdy. Not independentreevaluationcompletepotentials/allimplicitstatecoordinates; no ODE/fullstages/time/grid.",
+    "field_scope": "LinearT andng/vp0 reference-poreconcentration atinitialcentroids, not currentng/pore orpartialpressure averages; both internalheat/gasfluxes nonzero inall4. Differentquadratures do not require bitwiseglobalU equivalence.",
+    "face_scope": "Sharedfaceextensivefluxes andhalfcellheatresistances assembled; oldmolecularfinitefacearithmeticalpropertyinterpolation retained assumed. Not universalfinitejumpthermodynamicpositivity/optimalgrid/convergence proof.",
+    "original_failures": {
+      "P40_mesh_peak_relative": 0.0733335269426334,
+      "P40_mesh_direct_relative": 0.27875046911,
+      "P40_CaO_unique_failed": 3,
+      "P40_strict_OH_and_carbonate": "unqualified; signednegative retained",
+      "P34_phase_failed": 30,
+      "P34_phase_budgets": 81,
+      "nominal_water_fraction": 0.001358920787402553,
+      "nominal_water_limit_fraction": 0.001,
+      "nominal_process_passed": false
+    },
+    "new_raw_CaO_negative_mol": {
+      "quadratic12": -1.734723475976807e-18,
+      "quadratic24": -8.673617379884035e-19
+    },
+    "whole_model_passed": false,
+    "physical_numerical_all_acceptance": false,
+    "material_applicability": "0measured;literatureborrowing/assumed/synthetic only, awaitingrealbrick",
+    "unqualified": [
+      "newdefaultactualRHS",
+      "summarize/newobservationexecution",
+      "all8stages",
+      "Jacobian",
+      "integratedmass_element_energy",
+      "timestep_gridrefinement",
+      "strictallbranches",
+      "currentcomparison_inverse_UQ"
+    ],
+    "delivery": {
+      "normal_successor": "pendingactualreceipt",
+      "single_increment": "pendingupload/readback",
+      "recovery": "stoppedbyuser;0download/extract/recovery",
+      "history_storage_20GB_GitHub_capacity": "unresolved; originals/history preserved"
+    },
+    "next_dependency": {
+      "id": "P44",
+      "scope": "Candidate:existingfixed10ssyntheticdirect case on frozenquadratic12 baseline/time-halfstep plusquadratic24 spatialrefinement,3smallODEs only after explicitresourceallocation. SameL/recipe/atmosphere/rootacceptance/floors; oldP40failure retained. No search/UQ/newnominaldrying.",
+      "proposed_budget_per_s": 300,
+      "proposed_budget_global_s": 900,
+      "workers": 1,
+      "summary_bytes": 2097152,
+      "actual_new_integrations": 0,
+      "authorized_started": false
     }
   }
 }

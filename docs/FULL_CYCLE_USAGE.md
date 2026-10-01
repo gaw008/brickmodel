@@ -295,3 +295,5 @@ P42实际交付（2026-10-01T23:01:33.461636+00:00）：实现e36ac179及静态u
 ## P42明确追加受影响行实际结果
 
 P42明确追加uniform-only复核已完成（2026-10-01T23:12:12.452786+00:00）：仅5受影响行全PASS，实际第二sciencejob1次/累积2、原阈值与比较定义不变，CPU0.008507500s、监督0.257880250s/rc0/回收/新60–120s预算内，无第三次。原P42截止22:47:50.974739UTC、一job63/64FAIL、两prestart gate无child及151.717013s关闭永久保留；新窗口23:09:52.493403–23:11:52.493403UTC明示追加，不追溯延时或翻原PASS。当前uniform恒宽/旧A*L/N体积和每格md/chemical/原extent编码兼容获数据契约资格；旧63未受影响项不复评。根521=144literature377assumed0measured、旧514完整保持、primitive冻结4eeb不改、原44主机不改；非均匀主机/完整热力学未准入，0模型/物理算子/积分/fit/UQ/恢复。P42原operational仍partial，P40mesh7.33335%/phase/strict、P34旧30/81、名义0.135892078740%失败与wholefalse保持。
+
+P43当前表示契约：无initial_partition字段旧config或根mode0保留scalar uniform；mode1明确uniformarray，mode2固定quadratic，模式/指数仅根参数。只有4固定瞬时上下文获实际准入。全域水/收缩观测权重已接线，但当前predict/summarize/CLI及新default执行仍未新验证；不能把旧CLI或P33恢复证据给新quadratic。证据FULL_CYCLE_P43_CELL_HOST.md/.json；0新积分。

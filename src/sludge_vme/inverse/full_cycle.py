@@ -26,8 +26,9 @@ def map_observations(config: dict, observations: list[dict], report: dict, field
 
     report and fields must come from the supplied configuration. liquid_water
     uses fields.rows.water_kg_per_initial_dry_kg: whole-domain liquid-water
-    mass divided by initial dry mass, in kg/kg. Its arithmetic cell mean is
-    valid because this model assigns every cell the same initial dry mass.
+    mass divided by initial dry mass, in kg/kg, weighted by initial cell dry
+    mass. Dilatometry averages local shrinkage with initial cell volumes;
+    the uniform scalar path retains its original arithmetic means.
     It is neither the wettest cell nor TG, uses no current-dry-mass denominator,
     and excludes pore vapor and mineral-bound water. Binding acts on this same
     condensed-water inventory; its energy weight is not added as extra water.
@@ -41,12 +42,12 @@ def map_observations(config: dict, observations: list[dict], report: dict, field
     rows = fields['rows']
     time_s = np.array([r['time_s'] for r in rows])
     model = make_cycle(config)
-    dry_mass = model.n*model.md
+    dry_mass = model.total_initial_dry_mass
     curves = {'tg':np.array([r['mass_kg']/dry_mass for r in rows]),
               'dsc':np.array([r['dsc_endothermic_w_per_initial_dry_kg'] for r in rows]),
-              'dilatometry':np.array([-np.mean(r['thickness_shrinkage']) for r in rows]),
+              'dilatometry':np.array([-(np.average(r['thickness_shrinkage'],weights=model.initial_partition['initial_bulk_m3']) if model.cellwise_partition else np.mean(r['thickness_shrinkage'])) for r in rows]),
               'kiln':np.array([r['kiln_temperature_k'] for r in rows]),
-              'liquid_water':np.array([np.mean(r['water_kg_per_initial_dry_kg']) for r in rows])}
+              'liquid_water':np.array([(np.average(r['water_kg_per_initial_dry_kg'],weights=model.cell_dry_mass) if model.cellwise_partition else np.mean(r['water_kg_per_initial_dry_kg'])) for r in rows])}
     if any(row['kind'] == 'surface_temperature' for row in observations):
         curves['surface_temperature'] = np.array([r['surface_temperature_k'] for r in rows])
     products = {'absorption':'absorption_kg_kg','strength':'strength_pa','defects':'defect_indicator'}
