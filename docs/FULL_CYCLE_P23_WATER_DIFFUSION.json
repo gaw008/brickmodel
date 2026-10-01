@@ -1,0 +1,922 @@
+{
+  "schema": "full_cycle_p23_water_binary_diffusion_source_comparison_v1",
+  "recorded_utc": "2026-10-01T00:39:56.984641+00:00",
+  "frozen_utc": "2026-10-01T00:38:46.305126+00:00",
+  "base_commit": "ad4f7d942188adbb9cd9ebb8b09d6dad04d9a8dd",
+  "scientific_kernel_commit": "d5fd9a2f919fc605cc85a91db5d4cf6a3f54a3cc",
+  "fixed_design": {
+    "pressure_parameter": "validation.water_binary_diffusion.source_pressure",
+    "groups": [
+      {
+        "source": "S1",
+        "pair": "N2_H2O",
+        "temperature_parameter": "validation.water_binary_diffusion.temperatures.s1_water",
+        "coefficient_parameters": {
+          "A": "validation.water_binary_diffusion.S1.N2_H2O.A",
+          "B": "validation.water_binary_diffusion.S1.N2_H2O.B",
+          "C": "validation.water_binary_diffusion.S1.N2_H2O.C",
+          "Dref": "validation.water_binary_diffusion.S1.N2_H2O.Dref"
+        },
+        "reference_temperature_parameter": "validation.water_binary_diffusion.reference_temperature",
+        "reference_rule": "Use printed Dref at referenceT; use source A/B/C otherwise, no extrapolation.",
+        "temperature_domain_k": [
+          150,
+          2000
+        ]
+      },
+      {
+        "source": "S1",
+        "pair": "H2O_CO2",
+        "temperature_parameter": "validation.water_binary_diffusion.temperatures.s1_water",
+        "coefficient_parameters": {
+          "A": "validation.water_binary_diffusion.S1.H2O_CO2.A",
+          "B": "validation.water_binary_diffusion.S1.H2O_CO2.B",
+          "C": "validation.water_binary_diffusion.S1.H2O_CO2.C",
+          "Dref": "validation.water_binary_diffusion.S1.H2O_CO2.Dref"
+        },
+        "reference_temperature_parameter": "validation.water_binary_diffusion.reference_temperature",
+        "reference_rule": "Use printed Dref at referenceT; use source A/B/C otherwise, no extrapolation.",
+        "temperature_domain_k": [
+          250,
+          2000
+        ]
+      },
+      {
+        "source": "S1",
+        "pair": "N2_CO2",
+        "temperature_parameter": "validation.water_binary_diffusion.temperatures.s1_n2_co2",
+        "coefficient_parameters": {
+          "A": "validation.water_binary_diffusion.S1.N2_CO2.A",
+          "B": "validation.water_binary_diffusion.S1.N2_CO2.B",
+          "C": "validation.water_binary_diffusion.S1.N2_CO2.C",
+          "Dref": "validation.water_binary_diffusion.S1.N2_CO2.Dref"
+        },
+        "reference_temperature_parameter": "validation.water_binary_diffusion.reference_temperature",
+        "reference_rule": "Use printed Dref at referenceT; use source A/B/C otherwise, no extrapolation.",
+        "temperature_domain_k": [
+          253,
+          473
+        ]
+      },
+      {
+        "source": "S3",
+        "pair": "O2_H2O",
+        "temperature_parameter": "validation.water_binary_diffusion.temperatures.s3_o2",
+        "diffusivity_parameter": "validation.water_binary_diffusion.S3.O2_H2O.D",
+        "source_numeric_tokens_cm2_s": [
+          "0.26831",
+          "0.45366",
+          "0.92796",
+          "1.5243",
+          "2.2312",
+          "4.4382"
+        ],
+        "source_lines_1based": [
+          25,
+          32,
+          35,
+          36,
+          37,
+          38
+        ],
+        "temperature_domain_k": [
+          190,
+          2000
+        ],
+        "interpolation": false
+      },
+      {
+        "source": "S3",
+        "pair": "N2_H2O",
+        "temperature_parameter": "validation.water_binary_diffusion.temperatures.s3_n2",
+        "diffusivity_parameter": "validation.water_binary_diffusion.S3.N2_H2O.D",
+        "source_numeric_tokens_cm2_s": [
+          "0.25560",
+          "1.4892",
+          "4.3532"
+        ],
+        "source_lines_1based": [
+          25,
+          36,
+          38
+        ],
+        "temperature_domain_k": [
+          190,
+          2000
+        ],
+        "interpolation": false
+      }
+    ],
+    "source_review": "docs/FULL_CYCLE_P23_SOURCE_REVIEW.json",
+    "source_dat": "docs/sources/full-cycle-p23/Diffusivity_H2O.dat",
+    "reported_points": 18,
+    "host_extraction": "Existing gas_diffusivity at phi0; divide returned outerfacephi/tau once and multiply unchanged pairfactor. Compare freeD before pore resistance; no state/beta changes.",
+    "difference_denominator": "sourceD; signed current-source, relative(current-source)/sourceD",
+    "acceptance": "No invented statistical pass limit. Report source model discrepancy separately from conservation/refinement.",
+    "budget": {
+      "integrations": 0,
+      "fits": 0,
+      "UQ": 0,
+      "kernel_changes": 0,
+      "max_sources": 3,
+      "max_points": 18
+    },
+    "source_dependency": "S1 and S3 N2 share original theory; rows are comparisons, not independent experimental trials.",
+    "source_pressure_policy": "Currenthost evaluated at101325Pa, avoiding rescaling source values; all total/partial/source-specific definitions retained."
+  },
+  "source_review": {
+    "schema": "full_cycle_p23_source_admission_v1",
+    "recorded_utc": "2026-10-01T00:38:46.305126+00:00",
+    "sources": [
+      {
+        "id": "S1",
+        "title": "Burgess2024 NIST TN2279 Self-Diffusion and Binary-Diffusion Coefficients in Gases",
+        "doi": "10.6028/NIST.TN.2279",
+        "url": "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=957163",
+        "canonical_url": "https://nvlpubs.nist.gov/nistpubs/TechnicalNotes/NIST.TN.2279.pdf",
+        "identity": "government_evaluated_recommendations_and_correlations_not_raw_experiments",
+        "access": "Official web-tool extracted text read; both local PDF downloads HTTP403. No PDF cache or visible screenshot is claimed.",
+        "table_location": "Printed p8 Table1a (PDF page13); reverse/duplicate entries in Table1c are not independent evidence.",
+        "formula": "ln(D/(cm^2/s))=A+B/(T/K)+C*ln(T/K)",
+        "reference_temperature_k": 298.15,
+        "reference_total_pressure_pa": 101325,
+        "partial_pressure_pa": null,
+        "composition": "Not stated row-by-row in TN2279; do not invent 50/50 or water partial pressure. Binary dilute-gas coefficient, not porous effective diffusivity.",
+        "uncertainty": "Table calls U expanded uncertainty; no uniform k or confidence level supplied. Values are not assigned as full-temperature statistical bands.",
+        "rounding": "Dref and A/B/C printed to three decimal places; no source rounding probability or rounding-error bound specified. Dref and full-range A/B/C are separate fits; do not require exact agreement.",
+        "rows": {
+          "N2_H2O": {
+            "A": -10.324,
+            "B": -84.181,
+            "C": 1.62,
+            "Dref_cm2_s": 0.254,
+            "temperature_domain_k": [
+              150,
+              2000
+            ],
+            "reported_U_percent": [
+              2,
+              3
+            ],
+            "reference_number": 25,
+            "underlying_source_identity": "Hellmann2019 H2O+N2 first-principles calculations; same underlying ordinary-water theory as S3, not an independent experiment."
+          },
+          "H2O_CO2": {
+            "A": -10.298,
+            "B": -180.06,
+            "C": 1.597,
+            "Dref_cm2_s": 0.166,
+            "temperature_domain_k": [
+              250,
+              2000
+            ],
+            "reported_U_percent": [
+              2,
+              3
+            ],
+            "reference_number": 27,
+            "underlying_source_identity": "Hellmann2019 H2O+CO2 first-principles calculations."
+          },
+          "N2_CO2": {
+            "A": -7.317,
+            "B": -139.909,
+            "C": 1.103,
+            "Dref_cm2_s": 0.224,
+            "temperature_domain_k": [
+              253,
+              473
+            ],
+            "reported_U_percent": [
+              1,
+              3
+            ],
+            "reference_number": 31,
+            "underlying_source_identity": "Vogel/Bich/Hellmann2023 binary D inferred using kinetic theory from experimental viscosity; not a direct diffusion measurement. Literal table values retained without correction or identifying source/model as ground truth."
+          }
+        },
+        "not_covered": [
+          "O2_H2O",
+          "O2_N2",
+          "O2_CO2"
+        ],
+        "reviewer": "p02_scope_review"
+      },
+      {
+        "id": "S2",
+        "title": "Marrero and Mason1972 Gaseous Diffusion Coefficients, JPCRD1:3-118",
+        "doi": "10.1063/1.3253094",
+        "url": "https://srd.nist.gov/JPCRD/jpcrd1.pdf",
+        "access": "Web reports117 pages but0 extracted lines; screenshot yielded no visible pixels. Publisher/DOI text unavailable. Bibliography only.",
+        "admitted_quantitative_points": 0,
+        "rejection": "Original rows, units, composition, T/P, mutual/tracer and uncertainty were not directly read. Conflicting secondary water-air/water-N2 indexing is not data.",
+        "reviewer": "p01_ledger"
+      },
+      {
+        "id": "S3",
+        "title": "Hellmann and Harvey2020 First-Principles Diffusivity Ratios for Kinetic Isotope Fractionation of Water in Air",
+        "doi": "10.1029/2020GL089999",
+        "url": "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=930541",
+        "publisher_url": "https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2020GL089999",
+        "dataset_doi": "10.18434/M32271",
+        "dataset_url": "https://data.nist.gov/od/ds/mds2-2271/Diffusivity_H2O.dat",
+        "dataset_local": "docs/sources/full-cycle-p23/Diffusivity_H2O.dat",
+        "dataset_bytes": 1441,
+        "identity": "original_first_principles_calculation_with_associated_government_dataset_not_experiment",
+        "location": "Author manuscript p4 water dilution/low-density definition; p5 TableS2 description; published Data Availability links same NIST dataset. DAT header and direct numbered lines are numeric evidence; supporting PDF itself was not read.",
+        "quantity": "Infinite-water-dilution binary diffusivity in N2 or O2, low-density rho_m*D normalized to finite standard total pressure. Not self diffusivity, not isotopologue ratio, not porous effective D.",
+        "water_mole_fraction": "limit x_w -> 0",
+        "water_partial_pressure_pa": "limit0 at fixed total pressure",
+        "carrier_partial_pressure_pa": "limit101325Pa",
+        "reference_total_pressure_pa": 101325,
+        "temperature_domain_k": [
+          190,
+          2000
+        ],
+        "source_columns_1based": {
+          "T_K": 1,
+          "N2_H2O_cm2_s": 2,
+          "O2_H2O_cm2_s": 3,
+          "water_air_cm2_s": 4
+        },
+        "absolute_diffusivity_uncertainty": null,
+        "uncertainty_note": "No absolute-D uncertainty column or uniform absolute-D bound in read text. The k2/95% estimates are for isotopologue ratios, not these D values; Merlivat1.6% is another N2 experiment. Neither transferred.",
+        "rounding": "Retain literal DAT decimal tokens; last shown decimal is reporting precision, not uncertainty or an assumed half-unit interval.",
+        "source_dependence": "Ordinary H2O values250–2000K explicitly reuse author earlier N2/O2 work. S1/S3 N2 values are related theory, not independent validation. Air column not used as either binary pair.",
+        "access": "DAT downloaded once1441bytes; Readme timed out once and not read; main manuscript/publisher read through web. No full PDF cache claimed.",
+        "reviewer": "p01_ledger"
+      }
+    ],
+    "substantive_source_count": 3,
+    "source_budget_exhausted": true,
+    "new_direct_experimental_points": 0,
+    "independent_paper_search_stopped": true,
+    "source_3_selection_amendment": "Initial local search declaration reserved a measurement paper; final selected source is original calculation with explicit independent N2/O2 columns. User allowed original papers. This is an explicit pre-evaluation design amendment, not a promotion to measured.",
+    "failure_receipts": [
+      "runs/full-cycle/p23-water-diffusion/sources/download-attempt01-failure.json",
+      "runs/full-cycle/p23-water-diffusion/sources/download-attempt02-failure.json",
+      "runs/full-cycle/p23-water-diffusion/sources/s3-dataset-download.json"
+    ]
+  },
+  "records": [
+    {
+      "source": "S1",
+      "pair": "N2_H2O",
+      "temperature_k": 298.15,
+      "total_pressure_pa": 101325,
+      "source_method": "printed_Dref_separate_near_ambient_recommendation",
+      "source_location": "TN2279 printedp8/Table1a",
+      "source_literal_token_cm2_s": null,
+      "current_free_diffusivity_m2_s": 2.5660004934616336e-05,
+      "source_free_diffusivity_m2_s": 2.54e-05,
+      "signed_difference_m2_s": 2.6000493461633543e-07,
+      "signed_relative_difference": 0.010236414748674623,
+      "absolute_relative_difference": 0.010236414748674623,
+      "host_common_effective_diffusivity_m2_s": 1.5174145116144897e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_phi_over_tau": 0.07687601269466908,
+      "unchanged_assumed_pair_factor": 1.3,
+      "source_domain_k": [
+        150,
+        2000
+      ],
+      "in_source_temperature_domain": true,
+      "source_is_experimental": false,
+      "statistical_pass_claim": null
+    },
+    {
+      "source": "S1",
+      "pair": "N2_H2O",
+      "temperature_k": 600,
+      "total_pressure_pa": 101325,
+      "source_method": "published_full_range_correlation",
+      "source_location": "TN2279 printedp8/Table1a",
+      "source_literal_token_cm2_s": null,
+      "current_free_diffusivity_m2_s": 8.724900839149605e-05,
+      "source_free_diffusivity_m2_s": 9.036839204803743e-05,
+      "signed_difference_m2_s": -3.119383656541373e-06,
+      "signed_relative_difference": -0.03451852562434874,
+      "absolute_relative_difference": 0.03451852562434874,
+      "host_common_effective_diffusivity_m2_s": 5.159504520539954e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_phi_over_tau": 0.07687601269466908,
+      "unchanged_assumed_pair_factor": 1.3,
+      "source_domain_k": [
+        150,
+        2000
+      ],
+      "in_source_temperature_domain": true,
+      "source_is_experimental": false,
+      "statistical_pass_claim": null
+    },
+    {
+      "source": "S1",
+      "pair": "N2_H2O",
+      "temperature_k": 1200,
+      "total_pressure_pa": 101325,
+      "source_method": "published_full_range_correlation",
+      "source_location": "TN2279 printedp8/Table1a",
+      "source_literal_token_cm2_s": null,
+      "current_free_diffusivity_m2_s": 0.00029346951356340115,
+      "source_free_diffusivity_m2_s": 0.00029795540468892167,
+      "signed_difference_m2_s": -4.485891125520524e-06,
+      "signed_relative_difference": -0.015055578972309592,
+      "absolute_relative_difference": 0.015055578972309592,
+      "host_common_effective_diffusivity_m2_s": 1.7354435423229526e-05,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_phi_over_tau": 0.07687601269466908,
+      "unchanged_assumed_pair_factor": 1.3,
+      "source_domain_k": [
+        150,
+        2000
+      ],
+      "in_source_temperature_domain": true,
+      "source_is_experimental": false,
+      "statistical_pass_claim": null
+    },
+    {
+      "source": "S1",
+      "pair": "H2O_CO2",
+      "temperature_k": 298.15,
+      "total_pressure_pa": 101325,
+      "source_method": "printed_Dref_separate_near_ambient_recommendation",
+      "source_location": "TN2279 printedp8/Table1a",
+      "source_literal_token_cm2_s": null,
+      "current_free_diffusivity_m2_s": 2.072538860103627e-05,
+      "source_free_diffusivity_m2_s": 1.66e-05,
+      "signed_difference_m2_s": 4.12538860103627e-06,
+      "signed_relative_difference": 0.24851738560459458,
+      "absolute_relative_difference": 0.24851738560459458,
+      "host_common_effective_diffusivity_m2_s": 1.5174145116144897e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_phi_over_tau": 0.07687601269466908,
+      "unchanged_assumed_pair_factor": 1.05,
+      "source_domain_k": [
+        250,
+        2000
+      ],
+      "in_source_temperature_domain": true,
+      "source_is_experimental": false,
+      "statistical_pass_claim": null
+    },
+    {
+      "source": "S1",
+      "pair": "H2O_CO2",
+      "temperature_k": 600,
+      "total_pressure_pa": 101325,
+      "source_method": "published_full_range_correlation",
+      "source_location": "TN2279 printedp8/Table1a",
+      "source_literal_token_cm2_s": null,
+      "current_free_diffusivity_m2_s": 7.047035293159298e-05,
+      "source_free_diffusivity_m2_s": 6.823562883469947e-05,
+      "signed_difference_m2_s": 2.234724096893508e-06,
+      "signed_relative_difference": 0.03275010628695338,
+      "absolute_relative_difference": 0.03275010628695338,
+      "host_common_effective_diffusivity_m2_s": 5.159504520539954e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_phi_over_tau": 0.07687601269466908,
+      "unchanged_assumed_pair_factor": 1.05,
+      "source_domain_k": [
+        250,
+        2000
+      ],
+      "in_source_temperature_domain": true,
+      "source_is_experimental": false,
+      "statistical_pass_claim": null
+    },
+    {
+      "source": "S1",
+      "pair": "H2O_CO2",
+      "temperature_k": 1200,
+      "total_pressure_pa": 101325,
+      "source_method": "published_full_range_correlation",
+      "source_location": "TN2279 printedp8/Table1a",
+      "source_literal_token_cm2_s": null,
+      "current_free_diffusivity_m2_s": 0.00023703306864736244,
+      "source_free_diffusivity_m2_s": 0.00023984020587112257,
+      "signed_difference_m2_s": -2.8071372237601212e-06,
+      "signed_relative_difference": -0.01170419785775421,
+      "absolute_relative_difference": 0.01170419785775421,
+      "host_common_effective_diffusivity_m2_s": 1.7354435423229526e-05,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_phi_over_tau": 0.07687601269466908,
+      "unchanged_assumed_pair_factor": 1.05,
+      "source_domain_k": [
+        250,
+        2000
+      ],
+      "in_source_temperature_domain": true,
+      "source_is_experimental": false,
+      "statistical_pass_claim": null
+    },
+    {
+      "source": "S1",
+      "pair": "N2_CO2",
+      "temperature_k": 298.15,
+      "total_pressure_pa": 101325,
+      "source_method": "printed_Dref_separate_near_ambient_recommendation",
+      "source_location": "TN2279 printedp8/Table1a",
+      "source_literal_token_cm2_s": null,
+      "current_free_diffusivity_m2_s": 1.6777695534172217e-05,
+      "source_free_diffusivity_m2_s": 2.2400000000000002e-05,
+      "signed_difference_m2_s": -5.622304465827785e-06,
+      "signed_relative_difference": -0.2509957350815975,
+      "absolute_relative_difference": 0.2509957350815975,
+      "host_common_effective_diffusivity_m2_s": 1.5174145116144897e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_phi_over_tau": 0.07687601269466908,
+      "unchanged_assumed_pair_factor": 0.85,
+      "source_domain_k": [
+        253,
+        473
+      ],
+      "in_source_temperature_domain": true,
+      "source_is_experimental": false,
+      "statistical_pass_claim": null
+    },
+    {
+      "source": "S1",
+      "pair": "N2_CO2",
+      "temperature_k": 373.15,
+      "total_pressure_pa": 101325,
+      "source_method": "published_full_range_correlation",
+      "source_location": "TN2279 printedp8/Table1a",
+      "source_literal_token_cm2_s": null,
+      "current_free_diffusivity_m2_s": 2.4846625574324868e-05,
+      "source_free_diffusivity_m2_s": 3.1348746645492516e-05,
+      "signed_difference_m2_s": -6.502121071167648e-06,
+      "signed_relative_difference": -0.20741247312681818,
+      "absolute_relative_difference": 0.20741247312681818,
+      "host_common_effective_diffusivity_m2_s": 2.247187650672339e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_phi_over_tau": 0.07687601269466908,
+      "unchanged_assumed_pair_factor": 0.85,
+      "source_domain_k": [
+        253,
+        473
+      ],
+      "in_source_temperature_domain": true,
+      "source_is_experimental": false,
+      "statistical_pass_claim": null
+    },
+    {
+      "source": "S1",
+      "pair": "N2_CO2",
+      "temperature_k": 473,
+      "total_pressure_pa": 101325,
+      "source_method": "published_full_range_correlation",
+      "source_location": "TN2279 printedp8/Table1a",
+      "source_literal_token_cm2_s": null,
+      "current_free_diffusivity_m2_s": 3.76251622422028e-05,
+      "source_free_diffusivity_m2_s": 4.407363252982819e-05,
+      "signed_difference_m2_s": -6.448470287625388e-06,
+      "signed_relative_difference": -0.14631129583569466,
+      "absolute_relative_difference": 0.14631129583569466,
+      "host_common_effective_diffusivity_m2_s": 3.4029087649065485e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_phi_over_tau": 0.07687601269466908,
+      "unchanged_assumed_pair_factor": 0.85,
+      "source_domain_k": [
+        253,
+        473
+      ],
+      "in_source_temperature_domain": true,
+      "source_is_experimental": false,
+      "statistical_pass_claim": null
+    },
+    {
+      "source": "S3",
+      "pair": "O2_H2O",
+      "temperature_k": 300,
+      "total_pressure_pa": 101325,
+      "source_method": "direct_DAT_value_no_interpolation",
+      "source_location": "docs/sources/full-cycle-p23/Diffusivity_H2O.dat:25",
+      "source_literal_token_cm2_s": "0.26831",
+      "current_free_diffusivity_m2_s": 2.4941620566370006e-05,
+      "source_free_diffusivity_m2_s": 2.6831e-05,
+      "signed_difference_m2_s": -1.8893794336299946e-06,
+      "signed_relative_difference": -0.07041777919682436,
+      "absolute_relative_difference": 0.07041777919682436,
+      "host_common_effective_diffusivity_m2_s": 1.533929871428704e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_phi_over_tau": 0.07687601269466908,
+      "unchanged_assumed_pair_factor": 1.25,
+      "source_domain_k": [
+        190,
+        2000
+      ],
+      "in_source_temperature_domain": true,
+      "source_is_experimental": false,
+      "statistical_pass_claim": null
+    },
+    {
+      "source": "S3",
+      "pair": "O2_H2O",
+      "temperature_k": 400,
+      "total_pressure_pa": 101325,
+      "source_method": "direct_DAT_value_no_interpolation",
+      "source_location": "docs/sources/full-cycle-p23/Diffusivity_H2O.dat:32",
+      "source_literal_token_cm2_s": "0.45366",
+      "current_free_diffusivity_m2_s": 4.126363252079073e-05,
+      "source_free_diffusivity_m2_s": 4.5366000000000006e-05,
+      "signed_difference_m2_s": -4.102367479209276e-06,
+      "signed_relative_difference": -0.09042823875169236,
+      "absolute_relative_difference": 0.09042823875169236,
+      "host_common_effective_diffusivity_m2_s": 2.5377468299971744e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_phi_over_tau": 0.07687601269466908,
+      "unchanged_assumed_pair_factor": 1.25,
+      "source_domain_k": [
+        190,
+        2000
+      ],
+      "in_source_temperature_domain": true,
+      "source_is_experimental": false,
+      "statistical_pass_claim": null
+    },
+    {
+      "source": "S3",
+      "pair": "O2_H2O",
+      "temperature_k": 600,
+      "total_pressure_pa": 101325,
+      "source_method": "direct_DAT_value_no_interpolation",
+      "source_location": "docs/sources/full-cycle-p23/Diffusivity_H2O.dat:35",
+      "source_literal_token_cm2_s": "0.92796",
+      "current_free_diffusivity_m2_s": 8.389327729951544e-05,
+      "source_free_diffusivity_m2_s": 9.279600000000001e-05,
+      "signed_difference_m2_s": -8.90272270048457e-06,
+      "signed_relative_difference": -0.09593864714518481,
+      "absolute_relative_difference": 0.09593864714518481,
+      "host_common_effective_diffusivity_m2_s": 5.159504520539954e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_phi_over_tau": 0.07687601269466908,
+      "unchanged_assumed_pair_factor": 1.25,
+      "source_domain_k": [
+        190,
+        2000
+      ],
+      "in_source_temperature_domain": true,
+      "source_is_experimental": false,
+      "statistical_pass_claim": null
+    },
+    {
+      "source": "S3",
+      "pair": "O2_H2O",
+      "temperature_k": 800,
+      "total_pressure_pa": 101325,
+      "source_method": "direct_DAT_value_no_interpolation",
+      "source_location": "docs/sources/full-cycle-p23/Diffusivity_H2O.dat:36",
+      "source_literal_token_cm2_s": "1.5243",
+      "current_free_diffusivity_m2_s": 0.0001387937626683181,
+      "source_free_diffusivity_m2_s": 0.00015243,
+      "signed_difference_m2_s": -1.3636237331681898e-05,
+      "signed_relative_difference": -0.08945901286939512,
+      "absolute_relative_difference": 0.08945901286939512,
+      "host_common_effective_diffusivity_m2_s": 8.535928848664408e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_phi_over_tau": 0.07687601269466908,
+      "unchanged_assumed_pair_factor": 1.25,
+      "source_domain_k": [
+        190,
+        2000
+      ],
+      "in_source_temperature_domain": true,
+      "source_is_experimental": false,
+      "statistical_pass_claim": null
+    },
+    {
+      "source": "S3",
+      "pair": "O2_H2O",
+      "temperature_k": 1000,
+      "total_pressure_pa": 101325,
+      "source_method": "direct_DAT_value_no_interpolation",
+      "source_location": "docs/sources/full-cycle-p23/Diffusivity_H2O.dat:37",
+      "source_literal_token_cm2_s": "2.2312",
+      "current_free_diffusivity_m2_s": 0.00020509849441490636,
+      "source_free_diffusivity_m2_s": 0.00022312,
+      "signed_difference_m2_s": -1.802150558509363e-05,
+      "signed_relative_difference": -0.0807704624645645,
+      "absolute_relative_difference": 0.0807704624645645,
+      "host_common_effective_diffusivity_m2_s": 1.2613723568238286e-05,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_phi_over_tau": 0.07687601269466908,
+      "unchanged_assumed_pair_factor": 1.25,
+      "source_domain_k": [
+        190,
+        2000
+      ],
+      "in_source_temperature_domain": true,
+      "source_is_experimental": false,
+      "statistical_pass_claim": null
+    },
+    {
+      "source": "S3",
+      "pair": "O2_H2O",
+      "temperature_k": 1500,
+      "total_pressure_pa": 101325,
+      "source_method": "direct_DAT_value_no_interpolation",
+      "source_location": "docs/sources/full-cycle-p23/Diffusivity_H2O.dat:38",
+      "source_literal_token_cm2_s": "4.4382",
+      "current_free_diffusivity_m2_s": 0.00041698667360401187,
+      "source_free_diffusivity_m2_s": 0.00044382000000000004,
+      "signed_difference_m2_s": -2.6833326395988178e-05,
+      "signed_relative_difference": -0.0604599305934572,
+      "absolute_relative_difference": 0.0604599305934572,
+      "host_common_effective_diffusivity_m2_s": 2.564501825079188e-05,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_phi_over_tau": 0.07687601269466908,
+      "unchanged_assumed_pair_factor": 1.25,
+      "source_domain_k": [
+        190,
+        2000
+      ],
+      "in_source_temperature_domain": true,
+      "source_is_experimental": false,
+      "statistical_pass_claim": null
+    },
+    {
+      "source": "S3",
+      "pair": "N2_H2O",
+      "temperature_k": 300,
+      "total_pressure_pa": 101325,
+      "source_method": "direct_DAT_value_no_interpolation",
+      "source_location": "docs/sources/full-cycle-p23/Diffusivity_H2O.dat:25",
+      "source_literal_token_cm2_s": "0.25560",
+      "current_free_diffusivity_m2_s": 2.5939285389024807e-05,
+      "source_free_diffusivity_m2_s": 2.556e-05,
+      "signed_difference_m2_s": 3.7928538902480807e-07,
+      "signed_relative_difference": 0.014839021479843822,
+      "absolute_relative_difference": 0.014839021479843822,
+      "host_common_effective_diffusivity_m2_s": 1.533929871428704e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_phi_over_tau": 0.07687601269466908,
+      "unchanged_assumed_pair_factor": 1.3,
+      "source_domain_k": [
+        190,
+        2000
+      ],
+      "in_source_temperature_domain": true,
+      "source_is_experimental": false,
+      "statistical_pass_claim": null
+    },
+    {
+      "source": "S3",
+      "pair": "N2_H2O",
+      "temperature_k": 800,
+      "total_pressure_pa": 101325,
+      "source_method": "direct_DAT_value_no_interpolation",
+      "source_location": "docs/sources/full-cycle-p23/Diffusivity_H2O.dat:36",
+      "source_literal_token_cm2_s": "1.4892",
+      "current_free_diffusivity_m2_s": 0.00014434551317505084,
+      "source_free_diffusivity_m2_s": 0.00014892,
+      "signed_difference_m2_s": -4.574486824949169e-06,
+      "signed_relative_difference": -0.030717746608576204,
+      "absolute_relative_difference": 0.030717746608576204,
+      "host_common_effective_diffusivity_m2_s": 8.535928848664408e-06,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_phi_over_tau": 0.07687601269466908,
+      "unchanged_assumed_pair_factor": 1.3,
+      "source_domain_k": [
+        190,
+        2000
+      ],
+      "in_source_temperature_domain": true,
+      "source_is_experimental": false,
+      "statistical_pass_claim": null
+    },
+    {
+      "source": "S3",
+      "pair": "N2_H2O",
+      "temperature_k": 1500,
+      "total_pressure_pa": 101325,
+      "source_method": "direct_DAT_value_no_interpolation",
+      "source_location": "docs/sources/full-cycle-p23/Diffusivity_H2O.dat:38",
+      "source_literal_token_cm2_s": "4.3532",
+      "current_free_diffusivity_m2_s": 0.00043366614054817236,
+      "source_free_diffusivity_m2_s": 0.00043532000000000005,
+      "signed_difference_m2_s": -1.6538594518276917e-06,
+      "signed_relative_difference": -0.003799180951547578,
+      "absolute_relative_difference": 0.003799180951547578,
+      "host_common_effective_diffusivity_m2_s": 2.564501825079188e-05,
+      "host_face_porosity": 0.1921900317366727,
+      "host_face_tortuosity": 2.5,
+      "removed_phi_over_tau": 0.07687601269466908,
+      "unchanged_assumed_pair_factor": 1.3,
+      "source_domain_k": [
+        190,
+        2000
+      ],
+      "in_source_temperature_domain": true,
+      "source_is_experimental": false,
+      "statistical_pass_claim": null
+    }
+  ],
+  "by_source_pair": {
+    "S1:N2_H2O": {
+      "count": 3,
+      "minimum_signed_relative_difference": -0.03451852562434874,
+      "maximum_signed_relative_difference": 0.010236414748674623,
+      "maximum_absolute_relative_difference": 0.03451852562434874,
+      "maximum_at_temperature_k": 600,
+      "discrete_comparison_only": true
+    },
+    "S1:H2O_CO2": {
+      "count": 3,
+      "minimum_signed_relative_difference": -0.01170419785775421,
+      "maximum_signed_relative_difference": 0.24851738560459458,
+      "maximum_absolute_relative_difference": 0.24851738560459458,
+      "maximum_at_temperature_k": 298.15,
+      "discrete_comparison_only": true
+    },
+    "S1:N2_CO2": {
+      "count": 3,
+      "minimum_signed_relative_difference": -0.2509957350815975,
+      "maximum_signed_relative_difference": -0.14631129583569466,
+      "maximum_absolute_relative_difference": 0.2509957350815975,
+      "maximum_at_temperature_k": 298.15,
+      "discrete_comparison_only": true
+    },
+    "S3:O2_H2O": {
+      "count": 6,
+      "minimum_signed_relative_difference": -0.09593864714518481,
+      "maximum_signed_relative_difference": -0.0604599305934572,
+      "maximum_absolute_relative_difference": 0.09593864714518481,
+      "maximum_at_temperature_k": 600,
+      "discrete_comparison_only": true
+    },
+    "S3:N2_H2O": {
+      "count": 3,
+      "minimum_signed_relative_difference": -0.030717746608576204,
+      "maximum_signed_relative_difference": 0.014839021479843822,
+      "maximum_absolute_relative_difference": 0.030717746608576204,
+      "maximum_at_temperature_k": 800,
+      "discrete_comparison_only": true
+    }
+  },
+  "parameter_count": 343,
+  "parameter_status_counts": {
+    "literature": 102,
+    "assumed": 241,
+    "measured": 0
+  },
+  "identity": {
+    "six_science_files_equal_frozen_kernel": {
+      "src/sludge_vme/models/full_cycle.py": true,
+      "src/sludge_vme/models/full_cycle_gas.py": true,
+      "src/sludge_vme/models/full_cycle_solid.py": true,
+      "src/sludge_vme/models/full_cycle_diagnostics.py": true,
+      "src/sludge_vme/uq/full_cycle.py": true,
+      "src/sludge_vme/inverse/full_cycle.py": true
+    },
+    "all_prior323_parameter_entries_unchanged": true,
+    "root_equal_pre_evaluation_frozen_snapshot": true,
+    "kernel_changed": false
+  },
+  "current_model": {
+    "Dfree": "fij*Dref*(T/Tr)^b*Pr/P",
+    "Dref_m2_s": 2e-05,
+    "temperature_exponent": 1.75,
+    "Tr_k": 298.15,
+    "Pr_pa": 100000.0,
+    "pore_beta_unchanged": 1.0,
+    "comparison_excludes_pore_resistance": true,
+    "phi_over_tau_removed_once": true
+  },
+  "execution": {
+    "current_coefficient_vector_calls": 10,
+    "reported_rows": 18,
+    "source_correlation_evaluations": 6,
+    "source_direct_values": 12,
+    "new_integrations": 0,
+    "new_fits": 0,
+    "new_UQ": 0,
+    "new_source_searches_after_budget": 0,
+    "software_tests_added_or_run": false,
+    "sha_generated_or_compared": false,
+    "raw_fields_saved": false,
+    "script_elapsed_s": 0.08294554217718542,
+    "search_start_to_review_close_wall_s": 929.055935
+  },
+  "interpretation": {
+    "source_audit_completed": true,
+    "experimental_accuracy_passed": false,
+    "target_material_qualified": false,
+    "overall_model_goal_complete": false,
+    "nominal_drying_failure_unchanged": true,
+    "P20_P21_acceptance": "Retained only for unchanged d5fd9a2 kernel; no rerun or broadened source-range qualification.",
+    "uncertainty": "Source U, computational approximation, printed precision and model-source discrepancy are distinct. No universal confidence band or0.1% conservation threshold assigned to source comparisons.",
+    "source_dependency": "S1/S3 N2 share source theory; no independent experiments. S1 N2_CO2 is viscosity-inferred and below473K only; discrepancy does not identify which source/model is correct.",
+    "experimental_accuracy_status": "not_evaluated_no_direct_measurement_points",
+    "source_difference_audit_complete": true
+  },
+  "independent_review": {
+    "schema": "p23_independent_readonly_review_v1",
+    "recorded_utc": "2026-10-01T00:44:26.605507+00:00",
+    "passed": true,
+    "reviews": [
+      {
+        "reviewer": "p02_scope_review",
+        "scope": "S1 source metadata versus directly read NIST TN2279; saved source admission and frozen18 domain boundaries",
+        "passed": true,
+        "findings": [
+          "No blocking error in source identity/domain/pressure/U handling.",
+          "Dref equality switch is diagnostic only and must not become dynamic constitutive function.",
+          "S3 interpolation/domain extension must be explicit assumed.",
+          "Do not multiply new source pairD by old empirical pairfactor without separate assumed correction.",
+          "N2CO2 source discrepancy does not identify truth or justify highT extrapolation."
+        ],
+        "new_model_calls": 0,
+        "source_rows_recomputed": 0
+      },
+      {
+        "reviewer": "p01_ledger",
+        "scope": "S2 inaccessible source and S3 original manuscript plus1441byte DAT header/columns",
+        "passed": true,
+        "findings": [
+          "S2 no quantitative admission.",
+          "S3 columns2/3 are N2/O2 atxwater->0 and101325Pa; no1200K direct row.",
+          "AbsoluteD uncertainty not given; isotope-ratio95%/k2 and Merlivat1.6% not transferable.",
+          "S1/S3waterN2 source theory related, not independent experimental validation."
+        ],
+        "new_model_calls": 0
+      },
+      {
+        "reviewer": "p06_inverse",
+        "scope": "New saved P23 evidence only; independent standard-library arithmetic and byte identity",
+        "passed": true,
+        "source_rows_verified": 18,
+        "Dref_rows": 3,
+        "ABC_rows": 6,
+        "DAT_rows": 9,
+        "signed_relative_extraction_rows_verified": 18,
+        "group_extrema_verified": 5,
+        "unique_source_pair_temperature_pressure_rows": 18,
+        "unique_temperatures": 10,
+        "all_prior323_parameter_entries_unchanged": true,
+        "new_root_count": 343,
+        "parameter_status_counts": {
+          "literature": 102,
+          "assumed": 241,
+          "measured": 0
+        },
+        "six_science_files_equal_d5fd9a2": true,
+        "root_equal_frozen_snapshot": true,
+        "freeze_utc": "2026-10-01T00:38:46.305126+00:00",
+        "results_utc": "2026-10-01T00:39:56.984641+00:00",
+        "start_time_note": "Calculation start can be inferred from end minus0.082945542s; no independent start receipt claimed.",
+        "new_model_calls": 0,
+        "integrations": 0,
+        "fits": 0,
+        "files_written_by_reviewer": 0
+      }
+    ],
+    "sha_generated_or_compared": false,
+    "reviewer_messages_transcribed_by_root": true
+  },
+  "candidate_next": {
+    "id": "P24",
+    "status": "concrete_source_law_candidate_not_implemented_or_dynamically_accepted",
+    "priority_reason": "P23 identifies source-backed water-pair mobility differences up to24.85%, within existing shared gas coupling. This is an actionable constitutive-source gap, independent of target-material measurements.",
+    "scope": "Only the three water-related free binary diffusion coefficients. Preserve nonpolar laws pending resolution of source disagreements, shared phi/tau and positive symmetric pore resistance, Darcy, stoichiometry, storage, h/s and heat accounting.",
+    "recommended_law_choice": {
+      "N2_H2O": "Use the complete S3 directly tabulated infinite-dilution N2 data in an explicitly assumed interpolation, so N2 andO2 share documented composition definition. S1 ABC remains a related-source comparison, not independent validation.",
+      "O2_H2O": "Use complete S3 direct O2 table190–2000K. No air substitution, no isotopic-ratio error band.",
+      "H2O_CO2": "Use S1 A/B/C uniformly over250–2000K. Never implement a special equality switch to printedDref at298.15K; that would produce an isolated discontinuity. Dref stays a separate diagnostic."
+    },
+    "domain_policy_to_freeze_before_implementation": "Register all direct knots, unit conversion, source pressure, composition domain and source metadata in root. Choose and label a positive continuous logD-vs-logT interpolation for S3 as assumed; piecewise derivative/complex-step behavior at knots must be explicit. Extension from xwater->0 to arbitrary full-host composition is an explicit assumed approximation. Define domain violations before running, without silent clipping or fallback; no present authorization for highT/lowT extrapolation accuracy.",
+    "minimal_affected_acceptance_candidate": {
+      "new_source_law_checks": "One fixed <=18-row candidate comparison plus necessary source-knot/continuity/complex derivative/zero-or-retained-pore algebra checks; preserve failed evidence, no parameter fitting. Budget must be frozen before new evaluation.",
+      "new_full_cycles": 3,
+      "cycles": [
+        "nominal",
+        "one_time_refinement",
+        "one_grid_refinement"
+      ],
+      "mass_elements_full_energy_and_four_gases": "whole and8 stages <0.1%, signed raw increments retained",
+      "refinement": "porosity, residualcarbon, shrinkage and peakTdiff <2% with existing root denominator floors",
+      "same_saved_trajectories": "Reuse for source-domain inventory and9 observations, no new trajectory solely for mapping.",
+      "scheme_comparison": "Reusing nominal plus2 fixed scenarios may be needed if kernel changes, separately declare minimal budget.",
+      "new_fit_or_UQ_in_P23": 0
+    },
+    "P21_dependency": "Any implementation changes the kernel: P20/P21 retain historical d5fd9a2 scope and must not be called current-kernel distributions. Second24-run UQ is not authorized by P23. No silent rerun or overall completion claim until the versioned comparison requirement is resolved.",
+    "not_a_full_model_completion": "P24 candidate/next-stage budget decision remains outstanding; complete source audit does not close model implementation, engineering process, target material or history storage.",
+    "source_pair_factor_policy": "SourceD already includes pairidentity: the selected water-pair source value must replace, not be multiplied by, the old assumed pairfactor. Old factors retained only as historical metadata or explicit legacy law; any new multiplicative correction requires a separately declared assumed parameter.",
+    "pressure_extension_policy": "Applying standard-pressure source data with1/P away from101325Pa is the declared dilute-gas ideal approximation, not new finite-pressure qualification."
+  }
+}

@@ -224,6 +224,16 @@
       "kind": "primary_public_correlation",
       "location": "https://iapws.org/technical-guidance/release/viscosity.download",
       "note": "IAPWS R12-08 Eq11 Table1 only; pure dilute limit. Recommended upper1173.15K; higherT explicit assumed extrapolation without equal precision qualification. Existing IAPWS95 EOS checks do not validate this viscosity."
+    },
+    "nist_tn2279_binary_diffusion": {
+      "kind": "government_evaluated_correlation",
+      "location": "https://nvlpubs.nist.gov/nistpubs/TechnicalNotes/NIST.TN.2279.pdf",
+      "note": "P23 audit only; exact Table1a values, separate D298 recommendation; composition/U limitations in FULL_CYCLE_P23_SOURCE_REVIEW.json."
+    },
+    "hellmann_harvey2020_binary_diffusion": {
+      "kind": "original_first_principles_calculation",
+      "location": "https://data.nist.gov/od/ds/mds2-2271/Diffusivity_H2O.dat",
+      "note": "P23 audit only; infinite-water-dilution free-gas D, not measured; DOI10.1029/2020GL089999 and data10.18434/M32271."
     }
   },
   "parameters": {
@@ -3856,6 +3866,256 @@
       "source": "policy",
       "status": "assumed",
       "note": "P22 single fixed cached total pressure for dilute free-gas coefficient comparison; no pressure sweep or production-pressure qualification."
+    },
+    "validation.water_binary_diffusion.source_pressure": {
+      "value": 101325,
+      "unit": "Pa",
+      "range": [
+        101325,
+        101325
+      ],
+      "source": "nist_tn2279_binary_diffusion",
+      "status": "literature",
+      "note": "Shared standard total pressure in S1/S3. Read from source; no current-kernel pressure override."
+    },
+    "validation.water_binary_diffusion.reference_temperature": {
+      "value": 298.15,
+      "unit": "K",
+      "range": [
+        298.15,
+        298.15
+      ],
+      "source": "nist_tn2279_binary_diffusion",
+      "status": "literature",
+      "note": "S1 Dref actual298.15K though table Tref printed298; not the full-range formula fit."
+    },
+    "validation.water_binary_diffusion.temperatures.s1_water": {
+      "value": [
+        298.15,
+        600,
+        1200
+      ],
+      "unit": "K",
+      "range": [
+        298.15,
+        1200
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P23 fixed sampling design before currentD evaluation; no sweep/search or continuous accuracy claim."
+    },
+    "validation.water_binary_diffusion.temperatures.s1_n2_co2": {
+      "value": [
+        298.15,
+        373.15,
+        473
+      ],
+      "unit": "K",
+      "range": [
+        298.15,
+        473
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P23 fixed sampling design before currentD evaluation; no sweep/search or continuous accuracy claim."
+    },
+    "validation.water_binary_diffusion.temperatures.s3_o2": {
+      "value": [
+        300,
+        400,
+        600,
+        800,
+        1000,
+        1500
+      ],
+      "unit": "K",
+      "range": [
+        300,
+        1500
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P23 fixed sampling design before currentD evaluation; no sweep/search or continuous accuracy claim."
+    },
+    "validation.water_binary_diffusion.temperatures.s3_n2": {
+      "value": [
+        300,
+        800,
+        1500
+      ],
+      "unit": "K",
+      "range": [
+        300,
+        1500
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P23 fixed sampling design before currentD evaluation; no sweep/search or continuous accuracy claim."
+    },
+    "validation.water_binary_diffusion.S1.N2_H2O.A": {
+      "value": -10.324,
+      "unit": "1",
+      "range": [
+        -10.324,
+        -10.324
+      ],
+      "source": "nist_tn2279_binary_diffusion",
+      "status": "literature",
+      "note": "Audit-only printed correlation coefficient; validity domain and U interpretation in source review, not an active material coefficient."
+    },
+    "validation.water_binary_diffusion.S1.N2_H2O.B": {
+      "value": -84.181,
+      "unit": "K",
+      "range": [
+        -84.181,
+        -84.181
+      ],
+      "source": "nist_tn2279_binary_diffusion",
+      "status": "literature",
+      "note": "Audit-only printed correlation coefficient; validity domain and U interpretation in source review, not an active material coefficient."
+    },
+    "validation.water_binary_diffusion.S1.N2_H2O.C": {
+      "value": 1.62,
+      "unit": "1",
+      "range": [
+        1.62,
+        1.62
+      ],
+      "source": "nist_tn2279_binary_diffusion",
+      "status": "literature",
+      "note": "Audit-only printed correlation coefficient; validity domain and U interpretation in source review, not an active material coefficient."
+    },
+    "validation.water_binary_diffusion.S1.N2_H2O.Dref": {
+      "value": 2.54e-05,
+      "unit": "m^2/s",
+      "range": [
+        2.54e-05,
+        2.54e-05
+      ],
+      "source": "nist_tn2279_binary_diffusion",
+      "status": "literature",
+      "note": "Audit-only recommended298.15K D; exact cm²/s to m²/s conversion. Separate fit from A/B/C; not a target measurement."
+    },
+    "validation.water_binary_diffusion.S1.H2O_CO2.A": {
+      "value": -10.298,
+      "unit": "1",
+      "range": [
+        -10.298,
+        -10.298
+      ],
+      "source": "nist_tn2279_binary_diffusion",
+      "status": "literature",
+      "note": "Audit-only printed correlation coefficient; validity domain and U interpretation in source review, not an active material coefficient."
+    },
+    "validation.water_binary_diffusion.S1.H2O_CO2.B": {
+      "value": -180.06,
+      "unit": "K",
+      "range": [
+        -180.06,
+        -180.06
+      ],
+      "source": "nist_tn2279_binary_diffusion",
+      "status": "literature",
+      "note": "Audit-only printed correlation coefficient; validity domain and U interpretation in source review, not an active material coefficient."
+    },
+    "validation.water_binary_diffusion.S1.H2O_CO2.C": {
+      "value": 1.597,
+      "unit": "1",
+      "range": [
+        1.597,
+        1.597
+      ],
+      "source": "nist_tn2279_binary_diffusion",
+      "status": "literature",
+      "note": "Audit-only printed correlation coefficient; validity domain and U interpretation in source review, not an active material coefficient."
+    },
+    "validation.water_binary_diffusion.S1.H2O_CO2.Dref": {
+      "value": 1.66e-05,
+      "unit": "m^2/s",
+      "range": [
+        1.66e-05,
+        1.66e-05
+      ],
+      "source": "nist_tn2279_binary_diffusion",
+      "status": "literature",
+      "note": "Audit-only recommended298.15K D; exact cm²/s to m²/s conversion. Separate fit from A/B/C; not a target measurement."
+    },
+    "validation.water_binary_diffusion.S1.N2_CO2.A": {
+      "value": -7.317,
+      "unit": "1",
+      "range": [
+        -7.317,
+        -7.317
+      ],
+      "source": "nist_tn2279_binary_diffusion",
+      "status": "literature",
+      "note": "Audit-only printed correlation coefficient; validity domain and U interpretation in source review, not an active material coefficient."
+    },
+    "validation.water_binary_diffusion.S1.N2_CO2.B": {
+      "value": -139.909,
+      "unit": "K",
+      "range": [
+        -139.909,
+        -139.909
+      ],
+      "source": "nist_tn2279_binary_diffusion",
+      "status": "literature",
+      "note": "Audit-only printed correlation coefficient; validity domain and U interpretation in source review, not an active material coefficient."
+    },
+    "validation.water_binary_diffusion.S1.N2_CO2.C": {
+      "value": 1.103,
+      "unit": "1",
+      "range": [
+        1.103,
+        1.103
+      ],
+      "source": "nist_tn2279_binary_diffusion",
+      "status": "literature",
+      "note": "Audit-only printed correlation coefficient; validity domain and U interpretation in source review, not an active material coefficient."
+    },
+    "validation.water_binary_diffusion.S1.N2_CO2.Dref": {
+      "value": 2.2400000000000002e-05,
+      "unit": "m^2/s",
+      "range": [
+        2.2400000000000002e-05,
+        2.2400000000000002e-05
+      ],
+      "source": "nist_tn2279_binary_diffusion",
+      "status": "literature",
+      "note": "Audit-only recommended298.15K D; exact cm²/s to m²/s conversion. Separate fit from A/B/C; not a target measurement."
+    },
+    "validation.water_binary_diffusion.S3.O2_H2O.D": {
+      "value": [
+        2.6831e-05,
+        4.5366000000000006e-05,
+        9.279600000000001e-05,
+        0.00015243,
+        0.00022312,
+        0.00044382000000000004
+      ],
+      "unit": "m^2/s",
+      "range": [
+        2.6831e-05,
+        0.00044382000000000004
+      ],
+      "source": "hellmann_harvey2020_binary_diffusion",
+      "status": "literature",
+      "note": "Audit-only exact selected DAT values; paired to declared temperature array. Infinite dilution calculation; no absolute-D uncertainty assigned."
+    },
+    "validation.water_binary_diffusion.S3.N2_H2O.D": {
+      "value": [
+        2.556e-05,
+        0.00014892,
+        0.00043532000000000005
+      ],
+      "unit": "m^2/s",
+      "range": [
+        2.556e-05,
+        0.00043532000000000005
+      ],
+      "source": "hellmann_harvey2020_binary_diffusion",
+      "status": "literature",
+      "note": "Audit-only exact selected DAT values; paired to declared temperature array. Infinite dilution calculation; no absolute-D uncertainty assigned."
     }
   },
   "species": [
@@ -5687,6 +5947,126 @@
       ],
       "accuracy_policy": "Signed absolute and relative differences from source model only; no invented pass limit, experimental error bound or new fit.",
       "continuation_policy": "A supported future kernel candidate must state minimal affected acceptance and P21 version dependency; P22 authorizes no second UQ or implicit kernel replacement."
+    },
+    "water_binary_diffusion_source_comparison": {
+      "pressure_parameter": "validation.water_binary_diffusion.source_pressure",
+      "groups": [
+        {
+          "source": "S1",
+          "pair": "N2_H2O",
+          "temperature_parameter": "validation.water_binary_diffusion.temperatures.s1_water",
+          "coefficient_parameters": {
+            "A": "validation.water_binary_diffusion.S1.N2_H2O.A",
+            "B": "validation.water_binary_diffusion.S1.N2_H2O.B",
+            "C": "validation.water_binary_diffusion.S1.N2_H2O.C",
+            "Dref": "validation.water_binary_diffusion.S1.N2_H2O.Dref"
+          },
+          "reference_temperature_parameter": "validation.water_binary_diffusion.reference_temperature",
+          "reference_rule": "Use printed Dref at referenceT; use source A/B/C otherwise, no extrapolation.",
+          "temperature_domain_k": [
+            150,
+            2000
+          ]
+        },
+        {
+          "source": "S1",
+          "pair": "H2O_CO2",
+          "temperature_parameter": "validation.water_binary_diffusion.temperatures.s1_water",
+          "coefficient_parameters": {
+            "A": "validation.water_binary_diffusion.S1.H2O_CO2.A",
+            "B": "validation.water_binary_diffusion.S1.H2O_CO2.B",
+            "C": "validation.water_binary_diffusion.S1.H2O_CO2.C",
+            "Dref": "validation.water_binary_diffusion.S1.H2O_CO2.Dref"
+          },
+          "reference_temperature_parameter": "validation.water_binary_diffusion.reference_temperature",
+          "reference_rule": "Use printed Dref at referenceT; use source A/B/C otherwise, no extrapolation.",
+          "temperature_domain_k": [
+            250,
+            2000
+          ]
+        },
+        {
+          "source": "S1",
+          "pair": "N2_CO2",
+          "temperature_parameter": "validation.water_binary_diffusion.temperatures.s1_n2_co2",
+          "coefficient_parameters": {
+            "A": "validation.water_binary_diffusion.S1.N2_CO2.A",
+            "B": "validation.water_binary_diffusion.S1.N2_CO2.B",
+            "C": "validation.water_binary_diffusion.S1.N2_CO2.C",
+            "Dref": "validation.water_binary_diffusion.S1.N2_CO2.Dref"
+          },
+          "reference_temperature_parameter": "validation.water_binary_diffusion.reference_temperature",
+          "reference_rule": "Use printed Dref at referenceT; use source A/B/C otherwise, no extrapolation.",
+          "temperature_domain_k": [
+            253,
+            473
+          ]
+        },
+        {
+          "source": "S3",
+          "pair": "O2_H2O",
+          "temperature_parameter": "validation.water_binary_diffusion.temperatures.s3_o2",
+          "diffusivity_parameter": "validation.water_binary_diffusion.S3.O2_H2O.D",
+          "source_numeric_tokens_cm2_s": [
+            "0.26831",
+            "0.45366",
+            "0.92796",
+            "1.5243",
+            "2.2312",
+            "4.4382"
+          ],
+          "source_lines_1based": [
+            25,
+            32,
+            35,
+            36,
+            37,
+            38
+          ],
+          "temperature_domain_k": [
+            190,
+            2000
+          ],
+          "interpolation": false
+        },
+        {
+          "source": "S3",
+          "pair": "N2_H2O",
+          "temperature_parameter": "validation.water_binary_diffusion.temperatures.s3_n2",
+          "diffusivity_parameter": "validation.water_binary_diffusion.S3.N2_H2O.D",
+          "source_numeric_tokens_cm2_s": [
+            "0.25560",
+            "1.4892",
+            "4.3532"
+          ],
+          "source_lines_1based": [
+            25,
+            36,
+            38
+          ],
+          "temperature_domain_k": [
+            190,
+            2000
+          ],
+          "interpolation": false
+        }
+      ],
+      "source_review": "docs/FULL_CYCLE_P23_SOURCE_REVIEW.json",
+      "source_dat": "docs/sources/full-cycle-p23/Diffusivity_H2O.dat",
+      "reported_points": 18,
+      "host_extraction": "Existing gas_diffusivity at phi0; divide returned outerfacephi/tau once and multiply unchanged pairfactor. Compare freeD before pore resistance; no state/beta changes.",
+      "difference_denominator": "sourceD; signed current-source, relative(current-source)/sourceD",
+      "acceptance": "No invented statistical pass limit. Report source model discrepancy separately from conservation/refinement.",
+      "budget": {
+        "integrations": 0,
+        "fits": 0,
+        "UQ": 0,
+        "kernel_changes": 0,
+        "max_sources": 3,
+        "max_points": 18
+      },
+      "source_dependency": "S1 and S3 N2 share original theory; rows are comparisons, not independent experimental trials.",
+      "source_pressure_policy": "Currenthost evaluated at101325Pa, avoiding rescaling source values; all total/partial/source-specific definitions retained."
     }
   },
   "caloric_background": {

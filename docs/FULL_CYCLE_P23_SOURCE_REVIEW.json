@@ -1,0 +1,133 @@
+{
+  "schema": "full_cycle_p23_source_admission_v1",
+  "recorded_utc": "2026-10-01T00:38:46.305126+00:00",
+  "sources": [
+    {
+      "id": "S1",
+      "title": "Burgess2024 NIST TN2279 Self-Diffusion and Binary-Diffusion Coefficients in Gases",
+      "doi": "10.6028/NIST.TN.2279",
+      "url": "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=957163",
+      "canonical_url": "https://nvlpubs.nist.gov/nistpubs/TechnicalNotes/NIST.TN.2279.pdf",
+      "identity": "government_evaluated_recommendations_and_correlations_not_raw_experiments",
+      "access": "Official web-tool extracted text read; both local PDF downloads HTTP403. No PDF cache or visible screenshot is claimed.",
+      "table_location": "Printed p8 Table1a (PDF page13); reverse/duplicate entries in Table1c are not independent evidence.",
+      "formula": "ln(D/(cm^2/s))=A+B/(T/K)+C*ln(T/K)",
+      "reference_temperature_k": 298.15,
+      "reference_total_pressure_pa": 101325,
+      "partial_pressure_pa": null,
+      "composition": "Not stated row-by-row in TN2279; do not invent 50/50 or water partial pressure. Binary dilute-gas coefficient, not porous effective diffusivity.",
+      "uncertainty": "Table calls U expanded uncertainty; no uniform k or confidence level supplied. Values are not assigned as full-temperature statistical bands.",
+      "rounding": "Dref and A/B/C printed to three decimal places; no source rounding probability or rounding-error bound specified. Dref and full-range A/B/C are separate fits; do not require exact agreement.",
+      "rows": {
+        "N2_H2O": {
+          "A": -10.324,
+          "B": -84.181,
+          "C": 1.62,
+          "Dref_cm2_s": 0.254,
+          "temperature_domain_k": [
+            150,
+            2000
+          ],
+          "reported_U_percent": [
+            2,
+            3
+          ],
+          "reference_number": 25,
+          "underlying_source_identity": "Hellmann2019 H2O+N2 first-principles calculations; same underlying ordinary-water theory as S3, not an independent experiment."
+        },
+        "H2O_CO2": {
+          "A": -10.298,
+          "B": -180.06,
+          "C": 1.597,
+          "Dref_cm2_s": 0.166,
+          "temperature_domain_k": [
+            250,
+            2000
+          ],
+          "reported_U_percent": [
+            2,
+            3
+          ],
+          "reference_number": 27,
+          "underlying_source_identity": "Hellmann2019 H2O+CO2 first-principles calculations."
+        },
+        "N2_CO2": {
+          "A": -7.317,
+          "B": -139.909,
+          "C": 1.103,
+          "Dref_cm2_s": 0.224,
+          "temperature_domain_k": [
+            253,
+            473
+          ],
+          "reported_U_percent": [
+            1,
+            3
+          ],
+          "reference_number": 31,
+          "underlying_source_identity": "Vogel/Bich/Hellmann2023 binary D inferred using kinetic theory from experimental viscosity; not a direct diffusion measurement. Literal table values retained without correction or identifying source/model as ground truth."
+        }
+      },
+      "not_covered": [
+        "O2_H2O",
+        "O2_N2",
+        "O2_CO2"
+      ],
+      "reviewer": "p02_scope_review"
+    },
+    {
+      "id": "S2",
+      "title": "Marrero and Mason1972 Gaseous Diffusion Coefficients, JPCRD1:3-118",
+      "doi": "10.1063/1.3253094",
+      "url": "https://srd.nist.gov/JPCRD/jpcrd1.pdf",
+      "access": "Web reports117 pages but0 extracted lines; screenshot yielded no visible pixels. Publisher/DOI text unavailable. Bibliography only.",
+      "admitted_quantitative_points": 0,
+      "rejection": "Original rows, units, composition, T/P, mutual/tracer and uncertainty were not directly read. Conflicting secondary water-air/water-N2 indexing is not data.",
+      "reviewer": "p01_ledger"
+    },
+    {
+      "id": "S3",
+      "title": "Hellmann and Harvey2020 First-Principles Diffusivity Ratios for Kinetic Isotope Fractionation of Water in Air",
+      "doi": "10.1029/2020GL089999",
+      "url": "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=930541",
+      "publisher_url": "https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2020GL089999",
+      "dataset_doi": "10.18434/M32271",
+      "dataset_url": "https://data.nist.gov/od/ds/mds2-2271/Diffusivity_H2O.dat",
+      "dataset_local": "docs/sources/full-cycle-p23/Diffusivity_H2O.dat",
+      "dataset_bytes": 1441,
+      "identity": "original_first_principles_calculation_with_associated_government_dataset_not_experiment",
+      "location": "Author manuscript p4 water dilution/low-density definition; p5 TableS2 description; published Data Availability links same NIST dataset. DAT header and direct numbered lines are numeric evidence; supporting PDF itself was not read.",
+      "quantity": "Infinite-water-dilution binary diffusivity in N2 or O2, low-density rho_m*D normalized to finite standard total pressure. Not self diffusivity, not isotopologue ratio, not porous effective D.",
+      "water_mole_fraction": "limit x_w -> 0",
+      "water_partial_pressure_pa": "limit0 at fixed total pressure",
+      "carrier_partial_pressure_pa": "limit101325Pa",
+      "reference_total_pressure_pa": 101325,
+      "temperature_domain_k": [
+        190,
+        2000
+      ],
+      "source_columns_1based": {
+        "T_K": 1,
+        "N2_H2O_cm2_s": 2,
+        "O2_H2O_cm2_s": 3,
+        "water_air_cm2_s": 4
+      },
+      "absolute_diffusivity_uncertainty": null,
+      "uncertainty_note": "No absolute-D uncertainty column or uniform absolute-D bound in read text. The k2/95% estimates are for isotopologue ratios, not these D values; Merlivat1.6% is another N2 experiment. Neither transferred.",
+      "rounding": "Retain literal DAT decimal tokens; last shown decimal is reporting precision, not uncertainty or an assumed half-unit interval.",
+      "source_dependence": "Ordinary H2O values250–2000K explicitly reuse author earlier N2/O2 work. S1/S3 N2 values are related theory, not independent validation. Air column not used as either binary pair.",
+      "access": "DAT downloaded once1441bytes; Readme timed out once and not read; main manuscript/publisher read through web. No full PDF cache claimed.",
+      "reviewer": "p01_ledger"
+    }
+  ],
+  "substantive_source_count": 3,
+  "source_budget_exhausted": true,
+  "new_direct_experimental_points": 0,
+  "independent_paper_search_stopped": true,
+  "source_3_selection_amendment": "Initial local search declaration reserved a measurement paper; final selected source is original calculation with explicit independent N2/O2 columns. User allowed original papers. This is an explicit pre-evaluation design amendment, not a promotion to measured.",
+  "failure_receipts": [
+    "runs/full-cycle/p23-water-diffusion/sources/download-attempt01-failure.json",
+    "runs/full-cycle/p23-water-diffusion/sources/download-attempt02-failure.json",
+    "runs/full-cycle/p23-water-diffusion/sources/s3-dataset-download.json"
+  ]
+}

@@ -1,14 +1,14 @@
 {
   "schema": "full_cycle_final_acceptance_matrix_v1",
-  "recorded_utc": "2026-09-30T23:55:36.990315+00:00",
-  "status": "P22_scoped_source_comparison_complete_existing_kernel_numerics_retained_constitutive_unknowns_open",
+  "recorded_utc": "2026-10-01T00:44:26.635894+00:00",
+  "status": "P23_bounded_source_audit_complete_P24_water_diffusion_candidate_pending",
   "identity": "approximate_simulation_not_measured_material",
   "parent_commit": "d8bc6f1b09e0b6d10cdcf4abf35e634035a36d08",
   "parameter_file": "parameters.full_cycle.json",
-  "parameter_count": 323,
+  "parameter_count": 343,
   "parameter_status_counts": {
-    "literature": 86,
-    "assumed": 237,
+    "literature": 102,
+    "assumed": 241,
     "measured": 0
   },
   "implementation": {
@@ -1696,7 +1696,7 @@
       {
         "id": "P12-X01",
         "topic": "material, provenance and observables",
-        "status": "Root323 entries=86literature/237assumed/0measured;P22 adds only2 fixed audit sampling controls, original321 entries unchanged.",
+        "status": "Root343 entries:102literature/241assumed/0measured;20 new P23 entries are audit-only source/design metadata, previous323 intact.",
         "evidence": [
           "docs/FULL_CYCLE_P11_OBSERVATIONS.json",
           "parameters.full_cycle.json"
@@ -1709,7 +1709,8 @@
           "P17 applicability definitions",
           "P19",
           "P20",
-          "P22"
+          "P22",
+          "P23"
         ],
         "declared_implementation_work_complete": true,
         "pre_P20_status": "Root metadata and source/observable audit complete; 304 entries, 70 literature / 234 assumed / 0 measured. Target recipe remains unmeasured.",
@@ -1722,7 +1723,7 @@
       {
         "id": "P12-X02",
         "topic": "shared gas/liquid transport and thermodynamics",
-        "status": "P19/P20 viscosity source work complete; P22 strictly binary/Fick semantics and18 current free-D vs cached nonpolar LJ differences quantified. No experimental binary accuracy or water-pair source coverage, pore/mixture validation or >1200K qualification. No confirmed implementation fault or automatic replacement.",
+        "status": "P23 bounded water-pair source audit complete; source-backed candidate pending. Water freeD compared to theory/government correlations, no direct experiments; pore and arbitrary composition accuracy still unknown.",
         "evidence": [
           "docs/FULL_CYCLE_PAIR_DIFFUSION_RESULTS.json",
           "docs/FULL_CYCLE_PORE_GAS_RESULTS.json",
@@ -1733,7 +1734,8 @@
         "current_evidence": [
           "P19",
           "P20",
-          "P22"
+          "P22",
+          "P23"
         ],
         "declared_implementation_work_complete": false,
         "pre_P20_status": "Pure gas viscosity current-host curve comparison missing; P19 active. Pure caloric accuracy does not close transport evidence.",
@@ -1744,13 +1746,14 @@
         "pre_P22_status": "P19 source-curve gap audited; P20 pure source laws, same-temperature Wilke and affected current numerical checks completed. Dilute bulk source equations do not establish confined-pore or measured-mixture accuracy.",
         "P22_limited_audit_complete": true,
         "remaining_source_evidence_gaps": [
-          "All three water-pair source/experimental accuracy",
-          "Binary diffusion experiment uncertainty and precision for the three nonpolar pairs",
-          "Current trajectories outside selected300-1200K source-model review span",
-          "Pore-scale beta, diameter distribution, wall accommodation and real multi-species transport",
-          "Target material/process/product qualification"
+          "Direct binary experimental validation and absoluteD uncertainty, especiallywaterO2",
+          "N2CO2 disagreement between source models and narrow S1domain",
+          "Arbitrary-composition extension, interpolation and active source-law choice",
+          "Pore size/wall/porosity hypotheses and real multicomponent transport",
+          "Target brick/process/product qualification"
         ],
-        "next_action_boundary": "A future applicable source decision is separate; no secondUQ or kernel change is part of P22."
+        "next_action_boundary": "Any implementation changes the kernel: P20/P21 retain historical d5fd9a2 scope and must not be called current-kernel distributions. Second24-run UQ is not authorized by P23. No silent rerun or overall completion claim until the versioned comparison requirement is resolved.",
+        "pre_P23_status": "P19/P20 viscosity source work complete; P22 strictly binary/Fick semantics and18 current free-D vs cached nonpolar LJ differences quantified. No experimental binary accuracy or water-pair source coverage, pore/mixture validation or >1200K qualification. No confirmed implementation fault or automatic replacement."
       },
       {
         "id": "P12-X03",
@@ -1797,9 +1800,9 @@
     ],
     "source_reuse_policy": "Old sandbox benchmarks retain their own version/material/domain and failures; current-host evidence is required. Already exposed curves are not blind holdouts.",
     "completion_layers": {
-      "implementation": "declared_current_couplings_and_required_distribution_work_complete",
+      "implementation": "Existing kernel implemented; P23 sources now identify a concrete water-pair constitutive candidate not yet implemented/accepted.",
       "internal_physical_numerical": "current_affected_acceptance_passed",
-      "public_external": "P19/P20 pure-viscosity source comparison and source-backed implementation complete within declared dilute-source domains; previous foreign-material discrepancies and target limits retained",
+      "public_external": "P23 water and N2_CO2 source differences quantified in18 frozen rows; no direct binary experimental validation. Earlier source-specific failures preserved.",
       "target_material": "unqualified_pending_measurements",
       "engineering_process": "nominal_drying_failed",
       "delivery": "separate_receipts_not_a_model_PASS",
@@ -1813,7 +1816,7 @@
       "full microscopic dusty-gas transport",
       "damage/crack probability model"
     ],
-    "selected_next": "No further unbudgeted model batches; complete separate delivery and preserve process/material/source limitations.",
+    "selected_next": "P24 water-pair source constitutive candidate; fix root domains/interpolation/assumptions and affected-budget/P21 version dependency before implementation.",
     "whole_project_complete": false,
     "historical_subsequent_candidates": [
       {
@@ -1827,7 +1830,9 @@
         "priority": 3
       }
     ],
-    "declared_model_work_complete": true
+    "declared_model_work_complete": false,
+    "historical_pre_P23_selected_next": "No further unbudgeted model batches; complete separate delivery and preserve process/material/source limitations.",
+    "historical_pre_P23_declared_model_work_complete": true
   },
   "P13": {
     "status": "diagnostic_and_public_comparison_completed",
@@ -2004,6 +2009,14 @@
       "water_pairs_status": "unknown_not_covered",
       "kernel_unchanged": true,
       "global_model_complete": false
+    },
+    {
+      "item": "water_pair_free_diffusion_public_source_audit",
+      "outcome": "bounded18_point_audit_completed_source_law_candidate_pending",
+      "evidence": "P23",
+      "kernel_unchanged": true,
+      "experimental_accuracy": "not_evaluated",
+      "not_whole_development_goal_complete": true
     }
   ],
   "final_matrix_independent_review": {
@@ -2100,7 +2113,7 @@
     "wall_s": 1675.3755775829777
   },
   "historical_P18_model_completion_wall_s_from_plan_creation": 14941.526078,
-  "current_model_completion_status": "P22 limited binary semantics/source-model difference audit completed. P01-P21 evidence retains its exact version/scope; no claim that every constitutive source gap, target-material accuracy or whole development objective is complete.",
+  "current_model_completion_status": "P23_source_audit_complete_source_law_implementation_candidate_pending_not_whole_goal_complete",
   "historical_pre_P22_model_capability_closeout_complete": true,
   "P22": {
     "status": "completed_scoped_audit",
@@ -2170,5 +2183,104 @@
     "declared_to_reviewed_wall_s": 430.997672
   },
   "historical_pre_P22_status": "declared_approximate_model_work_complete_physics_numerics_passed_process_failed",
-  "physical_numerical_acceptance_scope": "Existing unchanged d5fd9a2 physical kernel P20 nominal/time/grid and P21 fixed ensemble; P22 introduces no dynamic result or extension of parameter coverage."
+  "physical_numerical_acceptance_scope": "Existing unchanged d5fd9a2 physical kernel P20 nominal/time/grid and P21 fixed ensemble; P22 introduces no dynamic result or extension of parameter coverage.",
+  "P23": {
+    "status": "completed_bounded_source_audit",
+    "evidence": [
+      "docs/FULL_CYCLE_P23_SOURCE_REVIEW.json",
+      "docs/FULL_CYCLE_P23_WATER_DIFFUSION.json",
+      "docs/FULL_CYCLE_P23_WATER_DIFFUSION.md"
+    ],
+    "by_source_pair": {
+      "S1:N2_H2O": {
+        "count": 3,
+        "minimum_signed_relative_difference": -0.03451852562434874,
+        "maximum_signed_relative_difference": 0.010236414748674623,
+        "maximum_absolute_relative_difference": 0.03451852562434874,
+        "maximum_at_temperature_k": 600,
+        "discrete_comparison_only": true
+      },
+      "S1:H2O_CO2": {
+        "count": 3,
+        "minimum_signed_relative_difference": -0.01170419785775421,
+        "maximum_signed_relative_difference": 0.24851738560459458,
+        "maximum_absolute_relative_difference": 0.24851738560459458,
+        "maximum_at_temperature_k": 298.15,
+        "discrete_comparison_only": true
+      },
+      "S1:N2_CO2": {
+        "count": 3,
+        "minimum_signed_relative_difference": -0.2509957350815975,
+        "maximum_signed_relative_difference": -0.14631129583569466,
+        "maximum_absolute_relative_difference": 0.2509957350815975,
+        "maximum_at_temperature_k": 298.15,
+        "discrete_comparison_only": true
+      },
+      "S3:O2_H2O": {
+        "count": 6,
+        "minimum_signed_relative_difference": -0.09593864714518481,
+        "maximum_signed_relative_difference": -0.0604599305934572,
+        "maximum_absolute_relative_difference": 0.09593864714518481,
+        "maximum_at_temperature_k": 600,
+        "discrete_comparison_only": true
+      },
+      "S3:N2_H2O": {
+        "count": 3,
+        "minimum_signed_relative_difference": -0.030717746608576204,
+        "maximum_signed_relative_difference": 0.014839021479843822,
+        "maximum_absolute_relative_difference": 0.030717746608576204,
+        "maximum_at_temperature_k": 800,
+        "discrete_comparison_only": true
+      }
+    },
+    "execution": {
+      "current_coefficient_vector_calls": 10,
+      "reported_rows": 18,
+      "source_correlation_evaluations": 6,
+      "source_direct_values": 12,
+      "new_integrations": 0,
+      "new_fits": 0,
+      "new_UQ": 0,
+      "new_source_searches_after_budget": 0,
+      "software_tests_added_or_run": false,
+      "sha_generated_or_compared": false,
+      "raw_fields_saved": false,
+      "script_elapsed_s": 0.08294554217718542,
+      "search_start_to_review_close_wall_s": 929.055935
+    },
+    "kernel_changed": false,
+    "prior323_parameter_entries_unchanged": true,
+    "independent_review_passed": true,
+    "experimental_accuracy_status": "not_evaluated_no_direct_measurements",
+    "next": {
+      "id": "P24",
+      "status": "concrete_source_law_candidate_not_implemented_or_dynamically_accepted",
+      "priority_reason": "P23 identifies source-backed water-pair mobility differences up to24.85%, within existing shared gas coupling. This is an actionable constitutive-source gap, independent of target-material measurements.",
+      "scope": "Only the three water-related free binary diffusion coefficients. Preserve nonpolar laws pending resolution of source disagreements, shared phi/tau and positive symmetric pore resistance, Darcy, stoichiometry, storage, h/s and heat accounting.",
+      "recommended_law_choice": {
+        "N2_H2O": "Use the complete S3 directly tabulated infinite-dilution N2 data in an explicitly assumed interpolation, so N2 andO2 share documented composition definition. S1 ABC remains a related-source comparison, not independent validation.",
+        "O2_H2O": "Use complete S3 direct O2 table190–2000K. No air substitution, no isotopic-ratio error band.",
+        "H2O_CO2": "Use S1 A/B/C uniformly over250–2000K. Never implement a special equality switch to printedDref at298.15K; that would produce an isolated discontinuity. Dref stays a separate diagnostic."
+      },
+      "domain_policy_to_freeze_before_implementation": "Register all direct knots, unit conversion, source pressure, composition domain and source metadata in root. Choose and label a positive continuous logD-vs-logT interpolation for S3 as assumed; piecewise derivative/complex-step behavior at knots must be explicit. Extension from xwater->0 to arbitrary full-host composition is an explicit assumed approximation. Define domain violations before running, without silent clipping or fallback; no present authorization for highT/lowT extrapolation accuracy.",
+      "minimal_affected_acceptance_candidate": {
+        "new_source_law_checks": "One fixed <=18-row candidate comparison plus necessary source-knot/continuity/complex derivative/zero-or-retained-pore algebra checks; preserve failed evidence, no parameter fitting. Budget must be frozen before new evaluation.",
+        "new_full_cycles": 3,
+        "cycles": [
+          "nominal",
+          "one_time_refinement",
+          "one_grid_refinement"
+        ],
+        "mass_elements_full_energy_and_four_gases": "whole and8 stages <0.1%, signed raw increments retained",
+        "refinement": "porosity, residualcarbon, shrinkage and peakTdiff <2% with existing root denominator floors",
+        "same_saved_trajectories": "Reuse for source-domain inventory and9 observations, no new trajectory solely for mapping.",
+        "scheme_comparison": "Reusing nominal plus2 fixed scenarios may be needed if kernel changes, separately declare minimal budget.",
+        "new_fit_or_UQ_in_P23": 0
+      },
+      "P21_dependency": "Any implementation changes the kernel: P20/P21 retain historical d5fd9a2 scope and must not be called current-kernel distributions. Second24-run UQ is not authorized by P23. No silent rerun or overall completion claim until the versioned comparison requirement is resolved.",
+      "not_a_full_model_completion": "P24 candidate/next-stage budget decision remains outstanding; complete source audit does not close model implementation, engineering process, target material or history storage.",
+      "source_pair_factor_policy": "SourceD already includes pairidentity: the selected water-pair source value must replace, not be multiplied by, the old assumed pairfactor. Old factors retained only as historical metadata or explicit legacy law; any new multiplicative correction requires a separately declared assumed parameter.",
+      "pressure_extension_policy": "Applying standard-pressure source data with1/P away from101325Pa is the declared dilute-gas ideal approximation, not new finite-pressure qualification."
+    }
+  }
 }
