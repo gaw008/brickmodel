@@ -753,3 +753,9 @@ D01正常后继/push/remote通过；D02本次明确增量metadata通过；D03恢
 P40固定10s合成动态实际完成三档（2026-10-01T21:55:34.264370+00:00），验收仍partial：原三次启动含首摘要失败，明确追加冻结mesh一次后总4、全回收，原21:53:23.887003UTC截止不延。三档质量/元素/完整能量及四gas低于原0.1%，time四指标通过；mesh峰温差按原1K尺度差7.333352694%>2%，direct累计量较基准差27.875046911%，未获空间收敛资格。三档CaO近零无floor预算失败、strictOH及carbonate均微负保留，原八阶段未覆盖。根500=144literature/356assumed/0measured、旧469/冻结499完整条目保持、名义direct未启用；历史名义干燥0.135892078740%失败与完整模型wholefalse保持。Git/Drive独立收据，未恢复。
 
 P40保持[ ]部分完成：单窗口实际接线/三档执行及time加密完成，mesh温差失败、direct空间敏感、CaO预算/严格OH及carbonate未资格；首失败/追加额度/真实耗时/下一必要零积分离散诊断见FULL_CYCLE_P40_DIRECT_TRANSIENT.md/.json及p40-direct-transient。变更full_cycle_gas.py、根31新增项、计划/当前规范/报告/用法/矩阵/状态；原材料/工艺失败保持，无第五次积分。
+
+### P40实际必要交付 2026-10-01T21:59:41.691049+00:00
+
+P40实际交付（2026-10-01T21:59:41.691049+00:00）：实现及失败矩阵提交39c618f8已普通推送并核对远端；39明确文件+manifest小增量1,064,643B已上传，名称/大小/父目录回读一致，收据FULL_CYCLE_P40_DELIVERY.json。三档实际10s、总4starts含首失败与明确追加mesh，全回收/原截止不延；time四指标PASS，mesh峰温差7.33335%>2%FAIL、directextent网格未资格，CaO/strictOH+carbonatefail保留。500=144literature356assumed0measured、名义direct未启用；历史0.135892078740%干燥/P34旧30/81保持。P40及完整模型仍partial/wholefalse。未下载/解包/恢复，不把metadata当恢复；原件/独有历史保留，20GB/历史全备份/GitHub容量告警未解决。后续仅必要零积分离散定位候选，不在本P40额度再积分。
+
+D01正常Git后继/push/远端读回通过；D02本次增量metadata通过；D03实际恢复停止，D04历史存储未通过。P40勾选保持未完成，下一必要离散诊断范围待登记，不虚报整个模型完成。

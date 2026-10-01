@@ -267,3 +267,7 @@ admitted = prepare_dataset(config, dataset, for_calibration=True)
 FiniteGas.summarize支持真实已声明单阶段窗口；若不含drying/cooling，端点evaluated=false、值和passed=null，不能当作工艺通过。actual_initial_references来自真正初始solverinput，第八extent/active_reactions/气体和自由水账本保持。initial_output_provenance记录摘要t0原始有符号插值差，摘要copy原点使用真正y0，不改sol.y/末态/RHS/Jac。
 
 public_reference_cases.direct_carbonation_transient明确冻结10s synthetic配置：make_cycle前复制所有根override，原12/.1s，time12/.05s与更紧容差，mesh24原精度；不可对既有名义initial使用后置单点改相。运行本身已执行，总4starts（一个失败+明确追加mesh），当前不授权重复。原四指标time通过、mesh峰温差失败，direct extent空间未收敛、CaO及严格OH/carbonate失败保存；原八阶段/实材/当前比较和反演未资格。见P40报告与ignored runs/full-cycle/p40-direct-transient证据。离线所需代码/根/既有依赖仍本地，不增加在线服务。
+
+## P40实际交付
+
+P40实际交付（2026-10-01T21:59:41.691049+00:00）：实现及失败矩阵提交39c618f8已普通推送并核对远端；39明确文件+manifest小增量1,064,643B已上传，名称/大小/父目录回读一致，收据FULL_CYCLE_P40_DELIVERY.json。三档实际10s、总4starts含首失败与明确追加mesh，全回收/原截止不延；time四指标PASS，mesh峰温差7.33335%>2%FAIL、directextent网格未资格，CaO/strictOH+carbonatefail保留。500=144literature356assumed0measured、名义direct未启用；历史0.135892078740%干燥/P34旧30/81保持。P40及完整模型仍partial/wholefalse。未下载/解包/恢复，不把metadata当恢复；原件/独有历史保留，20GB/历史全备份/GitHub容量告警未解决。后续仅必要零积分离散定位候选，不在本P40额度再积分。
