@@ -1,0 +1,26 @@
+# D05 既有离线环境快照与异路径启动
+
+当前结果（2026-10-01T03:52:44.607988+00:00）：仅本机 macOS26.6.2 ARM64 的 full-cycle 基础运行环境完成本地归档恢复、隔离启动和模型构造；完整科学计算、可选环境、其他平台和云恢复未据此通过。
+
+- 使用既有 CPython3.12.13、NumPy2.5.2、SciPy1.18.1；依赖轮子标签最低 macOS14 ARM64，只在26.6.2实跑。不是 wheelhouse 或跨平台安装器。
+- 原 .venv editable 元数据指向旧 Desktop；当前 runner 显式定位 Research/src。快照排除旧 .pth/项目分发元数据，不修改原环境；f2py/numpy-config 旧shebang脚本作为数据保存、不作启动入口。uv 默认缓存目录不存在、具名 wheelhouse/dist 等目录未发现对象，未扩大成全机不存在结论。
+- 首次帮助入口退出0，反演导入缺少 sludge_sandbox.units 而失败。原归档、快照、错误堆栈与脚本全部保留。第二次仅补已有 initializer(108B) 和 units.py(3079B)，没有改模型。
+- v2 归档 `/Users/wanggaoying/Research/brickmodel-backups/2026-09-26/offline-runtime-macos-arm64-e20ea485-v2.tar.gz` 为 **42,904,062 B**。源组件4296项；恢复文件/链接4305项全部相同（含新增说明、清单等），独立核对9个文件链接与140,509,502常规文件字节。
+- CLI帮助和Python接口导入/根读取/构造均退出0，12单元、8阶段、384参数。673个相关模块路径全在恢复目录；443个动态镜像=94恢复目录+349系统库，无原工程或外部安装加载依赖。
+- 首次复制打包14.450251542s，第二次11.147831250s；第二次解包及启动验证18.491927208s。首失败包装器未保存耗时，不补造。未运行积分、拟合、UQ、软件测试或SHA；未联网安装依赖。
+
+从归档解包后的 `offline-runtime-macos-arm64-e20ea485-v2` 目录使用原入口：
+
+```sh
+./runtime/bin/python3.12 -I -B application/examples/run_full_cycle.py --help
+```
+
+正常计算仍遵循 FULL_CYCLE_USAGE.md 的现有CLI和根参数；本项没有启动 `--compare` 或合成拟合，不把启动证据称为新科学验收。原始运行目录在 `runs/full-cycle/d05-offline-runtime/`，成功收据在 `attempt-2/local-restore.json`。build-v2.json 的 false 是打包当时状态，成功以后续恢复收据为准。
+
+环境云上传已尝试一次，被自动审批拒绝：认为原授权没有明确覆盖此42.9MB运行时二进制/源码/依赖归档。无Drive ID、无元数据或云恢复成功；不换渠道绕过，需用户明确批准这个具体归档。新增报告小包交付另记。
+
+D04独立工程核查更新：三独有Git对象已有历史云包ID，定位为 post-delivery-001(checkpoint.pack，4块/281292800B)、002(archive-split.bundle，30块/2685716480B)、003(reflog.bundle，6块/487516160B)；不得误称全无ID或重复上传。云恢复及base/tree依赖闭包未完成。32MiB仅是特定下载工具限制，不适用于所有Drive路径。
+
+最小完整历史44包91,893,760B：一次官方provider fetch可返回90MB file_uri，但落盘端HTTP403；正规Chrome已认证并确认大文件下载，返回 `Download 531 failed`，无保存路径，未下载第二块。随后读取该下载确认页最终状态又被自动审批拒绝，理由是失败路线已停止；停止访问，不改凭据/安全配置/下载URL。若继续，由用户正常Drive界面下载两个原分块并给出本地目录。三份旧文档当前已变，不能拿它们与旧归档不等误判损坏；旧tar临时源已不存在，不能重新打包当前文件伪称云取回。
+
+科学核5917不变，P24物理数值通过、P25固定方案及P29单参合成恢复保留各自范围；名义干燥0.135819744246%>0.1%失败、公开异材失配及0measured不变。P26第二UQ待原问题答复未运行。全历史、独有Git恢复、20GB和GitHub容量问题仍未关闭。
