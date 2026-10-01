@@ -101,7 +101,39 @@ def analyze(root_file: Path) -> dict:
     return {'schema':'P42_fixed_initial_partition_actual_invariants_v1','recorded_utc':datetime.now(timezone.utc).isoformat(),'identity':'Three given homogeneous synthetic algebra fixtures plus one compound invalid input; no resimulated P40 trajectory','fixture_count':len(fixtures),'fixtures':fixtures,'arithmetic_rows':rows,'arithmetic_factor_root_parameter':case['arithmetic_factor_parameter'],'all_arithmetic_rows_passed':all(row['passed'] for row in rows),'invalid_fixture_rejected':fixtures['invalid_composite']['rejected'],'synthetic_internal_face_dissipation_passed':all(v['positive_synthetic_internal_face_dissipation'] for k,v in fixtures.items() if k!='invalid_composite'),'input_species_names':list(initial_inventory),'input_gas_names':list(gas_density),'independent_extent_names':ext_names,'independent_extent_input':'Saved independently integrated final totals, homogenized as given synthetic extensive density. Not derived from inventories.','root_parameter_count':len(root['parameters']),'nominal_uniform_and_direct_configuration_changed':False,'original44_host_sources_changed':False,'new_model_instances_constitutive_transport_thermo_RHS_Jac_ODE_fit_UQ_recovery':0,'full_host_thermodynamics_admitted':False,'current_host_nonuniform_connected':False,'P40_mesh_or_phase_failure_reclassified':False,'whole_project_complete':False,'elapsed_analysis_s':time.monotonic()-started,'limitations':['Only declared algebra; complete chemical potentials/energy/surface/elastic/mechanical operators were not evaluated','Positive diagonal synthetic flux quadratic form is not actual MS/Darcy coupled qualification','No interpolation of T replaces energy or original peak contrast','No trajectory, source rate, direct mobility, process or real brick qualification']}
 
 
+def analyze_uniform(root_file: Path) -> dict:
+    """Only the failed encoding and four corrected uniform input checks."""
+    started=time.monotonic(); root=json.loads(root_file.read_text()); project=root_file.parent
+    addition=root['public_reference_cases']['fixed_initial_partition_uniform_appendix']; case=root['public_reference_cases'][addition['original_contract']]
+    p=lambda key:root['parameters'][key]['value']; before=json.loads((project/case['physical_input_root']).read_text()); bp=lambda key:before['parameters'][key]['value']
+    fixture=next(item for item in case['fixtures'] if item['id']==addition['original_fixture_id'])
+    source=json.loads((project/case['saved_reference']).read_text()); final=source['saved_numerical_samples'][-1]
+    spec=importlib.util.spec_from_file_location('initial_partition_primitive',project/case['primitive']); primitive=importlib.util.module_from_spec(spec); spec.loader.exec_module(primitive)
+    n=int(p(fixture['cells_parameter'])); area=bp('geometry.area'); length=bp('geometry.half_thickness'); total_bulk=area*length; oldV=area*length/n; old_md=bp('material.dry_density')*oldV; old_scale=old_md/bp('atomic.C')
+    geometry=primitive.initial_partition(cells=n,half_thickness_m=length,area_m2=area,profile=fixture['profile'],exterior_exponent=p(case['exponent_parameter']))
+    scales=primitive.initial_cell_scales(geometry['initial_bulk_m3'],dry_density_kg_m3=bp('material.dry_density'),char_molar_mass_kg_mol=bp('atomic.C'),retention_kg_kg=bp('water.retention_scale'),water_molar_mass_kg_mol=2*bp('atomic.H')+bp('atomic.O'))
+    ext_names=list(final['reaction_extent_mol']); extent_density=np.array([sum(final['reaction_extent_mol'][name])/total_bulk for name in ext_names]); extent=geometry['initial_bulk_m3'][:,None]*extent_density
+    encoded=primitive.extent_coordinates(extent,scales['chemical_scale_mol']); factor=p(case['arithmetic_factor_parameter']); eps=np.finfo(float).eps; rows=[]
+
+    def record(name,actual,expected,scale,unit):
+        a=np.asarray(actual); e=np.asarray(expected); residual=a-e; bound=factor*eps*np.asarray(scale)
+        rows.append({'name':name,'unit':unit,'signed_residual':residual.tolist(),'arithmetic_bound':np.broadcast_to(bound,residual.shape).tolist(),'passed':bool(np.all(np.abs(residual)<=bound))})
+
+    name=fixture['id']
+    record(name+'.old_scalar_width_broadcast',geometry['widths_m'],length/n,length,'m')
+    record(name+'.old_scalar_volume_broadcast',geometry['initial_bulk_m3'],oldV,total_bulk,'m3')
+    record(name+'.old_scalar_md_broadcast',scales['dry_mass_kg'],old_md,old_md,'kg')
+    record(name+'.old_scalar_chemical_scale_broadcast',scales['chemical_scale_mol'],old_scale,old_scale,'mol')
+    record(name+'.old_scalar_extent_encoding',encoded,(extent/(bp('material.dry_density')*oldV/bp('atomic.C'))).T.ravel(),np.abs(encoded),'1')
+    return {'schema':'P42_explicit_affected_uniform_actual_rows_v1','recorded_utc':datetime.now(timezone.utc).isoformat(),'identity':'Explicit second science job in new added window; corrected uniform inputs and original failed encoding only','fixture_ids_evaluated':[name],'arithmetic_rows':rows,'all_arithmetic_rows_passed':all(row['passed'] for row in rows),'arithmetic_factor_root_parameter':case['arithmetic_factor_parameter'],'original_failed_row_definition_unchanged':True,'original_physical_input_and_old_scalar_definition_unchanged':True,'rows_not_repeated':'Original63 passed rows retained separately except old volume compatibility rechecked because affected input changed. No quadratic/invalid/nesting/roundtrip/pressure/shared-face/dissipation validation repeated.','independent_extent_names':ext_names,'independent_extent_input':'Given homogeneous density from saved independently integrated final extent totals, not reconstructed from inventory','current_uniform_input_volume_m3':geometry['initial_bulk_m3'].tolist(),'current_uniform_width_m':geometry['widths_m'].tolist(),'old_scalar_volume_m3':oldV,'old_scalar_width_m':length/n,'old_scalar_dry_mass_kg':old_md,'old_scalar_chemical_scale_mol':old_scale,'root_parameter_count':len(root['parameters']),'new_model_instances_constitutive_transport_thermo_RHS_Jac_ODE_fit_UQ_recovery':0,'full_host_thermodynamics_admitted':False,'host_nonuniform_connected':False,'original_closed_window_failure_reclassified':False,'whole_project_complete':False,'elapsed_analysis_s':time.monotonic()-started}
+
+
 if __name__=='__main__':
-    result=analyze(Path(sys.argv[1])); Path(sys.argv[2]).write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
-    if not (result['all_arithmetic_rows_passed'] and result['invalid_fixture_rejected'] and result['synthetic_internal_face_dissipation_passed']):
-        raise SystemExit(1)
+    if len(sys.argv)==4 and sys.argv[3]=='--uniform-only':
+        result=analyze_uniform(Path(sys.argv[1])); passed=result['all_arithmetic_rows_passed']
+    elif len(sys.argv)==3:
+        result=analyze(Path(sys.argv[1])); passed=result['all_arithmetic_rows_passed'] and result['invalid_fixture_rejected'] and result['synthetic_internal_face_dissipation_passed']
+    else:
+        raise ValueError('Arguments: ROOT OUTPUT [--uniform-only]')
+    Path(sys.argv[2]).write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
+    if not passed:raise SystemExit(1)

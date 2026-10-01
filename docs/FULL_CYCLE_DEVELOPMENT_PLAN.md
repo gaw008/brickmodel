@@ -801,3 +801,15 @@ P42固定二次初始有限体积分区/逐格尺度原语已实现（2026-10-01
 P42实际交付（2026-10-01T23:01:33.461636+00:00）：实现e36ac179及静态uniform表达式后继4eebc3bf已正常推送/远端确认；28明确新文件+manifest增量636,390B上传及名称/大小/父目录读回通过。唯一实际科学job63/64、uniform标量extent兼容FAIL；两retry gate均无修改/子进程，原截止关闭。恒width及uniform体积按旧A*L/N的当前修正版只读审查、未执行；P42仍partial，未接主机、0新物理/积分/fit/UQ，原44保持39c618f8。514=144literature370assumed0measured、旧506保持，P40mesh7.33335%/phase/strict、P34旧30/81、名义0.135892078740%工艺失败与wholefalse保持。收据FULL_CYCLE_P42_DELIVERY.json；未恢复下载/解包，原件/独有历史保留，20GB/历史全备份/GitHub容量告警未解决。下个必要资源决定仅当前uniform12受影响数据行单job候选，尚未授权/启动，不换ID刷本项截止，不重跑未受影响项。
 
 D01正常Git/push/远端通过，D02本增量metadata通过；D03恢复按用户停止，D04历史存储未通过。P42主项与B不勾，后续资源决定见交付JSON具体单fixture范围，当前不执行。
+
+- [x] **P42-C** 明确追加当前uniform12受影响契约检验：协调依据已授权持续开发及正常科学验收明确追加，非延长原P42截止/刷ID。原一job63/64FAIL、两prestart gate无child与151.717013s收尾永久保留。本追加唯一1科学start、60s/新唯一120s/1worker/2MiB/无重试，总science最多2；仅uniform12原受影响检查，原8epsilon/旧scalar参考不变，不重评未受影响quad12/quad24/invalid/nesting。旧514保持、新增7操作政策至521=144literature377assumed0measured，原语4eebc3bf冻结不再改、44host不改，0物理算子/积分/fit/UQ/恢复。
+
+### P42-C明确追加事前登记 2026-10-01T23:05:36.774834+00:00
+
+原P42三正常commit/push及两小包metadata已完成，HEAD1fe1dc0c。追加范围/资源来源见p42-uniform-appendix/declaration.json；先代码/静态审查后start，原deadline22:47:50.974739UTC不变。无论结果如何不授予完整主机/原8阶段/P40grid/phase或实材资格。
+
+### P42-C实际追加复核 2026-10-01T23:12:12.452786+00:00
+
+P42明确追加uniform-only复核已完成（2026-10-01T23:12:12.452786+00:00）：仅5受影响行全PASS，实际第二sciencejob1次/累积2、原阈值与比较定义不变，CPU0.008507500s、监督0.257880250s/rc0/回收/新60–120s预算内，无第三次。原P42截止22:47:50.974739UTC、一job63/64FAIL、两prestart gate无child及151.717013s关闭永久保留；新窗口23:09:52.493403–23:11:52.493403UTC明示追加，不追溯延时或翻原PASS。当前uniform恒宽/旧A*L/N体积和每格md/chemical/原extent编码兼容获数据契约资格；旧63未受影响项不复评。根521=144literature377assumed0measured、旧514完整保持、primitive冻结4eeb不改、原44主机不改；非均匀主机/完整热力学未准入，0模型/物理算子/积分/fit/UQ/恢复。P42原operational仍partial，P40mesh7.33335%/phase/strict、P34旧30/81、名义0.135892078740%失败与wholefalse保持。
+
+下一逐格host接线/localRHS仅明确候选，尚未改源/分配或执行；本次正常Git与单小增量回执随后留本地，不独立notes递归。
