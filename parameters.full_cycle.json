@@ -5561,6 +5561,72 @@
       "source": "policy",
       "status": "assumed",
       "note": "P35 bounded zero-integration diagnosis declared before probes; operational setting only, no changed physics or acceptance floor/threshold."
+    },
+    "validation.direct_carbonation.maximum_states": {
+      "value": 4,
+      "unit": "1",
+      "range": [
+        4,
+        4
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P36 fixed zero-integration admission budget, operational only; no change to materials, process or acceptance scales."
+    },
+    "validation.direct_carbonation.per_probe_budget": {
+      "value": 60.0,
+      "unit": "s",
+      "range": [
+        60.0,
+        60.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P36 fixed zero-integration admission budget, operational only; no change to materials, process or acceptance scales."
+    },
+    "validation.direct_carbonation.global_probe_budget": {
+      "value": 120.0,
+      "unit": "s",
+      "range": [
+        120.0,
+        120.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P36 fixed zero-integration admission budget, operational only; no change to materials, process or acceptance scales."
+    },
+    "validation.direct_carbonation.summary_byte_limit": {
+      "value": 2097152,
+      "unit": "byte",
+      "range": [
+        2097152,
+        2097152
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P36 fixed zero-integration admission budget, operational only; no change to materials, process or acceptance scales."
+    },
+    "validation.direct_carbonation.maximum_workers": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P36 fixed zero-integration admission budget, operational only; no change to materials, process or acceptance scales."
+    },
+    "validation.direct_carbonation.maximum_attempts_per_issue": {
+      "value": 2,
+      "unit": "1",
+      "range": [
+        2,
+        2
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P36 fixed zero-integration admission budget, operational only; no change to materials, process or acceptance scales."
     }
   },
   "species": [
@@ -8006,6 +8072,74 @@
       "checks": "Paired OH/independent extent RHS and complete Jacobian output-row relations; no repeat of Cp/mu/entropy source benchmarks.",
       "saved_data_scope": "Three saved P34 endpoint sets and all81 original phase budgets; reuse supplied Decimal90 aggregation audit without rerunning it.",
       "failure_retention": "P34 first/final extendedfalse and30 no-floor phase failures unchanged; output-rounding bounds are diagnostic only."
+    },
+    "direct_carbonation_admission": {
+      "schema": "P36_fixed_local_source_admission_v1",
+      "recorded_utc": "2026-10-01T19:32:29.156163+00:00",
+      "identity": "assumed/synthetic local states, not paper experiments",
+      "budget_prefix": "validation.direct_carbonation.",
+      "probes": [
+        {
+          "id": "pure_portlandite_humid",
+          "calcium_fraction_index": 2,
+          "co2_parameter": "gas.inlet.CO2",
+          "steam_index": 1,
+          "temperature_parameter": "validation.hydroxide.temperatures",
+          "temperature_index": 0,
+          "calcium_fractions_parameter": "validation.hydroxide.calcium_fractions",
+          "steam_parameter": "validation.hydroxide.steam_activities",
+          "oxygen_parameter": "gas.inlet.O2",
+          "nitrogen_policy": "N2 fills exact remainder of selected mole fractions; gas inventories seeded with vp0/P/T, actual gas pressures read back after existing thermoelastic unpack."
+        },
+        {
+          "id": "pure_calcite_humid",
+          "calcium_fraction_index": 0,
+          "co2_parameter": "gas.inlet.CO2",
+          "steam_index": 1,
+          "temperature_parameter": "validation.hydroxide.temperatures",
+          "temperature_index": 0,
+          "calcium_fractions_parameter": "validation.hydroxide.calcium_fractions",
+          "steam_parameter": "validation.hydroxide.steam_activities",
+          "oxygen_parameter": "gas.inlet.O2",
+          "nitrogen_policy": "N2 fills exact remainder of selected mole fractions; gas inventories seeded with vp0/P/T, actual gas pressures read back after existing thermoelastic unpack."
+        },
+        {
+          "id": "mixed_high_CO2_low_H2O",
+          "calcium_fraction_index": 3,
+          "co2_parameter": "gas.stage.hold.CO2",
+          "steam_index": 1,
+          "temperature_parameter": "validation.hydroxide.temperatures",
+          "temperature_index": 0,
+          "calcium_fractions_parameter": "validation.hydroxide.calcium_fractions",
+          "steam_parameter": "validation.hydroxide.steam_activities",
+          "oxygen_parameter": "gas.inlet.O2",
+          "nitrogen_policy": "N2 fills exact remainder of selected mole fractions; gas inventories seeded with vp0/P/T, actual gas pressures read back after existing thermoelastic unpack."
+        },
+        {
+          "id": "mixed_low_CO2_high_H2O",
+          "calcium_fraction_index": 3,
+          "co2_parameter": "gas.inlet.CO2",
+          "steam_index": 2,
+          "temperature_parameter": "validation.hydroxide.temperatures",
+          "temperature_index": 0,
+          "calcium_fractions_parameter": "validation.hydroxide.calcium_fractions",
+          "steam_parameter": "validation.hydroxide.steam_activities",
+          "oxygen_parameter": "gas.inlet.O2",
+          "nitrogen_policy": "N2 fills exact remainder of selected mole fractions; gas inventories seeded with vp0/P/T, actual gas pressures read back after existing thermoelastic unpack."
+        }
+      ],
+      "pressure_parameter": "gas.pressure",
+      "identity_scale_parameter": "validation.hydroxide.identity_tolerance",
+      "new_cycle_integrations": 0,
+      "scientific_source_edits": 0,
+      "full_primary_texts_maximum": 2,
+      "source_urls": [
+        "https://www.ugr.es/~grupo179/pdf/Ruiz%20Agudo%202013c.pdf",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC12980848/"
+      ],
+      "raw_donors": "Main result uses reconstructed host ns and preserves signs. Exact donor coefficient comparison at same frozen mu/T/partial is separate and not a mechanically re-equilibrated full host state.",
+      "source_applicability": "298.15K synthetic states are not293.15K paper reproduction. High steam0.09 is imposed nonequilibrium inventory, not an equilibrium wet-film experiment. No wet-film availability law admitted.",
+      "diagnostic_scope": "Complete current shared mu and old two rates only; no rates/rhs/jacobian/solve_ivp call, direct mobility or new phase heat."
     }
   },
   "caloric_background": {

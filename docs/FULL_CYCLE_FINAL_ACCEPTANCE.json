@@ -5,10 +5,10 @@
   "identity": "approximate_simulation_not_measured_material",
   "parent_commit": "d8bc6f1b09e0b6d10cdcf4abf35e634035a36d08",
   "parameter_file": "parameters.full_cycle.json",
-  "parameter_count": 434,
+  "parameter_count": 440,
   "parameter_status_counts": {
     "literature": 141,
-    "assumed": 293,
+    "assumed": 299,
     "measured": 0
   },
   "implementation": {
@@ -1050,7 +1050,7 @@
           "Target material and macro hydration kinetics unmeasured; assumed kinetics and >700K source continuation.",
           "P31/P32/P33 and P26 evidence retains its old kernel and does not qualify P34 comparison, fits or distributions.",
           "P35 bounded zero-integration localization complete; extended near-zero phase and strictOH numerical qualification remain unpassed, no confirmed code defect.",
-          "Potential independent direct portlandite-carbonation path absent; P36 source admission and fixed local comparison proposed, not started or qualified."
+          "P36 exact-donor local direct-path gap demonstrated; macro mobility not directly admitted and independent direct channel remains absent. No direct-cycle/material qualification."
         ]
       },
       {
@@ -1227,7 +1227,7 @@
           "Target material and macro hydration kinetics unmeasured; assumed kinetics and >700K source continuation.",
           "P31/P32/P33 and P26 evidence retains its old kernel and does not qualify P34 comparison, fits or distributions.",
           "P35 bounded zero-integration localization complete; extended near-zero phase and strictOH numerical qualification remain unpassed, no confirmed code defect.",
-          "Potential independent direct portlandite-carbonation path absent; P36 source admission and fixed local comparison proposed, not started or qualified."
+          "P36 exact-donor local direct-path gap demonstrated; macro mobility not directly admitted and independent direct channel remains absent. No direct-cycle/material qualification."
         ]
       },
       {
@@ -1284,7 +1284,7 @@
           "Target material and macro hydration kinetics unmeasured; assumed kinetics and >700K source continuation.",
           "P31/P32/P33 and P26 evidence retains its old kernel and does not qualify P34 comparison, fits or distributions.",
           "P35 bounded zero-integration localization complete; extended near-zero phase and strictOH numerical qualification remain unpassed, no confirmed code defect.",
-          "Potential independent direct portlandite-carbonation path absent; P36 source admission and fixed local comparison proposed, not started or qualified."
+          "P36 exact-donor local direct-path gap demonstrated; macro mobility not directly admitted and independent direct channel remains absent. No direct-cycle/material qualification."
         ]
       }
     ],
@@ -1292,10 +1292,11 @@
       {
         "id": "P12-X01",
         "topic": "material, provenance and observables",
-        "status": "434parameters:141literature/293assumed/0measured; original427 complete entries unchanged,7 operational budgets added. P34 same-trajectory mappings only; no new material data.",
+        "status": "440parameters:141literature/299assumed/0measured; original434 full entries unchanged,6 operational budgets only. Wet mechanism source admitted; macro coefficients not admitted.",
         "current_evidence": [
           "docs/FULL_CYCLE_P34_LIME_HYDROXIDE.json",
-          "docs/FULL_CYCLE_P35_PHASE_LEDGER_DIAGNOSIS.json"
+          "docs/FULL_CYCLE_P35_PHASE_LEDGER_DIAGNOSIS.json",
+          "docs/FULL_CYCLE_P36_DIRECT_CARBONATION_ADMISSION.json"
         ],
         "measured_parameter_count": 0
       },
@@ -1304,7 +1305,8 @@
         "topic": "shared gas/liquid transport and thermodynamics",
         "status": "Existing four-gas wall-friction plus P34 portlandite uses shared U/S/mu/volume. Local identities passed on nonnegative donors; sampled negative OH dissipation retained, strict pointwise qualification false.",
         "current_evidence": [
-          "docs/FULL_CYCLE_P34_LIME_HYDROXIDE.json"
+          "docs/FULL_CYCLE_P34_LIME_HYDROXIDE.json",
+          "docs/FULL_CYCLE_P36_DIRECT_CARBONATION_ADMISSION.json"
         ],
         "strict_sampled_hydroxide_entropy_passed": false
       },
@@ -1314,7 +1316,8 @@
         "status": "Original81 ordinary/108gas and four required refinement metrics pass unchanged0.1%/2%; new81 phase budgets30failed. No current UQ qualification.",
         "current_evidence": [
           "docs/FULL_CYCLE_P34_LIME_HYDROXIDE.json",
-          "docs/FULL_CYCLE_P35_PHASE_LEDGER_DIAGNOSIS.json"
+          "docs/FULL_CYCLE_P35_PHASE_LEDGER_DIAGNOSIS.json",
+          "docs/FULL_CYCLE_P36_DIRECT_CARBONATION_ADMISSION.json"
         ],
         "original_criteria_passed": true,
         "extended_phase_criteria_passed": false,
@@ -1352,74 +1355,45 @@
       "Exact nonisothermal microscopic dusty-gas/Soret/thermal-transpiration/pore-network transport",
       "damage/crack probability model"
     ],
-    "selected_next": "Proposed P36 direct portlandite-carbonation source admissibility and at most4 frozen local comparisons; no P36 execution in P35. Original phase/strictOH/process failures remain unpassed.",
+    "selected_next": "P36 complete: mechanism admitted, macro rate not directly admitted, exact-donor local pathway gap demonstrated. Proposed P37 supplied-mobility conditional local operator, not started; no new cycle budget.",
     "whole_project_complete": false,
     "declared_model_work_complete": false,
     "proposed_next_capability": {
-      "id": "P36",
-      "status": "proposed_not_started",
-      "ability": "Independent direct portlandite carbonation pathway: Ca(OH)2+CO2 -> CaCO3+H2O",
-      "matrix_rows": [
-        "P12-S04",
-        "P12-S07",
-        "P12-S08",
-        "P12-X01",
-        "P12-X02",
-        "P12-X03",
-        "P12-X04"
-      ],
-      "implementation_gap": "Current root reactions and host contain hydroxide dehydration and reversible calcite/lime exchange, but no independent direct portlandite-carbonation rate or extent. Stoichiometry is linearly dependent; independent pathway kinetics is not thereby redundant.",
-      "current_scope_of_evidence": "Read-only code review and two primary full texts only; no local thermodynamic counterexample was evaluated in P35.",
-      "potential_value": "Can represent a humid low-temperature route without requiring the CaO intermediate. Whether the present two-step route is locally blocked must be demonstrated at fixed states, not presumed.",
-      "shared_potential_requirement": "nu_direct=nu_hydroxide-nu_decarbonation; delta_mu_direct=delta_mu_hydroxide-delta_mu_decarbonation including existing gas, pressure/capillary and skeleton terms. Use the same U/S/volume ledger and count reaction heat once.",
-      "future_coupling_requirements": "If admitted later, calcite derivative includes +r_direct/CaPool, portlandite derivative includes -r_direct, and independent invariant is P+xi_hydroxide+xi_direct=P0. Existing 4 gas and 3 Ca phase species suffice; thermodynamics alone supplies no mobility.",
-      "primary_sources": [
-        {
-          "title": "Dissolution and Carbonation of Portlandite [Ca(OH)2] Single Crystals",
-          "doi": "10.1021/es402061c",
-          "url": "https://www.ugr.es/~grupo179/pdf/Ruiz%20Agudo%202013c.pdf",
-          "full_text_read": true,
-          "support": "Surface observations support coupled dissolution and carbonate precipitation; humid-air experiment about93%RH at20+/-2C.",
-          "limitation": "Single crystals and aqueous/humid surface route; not macroscopic brick-rate coefficients or high-temperature kinetics."
-        },
-        {
-          "title": "Effects of Relative Humidity on Dissolution and Carbonation Potential of Portlandite",
-          "doi": "10.1021/acs.langmuir.5c05760",
-          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12980848/",
-          "full_text_read": true,
-          "support": "Pure CH powder20C; nine humidity conditions; two TG-based DoC definitions and nominal sampling0/3/7/28/56days.",
-          "limitation": "56day points at59-95%RH were not measured. Atomistic Ca-detachment barriers are not direct macro Arrhenius A/E. Figure trends and endpoint definitions alone do not admit a brick-scale mobility."
-        }
-      ],
-      "source_admissibility_question": "Do full texts supply a bounded, dimensionally complete macro pathway law with independently identifiable coefficients and humidity/surface/product applicability? If not, record inadmissibility and remaining assumed closure; do not invent A/E or label synthetic coefficients literature.",
-      "proposed_finite_budget": {
-        "primary_full_texts_maximum": 2,
-        "local_states_maximum": 4,
-        "per_local_probe_s": 60,
-        "total_local_probe_s": 120,
+      "id": "P37",
+      "status": "proposed_not_started_not_current_science_implementation_authorization",
+      "ability": "Conditional local direct-carbonation operator with explicit macroscopic mobility input and independent stoichiometric/extent contract",
+      "why": "P36 proves a specific exact-donor pathway gap. First principles determine stoichiometry/shared affinity/dissipation, while reviewed sources do not identify bulk mobility. A supplied-input local operator can be implemented without inventing default brickA/E; whole-host activation remains separately unqualified.",
+      "input_contract": "Positive macroscopic mobility with1/s units, source/material/temperature/humidity/surface applicability and value supplied explicitly. No hidden/defaultA/E or direct rate inferred from nm/s, atomisticEa or finalDoC. Synthetic positive unit-mobility fixture is diagnostic only, not a nominal brick parameter.",
+      "suggested_law_status": "Assumed affinity/donor phenomenology, not a literature rate law; source admitted mechanism only. Selected law and gas activities must be specified before implementation.",
+      "shared_coupling": "nu_d=nu_h-nu_c, common fullmu/U/S/volume; dn_calcite=+r_d,dn_OH=-r_d; independent extent derivative+r_d, OH+xi_h+xi_d invariant. Gas source and heat counted once.",
+      "proposed_first_budget": {
+        "new_constitutive_evaluations_maximum": 4,
+        "per_call_s": 60,
+        "total_s": 120,
+        "summary_bytes": 2097152,
         "workers": 1,
-        "summary_byte_limit": 2097152,
-        "maximum_attempts_per_issue": 2,
-        "full_or_partial_cycle_integrations": 0,
-        "fits": 0,
-        "UQ": 0,
-        "restoration_downloads": 0
+        "full_or_partial_integrations": 0,
+        "new_fits": 0,
+        "new_UQ": 0
       },
-      "proposed_fixed_state_classes": [
-        "Pure portlandite, zeroCaO, positiveCO2/H2O",
-        "Pure calcite, zeroCaO, positiveCO2/H2O",
-        "Three-phase mixture at existing highCO2/lowH2O nodes",
-        "Same mixture at existing lowCO2/highH2O nodes"
+      "reuse": "Use already saved P36 mu/T/partial and donor cases; do not recompute these four host states or repeat old rates. Evaluate only new local operator under declared positive synthetic input.",
+      "qualification_boundary": "Positive-input local closure/dissipation is not disabled-channel dynamic acceptance. This first item cannot claim full-cycle direct-path implementation, macro speed or new original/extended gates. Any host activation/extra extent changes require separate registered affected verification budget before integration.",
+      "alternative_real_gap": "Current inverse TG is total mass/initial_dry, not source-specific OH-loss versus carbonate-gain DoC. Source-only paired TG mapping is implementable after exactEq5/6 images are read; no guess of denominator or automatic backgroundcalcite->purepowder mapping.",
+      "evidence": [
+        "docs/FULL_CYCLE_P36_DIRECT_CARBONATION_ADMISSION.json",
+        "src/sludge_vme/inverse/observations.py",
+        "src/sludge_vme/inverse/full_cycle.py"
       ],
-      "next_stage_precondition": "After P35 delivery and idle, formal continuation must freeze the exact four existing temperature/pressure nodes and register any execution budgets in the root before evaluating them. No adaptive affinity search.",
-      "next_stage_completion_condition": "Source admission decision and local shared-affinity/stoichiometry comparison, identifying a supported two-step blockage if present or retaining a negative finding. No direct-kinetics or cycle PASS is implied.",
-      "not_claimed": [
-        "material validation",
-        "direct kinetic coefficients",
-        "P34 phase failure repair",
-        "current kernel UQ or synthetic-fit qualification",
-        "whole model completion"
-      ]
+      "candidate_local_law": {
+        "status": "proposed_assumed_phenomenology_not_executed",
+        "definition": "A=delta_mu_direct/(R*T); a_i=p_i/P_ref. IfA<=0, r_d=L*n_portlandite*a_CO2*(1-exp(A)); ifA>0, r_d=-L*n_calcite*a_H2O*(1-exp(-A)).",
+        "units": "L explicitly supplied in1/s; n in mol; a/A dimensionless; r in mol/s.",
+        "physical_domain": "Finite positiveT/partial pressures and nonnegative solid donors. PositiveL gives -r_d*delta_mu_direct/T>=0 and both branches vanish atA=0. This proves sign/unit/stoichiometry only, not macro kinetics.",
+        "mobility_identity": "No default value or brickA/E. Positive synthetic unitL would be a local fixture only, source/assumed identity explicit. Actual material/time/humidity/surface mobility remains supplied and unqualified until evidenced.",
+        "double_counting": "Independent kinetic pathway adds one rate@nu and one extent; same existing speciesU/S/volume, no separate reaction heat. Stoichiometric dependence is not duplicate source counting if every rate is accounted once.",
+        "not_implemented_in_P36": true
+      },
+      "first_budget_branch_qualification_limit": "All four saved P36 direct affinities are negative. Reusing these4 gives numerical forward-branch coverage only; reverse and equilibrium retain algebraic proof, not numerical coverage. Additional branch evaluations require separately declared inputs/budget."
     }
   },
   "P13": {
@@ -5839,5 +5813,23 @@
     }
   },
   "P35_parameter_metadata_scope": "Seven runtime diagnosis entries only; original427 entries unchanged, scientific43 unchanged.",
-  "P35_changes_no_prior_qualification": true
+  "P35_changes_no_prior_qualification": true,
+  "P36": {
+    "status": "source_admission_and_fixed_local_gap_check_complete",
+    "evidence": "docs/FULL_CYCLE_P36_DIRECT_CARBONATION_ADMISSION.json",
+    "mechanism_admitted": true,
+    "macro_rate_directly_admitted": false,
+    "new_channel_implemented": false,
+    "direct_cycle_qualified": false,
+    "scientific_source_changed": false,
+    "whole_project_complete": false
+  },
+  "historical_pre_P36_root_parameter_metadata": {
+    "count": 434,
+    "status_counts": {
+      "literature": 141,
+      "assumed": 293,
+      "measured": 0
+    }
+  }
 }
