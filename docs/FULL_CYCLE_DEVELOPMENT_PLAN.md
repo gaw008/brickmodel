@@ -53,7 +53,7 @@ P11已完成的可运行接口和模板保持，不再把它作为整体停止�
 
 - [x] **D01 Git** 显式路径检查及 stage，确认暂存仅本轮文件；按 `--no-lazy-fetch`、`write-tree --missing-ok`、`commit-tree`、带旧 HEAD 的 `update-ref` 生成正常后继，普通 push 并读回。禁用普通 commit、无路径 diff --check、强推与全历史扫描。
 - [x] **D02 Drive 增量** 授权目录 `1AmOyFBd6s0eJOgHiIK74Wyk8_M_QnlW2`；新代码、参数、计划、报告及必要汇总小型增量备份，读回名称、大小、父目录并留收据。
-- [ ] **D03 实际恢复** 与 D02 元数据验收分别记录；P01此前fetch副本恢复已过；P11最新小包fresh Drive fetch及21成员恢复已过；其他增量/完整历史恢复仍未验收，不删除唯一压缩源。
+- [x] **D03 当前增量实际恢复** 与 D02 元数据验收分别记录；P01此前fetch副本、P11/P18/P20及当前P21小包实际字节恢复均有收据。完整历史、独有Git及可迁移环境仍未验收，归D04限制；不删除压缩原件。
 - [ ] **D04 历史存储** 按私有备份最新 storage-20gb-plan.json / storage-closeout-20260926-continued.json 字段；保护历史、压缩原件、独有分支及未提交内容，条件不变不重复旧失败。备份阻塞不阻止独立模型工作。
 
 ## 执行记录
@@ -319,3 +319,11 @@ P16三档仍运行。并行独立工作仅一个预定DTU Y-Ref-1020/#0250/A配�
 - 468负气体残差、55负流入和91负流出原样保留；初始库存归一化最大0.0741535345544432仅作解释，预算归一化原0.1%判据不变。
 - 修正FINAL_ACCEPTANCE三处旧标签：P21已启动并完成的范围、S01/S02当前P20余水、八阶段P20/P21证据路径；旧证据转历史，未改任何科学输出。收据runs/full-cycle/p21-current-uq/independent-review.json。
 - 本会话负责本次P21小型增量的一次上传、元数据读回及一次fresh原始字节恢复；已通过P20/P18包不重复。最终Git/Drive行动以随后实际收据为准。
+
+### P21最终模型结果交付完成（2026-10-01T00:05:07.852895+00:00）
+
+- D01：13个显式结果/文档路径与暂存字节核对通过，正常后继d7bf2051442caf2e2862864430623977f500cfb9已普通push并ls-remote精确读回。提交工作0.36849966598674655s；科学核d5fd9a2及根科学参数未改。GitHub容量警告仍在，不改史或删对象。
+- D02：本次P21小增量p21-final-kernel-uq-20261001-000243-d7bf2051.tar.gz，1320864字节/53成员，上传一次；Drive名称/大小/授权父目录读回通过，云ID 1J9ewT6QDRbLJllJm-iVHACLzlqaJteGu。已通过P20/P18包未重取。
+- D03：本会话一次fresh正式raw fetch获得真实字节，恢复归档及53成员逐字节一致；无SHA、无旧403地址尝试、无原件删除。收据runs/full-cycle/p21-drive-delivery.json及docs/FULL_CYCLE_P21_DELIVERY.json。此包依赖已恢复的P20代码增量及已有工程，不声称完整历史/独有Git/可迁移Python环境恢复。
+- D04：旧18:41:57UTC实测总量163016282112字节，20GB仍未达；此刻未重扫历史。所有原件和历史保留。
+- 本条、最终交付JSON和验收矩阵再形成正常后继并只备份薄文档增量；随后实际动作写入runs/full-cycle/p21-delivery-note-git.json与p21-delivery-note-drive.json，避免在被备份文件内自指预写成功。模型不再运行新批次。
