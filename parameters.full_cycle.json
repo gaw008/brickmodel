@@ -228,12 +228,23 @@
     "nist_tn2279_binary_diffusion": {
       "kind": "government_evaluated_correlation",
       "location": "https://nvlpubs.nist.gov/nistpubs/TechnicalNotes/NIST.TN.2279.pdf",
-      "note": "P23 audit only; exact Table1a values, separate D298 recommendation; composition/U limitations in FULL_CYCLE_P23_SOURCE_REVIEW.json."
+      "note": "Printed TN2279 coefficients retained. P24 waterCO2 source formula is active; N2CO2 coefficients remain audit-only, never substituted into current nonwater law. P27 shows N2CO2 ABC numerically nearer the original paper author-rejected Table7 branch than admitted Table5, without proving editorial cause. No transfer of that finding to other pairs."
     },
     "hellmann_harvey2020_binary_diffusion": {
       "kind": "original_first_principles_calculation",
       "location": "https://data.nist.gov/od/ds/mds2-2271/Diffusivity_H2O.dat",
       "note": "P23 audit only; infinite-water-dilution free-gas D, not measured; DOI10.1029/2020GL089999 and data10.18434/M32271."
+    },
+    "vogel2023_n2_co2_viscosity_inference": {
+      "kind": "primary_paper_viscosity_inferred_binary_transport",
+      "location": "https://link.springer.com/article/10.1007/s10765-023-03233-y",
+      "doi": "10.1007/s10765-023-03233-y",
+      "note": "Table5 first procedure preferred by authors; Table7 second procedure explicitly unsuitable, diagnostic comparator only. Both report molar-density product, not direct diffusion measurements. HTMLs retained in P27 run directory."
+    },
+    "p27_cached_nonpolar_LJ": {
+      "kind": "cached_open_source_LJ_approximation",
+      "location": "parameters.nonpolar_gas_transport.json",
+      "note": "Unchanged P22 cached Cantera3.2/GRI30 zero-dipole collision formula; direct model approximation, not binary experiments. All reused numerical inputs mirrored into main root audit parameters."
     }
   },
   "parameters": {
@@ -4329,6 +4340,369 @@
       "source": "policy",
       "status": "assumed",
       "note": "P24 fixed execution/refinement setting before model evaluation; no retry/search or material interpretation."
+    },
+    "validation.n2_co2_source_chain.research_budget": {
+      "value": 1800,
+      "unit": "s",
+      "range": [
+        1800,
+        1800
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Maximum elapsed bounded source investigation; no expansion to a literature review."
+    },
+    "validation.n2_co2_source_chain.maximum_new_sources": {
+      "value": 2,
+      "unit": "1",
+      "range": [
+        1,
+        2
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Original paper and its own supplement count as one source; reuse TN2279 and P22 cache."
+    },
+    "validation.n2_co2_source_chain.maximum_comparison_points": {
+      "value": 12,
+      "unit": "1",
+      "range": [
+        1,
+        12
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Freeze actual source states before comparing; do not invent values if original rows inaccessible."
+    },
+    "validation.n2_co2_source_chain.maximum_access_attempts": {
+      "value": 2,
+      "unit": "1",
+      "range": [
+        1,
+        2
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "At most two failures for the same retrieval/extraction problem, then record unknown and simplify."
+    },
+    "validation.n2_co2_source_chain.temperatures": {
+      "value": [
+        298.2,
+        323.21,
+        373.3,
+        423.26,
+        473.3,
+        253.17,
+        273.2,
+        298.21
+      ],
+      "unit": "K",
+      "range": [
+        253.17,
+        473.3
+      ],
+      "source": "vogel2023_n2_co2_viscosity_inference",
+      "status": "literature",
+      "note": "All eight original common quasi-isothermal Table5/7 rows in printed order, including separate check row. No source interpolation."
+    },
+    "validation.n2_co2_source_chain.table5_display_rhoD": {
+      "value": [
+        6.824,
+        7.327,
+        8.273,
+        9.14,
+        9.983,
+        5.87,
+        6.297,
+        6.818
+      ],
+      "unit": "mol/m/s",
+      "range": [
+        5.87,
+        9.983
+      ],
+      "source": "vogel2023_n2_co2_viscosity_inference",
+      "status": "literature",
+      "note": "Printed values of10^4*rho_m*D in Table5, first procedure. Multiply root displayed_to_rhoD factor before RT/P."
+    },
+    "validation.n2_co2_source_chain.table7_display_rhoD": {
+      "value": [
+        9.283,
+        9.794,
+        9.862,
+        10.995,
+        11.382,
+        8.175,
+        8.694,
+        8.912
+      ],
+      "unit": "mol/m/s",
+      "range": [
+        8.175,
+        11.382
+      ],
+      "source": "vogel2023_n2_co2_viscosity_inference",
+      "status": "literature",
+      "note": "Printed10^4*rho_m*D, second procedure rejected by authors; diagnostic comparator, never accepted truth."
+    },
+    "validation.n2_co2_source_chain.displayed_to_rhoD": {
+      "value": 0.0001,
+      "unit": "1",
+      "range": [
+        0.0001,
+        0.0001
+      ],
+      "source": "vogel2023_n2_co2_viscosity_inference",
+      "status": "literature",
+      "note": "Exact table header scale10^4; maps displayed product to SI mol/(m s)."
+    },
+    "validation.n2_co2_source_chain.source_nitrogen_mole_fractions": {
+      "value": [
+        0.24788,
+        0.49962,
+        0.74981
+      ],
+      "unit": "1",
+      "range": [
+        0.24788,
+        0.74981
+      ],
+      "source": "vogel2023_n2_co2_viscosity_inference",
+      "status": "literature",
+      "note": "Reported constituent mixture compositions; rhoD column derives from averaged interaction viscosity, not three independent D measurements."
+    },
+    "validation.n2_co2_source_chain.LJ.boltzmann_j_k": {
+      "value": 1.380649e-23,
+      "unit": "J/K",
+      "range": [
+        1.380649e-23,
+        1.380649e-23
+      ],
+      "source": "p27_cached_nonpolar_LJ",
+      "status": "literature",
+      "note": "Exact cached SI constant or metric conversion retained from P22; diagnostic only."
+    },
+    "validation.n2_co2_source_chain.LJ.avogadro_mol_inverse": {
+      "value": 6.02214076e+23,
+      "unit": "1/mol",
+      "range": [
+        6.02214076e+23,
+        6.02214076e+23
+      ],
+      "source": "p27_cached_nonpolar_LJ",
+      "status": "literature",
+      "note": "Exact cached SI constant or metric conversion retained from P22; diagnostic only."
+    },
+    "validation.n2_co2_source_chain.LJ.angstrom_m": {
+      "value": 1e-10,
+      "unit": "m",
+      "range": [
+        1e-10,
+        1e-10
+      ],
+      "source": "p27_cached_nonpolar_LJ",
+      "status": "literature",
+      "note": "Exact cached SI constant or metric conversion retained from P22; diagnostic only."
+    },
+    "validation.n2_co2_source_chain.LJ.gram_kg": {
+      "value": 0.001,
+      "unit": "kg",
+      "range": [
+        0.001,
+        0.001
+      ],
+      "source": "p27_cached_nonpolar_LJ",
+      "status": "literature",
+      "note": "Exact cached SI constant or metric conversion retained from P22; diagnostic only."
+    },
+    "validation.n2_co2_source_chain.LJ.molar_mass_g_mol": {
+      "value": [
+        28.0135,
+        44.01
+      ],
+      "unit": "g/mol",
+      "range": [
+        28.0135,
+        44.01
+      ],
+      "source": "p27_cached_nonpolar_LJ",
+      "status": "literature",
+      "note": "Species order N2, CO2. Original fixed source values, not target measurements."
+    },
+    "validation.n2_co2_source_chain.LJ.diameter_angstrom": {
+      "value": [
+        3.621,
+        3.763
+      ],
+      "unit": "angstrom",
+      "range": [
+        3.621,
+        3.763
+      ],
+      "source": "p27_cached_nonpolar_LJ",
+      "status": "literature",
+      "note": "Species order N2, CO2. Original fixed source values, not target measurements."
+    },
+    "validation.n2_co2_source_chain.LJ.well_depth_over_kb_k": {
+      "value": [
+        97.53,
+        244.0
+      ],
+      "unit": "K",
+      "range": [
+        97.53,
+        244.0
+      ],
+      "source": "p27_cached_nonpolar_LJ",
+      "status": "literature",
+      "note": "Species order N2, CO2. Original fixed source values, not target measurements."
+    },
+    "validation.n2_co2_source_chain.LJ.reduced_temperature": {
+      "value": [
+        0.1,
+        0.2,
+        0.3,
+        0.4,
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        1.0,
+        1.2,
+        1.4,
+        1.6,
+        1.8,
+        2.0,
+        2.5,
+        3.0,
+        3.5,
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0,
+        12.0,
+        14.0,
+        16.0,
+        18.0,
+        20.0,
+        25.0,
+        30.0,
+        35.0,
+        40.0,
+        50.0,
+        75.0,
+        100.0
+      ],
+      "unit": "1",
+      "range": [
+        0.1,
+        100.0
+      ],
+      "source": "p27_cached_nonpolar_LJ",
+      "status": "literature",
+      "note": "Exact saved zero-dipole collision table; original three-node logT interpolation, no new fit."
+    },
+    "validation.n2_co2_source_chain.LJ.omega22_delta_zero": {
+      "value": [
+        4.1005,
+        3.2626,
+        2.8399,
+        2.531,
+        2.2837,
+        2.0838,
+        1.922,
+        1.7902,
+        1.6823,
+        1.5929,
+        1.4551,
+        1.3551,
+        1.28,
+        1.2219,
+        1.1757,
+        1.0933,
+        1.0388,
+        0.99963,
+        0.96988,
+        0.92676,
+        0.89616,
+        0.87272,
+        0.85379,
+        0.83795,
+        0.82435,
+        0.80184,
+        0.78363,
+        0.76834,
+        0.75518,
+        0.74364,
+        0.71982,
+        0.70097,
+        0.68545,
+        0.67232,
+        0.65099,
+        0.61397,
+        0.5887
+      ],
+      "unit": "1",
+      "range": [
+        0.5887,
+        4.1005
+      ],
+      "source": "p27_cached_nonpolar_LJ",
+      "status": "literature",
+      "note": "Exact saved zero-dipole collision table; original three-node logT interpolation, no new fit."
+    },
+    "validation.n2_co2_source_chain.LJ.astar_delta_zero": {
+      "value": [
+        1.0231,
+        1.0424,
+        1.0719,
+        1.0936,
+        1.1053,
+        1.1104,
+        1.1114,
+        1.1104,
+        1.1086,
+        1.1063,
+        1.102,
+        1.0985,
+        1.096,
+        1.0943,
+        1.0934,
+        1.0926,
+        1.0934,
+        1.0948,
+        1.0965,
+        1.0997,
+        1.1025,
+        1.105,
+        1.1072,
+        1.1091,
+        1.1107,
+        1.1133,
+        1.1154,
+        1.1172,
+        1.1186,
+        1.1199,
+        1.1223,
+        1.1243,
+        1.1259,
+        1.1273,
+        1.1297,
+        1.1339,
+        1.1364
+      ],
+      "unit": "1",
+      "range": [
+        1.0231,
+        1.1364
+      ],
+      "source": "p27_cached_nonpolar_LJ",
+      "status": "literature",
+      "note": "Exact saved zero-dipole collision table; original three-node logT interpolation, no new fit."
     }
   },
   "species": [
@@ -6293,6 +6667,301 @@
       "new_UQ": 0,
       "new_fits": 0,
       "distribution_scope": "P21 remains historical d5fd9a2; no second UQ authorized. Fixed points do not qualify distributions or ranking robustness."
+    },
+    "n2_co2_source_chain": {
+      "id": "P27",
+      "mode": "zero_integrations_source_chain_and_units_audit",
+      "existing_sources": [
+        "NIST TN2279 (2024) Table1a/1c and Ref31",
+        "P22 cached first-order Chapman-Enskog/Lennard-Jones approximation"
+      ],
+      "primary_candidate": {
+        "doi": "10.1007/s10765-023-03233-y",
+        "url": "https://link.springer.com/article/10.1007/s10765-023-03233-y",
+        "authors": "Vogel, Bich, Hellmann",
+        "year": 2023
+      },
+      "questions": [
+        "Is rho number, molar or mass density?",
+        "What are the reported rhoD and D units, pressure/temperature/composition and dilute-limit definitions?",
+        "Can original table/correlation, TN2279 and existing LJ be compared at identical admitted states?",
+        "Are values diffusion experiments, viscosity-inferred coefficients or theory?"
+      ],
+      "point_selection": "All eight matching original Table5/7 rows, frozen before local numeric comparison. No selected-subset search or new fit.",
+      "scientific_kernel_commit": "5917fcd493c1836b0db33f9eea290ce4770a9dd1",
+      "current_result_scope": "P24/P25 unchanged; P21 historical only, P26 second UQ unapproved.",
+      "budget_parameters": {
+        "research_budget": "validation.n2_co2_source_chain.research_budget",
+        "maximum_new_sources": "validation.n2_co2_source_chain.maximum_new_sources",
+        "maximum_comparison_points": "validation.n2_co2_source_chain.maximum_comparison_points",
+        "maximum_access_attempts": "validation.n2_co2_source_chain.maximum_access_attempts"
+      },
+      "new_integrations": 0,
+      "new_fits": 0,
+      "new_UQ": 0,
+      "point_count": 8,
+      "rows": [
+        {
+          "source_table5_row_1based": 4,
+          "source_table7_row_1based": 4,
+          "temperature_k": 298.2,
+          "table5_temperature_token": "298.20",
+          "table7_temperature_token": "298.20",
+          "table5_raw_row": [
+            "298.20",
+            "1.1708",
+            "16.632",
+            "16.634",
+            "16.621",
+            "16.629",
+            "6.824"
+          ],
+          "table7_raw_row": [
+            "298.20",
+            "1.1708",
+            "22.620",
+            "9.283",
+            "298.15",
+            "1.1411",
+            "11.841",
+            "7.749"
+          ],
+          "table5_rhoD_display_token": "6.824",
+          "table7_rhoD_display_token": "9.283",
+          "check_measurement": false
+        },
+        {
+          "source_table5_row_1based": 5,
+          "source_table7_row_1based": 5,
+          "temperature_k": 323.21,
+          "table5_temperature_token": "323.21",
+          "table7_temperature_token": "323.21",
+          "table5_raw_row": [
+            "323.21",
+            "1.1714",
+            "17.870",
+            "17.842",
+            "17.820",
+            "17.844",
+            "7.327"
+          ],
+          "table7_raw_row": [
+            "323.21",
+            "1.1714",
+            "23.853",
+            "9.794",
+            "323.15",
+            "1.1422",
+            "11.917",
+            "7.807"
+          ],
+          "table5_rhoD_display_token": "7.327",
+          "table7_rhoD_display_token": "9.794",
+          "check_measurement": false
+        },
+        {
+          "source_table5_row_1based": 6,
+          "source_table7_row_1based": 6,
+          "temperature_k": 373.3,
+          "table5_temperature_token": "373.30",
+          "table7_temperature_token": "373.30",
+          "table5_raw_row": [
+            "373.30",
+            "1.1719",
+            "20.168",
+            "20.137",
+            "20.115",
+            "20.140",
+            "8.273"
+          ],
+          "table7_raw_row": [
+            "373.30",
+            "1.1719",
+            "24.007",
+            "9.862",
+            "373.15",
+            "1.1430",
+            "13.789",
+            "9.040"
+          ],
+          "table5_rhoD_display_token": "8.273",
+          "table7_rhoD_display_token": "9.862",
+          "check_measurement": false
+        },
+        {
+          "source_table5_row_1based": 7,
+          "source_table7_row_1based": 7,
+          "temperature_k": 423.26,
+          "table5_temperature_token": "423.26",
+          "table7_temperature_token": "423.26",
+          "table5_raw_row": [
+            "423.26",
+            "1.1719",
+            "22.231",
+            "22.259",
+            "22.260",
+            "22.250",
+            "9.140"
+          ],
+          "table7_raw_row": [
+            "423.26",
+            "1.1719",
+            "26.768",
+            "10.995",
+            "423.16",
+            "1.1430",
+            "13.037",
+            "8.547"
+          ],
+          "table5_rhoD_display_token": "9.140",
+          "table7_rhoD_display_token": "10.995",
+          "check_measurement": false
+        },
+        {
+          "source_table5_row_1based": 8,
+          "source_table7_row_1based": 8,
+          "temperature_k": 473.3,
+          "table5_temperature_token": "473.30",
+          "table7_temperature_token": "473.30",
+          "table5_raw_row": [
+            "473.30",
+            "1.1717",
+            "24.321",
+            "24.321",
+            "24.279",
+            "24.307",
+            "9.983"
+          ],
+          "table7_raw_row": [
+            "473.30",
+            "1.1717",
+            "27.714",
+            "11.382",
+            "473.15",
+            "1.1428",
+            "15.435",
+            "10.117"
+          ],
+          "table5_rhoD_display_token": "9.983",
+          "table7_rhoD_display_token": "11.382",
+          "check_measurement": false
+        },
+        {
+          "source_table5_row_1based": 9,
+          "source_table7_row_1based": 9,
+          "temperature_k": 253.17,
+          "table5_temperature_token": "253.17",
+          "table7_temperature_token": "253.17",
+          "table5_raw_row": [
+            "253.17",
+            "1.1679",
+            "14.343",
+            "14.342",
+            "14.331",
+            "14.338",
+            "5.870"
+          ],
+          "table7_raw_row": [
+            "253.17",
+            "1.1679",
+            "19.970",
+            "8.175",
+            "253.15",
+            "1.1369",
+            "9.469",
+            "6.174"
+          ],
+          "table5_rhoD_display_token": "5.870",
+          "table7_rhoD_display_token": "8.175",
+          "check_measurement": false
+        },
+        {
+          "source_table5_row_1based": 10,
+          "source_table7_row_1based": 10,
+          "temperature_k": 273.2,
+          "table5_temperature_token": "273.20",
+          "table7_temperature_token": "273.20",
+          "table5_raw_row": [
+            "273.20",
+            "1.1695",
+            "15.353",
+            "15.370",
+            "15.362",
+            "15.362",
+            "6.297"
+          ],
+          "table7_raw_row": [
+            "273.20",
+            "1.1695",
+            "21.209",
+            "8.694",
+            "273.15",
+            "1.1392",
+            "9.815",
+            "6.413"
+          ],
+          "table5_rhoD_display_token": "6.297",
+          "table7_rhoD_display_token": "8.694",
+          "check_measurement": false
+        },
+        {
+          "source_table5_row_1based": 11,
+          "source_table7_row_1based": 11,
+          "temperature_k": 298.21,
+          "table5_temperature_token": "298.21b",
+          "table7_temperature_token": "298.21c",
+          "table5_raw_row": [
+            "298.21b",
+            "1.1707",
+            "16.576",
+            "16.638",
+            "16.630",
+            "16.614",
+            "6.818"
+          ],
+          "table7_raw_row": [
+            "298.21c",
+            "1.1707",
+            "21.718",
+            "8.912",
+            "298.15\\(^3\\)",
+            "1.1411",
+            "10.026",
+            "6.562"
+          ],
+          "table5_rhoD_display_token": "6.818",
+          "table7_rhoD_display_token": "8.912",
+          "check_measurement": true
+        }
+      ],
+      "temperature_parameter": "validation.n2_co2_source_chain.temperatures",
+      "table5_parameter": "validation.n2_co2_source_chain.table5_display_rhoD",
+      "table7_parameter": "validation.n2_co2_source_chain.table7_display_rhoD",
+      "rhoD_scale_parameter": "validation.n2_co2_source_chain.displayed_to_rhoD",
+      "pressure_parameter": "validation.water_binary_diffusion.source_pressure",
+      "gas_constant_parameter": "reference.R",
+      "TN_ABC_parameters": {
+        "A": "validation.water_binary_diffusion.S1.N2_CO2.A",
+        "B": "validation.water_binary_diffusion.S1.N2_CO2.B",
+        "C": "validation.water_binary_diffusion.S1.N2_CO2.C"
+      },
+      "TN_D_unit_parameter": "transport.binary.correlation_unit",
+      "TN_printed_temperature_range_k": [
+        253,
+        473
+      ],
+      "LJ_prior_selected_temperature_range_k": [
+        300,
+        1200
+      ],
+      "LJ_root_input_prefix": "validation.n2_co2_source_chain.LJ.",
+      "new_primary_sources_used": 1,
+      "same_source_table5_and7_not_independent": true,
+      "domain_policy": "473.30K is0.30K above TN printed473K bound. Four rows below300K are outside prior LJ selected range; retain diagnostic extensions separately from common-domain summaries.",
+      "composition_policy": "Source rhoD column uses averaged interaction viscosity over three mixtures. Current free pair coefficient and LJ are composition-independent approximations, not source mixture experimental reproduction.",
+      "source_validity_policy": "Table5 primary admitted inferred coefficient; Table7 author-rejected procedure diagnostic only. Neither is direct D measurement.",
+      "attribution_policy": "Closeness to Table7 can support a branch-consistency observation, not prove NIST used that table or identify editorial cause. No silent correction of printed TN values.",
+      "pre_evaluation_external_message": "Coordinator supplied one298.20K calculation before local evaluation. Selection remains all8 printed rows; no blind-validation claim and values will be independently recomputed."
     }
   },
   "caloric_background": {
