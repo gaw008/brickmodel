@@ -257,6 +257,18 @@
       "identity": "literature",
       "location": "https://cantera.org/3.2/cxx/dc/de6/classCantera_1_1DustyGasTransport.html; data/sandbox/research/dusty-gas-source-v1/source/DustyGasTransport.cpp and DustyGasTransport.h",
       "note": "Published multicomponent dusty-gas and Knudsen equations, not material measurements. Host log-mean force discretization, upwind Darcy, nonisothermal extension and evolving grain-size pore proxy remain assumed. No Soret or thermal transpiration qualification."
+    },
+    "usgs_portlandite": {
+      "identity": "literature",
+      "url": "https://pubs.usgs.gov/bul/2131/report.pdf",
+      "location": "runs/sandbox/source-cache/usgs2131-20260912/usgs-b2131.pdf; printed pages16,47,183",
+      "note": "Hexagonal Ca(OH)2 crystal; reference H/S/V and five-term Cp, 298.15–700K. Values source-based; continuation beyond700K assumed."
+    },
+    "hydroxide_host": {
+      "identity": "assumed",
+      "url": "https://mdpi-res.com/d_attachment/processes/processes-10-00325/article_deploy/processes-10-00325.pdf",
+      "location": "Risthaus et al2022 Processes10,325 p9 Eq7, and docs/FULL_CYCLE_P34_LIME_HYDROXIDE.md",
+      "note": "Published powder dehydration A/E are used only as a hypothetical common Arrhenius mobility in a different donor/affinity reversible law. Original X/pressure dependence is not implemented. Hydration/brick transfer, accessibility and temperature extrapolation assumed, not experimental kinetics qualification."
     }
   },
   "parameters": {
@@ -5152,6 +5164,326 @@
       "source": "policy",
       "status": "assumed",
       "note": "Numerical evaluation branch for the same analytic logarithm. Near equal partial pressures use log1p((pL-pR)/pR), elsewhere log(pL/pR); prevents complex division roundoff from producing zero log-mean concentration. No concentration floors or changed physics."
+    },
+    "species.portlandite.h_ref": {
+      "value": -986100.0,
+      "unit": "J/mol",
+      "range": [
+        -987400.0,
+        -984800.0
+      ],
+      "source": "usgs_portlandite",
+      "status": "literature",
+      "note": "Reference crystal value, not measured brick. cp is the inherited reference scale; current thermoelastic Cp/h/s use caloric_A1..A5."
+    },
+    "species.portlandite.s_ref": {
+      "value": 83.4,
+      "unit": "J/mol/K",
+      "range": [
+        83.0,
+        83.8
+      ],
+      "source": "usgs_portlandite",
+      "status": "literature",
+      "note": "Reference crystal value, not measured brick. cp is the inherited reference scale; current thermoelastic Cp/h/s use caloric_A1..A5."
+    },
+    "species.portlandite.cp": {
+      "value": 87.51,
+      "unit": "J/mol/K",
+      "range": [
+        87.51,
+        87.51
+      ],
+      "source": "usgs_portlandite",
+      "status": "literature",
+      "note": "Reference crystal value, not measured brick. cp is the inherited reference scale; current thermoelastic Cp/h/s use caloric_A1..A5."
+    },
+    "species.portlandite.volume": {
+      "value": 3.306e-05,
+      "unit": "m3/mol",
+      "range": [
+        3.304e-05,
+        3.308e-05
+      ],
+      "source": "usgs_portlandite",
+      "status": "literature",
+      "note": "Reference crystal value, not measured brick. cp is the inherited reference scale; current thermoelastic Cp/h/s use caloric_A1..A5."
+    },
+    "species.portlandite.caloric_A1": {
+      "value": 186.7,
+      "unit": "J/mol/K",
+      "range": [
+        186.7,
+        186.7
+      ],
+      "source": "usgs_portlandite",
+      "status": "literature",
+      "note": "USGS five-term Cp and analytic h/s integral, source domain298.15–700K; outside-domain continuation assumed."
+    },
+    "species.portlandite.caloric_A2": {
+      "value": -0.02191,
+      "unit": "J/mol/K2",
+      "range": [
+        -0.02191,
+        -0.02191
+      ],
+      "source": "usgs_portlandite",
+      "status": "literature",
+      "note": "USGS five-term Cp and analytic h/s integral, source domain298.15–700K; outside-domain continuation assumed."
+    },
+    "species.portlandite.caloric_A3": {
+      "value": 0.0,
+      "unit": "J*K/mol",
+      "range": [
+        0.0,
+        0.0
+      ],
+      "source": "usgs_portlandite",
+      "status": "literature",
+      "note": "USGS five-term Cp and analytic h/s integral, source domain298.15–700K; outside-domain continuation assumed."
+    },
+    "species.portlandite.caloric_A4": {
+      "value": -1600.0,
+      "unit": "J/mol/K0.5",
+      "range": [
+        -1600.0,
+        -1600.0
+      ],
+      "source": "usgs_portlandite",
+      "status": "literature",
+      "note": "USGS five-term Cp and analytic h/s integral, source domain298.15–700K; outside-domain continuation assumed."
+    },
+    "species.portlandite.caloric_A5": {
+      "value": 0.0,
+      "unit": "J/mol/K3",
+      "range": [
+        0.0,
+        0.0
+      ],
+      "source": "usgs_portlandite",
+      "status": "literature",
+      "note": "USGS five-term Cp and analytic h/s integral, source domain298.15–700K; outside-domain continuation assumed."
+    },
+    "recipe.portlandite": {
+      "value": 0.0,
+      "unit": "kg/kg",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Explicit initial inventory is zero in the unchanged nominal recipe. This adds no seed."
+    },
+    "kinetics.lime_dehydration.A": {
+      "value": 2083333333.3333333,
+      "unit": "1/s",
+      "range": [
+        208333333.33333334,
+        20833333333.333332
+      ],
+      "source": "hydroxide_host",
+      "status": "assumed",
+      "note": "Numeral from source Eq7, converted /min to /s; using it without original conversion/pressure exponents in reversible first-order mobility is an assumed transfer, not source kinetics."
+    },
+    "kinetics.lime_dehydration.E": {
+      "value": 144816.0,
+      "unit": "J/mol",
+      "range": [
+        115852.8,
+        173779.2
+      ],
+      "source": "hydroxide_host",
+      "status": "assumed",
+      "note": "Source powder dehydration E numeral. Applying same Arrhenius mobility to hydration and brick is assumed; ranges are engineering hypotheses, not source confidence intervals or UQ-covered."
+    },
+    "kinetics.hydroxide.factor": {
+      "value": 1.0,
+      "unit": "1",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "source": "hydroxide_host",
+      "status": "assumed",
+      "note": "Common positive multiplier for both directions; zero is only a local compatibility contrast, never a nominal process substitute."
+    },
+    "validation.hydroxide.local_budget": {
+      "value": 60.0,
+      "unit": "s",
+      "range": [
+        60.0,
+        60.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P34 fixed before execution; no UQ/search, raw fields or retries without recorded same-problem repair."
+    },
+    "validation.hydroxide.per_cycle_budget": {
+      "value": 900.0,
+      "unit": "s",
+      "range": [
+        900.0,
+        900.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P34 fixed before execution; no UQ/search, raw fields or retries without recorded same-problem repair."
+    },
+    "validation.hydroxide.global_cycle_budget": {
+      "value": 1800.0,
+      "unit": "s",
+      "range": [
+        1800.0,
+        1800.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P34 fixed before execution; no UQ/search, raw fields or retries without recorded same-problem repair."
+    },
+    "validation.hydroxide.maximum_workers": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P34 fixed before execution; no UQ/search, raw fields or retries without recorded same-problem repair."
+    },
+    "validation.hydroxide.poll_interval": {
+      "value": 0.25,
+      "unit": "s",
+      "range": [
+        0.25,
+        0.25
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P34 fixed before execution; no UQ/search, raw fields or retries without recorded same-problem repair."
+    },
+    "validation.hydroxide.summary_byte_limit": {
+      "value": 16777216,
+      "unit": "byte",
+      "range": [
+        16777216,
+        16777216
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P34 fixed before execution; no UQ/search, raw fields or retries without recorded same-problem repair."
+    },
+    "validation.hydroxide.refinement_factor": {
+      "value": 2,
+      "unit": "1",
+      "range": [
+        2,
+        2
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P34 fixed before execution; no UQ/search, raw fields or retries without recorded same-problem repair."
+    },
+    "validation.hydroxide.identity_tolerance": {
+      "value": 1e-11,
+      "unit": "1",
+      "range": [
+        1e-11,
+        1e-11
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P34 fixed before execution; no UQ/search, raw fields or retries without recorded same-problem repair."
+    },
+    "validation.hydroxide.maximum_local_states": {
+      "value": 48,
+      "unit": "1",
+      "range": [
+        48,
+        48
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P34 fixed before execution; no UQ/search, raw fields or retries without recorded same-problem repair."
+    },
+    "validation.hydroxide.temperatures": {
+      "value": [
+        298.15,
+        500.0,
+        700.0,
+        1000.0
+      ],
+      "unit": "K",
+      "range": [
+        298.15,
+        1000.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Fixed synthetic local states. Calcium order calcite,lime,portlandite; no material observation."
+    },
+    "validation.hydroxide.calcium_fractions": {
+      "value": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          0.25,
+          0.5,
+          0.25
+        ]
+      ],
+      "unit": "1",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Fixed synthetic local states. Calcium order calcite,lime,portlandite; no material observation."
+    },
+    "validation.hydroxide.steam_activities": {
+      "value": [
+        1e-08,
+        0.015,
+        0.09
+      ],
+      "unit": "1",
+      "range": [
+        1e-08,
+        0.09
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Fixed synthetic local states. Calcium order calcite,lime,portlandite; no material observation."
+    },
+    "validation.hydroxide.dimensionless_affinities": {
+      "value": [
+        -1.0,
+        0.0,
+        1.0
+      ],
+      "unit": "1",
+      "range": [
+        -1.0,
+        1.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Fixed synthetic local states. Calcium order calcite,lime,portlandite; no material observation."
     }
   },
   "species": [
@@ -5193,6 +5525,11 @@
     {
       "id": "char",
       "formula": "C",
+      "phase": "condensed"
+    },
+    {
+      "id": "portlandite",
+      "formula": "CaH2O2",
       "phase": "condensed"
     },
     {
@@ -5276,6 +5613,16 @@
         "H2O": 1
       },
       "kinetics_basis": "Lumped oxygen-independent first-order carbonization competes for the same organic inventory as oxidation; affinity-limited. Produced char can subsequently oxidize."
+    },
+    {
+      "id": "lime_dehydration",
+      "reactant": "portlandite",
+      "stoichiometry": {
+        "portlandite": -1,
+        "lime": 1,
+        "H2O": 1
+      },
+      "kinetics_basis": "Signed portlandite->lime+vapor; negative extent is hydration. Both branches use same full affinity, available solid donor and a positive assumed Arrhenius mobility. Reverse scales with steam activity. No separate reaction heat or empirical equilibrium-pressure law."
     }
   ],
   "stages": [
@@ -7528,13 +7875,31 @@
       "wall_budget_parameter": "validation.current_recovery.wall_budget",
       "maximum_forwards_parameter": "validation.current_recovery.maximum_forward_calls",
       "scope": "One scalar/no noise/same model two-stage recovery. Python truth and real existing CLI in one worker, total watchdog and actual started-call counter. No new design, nominal parameter updates, old multifit or UQ."
+    },
+    "lime_hydroxide_implementation": {
+      "recorded_utc": "2026-10-01T17:05:05.915309+00:00",
+      "identity": "assumed/synthetic model validation",
+      "new_cycles": [
+        "nominal",
+        "time",
+        "grid"
+      ],
+      "maximum_local_states_parameter": "validation.hydroxide.maximum_local_states",
+      "budget_prefix": "validation.hydroxide.",
+      "source_domain": "USGS solid298.15–700K; macro kinetics not source-qualified, nominal peak exceeds caloric source domain",
+      "source_dehydration_comparison": "Published Eq7 not claimed reproduced; no new fit",
+      "new_uq": 0,
+      "new_fits": 0,
+      "prior_P31_P32_P33_qualification": "historical kernel only; not inherited for modified chemistry",
+      "scope": "CaO/steam/portlandite inventory, formation storage and solid volume; no liquid slaking, silicate capture, cracks/damage or measured free lime"
     }
   },
   "caloric_background": {
     "model": "source_five_term_reference_anchored",
     "minerals": [
       "calcite",
-      "lime"
+      "lime",
+      "portlandite"
     ],
     "species_domains": {
       "O2": {
@@ -7583,6 +7948,14 @@
           1800.0
         ],
         "outside_source_range": "same polynomial continuation is an explicit unvalidated engineering extrapolation, no clipping",
+        "target_material_qualified": false
+      },
+      "portlandite": {
+        "source_temperature_range_k": [
+          298.15,
+          700.0
+        ],
+        "outside_source_range": "same analytic continuation explicitly assumed; no clipping",
         "target_material_qualified": false
       }
     },

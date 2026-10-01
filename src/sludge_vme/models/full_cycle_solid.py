@@ -75,6 +75,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         self.kinetic_liquid=self.liquid_tau>0 and self.liquid_active>0
         if (self.liquid_strain != 0 or self.phase_modulus_contrast != 0) and self.liquid_active > 0 and not self.kinetic_liquid:
             raise ValueError('Matrix elastic phase coupling requires positive liquid.relaxation_time_ref; set eigenstrain and phase modulus contrast to zero for the uncoupled algebraic model')
+        self.liquid_coordinate = self.gas_offset//self.n
         if self.kinetic_liquid:
             # The log-odds is a physical coordinate before gas and extents.
             # Zero relaxation time retains the previous equilibrium system.
@@ -118,7 +119,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         return affinity
 
     def liquid_driving_log_odds(self,T,fields,elastic_affinity):
-        drive=fields[9]-self.liquid_equilibrium_log_odds(T)
+        drive=fields[self.liquid_coordinate]-self.liquid_equilibrium_log_odds(T)
         if self.liquid_strain != 0 or self.phase_modulus_contrast != 0:
             drive=drive+elastic_affinity/(self.liquid_mixing*T)
         return drive
@@ -138,11 +139,11 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         affinity, including -v_matrix*K*(a*epsilon+g*epsilon**2/2)
         per active mole. g is the phase modulus contrast.
         """
-        _,_,slope=self.liquid_order(fields[9])
+        _,_,slope=self.liquid_order(fields[self.liquid_coordinate])
         xdot=slope*self.liquid_coordinate_rate(T,fields,elastic_affinity)
         amount=self.liquid_active*ns[:,self.matrix]
         enthalpy,entropy=self.liquid_contrast(T)
-        entropy_rate=amount*(entropy-self.liquid_mixing*fields[9])*xdot
+        entropy_rate=amount*(entropy-self.liquid_mixing*fields[self.liquid_coordinate])*xdot
         production=-amount*self.liquid_mixing*self.liquid_driving_log_odds(T,fields,elastic_affinity)*xdot
         return -amount*enthalpy*xdot,entropy_rate,production,xdot
 
@@ -155,7 +156,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         if self.liquid_active == 0:
             zero=np.zeros_like(ns[:,self.matrix])
             return zero,zero,zero
-        x=self.liquid_order(fields[9])[0]
+        x=self.liquid_order(fields[self.liquid_coordinate])[0]
         coefficient=self.liquid_active*self.v[self.matrix]/self.b0
         birth=coefficient*(x-self.liquid_reference[0])
         return ns[:,self.matrix]*birth,birth,coefficient*ns[:,self.matrix]
@@ -170,7 +171,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         if self.liquid_strain == 0 or self.liquid_active == 0:
             zero=np.zeros_like(ns[:,self.matrix])
             return zero,zero,zero
-        x=self.liquid_order(fields[9])[0]
+        x=self.liquid_order(fields[self.liquid_coordinate])[0]
         coefficient=self.liquid_strain*self.liquid_active*self.v[self.matrix]/self.b0
         birth=coefficient*(x-self.liquid_reference[0])
         return ns[:,self.matrix]*birth,birth,coefficient*ns[:,self.matrix]
@@ -193,7 +194,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         return x,entropy,cp
 
     def liquid_state(self,T,ns,fields):
-        x=self.liquid_order(fields[9])[0] if self.kinetic_liquid else self.liquid_phase(T)[0]
+        x=self.liquid_order(fields[self.liquid_coordinate])[0] if self.kinetic_liquid else self.liquid_phase(T)[0]
         liquid_moles=self.liquid_active*ns[:,self.matrix]*x
         dry_volume=ns@self.v-ns[:,self.water_index]*self.v[self.water_index]
         fraction=liquid_moles*self.v[self.matrix]/dry_volume
@@ -303,7 +304,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
     def state_thermo(self,T,fields):
         h,s=self.thermo(T)
         if self.kinetic_liquid:
-            x,entropy,_=self.liquid_order(fields[9])
+            x,entropy,_=self.liquid_order(fields[self.liquid_coordinate])
             eq_x,eq_entropy,_=self.liquid_phase(T)
             h[:,self.matrix]+=self.liquid_active*self.liquid_latent*(x-eq_x)
             if self.liquid_cp != 0:
@@ -322,7 +323,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         if not self.kinetic_liquid:
             capacity+=ns[:,self.matrix]*self.liquid_active*self.liquid_phase(T)[2]
         elif self.liquid_cp != 0:
-            capacity+=ns[:,self.matrix]*self.liquid_active*self.liquid_order(fields[9])[0]*self.liquid_cp
+            capacity+=ns[:,self.matrix]*self.liquid_active*self.liquid_order(fields[self.liquid_coordinate])[0]*self.liquid_cp
         return capacity
 
     def thermal_strain(self,T):
@@ -498,7 +499,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
     def initial_state(self):
         state=super().initial_state()
         if self.kinetic_liquid:
-            state[9*self.n:self.gas_offset]=self.liquid_equilibrium_log_odds(self.temperatures[0])
+            state[self.liquid_coordinate*self.n:(self.liquid_coordinate+1)*self.n]=self.liquid_equilibrium_log_odds(self.temperatures[0])
         return state
 
     def rhs(self,t,y):
@@ -510,7 +511,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
                 _,T,ns,bulk,_,_,_=self.unpack(y)
                 elastic=self.elastic_response(f,T,ns,bulk)
                 affinity=self.elastic_phase_affinity(elastic)
-            dy[9*self.n:self.gas_offset]=self.liquid_coordinate_rate(f[0]*self.Tr,f,affinity)
+            dy[self.liquid_coordinate*self.n:(self.liquid_coordinate+1)*self.n]=self.liquid_coordinate_rate(f[0]*self.Tr,f,affinity)
         return dy
 
     def additional_storage(self,f,T,bulk):
@@ -535,8 +536,8 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
             affinity=self.elastic_phase_affinity(elastic)
             power,_,production,xdot=self.liquid_relaxation(T,ns,f,affinity)
             driving=self.liquid_driving_log_odds(T,f,affinity)
-            phase_fields={'liquid_log_odds':f[9].tolist(),
-                'liquid_disordered_fraction':self.liquid_order(f[9])[0].tolist(),
+            phase_fields={'liquid_log_odds':f[self.liquid_coordinate].tolist(),
+                'liquid_disordered_fraction':self.liquid_order(f[self.liquid_coordinate])[0].tolist(),
                 'liquid_equilibrium_fraction':self.liquid_phase(T)[0].tolist(),
                 'liquid_relaxation_fraction_rate_per_s':xdot.tolist(),
                 'liquid_relaxation_power_w':power.tolist(),
@@ -548,7 +549,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         if self.phase_modulus_contrast != 0:
             stiffness_ratio=np.exp(-self.phase_modulus_contrast*self.phase_reference_volume(f,ns)[0])
         contrast_h,contrast_s=self.liquid_contrast(T)
-        phase_x=self.liquid_order(f[9])[0] if self.kinetic_liquid else self.liquid_phase(T)[0]
+        phase_x=self.liquid_order(f[self.liquid_coordinate])[0] if self.kinetic_liquid else self.liquid_phase(T)[0]
         background,phase_conductivity_factor=self.phase_conductivity(T,ns,bulk,f)
         temperature_factor=self.dry_temperature_conductivity_factor(T)
         if self.dry_conductivity_temperature_exponent == 0:
@@ -594,7 +595,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
 
     def summarize(self,times,states):
         report,fields=super().summarize(times,states)
-        report['dry_caloric_approximation']='Calcite/lime use source five-term Cp with reference-anchored analytic h/s; other non-quartz dry backgrounds retain their assumed linear Cp. Quartz, matrix phase, elasticity and binding remain separate. No added state or reaction heat. Source-domain extrapolation explicitly assumed; original linear-Cp UQ/fit evidence is historical.'
+        report['dry_caloric_approximation']='Calcite/lime/portlandite use source five-term Cp with reference-anchored analytic h/s; other non-quartz dry backgrounds retain their assumed linear Cp. Quartz, matrix phase, elasticity and binding remain separate. No separate caloric state or reaction heat. Source-domain extrapolation explicitly assumed; original linear-Cp UQ/fit evidence is historical.'
         report['dry_cp_slopes_j_mol_k2']={self.ns[i]:float(a) for i,a in zip(self.linear_dry_indices,self.dry_cp_slope)}
         report['summary']['minimum_sampled_dry_background_cp_j_mol_k']=min(min(v) for r in fields['rows'] for v in r['dry_background_molar_cp_j_mol_k'].values())
         report['summary']['maximum_sampled_dry_background_cp_j_mol_k']=max(max(v) for r in fields['rows'] for v in r['dry_background_molar_cp_j_mol_k'].values())
