@@ -117,6 +117,7 @@ def source_caloric_integrals(T, coefficients, reference_temperature):
 class FullCycle:
     def __init__(self, config: dict):
         self.config = config
+        self._summary_face_capture = None
         self.used_units: dict[str, str] = {}
         self.ns = [s["id"] for s in config["species"] if s["phase"] == "condensed"]
         self.ng = [s["id"] for s in config["species"] if s["phase"] == "gas"]
@@ -326,6 +327,8 @@ class FullCycle:
             surface_T -= (surface_T-T[-1]-resistance*q)/(1+resistance*(self.h+4*self.emissivity*self.sigma*surface_T**3))
         qext = self.area*(surface_T-T[-1])/resistance
         heat[-1] += qext
+        if self._summary_face_capture is not None:
+            self._summary_face_capture['thermal_energy_native_w'] = np.r_[0., -internal, -qext]
         return heat, surface_T, qext, conductance, conductivity
 
     def rates(self, t, y):
@@ -499,6 +502,8 @@ class FullCycle:
 def make_cycle(config: dict):
     mode = config['parameters']['gas.storage']['value']
     if mode == 0:
+        if config['parameters'][config['face_energy_sampling']['enabled_parameter']]['value'] != 0:
+            raise ValueError('face-energy sampling requires finite stored pore gas: gas.storage=1')
         if 'direct_carbonation' in config:
             raise ValueError('direct_carbonation requires finite stored pore gas: gas.storage=1')
         return FullCycle(config)
@@ -515,10 +520,18 @@ def run_cycle(config: dict):
     return make_cycle(config).integrate()
 
 
+def write_full_cycle_artifacts(out: Path, report: dict, fields: dict):
+    if '_face_energy_sample_bundle' in fields:
+        from .face_energy_sampling import write_sample_bundle
+        bundle = fields.pop('_face_energy_sample_bundle')
+        fields['face_energy_sample_export'] = write_sample_bundle(out, bundle)
+    write_json(out/'summary.json', report)
+    write_json(out/'fields.json', fields)
+
+
 def run_acceptance(config: dict, out: Path):
     base,fields=run_cycle(config)
-    write_json(out/'summary.json',base)
-    write_json(out/'fields.json',fields)
+    write_full_cycle_artifacts(out, base, fields)
     refined_time,_=run_cycle(changed(config,{'numerics.max_step':config['parameters']['numerics.max_step']['value']/2}))
     refined_grid,_=run_cycle(changed(config,{'numerics.cells':2*config['parameters']['numerics.cells']['value']}))
     metrics=['porosity','residual_carbon_kg','shrinkage','peak_temperature_difference_k']

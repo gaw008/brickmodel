@@ -935,3 +935,26 @@ P47生产三相账本已接入并完成受影响保存输出验收（2026-10-02T
 - [ ] **P48-CANDIDATE** mode1 time/grid及高温逐相/八阶段仍为后续依赖，不在本任务分配积分或用绝对零授相对PASS。
 
 本轮修改2source+root575+必要9文档，共12路径。科学模型计算0；保存数据CPU0.341216s、监督0.593627s；声明至本记录工作流wall491.843021s含源码/审查/记录，非solver时间。原P46及科学失败保留。D01/D02读取一次正常功能提交/小科学包实际receipt；D03不恢复、D04未通过。
+
+
+### P48正式聚合生产功能登记 2026-10-02T07:10:59.345200+00:00
+
+C/F/G/H冻结候选按additive补丁接入，唯一Research写入者root。原加密候选仍延后，0模型新窗口。C缺合同不隐式关闭，采样根默认0；G沿现有reader去重复通用校验，null仅文档；H旧保存转换不重跑。旧575完整保持、新C7及本轮预算5至587，0新增物性或实测。
+
+- [ ] **P48-A** 生产采样/单位CLI/湿度候选/嵌套分区功能及静态接口接入。
+- [ ] **P48-B** 唯一F原JSON/CSV数据CLI任务，30s总窗口/512KiB/1worker/最多2producercalls仅具体缺陷修正，0其他producer/model调用。
+- [ ] **P48-C** 当前范围矩阵、实际记录与一次正常Git/小科学增量交付。
+
+原P45/P34/P40/P44及名义余水FAIL/0measured/wholefalse保持；不授mode1 time/grid、全八阶段或所有CLI动态资格。
+
+
+### P48生产聚合实际完成 2026-10-02T07:20:42.461752+00:00
+
+P48 C/F/G/H生产能力已additive集成（2026-10-02T07:20:42.461752+00:00）：C原生面/完整能量采样及普通CLI/baseline writer接线静态，根采样0、缺合同直接报错，P47逐相保留；F原JSON/CSV单位CLI真实1调用rc0/回收，0.043822s/CPU0.035008s、293715B<30s/512KiB，3来源12条件23观测原manifest/conditions/CSV全保留，12缺总压分压仍null，admissionfalse、0L。P38先原mapper再附视图但wrapper未执行；G复用既有reader去重复通用校验，RH/Psat未知null仅文档，API/CLI未调用；H实际保存fine面/rebin生产脚本已合，旧固定P44一次0.011271s/38862B/13格提案沿用，不重跑、不接solver。根587=144literature443assumed0measured，旧575完整保持，新7采样+5运行政策，名义mode0/directoff保持；0新构造/RHS/Jac/ODE/fit/UQ。原P45/P34/P40/P44失败、P46/P47CaO undefined、名义余水0.135892078740%>0.1%与wholefalse保持，当前host新接线动态/加密/八阶段/交叉项未资格；交付及历史容量分列。
+
+- [x] **P48-A** C/F/G/H additive生产源码及必要合同/使用说明完成，原P47保留，受影响语法/静态独立源审查完成。
+- [x] **P48-B** 唯一F原数据CLI实际1调用rc0/回收/窗口内，原记录与null/admission读回；0其他producer或model。
+- [x] **P48-C** 当前矩阵与实际简明资料完成，正常功能commit/单增量交付读取独立receipt，不为说明重复commit/pack。
+- [ ] **P49-CANDIDATE** 当前mode1time/grid/热阶段及八阶段仍未资格，此聚合任务不分配任何新科学窗口。
+
+源码/根/说明/报告聚合交付；CPU0.035008s及监督0.043822s仅实际CLI，行政审查和文档时间分列声明至本记录，不冒充solver。D03不恢复；D04历史容量/独有Git仍未通过。

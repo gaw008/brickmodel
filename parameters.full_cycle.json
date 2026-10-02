@@ -1379,6 +1379,163 @@
       "status": "assumed",
       "note": ""
     },
+    "diagnostics.face_energy_sampling.enabled": {
+      "value": 0,
+      "unit": "1",
+      "range": [
+        0,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Optional saved-summary sampling. Default0 performs no native-face capture or export; explicit1 consumes only existing summary samples. No new dynamics authorized."
+    },
+    "diagnostics.face_energy_sampling.times": {
+      "value": [
+        0.0
+      ],
+      "unit": "s",
+      "range": [
+        0,
+        162000.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Fixed existing summary times only; no added t_eval or interpolation. Default first0s is common to nominal and short-window runners; future multi-time policy must be explicitly declared before a separately budgeted run."
+    },
+    "diagnostics.face_energy_sampling.summary_byte_limit": {
+      "value": 2097152,
+      "unit": "byte",
+      "range": [
+        2097152,
+        2097152
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Maximum uncompressed JSON bytes for one final gzip sidecar. Does not add to any future aggregate run-output allocation."
+    },
+    "diagnostics.face_energy_sampling.faces_12": {
+      "value": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "unit": "1",
+      "range": [
+        0,
+        12
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Fixed canonical reference-face indices0..N; positive flux points toward exterior. Operational sampling only, not a mesh choice or convergence qualification."
+    },
+    "diagnostics.face_energy_sampling.cells_12": {
+      "value": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "unit": "1",
+      "range": [
+        0,
+        11
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Fixed reference-cell indices for existing extensive storage and independent ledgers. No new state or source."
+    },
+    "diagnostics.face_energy_sampling.faces_24": {
+      "value": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "unit": "1",
+      "range": [
+        0,
+        24
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Fixed canonical reference-face indices0..N; positive flux points toward exterior. Operational sampling only, not a mesh choice or convergence qualification."
+    },
+    "diagnostics.face_energy_sampling.cells_24": {
+      "value": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "unit": "1",
+      "range": [
+        0,
+        23
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Fixed reference-cell indices for existing extensive storage and independent ledgers. No new state or source."
+    },
     "numerics.surface_iterations": {
       "value": 6,
       "unit": "1",
@@ -7191,6 +7348,61 @@
       "source": "policy",
       "status": "assumed",
       "note": "P47 explicitly allocated one saved-data production report job/30s/512KiB/oneworker; no retry, no constructor/RHS/Jac/ODE/fit/UQ or new tests. Operational policy, not material property."
+    },
+    "validation.production_integration_saved_data.maximum_jobs": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P48 explicit one saved-data task/30s total from firstCLIthroughreap/512KiB/1worker;up to2Fproducercalls only after concrete defect.0newmodel/tests/hash/guard/source; operational policy."
+    },
+    "validation.production_integration_saved_data.maximum_producer_calls": {
+      "value": 2,
+      "unit": "1",
+      "range": [
+        2,
+        2
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P48 explicit one saved-data task/30s total from firstCLIthroughreap/512KiB/1worker;up to2Fproducercalls only after concrete defect.0newmodel/tests/hash/guard/source; operational policy."
+    },
+    "validation.production_integration_saved_data.global_budget": {
+      "value": 30,
+      "unit": "s",
+      "range": [
+        30,
+        30
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P48 explicit one saved-data task/30s total from firstCLIthroughreap/512KiB/1worker;up to2Fproducercalls only after concrete defect.0newmodel/tests/hash/guard/source; operational policy."
+    },
+    "validation.production_integration_saved_data.maximum_workers": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P48 explicit one saved-data task/30s total from firstCLIthroughreap/512KiB/1worker;up to2Fproducercalls only after concrete defect.0newmodel/tests/hash/guard/source; operational policy."
+    },
+    "validation.production_integration_saved_data.summary_byte_limit": {
+      "value": 524288,
+      "unit": "byte",
+      "range": [
+        524288,
+        524288
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P48 explicit one saved-data task/30s total from firstCLIthroughreap/512KiB/1worker;up to2Fproducercalls only after concrete defect.0newmodel/tests/hash/guard/source; operational policy."
     }
   },
   "species": [
@@ -10452,6 +10664,23 @@
       "actual_constructor_RHS_Jac_ODE_fit_UQ": 0,
       "actual_report_bytes": 42613,
       "actual_result": "runs/full-cycle/p47-calcium-phase-ledger/production-report.json"
+    },
+    "production_integration_saved_data": {
+      "schema": "P48_original_F_data_unit_CLI_v1",
+      "budget_prefix": "validation.production_integration_saved_data.",
+      "resource_status": "closed_after_one_successful_F_CLI_no_retry",
+      "producer": "src/sludge_sandbox/carbonation_units.py",
+      "producer_command": "f-data",
+      "input": "data/research/direct-carbonation-workpackage-f/evidence.json",
+      "output": "runs/full-cycle/p48-production-integration/f-units.json",
+      "expected_sources": 3,
+      "expected_conditions": 12,
+      "expected_observations": 23,
+      "new_constructor_RHS_Jac_ODE_fit_UQ": 0,
+      "other_C_G_H_P38_producer_calls": 0,
+      "actual_producer_calls": 1,
+      "actual_output_bytes": 293715,
+      "actual_new_model_calls": 0
     }
   },
   "caloric_background": {
@@ -10686,6 +10915,30 @@
       },
       "assumptions": "Phase mass inputs already separated, same sample/time/source and same explicit CaO reference; no automatic peak integration, background subtraction, wholebrick basis inference, clipping/averaging, kinetic or canonicalfit qualification."
     }
+  },
+  "face_energy_sampling": {
+    "schema": "root_face_energy_sampling_v1",
+    "enabled_parameter": "diagnostics.face_energy_sampling.enabled",
+    "times_parameter": "diagnostics.face_energy_sampling.times",
+    "byte_limit_parameter": "diagnostics.face_energy_sampling.summary_byte_limit",
+    "selection_by_cell_count": {
+      "12": {
+        "faces_parameter": "diagnostics.face_energy_sampling.faces_12",
+        "cells_parameter": "diagnostics.face_energy_sampling.cells_12"
+      },
+      "24": {
+        "faces_parameter": "diagnostics.face_energy_sampling.faces_24",
+        "cells_parameter": "diagnostics.face_energy_sampling.cells_24"
+      }
+    },
+    "gas_species": [
+      "O2",
+      "N2",
+      "H2O",
+      "CO2"
+    ],
+    "output_filename": "face-energy-samples.json.gz",
+    "execution_policy": "Off by default; exact existing saved-summary times only. No added RHS/Jac/ODE or time samples. Native shared-face arrays and existing storage are exported once after summary; future dynamic execution and aggregate output budget require separate registration."
   },
   "initial_partition": {
     "profile_by_mode": {

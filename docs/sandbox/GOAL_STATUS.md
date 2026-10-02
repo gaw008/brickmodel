@@ -2591,3 +2591,8 @@ P46首个实际mode1短时动态单例已完成（2026-10-02T05:55:32.140418+00:
 ### P47实际生产接线与保存数据结果 2026-10-02T06:29:13.191257+00:00
 
 P47生产三相账本已接入并完成受影响保存输出验收（2026-10-02T06:29:13.191257+00:00）：新增calcium_phase_ledger及calcium_phase_ledger_report，FiniteGasFullCycle.summarize复用已有端点rows/self.reaction_config，无新增rate/thermo/RHS或重解码；原signed逐格残差再全局求和、cell/global nofloor预算及原0.001阈值保持。唯一保存P46数据任务rc0/回收，report42613B，监督0.593627s<独立30s/512KiB、CPU0.341216s；0构造/RHS/Jac/ODE/fit/UQ。每相15旧字段、whole/onlystage共90字段一致（同区间重复而非独立验收），calcite/portlandite passed；lime(CaO)原残差/预算零，relative=null、passed=false、undefined_zero_budget，绝对零仅保存观察。主summarize接线仅静态独立复核，不冒称执行或全八阶段资格。根575=144literature431assumed0measured，旧569完整保持，仅6运行政策，名义mode0/directoff及原whole flags保持。P45净U、P34/P40/P44、名义余水0.135892078740%>0.1%失败与当前mode1加密/完整阶段/交叉项未资格保持，wholefalse。Git、Drive、恢复与历史容量分别读回。
+
+
+### P48实际聚合生产结果 2026-10-02T07:20:42.461752+00:00
+
+P48 C/F/G/H生产能力已additive集成（2026-10-02T07:20:42.461752+00:00）：C原生面/完整能量采样及普通CLI/baseline writer接线静态，根采样0、缺合同直接报错，P47逐相保留；F原JSON/CSV单位CLI真实1调用rc0/回收，0.043822s/CPU0.035008s、293715B<30s/512KiB，3来源12条件23观测原manifest/conditions/CSV全保留，12缺总压分压仍null，admissionfalse、0L。P38先原mapper再附视图但wrapper未执行；G复用既有reader去重复通用校验，RH/Psat未知null仅文档，API/CLI未调用；H实际保存fine面/rebin生产脚本已合，旧固定P44一次0.011271s/38862B/13格提案沿用，不重跑、不接solver。根587=144literature443assumed0measured，旧575完整保持，新7采样+5运行政策，名义mode0/directoff保持；0新构造/RHS/Jac/ODE/fit/UQ。原P45/P34/P40/P44失败、P46/P47CaO undefined、名义余水0.135892078740%>0.1%与wholefalse保持，当前host新接线动态/加密/八阶段/交叉项未资格；交付及历史容量分列。

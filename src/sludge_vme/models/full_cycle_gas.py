@@ -24,6 +24,8 @@ from .full_cycle_diagnostics import drying_water_diagnostics, free_water_ledger,
 class FiniteGasFullCycle(FullCycle):
     def __init__(self, config):
         super().__init__(config)
+        from .face_energy_sampling import configured_sampler
+        self._face_energy_samples = configured_sampler(self)
         self.g = len(self.ng)
         self.gas_program_scale = self.p('gas.program_scale', '1')
         targets = np.array([[self.p('gas.stage.'+stage+'.'+s, '1') for s in self.ng]
@@ -509,6 +511,9 @@ class FiniteGasFullCycle(FullCycle):
         darcy = self.area*velocity[:, None]*donor_concentrations
         flux = molecular+darcy
         energy = np.sum(flux*hg, axis=1)
+        if self._summary_face_capture is not None:
+            self._summary_face_capture['gas_molecular_energy_w'] = np.sum(molecular*hg, axis=1)
+            self._summary_face_capture['gas_darcy_energy_w'] = np.sum(darcy*hg, axis=1)
         force = self.R*np.log(pl/pr)
         entropy = np.sum(flux*force, axis=1)
         hin,sin = self.thermo(np.asarray(tf))
@@ -946,13 +951,19 @@ class FiniteGasFullCycle(FullCycle):
 
     def summarize(self, times, states):
         rows=[]; inventories=[]; energies=[]; entropies=[]; heat=[]; flow=[]; bulks=[]
+        sampler = self._face_energy_samples
+        if sampler is not None:
+            sampler.require_existing_times(times)
         has_drying = 'drying' in self.config['stages']
         has_cooling = 'cooling' in self.config['stages'] or 'cooling_hold' in self.config['stages']
         minimum_capacity=float('inf'); maximum_mechanical_residual=0.
         min_entropy=float('inf'); min_face=float('inf'); min_water_face=float('inf'); identity_residual=0.; min_condensed=float('inf'); min_gas=float('inf')
         for t,y in zip(times, states):
             f,T,ns,bulk,pore,surface,cap = self.unpack(y)
+            capture = {} if sampler is not None and t in sampler.times else None
+            self._summary_face_capture = capture
             r = self.rates(t,y)
+            self._summary_face_capture = None
             radiative_conductivity = self.pore_radiative_conductivity(T,ns,bulk)
             ng = r['gas']; h,s = self.state_thermo(T,f)
             carbonate_fields={}
@@ -1053,6 +1064,10 @@ class FiniteGasFullCycle(FullCycle):
                 'total_mass_including_pore_gas_kg':float(inventories[-1]@self.mw),
                 'net_heat_and_flow_w':float(r['heat'].sum()+r['flow'].sum()),
                 'dsc_endothermic_w_per_initial_dry_kg':r['dsc'],'entropy_production_w_k':r['production'], **self.solid_fields(f,T,bulk)})
+            if capture is not None:
+                sampler.append(time_s=t, f=f, T=T, ns=ns, h=h, bulk=bulk, surface=surface,
+                    extra_u=extra_u, r=r, published_row=rows[-1], native_faces=capture,
+                    native_complete_energy_j=energy)
         inventories=np.array(inventories); energies=np.array(energies); entropies=np.array(entropies)
         heat=np.array(heat); flow=np.array(flow); bulks=np.array(bulks)
         gasin=states[:, self.last:self.last+self.g]*self.nscale
@@ -1294,4 +1309,7 @@ class FiniteGasFullCycle(FullCycle):
         report['caloric_source_domains']=caloric_source_domain_coverage(self, rows, self.ng)
         report['viscosity_source_domains']=viscosity_source_domain_coverage(self, rows)
         report['binary_diffusion_source_domains']=binary_diffusion_source_domain_coverage(self, rows)
-        return report,{'schema':'sludge_vme_full_cycle_fields_v2','cell_count':self.n,'rows':rows}
+        fields = {'schema':'sludge_vme_full_cycle_fields_v2','cell_count':self.n,'rows':rows}
+        if sampler is not None:
+            fields['_face_energy_sample_bundle'] = sampler.bundle()
+        return report, fields

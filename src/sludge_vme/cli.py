@@ -213,7 +213,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     if args.command == "full-cycle":
-        from .models.full_cycle import read_parameters, run_acceptance, run_cycle, write_json
+        from .models.full_cycle import read_parameters, run_acceptance, run_cycle, write_full_cycle_artifacts
         config = read_parameters(args.parameters)
         if args.synthetic_calibration or args.calibrate:
             from .inverse.full_cycle import fit, synthetic_demo
@@ -231,8 +231,7 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps({"passed":result["passed"], "relative_differences":result["relative_differences"]}))
             return 0 if result["passed"] else EXIT_SOLVER
         report, fields = run_cycle(config)
-        write_json(args.out / "summary.json", report)
-        write_json(args.out / "fields.json", fields)
+        write_full_cycle_artifacts(args.out, report, fields)
         print(json.dumps({"summary":report["summary"], "conservation_passed":report["conservation_passed"], "physical_consistency_passed":report["physical_consistency_passed"], "elapsed_s":report["elapsed_s"]}))
         return 0 if report["physical_consistency_passed"] else EXIT_SOLVER
     try:
