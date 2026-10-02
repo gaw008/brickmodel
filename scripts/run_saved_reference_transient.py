@@ -46,7 +46,8 @@ def main():
     def observer(frame,event,value):
         nonlocal summary_depth
         name = frame.f_code.co_qualname
-        if name not in selected_names:
+        namespace = frame.f_globals.get('__name__', '')
+        if name not in selected_names and not namespace.startswith('sludge_vme.'):
             return
         effective_phase = 'summary' if summary_depth else phase
         if event == 'call':

@@ -1,5 +1,22 @@
 # Goal 验收矩阵
 
+P57低温60秒原生前向已实际保存并闭窗。仅读沿P55真实26格27面/.025s/.5s/298.15K/原配方气氛direct通道，唯一工艺日程变化为完整process.time_scale=6，原单阶段10s→60s，121保存点。原生constructor生成初态，无seed/clip/rebin/y0覆盖。实际2026-10-02T19:28:59.701739+00:00至2026-10-02T19:29:39.797227+00:00，监督40.095568166s/CPU39.867883s；rc0/reaped，未超时，唯一900s截止2026-10-02T19:43:59.701739+00:00不重置。1job/worker/attempt/constructor/ODE，8460RHS含10Jac，另121native summaryrates；全内部Python frame calls逐阶段保存，构造内1原partitionprimitive、0独立extraoperators。原质量/元素/完整U最大relative分别6.23579623125e-10/6.51374369908e-09/1.46954394069e-08，四gas预算最坏1.90772598872e-06、原生累计熵3.00147036825e-09，均<原.001；whole与唯一stage同区间，非独立重复。Cc/OH预算通过，CaO零预算relative=null/passedfalse，整体逐相不PASS。121保存点严格库存/所存熵非负且原T/totalP/partial域内，限定保存点而非BDFknots/Newton/complex/between。原生signed directextent=+0.00143799766949mol；OH仍0.0289293746539mol，未耗尽；CO2原boundaryin=0.00140480634185mol、direct消耗和H2O生成各同signed extent。水净相转移负值保留，非夹零。独立完整signed S累计分解仍未serialized，不新积分/重构或授势导数资格；60s无新时空加密，P54/P55仅10s原固定范围保留。旧653完整根records/全部旧live合同/科学核保持；新增8policy至661=144literature517assumed0measured，原名义time_scale/12格mode0Ca0sampling0directoff不改。P45/P34/P40/P44FAIL、P50撤回和P51输出失败保持；历史名义余水0.135892078740%>.1%，0新名义尝试。全八阶段/三方案反演UQ/完整CLI/整模型未完成，wholefalse。Git/Drive增量/实际恢复/历史容量分别登记，不自动启动P58。
+
+| P57项目 | 当前证据判断 |
+|---|---|
+| 60s低温前向与闭窗 | 26格27面/121点，1ctor/ODE、8460RHS含10Jac/121summary；40.095568s/rc0/reaped |
+| 质量/元素/完整U | 原限.001通过，最坏1.46954394069e-08；whole/onlystage同一窗口 |
+| 四gas原budget/初库存归一化 | budget最坏1.90772598872e-06<.001；signed残差/源/inout均保留 |
+| 三Ca相 | Cc/OH通过，CaO零预算null/passfalse，allphase不PASS |
+| 原生累计熵/heatonce | 原relative3.00147036825e-09<.001；独立完整signed累计S缺失 |
+| strict及适用域 | 仅121保存点非负/原域内，非accepted/BDF/Newton/complex/between-time |
+| 库存耗减/供气/产物 | 原signedextent0.00143799766949mol，OH仍正未耗尽；合成描述非工艺成功 |
+| 60s时空加密/全状态/势导数 | 本轮未执行，P54/P55的10s资格不外推 |
+| 工艺/材料/全八阶段 | 旧余水FAIL、0measured及wholefalse保持 |
+| Git/Drive/恢复/历史容量 | finalreceipt分列；0恢复，原件保留，容量未解决 |
+
+以下历史记录按原范围保留。
+
 P56原P45操作证据已实际保存并闭窗。仅原12格declared_zero旧/新两模式，原生构造/初态及每模式1次完整RHS；原诊断Udot AST节点单次观察，原乘法、np.sum(axis=1)、左结合顺序和dtype保持，cached与decoded分别保存。实际2026-10-02T18:55:11.350023+00:00至2026-10-02T18:55:12.552424+00:00，监督1.202414125s/CPU1.015555s，rc0回收、未超时。独立1job/worker/attempt、2constructor/2nativeRHS，0Jac/ODE/独立extraoperators；原内部calls逐模式/阶段持久。两模式全12格净U、原生state及Ca状态/cached/decoded均逐值重现历史；这是新观察而非恢复历史内存。原signed最大差−1.4210855350476714e−14W、old净向量尺度4.6751916143275985e−6W、relative3.039630569777313e−9>原1e−11，仍FAIL。i7固体小计A_s差−2^−46W已定位于原decoded乘积和物种归约：输入精确乘积差−3.8780693134327255e−15W、乘法舍入差−6.0291690463418724e−15W、归约舍入差−4.303616355427406e−15W，精确分解残差0。i7Ccal/us/ug/cap相同且dT/db/dpore差0；后续五次原加法舍入差0，最终另含弹性差−6.352747104407253e−22W。未观察NumPy内部C-level每次加法，不唯一指认其内部索引。当前没有改物理核的证据，不能推论核在所有状态无缺陷。原科学核及旧642完整根记录、全部old live合同保持；新增11观察policy至653=144literature509assumed0measured。P45原FAIL和P34/P40/P44/P50撤回/P51失败保留；P54空间/P55时间只按原范围保持。历史名义余水.135892078740%>.1%和0实测保持，0新名义尝试。独立势导数、八阶段、三方案反演UQ/完整CLI/whole模型仍未完成。首次必要字节1958323B含旧新冻结源和原输入；后来分解/报告/行政另实测，不能代替最终总量。Git/Drive增量、实际恢复及历史容量分列；不自动修核或启动下轮。
 
 | P56项 | 实际判断 |

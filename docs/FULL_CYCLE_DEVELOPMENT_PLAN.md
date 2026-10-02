@@ -1138,6 +1138,29 @@ P56原P45操作证据已实际保存并闭窗。仅原12格declared_zero旧/新�
 
 P56-A/B/C仅勾选冻结、真实原操作观察与保存值归因完成；P56-QUALIFICATION不勾选，原FAIL不翻PASS。完整字段、签名值、文件与限制见本轮report和runs。科学1.202414125s/CPU1.015555s，行政至记录723.650s。后续候选60s低温direct阶段/T域290..350K、1作业/实例/ODE、900s/8MiB建议（预计必要约6MiB），当前未登记预算或启动，不复用本窗口，不自动修核或P57。
 
-- [ ] **D56-GIT** 12明确路径正常后继/push/remote，终态读 `runs/full-cycle/p56-calcium-energy-operation-observation-final-delivery-state.json`。
-- [ ] **D56-DRIVE** 本P56独立实际payload名称/大小/原父目录metadata；同终态收据，非恢复。
+- [x] **D56-GIT** 12明确路径正常后继/push/remote，终态读 `runs/full-cycle/p56-calcium-energy-operation-observation-final-delivery-state.json`。
+- [x] **D56-DRIVE** 本P56独立实际payload名称/大小/原父目录metadata；同终态收据，非恢复。
 - [ ] **D56-HISTORY** 完整恢复/独有Git/历史20GB/GitHub容量未通过。
+
+### P57 独立低温60秒登记 2026-10-02T19:28:41.476656+00:00
+
+只读沿实际P55冻结26格27面、298.15K、原配方/气氛/direct合成通道与BDF rtol1e-5/atol1e-7/max_step.025/output.5；唯一物理日程变化是最后应用完整process.time_scale6记录，原单direct_transient10s→60s/121保存时刻，0新温度气体knots或segments。原live root名义time_scale记录、旧653完整records及全部旧合同保持；新增8policy/assumed至661=144literature517assumed0measured。native constructor原初态，无seed/clip/floor/rebin/y0覆盖。原producer仅扩原生sludge_vme调用计数，无新算子/公式/热源。
+
+独立1job/worker/attempt含任何失败/constructor/原solve_ivp，900s唯一deadline自实际child启动含imports/readers/constructor/solver/summary/JSON/reap，不复用P56、不重置。必要冻结root/case/47源/producer/121原生samples/signedledgers/计数/执行/失败/stdoutstderr/readback/report/admin<=8388608B；事前估计6523048B，无模型字节试算。已有合成域T290..350K、totalP1000..200000Pa/partials0..200000Pa/fixedarea保持，域外保留FAIL/未资格，不扩域或clip。
+
+- [x] **P57-A** 新独立预算、完整time_scale6case/原输入源冻结及旧记录保持。
+- [x] **P57-B** 一次实际60s原生前向、真实内部调用/资源/闭窗。
+- [x] **P57-C** 原signed质量/元素/U/四gas/Ca账本和原生熵、strict/domain仅121保存点，必要资料收口。
+- [ ] **P57-QUALIFICATION** 60s时空加密、一般状态/独立完整S及势导数/八阶段/三方案反演UQ/整个模型未资格。
+
+P54/P55旧10s固定对资格不外推60s。CaO零预算relative=null/passedfalse；负值/signednet保留。P45原FAIL不重跑/修核/换sum或分母；P34/P40/P44/P50撤回/P51失败、原名义余水0.135892078740%>.1%与wholefalse保持，0新名义尝试。0额外RHS/Jac/rates/thermo/transport/source/geometryproducer/fit/UQ/search/retry/tests/SHA/护栏/恢复/历史清理。任何科学或资源失败耗尽唯一attempt并保存闭窗；备份不阻独立模型工作。D56实际Git/Drive依finalreceipt勾选，metadata不是恢复。结束后据结果提下一科学目的/预算但不自动分配或启动P58。
+
+### P57 实际收口 2026-10-02T19:38:06.247662+00:00
+
+P57低温60秒原生前向已实际保存并闭窗。仅读沿P55真实26格27面/.025s/.5s/298.15K/原配方气氛direct通道，唯一工艺日程变化为完整process.time_scale=6，原单阶段10s→60s，121保存点。原生constructor生成初态，无seed/clip/rebin/y0覆盖。实际2026-10-02T19:28:59.701739+00:00至2026-10-02T19:29:39.797227+00:00，监督40.095568166s/CPU39.867883s；rc0/reaped，未超时，唯一900s截止2026-10-02T19:43:59.701739+00:00不重置。1job/worker/attempt/constructor/ODE，8460RHS含10Jac，另121native summaryrates；全内部Python frame calls逐阶段保存，构造内1原partitionprimitive、0独立extraoperators。原质量/元素/完整U最大relative分别6.23579623125e-10/6.51374369908e-09/1.46954394069e-08，四gas预算最坏1.90772598872e-06、原生累计熵3.00147036825e-09，均<原.001；whole与唯一stage同区间，非独立重复。Cc/OH预算通过，CaO零预算relative=null/passedfalse，整体逐相不PASS。121保存点严格库存/所存熵非负且原T/totalP/partial域内，限定保存点而非BDFknots/Newton/complex/between。原生signed directextent=+0.00143799766949mol；OH仍0.0289293746539mol，未耗尽；CO2原boundaryin=0.00140480634185mol、direct消耗和H2O生成各同signed extent。水净相转移负值保留，非夹零。独立完整signed S累计分解仍未serialized，不新积分/重构或授势导数资格；60s无新时空加密，P54/P55仅10s原固定范围保留。旧653完整根records/全部旧live合同/科学核保持；新增8policy至661=144literature517assumed0measured，原名义time_scale/12格mode0Ca0sampling0directoff不改。P45/P34/P40/P44FAIL、P50撤回和P51输出失败保持；历史名义余水0.135892078740%>.1%，0新名义尝试。全八阶段/三方案反演UQ/完整CLI/整模型未完成，wholefalse。Git/Drive增量/实际恢复/历史容量分别登记，不自动启动P58。
+
+P57-A/B/C仅勾选输入冻结、一次实际运行及必要原signed账本/限定保存点资料，P57-QUALIFICATION保持未完成。变更文件、数值、分母、失败限制见本轮报告及runs；科学40.095568166s/CPU39.867883s，行政至记录564.771s。下一候选同60s一次.025→.0125原四指标时间比较/900s/8MiB，只提议未登记预算，不自动启动或修核。
+
+- [ ] **D57-GIT** 12明确路径正常后继/push/remote，终态读 `runs/full-cycle/p57-low-temperature-60s-transient-final-delivery-state.json`。
+- [ ] **D57-DRIVE** 本P57独立真实upload与metadata名称/大小/原父目录，同终态收据，非恢复。
+- [ ] **D57-HISTORY** 历史完整恢复/独有Git/20GB/GitHub容量未通过。
