@@ -1,5 +1,9 @@
 # 全流程近似烧结砖模型：当前执行规范（2026-09-26）
 
+P47生产三相账本已接入并完成受影响保存输出验收（2026-10-02T06:29:13.191257+00:00）：新增calcium_phase_ledger及calcium_phase_ledger_report，FiniteGasFullCycle.summarize复用已有端点rows/self.reaction_config，无新增rate/thermo/RHS或重解码；原signed逐格残差再全局求和、cell/global nofloor预算及原0.001阈值保持。唯一保存P46数据任务rc0/回收，report42613B，监督0.593627s<独立30s/512KiB、CPU0.341216s；0构造/RHS/Jac/ODE/fit/UQ。每相15旧字段、whole/onlystage共90字段一致（同区间重复而非独立验收），calcite/portlandite passed；lime(CaO)原残差/预算零，relative=null、passed=false、undefined_zero_budget，绝对零仅保存观察。主summarize接线仅静态独立复核，不冒称执行或全八阶段资格。根575=144literature431assumed0measured，旧569完整保持，仅6运行政策，名义mode0/directoff及原whole flags保持。P45净U、P34/P40/P44、名义余水0.135892078740%>0.1%失败与当前mode1加密/完整阶段/交叉项未资格保持，wholefalse。Git、Drive、恢复与历史容量分别读回。
+
+以下带时间段为此前实际或较窄资格。
+
 P46首个实际mode1短时动态单例已完成（2026-10-02T05:55:32.140418+00:00）：累计2次进程启动，首读参失败1次保留；实际1构造/1ODE，2379RHS含12Jac，solver9.203657s、CPU含构造9.415551s、构造至回收9.581245s，原300s窗口未延。原质量/元素/完整能量最大相对1.548557663e-8、四gas预算最大9.103027113e-6，均<0.001；熵账本3.150938169e-9，保存样本OH/carbonate最小0、direct最小6.534691959e-12W/K，accepted knots及t_eval原物理域通过。Cc/OH无floor逐相相对预算通过；CaO初末/源/残差均0、预算0，相对null且passed=false，精确零观察不能授相对预算PASS。与保存P44基准四指标最大变化7.389644452e-13仅表示诊断，0新time/grid；direct extent差+4.261998740e-16mol。根569=144literature425assumed0measured，16操作source-ID修复、旧7来源元数据例外及失败快照保留，45host929c/物理/solver保持，名义mode0/direct未启用。全八阶段/加密/三方案/反演/UQ/CLI当前模式未资格；P45净U、P34/P40/P44失败及名义余水0.135892078740%>0.1%保持，0新名义尝试，wholefalse。本轮实际模型额度关闭，下一加密仅候选；Git、Drive元数据与恢复另列。
 
 以下带时间段为此前实际或较窄资格。

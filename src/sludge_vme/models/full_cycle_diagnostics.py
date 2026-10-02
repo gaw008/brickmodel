@@ -224,6 +224,88 @@ def gas_species_ledger(config, start, end, *, reference_inventory_mol) -> dict:
     }
 
 
+def calcium_phase_ledger(config, start, end) -> dict:
+    """Audit saved per-cell phase inventories against independent extents.
+
+    All quantities are interval signed net amounts in mol. The global residual
+    is the sum of cell residuals, preserving the existing phase audit's order
+    of arithmetic. A zero budget leaves its relative verdict unqualified.
+    """
+    import numpy as np
+
+    threshold = config['parameters']['acceptance.balance_relative']['value']
+    species = {}
+    for name in ('calcite', 'lime', 'portlandite'):
+        initial = np.asarray(start[name+'_inventory_mol'])
+        final = np.asarray(end[name+'_inventory_mol'])
+        change = final-initial
+        sources = {reaction['id']:
+            (np.asarray(end['reaction_extent_mol'][reaction['id']])
+             -np.asarray(start['reaction_extent_mol'][reaction['id']]))
+            *reaction['stoichiometry'].get(name, 0.)
+            for reaction in config['reactions']}
+        residual = change-sum(sources.values())
+        cell_budget = np.maximum.reduce([
+            np.abs(initial), np.abs(final), sum(np.abs(x) for x in sources.values())])
+        budget = max(abs(float(initial.sum())), abs(float(final.sum())),
+                     sum(abs(float(x.sum())) for x in sources.values()))
+        signed_global = float(residual.sum())
+        reference = float(initial.sum())
+        relative = abs(signed_global)/budget if budget != 0 else None
+        passed = bool(relative is not None and relative < threshold)
+        species[name] = {
+            'initial_mol_by_cell':initial.tolist(), 'final_mol_by_cell':final.tolist(),
+            'signed_change_mol_by_cell':change.tolist(),
+            'signed_sources_mol_by_reaction':{key:value.tolist() for key,value in sources.items()},
+            'signed_residual_mol_by_cell':residual.tolist(),
+            'signed_global_residual_mol':signed_global,
+            'absolute_global_residual_mol':abs(signed_global),
+            'saved_global_residual_exact_zero':signed_global == 0,
+            'saved_cell_residuals_all_exact_zero':bool(np.all(residual == 0)),
+            'budget_mol':budget, 'budget_relative':relative,
+            'initial_inventory_mol':reference,
+            'initial_relative':abs(signed_global)/abs(reference) if reference != 0 else None,
+            'initial_relative_undefined_reason':'zeroactualinitial' if reference == 0 else None,
+            'initial_reference_status':'undefined_zero_reference' if reference == 0 else 'defined',
+            'cell_budget_mol':cell_budget.tolist(),
+            'cell_budget_relative':[abs(float(x))/float(b) if b != 0 else None
+                                    for x,b in zip(residual,cell_budget)],
+            'passed':passed, 'undefined_budget_not_qualified':relative is None,
+            'relative_status':('undefined_zero_budget' if relative is None
+                               else 'passed' if passed else 'failed'),
+        }
+    return {
+        'identity':'simulation', 'start_time_s':start['time_s'], 'end_time_s':end['time_s'],
+        'species':species, 'acceptance_balance_relative':threshold,
+        'passed':all(item['passed'] for item in species.values()),
+        'relative_status':('failed' if any(item['relative_status'] == 'failed' for item in species.values())
+                           else 'undefined_zero_budget' if any(item['undefined_budget_not_qualified'] for item in species.values())
+                           else 'passed'),
+    }
+
+
+def calcium_phase_ledger_report(config, endpoints) -> dict:
+    """Report the declared window and its stages from existing endpoint rows."""
+    return {
+        'schema':'sludge_vme_calcium_phase_ledger_v1',
+        'scope':{'stages':list(config['stages']),
+                 'start_time_s':endpoints[0]['time_s'], 'end_time_s':endpoints[-1]['time_s'],
+                 'whole_cycle_meaning':'Entire declared process window only; omitted stages are not covered.'},
+        'whole_cycle':calcium_phase_ledger(config, endpoints[0], endpoints[-1]),
+        'stages':{name:calcium_phase_ledger(config, endpoints[i], endpoints[i+1])
+                  for i,name in enumerate(config['stages'])},
+        'definitions':{
+            'residual':'Per-cell end minus start inventory minus each signed stoichiometric interval reaction source; global residual is the sum of these cell residuals.',
+            'cell_budget':'max(abs(cell start), abs(cell end), sum(abs(each cell reaction source))); mol, no floor.',
+            'global_budget':'max(abs(sum(start)), abs(sum(end)), sum(abs(sum(each reaction source)))); mol. This is the existing phase budget, not a Ca-pool or gas-species scale.',
+            'reference':'Signed start inventory summed across cells for this interval; its absolute value normalizes initial_relative. A zero actual initial inventory is explicitly undefined.',
+            'extent':'Independent integrated reaction_extent_mol slots, including active direct carbonation; signed net progress, not inferred from phase inventories or gross forward/reverse traffic.',
+            'relative_verdict':'Only defined abs(global residual)/global budget below root acceptance.balance_relative passes. Zero budget yields null and passed=false; an absolute saved zero is a separate observation.',
+            'scope':'Saved endpoint arithmetic only, not continuous positivity, local transport closure, or an interval-maximum residual. Existing physical, process and whole-project flags are unchanged.',
+        },
+    }
+
+
 def water_reference_observables(model, fields, temperature_k) -> dict:
     """Intrinsic sorption observables at the root pure-liquid pressure reference.
 

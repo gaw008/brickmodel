@@ -912,3 +912,26 @@ P46首个实际mode1短时动态单例已完成（2026-10-02T05:55:32.140418+00:
 - [ ] **P47** 各一次短时 time/grid 加密的依赖候选，复用本基准、冻结物理和原阈值；仅候选，尚无资源分配或实际运行。不得用加密或低温零相替代全阶段相验收。
 
 变更根569及 P46/计划/规范/报告/最终矩阵共10路径，无主机源码改动。科学 CPU9.415551s、solver9.203657s、实际构造至回收9.581245s；静态文档和交付时间分别记回执。D01/D02读取正常后继和唯一必要小增量实际收据；D03零恢复；D04历史存储/独有Git/容量警告未解决。
+
+
+### P47正式生产三相账本任务登记 2026-10-02T06:21:01.359898+00:00
+
+正式续派P47为生产calcite/lime/portlandite独立账本接线。此前未分配的P47加密候选仅历史提议、延后，未执行；不复用P46关闭窗口。唯一写入者归属diagnostics.py与gas.py，沿原signed per-cell/global算法、nofloor budget、原0.001阈值，明确passed/failed/undefined_zero_budget，绝对零残差另列。whole flags保持；self.reaction_config含active direct。新6操作条目至575，既有569完整条目保持，名义mode0/directoff不改。
+
+- [ ] **P47-A** 提取生产calcium_phase_ledger/helper及whole-stage报告路径，主summarize复用已有rows/端点；实际源复核后勾选。
+- [ ] **P47-B** 唯一保存P46数据生产报告，1job/30s/512KiB/1worker，0ctor/RHS/Jac/ODE/fit/UQ；失败即止，不造fixture或新增软件测试。
+- [ ] **P47-C** 记录实际API/schema、带符号数值一致性与CaO undefined；更新当前矩阵并一次Git/小增量实际交付。
+
+P46 2启动/首reader失败+1actualmodel、原P45/P34/P40/P44和名义0.135892078740%失败保留，0measured/wholefalse。新接口接线不授全周期、time/grid、三方案/反演/UQ/CLI新资格。
+
+
+### P47实施及受影响输出完成 2026-10-02T06:29:13.191257+00:00
+
+P47生产三相账本已接入并完成受影响保存输出验收（2026-10-02T06:29:13.191257+00:00）：新增calcium_phase_ledger及calcium_phase_ledger_report，FiniteGasFullCycle.summarize复用已有端点rows/self.reaction_config，无新增rate/thermo/RHS或重解码；原signed逐格残差再全局求和、cell/global nofloor预算及原0.001阈值保持。唯一保存P46数据任务rc0/回收，report42613B，监督0.593627s<独立30s/512KiB、CPU0.341216s；0构造/RHS/Jac/ODE/fit/UQ。每相15旧字段、whole/onlystage共90字段一致（同区间重复而非独立验收），calcite/portlandite passed；lime(CaO)原残差/预算零，relative=null、passed=false、undefined_zero_budget，绝对零仅保存观察。主summarize接线仅静态独立复核，不冒称执行或全八阶段资格。根575=144literature431assumed0measured，旧569完整保持，仅6运行政策，名义mode0/directoff及原whole flags保持。P45净U、P34/P40/P44、名义余水0.135892078740%>0.1%失败与当前mode1加密/完整阶段/交叉项未资格保持，wholefalse。Git、Drive、恢复与历史容量分别读回。
+
+- [x] **P47-A** 生产interval/window helper与主summarize端点接线完成，独立静态复核通过，原flags及物理调用次数不改。
+- [x] **P47-B** 唯一保存数据任务实际rc0/回收，42613B、0.593627s；无模型/新测试调用，全部旧15字段每相一致。
+- [x] **P47-C** 新schema/API和相对passed/failed/undefined说明、实际简明报告及当前矩阵完成；实际Git/cloud收据随后独立读取。
+- [ ] **P48-CANDIDATE** mode1 time/grid及高温逐相/八阶段仍为后续依赖，不在本任务分配积分或用绝对零授相对PASS。
+
+本轮修改2source+root575+必要9文档，共12路径。科学模型计算0；保存数据CPU0.341216s、监督0.593627s；声明至本记录工作流wall491.843021s含源码/审查/记录，非solver时间。原P46及科学失败保留。D01/D02读取一次正常功能提交/小科学包实际receipt；D03不恢复、D04未通过。

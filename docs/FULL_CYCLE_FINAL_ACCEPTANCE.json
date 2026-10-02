@@ -1,14 +1,14 @@
 {
   "schema": "full_cycle_final_acceptance_matrix_v1",
-  "recorded_utc": "2026-10-02T05:55:32.140418+00:00",
-  "status": "P46_single_actual_mode1_dynamic_partial_zero_phase_budget_undefined",
+  "recorded_utc": "2026-10-02T06:29:13.191257+00:00",
+  "status": "P47_production_phase_reporting_complete_current_model_partial",
   "identity": "approximate_simulation_not_measured_material",
   "parent_commit": "d8bc6f1b09e0b6d10cdcf4abf35e634035a36d08",
   "parameter_file": "parameters.full_cycle.json",
-  "parameter_count": 569,
+  "parameter_count": 575,
   "parameter_status_counts": {
     "literature": 144,
-    "assumed": 425,
+    "assumed": 431,
     "measured": 0
   },
   "implementation": {
@@ -222,7 +222,7 @@
     }
   },
   "base_model_complete": false,
-  "current_scope": "P46首个实际mode1短时动态单例已完成（2026-10-02T05:55:32.140418+00:00）：累计2次进程启动，首读参失败1次保留；实际1构造/1ODE，2379RHS含12Jac，solver9.203657s、CPU含构造9.415551s、构造至回收9.581245s，原300s窗口未延。原质量/元素/完整能量最大相对1.548557663e-8、四gas预算最大9.103027113e-6，均<0.001；熵账本3.150938169e-9，保存样本OH/carbonate最小0、direct最小6.534691959e-12W/K，accepted knots及t_eval原物理域通过。Cc/OH无floor逐相相对预算通过；CaO初末/源/残差均0、预算0，相对null且passed=false，精确零观察不能授相对预算PASS。与保存P44基准四指标最大变化7.389644452e-13仅表示诊断，0新time/grid；direct extent差+4.261998740e-16mol。根569=144literature425assumed0measured，16操作source-ID修复、旧7来源元数据例外及失败快照保留，45host929c/物理/solver保持，名义mode0/direct未启用。全八阶段/加密/三方案/反演/UQ/CLI当前模式未资格；P45净U、P34/P40/P44失败及名义余水0.135892078740%>0.1%保持，0新名义尝试，wholefalse。本轮实际模型额度关闭，下一加密仅候选；Git、Drive元数据与恢复另列。",
+  "current_scope": "P47生产三相账本已接入并完成受影响保存输出验收（2026-10-02T06:29:13.191257+00:00）：新增calcium_phase_ledger及calcium_phase_ledger_report，FiniteGasFullCycle.summarize复用已有端点rows/self.reaction_config，无新增rate/thermo/RHS或重解码；原signed逐格残差再全局求和、cell/global nofloor预算及原0.001阈值保持。唯一保存P46数据任务rc0/回收，report42613B，监督0.593627s<独立30s/512KiB、CPU0.341216s；0构造/RHS/Jac/ODE/fit/UQ。每相15旧字段、whole/onlystage共90字段一致（同区间重复而非独立验收），calcite/portlandite passed；lime(CaO)原残差/预算零，relative=null、passed=false、undefined_zero_budget，绝对零仅保存观察。主summarize接线仅静态独立复核，不冒称执行或全八阶段资格。根575=144literature431assumed0measured，旧569完整保持，仅6运行政策，名义mode0/directoff及原whole flags保持。P45净U、P34/P40/P44、名义余水0.135892078740%>0.1%失败与当前mode1加密/完整阶段/交叉项未资格保持，wholefalse。Git、Drive、恢复与历史容量分别读回。",
   "P11": {
     "status": "base_model_complete_with_nominal_process_failure_and_future_material_calibration",
     "verification": {
@@ -1797,6 +1797,18 @@
       "item": "P46_current_time_grid_8stage_crossitems",
       "outcome": "not_executed_or_not_qualified",
       "evidence": "P46"
+    },
+    {
+      "item": "P47_production_three_phase_endpoint_ledger",
+      "outcome": "implemented_saved_helper_executed_host_hook_static_reviewed",
+      "unique_phase_relative_results": {
+        "passed": 2,
+        "failed_finite_budget": 0,
+        "undefined_zero_budget": 1
+      },
+      "new_model_calls": 0,
+      "current_all8stage_qualification": false,
+      "evidence": "P47"
     }
   ],
   "final_matrix_independent_review": {
@@ -1907,20 +1919,13 @@
   },
   "historical_P18_model_completion_wall_s_from_plan_creation": 14941.526078,
   "current_model_completion_status": {
-    "implementation": "P45 source929c retained; root registered-source fix and explicit actual subrecord complete",
-    "physics_numerics": "P46 single synthetic10s ordinary/gas/sampled entropy/domain passed;CaO relative undefined;current time-grid/all8stage not qualified",
-    "nominal_process": "Historical0.1358920787402553%>.1%FAIL;0newnominalattempt",
-    "material": "569=144literature425assumed0measured",
-    "entry": "Existing reader and case actualODE run;new full CLI/eightstage not qualified",
-    "delivery": "Normal Git successor and one increment pending receipts;0 recovery",
-    "next_dependency": {
-      "status": "proposal_only_not_allocated_or_started",
-      "work": "Once each time and mesh refinement of the existing mode1 synthetic short case; broader thermal phase and eight-stage qualification remain separate",
-      "baseline_reused": true,
-      "new_physics_or_solver_search": false,
-      "zero_CaO_relative_budget": "undefined remains unqualified; no floor/pool substitution or changed threshold",
-      "current_allocation_closed": true
-    }
+    "implementation": "P47 independent phase report integrated in production; helper executes actual saved data, host hook static reviewed",
+    "physics_numerics": "No new model calculation;P46 preserved. CaO relative undefined,current mode1 time/grid/all8stage unqualified",
+    "nominal_process": "Historical0.1358920787402553%>.1%FAIL;0newattempt",
+    "material": "575=144literature431assumed0measured",
+    "entry": "Production pure report helper executed;hostsummarize/CLI not executed thisround",
+    "delivery": "One functional normal successor and required increment pending receipts;0recovery",
+    "next_dependency": "Mode1 time/grid and thermal phase/all8stage qualification remain; no science window allocated or reopened by this reporting task."
   },
   "historical_pre_P22_model_capability_closeout_complete": true,
   "P22": {
@@ -1991,7 +1996,7 @@
     "declared_to_reviewed_wall_s": 430.997672
   },
   "historical_pre_P22_status": "declared_approximate_model_work_complete_physics_numerics_passed_process_failed",
-  "physical_numerical_acceptance_scope": "P46 single mode1 synthetic10s only ordinary/gas/sampled entropy/domain qualified. CaO relative undefined; time/grid/all8stage unqualified.",
+  "physical_numerical_acceptance_scope": "Saved P46 endpoints executed through the production report helper; host summarize hook reviewed statically. No host summarize or model evaluation run. P46mode1fulltime-grid/all8stage unqualified.",
   "P23": {
     "status": "completed_bounded_source_audit",
     "evidence": [
@@ -8510,16 +8515,16 @@
     }
   },
   "current_root_parameter_metadata": {
-    "count": 569,
+    "count": 575,
     "status_counts": {
       "literature": 144,
-      "assumed": 425,
+      "assumed": 431,
       "measured": 0
     },
-    "old558_preservation_exception": "7 inherited operation sourceIDs/notes corrected; values/unit/range/status unchanged",
-    "source_count_changes": "9 operation entries then2 allocated actual/process counters; no material values changed"
+    "old569_complete_entries_preserved": true,
+    "new6_operation_policy_only": true
   },
-  "scientific_kernel_qualification": "P46 one actual mode1 short-case partial; no fullcurrent qualification",
+  "scientific_kernel_qualification": "P47 reporting only;P46 saved short-case physics retained,whole model partial",
   "historical_pre_P46_current_scope": "P45显式CaO坐标及必要叶模块已实现（2026-10-02T04:47:36.040486+00:00），局部资格partial。固定两物理上下文共4构造/4RHS/2sciencejobs，合计48项局部核查47通过/1净U比较FAIL（raw1.421085535e-14W、原scale4.675191614e-6W、relative3.039630570e-9>1e-11）保留；既有分项2645.316W补充诊断relative5.372082305e-18另列。明示正内点附录24/24PASS、0.259811s，原窗口关闭不延、0重复zero/ODE/Jac/fit/UQ。新初始零CaO精确0、所测新零/正内点三支熵非负仅瞬时，不授动态资格。根558=144literature414assumed0measured，旧541保持、新增表示及运行政策，无新物性，名义mode0/direct未启用。参考体积保存数据映射与外部C序列化数值一致；72熵记录14负值全保留；仅纳入F三来源/23文献观测，无L。原P34/P40/P44及名义0.135892078740%>0.1%失败、当前8阶段/加密/三方案/反演/UQ/CLI未资格和wholefalse保持。",
   "historical_pre_P46_current_model_completion_status": {
     "implementation": "ExplicitCaOopt-in/native shared chains and selected saved-data leaves implemented",
@@ -9535,5 +9540,183 @@
       "P45_prior": "929c4c3a ordinarypush/remotePASS,1377612B/Drive1a0Ci66j6N5eQZDzPBEn90U3okRlq9dz0 metadataPASS"
     }
   },
-  "current_scope_qualification": "P46首个实际mode1短时动态单例已完成（2026-10-02T05:55:32.140418+00:00）：累计2次进程启动，首读参失败1次保留；实际1构造/1ODE，2379RHS含12Jac，solver9.203657s、CPU含构造9.415551s、构造至回收9.581245s，原300s窗口未延。原质量/元素/完整能量最大相对1.548557663e-8、四gas预算最大9.103027113e-6，均<0.001；熵账本3.150938169e-9，保存样本OH/carbonate最小0、direct最小6.534691959e-12W/K，accepted knots及t_eval原物理域通过。Cc/OH无floor逐相相对预算通过；CaO初末/源/残差均0、预算0，相对null且passed=false，精确零观察不能授相对预算PASS。与保存P44基准四指标最大变化7.389644452e-13仅表示诊断，0新time/grid；direct extent差+4.261998740e-16mol。根569=144literature425assumed0measured，16操作source-ID修复、旧7来源元数据例外及失败快照保留，45host929c/物理/solver保持，名义mode0/direct未启用。全八阶段/加密/三方案/反演/UQ/CLI当前模式未资格；P45净U、P34/P40/P44失败及名义余水0.135892078740%>0.1%保持，0新名义尝试，wholefalse。本轮实际模型额度关闭，下一加密仅候选；Git、Drive元数据与恢复另列。"
+  "current_scope_qualification": "Saved P46 endpoints executed through the production report helper; host summarize hook reviewed statically. No host summarize or model evaluation run.",
+  "historical_pre_P47_current_scope": "P46首个实际mode1短时动态单例已完成（2026-10-02T05:55:32.140418+00:00）：累计2次进程启动，首读参失败1次保留；实际1构造/1ODE，2379RHS含12Jac，solver9.203657s、CPU含构造9.415551s、构造至回收9.581245s，原300s窗口未延。原质量/元素/完整能量最大相对1.548557663e-8、四gas预算最大9.103027113e-6，均<0.001；熵账本3.150938169e-9，保存样本OH/carbonate最小0、direct最小6.534691959e-12W/K，accepted knots及t_eval原物理域通过。Cc/OH无floor逐相相对预算通过；CaO初末/源/残差均0、预算0，相对null且passed=false，精确零观察不能授相对预算PASS。与保存P44基准四指标最大变化7.389644452e-13仅表示诊断，0新time/grid；direct extent差+4.261998740e-16mol。根569=144literature425assumed0measured，16操作source-ID修复、旧7来源元数据例外及失败快照保留，45host929c/物理/solver保持，名义mode0/direct未启用。全八阶段/加密/三方案/反演/UQ/CLI当前模式未资格；P45净U、P34/P40/P44失败及名义余水0.135892078740%>0.1%保持，0新名义尝试，wholefalse。本轮实际模型额度关闭，下一加密仅候选；Git、Drive元数据与恢复另列。",
+  "historical_pre_P47_current_model_completion_status": {
+    "implementation": "P45 source929c retained; root registered-source fix and explicit actual subrecord complete",
+    "physics_numerics": "P46 single synthetic10s ordinary/gas/sampled entropy/domain passed;CaO relative undefined;current time-grid/all8stage not qualified",
+    "nominal_process": "Historical0.1358920787402553%>.1%FAIL;0newnominalattempt",
+    "material": "569=144literature425assumed0measured",
+    "entry": "Existing reader and case actualODE run;new full CLI/eightstage not qualified",
+    "delivery": "Normal Git successor and one increment pending receipts;0 recovery",
+    "next_dependency": {
+      "status": "proposal_only_not_allocated_or_started",
+      "work": "Once each time and mesh refinement of the existing mode1 synthetic short case; broader thermal phase and eight-stage qualification remain separate",
+      "baseline_reused": true,
+      "new_physics_or_solver_search": false,
+      "zero_CaO_relative_budget": "undefined remains unqualified; no floor/pool substitution or changed threshold",
+      "current_allocation_closed": true
+    }
+  },
+  "historical_pre_P47_current_root_parameter_metadata": {
+    "count": 569,
+    "status_counts": {
+      "literature": 144,
+      "assumed": 425,
+      "measured": 0
+    },
+    "old558_preservation_exception": "7 inherited operation sourceIDs/notes corrected; values/unit/range/status unchanged",
+    "source_count_changes": "9 operation entries then2 allocated actual/process counters; no material values changed"
+  },
+  "P47": {
+    "schema": "P47_production_calcium_phase_ledger_implementation_and_saved_result_v1",
+    "recorded_utc": "2026-10-02T06:29:13.191257+00:00",
+    "source_base_commit": "f9a3abdf3fbdec790874025ba44d0ac4fae492d2",
+    "status": "implemented_saved_data_production_report_executed_static_host_hook_reviewed",
+    "changed_source_files": [
+      "src/sludge_vme/models/full_cycle_diagnostics.py",
+      "src/sludge_vme/models/full_cycle_gas.py"
+    ],
+    "production_API": {
+      "interval": "calcium_phase_ledger(config,start,end)",
+      "declared_window": "calcium_phase_ledger_report(config,endpoints)",
+      "host_output": "FiniteGasFullCycle.summarize report.calcium_phase_ledger",
+      "schema": "sludge_vme_calcium_phase_ledger_v1",
+      "reaction_config": "self.reaction_config including enabled direct reaction; per-cell independent reaction_extent_mol",
+      "data_selection": "Existing summarize row references at existing gas endpoint indices; no new decoding/rates/thermodynamics"
+    },
+    "root_parameter_count": 575,
+    "root_status_counts": {
+      "literature": 144,
+      "assumed": 431,
+      "measured": 0
+    },
+    "previous569_complete_entries_preserved": true,
+    "new_operation_entries": 6,
+    "new_material_or_numeric_solver_threshold_parameters": 0,
+    "nominal_mode0_directoff_unchanged": true,
+    "actual_saved_job": {
+      "schema": "P47_existing_saved_data_only_supervision_v1",
+      "recorded_utc": "2026-10-02T06:23:55.563972+00:00",
+      "started_utc": "2026-10-02T06:23:54.969509+00:00",
+      "unique_deadline_utc": "2026-10-02T06:24:24.969509+00:00",
+      "global_budget_parameter": "validation.calcium_ledger_saved_report.global_budget",
+      "unique_budget_s": 30,
+      "started_jobs": 1,
+      "workers": 1,
+      "return_code": 0,
+      "timed_out": false,
+      "child_reaped": true,
+      "supervised_wall_s": 0.5936268754303455,
+      "within_unique_budget": true,
+      "constructor_RHS_Jac_ODE_fit_UQ": 0,
+      "new_software_tests_SHA_or_guards": 0,
+      "automatic_retry": false,
+      "original_closed_P46_window_reused": false,
+      "status": "saved_report_completed",
+      "necessary_output_bytes": 42613,
+      "summary_byte_limit_parameter": "validation.calcium_ledger_saved_report.summary_byte_limit",
+      "within_summary_byte_limit": true
+    },
+    "worker_CPU_s": 0.341216,
+    "worker_wall_s": 0.502138583920896,
+    "necessary_report_bytes": 42613,
+    "actual_production_report_entry_calls": 1,
+    "actual_phase_interval_helper_calls": 2,
+    "actual_phase_records": 6,
+    "unique_physical_phase_interval_records": 3,
+    "whole_and_stage_same_interval_not_independent_replications": true,
+    "saved_input_rows": 21,
+    "endpoint_rows_used": 2,
+    "old_field_count_per_phase": 15,
+    "saved_common_field_comparisons": 90,
+    "all_previous_signed_budget_and_passed_fields_equal": true,
+    "phase_results": {
+      "calcite": {
+        "signed_global_residual_mol": 1.3641465615530507e-18,
+        "absolute_global_residual_mol": 1.3641465615530507e-18,
+        "saved_global_residual_exact_zero": false,
+        "saved_cell_residuals_all_exact_zero": false,
+        "budget_mol": 0.1464338674173214,
+        "budget_relative": 9.315785928574665e-18,
+        "initial_inventory_mol": 0.1461230190964052,
+        "initial_relative": 9.335603452410533e-18,
+        "initial_reference_status": "defined",
+        "passed": true,
+        "undefined_budget_not_qualified": false,
+        "relative_status": "passed"
+      },
+      "lime": {
+        "signed_global_residual_mol": 0.0,
+        "absolute_global_residual_mol": 0.0,
+        "saved_global_residual_exact_zero": true,
+        "saved_cell_residuals_all_exact_zero": true,
+        "budget_mol": 0.0,
+        "budget_relative": null,
+        "initial_inventory_mol": 0.0,
+        "initial_relative": null,
+        "initial_reference_status": "undefined_zero_reference",
+        "passed": false,
+        "undefined_budget_not_qualified": true,
+        "relative_status": "undefined_zero_budget"
+      },
+      "portlandite": {
+        "signed_global_residual_mol": -4.5083328617610136e-18,
+        "absolute_global_residual_mol": 4.5083328617610136e-18,
+        "saved_global_residual_exact_zero": false,
+        "saved_cell_residuals_all_exact_zero": false,
+        "budget_mol": 0.0303673723234198,
+        "budget_relative": 1.4845976180441913e-16,
+        "initial_inventory_mol": 0.0303673723234198,
+        "initial_relative": 1.4845976180441913e-16,
+        "initial_reference_status": "defined",
+        "passed": true,
+        "undefined_budget_not_qualified": false,
+        "relative_status": "passed"
+      }
+    },
+    "whole_interval_relative_status": "undefined_zero_budget",
+    "whole_interval_passed": false,
+    "zero_budget_policy": "CaO/lime has allsaved inventory/source/residual zero: budget_relative andinitial_relative null, passedfalse, undefined_zero_budget. Absolute zero is a saved endpoint observation, not a relative PASS or general proof.",
+    "independent_review": {
+      "reviewer": "p01_ledger",
+      "scope": "Read-only source and actual saved production report",
+      "result": "No blocking source/arithmetic/classification defects; existing endpoint rows/self.reaction_config and flags maintained",
+      "actual_models_helper_tests_SHA_or_file_writes": 0,
+      "previous_message_field_count_correction": "Each phase compares15 original fields, not19; addedstatus/absolute fields are not prior fields"
+    },
+    "qualification_scope": "Saved P46 endpoints executed through the production report helper; host summarize hook reviewed statically. No host summarize or model evaluation run.",
+    "host_summarize_executed": false,
+    "new_constructor_RHS_Jac_ODE_fit_UQ": 0,
+    "new_time_grid_8stage_comparison_inverse_UQ_CLI_qualification": false,
+    "P46_original_science_report_and_flags_unchanged": true,
+    "historical_failures_retained": {
+      "P45_original_netU_relative": 3.039630569777313e-09,
+      "P45_limit": 1e-11,
+      "P34_phase_failures": "30/81",
+      "P40_mesh_peak_relative": 0.0733335269426334,
+      "P44_CaO_phase_failures": "3/9",
+      "P44_direct_mesh_relative_unqualified": 0.03018534360042369,
+      "nominal_water_fraction": 0.001358920787402553,
+      "nominal_water_limit": 0.001,
+      "new_nominal_attempts": 0
+    },
+    "measured_material_parameters": 0,
+    "new_tests_SHA_guard_download_recovery_sources_automations": 0,
+    "P47_implementation_and_affected_saved_output_complete": true,
+    "physical_numerical_acceptance_complete": false,
+    "whole_project_complete": false,
+    "evidence": {
+      "production_report": "runs/full-cycle/p47-calcium-phase-ledger/production-report.json",
+      "execution": "runs/full-cycle/p47-calcium-phase-ledger/execution.json",
+      "source_review": "runs/full-cycle/p47-calcium-phase-ledger/independent-source-review.json"
+    },
+    "delivery": {
+      "normal_Git_push": "pending actual receipt",
+      "one_required_increment": "pending actual receipt",
+      "actual_download_restore_extract": false,
+      "historical_uniqueGit_storage20GB_capacity_warning_unresolved": true
+    },
+    "next_dependency": "Mode1 time/grid and thermal phase/all8stage qualification remain; no science window allocated or reopened by this reporting task."
+  }
 }

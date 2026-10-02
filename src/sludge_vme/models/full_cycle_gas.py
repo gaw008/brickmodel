@@ -18,7 +18,7 @@ from scipy.sparse import csc_matrix
 
 from .full_cycle import FullCycle, source_caloric_coefficients, source_caloric_integrals
 from .direct_carbonation import DirectCarbonationMobility, direct_carbonation_sources
-from .full_cycle_diagnostics import drying_water_diagnostics, free_water_ledger, gas_species_ledger, caloric_source_domain_coverage, viscosity_source_domain_coverage, binary_diffusion_source_domain_coverage
+from .full_cycle_diagnostics import drying_water_diagnostics, free_water_ledger, gas_species_ledger, caloric_source_domain_coverage, viscosity_source_domain_coverage, binary_diffusion_source_domain_coverage, calcium_phase_ledger_report
 
 
 class FiniteGasFullCycle(FullCycle):
@@ -1258,10 +1258,11 @@ class FiniteGasFullCycle(FullCycle):
         report['physical_consistency_passed']=bool(report['conservation_passed'] and min_condensed>=-inventory_budget and min_gas>0
             and minimum_capacity>0 and report['state_domain']['minimum_porosity']>0 and min_entropy>=0 and min_face>=0 and min_water_face>=0
             and entropy_relative<self.p('acceptance.entropy_relative','1'))
-        gas_endpoints=[]
+        gas_endpoints=[]; calcium_endpoints=[]
         for label,t in zip(['initial']+self.config['stages'],self.times):
             index=int(np.where(times==t)[0][0])
             row=rows[index]
+            calcium_endpoints.append(row)
             gas_endpoints.append({
                 'endpoint':label, 'time_s':float(t),
                 'gas_inventory_mol':{name:float(sum(row['gas_inventory_mol'][name])) for name in self.ng},
@@ -1281,6 +1282,7 @@ class FiniteGasFullCycle(FullCycle):
                 reference_inventory_mol=reference_inventory),
             'stages':{name:gas_species_ledger(self.reaction_config,gas_endpoints[i],gas_endpoints[i+1],
                 reference_inventory_mol=reference_inventory) for i,name in enumerate(self.config['stages'])}}
+        report['calcium_phase_ledger']=calcium_phase_ledger_report(self.reaction_config,calcium_endpoints)
         report['active_reactions'] = self.reactions
         report['direct_carbonation_configuration'] = {
             'enabled':self.direct_carbonation_enabled,
