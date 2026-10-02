@@ -1,14 +1,14 @@
 {
   "schema": "full_cycle_final_acceptance_matrix_v1",
-  "recorded_utc": "2026-10-02T07:20:42.461752+00:00",
-  "status": "P48_production_features_integrated_current_model_partial",
+  "recorded_utc": "2026-10-02T15:40:52.764071+00:00",
+  "status": "P49_saved_reference_geometry_implemented_current_model_partial",
   "identity": "approximate_simulation_not_measured_material",
   "parent_commit": "d8bc6f1b09e0b6d10cdcf4abf35e634035a36d08",
   "parameter_file": "parameters.full_cycle.json",
-  "parameter_count": 587,
+  "parameter_count": 595,
   "parameter_status_counts": {
     "literature": 144,
-    "assumed": 443,
+    "assumed": 451,
     "measured": 0
   },
   "implementation": {
@@ -222,7 +222,7 @@
     }
   },
   "base_model_complete": false,
-  "current_scope": "P48 C/F/G/H生产能力已additive集成（2026-10-02T07:20:42.461752+00:00）：C原生面/完整能量采样及普通CLI/baseline writer接线静态，根采样0、缺合同直接报错，P47逐相保留；F原JSON/CSV单位CLI真实1调用rc0/回收，0.043822s/CPU0.035008s、293715B<30s/512KiB，3来源12条件23观测原manifest/conditions/CSV全保留，12缺总压分压仍null，admissionfalse、0L。P38先原mapper再附视图但wrapper未执行；G复用既有reader去重复通用校验，RH/Psat未知null仅文档，API/CLI未调用；H实际保存fine面/rebin生产脚本已合，旧固定P44一次0.011271s/38862B/13格提案沿用，不重跑、不接solver。根587=144literature443assumed0measured，旧575完整保持，新7采样+5运行政策，名义mode0/directoff保持；0新构造/RHS/Jac/ODE/fit/UQ。原P45/P34/P40/P44失败、P46/P47CaO undefined、名义余水0.135892078740%>0.1%与wholefalse保持，当前host新接线动态/加密/八阶段/交叉项未资格；交付及历史容量分列。",
+  "current_scope": "P49显式保存面初始化接口及一次保存几何转换完成（2026-10-02T15:40:52.764071+00:00）：H原13格/14faces原值接入mode3 saved_faces，新增initial_partition_from_faces与整记录saved_reference_partition_case、纯离线脚本；主机构造未执行，接线仅静态。唯一1job/1primitive/1worker rc0回收，监督0.412691s/CPU0.330740s、case+geometry共420111B<30s/512KiB，窗口关闭不重试。faces/centers/widths原值一致；逐格new A*diff(faces)−saved fine-volume-sum保留−3.388131789e−21/+1.694065895e−21m3。P49 numpy.sum全局差0与H原math.fsum+2.710505431e−20m3并列，不授几何容差或物理PASS。根595=144literature451assumed0measured，旧587所有value保持、586完整条目保持；唯一旧mode range[0,2]→[0,3]+note例外，名义12格/mode0/sampling0/Cacoord0/directoff不变。0构造/RHS/Jac/ODE/fit/UQ/C/G/H-selection/P38，新mode3动态/加密/八阶段/采样/比较/反演/模型CLI未资格。P34/P40/P44/P45失败、CaO零预算relative=null/passfalse、名义余水0.135892078740%>0.1%及wholefalse保留。Git/Drive与历史恢复容量另计。",
   "P11": {
     "status": "base_model_complete_with_nominal_process_failure_and_future_material_calibration",
     "verification": {
@@ -1816,6 +1816,13 @@
       "new_model_calls": 0,
       "current_all8stage_qualified": false,
       "evidence": "P48"
+    },
+    {
+      "item": "P49_saved_faces_initialization",
+      "outcome": "implemented_one_actual_saved_geometry_job_host_static",
+      "new_model_calls": 0,
+      "currentmode3physical_qualified": false,
+      "evidence": "P49"
     }
   ],
   "final_matrix_independent_review": {
@@ -1926,13 +1933,18 @@
   },
   "historical_P18_model_completion_wall_s_from_plan_creation": 14941.526078,
   "current_model_completion_status": {
-    "implementation": "C/F/G/H production interfaces integrated;P47retained",
-    "physics_numerics": "Currenthost capture hooks changed but0newmodelcalls;newdynamic/time-grid/8stage notqualified;allfailures preserved",
+    "implementation": "Explicit saved_faces/mode3 and legal case conversion implemented,actual savedgeometry entry completed",
+    "physics_numerics": "No actualhost or physicaloperator;mode3short/time-grid/all8stage/Csampler/crossitems unqualified;oldfailures preserved",
     "nominal_process": "Historical0.1358920787402553%>.1%FAIL;0newnominalattempt",
-    "material": "587=144literature443assumed0measured;0brickL",
-    "entry": "OnlyFf-dataCLI actual;Cordinary/baselinewriter static,P38/Gnotrun,Hexternalprior conversion",
-    "delivery": "actual functional normalcommit andoneincrement receipts follow;0restore",
-    "next_dependency": "Mode1 time/grid, thermal phase generation/all8stage and versionmatchedcomparison/inverse/CLI evidence remain;0newsciencewindowallocated"
+    "material": "595=144literature451assumed0measured;0targetbrickL",
+    "delivery": "Normal functionalcommit/push andoneincrementmetadata actualreceipts follow;0restore/history20GBunresolved",
+    "next_candidate": {
+      "id": "P50-CANDIDATE",
+      "basis": "Explicit faces change per-cell extensive scales and internal distances; geometry alone cannot qualify their physical use",
+      "scope": "One actual host initialization and one instantaneous RHS on this explicit saved case, using a declared existing fixed physical context; cell scales/shared faces/global mass-element-completeU-entropy chains",
+      "extra_constructor_RHS_time_byte_budget": "Not allocated; require coordinator decision and explicit root declaration before any call",
+      "executed": false
+    }
   },
   "historical_pre_P22_model_capability_closeout_complete": true,
   "P22": {
@@ -2003,7 +2015,7 @@
     "declared_to_reviewed_wall_s": 430.997672
   },
   "historical_pre_P22_status": "declared_approximate_model_work_complete_physics_numerics_passed_process_failed",
-  "physical_numerical_acceptance_scope": "P48report/interfacework only. Current changed host newdynamic/timegrid/all8stage unqualified; historical physics scope remains separately recorded.",
+  "physical_numerical_acceptance_scope": "P49pure savedgeometry only; hostmode3 static and notconstructedorintegrated; no currentphysical qualification",
   "P23": {
     "status": "completed_bounded_source_audit",
     "evidence": [
@@ -8522,16 +8534,30 @@
     }
   },
   "current_root_parameter_metadata": {
-    "count": 587,
+    "count": 595,
     "status_counts": {
       "literature": 144,
-      "assumed": 443,
+      "assumed": 451,
       "measured": 0
     },
-    "old575_complete_entries_preserved": true,
-    "new12operation_only": true
+    "old587_values_preserved": true,
+    "old586_complete_records_preserved": true,
+    "one_old_mode_range_note_exception": {
+      "key": "numerics.initial_partition_mode",
+      "old_range": [
+        0,
+        2
+      ],
+      "new_range": [
+        0,
+        3
+      ],
+      "value_unchanged": true,
+      "note_appended": true
+    },
+    "new8_numerical_and_operation_assumed": true
   },
-  "scientific_kernel_qualification": "P48native capture hooks changed;0newmodels,no currentfull dynamics qualification",
+  "scientific_kernel_qualification": "P49explicitfaces initialization path added;0hostcalls,newmode3unqualified",
   "historical_pre_P46_current_scope": "P45显式CaO坐标及必要叶模块已实现（2026-10-02T04:47:36.040486+00:00），局部资格partial。固定两物理上下文共4构造/4RHS/2sciencejobs，合计48项局部核查47通过/1净U比较FAIL（raw1.421085535e-14W、原scale4.675191614e-6W、relative3.039630570e-9>1e-11）保留；既有分项2645.316W补充诊断relative5.372082305e-18另列。明示正内点附录24/24PASS、0.259811s，原窗口关闭不延、0重复zero/ODE/Jac/fit/UQ。新初始零CaO精确0、所测新零/正内点三支熵非负仅瞬时，不授动态资格。根558=144literature414assumed0measured，旧541保持、新增表示及运行政策，无新物性，名义mode0/direct未启用。参考体积保存数据映射与外部C序列化数值一致；72熵记录14负值全保留；仅纳入F三来源/23文献观测，无L。原P34/P40/P44及名义0.135892078740%>0.1%失败、当前8阶段/加密/三方案/反演/UQ/CLI未资格和wholefalse保持。",
   "historical_pre_P46_current_model_completion_status": {
     "implementation": "ExplicitCaOopt-in/native shared chains and selected saved-data leaves implemented",
@@ -9547,7 +9573,7 @@
       "P45_prior": "929c4c3a ordinarypush/remotePASS,1377612B/Drive1a0Ci66j6N5eQZDzPBEn90U3okRlq9dz0 metadataPASS"
     }
   },
-  "current_scope_qualification": "C/statichost andwriter,F/actualoriginalunitCLI+staticP38,G/staticunknowninputs,H/oldactualsavedconversion only;0newmodel",
+  "current_scope_qualification": "Actual saved geometry CLI and primitive only; host mode3 static,0constructors/RHS/Jac/ODE;currentmode3timegrid8stage unqualified",
   "historical_pre_P47_current_scope": "P46首个实际mode1短时动态单例已完成（2026-10-02T05:55:32.140418+00:00）：累计2次进程启动，首读参失败1次保留；实际1构造/1ODE，2379RHS含12Jac，solver9.203657s、CPU含构造9.415551s、构造至回收9.581245s，原300s窗口未延。原质量/元素/完整能量最大相对1.548557663e-8、四gas预算最大9.103027113e-6，均<0.001；熵账本3.150938169e-9，保存样本OH/carbonate最小0、direct最小6.534691959e-12W/K，accepted knots及t_eval原物理域通过。Cc/OH无floor逐相相对预算通过；CaO初末/源/残差均0、预算0，相对null且passed=false，精确零观察不能授相对预算PASS。与保存P44基准四指标最大变化7.389644452e-13仅表示诊断，0新time/grid；direct extent差+4.261998740e-16mol。根569=144literature425assumed0measured，16操作source-ID修复、旧7来源元数据例外及失败快照保留，45host929c/物理/solver保持，名义mode0/direct未启用。全八阶段/加密/三方案/反演/UQ/CLI当前模式未资格；P45净U、P34/P40/P44失败及名义余水0.135892078740%>0.1%保持，0新名义尝试，wholefalse。本轮实际模型额度关闭，下一加密仅候选；Git、Drive元数据与恢复另列。",
   "historical_pre_P47_current_model_completion_status": {
     "implementation": "P45 source929c retained; root registered-source fix and explicit actual subrecord complete",
@@ -9947,5 +9973,34 @@
       "historical_storage20GB_uniqueGit_Github_quota_unresolved": true
     },
     "next_dependency": "Mode1 time/grid, thermal phase generation/all8stage and versionmatchedcomparison/inverse/CLI evidence remain;0newsciencewindowallocated"
+  },
+  "historical_pre_P49_current_scope": "P48 C/F/G/H生产能力已additive集成（2026-10-02T07:20:42.461752+00:00）：C原生面/完整能量采样及普通CLI/baseline writer接线静态，根采样0、缺合同直接报错，P47逐相保留；F原JSON/CSV单位CLI真实1调用rc0/回收，0.043822s/CPU0.035008s、293715B<30s/512KiB，3来源12条件23观测原manifest/conditions/CSV全保留，12缺总压分压仍null，admissionfalse、0L。P38先原mapper再附视图但wrapper未执行；G复用既有reader去重复通用校验，RH/Psat未知null仅文档，API/CLI未调用；H实际保存fine面/rebin生产脚本已合，旧固定P44一次0.011271s/38862B/13格提案沿用，不重跑、不接solver。根587=144literature443assumed0measured，旧575完整保持，新7采样+5运行政策，名义mode0/directoff保持；0新构造/RHS/Jac/ODE/fit/UQ。原P45/P34/P40/P44失败、P46/P47CaO undefined、名义余水0.135892078740%>0.1%与wholefalse保持，当前host新接线动态/加密/八阶段/交叉项未资格；交付及历史容量分列。",
+  "historical_pre_P49_current_model_completion_status": {
+    "implementation": "C/F/G/H production interfaces integrated;P47retained",
+    "physics_numerics": "Currenthost capture hooks changed but0newmodelcalls;newdynamic/time-grid/8stage notqualified;allfailures preserved",
+    "nominal_process": "Historical0.1358920787402553%>.1%FAIL;0newnominalattempt",
+    "material": "587=144literature443assumed0measured;0brickL",
+    "entry": "OnlyFf-dataCLI actual;Cordinary/baselinewriter static,P38/Gnotrun,Hexternalprior conversion",
+    "delivery": "actual functional normalcommit andoneincrement receipts follow;0restore",
+    "next_dependency": "Mode1 time/grid, thermal phase generation/all8stage and versionmatchedcomparison/inverse/CLI evidence remain;0newsciencewindowallocated"
+  },
+  "historical_pre_P49_current_root_parameter_metadata": {
+    "count": 587,
+    "status_counts": {
+      "literature": 144,
+      "assumed": 443,
+      "measured": 0
+    },
+    "old575_complete_entries_preserved": true,
+    "new12operation_only": true
+  },
+  "P49": {
+    "report": "docs/FULL_CYCLE_P49_SAVED_REFERENCE_PARTITION.json",
+    "implemented": true,
+    "actual_jobs": 1,
+    "primitive_evaluations": 1,
+    "necessary_output_bytes": 420111,
+    "model_calls": 0,
+    "physical_numerical_qualified": false
   }
 }

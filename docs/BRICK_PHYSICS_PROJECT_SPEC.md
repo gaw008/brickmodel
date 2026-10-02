@@ -1,5 +1,9 @@
 # 全流程近似烧结砖模型：当前执行规范（2026-09-26）
 
+P49显式保存面初始化接口及一次保存几何转换完成（2026-10-02T15:40:52.764071+00:00）：H原13格/14faces原值接入mode3 saved_faces，新增initial_partition_from_faces与整记录saved_reference_partition_case、纯离线脚本；主机构造未执行，接线仅静态。唯一1job/1primitive/1worker rc0回收，监督0.412691s/CPU0.330740s、case+geometry共420111B<30s/512KiB，窗口关闭不重试。faces/centers/widths原值一致；逐格new A*diff(faces)−saved fine-volume-sum保留−3.388131789e−21/+1.694065895e−21m3。P49 numpy.sum全局差0与H原math.fsum+2.710505431e−20m3并列，不授几何容差或物理PASS。根595=144literature451assumed0measured，旧587所有value保持、586完整条目保持；唯一旧mode range[0,2]→[0,3]+note例外，名义12格/mode0/sampling0/Cacoord0/directoff不变。0构造/RHS/Jac/ODE/fit/UQ/C/G/H-selection/P38，新mode3动态/加密/八阶段/采样/比较/反演/模型CLI未资格。P34/P40/P44/P45失败、CaO零预算relative=null/passfalse、名义余水0.135892078740%>0.1%及wholefalse保留。Git/Drive与历史恢复容量另计。
+
+以下为保留的此前范围及证据。
+
 P48 C/F/G/H生产能力已additive集成（2026-10-02T07:20:42.461752+00:00）：C原生面/完整能量采样及普通CLI/baseline writer接线静态，根采样0、缺合同直接报错，P47逐相保留；F原JSON/CSV单位CLI真实1调用rc0/回收，0.043822s/CPU0.035008s、293715B<30s/512KiB，3来源12条件23观测原manifest/conditions/CSV全保留，12缺总压分压仍null，admissionfalse、0L。P38先原mapper再附视图但wrapper未执行；G复用既有reader去重复通用校验，RH/Psat未知null仅文档，API/CLI未调用；H实际保存fine面/rebin生产脚本已合，旧固定P44一次0.011271s/38862B/13格提案沿用，不重跑、不接solver。根587=144literature443assumed0measured，旧575完整保持，新7采样+5运行政策，名义mode0/directoff保持；0新构造/RHS/Jac/ODE/fit/UQ。原P45/P34/P40/P44失败、P46/P47CaO undefined、名义余水0.135892078740%>0.1%与wholefalse保持，当前host新接线动态/加密/八阶段/交叉项未资格；交付及历史容量分列。
 
 以下带时间段为此前实际或较窄资格。

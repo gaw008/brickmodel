@@ -958,3 +958,28 @@ P48 C/F/G/H生产能力已additive集成（2026-10-02T07:20:42.461752+00:00）�
 - [ ] **P49-CANDIDATE** 当前mode1time/grid/热阶段及八阶段仍未资格，此聚合任务不分配任何新科学窗口。
 
 源码/根/说明/报告聚合交付；CPU0.035008s及监督0.043822s仅实际CLI，行政审查和文档时间分列声明至本记录，不冒充solver。D03不恢复；D04历史容量/独有Git仍未通过。
+
+
+### P49 保存参考面生产初始化接线登记 2026-10-02T15:33:04.437672+00:00
+
+P48实际49eebba3后继；最新具体批准已收到。本项只消费既有H proposal，不重新选择或rebin。独立1job/1primitive/1worker/30s/524288B，含失败仅一次；所有旧科学窗口关闭，0构造/RHS/Jac/ODE/fit/UQ/C/G/H-selection/P38。名义12格/mode0保持。
+
+- [x] **P49-A** 显式面原语、mode3生产主机静态接线及纯参数case入口；旧mode0/1/2算术保留。
+- [x] **P49-B** 一次真实保存几何转换，合法13格快照、双体积basis及全部raw signed差；失败即止，不设物理阈值。
+- [x] **P49-C** 当前范围/失败/实测与实际耗时文档完成；Git/Drive另列交付清单，以最终实际receipt判断。
+
+P49-CANDIDATE旧加密候选为历史候选，本次P49正式范围仅网格输入。模型整体不勾选。
+
+
+### P49实际范围完成 2026-10-02T15:40:52.764071+00:00
+
+P49显式保存面初始化接口及一次保存几何转换完成（2026-10-02T15:40:52.764071+00:00）：H原13格/14faces原值接入mode3 saved_faces，新增initial_partition_from_faces与整记录saved_reference_partition_case、纯离线脚本；主机构造未执行，接线仅静态。唯一1job/1primitive/1worker rc0回收，监督0.412691s/CPU0.330740s、case+geometry共420111B<30s/512KiB，窗口关闭不重试。faces/centers/widths原值一致；逐格new A*diff(faces)−saved fine-volume-sum保留−3.388131789e−21/+1.694065895e−21m3。P49 numpy.sum全局差0与H原math.fsum+2.710505431e−20m3并列，不授几何容差或物理PASS。根595=144literature451assumed0measured，旧587所有value保持、586完整条目保持；唯一旧mode range[0,2]→[0,3]+note例外，名义12格/mode0/sampling0/Cacoord0/directoff不变。0构造/RHS/Jac/ODE/fit/UQ/C/G/H-selection/P38，新mode3动态/加密/八阶段/采样/比较/反演/模型CLI未资格。P34/P40/P44/P45失败、CaO零预算relative=null/passfalse、名义余水0.135892078740%>0.1%及wholefalse保留。Git/Drive与历史恢复容量另计。
+
+变更：3个Python文件、root8新条目及唯一旧mode元数据例外、使用说明/本轮报告/当前规范与矩阵。证据runs/full-cycle/p49-saved-reference-partition。实际作业wall0.412691125s/CPU0.330740s；启动前import失败已保留，0operation/primitive，不计新job。行政实现/审查/文档wall由声明至本条记录单列，不冒充科学CPU。
+
+独立交付清单：
+- [ ] **D49-GIT** 正常后继/scoped stage/push/远端，读取runs/full-cycle/p49-saved-reference-partition-final-delivery-state.json。
+- [ ] **D49-DRIVE** 单个必要增量名称/大小/parent readback，同一actual receipt；metadata不等于restore。
+- [ ] **D49-HISTORY** 历史/独有Git/20GB/容量告警未通过，0恢复/删除。
+
+- [ ] **P50-CANDIDATE** 13格逐格extensive scales/shared-face/瞬时RHS物理准入；仅建议，额外模型调用和时间/字节预算未分配，0执行。P49网格输入完成不授P50或整个模型PASS。

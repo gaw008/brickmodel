@@ -1,7 +1,7 @@
 """Initial one-dimensional control volumes and extensive-coordinate algebra.
 
 Arrays use cell as their first axis. These primitives do not evaluate a
-constitutive model and are not connected to the full-cycle host yet.
+constitutive model. FullCycle uses these partitions for explicit cellwise geometry.
 """
 from __future__ import annotations
 
@@ -35,6 +35,33 @@ def initial_partition(*, cells: int, half_thickness_m: float, area_m2: float,
     bulk = np.full(cells, area_m2 * half_thickness_m / cells) if profile == 'uniform' else area_m2 * widths
     return {'faces_m': faces, 'centers_m': centers, 'widths_m': widths,
             'initial_bulk_m3': bulk,
+            'internal_center_distance_m': np.diff(centers),
+            'symmetry_half_width_m': widths[0] / 2,
+            'exterior_half_width_m': widths[-1] / 2}
+
+
+def initial_partition_from_faces(*, faces_m, cells: int,
+                                 half_thickness_m: float, area_m2: float) -> dict:
+    """Use explicit initial reference faces without resampling or snapping.
+
+    Bulk volumes use area times face differences; saved fine-volume sums
+    are a separate basis and are not substituted here.
+    """
+    faces = np.asarray(faces_m, dtype=float)
+    if not isinstance(cells, int) or isinstance(cells, bool) or cells <= 0:
+        raise ValueError('cells must be a positive integer')
+    if faces.ndim != 1 or faces.size != cells + 1:
+        raise ValueError('explicit faces must contain cells+1 positions')
+    if not np.isfinite([half_thickness_m, area_m2]).all() or min(half_thickness_m, area_m2) <= 0:
+        raise ValueError('length and area must be finite and positive')
+    if faces[0] != 0 or faces[-1] != half_thickness_m:
+        raise ValueError('explicit faces must start at zero and end at the supplied half thickness')
+    widths = np.diff(faces)
+    if not np.all(widths > 0):
+        raise ValueError('explicit faces must be strictly increasing')
+    centers = (faces[:-1] + faces[1:]) / 2
+    return {'faces_m': faces, 'centers_m': centers, 'widths_m': widths,
+            'initial_bulk_m3': area_m2 * widths,
             'internal_center_distance_m': np.diff(centers),
             'symmetry_half_width_m': widths[0] / 2,
             'exterior_half_width_m': widths[-1] / 2}

@@ -6826,11 +6826,11 @@
       "unit": "1",
       "range": [
         0,
-        2
+        3
       ],
       "source": "policy",
       "status": "assumed",
-      "note": "Explicit0 originalscalaruniform(nominal/directabsent),1 displayedper-celluniform,2 fixedquadratic. Oldlegal configs with no initial_partition opt-in retain originalscalarA*L/N, no new exponent/material input. Explicitper-cell requiresdeclaredmode/profile/exponent. No implicit material parameter/fallback."
+      "note": "Explicit0 originalscalaruniform(nominal/directabsent),1 displayedper-celluniform,2 fixedquadratic. Oldlegal configs with no initial_partition opt-in retain originalscalarA*L/N, no new exponent/material input. Explicitper-cell requiresdeclaredmode/profile/exponent. No implicit material parameter/fallback. P49 explicit3 saved_faces via initial_partition.faces_parameter; only range/note metadata extended, value0 retained."
     },
     "validation.cell_host.maximum_total_RHS": {
       "value": 8,
@@ -7403,6 +7403,109 @@
       "source": "policy",
       "status": "assumed",
       "note": "P48 explicit one saved-data task/30s total from firstCLIthroughreap/512KiB/1worker;up to2Fproducercalls only after concrete defect.0newmodel/tests/hash/guard/source; operational policy."
+    },
+    "numerics.saved_reference_partition.faces": {
+      "value": [
+        0.0,
+        0.002395833333333335,
+        0.004583333333333332,
+        0.0065625,
+        0.008333333333333331,
+        0.009895833333333335,
+        0.01125,
+        0.012395833333333333,
+        0.013333333333333332,
+        0.014062499999999999,
+        0.014348958333333333,
+        0.014583333333333332,
+        0.014895833333333334,
+        0.015
+      ],
+      "unit": "m",
+      "range": [
+        0,
+        0.015
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P49 assumed numerical input from runs/full-cycle/p48-production-integration/H-p44-direct-10s-one-cell-proposal.json#proposed_initial_partition; not material measured data or solver convergence qualification. Exact initial_reference_faces_m retained without snapping."
+    },
+    "numerics.saved_reference_partition.cells": {
+      "value": 13,
+      "unit": "1",
+      "range": [
+        13,
+        13
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P49 assumed numerical input from runs/full-cycle/p48-production-integration/H-p44-direct-10s-one-cell-proposal.json#proposed_initial_partition; not material measured data or solver convergence qualification. Exact cells; copy the entire record to numerics.cells in the named case."
+    },
+    "numerics.saved_reference_partition.mode": {
+      "value": 3,
+      "unit": "1",
+      "range": [
+        3,
+        3
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P49 assumed numerical input from runs/full-cycle/p48-production-integration/H-p44-direct-10s-one-cell-proposal.json#proposed_initial_partition; not material measured data or solver convergence qualification. Explicit saved_faces selector; mode3 is opt-in, nominal mode0 unchanged."
+    },
+    "validation.saved_reference_partition.maximum_jobs": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P49 independent saved-data operation only; one attempt including failure, no automaticretry. Deadline starts at the actual producer launch; all old windows closed; 0model calls."
+    },
+    "validation.saved_reference_partition.maximum_primitive_evaluations": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P49 independent saved-data operation only; one attempt including failure, no automaticretry. Deadline starts at the actual producer launch; all old windows closed; 0model calls."
+    },
+    "validation.saved_reference_partition.maximum_workers": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P49 independent saved-data operation only; one attempt including failure, no automaticretry. Deadline starts at the actual producer launch; all old windows closed; 0model calls."
+    },
+    "validation.saved_reference_partition.global_budget": {
+      "value": 30,
+      "unit": "s",
+      "range": [
+        30,
+        30
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P49 independent saved-data operation only; one attempt including failure, no automaticretry. Deadline starts at the actual producer launch; all old windows closed; 0model calls."
+    },
+    "validation.saved_reference_partition.summary_byte_limit": {
+      "value": 524288,
+      "unit": "byte",
+      "range": [
+        524288,
+        524288
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P49 independent saved-data operation only; one attempt including failure, no automaticretry. Deadline starts at the actual producer launch; all old windows closed; 0model calls."
     }
   },
   "species": [
@@ -10681,6 +10784,28 @@
       "actual_producer_calls": 1,
       "actual_output_bytes": 293715,
       "actual_new_model_calls": 0
+    },
+    "saved_reference_partition": {
+      "schema": "P49_saved_reference_partition_case_v1",
+      "resource_status": "closed_after_one_actual_saved_geometry_job_no_retry",
+      "parameter_records": {
+        "numerics.cells": "numerics.saved_reference_partition.cells",
+        "numerics.initial_partition_mode": "numerics.saved_reference_partition.mode"
+      },
+      "faces_parameter": "numerics.saved_reference_partition.faces",
+      "area_parameter": "geometry.area",
+      "half_thickness_parameter": "geometry.half_thickness",
+      "source": "runs/full-cycle/p48-production-integration/H-p44-direct-10s-one-cell-proposal.json",
+      "source_field": "proposed_initial_partition",
+      "budget_prefix": "validation.saved_reference_partition.",
+      "producer": "scripts/materialize_saved_reference_partition.py",
+      "case_output": "runs/full-cycle/p49-saved-reference-partition/case-parameters.json",
+      "geometry_output": "runs/full-cycle/p49-saved-reference-partition/geometry.json",
+      "scope": "Explicit saved faces and geometry only; no reconstructed child state or physics qualification.",
+      "actual_jobs": 1,
+      "actual_primitive_evaluations": 1,
+      "actual_necessary_output_bytes": 420111,
+      "actual_host_calls": 0
     }
   },
   "caloric_background": {
@@ -10944,10 +11069,12 @@
     "profile_by_mode": {
       "0": "uniform",
       "1": "uniform",
-      "2": "exterior_power"
+      "2": "exterior_power",
+      "3": "saved_faces"
     },
     "mode_parameter": "numerics.initial_partition_mode",
     "exponent_parameter": "validation.fixed_initial_partition.exterior_profile_exponent",
-    "coordinate_diagnostic": "Symmetric quadratic center extrapolation uses initial material-reference cell centers. Reported x_m remains evolving spatial centers; initial_x_m is explicit. No diagnostic is a heat inventory."
+    "coordinate_diagnostic": "Symmetric quadratic center extrapolation uses initial material-reference cell centers. Reported x_m remains evolving spatial centers; initial_x_m is explicit. No diagnostic is a heat inventory.",
+    "faces_parameter": "numerics.saved_reference_partition.faces"
   }
 }

@@ -18,7 +18,7 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 from ..chemistry.formula import parse_formula
-from .initial_finite_volume import initial_partition
+from .initial_finite_volume import initial_partition, initial_partition_from_faces
 
 
 def read_parameters(path: str | Path) -> dict:
@@ -46,6 +46,19 @@ def changed(config: dict, overrides: dict) -> dict:
     result = deepcopy(config)
     for name, value in overrides.items():
         result["parameters"][name]["value"] = value
+    return result
+
+
+def saved_reference_partition_case(config: dict) -> dict:
+    """Copy root-declared parameter records into the named saved-face case.
+
+    Values, units, ranges, sources and identities move together. The input
+    root retains its nominal cells and initial partition mode.
+    """
+    case = config['public_reference_cases']['saved_reference_partition']
+    result = deepcopy(config)
+    for target, source in case['parameter_records'].items():
+        result['parameters'][target] = deepcopy(config['parameters'][source])
     return result
 
 
@@ -168,9 +181,14 @@ class FullCycle:
         else:
             self.cellwise_partition = False
         if self.cellwise_partition:
-            self.initial_partition = initial_partition(
-                cells=self.n, half_thickness_m=self.length, area_m2=self.area,
-                profile=profile, exterior_exponent=self.p(partition['exponent_parameter'], '1'))
+            if profile == 'saved_faces':
+                self.initial_partition = initial_partition_from_faces(
+                    faces_m=self.p(partition['faces_parameter'], 'm'),
+                    cells=self.n, half_thickness_m=self.length, area_m2=self.area)
+            else:
+                self.initial_partition = initial_partition(
+                    cells=self.n, half_thickness_m=self.length, area_m2=self.area,
+                    profile=profile, exterior_exponent=self.p(partition['exponent_parameter'], '1'))
             self.b0 = self.initial_partition['initial_bulk_m3']
         else:
             self.b0 = self.area*self.length/self.n
