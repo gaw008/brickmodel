@@ -1,7 +1,9 @@
 # 保存面短时生产运行入口
 
-`scripts/run_saved_reference_transient.py` 从 `public_reference_cases.saved_reference_transient` 读取冻结源码、完整case和必要输出路径，以既有 `model.integrate()` 完成声明过程。预算在根 `validation.saved_reference_transient.*`，外部沿既有固定deadline监督/回收流程。它不增加独立RHS/Jac/本构算子、搜索或拟合；正常solver及native summary调用真实计数。
+`scripts/run_saved_reference_transient.py` 读取冻结源码、完整case和必要路径，直接调用既有 `model.integrate()`。预算在根合同，外部既有固定deadline监督回收；正常solver与native summary真实调用计数，不增加独立RHS/Jac/本构算子、搜索或拟合。
 
-case的合法整记录构造顺序为既有P46/P44物理合同、P49保存13格mode3、baseline数值设置；输入在科学启动前冻结。observer读取原summary返回locals及原热导函数return，区分内面与边界、gas/water向外和heat into-left/into-brick；C采样保持0。原始量没有新归一尺度或阈值。
+case按既有P46/P44物理合同、P49保存13格mode3和baseline max_step/rtol/atol完整条目构造，启动前冻结。observer读取原summary返回locals及原热导函数return，保留内面与边界、gas/water outward和heat into-left/into-brick的带符号值，C采样保持0。没有新阈值、分母或物性。
 
-P51唯一实际attempt在最终JSON序列化处失败，数值未落盘。当前源补接已有 `plain(result)` 类型转换，仅静态核对、未重跑。已关闭科学窗口，本文不构成运行授权或新预算。原始冻结source及错误留存，完整失败、计数和资格边界见 `docs/FULL_CYCLE_P51_SAVED_REFERENCE_TRANSIENT.json/.md`。
+P51唯一实际attempt在最终JSON序列化失败，数值未落盘，原失败证据永久保留。当前源将既有 `plain(result)` 放到文件及stdout输出之前；独立P52唯一实际attempt已成功写出两者。P52 live合同为 `public_reference_cases.saved_reference_transient_json_recovery`；只有冻结snapshot做行政alias供原selector读取，原live P51失败合同不变。旧raw schema中的P51仅为复用格式名。
+
+P52原质量/元素/完整U、四gas及native累计熵判据通过限定0..10s；CaO预算0仍relative=null/passedfalse，整相不PASS。严格非负只覆盖21保存时刻，原生signed面输运不等于空间准确性；完整独立累计熵storage/production/exchange序列未保存，不能独立重放。两个科学窗口均关闭，本文不构成再次运行许可。详细事实与范围见 `docs/FULL_CYCLE_P51_SAVED_REFERENCE_TRANSIENT.json/.md` 与 `docs/FULL_CYCLE_P52_SAVED_REFERENCE_TRANSIENT.json/.md`，当前全模型仍未完成。

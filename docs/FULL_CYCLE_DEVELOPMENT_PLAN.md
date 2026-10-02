@@ -1026,3 +1026,24 @@ P51-B实际一次执行结束，但必要数值未落盘，保持部分未完成
 - [ ] **D51-GIT** 正常后继/push/remote，读取 `runs/full-cycle/p51-saved-reference-transient-final-delivery-state.json`。
 - [ ] **D51-DRIVE** 原父目录必要增量metadata，同一actualreceipt。
 - [ ] **D51-HISTORY** 实际恢复/独有Git/历史20GB/容量告警未通过。
+
+### P52 独立JSON输出修复前向登记 2026-10-02T17:02:39.551017+00:00
+
+旧P51首次失败与609参数完整保留、旧窗口关闭。本次独立1job/worker/attempt含全部失败/1constructor/1ODE，900s从新child启动至回收、不重置，全部必要冻结root/case/source/数值/收据<=2097152B，预计1800000B。物理/初态/阈值/13faces/原BDF及0.1s最大步、0.5s输出不变，只在输出前统一plain(result)。新7行政policy至616=144literature472assumed0measured，liveP51合同不改，新snapshot行政映射供既有CLI。
+
+- [x] **P52-A** 新根合同及冻结case/source、JSON文件与stdout同一类型转换准备完成。
+- [x] **P52-B** 唯一实际10s前向，真实持久数值/计数/原判据逐项读回，失败即闭窗。
+- [x] **P52-C** 有效物理资格/保留失败/耗时/矩阵与必要资料，Git/Drive另读actualreceipt。
+- [ ] **P52-QUALIFICATION** 原P45/空间/时间加密/八阶段/三方案反演UQ整CLI及whole项目仍未资格，不自动P53。
+
+0测试/SHA/护栏/物性/新名义尝试/fit/UQ/search/extraoperator/retry/恢复。P50错误PASS撤销、P45/P34/P40/P44和历史名义余水失败保持。
+
+### P52 实际收口 2026-10-02T17:16:00.750454+00:00
+
+P52 JSON类型转换已完成一次真实13格10秒生产前向并保存结果。实际2026-10-02 17:03:21.432530至17:03:32.613455UTC（洛杉矶10:03），11.181062291s/childCPU10.998613s，rc0回收；1job/worker/attempt/constructor/原solve_ivp，2537RHS含12Jac，另21native summary rates。唯一900s截止17:18:21.432530UTC未重置，窗口关闭。必要冻结源/输入/实际输出初测1682007B<2097152B。质量/元素/完整U相对残差6.822906222e-10/7.562083972e-9/1.578059999e-8，四gas最坏9.353029983e-6，native累计熵3.208755776e-9，均低于原0.001门槛。Cc/OH逐相预算通过；CaO初末/源/残差/预算均0，relative=null、passed=false、undefined_zero_budget，逐相整体不PASS。21保存时刻库存和各原生熵项非负，仅授保存时刻资格。原生带符号gas、水、携能和热面值已保存，有非浮点量级输运，仍不授空间精度。native累计熵最大残差已保存，但单独完整signed Sstorage/Sproduction/Sexchange累计序列未序列化，独立重放未资格。根616=144literature472assumed0measured，旧609完整记录、liveP51失败合同及科学核不改；当前名义12格mode0/Ca0/sampling0/directoff保持。P51首次序列化失败、P50两项初态错误PASS撤销、P45/P34/P40/P44失败和历史名义余水0.135892078740%>0.1%保留，0新名义尝试。当前时空加密/八阶段/三方案反演UQ/完整模型CLI仍未资格、whole_project_complete=false。Git/Drive另读实际收据，metadata不是恢复；历史20GB和GitHub容量未解决，不分配P53。
+
+P52-A/B/C勾选实施、一次实际执行和限定有效资格记录完成；P52-QUALIFICATION保持未完成，不授整个模型/物理数值验收完成。变更文件、数字与失败限制见本轮报告；科学11.181062291s/CPU10.998613s，行政至本条801.199s。0重跑/额外算子；下一科学项P53未分配，不因短窗成功自动推进。
+
+- [ ] **D52-GIT** 12路径正常后继/push/remote，最终事实读取 `runs/full-cycle/p52-saved-reference-transient-json-recovery-final-delivery-state.json`。
+- [ ] **D52-DRIVE** 一次必要增量名称/大小/父目录metadata，同一actualreceipt；不授恢复。
+- [ ] **D52-HISTORY** 实际恢复/独有Git/历史20GB/GitHub容量未通过。

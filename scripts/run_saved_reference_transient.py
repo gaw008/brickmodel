@@ -115,8 +115,9 @@ def main():
         'extra_independent_operators_fit_UQ_or_retry':0,
         'time_grid_8stage_Csampling_comparison_inverse_modelCLI_qualified':False,'whole_project_complete':False,
         'retained_P50_initial_inventory_eligibility':contract['retained_P50']}
+    result = plain(result)
     target = project / contract['result_output']
-    target.write_text(json.dumps(plain(result),ensure_ascii=False,separators=(',',':'),allow_nan=False)+'\n')
+    target.write_text(json.dumps(result,ensure_ascii=False,separators=(',',':'),allow_nan=False)+'\n')
     print(json.dumps({'result':str(target),'bytes':target.stat().st_size,'RHS':model.rhs_calls,'njev':report['solver']['njev'],
         'constructor_instances':result['actual_make_cycle_instances'],'completed_end':result['completed_declared_end']}),flush=True)
 
