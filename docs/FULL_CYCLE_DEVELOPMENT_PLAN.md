@@ -1161,6 +1161,30 @@ P57低温60秒原生前向已实际保存并闭窗。仅读沿P55真实26格27�
 
 P57-A/B/C仅勾选输入冻结、一次实际运行及必要原signed账本/限定保存点资料，P57-QUALIFICATION保持未完成。变更文件、数值、分母、失败限制见本轮报告及runs；科学40.095568166s/CPU39.867883s，行政至记录564.771s。下一候选同60s一次.025→.0125原四指标时间比较/900s/8MiB，只提议未登记预算，不自动启动或修核。
 
-- [ ] **D57-GIT** 12明确路径正常后继/push/remote，终态读 `runs/full-cycle/p57-low-temperature-60s-transient-final-delivery-state.json`。
-- [ ] **D57-DRIVE** 本P57独立真实upload与metadata名称/大小/原父目录，同终态收据，非恢复。
+- [x] **D57-GIT** 12明确路径正常后继/push/remote，终态读 `runs/full-cycle/p57-low-temperature-60s-transient-final-delivery-state.json`。
+- [x] **D57-DRIVE** 本P57独立真实upload与metadata名称/大小/原父目录，同终态收据，非恢复。
 - [ ] **D57-HISTORY** 历史完整恢复/独有Git/20GB/GitHub容量未通过。
+
+### P58 独立60秒时间加密登记 2026-10-02T19:52:11.985436+00:00
+
+仅读P57实际60s26格27面121点基线，不复制整旧结果或重算；基线3365399B作为真实科学依赖纳入完整必要字节。唯一case既有整record变化numerics.max_step.025→.0125s，最后应用新根policy/assumed数值记录；原物理/初态/faces/time_scale6/output.5/BDF/tols/298.15K/recipe/inlet/directL/域保持，0seed/interp/rebin/clip/floor/y0覆盖。原661完整records、所有oldlive合同及根名义max_step保持，新增8至669=144literature525assumed0measured；原P51schema历史格式，不覆盖真实26格60s身份。
+
+独立1job/worker/attempt含失败/constructor/ODE，900s自唯一childlaunch含imports/readers/solver/summary/JSON/reap固定deadline；任何失败保存闭窗，不retry/reset。必要全部actualuniquepaths：只读P57基线+本root/case/47sources/原与实际producer/121samples/signedledgers/计数/stdoutstderr/比较/所有相关livepaths/report/目标缺口分析/admin/声明程序≤12582912B。事前完整估计11826181B，0模型字节试算；压缩增量另列交付storage，不替代科学逻辑预算。
+
+- [x] **P58-A** 根独立预算/.0125完整record、same60s26case/47源与只读基线依赖冻结登记。
+- [x] **P58-B** 一次真实60s时间加密、真实内部调用/资源/闭窗。
+- [x] **P58-C** 原四量2%/原floors/signedraw时间比较及原账本/strict保存域收口。
+- [x] **P58-D** 按完整核心目标分清真正能力缺口、公开来源可实现/需材料数据/仅未执行验收，提出具体下一研发范围，不再自动延时加密循环。
+- [ ] **P58-QUALIFICATION** 60s空间/一般state/独立S势导数/8stage/三方案反演UQ/完整CLI/whole未资格。
+
+原4metrics严格abs(refined−baseline)/max(abs(refined),原floor)<.02；记录真实baseline/refined/signed差/分母/floor/raw无floor，不能改近零分母求PASS。OH耗量/directextent/CO2boundaryin新差仅saved值描述，无新阈值或PASS。原signed质量/元素/U/四gas/Ca percell源/inout/库存及budget/initial两归一化保持，.001不改；CaO零预算nullfalse。strict/域只121保存点；独立完整signed累计S未serialized不postrun重构/积分；nativefreewaterledger存在，drying专用诊断未适用另述。P45/P34/P40/P44/P50撤回/P51FAIL/历史名义余水.135892078740%>.1%保留，0新名义。0extraoperator/RHS/Jac/fit/UQ/search/tests/SHA/guards/env/物理公式改变/恢复/删历史。科学结果先報；后续普通Git/原Drive必要增量metadata与恢复历史分别判断。本轮后续研发仅评估/建议，未新预算/启动。
+
+### P58 实际收口 2026-10-02T20:02:31.380373+00:00
+
+P58同60秒26格一次时间加密已真实保存闭窗。只读P57实际基线3365399B，计入完整必要依赖，不复制整结果或重算。唯一case既有完整record变化max_step.025→.0125s，time_scale6/output.5/原tols/BDF/26cells27faces/298.15K/物理初态与direct合成通道保持。实际2026-10-02T19:53:10.618707+00:00至2026-10-02T19:54:01.626018+00:00，wall51.007199042s/CPU50.759883s，rc0/reaped/closed，无超时，900s唯一deadline2026-10-02T20:08:10.618707+00:00不重置。1job/worker/attempt/constructor/ODE，11860RHS含6Jac，nfev9832，另121native summaryrates；全内部Pythonframe与constructor内1原partitionprimitive分别保存。原四指标按原floor/2%时间判据全部通过，最坏1.42849785334e-08；signedraw/真实分母及floor分别保存，收缩用.001/峰温差用1K；OH耗量/directextent/CO2输入差仅描述，无新准入或精度PASS。质量/元素/完整U最大relative=5.75680558139e-10/5.79169453786e-09/1.37182919572e-08，四gasbudget最坏1.90729141193e-06、native累计S2.81078038594e-09<原.001。Cc/OH通过，CaO零预算null/passfalse，整体相不PASS；原signed负水相迁移/边界方向均保留。strict库存和所存熵/域只121保存点非负域内，不授between/BDF内部/Newton/complexstep。独立完整signed累计S未serialized，势导数未资格；本次仅固定60s四量时间对，不授空间/所有state/所有反应/原八阶段/实材。旧661完整根record及所有旧live合同/六核心保持，新增8budget数值至669=144literature525assumed0measured；根名义max_step/N12/mode0Ca0sampling0/directoff不改。P45/P34/P40/P44/P50撤回/P51失败及历史名义余水.135892078740%>.1%保留，0新名义尝试。核心目标静态评估另文件：主耦合已在核中，明确下一真代码缺口是完整signedS生产账本；P06固定配方portlandite与Ca证据留存也有具体缺口。whole模型仍未完成，Git/Drive/恢复/历史容量分别登记，下一研发/预算未分配。
+
+P58-A/B/C/D仅勾选冻结、真实单次time加密及原四判据/必要账本和目标缺口评估；QUALIFICATION不勾选。科学51.007199042s/CPU50.759883s，行政至记录619.395s。文件与数值见report/assessment，最终byte含真实只读基线及所有实际相关livepaths/adminunique计数。下一选定具体scope为原生完整signedS生产账本，不继续自动延时加密；提案预算/2stageODE明确但未登记授权/启动。
+
+- [ ] **D58-GIT** 12实际明确变更paths正常后继/push/remote，终态读 `runs/full-cycle/p58-low-temperature-60s-time-refinement-final-delivery-state.json`。
+- [ ] **D58-DRIVE** 本P58一次真实upload与metadata逐id/name/size/parent；同终态收据，非restore。
+- [ ] **D58-HISTORY** 历史完整恢复/独有Git/20GB/GitHub容量未通过。

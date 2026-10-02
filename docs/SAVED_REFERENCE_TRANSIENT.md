@@ -17,3 +17,5 @@ P55 `saved_reference_26cell_time_refinement`：复用P54实际26格27面case，�
 P56独立离线观察入口 `scripts/run_calcium_energy_observation.py` 读取P56 root-snapshot，原P4512格declared_zero旧/新各一次RHS并记录原操作值。2ctor/2RHS、0ODE，原U向量FAIL重现且归因已保存；不是动态入口或独立势导数验收。详见 `docs/FULL_CYCLE_P56_ENERGY_OPERATION_OBSERVATION.json`、`runs/full-cycle/p56-calcium-energy-operation-observation-final-delivery-state.json`。
 
 P57同一离线入口 `scripts/run_saved_reference_transient.py` 使用 `runs/full-cycle/p57-low-temperature-60s-transient/root-snapshot.json` 与项目根，真实26格27面/0..60s/121样本、1ODE已执行。仅case最后完整time_scale6，计数扩原生Pythonframe；旧P51 schema为历史格式。限定验收见 `docs/FULL_CYCLE_P57_LOW_TEMPERATURE_60S.json`，交付读 `runs/full-cycle/p57-low-temperature-60s-transient-final-delivery-state.json`；60s未时空加密，不能用10s资格外推。
+
+P58同入口/冻结原producer，`runs/full-cycle/p58-low-temperature-60s-time-refinement/root-snapshot.json`；同26cells27faces/60s/time_scale6/121点，仅case最后max_step.0125；真实一次ODE及原四time判据通过。基线只读并计科学字节，CaOnullfalse，未授空间/全模型；详见 `docs/FULL_CYCLE_P58_60S_TIME_REFINEMENT.json`、`docs/FULL_CYCLE_CORE_DEVELOPMENT_ASSESSMENT.md` 与 `runs/full-cycle/p58-low-temperature-60s-time-refinement-final-delivery-state.json`。
