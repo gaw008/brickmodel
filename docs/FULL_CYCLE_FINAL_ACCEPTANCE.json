@@ -1,14 +1,14 @@
 {
   "schema": "full_cycle_final_acceptance_matrix_v1",
-  "recorded_utc": "2026-10-02T18:08:35.597727+00:00",
-  "status": "P54_original_four_fixed_space_metrics_pass_wholemodel_partial",
+  "recorded_utc": "2026-10-02T18:32:06.372123+00:00",
+  "status": "P55_original_four_fixed26_time_metrics_pass_wholemodel_partial",
   "identity": "approximate_simulation_not_measured_material",
   "parent_commit": "d8bc6f1b09e0b6d10cdcf4abf35e634035a36d08",
   "parameter_file": "parameters.full_cycle.json",
-  "parameter_count": 634,
+  "parameter_count": 642,
   "parameter_status_counts": {
     "literature": 144,
-    "assumed": 490,
+    "assumed": 498,
     "measured": 0
   },
   "implementation": {
@@ -146,7 +146,7 @@
   },
   "timing_note": "Elapsed wall time from initial plan creation includes computation, parallel overlap, reviews and user-directed continuation; not summed CPU/scientific time. P16 and P18 execution receipts report separately measured batch times.",
   "delivery": {
-    "actual_receipt": "runs/full-cycle/p54-saved-reference-space-refinement-final-delivery-state.json",
+    "actual_receipt": "runs/full-cycle/p55-saved-reference-26cell-time-refinement-final-delivery-state.json",
     "status": "actualGitDrivefollow",
     "metadata_not_recovery": true,
     "history20GB_capacity_resolved": false
@@ -203,7 +203,7 @@
     }
   },
   "base_model_complete": false,
-  "current_scope": "P54独立一次13→26格保存分区空间比较已真实保存并闭窗（2026-10-02T18:08:35.597727+00:00）。仅读复用P53真实13格/.05s/10s结果，不复制整份或重跑；原14faces形成13区间逐段二分至27faces26格，原面保留偶数索引，area/halfthickness与物理/298.15K/Ca1/direct通道/BDF/rtol/atol/max_step.05/output.5保持。新初态仅native model生成，不插值/rebin/seed/clip/y0覆盖。实际17:58:45.450309至17:59:03.467780UTC（洛杉矶10:58），监督18.017544333s/childCPU17.791956s，rc0回收/未超时；1job/worker/attempt/constructor/原solve_ivp，4106RHS含10Jac，另21summary rates，constructor内部1原分区primitive、0额外producer。唯一900s截止18:13:45.450309UTC未重置，初必要输入/冻结源/输出2032140B<3145728B。原四空间指标按max(abs(refined26),原floor)<原.02全部通过，最坏5.288244252e-03（0.528824425%）；收缩与峰温差使用原.001/1K，raw无floor分别.0195746832/.0182206191仅描述，directextent变化也无新阈值/资格。质量/元素/完整U最坏1.469543941e-08、四gas最坏8.515348875e-06、native累计熵3.001470368e-09<原.001；Cc/OH通过、CaO零预算null/passfalse整体相不PASS。strict仅21保存点，独立完整signedS累计分解/势导数未资格；几何signed成对/全局舍入差保留，无几何容差PASS。根634=144literature490assumed0measured，旧624完整records/P49/P51/P52/P53live合同/科学核/名义12格mode0Ca0sampling0directoff不改。P45/P34/P40/P44旧FAIL、P50两项错误初态PASS撤销、P51输出失败及名义余水.135892078740%>.1%保留，0新名义尝试。只授本固定空间对的四指标，不授fine26时间/一般空间全状态/八阶段/三方案反演UQ/完整CLI/whole模型；GitDrive恢复历史容量另列，不分配P55。",
+  "current_scope": "P55 同26格时间加密已实际保存并闭窗。只读 P54 26格27面、10s、max_step=0.05s 基准，本轮仅将完整 max_step 记录改为0.025s，物理、初态、几何、BDF容差和0.5s输出保持。实际2026-10-02T18:26:19.861451+00:00至2026-10-02T18:26:39.502953+00:00（洛杉矶启动2026-10-02T11:26:19.861451-07:00），监督耗时19.641302125s、子进程CPU18.998931s；rc0、回收、未超时。1作业/worker/attempt/constructor/solve_ivp，4460次RHS含10次Jac，另21次原生summary rates；构造内部1次原分区primitive、0额外producer。原四时间指标均<0.02，最坏8.693064046e-10，按max(abs(P55细化值),原floor)归一化；带符号差、实际尺度、floor是否启用及无floor描述比值分别保存。质量/元素/完整U最坏1.469543941e-08，四gas最坏8.519561906e-06，原生累计熵3.001470368e-09均<原0.001。Cc/OH逐相通过，CaO零预算relative=null、passed=false，整体相不PASS。严格库存和熵仅21保存时刻；完整独立signed S累计分解和独立势导数仍未资格。根642=144literature/498assumed/0measured，旧634完整记录、旧6个live合同和科学核保持。原名义12格/mode0/Ca0/sampling0/directoff保持；P45/P34/P40/P44失败、P50错误初态PASS撤销和P51输出失败保留。历史名义余水0.135892078740%>0.1%，0新名义尝试。本次只授同26格10s工况的原四时间指标，P54固定空间比较资格按原范围保留；一般空间、全状态、独立势导数、全八阶段、三方案/反演UQ和完整模型CLI仍未资格，whole_project_complete=false。Git/Drive增量、实际恢复、历史存储分别登记；本轮不分配P56、0.0125s或52格任务。",
   "P11": {
     "status": "base_model_complete_with_nominal_process_failure_and_future_material_calibration",
     "verification": {
@@ -1579,31 +1579,36 @@
     "P51_failed_output": "docs/FULL_CYCLE_P51_SAVED_REFERENCE_TRANSIENT.json",
     "P52_limited_actual_numeric": "docs/FULL_CYCLE_P52_SAVED_REFERENCE_TRANSIENT.json",
     "P53_original_four_time_metrics": "docs/FULL_CYCLE_P53_TIME_REFINEMENT.json",
-    "P54_fixed4space": "docs/FULL_CYCLE_P54_SPACE_REFINEMENT.json"
+    "P54_fixed4space": "docs/FULL_CYCLE_P54_SPACE_REFINEMENT.json",
+    "P55_fixed26_time": "docs/FULL_CYCLE_P55_26CELL_TIME_REFINEMENT.json"
   },
   "current_nominal_drying_remaining_fraction": 0.001358920787402553,
   "whole_project_complete_definition": "Scoped implementation and physics/numerics, version-matched declared scenario evidence and observable interfaces are separate from process/material/delivery qualifications. P21 old kernel distribution cannot qualify P24 kernel.",
   "historical_model_closeout_wall_s_from_plan_creation": 4403.9089,
   "current_acceptance_matrix": [
     {
-      "item": "P54_unique26cell10s_forward",
+      "item": "P55_unique26cell10s_forward",
       "outcome": "actualsuccess"
     },
     {
-      "item": "P54_original4fixedspace_metrics",
-      "outcome": "pass_fixed13vs26_10s_.05_originalfloors",
-      "maximum_relative": 0.005288244251573815
+      "item": "P55_original4fixed26_time_metrics",
+      "outcome": "pass_same26_10s_.05vs.025_originalfloors",
+      "maximum_relative": 8.69306404638337e-10
     },
     {
-      "item": "fine26time_generalspace_allstates",
+      "item": "P54_original4fixedspace_metrics",
+      "outcome": "prior_fixed13vs26_.05_10s_qualification_retained"
+    },
+    {
+      "item": "generalspace_allstates",
       "outcome": "notqualified"
     },
     {
-      "item": "P54_mass_elements_completeU_fourgas_nativeentropy",
+      "item": "P55_mass_elements_completeU_fourgas_nativeentropy",
       "outcome": "pass_fixed26cell10s"
     },
     {
-      "item": "P54_CaO_allphase_relative",
+      "item": "P55_CaO_allphase_relative",
       "outcome": "undefined_zero_budget_notqualified"
     },
     {
@@ -1631,7 +1636,7 @@
     {
       "item": "Git_Drive_restore_history",
       "outcome": "separatedelivery",
-      "evidence": "runs/full-cycle/p54-saved-reference-space-refinement-final-delivery-state.json"
+      "evidence": "runs/full-cycle/p55-saved-reference-26cell-time-refinement-final-delivery-state.json"
     }
   ],
   "final_matrix_independent_review": {
@@ -1742,11 +1747,11 @@
   },
   "historical_P18_model_completion_wall_s_from_plan_creation": 14941.526078,
   "current_model_completion_status": {
-    "implementation": "Existing producer/kernel unchanged;new26/27face complete geometry records nativeinit",
-    "physics_numerics": "Original4space PASS fixed13vs26/.05s/10s;priorP53time PASS13only;fine26time/independentS/8stage unqualified;CaOundefined",
-    "nominal_process": "Historicalwater.135892078740%>.1%FAIL;0newattempt",
-    "material": "634=144lit490assumed0measured/no targetbrickL",
-    "delivery": "Separateactualreceipt;metadata notrestore/historycapacity unresolved",
+    "implementation": "Existing producer/kernel unchanged; one whole .025s max_step record on actual same26case/nativeinit",
+    "physics_numerics": "Original four time PASS for fixed26/10s/.05vs.025; P54 fixedspace originalscope retained. Generalspace/allstates/independentS/8stage/wholemodel unqualified; CaOundefined.",
+    "nominal_process": "Historical water .135892078740%>.1% FAIL; zero new attempts",
+    "material": "642=144lit498assumed0measured/no targetbrickL",
+    "delivery": "Separate actualreceipt; metadata notrestore/historycapacity unresolved",
     "next_budget_allocated": false
   },
   "historical_pre_P22_model_capability_closeout_complete": true,
@@ -1818,7 +1823,7 @@
     "declared_to_reviewed_wall_s": 430.997672
   },
   "historical_pre_P22_status": "declared_approximate_model_work_complete_physics_numerics_passed_process_failed",
-  "physical_numerical_acceptance_scope": "P54original4fixed13vs26spacePASS;P53time13only;fine26time/CaO/potential/8stage/whole incomplete",
+  "physical_numerical_acceptance_scope": "P55original4fixed26timePASS;P54fixedspace originalscope retained;generalspace/CaO/potential/8stage/whole incomplete",
   "P23": {
     "status": "completed_bounded_source_audit",
     "evidence": [
@@ -2710,6 +2715,34 @@
       "maximum_original_space_relative": 0.005288244251573815,
       "criterion": "refined26absolute/originalfloor,strict<.02",
       "fine26_time_generalspace_allstates_qualified": false,
+      "ordinary_balances_native_entropy_passed_fixedwindow": true,
+      "phase_all_relative_qualified": false,
+      "CaO": "nullfalse/undefined_zero_budget",
+      "strict_scope": "21savedinstants",
+      "whole_model_qualified": false,
+      "new_postrun_calls": 0
+    },
+    "P55": {
+      "report": "docs/FULL_CYCLE_P55_26CELL_TIME_REFINEMENT.json",
+      "actual_counts": {
+        "jobs": 1,
+        "workers": 1,
+        "attempts_including_failure": 1,
+        "make_cycle_instances": 1,
+        "observed_solve_ivp_entries": 1,
+        "RHS_including_Jacobian": 4460,
+        "Jacobian": 10,
+        "summary_rates": 21,
+        "initial_partition_primitive_inside_constructor": 1,
+        "extra_geometryproducer_or_primitive_calls": 0
+      },
+      "operation_passed": true,
+      "numerical_report_saved": true,
+      "original_four_fixed26_time_metrics_qualified": true,
+      "maximum_original_time_relative": 8.69306404638337e-10,
+      "criterion": "refinedP55absolute/originalfloor,strict<.02",
+      "prior_P54_fixedspace_originalscope_retained": true,
+      "generalspace_allstates_qualified": false,
       "ordinary_balances_native_entropy_passed_fixedwindow": true,
       "phase_all_relative_qualified": false,
       "CaO": "nullfalse/undefined_zero_budget",
@@ -8430,22 +8463,24 @@
     }
   },
   "current_root_parameter_metadata": {
-    "count": 634,
+    "count": 642,
     "status_counts": {
       "literature": 144,
-      "assumed": 490,
+      "assumed": 498,
       "measured": 0
     },
-    "old624_complete_records_preserved": true,
+    "old634_complete_records_preserved": true,
     "old_live_contracts_preserved": {
       "saved_reference_partition": true,
       "saved_reference_transient": true,
       "saved_reference_transient_json_recovery": true,
-      "saved_reference_time_refinement": true
+      "saved_reference_time_refinement": true,
+      "saved_reference_space_partition": true,
+      "saved_reference_space_refinement": true
     },
-    "new10_numerical_operation_policy_assumed": true
+    "new8_numerical_operation_policy_assumed": true
   },
-  "scientific_kernel_qualification": "Kernel unchanged;newfixedspace4metrics not substitute priorfailures/potential/wholemodel acceptance",
+  "scientific_kernel_qualification": "Kernel unchanged; shortcase time/space metrics do not supersede prior failures or wholemodel acceptance",
   "historical_pre_P46_current_scope": "P45显式CaO坐标及必要叶模块已实现（2026-10-02T04:47:36.040486+00:00），局部资格partial。固定两物理上下文共4构造/4RHS/2sciencejobs，合计48项局部核查47通过/1净U比较FAIL（raw1.421085535e-14W、原scale4.675191614e-6W、relative3.039630570e-9>1e-11）保留；既有分项2645.316W补充诊断relative5.372082305e-18另列。明示正内点附录24/24PASS、0.259811s，原窗口关闭不延、0重复zero/ODE/Jac/fit/UQ。新初始零CaO精确0、所测新零/正内点三支熵非负仅瞬时，不授动态资格。根558=144literature414assumed0measured，旧541保持、新增表示及运行政策，无新物性，名义mode0/direct未启用。参考体积保存数据映射与外部C序列化数值一致；72熵记录14负值全保留；仅纳入F三来源/23文献观测，无L。原P34/P40/P44及名义0.135892078740%>0.1%失败、当前8阶段/加密/三方案/反演/UQ/CLI未资格和wholefalse保持。",
   "historical_pre_P46_current_model_completion_status": {
     "implementation": "ExplicitCaOopt-in/native shared chains and selected saved-data leaves implemented",
@@ -9461,7 +9496,7 @@
       "P45_prior": "929c4c3a ordinarypush/remotePASS,1377612B/Drive1a0Ci66j6N5eQZDzPBEn90U3okRlq9dz0 metadataPASS"
     }
   },
-  "current_scope_qualification": "Original4fixedspace comparisonPASS;fine26time/generalspace/allstates/potential/8stages notqualified",
+  "current_scope_qualification": "Original four fixed26 time comparison PASS; generalspace/allstates/potential/8stages unqualified",
   "historical_pre_P47_current_scope": "P46首个实际mode1短时动态单例已完成（2026-10-02T05:55:32.140418+00:00）：累计2次进程启动，首读参失败1次保留；实际1构造/1ODE，2379RHS含12Jac，solver9.203657s、CPU含构造9.415551s、构造至回收9.581245s，原300s窗口未延。原质量/元素/完整能量最大相对1.548557663e-8、四gas预算最大9.103027113e-6，均<0.001；熵账本3.150938169e-9，保存样本OH/carbonate最小0、direct最小6.534691959e-12W/K，accepted knots及t_eval原物理域通过。Cc/OH无floor逐相相对预算通过；CaO初末/源/残差均0、预算0，相对null且passed=false，精确零观察不能授相对预算PASS。与保存P44基准四指标最大变化7.389644452e-13仅表示诊断，0新time/grid；direct extent差+4.261998740e-16mol。根569=144literature425assumed0measured，16操作source-ID修复、旧7来源元数据例外及失败快照保留，45host929c/物理/solver保持，名义mode0/direct未启用。全八阶段/加密/三方案/反演/UQ/CLI当前模式未资格；P45净U、P34/P40/P44失败及名义余水0.135892078740%>0.1%保持，0新名义尝试，wholefalse。本轮实际模型额度关闭，下一加密仅候选；Git、Drive元数据与恢复另列。",
   "historical_pre_P47_current_model_completion_status": {
     "implementation": "P45 source929c retained; root registered-source fix and explicit actual subrecord complete",
@@ -10595,6 +10630,115 @@
     "maximum_original_space_relative": 0.005288244251573815,
     "criterion": "refined26absolute/originalfloor,strict<.02",
     "fine26_time_generalspace_allstates_qualified": false,
+    "ordinary_balances_native_entropy_passed_fixedwindow": true,
+    "phase_all_relative_qualified": false,
+    "CaO": "nullfalse/undefined_zero_budget",
+    "strict_scope": "21savedinstants",
+    "whole_model_qualified": false,
+    "new_postrun_calls": 0
+  },
+  "historical_pre_P55_current_scope": "P54独立一次13→26格保存分区空间比较已真实保存并闭窗（2026-10-02T18:08:35.597727+00:00）。仅读复用P53真实13格/.05s/10s结果，不复制整份或重跑；原14faces形成13区间逐段二分至27faces26格，原面保留偶数索引，area/halfthickness与物理/298.15K/Ca1/direct通道/BDF/rtol/atol/max_step.05/output.5保持。新初态仅native model生成，不插值/rebin/seed/clip/y0覆盖。实际17:58:45.450309至17:59:03.467780UTC（洛杉矶10:58），监督18.017544333s/childCPU17.791956s，rc0回收/未超时；1job/worker/attempt/constructor/原solve_ivp，4106RHS含10Jac，另21summary rates，constructor内部1原分区primitive、0额外producer。唯一900s截止18:13:45.450309UTC未重置，初必要输入/冻结源/输出2032140B<3145728B。原四空间指标按max(abs(refined26),原floor)<原.02全部通过，最坏5.288244252e-03（0.528824425%）；收缩与峰温差使用原.001/1K，raw无floor分别.0195746832/.0182206191仅描述，directextent变化也无新阈值/资格。质量/元素/完整U最坏1.469543941e-08、四gas最坏8.515348875e-06、native累计熵3.001470368e-09<原.001；Cc/OH通过、CaO零预算null/passfalse整体相不PASS。strict仅21保存点，独立完整signedS累计分解/势导数未资格；几何signed成对/全局舍入差保留，无几何容差PASS。根634=144literature490assumed0measured，旧624完整records/P49/P51/P52/P53live合同/科学核/名义12格mode0Ca0sampling0directoff不改。P45/P34/P40/P44旧FAIL、P50两项错误初态PASS撤销、P51输出失败及名义余水.135892078740%>.1%保留，0新名义尝试。只授本固定空间对的四指标，不授fine26时间/一般空间全状态/八阶段/三方案反演UQ/完整CLI/whole模型；GitDrive恢复历史容量另列，不分配P55。",
+  "historical_pre_P55_current_model_completion_status": {
+    "implementation": "Existing producer/kernel unchanged;new26/27face complete geometry records nativeinit",
+    "physics_numerics": "Original4space PASS fixed13vs26/.05s/10s;priorP53time PASS13only;fine26time/independentS/8stage unqualified;CaOundefined",
+    "nominal_process": "Historicalwater.135892078740%>.1%FAIL;0newattempt",
+    "material": "634=144lit490assumed0measured/no targetbrickL",
+    "delivery": "Separateactualreceipt;metadata notrestore/historycapacity unresolved",
+    "next_budget_allocated": false
+  },
+  "historical_pre_P55_current_root_parameter_metadata": {
+    "count": 634,
+    "status_counts": {
+      "literature": 144,
+      "assumed": 490,
+      "measured": 0
+    },
+    "old624_complete_records_preserved": true,
+    "old_live_contracts_preserved": {
+      "saved_reference_partition": true,
+      "saved_reference_transient": true,
+      "saved_reference_transient_json_recovery": true,
+      "saved_reference_time_refinement": true
+    },
+    "new10_numerical_operation_policy_assumed": true
+  },
+  "historical_pre_P55_current_acceptance_matrix": [
+    {
+      "item": "P54_unique26cell10s_forward",
+      "outcome": "actualsuccess"
+    },
+    {
+      "item": "P54_original4fixedspace_metrics",
+      "outcome": "pass_fixed13vs26_10s_.05_originalfloors",
+      "maximum_relative": 0.005288244251573815
+    },
+    {
+      "item": "fine26time_generalspace_allstates",
+      "outcome": "notqualified"
+    },
+    {
+      "item": "P54_mass_elements_completeU_fourgas_nativeentropy",
+      "outcome": "pass_fixed26cell10s"
+    },
+    {
+      "item": "P54_CaO_allphase_relative",
+      "outcome": "undefined_zero_budget_notqualified"
+    },
+    {
+      "item": "strict_inventory_entropy",
+      "outcome": "21savedinstants_only"
+    },
+    {
+      "item": "independentS_potential_8stage_compare_inverse_UQ_completeCLI",
+      "outcome": "notqualified"
+    },
+    {
+      "item": "prior_P45_P34_P40_P44_P50_P51failures",
+      "outcome": "retained_notreexecuted"
+    },
+    {
+      "item": "nominal_drying",
+      "outcome": "historicalfailed",
+      "new_attempts": 0
+    },
+    {
+      "item": "targetmaterial",
+      "outcome": "pendingmeasurements",
+      "measured": 0
+    },
+    {
+      "item": "Git_Drive_restore_history",
+      "outcome": "separatedelivery",
+      "evidence": "runs/full-cycle/p54-saved-reference-space-refinement-final-delivery-state.json"
+    }
+  ],
+  "historical_pre_P55_delivery": {
+    "actual_receipt": "runs/full-cycle/p54-saved-reference-space-refinement-final-delivery-state.json",
+    "status": "actualGitDrivefollow",
+    "metadata_not_recovery": true,
+    "history20GB_capacity_resolved": false
+  },
+  "P55": {
+    "report": "docs/FULL_CYCLE_P55_26CELL_TIME_REFINEMENT.json",
+    "actual_counts": {
+      "jobs": 1,
+      "workers": 1,
+      "attempts_including_failure": 1,
+      "make_cycle_instances": 1,
+      "observed_solve_ivp_entries": 1,
+      "RHS_including_Jacobian": 4460,
+      "Jacobian": 10,
+      "summary_rates": 21,
+      "initial_partition_primitive_inside_constructor": 1,
+      "extra_geometryproducer_or_primitive_calls": 0
+    },
+    "operation_passed": true,
+    "numerical_report_saved": true,
+    "original_four_fixed26_time_metrics_qualified": true,
+    "maximum_original_time_relative": 8.69306404638337e-10,
+    "criterion": "refinedP55absolute/originalfloor,strict<.02",
+    "prior_P54_fixedspace_originalscope_retained": true,
+    "generalspace_allstates_qualified": false,
     "ordinary_balances_native_entropy_passed_fixedwindow": true,
     "phase_all_relative_qualified": false,
     "CaO": "nullfalse/undefined_zero_budget",
