@@ -1260,9 +1260,9 @@ P60 原生两阶段signed S生产和唯一saved-JSON回放已实际完成并闭�
 - [x] **P61-64-B** v2当前stage/gas/recipe有效条件及legacy完整source记录、compare/save/measuredfixed同一投影，CLI/Python真实来源与派生变换接线。
 - [x] **P61-64-C** P58合法case新v2纯JSON输出与真正既有83行synthetic数据纯prepare输出；无新fixture/测量/模型或拟合。
 - [x] **P61-64-D** 必要AST/API调用链及实际执行边界记录，旧bundle/候选65→72原证据不改，不称动态拟合或map资格。
-- [ ] **D61-GIT** 本轮16明确路径正常后继/普通push/remote。
-- [ ] **D61-DRIVE** 原目录一次必要增量name/size/parent/source_visibility读回，非恢复。
-- [ ] **P61-64-FINAL** 所有实际path/base和stagedblob完整最终一次收口，最后receipt晚于包明确未收，不递归打包。
+- [x] **D61-GIT** 本轮16明确路径正常后继/普通push/remote。
+- [x] **D61-DRIVE** 原目录一次必要增量name/size/parent/source_visibility读回，非恢复。
+- [x] **P61-64-FINAL** 所有实际path/base和stagedblob完整最终一次收口，最后receipt晚于包明确未收，不递归打包。
 
 map_observations会构造模型本轮不执行，predict/fit/三个demo/完整数值CLI及measured/reference缺真实input的路径保持未执行；只声明接线不造来源。工艺FAIL/0measured/wholefalse、CaOnullfalse、P58/P60资源FAIL及P34/P40/P44/P45/P50/P51保持。
 
@@ -1275,3 +1275,33 @@ P61 有效case条件与真实来源接口已实现，实际JSON功能完成（20
 实现及执行证据 `docs/FULL_CYCLE_P61_CASE_CONDITIONS.json/md`。下一代码缺口为inverse/UQ Ca与native entropy证据保留；当前无下一科学窗口。Git、Drive元数据、实际恢复和20GB/GitHub容量分别判断。
 
 GATE/B/C/D仅其实际范围勾选。D61-GIT/DRIVE/FINAL在本次唯一提交之前仍待真实交付；最终localreceipt给出实际完成状态和勾选读回依据，下一开发启动据它续勾，不为末receipt递归commit/打包。P60-GATE保持未勾选。
+
+### P62 独立64MiB反演/UQ同源审计留存 2026-10-02T22:59:15.597732+00:00
+
+P61真实末receipt已读：normalHEAD/remote6b3071f2，16paths干净，完整25707870/67108864B、Drive1154998B45members元数据通过/access_not_verified/0restore、晚收据未在包中。据实际收据续勾D61/FINAL，不追认旧32/P58/P60FAIL。本轮新独立64MiB，只沿真正需要的源码/合同/合法P60和P58savedJSON/原与stagedGitblob/原件冻结/输出/行政/一档案完整计量，不自动纳入P61全2080path。
+
+- [x] **P62-A** 独立根行政额度/旧690完整records保护、原root与两通路source冻结、明确合法savedJSON输入和完整reservations。
+- [x] **P62-GATE** 全必要A/B路径、原Gitblob、未来staged及所有输出/admin/档案growth完整保守预检。
+- [x] **P62-B** 标准库共享Ca/原生S-Ip-Ie审计提取；完整deepcopy、来源路径/present-absent-explicitnull，原符号/尺度/局部false/资格保持。
+- [x] **P62-C** inverse callback/progress/final/三synthetic truth及每条UQrecord/progress/final静态接线；原ordinary指标/排名不替换。
+- [x] **P62-D** 一次实际标准库CLI请求从P60/P58合法wrapper.report导出审计，P58熵字段absent不回填；0模型构造/RHS/Jac/ODE/predict/fit/UQ/新独立物理算子。
+- [x] **P62-E** 必要源/JSON资格读回、更新当前矩阵/下一实际物理主流程与材料缺口。
+- [ ] **D62-GIT** 本轮16明确路径正常后继/普通push/remote。
+- [ ] **D62-DRIVE** 原目录一次必要增量metadata，非恢复。
+- [ ] **P62-FINAL** 全actualpaths/原与stagedblob/档案/末receipt自身一次收口，无递归commit或打包。
+
+0新science窗口/测试/SHA/fixtures/guards/defaults/retry/env参数/新agents/文献广搜/自动化/memory/恢复或删除；旧物理失败、名义.135892078740%>.1%、CaOnullfalse/wholefalse/0measured保留。
+
+### P62 实际留存接线与导出完成
+
+P62 inverse/UQ共享审计留存已实现并实际导出（2026-10-02T23:12:31.319549+00:00）。标准库模块`audit_evidence.py`完整deepcopy源Ca/entropy账本，保留signed/原尺度/各自origin/完整records/原qualification与局部nullfalse；present/absent/explicit-null明确区分，缺字段不造payload或PASS。inverse callback/evaluation/progress/final forward_*及三个synthetic truth audit、UQ每条newrecord.forward_audit/progress/final同源接线；原普通预算/气体缺失诊断/physicalflag/拟合判据/排名保持。一次实际stdlib直接文件CLI请求（runpy __main__，显式真实source/report路径）读取P60/P58合法wrapper.report，用时0.127491s、导出728073B；实际main/export各1、audit/summary/ledgercopy各2、0项目包导入/模型构造/RHS/Jac/ODE/predict/fit/UQ/新物理算子。P60完整121点S/Ip/Ie/原scale/两stage非零origin保留，P58 entropy_ledger absent/不回填；每个现存ledger的JSON值及signed-zero文本一致。ordinaryphysical=true仍与allCa=false/CaO零预算relative=null/false并列。explicit-null顶层分支仅实现未动态覆盖，真实嵌套CaOnullfalse保留。inverse/三demo/UQ数值入口未运行，不授新的科学资格。
+
+根691=144literature/547assumed/0measured，旧690完整records/名义物理与P61显式case来源/版本合同保持；新增仅独立64MiB行政额度。原完整事前33468055≤67108864；必要序列化补充计当前输入/13实际原Gitblob及原六reserve完整34363231≤67108864，最终全部actualpath/原及16stagedblob/档案/末receipt读`runs/full-cycle/p62-forward-audit-retention-final-delivery-state.json`。P61-64真实交付25707870B已承接续勾；旧P61-32/P58/P60完整资源FAIL不能由本新预算追认。P34/P40/P44/P45/P50撤回/P51、名义余水0.1358920787402553%>0.1%、CaO零预算及wholefalse保持。此轮改善证据留存，物理数值验收没有新增进展；Git/Drive元数据/实际恢复/历史20GB与GitHub容量分别判断。
+
+下一真正主流程建议：先有界独立U/S势及反应/输运分支一致性资格，再最新耦合8stage原生baseline、受影响dt/grid各加密一次与三固定条件方案；须另明确实际预算和完整case，不能静默把root名义开关换成公开短case的storage/direct/Ca开关，也不重启已耗尽干燥搜索。公开科学源与现有模型可继续闭合这些数值事项；目标材料迁移率/活度孔演化/完整工艺及产品性能对照仍待实测。P62不分配或启动下一科学窗口。完整报告`docs/FULL_CYCLE_P62_FORWARD_AUDIT.json/md`；末local交付receipt晚于一次commit/archive，明确未收且不递归补包。
+
+现有host write_json签名保持并委托同一stdlib json_native/write_json，显式传其已导入np.ndarray/np.generic类型；既有tolist/item与递归dict/list/tuple表达不丢数值符号/nullfalse，未知对象原JSON错误直接暴露，无默认/fallback。full_cycle.py除writer和导入外全部函数/classes AST保持。新NumPy类型分支仅静态接线，未执行；本轮唯一导出已执行源快照保留，不重跑导出或造类型fixture。
+
+GATE/B/C/D/E只勾实际范围；D62-GIT/DRIVE/FINAL在唯一commit之前保持待真实receipt。下一启动据末receipt续勾，不为最后收据递归commit/archive。
+
+P62必要共享序列化补充：原15路径扩为16（新增现有models/full_cycle.py writer委托），原六reserve数值保持，原Gitblob共13；完整补充estimate34363231/67108864B在修改前通过。物理函数/class AST保持、NumPy分支仅静态，原唯一导出不重跑。

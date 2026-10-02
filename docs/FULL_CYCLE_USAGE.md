@@ -1,5 +1,23 @@
 # 全流程近似模型：离线使用与结果解释
 
+P62 审计导出直接文件入口（标准库离线、不导入项目包）：
+
+```sh
+python3 -B src/sludge_vme/audit_evidence.py runs/full-cycle/p60-native-signed-entropy-two-stage/result.json runs/full-cycle/p58-low-temperature-60s-time-refinement/result.json --report-path report --out runs/full-cycle/p62-forward-audit-retention/saved-forward-audits.json
+```
+
+本轮已通过stdlib runpy执行同一main/argv一次，无需为相同证据重复执行。必须显式给真实saved文件、report键路径和out；源ordinary必需budget字段缺失直接报错，optional Ca/S缺失记录absent，不回填或把旧thermoflag当新S序列。新summary/audit版本分别`full_cycle_forward_call_summary_v2`/`full_cycle_forward_audit_v2`；原ordinary键保持，完整账本字段及ledger_retention按实际present/absent/explicit_null保存。inverse最终字段以forward_前缀留存；UQ新record.forward_audit随progress/final记录流转。数值入口未运行，旧文件不覆盖。
+
+P62 inverse/UQ共享审计留存已实现并实际导出（2026-10-02T23:12:31.319549+00:00）。标准库模块`audit_evidence.py`完整deepcopy源Ca/entropy账本，保留signed/原尺度/各自origin/完整records/原qualification与局部nullfalse；present/absent/explicit-null明确区分，缺字段不造payload或PASS。inverse callback/evaluation/progress/final forward_*及三个synthetic truth audit、UQ每条newrecord.forward_audit/progress/final同源接线；原普通预算/气体缺失诊断/physicalflag/拟合判据/排名保持。一次实际stdlib直接文件CLI请求（runpy __main__，显式真实source/report路径）读取P60/P58合法wrapper.report，用时0.127491s、导出728073B；实际main/export各1、audit/summary/ledgercopy各2、0项目包导入/模型构造/RHS/Jac/ODE/predict/fit/UQ/新物理算子。P60完整121点S/Ip/Ie/原scale/两stage非零origin保留，P58 entropy_ledger absent/不回填；每个现存ledger的JSON值及signed-zero文本一致。ordinaryphysical=true仍与allCa=false/CaO零预算relative=null/false并列。explicit-null顶层分支仅实现未动态覆盖，真实嵌套CaOnullfalse保留。inverse/三demo/UQ数值入口未运行，不授新的科学资格。
+
+根691=144literature/547assumed/0measured，旧690完整records/名义物理与P61显式case来源/版本合同保持；新增仅独立64MiB行政额度。原完整事前33468055≤67108864；必要序列化补充计当前输入/13实际原Gitblob及原六reserve完整34363231≤67108864，最终全部actualpath/原及16stagedblob/档案/末receipt读`runs/full-cycle/p62-forward-audit-retention-final-delivery-state.json`。P61-64真实交付25707870B已承接续勾；旧P61-32/P58/P60完整资源FAIL不能由本新预算追认。P34/P40/P44/P45/P50撤回/P51、名义余水0.1358920787402553%>0.1%、CaO零预算及wholefalse保持。此轮改善证据留存，物理数值验收没有新增进展；Git/Drive元数据/实际恢复/历史20GB与GitHub容量分别判断。
+
+下一真正主流程建议：先有界独立U/S势及反应/输运分支一致性资格，再最新耦合8stage原生baseline、受影响dt/grid各加密一次与三固定条件方案；须另明确实际预算和完整case，不能静默把root名义开关换成公开短case的storage/direct/Ca开关，也不重启已耗尽干燥搜索。公开科学源与现有模型可继续闭合这些数值事项；目标材料迁移率/活度孔演化/完整工艺及产品性能对照仍待实测。P62不分配或启动下一科学窗口。完整报告`docs/FULL_CYCLE_P62_FORWARD_AUDIT.json/md`；末local交付receipt晚于一次commit/archive，明确未收且不递归补包。
+
+现有host write_json签名保持并委托同一stdlib json_native/write_json，显式传其已导入np.ndarray/np.generic类型；既有tolist/item与递归dict/list/tuple表达不丢数值符号/nullfalse，未知对象原JSON错误直接暴露，无默认/fallback。full_cycle.py除writer和导入外全部函数/classes AST保持。新NumPy类型分支仅静态接线，未执行；本轮唯一导出已执行源快照保留，不重跑导出或造类型fixture。
+
+### P61及更早用法
+
 P61 当前来源接口：Python调用`prepare_dataset`、`fit`及三个synthetic helper必须显式给`case_reference`和`case_transformations`；原始配置传实际读取的参数文件路径和`[]`，派生配置传真实变换记录。`configured_conditions`也需显式`case_reference`。新有效条件快照含完整记录和sources，保留legacy65，旧72候选证据不修改。新数据合同v2保留`source_dataset_schema`；已准备v2缺该必需字段会直接报错。当前83行原v1输入已实际转换，fit/measured/reference/二次prepare及完整数值CLI仍未运行。
 
 纯JSON入口（标准库、直接文件运行，不构造模型）：

@@ -8,6 +8,7 @@ import numpy as np
 from scipy.stats import norm
 
 from ..models.full_cycle import changed, run_cycle, write_json
+from ..audit_evidence import forward_audit as retained_forward_audit
 
 
 def compare(config: dict, out: Path) -> dict:
@@ -24,7 +25,12 @@ def compare(config: dict, out: Path) -> dict:
             if set(overrides) & set(draw):
                 raise ValueError('scenario controls and uncertain material parameters overlap')
             report, _ = run_cycle(changed(config, draw | overrides))
+            audit = retained_forward_audit(report, source_reference={
+                'kind':'in_memory_report_argument', 'source_file':None, 'report_path':None,
+                'producer':'run_cycle', 'consumer':'sludge_vme.uq.full_cycle.compare',
+                'sample':sample, 'scenario':scenario['id']})
             records.append({'sample':sample, 'scenario':scenario['id'], 'parameters':draw,
+                            'forward_audit':audit,
                             'summary':report['summary'], 'conservation_passed':report['conservation_passed'],
                             'physical_consistency_passed':report['physical_consistency_passed'],
                             'example_endpoints':report['example_endpoints'],

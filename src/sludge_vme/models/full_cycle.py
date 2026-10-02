@@ -19,6 +19,7 @@ from scipy.integrate import solve_ivp
 
 from ..chemistry.formula import parse_formula
 from .initial_finite_volume import initial_partition, initial_partition_from_faces
+from ..audit_evidence import write_json as write_native_json
 
 
 def read_parameters(path: str | Path) -> dict:
@@ -99,8 +100,7 @@ def binding_extended_drying(config: dict) -> dict:
 
 
 def write_json(path: str | Path, data: dict) -> None:
-    Path(path).parent.mkdir(parents=True, exist_ok=True)
-    Path(path).write_text(json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False) + "\n")
+    write_native_json(path, data, array_type=np.ndarray, scalar_type=np.generic)
 
 
 def source_caloric_coefficients(model, names):

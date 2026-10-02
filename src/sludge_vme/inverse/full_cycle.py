@@ -14,6 +14,7 @@ from ..models.full_cycle import make_cycle, changed, run_cycle, write_json
 
 from .observations import UNITS, prepare_dataset
 from .case_conditions import declared_case_condition_bundle, describe_case_transformation
+from ..audit_evidence import forward_call_summary as retained_forward_call_summary, forward_audit as retained_forward_audit
 
 
 def predict(config: dict, observations: list[dict]):
@@ -67,44 +68,17 @@ def map_observations(config: dict, observations: list[dict], report: dict, field
 
 
 def forward_call_summary(report: dict) -> dict:
-    """Record one actual report; ledger availability is not ledger acceptance.
-
-    Read the gas ledger at report.gas_species_ledger. Older or non-stored-gas
-    reports without that field remain explicitly missing; no ledger is inferred
-    from a physical-consistency flag or a nested whole_cycle field.
-    """
-    ledger_present = bool(report.get('gas_species_ledger'))
-    return {
-        'physical_consistency_passed':report['physical_consistency_passed'],
-        'maximum_balance_relative_residual':max(
-            value for budget in [report['whole_cycle'], *report['stages'].values()]
-            for value in budget['relative_residuals'].values()),
-        'forward_elapsed_s':report['elapsed_s'],
-        'gas_ledger_present':ledger_present,
-        'gas_ledger_status':'present' if ledger_present else 'missing',
-        'gas_ledger_source':'report.gas_species_ledger',
-        'gas_ledger_diagnostic':None if ledger_present else
-            'Missing or empty report.gas_species_ledger; no gas-ledger acceptance evidence is retained.',
-    }
+    """Keep this supplied report's ordinary metrics and native ledger evidence."""
+    return retained_forward_call_summary(report, source_reference={
+        'kind':'in_memory_report_argument', 'source_file':None, 'report_path':None,
+        'consumer':'sludge_vme.inverse.full_cycle.forward_call_summary'})
 
 
 def forward_audit(report: dict) -> dict:
-    """Keep independent-readback budgets without fields or another solution.
-
-    whole_cycle covers exactly the stages in this report, including truncated
-    drying windows. Availability and the input physical flag are separate; this
-    function copies evidence and does not recompute or upgrade acceptance.
-    """
-    audit = forward_call_summary(report)
-    audit.update({key:report[key] for key in (
-        'whole_cycle', 'stages', 'thermodynamics', 'state_domain', 'dimension_check')})
-    audit['scope'] = {
-        'stages':list(report['stages']),
-        'whole_cycle_meaning':'Entire declared process window; no claim for omitted stages.',
-    }
-    audit['gas_species_ledger'] = (report['gas_species_ledger']
-        if audit['gas_ledger_present'] else None)
-    return audit
+    """Retain the complete report window through the shared standard-library audit."""
+    return retained_forward_audit(report, source_reference={
+        'kind':'in_memory_report_argument', 'source_file':None, 'report_path':None,
+        'consumer':'sludge_vme.inverse.full_cycle.forward_audit'})
 
 
 def fit(config: dict, dataset: dict, out: Path, *, case_reference: str, case_transformations: list[dict]) -> dict:
