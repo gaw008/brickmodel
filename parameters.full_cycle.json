@@ -7506,6 +7506,83 @@
       "source": "policy",
       "status": "assumed",
       "note": "P49 independent saved-data operation only; one attempt including failure, no automaticretry. Deadline starts at the actual producer launch; all old windows closed; 0model calls."
+    },
+    "validation.saved_reference_host.maximum_jobs": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P50 new explicit independent allocation: one job/worker/attempt includingfailure, one make_cycle instance and one RHS.60sfromactualchildlaunch includingimports/reader/construct/RHS/report/reap;necessarycase/report/stdout/stderr/failure<=524288B.All previous windows closed.No automaticretry/newphysics/Jac/ODE/fit/UQ/search."
+    },
+    "validation.saved_reference_host.maximum_workers": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P50 new explicit independent allocation: one job/worker/attempt includingfailure, one make_cycle instance and one RHS.60sfromactualchildlaunch includingimports/reader/construct/RHS/report/reap;necessarycase/report/stdout/stderr/failure<=524288B.All previous windows closed.No automaticretry/newphysics/Jac/ODE/fit/UQ/search."
+    },
+    "validation.saved_reference_host.maximum_attempts_including_failure": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P50 new explicit independent allocation: one job/worker/attempt includingfailure, one make_cycle instance and one RHS.60sfromactualchildlaunch includingimports/reader/construct/RHS/report/reap;necessarycase/report/stdout/stderr/failure<=524288B.All previous windows closed.No automaticretry/newphysics/Jac/ODE/fit/UQ/search."
+    },
+    "validation.saved_reference_host.maximum_constructor_instances": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P50 new explicit independent allocation: one job/worker/attempt includingfailure, one make_cycle instance and one RHS.60sfromactualchildlaunch includingimports/reader/construct/RHS/report/reap;necessarycase/report/stdout/stderr/failure<=524288B.All previous windows closed.No automaticretry/newphysics/Jac/ODE/fit/UQ/search."
+    },
+    "validation.saved_reference_host.maximum_RHS_calls": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P50 new explicit independent allocation: one job/worker/attempt includingfailure, one make_cycle instance and one RHS.60sfromactualchildlaunch includingimports/reader/construct/RHS/report/reap;necessarycase/report/stdout/stderr/failure<=524288B.All previous windows closed.No automaticretry/newphysics/Jac/ODE/fit/UQ/search."
+    },
+    "validation.saved_reference_host.global_budget": {
+      "value": 60,
+      "unit": "s",
+      "range": [
+        60,
+        60
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P50 new explicit independent allocation: one job/worker/attempt includingfailure, one make_cycle instance and one RHS.60sfromactualchildlaunch includingimports/reader/construct/RHS/report/reap;necessarycase/report/stdout/stderr/failure<=524288B.All previous windows closed.No automaticretry/newphysics/Jac/ODE/fit/UQ/search."
+    },
+    "validation.saved_reference_host.necessary_output_byte_limit": {
+      "value": 524288,
+      "unit": "byte",
+      "range": [
+        524288,
+        524288
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P50 new explicit independent allocation: one job/worker/attempt includingfailure, one make_cycle instance and one RHS.60sfromactualchildlaunch includingimports/reader/construct/RHS/report/reap;necessarycase/report/stdout/stderr/failure<=524288B.All previous windows closed.No automaticretry/newphysics/Jac/ODE/fit/UQ/search."
     }
   },
   "species": [
@@ -10806,6 +10883,89 @@
       "actual_primitive_evaluations": 1,
       "actual_necessary_output_bytes": 420111,
       "actual_host_calls": 0
+    },
+    "saved_reference_host": {
+      "schema": "P50_fixed_saved_reference_host_instantaneous_diagnostics_v1",
+      "resource_status": "closed_after_one_actual_constructor_RHS_no_retry",
+      "physical_case": "ca_coordinate_transient_first_actual_model",
+      "geometry_case": "saved_reference_partition",
+      "budget_prefix": "validation.saved_reference_host.",
+      "producer": "scripts/diagnose_saved_reference_host.py",
+      "output_directory": "runs/full-cycle/p50-saved-reference-host",
+      "case_output": "runs/full-cycle/p50-saved-reference-host/case-parameters.json",
+      "diagnostic_output": "runs/full-cycle/p50-saved-reference-host/diagnostics.json",
+      "events_output": "runs/full-cycle/p50-saved-reference-host/call-events.json",
+      "state": "one actual initial_state; no supplied12cell state/rebin/interpolation/override",
+      "time_basis": "actual model.times[0] from declared process; no selected alternative time",
+      "identity": "P46/P44existing synthetic/assumed condition,coordinate1,P49mode3and13cells. No realbrickL or newsource",
+      "sampler": "rootdefault0;onlyexisting _summary_face_capture observerduringoneRHS,no Csampleractivation",
+      "criteria": {
+        "instantaneous_identity": {
+          "limit_parameter": "validation.hydroxide.identity_tolerance",
+          "unit": "1",
+          "source": "runs/full-cycle/p43-cell-host/probe.py:80-81;P45same-RHScomponentclosure",
+          "no_floor": true
+        },
+        "mass": {
+          "unit": "kg/s",
+          "denominator": "sum abs(cell condensedmassdot)+sum abs(cell gasmassdot)+sum abs(boundaryspecies massflux);P43original"
+        },
+        "elements": {
+          "unit": "mol/s",
+          "denominator": "sum abs(cell condensed elementdot)+sum abs(cell gas elementdot);P43original"
+        },
+        "complete_U_components": {
+          "unit": "W",
+          "denominator": "sum abs(C*dT)+sum abs(us*dns)+sum abs(ug*dng)+sum abs(cap*dpore)+sum abs(elasticUdot)+sum abs(phaseUdot)+abs(boundary);P45own-chaincomponentdefinition",
+          "scope": "same-RHS algebraic closure only;notoldnewnetU"
+        },
+        "complete_S_components": {
+          "unit": "W/K",
+          "denominator": "abs(storage)+abs(production)+abs(exchange);P45same-RHSalgebraicidentity",
+          "scope": "shared same mechanical coefficients;notindependentpotentialderivative"
+        },
+        "Ca_inventory_readback": {
+          "unit": "mol",
+          "denominator": "sum abs(declaredinitialphase)+sum abs(actualinitialphase);nofloor;zero remainsundefined",
+          "scope": "Descriptive initial inventory ratio only; no applicable existing criterion. Original P50firstoutput two PASS overclaims retained and withdrawn in separate annotation.",
+          "qualified": false
+        },
+        "P45_original_netU": {
+          "limit_parameter": "validation.hydroxide.identity_tolerance",
+          "unit": "1",
+          "denominator": "max abs(old.complete_U_chain) for matchedoldhost; unavailable underoneinstance",
+          "qualified": false
+        },
+        "strict_inventory_entropy": {
+          "inventory_unit": "mol",
+          "entropy_unit": "W/K",
+          "definition": "raw>=0,physicalzero,noallowance/floor",
+          "scope": "thisinitialinstant only"
+        },
+        "full_cycle_balance": {
+          "limit_parameter": "acceptance.balance_relative",
+          "qualified": false,
+          "reason": "no intervalintegration/all8stages"
+        },
+        "full_cycle_entropy": {
+          "limit_parameter": "acceptance.entropy_relative",
+          "qualified": false,
+          "reason": "cumulative E_scale/T_ref definition is not instantaneous W/K normalization"
+        },
+        "time_grid": {
+          "limit_parameter": "acceptance.convergence_relative",
+          "qualified": false,
+          "reason": "no integration or refinements"
+        }
+      },
+      "extra_calls": "0independentrates/thermo/transport/mechanical/summarize/Jac/ODE/fit/UQ;normalconstructor/RHSproductionhelpercalls counted",
+      "failure_policy": "Any operational/scientific failure preserved;single allocation closes,no retry/contextsearch/no criterion change",
+      "retained_failure_report": "docs/FULL_CYCLE_P49_SAVED_REFERENCE_PARTITION.json",
+      "actual_jobs": 1,
+      "actual_constructor_instances": 1,
+      "actual_RHS_calls": 1,
+      "original_call_output_bytes": 416904,
+      "postrun_eligibility_correction": "runs/full-cycle/p50-saved-reference-host/eligibility-correction.json"
     }
   },
   "caloric_background": {

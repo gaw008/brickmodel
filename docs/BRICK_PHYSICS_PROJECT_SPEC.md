@@ -1,5 +1,9 @@
 # 全流程近似烧结砖模型：当前执行规范（2026-09-26）
 
+P50 保存面主机瞬时生产诊断完成（2026-10-02T16:27:47.143152+00:00）：固定 P46/P44 合成初态、Ca 坐标1及 P49 mode3/13格，实际1job/1worker/1attempt/1完整实例/1RHS，t=0，rc0回收；监督0.447814s/CPU0.369549s，原必要输出416904B，事后资格注记3062B、合计419966B<512KiB，原60s窗口关闭。质量/元素/完整U/完整S及三个导数坐标按原1e−11瞬时判据通过，仅共享同次RHS代数闭合。初态严格库存及所观测熵非负；内面通量仅浮点量级，不授非零传输、动态或加密资格。首次输出两个Ca初态读回PASS因自定描述分母撤为未资格；signed数值及首次输出保留，CaO零预算relative=null/passfalse。源资格元数据事后修正、静态解析通过、未再执行。根602=144literature458assumed0measured，旧595完整条目、名义12格/mode0/Ca0/sampling0及科学核保持；无新物性/热源。P45旧净U失败、P34/P40/P44失败及名义余水0.135892078740%>0.1%保留，整模型仍partial；mode3动态/时空加密/八阶段/C采样/比较/反演/模型CLI未资格。Git/Drive和实际恢复/历史容量分列。
+
+证据 docs/FULL_CYCLE_P50_SAVED_REFERENCE_HOST.json/.md，实际交付读取 runs/full-cycle/p50-saved-reference-host-final-delivery-state.json。以下原记录按其时间和较窄资格保留。
+
 P49显式保存面初始化接口及一次保存几何转换完成（2026-10-02T15:40:52.764071+00:00）：H原13格/14faces原值接入mode3 saved_faces，新增initial_partition_from_faces与整记录saved_reference_partition_case、纯离线脚本；主机构造未执行，接线仅静态。唯一1job/1primitive/1worker rc0回收，监督0.412691s/CPU0.330740s、case+geometry共420111B<30s/512KiB，窗口关闭不重试。faces/centers/widths原值一致；逐格new A*diff(faces)−saved fine-volume-sum保留−3.388131789e−21/+1.694065895e−21m3。P49 numpy.sum全局差0与H原math.fsum+2.710505431e−20m3并列，不授几何容差或物理PASS。根595=144literature451assumed0measured，旧587所有value保持、586完整条目保持；唯一旧mode range[0,2]→[0,3]+note例外，名义12格/mode0/sampling0/Cacoord0/directoff不变。0构造/RHS/Jac/ODE/fit/UQ/C/G/H-selection/P38，新mode3动态/加密/八阶段/采样/比较/反演/模型CLI未资格。P34/P40/P44/P45失败、CaO零预算relative=null/passfalse、名义余水0.135892078740%>0.1%及wholefalse保留。Git/Drive与历史恢复容量另计。
 
 以下为保留的此前范围及证据。
