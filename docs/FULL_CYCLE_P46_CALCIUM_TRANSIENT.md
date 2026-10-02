@@ -1,25 +1,30 @@
-# P46：同物理条件的新CaO坐标单例
+# P46：同物理条件的新 CaO 坐标单例
 
-P46唯一单例在构造前读参失败（2026-10-02T05:24:16.997599+00:00）：05:13:28.562353UTC启动、05:13:29.342829UTC rc1/回收，1sciencechild attempt、0constructor/RHS/Jac/ODE，首构造时钟和deadline均未启动，0动态数值摘要。现确认并修复16操作参数source未注册问题（7继承P45+9本轮P46），改为已有policy键、原说明移note，所有value/unit/range/status与45host源码保持；既有read_parameters实际通过567条。旧558“metadata完整保持”例外恰为这7来源/说明元数据，不掩盖原失败快照。567=144literature423assumed0measured；名义mode0/direct未启用。全部动态账本/逐相/严格熵/域审查/保存P44表示比较未执行，不授PASS或zero-budget资格。原P45净U、P34/P40/P44及名义0.135892078740%>0.1%失败保持，wholefalse。首作业已关闭，无自动补跑；下一同物理/solver修复读参后的单例候选尚未分配。
+P46首个实际mode1短时动态单例已完成（2026-10-02T05:55:32.140418+00:00）：累计2次进程启动，首读参失败1次保留；实际1构造/1ODE，2379RHS含12Jac，solver9.203657s、CPU含构造9.415551s、构造至回收9.581245s，原300s窗口未延。原质量/元素/完整能量最大相对1.548557663e-8、四gas预算最大9.103027113e-6，均<0.001；熵账本3.150938169e-9，保存样本OH/carbonate最小0、direct最小6.534691959e-12W/K，accepted knots及t_eval原物理域通过。Cc/OH无floor逐相相对预算通过；CaO初末/源/残差均0、预算0，相对null且passed=false，精确零观察不能授相对预算PASS。与保存P44基准四指标最大变化7.389644452e-13仅表示诊断，0新time/grid；direct extent差+4.261998740e-16mol。根569=144literature425assumed0measured，16操作source-ID修复、旧7来源元数据例外及失败快照保留，45host929c/物理/solver保持，名义mode0/direct未启用。全八阶段/加密/三方案/反演/UQ/CLI当前模式未资格；P45净U、P34/P40/P44失败及名义余水0.135892078740%>0.1%保持，0新名义尝试，wholefalse。本轮实际模型额度关闭，下一加密仅候选；Git、Drive元数据与恢复另列。
 
-原分配是1模型构造/1ODEattempt/唯一300s从首实际构造/1worker/2MiB/无重试。45host冻结929c4c3a；P44quad12、原10s/recipe/T/gas/L和maxstep0.1s/rtol1e-5/atol1e-7全部保持。原P46预算120s/512KiB候选从未执行，本次300s/2MiB是明示单例分配，非旧窗口续期。
+两次进程分别登记：原子进程在 2026-10-01 22:13:28–22:13:29 PDT 构造前读参失败，实际模型调用为零，科学时钟未启动；第二进程在 22:27:39 PDT 启动，首实际构造 22:27:40.308400 PDT，唯一截止 22:32:40.308400 PDT，实际构造至回收 9.581245 秒。1 实际模型作业、1 构造、1 积分，全部回收。原运行误标的 constructor_window 耗时仅指构造前启动至回收，原数值保留并附说明；不改写成构造耗时。
 
-本次子进程只运行到既有read_parameters，报 `ValueError: missing unit/source: validation.ca_coordinate_appendix.maximum_jobs`。所以实际构造入口/solve入口/唯一科学deadline均为null，预构造childwall0.778354s、launcher0.783415s。CPU统计注册尚未执行，CPU未记录，不能报科学CPU或编造solver内部调用。无域外轨迹、无accepted knots、无新summary。
+首次失败为既有 read_parameters 的 `ValueError: missing unit/source: validation.ca_coordinate_appendix.maximum_jobs`。16 条操作参数的 source 原为未注册说明（7 继承 P45、9 本轮）；现映射到已有 policy，原说明留 note，值、单位、范围、身份不变。失败快照和日志保留，修复后原 reader 实际读取 567 条；随后仅新增两条已分配运行计数政策至 569，首实际模型读取该快照。无新物性或阈值。旧 558 全元数据保持的例外恰为那 7 条来源说明。
 
-源码要求parameter.source是root.sources的键。P45附录7条当时写入完整授权说明，P45局部probe直接JSON后构造未覆盖这个读取入口；P46又复制相同写法新增9条。现在只改这16条为已有policy，原说明移note，不改材料/数值参数值、单位、范围或assumed身份。失败root-snapshot/日志原样保留；不能继续称旧558所有metadata字节保持。已有命令read_parameters当前根配置实际通过567条、读取wall0.005783s，0主机调用，未创建测试或新校验代码。
+唯一合成条件沿用 P44：298.15 K、12 格二次分区、10 秒、原配方/气体/L，max_step 0.1 秒、rtol 1e-5、atol 1e-7；只将坐标 mode0 改为 mode1。真实初始 CaO 各格为零，没有 seed、floor 或 clip。源码冻结于 929c4c3a，根名义选择仍为 mode0、direct 不启用。低温短时条件不覆盖高温 CaO 生成或全部八阶段。
 
-| 本次门槛 | 状态 |
+| 本轮实际证据 | 判断 |
 |---|---|
-| 修复后根参数reader | 实际通过 |
-| 原sciencechild | 失败、回收、额度关闭 |
-| 质量/元素/完整能量与四gas | 未执行 |
-| 三相signed预算及真实初始CaO | 未执行，不能推断零分母 |
-| strictOH/carbonate/direct与raw库存 | 未执行 |
-| accepted knots/t_eval物理域 | 未执行 |
-| 相对保存P44四指标/extent/相库存 | 未执行，不冒充加密 |
-| 全八阶段/比较/反演/UQ/CLI solver | 未资格 |
-| 原工艺/实测 | 历史余水失败、0measured |
+| 质量 / 元素 / 完整能量 | 相对 6.659897139e-10 / 7.261342598e-9 / 1.548557663e-8，原 0.001 门槛通过 |
+| O2 / N2 / H2O / CO2 | 预算归一最坏 9.103027113e-6；初始库存归一最坏 1.527808884e-4，带符号残差保留 |
+| Cc / OH 无 floor 逐相 | 分别相对 9.315785929e-18 / 1.484597618e-16，通过 |
+| CaO 无 floor 逐相 | 库存、源和残差全零，预算零；relative=null、passed=false，undefined 未资格 |
+| 熵与原始库存 | 熵账本 3.150938169e-9；采样 OH/Cc 熵 0，direct 正；原始凝聚库存最小 0 |
+| 状态域 | 仅真实 BDF accepted knots 和 t_eval；T 298.150..298.437068 K，原气压域通过 |
+| 相对保存 P44 四指标 | 三项精确相同，峰温差变化 −7.389644452e-13 K；仅表示诊断，不是加密 |
+| direct 累计进度 | +4.261998740e-16 mol（相对旧值 1.371086299e-12），不是额外收敛资格 |
+| 当前整周期、加密、三方案、反演、UQ、CLI | 未资格；完整模型不勾选 |
+| 原工艺 / 实材 | 原名义余水 0.135892078740% 超 0.1%，本轮零新名义尝试；measured=0 |
 
-同一来源问题下一次至多再尝试一次；只有明确后续资源决定才能启动固定单例。候选1construct/1ODE、单新job/首实际构造300s/1worker/2MiB，累计sciencechild至多2，无自动第三job、加密或搜索。此候选尚未授权或执行。P45净U的1e-11失败与完整动态能量0.1%门槛是不同问题，不能互相翻判。
+内部实际 2379 次 RHS（包括 Jacobian 调用）、12 次 Jacobian、21 次汇总速率调用；solver 9.203657 秒，CPU 含构造 9.415551 秒。BDF 208 步、209 accepted states、21 保存点，域审查 230 条记录含重合点。严格熵结论只限这些保存采样，不证明连续时刻或内部 Newton / complex trial 正性。
 
-源元数据修复与本轮失败资料沿正常逐路径Git和一个必要小增量交付。metadata readback不同于恢复；原始压缩、历史轨迹及独有Git保留，20GB/历史完整恢复/GitHub容量告警未解决。本轮不下载/恢复/SHA/自动任务或新增测试。
+P45 原净 U 比较 3.039630570e-9>1e-11 不被本轮完整动态能量通过翻判；P34 30/81、P40 7.33335% 网格差、P44 CaO 3/9 与 direct 3.01853436% 原失败保留。当前没有第三进程或额外积分配额。必要下一依赖是各一次时间和网格加密，复用本基准；本文件只登记候选，不启动、不变分母或容差。
+
+证据：`runs/full-cycle/p46-calcium-coordinate-transient/first-actual-model/acceptance.json`、`baseline.json`、`execution.json` 与各入口计数；原失败在父目录 `acceptance.json`、`execution.json`、`baseline.log`、失败 root-snapshot。独立只读复核确认计数、符号、零分母和资格范围一致，零新模型调用。
+
+变更仅根操作来源/计数登记及 9 个计划、报告和矩阵文件；主机源码未改。正常 Git 后继及小型增量的实际回执独立读取，Drive 名称/大小/父目录核对不等于恢复。唯一压缩原件、历史轨迹、独有 Git 保留；20GB、历史完整恢复与 GitHub 容量告警未解决。无新软件测试、SHA、恢复下载、护栏或自动任务。

@@ -7103,6 +7103,28 @@
       "source": "policy",
       "status": "assumed",
       "note": "P46 sole coordinator explicit allocation: one fixed P44 baseline mode1 case,1constructor/1ODEattempt/unique300s from firstconstructor/1worker/2MiB/no retry. Operational assumed, not material property."
+    },
+    "validation.ca_coordinate_transient.maximum_process_launches_including_preconstructor_failure": {
+      "value": 2,
+      "unit": "1",
+      "range": [
+        2,
+        2
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Explicit P46 firstactualmodel allocation:1priorpreconstructorreaderfailure separatelyretained, atmost1actualmodelconstructor/1ODE/1modelenteringjob, processlaunchestotal2. No automaticretry or thirdjob;physics unchanged."
+    },
+    "validation.ca_coordinate_transient.maximum_model_entering_science_jobs": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Explicit P46 firstactualmodel allocation:1priorpreconstructorreaderfailure separatelyretained, atmost1actualmodelconstructor/1ODE/1modelenteringjob, processlaunchestotal2. No automaticretry or thirdjob;physics unchanged."
     }
   },
   "species": [
@@ -10265,6 +10287,84 @@
       "comparison": "Saved P44 baseline only. Originalmetric denominators and .02limit representation diagnostic, not time/grid qualification.",
       "current_scientific_jobs": 1,
       "current_constructor_starts": 0
+    },
+    "ca_coordinate_transient_first_actual_model": {
+      "schema": "P44_proposed_fixed_nonuniform_transient_v1",
+      "recorded_utc": "2026-10-02T00:22:32.147556+00:00",
+      "budget_prefix": "validation.ca_coordinate_transient.",
+      "stages": [
+        "direct_transient"
+      ],
+      "channel": {
+        "mobility_parameter": "validation.direct_carbonation_transient.synthetic_mobility",
+        "identity": "synthetic_P40_fixed_short_dynamic_coupling",
+        "material": "Synthetic declared dry-mass recipe with1%portlandite and6.5%calcite, rest unchanged; no realmaterial rate identification",
+        "temperature_range_parameter": "validation.direct_carbonation_transient.temperature_domain",
+        "humidity_pressure_range_parameter": "validation.direct_carbonation_transient.partial_pressure_domain",
+        "surface_basis": "Bulk donor inventory law; geometric face area is unchanged geometry.area in root, no fittedactivewetfilm/interfacialarea/productlayer. Fixed geometry/permeability/material closures inherited."
+      },
+      "common_override_parameters": {
+        "recipe.calcite": "validation.direct_carbonation_transient.recipe_calcite",
+        "recipe.portlandite": "validation.direct_carbonation_transient.recipe_portlandite",
+        "initial.temperature": "validation.direct_carbonation_transient.initial_temperature",
+        "numerics.output_step": "validation.direct_carbonation_transient.output_step",
+        "gas.inlet.O2": "validation.direct_carbonation_transient.inlet_O2",
+        "gas.inlet.N2": "validation.direct_carbonation_transient.inlet_N2",
+        "gas.inlet.H2O": "validation.direct_carbonation_transient.inlet_H2O",
+        "gas.inlet.CO2": "validation.direct_carbonation_transient.inlet_CO2"
+      },
+      "jobs": [
+        {
+          "id": "baseline",
+          "cells_parameter": "validation.direct_carbonation_transient.baseline_cells",
+          "max_step_parameter": "validation.direct_carbonation_transient.baseline_max_step",
+          "rtol_parameter": "numerics.rtol",
+          "atol_parameter": "numerics.atol"
+        }
+      ],
+      "original_named_stages_not_covered": [
+        "drying_ramp",
+        "drying",
+        "heating",
+        "reactions",
+        "sintering",
+        "hold",
+        "cooling",
+        "cooling_hold"
+      ],
+      "total_pressure_domain_parameter": "validation.direct_carbonation_transient.total_pressure_domain",
+      "geometric_area_parameter": "geometry.area",
+      "original_balance_limit_parameter": "acceptance.balance_relative",
+      "original_convergence_parameter": "acceptance.convergence_relative",
+      "required_metrics": [
+        "porosity",
+        "residual_carbon_kg",
+        "shrinkage",
+        "peak_temperature_difference_k"
+      ],
+      "initialization": "Actual original homogeneous P44 recipe/T/gas mode2 quadratic12, explicitCaO coordinate1 and actual declaredCaO0. No overwrite/seed/clip/floor; currentCaoremainder source929c frozen.",
+      "domain_policy": "Assumed T290..350K,totalP1000..200000Pa,all partial0..200000Pa, fixedrootarea. Predeclared numericalscope only; no runtimeclamp. Auditreal BDFacceptedknots plus savedt_eval/summary states. Any violation retainsfailure/stops remainingbatch, no postrun widening. No continuousbetweenknots orNewton/complexstep trialdomain qualification.",
+      "time_resolution": "Original P44 baseline settings unchanged; no time/grid cases authorized.",
+      "metric_scope": "Original4metrics androot0.1%/2%/floor1K unchanged. Centerdiagnostic initialreference geometry innewmode2 explicit; originalP40uniform7.33335%FAIL not replaced. Directglobalextentdiff extraunqualified if notsmall; signedphase/strict criteria separately.",
+      "start_limit_includes_failures": 1,
+      "independent_extra_RHS_Jacobian_fit_UQ_recovery": 0,
+      "summary_byte_scope": "Necessary numericaloutputs only ≤2MiB; frozenroot/code andexecutionmetadata identifiedseparately, no rawfields saved.",
+      "source_basis": "P36 declaredwet mechanism, P37 phenomenological explicitL andP39sharedhost only; no new literature/fit or nominalrate inference",
+      "profile_mode": 2,
+      "resource_status": "closed_after_one_actual_model_no_additional_run_under_this_allocation",
+      "dependency_P43_actual_commit": "476425526dd9b3fce2acaeb22542248f2d96bffd",
+      "authority": "CoordinatorexplicitP46firstactualmodel decision: prioronepreconstructoroperationalchildfailure retained; cumulativeP46actualconstructor<=1/ODE<=1/modeljob<=1, processlaunches<=2.300sfromfirstactualconstructor/2MiB/1worker; anyactualmodel failureconsumesonlyattempt. No automaticretry.",
+      "current_integrations_started": 1,
+      "calcium_coordinate_mode_parameter": "validation.ca_coordinate_transient.mode",
+      "comparison": "Saved P44 baseline only. Originalmetric denominators and .02limit representation diagnostic, not time/grid qualification.",
+      "current_scientific_jobs": 1,
+      "current_constructor_starts": 1,
+      "prior_failed_subrecord": "../execution.json",
+      "cumulative_process_launches": 2,
+      "prior_preconstructor_operational_failures": 1,
+      "actual_RHS_including_Jacobian": 2379,
+      "actual_Jacobian": 12,
+      "actual_result": "runs/full-cycle/p46-calcium-coordinate-transient/first-actual-model/acceptance.json"
     }
   },
   "caloric_background": {

@@ -2581,3 +2581,8 @@ P46一条有限mode1动态候选尚未分配/执行；0新积分。Git/Drive待�
 ### P46构造前实际失败与metadata修复 2026-10-02T05:24:16.997599+00:00
 
 P46唯一单例在构造前读参失败（2026-10-02T05:24:16.997599+00:00）：05:13:28.562353UTC启动、05:13:29.342829UTC rc1/回收，1sciencechild attempt、0constructor/RHS/Jac/ODE，首构造时钟和deadline均未启动，0动态数值摘要。现确认并修复16操作参数source未注册问题（7继承P45+9本轮P46），改为已有policy键、原说明移note，所有value/unit/range/status与45host源码保持；既有read_parameters实际通过567条。旧558“metadata完整保持”例外恰为这7来源/说明元数据，不掩盖原失败快照。567=144literature423assumed0measured；名义mode0/direct未启用。全部动态账本/逐相/严格熵/域审查/保存P44表示比较未执行，不授PASS或zero-budget资格。原P45净U、P34/P40/P44及名义0.135892078740%>0.1%失败保持，wholefalse。首作业已关闭，无自动补跑；下一同物理/solver修复读参后的单例候选尚未分配。
+
+
+### P46首个实际模型结果 2026-10-02T05:55:32.140418+00:00
+
+P46首个实际mode1短时动态单例已完成（2026-10-02T05:55:32.140418+00:00）：累计2次进程启动，首读参失败1次保留；实际1构造/1ODE，2379RHS含12Jac，solver9.203657s、CPU含构造9.415551s、构造至回收9.581245s，原300s窗口未延。原质量/元素/完整能量最大相对1.548557663e-8、四gas预算最大9.103027113e-6，均<0.001；熵账本3.150938169e-9，保存样本OH/carbonate最小0、direct最小6.534691959e-12W/K，accepted knots及t_eval原物理域通过。Cc/OH无floor逐相相对预算通过；CaO初末/源/残差均0、预算0，相对null且passed=false，精确零观察不能授相对预算PASS。与保存P44基准四指标最大变化7.389644452e-13仅表示诊断，0新time/grid；direct extent差+4.261998740e-16mol。根569=144literature425assumed0measured，16操作source-ID修复、旧7来源元数据例外及失败快照保留，45host929c/物理/solver保持，名义mode0/direct未启用。全八阶段/加密/三方案/反演/UQ/CLI当前模式未资格；P45净U、P34/P40/P44失败及名义余水0.135892078740%>0.1%保持，0新名义尝试，wholefalse。本轮实际模型额度关闭，下一加密仅候选；Git、Drive元数据与恢复另列。

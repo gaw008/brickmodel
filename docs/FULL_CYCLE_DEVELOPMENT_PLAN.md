@@ -895,3 +895,20 @@ P46唯一单例在构造前读参失败（2026-10-02T05:24:16.997599+00:00）：
 - [ ] **P46-C** 修复后同固定单例必要候选，尚未分配；最多1新sciencejob/1constructor/1ODE/300s/2MiB，累计sciencechild2、无retry/第三次/fit/UQ/名义搜索。
 
 变更仅根source/note与9本轮操作政策、当前文档/P46报告。45host929c保持，无物理/阈值更改。旧558meta保护例外精准7来源声明；完整failed snapshot保留。现reader0.005783s、原child0.778354s与工作流时间分别记录，CPU未记录。正常Git/smallbackup随后独立receipt，0恢复/SHA/测试/护栏。
+
+
+### P46首个实际模型单例明示子记录 2026-10-02T05:27:36.757624+00:00
+
+协调纠正派生进程启动限制，明确给原目标首个actualmodel：累计实际构造/ODE/modelenteringjob各至多1，总processlaunches至多2（原readerfailed1+本次1），唯一300sfromconstructor/1worker/2MiB。原firstreaderfailure不覆盖；修复后567完整保留、新2操作至569，仅publiccase/resource子记录，45host/物理/solver保持；不新增retryloop/护栏/测试/SHA。未实际构造前不启动科学clock，发生模型失败不得补跑。证据p46-calcium-coordinate-transient/first-actual-model/declaration.json。
+
+
+### P46首个实际模型闭窗 2026-10-02T05:55:32.140418+00:00
+
+P46首个实际mode1短时动态单例已完成（2026-10-02T05:55:32.140418+00:00）：累计2次进程启动，首读参失败1次保留；实际1构造/1ODE，2379RHS含12Jac，solver9.203657s、CPU含构造9.415551s、构造至回收9.581245s，原300s窗口未延。原质量/元素/完整能量最大相对1.548557663e-8、四gas预算最大9.103027113e-6，均<0.001；熵账本3.150938169e-9，保存样本OH/carbonate最小0、direct最小6.534691959e-12W/K，accepted knots及t_eval原物理域通过。Cc/OH无floor逐相相对预算通过；CaO初末/源/残差均0、预算0，相对null且passed=false，精确零观察不能授相对预算PASS。与保存P44基准四指标最大变化7.389644452e-13仅表示诊断，0新time/grid；direct extent差+4.261998740e-16mol。根569=144literature425assumed0measured，16操作source-ID修复、旧7来源元数据例外及失败快照保留，45host929c/物理/solver保持，名义mode0/direct未启用。全八阶段/加密/三方案/反演/UQ/CLI当前模式未资格；P45净U、P34/P40/P44失败及名义余水0.135892078740%>0.1%保持，0新名义尝试，wholefalse。本轮实际模型额度关闭，下一加密仅候选；Git、Drive元数据与恢复另列。
+
+- [x] **P46-C** 明示首个实际模型已执行回收；累计 process2、构造前失败1、actual model1/constructor1/ODE1，额度关闭。
+- [x] **P46-D** 本例质量/元素/完整能量、四气体、采样严格熵和 accepted/t_eval 域核查完成；与旧保存 P44 的表示比较完成，独立只读复核通过。
+- [ ] **P46-E** CaO 相对预算 undefined，当前模式 time/grid、全八阶段及四交叉项未资格；主项 P46 不勾选。
+- [ ] **P47** 各一次短时 time/grid 加密的依赖候选，复用本基准、冻结物理和原阈值；仅候选，尚无资源分配或实际运行。不得用加密或低温零相替代全阶段相验收。
+
+变更根569及 P46/计划/规范/报告/最终矩阵共10路径，无主机源码改动。科学 CPU9.415551s、solver9.203657s、实际构造至回收9.581245s；静态文档和交付时间分别记回执。D01/D02读取正常后继和唯一必要小增量实际收据；D03零恢复；D04历史存储/独有Git/容量警告未解决。
