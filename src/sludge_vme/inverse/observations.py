@@ -11,6 +11,7 @@ import math
 
 from sludge_sandbox.units import convert
 from ..units import degc_to_k, water_per_dry_mass
+from .case_conditions import project_declared_case_conditions, declared_case_condition_bundle
 
 UNITS = {'tg':'1', 'dsc':'W/kg', 'dilatometry':'1', 'kiln':'K',
          'absorption':'kg/kg', 'strength':'Pa', 'defects':'1',
@@ -28,11 +29,9 @@ def _known(value):
     return isinstance(value, str) and value.strip().lower() not in ('', 'unknown', 'pending', 'template')
 
 
-def configured_conditions(config: dict) -> dict:
-    """Declared model conditions, NOT measured protocol or compatibility evidence."""
-    return {'stages':list(config['stages']), 'parameters':{
-        key:{field:deepcopy(config['parameters'][key][field]) for field in ('value', 'unit')}
-        for key in config['observation_contract']['condition_parameter_keys']}}
+def configured_conditions(config: dict, *, case_reference: str) -> dict:
+    """Effective physical declaration; legacy lives in the v2 projection."""
+    return project_declared_case_conditions(config, case_reference)['configuration']
 
 
 def _time_end(config):
@@ -181,7 +180,8 @@ def _reference_row(config, original):
     return row
 
 
-def prepare_dataset(config: dict, dataset: dict, *, for_calibration: bool = False) -> dict:
+def prepare_dataset(config: dict, dataset: dict, *, case_reference: str,
+                    case_transformations: list[dict], for_calibration: bool = False) -> dict:
     """Normalize reference data or validate calibration before optimizer/forward.
 
     Legacy canonical synthetic data remain supported. Measured calibration needs
@@ -189,6 +189,13 @@ def prepare_dataset(config: dict, dataset: dict, *, for_calibration: bool = Fals
     Unknown target metadata do not prevent running the forward base model.
     """
     result = deepcopy(dataset)
+    bundle = declared_case_condition_bundle(config, case_reference,
+        case_transformations=case_transformations)
+    effective_conditions = bundle['projection']['configuration']
+    result['source_dataset_schema'] = (dataset['source_dataset_schema']
+        if dataset['schema'] == 'full_cycle_observations_v2' else dataset['schema'])
+    result['schema'] = 'full_cycle_observations_v2'
+    result['case_condition_bundle'] = bundle
     kind = result['measurement_kind']
     if not _known(result['source']):
         raise ValueError('dataset source is required')
@@ -203,7 +210,8 @@ def prepare_dataset(config: dict, dataset: dict, *, for_calibration: bool = Fals
         result['observations'] = [_reference_row(config, row) for row in result['observations']]
         if not result['observations']:
             raise ValueError('observations must not be empty')
-        issues = []
+        issues = [f"condition {item['parameter_key']}: {item['reason']}"
+            for item in bundle['projection']['unavailable_conditions']]
         if result.get('data_role') == 'regression-only':
             issues.append('regression-only structural inputs cannot become measured calibration data')
         if kind != 'measured' or result['source_kind'] != 'raw_experiment':
@@ -217,7 +225,7 @@ def prepare_dataset(config: dict, dataset: dict, *, for_calibration: bool = Fals
             if not _known(contract['target'][source]) or not _known(result.get(source)):
                 issues.append(f'{source}: explicit target and input evidence required')
         declared = result['conditions']['configuration']
-        if declared != configured_conditions(config):
+        if declared != effective_conditions:
             issues.append('geometry/initial/recipe/boundary configuration differs or is unknown')
         for index, row in enumerate(result['observations']):
             original = row['mapping']['original']
@@ -234,17 +242,23 @@ def prepare_dataset(config: dict, dataset: dict, *, for_calibration: bool = Fals
                                'provenance':{key:deepcopy(result[key]) for key in (
                                    'source_kind','material','conditions','identity_source','compatibility_source')},
                                'target_declaration':deepcopy(contract['target']),
-                               'model_conditions':configured_conditions(config)}
+                               'model_conditions':deepcopy(effective_conditions)}
         if for_calibration:
             if issues:
                 raise ValueError('observation admission failed: '+'; '.join(issues))
             _canonical_rows(config, result['observations'])
     else:
         raise ValueError('template/unknown identity cannot be calibrated; choose explicit synthetic, reference or measured')
+    result['admission'].update(
+        model_conditions=deepcopy(effective_conditions),
+        model_condition_records=deepcopy(bundle['projection']['records']),
+        model_case_reference=case_reference,
+        model_case_provenance=deepcopy(bundle['case_provenance']),
+        fixed_physical_condition_parameter_keys=list(effective_conditions['parameters']))
     if for_calibration:
         _fit_parameters(config, result)
         if kind == 'measured':
-            fixed = set(config['observation_contract']['condition_parameter_keys'])
+            fixed = set(effective_conditions['parameters'])
             if fixed.intersection(result['fit_parameters']):
                 raise ValueError('declared fixed geometry/initial/recipe/boundary conditions cannot also be fitted')
     return result

@@ -1,5 +1,23 @@
 # 全流程近似模型：离线使用与结果解释
 
+P61 当前来源接口：Python调用`prepare_dataset`、`fit`及三个synthetic helper必须显式给`case_reference`和`case_transformations`；原始配置传实际读取的参数文件路径和`[]`，派生配置传真实变换记录。`configured_conditions`也需显式`case_reference`。新有效条件快照含完整记录和sources，保留legacy65，旧72候选证据不修改。新数据合同v2保留`source_dataset_schema`；已准备v2缺该必需字段会直接报错。当前83行原v1输入已实际转换，fit/measured/reference/二次prepare及完整数值CLI仍未运行。
+
+纯JSON入口（标准库、直接文件运行，不构造模型）：
+
+```sh
+python3 -B src/sludge_vme/inverse/case_conditions.py runs/full-cycle/p58-low-temperature-60s-time-refinement/case-parameters.json --out runs/full-cycle/p61-effective-case-conditions-64mib/new-case-condition-bundle.json
+```
+
+上面是本轮已执行命令的可复用形式；结果24有效条件/65旧记录。不要为相同证据重复执行。实际CLI调用参数来源来自`args.parameters.resolve()`；未保存的派生case不伪造文件路径。依赖现有离线Python环境，无运行时下载。此功能资格不等于观测算子、拟合或材料验证。
+
+P61 有效case条件与真实来源接口已实现，实际JSON功能完成（2026-10-02T22:37:27.274912+00:00）。单阶段合法case输出24项有效条件、65项legacy完整记录/48项非当前stage旧键；真正既有83行synthetic输入原样保留，八stage配置使用66项有效条件。v2 bundle保存完整records/sources/原source及显式变换；compare/save/measuredfixed共用同一投影，数值网格/步长/容差不混入实验物理条件。CLI传实际args.parameters，Python调用须显式case_reference/case_transformations，派生窗口只记真实内存变换且savedfile=null。已准备v2保留原source_dataset_schema；fit结果保存整个bundle、三个新synthetic生成合同v2，相关fit/reference/measured/重prepare分支本轮仅静态接线，未执行。实际一次direct JSON及一次prepare用时1.382284s，0模型构造/RHS/Jac/ODE/fit/UQ；包导入的旧dataclass类体/代码生成4事件另保raw profile及来源分类，不称物理forward。一次源语法错误在AST前停止、修正后执行，失败留证。
+
+根690=144literature/546assumed/0measured，旧689完整records及名义物理参数保持；新增仅独立64MiB行政额度。原32MiB预检33618433>33554432，超64001B并0实施/功能，原FAIL保留。新完整事前估算34633649≤67108864（所有六reserve保持），最终actual连同Gitblob/增量档案/末收据读 `runs/full-cycle/p61-effective-case-conditions-64mib-final-delivery-state.json`；一次正常提交和一次Drive增量以后，末local收据不递归commit/打包。P60原完整预检补齐17600341>16777216超823125B，协议FAIL；actual16701789B及已真实两段熵/预算证据不追认预检。名义余水0.1358920787402553%>0.1%仍失败，P34/P40/P44/P45/P50撤回/P51、CaO零预算nullfalse保持。当前8stage、独立势/分支、组合加密、最新三方案/反演/UQ及材料仍未完成；本次接口功能不授整体模型或工艺PASS，0新物理验收/测量/恢复/历史删除。
+
+实现及执行证据 `docs/FULL_CYCLE_P61_CASE_CONDITIONS.json/md`。下一代码缺口为inverse/UQ Ca与native entropy证据保留；当前无下一科学窗口。Git、Drive元数据、实际恢复和20GB/GitHub容量分别判断。
+
+### 旧用法记录
+
 P36有限来源准入及4固定局部核查完成（2026-10-01T19:44:21.845454+00:00）：湿表面机制准入，两主文宏观迁移率不直接准入。298.15K纯OH精确零CaO供体系数对照两旧率均0且directΔμ−57.92008kJ/mol；raw主机微小CaO/非零率保留，不称严格主机阻断。实际2.100607s、16本构调用、0RHS/Jac/积分/fit/UQ/恢复。440=141literature/299assumed/0measured，原434/科学核保持，未新增通道或默认A/E。原30/81、strictOH及0.135892078740%干燥失败保持，wholefalse。P37具显式迁移率输入局部能力仅候选；详见FULL_CYCLE_P36_DIRECT_CARBONATION_ADMISSION.md/.json。
 
 P35有界零积分定位完成（2026-10-01T19:01:14.677712+00:00）：4固定RHS/Jacobian配对行和均0；432保存端点格揭示OH/extent偏离在最终投影前已存在，不能只归结为报告sum或CaO差值。3个calcite保温区间的小进度增量低于大累计量的binary64分辨率。未确认科学源码缺陷，源43保持，原427参数保持，仅新增7运行预算至434=141literature/293assumed/0measured。原30/81失败和严格OH耗散未资格、名义0.135892078740%干燥失败保持。P35诊断完成，P34及完整模型仍partial；无新周期/UQ/拟合/恢复，实际边界见FULL_CYCLE_P35_PHASE_LEDGER_DIAGNOSIS.md/.json。

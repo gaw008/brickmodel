@@ -1233,13 +1233,13 @@ P59-D只勾选具体未分配case/完整未来依赖框架和保守reservations�
 正式采用P59独立16MiB最终方案；旧未来12MiB候选撤回、不启动，原P58超限FAIL不追认。完整采用case的26cells/27faces/mode3/Ca1/end5/10×6→0–30/30–60s/T298.15/gas/压力/geometry/配方/合成L/域/step.0125/out.5/tols完整records保持，不读取旧P58完整result，不seed/rebin/clip或改初态。根独立新增8policy budget；旧681参数与所有旧live合同/根名义保持。本次冻结当前48源，唯一原生构造/连续integrate/两solve_ivp，中点全部状态和累计账本carry、BDF历史restart，无逐值旧轨迹等价声明。
 
 - [x] **P60-A** 独立根预算/完整case与48源冻结、生产JSON/replay输出契约登记，静态语法及records读回。
-- [x] **P60-GATE** 完整实际依赖、全部virtualGitblob及distinctcopies与结果/admin增长保守预检≤16777216B；启动前实际stat。
+- [ ] **P60-GATE** 完整预检FAIL：漏11个stagedGitblob3001401B，补齐17600341B>16777216B823125B；科学结果保留、actual16701789B不追认，见最终收据。
 - [x] **P60-B** 唯一1job/worker/attempt/constructor/integrate、2native solve_ivp，childlaunch至reap900s固定硬停，失败消费闭窗不retry。
 - [x] **P60-C** 保存真实完整S/Ip/Ie/time/原无量纲末槽、全窗/两stage各自起点signedledger、原尺度/阈值及实际非零30sorigin；原flags分别保留。
 - [x] **P60-D** 唯一worker从新实际JSON通过stdlib直接文件非__main__入口执行一次回放功能、持久原起值/重算residual/返回资格，0额外forward/operator，不新增tests。
-- [ ] **P60-E** 部分完成：适用原账本/域已读回、CaO零预算及旧失败保留；最终完整actual字节含Git/Drive/admin/增量档案待最后localreceipt，不能提前勾选。
-- [ ] **D60-GIT** 本轮必要源契约/根/计划/报告/汇总正常后继与普通push。
-- [ ] **D60-DRIVE** 原目录必要小型增量及id/name/size/parent/sourcevisibility读回，非字节恢复。
+- [x] **P60-E** 原账本/域及全部actual收口完成：228physical+14virtual=16701789B，见真实finalreceipt；原预检仍FAIL/CaO零预算false/whole不完整。
+- [x] **D60-GIT** 本轮必要源契约/根/计划/报告/汇总正常后继与普通push。
+- [x] **D60-DRIVE** 原目录必要小型增量及id/name/size/parent/sourcevisibility读回，非字节恢复。
 
 证据目录 `runs/full-cycle/p60-native-signed-entropy-two-stage`；本阶段0新名义/高温/空间时间加密/三方案/反演/UQ/材料实测/观察候选整合/自动化/历史恢复或删除。实际科学时间与静态/交付行政分列；本窗口后不自动启动新计算。
 
@@ -1250,3 +1250,28 @@ P60 原生两阶段signed S生产和唯一saved-JSON回放已实际完成并闭�
 证据 `docs/FULL_CYCLE_P60_NATIVE_ENTROPY_PRODUCTION.json/md`；最终Git/Drive/实际字节收口 `runs/full-cycle/p60-native-signed-entropy-two-stage-final-delivery-state.json`，元数据核对不等于恢复。
 
 已完成GATE/B/C/D，实际科学52.205773333s；当前静态/行政耗时另列finalreceipt。不再启动constructor/RHS/Jac/ODE/operator/fit/UQ/search或第二次replay。E只因最终交付字节尚未收口保持部分；D60-GIT/DRIVE待实际receipt，不提前PASS。最终localreceipt若成功记录即为交付终态，下一阶段可据其实际证据续勾，避免为每新增收据反复commit/打包。
+
+### P61 独立64MiB有效case观测合同续作 2026-10-02T22:23:05.723817+00:00
+
+旧32MiB事前完整估算33618433B>33554432B64001B，gateFAIL且0实施/投影/prepare/科学，原清单/hold保留。当前独立采用67108864B，沿原2038物理路径/13已读baseGitblob及六项完整reserve，再计当前新增原件冻结/计划/程序/登记/manifest。相同path不按读次数累计存储，distinctcopies/old或futurestagedGitblob分别计；未来全部16stagedblob预留8MiB不删减，不扫描旧history。不是旧32/P58/P60追认或新科学窗口。
+
+- [x] **P61-64-A** 独立根行政预算/旧689records保护、原source/root冻结、采用范围登记。
+- [x] **P61-64-GATE** 原完整catalog及新增对象重stat一次、A/B/13baseblob/六reserve完整估算≤64MiB后实施。
+- [x] **P61-64-B** v2当前stage/gas/recipe有效条件及legacy完整source记录、compare/save/measuredfixed同一投影，CLI/Python真实来源与派生变换接线。
+- [x] **P61-64-C** P58合法case新v2纯JSON输出与真正既有83行synthetic数据纯prepare输出；无新fixture/测量/模型或拟合。
+- [x] **P61-64-D** 必要AST/API调用链及实际执行边界记录，旧bundle/候选65→72原证据不改，不称动态拟合或map资格。
+- [ ] **D61-GIT** 本轮16明确路径正常后继/普通push/remote。
+- [ ] **D61-DRIVE** 原目录一次必要增量name/size/parent/source_visibility读回，非恢复。
+- [ ] **P61-64-FINAL** 所有实际path/base和stagedblob完整最终一次收口，最后receipt晚于包明确未收，不递归打包。
+
+map_observations会构造模型本轮不执行，predict/fit/三个demo/完整数值CLI及measured/reference缺真实input的路径保持未执行；只声明接线不造来源。工艺FAIL/0measured/wholefalse、CaOnullfalse、P58/P60资源FAIL及P34/P40/P44/P45/P50/P51保持。
+
+### P61-64 实际接线和既有数据功能完成
+
+P61 有效case条件与真实来源接口已实现，实际JSON功能完成（2026-10-02T22:37:27.274912+00:00）。单阶段合法case输出24项有效条件、65项legacy完整记录/48项非当前stage旧键；真正既有83行synthetic输入原样保留，八stage配置使用66项有效条件。v2 bundle保存完整records/sources/原source及显式变换；compare/save/measuredfixed共用同一投影，数值网格/步长/容差不混入实验物理条件。CLI传实际args.parameters，Python调用须显式case_reference/case_transformations，派生窗口只记真实内存变换且savedfile=null。已准备v2保留原source_dataset_schema；fit结果保存整个bundle、三个新synthetic生成合同v2，相关fit/reference/measured/重prepare分支本轮仅静态接线，未执行。实际一次direct JSON及一次prepare用时1.382284s，0模型构造/RHS/Jac/ODE/fit/UQ；包导入的旧dataclass类体/代码生成4事件另保raw profile及来源分类，不称物理forward。一次源语法错误在AST前停止、修正后执行，失败留证。
+
+根690=144literature/546assumed/0measured，旧689完整records及名义物理参数保持；新增仅独立64MiB行政额度。原32MiB预检33618433>33554432，超64001B并0实施/功能，原FAIL保留。新完整事前估算34633649≤67108864（所有六reserve保持），最终actual连同Gitblob/增量档案/末收据读 `runs/full-cycle/p61-effective-case-conditions-64mib-final-delivery-state.json`；一次正常提交和一次Drive增量以后，末local收据不递归commit/打包。P60原完整预检补齐17600341>16777216超823125B，协议FAIL；actual16701789B及已真实两段熵/预算证据不追认预检。名义余水0.1358920787402553%>0.1%仍失败，P34/P40/P44/P45/P50撤回/P51、CaO零预算nullfalse保持。当前8stage、独立势/分支、组合加密、最新三方案/反演/UQ及材料仍未完成；本次接口功能不授整体模型或工艺PASS，0新物理验收/测量/恢复/历史删除。
+
+实现及执行证据 `docs/FULL_CYCLE_P61_CASE_CONDITIONS.json/md`。下一代码缺口为inverse/UQ Ca与native entropy证据保留；当前无下一科学窗口。Git、Drive元数据、实际恢复和20GB/GitHub容量分别判断。
+
+GATE/B/C/D仅其实际范围勾选。D61-GIT/DRIVE/FINAL在本次唯一提交之前仍待真实交付；最终localreceipt给出实际完成状态和勾选读回依据，下一开发启动据它续勾，不为末receipt递归commit/打包。P60-GATE保持未勾选。

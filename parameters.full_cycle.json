@@ -8583,6 +8583,17 @@
       "source": "policy",
       "status": "assumed",
       "note": "P60 formally adopted independent16MiB unique two-stage production. New16MiB proposal replaces the withdrawn, never-adopted future12MiB suggestion. Does not change P58 original12MiB or failures."
+    },
+    "validation.effective_case_conditions.complete_necessary_byte_limit": {
+      "value": 67108864,
+      "unit": "byte",
+      "range": [
+        67108864,
+        67108864
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P61 newly adopted independent64MiB static/real-existing-JSON integration and normal one-package delivery only. Full unique physical inputs/copies and actual original/stagedGitblob inputs separately, all unchanged six future reserves. No science/time-window allocation. Old32MiB/P58/P60 failed protocols remain unchanged."
     }
   },
   "species": [
@@ -10005,7 +10016,7 @@
     "scope_note": "One fixed joint synthetic recovery with existing fit settings and drying schedule. Reuse the numerical E truth/initial controls previously used in the single-parameter example, without inheriting that recovery evidence. Same model/discretization, no measurement or added noise. Scales are residual normalization, not sigma. No design, perturbation, tolerance or restart search."
   },
   "observation_contract": {
-    "schema": "full_cycle_observation_admission_v1",
+    "schema": "full_cycle_observation_contract_v2",
     "status": "assumed",
     "source": "policy",
     "note": "Observation semantics and explicit target metadata only. Null means unknown, not a matching identity. Forward operation and existing synthetic data do not require target measurements. Compatibility checks declarations, not experimental truth. Product outputs remain unvalidated proxies.",
@@ -10183,7 +10194,30 @@
       }
     },
     "time_note": "Curve times are seconds since simulation start; other origins need an explicit sourced offset. Main drying and later conditioning cannot be pooled. Scale is explicitly in canonical target units and is not automatically an uncertainty.",
-    "reference_note": "External paper tables/digitized curves remain reference. Current/wet dry-mass conversion requires a sourced current/initial dry-mass ratio. MR accepts only explicitly sourced water/initial_water and an initial-dry denominator; unknown formulas are not inferred."
+    "reference_note": "External paper tables/digitized curves remain reference. Current/wet dry-mass conversion requires a sourced current/initial dry-mass ratio. MR accepts only explicitly sourced water/initial_water and an initial-dry denominator; unknown formulas are not inferred.",
+    "legacy_condition_parameter_keys_note": "Unchanged65 historical keys retained for legacy projection only. Effective physical conditions use actual supplied stages/gas species plus all existing recipe records; no permanent synthetic-stage list.",
+    "case_condition_projection": {
+      "schema": "declared_case_condition_projection_v2",
+      "bundle_schema": "declared_case_condition_bundle_v2",
+      "observation_bundle_schema": "full_cycle_observations_v2",
+      "api": "project_declared_case_conditions(config, case_reference)",
+      "case_reference": "Explicit actual caller source path/ID, CLI passes resolved args.parameters; no module-default source.",
+      "case_transformations": "Explicit required list from caller; each actual derived window/changed record retains base source and transformations, derived_saved_file null unless actually saved elsewhere.",
+      "effective_keys": "Historical non-stage physical declarations, all declared recipe.*, actual stages process.end/temperature and gas.stage for phase=gas species; legacy inactive stages separate.",
+      "legacy": "Full historical65 projection/records unchanged, independent candidate historical72 unchanged.",
+      "shared_consumers": [
+        "prepare_dataset configuration comparison",
+        "admission.model_conditions and records",
+        "measured fit fixed-parameter exclusion"
+      ],
+      "not_experiment_conditions": [
+        "mesh cells/faces",
+        "solver timestep/tolerances",
+        "Ca numerical coordinate",
+        "sampling controls"
+      ],
+      "qualification": "Declaration/source completeness only; no measurement/protocol/material or new physics qualification."
+    }
   },
   "public_reference_cases": {
     "arlabosse95": {
@@ -13733,6 +13767,41 @@
       "whole_project_complete": false,
       "next_scientific_budget_allocated": false,
       "final_delivery_receipt": "runs/full-cycle/p60-native-signed-entropy-two-stage-final-delivery-state.json"
+    },
+    "effective_case_conditions_integration": {
+      "schema": "P61_independent64MiB_effective_case_conditions_integration_v1",
+      "status": "v2_source_and_call_chain_implemented_actual_case_JSON_and_existing_dataset_prepared",
+      "budget_prefix": "validation.effective_case_conditions.",
+      "output_directory": "runs/full-cycle/p61-effective-case-conditions-64mib",
+      "original32MiB_manifest": "runs/full-cycle/p61-effective-case-conditions/complete-preflight-manifest.json",
+      "old32MiB_preflight_passed": false,
+      "new64MiB_preflight": "runs/full-cycle/p61-effective-case-conditions-64mib/complete-preflight-manifest.json",
+      "case_projection_input": "runs/full-cycle/p58-low-temperature-60s-time-refinement/case-parameters.json",
+      "pure_dataset_preparation_input": "runs/full-cycle/final-inverse-20260930/full/synthetic.observations.json",
+      "interface_source_paths": [
+        "src/sludge_vme/inverse/case_conditions.py",
+        "src/sludge_vme/inverse/observations.py",
+        "src/sludge_vme/inverse/full_cycle.py",
+        "src/sludge_vme/cli.py"
+      ],
+      "scope": "Real case-reference chain and effective physical-condition projection shared by live comparison/admission.save/measured-fixed exclusion; preserve old65 and historical72, complete source records and old bundles. Actual stage/gas only, no mesh/solver experiment compatibility. Explicit derived-source transformations without fake saved files.",
+      "functional_status": "actual_direct_case24_and_existing83rows_root66_completed_only",
+      "scientific_budget_allocated": false,
+      "whole_project_complete": false,
+      "future_reserves_bytes": {
+        "A_distinct_original_source_and_root_freeze": 1048576,
+        "A_new_effective_source_JSON_bundle_and_real_existing_dataset_output": 1048576,
+        "B_live_code_root_docs_report_growth": 1048576,
+        "B_future_all16_changed_staged_Git_blobs_fullbytes": 8388608,
+        "B_new_programs_manifests_self_logs_GitDrive_and_final_receipts": 1048576,
+        "B_actual_own_Drive_increment_archive": 1572864
+      },
+      "no_model_constructor_RHS_Jac_ODE_fit_UQ_or_extra_operator": true,
+      "functional_receipt": "runs/full-cycle/p61-effective-case-conditions-64mib/functional-execution.json",
+      "import_classification": "runs/full-cycle/p61-effective-case-conditions-64mib/import-profile-classification.json",
+      "source_repair_receipt": "runs/full-cycle/p61-effective-case-conditions-64mib/source-repair.json",
+      "pure_case_output": "runs/full-cycle/p61-effective-case-conditions-64mib/new-case-condition-bundle.json",
+      "pure_prepared_output": "runs/full-cycle/p61-effective-case-conditions-64mib/existing-synthetic-prepared.v2.json"
     }
   },
   "caloric_background": {
@@ -14026,5 +14095,186 @@
     "qualification": "Saved same-origin storage and cumulative balance only; not independent potentials, independent cumulative branches, between samples, material or whole-model qualification.",
     "replay_entry": "python src/sludge_vme/entropy_ledger.py INPUT --ledger-path entropy_ledger --out OUTPUT; saved producer wrapper uses --ledger-path report entropy_ledger. Direct file avoids package __init__ model imports.",
     "historical_missing_fields": "P57/P58 complete S/Ip/Ie were not serialized; fail naturally on required missing keys, no synthetic backfill or rate quadrature."
+  },
+  "legacy_observation_contract_v1": {
+    "schema": "full_cycle_observation_admission_v1",
+    "status": "assumed",
+    "source": "policy",
+    "note": "Observation semantics and explicit target metadata only. Null means unknown, not a matching identity. Forward operation and existing synthetic data do not require target measurements. Compatibility checks declarations, not experimental truth. Product outputs remain unvalidated proxies.",
+    "target": {
+      "material": {
+        "material_id": null,
+        "recipe_id": null,
+        "batch_id": null
+      },
+      "conditions": {
+        "geometry_id": null,
+        "boundary_program_id": null,
+        "initial_state_id": null
+      },
+      "identity_source": null,
+      "compatibility_source": null
+    },
+    "condition_parameter_keys": [
+      "geometry.half_thickness",
+      "geometry.area",
+      "material.dry_density",
+      "material.water_dry_ratio",
+      "initial.temperature",
+      "recipe.silica",
+      "recipe.kaolin",
+      "recipe.calcite",
+      "recipe.organic",
+      "recipe.char",
+      "gas.pressure",
+      "gas.inlet.O2",
+      "gas.inlet.N2",
+      "gas.inlet.H2O",
+      "gas.inlet.CO2",
+      "process.drying.end",
+      "process.drying.temperature",
+      "process.heating.end",
+      "process.heating.temperature",
+      "process.reactions.end",
+      "process.reactions.temperature",
+      "process.sintering.end",
+      "process.sintering.temperature",
+      "process.hold.end",
+      "process.hold.temperature",
+      "process.cooling.end",
+      "process.cooling.temperature",
+      "process.time_scale",
+      "process.drying_ramp.end",
+      "process.drying_ramp.temperature",
+      "process.cooling_hold.end",
+      "process.cooling_hold.temperature",
+      "gas.program_scale",
+      "gas.stage.drying_ramp.O2",
+      "gas.stage.drying_ramp.N2",
+      "gas.stage.drying_ramp.H2O",
+      "gas.stage.drying_ramp.CO2",
+      "gas.stage.drying.O2",
+      "gas.stage.drying.N2",
+      "gas.stage.drying.H2O",
+      "gas.stage.drying.CO2",
+      "gas.stage.heating.O2",
+      "gas.stage.heating.N2",
+      "gas.stage.heating.H2O",
+      "gas.stage.heating.CO2",
+      "gas.stage.reactions.O2",
+      "gas.stage.reactions.N2",
+      "gas.stage.reactions.H2O",
+      "gas.stage.reactions.CO2",
+      "gas.stage.sintering.O2",
+      "gas.stage.sintering.N2",
+      "gas.stage.sintering.H2O",
+      "gas.stage.sintering.CO2",
+      "gas.stage.hold.O2",
+      "gas.stage.hold.N2",
+      "gas.stage.hold.H2O",
+      "gas.stage.hold.CO2",
+      "gas.stage.cooling.O2",
+      "gas.stage.cooling.N2",
+      "gas.stage.cooling.H2O",
+      "gas.stage.cooling.CO2",
+      "gas.stage.cooling_hold.O2",
+      "gas.stage.cooling_hold.N2",
+      "gas.stage.cooling_hold.H2O",
+      "gas.stage.cooling_hold.CO2"
+    ],
+    "semantics": {
+      "tg": {
+        "quantity": "condensed_mass",
+        "basis": "initial_dry_mass",
+        "location": "whole_specimen",
+        "acquisition": "in_situ",
+        "segments": [
+          "full_cycle",
+          "main_drying"
+        ]
+      },
+      "dsc": {
+        "quantity": "net_boundary_power",
+        "basis": "initial_dry_mass",
+        "location": "whole_specimen",
+        "acquisition": "in_situ",
+        "segments": [
+          "full_cycle",
+          "main_drying"
+        ]
+      },
+      "dilatometry": {
+        "quantity": "axial_strain",
+        "basis": "initial_thickness",
+        "location": "whole_specimen",
+        "acquisition": "in_situ",
+        "segments": [
+          "full_cycle",
+          "main_drying"
+        ]
+      },
+      "kiln": {
+        "quantity": "temperature",
+        "basis": "no_mass_basis",
+        "location": "kiln",
+        "acquisition": "in_situ",
+        "segments": [
+          "full_cycle",
+          "main_drying"
+        ]
+      },
+      "liquid_water": {
+        "quantity": "liquid_water",
+        "basis": "initial_dry_mass",
+        "location": "whole_specimen",
+        "acquisition": "in_situ",
+        "segments": [
+          "full_cycle",
+          "main_drying"
+        ]
+      },
+      "surface_temperature": {
+        "quantity": "temperature",
+        "basis": "no_mass_basis",
+        "location": "outer_surface",
+        "acquisition": "in_situ",
+        "segments": [
+          "full_cycle",
+          "main_drying"
+        ]
+      },
+      "absorption": {
+        "quantity": "fired_water_absorption",
+        "basis": "fired_dry_mass",
+        "location": "whole_specimen",
+        "acquisition": "post_cooling",
+        "segments": [
+          "post_cooling"
+        ],
+        "terminal_stage": "cooling_hold"
+      },
+      "strength": {
+        "quantity": "compressive_strength",
+        "basis": "no_mass_basis",
+        "location": "whole_specimen",
+        "acquisition": "post_cooling",
+        "segments": [
+          "post_cooling"
+        ],
+        "terminal_stage": "cooling_hold"
+      },
+      "defects": {
+        "quantity": "defect_indicator",
+        "basis": "no_mass_basis",
+        "location": "whole_specimen",
+        "acquisition": "post_cooling",
+        "segments": [
+          "post_cooling"
+        ],
+        "terminal_stage": "cooling_hold"
+      }
+    },
+    "time_note": "Curve times are seconds since simulation start; other origins need an explicit sourced offset. Main drying and later conditioning cannot be pooled. Scale is explicitly in canonical target units and is not automatically an uncertainty.",
+    "reference_note": "External paper tables/digitized curves remain reference. Current/wet dry-mass conversion requires a sourced current/initial dry-mass ratio. MR accepts only explicitly sourced water/initial_water and an initial-dry denominator; unknown formulas are not inferred."
   }
 }

@@ -217,7 +217,11 @@ def main(argv: list[str] | None = None) -> int:
         config = read_parameters(args.parameters)
         if args.synthetic_calibration or args.calibrate:
             from .inverse.full_cycle import fit, synthetic_demo
-            result = synthetic_demo(config, args.out) if args.synthetic_calibration else fit(config, json.loads(args.calibrate.read_text()), args.out)
+            case_reference = str(args.parameters.resolve())
+            result = synthetic_demo(config, args.out, case_reference=case_reference,
+                case_transformations=[]) if args.synthetic_calibration else fit(config,
+                json.loads(args.calibrate.read_text()), args.out, case_reference=case_reference,
+                case_transformations=[])
             print(json.dumps({"qualified_fit":result["qualified_fit"], "measurement_kind":result["measurement_kind"], "elapsed_s":result["elapsed_s"]}))
             passed = result['demonstration_passed'] if args.synthetic_calibration else result['qualified_fit']
             return 0 if passed else EXIT_SOLVER

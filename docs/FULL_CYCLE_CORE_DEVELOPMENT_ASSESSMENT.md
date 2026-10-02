@@ -1,5 +1,13 @@
 # 当前完整模型目标：能力与验收缺口评估
 
+P61 有效case条件与真实来源接口已实现，实际JSON功能完成（2026-10-02T22:37:27.274912+00:00）。单阶段合法case输出24项有效条件、65项legacy完整记录/48项非当前stage旧键；真正既有83行synthetic输入原样保留，八stage配置使用66项有效条件。v2 bundle保存完整records/sources/原source及显式变换；compare/save/measuredfixed共用同一投影，数值网格/步长/容差不混入实验物理条件。CLI传实际args.parameters，Python调用须显式case_reference/case_transformations，派生窗口只记真实内存变换且savedfile=null。已准备v2保留原source_dataset_schema；fit结果保存整个bundle、三个新synthetic生成合同v2，相关fit/reference/measured/重prepare分支本轮仅静态接线，未执行。实际一次direct JSON及一次prepare用时1.382284s，0模型构造/RHS/Jac/ODE/fit/UQ；包导入的旧dataclass类体/代码生成4事件另保raw profile及来源分类，不称物理forward。一次源语法错误在AST前停止、修正后执行，失败留证。
+
+根690=144literature/546assumed/0measured，旧689完整records及名义物理参数保持；新增仅独立64MiB行政额度。原32MiB预检33618433>33554432，超64001B并0实施/功能，原FAIL保留。新完整事前估算34633649≤67108864（所有六reserve保持），最终actual连同Gitblob/增量档案/末收据读 `runs/full-cycle/p61-effective-case-conditions-64mib-final-delivery-state.json`；一次正常提交和一次Drive增量以后，末local收据不递归commit/打包。P60原完整预检补齐17600341>16777216超823125B，协议FAIL；actual16701789B及已真实两段熵/预算证据不追认预检。名义余水0.1358920787402553%>0.1%仍失败，P34/P40/P44/P45/P50撤回/P51、CaO零预算nullfalse保持。当前8stage、独立势/分支、组合加密、最新三方案/反演/UQ及材料仍未完成；本次接口功能不授整体模型或工艺PASS，0新物理验收/测量/恢复/历史删除。
+
+实现及执行证据 `docs/FULL_CYCLE_P61_CASE_CONDITIONS.json/md`。下一代码缺口为inverse/UQ Ca与native entropy证据保留；当前无下一科学窗口。Git、Drive元数据、实际恢复和20GB/GitHub容量分别判断。
+
+### P60及更早记录（各自当时状态，以最新更正为准）
+
 P60 原生两阶段signed S生产和唯一saved-JSON回放已实际完成并闭窗（2026-10-02T21:41:12.215616+00:00）。原完整采用case的26格27面/mode3/Ca1、0–30/30–60s及物理/数值records保持，fresh native初态/所有states累计carry，中点BDF历史restart；不声称与P58单stage逐值相同。实际wall52.205773333s/CPU51.946520s，rc0/reaped/无timeout，1job/worker/attempt/constructor/continuousintegrate、2native solve_ivp；12206RHS含7Jac（9840+7×338），另121native summaryrates，无额外独立算子/forward/fit/UQ/search。真正持久121点完整S/Ip/Ie/time/原无量纲末槽及escale/Tr/原阈值；第二段30s起点产熵0.18294835655058223、交换熵0.007497017663414705J/K均实际非零，全窗/两段各自起点作差signed R=(ΔS−ΔIp)−ΔIe，不重置或裁剪。新全窗relative2.81146423756e-09，第二段6.84756259103e-13<原.001；从真正新JSON执行一次stdlib非__main__replay，输入series及重算interval输出一致，原native flags保持各自表达式。质量/元素/U及四gas全窗两段按原.001通过；CaO零预算仍nullfalse，全相不PASS。strict非负/原source域仅121保存点，独立势/分支累计/内部BDF/Newton/complex/between/最新8stage/材料不自动资格。根689=144literature545assumed0measured，旧681完整records与全部旧live合同/名义保持；新增8仅独立policy预算。本轮完整prelaunch200实际路径+3virtualGitblob+futureoutput/adminreserve=14598940B≤16777216B，最终所有actualpaths/增量档案/行政按finalreceipt另核算，不能拿reap较早口径冒充最终PASS。旧未来12MiB候选撤回、不启动；P58资源FAIL、P34/P40/P44/P45/P50撤回/P51及名义余水.135892078740%>.1%/0实测/wholefalse全部保留。本科学窗口已消费，0后续预算；观察候选、条件接口和inverse/UQ Ca留存未整合。
 
 证据 `docs/FULL_CYCLE_P60_NATIVE_ENTROPY_PRODUCTION.json/md`；最终Git/Drive/实际字节收口 `runs/full-cycle/p60-native-signed-entropy-two-stage-final-delivery-state.json`，元数据核对不等于恢复。
