@@ -7737,6 +7737,94 @@
       "source": "policy",
       "status": "assumed",
       "note": "P52 new explicitly allocated single JSON scalar serialization recovery forward. P51closedfailure remains;900sfromnewchildlaunch,2MiB including frozen inputs/source/results/reap,no retry and no physical/solver changes."
+    },
+    "validation.saved_reference_time_refinement.maximum_jobs": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P53 independently allocated one fixed13cell10s max_step0.05s forward; reuse saved P52baseline, no baseline rerun. 900s from child launch through reap, 2MiB including frozen sources/inputs/results/receipts. Any failure closes soleattempt, no retry or P54."
+    },
+    "validation.saved_reference_time_refinement.maximum_workers": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P53 independently allocated one fixed13cell10s max_step0.05s forward; reuse saved P52baseline, no baseline rerun. 900s from child launch through reap, 2MiB including frozen sources/inputs/results/receipts. Any failure closes soleattempt, no retry or P54."
+    },
+    "validation.saved_reference_time_refinement.maximum_attempts_including_failure": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P53 independently allocated one fixed13cell10s max_step0.05s forward; reuse saved P52baseline, no baseline rerun. 900s from child launch through reap, 2MiB including frozen sources/inputs/results/receipts. Any failure closes soleattempt, no retry or P54."
+    },
+    "validation.saved_reference_time_refinement.maximum_constructor_instances": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P53 independently allocated one fixed13cell10s max_step0.05s forward; reuse saved P52baseline, no baseline rerun. 900s from child launch through reap, 2MiB including frozen sources/inputs/results/receipts. Any failure closes soleattempt, no retry or P54."
+    },
+    "validation.saved_reference_time_refinement.maximum_ODE_forwards": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P53 independently allocated one fixed13cell10s max_step0.05s forward; reuse saved P52baseline, no baseline rerun. 900s from child launch through reap, 2MiB including frozen sources/inputs/results/receipts. Any failure closes soleattempt, no retry or P54."
+    },
+    "validation.saved_reference_time_refinement.global_budget": {
+      "value": 900,
+      "unit": "s",
+      "range": [
+        900,
+        900
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P53 independently allocated one fixed13cell10s max_step0.05s forward; reuse saved P52baseline, no baseline rerun. 900s from child launch through reap, 2MiB including frozen sources/inputs/results/receipts. Any failure closes soleattempt, no retry or P54."
+    },
+    "validation.saved_reference_time_refinement.necessary_output_byte_limit": {
+      "value": 2097152,
+      "unit": "byte",
+      "range": [
+        2097152,
+        2097152
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P53 independently allocated one fixed13cell10s max_step0.05s forward; reuse saved P52baseline, no baseline rerun. 900s from child launch through reap, 2MiB including frozen sources/inputs/results/receipts. Any failure closes soleattempt, no retry or P54."
+    },
+    "validation.saved_reference_time_refinement.max_step": {
+      "value": 0.05,
+      "unit": "s",
+      "range": [
+        0.05,
+        0.05
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "Single predeclared time refinement of existing P52 fixedcase max_step0.1s, applied as whole numerics.max_step record. No tolerance, physics, initialstate, grid or material change; not measured."
     }
   },
   "species": [
@@ -11303,6 +11391,123 @@
       "numeric_readback": "runs/full-cycle/p52-saved-reference-transient-json-recovery/saved-readback.json",
       "qualification": "Only fixed synthetic/assumed 13cell direct_transient0..10s;ordinary balances and native entropy criterion pass;CaO zero-budget relative undefined/passfalse;not fullmodel/time-grid/8stages",
       "next_budget_allocated": false
+    },
+    "saved_reference_time_refinement": {
+      "schema": "P53_single_saved13cell_time_refinement_v1",
+      "budget_prefix": "validation.saved_reference_time_refinement.",
+      "physical_case": "ca_coordinate_transient_first_actual_model",
+      "geometry_case": "saved_reference_partition",
+      "baseline_job_id": "baseline",
+      "case_builder": "Read existing P52 frozen case; add8 declared policy records, use whole new max_step record; preserve every other old616 parameter record and physical top-level fields",
+      "output_directory": "runs/full-cycle/p53-saved-reference-time-refinement",
+      "frozen_source_root": "runs/full-cycle/p53-saved-reference-time-refinement/frozen-src",
+      "root_snapshot": "runs/full-cycle/p53-saved-reference-time-refinement/root-snapshot.json",
+      "case_output": "runs/full-cycle/p53-saved-reference-time-refinement/case-parameters.json",
+      "result_output": "runs/full-cycle/p53-saved-reference-time-refinement/result.json",
+      "calls_output": "runs/full-cycle/p53-saved-reference-time-refinement/call-counts.json",
+      "producer": "scripts/run_saved_reference_transient.py",
+      "resource_status": "closed_after_one_actual_success_no_retry",
+      "identity": "P53sameP52existingP46P44syntheticassumed fixed13cell10s,max_step0.05s only;notmaterialrate",
+      "summary_report_keys": [
+        "scope",
+        "summary",
+        "whole_cycle",
+        "stages",
+        "conservation_passed",
+        "thermodynamics",
+        "state_domain",
+        "gas_ledger_endpoint_totals",
+        "gas_species_ledger",
+        "calcium_phase_ledger",
+        "actual_initial_references",
+        "declared_process_window",
+        "active_reactions",
+        "direct_carbonation_configuration",
+        "example_endpoints",
+        "drying_water_diagnostics",
+        "physical_consistency_passed",
+        "solver",
+        "elapsed_s",
+        "initial_output_provenance",
+        "dimension_check"
+      ],
+      "saved_row_keys": [
+        "time_s",
+        "temperature_k",
+        "pressure_pa",
+        "gas_inventory_mol",
+        "calcite_inventory_mol",
+        "lime_inventory_mol",
+        "portlandite_inventory_mol",
+        "calcium_inventory_residual_mol",
+        "reaction_extent_mol",
+        "porosity",
+        "thickness_shrinkage",
+        "residual_carbon_kg",
+        "temperature_difference_k",
+        "hydroxide_entropy_w_k",
+        "carbonate_entropy_w_k",
+        "direct_carbonation_rate_mol_s",
+        "direct_carbonation_entropy_w_k",
+        "entropy_production_w_k",
+        "internal_liquid_water_face_flux_mol_s",
+        "internal_liquid_water_face_energy_flux_w",
+        "internal_liquid_water_face_entropy_w_k",
+        "gas_face_flux_mol_s",
+        "gas_molecular_face_entropy_w_k"
+      ],
+      "criteria": {
+        "balance": "acceptance.balance_relative",
+        "entropy": "acceptance.entropy_relative",
+        "strict": "raw inventory and entropy >=0 at saved times; no tolerance/floor",
+        "Ca_phase": "existing calcium_phase_ledger_report, signed cell residual first then global; originalnofloor budget,zero relative=null/passfalse",
+        "initial_Ca_readback": "P50 twoflags withdrawn; no new inventory criterion",
+        "faces": "signed native summary values only; descriptive actual transport, no invented threshold",
+        "time_grid_8stage_oldnewnetU": "P53originalfour time metrics executed and passed fixed13cell10s only;space/8stage/currentoldnewnetU notexecuted or unqualified;oldP45FAILretained"
+      },
+      "necessary_output_estimate_bytes": 1800000,
+      "output_estimate_basis": "~350KiB root +350KiB case +586189B47frozen Pythonfiles +389KiB native result +40KiB CLI/supervisor/receipts/readback/comparison;P52baseline referenced read-only without new copy",
+      "failure_policy": "Any new child read/import/constructor/integrate/summary/output/resource failure consumes sole P53attempt;close/reap/preserve,no retry,no P54",
+      "retained_P50": "runs/full-cycle/p50-saved-reference-host/eligibility-correction.json",
+      "original_P51_live_contract_preserved": true,
+      "snapshot_contract_mapping": "Only frozen snapshot maps new P53 contract into existing CLI saved_reference_transient selector;original P51/P52 live contracts remain closed",
+      "prior_failure": "runs/full-cycle/p51-saved-reference-transient-final-delivery-state.json",
+      "serialization_scope": "Existing plain(result) performed once before persistedfile and stdoutsummary; no physical/default/fallback change",
+      "original_P51_P52_live_contracts_preserved": true,
+      "baseline_result": "runs/full-cycle/p52-saved-reference-transient-json-recovery/result.json",
+      "baseline_root_snapshot": "runs/full-cycle/p52-saved-reference-transient-json-recovery/root-snapshot.json",
+      "baseline_case": "runs/full-cycle/p52-saved-reference-transient-json-recovery/case-parameters.json",
+      "baseline_executed_source": "runs/full-cycle/p52-saved-reference-transient-json-recovery/run_saved_reference_transient.executed.py",
+      "time_refinement_parameter": "validation.saved_reference_time_refinement.max_step",
+      "comparison_metrics": [
+        "porosity",
+        "residual_carbon_kg",
+        "shrinkage",
+        "peak_temperature_difference_k"
+      ],
+      "comparison_threshold_parameter": "acceptance.convergence_relative",
+      "comparison_floor_prefix": "acceptance.floor.",
+      "comparison_output": "runs/full-cycle/p53-saved-reference-time-refinement/time-comparison.json",
+      "comparison_definition": "abs(refined-baseline)/max(abs(refined),original floor), original strict .02;raw nofloor zero-reference yields null/notqualified only for that descriptive ratio;original positive floor criterion unchanged;Ca nofloor zero-budget null/passfalse",
+      "extra_direct_extent": "descriptive only,no threshold or qualification",
+      "source_scope": "Byte-identical existing P52 actual producer and frozen Pythonpackage, no scientific code changes",
+      "next_budget_allocated": false,
+      "actual_counts": {
+        "jobs": 1,
+        "workers": 1,
+        "attempts_including_failure": 1,
+        "make_cycle_instances": 1,
+        "observed_solve_ivp_entries": 1,
+        "RHS_including_Jacobian": 2710,
+        "Jacobian": 12,
+        "summary_rates": 21
+      },
+      "numerical_report_saved": true,
+      "declared_end_completed": true,
+      "execution_receipt": "runs/full-cycle/p53-saved-reference-time-refinement/execution.json",
+      "numeric_readback": "runs/full-cycle/p53-saved-reference-time-refinement/saved-readback.json",
+      "original_four_time_metrics_qualified": true,
+      "qualification": "Only original four time metrics for same synthetic13cell direct_transient0..10s;not all state/reaction accuracy, space, independent potential derivatives,8stage or wholemodel"
     }
   },
   "caloric_background": {
