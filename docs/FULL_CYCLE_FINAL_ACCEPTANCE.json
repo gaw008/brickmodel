@@ -1,14 +1,14 @@
 {
   "schema": "full_cycle_final_acceptance_matrix_v1",
-  "recorded_utc": "2026-10-02T18:32:06.372123+00:00",
-  "status": "P55_original_four_fixed26_time_metrics_pass_wholemodel_partial",
+  "recorded_utc": "2026-10-02T19:05:32.929138+00:00",
+  "status": "P56_missing_operations_observed_original_netU_FAIL_wholemodel_partial",
   "identity": "approximate_simulation_not_measured_material",
   "parent_commit": "d8bc6f1b09e0b6d10cdcf4abf35e634035a36d08",
   "parameter_file": "parameters.full_cycle.json",
-  "parameter_count": 642,
+  "parameter_count": 653,
   "parameter_status_counts": {
     "literature": 144,
-    "assumed": 498,
+    "assumed": 509,
     "measured": 0
   },
   "implementation": {
@@ -146,7 +146,7 @@
   },
   "timing_note": "Elapsed wall time from initial plan creation includes computation, parallel overlap, reviews and user-directed continuation; not summed CPU/scientific time. P16 and P18 execution receipts report separately measured batch times.",
   "delivery": {
-    "actual_receipt": "runs/full-cycle/p55-saved-reference-26cell-time-refinement-final-delivery-state.json",
+    "actual_receipt": "runs/full-cycle/p56-calcium-energy-operation-observation-final-delivery-state.json",
     "status": "actualGitDrivefollow",
     "metadata_not_recovery": true,
     "history20GB_capacity_resolved": false
@@ -203,7 +203,7 @@
     }
   },
   "base_model_complete": false,
-  "current_scope": "P55 同26格时间加密已实际保存并闭窗。只读 P54 26格27面、10s、max_step=0.05s 基准，本轮仅将完整 max_step 记录改为0.025s，物理、初态、几何、BDF容差和0.5s输出保持。实际2026-10-02T18:26:19.861451+00:00至2026-10-02T18:26:39.502953+00:00（洛杉矶启动2026-10-02T11:26:19.861451-07:00），监督耗时19.641302125s、子进程CPU18.998931s；rc0、回收、未超时。1作业/worker/attempt/constructor/solve_ivp，4460次RHS含10次Jac，另21次原生summary rates；构造内部1次原分区primitive、0额外producer。原四时间指标均<0.02，最坏8.693064046e-10，按max(abs(P55细化值),原floor)归一化；带符号差、实际尺度、floor是否启用及无floor描述比值分别保存。质量/元素/完整U最坏1.469543941e-08，四gas最坏8.519561906e-06，原生累计熵3.001470368e-09均<原0.001。Cc/OH逐相通过，CaO零预算relative=null、passed=false，整体相不PASS。严格库存和熵仅21保存时刻；完整独立signed S累计分解和独立势导数仍未资格。根642=144literature/498assumed/0measured，旧634完整记录、旧6个live合同和科学核保持。原名义12格/mode0/Ca0/sampling0/directoff保持；P45/P34/P40/P44失败、P50错误初态PASS撤销和P51输出失败保留。历史名义余水0.135892078740%>0.1%，0新名义尝试。本次只授同26格10s工况的原四时间指标，P54固定空间比较资格按原范围保留；一般空间、全状态、独立势导数、全八阶段、三方案/反演UQ和完整模型CLI仍未资格，whole_project_complete=false。Git/Drive增量、实际恢复、历史存储分别登记；本轮不分配P56、0.0125s或52格任务。",
+  "current_scope": "P56原P45操作证据已实际保存并闭窗。仅原12格declared_zero旧/新两模式，原生构造/初态及每模式1次完整RHS；原诊断Udot AST节点单次观察，原乘法、np.sum(axis=1)、左结合顺序和dtype保持，cached与decoded分别保存。实际2026-10-02T18:55:11.350023+00:00至2026-10-02T18:55:12.552424+00:00，监督1.202414125s/CPU1.015555s，rc0回收、未超时。独立1job/worker/attempt、2constructor/2nativeRHS，0Jac/ODE/独立extraoperators；原内部calls逐模式/阶段持久。两模式全12格净U、原生state及Ca状态/cached/decoded均逐值重现历史；这是新观察而非恢复历史内存。原signed最大差−1.4210855350476714e−14W、old净向量尺度4.6751916143275985e−6W、relative3.039630569777313e−9>原1e−11，仍FAIL。i7固体小计A_s差−2^−46W已定位于原decoded乘积和物种归约：输入精确乘积差−3.8780693134327255e−15W、乘法舍入差−6.0291690463418724e−15W、归约舍入差−4.303616355427406e−15W，精确分解残差0。i7Ccal/us/ug/cap相同且dT/db/dpore差0；后续五次原加法舍入差0，最终另含弹性差−6.352747104407253e−22W。未观察NumPy内部C-level每次加法，不唯一指认其内部索引。当前没有改物理核的证据，不能推论核在所有状态无缺陷。原科学核及旧642完整根记录、全部old live合同保持；新增11观察policy至653=144literature509assumed0measured。P45原FAIL和P34/P40/P44/P50撤回/P51失败保留；P54空间/P55时间只按原范围保持。历史名义余水.135892078740%>.1%和0实测保持，0新名义尝试。独立势导数、八阶段、三方案反演UQ/完整CLI/whole模型仍未完成。首次必要字节1958323B含旧新冻结源和原输入；后来分解/报告/行政另实测，不能代替最终总量。Git/Drive增量、实际恢复及历史容量分列；不自动修核或启动下轮。",
   "P11": {
     "status": "base_model_complete_with_nominal_process_failure_and_future_material_calibration",
     "verification": {
@@ -1580,53 +1580,47 @@
     "P52_limited_actual_numeric": "docs/FULL_CYCLE_P52_SAVED_REFERENCE_TRANSIENT.json",
     "P53_original_four_time_metrics": "docs/FULL_CYCLE_P53_TIME_REFINEMENT.json",
     "P54_fixed4space": "docs/FULL_CYCLE_P54_SPACE_REFINEMENT.json",
-    "P55_fixed26_time": "docs/FULL_CYCLE_P55_26CELL_TIME_REFINEMENT.json"
+    "P55_fixed26_time": "docs/FULL_CYCLE_P55_26CELL_TIME_REFINEMENT.json",
+    "P56_operation_observation": "docs/FULL_CYCLE_P56_ENERGY_OPERATION_OBSERVATION.json"
   },
   "current_nominal_drying_remaining_fraction": 0.001358920787402553,
   "whole_project_complete_definition": "Scoped implementation and physics/numerics, version-matched declared scenario evidence and observable interfaces are separate from process/material/delivery qualifications. P21 old kernel distribution cannot qualify P24 kernel.",
   "historical_model_closeout_wall_s_from_plan_creation": 4403.9089,
   "current_acceptance_matrix": [
     {
-      "item": "P55_unique26cell10s_forward",
-      "outcome": "actualsuccess"
+      "item": "P56_original12_declared_zero_two_mode_observation",
+      "outcome": "actualsuccess_2constructor2RHS_0ODE"
     },
     {
-      "item": "P55_original4fixed26_time_metrics",
-      "outcome": "pass_same26_10s_.05vs.025_originalfloors",
-      "maximum_relative": 8.69306404638337e-10
+      "item": "P56_historical_vectors_and_states_reproduction",
+      "outcome": "all_saved_values_reproduced"
     },
     {
-      "item": "P54_original4fixedspace_metrics",
-      "outcome": "prior_fixed13vs26_.05_10s_qualification_retained"
+      "item": "P45_original_net_U_vector",
+      "outcome": "failed_preserved",
+      "relative": 3.039630569777313e-09,
+      "limit": 1e-11
     },
     {
-      "item": "generalspace_allstates",
+      "item": "P56_i7_operation_attribution",
+      "outcome": "exact_saved_decomposition_closed_not_independent_physics_acceptance"
+    },
+    {
+      "item": "P54_space_P55_time",
+      "outcome": "historical_fixed_scope_retained"
+    },
+    {
+      "item": "independent_potential_8stage_generalspace_allstates_compare_inverse_UQ_CLI",
       "outcome": "notqualified"
     },
     {
-      "item": "P55_mass_elements_completeU_fourgas_nativeentropy",
-      "outcome": "pass_fixed26cell10s"
+      "item": "CaO_zero_budget",
+      "outcome": "historical_nullfalse_notqualified"
     },
     {
-      "item": "P55_CaO_allphase_relative",
-      "outcome": "undefined_zero_budget_notqualified"
-    },
-    {
-      "item": "strict_inventory_entropy",
-      "outcome": "21savedinstants_only"
-    },
-    {
-      "item": "independentS_potential_8stage_compare_inverse_UQ_completeCLI",
-      "outcome": "notqualified"
-    },
-    {
-      "item": "prior_P45_P34_P40_P44_P50_P51failures",
-      "outcome": "retained_notreexecuted"
-    },
-    {
-      "item": "nominal_drying",
-      "outcome": "historicalfailed",
-      "new_attempts": 0
+      "item": "prior_failures_nominal_drying",
+      "outcome": "retained",
+      "new_nominal_attempts": 0
     },
     {
       "item": "targetmaterial",
@@ -1636,7 +1630,7 @@
     {
       "item": "Git_Drive_restore_history",
       "outcome": "separatedelivery",
-      "evidence": "runs/full-cycle/p55-saved-reference-26cell-time-refinement-final-delivery-state.json"
+      "evidence": "runs/full-cycle/p56-calcium-energy-operation-observation-final-delivery-state.json"
     }
   ],
   "final_matrix_independent_review": {
@@ -1747,10 +1741,10 @@
   },
   "historical_P18_model_completion_wall_s_from_plan_creation": 14941.526078,
   "current_model_completion_status": {
-    "implementation": "Existing producer/kernel unchanged; one whole .025s max_step record on actual same26case/nativeinit",
-    "physics_numerics": "Original four time PASS for fixed26/10s/.05vs.025; P54 fixedspace originalscope retained. Generalspace/allstates/independentS/8stage/wholemodel unqualified; CaOundefined.",
+    "implementation": "Original12cell two-mode same-RHS operation observation entry added; scientific kernel unchanged",
+    "physics_numerics": "Original P45 FAIL reproduced/localized; current observation is not new dynamic/fullpotential/convergence acceptance. P54/P55 qualification retains original fixed scope.",
     "nominal_process": "Historical water .135892078740%>.1% FAIL; zero new attempts",
-    "material": "642=144lit498assumed0measured/no targetbrickL",
+    "material": "653=144literature509assumed0measured; no targetbrickL",
     "delivery": "Separate actualreceipt; metadata notrestore/historycapacity unresolved",
     "next_budget_allocated": false
   },
@@ -1823,7 +1817,7 @@
     "declared_to_reviewed_wall_s": 430.997672
   },
   "historical_pre_P22_status": "declared_approximate_model_work_complete_physics_numerics_passed_process_failed",
-  "physical_numerical_acceptance_scope": "P55original4fixed26timePASS;P54fixedspace originalscope retained;generalspace/CaO/potential/8stage/whole incomplete",
+  "physical_numerical_acceptance_scope": "P56 originalP45netU FAIL reproduced/localized; P54space/P55time original scopes retained; potential/8stage/whole incomplete",
   "P23": {
     "status": "completed_bounded_source_audit",
     "evidence": [
@@ -2749,6 +2743,38 @@
       "strict_scope": "21savedinstants",
       "whole_model_qualified": false,
       "new_postrun_calls": 0
+    },
+    "P56": {
+      "report": "docs/FULL_CYCLE_P56_ENERGY_OPERATION_OBSERVATION.json",
+      "actual_counts": {
+        "jobs": 1,
+        "workers": 1,
+        "attempts_including_failure": 1,
+        "logical_constructor_instances": 2,
+        "native_RHS_calls": 2,
+        "Jacobian_calls": 0,
+        "ODE_forwards": 0,
+        "independent_extra_operators": 0,
+        "original_native_internal_calls_by_mode_phase": "runs/full-cycle/p56-calcium-energy-operation-observation/call-counts.json"
+      },
+      "operations_observed": true,
+      "original_net_U_passed": false,
+      "original_relative": 3.039630569777313e-09,
+      "original_limit": 1e-11,
+      "i7_As_exact_delta": {
+        "signed_float": -1.4210854715202004e-14,
+        "exact_numerator": "-1",
+        "exact_denominator": "70368744177664",
+        "unit": "W"
+      },
+      "saved_exact_decomposition_residual": {
+        "signed_float": 0.0,
+        "exact_numerator": "0",
+        "exact_denominator": "1",
+        "unit": "W"
+      },
+      "physical_core_change_supported": false,
+      "wholemodel_qualified": false
     }
   },
   "final_complete_scope_review": {
@@ -8463,24 +8489,16 @@
     }
   },
   "current_root_parameter_metadata": {
-    "count": 642,
+    "count": 653,
     "status_counts": {
       "literature": 144,
-      "assumed": 498,
+      "assumed": 509,
       "measured": 0
     },
-    "old634_complete_records_preserved": true,
-    "old_live_contracts_preserved": {
-      "saved_reference_partition": true,
-      "saved_reference_transient": true,
-      "saved_reference_transient_json_recovery": true,
-      "saved_reference_time_refinement": true,
-      "saved_reference_space_partition": true,
-      "saved_reference_space_refinement": true
-    },
-    "new8_numerical_operation_policy_assumed": true
+    "old642_complete_records_preserved": true,
+    "all_previous_live_contracts_preserved": true
   },
-  "scientific_kernel_qualification": "Kernel unchanged; shortcase time/space metrics do not supersede prior failures or wholemodel acceptance",
+  "scientific_kernel_qualification": "Unchanged; current saved arithmetic supplies no reason to alter physical formulas, not proof for all states.",
   "historical_pre_P46_current_scope": "P45显式CaO坐标及必要叶模块已实现（2026-10-02T04:47:36.040486+00:00），局部资格partial。固定两物理上下文共4构造/4RHS/2sciencejobs，合计48项局部核查47通过/1净U比较FAIL（raw1.421085535e-14W、原scale4.675191614e-6W、relative3.039630570e-9>1e-11）保留；既有分项2645.316W补充诊断relative5.372082305e-18另列。明示正内点附录24/24PASS、0.259811s，原窗口关闭不延、0重复zero/ODE/Jac/fit/UQ。新初始零CaO精确0、所测新零/正内点三支熵非负仅瞬时，不授动态资格。根558=144literature414assumed0measured，旧541保持、新增表示及运行政策，无新物性，名义mode0/direct未启用。参考体积保存数据映射与外部C序列化数值一致；72熵记录14负值全保留；仅纳入F三来源/23文献观测，无L。原P34/P40/P44及名义0.135892078740%>0.1%失败、当前8阶段/加密/三方案/反演/UQ/CLI未资格和wholefalse保持。",
   "historical_pre_P46_current_model_completion_status": {
     "implementation": "ExplicitCaOopt-in/native shared chains and selected saved-data leaves implemented",
@@ -9496,7 +9514,7 @@
       "P45_prior": "929c4c3a ordinarypush/remotePASS,1377612B/Drive1a0Ci66j6N5eQZDzPBEn90U3okRlq9dz0 metadataPASS"
     }
   },
-  "current_scope_qualification": "Original four fixed26 time comparison PASS; generalspace/allstates/potential/8stages unqualified",
+  "current_scope_qualification": "Missing operations persist and history reproduced; original P45 vector remains FAIL. No independent potential/dynamic/fullmodel qualification.",
   "historical_pre_P47_current_scope": "P46首个实际mode1短时动态单例已完成（2026-10-02T05:55:32.140418+00:00）：累计2次进程启动，首读参失败1次保留；实际1构造/1ODE，2379RHS含12Jac，solver9.203657s、CPU含构造9.415551s、构造至回收9.581245s，原300s窗口未延。原质量/元素/完整能量最大相对1.548557663e-8、四gas预算最大9.103027113e-6，均<0.001；熵账本3.150938169e-9，保存样本OH/carbonate最小0、direct最小6.534691959e-12W/K，accepted knots及t_eval原物理域通过。Cc/OH无floor逐相相对预算通过；CaO初末/源/残差均0、预算0，相对null且passed=false，精确零观察不能授相对预算PASS。与保存P44基准四指标最大变化7.389644452e-13仅表示诊断，0新time/grid；direct extent差+4.261998740e-16mol。根569=144literature425assumed0measured，16操作source-ID修复、旧7来源元数据例外及失败快照保留，45host929c/物理/solver保持，名义mode0/direct未启用。全八阶段/加密/三方案/反演/UQ/CLI当前模式未资格；P45净U、P34/P40/P44失败及名义余水0.135892078740%>0.1%保持，0新名义尝试，wholefalse。本轮实际模型额度关闭，下一加密仅候选；Git、Drive元数据与恢复另列。",
   "historical_pre_P47_current_model_completion_status": {
     "implementation": "P45 source929c retained; root registered-source fix and explicit actual subrecord complete",
@@ -10745,5 +10763,124 @@
     "strict_scope": "21savedinstants",
     "whole_model_qualified": false,
     "new_postrun_calls": 0
+  },
+  "historical_pre_P56_current_scope": "P55 同26格时间加密已实际保存并闭窗。只读 P54 26格27面、10s、max_step=0.05s 基准，本轮仅将完整 max_step 记录改为0.025s，物理、初态、几何、BDF容差和0.5s输出保持。实际2026-10-02T18:26:19.861451+00:00至2026-10-02T18:26:39.502953+00:00（洛杉矶启动2026-10-02T11:26:19.861451-07:00），监督耗时19.641302125s、子进程CPU18.998931s；rc0、回收、未超时。1作业/worker/attempt/constructor/solve_ivp，4460次RHS含10次Jac，另21次原生summary rates；构造内部1次原分区primitive、0额外producer。原四时间指标均<0.02，最坏8.693064046e-10，按max(abs(P55细化值),原floor)归一化；带符号差、实际尺度、floor是否启用及无floor描述比值分别保存。质量/元素/完整U最坏1.469543941e-08，四gas最坏8.519561906e-06，原生累计熵3.001470368e-09均<原0.001。Cc/OH逐相通过，CaO零预算relative=null、passed=false，整体相不PASS。严格库存和熵仅21保存时刻；完整独立signed S累计分解和独立势导数仍未资格。根642=144literature/498assumed/0measured，旧634完整记录、旧6个live合同和科学核保持。原名义12格/mode0/Ca0/sampling0/directoff保持；P45/P34/P40/P44失败、P50错误初态PASS撤销和P51输出失败保留。历史名义余水0.135892078740%>0.1%，0新名义尝试。本次只授同26格10s工况的原四时间指标，P54固定空间比较资格按原范围保留；一般空间、全状态、独立势导数、全八阶段、三方案/反演UQ和完整模型CLI仍未资格，whole_project_complete=false。Git/Drive增量、实际恢复、历史存储分别登记；本轮不分配P56、0.0125s或52格任务。",
+  "historical_pre_P56_current_model_completion_status": {
+    "implementation": "Existing producer/kernel unchanged; one whole .025s max_step record on actual same26case/nativeinit",
+    "physics_numerics": "Original four time PASS for fixed26/10s/.05vs.025; P54 fixedspace originalscope retained. Generalspace/allstates/independentS/8stage/wholemodel unqualified; CaOundefined.",
+    "nominal_process": "Historical water .135892078740%>.1% FAIL; zero new attempts",
+    "material": "642=144lit498assumed0measured/no targetbrickL",
+    "delivery": "Separate actualreceipt; metadata notrestore/historycapacity unresolved",
+    "next_budget_allocated": false
+  },
+  "historical_pre_P56_current_root_parameter_metadata": {
+    "count": 642,
+    "status_counts": {
+      "literature": 144,
+      "assumed": 498,
+      "measured": 0
+    },
+    "old634_complete_records_preserved": true,
+    "old_live_contracts_preserved": {
+      "saved_reference_partition": true,
+      "saved_reference_transient": true,
+      "saved_reference_transient_json_recovery": true,
+      "saved_reference_time_refinement": true,
+      "saved_reference_space_partition": true,
+      "saved_reference_space_refinement": true
+    },
+    "new8_numerical_operation_policy_assumed": true
+  },
+  "historical_pre_P56_current_acceptance_matrix": [
+    {
+      "item": "P55_unique26cell10s_forward",
+      "outcome": "actualsuccess"
+    },
+    {
+      "item": "P55_original4fixed26_time_metrics",
+      "outcome": "pass_same26_10s_.05vs.025_originalfloors",
+      "maximum_relative": 8.69306404638337e-10
+    },
+    {
+      "item": "P54_original4fixedspace_metrics",
+      "outcome": "prior_fixed13vs26_.05_10s_qualification_retained"
+    },
+    {
+      "item": "generalspace_allstates",
+      "outcome": "notqualified"
+    },
+    {
+      "item": "P55_mass_elements_completeU_fourgas_nativeentropy",
+      "outcome": "pass_fixed26cell10s"
+    },
+    {
+      "item": "P55_CaO_allphase_relative",
+      "outcome": "undefined_zero_budget_notqualified"
+    },
+    {
+      "item": "strict_inventory_entropy",
+      "outcome": "21savedinstants_only"
+    },
+    {
+      "item": "independentS_potential_8stage_compare_inverse_UQ_completeCLI",
+      "outcome": "notqualified"
+    },
+    {
+      "item": "prior_P45_P34_P40_P44_P50_P51failures",
+      "outcome": "retained_notreexecuted"
+    },
+    {
+      "item": "nominal_drying",
+      "outcome": "historicalfailed",
+      "new_attempts": 0
+    },
+    {
+      "item": "targetmaterial",
+      "outcome": "pendingmeasurements",
+      "measured": 0
+    },
+    {
+      "item": "Git_Drive_restore_history",
+      "outcome": "separatedelivery",
+      "evidence": "runs/full-cycle/p55-saved-reference-26cell-time-refinement-final-delivery-state.json"
+    }
+  ],
+  "historical_pre_P56_delivery": {
+    "actual_receipt": "runs/full-cycle/p55-saved-reference-26cell-time-refinement-final-delivery-state.json",
+    "status": "actualGitDrivefollow",
+    "metadata_not_recovery": true,
+    "history20GB_capacity_resolved": false
+  },
+  "P56": {
+    "report": "docs/FULL_CYCLE_P56_ENERGY_OPERATION_OBSERVATION.json",
+    "actual_counts": {
+      "jobs": 1,
+      "workers": 1,
+      "attempts_including_failure": 1,
+      "logical_constructor_instances": 2,
+      "native_RHS_calls": 2,
+      "Jacobian_calls": 0,
+      "ODE_forwards": 0,
+      "independent_extra_operators": 0,
+      "original_native_internal_calls_by_mode_phase": "runs/full-cycle/p56-calcium-energy-operation-observation/call-counts.json"
+    },
+    "operations_observed": true,
+    "original_net_U_passed": false,
+    "original_relative": 3.039630569777313e-09,
+    "original_limit": 1e-11,
+    "i7_As_exact_delta": {
+      "signed_float": -1.4210854715202004e-14,
+      "exact_numerator": "-1",
+      "exact_denominator": "70368744177664",
+      "unit": "W"
+    },
+    "saved_exact_decomposition_residual": {
+      "signed_float": 0.0,
+      "exact_numerator": "0",
+      "exact_denominator": "1",
+      "unit": "W"
+    },
+    "physical_core_change_supported": false,
+    "wholemodel_qualified": false
   }
 }

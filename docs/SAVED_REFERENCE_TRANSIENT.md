@@ -13,3 +13,5 @@ P53独立合同 `saved_reference_time_refinement` 复用同一已修producer与P
 P54 `saved_reference_space_refinement`/`saved_reference_space_partition` 仅在新snapshot行政alias供原producer与geometry selector读取。现有直接case入口执行26格原生初态及10s/.05前向，原13faces区间二分，实际13vs26原四空间指标通过，fine26时间与全周期仍未资格；窗口关闭。详情 `docs/FULL_CYCLE_P54_SPACE_REFINEMENT.json/.md` 与 `runs/full-cycle/p54-saved-reference-space-refinement-final-delivery-state.json`，P53真实基准只读不重跑/整份复制，原失败保持。
 
 P55 `saved_reference_26cell_time_refinement`：复用P54实际26格27面case，仅完整max_step=.025s记录最后替换；一次10s原生前向，四原时间指标通过。P54基准只读不重跑或整份复制，原源保持，窗口关闭；一般空间/全状态/八阶段/整个模型未资格。详情 `docs/FULL_CYCLE_P55_26CELL_TIME_REFINEMENT.json` 和 `runs/full-cycle/p55-saved-reference-26cell-time-refinement-final-delivery-state.json`。
+
+P56独立离线观察入口 `scripts/run_calcium_energy_observation.py` 读取P56 root-snapshot，原P4512格declared_zero旧/新各一次RHS并记录原操作值。2ctor/2RHS、0ODE，原U向量FAIL重现且归因已保存；不是动态入口或独立势导数验收。详见 `docs/FULL_CYCLE_P56_ENERGY_OPERATION_OBSERVATION.json`、`runs/full-cycle/p56-calcium-energy-operation-observation-final-delivery-state.json`。

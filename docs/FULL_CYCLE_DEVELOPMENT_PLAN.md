@@ -1115,6 +1115,29 @@ P55-A/B/C仅勾选输入冻结、一次实际生产及原四时间指标和必�
 
 下一步建议先补P45同RHS原能量逐物种乘积和subtotal，再面向既有长过程阶段必要能力；本轮0新科学预算/启动，不自动P56/.0125s/52格。
 
-- [ ] **D55-GIT** 11明确路径正常后继/push/remote，真实终态读 `runs/full-cycle/p55-saved-reference-26cell-time-refinement-final-delivery-state.json`。
-- [ ] **D55-DRIVE** 只用本P55实际上传与metadata payload核对名称/大小/父目录，终态同一收据；非恢复。
+- [x] **D55-GIT** 11明确路径正常后继/push/remote，真实终态读 `runs/full-cycle/p55-saved-reference-26cell-time-refinement-final-delivery-state.json`。
+- [x] **D55-DRIVE** 只用本P55实际上传与metadata payload核对名称/大小/父目录，终态同一收据；非恢复。
 - [ ] **D55-HISTORY** 完整恢复/独有Git/历史20GB/GitHub容量未通过。
+
+### P56 原P45操作证据独立登记 2026-10-02T18:53:29.279106+00:00
+
+新独立1job/1worker/1attempt、2逻辑constructor/2native RHS、0Jac/ODE/独立extra operators，300s唯一deadline自实际子进程启动含imports/readers至两构造/RHS/原诊断表达式记录/JSON/report/reap。必要输入和冻结旧/新源、结果、计数、stdout/stderr、比较报告和行政收据全部<=3145728B，事前估计2400000B；原依赖1457917B包括before533168/current534874/旧root374061/probe15814，不能隐藏。0模型字节试算、0重试/重置；任何实际失败保存并闭窗。
+
+只原12格declared_zero_old/new，原物理/初态/坐标/1e-11与old12净U最大值分母保持；0positiveinterior、0P55工况/初态恢复/seed/clip/y0改写。截获原RHS已有系数，原diagnostic decoded/EUdot/PUdot arithmetic保持；对原Udot AST每node只计算一次并记录原乘积/np.sum(axis1)/左结合subtotal。原signed状态/cached及decoded分别、Ccal/us/ug/cap/dT/dng/dpore、各乘积/EUdot/PUdot/原subtotal及全12净U保存，i7主、i2/3/5辅助。不能用cached替换decoded、换高质量sum或component分母去盖原FAIL。
+
+- [x] **P56-A** 根独立预算/字段索引合同与原12格输入源冻结。
+- [x] **P56-B** 一次双模式原生瞬时观察、真实内部调用/时间/字节和闭窗。
+- [x] **P56-C** 仅保存值操作差分/精确算术归因与本轮重现边界。
+- [ ] **P56-QUALIFICATION** P45原FAIL不翻为PASS；独立全势导数/长阶段/全模型仍未资格。
+
+根新增11数值/行政policy记录至653=144literature509assumed0measured，旧642完整及全部old live contracts保持。0科学核改动、测试/assert harness/SHA/护栏/环境变量/下载恢复/名义尝试/搜索。P55真实GitDrive另收据勾选；原失败和wholefalse保持。本轮只观察+保存算术，不自动修核或P57/长阶段；需有适用域依据并另登记预算，synthetic directL290..350K不能扩高温。
+
+### P56 实际收口 2026-10-02T19:05:32.929138+00:00
+
+P56原P45操作证据已实际保存并闭窗。仅原12格declared_zero旧/新两模式，原生构造/初态及每模式1次完整RHS；原诊断Udot AST节点单次观察，原乘法、np.sum(axis=1)、左结合顺序和dtype保持，cached与decoded分别保存。实际2026-10-02T18:55:11.350023+00:00至2026-10-02T18:55:12.552424+00:00，监督1.202414125s/CPU1.015555s，rc0回收、未超时。独立1job/worker/attempt、2constructor/2nativeRHS，0Jac/ODE/独立extraoperators；原内部calls逐模式/阶段持久。两模式全12格净U、原生state及Ca状态/cached/decoded均逐值重现历史；这是新观察而非恢复历史内存。原signed最大差−1.4210855350476714e−14W、old净向量尺度4.6751916143275985e−6W、relative3.039630569777313e−9>原1e−11，仍FAIL。i7固体小计A_s差−2^−46W已定位于原decoded乘积和物种归约：输入精确乘积差−3.8780693134327255e−15W、乘法舍入差−6.0291690463418724e−15W、归约舍入差−4.303616355427406e−15W，精确分解残差0。i7Ccal/us/ug/cap相同且dT/db/dpore差0；后续五次原加法舍入差0，最终另含弹性差−6.352747104407253e−22W。未观察NumPy内部C-level每次加法，不唯一指认其内部索引。当前没有改物理核的证据，不能推论核在所有状态无缺陷。原科学核及旧642完整根记录、全部old live合同保持；新增11观察policy至653=144literature509assumed0measured。P45原FAIL和P34/P40/P44/P50撤回/P51失败保留；P54空间/P55时间只按原范围保持。历史名义余水.135892078740%>.1%和0实测保持，0新名义尝试。独立势导数、八阶段、三方案反演UQ/完整CLI/whole模型仍未完成。首次必要字节1958323B含旧新冻结源和原输入；后来分解/报告/行政另实测，不能代替最终总量。Git/Drive增量、实际恢复及历史容量分列；不自动修核或启动下轮。
+
+P56-A/B/C仅勾选冻结、真实原操作观察与保存值归因完成；P56-QUALIFICATION不勾选，原FAIL不翻PASS。完整字段、签名值、文件与限制见本轮report和runs。科学1.202414125s/CPU1.015555s，行政至记录723.650s。后续候选60s低温direct阶段/T域290..350K、1作业/实例/ODE、900s/8MiB建议（预计必要约6MiB），当前未登记预算或启动，不复用本窗口，不自动修核或P57。
+
+- [ ] **D56-GIT** 12明确路径正常后继/push/remote，终态读 `runs/full-cycle/p56-calcium-energy-operation-observation-final-delivery-state.json`。
+- [ ] **D56-DRIVE** 本P56独立实际payload名称/大小/原父目录metadata；同终态收据，非恢复。
+- [ ] **D56-HISTORY** 完整恢复/独有Git/历史20GB/GitHub容量未通过。
