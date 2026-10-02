@@ -814,7 +814,7 @@ P42明确追加uniform-only复核已完成（2026-10-01T23:12:12.452786+00:00）
 
 下一逐格host接线/localRHS仅明确候选，尚未改源/分配或执行；本次正常Git与单小增量回执随后留本地，不独立notes递归。
 
-- [ ] **P43** 初始有限体积分区逐格主机接线及瞬时准入。根显式 mode0 名义uniform /mode1固定二次；原P42原语冻结。范围full_cycle.py/full_cycle_gas.py及唯一inverse全域干质量分母。{'maximum_jobs': 2, 'per_job_budget': 60, 'global_budget': 120, 'maximum_workers': 1, 'maximum_RHS_per_job': 3, 'maximum_initializations_per_job': 3, 'maximum_attempts_per_issue': 2, 'summary_byte_limit': 2097152}；3固定synthetic初始化/RHS每job、0积分/Jac/fit/UQ，不重跑63算术或旧P40轨迹。先静态审查，再启动唯一120s窗口；实际完成后才勾选。
+- [x] **P43** 初始有限体积分区逐格主机接线及瞬时准入。根显式 mode0 名义uniform /mode1固定二次；原P42原语冻结。范围full_cycle.py/full_cycle_gas.py及唯一inverse全域干质量分母。{'maximum_jobs': 2, 'per_job_budget': 60, 'global_budget': 120, 'maximum_workers': 1, 'maximum_RHS_per_job': 3, 'maximum_initializations_per_job': 3, 'maximum_attempts_per_issue': 2, 'summary_byte_limit': 2097152}；3固定synthetic初始化/RHS每job、0积分/Jac/fit/UQ，不重跑63算术或旧P40轨迹。先静态审查，再启动唯一120s窗口；实际完成后才勾选。
 
 ### P43事前登记 2026-10-01T23:25:45.728032+00:00
 
@@ -834,3 +834,26 @@ P43计时前静态修正：没有initial_partition显式opt-in的旧合法config
 P43逐格主机接线及4固定瞬时上下文准入完成（2026-10-01T23:46:39.017915+00:00）：首旧reference1初始化/1RHS后汇总键KeyError失败保留；仅引用键修正到既有1e-11，第二4上下文52类向量/标量检查全PASS，累计5初始化/5RHS/2jobs回收、分析CPU0.1624s、原唯一120s窗口实际86.844847s、不延截止/无第三次，必要163703B。旧新uniform同y的RHS/库存差精确0，quad12/24非零内面通量及缓存导数U/S链通过；rawCaO约−1.73e−18/−8.67e−19mol保留。当前default/inverse/summarize仅静态，0Jac/积分/fit/UQ，不授新八阶段/时间网格/严格全支路资格。根534=144literature390assumed0measured，旧521完整保持，名义旧scalar/direct未启用；P40原mesh7.33335%/direct27.87505%/phase/strict、P34旧30/81和名义余水0.135892078740%失败保持，wholefalse。
 
 P43主项限上述瞬时范围，完成；default/inverse/summarize仅静态，原动态失败/工艺/待实测分列。Git/单增量实际收据随后本地保存，不notes递归。下一必要依赖P44固定10s三档仅候选：300s每例/900s总/1worker/2MiB，0自动积分，原失败不覆盖。
+
+### P43实际单次交付补入下一实质准备
+
+476425526dd9b3fce2acaeb22542248f2d96bffd正常push/remote一致，1063956B/83明确源文件+manifest增量Drive1BGeKUOgJZF5Pkuq2w4lZNfrJ3PQZWjP3名称/大小/parent回读通过；finalreceipt=p43-cell-host-final-delivery-state.json。0恢复、原件保留，不独立notescommit/pack。
+
+- [ ] **P44** 固定二次逐格表示的10s动态、时间/网格准入（partial）：基准quadratic12、timequadratic12、meshquadratic24，复用原P40合法synthetic物性/recipe/L/边界/源域/原阈值和加密设置，不用P43局部T梯度field作新y0。300s每例/900s全局/1worker/3starts含失败/同问题2attempt/2MiB。原候选登记时0积分；后续明确分配及实际3starts见下方记录，不延P43旧截止，不重跑旧P40三档/旧UQ。
+
+### P44静态准备 2026-10-02T00:22:32.166129+00:00
+
+相关根/计划干净、HEAD4764255，保存root534与当前541=144literature397assumed0measured，旧534完整条目保持，仅7操作政策。45源码当前bytes冻结，候选执行器AST准备，0实例/RHS/Jac/ODE/fit/UQ。源/参数/报告/计划下一实质实现一起交付，当前WIP。原mesh/phase/strict/工艺/待实测与wholefalse全部保持。
+
+### P44明确资源分配与静态接续 2026-10-02T00:29:17.279408+00:00
+
+新唯一协调01a0f90c-bb6c-72a3-889b-e2dda6db9001正式分配3actual ODE starts含失败，300s每例/从首solverentry计唯一900s/1worker/2MiB；前01a0f8d3已idle停止续派。本实施由同一Research唯一writer，接续已保存P44候选，0新物性/门槛/solver变更，旧534全metadata保持、名义mode0/directabsent。45src与P43commit不改；全方法及构造/internalJac/RHS/direct/summarycallbacks计数，给定真实y0参考几何/globalmass及独立extents读取，尚未开批。
+
+### P44实际三档及限定结果复核 2026-10-02T00:43:57.565155+00:00
+
+P44固定二次分区10s合成动态三档已实际完成（2026-10-02T00:43:57.565155+00:00）：3实例/3积分均rc0回收，实际8160RHS/30Jac、solver32.657392s/CPU含构造33.530160s、launcher35.137540s。原质量/元素/完整能量最坏1.5485576e-8，四gas预算最坏9.1030257e-6、初始库存归一最坏1.6446839e-4，均<原0.001；time/grid四指标全PASS，最大0.0091178763<原0.02。仍partial：3/9唯一CaO逐相无floor预算FAIL、3档严格OH/carbonate熵负值和原始负库存保留；direct累计extent网格相对基准差3.01853436%未获额外空间资格。原P40uniformmesh7.33335%失败不被新表示覆盖；原P34全周期30/81、名义干燥0.135892078740%>0.1%及wholefalse保持。541=144literature397assumed0measured，旧534完整保留，仅新增7运行政策，45源码与4764255冻结一致；名义mode0/direct未启用。新8阶段、三方案/反演/UQ/离线CLI未获新资格，synthetic不授实砖速率。
+
+- [x] **P44-A** 三固定实际动态/接受态域/普通与四gas守恒/四指标time-grid执行及独立结果审查完成。
+- [ ] **P44-B** 严格近零逐相/所有branch数值资格：CaO3/9及OH/carbonate strict失败，directamount额外空间资格未通过，主项不勾。
+
+变更仅root7操作policy/plan/currentreports/必要验收汇总，host45不改。证据p44-nonuniform-direct-transient的三case、callbacks、start/执行、acceptance/prestart/result-review；真实solver/CPU/35.13754s监督与工作流分开。P44原3start/截止关闭，不再启动；P45仅source/状态表示候选待明确资源，不重开大网格/参数/UQ。正常提交+唯一小增量随后实际回执本地，不另notescommit。

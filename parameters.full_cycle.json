@@ -6736,6 +6736,83 @@
       "source": "policy",
       "status": "assumed",
       "note": "One fixed synthetic nonuniform local intensity field only, specified before execution. T and gas molar density linear in initial material coordinate, cell averages at exactreference centroids; N2 offsets CO2, other fractions from frozen P40. No material/kinetics change or new transient y0."
+    },
+    "validation.nonuniform_direct_transient.maximum_integrations": {
+      "value": 3,
+      "unit": "1",
+      "range": [
+        3,
+        3
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P44 explicitlyallocatedfixed3 quadratic numerical representation dynamic admission only. Formalallocationreceived; still0starts beforestaticreview. OriginalP40physicalrecipe/L/atmosphere/10s/source applicability/tolerances/refinement/normalizers unchanged. New window, not P43extension;failedstarts count within3, no unallocated retry/additionalcase/search/UQ."
+    },
+    "validation.nonuniform_direct_transient.per_run_budget": {
+      "value": 300,
+      "unit": "s",
+      "range": [
+        300,
+        300
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P44 explicitlyallocatedfixed3 quadratic numerical representation dynamic admission only. Formalallocationreceived; still0starts beforestaticreview. OriginalP40physicalrecipe/L/atmosphere/10s/source applicability/tolerances/refinement/normalizers unchanged. New window, not P43extension;failedstarts count within3, no unallocated retry/additionalcase/search/UQ."
+    },
+    "validation.nonuniform_direct_transient.global_budget": {
+      "value": 900,
+      "unit": "s",
+      "range": [
+        900,
+        900
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P44 explicitlyallocatedfixed3 quadratic numerical representation dynamic admission only. Formalallocationreceived; still0starts beforestaticreview. OriginalP40physicalrecipe/L/atmosphere/10s/source applicability/tolerances/refinement/normalizers unchanged. New window, not P43extension;failedstarts count within3, no unallocated retry/additionalcase/search/UQ."
+    },
+    "validation.nonuniform_direct_transient.maximum_workers": {
+      "value": 1,
+      "unit": "1",
+      "range": [
+        1,
+        1
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P44 explicitlyallocatedfixed3 quadratic numerical representation dynamic admission only. Formalallocationreceived; still0starts beforestaticreview. OriginalP40physicalrecipe/L/atmosphere/10s/source applicability/tolerances/refinement/normalizers unchanged. New window, not P43extension;failedstarts count within3, no unallocated retry/additionalcase/search/UQ."
+    },
+    "validation.nonuniform_direct_transient.maximum_attempts_per_issue": {
+      "value": 2,
+      "unit": "1",
+      "range": [
+        2,
+        2
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P44 explicitlyallocatedfixed3 quadratic numerical representation dynamic admission only. Formalallocationreceived; still0starts beforestaticreview. OriginalP40physicalrecipe/L/atmosphere/10s/source applicability/tolerances/refinement/normalizers unchanged. New window, not P43extension;failedstarts count within3, no unallocated retry/additionalcase/search/UQ."
+    },
+    "validation.nonuniform_direct_transient.summary_byte_limit": {
+      "value": 2097152,
+      "unit": "byte",
+      "range": [
+        2097152,
+        2097152
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P44 explicitlyallocatedfixed3 quadratic numerical representation dynamic admission only. Formalallocationreceived; still0starts beforestaticreview. OriginalP40physicalrecipe/L/atmosphere/10s/source applicability/tolerances/refinement/normalizers unchanged. New window, not P43extension;failedstarts count within3, no unallocated retry/additionalcase/search/UQ."
+    },
+    "validation.nonuniform_direct_transient.maximum_starts_including_failure": {
+      "value": 3,
+      "unit": "1",
+      "range": [
+        3,
+        3
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "P44 explicitlyallocatedfixed3 quadratic numerical representation dynamic admission only. Formalallocationreceived; still0starts beforestaticreview. OriginalP40physicalrecipe/L/atmosphere/10s/source applicability/tolerances/refinement/normalizers unchanged. New window, not P43extension;failedstarts count within3, no unallocated retry/additionalcase/search/UQ."
     }
   },
   "species": [
@@ -9672,6 +9749,88 @@
       "scope": "Per-cell reference volume/dry/chemical/conversion/calcium/retention, extent cell-axis, total dry denominators, reference-center diagnostic. Existing transport/thermodynamic operators unchanged. Three synthetic initial states with existing P40 direct channel and root recipe/atmosphere; one actual full RHS per fixture. No integration or complete8-stage qualification. Defaultmode0 keeps original scalar arithmetic, per-cell mode1/2 opt-in; oldfrozen reference fullMRO and relativeimports isolated, old/newuniform copies identicalstate. Internalface nonzero field fixedbeforeexecution; no additionalstate scan.",
       "temperature_endpoints_parameter": "validation.cell_host.temperature_endpoints",
       "co2_endpoints_parameter": "validation.cell_host.co2_fraction_endpoints"
+    },
+    "nonuniform_direct_transient": {
+      "schema": "P44_proposed_fixed_nonuniform_transient_v1",
+      "recorded_utc": "2026-10-02T00:22:32.147556+00:00",
+      "budget_prefix": "validation.nonuniform_direct_transient.",
+      "stages": [
+        "direct_transient"
+      ],
+      "channel": {
+        "mobility_parameter": "validation.direct_carbonation_transient.synthetic_mobility",
+        "identity": "synthetic_P40_fixed_short_dynamic_coupling",
+        "material": "Synthetic declared dry-mass recipe with1%portlandite and6.5%calcite, rest unchanged; no realmaterial rate identification",
+        "temperature_range_parameter": "validation.direct_carbonation_transient.temperature_domain",
+        "humidity_pressure_range_parameter": "validation.direct_carbonation_transient.partial_pressure_domain",
+        "surface_basis": "Bulk donor inventory law; geometric face area is unchanged geometry.area in root, no fittedactivewetfilm/interfacialarea/productlayer. Fixed geometry/permeability/material closures inherited."
+      },
+      "common_override_parameters": {
+        "recipe.calcite": "validation.direct_carbonation_transient.recipe_calcite",
+        "recipe.portlandite": "validation.direct_carbonation_transient.recipe_portlandite",
+        "initial.temperature": "validation.direct_carbonation_transient.initial_temperature",
+        "numerics.output_step": "validation.direct_carbonation_transient.output_step",
+        "gas.inlet.O2": "validation.direct_carbonation_transient.inlet_O2",
+        "gas.inlet.N2": "validation.direct_carbonation_transient.inlet_N2",
+        "gas.inlet.H2O": "validation.direct_carbonation_transient.inlet_H2O",
+        "gas.inlet.CO2": "validation.direct_carbonation_transient.inlet_CO2"
+      },
+      "jobs": [
+        {
+          "id": "baseline",
+          "cells_parameter": "validation.direct_carbonation_transient.baseline_cells",
+          "max_step_parameter": "validation.direct_carbonation_transient.baseline_max_step",
+          "rtol_parameter": "numerics.rtol",
+          "atol_parameter": "numerics.atol"
+        },
+        {
+          "id": "time_refined",
+          "cells_parameter": "validation.direct_carbonation_transient.baseline_cells",
+          "max_step_parameter": "validation.direct_carbonation_transient.time_max_step",
+          "rtol_parameter": "validation.direct_carbonation_transient.time_rtol",
+          "atol_parameter": "validation.direct_carbonation_transient.time_atol"
+        },
+        {
+          "id": "mesh_refined",
+          "cells_parameter": "validation.direct_carbonation_transient.mesh_cells",
+          "max_step_parameter": "validation.direct_carbonation_transient.baseline_max_step",
+          "rtol_parameter": "numerics.rtol",
+          "atol_parameter": "numerics.atol"
+        }
+      ],
+      "original_named_stages_not_covered": [
+        "drying_ramp",
+        "drying",
+        "heating",
+        "reactions",
+        "sintering",
+        "hold",
+        "cooling",
+        "cooling_hold"
+      ],
+      "total_pressure_domain_parameter": "validation.direct_carbonation_transient.total_pressure_domain",
+      "geometric_area_parameter": "geometry.area",
+      "original_balance_limit_parameter": "acceptance.balance_relative",
+      "original_convergence_parameter": "acceptance.convergence_relative",
+      "required_metrics": [
+        "porosity",
+        "residual_carbon_kg",
+        "shrinkage",
+        "peak_temperature_difference_k"
+      ],
+      "initialization": "Actual newmode2 initial_state, sameP40homogeneous physicalrecipe/T298.15/inlet andzeroindependentextent. DoesnotuseP43given nonuniformT/concentrationfield. Frozenactualy0/inputtoBDF/provenance cached andsignedCa/rawnegative preserved.",
+      "domain_policy": "Assumed T290..350K,totalP1000..200000Pa,all partial0..200000Pa, fixedrootarea. Predeclared numericalscope only; no runtimeclamp. Auditreal BDFacceptedknots plus savedt_eval/summary states. Any violation retainsfailure/stops remainingbatch, no postrun widening. No continuousbetweenknots orNewton/complexstep trialdomain qualification.",
+      "time_resolution": "P40existingbaseline .1s/rtol1e-5/atol1e-7, declaredtime .05s/rtol1e-6/atol1e-8 unchanged. Adaptiveinternalsteps reported, notassumed atcap.",
+      "metric_scope": "Original4metrics androot0.1%/2%/floor1K unchanged. Centerdiagnostic initialreference geometry innewmode2 explicit; originalP40uniform7.33335%FAIL not replaced. Directglobalextentdiff extraunqualified if notsmall; signedphase/strict criteria separately.",
+      "start_limit_includes_failures": 3,
+      "independent_extra_RHS_Jacobian_fit_UQ_recovery": 0,
+      "summary_byte_scope": "Necessary numericaloutputs only ≤2MiB; frozenroot/code andexecutionmetadata identifiedseparately, no rawfields saved.",
+      "source_basis": "P36 declaredwet mechanism, P37 phenomenological explicitL andP39sharedhost only; no new literature/fit or nominalrate inference",
+      "profile_mode": 2,
+      "resource_status": "closed_after3actual_solver_starts_no_fourth",
+      "dependency_P43_actual_commit": "476425526dd9b3fce2acaeb22542248f2d96bffd",
+      "authority": "Formal P44 delegation by sole coordinator01a0f90c-bb6c-72a3-889b-e2dda6db9001; continuoushumanimplementation/normal bounded verification authorized. Exactly3actualintegrationstarts includingfailure,300s each/unique900s fromfirstsolverentry/1worker/2MiB;no4th or refresheddeadline.",
+      "current_integrations_started": 3
     }
   },
   "caloric_background": {
