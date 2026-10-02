@@ -18,7 +18,7 @@ from scipy.sparse import csc_matrix
 
 from .full_cycle import FullCycle, source_caloric_coefficients, source_caloric_integrals
 from .direct_carbonation import DirectCarbonationMobility, direct_carbonation_sources
-from .full_cycle_diagnostics import drying_water_diagnostics, free_water_ledger, gas_species_ledger, caloric_source_domain_coverage, viscosity_source_domain_coverage, binary_diffusion_source_domain_coverage, calcium_phase_ledger_report
+from .full_cycle_diagnostics import drying_water_diagnostics, free_water_ledger, gas_species_ledger, caloric_source_domain_coverage, viscosity_source_domain_coverage, binary_diffusion_source_domain_coverage, calcium_phase_ledger_report, entropy_ledger_report
 
 
 class FiniteGasFullCycle(FullCycle):
@@ -1095,10 +1095,11 @@ class FiniteGasFullCycle(FullCycle):
             return free_water_ledger(self.reaction_config,rows[a],rows[b],
                 boundary_in_mol=gasin[b,vapor_index]-gasin[a,vapor_index],
                 boundary_out_mol=gasout[b,vapor_index]-gasout[a,vapor_index])
-        stages={}
+        stages={}; entropy_intervals=[]
         for i,name in enumerate(self.config['stages']):
             a=int(np.where(times==self.times[i])[0][0]); b=int(np.where(times==self.times[i+1])[0][0]); stages[name]=balance(a,b)
             stages[name]['free_water_ledger']=interval_free_water(a,b)
+            entropy_intervals.append({'name':name,'start_index':a,'end_index':b})
         final=rows[-1]; phi=float(np.average(final['porosity'],weights=self.unpack(states[-1])[3]))
         product_mass=final['mass_kg']; density=product_mass/bulks[-1]; peak=max(r['temperature_difference_k'] for r in rows)
         summary={'mass_kg':product_mass,'total_mass_including_pore_gas_kg':float(mass[-1]),'density_kg_m3':float(density),
@@ -1298,6 +1299,12 @@ class FiniteGasFullCycle(FullCycle):
             'stages':{name:gas_species_ledger(self.reaction_config,gas_endpoints[i],gas_endpoints[i+1],
                 reference_inventory_mol=reference_inventory) for i,name in enumerate(self.config['stages'])}}
         report['calcium_phase_ledger']=calcium_phase_ledger_report(self.reaction_config,calcium_endpoints)
+        report['entropy_ledger']=entropy_ledger_report(self.config,
+            times_s=times.tolist(), stored_entropy_j_k=entropies.tolist(),
+            production_j_k=(states[:,-2]*self.escale/self.Tr).tolist(),
+            exchange_j_k=(states[:,-1]*self.escale/self.Tr).tolist(),
+            native_coordinates=states[:,-2:].tolist(), stage_intervals=entropy_intervals,
+            energy_scale_j=self.escale, reference_temperature_k=self.Tr)
         report['active_reactions'] = self.reactions
         report['direct_carbonation_configuration'] = {
             'enabled':self.direct_carbonation_enabled,

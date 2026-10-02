@@ -1,5 +1,9 @@
 # 全流程近似模型交付报告
 
+P59 原生完整signed S输出/replay已静态实现（2026-10-02T20:50:29.822311+00:00），尚未生产执行或replay，0constructor/RHS/Jac/ODE/physicaloperator/fit/UQ/search。共享gas summary复用已有completeS及原生累计末两槽，无新状态/热源/物性/采样rate求积；按各区间起点分别作差，保存signed/abs/relative/原尺度和阈值完整record，旧native熵误差/flags不改。直接文件stdlib重算只读必需新字段，P57/P58缺序列不回填；package -m会导入模型，不作为此纯入口。原escale仅初凝聚相参考Cp尺度，不含孔气Cp。根681=144literature537assumed0measured，旧669完整records/所有旧live合同/名义配置保持；新增12为未分配两stage边界记录，无材料物性增加。两互异stage end5/10×time_scale6→实际0–30/30–60，原T/gas/geometry/tols/step/domain/原生初态保持；未来1ctor/1integrate/2solve_ivp(中点restartBDF)，900s/12MiB仅提案，完整manifest估算另列，不能提前运行或称非零起点已验证。当前矩阵directcycle absent/P41非均匀未实现已精准归历史，生产能力/元数据/材料/待执行验收分层；观察候选不导入，inverse/UQ Ca留存未改。P58最终158必要路径12922129B>12582912B超339217B，预检及actual资源均FAIL/partial；旧数值PASS不追认。P34/P40/P44/P45/P50撤回/P51失败、名义余水0.135892078740%>0.1%、CaO零预算nullfalse及wholefalse全部保留。科学、静态实现、工艺、材料、Git/Drivemetadata/实际恢复/历史容量分别判断。
+
+见 `docs/FULL_CYCLE_P59_NATIVE_ENTROPY.md/json`、静态收据和未来提案；本节为当前层，下方P58及更早记录保持各自历史范围。
+
 P58预检完整性失败更正：事前11826181B估计漏了实际比较读取的P57 root-snapshot403784B及case403325B；补入原保守估计为12633290B>12582912B，超50378B，按约定本应不启动。该规则未满足，唯一attempt已经消费，不重跑、不重置或放宽预算。原较窄统计漏计冻结准备读取的旧47源码/生产脚本/声明/Git路径清单。加入全部实际必要准备路径后，实际完整路径总量也超原12MiB；准确最终总量和清单读finalreceipt。较窄口径低于上限不构成完整预算PASS。原数值四time/budget通过与已有失败保持，P58整体约定任务不完整；输入冻结/实际运行/资料和目标评估分别记录。
 
 更正证据 `runs/full-cycle/p58-low-temperature-60s-time-refinement/preflight-accounting-correction.json`；actualfinalreceipt保留科学/预检/交付分别判断。

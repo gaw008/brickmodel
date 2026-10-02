@@ -1185,8 +1185,8 @@ P58同60秒26格一次时间加密已真实保存闭窗。只读P57实际基线3
 
 P58-A/B/C/D仅勾选冻结、真实单次time加密及原四判据/必要账本和目标缺口评估；QUALIFICATION不勾选。科学51.007199042s/CPU50.759883s，行政至记录619.395s。文件与数值见report/assessment，最终byte含真实只读基线及所有实际相关livepaths/adminunique计数。下一选定具体scope为原生完整signedS生产账本，不继续自动延时加密；提案预算/2stageODE明确但未登记授权/启动。
 
-- [ ] **D58-GIT** 12实际明确变更paths正常后继/push/remote，终态读 `runs/full-cycle/p58-low-temperature-60s-time-refinement-final-delivery-state.json`。
-- [ ] **D58-DRIVE** 本P58一次真实upload与metadata逐id/name/size/parent；同终态收据，非restore。
+- [x] **D58-GIT** 最终15 union scoped live paths正常后继/push/remote，最终9496182；初版12路径及两次实质资格更正保持历史。终态读 `runs/full-cycle/p58-low-temperature-60s-time-refinement-final-delivery-state.json`。
+- [x] **D58-DRIVE** 本P58最终3个own实际增量2438487/792152/797741B逐id/name/size/parent读回通过/access_not_verified；0byte restore、原件保留。同终态收据。
 - [ ] **D58-HISTORY** 历史完整恢复/独有Git/20GB/GitHub容量未通过。
 
 ### P58 原预检依赖遗漏更正 2026-10-02T20:09:51.949554+00:00
@@ -1196,3 +1196,34 @@ P58预检完整性失败更正：事前11826181B估计漏了实际比较读取�
 P58-A标为部分完成：输入源冻结已完成，完整事前依赖估计失败且不能事后勾选。P58-B/C/D仅其实际运行/原数值资料及目标分析完成；不将P58全任务或whole模型称为完成。下一新预算必须先列所有真正依赖路径、包括比较实际读取的旧root/case，不沿用此不完整估计。科学attempt=1/0retry，原source/params/判据/结果不变。
 
 P58完整准备路径进一步更正：旧47冻结源码、旧生产脚本、旧声明/Git路径清单是实际准备依赖，不能从完整实际路径口径排除。加入后完整实际字节也超原12MiB；P58资源约定仍FAIL/partial，原较窄输出统计不授PASS。审计 preparation-dependency-accounting.json；最终exactunique清单见finalreceipt。0额外science/retry/reset/删除，数值结果不变。
+
+### P59 原生signed S输出与离线replay静态实施 2026-10-02T20:41:48.730174+00:00
+
+P58最终HEAD9496182/remote，158必要路径12922129B>12582912B，超339217B；事前及actual完整资源均FAIL/partial，原数值比较不能追认。3Drive增量metadata通过/access_not_verified/0restore、原件保留。P58科学消费闭窗不挪用。
+
+- [x] **P59-A** 共享生产summary从既有completeS/原末两槽保存signedJ/K，原全程flag保留；区间起点各自作差、原尺度/阈值完整record。
+- [x] **P59-B** 标准库直接文件replay入口，从必需保存序列重算，不导入模型、不回填P57/P58、不抄PASS。
+- [x] **P59-C** 当前矩阵specific_gaps/旧direct和P41分区状态精准更新，历史原样保留；区分代码/未跑验收/材料/元数据缺口。
+- [x] **P59-D** 两互异stage、完整records与未来完整实际依赖清单/保守估算可审阅；1ctor/2solve_ivp/1integrate、900s/12MiB仅提案，0预算分配/启动。
+- [ ] **P59-DYNAMIC** 原生新ledger实际生产和savedreplay尚未执行，非零30s累计起点/区间判据未资格。
+- [ ] **D59-GIT** 正常后继/普通push/remote实际receipt。
+- [ ] **D59-DRIVE** 本次必要小增量metadata，非字节恢复。
+
+唯一writer owns gas.py/diagnostics.py/新entropy_ledger.py/root/共同docs；独立case_conditions候选不应用。科学ctor/RHS/Jac/ODE/operator/fit/UQ/search均0；不新增tests/SHA/guards/参数默认/状态/热源/率求积/材料物性/恢复/历史删除。案例仅将P58恒定物理边界的原累计end10s拆5/10s/time_scale6；未来30s会restartBDF，不能保证同原单stage轨迹逐值相同。新的完整必要清单必须计实际读取旧source/producer/case/root/声明/docs与新不同路径冻结副本/结果/admin，一path只计一次，不再沿旧窄fits口径。
+
+### P59 静态源完成（动态资格未完成）
+
+P59 原生完整signed S输出/replay已静态实现（2026-10-02T20:50:29.822311+00:00），尚未生产执行或replay，0constructor/RHS/Jac/ODE/physicaloperator/fit/UQ/search。共享gas summary复用已有completeS及原生累计末两槽，无新状态/热源/物性/采样rate求积；按各区间起点分别作差，保存signed/abs/relative/原尺度和阈值完整record，旧native熵误差/flags不改。直接文件stdlib重算只读必需新字段，P57/P58缺序列不回填；package -m会导入模型，不作为此纯入口。原escale仅初凝聚相参考Cp尺度，不含孔气Cp。根681=144literature537assumed0measured，旧669完整records/所有旧live合同/名义配置保持；新增12为未分配两stage边界记录，无材料物性增加。两互异stage end5/10×time_scale6→实际0–30/30–60，原T/gas/geometry/tols/step/domain/原生初态保持；未来1ctor/1integrate/2solve_ivp(中点restartBDF)，900s/12MiB仅提案，完整manifest估算另列，不能提前运行或称非零起点已验证。当前矩阵directcycle absent/P41非均匀未实现已精准归历史，生产能力/元数据/材料/待执行验收分层；观察候选不导入，inverse/UQ Ca留存未改。P58最终158必要路径12922129B>12582912B超339217B，预检及actual资源均FAIL/partial；旧数值PASS不追认。P34/P40/P44/P45/P50撤回/P51失败、名义余水0.135892078740%>0.1%、CaO零预算nullfalse及wholefalse全部保留。科学、静态实现、工艺、材料、Git/Drivemetadata/实际恢复/历史容量分别判断。
+
+P59-A/B/C只勾选实际源码接线/AST和声明JSON审阅/当前矩阵历史修正，不包括生产、replay、非零stage初值或物理验收。D依赖清单尚待完整保守估计；DYNAMIC保持未勾选。当前源码与契约见P59report/static-readback，不新建tests/assert/SHA/guards或运行算子。
+
+### P59 两stage未来依赖/预算提案静态完成
+
+完整准备input已显式列旧47sources、当前48sources、原case/root/producer/声明/报告/失败收据、source虚拟Gitblob，以及不同path新frozen source/root/case副本、结果/程序/admin完整reservations。一path只计一次，副本不同path分别计；原P58 result不作为freshcase/replay输入打开，不回填历史，若未来决定读取则必须计全量。当前保守snapshot估计12094363B/建议12582912B，manifest/最终行政/最后live增长尚需未来父采用前重stat完整final清单，估计不是resourcePASS或launcher授权。900s/1ctor/1integrate/2solve_ivp仅提案，0实际科学/新replay。root中没有operative>0预算prefix或launcher。若最终完整estimate越额，启动前停报，不删原件/改阈值/借P58 budget。
+
+P59-D只勾选具体未分配case/完整未来依赖框架和保守reservations可审阅，不勾动态。P58勾选交付采用最终15/3实际口径；原未勾选描述保持如下历史文本：
+
+```text
+- [x] **D58-GIT** 12实际明确变更paths正常后继/push/remote，终态读 `runs/full-cycle/p58-low-temperature-60s-time-refinement-final-delivery-state.json`。
+- [x] **D58-DRIVE** 本P58一次真实upload与metadata逐id/name/size/parent；同终态收据，非restore。
+```

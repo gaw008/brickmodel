@@ -471,3 +471,36 @@ def binary_diffusion_source_domain_coverage(model, rows):
         'pressure_extension_status': background['pressure_extension_status'],
         'coverage_note': 'Includes external reservoir face, strict source endpoints included. Saved nodes only; finitewater and pore applicability are not established by temperature coverage.',
     }
+
+
+def entropy_ledger_report(config, *, times_s, stored_entropy_j_k,
+                          production_j_k, exchange_j_k, native_coordinates,
+                          stage_intervals, energy_scale_j, reference_temperature_k):
+    """Publish existing native arrays; compute no rates or physical operators."""
+    from copy import deepcopy
+    from ..entropy_ledger import calculate_saved_entropy_ledger
+
+    contract = config['entropy_ledger_output']
+    ledger = {'schema': contract['report_schema'], 'output_contract': deepcopy(contract),
+        'scope': {'declared_stages': list(config['stages']),
+            'start_time_s': times_s[0], 'end_time_s': times_s[-1],
+            'whole_window_meaning': 'Entire declared process window, not omitted stages.'},
+        'series': {'time_s': times_s, 'complete_stored_entropy_j_k': stored_entropy_j_k,
+            'cumulative_entropy_production_j_k': production_j_k,
+            'cumulative_entropy_exchange_j_k': exchange_j_k,
+            'native_dimensionless_cumulative_coordinates': native_coordinates},
+        'intervals': {'full_window': {'start_index': 0, 'end_index': len(times_s) - 1},
+            'stages': stage_intervals},
+        'normalization': {'energy_scale_j': energy_scale_j,
+            'reference_temperature_k': reference_temperature_k,
+            'entropy_scale_j_k': energy_scale_j / reference_temperature_k,
+            'reference_temperature_record': deepcopy(config['parameters'][contract['temperature_parameter']]),
+            'acceptance_entropy_relative_record': deepcopy(config['parameters'][contract['threshold_parameter']]),
+            'scale_definition': contract['scale_definition']},
+        'qualification': {'basis': 'Native saved complete S and cumulative Ip/Ie at each output instant; no new physical operator.',
+            'independent_potential_derivatives': False,
+            'independent_branch_cumulative_entropy': False,
+            'continuous_internal_solver_states': False,
+            'material_or_whole_model_qualified': False}}
+    ledger.update(calculate_saved_entropy_ledger(ledger))
+    return ledger

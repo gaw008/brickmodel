@@ -1,5 +1,11 @@
 # 当前完整模型目标：能力与验收缺口评估
 
+P59 原生完整signed S输出/replay已静态实现（2026-10-02T20:50:29.822311+00:00），尚未生产执行或replay，0constructor/RHS/Jac/ODE/physicaloperator/fit/UQ/search。共享gas summary复用已有completeS及原生累计末两槽，无新状态/热源/物性/采样rate求积；按各区间起点分别作差，保存signed/abs/relative/原尺度和阈值完整record，旧native熵误差/flags不改。直接文件stdlib重算只读必需新字段，P57/P58缺序列不回填；package -m会导入模型，不作为此纯入口。原escale仅初凝聚相参考Cp尺度，不含孔气Cp。根681=144literature537assumed0measured，旧669完整records/所有旧live合同/名义配置保持；新增12为未分配两stage边界记录，无材料物性增加。两互异stage end5/10×time_scale6→实际0–30/30–60，原T/gas/geometry/tols/step/domain/原生初态保持；未来1ctor/1integrate/2solve_ivp(中点restartBDF)，900s/12MiB仅提案，完整manifest估算另列，不能提前运行或称非零起点已验证。当前矩阵directcycle absent/P41非均匀未实现已精准归历史，生产能力/元数据/材料/待执行验收分层；观察候选不导入，inverse/UQ Ca留存未改。P58最终158必要路径12922129B>12582912B超339217B，预检及actual资源均FAIL/partial；旧数值PASS不追认。P34/P40/P44/P45/P50撤回/P51失败、名义余水0.135892078740%>0.1%、CaO零预算nullfalse及wholefalse全部保留。科学、静态实现、工艺、材料、Git/Drivemetadata/实际恢复/历史容量分别判断。
+
+当前具体剩余项：生产新ledger/纯保存replay尚未执行、独立完整势导数/原8段及三方案反演验收未通过；观察声明条件候选未整合、inverse/UQ Ca证据留存未实现；材料参数待同批实测。下方完整P58评估原样保留为历史提案，其“拟改/本轮未实施”属于P58当时，不是P59当前状态。
+
+## P58 历史目标评估原文
+
 状态：静态评估完成，后续研发范围为提案；本文件不分配科学预算或宣称模型完成。
 
 当前目标是单砖湿坯→干燥→升温反应→烧结→冷却的可替换近似模型、至少三方案条件化比较及观测/标定接口，见 BRICK_PHYSICS_PROJECT_SPEC.md「当前目标和顺序」「现行§0.5」。不要求已代表本厂砖，不扩整窑/完整微观相图/UI。参数数量、低温synthetic时长、旧P01–08勾选都不能代替当前组合验收。此次评估只读既有源码、缓存公开证据及报告；未新检索、构造、拟合或执行后续物理代码。

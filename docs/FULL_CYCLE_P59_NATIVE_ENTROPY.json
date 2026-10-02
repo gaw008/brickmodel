@@ -1,0 +1,118 @@
+{
+  "schema": "P59_native_signed_entropy_static_implementation_v1",
+  "recorded_utc": "2026-10-02T20:50:29.822311+00:00",
+  "base_commit": "9496182a001e1bf114995226d4b0fa18db2392ba",
+  "status": "static_source_implemented_dynamic_unexecuted_future_budget_unallocated",
+  "root_count": 681,
+  "root_status_counts": {
+    "literature": 144,
+    "assumed": 537,
+    "measured": 0
+  },
+  "static_readback": "runs/full-cycle/p59-native-signed-entropy-static/static-readback.json",
+  "declaration": "runs/full-cycle/p59-native-signed-entropy-static/declaration.json",
+  "source_files": [
+    "src/sludge_vme/models/full_cycle_gas.py",
+    "src/sludge_vme/models/full_cycle_diagnostics.py",
+    "src/sludge_vme/entropy_ledger.py"
+  ],
+  "output_contract": {
+    "schema": "native_signed_entropy_output_contract_v1",
+    "report_schema": "native_signed_entropy_ledger_v1",
+    "report_key": "entropy_ledger",
+    "replay_schema": "saved_signed_entropy_replay_v1",
+    "time_unit": "s",
+    "entropy_unit": "J/K",
+    "source": "Existing FiniteGasFullCycle summarize complete S and rhs native last-two cumulative coordinates; no new physical operator or source quadrature.",
+    "temperature_parameter": "reference.temperature",
+    "threshold_parameter": "acceptance.entropy_relative",
+    "scale_definition": "Original FullCycle construction escale=float(np.sum(initial condensed inventory * cp[:len(ns)]) * Tr). Initial pore gas Cp is not included in this normalization. Use actual model.escale/model.Tr, no floor or effective/dynamic stage-energy scale.",
+    "stored_entropy_scope": "Complete condensed, ideal pore gas/mixing, water retention/binding, and skeleton/phase additional entropy storage already computed by the native summary.",
+    "cumulative_coordinate_order": [
+      "entropy_production",
+      "entropy_exchange"
+    ],
+    "physical_cumulative_conversion_order": "(native_coordinate * energy_scale_j) / reference_temperature_k, each component separately",
+    "residual_order": "(delta_stored_entropy_j_k - delta_production_j_k) - delta_exchange_j_k; deltas subtract each interval own saved cumulative origin",
+    "floating_point_boundary": "Separate physical-slot scaling/differences may round differently from historical sum(two slots)*escale/Tr. Original native entropy_error and acceptance flags remain unchanged.",
+    "qualification": "Saved same-origin storage and cumulative balance only; not independent potentials, independent cumulative branches, between samples, material or whole-model qualification.",
+    "replay_entry": "python src/sludge_vme/entropy_ledger.py INPUT --ledger-path entropy_ledger --out OUTPUT; saved producer wrapper uses --ledger-path report entropy_ledger. Direct file avoids package __init__ model imports.",
+    "historical_missing_fields": "P57/P58 complete S/Ip/Ie were not serialized; fail naturally on required missing keys, no synthetic backfill or rate quadrature."
+  },
+  "current_model_completion_status": {
+    "implementation": "Native complete S/physical Ip/Ie/raw cumulative coordinates saved via shared gas summary; per-window/stage ledger and stdlib direct-file replay statically implemented.",
+    "physics_numerics": "No new constructor/RHS/Jac/ODE/physical operator or actual ledger production/replay. P59 current dynamic and full eight-stage acceptance unqualified; previous bounded results retain their original scope.",
+    "resource_P58": "Original prelaunch and complete actual resource FAIL/partial; final158paths12922129B>12582912B by339217B. No retrospective PASS or budget transfer.",
+    "nominal_process": "Historical remaining water0.1358920787402553%>0.1% FAIL,0new attempts",
+    "material": "681=144literature537assumed0measured; new12stage proposal boundary records assumed, no new material properties or target calibration",
+    "metadata_interface_gaps": [
+      "Live observations configured_conditions still misses portlandite/actual-stage records; separate candidate not integrated",
+      "Inverse/UQ forward audit still requires existing Ca ledger evidence retention"
+    ],
+    "scientific_budget_allocated": false,
+    "future_two_stage_run": "Proposal only;1constructor/1integrate/2solve_ivp, same boundaries,900s/12MiB suggested, fullmanifest/estimate required before any future adoption",
+    "delivery": "Separate actual Git/Drive receipt;metadata not byte recovery/history qualification",
+    "whole_project_complete": false
+  },
+  "dynamic_ledger_production_or_replay_executed": false,
+  "scientific_calls": {
+    "constructor": 0,
+    "RHS": 0,
+    "Jacobian": 0,
+    "ODE": 0,
+    "physical_operator": 0,
+    "fit": 0,
+    "UQ": 0,
+    "search": 0
+  },
+  "old669_records_and_all_live_contracts_preserved": true,
+  "original_native_entropy_flags_unchanged": true,
+  "separate_slot_float_order": "(native_coordinate * energy_scale_j) / reference_temperature_k, each component separately; (delta_stored_entropy_j_k - delta_production_j_k) - delta_exchange_j_k; deltas subtract each interval own saved cumulative origin",
+  "replay_boundary": "Only stored physical cumulative Ip/Ie balance recomputed; raw dimensionless slots are retained but not independently reconverted/compared. No source quadrature or independent potentials.",
+  "old_P57_P58_missing_complete_series_not_backfilled": true,
+  "P58_final_resource_failure": {
+    "necessary_paths": 158,
+    "actual_bytes": 12922129,
+    "limit_bytes": 12582912,
+    "excess_bytes": 339217,
+    "original_preflight_passed": false,
+    "complete_actual_budget_passed": false,
+    "receipt": "runs/full-cycle/p58-low-temperature-60s-time-refinement-final-delivery-state.json"
+  },
+  "retained_failures": {
+    "P51": "runs/full-cycle/p51-saved-reference-transient/failure.json;oneattempt remains failure",
+    "P50_initial_Ca": "runs/full-cycle/p50-saved-reference-host/eligibility-correction.json;twoPASSflags remain withdrawn",
+    "P45_old_new_netU_relative": 3.039630569777313e-09,
+    "P45_original_limit": 1e-11,
+    "P34_phase_nofloor_failed": 30,
+    "P34_phase_nofloor_total": 81,
+    "P40_peak_mesh_relative": 0.0733335269426334,
+    "P44_CaO_failed": 3,
+    "P44_CaO_total": 9,
+    "P44_direct_extent_mesh_relative": 0.03018534360042369
+  },
+  "nominal_process": {
+    "historical_remaining_fraction": 0.001358920787402553,
+    "limit": 0.001,
+    "passed": false,
+    "new_attempts": 0
+  },
+  "material_measured": 0,
+  "model_capability_complete": false,
+  "physical_numerical_acceptance_complete": false,
+  "whole_project_complete": false,
+  "next_scientific_budget_allocated": false,
+  "proposal_case": "runs/full-cycle/p59-native-signed-entropy-static/proposal-case.json",
+  "future_manifest_and_estimate": "runs/full-cycle/p59-native-signed-entropy-static/future-production-dependency-proposal.json",
+  "delivery_receipt": "runs/full-cycle/p59-native-signed-entropy-static-final-delivery-state.json",
+  "no_new_tests_SHA_guard_retry_default_environment_or_material_law": true,
+  "future_proposal_estimate": {
+    "manifest": "runs/full-cycle/p59-native-signed-entropy-static/future-production-dependency-proposal.json",
+    "estimated_bytes_before_this_manifest_final_delivery_receipts_and_final_live_growth": 12094363,
+    "limit_bytes": 12582912,
+    "estimated_below_limit_at_snapshot": true,
+    "snapshot_not_final_future_prelaunch_manifest": true,
+    "budget_or_scientific_launch_authorized": false
+  },
+  "current_generic_source_labels_corrected_with_history_preserved": true
+}
