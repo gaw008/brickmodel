@@ -1005,3 +1005,24 @@ P50-A/B/C仅勾选实施、一次限定执行及记录完成；完整模型与�
 - [ ] **D50-GIT** 精确路径正常后继/push/远端；实际状态读取 `runs/full-cycle/p50-saved-reference-host-final-delivery-state.json`。
 - [ ] **D50-DRIVE** 单个必要增量名称/大小/父目录readback，同一actualreceipt；不授恢复。
 - [ ] **D50-HISTORY** 0恢复/删除，历史、独有Git、20GB/GitHub容量未通过。
+
+### P51 独立短时动态登记 2026-10-02T16:45:31.804618+00:00
+
+旧P49/P50/P46窗口均关闭。本项1job/1worker/1attempt含所有失败/1完整constructor/1ODE，900s自实际child启动至回收唯一deadline；必要冻结输入和数值汇总总量<=2097152B，预计1780000B。既有P46/P44配方/气氛/通道/298.15K/10s和baseline BDF/rtol/atol/max_step0.1/output0.5保持，唯一表示变化为已合法保存13格mode3，Ca1；不重采样y0、不生成新网格。
+
+- [x] **P51-A** 根预算/合同、最小生产入口和源/case冻结完成。
+- [ ] **P51-B** 唯一实际10s前向及累计质量/元素/完整U/四gas/逐相/熵与原生面事实，实际RHS含Jac和summary调用逐项记录；失败即关闭。
+- [x] **P51-C** 有效资格、原失败、耗时和必要文档完成；Git/Drive分离actualreceipt。
+- [ ] **P51-QUALIFICATION** 当前空间/时间加密、八阶段/三方案反演UQ完整模型CLI仍未资格，不能以本次短时勾全模型。
+
+0fit/UQ/search/retry/新增物性/新名义尝试/测试/SHA/护栏/恢复。P50两项初态PASS撤销、P45净U/P34/P40/P44失败与名义余水FAIL保留。成功或失败都交付事实，不自动P52。
+
+### P51 实际失败收口 2026-10-02T16:55:17.793082+00:00
+
+P51 13格10秒生产前向已实际执行，但最终数值序列化失败（2026-10-02T16:55:17.793082+00:00）。1job/1worker/1attempt/1完整实例/1原solve_ivp，2537RHS含Jac内部调用、12Jac、21summary rates；stdout达t=10s，随后在原CLI119行json.dumps(result)发生bool对象TypeError，result.json未生成。实际16:50:12.055734至16:50:22.241066UTC，监督10.185289s/childCPU10.166340s，rc1回收、未超时，唯一900s截止17:05:12.055734UTC未重置、窗口关闭。原必要冻结输入/源/执行前文件及输出1274326B<2MiB；失败和收尾注记另实测。仅补接既有plain(result)序列化，当前源静态核对，0重跑。无法从日志恢复未落盘轨迹/质量元素完整U/四gas/Ca分相/熵/原生面数值，因此所有P51物理数值项未资格，不能由P50代替。根609=144literature465assumed0measured，旧602完整条目及科学核、名义12格mode0Ca0sampling0directoff保持。P50两项初态库存PASS撤销和原raw、P45净U/P34/P40/P44失败、名义余水0.135892078740%>0.1%保留；当前加密/八阶段/三方案反演UQ模型CLI及wholefalse保持。Git/Drive、恢复与历史容量分列，不自动P52。
+
+P51-B实际一次执行结束，但必要数值未落盘，保持部分未完成；原唯一attempt消耗且窗口关闭，勾选缺失数据不构成重跑许可。P51-A实施/冻结与P51-C失败收口完成，修正后源仅静态。变更/证据/真实耗时见报告，下一项未分配，不自动P52。
+
+- [ ] **D51-GIT** 正常后继/push/remote，读取 `runs/full-cycle/p51-saved-reference-transient-final-delivery-state.json`。
+- [ ] **D51-DRIVE** 原父目录必要增量metadata，同一actualreceipt。
+- [ ] **D51-HISTORY** 实际恢复/独有Git/历史20GB/容量告警未通过。

@@ -1,14 +1,14 @@
 {
   "schema": "full_cycle_final_acceptance_matrix_v1",
-  "recorded_utc": "2026-10-02T16:27:47.143152+00:00",
-  "status": "P50_initial_host_RHS_implemented_effective_qualification_partial",
+  "recorded_utc": "2026-10-02T16:55:17.793082+00:00",
+  "status": "P51_actual_forward_final_output_failed_whole_model_partial",
   "identity": "approximate_simulation_not_measured_material",
   "parent_commit": "d8bc6f1b09e0b6d10cdcf4abf35e634035a36d08",
   "parameter_file": "parameters.full_cycle.json",
-  "parameter_count": 602,
+  "parameter_count": 609,
   "parameter_status_counts": {
     "literature": 144,
-    "assumed": 458,
+    "assumed": 465,
     "measured": 0
   },
   "implementation": {
@@ -146,11 +146,10 @@
   },
   "timing_note": "Elapsed wall time from initial plan creation includes computation, parallel overlap, reviews and user-directed continuation; not summed CPU/scientific time. P16 and P18 execution receipts report separately measured batch times.",
   "delivery": {
-    "status": "Actual Git/Drive fields in separate finalreceipt",
-    "evidence": "runs/full-cycle/p50-saved-reference-host-final-delivery-state.json",
+    "actual_receipt": "runs/full-cycle/p51-saved-reference-transient-final-delivery-state.json",
+    "status": "actualGitDrivefollow",
     "metadata_not_recovery": true,
-    "actual_byte_recovery": false,
-    "historical_storage_20gb_passed": false
+    "history20GB_capacity_resolved": false
   },
   "P09": {
     "status": "completed_conditional_attribution_review",
@@ -204,7 +203,7 @@
     }
   },
   "base_model_complete": false,
-  "current_scope": "P50 保存面主机瞬时生产诊断完成（2026-10-02T16:27:47.143152+00:00）：固定 P46/P44 合成初态、Ca 坐标1及 P49 mode3/13格，实际1job/1worker/1attempt/1完整实例/1RHS，t=0，rc0回收；监督0.447814s/CPU0.369549s，原必要输出416904B，事后资格注记3062B、合计419966B<512KiB，原60s窗口关闭。质量/元素/完整U/完整S及三个导数坐标按原1e−11瞬时判据通过，仅共享同次RHS代数闭合。初态严格库存及所观测熵非负；内面通量仅浮点量级，不授非零传输、动态或加密资格。首次输出两个Ca初态读回PASS因自定描述分母撤为未资格；signed数值及首次输出保留，CaO零预算relative=null/passfalse。源资格元数据事后修正、静态解析通过、未再执行。根602=144literature458assumed0measured，旧595完整条目、名义12格/mode0/Ca0/sampling0及科学核保持；无新物性/热源。P45旧净U失败、P34/P40/P44失败及名义余水0.135892078740%>0.1%保留，整模型仍partial；mode3动态/时空加密/八阶段/C采样/比较/反演/模型CLI未资格。Git/Drive和实际恢复/历史容量分列。",
+  "current_scope": "P51 13格10秒生产前向已实际执行，但最终数值序列化失败（2026-10-02T16:55:17.793082+00:00）。1job/1worker/1attempt/1完整实例/1原solve_ivp，2537RHS含Jac内部调用、12Jac、21summary rates；stdout达t=10s，随后在原CLI119行json.dumps(result)发生bool对象TypeError，result.json未生成。实际16:50:12.055734至16:50:22.241066UTC，监督10.185289s/childCPU10.166340s，rc1回收、未超时，唯一900s截止17:05:12.055734UTC未重置、窗口关闭。原必要冻结输入/源/执行前文件及输出1274326B<2MiB；失败和收尾注记另实测。仅补接既有plain(result)序列化，当前源静态核对，0重跑。无法从日志恢复未落盘轨迹/质量元素完整U/四gas/Ca分相/熵/原生面数值，因此所有P51物理数值项未资格，不能由P50代替。根609=144literature465assumed0measured，旧602完整条目及科学核、名义12格mode0Ca0sampling0directoff保持。P50两项初态库存PASS撤销和原raw、P45净U/P34/P40/P44失败、名义余水0.135892078740%>0.1%保留；当前加密/八阶段/三方案反演UQ模型CLI及wholefalse保持。Git/Drive、恢复与历史容量分列，不自动P52。",
   "P11": {
     "status": "base_model_complete_with_nominal_process_failure_and_future_material_calibration",
     "verification": {
@@ -1576,90 +1575,44 @@
     "P43_fixed4_instantaneous": "docs/FULL_CYCLE_P43_CELL_HOST.json",
     "P44_fixed3_quadratic_dynamic": "docs/FULL_CYCLE_P44_NONUNIFORM_DIRECT_TRANSIENT.json",
     "P46_single_actual_mode1": "docs/FULL_CYCLE_P46_CALCIUM_TRANSIENT.json",
-    "P50_actual_t0_saved13cell": "docs/FULL_CYCLE_P50_SAVED_REFERENCE_HOST.json"
+    "P50_actual_t0_saved13cell": "docs/FULL_CYCLE_P50_SAVED_REFERENCE_HOST.json",
+    "P51_failed_output": "docs/FULL_CYCLE_P51_SAVED_REFERENCE_TRANSIENT.json"
   },
   "current_nominal_drying_remaining_fraction": 0.001358920787402553,
   "whole_project_complete_definition": "Scoped implementation and physics/numerics, version-matched declared scenario evidence and observable interfaces are separate from process/material/delivery qualifications. P21 old kernel distribution cannot qualify P24 kernel.",
   "historical_model_closeout_wall_s_from_plan_creation": 4403.9089,
   "current_acceptance_matrix": [
     {
-      "item": "P50_mass",
-      "outcome": "passed_instantaneous_same_RHS_only",
-      "evidence": "P50",
-      "maximum_relative": 3.1843464993656723e-16,
-      "limit": 1e-11
+      "item": "P51_actual_fixed13cell10s_execution",
+      "outcome": "completed_solver_then_serialization_failure",
+      "evidence": "P51"
     },
     {
-      "item": "P50_elements",
-      "outcome": "passed_instantaneous_same_RHS_only",
-      "evidence": "P50",
-      "maximum_relative": 3.012523388950746e-17,
-      "limit": 1e-11
+      "item": "P51_numerical_ledgers_faces_strict",
+      "outcome": "notqualified_missing_output"
     },
     {
-      "item": "P50_complete_U_same_RHS_components",
-      "outcome": "passed_instantaneous_same_RHS_only",
-      "evidence": "P50",
-      "maximum_relative": 2.0888891412664807e-19,
-      "limit": 1e-11
+      "item": "current_time_grid_8stage_comparison_inverse_UQ_modelCLI",
+      "outcome": "notqualified"
     },
     {
-      "item": "P50_complete_S_same_RHS_components",
-      "outcome": "passed_instantaneous_same_RHS_only",
-      "evidence": "P50",
-      "maximum_relative": 1.9147132905170352e-16,
-      "limit": 1e-11
-    },
-    {
-      "item": "P50_three_derivative_coordinates",
-      "outcome": "passed_t0_only",
-      "evidence": "P50"
-    },
-    {
-      "item": "P50_Cc_OH_initial_inventory_ratios",
-      "outcome": "not_qualified_descriptive_first_PASS_withdrawn",
-      "evidence": "P50 eligibility-correction"
-    },
-    {
-      "item": "P50_CaO_initial_inventory_ratio",
-      "outcome": "undefined_zero_budget",
-      "relative": null,
-      "passed": false
-    },
-    {
-      "item": "P50_strict_initial_inventory_entropy",
-      "outcome": "observed_nonnegative_t0_only"
-    },
-    {
-      "item": "P50_current_mode3_all8stage_time_grid_comparison_inverse_modelCLI",
-      "outcome": "not_qualified_not_executed"
-    },
-    {
-      "item": "P45_old_new_netU",
-      "outcome": "historical_failed_current_unqualified",
-      "historical_relative": 3.039630569777313e-09,
-      "limit": 1e-11
-    },
-    {
-      "item": "P34_P40_P44_extended_phase_entropy_spatial",
-      "outcome": "historical_failures_retained_not_reexecuted"
+      "item": "prior_P45_P34_P40_P44_failures",
+      "outcome": "retained_not_reexecuted"
     },
     {
       "item": "nominal_drying",
       "outcome": "historical_failed",
-      "fraction": 0.001358920787402553,
-      "limit": 0.001,
       "new_attempts": 0
     },
     {
-      "item": "target_material",
+      "item": "targetmaterial",
       "outcome": "pending_measurements",
-      "measured_parameters": 0
+      "measured": 0
     },
     {
-      "item": "Git_Drive_recovery_history",
+      "item": "Git_Drive_restore_history",
       "outcome": "separate_delivery",
-      "evidence": "runs/full-cycle/p50-saved-reference-host-final-delivery-state.json"
+      "evidence": "runs/full-cycle/p51-saved-reference-transient-final-delivery-state.json"
     }
   ],
   "final_matrix_independent_review": {
@@ -1770,16 +1723,12 @@
   },
   "historical_P18_model_completion_wall_s_from_plan_creation": 14941.526078,
   "current_model_completion_status": {
-    "implementation": "P50 production observer implemented; one actual saved13cell initial host/RHS. Eligibility-only source fix afterward static,notrerun.",
-    "physics_numerics": "Four original instantaneous budgets and three derivative coordinates passed; initialphase descriptive overclaims withdrawn; current dynamics and refinements unqualified.",
-    "nominal_process": "Historical0.1358920787402553%>.1%FAIL;0newattempt",
-    "material": "602=144literature458assumed0measured;targetbrickLabsent",
-    "delivery": "Read separate actual receipt; metadata is not recovery; historical capacity unresolved",
-    "next_candidate": {
-      "scope": "A bounded short dynamic use of the same13 saved cells may address accumulated budgets; no new job, constructor, RHS, ODE or time/byte allocation is declared here. Coordinator decides next scope.",
-      "executed": false,
-      "new_budget_allocated": false
-    }
+    "implementation": "New short productionentry with frozen case/source; serialization wiring corrected statically after solefailure",
+    "physics_numerics": "P51 needed numerics unavailable; t0P50 only remains priorconditional qualification; no13cell dynamic PASS",
+    "nominal_process": "Historical0.135892078740%>.1%FAIL;0newattempt",
+    "material": "609=144literature465assumed0measured;targetbrickLabsent",
+    "delivery": "Separateactualreceipt;metadata notrestore;historicalcapacity unresolved",
+    "next_budget_allocated": false
   },
   "historical_pre_P22_model_capability_closeout_complete": true,
   "P22": {
@@ -1850,7 +1799,7 @@
     "declared_to_reviewed_wall_s": 430.997672
   },
   "historical_pre_P22_status": "declared_approximate_model_work_complete_physics_numerics_passed_process_failed",
-  "physical_numerical_acceptance_scope": "P50 t0 sameRHS algebraicclosure only;current13cell dynamics,timegrid,8stages unqualified",
+  "physical_numerical_acceptance_scope": "P51no savednumerics;P50t0 only priorconditional, current13cell dynamics unqualified",
   "P23": {
     "status": "completed_bounded_source_audit",
     "evidence": [
@@ -2667,6 +2616,19 @@
       "initial_phase_overclaims_withdrawn": true,
       "source_metadata_fix_static_only": true,
       "dynamic_qualified": false
+    },
+    "P51": {
+      "report": "docs/FULL_CYCLE_P51_SAVED_REFERENCE_TRANSIENT.json",
+      "actual_constructor": 1,
+      "actual_solve_ivp": 1,
+      "actual_RHS": 2537,
+      "actual_Jacobian": 12,
+      "actual_summary_rates": 21,
+      "operation_passed": false,
+      "numerical_report_saved": false,
+      "physical_numerical_qualified": false,
+      "source_serialization_fix_static_only": true,
+      "new_calls_after_failure": 0
     }
   },
   "final_complete_scope_review": {
@@ -8381,17 +8343,16 @@
     }
   },
   "current_root_parameter_metadata": {
-    "count": 602,
+    "count": 609,
     "status_counts": {
       "literature": 144,
-      "assumed": 458,
+      "assumed": 465,
       "measured": 0
     },
-    "old595_complete_records_preserved": true,
-    "new7_operation_assumed": true,
-    "no_new_physics_parameters": true
+    "old602_complete_records_preserved": true,
+    "new7_operation_assumed": true
   },
-  "scientific_kernel_qualification": "P50 actual saved13cell initial RHS only; scientific kernel unchanged. Four closure/three derivative budgets do not qualify dynamics or originalP45 netU.",
+  "scientific_kernel_qualification": "Scientificcore unchanged;P51 pipeline failure cannot establish mass/element/U/gas/Ca/entropy/face qualification",
   "historical_pre_P46_current_scope": "P45显式CaO坐标及必要叶模块已实现（2026-10-02T04:47:36.040486+00:00），局部资格partial。固定两物理上下文共4构造/4RHS/2sciencejobs，合计48项局部核查47通过/1净U比较FAIL（raw1.421085535e-14W、原scale4.675191614e-6W、relative3.039630570e-9>1e-11）保留；既有分项2645.316W补充诊断relative5.372082305e-18另列。明示正内点附录24/24PASS、0.259811s，原窗口关闭不延、0重复zero/ODE/Jac/fit/UQ。新初始零CaO精确0、所测新零/正内点三支熵非负仅瞬时，不授动态资格。根558=144literature414assumed0measured，旧541保持、新增表示及运行政策，无新物性，名义mode0/direct未启用。参考体积保存数据映射与外部C序列化数值一致；72熵记录14负值全保留；仅纳入F三来源/23文献观测，无L。原P34/P40/P44及名义0.135892078740%>0.1%失败、当前8阶段/加密/三方案/反演/UQ/CLI未资格和wholefalse保持。",
   "historical_pre_P46_current_model_completion_status": {
     "implementation": "ExplicitCaOopt-in/native shared chains and selected saved-data leaves implemented",
@@ -9407,7 +9368,7 @@
       "P45_prior": "929c4c3a ordinarypush/remotePASS,1377612B/Drive1a0Ci66j6N5eQZDzPBEn90U3okRlq9dz0 metadataPASS"
     }
   },
-  "current_scope_qualification": "t0 conditional only. Two firstinitialphase PASS flags withdrawn with raw preserved;CaO undefined. Wholemodel false.",
+  "current_scope_qualification": "P51 failed finalserialization, no savednumericalqualification;P50 originalt0 scope retained;wholefalse",
   "historical_pre_P47_current_scope": "P46首个实际mode1短时动态单例已完成（2026-10-02T05:55:32.140418+00:00）：累计2次进程启动，首读参失败1次保留；实际1构造/1ODE，2379RHS含12Jac，solver9.203657s、CPU含构造9.415551s、构造至回收9.581245s，原300s窗口未延。原质量/元素/完整能量最大相对1.548557663e-8、四gas预算最大9.103027113e-6，均<0.001；熵账本3.150938169e-9，保存样本OH/carbonate最小0、direct最小6.534691959e-12W/K，accepted knots及t_eval原物理域通过。Cc/OH无floor逐相相对预算通过；CaO初末/源/残差均0、预算0，相对null且passed=false，精确零观察不能授相对预算PASS。与保存P44基准四指标最大变化7.389644452e-13仅表示诊断，0新time/grid；direct extent差+4.261998740e-16mol。根569=144literature425assumed0measured，16操作source-ID修复、旧7来源元数据例外及失败快照保留，45host929c/物理/solver保持，名义mode0/direct未启用。全八阶段/加密/三方案/反演/UQ/CLI当前模式未资格；P45净U、P34/P40/P44失败及名义余水0.135892078740%>0.1%保持，0新名义尝试，wholefalse。本轮实际模型额度关闭，下一加密仅候选；Git、Drive元数据与恢复另列。",
   "historical_pre_P47_current_model_completion_status": {
     "implementation": "P45 source929c retained; root registered-source fix and explicit actual subrecord complete",
@@ -10139,5 +10100,130 @@
     "initial_phase_overclaims_withdrawn": true,
     "source_metadata_fix_static_only": true,
     "dynamic_qualified": false
+  },
+  "historical_pre_P51_current_scope": "P50 保存面主机瞬时生产诊断完成（2026-10-02T16:27:47.143152+00:00）：固定 P46/P44 合成初态、Ca 坐标1及 P49 mode3/13格，实际1job/1worker/1attempt/1完整实例/1RHS，t=0，rc0回收；监督0.447814s/CPU0.369549s，原必要输出416904B，事后资格注记3062B、合计419966B<512KiB，原60s窗口关闭。质量/元素/完整U/完整S及三个导数坐标按原1e−11瞬时判据通过，仅共享同次RHS代数闭合。初态严格库存及所观测熵非负；内面通量仅浮点量级，不授非零传输、动态或加密资格。首次输出两个Ca初态读回PASS因自定描述分母撤为未资格；signed数值及首次输出保留，CaO零预算relative=null/passfalse。源资格元数据事后修正、静态解析通过、未再执行。根602=144literature458assumed0measured，旧595完整条目、名义12格/mode0/Ca0/sampling0及科学核保持；无新物性/热源。P45旧净U失败、P34/P40/P44失败及名义余水0.135892078740%>0.1%保留，整模型仍partial；mode3动态/时空加密/八阶段/C采样/比较/反演/模型CLI未资格。Git/Drive和实际恢复/历史容量分列。",
+  "historical_pre_P51_current_model_completion_status": {
+    "implementation": "P50 production observer implemented; one actual saved13cell initial host/RHS. Eligibility-only source fix afterward static,notrerun.",
+    "physics_numerics": "Four original instantaneous budgets and three derivative coordinates passed; initialphase descriptive overclaims withdrawn; current dynamics and refinements unqualified.",
+    "nominal_process": "Historical0.1358920787402553%>.1%FAIL;0newattempt",
+    "material": "602=144literature458assumed0measured;targetbrickLabsent",
+    "delivery": "Read separate actual receipt; metadata is not recovery; historical capacity unresolved",
+    "next_candidate": {
+      "scope": "A bounded short dynamic use of the same13 saved cells may address accumulated budgets; no new job, constructor, RHS, ODE or time/byte allocation is declared here. Coordinator decides next scope.",
+      "executed": false,
+      "new_budget_allocated": false
+    }
+  },
+  "historical_pre_P51_current_root_parameter_metadata": {
+    "count": 602,
+    "status_counts": {
+      "literature": 144,
+      "assumed": 458,
+      "measured": 0
+    },
+    "old595_complete_records_preserved": true,
+    "new7_operation_assumed": true,
+    "no_new_physics_parameters": true
+  },
+  "historical_pre_P51_current_acceptance_matrix": [
+    {
+      "item": "P50_mass",
+      "outcome": "passed_instantaneous_same_RHS_only",
+      "evidence": "P50",
+      "maximum_relative": 3.1843464993656723e-16,
+      "limit": 1e-11
+    },
+    {
+      "item": "P50_elements",
+      "outcome": "passed_instantaneous_same_RHS_only",
+      "evidence": "P50",
+      "maximum_relative": 3.012523388950746e-17,
+      "limit": 1e-11
+    },
+    {
+      "item": "P50_complete_U_same_RHS_components",
+      "outcome": "passed_instantaneous_same_RHS_only",
+      "evidence": "P50",
+      "maximum_relative": 2.0888891412664807e-19,
+      "limit": 1e-11
+    },
+    {
+      "item": "P50_complete_S_same_RHS_components",
+      "outcome": "passed_instantaneous_same_RHS_only",
+      "evidence": "P50",
+      "maximum_relative": 1.9147132905170352e-16,
+      "limit": 1e-11
+    },
+    {
+      "item": "P50_three_derivative_coordinates",
+      "outcome": "passed_t0_only",
+      "evidence": "P50"
+    },
+    {
+      "item": "P50_Cc_OH_initial_inventory_ratios",
+      "outcome": "not_qualified_descriptive_first_PASS_withdrawn",
+      "evidence": "P50 eligibility-correction"
+    },
+    {
+      "item": "P50_CaO_initial_inventory_ratio",
+      "outcome": "undefined_zero_budget",
+      "relative": null,
+      "passed": false
+    },
+    {
+      "item": "P50_strict_initial_inventory_entropy",
+      "outcome": "observed_nonnegative_t0_only"
+    },
+    {
+      "item": "P50_current_mode3_all8stage_time_grid_comparison_inverse_modelCLI",
+      "outcome": "not_qualified_not_executed"
+    },
+    {
+      "item": "P45_old_new_netU",
+      "outcome": "historical_failed_current_unqualified",
+      "historical_relative": 3.039630569777313e-09,
+      "limit": 1e-11
+    },
+    {
+      "item": "P34_P40_P44_extended_phase_entropy_spatial",
+      "outcome": "historical_failures_retained_not_reexecuted"
+    },
+    {
+      "item": "nominal_drying",
+      "outcome": "historical_failed",
+      "fraction": 0.001358920787402553,
+      "limit": 0.001,
+      "new_attempts": 0
+    },
+    {
+      "item": "target_material",
+      "outcome": "pending_measurements",
+      "measured_parameters": 0
+    },
+    {
+      "item": "Git_Drive_recovery_history",
+      "outcome": "separate_delivery",
+      "evidence": "runs/full-cycle/p50-saved-reference-host-final-delivery-state.json"
+    }
+  ],
+  "historical_pre_P51_delivery": {
+    "status": "Actual Git/Drive fields in separate finalreceipt",
+    "evidence": "runs/full-cycle/p50-saved-reference-host-final-delivery-state.json",
+    "metadata_not_recovery": true,
+    "actual_byte_recovery": false,
+    "historical_storage_20gb_passed": false
+  },
+  "P51": {
+    "report": "docs/FULL_CYCLE_P51_SAVED_REFERENCE_TRANSIENT.json",
+    "actual_constructor": 1,
+    "actual_solve_ivp": 1,
+    "actual_RHS": 2537,
+    "actual_Jacobian": 12,
+    "actual_summary_rates": 21,
+    "operation_passed": false,
+    "numerical_report_saved": false,
+    "physical_numerical_qualified": false,
+    "source_serialization_fix_static_only": true,
+    "new_calls_after_failure": 0
   }
 }

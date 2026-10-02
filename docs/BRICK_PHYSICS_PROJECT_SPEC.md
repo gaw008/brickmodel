@@ -1,5 +1,9 @@
 # 全流程近似烧结砖模型：当前执行规范（2026-09-26）
 
+P51 13格10秒生产前向已实际执行，但最终数值序列化失败（2026-10-02T16:55:17.793082+00:00）。1job/1worker/1attempt/1完整实例/1原solve_ivp，2537RHS含Jac内部调用、12Jac、21summary rates；stdout达t=10s，随后在原CLI119行json.dumps(result)发生bool对象TypeError，result.json未生成。实际16:50:12.055734至16:50:22.241066UTC，监督10.185289s/childCPU10.166340s，rc1回收、未超时，唯一900s截止17:05:12.055734UTC未重置、窗口关闭。原必要冻结输入/源/执行前文件及输出1274326B<2MiB；失败和收尾注记另实测。仅补接既有plain(result)序列化，当前源静态核对，0重跑。无法从日志恢复未落盘轨迹/质量元素完整U/四gas/Ca分相/熵/原生面数值，因此所有P51物理数值项未资格，不能由P50代替。根609=144literature465assumed0measured，旧602完整条目及科学核、名义12格mode0Ca0sampling0directoff保持。P50两项初态库存PASS撤销和原raw、P45净U/P34/P40/P44失败、名义余水0.135892078740%>0.1%保留；当前加密/八阶段/三方案反演UQ模型CLI及wholefalse保持。Git/Drive、恢复与历史容量分列，不自动P52。
+
+证据 docs/FULL_CYCLE_P51_SAVED_REFERENCE_TRANSIENT.json/.md；实际交付 runs/full-cycle/p51-saved-reference-transient-final-delivery-state.json。以下原资格按其历史范围保留。
+
 P50 保存面主机瞬时生产诊断完成（2026-10-02T16:27:47.143152+00:00）：固定 P46/P44 合成初态、Ca 坐标1及 P49 mode3/13格，实际1job/1worker/1attempt/1完整实例/1RHS，t=0，rc0回收；监督0.447814s/CPU0.369549s，原必要输出416904B，事后资格注记3062B、合计419966B<512KiB，原60s窗口关闭。质量/元素/完整U/完整S及三个导数坐标按原1e−11瞬时判据通过，仅共享同次RHS代数闭合。初态严格库存及所观测熵非负；内面通量仅浮点量级，不授非零传输、动态或加密资格。首次输出两个Ca初态读回PASS因自定描述分母撤为未资格；signed数值及首次输出保留，CaO零预算relative=null/passfalse。源资格元数据事后修正、静态解析通过、未再执行。根602=144literature458assumed0measured，旧595完整条目、名义12格/mode0/Ca0/sampling0及科学核保持；无新物性/热源。P45旧净U失败、P34/P40/P44失败及名义余水0.135892078740%>0.1%保留，整模型仍partial；mode3动态/时空加密/八阶段/C采样/比较/反演/模型CLI未资格。Git/Drive和实际恢复/历史容量分列。
 
 证据 docs/FULL_CYCLE_P50_SAVED_REFERENCE_HOST.json/.md，实际交付读取 runs/full-cycle/p50-saved-reference-host-final-delivery-state.json。以下原记录按其时间和较窄资格保留。
