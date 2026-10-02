@@ -1205,9 +1205,9 @@ P58最终HEAD9496182/remote，158必要路径12922129B>12582912B，超339217B；
 - [x] **P59-B** 标准库直接文件replay入口，从必需保存序列重算，不导入模型、不回填P57/P58、不抄PASS。
 - [x] **P59-C** 当前矩阵specific_gaps/旧direct和P41分区状态精准更新，历史原样保留；区分代码/未跑验收/材料/元数据缺口。
 - [x] **P59-D** 两互异stage、完整records与未来完整实际依赖清单/保守估算可审阅；1ctor/2solve_ivp/1integrate、900s/12MiB仅提案，0预算分配/启动。
-- [ ] **P59-DYNAMIC** 原生新ledger实际生产和savedreplay尚未执行，非零30s累计起点/区间判据未资格。
-- [ ] **D59-GIT** 正常后继/普通push/remote实际receipt。
-- [ ] **D59-DRIVE** 本次必要小增量metadata，非字节恢复。
+- [x] **P59-DYNAMIC** 由P60唯一实际两stage生产与新JSON回放完成：真实非零30s累计起点及各自起点原判据通过，仅saved同源数学资格。
+- [x] **D59-GIT** 正常后继/普通push/remote实际receipt。
+- [x] **D59-DRIVE** 本次必要小增量metadata，非字节恢复。
 
 唯一writer owns gas.py/diagnostics.py/新entropy_ledger.py/root/共同docs；独立case_conditions候选不应用。科学ctor/RHS/Jac/ODE/operator/fit/UQ/search均0；不新增tests/SHA/guards/参数默认/状态/热源/率求积/材料物性/恢复/历史删除。案例仅将P58恒定物理边界的原累计end10s拆5/10s/time_scale6；未来30s会restartBDF，不能保证同原单stage轨迹逐值相同。新的完整必要清单必须计实际读取旧source/producer/case/root/声明/docs与新不同路径冻结副本/结果/admin，一path只计一次，不再沿旧窄fits口径。
 
@@ -1227,3 +1227,26 @@ P59-D只勾选具体未分配case/完整未来依赖框架和保守reservations�
 - [x] **D58-GIT** 12实际明确变更paths正常后继/push/remote，终态读 `runs/full-cycle/p58-low-temperature-60s-time-refinement-final-delivery-state.json`。
 - [x] **D58-DRIVE** 本P58一次真实upload与metadata逐id/name/size/parent；同终态收据，非restore。
 ```
+
+### P60 独立16MiB两阶段原生生产登记 2026-10-02T21:37:52.852269+00:00
+
+正式采用P59独立16MiB最终方案；旧未来12MiB候选撤回、不启动，原P58超限FAIL不追认。完整采用case的26cells/27faces/mode3/Ca1/end5/10×6→0–30/30–60s/T298.15/gas/压力/geometry/配方/合成L/域/step.0125/out.5/tols完整records保持，不读取旧P58完整result，不seed/rebin/clip或改初态。根独立新增8policy budget；旧681参数与所有旧live合同/根名义保持。本次冻结当前48源，唯一原生构造/连续integrate/两solve_ivp，中点全部状态和累计账本carry、BDF历史restart，无逐值旧轨迹等价声明。
+
+- [x] **P60-A** 独立根预算/完整case与48源冻结、生产JSON/replay输出契约登记，静态语法及records读回。
+- [x] **P60-GATE** 完整实际依赖、全部virtualGitblob及distinctcopies与结果/admin增长保守预检≤16777216B；启动前实际stat。
+- [x] **P60-B** 唯一1job/worker/attempt/constructor/integrate、2native solve_ivp，childlaunch至reap900s固定硬停，失败消费闭窗不retry。
+- [x] **P60-C** 保存真实完整S/Ip/Ie/time/原无量纲末槽、全窗/两stage各自起点signedledger、原尺度/阈值及实际非零30sorigin；原flags分别保留。
+- [x] **P60-D** 唯一worker从新实际JSON通过stdlib直接文件非__main__入口执行一次回放功能、持久原起值/重算residual/返回资格，0额外forward/operator，不新增tests。
+- [ ] **P60-E** 部分完成：适用原账本/域已读回、CaO零预算及旧失败保留；最终完整actual字节含Git/Drive/admin/增量档案待最后localreceipt，不能提前勾选。
+- [ ] **D60-GIT** 本轮必要源契约/根/计划/报告/汇总正常后继与普通push。
+- [ ] **D60-DRIVE** 原目录必要小型增量及id/name/size/parent/sourcevisibility读回，非字节恢复。
+
+证据目录 `runs/full-cycle/p60-native-signed-entropy-two-stage`；本阶段0新名义/高温/空间时间加密/三方案/反演/UQ/材料实测/观察候选整合/自动化/历史恢复或删除。实际科学时间与静态/交付行政分列；本窗口后不自动启动新计算。
+
+### P60 实际科学闭窗 2026-10-02T21:41:12.215616+00:00
+
+P60 原生两阶段signed S生产和唯一saved-JSON回放已实际完成并闭窗（2026-10-02T21:41:12.215616+00:00）。原完整采用case的26格27面/mode3/Ca1、0–30/30–60s及物理/数值records保持，fresh native初态/所有states累计carry，中点BDF历史restart；不声称与P58单stage逐值相同。实际wall52.205773333s/CPU51.946520s，rc0/reaped/无timeout，1job/worker/attempt/constructor/continuousintegrate、2native solve_ivp；12206RHS含7Jac（9840+7×338），另121native summaryrates，无额外独立算子/forward/fit/UQ/search。真正持久121点完整S/Ip/Ie/time/原无量纲末槽及escale/Tr/原阈值；第二段30s起点产熵0.18294835655058223、交换熵0.007497017663414705J/K均实际非零，全窗/两段各自起点作差signed R=(ΔS−ΔIp)−ΔIe，不重置或裁剪。新全窗relative2.81146423756e-09，第二段6.84756259103e-13<原.001；从真正新JSON执行一次stdlib非__main__replay，输入series及重算interval输出一致，原native flags保持各自表达式。质量/元素/U及四gas全窗两段按原.001通过；CaO零预算仍nullfalse，全相不PASS。strict非负/原source域仅121保存点，独立势/分支累计/内部BDF/Newton/complex/between/最新8stage/材料不自动资格。根689=144literature545assumed0measured，旧681完整records与全部旧live合同/名义保持；新增8仅独立policy预算。本轮完整prelaunch200实际路径+3virtualGitblob+futureoutput/adminreserve=14598940B≤16777216B，最终所有actualpaths/增量档案/行政按finalreceipt另核算，不能拿reap较早口径冒充最终PASS。旧未来12MiB候选撤回、不启动；P58资源FAIL、P34/P40/P44/P45/P50撤回/P51及名义余水.135892078740%>.1%/0实测/wholefalse全部保留。本科学窗口已消费，0后续预算；观察候选、条件接口和inverse/UQ Ca留存未整合。
+
+证据 `docs/FULL_CYCLE_P60_NATIVE_ENTROPY_PRODUCTION.json/md`；最终Git/Drive/实际字节收口 `runs/full-cycle/p60-native-signed-entropy-two-stage-final-delivery-state.json`，元数据核对不等于恢复。
+
+已完成GATE/B/C/D，实际科学52.205773333s；当前静态/行政耗时另列finalreceipt。不再启动constructor/RHS/Jac/ODE/operator/fit/UQ/search或第二次replay。E只因最终交付字节尚未收口保持部分；D60-GIT/DRIVE待实际receipt，不提前PASS。最终localreceipt若成功记录即为交付终态，下一阶段可据其实际证据续勾，避免为每新增收据反复commit/打包。
