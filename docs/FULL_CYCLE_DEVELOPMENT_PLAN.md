@@ -857,3 +857,25 @@ P44固定二次分区10s合成动态三档已实际完成（2026-10-02T00:43:57.
 - [ ] **P44-B** 严格近零逐相/所有branch数值资格：CaO3/9及OH/carbonate strict失败，directamount额外空间资格未通过，主项不勾。
 
 变更仅root7操作policy/plan/currentreports/必要验收汇总，host45不改。证据p44-nonuniform-direct-transient的三case、callbacks、start/执行、acceptance/prestart/result-review；真实solver/CPU/35.13754s监督与工作流分开。P44原3start/截止关闭，不再启动；P45仅source/状态表示候选待明确资源，不重开大网格/参数/UQ。正常提交+唯一小增量随后实际回执本地，不另notescommit。
+
+### P44实际单次交付并入下一实质实现
+
+571b409fa038675ded5245ff79ac8868a5b4cdc2正常push/远端一致；唯一1320045B/Drive1H6zkzEobkFL7_N3CJrdt2vRVdb0WEMdd名称大小parent读回通过。最小最终收据p44-nonuniform-direct-transient-final-delivery-state.json，两个全量收据field引用失败后简化，0科学/云操作重做。0恢复，原件保留，历史20GB/独有Git/GitHub容量未解决。
+
+- [ ] **P45** 同一固定Ca池的显式CaO数值坐标及必要瞬时准入；根mode0历史/名义保留、mode1 opt-in，无新状态/物率/热源。静态同步decode/init/dot，gas/8extent/同U/S/机械与inverse路径核对后，仅A真实零CaO配方、B固定正内点，各old/new一次。计划4构造4RHS、1worker、最多2sciencejobs/60s每job/首实际构造唯一120s、累积最多6构造6RHS含失败/受影响一上下文retry、每问题2次/1MiB；0ODE/Jac单扫/summary/fit/UQ/来源扩扫/恢复。
+
+### P45正式事前接续 2026-10-02T04:06:14.151637+00:00
+
+相关Git路径干净/HEAD571b409f，Research可写、磁盘可用约280GiB；旧541完整保留，新增10项至551=144literature407assumed0measured，仅1数值selector/固定synthetic内点和8预算。静态推导及既有只读reviewer肯定仿射流形/切向等价；Jac列含义/BDF误差范数会变，非动态轨迹等价。Gas一文件接线，其他44源冻结保持；当前0实例/RHS/科学clock，详见p45-calcium-coordinate/declaration.json。共享主checkoutroot唯一writer；其它隔离并行分支初轮0主模型调用，计入同一预算，不加副额度。名义mode0/direct未启用，P44/P40/P34/名义工艺/空间/0measured失败保持，wholefalse。
+
+
+### P45实际局部及明示附录 2026-10-02T04:47:36.040486+00:00
+
+P45显式CaO坐标及必要叶模块已实现（2026-10-02T04:47:36.040486+00:00），局部资格partial。固定两物理上下文共4构造/4RHS/2sciencejobs，合计48项局部核查47通过/1净U比较FAIL（raw1.421085535e-14W、原scale4.675191614e-6W、relative3.039630570e-9>1e-11）保留；既有分项2645.316W补充诊断relative5.372082305e-18另列。明示正内点附录24/24PASS、0.259811s，原窗口关闭不延、0重复zero/ODE/Jac/fit/UQ。新初始零CaO精确0、所测新零/正内点三支熵非负仅瞬时，不授动态资格。根558=144literature414assumed0measured，旧541保持、新增表示及运行政策，无新物性，名义mode0/direct未启用。参考体积保存数据映射与外部C序列化数值一致；72熵记录14负值全保留；仅纳入F三来源/23文献观测，无L。原P34/P40/P44及名义0.135892078740%>0.1%失败、当前8阶段/加密/三方案/反演/UQ/CLI未资格和wholefalse保持。
+
+- [x] **P45-A** 连续坐标证明、最小gas源码及根显式选择、4真实固定局部上下文已执行；raw失败及附录区别保留。
+- [ ] **P45-B** 原净U准入FAIL、动态严格正性/逐相/加密未资格，不以瞬时结果勾选模型主项。
+- [x] **P45-C** 必要参考体积/熵叶模块及F文献观测选择性集成、受影响保存数据核查；流程AttributeError保留。未新增软件测试/重复预检/护栏。
+- [ ] **P46** 最小mode1动态基准候选：1integration/120s/1worker/512KiB/1attempt/0fit-UQ-名义搜索。先当前nofloor和严格熵；只有通过后另配time/grid一次。当前未分配、不执行。
+
+变更gas/root558、7选择性新文件及P45/当前矩阵文档。科学CPU/实际wall见JSON，静态与交付独立计时；失败证据原样保留。D01正常后继push和D02唯一必要增量待回执，D03不恢复，D04历史20GB/独有Git/容量警告未解决。

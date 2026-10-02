@@ -1,0 +1,194 @@
+{
+  "schema": "P45_actual_coordinate_and_selective_leaf_closeout_v1",
+  "recorded_utc": "2026-10-02T04:47:36.040486+00:00",
+  "status": "implemented_local_partial_original_net_U_comparison_FAIL_retained",
+  "base_commit": "571b409fa038675ded5245ff79ac8868a5b4cdc2",
+  "source_change": "src/sludge_vme/models/full_cycle_gas.py only in45host source paths",
+  "root_parameter_count": 558,
+  "root_status_counts": {
+    "literature": 144,
+    "assumed": 414,
+    "measured": 0
+  },
+  "old541_parameters_preserved": true,
+  "new_operation_parameters": 16,
+  "new_representation_selector": 1,
+  "new_physical_parameters": 0,
+  "default_mode": 0,
+  "conditional_new_mode": 1,
+  "nominal_direct_enabled": false,
+  "coordinate_proof": {
+    "calcium_pool": "C>0 fixed closed Ca pool",
+    "OH": "nOH=s*h unchanged",
+    "mode0": "historical nCc=C*c; original irreversible branch retained",
+    "mode1": "nCaO=C*l; nCc=C-nCaO-nOH",
+    "d_l": "(r_h+r_c)/C",
+    "d_nOH": "-r_h-r_direct",
+    "d_nCc": "-r_c+r_direct",
+    "gas_independent_extent_mu_U_S_volume": "unchanged shared current state chains; no added heat"
+  },
+  "actual_execution": {
+    "science_jobs": 2,
+    "constructors": 4,
+    "RHS": 4,
+    "standalone_Jac_ODE_summary_fit_UQ": 0,
+    "CPU_s": 0.09611299999999995,
+    "scientific_constructor_to_reap_s": 0.5461944583803415,
+    "all_children_reaped": true,
+    "first_window": {
+      "first_utc": "2026-10-02T04:17:45.455114+00:00",
+      "deadline_utc": "2026-10-02T04:19:45.455114+00:00",
+      "closed_partial": true,
+      "extended": false,
+      "jobs": 1
+    },
+    "explicit_positive_only_appendix": {
+      "first_utc": "2026-10-02T04:43:26.828816+00:00",
+      "deadline_utc": "2026-10-02T04:43:56.828816+00:00",
+      "jobs": 1,
+      "constructors_RHS": 2,
+      "passed": true,
+      "budget_s": 30,
+      "source_unchanged_no_zero_repeat": true
+    },
+    "original_first_metrics": {
+      "checks": 24,
+      "passed": 23,
+      "failed": 1,
+      "original_U_comparison": {
+        "raw_signed_residual": [
+          0.0,
+          0.0,
+          0.0,
+          -8.470329472543003e-22,
+          0.0,
+          -8.046812998915853e-21,
+          0.0,
+          -1.4210855350476714e-14,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute": 1.4210855350476714e-14,
+        "normalization_scale": 4.6751916143275985e-06,
+        "relative": 3.039630569777313e-09,
+        "existing_identity_limit": 1e-11,
+        "passed": false,
+        "undefined_scale_no_floor": false
+      }
+    },
+    "separate_saved_component_U_diagnostic": {
+      "basis": "Preexisting own U identity normalization: sum absolute C*dT, us*dns, ug*dng, surface_cap*dpore, elastic_Udot, phase_Udot plus absolute boundary. Stored at first same-RHS before old/new comparison. Not newly evaluated physics; not formal roundoff proof.",
+      "old_component_budget_W": 2645.316014230268,
+      "new_component_budget_W": 2645.316014230268,
+      "raw_maximum_difference_W": 1.4210855350476714e-14,
+      "relative_to_old_component_budget": 5.372082304734309e-18,
+      "existing_identity_limit": 1e-11,
+      "below_existing_limit": true,
+      "original_net_U_check_remains_failed": true
+    },
+    "positive_appendix_metrics": {
+      "checks": 24,
+      "passed": 24,
+      "failed": 0,
+      "predeclared_U_component_budget_W": 11400.330581874074,
+      "same_original_identity_limit": 1e-11,
+      "different_from_original_zero_net_U_normalization": true
+    },
+    "total_local_checks": {
+      "checks": 48,
+      "passed": 47,
+      "failed": 1,
+      "scopes": "Originalzero24 andpredeclaredpositiveappendix24; U comparison normalization distinction retained"
+    }
+  },
+  "sampled_strict_signs": [
+    {
+      "fixture": "declared_zero_old",
+      "nonnegative": false,
+      "dynamic_qualified": false
+    },
+    {
+      "fixture": "declared_zero_new",
+      "nonnegative": true,
+      "dynamic_qualified": false
+    },
+    {
+      "fixture": "positive_interior_old",
+      "nonnegative": true,
+      "dynamic_qualified": false
+    },
+    {
+      "fixture": "positive_interior_new",
+      "nonnegative": true,
+      "dynamic_qualified": false
+    }
+  ],
+  "leaf_integration": {
+    "static_review": "runs/full-cycle/p45-calcium-coordinate/leaf-integration/static-review.json",
+    "actual_data_job": "runs/full-cycle/p45-calcium-coordinate/leaf-integration/execution.json",
+    "C_saved_serialized_parity": {
+      "time_refined": {
+        "saved_samples_equal": true,
+        "initial_direct_rate_equal": true,
+        "endpoint_CO2_equal": true
+      },
+      "mesh_refined": {
+        "saved_samples_equal": true,
+        "initial_direct_rate_equal": true,
+        "endpoint_CO2_equal": true
+      }
+    },
+    "D_actual_saved_entropy_samples": 72,
+    "D_known_negative_samples_preserved": 14,
+    "data_worker_CPU_s": 0.043891,
+    "data_worker_wall_s": 0.05121370917186141,
+    "supervisor_error": "Post-save Popen.check_returncode AttributeError; actual child rc0/reaped, original receipt/data retained; no rerun",
+    "F": "Three sources/12conditions/23literature observations only; noL, targetmeasured0; P34 phase failure attribution corrected",
+    "B": "External24pureAST/algorithm PASS, snapshot bytes matched before operation-only additions; no test/runner imported",
+    "E": "Omitted duplicate preflight/admission-policy changes; existing observation/sourceTG API retained",
+    "passive_sampler": "Not imported: depends on removed finite_vector and adds hardcoded64cell/64time/8species/2MiB defaults and output-cap guard. No new host hookup/data fabricated.",
+    "new_software_tests": 0,
+    "new_host_RHS_calls": 0
+  },
+  "current_qualification": {
+    "all8_stage_new_coordinate_dynamic": false,
+    "time_grid_new_coordinate": false,
+    "strict_dynamic_OH_Cc_CaO": false,
+    "current_three_scheme_inverse_UQ_CLI": false,
+    "original_P45_item_complete": false,
+    "whole_project_complete": false
+  },
+  "retained_failures": {
+    "P34_extended_phase_budgets": "30/81FAIL historical",
+    "P40_uniform_mesh_peak_relative": 0.0733335269426334,
+    "P44_CaO_unique_phase_budgets": "3/9FAIL historical mode0",
+    "P44_direct_mesh_relative": 0.03018534360042369,
+    "nominal_water_fraction": 0.001358920787402553,
+    "nominal_water_limit": 0.001,
+    "new_nominal_attempts": 0,
+    "measured_target_material_parameters": 0
+  },
+  "delivery": {
+    "Git_normal_successor_push": "pending actualreceipt",
+    "Drive_single_necessary_increment": "pending actualreceipt",
+    "actual_recovery_or_download": false,
+    "original_archives_preserved": true,
+    "historical_storage20GB_GitHub_quota": "unresolved"
+  },
+  "next_dependency": {
+    "id": "P46",
+    "status": "proposal_only_no_ODE_allocation_no_science_start",
+    "scope": "One frozen P44 quadratic12/10s baseline with mode1 CaO coordinate, not nominal cycle. First directly assess nofloorCa phase budgets and strictsampled OH/Cc/direct signs; do not infer dynamic positivity from instantaneous probes. Retain raw failure then simplify; no failedgate refinement search.",
+    "proposed_resources": {
+      "initial_integrations": 1,
+      "per_job_unique_budget_s": 120,
+      "workers": 1,
+      "summary_byte_limit": 524288,
+      "attempts": 1,
+      "fit_UQ_nominal_parameter_search": 0
+    },
+    "refinement_dependency": "Only if baseline current gates pass, explicitly allocate one time and one mesh refinement with original root criteria and denominator; not automatic under thisproposal."
+  }
+}
