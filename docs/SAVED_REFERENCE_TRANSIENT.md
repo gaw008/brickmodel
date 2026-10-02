@@ -9,3 +9,5 @@ P51唯一实际attempt在最终JSON序列化失败，数值未落盘，原失败
 P52原质量/元素/完整U、四gas及native累计熵判据通过限定0..10s；CaO预算0仍relative=null/passedfalse，整相不PASS。严格非负只覆盖21保存时刻，原生signed面输运不等于空间准确性；完整独立累计熵storage/production/exchange序列未保存，不能独立重放。两个科学窗口均关闭，本文不构成再次运行许可。详细事实与范围见 `docs/FULL_CYCLE_P51_SAVED_REFERENCE_TRANSIENT.json/.md` 与 `docs/FULL_CYCLE_P52_SAVED_REFERENCE_TRANSIENT.json/.md`，当前全模型仍未完成。
 
 P53独立合同 `saved_reference_time_refinement` 复用同一已修producer与P52实际冻结源，只应用根完整0.05s max_step记录。同13格10s一次实际运行成功，四原时间指标采用细化分母和既定floor通过；其结果不授空间、独立势导数、八阶段或整模型。P52基准原文件只读、没有重跑/整份复制。0.05s预算窗口已关闭，不构成再次运行许可；详情 `docs/FULL_CYCLE_P53_TIME_REFINEMENT.json/.md`，交付 `runs/full-cycle/p53-saved-reference-time-refinement-final-delivery-state.json`。
+
+P54 `saved_reference_space_refinement`/`saved_reference_space_partition` 仅在新snapshot行政alias供原producer与geometry selector读取。现有直接case入口执行26格原生初态及10s/.05前向，原13faces区间二分，实际13vs26原四空间指标通过，fine26时间与全周期仍未资格；窗口关闭。详情 `docs/FULL_CYCLE_P54_SPACE_REFINEMENT.json/.md` 与 `runs/full-cycle/p54-saved-reference-space-refinement-final-delivery-state.json`，P53真实基准只读不重跑/整份复制，原失败保持。
