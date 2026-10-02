@@ -1,14 +1,14 @@
 {
   "schema": "full_cycle_final_acceptance_matrix_v1",
-  "recorded_utc": "2026-10-02T04:47:36.040486+00:00",
+  "recorded_utc": "2026-10-02T05:24:16.997599+00:00",
   "status": "P44_quadratic_fixed3_original_metrics_pass_strict_phase_partial",
   "identity": "approximate_simulation_not_measured_material",
   "parent_commit": "d8bc6f1b09e0b6d10cdcf4abf35e634035a36d08",
   "parameter_file": "parameters.full_cycle.json",
-  "parameter_count": 558,
+  "parameter_count": 567,
   "parameter_status_counts": {
     "literature": 144,
-    "assumed": 414,
+    "assumed": 423,
     "measured": 0
   },
   "implementation": {
@@ -222,7 +222,7 @@
     }
   },
   "base_model_complete": false,
-  "current_scope": "P45显式CaO坐标及必要叶模块已实现（2026-10-02T04:47:36.040486+00:00），局部资格partial。固定两物理上下文共4构造/4RHS/2sciencejobs，合计48项局部核查47通过/1净U比较FAIL（raw1.421085535e-14W、原scale4.675191614e-6W、relative3.039630570e-9>1e-11）保留；既有分项2645.316W补充诊断relative5.372082305e-18另列。明示正内点附录24/24PASS、0.259811s，原窗口关闭不延、0重复zero/ODE/Jac/fit/UQ。新初始零CaO精确0、所测新零/正内点三支熵非负仅瞬时，不授动态资格。根558=144literature414assumed0measured，旧541保持、新增表示及运行政策，无新物性，名义mode0/direct未启用。参考体积保存数据映射与外部C序列化数值一致；72熵记录14负值全保留；仅纳入F三来源/23文献观测，无L。原P34/P40/P44及名义0.135892078740%>0.1%失败、当前8阶段/加密/三方案/反演/UQ/CLI未资格和wholefalse保持。",
+  "current_scope": "P46唯一单例在构造前读参失败（2026-10-02T05:24:16.997599+00:00）：05:13:28.562353UTC启动、05:13:29.342829UTC rc1/回收，1sciencechild attempt、0constructor/RHS/Jac/ODE，首构造时钟和deadline均未启动，0动态数值摘要。现确认并修复16操作参数source未注册问题（7继承P45+9本轮P46），改为已有policy键、原说明移note，所有value/unit/range/status与45host源码保持；既有read_parameters实际通过567条。旧558“metadata完整保持”例外恰为这7来源/说明元数据，不掩盖原失败快照。567=144literature423assumed0measured；名义mode0/direct未启用。全部动态账本/逐相/严格熵/域审查/保存P44表示比较未执行，不授PASS或zero-budget资格。原P45净U、P34/P40/P44及名义0.135892078740%>0.1%失败保持，wholefalse。首作业已关闭，无自动补跑；下一同物理/solver修复读参后的单例候选尚未分配。",
   "P11": {
     "status": "base_model_complete_with_nominal_process_failure_and_future_material_calibration",
     "verification": {
@@ -1888,24 +1888,23 @@
   },
   "historical_P18_model_completion_wall_s_from_plan_creation": 14941.526078,
   "current_model_completion_status": {
-    "implementation": "ExplicitCaOopt-in/native shared chains and selected saved-data leaves implemented",
-    "physical_numerical": "Originalzero_U_net FAIL, 47/48localPASS; componentbudget diagnostic separatelyPASS, positiveappendix24PASS; no newdynamic/all8/refinement qualification",
-    "process": "Historicalnominalwater0.1358920787402553%>.1%FAIL/0newattempt",
-    "material": "558=144literature414assumed0measured; F literatureobservations nottargetmeasured orL",
-    "delivery": "P44commit571b/Drive1H6...1320045BmetadataPASS;P45receiptpending;0recovery",
+    "implementation": "P45host/source929c retained;16operational metadata sourceIDrepair applied",
+    "physics_numerics": "P46onechildfailedbeforeconstructor,0RHS/Jac/ODE; alldynamicgatesunexecuted. OriginalP45Ufailure+historicalfailures retained",
+    "nominal_process": "Historical0.1358920787402553%>.1%FAIL,0newattempt",
+    "material": "567=144literature423assumed0measured",
+    "entry": "Existingreader actualPASS aftermetadatafix; not host/CLI solver qualification",
+    "delivery": "P45normal929c/1377612BDrive metadataPASS;P46actualreceiptpending/0recovery",
     "next_dependency": {
-      "id": "P46",
-      "status": "proposal_only_no_ODE_allocation_no_science_start",
-      "scope": "One frozen P44 quadratic12/10s baseline with mode1 CaO coordinate, not nominal cycle. First directly assess nofloorCa phase budgets and strictsampled OH/Cc/direct signs; do not infer dynamic positivity from instantaneous probes. Retain raw failure then simplify; no failedgate refinement search.",
-      "proposed_resources": {
-        "initial_integrations": 1,
-        "per_job_unique_budget_s": 120,
-        "workers": 1,
-        "summary_byte_limit": 524288,
-        "attempts": 1,
-        "fit_UQ_nominal_parameter_search": 0
-      },
-      "refinement_dependency": "Only if baseline current gates pass, explicitly allocate one time and one mesh refinement with original root criteria and denominator; not automatic under thisproposal."
+      "status": "not_allocated",
+      "reason": "Only parameter source-ID repair; fixedexistingreaderpasses. Needactualsame frozen physics oneconstruct/oneODE to obtain anyP46dynamicevidence. Originalreaderfailedjob remainscount1, noimplicitreset.",
+      "requested_new_jobs": 1,
+      "maximum_total_science_child_attempts": 2,
+      "additional_constructor_ODE_attempt": 1,
+      "unique_budget_s_from_first_real_constructor": 300,
+      "workers": 1,
+      "summary_byte_limit": 2097152,
+      "retry": 0,
+      "physical_source_or_solver_settings_changed": false
     }
   },
   "historical_pre_P22_model_capability_closeout_complete": true,
@@ -8496,6 +8495,38 @@
     }
   },
   "current_root_parameter_metadata": {
+    "count": 567,
+    "status_counts": {
+      "literature": 144,
+      "assumed": 423,
+      "measured": 0
+    },
+    "old558_preservation_exception": "7P45introducedsourceIDs/notes corrected, value/unit/range/status unchanged"
+  },
+  "scientific_kernel_qualification": "P45opt-incoordinate current;4localcontexts only, originalnetUFAIL retained;P44mode0dynamic historical only",
+  "historical_pre_P46_current_scope": "P45显式CaO坐标及必要叶模块已实现（2026-10-02T04:47:36.040486+00:00），局部资格partial。固定两物理上下文共4构造/4RHS/2sciencejobs，合计48项局部核查47通过/1净U比较FAIL（raw1.421085535e-14W、原scale4.675191614e-6W、relative3.039630570e-9>1e-11）保留；既有分项2645.316W补充诊断relative5.372082305e-18另列。明示正内点附录24/24PASS、0.259811s，原窗口关闭不延、0重复zero/ODE/Jac/fit/UQ。新初始零CaO精确0、所测新零/正内点三支熵非负仅瞬时，不授动态资格。根558=144literature414assumed0measured，旧541保持、新增表示及运行政策，无新物性，名义mode0/direct未启用。参考体积保存数据映射与外部C序列化数值一致；72熵记录14负值全保留；仅纳入F三来源/23文献观测，无L。原P34/P40/P44及名义0.135892078740%>0.1%失败、当前8阶段/加密/三方案/反演/UQ/CLI未资格和wholefalse保持。",
+  "historical_pre_P46_current_model_completion_status": {
+    "implementation": "ExplicitCaOopt-in/native shared chains and selected saved-data leaves implemented",
+    "physical_numerical": "Originalzero_U_net FAIL, 47/48localPASS; componentbudget diagnostic separatelyPASS, positiveappendix24PASS; no newdynamic/all8/refinement qualification",
+    "process": "Historicalnominalwater0.1358920787402553%>.1%FAIL/0newattempt",
+    "material": "558=144literature414assumed0measured; F literatureobservations nottargetmeasured orL",
+    "delivery": "P44commit571b/Drive1H6...1320045BmetadataPASS;P45receiptpending;0recovery",
+    "next_dependency": {
+      "id": "P46",
+      "status": "proposal_only_no_ODE_allocation_no_science_start",
+      "scope": "One frozen P44 quadratic12/10s baseline with mode1 CaO coordinate, not nominal cycle. First directly assess nofloorCa phase budgets and strictsampled OH/Cc/direct signs; do not infer dynamic positivity from instantaneous probes. Retain raw failure then simplify; no failedgate refinement search.",
+      "proposed_resources": {
+        "initial_integrations": 1,
+        "per_job_unique_budget_s": 120,
+        "workers": 1,
+        "summary_byte_limit": 524288,
+        "attempts": 1,
+        "fit_UQ_nominal_parameter_search": 0
+      },
+      "refinement_dependency": "Only if baseline current gates pass, explicitly allocate one time and one mesh refinement with original root criteria and denominator; not automatic under thisproposal."
+    }
+  },
+  "historical_pre_P46_current_root_parameter_metadata": {
     "count": 558,
     "status_counts": {
       "literature": 144,
@@ -8503,5 +8534,216 @@
       "measured": 0
     }
   },
-  "scientific_kernel_qualification": "P45opt-incoordinate current;4localcontexts only, originalnetUFAIL retained;P44mode0dynamic historical only"
+  "P46": {
+    "schema": "P46_original_single_science_attempt_preconstructor_failure_v1",
+    "recorded_utc": "2026-10-02T05:20:22.090130+00:00",
+    "status": "partial_parameter_loader_failed_no_dynamic_results",
+    "source_commit": "929c4c3ae9e1146e3b03a2a4f035f43843c52a6e",
+    "root_parameter_count": 567,
+    "root_status_counts": {
+      "literature": 144,
+      "assumed": 423,
+      "measured": 0
+    },
+    "science_child_attempts": 1,
+    "actual_constructor_RHS_Jac_ODE_starts": 0,
+    "child_return_code": 1,
+    "all_children_reaped": true,
+    "first_constructor_UTC": null,
+    "first_solve_UTC": null,
+    "constructor_deadline_UTC": null,
+    "scientific_clock_started": false,
+    "preconstructor_child_wall_s": 0.7783540422096848,
+    "CPU_not_recorded_before_atexit_registration": true,
+    "exact_error": "ValueError: missing unit/source: validation.ca_coordinate_appendix.maximum_jobs",
+    "cause": "7P45appendix/9P46operation source field held unregistered explanatory text, not config.sources key; existing reader rejects firstone. P45directJSON/local constructors did not exercise thiswhole-file reader.",
+    "fix": {
+      "schema": "P46_confirmed_root_source_metadata_repair_v1",
+      "recorded_utc": "2026-10-02T05:16:07.049819+00:00",
+      "confirmed_error": "read_parameters rejects source not registered inconfig.sources, first validation.ca_coordinate_appendix.maximum_jobs",
+      "science_job_attempts_consumed": 1,
+      "constructor_RHS_Jac_ODE_starts": 0,
+      "child_return_code": 1,
+      "child_reaped": true,
+      "clock_from_first_constructor": "never_started",
+      "budget_status": "single job quota closed; no auto retry",
+      "fixed_paths": [
+        {
+          "path": "validation.ca_coordinate_appendix.maximum_jobs",
+          "old_source": "Explicit coordinator positive-interior-only appendix allocation after original P45 window closed:1job30s/2constructor2RHS/1worker/512KiB; original net-U FAIL retained,0ODE",
+          "new_source": "policy",
+          "values_unit_range_identity_unchanged": true
+        },
+        {
+          "path": "validation.ca_coordinate_appendix.per_job_budget",
+          "old_source": "Explicit coordinator positive-interior-only appendix allocation after original P45 window closed:1job30s/2constructor2RHS/1worker/512KiB; original net-U FAIL retained,0ODE",
+          "new_source": "policy",
+          "values_unit_range_identity_unchanged": true
+        },
+        {
+          "path": "validation.ca_coordinate_appendix.global_budget",
+          "old_source": "Explicit coordinator positive-interior-only appendix allocation after original P45 window closed:1job30s/2constructor2RHS/1worker/512KiB; original net-U FAIL retained,0ODE",
+          "new_source": "policy",
+          "values_unit_range_identity_unchanged": true
+        },
+        {
+          "path": "validation.ca_coordinate_appendix.maximum_workers",
+          "old_source": "Explicit coordinator positive-interior-only appendix allocation after original P45 window closed:1job30s/2constructor2RHS/1worker/512KiB; original net-U FAIL retained,0ODE",
+          "new_source": "policy",
+          "values_unit_range_identity_unchanged": true
+        },
+        {
+          "path": "validation.ca_coordinate_appendix.maximum_constructor_starts",
+          "old_source": "Explicit coordinator positive-interior-only appendix allocation after original P45 window closed:1job30s/2constructor2RHS/1worker/512KiB; original net-U FAIL retained,0ODE",
+          "new_source": "policy",
+          "values_unit_range_identity_unchanged": true
+        },
+        {
+          "path": "validation.ca_coordinate_appendix.maximum_RHS_starts",
+          "old_source": "Explicit coordinator positive-interior-only appendix allocation after original P45 window closed:1job30s/2constructor2RHS/1worker/512KiB; original net-U FAIL retained,0ODE",
+          "new_source": "policy",
+          "values_unit_range_identity_unchanged": true
+        },
+        {
+          "path": "validation.ca_coordinate_appendix.summary_byte_limit",
+          "old_source": "Explicit coordinator positive-interior-only appendix allocation after original P45 window closed:1job30s/2constructor2RHS/1worker/512KiB; original net-U FAIL retained,0ODE",
+          "new_source": "policy",
+          "values_unit_range_identity_unchanged": true
+        },
+        {
+          "path": "validation.ca_coordinate_transient.maximum_integrations",
+          "old_source": "P46 sole coordinator explicit allocation: one fixed P44 baseline mode1 case,1constructor/1ODEattempt/unique300s from firstconstructor/1worker/2MiB/no retry. Operational assumed, not material property.",
+          "new_source": "policy",
+          "values_unit_range_identity_unchanged": true
+        },
+        {
+          "path": "validation.ca_coordinate_transient.maximum_constructor_starts",
+          "old_source": "P46 sole coordinator explicit allocation: one fixed P44 baseline mode1 case,1constructor/1ODEattempt/unique300s from firstconstructor/1worker/2MiB/no retry. Operational assumed, not material property.",
+          "new_source": "policy",
+          "values_unit_range_identity_unchanged": true
+        },
+        {
+          "path": "validation.ca_coordinate_transient.per_run_budget",
+          "old_source": "P46 sole coordinator explicit allocation: one fixed P44 baseline mode1 case,1constructor/1ODEattempt/unique300s from firstconstructor/1worker/2MiB/no retry. Operational assumed, not material property.",
+          "new_source": "policy",
+          "values_unit_range_identity_unchanged": true
+        },
+        {
+          "path": "validation.ca_coordinate_transient.global_budget",
+          "old_source": "P46 sole coordinator explicit allocation: one fixed P44 baseline mode1 case,1constructor/1ODEattempt/unique300s from firstconstructor/1worker/2MiB/no retry. Operational assumed, not material property.",
+          "new_source": "policy",
+          "values_unit_range_identity_unchanged": true
+        },
+        {
+          "path": "validation.ca_coordinate_transient.maximum_workers",
+          "old_source": "P46 sole coordinator explicit allocation: one fixed P44 baseline mode1 case,1constructor/1ODEattempt/unique300s from firstconstructor/1worker/2MiB/no retry. Operational assumed, not material property.",
+          "new_source": "policy",
+          "values_unit_range_identity_unchanged": true
+        },
+        {
+          "path": "validation.ca_coordinate_transient.maximum_attempts_per_issue",
+          "old_source": "P46 sole coordinator explicit allocation: one fixed P44 baseline mode1 case,1constructor/1ODEattempt/unique300s from firstconstructor/1worker/2MiB/no retry. Operational assumed, not material property.",
+          "new_source": "policy",
+          "values_unit_range_identity_unchanged": true
+        },
+        {
+          "path": "validation.ca_coordinate_transient.summary_byte_limit",
+          "old_source": "P46 sole coordinator explicit allocation: one fixed P44 baseline mode1 case,1constructor/1ODEattempt/unique300s from firstconstructor/1worker/2MiB/no retry. Operational assumed, not material property.",
+          "new_source": "policy",
+          "values_unit_range_identity_unchanged": true
+        },
+        {
+          "path": "validation.ca_coordinate_transient.maximum_starts_including_failure",
+          "old_source": "P46 sole coordinator explicit allocation: one fixed P44 baseline mode1 case,1constructor/1ODEattempt/unique300s from firstconstructor/1worker/2MiB/no retry. Operational assumed, not material property.",
+          "new_source": "policy",
+          "values_unit_range_identity_unchanged": true
+        },
+        {
+          "path": "validation.ca_coordinate_transient.mode",
+          "old_source": "P46 sole coordinator explicit allocation: one fixed P44 baseline mode1 case,1constructor/1ODEattempt/unique300s from firstconstructor/1worker/2MiB/no retry. Operational assumed, not material property.",
+          "new_source": "policy",
+          "values_unit_range_identity_unchanged": true
+        }
+      ],
+      "scope": "16operational source strings mapped to existing registered policy ID; previousfulltext kept note. 7 inheritedP45+9newP46. Old558metadata-preservation exception exactlythese7sourceentries, notphysics values/unit/range/status. Frozen failed root retained.",
+      "host_source_changed": false,
+      "physical_parameter_values_units_ranges_status_changed": false,
+      "new_model_or_software_test_calls": 0
+    },
+    "after_fix_existing_reader": {
+      "schema": "P46_existing_parameter_reader_after_metadata_repair_v1",
+      "recorded_utc": "2026-10-02T05:20:22.090130+00:00",
+      "command": "Existing read_parameters on current root, Python-B; no written tests or validation implementation",
+      "passed": true,
+      "reader_wall_s": 0.005783250089734793,
+      "parameters": 567,
+      "new_model_constructor_RHS_Jac_ODE": 0,
+      "source_registry_fix_only": true
+    },
+    "host_physics_source_changed": false,
+    "old558_metadata_preserved_exception": "Exactly7introducedP45sourceIDs changed to existingpolicy; originaltext retainednotes. No value/unit/range/status changes. Failed root-snapshot preserved, not replaced.",
+    "dynamic_gates": {
+      "ordinary_mass_elements_full_energy": {
+        "status": "unexecuted_due_to_reader_failure",
+        "passed": null
+      },
+      "gas_4species": {
+        "status": "unexecuted_due_to_reader_failure",
+        "passed": null
+      },
+      "individual_Cc_CaO_OH_signed_budgets": {
+        "status": "unexecuted_due_to_reader_failure",
+        "passed": null
+      },
+      "strict_OH_carbonate_direct_entropy": {
+        "status": "unexecuted_due_to_reader_failure",
+        "passed": null
+      },
+      "accepted_knots_and_t_eval_domain": {
+        "status": "unexecuted_due_to_reader_failure",
+        "passed": null
+      },
+      "savedP44_fourmetric_representation_comparison": {
+        "status": "unexecuted_due_to_reader_failure",
+        "passed": null
+      },
+      "savedP44_direct_and_phase_inventory_comparison": {
+        "status": "unexecuted_due_to_reader_failure",
+        "passed": null
+      }
+    },
+    "new_initial_state_verified": false,
+    "new_time_grid_refinement_qualified": false,
+    "new_all8stage_comparison_inverse_UQ_CLI_qualified": false,
+    "current_saved_nominal_water_fraction": 0.001358920787402553,
+    "nominal_water_limit": 0.001,
+    "nominal_new_attempts": 0,
+    "P34_extended30of81_P44CaO3of9_P40peak7_33335percentFAIL_retained": true,
+    "P44_direct_mesh_3_01853436percent_unqualified": true,
+    "P45_original_netU_relativeFAIL": 3.039630569777313e-09,
+    "P45_netU_limit": 1e-11,
+    "whole_project_complete": false,
+    "single_job_scope_closed": true,
+    "retry_permitted": false,
+    "backup_and_git_separate": "Currentrootmetadatafix/reportpending delivery;0newrecovery/download/hash/tests/guards/automations",
+    "next_candidate": {
+      "status": "not_allocated",
+      "reason": "Only parameter source-ID repair; fixedexistingreaderpasses. Needactualsame frozen physics oneconstruct/oneODE to obtain anyP46dynamicevidence. Originalreaderfailedjob remainscount1, noimplicitreset.",
+      "requested_new_jobs": 1,
+      "maximum_total_science_child_attempts": 2,
+      "additional_constructor_ODE_attempt": 1,
+      "unique_budget_s_from_first_real_constructor": 300,
+      "workers": 1,
+      "summary_byte_limit": 2097152,
+      "retry": 0,
+      "physical_source_or_solver_settings_changed": false
+    },
+    "documentation_recorded_utc": "2026-10-02T05:24:16.997599+00:00",
+    "delivery": {
+      "Git_normal_successor": "pending actualreceipt",
+      "Drive_single_small_increment": "pending actualreceipt",
+      "recovery_download": false,
+      "P45_prior": "929c4c3a ordinarypush/remotePASS,1377612B/Drive1a0Ci66j6N5eQZDzPBEn90U3okRlq9dz0 metadataPASS"
+    }
+  }
 }

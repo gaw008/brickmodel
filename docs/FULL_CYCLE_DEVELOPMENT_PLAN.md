@@ -879,3 +879,19 @@ P45显式CaO坐标及必要叶模块已实现（2026-10-02T04:47:36.040486+00:00
 - [ ] **P46** 最小mode1动态基准候选：1integration/120s/1worker/512KiB/1attempt/0fit-UQ-名义搜索。先当前nofloor和严格熵；只有通过后另配time/grid一次。当前未分配、不执行。
 
 变更gas/root558、7选择性新文件及P45/当前矩阵文档。科学CPU/实际wall见JSON，静态与交付独立计时；失败证据原样保留。D01正常后继push和D02唯一必要增量待回执，D03不恢复，D04历史20GB/独有Git/容量警告未解决。
+
+
+### P46明示单例事前登记 2026-10-02T05:12:16.259407+00:00
+
+原P46候选120s/512KiB未执行，现协调正式分配1构造/1ODEattempt/唯一300s从首实际构造/1worker/2MiB/无重试。仅同P44quad12/10s baseline mode0→mode1，物理与solver方案完整保持；根旧558完整、新9操作至567。名义mode0/direct未启用、源码929c冻结45路径无改。P44/P45窗口关闭及失败保持；不加新测试/护栏/SHA、0额外probe/fit/UQ/名义搜索。证据runs/full-cycle/p46-calcium-coordinate-transient/declaration.json，首构造后才开始科学时钟，实际结果后更新勾选。
+
+
+### P46单例实际闭窗与来源修复 2026-10-02T05:24:16.997599+00:00
+
+P46唯一单例在构造前读参失败（2026-10-02T05:24:16.997599+00:00）：05:13:28.562353UTC启动、05:13:29.342829UTC rc1/回收，1sciencechild attempt、0constructor/RHS/Jac/ODE，首构造时钟和deadline均未启动，0动态数值摘要。现确认并修复16操作参数source未注册问题（7继承P45+9本轮P46），改为已有policy键、原说明移note，所有value/unit/range/status与45host源码保持；既有read_parameters实际通过567条。旧558“metadata完整保持”例外恰为这7来源/说明元数据，不掩盖原失败快照。567=144literature423assumed0measured；名义mode0/direct未启用。全部动态账本/逐相/严格熵/域审查/保存P44表示比较未执行，不授PASS或zero-budget资格。原P45净U、P34/P40/P44及名义0.135892078740%>0.1%失败保持，wholefalse。首作业已关闭，无自动补跑；下一同物理/solver修复读参后的单例候选尚未分配。
+
+- [x] **P46-A** 单例配置/45源冻结、首失败子进程实际执行回收；16source-ID实际缺陷修复，现有reader读回PASS。
+- [ ] **P46-B** 原单例动态轨迹与各门槛均未执行，主项不勾；科学job1已关闭，0构造/solve，无科学deadline。
+- [ ] **P46-C** 修复后同固定单例必要候选，尚未分配；最多1新sciencejob/1constructor/1ODE/300s/2MiB，累计sciencechild2、无retry/第三次/fit/UQ/名义搜索。
+
+变更仅根source/note与9本轮操作政策、当前文档/P46报告。45host929c保持，无物理/阈值更改。旧558meta保护例外精准7来源声明；完整failed snapshot保留。现reader0.005783s、原child0.778354s与工作流时间分别记录，CPU未记录。正常Git/smallbackup随后独立receipt，0恢复/SHA/测试/护栏。
