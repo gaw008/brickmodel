@@ -1,5 +1,9 @@
 # 全流程近似烧结砖模型：当前执行规范（2026-09-26）
 
+P58预检完整性失败更正：事前11826181B估计漏了实际比较读取的P57 root-snapshot403784B及case403325B；补入原保守估计为12633290B>12582912B，超50378B，按约定本应不启动。该规则未满足，唯一attempt已经消费，不重跑、不重置或放宽预算。实际最终必要字节仍在原12MiB内另读finalreceipt，但不能倒改事前预检PASS。原数值四time/budget通过与已有失败保持，P58整体约定任务不完整；输入冻结/实际运行/资料和目标评估分别记录。
+
+更正证据 `runs/full-cycle/p58-low-temperature-60s-time-refinement/preflight-accounting-correction.json`；actualfinalreceipt保留科学/预检/交付分别判断。
+
 P58同60秒26格一次时间加密已真实保存闭窗。只读P57实际基线3365399B，计入完整必要依赖，不复制整结果或重算。唯一case既有完整record变化max_step.025→.0125s，time_scale6/output.5/原tols/BDF/26cells27faces/298.15K/物理初态与direct合成通道保持。实际2026-10-02T19:53:10.618707+00:00至2026-10-02T19:54:01.626018+00:00，wall51.007199042s/CPU50.759883s，rc0/reaped/closed，无超时，900s唯一deadline2026-10-02T20:08:10.618707+00:00不重置。1job/worker/attempt/constructor/ODE，11860RHS含6Jac，nfev9832，另121native summaryrates；全内部Pythonframe与constructor内1原partitionprimitive分别保存。原四指标按原floor/2%时间判据全部通过，最坏1.42849785334e-08；signedraw/真实分母及floor分别保存，收缩用.001/峰温差用1K；OH耗量/directextent/CO2输入差仅描述，无新准入或精度PASS。质量/元素/完整U最大relative=5.75680558139e-10/5.79169453786e-09/1.37182919572e-08，四gasbudget最坏1.90729141193e-06、native累计S2.81078038594e-09<原.001。Cc/OH通过，CaO零预算null/passfalse，整体相不PASS；原signed负水相迁移/边界方向均保留。strict库存和所存熵/域只121保存点非负域内，不授between/BDF内部/Newton/complexstep。独立完整signed累计S未serialized，势导数未资格；本次仅固定60s四量时间对，不授空间/所有state/所有反应/原八阶段/实材。旧661完整根record及所有旧live合同/六核心保持，新增8budget数值至669=144literature525assumed0measured；根名义max_step/N12/mode0Ca0sampling0/directoff不改。P45/P34/P40/P44/P50撤回/P51失败及历史名义余水.135892078740%>.1%保留，0新名义尝试。核心目标静态评估另文件：主耦合已在核中，明确下一真代码缺口是完整signedS生产账本；P06固定配方portlandite与Ca证据留存也有具体缺口。whole模型仍未完成，Git/Drive/恢复/历史容量分别登记，下一研发/预算未分配。
 
 证据 docs/FULL_CYCLE_P58_60S_TIME_REFINEMENT.json 与 docs/FULL_CYCLE_P58_60S_TIME_REFINEMENT.md；目标导向研发评估 docs/FULL_CYCLE_CORE_DEVELOPMENT_ASSESSMENT.md；交付 runs/full-cycle/p58-low-temperature-60s-time-refinement-final-delivery-state.json。P57未分配P58是旧窗口记录，由本次独立授权接续。

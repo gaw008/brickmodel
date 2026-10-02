@@ -1171,7 +1171,7 @@ P57-A/B/C仅勾选输入冻结、一次实际运行及必要原signed账本/限�
 
 独立1job/worker/attempt含失败/constructor/ODE，900s自唯一childlaunch含imports/readers/solver/summary/JSON/reap固定deadline；任何失败保存闭窗，不retry/reset。必要全部actualuniquepaths：只读P57基线+本root/case/47sources/原与实际producer/121samples/signedledgers/计数/stdoutstderr/比较/所有相关livepaths/report/目标缺口分析/admin/声明程序≤12582912B。事前完整估计11826181B，0模型字节试算；压缩增量另列交付storage，不替代科学逻辑预算。
 
-- [x] **P58-A** 根独立预算/.0125完整record、same60s26case/47源与只读基线依赖冻结登记。
+- [ ] **P58-A** 根独立预算/.0125完整record、same60s26case/47源与只读基线依赖冻结登记。
 - [x] **P58-B** 一次真实60s时间加密、真实内部调用/资源/闭窗。
 - [x] **P58-C** 原四量2%/原floors/signedraw时间比较及原账本/strict保存域收口。
 - [x] **P58-D** 按完整核心目标分清真正能力缺口、公开来源可实现/需材料数据/仅未执行验收，提出具体下一研发范围，不再自动延时加密循环。
@@ -1188,3 +1188,9 @@ P58-A/B/C/D仅勾选冻结、真实单次time加密及原四判据/必要账本�
 - [ ] **D58-GIT** 12实际明确变更paths正常后继/push/remote，终态读 `runs/full-cycle/p58-low-temperature-60s-time-refinement-final-delivery-state.json`。
 - [ ] **D58-DRIVE** 本P58一次真实upload与metadata逐id/name/size/parent；同终态收据，非restore。
 - [ ] **D58-HISTORY** 历史完整恢复/独有Git/20GB/GitHub容量未通过。
+
+### P58 原预检依赖遗漏更正 2026-10-02T20:09:51.949554+00:00
+
+P58预检完整性失败更正：事前11826181B估计漏了实际比较读取的P57 root-snapshot403784B及case403325B；补入原保守估计为12633290B>12582912B，超50378B，按约定本应不启动。该规则未满足，唯一attempt已经消费，不重跑、不重置或放宽预算。实际最终必要字节仍在原12MiB内另读finalreceipt，但不能倒改事前预检PASS。原数值四time/budget通过与已有失败保持，P58整体约定任务不完整；输入冻结/实际运行/资料和目标评估分别记录。
+
+P58-A标为部分完成：输入源冻结已完成，完整事前依赖估计失败且不能事后勾选。P58-B/C/D仅其实际运行/原数值资料及目标分析完成；不将P58全任务或whole模型称为完成。下一新预算必须先列所有真正依赖路径、包括比较实际读取的旧root/case，不沿用此不完整估计。科学attempt=1/0retry，原source/params/判据/结果不变。
