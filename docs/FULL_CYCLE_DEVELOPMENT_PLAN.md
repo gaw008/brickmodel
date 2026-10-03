@@ -1537,8 +1537,26 @@ P73真实交付续勾依据：HEAD/remote=16c99bed776d237ec55ed521b7345f39d69138
 - [x] **P74-C** actual非微弱phase储能/机械率/14x12产品/Vdot压功/原S与派生F/signed差、三项源越域及负库存/旧失败留存。
 - [x] **P74-D** 未定位具体漏项，不改核或参数；下一原soak独立300s4MiB64MiB候选已登记未启动。
 - [ ] **P74-E** 独立/完整8stage守恒、受影响加密、三方案反演与材料资格仍未完成。
-- [ ] **D74-GIT** 七root/docs正常后继与普通push。
-- [ ] **D74-DRIVE** 原folder一次必要增量metadata，actualrestore另列。
-- [ ] **P74-FINAL** 全necessarysource/input/blob/report/admin/archive/末self完整收口。
+- [x] **D74-GIT** 七root/docs正常后继与普通push。
+- [x] **D74-DRIVE** 原folder一次必要增量metadata，actualrestore另列。
+- [x] **P74-FINAL** 全necessarysource/input/blob/report/admin/archive/末self完整收口。
 
 P73-E中actualphase/机械分项在本点已观察，由P74完成此部分；独立interval/fullcycle和材料资格未完，不能整项勾选。0新science窗口；真实wall/CPU来自execution。行政JSON读取错误留证，与成功科学窗口分开。
+
+
+### P75 原hold单段与候选路径纠正
+
+P75 原hold126000→133200s已真实续算完成：先保留P74两处错误P73reactions路径历史并静态纠正为真实P73sintering完整输入，不建alias、不用P71、不重建初态。strict51load/ctor路径声明、0initial/1原BDFsolve/1新y275/source51端点，势/state_dynamics/summary/fitUQ0。rc0/reaped，wall2.149399333s/CPU1.935516000s，科学全部2006371B/4194304B，300s唯一窗口关闭无科学重试；实际RHS422/Jac1，nfev/njev/nlu=266/1/28。T1223.149979234–1223.149995956K，q-0.000141480844976–-0.00013509899223。758完整records与51科学源全保持，144literature614assumed0measured；三项来源越域assumed、旧失败/criterionNA/wholefalse保持。预算flat-schema读取失败与重复行政调用留证，科学0后显式简化再freshgate。下一原cooling+cooling_hold两段单独候选未启动。详见docs/FULL_CYCLE_P75_HOLD_CONTINUATION.json/md。
+
+P74真实交付续勾依据：HEAD/remote=00532b0c0e6b4fce8b7a2388aac27a1d964c073d；actual=16203456B/conservative=45563584B；Drive=1603045B/id=1Te0OpbrZlkx1nyrQ-WWQSw6PkiyVpi_p，metadata匹配/access_not_verified/restore0。P74错误原proposal0全文留历史，P75只纠正两路径后另采用。协调末封账193047B必要全文件另计，不作为本轮gatePASS。
+
+- [x] **P75-A** 两错误路径静态纠正/原候选与行政fail保留；freshGit/磁盘/完整gate/strict51输入与758records保护。
+- [x] **P75-B** 真实P73sintering126000→133200原hold，1solve/0initial，新y275/source51端点保存，唯一科学窗关闭无重试。
+- [x] **P75-C** rawq/T/actualcounters/原nativeledger signed归约及三项越域assumed/负值/旧fail保持。
+- [x] **P75-D** 按实结果登记最后cooling/cooling_hold两个顺序原段的独立300s4MiB64MiB候选，未采用未启动。
+- [ ] **P75-E** 最新完整周期守恒、受影响加密/三方案反演与材料资格仍未完成。
+- [ ] **D75-GIT** 七本轮root/docs路径正常后继和普通push。
+- [ ] **D75-DRIVE** 原folder一次必要增量metadata，actualrestore另列。
+- [ ] **P75-FINAL** 全必要source/原纠正候选/input/blob/freeze/报告/admin/archive/末self完整收口。
+
+P74-E与完整模型保持未完成：P75实际推进原hold，不重复点projection；后续以原冷却两段和完整过程证据为主，不以新增阶段编号当模型完成。原八reserve+额外2MiB不减，0本窗追加科学。

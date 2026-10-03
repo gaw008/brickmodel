@@ -1,5 +1,10 @@
 # 全流程近似烧结砖模型：当前执行规范（2026-09-26）
 
+P75 原hold126000→133200s已真实续算完成：先保留P74两处错误P73reactions路径历史并静态纠正为真实P73sintering完整输入，不建alias、不用P71、不重建初态。strict51load/ctor路径声明、0initial/1原BDFsolve/1新y275/source51端点，势/state_dynamics/summary/fitUQ0。rc0/reaped，wall2.149399333s/CPU1.935516000s，科学全部2006371B/4194304B，300s唯一窗口关闭无科学重试；实际RHS422/Jac1，nfev/njev/nlu=266/1/28。T1223.149979234–1223.149995956K，q-0.000141480844976–-0.00013509899223。758完整records与51科学源全保持，144literature614assumed0measured；三项来源越域assumed、旧失败/criterionNA/wholefalse保持。预算flat-schema读取失败与重复行政调用留证，科学0后显式简化再freshgate。下一原cooling+cooling_hold两段单独候选未启动。详见docs/FULL_CYCLE_P75_HOLD_CONTINUATION.json/md。
+
+### P74及更早当时记录
+
+
 P74 真实sintering126000s strict51load与同事件势功率完成：rc0/reaped，wall0.950319375s/CPU0.679611000s，科学全部1442851B/4194304B，120s唯一窗口关闭。1load/ctor路径声明、0initial、实际1nativeRHS/rate/chart与15完整值，JacODEsummaryfitUQ0。原生phase储能0.356702602691W/熵0.000296048798703W/K，phase_eigenstrain_sum1.67659607635e-06/s/phase_modulus_sum-231587.726914Pa/s；真实Vdot-2.80385376731e-11m3/s/外压功2.80385376731e-06W。Udot投影减原生signed4.440892098500626e-16, Sdot原归约差0.0,派生Fdot差0.0。实际phase/机械分项已观测，不等全interval或独立PASS；不同q/phase分区不直接相减认漏项。758records全保持/144literature614assumed0measured，三项源越域assumed、负库存/旧失败/criterionNA/wholefalse保持。下一原soak仅登记未启动。详见docs/FULL_CYCLE_P74_SINTERING_DYNAMICS.json/md。
 
 ### P73及更早当时记录
