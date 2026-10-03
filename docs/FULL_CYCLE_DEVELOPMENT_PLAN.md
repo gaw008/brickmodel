@@ -1411,8 +1411,26 @@ P66交付续勾依据：HEAD/remote=f4d5d7590fc32fe560441df4d71a0e2838ce6f05，a
 - [x] **P67-C** saved-state→既有state_dynamics/显式投影CLI接线，生产Jac调用计数；三源AST解析，未动态。
 - [x] **P67-D** 精确三阶段/所有knots/源域/275layout/当前solver/计数/300s4MiB64MiB完整新方案；proposal未采用。
 - [ ] **P67-E** 真实当前nominal演化端点及加载/完整状态动态、非零carrier/相耦合资格：本轮全部0科学。
-- [ ] **D67-GIT** 十个本轮明确paths正常后继/普通push，待真实末收据。
-- [ ] **D67-DRIVE** 原folder一次必要静态增量；metadata非实际恢复。
-- [ ] **P67-FINAL** 全实际源/根/冻结/原及暂存blob/一档案/末收据自身收口，不递归commit/archive。
+- [x] **D67-GIT** 十个本轮明确paths正常后继/普通push，待真实末收据。
+- [x] **D67-DRIVE** 原folder一次必要静态增量；metadata非实际恢复。
+- [x] **P67-FINAL** 全实际源/根/冻结/原及暂存blob/一档案/末收据自身收口，不递归commit/archive。
 
 原P01–P08未通过项目保持。heating弱激活可能性与source域外assumed、旧工艺/物理/资源FAIL/0measured/wholefalse保留；不自动启动后五段、投影、UQ/fit或新搜索。
+
+
+### P68 新批准的真实三端点采集
+
+P68 新批准的真实nominal三端点采集已完成：rc0/reaped，wall83.251448208s/CPU82.261245000s，科学全部2025102B/4194304B，唯一300s窗口关闭。1构造/1初态/3solve，实际RHS23568/Jac125，0加载/势/state_dynamics/summary/fit/UQ。758完整records未变，144literature/614assumed/0measured，原12格mode0Ca0/directoff与8knots保持。3原生y各275及50源/config/context真实保存；heating实际T671.012175–671.432721K，脱羟累计0.0031031435281507207mol，q=-73.788495至-73.788437，载体账本非零不等液相充分激活。未算新守恒/功率/加密/材料资格，criterionNA/wholefalse；后续同状态loader+1event15values仅独立提案未采用。详见docs/FULL_CYCLE_P68_NATIVE_ENDPOINTS.json/md。
+
+P67交付续勾依据：HEAD/remote=ce65f2441066d69ba1e43d1c57d3a2af507a14cc，actual=11803535B/conservative=41163663B；Drive=1201880B/id=1YBTWjnWuX3MsluuOUoCYDPF8OVGS_9ic，name-size-parent一致/access_not_verified/restore0。P67历史提案未批准状态不改写，另有P68直接新批准登记。
+
+- [x] **P68-A** 新直接批准/当前Git与磁盘/完整独立gate/758records和50源码冻结保护。
+- [x] **P68-B** 唯一正常CLI采集原3段至97200s，3原生完整y实际保存，rc0/83.251448s/2025102B，窗口关闭。
+- [x] **P68-C** 只读保存raw/账本和实际public/solver计数，signed与来源范围/phase弱激活保留。
+- [x] **P68-D** 基于真实heating状态提出独立loader+1event15values方案，未采用，当前新科学窗口0。
+- [ ] **P68-E** saved-state动态加载/势功率、非零carrier/充分phase耦合及独立物理资格：本轮不执行。
+- [ ] **D68-GIT** 七个本轮明确paths正常后继/普通push，待真实末收据。
+- [ ] **D68-DRIVE** 原folder一次必要小增量，metadata不等恢复。
+- [ ] **P68-FINAL** 全实际source/root/input/freezes/原及stagedblob/一archive/末收据自身收口，不递归commit/upload。
+
+P67-E拆分：其中真实端点采集已由P68完成；加载/动态/相耦合整体未完成，不将其整项勾成PASS。P01–P08未满足模型项、全部原工艺/物理/资源失败和材料待实测保留。

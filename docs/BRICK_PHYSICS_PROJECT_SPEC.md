@@ -1,5 +1,10 @@
 # 全流程近似烧结砖模型：当前执行规范（2026-09-26）
 
+P68 新批准的真实nominal三端点采集已完成：rc0/reaped，wall83.251448208s/CPU82.261245000s，科学全部2025102B/4194304B，唯一300s窗口关闭。1构造/1初态/3solve，实际RHS23568/Jac125，0加载/势/state_dynamics/summary/fit/UQ。758完整records未变，144literature/614assumed/0measured，原12格mode0Ca0/directoff与8knots保持。3原生y各275及50源/config/context真实保存；heating实际T671.012175–671.432721K，脱羟累计0.0031031435281507207mol，q=-73.788495至-73.788437，载体账本非零不等液相充分激活。未算新守恒/功率/加密/材料资格，criterionNA/wholefalse；后续同状态loader+1event15values仅独立提案未采用。详见docs/FULL_CYCLE_P68_NATIVE_ENDPOINTS.json/md。
+
+### P67及更早当时记录
+
+
 P67 原生检查点生产接口已静态接线；真实端点直接持久完整y/config/source/context，saved-state进入既有同事件state_dynamics，不用初态或summary回拼。本轮科学全部0、三源AST解析；旧750完整records保持，根758=144literature/614assumed/0measured。当前nominal12格mode0Ca0/directoff的原三段端点14400/86400/97200s方案待采用，BDF原rtol1e-5/atol1e-7/max_step60s；建议新300s/科学全4MiB/独立全64MiB，原八reserve不减并加2MiB。heating载体可能非零而液相极弱；无动态/物理/材料PASS，wholefalse。详见docs/FULL_CYCLE_P67_NATIVE_CHECKPOINT.json/md。
 
 ### P66及更早当时记录
