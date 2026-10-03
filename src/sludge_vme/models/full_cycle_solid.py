@@ -514,6 +514,95 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
             dy[self.liquid_coordinate*self.n:(self.liquid_coordinate+1)*self.n]=self.liquid_coordinate_rate(f[0]*self.Tr,f,affinity)
         return dy
 
+    def native_potential_state(self, y):
+        """Decode one real native state; volume stays explicit in the chart."""
+        f,T,ns,bulk,pore,surface,cap=self.unpack(y)
+        contract=self.config['production_potential_export']
+        native=list(contract['native_fields'])
+        if self.kinetic_liquid:
+            native.append({'name':contract['liquid_coordinate_name'],'field':self.liquid_coordinate})
+        gas_log=y[self.gas_offset:self.extent_offset].reshape(self.g,self.n)
+        coordinates=[{'name':item['name'],'field':item['field'],'unit':'1'} for item in native]
+        coordinates += [{'name':'log_'+name,'gas_index':i,'unit':'1'} for i,name in enumerate(self.ng)]
+        coordinates += [{'name':contract['volume_coordinate_name'],'unit':'1'}]
+        z=np.vstack([f[item['field']] for item in native]+list(gas_log)+[bulk/self.b0])
+        return {'schema':'thermoelastic_constrained_potential_state_v1','coordinates':coordinates,
+                'chart':z,'native_field_coordinates':native,'reference_fields':f.copy(),
+                'fields':f.copy(),'temperature_k':T,'condensed_mol':ns,
+                'gas_mol':self.initial_gas*np.exp(gas_log.T),'bulk_m3':bulk,
+                'native_pore_m3':pore,'native_surface_energy_j':surface,
+                'reference_bulk_m3':bulk.copy(),'reference_chart':z.copy(),
+                'reference_scales':{'V0_m3':self.b0,'initial_dry_mass_kg':self.md,
+                    'chemical_scale_mol':self.chemical_scale,'calcium_pool_mol':self.calcium_pool,
+                    'initial_gas_mol':self.initial_gas,'silica_reference_fraction':self.quartz_reference_fraction},
+                'fixed_volume_rule':'Composition changes excluded volume: pore=V-ns dot v. Imaginary chart perturbations do not solve mechanics.',
+                'active_branches':{'quartz_low':T.real<self.tc,'kinetic_liquid':self.kinetic_liquid,
+                    'calcium_mode':self.calcium_coordinate_mode,
+                    'calcium_fraction_coordinate':self.calcium_fraction_coordinate},
+                'completed_native_unpack_calls':1}
+
+    def _potential_state_at_chart(self, state, z):
+        native=state['native_field_coordinates']
+        fields=state['reference_fields'].astype(np.result_type(z,float),copy=True)
+        for i,item in enumerate(native):
+            fields[item['field']]=z[i]
+        ns=self.condensed_state(fields)
+        self.potential_helper_calls['fixed_volume_condensed_state_completed']+=1
+        gas_log=z[len(native):len(native)+self.g]
+        bulk=state['reference_bulk_m3']+(z[-1]-state['reference_chart'][-1])*self.b0
+        return {**state,'fields':fields,'temperature_k':fields[0]*self.Tr,
+                'condensed_mol':ns,'gas_mol':self.initial_gas*np.exp(gas_log.T),'bulk_m3':bulk}
+
+    def _direct_skeleton_potential(self, state):
+        T=state['temperature_k']; ns=state['condensed_mol']; f=state['fields']; bulk=state['bulk_m3']
+        xq=self.phase(T)[0]
+        self.potential_helper_calls['raw_quartz_phase_completed']+=1
+        amplitude=self.quartz_strain*self.quartz_reference_fraction
+        beta=self.alpha*(T-self.temperatures[0])+amplitude*(xq-self.initial_phase_fraction)
+        beta_prime=self.alpha+amplitude*xq*(1-xq)*self.latent/(self.mixing*T**2)
+        if self.kinetic_liquid:
+            x=self.liquid_order(f[self.liquid_coordinate])[0]
+            self.potential_helper_calls['raw_liquid_order_completed']+=1
+        else:
+            x=self.liquid_phase(T)[0]
+        phase_volume=self.liquid_active*ns[:,self.matrix]*self.v[self.matrix]*(x-self.liquid_reference[0])/self.b0
+        eigenstrain=self.liquid_strain*phase_volume
+        dry_volume=ns@self.dry_v
+        modulus=self.modulus*(dry_volume/bulk/self.initial_dry_fraction)**self.modulus_exponent*np.exp(-self.phase_modulus_contrast*phase_volume)
+        eps=bulk/self.b0-1-beta-eigenstrain-f[6]+self.initial_elastic_strain
+        free=self.b0*modulus*eps**2/2
+        entropy=self.b0*modulus*beta_prime*eps
+        return free+T*entropy,entropy
+
+    def potential_derivatives(self, constrained_state):
+        """Explicit complete-value complex directions at frozen real volume."""
+        z=constrained_state['chart']
+        steps=self.jacobian_step*np.maximum(np.abs(z.real),self.jacobian_scale)
+        before=self.potential_value_calls
+        baseline=self.potential_values(constrained_state)
+        gradients={key:np.empty(z.shape) for key in ('U_j','S_j_k','F_j')}
+        for j in range(len(z)):
+            perturbed=z.astype(complex,copy=True)
+            perturbed[j]+=1j*steps[j]
+            value=self.potential_values(self._potential_state_at_chart(constrained_state,perturbed))
+            for key in gradients:
+                gradients[key][j]=value['cell'][key].imag/steps[j]
+        return {'schema':'thermoelastic_constrained_potential_derivatives_v1',
+                'baseline_values':baseline,'gradients':gradients,
+                'coordinates':constrained_state['coordinates'],
+                'coordinate_reference_comparison':{'state':'unavailable','signed_difference':None,'criterion':'criterion_not_applicable'},
+                'mechanical_residual_pa':gradients['F_j'][-1]/self.b0+self.P,
+                'temperature_identity_signed_j':gradients['F_j'][0]+self.Tr*baseline['cell']['S_j_k'],
+                'method':{'name':'complete-value complex-step','step_record':self.config['parameters']['numerics.jacobian_step'],
+                    'scale_record':self.config['parameters']['numerics.jacobian_state_scale'],'steps':steps,
+                    'native_volume_frozen':True,'all_cells_simultaneously_per_local_direction':True,
+                    'complete_value_calls':self.potential_value_calls-before,'direction_calls':len(z),
+                    'cached_RHS_derivatives_reused':False,
+                    'shared_values':'root constants, constrained condensed decoding, uncached h/s and phase/log primitives; not a second EOS'},
+                'qualifications':{'criterion':'criterion_not_applicable','instantaneous_power_evaluated':False,
+                    'summary_dynamically_evaluated':False,'full_cycle_or_material_qualified':False,
+                    'zero_carrier_scope':'Only this actual state; zero q derivative does not qualify nonzero-carrier relaxation.'}}
+
     def additional_storage(self,f,T,bulk):
         eps=self.elastic_strain(f,T,bulk)
         modulus=self.modulus

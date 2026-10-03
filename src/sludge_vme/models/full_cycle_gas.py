@@ -156,6 +156,8 @@ class FiniteGasFullCycle(FullCycle):
                 self.conversion_scale = np.append(self.conversion_scale,self.calcium_pool[0])
         self.reaction_config = {**config, 'reactions':self.reactions}
         self.rhs_calls = 0
+        self.potential_value_calls = 0
+        self.potential_helper_calls = {'state_thermo_completed':0, 'water_fractions_completed':0, 'direct_skeleton_completed':0, 'raw_quartz_phase_completed':0, 'raw_liquid_order_completed':0, 'fixed_volume_condensed_state_completed':0}
 
     def unpack(self, y):
         fields = y[:self.gas_offset].reshape(-1, self.n)
@@ -949,6 +951,71 @@ class FiniteGasFullCycle(FullCycle):
             })
         return cells
 
+    def _assemble_potential_values(self, state, h, s, *, mixing_entropy,
+                                   retention_entropy, binding, extra_u, extra_s):
+        """Shared storage values; retain the original global reduction order."""
+        T=state['temperature_k']; ns=state['condensed_mol']; ng=state['gas_mol']
+        surface=state['surface_energy_j']; partial=state['partial_pressure_pa']
+        condensed_u=ns*(h[:, :len(self.ns)]-self.P*self.v)
+        gas_u=ng*(h[:, len(self.ns):]-self.R*T[:, None])
+        condensed_s=ns*s[:, :len(self.ns)]
+        gas_s=ng*(s[:, len(self.ns):]-self.R*np.log(partial/self.Pr))
+        energy=np.sum(condensed_u)+np.sum(gas_u)+surface.sum()
+        entropy=np.sum(condensed_s)+np.sum(gas_s)
+        entropy+=retention_entropy.sum()
+        energy+=binding['energy'].sum()
+        energy+=extra_u.sum(); entropy+=extra_s.sum()
+        zero=np.zeros_like(T)
+        parts={'condensed':(condensed_u.sum(axis=1),condensed_s.sum(axis=1)),
+               'gas':(gas_u.sum(axis=1),gas_s.sum(axis=1)),
+               'surface':(surface,zero), 'water_mixing':(zero,mixing_entropy),
+               'water_binding':(binding['energy'],binding['entropy']),
+               'elastic':(extra_u,extra_s)}
+        components={name:{'U_j':u,'S_j_k':entropy_part,'F_j':u-T*entropy_part}
+                    for name,(u,entropy_part) in parts.items()}
+        cell_u=sum(value['U_j'] for value in components.values())
+        cell_s=sum(value['S_j_k'] for value in components.values())
+        cell_f=cell_u-T*cell_s
+        return {'schema':'full_cycle_local_potential_values_v1',
+                'components':components,'cell':{'U_j':cell_u,'S_j_k':cell_s,'F_j':cell_f},
+                'global':{'native_reduction_U_j':energy,'native_reduction_S_j_k':entropy,
+                    'sum_cell_U_j':cell_u.sum(),'sum_cell_S_j_k':cell_s.sum(),
+                    'sum_cell_F_j':cell_f.sum(),
+                    'cell_minus_native_U_j':cell_u.sum()-energy,
+                    'cell_minus_native_S_j_k':cell_s.sum()-entropy},
+                'units':{'U_j':'J','S_j_k':'J/K','F_j':'J'},
+                'phase_storage':'Quartz and matrix phase contributions are already in state h/s; no extra reaction or phase heat.',
+                'global_F_definition':'sum_i(U_i-T_i*S_i), no mean-temperature substitution',
+                'criterion':'criterion_not_applicable'}
+
+    def _direct_skeleton_potential(self, state):
+        zero=np.zeros_like(state['temperature_k'])
+        return zero,zero
+
+    def potential_values(self, decoded_state):
+        """Complete local storage expression without cached RHS derivatives."""
+        self.potential_value_calls+=1
+        f=decoded_state['fields']; T=decoded_state['temperature_k']
+        ns=decoded_state['condensed_mol']; ng=decoded_state['gas_mol']
+        pore=decoded_state['bulk_m3']-ns@self.v
+        state={**decoded_state,'pore_m3':pore,
+               'surface_energy_j':self.es0*(pore/self.vp0)**(2/3),
+               'partial_pressure_pa':ng*self.R*T[:,None]/pore[:,None]}
+        h,s=self.state_thermo(T,f)
+        self.potential_helper_calls['state_thermo_completed']+=1
+        log_water,log_matrix,sites=self.water_fractions(f)
+        self.potential_helper_calls['water_fractions_completed']+=1
+        water=ns[:,self.water_index]
+        mixing=-self.R*(water*log_water+sites*log_matrix)
+        amount=water*(-np.expm1(log_water))
+        binding={'energy':amount*(-self.binding_energy+self.binding_cp*(T-self.Tr)),
+                 'entropy':amount*self.binding_cp*np.log(T/self.Tr)}
+        extra_u,extra_s=self._direct_skeleton_potential(state)
+        self.potential_helper_calls['direct_skeleton_completed']+=1
+        return self._assemble_potential_values(state,h,s,mixing_entropy=mixing,
+            retention_entropy=mixing+binding['entropy'],binding=binding,
+            extra_u=extra_u,extra_s=extra_s)
+
     def summarize(self, times, states):
         rows=[]; inventories=[]; energies=[]; entropies=[]; heat=[]; flow=[]; bulks=[]
         sampler = self._face_energy_samples
@@ -974,12 +1041,15 @@ class FiniteGasFullCycle(FullCycle):
             if has_drying and t == self.times[self.config['stages'].index('drying')+1]:
                 drying_affinity_decomposition=self.water_phase_affinity_decomposition(f,T,ns,bulk,cap,r,h,s)
             inventories.append(np.r_[ns.sum(axis=0),ng.sum(axis=0)])
-            energy=np.sum(ns*(h[:, :len(self.ns)]-self.P*self.v))+np.sum(ng*(h[:, len(self.ns):]-self.R*T[:, None]))+surface.sum()
-            entropy=np.sum(ns*s[:, :len(self.ns)])+np.sum(ng*(s[:, len(self.ns):]-self.R*np.log(r['partial']/self.Pr)))
-            entropy+=r['water_retention_entropy'].sum()
-            energy+=r['water_binding']['energy'].sum()
             extra_u,extra_s=self.additional_storage(f,T,bulk)
-            energy+=extra_u.sum(); entropy+=extra_s.sum()
+            potential=self._assemble_potential_values(
+                {'temperature_k':T,'condensed_mol':ns,'gas_mol':ng,
+                 'surface_energy_j':surface,'partial_pressure_pa':r['partial']},h,s,
+                mixing_entropy=r['water_retention_entropy']-r['water_binding']['entropy'],
+                retention_entropy=r['water_retention_entropy'],binding=r['water_binding'],
+                extra_u=extra_u,extra_s=extra_s)
+            energy=potential['global']['native_reduction_U_j']
+            entropy=potential['global']['native_reduction_S_j_k']
             minimum_capacity=min(minimum_capacity,float(np.min(r['effective_capacity'])))
             maximum_mechanical_residual=max(maximum_mechanical_residual,float(np.max(np.abs(r['mechanical_residual']))))
             energies.append(float(energy)); entropies.append(float(entropy)); bulks.append(float(bulk.sum()))
@@ -991,6 +1061,7 @@ class FiniteGasFullCycle(FullCycle):
             identity_residual=max(identity_residual,abs(r['entropy_identity_residual']))
             min_condensed=min(min_condensed,float(ns.min())); min_gas=min(min_gas,float(ng.min()))
             rows.append({'time_s':float(t),'kiln_temperature_k':r['kiln_T'],'temperature_k':T.tolist(),
+                'stored_potential':potential,
                 'surface_temperature_k':float(r['surface_T']),
                 'kiln_gas_mole_fractions':dict(zip(self.ng,r['boundary_gas_fractions'].tolist())),
                 'outward_boundary_gas_enthalpy_w':float(r['energy_flux'][-1]),

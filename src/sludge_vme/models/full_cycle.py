@@ -63,6 +63,18 @@ def saved_reference_partition_case(config: dict) -> dict:
     return result
 
 
+def saved_reference_host_case(root: dict) -> dict:
+    declaration = root['public_reference_cases']['saved_reference_host']
+    physical = root['public_reference_cases'][declaration['physical_case']]
+    case = deepcopy(root)
+    for target, source in physical['common_override_parameters'].items():
+        case['parameters'][target] = deepcopy(root['parameters'][source])
+    case['stages'] = deepcopy(physical['stages'])
+    case['direct_carbonation'] = deepcopy(physical['channel'])
+    case['parameters']['numerics.calcium_inventory_coordinate'] = deepcopy(
+        root['parameters'][physical['calcium_coordinate_mode_parameter']])
+    return saved_reference_partition_case(case)
+
 def water_binding_disabled(config: dict) -> dict:
     """Return the root-declared coupled binding-disabled hypothesis contrast.
 
@@ -532,6 +544,39 @@ def make_cycle(config: dict):
         from .full_cycle_gas import FiniteGasFullCycle
         return FiniteGasFullCycle(config)
     raise ValueError('gas.storage and solid.thermoelastic must explicitly select 0 or 1')
+
+
+def export_initial_potential(config: dict, out: Path, *, case_reference: str):
+    """Persist a genuine declared-case native state and its storage derivatives."""
+    case=saved_reference_host_case(config)
+    model=make_cycle(case)
+    y=model.initial_state()
+    state=model.native_potential_state(y)
+    if model.p('production_potential_export.explicit_gradients','1') == 1:
+        potential=model.potential_derivatives(state)
+    else:
+        potential={'baseline_values':model.potential_values(state),'gradients':None}
+    payload={'schema':'full_cycle_production_potential_export_v1',
+        'case_reference':case_reference,'case_builder':'saved_reference_host_case',
+        'named_case_declaration':case['public_reference_cases']['saved_reference_host'],
+        'native_time_s':model.times[0],'native_y':y,'state':state,'potential':potential,
+        'parameter_status_counts':{status:sum(record['status']==status for record in config['parameters'].values())
+                                  for status in ('literature','assumed','measured')},
+        'source_domain_contract':case['caloric_background'],
+        'direct_channel':case['direct_carbonation'],
+        'parameter_sources':config['sources'],
+        'completed_production_calls':{'make_cycle':1,'native_initial_state':1,'native_chart_unpack':1,
+            'complete_vector_potential_values':model.potential_value_calls,
+            'own_value_helper_call_sites':model.potential_helper_calls,'native_RHS_counter':model.rhs_calls,
+            'Jacobian':0,'ODE':0,'trajectory_summary':0,'predict':0,'fit':0,'UQ':0},
+        'source_inferred_internal_calls':config['production_potential_export']['source_inferred_internal_calls'],
+        'counter_qualification':'Completed explicit production call sites and existing RHS counter; inherited helper entry counts are separately source-inferred, not independently observed.',
+        'whole_model_complete':False,'material_applicability':'待实测',
+        'DSC_semantics':config['observation_contract']['semantics']['dsc'],
+        'inverse_audit_retention':'New potential fields are not automatically copied by P62 forward_audit and are not a parameter Jacobian.'}
+    write_json(out/'case-parameters.json',case)
+    write_json(out/'potential-state.json',payload)
+    return payload
 
 
 def run_cycle(config: dict):

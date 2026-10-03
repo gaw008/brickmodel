@@ -14,20 +14,8 @@ import time
 
 import numpy as np
 
-from .full_cycle import make_cycle, saved_reference_partition_case
+from .full_cycle import make_cycle, saved_reference_host_case
 
-
-def saved_reference_host_case(root: dict) -> dict:
-    declaration = root['public_reference_cases']['saved_reference_host']
-    physical = root['public_reference_cases'][declaration['physical_case']]
-    case = deepcopy(root)
-    for target, source in physical['common_override_parameters'].items():
-        case['parameters'][target] = deepcopy(root['parameters'][source])
-    case['stages'] = deepcopy(physical['stages'])
-    case['direct_carbonation'] = deepcopy(physical['channel'])
-    case['parameters']['numerics.calcium_inventory_coordinate'] = deepcopy(
-        root['parameters'][physical['calcium_coordinate_mode_parameter']])
-    return saved_reference_partition_case(case)
 
 
 def plain(value):

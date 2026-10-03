@@ -31,6 +31,7 @@ def build_parser() -> argparse.ArgumentParser:
     cycle.add_argument("--out", type=Path, required=True)
     operation = cycle.add_mutually_exclusive_group()
     operation.add_argument("--acceptance", action="store_true")
+    operation.add_argument("--potential-state", action="store_true")
     operation.add_argument("--compare", action="store_true")
     operation.add_argument("--synthetic-calibration", action="store_true")
     operation.add_argument("--calibrate", type=Path)
@@ -215,6 +216,13 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "full-cycle":
         from .models.full_cycle import read_parameters, run_acceptance, run_cycle, write_full_cycle_artifacts
         config = read_parameters(args.parameters)
+        if args.potential_state:
+            from .models.full_cycle import export_initial_potential
+            result=export_initial_potential(config,args.out,case_reference=str(args.parameters.resolve()))
+            print(json.dumps({'output':str(args.out/'potential-state.json'),
+                'completed_production_calls':result['completed_production_calls'],
+                'criterion':'criterion_not_applicable','whole_model_complete':False}))
+            return 0
         if args.synthetic_calibration or args.calibrate:
             from .inverse.full_cycle import fit, synthetic_demo
             case_reference = str(args.parameters.resolve())

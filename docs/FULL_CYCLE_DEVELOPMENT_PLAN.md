@@ -1305,3 +1305,24 @@ P62 inverse/UQ共享审计留存已实现并实际导出（2026-10-02T23:12:31.3
 GATE/B/C/D/E只勾实际范围；D62-GIT/DRIVE/FINAL在唯一commit之前保持待真实receipt。下一启动据末receipt续勾，不为最后收据递归commit/archive。
 
 P62必要共享序列化补充：原15路径扩为16（新增现有models/full_cycle.py writer委托），原六reserve数值保持，原Gitblob共13；完整补充estimate34363231/67108864B在修改前通过。物理函数/class AST保持、NumPy分支仅静态，原唯一导出不重跑。
+
+
+### P63 完整生产势源码与唯一preimport失败
+
+P63 完整生产势接口源码已实现，唯一实际CLI启动在包导入前失败（2026-10-03T01:22:07.770694+00:00）。`potential_values/native_potential_state/potential_derivatives`、保旧归约顺序的summary共享assembler及`--potential-state`已接线，5源静态语法通过；原RHS/物理率链保持。根710=144literature/566assumed/0measured，旧691完整records保持，新增19仅操作policy。实际一次请求`.venv/bin/python -B -m sludge_vme.cli`在Research根cwd下报`ModuleNotFoundError: No module named 'sludge_vme'`，未进入CLI main/项目包/constructor/initial/chart/势；子进程rc1/reaped，launch-to-reap 0.089903041s，CPU 0.020705000s，stdout0B/stderr178B。120s唯一窗口关闭，0重试；时间/必要输出容量未超额不等于功能通过。完整原预检36414030/67108864B、八reserve27262976B保持，最终actual及Git/archive另读末receipt。
+
+没有实际U/S/F/梯度/机械或温度输出，NumPy序列化分支仍未执行；summary0、RHS/Jac/ODE/predict/fit/UQ0，不能授独立势、功率或全周期PASS。逐坐标/机械/温度无原判据，criterion_not_applicable；原P45/P50/累计S门槛不移用。名义历史余水0.1358920787402553%>0.1%、CaO零预算nullfalse、P45净U3.039630569777313e-9>1e-11及P34/P40/P44/P50撤回/P51/P58/P60/P61-32失败、0实测/wholefalse保持。P62audit不自动复制newpotentialfields，不称inverse/UQ已保留或参数Jacobian。源与执行冻结、原失败stdout/stderr完整保留。
+
+下一只建议独立采用从Research/src作为cwd运行同一实际CLI，显式Research解释器/root/out路径，由Python正常cwd解析src包；不安装、不注入环境、不加sys.path或wrapper。现有NumPy2.5.2/SciPy1.18.1身份仅文件与METADATA静态核对，没有import/probe；旧console shebang指Desktop不能据此迁移项目。建议新一次1job/worker/attempt/constructor/nativeinitial/chart、15完整向量值/14方向、0RHS/Jac/ODE/summary/predict/fit/UQ、120s launch-to-reap/2MiB结果/64MiB完整gate，所有原预留及全部旧失败保持，父未采用不启动。随后正式state_dynamics、summary动态及最新8stage/受影响dt-grid/三条件比较仍独立缺口。Git/Drive必要增量与实际恢复/历史20GB/GitHub容量分别判断，0本轮恢复或删除。
+
+- [x] **P63-A** 明确采用生产接口和独立一次额度；旧691完整records保护，19操作policy、原与执行源完整冻结。
+- [x] **P63-GATE** 新完整明列gate，真实49个应用源/import闭包、14原HEADblob与原八reserve；prelaunch36414030B≤64MiB。
+- [x] **P63-B** 三公开方法、summary共享值assembler、真实CLI --potential-state；只授静态实现，0summary动态。
+- [ ] **P63-C** 实际原生初态势/梯度/NumPy持久化：唯一CLI在包导入前FAIL，0constructor/0values；窗口关闭，不能勾成完成。
+- [x] **P63-C-CLOSE** 原失败输入/执行冻结/stdout/stderr/rc1/reap/真实wall及无重试记录。
+- [x] **P63-D** 必要报告/范围/工艺失败与下一入口/正式dynamics关键路径；0新科学额度。
+- [ ] **D63-GIT** 本次12明确paths正常后继/普通push，等实际receipt。
+- [ ] **D63-DRIVE** 一必要增量原目录metadata/source_visibility，非恢复。
+- [ ] **P63-FINAL** 全actualpaths/原与stagedblob/archive/末receipt自身一次收口，不递归commit/archive。
+
+下一P64仅候选修正真实CLI cwd为Research/src，新独立一次额度待父采用；不续用已闭P63窗口。原P01–P08未满足项与wholefalse保持。
