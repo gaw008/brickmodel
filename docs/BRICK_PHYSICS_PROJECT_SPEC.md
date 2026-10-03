@@ -1,5 +1,9 @@
 # 全流程近似烧结砖模型：当前执行规范（2026-09-26）
 
+P85 原finalcooling_hold单次实际比较完成：真实P80加密154800→162000s，1strict53load/ctor/原BDF/新endpoint/decode/completevalue/interval，0initial/baseline/reference重求；正常src cwd rc0/reaped，wall12.134509292s/CPU11.829464000s，四science3937159B/4194304B，唯一120s窗关闭无retry/0postwindow。原54source/758完整records/37context保持，144literature614assumed0measured；原root60s/rtol/atol及P80cooling-only合同原样，final独立conditional30s实际传solver/完整config同源。三原终态差relative均<.02：phi1.036999761e-6、signed残碳7.786259652e-14、条件收缩4.982110900e-7；残碳原值+6.855517883e-21→−9.307417698e-22kg未clip，strictnegative仍false/minchar−8.582350824e-20mol/6格。原历史t0收缩availablefalse/null，新P78共同reference条件单列。final账本质量/元素/完整U/S/四gas低原.1%，最大Nrelative.00327795345%；只原hold后两冷段半步影响终态产品，不授前六段/continuouspeak/grid/全time/三方案反演/材料PASS。原drying.1358920787402553%>.1%、CaO nullfalse/P45/resources/全部旧FAIL/高温assumed和wholefalse保持；下一仅inertN2原生log库存与独立边界账本有限步兼容性source-only候选未采用，0追加科学。GitDrive/实际恢复0/历史容量另finalreceipt。详见docs/FULL_CYCLE_P85_FINAL_COOLING_HOLD_COMPARISON.md/json。
+
+### P84及更早当时记录
+
 P84最终cooling_hold比较接口仅静态完成：新增独立producer54，原53含strictloader/CLI与758完整records保持，0productionimport/load/ctor/initial/decode/value/RHS/Jac/ODE/rates/helper/grad/summaryfitUQ。单独cooling_hold_half_step30s/assumed-policy声明，原root60s/rtol/atol和P80cooling-only合同原样。实际P80source53/context37/154800s与P78savedcoarse162000s字段审查完成，bulk权重porosity与org+char元素碳kg可用；shrinkage仅共用P78新declared初始bulk条件化可用，旧P68t0不可恢复，原历史shrinkage/null未伪造。原refined分母floors.01/1e-7kg/.001和strict<.02保持，signed原库存和负FAIL独立。未来1loadctor/1原finalBDF/1endpoint/decode/value/interval、0initial/baseline/reference重求的120s四文件4MiB完整64MiB候选已具体登记但未采用未运行。只覆盖原hold后两冷却段半步产品，前六段/continuouspeak/grid/整time/三方案反演/完整U_S未资格；P83BE暂停及干燥.1358920787402553%>.1%/CaO nullfalse/全部旧FAIL/0measured高温assumed/wholefalse保持。GitDrive/metadata/恢复0/历史容量另finalreceipt。详见docs/FULL_CYCLE_P84_COOLING_HOLD_INTERFACE.md/json。
 
 ### P83及更早当时记录

@@ -1731,3 +1731,19 @@ P84最终cooling_hold比较接口仅静态完成：新增独立producer54，原5
 - [ ] **P84-FINAL** 全必要physicalcopies/blobs/adminformal/archive/self封账以另finalreceipt为准。
 
 变更9路径：独立producer54、root独立conditional合同、spec/report/plan/goal、P84md/json及finalmatrix；旧53保持。实际静态开发/adminwall=1163.998487s，sciencewallCPU=null。P83交付checkbox据真实回执补齐。
+
+
+## 2026-10-03T19:16:49.272530+00:00: P85 单次最终冷却保温比较（正在进行）
+
+- [x] **P85-A** 当前独立采用记录、首个完整容量检查和原54源码/758参数冻结。
+- [x] **P85-B** 唯一120s离线CLI从真实P80加密154800s至原162000s；失败关闭回收不重试。
+- [x] **P85-C** 按原定义/floors/strict<2%比较三个原终态产品；新P78初始参考收缩单列，负库存/旧失败保持。
+- [x] **P85-D** 更新报告/最终矩阵和真实证据、耗时；只提出一个未采用的剩余最小范围。
+Git/Drive/实际恢复及历史容量另交付receipt，不混为模型PASS。
+
+
+### 2026-10-03T19:22:56.283507+00:00: P85 实际结果收束
+
+P85 原finalcooling_hold单次实际比较完成：真实P80加密154800→162000s，1strict53load/ctor/原BDF/新endpoint/decode/completevalue/interval，0initial/baseline/reference重求；正常src cwd rc0/reaped，wall12.134509292s/CPU11.829464000s，四science3937159B/4194304B，唯一120s窗关闭无retry/0postwindow。原54source/758完整records/37context保持，144literature614assumed0measured；原root60s/rtol/atol及P80cooling-only合同原样，final独立conditional30s实际传solver/完整config同源。三原终态差relative均<.02：phi1.036999761e-6、signed残碳7.786259652e-14、条件收缩4.982110900e-7；残碳原值+6.855517883e-21→−9.307417698e-22kg未clip，strictnegative仍false/minchar−8.582350824e-20mol/6格。原历史t0收缩availablefalse/null，新P78共同reference条件单列。final账本质量/元素/完整U/S/四gas低原.1%，最大Nrelative.00327795345%；只原hold后两冷段半步影响终态产品，不授前六段/continuouspeak/grid/全time/三方案反演/材料PASS。原drying.1358920787402553%>.1%、CaO nullfalse/P45/resources/全部旧FAIL/高温assumed和wholefalse保持；下一仅inertN2原生log库存与独立边界账本有限步兼容性source-only候选未采用，0追加科学。GitDrive/实际恢复0/历史容量另finalreceipt。详见docs/FULL_CYCLE_P85_FINAL_COOLING_HOLD_COMPARISON.md/json。
+
+本轮变更：根parameters与spec/report/plan/GOAL_STATUS/P85MD+JSON/finalmatrix共8路径；生产54源不改。实际科学wall/CPU与行政到reportwall在JSON，完整交付真实wall另receipt。P04仅这一局部数值证据完成，整体仍未勾选；P02/P05/P06/P08现有未通过范围保持。下一static候选未采用。
