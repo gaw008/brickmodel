@@ -1,0 +1,698 @@
+{
+  "schema": "P67_static_native_checkpoint_implementation_v1",
+  "recorded_utc": "2026-10-03T06:20:36.094528+00:00",
+  "implementation_status": "static_source_and_syntax_only",
+  "actual_scientific_calls": {
+    "scientific_import": 0,
+    "constructor": 0,
+    "initial_state": 0,
+    "unpack": 0,
+    "rates": 0,
+    "RHS": 0,
+    "Jacobian": 0,
+    "ODE": 0,
+    "potential_values": 0,
+    "state_dynamics": 0,
+    "summary": 0,
+    "predict": 0,
+    "fit": 0,
+    "UQ": 0
+  },
+  "static_review": {
+    "syntax_parsed_paths": [
+      "src/sludge_vme/models/full_cycle_gas.py",
+      "src/sludge_vme/cli.py",
+      "src/sludge_vme/models/full_cycle_checkpoint.py"
+    ],
+    "parse_only_not_imported": true,
+    "old_record_changes": [],
+    "current_records": 758,
+    "added_administrative_records": [
+      "native_checkpoint.complete_inventory_limit",
+      "native_checkpoint.proposed_launch_to_reap_seconds",
+      "native_checkpoint.proposed_science_output_limit_bytes",
+      "native_checkpoint.proposed_jobs",
+      "native_checkpoint.proposed_workers",
+      "native_checkpoint.proposed_attempts",
+      "native_checkpoint.proposed_maximum_solver_calls",
+      "native_checkpoint.proposed_saved_endpoint_count"
+    ],
+    "actual_scientific_imports_and_calls": 0
+  },
+  "original_records": 750,
+  "current_records": 758,
+  "parameter_status_counts": {
+    "literature": 144,
+    "assumed": 614,
+    "measured": 0
+  },
+  "elapsed_from_explicit_freeze_start_s": 311.7949869632721,
+  "entry_points": {
+    "acquisition": "CLI --native-checkpoint -> export_native_checkpoints -> existing make_cycle(config) -> integrate_until -> same solve_ivp RHS/Jacobian -> direct complete endpoint persistence",
+    "load": "load_native_checkpoint(path,stage=None) selects declared original stop-stage; explicit stage selects another actual saved endpoint. Exact source contract, saved config/context and y/t, initial_state0.",
+    "dynamics": "CLI --checkpoint-dynamics FILE -> exact saved-config loader -> existing state_dynamics(t,y) -> instantaneous_potential_power; no fresh initial or full summary."
+  },
+  "normal_path": "Ordinary integrate function/summary routes and physics operators unchanged; existing Jacobian now also increments a public invocation counter.",
+  "saved_scope": "Complete native vector includes all signed cumulative accounts; one shared full config/source/context header plus only3 actual stage endpoints. No full-cycle PASS, native values or new material qualification this round.",
+  "proposal": {
+    "schema": "P67_future_nominal_heating_acquisition_proposal_v1",
+    "status": "proposal_not_adopted",
+    "current_science_authorization": 0,
+    "cwd": "/Users/wanggaoying/Research/brickmodel-github/src",
+    "argv": [
+      "/Users/wanggaoying/Research/brickmodel-github/.venv/bin/python",
+      "-B",
+      "-m",
+      "sludge_vme.cli",
+      "full-cycle",
+      "/Users/wanggaoying/Research/brickmodel-github/parameters.full_cycle.json",
+      "--native-checkpoint",
+      "--out",
+      "/Users/wanggaoying/Research/brickmodel-github/runs/full-cycle/p68-nominal-heating-checkpoints"
+    ],
+    "case_identity": {
+      "complete_current_root_records": 758,
+      "old750_records_unchanged": true,
+      "physical_overrides": {},
+      "stages_not_truncated": [
+        "drying_ramp",
+        "drying",
+        "heating",
+        "reactions",
+        "sintering",
+        "hold",
+        "cooling",
+        "cooling_hold"
+      ],
+      "end_stage": "heating",
+      "cells": 12,
+      "partition_mode": 0,
+      "calcium_coordinate_mode": 0,
+      "direct_carbonation_enabled": false,
+      "initial_temperature_k": 298.15,
+      "time_scale": 1.0,
+      "recipes_and_all_existing_flags": "Unchanged original nominal complete records."
+    },
+    "all_declared_stages": [
+      {
+        "stage": "drying_ramp",
+        "start_s": 0.0,
+        "end_s": 14400.0,
+        "furnace_start_k": 298.15,
+        "furnace_end_k": 383.15,
+        "gas_start_mole_fractions": {
+          "O2": 0.209,
+          "N2": 0.78,
+          "H2O": 0.01,
+          "CO2": 0.001
+        },
+        "gas_end_mole_fractions": {
+          "O2": 0.209,
+          "N2": 0.775,
+          "H2O": 0.015,
+          "CO2": 0.001
+        },
+        "selected_for_proposed_prefix": true
+      },
+      {
+        "stage": "drying",
+        "start_s": 14400.0,
+        "end_s": 86400.0,
+        "furnace_start_k": 383.15,
+        "furnace_end_k": 383.15,
+        "gas_start_mole_fractions": {
+          "O2": 0.209,
+          "N2": 0.775,
+          "H2O": 0.015,
+          "CO2": 0.001
+        },
+        "gas_end_mole_fractions": {
+          "O2": 0.209,
+          "N2": 0.775,
+          "H2O": 0.015,
+          "CO2": 0.001
+        },
+        "selected_for_proposed_prefix": true
+      },
+      {
+        "stage": "heating",
+        "start_s": 86400.0,
+        "end_s": 97200.0,
+        "furnace_start_k": 383.15,
+        "furnace_end_k": 673.15,
+        "gas_start_mole_fractions": {
+          "O2": 0.209,
+          "N2": 0.775,
+          "H2O": 0.015,
+          "CO2": 0.001
+        },
+        "gas_end_mole_fractions": {
+          "O2": 0.1,
+          "N2": 0.78,
+          "H2O": 0.1,
+          "CO2": 0.02
+        },
+        "selected_for_proposed_prefix": true
+      },
+      {
+        "stage": "reactions",
+        "start_s": 97200.0,
+        "end_s": 115200.0,
+        "furnace_start_k": 673.15,
+        "furnace_end_k": 1073.15,
+        "gas_start_mole_fractions": {
+          "O2": 0.1,
+          "N2": 0.78,
+          "H2O": 0.1,
+          "CO2": 0.02
+        },
+        "gas_end_mole_fractions": {
+          "O2": 0.04,
+          "N2": 0.8,
+          "H2O": 0.12,
+          "CO2": 0.04
+        },
+        "selected_for_proposed_prefix": false
+      },
+      {
+        "stage": "sintering",
+        "start_s": 115200.0,
+        "end_s": 126000.0,
+        "furnace_start_k": 1073.15,
+        "furnace_end_k": 1223.15,
+        "gas_start_mole_fractions": {
+          "O2": 0.04,
+          "N2": 0.8,
+          "H2O": 0.12,
+          "CO2": 0.04
+        },
+        "gas_end_mole_fractions": {
+          "O2": 0.06,
+          "N2": 0.81,
+          "H2O": 0.1,
+          "CO2": 0.03
+        },
+        "selected_for_proposed_prefix": false
+      },
+      {
+        "stage": "hold",
+        "start_s": 126000.0,
+        "end_s": 133200.0,
+        "furnace_start_k": 1223.15,
+        "furnace_end_k": 1223.15,
+        "gas_start_mole_fractions": {
+          "O2": 0.06,
+          "N2": 0.81,
+          "H2O": 0.1,
+          "CO2": 0.03
+        },
+        "gas_end_mole_fractions": {
+          "O2": 0.08,
+          "N2": 0.8,
+          "H2O": 0.09,
+          "CO2": 0.03
+        },
+        "selected_for_proposed_prefix": false
+      },
+      {
+        "stage": "cooling",
+        "start_s": 133200.0,
+        "end_s": 154800.0,
+        "furnace_start_k": 1223.15,
+        "furnace_end_k": 298.15,
+        "gas_start_mole_fractions": {
+          "O2": 0.08,
+          "N2": 0.8,
+          "H2O": 0.09,
+          "CO2": 0.03
+        },
+        "gas_end_mole_fractions": {
+          "O2": 0.209,
+          "N2": 0.775,
+          "H2O": 0.015,
+          "CO2": 0.001
+        },
+        "selected_for_proposed_prefix": false
+      },
+      {
+        "stage": "cooling_hold",
+        "start_s": 154800.0,
+        "end_s": 162000.0,
+        "furnace_start_k": 298.15,
+        "furnace_end_k": 298.15,
+        "gas_start_mole_fractions": {
+          "O2": 0.209,
+          "N2": 0.775,
+          "H2O": 0.015,
+          "CO2": 0.001
+        },
+        "gas_end_mole_fractions": {
+          "O2": 0.209,
+          "N2": 0.775,
+          "H2O": 0.015,
+          "CO2": 0.001
+        },
+        "selected_for_proposed_prefix": false
+      }
+    ],
+    "selected_stages": [
+      "drying_ramp",
+      "drying",
+      "heating"
+    ],
+    "saved_times_s": [
+      14400.0,
+      86400.0,
+      97200.0
+    ],
+    "boundary_program": "Original np.interp over all eight knots: piecewise-linear furnace and gas composition; original initial inlet and gas.program_scale=1.",
+    "solver": {
+      "method": "BDF",
+      "rtol": {
+        "value": 1e-05,
+        "unit": "1",
+        "range": [
+          1e-05,
+          1e-05
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Engineering solver-coordinate resolution; physical conservation and convergence acceptance thresholds unchanged. Replaces over-resolved settings that stalled a high-permeability UQ drying case."
+      },
+      "atol": {
+        "value": 1e-07,
+        "unit": "1",
+        "range": [
+          1e-07,
+          1e-07
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Engineering solver-coordinate resolution; physical conservation and convergence acceptance thresholds unchanged. Replaces over-resolved settings that stalled a high-permeability UQ drying case."
+      },
+      "max_step": {
+        "value": 60.0,
+        "unit": "s",
+        "range": [
+          60.0,
+          60.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "jacobian_step": {
+        "value": 1e-24,
+        "unit": "1",
+        "range": [
+          1e-24,
+          1e-24
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Imaginary perturbation for complex-step differentiation on each active branch. Avoids subtractive Jacobian error in the stiff gas system; physical acceptance tolerances are unchanged."
+      },
+      "jacobian_state_scale": {
+        "value": 1.0,
+        "unit": "1",
+        "range": [
+          1.0,
+          1.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Dimensionless scale for near-zero physical coordinates in Jacobian differencing."
+      },
+      "existing_output_step_record_unchanged": {
+        "value": 120.0,
+        "unit": "s",
+        "range": [
+          120.0,
+          120.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": ""
+      },
+      "output_override_semantics": "Only t_eval=[the original stage endpoint]. This changes persistence sampling, not root steps/tolerances or actual BDF physics. Original integrate and summary route unchanged.",
+      "restart_policy": "Carry all native state and ledgers across each original stage, restart BDF history exactly as the ordinary stage loop."
+    },
+    "calls": {
+      "jobs": 1,
+      "workers": 1,
+      "attempts": 1,
+      "make_cycle": 1,
+      "native_initial_state": 1,
+      "actual_solve_ivp_requested": 3,
+      "state_dynamics": 0,
+      "potential_values": 0,
+      "trajectory_summary": 0,
+      "predict": 0,
+      "fit": 0,
+      "UQ": 0,
+      "RHS": "Unknown until run; existing rhs_calls includes Jacobian RHS.",
+      "Jacobian": "New production invocation counter, plus each real sol.njev; unknown until run.",
+      "per_Jacobian_source_forecast_RHS_columns": 156,
+      "forecast_basis": "7*n + (extent_offset-9*n)=156 for the current nominal12/q-on layout; not a runtime measurement.",
+      "inherited_constructor_forecast": "Three Python __init__ entries for one make_cycle object; cached phase/reference primitives occur during construction, uninstrumented and source-inferred.",
+      "extra_checkpoint_thermo_unpack_rates_RHS_summary": 0
+    },
+    "history_cost_basis": {
+      "file": "runs/full-cycle/p34-lime-hydroxide/nominal.json",
+      "old_complete_cycle_elapsed_s": 205.53559554181993,
+      "old_solver": {
+        "method": "BDF",
+        "jacobian": "physical-state complex step on active constitutive branches; exact zero ledger columns",
+        "nfev": 7935,
+        "njev": 324,
+        "actual_rhs_calls_including_jacobian": 58479,
+        "cells": 12,
+        "restart_policy": "Carry all states and ledgers continuously across declared process-segment endpoints; restart BDF history."
+      },
+      "qualification": "Different historical427-record kernel; full-cycle205.5356s is planning evidence only, not current prefix execution or a promised deadline."
+    },
+    "limits": {
+      "launch_to_reap_seconds": {
+        "value": 300.0,
+        "unit": "s",
+        "range": [
+          300.0,
+          300.0
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "P67 administrative/proposed acquisition allocation only; not adopted numerical authorization or material data. Original 750 complete parameter records preserved."
+      },
+      "scientific_output_total_bytes": {
+        "value": 4194304,
+        "unit": "byte",
+        "range": [
+          4194304,
+          4194304
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "P67 administrative/proposed acquisition allocation only; not adopted numerical authorization or material data. Original 750 complete parameter records preserved."
+      },
+      "complete_source_input_delivery_bytes": {
+        "value": 67108864,
+        "unit": "byte",
+        "range": [
+          67108864,
+          67108864
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "P67 administrative/proposed acquisition allocation only; not adopted numerical authorization or material data. Original 750 complete parameter records preserved."
+      },
+      "budget_origin": "New independent proposed window; P66 closed window is not inherited.",
+      "external_process_control": "One normal CLI process, hard timeout counts imports/construction/all3 solves/endpoint writes/reap. Timeout/error/over-output closes unique window; terminate and reap, no retry, no new stage, parameter search or alternate route."
+    },
+    "output": {
+      "files": [
+        "case-parameters.json",
+        "native-checkpoints.json",
+        "cli.stdout",
+        "cli.stderr"
+      ],
+      "all_files_counted_in_4MiB": "Full uncompressed source+config+3 native endpoints bundle, complete case JSON and stdout/stderr; no partial diagnostic accounting.",
+      "persisted_endpoints_only": 3,
+      "no_trajectory_array_file": true,
+      "expected_size_basis": "50 full current application source files plus complete root once inside the shared checkpoint header; a separate complete case copy, context/scales and three length275 native vectors. Actual counts and full file bytes must be measured, not estimated PASS.",
+      "partial_failure": "Prior real successful endpoints stay with prefix_completed=false; stack trace/message/stdout/stderr preserved. Missing heating endpoint cannot be rebuilt from summary.",
+      "full_cycle_result": false
+    },
+    "provenance": {
+      "config": "Complete saved current nominal config, all records/units/ranges/sources/status; loader uses it directly, not current-root replacements.",
+      "source": "Exact source text for the50 declared application files. Implementation parent revision is ancestry only; exact frozen text is execution identity. Loader requires same ordinary source values before model construction; no checksum.",
+      "geometry_and_scales": "Full initial partition, b0/md, actual initial condensed and gas inventories, chemical/conversion/extent/Ca scales, nscale/escale/Tr, gas knots and full time/temperature knots.",
+      "mechanical_context": "Actual initial prestress, elastic strain, dry fraction, quartz/reference phase, phase0 and liquid_reference; new constructor from saved config then explicit saved references restored without initial_state.",
+      "state_layout": {
+        "array_order": "Field-major flattened native y; all offsets are zero-based half-open slices.",
+        "fields": [
+          {
+            "field": 0,
+            "meaning": "temperature / Tr"
+          },
+          {
+            "field": 1,
+            "meaning": "native water depletion coordinate"
+          },
+          {
+            "field": 2,
+            "meaning": "kaolin log depletion"
+          },
+          {
+            "field": 3,
+            "meaning": "mode0 calcite/Ca_pool fraction for nominal reverse carbonation"
+          },
+          {
+            "field": 4,
+            "meaning": "organic log depletion"
+          },
+          {
+            "field": 5,
+            "meaning": "char inventory / chemical_scale"
+          },
+          {
+            "field": 6,
+            "meaning": "axial inelastic strain"
+          },
+          {
+            "field": 7,
+            "meaning": "cumulative heat / escale"
+          },
+          {
+            "field": 8,
+            "meaning": "cumulative carried energy / escale"
+          },
+          {
+            "field": 9,
+            "meaning": "portlandite inventory / chemical_scale"
+          },
+          {
+            "field": 10,
+            "meaning": "kinetic disordered-phase log odds q when kinetic_liquid is true"
+          }
+        ],
+        "gas": "y[gas_offset:extent_offset].reshape(g,n); inventory=initial_gas*exp(gas_log.T)",
+        "reaction_extents": "y[extent_offset:last].reshape(nr,n).T*cell_chemical_scale[:,None], all signed cumulative reactions",
+        "boundary_in": "y[last:last+g]*nscale mol",
+        "boundary_out": "y[last+g:last+2*g]*nscale mol",
+        "exterior_pressure_work": "y[-3]*escale J",
+        "entropy_production": "y[-2]*escale/Tr J/K",
+        "entropy_exchange": "y[-1]*escale/Tr J/K",
+        "nominal_offsets": {
+          "cells": 12,
+          "fields": [
+            0,
+            132
+          ],
+          "gas": [
+            132,
+            180
+          ],
+          "reactions": [
+            180,
+            264
+          ],
+          "boundary_in": [
+            264,
+            268
+          ],
+          "boundary_out": [
+            268,
+            272
+          ],
+          "work": 272,
+          "production": 273,
+          "exchange": 274,
+          "length": 275
+        },
+        "normalization_origin": "Exact constructor references stored once; cumulative origins never reset at stages."
+      },
+      "branch_provenance": "Actual endpoint cell T, quartz low-T selector, q/direct/Ca flags, caloric/viscosity/binary contracts. Not between-endpoint extrema or independent domain admission."
+    },
+    "source_domains": {
+      "caloric_species_domains": {
+        "O2": {
+          "source_temperature_range_k": [
+            298.15,
+            2500.0
+          ],
+          "outside_source_range": "same polynomial continuation is an explicit unvalidated engineering extrapolation, no clipping",
+          "target_material_qualified": false
+        },
+        "N2": {
+          "source_temperature_range_k": [
+            298.15,
+            2500.0
+          ],
+          "outside_source_range": "same polynomial continuation is an explicit unvalidated engineering extrapolation, no clipping",
+          "target_material_qualified": false
+        },
+        "H2O": {
+          "source_temperature_range_k": [
+            298.15,
+            2500
+          ],
+          "outside_source_range": "same polynomial continuation is an explicit unvalidated engineering extrapolation, no clipping",
+          "target_material_qualified": false
+        },
+        "CO2": {
+          "source_temperature_range_k": [
+            298.15,
+            2200.0
+          ],
+          "outside_source_range": "same polynomial continuation is an explicit unvalidated engineering extrapolation, no clipping",
+          "target_material_qualified": false
+        },
+        "calcite": {
+          "source_temperature_range_k": [
+            298.15,
+            1200.0
+          ],
+          "outside_source_range": "same polynomial continuation is an explicit unvalidated engineering extrapolation, no clipping",
+          "target_material_qualified": false
+        },
+        "lime": {
+          "source_temperature_range_k": [
+            298.15,
+            1800.0
+          ],
+          "outside_source_range": "same polynomial continuation is an explicit unvalidated engineering extrapolation, no clipping",
+          "target_material_qualified": false
+        },
+        "portlandite": {
+          "source_temperature_range_k": [
+            298.15,
+            700.0
+          ],
+          "outside_source_range": "same analytic continuation explicitly assumed; no clipping",
+          "target_material_qualified": false
+        }
+      },
+      "viscosity_species_domains": {
+        "N2": {
+          "source_temperature_range_k": [
+            120.0,
+            1700.0
+          ],
+          "domain_kind": "selected conservative subset within published dilute-gas data span; not a uniform accuracy boundary",
+          "source": "lemmon2004_viscosity"
+        },
+        "O2": {
+          "source_temperature_range_k": [
+            120.0,
+            1700.0
+          ],
+          "domain_kind": "selected conservative subset within published dilute-gas data span; not a uniform accuracy boundary",
+          "source": "lemmon2004_viscosity"
+        },
+        "CO2": {
+          "source_temperature_range_k": [
+            100,
+            2000
+          ],
+          "domain_kind": "admitted source zero-density correlation domain",
+          "source": "co2_2017_viscosity"
+        },
+        "H2O": {
+          "source_temperature_range_k": [
+            273.16,
+            1173.15
+          ],
+          "domain_kind": "recommended dilute-limit temperature region; highT extrapolation explicitly assumed",
+          "source": "iapws2008_viscosity"
+        }
+      },
+      "binary_diffusion_pair_domains": {
+        "N2_H2O": {
+          "source_temperature_range_k": [
+            190,
+            2000
+          ],
+          "composition": "water mole fraction tends0",
+          "definition": "low-density binary tracer limit normalized to101325Pa",
+          "source": "hellmann_harvey2020_binary_diffusion"
+        },
+        "O2_H2O": {
+          "source_temperature_range_k": [
+            190,
+            2000
+          ],
+          "composition": "water mole fraction tends0",
+          "definition": "low-density binary tracer limit normalized to101325Pa",
+          "source": "hellmann_harvey2020_binary_diffusion"
+        },
+        "H2O_CO2": {
+          "source_temperature_range_k": [
+            250,
+            2000
+          ],
+          "composition": "not specified in TN2279 row",
+          "definition": "dilute binary source correlation at101325Pa",
+          "source": "nist_tn2279_binary_diffusion"
+        }
+      },
+      "assumed_components": "Metakaolin enthalpy is a cross-material borrowing; its Cp/S and the disordered matrix, modulus and strain proxies remain assumed. No measured phase yield or real-brick qualification.",
+      "branch_policy": "Quartz transition parameter is 847 K. A future instantaneous U/S/F projection needs the actual active quartz, caloric and gas branches from the saved state. No invented interpolation, temperature clipping or manufactured carrier.",
+      "heating_prefix": "Existing furnace endpoint 673.15 K lies below the narrow portlandite caloric upper source bound 700 K. Actual cell temperatures and all local source/branch domains still need inspection; the setpoint is not a guarantee.",
+      "carrier_vs_phase_activation": "The phase proxy transition parameter is 1223.15 K, width 40 K, and relaxation activation energy 180000 J/mol. The heating endpoint may provide nonzero metakaolin carrier while substantial disordered fraction, q power or phase-mechanical products remain very small. This selection does not calculate them or promise that heating alone dynamically qualifies all phase coupling.",
+      "full_eight_stages": "Existing peak setpoint 1223.15 K exceeds portlandite 700 K, calcite 1200 K and H2O dilute viscosity 1173.15 K source domains. Explicit assumed continuations must retain their original status, including for depleted species.",
+      "synthetic_direct_contract": "The direct-host synthetic 290–350 K window must not be extended to high temperature. Existing nominal root already omits this channel."
+    },
+    "physical_expectation": {
+      "carrier": "Historical heating dehydroxylation0.0031031435281507207mol supports acquisition direction only; current carrier not computed.",
+      "liquid": "673.15K is far below the assumed1223.15K proxy transition;180000J/mol relaxation barrier and birth inheriting local x imply potentially extremely weak q/phase response. Nonzero carrier and sufficient liquid activation are separate, no predicted PASS.",
+      "source_limit": "Furnace endpoint below700K portlandite bound, but actual cell T may differ. Caloric gas/mineral and transport domains are in the explicit copied contract; any out-of-domain continuation remains assumed. Syntheticdirect290–350K is absent, not extended.",
+      "later_stages": "Remaining five knots preserved but not executed; later peak1223.15K crosses portlandite700/calcite1200/H2O dilute-viscosity1173.15K source domains, requiring separate explicit future scope."
+    },
+    "independent_complete_gate": {
+      "current_static_gate": {
+        "actual_complete_bytes": 8203508,
+        "original_reserves_bytes": 27262976,
+        "reserves_bytes": 29360128,
+        "conservative_complete_bytes": 37563636,
+        "limit_bytes": 67108864,
+        "passed": true
+      },
+      "original_eight_reserves": {
+        "A_additional_explicit_dependency_source_or_actual_saved_input_fullbytes": 4194304,
+        "A_distinct_source_root_case_frozen_copies_fullbytes": 4194304,
+        "A_new_production_source_and_root_growth": 1048576,
+        "A_future_real_function_output_not_numerically_authorized": 2097152,
+        "B_developer_reports_and_existing_doc_growth": 1048576,
+        "B_future_all_staged_blobs_fullbytes": 8388608,
+        "B_coordinator_and_developer_executed_admin_programs_logs_manifests_self_receipts_formal_tool_responses": 2097152,
+        "B_one_ordinary_delivery_archive_fullbytes": 4194304
+      },
+      "additional_output_reserve_bytes": 2097152,
+      "why_additional": "Original eight reserves27,262,976B never reduced; proposed scientific output4MiB needs another2MiB beyond the original2MiB reserve. Current static also holds this extra allocation; current science0.",
+      "future_required_inputs": "Fresh complete50 source/dependency identity/root/case/source domain facts, this exact proposal/parent adoption/admin programs and formal receipts, all necessary old/staged Git blobs, source/root freezes, all actual outputs/reports/self and one archive; read traffic separate. No inherited PASS or old catalog recursion.",
+      "future_action": "Before launch restat all explicit current objects and new case/freezes plus full different Git blobs, keep every reserve and extra2MiB. Any complete total>64MiB stops; do not remove reserves or rewrite old failures."
+    },
+    "following_saved_state_projection": {
+      "status": "Separate candidate, not authorized in this acquisition proposal",
+      "CLI": [
+        ".venv/bin/python",
+        "-B",
+        "-m",
+        "sludge_vme.cli",
+        "full-cycle",
+        "parameters.full_cycle.json",
+        "--checkpoint-dynamics",
+        "/Users/wanggaoying/Research/brickmodel-github/runs/full-cycle/p68-nominal-heating-checkpoints/native-checkpoints.json",
+        "--out",
+        "a separately declared destination"
+      ],
+      "planned_calls": "One saved-config constructor, zero initial_state, one same t/y native state_dynamics, explicit baseline+14direction15values,0ODE/Jac/summary/fit/UQ. Physical applicability and window/output/gate must be adopted after the actual checkpoint evidence, no automatic second call.",
+      "CLI_parameter_argument": "Shared full-cycle positional argument remains; checkpoint branch uses only the bundled config/state/source context, never swaps in the positional current root."
+    }
+  },
+  "whole_model_complete": false,
+  "criterion": "criterion_not_applicable",
+  "retained_failures": "Nominal water0.1358920787402553%>.1%; CaOzero budget relative=null/false; all P66-preserved physics/mesh/resource/P63 failures and P50 withdrawn claims unchanged.",
+  "material_applicability": "0measured; cross-material/phase/mechanical/kinetics/synthetic contracts assumed and target comparison pending.",
+  "delivery": "Normal scoped successor/push and one original-folder increment planned separately; metadata not restore, historical20GB and GitHub quota unresolved."
+}

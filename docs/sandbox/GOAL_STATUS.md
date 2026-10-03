@@ -2715,3 +2715,8 @@ P66 一次真实同事件动态CLI已完成（2026-10-03T05:23:55.771742+00:00�
 旧749完整records未变，根750=144literature/606assumed/0measured，新增1操作额度。P65旧222ebf4/Drive/末receipt的1/8/8残留保持历史，本地0/0/0WIP在本轮正常后继交付；0新物性/源/测量。P63/P34/P40/P44/P45/P50撤回/P51/P58/P60/P61及名义余水0.1358920787402553%>0.1%、CaOnullfalse/wholefalse保持。后续非零载体、summary/最新8stage/加密/三方案/反演与材料仍有缺口，新科学额度0。
 
 本轮独立prelaunch35224539/67108864B、八reserve27262976B保持。最终actual源/root/必要input/原及暂存blob/冻结/一archive/末receipt自身读runs/full-cycle/p66-state-dynamics-native/final-delivery-state.json；Git/Drive元数据/实际恢复/历史20GB与GitHub容量分列，restore0。完整报告docs/FULL_CYCLE_P66_NATIVE_DYNAMICS.json/md。
+
+
+## P67 静态原生检查点与未采用获取方案
+
+P67 原生检查点生产接口已静态接线；真实端点直接持久完整y/config/source/context，saved-state进入既有同事件state_dynamics，不用初态或summary回拼。本轮科学全部0、三源AST解析；旧750完整records保持，根758=144literature/614assumed/0measured。当前nominal12格mode0Ca0/directoff的原三段端点14400/86400/97200s方案待采用，BDF原rtol1e-5/atol1e-7/max_step60s；建议新300s/科学全4MiB/独立全64MiB，原八reserve不减并加2MiB。heating载体可能非零而液相极弱；无动态/物理/材料PASS，wholefalse。详见docs/FULL_CYCLE_P67_NATIVE_CHECKPOINT.json/md。

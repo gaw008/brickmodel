@@ -33,6 +33,8 @@ def build_parser() -> argparse.ArgumentParser:
     operation.add_argument("--acceptance", action="store_true")
     operation.add_argument("--potential-state", action="store_true")
     operation.add_argument("--state-dynamics", action="store_true")
+    operation.add_argument("--native-checkpoint", action="store_true")
+    operation.add_argument("--checkpoint-dynamics", type=Path)
     operation.add_argument("--compare", action="store_true")
     operation.add_argument("--synthetic-calibration", action="store_true")
     operation.add_argument("--calibrate", type=Path)
@@ -216,7 +218,20 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.command == "full-cycle":
         from .models.full_cycle import read_parameters, run_acceptance, run_cycle, write_full_cycle_artifacts
+        if args.checkpoint_dynamics:
+            from .models.full_cycle_checkpoint import export_checkpoint_state_dynamics
+            result=export_checkpoint_state_dynamics(args.checkpoint_dynamics,args.out)
+            print(json.dumps({'output':str(args.out/'state-dynamics.json'),
+                'completed_production_calls':result['completed_production_calls'],
+                'criterion':'criterion_not_applicable','whole_model_complete':False}))
+            return 0
         config = read_parameters(args.parameters)
+        if args.native_checkpoint:
+            from .models.full_cycle_checkpoint import export_native_checkpoints
+            result=export_native_checkpoints(config,args.out,case_reference=str(args.parameters.resolve()),
+                stop_stage=config['native_checkpoint']['stop_stage'])
+            print(json.dumps(result))
+            return 0
         if args.potential_state:
             from .models.full_cycle import export_initial_potential
             result=export_initial_potential(config,args.out,case_reference=str(args.parameters.resolve()))

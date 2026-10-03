@@ -1,5 +1,10 @@
 # 全流程近似模型交付报告
 
+P67 原生检查点生产接口已静态接线；真实端点直接持久完整y/config/source/context，saved-state进入既有同事件state_dynamics，不用初态或summary回拼。本轮科学全部0、三源AST解析；旧750完整records保持，根758=144literature/614assumed/0measured。当前nominal12格mode0Ca0/directoff的原三段端点14400/86400/97200s方案待采用，BDF原rtol1e-5/atol1e-7/max_step60s；建议新300s/科学全4MiB/独立全64MiB，原八reserve不减并加2MiB。heating载体可能非零而液相极弱；无动态/物理/材料PASS，wholefalse。详见docs/FULL_CYCLE_P67_NATIVE_CHECKPOINT.json/md。
+
+### P66及更早当时记录
+
+
 P66 一次真实同事件动态CLI已完成（2026-10-03T05:23:55.771742+00:00）。Research/src正常模块入口，rc0/reaped、wall1.525465042s/CPU0.712728s、科学case+dynamicJSON+stdout/stderr共807683B/2097152B；原120s独立窗口关闭，0重试。实际1构造/1初态/1共享nativeRHS事件及rate/chart、RHScounter1、15完整值baseline+14方向，额外chartunpack/机械0，Jac/ODE/summary/predict/fit/UQ0。底层2unpack/16Newton/19elastic等仍源码预测。
 
 13格mode3/Ca1/298.15K实际原初态：原生Udot=-2.9270770583350912e-05W，投影Udot=-2.9270770609843995e-05W，signed差=-2.6493083172141746e-14W；外部heat+flow−P*Vdot=-2.9270770582798328e-05W，投影与外部差=-2.7045667138139717e-14W。原全局Sdot=0.20274581424644447W/K，投影=0.20274581424644442W/K，signed差=-5.5511151231257827e-17W/K；Fdot=-116.13463774114626W，global差0。原生逐格S归约差−8.326672684688674e−17W/K另列；F为逐格Udot−T*Sdot−S*Tdot新派生，不是独立cache/meanT/第二EOS。

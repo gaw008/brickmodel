@@ -156,6 +156,7 @@ class FiniteGasFullCycle(FullCycle):
                 self.conversion_scale = np.append(self.conversion_scale,self.calcium_pool[0])
         self.reaction_config = {**config, 'reactions':self.reactions}
         self.rhs_calls = 0
+        self.jacobian_calls = 0
         self.potential_value_calls = 0
         self.potential_helper_calls = {'state_thermo_completed':0, 'water_fractions_completed':0, 'direct_skeleton_completed':0, 'raw_quartz_phase_completed':0, 'raw_liquid_order_completed':0, 'fixed_volume_condensed_state_completed':0}
 
@@ -888,6 +889,7 @@ class FiniteGasFullCycle(FullCycle):
             'criterion':'criterion_not_applicable'}
 
     def jacobian(self, t, y):
+        self.jacobian_calls += 1
         # The integrated diagnostic ledgers never feed back into physical RHS.
         # Their exact zero columns are supplied, not repeatedly differentiated.
         result = np.zeros((len(y), len(y)))
@@ -897,6 +899,34 @@ class FiniteGasFullCycle(FullCycle):
             trial[index] += 1j*step
             result[:, index] = self.rhs(t, trial).imag/step
         return csc_matrix(result)
+
+    def integrate_until(self, stop_stage, *, endpoint_sink):
+        """Persist only returned stage endpoints, without full-cycle reduction."""
+        started = time.monotonic()
+        stop_index = self.config['stages'].index(stop_stage)
+        state = self.initial_state()
+        completed = []
+        for i, name in enumerate(self.config['stages'][:stop_index+1]):
+            a, b = self.times[i:i+2]
+            rhs_before, jac_before = self.rhs_calls, self.jacobian_calls
+            sol = solve_ivp(self.rhs, (a,b), state, method='BDF', jac=self.jacobian,
+                t_eval=np.asarray([b]), max_step=self.p('numerics.max_step','s'),
+                rtol=self.p('numerics.rtol','1'), atol=self.p('numerics.atol','1'))
+            if not sol.success:
+                raise RuntimeError(f'{name}: {sol.message}')
+            state = sol.y[:,-1].copy()
+            solver = {'method':'BDF','success':sol.success,'message':sol.message,
+                'nfev':sol.nfev,'njev':sol.njev,'nlu':sol.nlu,
+                'actual_rhs_calls_including_jacobian':self.rhs_calls-rhs_before,
+                'actual_jacobian_calls':self.jacobian_calls-jac_before,
+                'elapsed_since_integrate_start_s':time.monotonic()-started,
+                'history':'Fresh BDF history for each original stage; complete y and ledgers carried unchanged.'}
+            endpoint_sink(name,float(sol.t[-1]),state,solver)
+            completed.append({'stage':name,'time_s':float(sol.t[-1]),'solver':solver})
+            print(f'full-cycle checkpoint {name}: t={sol.t[-1]:g}s, RHS calls={self.rhs_calls}',flush=True)
+        return {'completed_stages':completed,'elapsed_s':time.monotonic()-started,
+            'actual_rhs_calls_including_jacobian':self.rhs_calls,
+            'actual_jacobian_calls':self.jacobian_calls,'full_cycle_summary_called':False}
 
     def integrate(self):
         started = time.monotonic()

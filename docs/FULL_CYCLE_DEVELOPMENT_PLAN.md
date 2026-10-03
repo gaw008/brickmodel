@@ -1393,8 +1393,26 @@ P65交付续勾依据：HEAD/remote222ebf4、actual11659185B/reserved38922161B�
 - [x] **P66-B** 唯一正常src cwd原生事件及15完整势真实导出，rc0、1.525465042s/807683B，窗口关闭。
 - [x] **P66-C** actualsigned U/S/F功率及所有分项、Vdot/外压、计数/forecast区分和有界源码定位保存；无独立判据不造PASS。
 - [ ] **P66-D** 非零载体/独立criterion/完整阶段及受影响加密资格；本初态不能覆盖，0新窗口。
-- [ ] **D66-GIT** 八个本轮明确paths正常后继/普通push，待真实收据。
-- [ ] **D66-DRIVE** 原folder一次必要增量metadata，实际恢复另列。
-- [ ] **P66-FINAL** 全actualpaths/原及暂存blob/一archive/末receipt自身收口，不递归提交或打包。
+- [x] **D66-GIT** 八个本轮明确paths正常后继/普通push，待真实收据。
+- [x] **D66-DRIVE** 原folder一次必要增量metadata，实际恢复另列。
+- [x] **P66-FINAL** 全actualpaths/原及暂存blob/一archive/末receipt自身收口，不递归提交或打包。
 
 P65-E拆分：生产动态导出部分已由P66执行；独立功率判据仍notapplicable，原整体资格checkbox不替换为PASS。P01–P08未满足模型项、工艺失败和待实测保持。
+
+
+### P67 原生检查点静态实施
+
+P67 原生检查点生产接口已静态接线；真实端点直接持久完整y/config/source/context，saved-state进入既有同事件state_dynamics，不用初态或summary回拼。本轮科学全部0、三源AST解析；旧750完整records保持，根758=144literature/614assumed/0measured。当前nominal12格mode0Ca0/directoff的原三段端点14400/86400/97200s方案待采用，BDF原rtol1e-5/atol1e-7/max_step60s；建议新300s/科学全4MiB/独立全64MiB，原八reserve不减并加2MiB。heating载体可能非零而液相极弱；无动态/物理/材料PASS，wholefalse。详见docs/FULL_CYCLE_P67_NATIVE_CHECKPOINT.json/md。
+
+P66交付续勾依据：HEAD/remote=f4d5d7590fc32fe560441df4d71a0e2838ce6f05，actual=12128721B/conservative=39391697B；Drive=1119478B/id=1X2obEpQwJhaWzY6PYMgYcUYBKknD7fYS，name/size/parent一致/access_not_verified/restore0。旧末receipt/包不改写。
+
+- [x] **P67-A** 当前Git路径干净/磁盘及规则/独立完整64MiB核算、750records和源码冻结保护。
+- [x] **P67-B** 生产原stage-prefix直接完整端点、账本/源/机械context持久和loader；普通full-cycle流程保持；仅静态。
+- [x] **P67-C** saved-state→既有state_dynamics/显式投影CLI接线，生产Jac调用计数；三源AST解析，未动态。
+- [x] **P67-D** 精确三阶段/所有knots/源域/275layout/当前solver/计数/300s4MiB64MiB完整新方案；proposal未采用。
+- [ ] **P67-E** 真实当前nominal演化端点及加载/完整状态动态、非零carrier/相耦合资格：本轮全部0科学。
+- [ ] **D67-GIT** 十个本轮明确paths正常后继/普通push，待真实末收据。
+- [ ] **D67-DRIVE** 原folder一次必要静态增量；metadata非实际恢复。
+- [ ] **P67-FINAL** 全实际源/根/冻结/原及暂存blob/一档案/末收据自身收口，不递归commit/archive。
+
+原P01–P08未通过项目保持。heating弱激活可能性与source域外assumed、旧工艺/物理/资源FAIL/0measured/wholefalse保留；不自动启动后五段、投影、UQ/fit或新搜索。
