@@ -1,4 +1,4 @@
-"""Paired original sintering interval and stored-reference sampled peak comparison.
+"""Paired explicitly selected original interval and saved-reference sampled peak comparison.
 
 This independent producer preserves the original loader and constitutive code.
 Its bounded numerical run is separately adopted. No prefix, initial state or
@@ -23,11 +23,11 @@ from .full_cycle_endpoint_ledgers import endpoint_inventory, interval_ledger
 from .full_cycle_gas import solve_ivp
 
 
-def compare_sintering_time(parameters: Path, out: Path):
+def compare_sintering_time(parameters: Path, out: Path, *, contract_key: str):
     """Two strict loads, original BDF solves, sampled spans and endpoint ledgers."""
     started = time.monotonic()
     root = json.loads(parameters.read_text())
-    contract = root['sintering_time_comparison']
+    contract = root[contract_key]
     project_root = parameters.resolve().parent
     checkpoint = project_root/contract['checkpoint_input']
     inventory_path = project_root/contract['inventory_input']
@@ -43,6 +43,7 @@ def compare_sintering_time(parameters: Path, out: Path):
         'root_reference':{'path':str(parameters.resolve()),'full_bytes':parameters.stat().st_size},
         'original_saved_config':None,'effective_cases':{},'numerical_conditions':{}}
     bundle = {'schema':contract['schema'],'created_utc':datetime.now(timezone.utc).isoformat(),
+        'selected_contract_key':contract_key,'contract_reference':str(parameters.resolve())+'#/'+contract_key,
         'case_file_reference':str(case_file.resolve()),'source_version':None,'context':None,
         'input_source_identity':None,'resume_origin':None,'sample_times_s':None,
         'inventory_reference':{'path':str(inventory_path.resolve()),'full_bytes':inventory_path.stat().st_size,
@@ -63,7 +64,7 @@ def compare_sintering_time(parameters: Path, out: Path):
             condition = root['conditional_numerical_conditions'][case_rule['condition_key']]
             effective['parameters'][condition['target_parameter']] = deepcopy(condition['record'])
             effective['conditional_numerical_conditions'] = {case_rule['condition_key']:deepcopy(condition)}
-        effective['sintering_time_comparison'] = deepcopy(contract)
+        effective[contract_key] = deepcopy(contract)
         effective['native_checkpoint']['source_paths'] = list(contract['output_source_paths'])
         effective['native_checkpoint']['implementation_parent_revision'] = contract['implementation_parent_revision']
         model.config = effective
@@ -93,7 +94,7 @@ def compare_sintering_time(parameters: Path, out: Path):
                     'complete_input_source_text_reference':contract['input_source_text_reference'],
                     'strict_loader_changed':False},
                 resume_origin={'stage':contract['input_stage'],'time_s':start_s,'native_y':state.copy(),
-                    'basis':'Exact actual P71 reactions checkpoint; references and cumulative origins retained.'},
+                    'basis':'Exact actual saved '+contract['checkpoint_input']+' '+contract['input_stage']+' checkpoint; references and cumulative origins retained.'},
                 sample_times_s=sample_times)
         cases['effective_cases'][case_name] = effective
         cases['numerical_conditions'][case_name] = numerical
@@ -123,7 +124,7 @@ def compare_sintering_time(parameters: Path, out: Path):
             spans.append(span)
         endpoint = solution.y[:,-1].copy()
         point = endpoint_inventory(model,contract['output_stage'],float(solution.t[-1]),endpoint,
-            provenance={'kind':'actual_paired_sintering_saved_solver_endpoint','case':case_name,
+            provenance={'kind':'actual_paired_'+contract['output_stage']+'_saved_solver_endpoint','case':case_name,
                 'numerical_condition_reference':'case-parameters.json#/numerical_conditions/'+case_name},
             contract=root['endpoint_ledger_export'])
         ledger = interval_ledger(model,[start_point,point],reference,root['endpoint_ledger_export'],
@@ -179,8 +180,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('parameters',type=Path)
     parser.add_argument('--out',type=Path,required=True)
+    parser.add_argument('--contract',required=True,help='Explicit root comparison contract key')
     args = parser.parse_args()
-    print(json.dumps(compare_sintering_time(args.parameters,args.out),ensure_ascii=False,indent=2))
+    print(json.dumps(compare_sintering_time(args.parameters,args.out,contract_key=args.contract),ensure_ascii=False,indent=2))
 
 
 if __name__ == '__main__':
