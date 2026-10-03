@@ -1747,3 +1747,24 @@ Git/Drive/实际恢复及历史容量另交付receipt，不混为模型PASS。
 P85 原finalcooling_hold单次实际比较完成：真实P80加密154800→162000s，1strict53load/ctor/原BDF/新endpoint/decode/completevalue/interval，0initial/baseline/reference重求；正常src cwd rc0/reaped，wall12.134509292s/CPU11.829464000s，四science3937159B/4194304B，唯一120s窗关闭无retry/0postwindow。原54source/758完整records/37context保持，144literature614assumed0measured；原root60s/rtol/atol及P80cooling-only合同原样，final独立conditional30s实际传solver/完整config同源。三原终态差relative均<.02：phi1.036999761e-6、signed残碳7.786259652e-14、条件收缩4.982110900e-7；残碳原值+6.855517883e-21→−9.307417698e-22kg未clip，strictnegative仍false/minchar−8.582350824e-20mol/6格。原历史t0收缩availablefalse/null，新P78共同reference条件单列。final账本质量/元素/完整U/S/四gas低原.1%，最大Nrelative.00327795345%；只原hold后两冷段半步影响终态产品，不授前六段/continuouspeak/grid/全time/三方案反演/材料PASS。原drying.1358920787402553%>.1%、CaO nullfalse/P45/resources/全部旧FAIL/高温assumed和wholefalse保持；下一仅inertN2原生log库存与独立边界账本有限步兼容性source-only候选未采用，0追加科学。GitDrive/实际恢复0/历史容量另finalreceipt。详见docs/FULL_CYCLE_P85_FINAL_COOLING_HOLD_COMPARISON.md/json。
 
 本轮变更：根parameters与spec/report/plan/GOAL_STATUS/P85MD+JSON/finalmatrix共8路径；生产54源不改。实际科学wall/CPU与行政到reportwall在JSON，完整交付真实wall另receipt。P04仅这一局部数值证据完成，整体仍未勾选；P02/P05/P06/P08现有未通过范围保持。下一static候选未采用。
+
+
+## 2026-10-03T19:45:30.507896+00:00: P86 N2库存／边界离散兼容性静态审查
+
+- [x] **P86-A** freshGit/磁盘/独立full64MiB/原reserve不减，当前采用记录与54源/758记录冻结。
+- [x] **P86-B** 核实际N2反应列/排序/scale、内部face抵消和signed边界slot；连续恒等式与原分母。
+- [x] **P86-C** 本机order1–5/variable-step BDF/NDF D历史/alpha/gamma/kappa/Newton实际更新的exp链式缺项与限定。
+- [x] **P86-D** 已存P78/P80/P85 signed证据及唯一原因未识别边界，具体漏项有无结论；单个剩余数值建议。
+- [x] **P86-E** 报告/矩阵/耗时和独立Git/Drive交付；0生产科学调用/窗口，wholefalse和旧失败保持。
+
+
+### 2026-10-03T20:02:37.974753+00:00: P86 静态结论
+
+P86 N2库存/边界有限步兼容性静态审查完成，0production科学调用/窗口，sciencewallCPU=null。原54源/758完整records=144literature614assumed0measured/原50paths和两冷却合同保持。实际N2七反应列0、同rates face空间相消/同右外面signed in/out、固定initialgas exp坐标与nscale归约一致，未发现具体错接漏项。原本机SciPy1.18.1 order1–5/variable-step D历史/alpha=(1-kappa)gamma/NDF/Newton有限终止实际式已列；exp库存与独立边界线性多步更新不自动离散守恒，实际P/G接受步缺项及限定pureBDF Taylor式明确，未重构内部history或评估exp/log。P78/P80/P85原N2/N元素/预算/初始分母与负out增量保signed；二档下降/翻号不证唯一原因或char负因，暂停BE/char保持。下一仅原sintering115200→126000s paired60/30、120s原surface/center/cell sampledpeak数值建议未采用；需additive55接口、182sample rates+182center、独立300s/4MiB/full64MiB fresh预算，实耗未知/不借120s/旧headroom。当前不新增源码或数值，原drying.1358920787402553%>.1%/strictchar及负残碳/CaO nullfalse/P45/resource全部旧FAIL/高温assumed/wholefalse保持。GitDrive/恢复0/历史容量另receipt。详见docs/FULL_CYCLE_P86_INERT_GAS_DISCRETE_LEDGER.md/json。
+
+静态研究/adminwall=1027.455072s，sciencewall/CPU=null；8路径root/spec/report/plan/goal/P86MD+JSON/finalmatrix，原54源不改。未来候选未采用；该项源码结论完成，不改变P04等全模型未通过状态。交付真实wall、Git/Drive/fullallocation另receipt。
+
+
+### 2026-10-03T20:06:20.367670+00:00: P86 同阶段源分派补充
+
+P86同阶段实际Thermoelastic继承分派已纳入：superevent后仅改liquid120:132，gas/boundary不覆盖。NDF corrector exp局部bracket及predictor/history总项并列；协调out-in与本文in-out符号换向一致，0新科学/非新人类授权。静态/adminwall=1249.847396s，sciencewall/CPU=null。

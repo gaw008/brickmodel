@@ -2833,3 +2833,15 @@ P84最终cooling_hold比较接口仅静态完成：新增独立producer54，原5
 P85 原finalcooling_hold单次实际比较完成：真实P80加密154800→162000s，1strict53load/ctor/原BDF/新endpoint/decode/completevalue/interval，0initial/baseline/reference重求；正常src cwd rc0/reaped，wall12.134509292s/CPU11.829464000s，四science3937159B/4194304B，唯一120s窗关闭无retry/0postwindow。原54source/758完整records/37context保持，144literature614assumed0measured；原root60s/rtol/atol及P80cooling-only合同原样，final独立conditional30s实际传solver/完整config同源。三原终态差relative均<.02：phi1.036999761e-6、signed残碳7.786259652e-14、条件收缩4.982110900e-7；残碳原值+6.855517883e-21→−9.307417698e-22kg未clip，strictnegative仍false/minchar−8.582350824e-20mol/6格。原历史t0收缩availablefalse/null，新P78共同reference条件单列。final账本质量/元素/完整U/S/四gas低原.1%，最大Nrelative.00327795345%；只原hold后两冷段半步影响终态产品，不授前六段/continuouspeak/grid/全time/三方案反演/材料PASS。原drying.1358920787402553%>.1%、CaO nullfalse/P45/resources/全部旧FAIL/高温assumed和wholefalse保持；下一仅inertN2原生log库存与独立边界账本有限步兼容性source-only候选未采用，0追加科学。GitDrive/实际恢复0/历史容量另finalreceipt。详见docs/FULL_CYCLE_P85_FINAL_COOLING_HOLD_COMPARISON.md/json。
 
 科学wall=12.134509292s/CPU=11.829464000s；prep到报告wall=367.003807s，最终交付wall另receipt。唯一科学窗关闭、0后续，next候选未采用。
+
+
+## 2026-10-03T20:02:37.976787+00:00: P86 N2原生库存账本静态审查
+
+P86 N2库存/边界有限步兼容性静态审查完成，0production科学调用/窗口，sciencewallCPU=null。原54源/758完整records=144literature614assumed0measured/原50paths和两冷却合同保持。实际N2七反应列0、同rates face空间相消/同右外面signed in/out、固定initialgas exp坐标与nscale归约一致，未发现具体错接漏项。原本机SciPy1.18.1 order1–5/variable-step D历史/alpha=(1-kappa)gamma/NDF/Newton有限终止实际式已列；exp库存与独立边界线性多步更新不自动离散守恒，实际P/G接受步缺项及限定pureBDF Taylor式明确，未重构内部history或评估exp/log。P78/P80/P85原N2/N元素/预算/初始分母与负out增量保signed；二档下降/翻号不证唯一原因或char负因，暂停BE/char保持。下一仅原sintering115200→126000s paired60/30、120s原surface/center/cell sampledpeak数值建议未采用；需additive55接口、182sample rates+182center、独立300s/4MiB/full64MiB fresh预算，实耗未知/不借120s/旧headroom。当前不新增源码或数值，原drying.1358920787402553%>.1%/strictchar及负残碳/CaO nullfalse/P45/resource全部旧FAIL/高温assumed/wholefalse保持。GitDrive/恢复0/历史容量另receipt。详见docs/FULL_CYCLE_P86_INERT_GAS_DISCRETE_LEDGER.md/json。
+
+真实静态/adminwall=1027.455072s，sciencewall/CPU=null；未来0采用、0额外科学，最终交付另receipt。
+
+
+### 2026-10-03T20:06:20.369455+00:00: P86 同阶段源分派补充
+
+P86同阶段实际Thermoelastic继承分派已纳入：superevent后仅改liquid120:132，gas/boundary不覆盖。NDF corrector exp局部bracket及predictor/history总项并列；协调out-in与本文in-out符号换向一致，0新科学/非新人类授权。静态/adminwall=1249.847396s，sciencewall/CPU=null。
