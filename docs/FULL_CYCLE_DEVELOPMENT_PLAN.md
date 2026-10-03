@@ -1591,8 +1591,26 @@ P76真实交付续勾：HEAD/remote=59813a1dae79b1771d942ca16e58fec531868c19，�
 - [x] **P77-C** initial/reference隔离恢复次序、原globalU/S/完整storage/外压功signed/单位/原分母/undefinedzero静态审清。
 - [x] **P77-D** 公用future9decode/9values与ctor/initial/72Newton等继承forecast分开；真实CLI及120s4MiB64MiB未采用候选完整登记，AST语法通过。
 - [ ] **P77-E** 新接口正常运行与数值账本未执行，本轮科学0；全模型、工艺、材料与加密/三方案/反演仍未完成。
-- [ ] **D77-GIT** 八明确本轮路径正常后继与普通push。
-- [ ] **D77-DRIVE** 原folder一次静态增量metadata；实际恢复另列。
-- [ ] **P77-FINAL** 全必要fullbyte source/6inputs/root/blob/freeze/report/admin/archive/末self收口。
+- [x] **D77-GIT** 八明确本轮路径正常后继与普通push。
+- [x] **D77-DRIVE** 原folder一次静态增量metadata；实际恢复另列。
+- [x] **P77-FINAL** 全必要fullbyte source/6inputs/root/blob/freeze/report/admin/archive/末self收口。
 
 变更文件：新full_cycle_endpoint_ledgers.py，根parameters，spec/report/plan/goal及P77json/md共八路径。真实耗时为preparation到final行政wall；scientific wall没有执行值，不制造0秒科学成功。下一项先独立采用未来账本acquisition，不自行数值启动。完整旧FAIL保留，不勾整体P01–P08物理验收。
+
+
+### P78 独立采用与实际端点账本
+
+P78 真实端点库存/账本完成：正常source-cwd CLI rc0/reaped，wall0.712672250s/CPU0.476645000s，四science文件1155171B/4194304B；1strictload/ctor/新detachedinitial、9decode/9completevalues，RHS/Jac/ODE/rates/grad/dynamics/summary/fitUQ0，唯一120s窗关闭0retry。8actualsaved y/time与原52source全保持，758records/144literature614assumed0measured原样。原8端点区间+新初始参考全程endpoint账本均低原0.1%；最接近门槛cooling N元素signed1.47620381198e-06molatoms/denom0.00290216784547，relative0.000508655560457（0.050865556%）；gasO2最高0.045102942%，U最高0.001458559%，S最高0.001016471%。P77行政AST false历史保留，正确目标归属三initialselfwrite0；未改loader/源。原P68initial未保存，新参考非历史恢复；后7actual差的原初始归一化依赖明示，ptp仅提供端点不授轨迹极值。8actual端点strictnegative保持/min-3.3795444690834975e-18mol，原干燥FAIL/高温assumed/加密三方案反演缺口保持，overallcriterionNA/wholefalse。下一仅cooling时间步敏感性静态候选未采用未启动，0追加科学。详见docs/FULL_CYCLE_P78_ENDPOINT_LEDGERS.json/md。
+
+P77实际交付续勾：HEAD/remote=52c460e9b3b442b2701d08ffbbf12178b77a4a67，完整49741763B/67108864B，Drive=1144690B/id=13h459b5myX4hbg9ahWcCJoxZVlwXS1ms，metadata匹配/restore0。独立协调末封账417809B本轮必要全量另计，其PASS/headroom不借用。
+
+- [x] **P78-A** freshGit/磁盘/完整独立gate；六input8282699B/52source/完整授权和原八reserve+2MiB，0science后登记采用。
+- [x] **P78-B** P77错误target归属/原false历史保留，三initial根self写入0；1真实CLI/1loadctorinitial/9decodevalues/0RHSJacODE，120s和四输出4MiB内，唯一窗关闭0retry。
+- [x] **P78-C** 实际9点库存/globalU/S/cellF、8区间和全程signed闭合及真实原分母/来源/单位，新初始参考依赖与后7actual差明确，局部门槛真实通过。
+- [x] **P78-D** 按closestcooling N0.0508656%/O2gas0.0451029%登记针对性时间步比较静态候选，未采用未启动，不增加无目标投影或调参。
+- [ ] **P78-E** 严格非负/最新完整加密、连续源域局部热力学、三方案反演及待实测范围仍未完成；名义干燥FAIL与wholefalse保持。
+- [ ] **D78-GIT** 七本轮root/docs路径正常后继与普通push。
+- [ ] **D78-DRIVE** 原folder一次必要增量metadata，actualrestore和历史存储另列。
+- [ ] **P78-FINAL** 全source/6input/root/blob/freeze/实际输出/报告/admin/archive/末self完整收口，staged转commit表示仅一次计数，不返还预留。
+
+P77-E仅正常运行/库存账本部分由P78完成，其全模型/工艺/材料/加密三方案反演剩余不能整体勾选。真实science wall/CPU见execution，新报告后0科学调用。只7root/docs变更，52生产源码及758原完整参数不变，无tests/asserts/fixtures/SHA/memory/自动任务。下一最小范围先静态建立冷却时间步条件与真实比较producer，不能直接拿当前producer篡改保存参数。

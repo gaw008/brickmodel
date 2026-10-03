@@ -1,5 +1,10 @@
 # 全流程近似模型交付报告
 
+P78 真实端点库存/账本完成：正常source-cwd CLI rc0/reaped，wall0.712672250s/CPU0.476645000s，四science文件1155171B/4194304B；1strictload/ctor/新detachedinitial、9decode/9completevalues，RHS/Jac/ODE/rates/grad/dynamics/summary/fitUQ0，唯一120s窗关闭0retry。8actualsaved y/time与原52source全保持，758records/144literature614assumed0measured原样。原8端点区间+新初始参考全程endpoint账本均低原0.1%；最接近门槛cooling N元素signed1.47620381198e-06molatoms/denom0.00290216784547，relative0.000508655560457（0.050865556%）；gasO2最高0.045102942%，U最高0.001458559%，S最高0.001016471%。P77行政AST false历史保留，正确目标归属三initialselfwrite0；未改loader/源。原P68initial未保存，新参考非历史恢复；后7actual差的原初始归一化依赖明示，ptp仅提供端点不授轨迹极值。8actual端点strictnegative保持/min-3.3795444690834975e-18mol，原干燥FAIL/高温assumed/加密三方案反演缺口保持，overallcriterionNA/wholefalse。下一仅cooling时间步敏感性静态候选未采用未启动，0追加科学。详见docs/FULL_CYCLE_P78_ENDPOINT_LEDGERS.json/md。
+
+### P77及更早当时记录
+
+
 P77 仅静态实施完成：新增独立离线endpoint-ledger exporter及根合同，原51model/strictloader源码逐字节不变，实际应用文件52；758records原样/144literature614assumed0measured，原候选/P65/P67历史notes保持。只stdAST/源码/现存JSON，productionimport/load/ctor/initial/decode/potential/RHS/Jac/ODE/rates/summary/fitUQ实际全部0，无--help/入口执行。initial_state不写self参考，单strictloader先ctor再恢复37numeric+partition/phase0/liquidreference，新initialy独立且不覆盖8actualsaved参考。未来1load/ctor/initial、9decode/9completevalues可保持原公用数，但ctor继承3entries/initial2entries和decode72Newton等另列sourceforecast，非实际计数。外压功原dy[-3]=-Psum(db)/escale，U残差减signedwork；原globalU/S与逐格F、完整storage只一次、signed质量元素gas反应能熵、原分母/zero nullfalse明确。首段/全程依赖新declared初始reference，后7interval真实saved差与该初始归一化分别标识，非P68初态恢复。六真实input合计8282699B；未来真实CLI/120s4MiB64MiB仅proposal0未采用未启动。静态不授physical/process/material/runtimePASS，旧FAIL/wholefalse保持。详见docs/FULL_CYCLE_P77_ENDPOINT_LEDGER_INTERFACE.json/md。
 
 ### P76及更早当时记录
