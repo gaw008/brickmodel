@@ -1,5 +1,10 @@
 # 全流程近似烧结砖模型：当前执行规范（2026-09-26）
 
+P77 仅静态实施完成：新增独立离线endpoint-ledger exporter及根合同，原51model/strictloader源码逐字节不变，实际应用文件52；758records原样/144literature614assumed0measured，原候选/P65/P67历史notes保持。只stdAST/源码/现存JSON，productionimport/load/ctor/initial/decode/potential/RHS/Jac/ODE/rates/summary/fitUQ实际全部0，无--help/入口执行。initial_state不写self参考，单strictloader先ctor再恢复37numeric+partition/phase0/liquidreference，新initialy独立且不覆盖8actualsaved参考。未来1load/ctor/initial、9decode/9completevalues可保持原公用数，但ctor继承3entries/initial2entries和decode72Newton等另列sourceforecast，非实际计数。外压功原dy[-3]=-Psum(db)/escale，U残差减signedwork；原globalU/S与逐格F、完整storage只一次、signed质量元素gas反应能熵、原分母/zero nullfalse明确。首段/全程依赖新declared初始reference，后7interval真实saved差与该初始归一化分别标识，非P68初态恢复。六真实input合计8282699B；未来真实CLI/120s4MiB64MiB仅proposal0未采用未启动。静态不授physical/process/material/runtimePASS，旧FAIL/wholefalse保持。详见docs/FULL_CYCLE_P77_ENDPOINT_LEDGER_INTERFACE.json/md。
+
+### P76及更早当时记录
+
+
 P76 原cooling与cooling_hold两段真实完成：hold133200→154800→162000s，共用窗口wall81.361072333s/CPU80.567048000s，八科学文件合计4012487B/4194304B；2CLI/load/ctor/原BDFsolve/新y275/source51端点，0initial/势/state_dynamics/summary/fitUQ，第二输入严格是首段实际输出，deadline重置0/重试0。真实RHS23116/Jac134；降温端T327.619110–333.983568K，最终T298.153449–298.154181K。实际原8stage端点及5原生continuationlinks齐全，但无保存t0原生y或完整各端U/S库存，producer原prefix/fullcyclefalse保持；不等于物理验收。两冷端域内不授温热中途source/material资格，三项高温assumed延拓、原干燥FAIL与其他失败保持。758records原样、144literature614assumed0measured、criterionNA/wholefalse。下一最小9state完整库存/端点账本候选仅登记未采用未启动；不自动重复瞬时投影。详见docs/FULL_CYCLE_P76_COOLING_COMPLETION.json/md。
 
 ### P75及更早当时记录

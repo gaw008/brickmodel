@@ -15854,5 +15854,255 @@
     "actual_jacobian_calls": 134,
     "following_status": "proposal_not_adopted",
     "following_proposal": "runs/full-cycle/p76-native-cooling-completion/next-saved-endpoint-acceptance-proposal.json"
+  },
+  "endpoint_ledger_static_implementation": {
+    "schema": "P77_static_only_adoption_v1",
+    "status": "static_implementation_complete_no_science",
+    "current_science_windows": 0,
+    "actual_scientific_calls": 0,
+    "source_HEAD": "59813a1dae79b1771d942ca16e58fec531868c19",
+    "standing_authority": "2026-10-03T08:43:46.638831Z 全部批准，之后也不需要问我",
+    "adoption": "brickmodel-P77-approved-developer-dispatch.txt",
+    "scope": "One additive offline exporter/root contract; AST/source/existingJSON only. No production import/load/constructor/initial/decode/potential/RHS/Jac/ODE/rates/summary/predict/fit/UQ/--help. Normal scoped currentbranch Git/one originalDrive increment;0restore.",
+    "old_candidate_and_P65_P67_notes": "Historical unchanged; not adopted scientific budget or actual counters.",
+    "future_public_calls": {
+      "logical_jobs": 1,
+      "workers": 1,
+      "attempts": 1,
+      "strict_saved_checkpoint_load": 1,
+      "make_cycle": 1,
+      "native_initial_state": 1,
+      "actual_saved_endpoints": 8,
+      "native_potential_state": 9,
+      "complete_potential_values": 9,
+      "native_RHS": 0,
+      "native_Jacobian": 0,
+      "ODE": 0,
+      "rates": 0,
+      "state_dynamics": 0,
+      "instantaneous_projection": 0,
+      "potential_gradient_directions": 0,
+      "trajectory_summary": 0,
+      "predict": 0,
+      "fit": 0,
+      "UQ": 0
+    },
+    "forecast_qualification": "Static source graph, not dynamic measurement; original9decode/9values fit current nominal branch because constructor/initial do not call them."
+  },
+  "endpoint_ledger_export": {
+    "schema": "full_cycle_saved_endpoint_inventory_ledgers_v1",
+    "output_filename": "endpoint-ledgers.json",
+    "producer_source_path": "src/sludge_vme/models/full_cycle_endpoint_ledgers.py",
+    "inputs": [
+      "runs/full-cycle/p68-nominal-heating-checkpoints/native-checkpoints.json",
+      "runs/full-cycle/p71-native-reactions-continuation/native-checkpoints.json",
+      "runs/full-cycle/p73-native-sintering-continuation/native-checkpoints.json",
+      "runs/full-cycle/p75-native-soak-continuation/native-checkpoints.json",
+      "runs/full-cycle/p76-native-cooling-completion/cooling/native-checkpoints.json",
+      "runs/full-cycle/p76-native-cooling-completion/cooling_hold/native-checkpoints.json"
+    ],
+    "input_model_identity": "Each original50/51 model-source identity remains unchanged. Independent new exporter is additional source52, excluded from historical checkpoint source_paths; strict loader bytes unchanged.",
+    "initial_reference_label": "new_declared_initial_reference",
+    "whole_cycle_label": "whole_declared_cycle_using_new_initial_reference",
+    "initial_reference_basis": {
+      "kind": "new_genuine_declared_initial_reference",
+      "historical_P68_initial_state_recovered": false,
+      "source": "One genuine existing ThermoelasticFullCycle.initial_state invocation on exact savedconfig with original restored context. New allocated y only; no self/context mutation; no ODE input."
+    },
+    "first_interval_basis": "New genuine declared initial reference to actual saved drying_ramp endpoint. Original P68 initial native y was not persisted; this is source-identical new-reference evidence, not historical-byte recovery.",
+    "saved_interval_basis": "Actual saved solver endpoint to next actual saved endpoint. Raw difference uses original reference context; original mass/element/gas initial normalization still explicitly depends on the new declared initial reference.",
+    "whole_cycle_basis": "New genuine declared initial reference to actual saved final endpoint; qualification depends on the new source-identical initial reference, not recovery of historical P68 y.",
+    "native_cumulative_slots": {
+      "heat_field": 7,
+      "carried_field": 8,
+      "work_from_end": 3,
+      "production_from_end": 2,
+      "exchange_from_end": 1,
+      "source": "Unchanged native_checkpoint.native_layout and FiniteGasFullCycle._rhs_event; slots describe existing layout, not new physical parameters."
+    },
+    "balance_threshold_parameter": "acceptance.balance_relative",
+    "entropy_threshold_parameter": "acceptance.entropy_relative",
+    "normalization": {
+      "mass": {
+        "rule": "Original FiniteGasFullCycle.summarize merror normalization: complete initial mass[0], including condensed and pore gas.",
+        "actual_source": "Newly evaluated genuine declared initial reference complete_mass_kg. All later interval differences are actualsaved-to-actualsaved, but this original denominator still depends on that newly evaluated reference.",
+        "unit": "kg",
+        "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+      },
+      "elements": {
+        "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+        "actual_sources": [
+          "new genuine initial reference element_inventory_mol_atoms",
+          "current saved endpoint cumulative boundary-in signed difference",
+          "unchanged saved-case model.atom"
+        ],
+        "unit": "mol_atoms",
+        "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+      },
+      "energy": {
+        "rule": "Original energy_scale=max(ptp(heat)+ptp(carried)+ptp(exterior_work),model.escale), evaluated only over the supplied endpoint samples.",
+        "actual_sources": [
+          "actual native endpoint heat/carried/work slots",
+          "saved context numeric.escale"
+        ],
+        "escale_derivation": "Original FullCycle constructor sum(initial condensed mol*base cp)*Tr. Original unchanged thermal-capacity scale, not a new adjustable floor.",
+        "unit": "J",
+        "scope": "For a stage use its two endpoints; wholecycle uses the nine supplied points. These are not extrema over unsaved intermediate solver/output times.",
+        "residual": "delta(original_global_U)-delta_heat-delta_carried-delta_signed_exterior_work"
+      },
+      "entropy": {
+        "rule": "Existing entropy_ledger_output scale model.escale/model.Tr; canonical signed residual=(delta originalglobalS-delta production)-delta exchange.",
+        "actual_sources": [
+          "saved context numeric.escale and numeric.Tr",
+          "actual separate native physical entropy slots",
+          "original global S reduction"
+        ],
+        "unit": "J/K",
+        "threshold_parameter": "acceptance.entropy_relative",
+        "rounding": "Also publish original slot-sum order residual and signed canonical-minus-original difference; do not alter historical verdicts."
+      },
+      "gas_budget": {
+        "rule": "Existing gas_species_ledger max(abs(start),abs(end),sum(abs(each signed net reaction source)),abs(signed in)+abs(signed out)); no floor.",
+        "actual_sources": [
+          "actual decoded stored gas inventories",
+          "saved cumulative reaction extent differences and original stoichiometry",
+          "saved signed boundary in/out differences"
+        ],
+        "unit": "mol",
+        "criterion_parameter": "acceptance.balance_relative",
+        "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+      },
+      "gas_initial_reference": {
+        "rule": "Existing declared-process initial gas inventory, distinct from gas budget. Diagnostic normalization only; no independent pass criterion.",
+        "actual_source": "New genuine declared initial reference decoded gas inventory, not a recovered historical P68 initial vector.",
+        "unit": "mol",
+        "defined_passed": "null,threshold=null; diagnostic only",
+        "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+      }
+    },
+    "units": {
+      "time": "s",
+      "inventory": "mol",
+      "reaction": "mol",
+      "mass": "kg",
+      "elements": "mol_atoms",
+      "U": "J",
+      "S": "J/K",
+      "F": "J",
+      "volume": "m3",
+      "temperature": "K"
+    },
+    "source_only_forecast": {
+      "qualification": "Static exact source graph for this unchanged nominal branch only; every actual scientific count in P77 is0. Not runtime primitive measurements.",
+      "constructor": {
+        "make_cycle_public": 1,
+        "Thermoelastic_constructor_entry": 1,
+        "FiniteGas_constructor_entry": 1,
+        "FullCycle_constructor_entry": 1,
+        "logical_constructor_instances": 1,
+        "source_caloric_coefficients": 2,
+        "quartz_phase": 2,
+        "liquid_phase": 1,
+        "liquid_equilibrium_log_odds": 1,
+        "liquid_contrast_nonzero_cp": 2,
+        "native_unpack": 0,
+        "native_potential_state": 0,
+        "potential_values": 0,
+        "state_thermo": 0,
+        "initial_state": 0,
+        "reference_mutation": "Constructs initial_partition/b0/md/initial/vs0/vp0/es0/initialgas/scales/layout and all thermoelastic references. Loader restores savednumeric37 then partition/phase0/liquidreference. Constructor derived constitutive arrays use the identical saved physical config."
+      },
+      "initial_reference": {
+        "public_initial_state": 1,
+        "Thermoelastic_initial_state_entry": 1,
+        "FiniteGas_initial_state_entry": 1,
+        "FullCycle_initial_state_entry": 0,
+        "new_y_allocation": 1,
+        "liquid_equilibrium_log_odds": 1,
+        "liquid_contrast_nonzero_cp": 1,
+        "self_reference_writes": 0,
+        "native_unpack": 0,
+        "native_potential_state": 0,
+        "potential_values": 0,
+        "state_thermo": 0,
+        "extra_constructor": 0
+      },
+      "native_decode": {
+        "native_potential_state": 9,
+        "native_unpack": 9,
+        "chart_assembly_from_decoded": 9,
+        "condensed_state_logical": 9,
+        "condensed_state_inherited_entries": 18,
+        "fixed_Newton_iterations_parameter": "numerics.mechanical_iterations",
+        "iterations_per_decode": 8,
+        "total_fixed_Newton_iterations": 72,
+        "elastic_response": 72,
+        "elastic_strain": 72,
+        "thermal_strain": 81,
+        "phase_eigenstrain": 81,
+        "phase_reference_volume": 72,
+        "quartz_phase": 81,
+        "liquid_order": 153
+      },
+      "complete_values": {
+        "potential_values": 9,
+        "state_thermo": 9,
+        "thermo_logical": 9,
+        "thermo_inherited_entries": 27,
+        "source_caloric_integrals": 18,
+        "quartz_thermo": 9,
+        "quartz_polynomial": 45,
+        "liquid_phase": 18,
+        "liquid_equilibrium_log_odds": 18,
+        "liquid_contrast_nonzero_cp": 36,
+        "liquid_order_state_hs": 9,
+        "raw_skeleton_liquid_order": 9,
+        "quartz_phase_in_hs": 9,
+        "raw_skeleton_quartz_phase": 9,
+        "water_fractions": 9,
+        "retention_sites": 9,
+        "direct_skeleton_storage": 9,
+        "fixed_volume_direction_inventory_decode": 0,
+        "gradient_directions": 0,
+        "extra_newton": 0
+      },
+      "ordinary_identity_IO": {
+        "saved_json_initial_reads": 6,
+        "strict_loader_additional_final_json_read": 1,
+        "explicit_existing_source_text_calls_for_first_five": 5,
+        "inherited_strict_final_source_text_call": 1,
+        "independent_producer_source_text_read": 1
+      },
+      "other_numpy_elementary_operations": "Existing formula operations inside the enumerated calls; no separate profile/probe or claim that all lowlevel operations were dynamically counted."
+    },
+    "future_public_calls": {
+      "logical_jobs": 1,
+      "workers": 1,
+      "attempts": 1,
+      "strict_saved_checkpoint_load": 1,
+      "make_cycle": 1,
+      "native_initial_state": 1,
+      "actual_saved_endpoints": 8,
+      "native_potential_state": 9,
+      "complete_potential_values": 9,
+      "native_RHS": 0,
+      "native_Jacobian": 0,
+      "ODE": 0,
+      "rates": 0,
+      "state_dynamics": 0,
+      "instantaneous_projection": 0,
+      "potential_gradient_directions": 0,
+      "trajectory_summary": 0,
+      "predict": 0,
+      "fit": 0,
+      "UQ": 0
+    },
+    "future_seconds_parameter": "production_state_dynamics.science_window",
+    "future_science_output_bytes_parameter": "native_checkpoint.proposed_science_output_limit_bytes",
+    "complete_inventory_bytes_parameter": "native_checkpoint.complete_inventory_limit",
+    "status": "statically_implemented_not_numerically_adopted",
+    "current_science_windows": 0,
+    "actual_scientific_calls": 0,
+    "scope_limits": "Complete endpoint balances only, all signed states/increments preserved. Source assumed extrapolation/0measured/negative inventory/priorFAIL remain. No interval maxima, continuous thermodynamics/domain admission, time-grid refinement, three-case/inverse update or whole-model qualification."
   }
 }

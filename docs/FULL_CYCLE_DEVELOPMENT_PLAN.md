@@ -1573,8 +1573,26 @@ P75真实交付续勾依据：HEAD/remote=cf64de49f6da7d5f7b958ef0ba7ee6f95db497
 - [x] **P76-C** rawT/q/char、计数和七反应/四gas/U/S累计signed归约；两冷端域内与原温热assumed外推分别记录。
 - [x] **P76-D** 六完整输入先登记全bytes后只读，核对8原stage端点及5originlinks；明确t0与完整库存缺失并登记最小9state库存/账本候选，未采用未启动。
 - [ ] **P76-E** 最新完整八stage物理/数值验收、时间/网格加密、三方案/反演及待实测资格仍未完成，原名义干燥FAIL保留。
-- [ ] **D76-GIT** 七本轮root/docs paths正常后继/普通push。
-- [ ] **D76-DRIVE** 原folder一次必要小增量metadata；实际恢复与历史存储另列。
-- [ ] **P76-FINAL** 全source/root/六savedinputs/freezes/oldstagedblob/archive/admin/末receipt自身完整收口。
+- [x] **D76-GIT** 七本轮root/docs paths正常后继/普通push。
+- [x] **D76-DRIVE** 原folder一次必要小增量metadata；实际恢复与历史存储另列。
+- [x] **P76-FINAL** 全source/root/六savedinputs/freezes/oldstagedblob/archive/admin/末receipt自身完整收口。
 
 原P01–P08只按最新独立验收继续，八端点覆盖不替换其中物理与工程失败。真实wall/CPU来自execution；当前报告仅saved字段身份与原尺度signed算术，无追加科学调用。变更文件为根参数行政记录、spec/report/plan/goal及P76json/md七路径，生产51source与全部758原参数不变。
+
+
+### P77 静态实施端点库存与账本输出
+
+P77 仅静态实施完成：新增独立离线endpoint-ledger exporter及根合同，原51model/strictloader源码逐字节不变，实际应用文件52；758records原样/144literature614assumed0measured，原候选/P65/P67历史notes保持。只stdAST/源码/现存JSON，productionimport/load/ctor/initial/decode/potential/RHS/Jac/ODE/rates/summary/fitUQ实际全部0，无--help/入口执行。initial_state不写self参考，单strictloader先ctor再恢复37numeric+partition/phase0/liquidreference，新initialy独立且不覆盖8actualsaved参考。未来1load/ctor/initial、9decode/9completevalues可保持原公用数，但ctor继承3entries/initial2entries和decode72Newton等另列sourceforecast，非实际计数。外压功原dy[-3]=-Psum(db)/escale，U残差减signedwork；原globalU/S与逐格F、完整storage只一次、signed质量元素gas反应能熵、原分母/zero nullfalse明确。首段/全程依赖新declared初始reference，后7interval真实saved差与该初始归一化分别标识，非P68初态恢复。六真实input合计8282699B；未来真实CLI/120s4MiB64MiB仅proposal0未采用未启动。静态不授physical/process/material/runtimePASS，旧FAIL/wholefalse保持。详见docs/FULL_CYCLE_P77_ENDPOINT_LEDGER_INTERFACE.json/md。
+
+P76真实交付续勾：HEAD/remote=59813a1dae79b1771d942ca16e58fec531868c19，完整53205852B/67108864B，Drive=2115045B/id=1PJO83b6H5egQ2VDCuYjDuZ6608HAwWhX，metadata匹配/access_not_verified/actualrestore0。被读独立协调末封账285659B本轮全量登记，不能借其PASS。
+
+- [x] **P77-A** freshGit/磁盘/独立完整64MiB gate；六输入8282699B及完整授权/协调末封账登记，全原reserve保留。
+- [x] **P77-B** 新独立生产exporter和根合同；原51源码/loader/758物理records逐字节/逐项保持。
+- [x] **P77-C** initial/reference隔离恢复次序、原globalU/S/完整storage/外压功signed/单位/原分母/undefinedzero静态审清。
+- [x] **P77-D** 公用future9decode/9values与ctor/initial/72Newton等继承forecast分开；真实CLI及120s4MiB64MiB未采用候选完整登记，AST语法通过。
+- [ ] **P77-E** 新接口正常运行与数值账本未执行，本轮科学0；全模型、工艺、材料与加密/三方案/反演仍未完成。
+- [ ] **D77-GIT** 八明确本轮路径正常后继与普通push。
+- [ ] **D77-DRIVE** 原folder一次静态增量metadata；实际恢复另列。
+- [ ] **P77-FINAL** 全必要fullbyte source/6inputs/root/blob/freeze/report/admin/archive/末self收口。
+
+变更文件：新full_cycle_endpoint_ledgers.py，根parameters，spec/report/plan/goal及P77json/md共八路径。真实耗时为preparation到final行政wall；scientific wall没有执行值，不制造0秒科学成功。下一项先独立采用未来账本acquisition，不自行数值启动。完整旧FAIL保留，不勾整体P01–P08物理验收。
