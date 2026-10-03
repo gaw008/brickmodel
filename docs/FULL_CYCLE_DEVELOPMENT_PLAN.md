@@ -1650,3 +1650,21 @@ P79实际交付续勾：HEAD/remote=498a75aaf546ddb0d681853d5b1d57b2ac96c0cd，�
 - [ ] **P80-FINAL** 全source/input/root/oldstagedblob/freeze/effectivecase/真实outputs/报告/adminformal/archive/末self完整收口，不退原预留。
 
 P79-E仅新接口实际运行和cooling局部time比较由P80完成；其全模型/工艺/最终time-grid/三方案反演与材料余项不能整体勾选。科学真实wall/CPU见execution，窗口关闭后0额外科学；不新增tests/asserts/fixtures/SHA/memory/自动任务。
+
+
+### P81 原生 char 严格非负静态研究（2026-10-03T15:59:52.034364+00:00）
+
+P81 原生 char 非负静态研究完成；生产科学调用 0，53 源码普通字节和原 758 完整参数保持。连续式 dc/dt=P(y,t)−K(y,t)c 在有限正域/非负供体/非负初值及解存在唯一条件下有非负不变性；完整耦合域正则与 BDF 离散非负未证明。实际名义初始 char=0.005 kg/kg，并非零；原范围含零，不能以 seed/log 假定消除零生成问题。36 行原 f5*1.5611080120226133mol 与 P78/P80 已存库存逐格一致，负号已在 f5 中：P75 incoming负1/3/5/8/11，P76coarse负1/5/6/7/10，P80refined负0/2/3/5/7/10；正到负0/2/7/10、负到负3/5。coarse/refined最小值−1.2646807323299508e−18/−8.581861576534481e−20mol，strict false保持。必要原extent线性不变量 signed算术只说明浮点表达关系，不能唯一定位内部成因或覆盖原状态。Ca fraction余量重建与OH线性库存不同，不扩大修复。log/square/移位坐标/单独char更新/积分因子均未证明满足全耦合精确零和原计量U/S；下一仅三条organic/char共用extent非负离散合同的静态候选，proposal_not_adopted，未实施/未分配数值；P80 finalcooling_hold候选同样未采用。原drying/CaO nullfalse/P34-P45/P50撤回/P51及资源FAIL、最新finaltime/grid/peak/三方案反演/材料缺口保持，758=144literature614assumed0measured，wholefalse。详见 docs/FULL_CYCLE_P81_CHAR_NONNEGATIVITY_STUDY.md/json。
+
+P80 实际交付续勾依据：HEAD/remote=07c512c9724c9d29896eacce6b0ac07de9755d65；开发完整47452115B，协调末466011B后完整48170169B/67108864B，历史口径不借本轮headroom。Drive=1704958B/id=1RUSafUXrep4FfAkzD0LdJ8-EH-DysiNg，metadata匹配/access_not_verified/actualrestore0。
+
+- [x] **P81-A** fresh Git/磁盘、独立完整 gate/source53/四原 input/758record 和原八 reserve+2MiB保持。
+- [x] **P81-B** 实际全耦合 char 原式/零边界/正则条件/连续与BDF区别及复杂步分支推导完成。
+- [x] **P81-C** 36 行原 f5/已存 scale/inventory/extent signed算术映射与符号分类，raw字段仅runs，不入Git。
+- [x] **P81-D** 计量/U/S/压力功、精确零、负checkpoint迁移和候选取舍/真正最小下一静态合同完成。
+- [ ] **P81-E** 新坐标/数值修复、严格非负、最终时间网格/峰温/三方案反演/材料及整体模型验收未完成。
+- [ ] **D81-GIT** 本轮8root/docs普通后继/普通push；实际收据最终另写。
+- [ ] **D81-DRIVE** 原目录一次必要增量与metadata；0restore/历史存储另列。
+- [ ] **P81-FINAL** 完整所有必要文件/blob/冻结/adminformal/archive/末self实际封账，原reserve不退。
+
+变更文件：parameters.full_cycle.json行政注记、spec/report/plan/goal、P81md/json及FULL_CYCLE_FINAL_ACCEPTANCE.json共8路径。生产53source保持。preparation至report实际wall=1201.676488s，科学wall/CPU=null，非0秒科学成功；实际finalwall/预算/Git/Drive读runs/full-cycle/p81-char-nonnegativity-static/final-delivery-state.json。下一静态合同尚未采用，0科学窗口；原P01–P08不因本项研究整体改判。

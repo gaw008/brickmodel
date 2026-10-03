@@ -1,5 +1,9 @@
 # 全流程近似模型交付报告
 
+P81 原生 char 非负静态研究完成；生产科学调用 0，53 源码普通字节和原 758 完整参数保持。连续式 dc/dt=P(y,t)−K(y,t)c 在有限正域/非负供体/非负初值及解存在唯一条件下有非负不变性；完整耦合域正则与 BDF 离散非负未证明。实际名义初始 char=0.005 kg/kg，并非零；原范围含零，不能以 seed/log 假定消除零生成问题。36 行原 f5*1.5611080120226133mol 与 P78/P80 已存库存逐格一致，负号已在 f5 中：P75 incoming负1/3/5/8/11，P76coarse负1/5/6/7/10，P80refined负0/2/3/5/7/10；正到负0/2/7/10、负到负3/5。coarse/refined最小值−1.2646807323299508e−18/−8.581861576534481e−20mol，strict false保持。必要原extent线性不变量 signed算术只说明浮点表达关系，不能唯一定位内部成因或覆盖原状态。Ca fraction余量重建与OH线性库存不同，不扩大修复。log/square/移位坐标/单独char更新/积分因子均未证明满足全耦合精确零和原计量U/S；下一仅三条organic/char共用extent非负离散合同的静态候选，proposal_not_adopted，未实施/未分配数值；P80 finalcooling_hold候选同样未采用。原drying/CaO nullfalse/P34-P45/P50撤回/P51及资源FAIL、最新finaltime/grid/peak/三方案反演/材料缺口保持，758=144literature614assumed0measured，wholefalse。详见 docs/FULL_CYCLE_P81_CHAR_NONNEGATIVITY_STUDY.md/json。
+
+### P80及更早当时记录
+
 P80 conditional冷却时间比较实际完成：P75hold133200→154800仅1BDF/新端点/decode/completevalue/interval，0initial/0baseline/reference重求势；正常sourcecwd CLI rc0/reaped，wall36.516589209s/CPU36.182987s，四science2868740B/4194304B，唯一120s窗关闭无retry/0postwindow。实际RHS9809/Jac51，内部rates次数未独立动态测量，额外publicrates/dynamics/grad/projection/summary/fitUQ0。53source普通bytes/完整原37context/原758records/144literature614assumed0measured保持；唯一effective数值diffmaxstep60→conditional30，solver/casefile/nativebundle同源30，P75完整原case单独保留/source51→53严格身份明确。原cooling账本全部仍低0.1%，Nrelative0.050865556%→0.025452828%，O2gas0.045102942%→0.022650411%，N2gas0.036230527%→0.018122556%；U signed-2.967064090→+1.063239615J，S-0.003062536→+0.001344613J/K，绝对relative降低但符号flip保留，Al/Si非零分母下zero不变。char min-1.264680732e-18→-8.581861577e-20mol/negativecells5→6，strictnonnegativefalse，不clip/seed/阈值修复。新initial分母依赖/两端ptp非pathmax保持；只cooling不授最终cooling_hold三产品/峰温/网格/材料PASS，原drying/全部FAIL/高温assumed保持，criterionNA/wholefalse。下一仅最终cooling_hold比较静态候选未采用未启动。详见docs/FULL_CYCLE_P80_COOLING_TIME_REFINEMENT.json/md。
 
 ### P79及更早当时记录
