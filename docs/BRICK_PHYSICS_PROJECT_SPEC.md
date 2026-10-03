@@ -1,5 +1,10 @@
 # 全流程近似烧结砖模型：当前执行规范（2026-09-26）
 
+P70 原生单阶段续算生产模块已静态实现，未运行模型。旧50源码/loader普通文本与bytes保持，新增full_cycle_continue.py以已有strictload承接P68完整case/context/t/y并调用原SciPy BDF、native rhs/jac及绝对时间全9knots。输出配置/source有旧50+新producer51份，既有loader按51份严格匹配；不绕身份、不重复前三段、不回initial、不新物理。实际load/ctor/initial/RHS/Jac/ODE/potential/summary/predict/fit/UQ均0，仅新模块AST与源码静态读取。758完整records未变，144literature/614assumed/0measured，criterionNA/wholefalse。后续原reactions97200→115200s、炉温673.15→1073.15K、rtol1e-5/atol1e-7/maxstep60s、独立300s/4MiB/64MiB只登记提案；须新内部采用和freshgate再数值。700K hydroxide越域沿旧assumed continuation，不授source/materialPASS或承诺phase激活。详见docs/FULL_CYCLE_P70_NATIVE_CONTINUATION.json/md。
+
+### P69及更早当时记录
+
+
 P69 已用真实P68 heating原生端点t97200s完成唯一saved-state导出：rc0/reaped，wall1.661012708s/CPU0.715526000s，科学全部1438584B/4194304B，120s窗口已关闭。1load/1构造声明、0initial、实际1nativeRHS/rate/chart、15完整势值，Jac/ODE/summary/fit/UQ0；source50普通文本匹配，758完整records不改，144literature/614assumed/0measured。原生与投影Udot均2.0827150877870784W、Sdot均0.001825961403377241W/K；U对外部signed差4.440892098500626e-16W，派生Fdot差3.3306690738754696e-16W。实际metakaolin非零、qdot非零，但phase总功率8.347174595727095e-39W，仍不授充分液相/全周期资格。criterionNA/wholefalse；原干燥/物理/资源失败保持。详见docs/FULL_CYCLE_P69_HEATING_DYNAMICS.json/md。
 
 ### P68及更早当时记录

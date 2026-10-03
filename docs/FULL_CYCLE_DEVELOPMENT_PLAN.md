@@ -1447,8 +1447,26 @@ P68交付续勾依据：HEAD/remote=c4994896a814a655197fe1e072d830bb3b27f8f3；a
 - [x] **P69-C** 原始signed U/S/派生F/Vdot/压力功/14×12产品与非零carrier/q导数留证，不授独立PASS。
 - [x] **P69-D** 登记下一静态native续算接口范围与未来独立300s/4MiB/64MiB候选，0后续数值启动。
 - [ ] **P69-E** 充分phase耦合、最新完整8stage物理数值/受影响加密/三方案反演资格仍未完成。
-- [ ] **D69-GIT** 七明确paths正常后继/普通push，待实际末收据。
-- [ ] **D69-DRIVE** 原folder一次必要小增量metadata，实际恢复另列。
-- [ ] **P69-FINAL** 全source/root/input/freezes/原及stagedblob/一archive/末收据自身收口。
+- [x] **D69-GIT** 七明确paths正常后继/普通push，待实际末收据。
+- [x] **D69-DRIVE** 原folder一次必要小增量metadata，实际恢复另列。
+- [x] **P69-FINAL** 全source/root/input/freezes/原及stagedblob/一archive/末收据自身收口。
 
 P68-E仅saved-state加载/动态/投影部分由P69真实完成；充分phase/独立物理资格仍不满足，不整项勾选。实际scientific wall/CPU来自execution.json；后处理只读stdlib不额外调用科学算子。连续常规研发已由人类授权，下一依赖接口直接推进；P69本窗口结束后由协调接续单写者，不复用余时。
+
+
+### P70 静态native单段续算接口
+
+P70 原生单阶段续算生产模块已静态实现，未运行模型。旧50源码/loader普通文本与bytes保持，新增full_cycle_continue.py以已有strictload承接P68完整case/context/t/y并调用原SciPy BDF、native rhs/jac及绝对时间全9knots。输出配置/source有旧50+新producer51份，既有loader按51份严格匹配；不绕身份、不重复前三段、不回initial、不新物理。实际load/ctor/initial/RHS/Jac/ODE/potential/summary/predict/fit/UQ均0，仅新模块AST与源码静态读取。758完整records未变，144literature/614assumed/0measured，criterionNA/wholefalse。后续原reactions97200→115200s、炉温673.15→1073.15K、rtol1e-5/atol1e-7/maxstep60s、独立300s/4MiB/64MiB只登记提案；须新内部采用和freshgate再数值。700K hydroxide越域沿旧assumed continuation，不授source/materialPASS或承诺phase激活。详见docs/FULL_CYCLE_P70_NATIVE_CONTINUATION.json/md。
+
+P69真实交付续勾依据：HEAD/remote=00081b22fdb12ba07c338d36eb0b893fd3bc6df9；actual=15216431B/conservative=44576559B；Drive=1555792B/id=1kaYGFHHRyFeNR-gCxNjnFtp56VTAFHiQ，metadata匹配/access_not_verified/restore0。P69窗口closed，后续常规研发已持续授权。
+
+- [x] **P70-A** 当前Git/磁盘/原生输入与旧50source冻结、独立完整gate和新静态采用登记。
+- [x] **P70-B** 新模块与行政合同接线，只复用strictload/原BDF/rhs/jac/fullknots；758完整records/旧50source不变。
+- [x] **P70-C** 新source AST与50ordinarytext/bytes/scoped diff静态证据；实际science全部0。
+- [x] **P70-D** 完整真实reactions单段argv/case/context/gas/solver/calls/300s4MiB64MiB独立候选登记，未数值执行。
+- [ ] **P70-E** 实际原生续算/新端点JSON/51份身份load、phase/物理数值资格未执行或未完成。
+- [ ] **D70-GIT** 八明确paths正常后继/普通push。
+- [ ] **D70-DRIVE** 原folder一次必要小增量，metadata不等实际恢复。
+- [ ] **P70-FINAL** 全source/root/必要input/freezes/原及stagedblob/一archive/末receipt自身收口。
+
+旧P69-E、完整P01–P08未满足项与全部失败不重写。下一依赖满足项为独立采用原reactions一段候选、freshgate后唯一生产调用；本P70静态窗口不继承任何P69剩余时间、不追加load/ctor/数值。
