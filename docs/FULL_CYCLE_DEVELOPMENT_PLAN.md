@@ -1609,8 +1609,26 @@ P77实际交付续勾：HEAD/remote=52c460e9b3b442b2701d08ffbbf12178b77a4a67，�
 - [x] **P78-C** 实际9点库存/globalU/S/cellF、8区间和全程signed闭合及真实原分母/来源/单位，新初始参考依赖与后7actual差明确，局部门槛真实通过。
 - [x] **P78-D** 按closestcooling N0.0508656%/O2gas0.0451029%登记针对性时间步比较静态候选，未采用未启动，不增加无目标投影或调参。
 - [ ] **P78-E** 严格非负/最新完整加密、连续源域局部热力学、三方案反演及待实测范围仍未完成；名义干燥FAIL与wholefalse保持。
-- [ ] **D78-GIT** 七本轮root/docs路径正常后继与普通push。
-- [ ] **D78-DRIVE** 原folder一次必要增量metadata，actualrestore和历史存储另列。
-- [ ] **P78-FINAL** 全source/6input/root/blob/freeze/实际输出/报告/admin/archive/末self完整收口，staged转commit表示仅一次计数，不返还预留。
+- [x] **D78-GIT** 七本轮root/docs路径正常后继与普通push。
+- [x] **D78-DRIVE** 原folder一次必要增量metadata，actualrestore和历史存储另列。
+- [x] **P78-FINAL** 全source/6input/root/blob/freeze/实际输出/报告/admin/archive/末self完整收口，staged转commit表示仅一次计数，不返还预留。
 
 P77-E仅正常运行/库存账本部分由P78完成，其全模型/工艺/材料/加密三方案反演剩余不能整体勾选。真实science wall/CPU见execution，新报告后0科学调用。只7root/docs变更，52生产源码及758原完整参数不变，无tests/asserts/fixtures/SHA/memory/自动任务。下一最小范围先静态建立冷却时间步条件与真实比较producer，不能直接拿当前producer篡改保存参数。
+
+
+### P79 独立静态冷却时间加密接口
+
+P79 冷却时间加密接口仅静态完成：新增独立full_cycle_cooling_refinement.py与根conditional30s/assumed-policy记录，原52model/loader/exporter普通bytes及758records/144literature614assumed0measured保持，原60s/rtol1e-5/atol1e-7/8stage物理气体程序不改。future strictP75hold133200→154800仅1BDF、0initial、1新decode/value/interval，原P78hold/reference/coarsecooling只读不重求势；严格恢复原37context/partition/phase0/liquid后生成effectiveconfig，model.p与solver及两完整保存config同读conditional30，原P75完整case另列出处/差异/source51→53身份。JSONhold列表先转array供原Sslot差，原globalU/S/cellF、signedwork/原分母/undefinedzero和端点ptp限制保持。已存负库存静态分类：早期lime池差/OH线性、reactionchar/OH、sinteringholdcalcite分数/charOH、冷末char；不归单因、不clip/改阈值。P79实际所有productionimport/load/ctor/initial/decode/values/RHS/JacODErates/projection/summaryfitUQ0，仅AST/source/现存JSON；未来120s四science4MiB完整64MiB+原预留候选未采用未启动。原干燥/负库存/高温assumed及全部旧FAIL保持、criterionNA/wholefalse。详见docs/FULL_CYCLE_P79_COOLING_REFINEMENT_INTERFACE.json/md。
+
+P78实际交付续勾：HEAD/remote=79495f1967bde108ba0adccafc079bf0fd0613f9，完整52219252B/67108864B；Drive=1358750B/id=1avH5DDOL7J3WvTN4NT3rnMLt2mA72uUe，metadata匹配/access_not_verified/actualrestore0。独立协调末封账735631B本轮必要全量计入，不借其PASS/headroom。
+
+- [x] **P79-A** freshGit/磁盘/独立完整gate与原八reserve+2MiB；P75/P78两完整input、原52sources及直接持续授权登记。
+- [x] **P79-B** 新独立producer与conditional30s数值合同；原758records和52source/strictloader保持、有效config与solver条件同源、原保存case及source50/51/53身份分清。
+- [x] **P79-C** 直接/继承入口、JSON列表array边界、完整storage/U/S/F/signedwork/原分母/zero规则静态审查；原负库存分类，不断单因不修阈值。
+- [x] **P79-D** 最小离线CLI与1load/ctor0initial1BDF1decode/value/interval、未知solver真实counter、120s4MiB64MiB+原预留候选登记未采用未启动；实际科学全部0。
+- [ ] **P79-E** 新入口运行与条件时间步比较未执行；全模型/工艺/最新加密三方案反演及材料资格仍未完成。
+- [ ] **D79-GIT** 八明确本轮路径正常后继和普通push。
+- [ ] **D79-DRIVE** 原folder一次必要静态增量metadata，实际恢复和历史存储另列。
+- [ ] **P79-FINAL** 全necessarysource/input/root/oldstagedblob/freeze/report/adminformal/archive/末self完整收口，不退原预留。
+
+科学wall/CPU均null，因为本轮未执行科学任务；行政真实耗时另见staticreport与finalreceipt。原P01–P08验收缺口按实证推进，不能用本静态阶段号或未来局部残差降低当全模型完成。
