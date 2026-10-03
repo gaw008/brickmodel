@@ -1,5 +1,10 @@
 # 全流程近似烧结砖模型：当前执行规范（2026-09-26）
 
+P76 原cooling与cooling_hold两段真实完成：hold133200→154800→162000s，共用窗口wall81.361072333s/CPU80.567048000s，八科学文件合计4012487B/4194304B；2CLI/load/ctor/原BDFsolve/新y275/source51端点，0initial/势/state_dynamics/summary/fitUQ，第二输入严格是首段实际输出，deadline重置0/重试0。真实RHS23116/Jac134；降温端T327.619110–333.983568K，最终T298.153449–298.154181K。实际原8stage端点及5原生continuationlinks齐全，但无保存t0原生y或完整各端U/S库存，producer原prefix/fullcyclefalse保持；不等于物理验收。两冷端域内不授温热中途source/material资格，三项高温assumed延拓、原干燥FAIL与其他失败保持。758records原样、144literature614assumed0measured、criterionNA/wholefalse。下一最小9state完整库存/端点账本候选仅登记未采用未启动；不自动重复瞬时投影。详见docs/FULL_CYCLE_P76_COOLING_COMPLETION.json/md。
+
+### P75及更早当时记录
+
+
 P75 原hold126000→133200s已真实续算完成：先保留P74两处错误P73reactions路径历史并静态纠正为真实P73sintering完整输入，不建alias、不用P71、不重建初态。strict51load/ctor路径声明、0initial/1原BDFsolve/1新y275/source51端点，势/state_dynamics/summary/fitUQ0。rc0/reaped，wall2.149399333s/CPU1.935516000s，科学全部2006371B/4194304B，300s唯一窗口关闭无科学重试；实际RHS422/Jac1，nfev/njev/nlu=266/1/28。T1223.149979234–1223.149995956K，q-0.000141480844976–-0.00013509899223。758完整records与51科学源全保持，144literature614assumed0measured；三项来源越域assumed、旧失败/criterionNA/wholefalse保持。预算flat-schema读取失败与重复行政调用留证，科学0后显式简化再freshgate。下一原cooling+cooling_hold两段单独候选未启动。详见docs/FULL_CYCLE_P75_HOLD_CONTINUATION.json/md。
 
 ### P74及更早当时记录

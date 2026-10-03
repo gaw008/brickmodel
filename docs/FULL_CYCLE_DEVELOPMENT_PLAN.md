@@ -1555,8 +1555,26 @@ P74真实交付续勾依据：HEAD/remote=00532b0c0e6b4fce8b7a2388aac27a1d964c07
 - [x] **P75-C** rawq/T/actualcounters/原nativeledger signed归约及三项越域assumed/负值/旧fail保持。
 - [x] **P75-D** 按实结果登记最后cooling/cooling_hold两个顺序原段的独立300s4MiB64MiB候选，未采用未启动。
 - [ ] **P75-E** 最新完整周期守恒、受影响加密/三方案反演与材料资格仍未完成。
-- [ ] **D75-GIT** 七本轮root/docs路径正常后继和普通push。
-- [ ] **D75-DRIVE** 原folder一次必要增量metadata，actualrestore另列。
-- [ ] **P75-FINAL** 全必要source/原纠正候选/input/blob/freeze/报告/admin/archive/末self完整收口。
+- [x] **D75-GIT** 七本轮root/docs路径正常后继和普通push。
+- [x] **D75-DRIVE** 原folder一次必要增量metadata，actualrestore另列。
+- [x] **P75-FINAL** 全必要source/原纠正候选/input/blob/freeze/报告/admin/archive/末self完整收口。
 
 P74-E与完整模型保持未完成：P75实际推进原hold，不重复点projection；后续以原冷却两段和完整过程证据为主，不以新增阶段编号当模型完成。原八reserve+额外2MiB不减，0本窗追加科学。
+
+
+### P76 新内部采用的原 cooling/cooling_hold 两段
+
+P76 原cooling与cooling_hold两段真实完成：hold133200→154800→162000s，共用窗口wall81.361072333s/CPU80.567048000s，八科学文件合计4012487B/4194304B；2CLI/load/ctor/原BDFsolve/新y275/source51端点，0initial/势/state_dynamics/summary/fitUQ，第二输入严格是首段实际输出，deadline重置0/重试0。真实RHS23116/Jac134；降温端T327.619110–333.983568K，最终T298.153449–298.154181K。实际原8stage端点及5原生continuationlinks齐全，但无保存t0原生y或完整各端U/S库存，producer原prefix/fullcyclefalse保持；不等于物理验收。两冷端域内不授温热中途source/material资格，三项高温assumed延拓、原干燥FAIL与其他失败保持。758records原样、144literature614assumed0measured、criterionNA/wholefalse。下一最小9state完整库存/端点账本候选仅登记未采用未启动；不自动重复瞬时投影。详见docs/FULL_CYCLE_P76_COOLING_COMPLETION.json/md。
+
+P75真实交付续勾依据：HEAD/remote=cf64de49f6da7d5f7b958ef0ba7ee6f95db497e6；actual=17162065B/conservative=46522193B；Drive=1680001B/id=1eaVlRzv7q_zVpF3u1oWQ3mPR_gT6BNmP，metadata匹配/access_not_verified/restore0。P75原候选proposal0保持，P76另内部采用，当前窗口结束0剩余。
+
+- [x] **P76-A** freshGit/磁盘/完整gate及51source、758records冻结，原预留不缩减。
+- [x] **P76-B** 共用300s窗口实际两原段、第二input=首段实际输出、2load/ctor/solve/endpoint、0initial，八science文件合计4MiB内，唯一窗口关闭无重试。
+- [x] **P76-C** rawT/q/char、计数和七反应/四gas/U/S累计signed归约；两冷端域内与原温热assumed外推分别记录。
+- [x] **P76-D** 六完整输入先登记全bytes后只读，核对8原stage端点及5originlinks；明确t0与完整库存缺失并登记最小9state库存/账本候选，未采用未启动。
+- [ ] **P76-E** 最新完整八stage物理/数值验收、时间/网格加密、三方案/反演及待实测资格仍未完成，原名义干燥FAIL保留。
+- [ ] **D76-GIT** 七本轮root/docs paths正常后继/普通push。
+- [ ] **D76-DRIVE** 原folder一次必要小增量metadata；实际恢复与历史存储另列。
+- [ ] **P76-FINAL** 全source/root/六savedinputs/freezes/oldstagedblob/archive/admin/末receipt自身完整收口。
+
+原P01–P08只按最新独立验收继续，八端点覆盖不替换其中物理与工程失败。真实wall/CPU来自execution；当前报告仅saved字段身份与原尺度signed算术，无追加科学调用。变更文件为根参数行政记录、spec/report/plan/goal及P76json/md七路径，生产51source与全部758原参数不变。
