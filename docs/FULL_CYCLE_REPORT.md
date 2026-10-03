@@ -1,5 +1,15 @@
 # 全流程近似模型交付报告
 
+P64 正常源码目录 CLI 已实际导出原生势与梯度（2026-10-03T01:53:00.358897+00:00）。Research/src 正常模块解析，无安装或环境注入；一次 rc0/reaped，wall 1.526735833s、CPU 0.709965s，科学输出 701052B/2097152B。1构造/1初态/1chart、15完整值含baseline及14方向，RHS/Jac/ODE/summary/predict/fit/UQ均0。根729=144literature/585assumed/0measured，旧710完整records未变；无物理源码修改。
+
+13格/298.15K、mode3/Ca1实际初态：U=-3900077.805570853J、S=305.2967543342309J/K、F=sum(U_i-T_i*S_i)=-3991102.032875604J；cell-native U=-9.313225746154785e-10J、S=0J/K。14×13 U/S/F梯度与全部signed组件/机械残差/温度恒等式保留；机械maxabs=1.112639438360929e-07Pa，温度maxabs=9.094947017729282e-12J。无采用的独立阈值，一律criterion_not_applicable；q载体零及q导数零只限该初态。真实NumPy输出仅资格本对象/入口，不扩展fit/UQ。继承底层次数源码预测与真实public completed计数分列。
+
+P63 preimport失败保留，不被P64重写；P45净U与P34/P40/P44/P50撤回/P51/P58/P60/P61-32失败保留。历史名义余水0.1358920787402553%>0.1%、CaO零预算nullfalse、0measured/whole_model_complete=false保持。最新八阶段/加密/三方案/反演及summary/dynamics仍未完成。下一state_dynamics只是基于真实P64数据的明确候选，当前新科学额度0；需独立采用case/调用/判据及完整预算，不能移用旧缓存/P45/P50/累计S门槛。
+
+独立预launch完整34518344/67108864B，八reserve27262976B不下降；最终actual/Git/档案/末receipt自身另读runs/full-cycle/p64-potential-source-entry/final-delivery-state.json。Git、Drive元数据、实际恢复、历史20GB/GitHub容量分别判断，本轮恢复0。详见docs/FULL_CYCLE_P64_POTENTIAL_SOURCE_ENTRY.json/md。
+
+### P63及更早记录（各自当时状态）
+
 P63 完整生产势接口源码已实现，唯一实际CLI启动在包导入前失败（2026-10-03T01:22:07.770694+00:00）。`potential_values/native_potential_state/potential_derivatives`、保旧归约顺序的summary共享assembler及`--potential-state`已接线，5源静态语法通过；原RHS/物理率链保持。根710=144literature/566assumed/0measured，旧691完整records保持，新增19仅操作policy。实际一次请求`.venv/bin/python -B -m sludge_vme.cli`在Research根cwd下报`ModuleNotFoundError: No module named 'sludge_vme'`，未进入CLI main/项目包/constructor/initial/chart/势；子进程rc1/reaped，launch-to-reap 0.089903041s，CPU 0.020705000s，stdout0B/stderr178B。120s唯一窗口关闭，0重试；时间/必要输出容量未超额不等于功能通过。完整原预检36414030/67108864B、八reserve27262976B保持，最终actual及Git/archive另读末receipt。
 
 没有实际U/S/F/梯度/机械或温度输出，NumPy序列化分支仍未执行；summary0、RHS/Jac/ODE/predict/fit/UQ0，不能授独立势、功率或全周期PASS。逐坐标/机械/温度无原判据，criterion_not_applicable；原P45/P50/累计S门槛不移用。名义历史余水0.1358920787402553%>0.1%、CaO零预算nullfalse、P45净U3.039630569777313e-9>1e-11及P34/P40/P44/P50撤回/P51/P58/P60/P61-32失败、0实测/wholefalse保持。P62audit不自动复制newpotentialfields，不称inverse/UQ已保留或参数Jacobian。源与执行冻结、原失败stdout/stderr完整保留。
