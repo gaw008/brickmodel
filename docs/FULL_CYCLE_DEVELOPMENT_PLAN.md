@@ -1501,8 +1501,26 @@ P71真实交付续勾依据：HEAD/remote=7606af6a6243dd5834b889941ce624189323b4
 - [x] **P72-C** 保留原生/梯度U/S/newF/真实Vdot压功/带符号差和实际CaO/载体/弱phase；criterionNA不授独立PASS。
 - [x] **P72-D** 当前差未定位漏项，按实际qdot/弱phase登记下一原sintering115200→126000单段300s4MiB64MiB候选，未启动。
 - [ ] **P72-E** 充分phase/最新完整8stage守恒与受影响加密/比较反演及材料资格仍未完成。
-- [ ] **D72-GIT** 七本轮root/docs paths正常后继/普通push。
-- [ ] **D72-DRIVE** 原folder必要一次小增量metadata，实际恢复另列。
-- [ ] **P72-FINAL** 全source/root/input/freezes/oldstagedblob/archive/末receipt自身收口。
+- [x] **D72-GIT** 七本轮root/docs paths正常后继/普通push。
+- [x] **D72-DRIVE** 原folder必要一次小增量metadata，实际恢复另列。
+- [x] **P72-FINAL** 全source/root/input/freezes/oldstagedblob/archive/末receipt自身收口。
 
 P70-E/P71-E中strict51load与同事件势/功率部分由P72完成；充分phase和完整物理资格仍缺，不能整项勾选。0新物理参数、0测量、0下一科学窗口。后续推进原下一段获得有意义phase状态，而不是重复点诊断或仅流水号；全部旧process/physical/resource失败保持。
+
+
+### P73 新内部采用的原 sintering 单段
+
+P73 原sintering独立续算真实完成：从P71 reactions115200s/y275至126000s，strict51load/ctor路径声明、0initial/1原BDFsolve、1新y275/source51端点，势/state_dynamics/summary/fitUQ0。rc0/reaped，wall6.713187208s/CPU6.480378000s，科学全部2006326B/4194304B，300s窗口关闭无重试；实际RHS1672/Jac8，nfev/njev/nlu=424/8/50。T1217.111809–1221.681264K，q-0.525843740–-0.351902963，signed推进57.239400269–60.096009625；已取得有意义后续相变坐标，但未独立计算fraction/phase功率/守恒。12格均越portlandite700K/calcite1200K caloric及H2Oviscosity1173.15K原源上界，沿旧assumed延拓不授source/material/continuous资格。758records原样、144literature614assumed0measured、criterionNA/wholefalse与全部旧失败保持。下一同端点1event15values仅登记未启动。详见docs/FULL_CYCLE_P73_SINTERING_CONTINUATION.json/md。
+
+P72真实交付续勾依据：HEAD/remote=34561a845757f960b6c651c2b8e243af834ea732；actual=15429579B/conservative=44789707B；Drive=1584917B/id=16OVcL5cYWtLSzCw2bqTSYI89u6wKnNIv，metadata匹配/access_not_verified/restore0。P72原候选proposal0保持，P73另内部采用。
+
+- [x] **P73-A** freshGit/磁盘/完整gate/严格51source输入与758records冻结保护。
+- [x] **P73-B** 原115200→126000 sintering实际1solve/0initial，y275/source51完整端点写出，唯一窗口关闭。
+- [x] **P73-C** rawq/temperature/counters及七反应、四gas、U/S累计槽signed归约，逐物种来源边界与旧失败保持。
+- [x] **P73-D** 依据actual nearzero q登记同端点strict51+1event15values候选120s4MiB64MiB，未启动。
+- [ ] **P73-E** 实际phase功率/机械coupling、最新完整8stage守恒和受影响加密/三方案/反演及材料资格仍未完成。
+- [ ] **D73-GIT** 七本轮root/docs paths正常后继/普通push。
+- [ ] **D73-DRIVE** 原folder一次必要小增量metadata，实际恢复另列。
+- [ ] **P73-FINAL** 全source/root/input/freezes/oldstagedblob/archive/末receipt自身收口。
+
+P72-E仍未整体勾选：P73取得真实烧结后续q，却未独立导出其phase储能和机械products。真实科学wall/CPU来自execution；报告是读取saved字段和原尺度归约，0新增科学调用。758原records与51生产源全部保持。

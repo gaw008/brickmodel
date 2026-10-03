@@ -1,5 +1,10 @@
 # 全流程近似烧结砖模型：当前执行规范（2026-09-26）
 
+P73 原sintering独立续算真实完成：从P71 reactions115200s/y275至126000s，strict51load/ctor路径声明、0initial/1原BDFsolve、1新y275/source51端点，势/state_dynamics/summary/fitUQ0。rc0/reaped，wall6.713187208s/CPU6.480378000s，科学全部2006326B/4194304B，300s窗口关闭无重试；实际RHS1672/Jac8，nfev/njev/nlu=424/8/50。T1217.111809–1221.681264K，q-0.525843740–-0.351902963，signed推进57.239400269–60.096009625；已取得有意义后续相变坐标，但未独立计算fraction/phase功率/守恒。12格均越portlandite700K/calcite1200K caloric及H2Oviscosity1173.15K原源上界，沿旧assumed延拓不授source/material/continuous资格。758records原样、144literature614assumed0measured、criterionNA/wholefalse与全部旧失败保持。下一同端点1event15values仅登记未启动。详见docs/FULL_CYCLE_P73_SINTERING_CONTINUATION.json/md。
+
+### P72及更早当时记录
+
+
 P72 真实reactions115200s端点strict51load与同事件投影已完成：rc0/reaped，wall0.950378875s/CPU0.679432000s，科学全部1445502B/4194304B，120s窗口关闭。1load/ctor路径声明、0initial、实际1nativeRHS/rate/chart及15完整势，JacODEsummaryfitUQ0。Udot原生28.263728917584093W/投影28.26372891758409W/signed差-3.552713678800501e-15W；原Sdot=-0.000525131632333618W/K，投影对原全局signed差+4.336808689942018e-19W/K，派生Fdot差-7.105427357601002e-15W。CaO库存0.13241213422851839mol，实际phase功率3.6120133845024145e-25W仍极弱；qdot0.00498424–0.00660763/s。当前差未定位具体漏项，不证明浮点原因或独立PASS；下一价值在原sintering真实后续状态。758records未变/144literature614assumed0measured、OH700K越域assumed、旧失败与criterionNA/wholefalse保持。详见docs/FULL_CYCLE_P72_REACTIONS_DYNAMICS.json/md。
 
 ### P71及更早当时记录
