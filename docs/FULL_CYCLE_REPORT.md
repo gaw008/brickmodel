@@ -1,5 +1,11 @@
 # 全流程近似模型交付报告
 
+P82 三条organic/char共用离散extent合同设计完成；0科学调用/窗口/源码状态求解器实现，原53source和758完整记录保持。a=organic氧化/b=organic碳化/d=char氧化共享更新o−a−b、c+b−d、O2−a−d、H2O+a+b、CO2+a+d及N2不变；联合F要求a/b/d≥0、a+b≤o、d≤c+b、a+d≤O2。非负初库存给端点计量非负与C/H/O/N质量守恒；精确零可用供体零消费，初始零char允许出生后同一步消费，但端点F不证明内步路径。jointBE在已存在有限非负完整k解条件下o+=o/(1+h(ka+kb))、c+=(c+hkb o+)/(1+hkd)，氧方程必须同时解；完整气热力相/氧域存在唯一未证明，gas log精确零只写极限。原完整μ/rate/ν/U/S/外压功和signed其他反应全部列明，末点affinity耗散不推出实际ΔS−Ie≥0，完整离散U/S链式与solver/Jac/domain未实现未资格。BE是新一阶方法，不能继承BDF/NDF1–5/原log库存步进与精度。源身份/负checkpoint不能无损迁移的边界保持。下一仅完整nativeU/S与jointextent链式的静态设计候选未采用，P80finalcooling_hold仍未采用。原负char/干燥0.1358920787402553%>.1%、CaO nullfalse/undefined、P45float/全部旧science资源FAIL、最终time/grid/peak/三方案反演/源外推/0measured/wholefalse保留。详见docs/FULL_CYCLE_P82_JOINT_REACTION_DISCRETE_CONTRACT.md/json。
+
+P82两条独立AI符号审查已合并（不是新的人类批准/额度）：N_a=N_b+N_d、rank2/零方向(1,-1,-1)，净u=a+b/vnet=a+d，库存与同端态U/S不能识别lambda通道，但三原A/E/G/氧因子率闭合仍可指定给定合法X/h的三extent，不能据rank2断根非唯一/Jac必奇异。两净残差Ru=u−h(ra+rb)、Rv=vnet−h(ra+rd)+a=h ra已列；原physical字段/辅助路径不把累计三槽当供体，减少变量须保留T/gas/力学/相/时钟与原context约束。耗尽gas/organic有限图与严格内点氧根条件、负输入P0仍负、独立Ip不可事后定义为ΔS−Ie均明确。下一候选收窄为net状态映射与耗尽/氧内点根域的有界静态合同，未采用/0science，不直接扩为全部耦合新solver。初始dispatch1、AI反馈2、行政来源纠正1，真实直接人类授权仍原2351B文本，原human标签保留历史并更正。
+
+### P81及更早当时记录
+
 P81 原生 char 非负静态研究完成；生产科学调用 0，53 源码普通字节和原 758 完整参数保持。连续式 dc/dt=P(y,t)−K(y,t)c 在有限正域/非负供体/非负初值及解存在唯一条件下有非负不变性；完整耦合域正则与 BDF 离散非负未证明。实际名义初始 char=0.005 kg/kg，并非零；原范围含零，不能以 seed/log 假定消除零生成问题。36 行原 f5*1.5611080120226133mol 与 P78/P80 已存库存逐格一致，负号已在 f5 中：P75 incoming负1/3/5/8/11，P76coarse负1/5/6/7/10，P80refined负0/2/3/5/7/10；正到负0/2/7/10、负到负3/5。coarse/refined最小值−1.2646807323299508e−18/−8.581861576534481e−20mol，strict false保持。必要原extent线性不变量 signed算术只说明浮点表达关系，不能唯一定位内部成因或覆盖原状态。Ca fraction余量重建与OH线性库存不同，不扩大修复。log/square/移位坐标/单独char更新/积分因子均未证明满足全耦合精确零和原计量U/S；下一仅三条organic/char共用extent非负离散合同的静态候选，proposal_not_adopted，未实施/未分配数值；P80 finalcooling_hold候选同样未采用。原drying/CaO nullfalse/P34-P45/P50撤回/P51及资源FAIL、最新finaltime/grid/peak/三方案反演/材料缺口保持，758=144literature614assumed0measured，wholefalse。详见 docs/FULL_CYCLE_P81_CHAR_NONNEGATIVITY_STUDY.md/json。
 
 ### P80及更早当时记录
