@@ -1,5 +1,10 @@
 # 全流程近似烧结砖模型：当前执行规范（2026-09-26）
 
+P69 已用真实P68 heating原生端点t97200s完成唯一saved-state导出：rc0/reaped，wall1.661012708s/CPU0.715526000s，科学全部1438584B/4194304B，120s窗口已关闭。1load/1构造声明、0initial、实际1nativeRHS/rate/chart、15完整势值，Jac/ODE/summary/fit/UQ0；source50普通文本匹配，758完整records不改，144literature/614assumed/0measured。原生与投影Udot均2.0827150877870784W、Sdot均0.001825961403377241W/K；U对外部signed差4.440892098500626e-16W，派生Fdot差3.3306690738754696e-16W。实际metakaolin非零、qdot非零，但phase总功率8.347174595727095e-39W，仍不授充分液相/全周期资格。criterionNA/wholefalse；原干燥/物理/资源失败保持。详见docs/FULL_CYCLE_P69_HEATING_DYNAMICS.json/md。
+
+### P68及更早当时记录
+
+
 P68 新批准的真实nominal三端点采集已完成：rc0/reaped，wall83.251448208s/CPU82.261245000s，科学全部2025102B/4194304B，唯一300s窗口关闭。1构造/1初态/3solve，实际RHS23568/Jac125，0加载/势/state_dynamics/summary/fit/UQ。758完整records未变，144literature/614assumed/0measured，原12格mode0Ca0/directoff与8knots保持。3原生y各275及50源/config/context真实保存；heating实际T671.012175–671.432721K，脱羟累计0.0031031435281507207mol，q=-73.788495至-73.788437，载体账本非零不等液相充分激活。未算新守恒/功率/加密/材料资格，criterionNA/wholefalse；后续同状态loader+1event15values仅独立提案未采用。详见docs/FULL_CYCLE_P68_NATIVE_ENDPOINTS.json/md。
 
 ### P67及更早当时记录

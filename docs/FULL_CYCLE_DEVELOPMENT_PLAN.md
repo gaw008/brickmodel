@@ -1429,8 +1429,26 @@ P67交付续勾依据：HEAD/remote=ce65f2441066d69ba1e43d1c57d3a2af507a14cc，a
 - [x] **P68-C** 只读保存raw/账本和实际public/solver计数，signed与来源范围/phase弱激活保留。
 - [x] **P68-D** 基于真实heating状态提出独立loader+1event15values方案，未采用，当前新科学窗口0。
 - [ ] **P68-E** saved-state动态加载/势功率、非零carrier/充分phase耦合及独立物理资格：本轮不执行。
-- [ ] **D68-GIT** 七个本轮明确paths正常后继/普通push，待真实末收据。
-- [ ] **D68-DRIVE** 原folder一次必要小增量，metadata不等恢复。
-- [ ] **P68-FINAL** 全实际source/root/input/freezes/原及stagedblob/一archive/末收据自身收口，不递归commit/upload。
+- [x] **D68-GIT** 七个本轮明确paths正常后继/普通push，待真实末收据。
+- [x] **D68-DRIVE** 原folder一次必要小增量，metadata不等恢复。
+- [x] **P68-FINAL** 全实际source/root/input/freezes/原及stagedblob/一archive/末收据自身收口，不递归commit/upload。
 
 P67-E拆分：其中真实端点采集已由P68完成；加载/动态/相耦合整体未完成，不将其整项勾成PASS。P01–P08未满足模型项、全部原工艺/物理/资源失败和材料待实测保留。
+
+
+### P69 新批准的真实heating saved-state导出
+
+P69 已用真实P68 heating原生端点t97200s完成唯一saved-state导出：rc0/reaped，wall1.661012708s/CPU0.715526000s，科学全部1438584B/4194304B，120s窗口已关闭。1load/1构造声明、0initial、实际1nativeRHS/rate/chart、15完整势值，Jac/ODE/summary/fit/UQ0；source50普通文本匹配，758完整records不改，144literature/614assumed/0measured。原生与投影Udot均2.0827150877870784W、Sdot均0.001825961403377241W/K；U对外部signed差4.440892098500626e-16W，派生Fdot差3.3306690738754696e-16W。实际metakaolin非零、qdot非零，但phase总功率8.347174595727095e-39W，仍不授充分液相/全周期资格。criterionNA/wholefalse；原干燥/物理/资源失败保持。详见docs/FULL_CYCLE_P69_HEATING_DYNAMICS.json/md。
+
+P68交付续勾依据：HEAD/remote=c4994896a814a655197fe1e072d830bb3b27f8f3；actual=12792390B/conservative=42152518B，Drive=1358550B/id=1Il7qd-Uo_N6SWijyvyRif_8qLrMQ9_jm，name-size-parent一致/access_not_verified/restore0。旧P68候选history0不重写，P69另登记直接批准。
+
+- [x] **P69-A** 当前Git/磁盘/新授权、完整独立gate和原生输入/source冻结。
+- [x] **P69-B** 唯一saved-state生产CLI已完成，1.661013s/1438584B，1event15values，0initialODE，窗口关闭。
+- [x] **P69-C** 原始signed U/S/派生F/Vdot/压力功/14×12产品与非零carrier/q导数留证，不授独立PASS。
+- [x] **P69-D** 登记下一静态native续算接口范围与未来独立300s/4MiB/64MiB候选，0后续数值启动。
+- [ ] **P69-E** 充分phase耦合、最新完整8stage物理数值/受影响加密/三方案反演资格仍未完成。
+- [ ] **D69-GIT** 七明确paths正常后继/普通push，待实际末收据。
+- [ ] **D69-DRIVE** 原folder一次必要小增量metadata，实际恢复另列。
+- [ ] **P69-FINAL** 全source/root/input/freezes/原及stagedblob/一archive/末收据自身收口。
+
+P68-E仅saved-state加载/动态/投影部分由P69真实完成；充分phase/独立物理资格仍不满足，不整项勾选。实际scientific wall/CPU来自execution.json；后处理只读stdlib不额外调用科学算子。连续常规研发已由人类授权，下一依赖接口直接推进；P69本窗口结束后由协调接续单写者，不复用余时。
