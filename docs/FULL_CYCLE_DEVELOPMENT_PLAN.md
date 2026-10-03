@@ -1465,8 +1465,26 @@ P69真实交付续勾依据：HEAD/remote=00081b22fdb12ba07c338d36eb0b893fd3bc6d
 - [x] **P70-C** 新source AST与50ordinarytext/bytes/scoped diff静态证据；实际science全部0。
 - [x] **P70-D** 完整真实reactions单段argv/case/context/gas/solver/calls/300s4MiB64MiB独立候选登记，未数值执行。
 - [ ] **P70-E** 实际原生续算/新端点JSON/51份身份load、phase/物理数值资格未执行或未完成。
-- [ ] **D70-GIT** 八明确paths正常后继/普通push。
-- [ ] **D70-DRIVE** 原folder一次必要小增量，metadata不等实际恢复。
-- [ ] **P70-FINAL** 全source/root/必要input/freezes/原及stagedblob/一archive/末receipt自身收口。
+- [x] **D70-GIT** 八明确paths正常后继/普通push。
+- [x] **D70-DRIVE** 原folder一次必要小增量，metadata不等实际恢复。
+- [x] **P70-FINAL** 全source/root/必要input/freezes/原及stagedblob/一archive/末receipt自身收口。
 
 旧P69-E、完整P01–P08未满足项与全部失败不重写。下一依赖满足项为独立采用原reactions一段候选、freshgate后唯一生产调用；本P70静态窗口不继承任何P69剩余时间、不追加load/ctor/数值。
+
+
+### P71 新内部采用的实际原reactions单段
+
+P71 独立原reactions续算已真实完成：从P68实际97200s/y275续至115200s，0initial/1savedload构造声明/1BDFsolve，新y275与51source/config/context保存，0summary/势/state_dynamics/fit/UQ。rc0/reaped，wall35.968494625s/CPU35.703364000s，科学全部2006055B/4194304B，300s窗口关闭无重试；实际RHS9701/Jac56、nfev965/njev56/nlu157。温度1049.684203–1066.635128K，q=-60.621853至-57.591303，脱羟累计0.30503219151407235mol/新增0.30192904798592163mol，脱碳新增0.13241213422851836mol。q仍很负，未算液相/耦合功率；12endpoint均越700K hydroxide来源上限，旧assumed解析延拓不授domain/materialPASS。758records全保持、144literature/614assumed/0measured，原失败与criterionNA/wholefalse保持。详见docs/FULL_CYCLE_P71_REACTIONS_ENDPOINT.json/md。
+
+P70真实交付续勾依据：HEAD/remote=bebe45854be2624d3a92a16112463a0148e2b6fd；actual=13585283B/conservative=42945411B；Drive=1283827B/id=1ZU_yl3GMHG4E_zadwgJ3bFs9WmJZs8vM，metadata匹配/access_not_verified/restore0。P70历史候选proposal0保持，P71另内部采用，不重复问已授权常规事项。
+
+- [x] **P71-A** freshGit/磁盘/完整gate/51source冻结与758records保护，独立内部采用。
+- [x] **P71-B** 原生97200→115200单段续算实际1solve/0initial，新y275/config/source51真实写出，rc0/35.968495s/2006055B，窗口关闭。
+- [x] **P71-C** 保存原始q/温度/public计数/带符号反应与边界能量熵账本，700Ksource越域/弱phase限制和全部失败保持。
+- [x] **P71-D** 根据真实reactions状态登记独立strict51load+1event15values候选120s4MiB64MiB，未采用/未启动。
+- [ ] **P71-E** 新51身份动态load/势与耦合功率、充分phase/完整8stage物理数值加密资格仍未完成。
+- [ ] **D71-GIT** 七明确本轮root/docs路径正常后继/普通push。
+- [ ] **D71-DRIVE** 原folder一次必要小增量，metadata不等实际恢复。
+- [ ] **P71-FINAL** 全source/root/input/freezes/原及stagedblob/一archive/末receipt自身收口。
+
+P70-E中实际原生续算/新端点JSON部分由P71完成；新51身份实际load及phase/物理资格仍缺，不整项勾选。P69/P70历史科学资格不改，P01–P08未满足模型項和全部原工艺/资源失败保持。真正计算wall/CPU来自execution，不将报告读取称新科学运行。

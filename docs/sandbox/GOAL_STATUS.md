@@ -2735,3 +2735,8 @@ P69 已用真实P68 heating原生端点t97200s完成唯一saved-state导出：rc
 ## P70 静态native续算生产模块
 
 P70 原生单阶段续算生产模块已静态实现，未运行模型。旧50源码/loader普通文本与bytes保持，新增full_cycle_continue.py以已有strictload承接P68完整case/context/t/y并调用原SciPy BDF、native rhs/jac及绝对时间全9knots。输出配置/source有旧50+新producer51份，既有loader按51份严格匹配；不绕身份、不重复前三段、不回initial、不新物理。实际load/ctor/initial/RHS/Jac/ODE/potential/summary/predict/fit/UQ均0，仅新模块AST与源码静态读取。758完整records未变，144literature/614assumed/0measured，criterionNA/wholefalse。后续原reactions97200→115200s、炉温673.15→1073.15K、rtol1e-5/atol1e-7/maxstep60s、独立300s/4MiB/64MiB只登记提案；须新内部采用和freshgate再数值。700K hydroxide越域沿旧assumed continuation，不授source/materialPASS或承诺phase激活。详见docs/FULL_CYCLE_P70_NATIVE_CONTINUATION.json/md。
+
+
+## P71 实际原生reactions续算
+
+P71 独立原reactions续算已真实完成：从P68实际97200s/y275续至115200s，0initial/1savedload构造声明/1BDFsolve，新y275与51source/config/context保存，0summary/势/state_dynamics/fit/UQ。rc0/reaped，wall35.968494625s/CPU35.703364000s，科学全部2006055B/4194304B，300s窗口关闭无重试；实际RHS9701/Jac56、nfev965/njev56/nlu157。温度1049.684203–1066.635128K，q=-60.621853至-57.591303，脱羟累计0.30503219151407235mol/新增0.30192904798592163mol，脱碳新增0.13241213422851836mol。q仍很负，未算液相/耦合功率；12endpoint均越700K hydroxide来源上限，旧assumed解析延拓不授domain/materialPASS。758records全保持、144literature/614assumed/0measured，原失败与criterionNA/wholefalse保持。详见docs/FULL_CYCLE_P71_REACTIONS_ENDPOINT.json/md。
