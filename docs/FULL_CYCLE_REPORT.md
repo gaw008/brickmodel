@@ -1,5 +1,10 @@
 # 全流程近似模型交付报告
 
+P88 唯一原烧结段115200→126000s paired60/30实际运行完成，wall14.229181667s/CPU13.752422000s，四science3466865B/4194304B，300s窗closed/reaped/0retry/0postwindow科学。原55sources/758完整records/144literature614assumed0measured及37context保持；2strict51load/ctor/BDF/endpointdecodevalueinterval、182publicrates+182center实际完成，0initial/baseline/reference重求；coarse/refined原RHS1672/1856、Jac8/7与nfev424/764独立计，低层primitive仍sourceforecast未测。各91原120s完整cell/surface/center采样峰18.2667389391K均在共用起点，peakrelative0不证相同内段/continuouspeak；内段span signeddiff−0.0006413720864→+0.001029235586K。phi/carbon/条件shrink relative 2.156810623e-10/1.105255333e-18/2.331563675e-08低原strict.02，signedcarbon由负到正、shrink仍负不clip。两端点质量/元素/完整U/S/四gas低原.1%，最坏relativecoarse3.452950141e-05/refined7.606667307e-06。严格非负仍false，mincondensed -1.372439673e-20→-2.754455551e-17mol变更负，char最小也变负；不能称非负改善。原输入、actualsolver完整275维t0及signeddelta分存且均同一输入；source55/context共享、三个config各一次，P78newreference条件化与历史t0 null/unavailable分开。只局部sintering time/sampledpeak/endpointPASS，原drying.1358920787402553%>.1%、CaO nullfalse/P45/resources/全部FAIL/高温三源assumed/direct合成290–350K及wholefalse保留。下一仅原reactions97200→115200配对接口的最小静态通用化候选未采用，无追加科学。GitDrive/恢复0/容量另receipt。详见docs/FULL_CYCLE_P88_SINTERING_TIME_COMPARISON.md/json。
+
+### P87及更早当时记录
+
+
 P87 独立烧结采样峰值时间比较producer55静态实现完成，原54源码普通bytes/strictloader/CLI/原758完整records及两冷却合同保持；0科学import/load/ctor/solve/rates/helper/势值和0窗口。独立sintering30s与未来300s/四science4MiB/full64MiB根政策已声明。未来同一P71实际115200s到126000s两原BDF60/30，各91个原120s采样，完整cell/surface/center温差峰；原输入、每条实际完整solver275维t0与signed delta分别保存。2strict51load/ctor/endpointdecodevalueinterval、182rates/182center及67方法条件循环源码forecast分开；内部solver工作当前未知。共享source55/config两effectivecases/context和完整input51subset来源明确，四science保守估算3965444B/4194304B、余量228860B，actual新输出/耗时未测。仅局部采样峰/端点，原P78newreference不冒充历史t0，原floors/signed负FAIL/drying.1358920787402553%>.1%/CaO nullfalse/P45/resources/0measured/highTassumed/wholefalse保持。完整可运行候选未采用未动态验证，当前不数值运行；GitDrive/恢复0/历史容量另receipt。详见docs/FULL_CYCLE_P87_SINTERING_TIME_INTERFACE.md/json。
 
 ### P86及更早当时记录
