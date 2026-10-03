@@ -1627,8 +1627,26 @@ P78实际交付续勾：HEAD/remote=79495f1967bde108ba0adccafc079bf0fd0613f9，�
 - [x] **P79-C** 直接/继承入口、JSON列表array边界、完整storage/U/S/F/signedwork/原分母/zero规则静态审查；原负库存分类，不断单因不修阈值。
 - [x] **P79-D** 最小离线CLI与1load/ctor0initial1BDF1decode/value/interval、未知solver真实counter、120s4MiB64MiB+原预留候选登记未采用未启动；实际科学全部0。
 - [ ] **P79-E** 新入口运行与条件时间步比较未执行；全模型/工艺/最新加密三方案反演及材料资格仍未完成。
-- [ ] **D79-GIT** 八明确本轮路径正常后继和普通push。
-- [ ] **D79-DRIVE** 原folder一次必要静态增量metadata，实际恢复和历史存储另列。
-- [ ] **P79-FINAL** 全necessarysource/input/root/oldstagedblob/freeze/report/adminformal/archive/末self完整收口，不退原预留。
+- [x] **D79-GIT** 八明确本轮路径正常后继和普通push。
+- [x] **D79-DRIVE** 原folder一次必要静态增量metadata，实际恢复和历史存储另列。
+- [x] **P79-FINAL** 全necessarysource/input/root/oldstagedblob/freeze/report/adminformal/archive/末self完整收口，不退原预留。
 
 科学wall/CPU均null，因为本轮未执行科学任务；行政真实耗时另见staticreport与finalreceipt。原P01–P08验收缺口按实证推进，不能用本静态阶段号或未来局部残差降低当全模型完成。
+
+
+### P80 独立采用与实际conditional冷却比较
+
+P80 conditional冷却时间比较实际完成：P75hold133200→154800仅1BDF/新端点/decode/completevalue/interval，0initial/0baseline/reference重求势；正常sourcecwd CLI rc0/reaped，wall36.516589209s/CPU36.182987s，四science2868740B/4194304B，唯一120s窗关闭无retry/0postwindow。实际RHS9809/Jac51，内部rates次数未独立动态测量，额外publicrates/dynamics/grad/projection/summary/fitUQ0。53source普通bytes/完整原37context/原758records/144literature614assumed0measured保持；唯一effective数值diffmaxstep60→conditional30，solver/casefile/nativebundle同源30，P75完整原case单独保留/source51→53严格身份明确。原cooling账本全部仍低0.1%，Nrelative0.050865556%→0.025452828%，O2gas0.045102942%→0.022650411%，N2gas0.036230527%→0.018122556%；U signed-2.967064090→+1.063239615J，S-0.003062536→+0.001344613J/K，绝对relative降低但符号flip保留，Al/Si非零分母下zero不变。char min-1.264680732e-18→-8.581861577e-20mol/negativecells5→6，strictnonnegativefalse，不clip/seed/阈值修复。新initial分母依赖/两端ptp非pathmax保持；只cooling不授最终cooling_hold三产品/峰温/网格/材料PASS，原drying/全部FAIL/高温assumed保持，criterionNA/wholefalse。下一仅最终cooling_hold比较静态候选未采用未启动。详见docs/FULL_CYCLE_P80_COOLING_TIME_REFINEMENT.json/md。
+
+P79实际交付续勾：HEAD/remote=498a75aaf546ddb0d681853d5b1d57b2ac96c0cd，完整44516056B/67108864B；Drive=1249767B/id=19Sp2IIkS_-rJE9ThzHugCA_LQ_pnzXY2，metadata匹配/access_not_verified/actualrestore0。独立协调末封账365666B本轮全量计入，不借其PASS/headroom。
+
+- [x] **P80-A** freshGit/磁盘/独立完整gate、两完整原input/source53/758records身份及直接持续授权，原八reserve+2MiB保留。
+- [x] **P80-B** 唯一真实cooling窗口1loadctor0initial1BDF/新endpoint/decode/value/ledger，120s/四science4MiB内且回收/关闭0retry。
+- [x] **P80-C** 完整effectiveconfig实际30s/原P75case分列、source51→53/37context保持；实际计数与未测内部rates明确，all原分母/signedlower/unchanged/U-Sflip/negative数量及最小值留存。
+- [x] **P80-D** 按实结果登记最小finalcooling_hold终态比较静态候选，当前未采用未启动，不自动再加密/继续。
+- [ ] **P80-E** 最新最终产品时间比较/连续峰温/网格/三方案反演及材料资格仍未完成，原工艺/物理FAIL/wholefalse保持。
+- [ ] **D80-GIT** 七本轮root/docs路径正常后继和普通push。
+- [ ] **D80-DRIVE** 原folder一次必要增量metadata；actualrestore/历史存储另列。
+- [ ] **P80-FINAL** 全source/input/root/oldstagedblob/freeze/effectivecase/真实outputs/报告/adminformal/archive/末self完整收口，不退原预留。
+
+P79-E仅新接口实际运行和cooling局部time比较由P80完成；其全模型/工艺/最终time-grid/三方案反演与材料余项不能整体勾选。科学真实wall/CPU见execution，窗口关闭后0额外科学；不新增tests/asserts/fixtures/SHA/memory/自动任务。

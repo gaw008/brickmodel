@@ -1,0 +1,2298 @@
+{
+  "schema": "P80_actual_conditional_cooling_time_refinement_report_v1",
+  "recorded_utc": "2026-10-03T15:02:26.685526+00:00",
+  "execution": {
+    "schema": "P80_unique_actual_conditional_cooling_CLI_v1",
+    "logical_jobs": 1,
+    "workers": 1,
+    "attempts": 1,
+    "argv": [
+      "/Users/wanggaoying/Research/brickmodel-github/.venv/bin/python",
+      "-B",
+      "-m",
+      "sludge_vme.models.full_cycle_cooling_refinement",
+      "/Users/wanggaoying/Research/brickmodel-github/parameters.full_cycle.json",
+      "--checkpoint",
+      "/Users/wanggaoying/Research/brickmodel-github/runs/full-cycle/p75-native-soak-continuation/native-checkpoints.json",
+      "--baseline-ledgers",
+      "/Users/wanggaoying/Research/brickmodel-github/runs/full-cycle/p78-endpoint-ledger-acquisition/endpoint-ledgers.json",
+      "--out",
+      "/Users/wanggaoying/Research/brickmodel-github/runs/full-cycle/p80-cooling-time-refinement"
+    ],
+    "cwd": "/Users/wanggaoying/Research/brickmodel-github/src",
+    "started_utc": "2026-10-03T14:52:34.854915+00:00",
+    "fixed_deadline_utc": "2026-10-03T14:54:34.854915+00:00",
+    "allocated_launch_to_final_reap_seconds": 120,
+    "scientific_output_limit_bytes": 4194304,
+    "prelaunch_conservative_complete_bytes": 40084698,
+    "declared_public_calls": {
+      "logical_jobs": 1,
+      "workers": 1,
+      "attempts": 1,
+      "strict_saved_checkpoint_load": 1,
+      "make_cycle": 1,
+      "native_initial_state": 0,
+      "original_cooling_BDF_solve": 1,
+      "actual_refined_native_endpoint": 1,
+      "native_potential_state": 1,
+      "complete_potential_values": 1,
+      "endpoint_interval_ledger": 1,
+      "baseline_potential_reevaluations": 0,
+      "initial_reference_reevaluations": 0,
+      "RHS_Jacobian_native_rates": "Unknown real solver work until execution; existing counters will be reported, no false zero forecast.",
+      "extra_public_rates": 0,
+      "state_dynamics": 0,
+      "instantaneous_projection": 0,
+      "potential_gradient_directions": 0,
+      "trajectory_summary": 0,
+      "predict": 0,
+      "fit": 0,
+      "UQ": 0
+    },
+    "inherited_source_forecast_not_runtime_counts": {
+      "qualification": "Static inherited entry counts for unchanged nominal branch, not actual P79 execution or dynamic primitive observations. No forecast of solver RHS/Jac/Newton/thermo work.",
+      "constructor": {
+        "make_cycle_public": 1,
+        "Thermoelastic_constructor_entry": 1,
+        "FiniteGas_constructor_entry": 1,
+        "FullCycle_constructor_entry": 1,
+        "logical_constructor_instances": 1,
+        "source_caloric_coefficients": 2,
+        "quartz_phase": 2,
+        "liquid_phase": 1,
+        "liquid_equilibrium_log_odds": 1,
+        "liquid_contrast_nonzero_cp": 2,
+        "native_unpack": 0,
+        "native_potential_state": 0,
+        "potential_values": 0,
+        "state_thermo": 0,
+        "initial_state": 0,
+        "reference_mutation": "Constructs initial_partition/b0/md/initial/vs0/vp0/es0/initialgas/scales/layout and all thermoelastic references. Loader restores savednumeric37 then partition/phase0/liquidreference. Constructor derived constitutive arrays use the identical saved physical config."
+      },
+      "initial_reference": {
+        "public_initial_state": 0,
+        "initial_reference_reevaluations": 0
+      },
+      "postsolve_native_decode": {
+        "native_potential_state": 1,
+        "native_unpack": 1,
+        "chart_assembly_from_decoded": 1,
+        "condensed_state_logical": 1,
+        "condensed_state_inherited_entries": 2,
+        "fixed_Newton_iterations_parameter": "numerics.mechanical_iterations",
+        "iterations_per_decode": 8,
+        "total_fixed_Newton_iterations": 8,
+        "elastic_response": 8,
+        "elastic_strain": 8,
+        "thermal_strain": 9,
+        "phase_eigenstrain": 9,
+        "phase_reference_volume": 8,
+        "quartz_phase": 9,
+        "liquid_order": 17
+      },
+      "postsolve_complete_values": {
+        "potential_values": 1,
+        "state_thermo": 1,
+        "thermo_logical": 1,
+        "thermo_inherited_entries": 3,
+        "source_caloric_integrals": 2,
+        "quartz_thermo": 1,
+        "quartz_polynomial": 5,
+        "liquid_phase": 2,
+        "liquid_equilibrium_log_odds": 2,
+        "liquid_contrast_nonzero_cp": 4,
+        "liquid_order_state_hs": 1,
+        "raw_skeleton_liquid_order": 1,
+        "quartz_phase_in_hs": 1,
+        "raw_skeleton_quartz_phase": 1,
+        "water_fractions": 1,
+        "retention_sites": 1,
+        "direct_skeleton_storage": 1,
+        "fixed_volume_direction_inventory_decode": 0,
+        "gradient_directions": 0,
+        "extra_newton": 0
+      },
+      "ordinary_identity_IO": {
+        "baseline_ledger_json_reads": 1,
+        "strict_loader_saved_json_reads": 1,
+        "inherited_strict_source_text_calls": 1,
+        "output_complete53_source_text_call": 1,
+        "baseline_hold_native_list_to_array": 1,
+        "baseline_inventory_or_potential_recompute": 0
+      },
+      "BDF_internal_work": "Existing native RHS/Jac and their inherited rates/unpack/thermo/Newton/complex operations run in the future solver only. Counts cannot be predicted as zero or inferred from one postsolve value count."
+    },
+    "timed_out": false,
+    "deadline_resets": 0,
+    "post_window_scientific_calls": 0,
+    "counter_qualification": "Completed existing production path declarations plus existing native RHS/Jac and potential/helper counters. Solver internal rates and other primitives are not independently dynamically counted; no added probes.",
+    "pid": 38552,
+    "finished_utc": "2026-10-03T14:53:11.371620+00:00",
+    "returncode": 0,
+    "reaped": true,
+    "launch_to_final_reap_seconds": 36.51658920897171,
+    "child_CPU_seconds": 36.182987000000004,
+    "unique_science_window_closed_no_retry": true,
+    "remaining_science_windows": 0,
+    "scientific_outputs": [
+      {
+        "path": "/Users/wanggaoying/Research/brickmodel-github/runs/full-cycle/p80-cooling-time-refinement/case-parameters.json",
+        "bytes": 636538
+      },
+      {
+        "path": "/Users/wanggaoying/Research/brickmodel-github/runs/full-cycle/p80-cooling-time-refinement/refined-cooling.json",
+        "bytes": 2230086
+      },
+      {
+        "path": "/Users/wanggaoying/Research/brickmodel-github/runs/full-cycle/p80-cooling-time-refinement/cli.stdout",
+        "bytes": 2116
+      },
+      {
+        "path": "/Users/wanggaoying/Research/brickmodel-github/runs/full-cycle/p80-cooling-time-refinement/cli.stderr",
+        "bytes": 0
+      }
+    ],
+    "scientific_output_total_bytes": 2868740,
+    "time_output_cap_passed": true,
+    "CLI_cap_completed": true,
+    "output_JSON_read_success": true,
+    "actual_completed_production_calls": {
+      "saved_checkpoint_load": 1,
+      "make_cycle": 1,
+      "native_initial_state": 0,
+      "solve_ivp_completed": 1,
+      "native_refined_endpoint": 1,
+      "native_potential_state": 1,
+      "complete_potential_values": 1,
+      "endpoint_interval_ledger": 1,
+      "baseline_potential_reevaluations": 0,
+      "initial_reference_reevaluations": 0,
+      "native_RHS_counter": 9809,
+      "native_Jacobian_counter": 51,
+      "extra_public_rates": 0,
+      "state_dynamics": 0,
+      "instantaneous_projection": 0,
+      "potential_gradient_directions": 0,
+      "trajectory_summary": 0,
+      "predict": 0,
+      "fit": 0,
+      "UQ": 0
+    },
+    "actual_existing_potential_helper_counters": {
+      "state_thermo_completed": 1,
+      "water_fractions_completed": 1,
+      "direct_skeleton_completed": 1,
+      "raw_quartz_phase_completed": 1,
+      "raw_liquid_order_completed": 1,
+      "fixed_volume_condensed_state_completed": 0
+    }
+  },
+  "actual_scientific_calls": {
+    "saved_checkpoint_load": 1,
+    "make_cycle": 1,
+    "native_initial_state": 0,
+    "solve_ivp_completed": 1,
+    "native_refined_endpoint": 1,
+    "native_potential_state": 1,
+    "complete_potential_values": 1,
+    "endpoint_interval_ledger": 1,
+    "baseline_potential_reevaluations": 0,
+    "initial_reference_reevaluations": 0,
+    "native_RHS_counter": 9809,
+    "native_Jacobian_counter": 51,
+    "extra_public_rates": 0,
+    "state_dynamics": 0,
+    "instantaneous_projection": 0,
+    "potential_gradient_directions": 0,
+    "trajectory_summary": 0,
+    "predict": 0,
+    "fit": 0,
+    "UQ": 0
+  },
+  "actual_existing_helper_counters": {
+    "state_thermo_completed": 1,
+    "water_fractions_completed": 1,
+    "direct_skeleton_completed": 1,
+    "raw_quartz_phase_completed": 1,
+    "raw_liquid_order_completed": 1,
+    "fixed_volume_condensed_state_completed": 0
+  },
+  "internal_rates_measurement": "Native solver internal rates are part of the same RHS/Jac work but have no independent existing dynamic counter; count not independently measured, never claimed0. Extra independent public rates calls0. No probe or profiling was added.",
+  "source_only_forecast_not_actual_primitive_measurement": {
+    "qualification": "Static inherited entry counts for unchanged nominal branch, not actual P79 execution or dynamic primitive observations. No forecast of solver RHS/Jac/Newton/thermo work.",
+    "constructor": {
+      "make_cycle_public": 1,
+      "Thermoelastic_constructor_entry": 1,
+      "FiniteGas_constructor_entry": 1,
+      "FullCycle_constructor_entry": 1,
+      "logical_constructor_instances": 1,
+      "source_caloric_coefficients": 2,
+      "quartz_phase": 2,
+      "liquid_phase": 1,
+      "liquid_equilibrium_log_odds": 1,
+      "liquid_contrast_nonzero_cp": 2,
+      "native_unpack": 0,
+      "native_potential_state": 0,
+      "potential_values": 0,
+      "state_thermo": 0,
+      "initial_state": 0,
+      "reference_mutation": "Constructs initial_partition/b0/md/initial/vs0/vp0/es0/initialgas/scales/layout and all thermoelastic references. Loader restores savednumeric37 then partition/phase0/liquidreference. Constructor derived constitutive arrays use the identical saved physical config."
+    },
+    "initial_reference": {
+      "public_initial_state": 0,
+      "initial_reference_reevaluations": 0
+    },
+    "postsolve_native_decode": {
+      "native_potential_state": 1,
+      "native_unpack": 1,
+      "chart_assembly_from_decoded": 1,
+      "condensed_state_logical": 1,
+      "condensed_state_inherited_entries": 2,
+      "fixed_Newton_iterations_parameter": "numerics.mechanical_iterations",
+      "iterations_per_decode": 8,
+      "total_fixed_Newton_iterations": 8,
+      "elastic_response": 8,
+      "elastic_strain": 8,
+      "thermal_strain": 9,
+      "phase_eigenstrain": 9,
+      "phase_reference_volume": 8,
+      "quartz_phase": 9,
+      "liquid_order": 17
+    },
+    "postsolve_complete_values": {
+      "potential_values": 1,
+      "state_thermo": 1,
+      "thermo_logical": 1,
+      "thermo_inherited_entries": 3,
+      "source_caloric_integrals": 2,
+      "quartz_thermo": 1,
+      "quartz_polynomial": 5,
+      "liquid_phase": 2,
+      "liquid_equilibrium_log_odds": 2,
+      "liquid_contrast_nonzero_cp": 4,
+      "liquid_order_state_hs": 1,
+      "raw_skeleton_liquid_order": 1,
+      "quartz_phase_in_hs": 1,
+      "raw_skeleton_quartz_phase": 1,
+      "water_fractions": 1,
+      "retention_sites": 1,
+      "direct_skeleton_storage": 1,
+      "fixed_volume_direction_inventory_decode": 0,
+      "gradient_directions": 0,
+      "extra_newton": 0
+    },
+    "ordinary_identity_IO": {
+      "baseline_ledger_json_reads": 1,
+      "strict_loader_saved_json_reads": 1,
+      "inherited_strict_source_text_calls": 1,
+      "output_complete53_source_text_call": 1,
+      "baseline_hold_native_list_to_array": 1,
+      "baseline_inventory_or_potential_recompute": 0
+    },
+    "BDF_internal_work": "Existing native RHS/Jac and their inherited rates/unpack/thermo/Newton/complex operations run in the future solver only. Counts cannot be predicted as zero or inferred from one postsolve value count."
+  },
+  "source_identity": {
+    "all53_production_source_bytes_unchanged": true,
+    "complete_computed53_source_text_matches_current": true,
+    "source_count": 53,
+    "historical_root_source_paths50_unchanged": true,
+    "original_actual_saved51_input_source_list_unchanged": true,
+    "complete_original_P75_config_preserved": true,
+    "all37_numeric_and_partition_phase0_liquidreference_context_unchanged": true,
+    "resume_origin_actual_y_unchanged": true,
+    "resume_origin_actual_time_unchanged": true,
+    "complete_effective_case_file_equals_computed_bundle_config": true,
+    "solver_max_step_equals_effective_config": true,
+    "coarse_ledger_original_P78_data_preserved": true,
+    "current_root_original758_records_unchanged": true,
+    "current_original_conditional_record_unchanged": true
+  },
+  "parameter_identity": {
+    "original_count": 758,
+    "current_count": 758,
+    "original_changed_records": [],
+    "effective_changed_records_relative_actualP75": [
+      "numerics.max_step"
+    ],
+    "original_root_status_counts": {
+      "literature": 144,
+      "assumed": 614,
+      "measured": 0
+    },
+    "original_saved_record": {
+      "value": 60.0,
+      "unit": "s",
+      "range": [
+        60.0,
+        60.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": ""
+    },
+    "effective_conditional_record": {
+      "value": 30.0,
+      "unit": "s",
+      "range": [
+        30.0,
+        30.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "One proposed factor2 time refinement only for original cooling from actual P75 hold133200s to154800s. Conditional numerical policy; not measured material data. Original root758 records and historical60s remain unchanged."
+    },
+    "rtol_atol_unchanged": {
+      "numerics.rtol": true,
+      "numerics.atol": true
+    }
+  },
+  "conditional_configuration": {
+    "parameter": "numerics.max_step",
+    "original_saved_record": {
+      "value": 60.0,
+      "unit": "s",
+      "range": [
+        60.0,
+        60.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": ""
+    },
+    "effective_conditional_record": {
+      "value": 30.0,
+      "unit": "s",
+      "range": [
+        30.0,
+        30.0
+      ],
+      "source": "policy",
+      "status": "assumed",
+      "note": "One proposed factor2 time refinement only for original cooling from actual P75 hold133200s to154800s. Conditional numerical policy; not measured material data. Original root758 records and historical60s remain unchanged."
+    },
+    "conditional_record_source": "/Users/wanggaoying/Research/brickmodel-github/parameters.full_cycle.json#conditional_numerical_conditions/cooling_half_step",
+    "solver_max_step_s": 30.0,
+    "changed_parameter_records": [
+      "numerics.max_step"
+    ],
+    "effective_config_basis": "Exact saved P75 physical case with only the explicit conditional numerical record applied after strict restoration. Administrative/source provenance is added separately."
+  },
+  "actual_results": {
+    "original_interval": {
+      "start_time_s": 133200.0,
+      "end_time_s": 154800.0
+    },
+    "solver": {
+      "method": "BDF",
+      "success": true,
+      "message": "The solver successfully reached the end of the integration interval.",
+      "nfev": 1853,
+      "njev": 51,
+      "nlu": 292,
+      "max_step_s": 30.0,
+      "actual_rhs_calls_including_jacobian": 9809,
+      "actual_jacobian_calls": 51,
+      "elapsed_since_refinement_start_s": 35.804999583400786,
+      "history": "Fresh BDF history only for the original cooling interval; existing native equations and absolute-time boundary/gas programs remain unchanged."
+    },
+    "coarse_saved_interval": {
+      "name": "cooling",
+      "start_time_s": 133200.0,
+      "end_time_s": 154800.0,
+      "evidence_basis": "Actual saved solver endpoint to next actual saved endpoint. Raw difference uses original reference context; original mass/element/gas initial normalization still explicitly depends on the new declared initial reference.",
+      "mass": {
+        "signed_residual": 2.78842576064732e-08,
+        "unit": "kg",
+        "denominator": 0.25878344858031754,
+        "denominator_source": {
+          "rule": "Original FiniteGasFullCycle.summarize merror normalization: complete initial mass[0], including condensed and pore gas.",
+          "actual_source": "Newly evaluated genuine declared initial reference complete_mass_kg. All later interval differences are actualsaved-to-actualsaved, but this original denominator still depends on that newly evaluated reference.",
+          "unit": "kg",
+          "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+        },
+        "absolute_relative_residual": 1.0775131778885341e-07,
+        "denominator_status": "defined",
+        "passed": true,
+        "threshold": 0.001
+      },
+      "elements": {
+        "H": {
+          "signed_residual": -2.5222965275434328e-08,
+          "unit": "mol_atoms",
+          "denominator": 5.26675450620759,
+          "denominator_source": {
+            "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+            "actual_sources": [
+              "new genuine initial reference element_inventory_mol_atoms",
+              "current saved endpoint cumulative boundary-in signed difference",
+              "unchanged saved-case model.atom"
+            ],
+            "unit": "mol_atoms",
+            "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+          },
+          "absolute_relative_residual": 4.789090747576257e-09,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001,
+          "initial_reference_mol_atoms": 5.26675450620759,
+          "signed_boundary_in_mol_atoms": 0.015729178350444968
+        },
+        "C": {
+          "signed_residual": -1.120720381748248e-08,
+          "unit": "mol_atoms",
+          "denominator": 0.4121413396189779,
+          "denominator_source": {
+            "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+            "actual_sources": [
+              "new genuine initial reference element_inventory_mol_atoms",
+              "current saved endpoint cumulative boundary-in signed difference",
+              "unchanged saved-case model.atom"
+            ],
+            "unit": "mol_atoms",
+            "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+          },
+          "absolute_relative_residual": 2.7192622384940733e-08,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001,
+          "initial_reference_mol_atoms": 0.4121413396189779,
+          "signed_boundary_in_mol_atoms": 0.0004383855384965883
+        },
+        "N": {
+          "signed_residual": 1.4762038119792674e-06,
+          "unit": "mol_atoms",
+          "denominator": 0.00290216784547003,
+          "denominator_source": {
+            "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+            "actual_sources": [
+              "new genuine initial reference element_inventory_mol_atoms",
+              "current saved endpoint cumulative boundary-in signed difference",
+              "unchanged saved-case model.atom"
+            ],
+            "unit": "mol_atoms",
+            "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+          },
+          "absolute_relative_residual": 0.0005086555604574911,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001,
+          "initial_reference_mol_atoms": 0.0018141688980221956,
+          "signed_boundary_in_mol_atoms": 0.00290216784547003
+        },
+        "O": {
+          "signed_residual": 4.604887251114659e-07,
+          "unit": "mol_atoms",
+          "denominator": 9.394188688634067,
+          "denominator_source": {
+            "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+            "actual_sources": [
+              "new genuine initial reference element_inventory_mol_atoms",
+              "current saved endpoint cumulative boundary-in signed difference",
+              "unchanged saved-case model.atom"
+            ],
+            "unit": "mol_atoms",
+            "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+          },
+          "absolute_relative_residual": 4.901846666850608e-08,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001,
+          "initial_reference_mol_atoms": 9.394188688634067,
+          "signed_boundary_in_mol_atoms": 0.009722486351126594
+        },
+        "Al": {
+          "signed_residual": 0.0,
+          "unit": "mol_atoms",
+          "denominator": 0.6100857280844426,
+          "denominator_source": {
+            "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+            "actual_sources": [
+              "new genuine initial reference element_inventory_mol_atoms",
+              "current saved endpoint cumulative boundary-in signed difference",
+              "unchanged saved-case model.atom"
+            ],
+            "unit": "mol_atoms",
+            "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+          },
+          "absolute_relative_residual": 0.0,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001,
+          "initial_reference_mol_atoms": 0.6100857280844426,
+          "signed_boundary_in_mol_atoms": 0.0
+        },
+        "Si": {
+          "signed_residual": 0.0,
+          "unit": "mol_atoms",
+          "denominator": 2.669691981298677,
+          "denominator_source": {
+            "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+            "actual_sources": [
+              "new genuine initial reference element_inventory_mol_atoms",
+              "current saved endpoint cumulative boundary-in signed difference",
+              "unchanged saved-case model.atom"
+            ],
+            "unit": "mol_atoms",
+            "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+          },
+          "absolute_relative_residual": 0.0,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001,
+          "initial_reference_mol_atoms": 2.669691981298677,
+          "signed_boundary_in_mol_atoms": 0.0
+        },
+        "Ca": {
+          "signed_residual": -8.326672684688674e-17,
+          "unit": "mol_atoms",
+          "denominator": 0.1686034835727753,
+          "denominator_source": {
+            "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+            "actual_sources": [
+              "new genuine initial reference element_inventory_mol_atoms",
+              "current saved endpoint cumulative boundary-in signed difference",
+              "unchanged saved-case model.atom"
+            ],
+            "unit": "mol_atoms",
+            "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+          },
+          "absolute_relative_residual": 4.938612481926913e-16,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001,
+          "initial_reference_mol_atoms": 0.1686034835727753,
+          "signed_boundary_in_mol_atoms": 0.0
+        }
+      },
+      "complete_energy": {
+        "signed_residual": -2.967064090436648,
+        "unit": "J",
+        "denominator": 203424.3372954902,
+        "denominator_source": {
+          "rule": "Original energy_scale=max(ptp(heat)+ptp(carried)+ptp(exterior_work),model.escale), evaluated only over the supplied endpoint samples.",
+          "actual_sources": [
+            "actual native endpoint heat/carried/work slots",
+            "saved context numeric.escale"
+          ],
+          "escale_derivation": "Original FullCycle constructor sum(initial condensed mol*base cp)*Tr. Original unchanged thermal-capacity scale, not a new adjustable floor.",
+          "unit": "J",
+          "scope": "For a stage use its two endpoints; wholecycle uses the nine supplied points. These are not extrema over unsaved intermediate solver/output times.",
+          "residual": "delta(original_global_U)-delta_heat-delta_carried-delta_signed_exterior_work"
+        },
+        "absolute_relative_residual": 1.4585590543803759e-05,
+        "denominator_status": "defined",
+        "passed": true,
+        "threshold": 0.001,
+        "stored_U_change_j": -203426.95523905847,
+        "heat_change_j": -201469.86819343478,
+        "carried_energy_change_j": -1954.294541794341,
+        "exterior_pressure_work_change_j": 0.17456026108967843,
+        "endpoint_sample_cumulative_ranges_j": {
+          "heat_j": 201469.86819343478,
+          "carried_energy_j": 1954.294541794341,
+          "exterior_pressure_work_j": 0.17456026108967843
+        },
+        "original_initial_thermal_capacity_scale_j": 114147.47988818285
+      },
+      "entropy": {
+        "signed_residual": -0.003062535827893953,
+        "unit": "J/K",
+        "denominator": 382.85252352233056,
+        "denominator_source": {
+          "rule": "Existing entropy_ledger_output scale model.escale/model.Tr; canonical signed residual=(delta originalglobalS-delta production)-delta exchange.",
+          "actual_sources": [
+            "saved context numeric.escale and numeric.Tr",
+            "actual separate native physical entropy slots",
+            "original global S reduction"
+          ],
+          "unit": "J/K",
+          "threshold_parameter": "acceptance.entropy_relative",
+          "rounding": "Also publish original slot-sum order residual and signed canonical-minus-original difference; do not alter historical verdicts."
+        },
+        "absolute_relative_residual": 7.999257258951632e-06,
+        "denominator_status": "defined",
+        "passed": true,
+        "threshold": 0.001,
+        "stored_S_change_j_k": -283.081469263225,
+        "production_change_j_k": 11.78599396837808,
+        "exchange_change_j_k": -294.8644006957752,
+        "original_slot_sum_order_residual_j_k": -0.0030625358279507964,
+        "separate_minus_original_order_residual_j_k": 5.684341886080802e-14
+      },
+      "gas_species": {
+        "O2": {
+          "start_inventory_mol": 5.8503257753303034e-05,
+          "end_inventory_mol": 0.0005493151840154856,
+          "signed_inventory_change_mol": 0.0004908119262621825,
+          "signed_reaction_sources_mol": {
+            "evaporation": -0.0,
+            "dehydroxylation": 0.0,
+            "decarbonation": -0.0,
+            "organic_oxidation": -0.0,
+            "char_oxidation": 2.7755575615628914e-17,
+            "organic_carbonization": 0.0,
+            "lime_dehydration": -0.0
+          },
+          "signed_reaction_net_source_mol": 2.7755575615628914e-17,
+          "signed_boundary_in_mol": 0.0004905630494554669,
+          "signed_boundary_out_mol": -1.1194995725794313e-09,
+          "budget_normalization": {
+            "signed_residual": 2.4775730711522424e-07,
+            "unit": "mol",
+            "denominator": 0.0005493151840154856,
+            "denominator_source": {
+              "rule": "Existing gas_species_ledger max(abs(start),abs(end),sum(abs(each signed net reaction source)),abs(signed in)+abs(signed out)); no floor.",
+              "actual_sources": [
+                "actual decoded stored gas inventories",
+                "saved cumulative reaction extent differences and original stoichiometry",
+                "saved signed boundary in/out differences"
+              ],
+              "unit": "mol",
+              "criterion_parameter": "acceptance.balance_relative",
+              "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+            },
+            "absolute_relative_residual": 0.00045102941685340307,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001
+          },
+          "initial_reference_normalization": {
+            "signed_residual": 2.4775730711522424e-07,
+            "unit": "mol",
+            "denominator": 0.00024305211518374297,
+            "denominator_source": {
+              "rule": "Existing declared-process initial gas inventory, distinct from gas budget. Diagnostic normalization only; no independent pass criterion.",
+              "actual_source": "New genuine declared initial reference decoded gas inventory, not a recovered historical P68 initial vector.",
+              "unit": "mol",
+              "defined_passed": "null,threshold=null; diagnostic only",
+              "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+            },
+            "absolute_relative_residual": 0.0010193587779638298,
+            "denominator_status": "defined",
+            "passed": null,
+            "threshold": null
+          }
+        },
+        "N2": {
+          "start_inventory_mol": 0.0005850437989126657,
+          "end_inventory_mol": 0.002037237592431552,
+          "signed_inventory_change_mol": 0.0014521937935188865,
+          "signed_reaction_sources_mol": {
+            "evaporation": -0.0,
+            "dehydroxylation": 0.0,
+            "decarbonation": -0.0,
+            "organic_oxidation": 0.0,
+            "char_oxidation": -0.0,
+            "organic_carbonization": 0.0,
+            "lime_dehydration": -0.0
+          },
+          "signed_reaction_net_source_mol": 0.0,
+          "signed_boundary_in_mol": 0.001451083922735015,
+          "signed_boundary_out_mol": -3.7176887788181387e-07,
+          "budget_normalization": {
+            "signed_residual": 7.381019059896337e-07,
+            "unit": "mol",
+            "denominator": 0.002037237592431552,
+            "denominator_source": {
+              "rule": "Existing gas_species_ledger max(abs(start),abs(end),sum(abs(each signed net reaction source)),abs(signed in)+abs(signed out)); no floor.",
+              "actual_sources": [
+                "actual decoded stored gas inventories",
+                "saved cumulative reaction extent differences and original stoichiometry",
+                "saved signed boundary in/out differences"
+              ],
+              "unit": "mol",
+              "criterion_parameter": "acceptance.balance_relative",
+              "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+            },
+            "absolute_relative_residual": 0.00036230526509609004,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001
+          },
+          "initial_reference_normalization": {
+            "signed_residual": 7.381019059896337e-07,
+            "unit": "mol",
+            "denominator": 0.0009070844490110978,
+            "denominator_source": {
+              "rule": "Existing declared-process initial gas inventory, distinct from gas budget. Diagnostic normalization only; no independent pass criterion.",
+              "actual_source": "New genuine declared initial reference decoded gas inventory, not a recovered historical P68 initial vector.",
+              "unit": "mol",
+              "defined_passed": "null,threshold=null; diagnostic only",
+              "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+            },
+            "absolute_relative_residual": 0.0008137080365497516,
+            "denominator_status": "defined",
+            "passed": null,
+            "threshold": null
+          }
+        },
+        "H2O": {
+          "start_inventory_mol": 6.581777708117494e-05,
+          "end_inventory_mol": 3.945887487115602e-05,
+          "signed_inventory_change_mol": -2.6358902210018927e-05,
+          "signed_reaction_sources_mol": {
+            "evaporation": -0.0001963366582629078,
+            "dehydroxylation": 0.0,
+            "decarbonation": -0.0,
+            "organic_oxidation": 0.0,
+            "char_oxidation": -0.0,
+            "organic_carbonization": 0.0,
+            "lime_dehydration": -0.007688969101601114
+          },
+          "signed_reaction_net_source_mol": -0.007885305759864021,
+          "signed_boundary_in_mol": 0.007864589175222484,
+          "signed_boundary_out_mol": 5.628464835982783e-06,
+          "budget_normalization": {
+            "signed_residual": -1.3852732499292086e-08,
+            "unit": "mol",
+            "denominator": 0.007885305759864021,
+            "denominator_source": {
+              "rule": "Existing gas_species_ledger max(abs(start),abs(end),sum(abs(each signed net reaction source)),abs(signed in)+abs(signed out)); no floor.",
+              "actual_sources": [
+                "actual decoded stored gas inventories",
+                "saved cumulative reaction extent differences and original stoichiometry",
+                "saved signed boundary in/out differences"
+              ],
+              "unit": "mol",
+              "criterion_parameter": "acceptance.balance_relative",
+              "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+            },
+            "absolute_relative_residual": 1.7567781036218147e-06,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001
+          },
+          "initial_reference_normalization": {
+            "signed_residual": -1.3852732499292086e-08,
+            "unit": "mol",
+            "denominator": 1.1629287807834594e-05,
+            "denominator_source": {
+              "rule": "Existing declared-process initial gas inventory, distinct from gas budget. Diagnostic normalization only; no independent pass criterion.",
+              "actual_source": "New genuine declared initial reference decoded gas inventory, not a recovered historical P68 initial vector.",
+              "unit": "mol",
+              "defined_passed": "null,threshold=null; diagnostic only",
+              "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+            },
+            "absolute_relative_residual": 0.0011911935389508177,
+            "denominator_status": "defined",
+            "passed": null,
+            "threshold": null
+          }
+        },
+        "CO2": {
+          "start_inventory_mol": 2.1939124698854274e-05,
+          "end_inventory_mol": 2.649556637162356e-06,
+          "signed_inventory_change_mol": -1.928956806169192e-05,
+          "signed_reaction_sources_mol": {
+            "evaporation": -0.0,
+            "dehydroxylation": 0.0,
+            "decarbonation": -0.0004416499565975951,
+            "organic_oxidation": 0.0,
+            "char_oxidation": -2.7755575615628914e-17,
+            "organic_carbonization": 0.0,
+            "lime_dehydration": -0.0
+          },
+          "signed_reaction_net_source_mol": -0.00044164995659762285,
+          "signed_boundary_in_mol": 0.0004383855384965883,
+          "signed_boundary_out_mol": 1.601394275685397e-05,
+          "budget_normalization": {
+            "signed_residual": -1.1207203803387852e-08,
+            "unit": "mol",
+            "denominator": 0.0004543994812534423,
+            "denominator_source": {
+              "rule": "Existing gas_species_ledger max(abs(start),abs(end),sum(abs(each signed net reaction source)),abs(signed in)+abs(signed out)); no floor.",
+              "actual_sources": [
+                "actual decoded stored gas inventories",
+                "saved cumulative reaction extent differences and original stoichiometry",
+                "saved signed boundary in/out differences"
+              ],
+              "unit": "mol",
+              "criterion_parameter": "acceptance.balance_relative",
+              "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+            },
+            "absolute_relative_residual": 2.4663768920847445e-05,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001
+          },
+          "initial_reference_normalization": {
+            "signed_residual": -1.1207203803387852e-08,
+            "unit": "mol",
+            "denominator": 1.162928780783459e-06,
+            "denominator_source": {
+              "rule": "Existing declared-process initial gas inventory, distinct from gas budget. Diagnostic normalization only; no independent pass criterion.",
+              "actual_source": "New genuine declared initial reference decoded gas inventory, not a recovered historical P68 initial vector.",
+              "unit": "mol",
+              "defined_passed": "null,threshold=null; diagnostic only",
+              "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+            },
+            "absolute_relative_residual": 0.009637050856921452,
+            "denominator_status": "defined",
+            "passed": null,
+            "threshold": null
+          }
+        }
+      },
+      "signed_reaction_extent_changes_mol": {
+        "evaporation": -0.0001963366582629078,
+        "dehydroxylation": 0.0,
+        "decarbonation": -0.0004416499565975951,
+        "organic_oxidation": 0.0,
+        "char_oxidation": -2.7755575615628914e-17,
+        "organic_carbonization": 0.0,
+        "lime_dehydration": -0.007688969101601114
+      },
+      "pressure_work_integration_signed_residual_j": 2.1869403549229505e-05,
+      "pressure_work_diagnostic_criterion": "criterion_not_applicable",
+      "endpoint_balance_passed": true,
+      "scope": "Supplied endpoint samples only. No interval maximum or continuous entropy/source/material admission.",
+      "whole_model_complete": false
+    },
+    "refined_interval": {
+      "name": "cooling",
+      "start_time_s": 133200.0,
+      "end_time_s": 154800.0,
+      "evidence_basis": "Two actual hold-to-cooling endpoint inventories are compared. Initial mass/element/gas denominators still come from P78 new genuine declared initial reference; this is not recovery of historical P68 initial y. Energy ptp uses only the two supplied endpoints, not unsaved trajectory extrema.",
+      "mass": {
+        "signed_residual": 1.3969573368736998e-08,
+        "unit": "kg",
+        "denominator": 0.25878344858031754,
+        "denominator_source": {
+          "rule": "Original FiniteGasFullCycle.summarize merror normalization: complete initial mass[0], including condensed and pore gas.",
+          "actual_source": "Newly evaluated genuine declared initial reference complete_mass_kg. All later interval differences are actualsaved-to-actualsaved, but this original denominator still depends on that newly evaluated reference.",
+          "unit": "kg",
+          "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+        },
+        "absolute_relative_residual": 5.3981711138691e-08,
+        "denominator_status": "defined",
+        "passed": true,
+        "threshold": 0.001
+      },
+      "elements": {
+        "H": {
+          "signed_residual": -1.3151476158101971e-08,
+          "unit": "mol_atoms",
+          "denominator": 5.26675450620759,
+          "denominator_source": {
+            "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+            "actual_sources": [
+              "new genuine initial reference element_inventory_mol_atoms",
+              "current saved endpoint cumulative boundary-in signed difference",
+              "unchanged saved-case model.atom"
+            ],
+            "unit": "mol_atoms",
+            "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+          },
+          "absolute_relative_residual": 2.49707407903694e-09,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001,
+          "initial_reference_mol_atoms": 5.26675450620759,
+          "signed_boundary_in_mol_atoms": 0.015719366745916157
+        },
+        "C": {
+          "signed_residual": -5.35957919711727e-09,
+          "unit": "mol_atoms",
+          "denominator": 0.4121413396189779,
+          "denominator_source": {
+            "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+            "actual_sources": [
+              "new genuine initial reference element_inventory_mol_atoms",
+              "current saved endpoint cumulative boundary-in signed difference",
+              "unchanged saved-case model.atom"
+            ],
+            "unit": "mol_atoms",
+            "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+          },
+          "absolute_relative_residual": 1.3004226176564009e-08,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001,
+          "initial_reference_mol_atoms": 0.4121413396189779,
+          "signed_boundary_in_mol_atoms": 0.00043832150123919537
+        },
+        "N": {
+          "signed_residual": 7.383998739986242e-07,
+          "unit": "mol_atoms",
+          "denominator": 0.0029010523994539793,
+          "denominator_source": {
+            "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+            "actual_sources": [
+              "new genuine initial reference element_inventory_mol_atoms",
+              "current saved endpoint cumulative boundary-in signed difference",
+              "unchanged saved-case model.atom"
+            ],
+            "unit": "mol_atoms",
+            "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+          },
+          "absolute_relative_residual": 0.00025452827881964555,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001,
+          "initial_reference_mol_atoms": 0.0018141688980221956,
+          "signed_boundary_in_mol_atoms": 0.0029010523994539793
+        },
+        "O": {
+          "signed_residual": 2.3154968420077693e-07,
+          "unit": "mol_atoms",
+          "denominator": 9.394188688634067,
+          "denominator_source": {
+            "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+            "actual_sources": [
+              "new genuine initial reference element_inventory_mol_atoms",
+              "current saved endpoint cumulative boundary-in signed difference",
+              "unchanged saved-case model.atom"
+            ],
+            "unit": "mol_atoms",
+            "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+          },
+          "absolute_relative_residual": 2.464818324129752e-08,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001,
+          "initial_reference_mol_atoms": 9.394188688634067,
+          "signed_boundary_in_mol_atoms": 0.009716929894483466
+        },
+        "Al": {
+          "signed_residual": 0.0,
+          "unit": "mol_atoms",
+          "denominator": 0.6100857280844426,
+          "denominator_source": {
+            "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+            "actual_sources": [
+              "new genuine initial reference element_inventory_mol_atoms",
+              "current saved endpoint cumulative boundary-in signed difference",
+              "unchanged saved-case model.atom"
+            ],
+            "unit": "mol_atoms",
+            "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+          },
+          "absolute_relative_residual": 0.0,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001,
+          "initial_reference_mol_atoms": 0.6100857280844426,
+          "signed_boundary_in_mol_atoms": 0.0
+        },
+        "Si": {
+          "signed_residual": 0.0,
+          "unit": "mol_atoms",
+          "denominator": 2.669691981298677,
+          "denominator_source": {
+            "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+            "actual_sources": [
+              "new genuine initial reference element_inventory_mol_atoms",
+              "current saved endpoint cumulative boundary-in signed difference",
+              "unchanged saved-case model.atom"
+            ],
+            "unit": "mol_atoms",
+            "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+          },
+          "absolute_relative_residual": 0.0,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001,
+          "initial_reference_mol_atoms": 2.669691981298677,
+          "signed_boundary_in_mol_atoms": 0.0
+        },
+        "Ca": {
+          "signed_residual": -5.551115123125783e-17,
+          "unit": "mol_atoms",
+          "denominator": 0.1686034835727753,
+          "denominator_source": {
+            "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+            "actual_sources": [
+              "new genuine initial reference element_inventory_mol_atoms",
+              "current saved endpoint cumulative boundary-in signed difference",
+              "unchanged saved-case model.atom"
+            ],
+            "unit": "mol_atoms",
+            "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+          },
+          "absolute_relative_residual": 3.292408321284609e-16,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001,
+          "initial_reference_mol_atoms": 0.1686034835727753,
+          "signed_boundary_in_mol_atoms": 0.0
+        }
+      },
+      "complete_energy": {
+        "signed_residual": 1.0632396146601726,
+        "unit": "J",
+        "denominator": 203426.7585063271,
+        "denominator_source": {
+          "rule": "Original energy_scale=max(ptp(heat)+ptp(carried)+ptp(exterior_work),model.escale), evaluated only over the supplied endpoint samples.",
+          "actual_sources": [
+            "actual native endpoint heat/carried/work slots",
+            "saved context numeric.escale"
+          ],
+          "escale_derivation": "Original FullCycle constructor sum(initial condensed mol*base cp)*Tr. Original unchanged thermal-capacity scale, not a new adjustable floor.",
+          "unit": "J",
+          "scope": "For a stage use its two endpoints; wholecycle uses the nine supplied points. These are not extrema over unsaved intermediate solver/output times.",
+          "residual": "delta(original_global_U)-delta_heat-delta_carried-delta_signed_exterior_work"
+        },
+        "absolute_relative_residual": 5.226645808383675e-06,
+        "denominator_status": "defined",
+        "passed": true,
+        "threshold": 0.001,
+        "stored_U_change_j": -203425.34618712217,
+        "heat_change_j": -201473.3502827001,
+        "carried_energy_change_j": -1953.2336838318733,
+        "exterior_pressure_work_change_j": 0.1745397951390865,
+        "endpoint_sample_cumulative_ranges_j": {
+          "heat_j": 201473.3502827001,
+          "carried_energy_j": 1953.2336838318733,
+          "exterior_pressure_work_j": 0.1745397951390865
+        },
+        "original_initial_thermal_capacity_scale_j": 114147.47988818285
+      },
+      "entropy": {
+        "signed_residual": 0.001344613119783844,
+        "unit": "J/K",
+        "denominator": 382.85252352233056,
+        "denominator_source": {
+          "rule": "Existing entropy_ledger_output scale model.escale/model.Tr; canonical signed residual=(delta originalglobalS-delta production)-delta exchange.",
+          "actual_sources": [
+            "saved context numeric.escale and numeric.Tr",
+            "actual separate native physical entropy slots",
+            "original global S reduction"
+          ],
+          "unit": "J/K",
+          "threshold_parameter": "acceptance.entropy_relative",
+          "rounding": "Also publish original slot-sum order residual and signed canonical-minus-original difference; do not alter historical verdicts."
+        },
+        "absolute_relative_residual": 3.5120915683488163e-06,
+        "denominator_status": "defined",
+        "passed": true,
+        "threshold": 0.001,
+        "stored_S_change_j_k": -283.08171588008736,
+        "production_change_j_k": 11.786086432332581,
+        "exchange_change_j_k": -294.8691469255397,
+        "original_slot_sum_order_residual_j_k": 0.0013446131198406874,
+        "separate_minus_original_order_residual_j_k": -5.684341886080802e-14
+      },
+      "gas_species": {
+        "O2": {
+          "start_inventory_mol": 5.8503257753303034e-05,
+          "end_inventory_mol": 0.0005493158075993093,
+          "signed_inventory_change_mol": 0.0004908125498460063,
+          "signed_reaction_sources_mol": {
+            "evaporation": -0.0,
+            "dehydroxylation": 0.0,
+            "decarbonation": -0.0,
+            "organic_oxidation": -0.0,
+            "char_oxidation": 2.7755575615628914e-17,
+            "organic_carbonization": 0.0,
+            "lime_dehydration": -0.0
+          },
+          "signed_reaction_net_source_mol": 2.7755575615628914e-17,
+          "signed_boundary_in_mol": 0.0004903017595234982,
+          "signed_boundary_out_mol": -3.8636803185114867e-07,
+          "budget_normalization": {
+            "signed_residual": 1.244222906291695e-07,
+            "unit": "mol",
+            "denominator": 0.0005493158075993093,
+            "denominator_source": {
+              "rule": "Existing gas_species_ledger max(abs(start),abs(end),sum(abs(each signed net reaction source)),abs(signed in)+abs(signed out)); no floor.",
+              "actual_sources": [
+                "actual decoded stored gas inventories",
+                "saved cumulative reaction extent differences and original stoichiometry",
+                "saved signed boundary in/out differences"
+              ],
+              "unit": "mol",
+              "criterion_parameter": "acceptance.balance_relative",
+              "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+            },
+            "absolute_relative_residual": 0.00022650411458744618,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001
+          },
+          "initial_reference_normalization": {
+            "signed_residual": 1.244222906291695e-07,
+            "unit": "mol",
+            "denominator": 0.00024305211518374297,
+            "denominator_source": {
+              "rule": "Existing declared-process initial gas inventory, distinct from gas budget. Diagnostic normalization only; no independent pass criterion.",
+              "actual_source": "New genuine declared initial reference decoded gas inventory, not a recovered historical P68 initial vector.",
+              "unit": "mol",
+              "defined_passed": "null,threshold=null; diagnostic only",
+              "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+            },
+            "absolute_relative_residual": 0.0005119160988790759,
+            "denominator_status": "defined",
+            "passed": null,
+            "threshold": null
+          }
+        },
+        "N2": {
+          "start_inventory_mol": 0.0005850437989126657,
+          "end_inventory_mol": 0.0020372399049853615,
+          "signed_inventory_change_mol": 0.001452196106072696,
+          "signed_reaction_sources_mol": {
+            "evaporation": -0.0,
+            "dehydroxylation": 0.0,
+            "decarbonation": -0.0,
+            "organic_oxidation": 0.0,
+            "char_oxidation": -0.0,
+            "organic_carbonization": 0.0,
+            "lime_dehydration": -0.0
+          },
+          "signed_reaction_net_source_mol": 0.0,
+          "signed_boundary_in_mol": 0.0014505261997269897,
+          "signed_boundary_out_mol": -1.3007064087070062e-06,
+          "budget_normalization": {
+            "signed_residual": 3.691999369993121e-07,
+            "unit": "mol",
+            "denominator": 0.0020372399049853615,
+            "denominator_source": {
+              "rule": "Existing gas_species_ledger max(abs(start),abs(end),sum(abs(each signed net reaction source)),abs(signed in)+abs(signed out)); no floor.",
+              "actual_sources": [
+                "actual decoded stored gas inventories",
+                "saved cumulative reaction extent differences and original stoichiometry",
+                "saved signed boundary in/out differences"
+              ],
+              "unit": "mol",
+              "criterion_parameter": "acceptance.balance_relative",
+              "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+            },
+            "absolute_relative_residual": 0.00018122555723350852,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001
+          },
+          "initial_reference_normalization": {
+            "signed_residual": 3.691999369993121e-07,
+            "unit": "mol",
+            "denominator": 0.0009070844490110978,
+            "denominator_source": {
+              "rule": "Existing declared-process initial gas inventory, distinct from gas budget. Diagnostic normalization only; no independent pass criterion.",
+              "actual_source": "New genuine declared initial reference decoded gas inventory, not a recovered historical P68 initial vector.",
+              "unit": "mol",
+              "defined_passed": "null,threshold=null; diagnostic only",
+              "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+            },
+            "absolute_relative_residual": 0.0004070182631857633,
+            "denominator_status": "defined",
+            "passed": null,
+            "threshold": null
+          }
+        },
+        "H2O": {
+          "start_inventory_mol": 6.581777708117494e-05,
+          "end_inventory_mol": 3.945891969119913e-05,
+          "signed_inventory_change_mol": -2.6358857389975817e-05,
+          "signed_reaction_sources_mol": {
+            "evaporation": -0.00019633752810332972,
+            "dehydroxylation": 0.0,
+            "decarbonation": -0.0,
+            "organic_oxidation": 0.0,
+            "char_oxidation": -0.0,
+            "organic_carbonization": 0.0,
+            "lime_dehydration": -0.0076844502489687065
+          },
+          "signed_reaction_net_source_mol": -0.007880787777072035,
+          "signed_boundary_in_mol": 0.007859683372958079,
+          "signed_boundary_out_mol": 5.247657822504692e-06,
+          "budget_normalization": {
+            "signed_residual": -6.79545351413291e-09,
+            "unit": "mol",
+            "denominator": 0.007880787777072035,
+            "denominator_source": {
+              "rule": "Existing gas_species_ledger max(abs(start),abs(end),sum(abs(each signed net reaction source)),abs(signed in)+abs(signed out)); no floor.",
+              "actual_sources": [
+                "actual decoded stored gas inventories",
+                "saved cumulative reaction extent differences and original stoichiometry",
+                "saved signed boundary in/out differences"
+              ],
+              "unit": "mol",
+              "criterion_parameter": "acceptance.balance_relative",
+              "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+            },
+            "absolute_relative_residual": 8.622809935198683e-07,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001
+          },
+          "initial_reference_normalization": {
+            "signed_residual": -6.79545351413291e-09,
+            "unit": "mol",
+            "denominator": 1.1629287807834594e-05,
+            "denominator_source": {
+              "rule": "Existing declared-process initial gas inventory, distinct from gas budget. Diagnostic normalization only; no independent pass criterion.",
+              "actual_source": "New genuine declared initial reference decoded gas inventory, not a recovered historical P68 initial vector.",
+              "unit": "mol",
+              "defined_passed": "null,threshold=null; diagnostic only",
+              "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+            },
+            "absolute_relative_residual": 0.0005843396110254359,
+            "denominator_status": "defined",
+            "passed": null,
+            "threshold": null
+          }
+        },
+        "CO2": {
+          "start_inventory_mol": 2.1939124698854274e-05,
+          "end_inventory_mol": 2.6495594619787248e-06,
+          "signed_inventory_change_mol": -1.928956523687555e-05,
+          "signed_reaction_sources_mol": {
+            "evaporation": -0.0,
+            "dehydroxylation": 0.0,
+            "decarbonation": -0.0004415879239683118,
+            "organic_oxidation": 0.0,
+            "char_oxidation": -2.7755575615628914e-17,
+            "organic_carbonization": 0.0,
+            "lime_dehydration": -0.0
+          },
+          "signed_reaction_net_source_mol": -0.00044158792396833957,
+          "signed_boundary_in_mol": 0.00043832150123919537,
+          "signed_boundary_out_mol": 1.6017782928368085e-05,
+          "budget_normalization": {
+            "signed_residual": -5.359579363271253e-09,
+            "unit": "mol",
+            "denominator": 0.00045433928416756345,
+            "denominator_source": {
+              "rule": "Existing gas_species_ledger max(abs(start),abs(end),sum(abs(each signed net reaction source)),abs(signed in)+abs(signed out)); no floor.",
+              "actual_sources": [
+                "actual decoded stored gas inventories",
+                "saved cumulative reaction extent differences and original stoichiometry",
+                "saved signed boundary in/out differences"
+              ],
+              "unit": "mol",
+              "criterion_parameter": "acceptance.balance_relative",
+              "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+            },
+            "absolute_relative_residual": 1.1796425160749699e-05,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001
+          },
+          "initial_reference_normalization": {
+            "signed_residual": -5.359579363271253e-09,
+            "unit": "mol",
+            "denominator": 1.162928780783459e-06,
+            "denominator_source": {
+              "rule": "Existing declared-process initial gas inventory, distinct from gas budget. Diagnostic normalization only; no independent pass criterion.",
+              "actual_source": "New genuine declared initial reference decoded gas inventory, not a recovered historical P68 initial vector.",
+              "unit": "mol",
+              "defined_passed": "null,threshold=null; diagnostic only",
+              "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+            },
+            "absolute_relative_residual": 0.004608690963569181,
+            "denominator_status": "defined",
+            "passed": null,
+            "threshold": null
+          }
+        }
+      },
+      "signed_reaction_extent_changes_mol": {
+        "evaporation": -0.00019633752810332972,
+        "dehydroxylation": 0.0,
+        "decarbonation": -0.0004415879239683118,
+        "organic_oxidation": 0.0,
+        "char_oxidation": -2.7755575615628914e-17,
+        "organic_carbonization": 0.0,
+        "lime_dehydration": -0.0076844502489687065
+      },
+      "pressure_work_integration_signed_residual_j": 1.4575932162086414e-06,
+      "pressure_work_diagnostic_criterion": "criterion_not_applicable",
+      "endpoint_balance_passed": true,
+      "scope": "Supplied endpoint samples only. No interval maximum or continuous entropy/source/material admission.",
+      "whole_model_complete": false
+    },
+    "signed_comparisons": {
+      "mass": {
+        "coarse": {
+          "signed_residual": 2.78842576064732e-08,
+          "unit": "kg",
+          "denominator": 0.25878344858031754,
+          "denominator_source": {
+            "rule": "Original FiniteGasFullCycle.summarize merror normalization: complete initial mass[0], including condensed and pore gas.",
+            "actual_source": "Newly evaluated genuine declared initial reference complete_mass_kg. All later interval differences are actualsaved-to-actualsaved, but this original denominator still depends on that newly evaluated reference.",
+            "unit": "kg",
+            "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+          },
+          "absolute_relative_residual": 1.0775131778885341e-07,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001
+        },
+        "refined": {
+          "signed_residual": 1.3969573368736998e-08,
+          "unit": "kg",
+          "denominator": 0.25878344858031754,
+          "denominator_source": {
+            "rule": "Original FiniteGasFullCycle.summarize merror normalization: complete initial mass[0], including condensed and pore gas.",
+            "actual_source": "Newly evaluated genuine declared initial reference complete_mass_kg. All later interval differences are actualsaved-to-actualsaved, but this original denominator still depends on that newly evaluated reference.",
+            "unit": "kg",
+            "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+          },
+          "absolute_relative_residual": 5.3981711138691e-08,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001
+        },
+        "signed_residual_change": -1.3914684237736202e-08,
+        "absolute_residual_change": -1.3914684237736202e-08,
+        "absolute_relative_residual_change": -5.376960665016241e-08,
+        "relative_relation": "lower",
+        "criterion": "criterion_not_applicable",
+        "qualification": "No required monotonic improvement; local existing ledger verdicts remain separate from timestep convergence and full-cycle acceptance."
+      },
+      "elements": {
+        "H": {
+          "coarse": {
+            "signed_residual": -2.5222965275434328e-08,
+            "unit": "mol_atoms",
+            "denominator": 5.26675450620759,
+            "denominator_source": {
+              "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+              "actual_sources": [
+                "new genuine initial reference element_inventory_mol_atoms",
+                "current saved endpoint cumulative boundary-in signed difference",
+                "unchanged saved-case model.atom"
+              ],
+              "unit": "mol_atoms",
+              "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+            },
+            "absolute_relative_residual": 4.789090747576257e-09,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001,
+            "initial_reference_mol_atoms": 5.26675450620759,
+            "signed_boundary_in_mol_atoms": 0.015729178350444968
+          },
+          "refined": {
+            "signed_residual": -1.3151476158101971e-08,
+            "unit": "mol_atoms",
+            "denominator": 5.26675450620759,
+            "denominator_source": {
+              "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+              "actual_sources": [
+                "new genuine initial reference element_inventory_mol_atoms",
+                "current saved endpoint cumulative boundary-in signed difference",
+                "unchanged saved-case model.atom"
+              ],
+              "unit": "mol_atoms",
+              "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+            },
+            "absolute_relative_residual": 2.49707407903694e-09,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001,
+            "initial_reference_mol_atoms": 5.26675450620759,
+            "signed_boundary_in_mol_atoms": 0.015719366745916157
+          },
+          "signed_residual_change": 1.2071489117332357e-08,
+          "absolute_residual_change": -1.2071489117332357e-08,
+          "absolute_relative_residual_change": -2.2920166685393173e-09,
+          "relative_relation": "lower",
+          "criterion": "criterion_not_applicable",
+          "qualification": "No required monotonic improvement; local existing ledger verdicts remain separate from timestep convergence and full-cycle acceptance."
+        },
+        "C": {
+          "coarse": {
+            "signed_residual": -1.120720381748248e-08,
+            "unit": "mol_atoms",
+            "denominator": 0.4121413396189779,
+            "denominator_source": {
+              "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+              "actual_sources": [
+                "new genuine initial reference element_inventory_mol_atoms",
+                "current saved endpoint cumulative boundary-in signed difference",
+                "unchanged saved-case model.atom"
+              ],
+              "unit": "mol_atoms",
+              "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+            },
+            "absolute_relative_residual": 2.7192622384940733e-08,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001,
+            "initial_reference_mol_atoms": 0.4121413396189779,
+            "signed_boundary_in_mol_atoms": 0.0004383855384965883
+          },
+          "refined": {
+            "signed_residual": -5.35957919711727e-09,
+            "unit": "mol_atoms",
+            "denominator": 0.4121413396189779,
+            "denominator_source": {
+              "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+              "actual_sources": [
+                "new genuine initial reference element_inventory_mol_atoms",
+                "current saved endpoint cumulative boundary-in signed difference",
+                "unchanged saved-case model.atom"
+              ],
+              "unit": "mol_atoms",
+              "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+            },
+            "absolute_relative_residual": 1.3004226176564009e-08,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001,
+            "initial_reference_mol_atoms": 0.4121413396189779,
+            "signed_boundary_in_mol_atoms": 0.00043832150123919537
+          },
+          "signed_residual_change": 5.84762462036521e-09,
+          "absolute_residual_change": -5.84762462036521e-09,
+          "absolute_relative_residual_change": -1.4188396208376724e-08,
+          "relative_relation": "lower",
+          "criterion": "criterion_not_applicable",
+          "qualification": "No required monotonic improvement; local existing ledger verdicts remain separate from timestep convergence and full-cycle acceptance."
+        },
+        "N": {
+          "coarse": {
+            "signed_residual": 1.4762038119792674e-06,
+            "unit": "mol_atoms",
+            "denominator": 0.00290216784547003,
+            "denominator_source": {
+              "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+              "actual_sources": [
+                "new genuine initial reference element_inventory_mol_atoms",
+                "current saved endpoint cumulative boundary-in signed difference",
+                "unchanged saved-case model.atom"
+              ],
+              "unit": "mol_atoms",
+              "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+            },
+            "absolute_relative_residual": 0.0005086555604574911,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001,
+            "initial_reference_mol_atoms": 0.0018141688980221956,
+            "signed_boundary_in_mol_atoms": 0.00290216784547003
+          },
+          "refined": {
+            "signed_residual": 7.383998739986242e-07,
+            "unit": "mol_atoms",
+            "denominator": 0.0029010523994539793,
+            "denominator_source": {
+              "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+              "actual_sources": [
+                "new genuine initial reference element_inventory_mol_atoms",
+                "current saved endpoint cumulative boundary-in signed difference",
+                "unchanged saved-case model.atom"
+              ],
+              "unit": "mol_atoms",
+              "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+            },
+            "absolute_relative_residual": 0.00025452827881964555,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001,
+            "initial_reference_mol_atoms": 0.0018141688980221956,
+            "signed_boundary_in_mol_atoms": 0.0029010523994539793
+          },
+          "signed_residual_change": -7.378039379806432e-07,
+          "absolute_residual_change": -7.378039379806432e-07,
+          "absolute_relative_residual_change": -0.0002541272816378455,
+          "relative_relation": "lower",
+          "criterion": "criterion_not_applicable",
+          "qualification": "No required monotonic improvement; local existing ledger verdicts remain separate from timestep convergence and full-cycle acceptance."
+        },
+        "O": {
+          "coarse": {
+            "signed_residual": 4.604887251114659e-07,
+            "unit": "mol_atoms",
+            "denominator": 9.394188688634067,
+            "denominator_source": {
+              "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+              "actual_sources": [
+                "new genuine initial reference element_inventory_mol_atoms",
+                "current saved endpoint cumulative boundary-in signed difference",
+                "unchanged saved-case model.atom"
+              ],
+              "unit": "mol_atoms",
+              "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+            },
+            "absolute_relative_residual": 4.901846666850608e-08,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001,
+            "initial_reference_mol_atoms": 9.394188688634067,
+            "signed_boundary_in_mol_atoms": 0.009722486351126594
+          },
+          "refined": {
+            "signed_residual": 2.3154968420077693e-07,
+            "unit": "mol_atoms",
+            "denominator": 9.394188688634067,
+            "denominator_source": {
+              "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+              "actual_sources": [
+                "new genuine initial reference element_inventory_mol_atoms",
+                "current saved endpoint cumulative boundary-in signed difference",
+                "unchanged saved-case model.atom"
+              ],
+              "unit": "mol_atoms",
+              "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+            },
+            "absolute_relative_residual": 2.464818324129752e-08,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001,
+            "initial_reference_mol_atoms": 9.394188688634067,
+            "signed_boundary_in_mol_atoms": 0.009716929894483466
+          },
+          "signed_residual_change": -2.2893904091068895e-07,
+          "absolute_residual_change": -2.2893904091068895e-07,
+          "absolute_relative_residual_change": -2.437028342720856e-08,
+          "relative_relation": "lower",
+          "criterion": "criterion_not_applicable",
+          "qualification": "No required monotonic improvement; local existing ledger verdicts remain separate from timestep convergence and full-cycle acceptance."
+        },
+        "Al": {
+          "coarse": {
+            "signed_residual": 0.0,
+            "unit": "mol_atoms",
+            "denominator": 0.6100857280844426,
+            "denominator_source": {
+              "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+              "actual_sources": [
+                "new genuine initial reference element_inventory_mol_atoms",
+                "current saved endpoint cumulative boundary-in signed difference",
+                "unchanged saved-case model.atom"
+              ],
+              "unit": "mol_atoms",
+              "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+            },
+            "absolute_relative_residual": 0.0,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001,
+            "initial_reference_mol_atoms": 0.6100857280844426,
+            "signed_boundary_in_mol_atoms": 0.0
+          },
+          "refined": {
+            "signed_residual": 0.0,
+            "unit": "mol_atoms",
+            "denominator": 0.6100857280844426,
+            "denominator_source": {
+              "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+              "actual_sources": [
+                "new genuine initial reference element_inventory_mol_atoms",
+                "current saved endpoint cumulative boundary-in signed difference",
+                "unchanged saved-case model.atom"
+              ],
+              "unit": "mol_atoms",
+              "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+            },
+            "absolute_relative_residual": 0.0,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001,
+            "initial_reference_mol_atoms": 0.6100857280844426,
+            "signed_boundary_in_mol_atoms": 0.0
+          },
+          "signed_residual_change": 0.0,
+          "absolute_residual_change": 0.0,
+          "absolute_relative_residual_change": 0.0,
+          "relative_relation": "unchanged",
+          "criterion": "criterion_not_applicable",
+          "qualification": "No required monotonic improvement; local existing ledger verdicts remain separate from timestep convergence and full-cycle acceptance."
+        },
+        "Si": {
+          "coarse": {
+            "signed_residual": 0.0,
+            "unit": "mol_atoms",
+            "denominator": 2.669691981298677,
+            "denominator_source": {
+              "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+              "actual_sources": [
+                "new genuine initial reference element_inventory_mol_atoms",
+                "current saved endpoint cumulative boundary-in signed difference",
+                "unchanged saved-case model.atom"
+              ],
+              "unit": "mol_atoms",
+              "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+            },
+            "absolute_relative_residual": 0.0,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001,
+            "initial_reference_mol_atoms": 2.669691981298677,
+            "signed_boundary_in_mol_atoms": 0.0
+          },
+          "refined": {
+            "signed_residual": 0.0,
+            "unit": "mol_atoms",
+            "denominator": 2.669691981298677,
+            "denominator_source": {
+              "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+              "actual_sources": [
+                "new genuine initial reference element_inventory_mol_atoms",
+                "current saved endpoint cumulative boundary-in signed difference",
+                "unchanged saved-case model.atom"
+              ],
+              "unit": "mol_atoms",
+              "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+            },
+            "absolute_relative_residual": 0.0,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001,
+            "initial_reference_mol_atoms": 2.669691981298677,
+            "signed_boundary_in_mol_atoms": 0.0
+          },
+          "signed_residual_change": 0.0,
+          "absolute_residual_change": 0.0,
+          "absolute_relative_residual_change": 0.0,
+          "relative_relation": "unchanged",
+          "criterion": "criterion_not_applicable",
+          "qualification": "No required monotonic improvement; local existing ledger verdicts remain separate from timestep convergence and full-cycle acceptance."
+        },
+        "Ca": {
+          "coarse": {
+            "signed_residual": -8.326672684688674e-17,
+            "unit": "mol_atoms",
+            "denominator": 0.1686034835727753,
+            "denominator_source": {
+              "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+              "actual_sources": [
+                "new genuine initial reference element_inventory_mol_atoms",
+                "current saved endpoint cumulative boundary-in signed difference",
+                "unchanged saved-case model.atom"
+              ],
+              "unit": "mol_atoms",
+              "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+            },
+            "absolute_relative_residual": 4.938612481926913e-16,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001,
+            "initial_reference_mol_atoms": 0.1686034835727753,
+            "signed_boundary_in_mol_atoms": 0.0
+          },
+          "refined": {
+            "signed_residual": -5.551115123125783e-17,
+            "unit": "mol_atoms",
+            "denominator": 0.1686034835727753,
+            "denominator_source": {
+              "rule": "Original element_scale[e]=max(elements[0,e], signed interval boundary_in dot gas atomic counts).",
+              "actual_sources": [
+                "new genuine initial reference element_inventory_mol_atoms",
+                "current saved endpoint cumulative boundary-in signed difference",
+                "unchanged saved-case model.atom"
+              ],
+              "unit": "mol_atoms",
+              "original_zero_branch": "Historical np.divide(where=scale!=0,out=zeros) would produce0; new explicit output instead retains undefined null/false, never zero/zero PASS."
+            },
+            "absolute_relative_residual": 3.292408321284609e-16,
+            "denominator_status": "defined",
+            "passed": true,
+            "threshold": 0.001,
+            "initial_reference_mol_atoms": 0.1686034835727753,
+            "signed_boundary_in_mol_atoms": 0.0
+          },
+          "signed_residual_change": 2.7755575615628914e-17,
+          "absolute_residual_change": -2.7755575615628914e-17,
+          "absolute_relative_residual_change": -1.6462041606423043e-16,
+          "relative_relation": "lower",
+          "criterion": "criterion_not_applicable",
+          "qualification": "No required monotonic improvement; local existing ledger verdicts remain separate from timestep convergence and full-cycle acceptance."
+        }
+      },
+      "complete_energy": {
+        "coarse": {
+          "signed_residual": -2.967064090436648,
+          "unit": "J",
+          "denominator": 203424.3372954902,
+          "denominator_source": {
+            "rule": "Original energy_scale=max(ptp(heat)+ptp(carried)+ptp(exterior_work),model.escale), evaluated only over the supplied endpoint samples.",
+            "actual_sources": [
+              "actual native endpoint heat/carried/work slots",
+              "saved context numeric.escale"
+            ],
+            "escale_derivation": "Original FullCycle constructor sum(initial condensed mol*base cp)*Tr. Original unchanged thermal-capacity scale, not a new adjustable floor.",
+            "unit": "J",
+            "scope": "For a stage use its two endpoints; wholecycle uses the nine supplied points. These are not extrema over unsaved intermediate solver/output times.",
+            "residual": "delta(original_global_U)-delta_heat-delta_carried-delta_signed_exterior_work"
+          },
+          "absolute_relative_residual": 1.4585590543803759e-05,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001,
+          "stored_U_change_j": -203426.95523905847,
+          "heat_change_j": -201469.86819343478,
+          "carried_energy_change_j": -1954.294541794341,
+          "exterior_pressure_work_change_j": 0.17456026108967843,
+          "endpoint_sample_cumulative_ranges_j": {
+            "heat_j": 201469.86819343478,
+            "carried_energy_j": 1954.294541794341,
+            "exterior_pressure_work_j": 0.17456026108967843
+          },
+          "original_initial_thermal_capacity_scale_j": 114147.47988818285
+        },
+        "refined": {
+          "signed_residual": 1.0632396146601726,
+          "unit": "J",
+          "denominator": 203426.7585063271,
+          "denominator_source": {
+            "rule": "Original energy_scale=max(ptp(heat)+ptp(carried)+ptp(exterior_work),model.escale), evaluated only over the supplied endpoint samples.",
+            "actual_sources": [
+              "actual native endpoint heat/carried/work slots",
+              "saved context numeric.escale"
+            ],
+            "escale_derivation": "Original FullCycle constructor sum(initial condensed mol*base cp)*Tr. Original unchanged thermal-capacity scale, not a new adjustable floor.",
+            "unit": "J",
+            "scope": "For a stage use its two endpoints; wholecycle uses the nine supplied points. These are not extrema over unsaved intermediate solver/output times.",
+            "residual": "delta(original_global_U)-delta_heat-delta_carried-delta_signed_exterior_work"
+          },
+          "absolute_relative_residual": 5.226645808383675e-06,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001,
+          "stored_U_change_j": -203425.34618712217,
+          "heat_change_j": -201473.3502827001,
+          "carried_energy_change_j": -1953.2336838318733,
+          "exterior_pressure_work_change_j": 0.1745397951390865,
+          "endpoint_sample_cumulative_ranges_j": {
+            "heat_j": 201473.3502827001,
+            "carried_energy_j": 1953.2336838318733,
+            "exterior_pressure_work_j": 0.1745397951390865
+          },
+          "original_initial_thermal_capacity_scale_j": 114147.47988818285
+        },
+        "signed_residual_change": 4.030303705096821,
+        "absolute_residual_change": -1.9038244757764755,
+        "absolute_relative_residual_change": -9.358944735420083e-06,
+        "relative_relation": "lower",
+        "criterion": "criterion_not_applicable",
+        "qualification": "No required monotonic improvement; local existing ledger verdicts remain separate from timestep convergence and full-cycle acceptance."
+      },
+      "entropy": {
+        "coarse": {
+          "signed_residual": -0.003062535827893953,
+          "unit": "J/K",
+          "denominator": 382.85252352233056,
+          "denominator_source": {
+            "rule": "Existing entropy_ledger_output scale model.escale/model.Tr; canonical signed residual=(delta originalglobalS-delta production)-delta exchange.",
+            "actual_sources": [
+              "saved context numeric.escale and numeric.Tr",
+              "actual separate native physical entropy slots",
+              "original global S reduction"
+            ],
+            "unit": "J/K",
+            "threshold_parameter": "acceptance.entropy_relative",
+            "rounding": "Also publish original slot-sum order residual and signed canonical-minus-original difference; do not alter historical verdicts."
+          },
+          "absolute_relative_residual": 7.999257258951632e-06,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001,
+          "stored_S_change_j_k": -283.081469263225,
+          "production_change_j_k": 11.78599396837808,
+          "exchange_change_j_k": -294.8644006957752,
+          "original_slot_sum_order_residual_j_k": -0.0030625358279507964,
+          "separate_minus_original_order_residual_j_k": 5.684341886080802e-14
+        },
+        "refined": {
+          "signed_residual": 0.001344613119783844,
+          "unit": "J/K",
+          "denominator": 382.85252352233056,
+          "denominator_source": {
+            "rule": "Existing entropy_ledger_output scale model.escale/model.Tr; canonical signed residual=(delta originalglobalS-delta production)-delta exchange.",
+            "actual_sources": [
+              "saved context numeric.escale and numeric.Tr",
+              "actual separate native physical entropy slots",
+              "original global S reduction"
+            ],
+            "unit": "J/K",
+            "threshold_parameter": "acceptance.entropy_relative",
+            "rounding": "Also publish original slot-sum order residual and signed canonical-minus-original difference; do not alter historical verdicts."
+          },
+          "absolute_relative_residual": 3.5120915683488163e-06,
+          "denominator_status": "defined",
+          "passed": true,
+          "threshold": 0.001,
+          "stored_S_change_j_k": -283.08171588008736,
+          "production_change_j_k": 11.786086432332581,
+          "exchange_change_j_k": -294.8691469255397,
+          "original_slot_sum_order_residual_j_k": 0.0013446131198406874,
+          "separate_minus_original_order_residual_j_k": -5.684341886080802e-14
+        },
+        "signed_residual_change": 0.004407148947677797,
+        "absolute_residual_change": -0.001717922708110109,
+        "absolute_relative_residual_change": -4.487165690602815e-06,
+        "relative_relation": "lower",
+        "criterion": "criterion_not_applicable",
+        "qualification": "No required monotonic improvement; local existing ledger verdicts remain separate from timestep convergence and full-cycle acceptance."
+      },
+      "gas_species": {
+        "O2": {
+          "budget_normalization": {
+            "coarse": {
+              "signed_residual": 2.4775730711522424e-07,
+              "unit": "mol",
+              "denominator": 0.0005493151840154856,
+              "denominator_source": {
+                "rule": "Existing gas_species_ledger max(abs(start),abs(end),sum(abs(each signed net reaction source)),abs(signed in)+abs(signed out)); no floor.",
+                "actual_sources": [
+                  "actual decoded stored gas inventories",
+                  "saved cumulative reaction extent differences and original stoichiometry",
+                  "saved signed boundary in/out differences"
+                ],
+                "unit": "mol",
+                "criterion_parameter": "acceptance.balance_relative",
+                "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+              },
+              "absolute_relative_residual": 0.00045102941685340307,
+              "denominator_status": "defined",
+              "passed": true,
+              "threshold": 0.001
+            },
+            "refined": {
+              "signed_residual": 1.244222906291695e-07,
+              "unit": "mol",
+              "denominator": 0.0005493158075993093,
+              "denominator_source": {
+                "rule": "Existing gas_species_ledger max(abs(start),abs(end),sum(abs(each signed net reaction source)),abs(signed in)+abs(signed out)); no floor.",
+                "actual_sources": [
+                  "actual decoded stored gas inventories",
+                  "saved cumulative reaction extent differences and original stoichiometry",
+                  "saved signed boundary in/out differences"
+                ],
+                "unit": "mol",
+                "criterion_parameter": "acceptance.balance_relative",
+                "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+              },
+              "absolute_relative_residual": 0.00022650411458744618,
+              "denominator_status": "defined",
+              "passed": true,
+              "threshold": 0.001
+            },
+            "signed_residual_change": -1.2333501648605473e-07,
+            "absolute_residual_change": -1.2333501648605473e-07,
+            "absolute_relative_residual_change": -0.0002245253022659569,
+            "relative_relation": "lower",
+            "criterion": "criterion_not_applicable",
+            "qualification": "No required monotonic improvement; local existing ledger verdicts remain separate from timestep convergence and full-cycle acceptance."
+          },
+          "initial_reference_normalization": {
+            "coarse": {
+              "signed_residual": 2.4775730711522424e-07,
+              "unit": "mol",
+              "denominator": 0.00024305211518374297,
+              "denominator_source": {
+                "rule": "Existing declared-process initial gas inventory, distinct from gas budget. Diagnostic normalization only; no independent pass criterion.",
+                "actual_source": "New genuine declared initial reference decoded gas inventory, not a recovered historical P68 initial vector.",
+                "unit": "mol",
+                "defined_passed": "null,threshold=null; diagnostic only",
+                "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+              },
+              "absolute_relative_residual": 0.0010193587779638298,
+              "denominator_status": "defined",
+              "passed": null,
+              "threshold": null
+            },
+            "refined": {
+              "signed_residual": 1.244222906291695e-07,
+              "unit": "mol",
+              "denominator": 0.00024305211518374297,
+              "denominator_source": {
+                "rule": "Existing declared-process initial gas inventory, distinct from gas budget. Diagnostic normalization only; no independent pass criterion.",
+                "actual_source": "New genuine declared initial reference decoded gas inventory, not a recovered historical P68 initial vector.",
+                "unit": "mol",
+                "defined_passed": "null,threshold=null; diagnostic only",
+                "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+              },
+              "absolute_relative_residual": 0.0005119160988790759,
+              "denominator_status": "defined",
+              "passed": null,
+              "threshold": null
+            },
+            "signed_residual_change": -1.2333501648605473e-07,
+            "absolute_residual_change": -1.2333501648605473e-07,
+            "absolute_relative_residual_change": -0.0005074426790847539,
+            "relative_relation": "lower",
+            "criterion": "criterion_not_applicable",
+            "qualification": "No required monotonic improvement; local existing ledger verdicts remain separate from timestep convergence and full-cycle acceptance."
+          }
+        },
+        "N2": {
+          "budget_normalization": {
+            "coarse": {
+              "signed_residual": 7.381019059896337e-07,
+              "unit": "mol",
+              "denominator": 0.002037237592431552,
+              "denominator_source": {
+                "rule": "Existing gas_species_ledger max(abs(start),abs(end),sum(abs(each signed net reaction source)),abs(signed in)+abs(signed out)); no floor.",
+                "actual_sources": [
+                  "actual decoded stored gas inventories",
+                  "saved cumulative reaction extent differences and original stoichiometry",
+                  "saved signed boundary in/out differences"
+                ],
+                "unit": "mol",
+                "criterion_parameter": "acceptance.balance_relative",
+                "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+              },
+              "absolute_relative_residual": 0.00036230526509609004,
+              "denominator_status": "defined",
+              "passed": true,
+              "threshold": 0.001
+            },
+            "refined": {
+              "signed_residual": 3.691999369993121e-07,
+              "unit": "mol",
+              "denominator": 0.0020372399049853615,
+              "denominator_source": {
+                "rule": "Existing gas_species_ledger max(abs(start),abs(end),sum(abs(each signed net reaction source)),abs(signed in)+abs(signed out)); no floor.",
+                "actual_sources": [
+                  "actual decoded stored gas inventories",
+                  "saved cumulative reaction extent differences and original stoichiometry",
+                  "saved signed boundary in/out differences"
+                ],
+                "unit": "mol",
+                "criterion_parameter": "acceptance.balance_relative",
+                "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+              },
+              "absolute_relative_residual": 0.00018122555723350852,
+              "denominator_status": "defined",
+              "passed": true,
+              "threshold": 0.001
+            },
+            "signed_residual_change": -3.689019689903216e-07,
+            "absolute_residual_change": -3.689019689903216e-07,
+            "absolute_relative_residual_change": -0.00018107970786258152,
+            "relative_relation": "lower",
+            "criterion": "criterion_not_applicable",
+            "qualification": "No required monotonic improvement; local existing ledger verdicts remain separate from timestep convergence and full-cycle acceptance."
+          },
+          "initial_reference_normalization": {
+            "coarse": {
+              "signed_residual": 7.381019059896337e-07,
+              "unit": "mol",
+              "denominator": 0.0009070844490110978,
+              "denominator_source": {
+                "rule": "Existing declared-process initial gas inventory, distinct from gas budget. Diagnostic normalization only; no independent pass criterion.",
+                "actual_source": "New genuine declared initial reference decoded gas inventory, not a recovered historical P68 initial vector.",
+                "unit": "mol",
+                "defined_passed": "null,threshold=null; diagnostic only",
+                "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+              },
+              "absolute_relative_residual": 0.0008137080365497516,
+              "denominator_status": "defined",
+              "passed": null,
+              "threshold": null
+            },
+            "refined": {
+              "signed_residual": 3.691999369993121e-07,
+              "unit": "mol",
+              "denominator": 0.0009070844490110978,
+              "denominator_source": {
+                "rule": "Existing declared-process initial gas inventory, distinct from gas budget. Diagnostic normalization only; no independent pass criterion.",
+                "actual_source": "New genuine declared initial reference decoded gas inventory, not a recovered historical P68 initial vector.",
+                "unit": "mol",
+                "defined_passed": "null,threshold=null; diagnostic only",
+                "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+              },
+              "absolute_relative_residual": 0.0004070182631857633,
+              "denominator_status": "defined",
+              "passed": null,
+              "threshold": null
+            },
+            "signed_residual_change": -3.689019689903216e-07,
+            "absolute_residual_change": -3.689019689903216e-07,
+            "absolute_relative_residual_change": -0.0004066897733639883,
+            "relative_relation": "lower",
+            "criterion": "criterion_not_applicable",
+            "qualification": "No required monotonic improvement; local existing ledger verdicts remain separate from timestep convergence and full-cycle acceptance."
+          }
+        },
+        "H2O": {
+          "budget_normalization": {
+            "coarse": {
+              "signed_residual": -1.3852732499292086e-08,
+              "unit": "mol",
+              "denominator": 0.007885305759864021,
+              "denominator_source": {
+                "rule": "Existing gas_species_ledger max(abs(start),abs(end),sum(abs(each signed net reaction source)),abs(signed in)+abs(signed out)); no floor.",
+                "actual_sources": [
+                  "actual decoded stored gas inventories",
+                  "saved cumulative reaction extent differences and original stoichiometry",
+                  "saved signed boundary in/out differences"
+                ],
+                "unit": "mol",
+                "criterion_parameter": "acceptance.balance_relative",
+                "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+              },
+              "absolute_relative_residual": 1.7567781036218147e-06,
+              "denominator_status": "defined",
+              "passed": true,
+              "threshold": 0.001
+            },
+            "refined": {
+              "signed_residual": -6.79545351413291e-09,
+              "unit": "mol",
+              "denominator": 0.007880787777072035,
+              "denominator_source": {
+                "rule": "Existing gas_species_ledger max(abs(start),abs(end),sum(abs(each signed net reaction source)),abs(signed in)+abs(signed out)); no floor.",
+                "actual_sources": [
+                  "actual decoded stored gas inventories",
+                  "saved cumulative reaction extent differences and original stoichiometry",
+                  "saved signed boundary in/out differences"
+                ],
+                "unit": "mol",
+                "criterion_parameter": "acceptance.balance_relative",
+                "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+              },
+              "absolute_relative_residual": 8.622809935198683e-07,
+              "denominator_status": "defined",
+              "passed": true,
+              "threshold": 0.001
+            },
+            "signed_residual_change": 7.057278985159177e-09,
+            "absolute_residual_change": -7.057278985159177e-09,
+            "absolute_relative_residual_change": -8.944971101019463e-07,
+            "relative_relation": "lower",
+            "criterion": "criterion_not_applicable",
+            "qualification": "No required monotonic improvement; local existing ledger verdicts remain separate from timestep convergence and full-cycle acceptance."
+          },
+          "initial_reference_normalization": {
+            "coarse": {
+              "signed_residual": -1.3852732499292086e-08,
+              "unit": "mol",
+              "denominator": 1.1629287807834594e-05,
+              "denominator_source": {
+                "rule": "Existing declared-process initial gas inventory, distinct from gas budget. Diagnostic normalization only; no independent pass criterion.",
+                "actual_source": "New genuine declared initial reference decoded gas inventory, not a recovered historical P68 initial vector.",
+                "unit": "mol",
+                "defined_passed": "null,threshold=null; diagnostic only",
+                "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+              },
+              "absolute_relative_residual": 0.0011911935389508177,
+              "denominator_status": "defined",
+              "passed": null,
+              "threshold": null
+            },
+            "refined": {
+              "signed_residual": -6.79545351413291e-09,
+              "unit": "mol",
+              "denominator": 1.1629287807834594e-05,
+              "denominator_source": {
+                "rule": "Existing declared-process initial gas inventory, distinct from gas budget. Diagnostic normalization only; no independent pass criterion.",
+                "actual_source": "New genuine declared initial reference decoded gas inventory, not a recovered historical P68 initial vector.",
+                "unit": "mol",
+                "defined_passed": "null,threshold=null; diagnostic only",
+                "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+              },
+              "absolute_relative_residual": 0.0005843396110254359,
+              "denominator_status": "defined",
+              "passed": null,
+              "threshold": null
+            },
+            "signed_residual_change": 7.057278985159177e-09,
+            "absolute_residual_change": -7.057278985159177e-09,
+            "absolute_relative_residual_change": -0.0006068539279253818,
+            "relative_relation": "lower",
+            "criterion": "criterion_not_applicable",
+            "qualification": "No required monotonic improvement; local existing ledger verdicts remain separate from timestep convergence and full-cycle acceptance."
+          }
+        },
+        "CO2": {
+          "budget_normalization": {
+            "coarse": {
+              "signed_residual": -1.1207203803387852e-08,
+              "unit": "mol",
+              "denominator": 0.0004543994812534423,
+              "denominator_source": {
+                "rule": "Existing gas_species_ledger max(abs(start),abs(end),sum(abs(each signed net reaction source)),abs(signed in)+abs(signed out)); no floor.",
+                "actual_sources": [
+                  "actual decoded stored gas inventories",
+                  "saved cumulative reaction extent differences and original stoichiometry",
+                  "saved signed boundary in/out differences"
+                ],
+                "unit": "mol",
+                "criterion_parameter": "acceptance.balance_relative",
+                "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+              },
+              "absolute_relative_residual": 2.4663768920847445e-05,
+              "denominator_status": "defined",
+              "passed": true,
+              "threshold": 0.001
+            },
+            "refined": {
+              "signed_residual": -5.359579363271253e-09,
+              "unit": "mol",
+              "denominator": 0.00045433928416756345,
+              "denominator_source": {
+                "rule": "Existing gas_species_ledger max(abs(start),abs(end),sum(abs(each signed net reaction source)),abs(signed in)+abs(signed out)); no floor.",
+                "actual_sources": [
+                  "actual decoded stored gas inventories",
+                  "saved cumulative reaction extent differences and original stoichiometry",
+                  "saved signed boundary in/out differences"
+                ],
+                "unit": "mol",
+                "criterion_parameter": "acceptance.balance_relative",
+                "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+              },
+              "absolute_relative_residual": 1.1796425160749699e-05,
+              "denominator_status": "defined",
+              "passed": true,
+              "threshold": 0.001
+            },
+            "signed_residual_change": 5.847624440116599e-09,
+            "absolute_residual_change": -5.847624440116599e-09,
+            "absolute_relative_residual_change": -1.2867343760097747e-05,
+            "relative_relation": "lower",
+            "criterion": "criterion_not_applicable",
+            "qualification": "No required monotonic improvement; local existing ledger verdicts remain separate from timestep convergence and full-cycle acceptance."
+          },
+          "initial_reference_normalization": {
+            "coarse": {
+              "signed_residual": -1.1207203803387852e-08,
+              "unit": "mol",
+              "denominator": 1.162928780783459e-06,
+              "denominator_source": {
+                "rule": "Existing declared-process initial gas inventory, distinct from gas budget. Diagnostic normalization only; no independent pass criterion.",
+                "actual_source": "New genuine declared initial reference decoded gas inventory, not a recovered historical P68 initial vector.",
+                "unit": "mol",
+                "defined_passed": "null,threshold=null; diagnostic only",
+                "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+              },
+              "absolute_relative_residual": 0.009637050856921452,
+              "denominator_status": "defined",
+              "passed": null,
+              "threshold": null
+            },
+            "refined": {
+              "signed_residual": -5.359579363271253e-09,
+              "unit": "mol",
+              "denominator": 1.162928780783459e-06,
+              "denominator_source": {
+                "rule": "Existing declared-process initial gas inventory, distinct from gas budget. Diagnostic normalization only; no independent pass criterion.",
+                "actual_source": "New genuine declared initial reference decoded gas inventory, not a recovered historical P68 initial vector.",
+                "unit": "mol",
+                "defined_passed": "null,threshold=null; diagnostic only",
+                "zero_policy": "relative=null,passed=false,undefined_zero_budget"
+              },
+              "absolute_relative_residual": 0.004608690963569181,
+              "denominator_status": "defined",
+              "passed": null,
+              "threshold": null
+            },
+            "signed_residual_change": 5.847624440116599e-09,
+            "absolute_residual_change": -5.847624440116599e-09,
+            "absolute_relative_residual_change": -0.00502835989335227,
+            "relative_relation": "lower",
+            "criterion": "criterion_not_applicable",
+            "qualification": "No required monotonic improvement; local existing ledger verdicts remain separate from timestep convergence and full-cycle acceptance."
+          }
+        }
+      }
+    },
+    "primary_relative_relation_counts": {
+      "lower": 12,
+      "unchanged": 2
+    },
+    "temperature_endpoint_only": {
+      "coarse_range_k": [
+        327.6191101277857,
+        333.9835684767656
+      ],
+      "refined_range_k": [
+        327.61907746276626,
+        333.98353834163333
+      ],
+      "maximum_absolute_refined_minus_coarse_cell_temperature_k": 3.266501943244293e-05,
+      "qualification": "Cooling endpoint only, not continuous peak temperature or cooling_hold finalproduct metrics."
+    },
+    "complete_storage_endpoint_scalars": {
+      "native_reduction_U_j": -3043805.469241053,
+      "native_reduction_S_j_k": 163.18422294151915
+    },
+    "complete_mass_kg": 0.20120088822057206,
+    "refined_endpoint_balance_passed": true,
+    "interpretation": "N/N2/O2 residuals decreased approximately one-half under this one factor2 max_step comparison; U/S absolute relative residuals decreased with signed residual reversals. Al/Si exactzero relative residuals with defined nonzero denominators remain unchanged. A single cooling-only comparison does not prove a convergence order, a unique cause, fullcycle/finalproduct/peak/grid or material acceptance."
+  },
+  "negative_inventory_summary": {
+    "refined": {
+      "char": {
+        "minimum_saved_inventory_mol": -8.581861576534481e-20,
+        "negative_cell_count": 6,
+        "coordinate_basis": "Original linear field5*chemical_scale for char; actual negative inventory retained."
+      }
+    },
+    "coarse": {
+      "char": {
+        "minimum_saved_inventory_mol": -1.2646807323299508e-18,
+        "negative_cell_count": 5
+      }
+    },
+    "refined_strict_nonnegative_inventories": false,
+    "actual_mode": {
+      "kinetic_liquid": true,
+      "direct_carbonation_enabled": false,
+      "cellwise_partition": false,
+      "calcium_coordinate_mode": 0,
+      "calcium_fraction_coordinate": true
+    },
+    "qualification": "Magnitude and negative-cell count are distinct. Refined char minimum is less negative, while negative cells increased5to6. No clipping/seed/threshold change or attribution to a single cause; original char/OH/Ca-fraction/pool-difference source classification retained as history."
+  },
+  "future_proposal": {
+    "schema": "P80_data_based_remaining_final_cooling_hold_comparison_static_candidate_v1",
+    "status": "proposal_not_adopted",
+    "current_science_windows": 0,
+    "scientifically_launched": false,
+    "scope": "Next independent static interface first; preserve all current53 sources/strictloader, define explicit conditional cooling_hold max_step30s contract and original finalproduct comparison. No new numerical attempt adopted here.",
+    "reason_from_actual_P80": "Cooling N/N2/O2 and completeU/S ledgers all pass and show lower/unchanged residuals under one time refinement; no new constitutive defect is established. Current missing numerical evidence is finalcooling_hold product changes, while char strictnegative remains separate.",
+    "exact_inputs": [
+      {
+        "path": "/Users/wanggaoying/Research/brickmodel-github/runs/full-cycle/p80-cooling-time-refinement/refined-cooling.json",
+        "full_bytes": 2230086,
+        "basis": "Actual refined cooling154800s full y275/effective30sconfig/original37context/fullsource53, no initialreset."
+      },
+      {
+        "path": "/Users/wanggaoying/Research/brickmodel-github/runs/full-cycle/p78-endpoint-ledger-acquisition/endpoint-ledgers.json",
+        "full_bytes": 483536,
+        "basis": "Actual already-saved coarse cooling/cooling_hold complete inventory/storage and newdeclaredinitial reference; no baseline potential reevaluation."
+      }
+    ],
+    "proposed_additive_source": "src/sludge_vme/models/full_cycle_cooling_hold_comparison.py",
+    "condition_to_declare_before_future_execution": "Separate cooling_hold_half_step policy/assumed record30s/range[30,30]/units; original758 rootrecords60s and existing cooling-only contract unchanged. Effective solver/config30s tied to that explicit final-stage condition, not an implicit extension of the cooling-only record.",
+    "future_original_interval": {
+      "start_time_s": 154800.0,
+      "end_time_s": 162000.0,
+      "stage": "cooling_hold"
+    },
+    "future_public_forecast": "One new strictactual53 load/ctor,0initial,1originalfinalBDF,1newendpoint/decode/completevalue/interval. Internal RHS/Jac actual existing counters; internalrates not independently measured.0extra publicrates/dynamics/gradient/projection/summary/predict/fit/UQ.",
+    "necessary_static_work": "Read existing finalporosity/residualcarbon/shrinkage definitions and root convergence denominator scales; define matched actual coarse/refined final endpoint comparison using existing data/complete new inventory only. Add producer54 with explicit input53/output54 complete source identity and effective/original cases. Preserve signed differences and negative inventories, no new floor or claimed single cause.",
+    "remaining_peak_grid_gap": "A finalcooling_hold comparison could supply three finalproduct time-sensitivity quantities, but continuouspeaktemperature and grid convergence remain separate missing actual evidence; no unpersisted path-peak interpolation.",
+    "possible_state_representation_audit": "If next source-only review is needed, inspect nativegas log-coordinate derivative dlogng=dng/ng versus integrated boundary ledgers for inertN2 and stored linearchar excursions. The current one-pair residual change alone does not prove this as the cause or authorize coordinate changes, clipping or another time refinement.",
+    "future_limits_required": "After separate adoption, fixed120s firstlaunch-to-finalreap inclJSON/four sciencefiles4194304B/fresh full67108864B including sources54/runtime/each fullinput/root/cases/freeze/oldstagedGitblobs/results/reports/adminformal/archive/self plus original8reserves27262976+extra2097152. Oneattempt,error/timeout/oversize/JSON closes/reaps0retry. No automatic continuation in currentP80.",
+    "criterion": "criterion_not_applicable",
+    "whole_model_complete": false,
+    "delivery": "Normal currentbranch and one originalDrive increment;0restore/download/historydelete."
+  },
+  "reference_and_sampling_qualification": {
+    "initial_reference": {
+      "kind": "new_genuine_declared_initial_reference",
+      "historical_P68_initial_state_recovered": false,
+      "source": "One genuine existing ThermoelasticFullCycle.initial_state invocation on exact savedconfig with original restored context. New allocated y only; no self/context mutation; no ODE input."
+    },
+    "mass_element_gas_initial_denominators": "P78 new genuine declared initial reference; not original historicalP68 t0 recovery. Currenthold-to-cooling differences use two actual endpoints, while originalinitial normalization has this separately declared basis.",
+    "energy": "Original energy-scale max of supplied two-point cumulativeheat/carried/work ptp and savedescale; each coarse/refined denominator retained separately. No continuous-path extremum or new adjustable floor.",
+    "entropy": "Original globalS, canonical separate-minus residual and originalslot-sum order residual plus signed difference preserved. Originalescale/Tr physical scale unchanged.",
+    "storage": "Original completeglobalU/globalS/cellF=sum(U_i-T_i*S_i), existing reaction/phase heat once. Residual subtracts signed externalpressurework; no extra state/heat/physical parameter.",
+    "zero_budget": "Null/false/undefined maintained in existing production rules; all current primary denominators defined, this run does not exercise or repair historicalzeroCaO phase budget."
+  },
+  "historical_failures_and_limits_preserved": {
+    "nominal_drying_percent_historical": 0.1358920787402553,
+    "nominal_drying_limit_percent": 0.1,
+    "CaOzero": "relative=null,passed=false,undefined_zero_budget; elementalCaPASS does not repair originalphase verdict.",
+    "all_prior_FAIL": "P34/P40/P44/P45/P50PASSwithdrawn/P51/P58/P60/P61/P63/all other savedFAIL preserved; no old wideUQ restart.",
+    "highT_assumed": "Portlandite caloric>700K/calcite caloric>1200K/H2O viscosity>1173.15K assumed analytic extrapolation remains; endpointcooling does not qualify intervening source/material domain.",
+    "directsynthetic": "Historical290–350K only; nominaldirectoff unchanged, no new highT applicability.",
+    "measured_parameter_count": 0,
+    "pending": "Fullcycle finaltime/grid/continuouspeak/threecases/inverse and real material qualification remain incomplete.",
+    "GitHub_capacity_warning_unresolved": true,
+    "historical_storage_20GB_unresolved": true,
+    "new_historical_storage_aggregate_measured": false
+  },
+  "delivery_separate_from_model_acceptance": true,
+  "criterion": "criterion_not_applicable",
+  "whole_model_complete": false,
+  "remaining_P80_science_windows": 0,
+  "post_window_scientific_calls": 0,
+  "future_science_adopted": false
+}

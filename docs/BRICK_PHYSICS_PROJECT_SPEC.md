@@ -1,5 +1,10 @@
 # 全流程近似烧结砖模型：当前执行规范（2026-09-26）
 
+P80 conditional冷却时间比较实际完成：P75hold133200→154800仅1BDF/新端点/decode/completevalue/interval，0initial/0baseline/reference重求势；正常sourcecwd CLI rc0/reaped，wall36.516589209s/CPU36.182987s，四science2868740B/4194304B，唯一120s窗关闭无retry/0postwindow。实际RHS9809/Jac51，内部rates次数未独立动态测量，额外publicrates/dynamics/grad/projection/summary/fitUQ0。53source普通bytes/完整原37context/原758records/144literature614assumed0measured保持；唯一effective数值diffmaxstep60→conditional30，solver/casefile/nativebundle同源30，P75完整原case单独保留/source51→53严格身份明确。原cooling账本全部仍低0.1%，Nrelative0.050865556%→0.025452828%，O2gas0.045102942%→0.022650411%，N2gas0.036230527%→0.018122556%；U signed-2.967064090→+1.063239615J，S-0.003062536→+0.001344613J/K，绝对relative降低但符号flip保留，Al/Si非零分母下zero不变。char min-1.264680732e-18→-8.581861577e-20mol/negativecells5→6，strictnonnegativefalse，不clip/seed/阈值修复。新initial分母依赖/两端ptp非pathmax保持；只cooling不授最终cooling_hold三产品/峰温/网格/材料PASS，原drying/全部FAIL/高温assumed保持，criterionNA/wholefalse。下一仅最终cooling_hold比较静态候选未采用未启动。详见docs/FULL_CYCLE_P80_COOLING_TIME_REFINEMENT.json/md。
+
+### P79及更早当时记录
+
+
 P79 冷却时间加密接口仅静态完成：新增独立full_cycle_cooling_refinement.py与根conditional30s/assumed-policy记录，原52model/loader/exporter普通bytes及758records/144literature614assumed0measured保持，原60s/rtol1e-5/atol1e-7/8stage物理气体程序不改。future strictP75hold133200→154800仅1BDF、0initial、1新decode/value/interval，原P78hold/reference/coarsecooling只读不重求势；严格恢复原37context/partition/phase0/liquid后生成effectiveconfig，model.p与solver及两完整保存config同读conditional30，原P75完整case另列出处/差异/source51→53身份。JSONhold列表先转array供原Sslot差，原globalU/S/cellF、signedwork/原分母/undefinedzero和端点ptp限制保持。已存负库存静态分类：早期lime池差/OH线性、reactionchar/OH、sinteringholdcalcite分数/charOH、冷末char；不归单因、不clip/改阈值。P79实际所有productionimport/load/ctor/initial/decode/values/RHS/JacODErates/projection/summaryfitUQ0，仅AST/source/现存JSON；未来120s四science4MiB完整64MiB+原预留候选未采用未启动。原干燥/负库存/高温assumed及全部旧FAIL保持、criterionNA/wholefalse。详见docs/FULL_CYCLE_P79_COOLING_REFINEMENT_INTERFACE.json/md。
 
 ### P78及更早当时记录
