@@ -1,5 +1,11 @@
 # 全流程近似模型交付报告
 
+P87 独立烧结采样峰值时间比较producer55静态实现完成，原54源码普通bytes/strictloader/CLI/原758完整records及两冷却合同保持；0科学import/load/ctor/solve/rates/helper/势值和0窗口。独立sintering30s与未来300s/四science4MiB/full64MiB根政策已声明。未来同一P71实际115200s到126000s两原BDF60/30，各91个原120s采样，完整cell/surface/center温差峰；原输入、每条实际完整solver275维t0与signed delta分别保存。2strict51load/ctor/endpointdecodevalueinterval、182rates/182center及67方法条件循环源码forecast分开；内部solver工作当前未知。共享source55/config两effectivecases/context和完整input51subset来源明确，四science保守估算3965444B/4194304B、余量228860B，actual新输出/耗时未测。仅局部采样峰/端点，原P78newreference不冒充历史t0，原floors/signed负FAIL/drying.1358920787402553%>.1%/CaO nullfalse/P45/resources/0measured/highTassumed/wholefalse保持。完整可运行候选未采用未动态验证，当前不数值运行；GitDrive/恢复0/历史容量另receipt。详见docs/FULL_CYCLE_P87_SINTERING_TIME_INTERFACE.md/json。
+
+### P86及更早当时记录
+
+
+
 P86 N2库存/边界有限步兼容性静态审查完成，0production科学调用/窗口，sciencewallCPU=null。原54源/758完整records=144literature614assumed0measured/原50paths和两冷却合同保持。实际N2七反应列0、同rates face空间相消/同右外面signed in/out、固定initialgas exp坐标与nscale归约一致，未发现具体错接漏项。原本机SciPy1.18.1 order1–5/variable-step D历史/alpha=(1-kappa)gamma/NDF/Newton有限终止实际式已列；exp库存与独立边界线性多步更新不自动离散守恒，实际P/G接受步缺项及限定pureBDF Taylor式明确，未重构内部history或评估exp/log。P78/P80/P85原N2/N元素/预算/初始分母与负out增量保signed；二档下降/翻号不证唯一原因或char负因，暂停BE/char保持。下一仅原sintering115200→126000s paired60/30、120s原surface/center/cell sampledpeak数值建议未采用；需additive55接口、182sample rates+182center、独立300s/4MiB/full64MiB fresh预算，实耗未知/不借120s/旧headroom。当前不新增源码或数值，原drying.1358920787402553%>.1%/strictchar及负残碳/CaO nullfalse/P45/resource全部旧FAIL/高温assumed/wholefalse保持。GitDrive/恢复0/历史容量另receipt。详见docs/FULL_CYCLE_P86_INERT_GAS_DISCRETE_LEDGER.md/json。
 
 ### P85及更早当时记录

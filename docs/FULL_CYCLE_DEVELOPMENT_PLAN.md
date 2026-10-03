@@ -1768,3 +1768,33 @@ P86 N2库存/边界有限步兼容性静态审查完成，0production科学调�
 ### 2026-10-03T20:06:20.367670+00:00: P86 同阶段源分派补充
 
 P86同阶段实际Thermoelastic继承分派已纳入：superevent后仅改liquid120:132，gas/boundary不覆盖。NDF corrector exp局部bracket及predictor/history总项并列；协调out-in与本文in-out符号换向一致，0新科学/非新人类授权。静态/adminwall=1249.847396s，sciencewall/CPU=null。
+
+
+## 2026-10-03T20:53:18.774300+00:00: P87 静态烧结采样峰值时间比较接口
+
+- [x] **P87-A** freshGit/磁盘/独立full64MiB/原reserve不减、当前采用与原54源/758记录冻结。
+- [x] **P87-B** 新增producer55、独立sintering30s和未来300s/四science4MiB/full64MiB声明，原54/758保持。
+- [x] **P87-C** 2strict51load/ctor/原BDF/endpointdecodevalueinterval、91各完整cell/surface/center采样与精确起点/t0roundtrip；0当前科学。
+- [x] **P87-D** 182rates/182center实际源内嵌decode/thermo/固定Newton等forecast与具体序列化/未来full预算。
+- [x] **P87-E** 静态代码审查/报告/矩阵/真实耗时、完整未采用可运行候选，GitDrive另receipt；wholefalse/旧FAIL保持。
+
+
+### 2026-10-03T21:04:56.973140+00:00: P87 静态实现收束
+
+P87 独立烧结采样峰值时间比较producer55静态实现完成，原54源码普通bytes/strictloader/CLI/原758完整records及两冷却合同保持；0科学import/load/ctor/solve/rates/helper/势值和0窗口。独立sintering30s与未来300s/四science4MiB/full64MiB根政策已声明。未来同一P71实际115200s到126000s两原BDF60/30，各91个原120s采样，完整cell/surface/center温差峰；原输入、每条实际完整solver275维t0与signed delta分别保存。2strict51load/ctor/endpointdecodevalueinterval、182rates/182center及67方法条件循环源码forecast分开；内部solver工作当前未知。共享source55/config两effectivecases/context和完整input51subset来源明确，四science保守估算3933245B/4194304B、余量261059B，actual新输出/耗时未测。仅局部采样峰/端点，原P78newreference不冒充历史t0，原floors/signed负FAIL/drying.1358920787402553%>.1%/CaO nullfalse/P45/resources/0measured/highTassumed/wholefalse保持。完整可运行候选未采用未动态验证，当前不数值运行；GitDrive/恢复0/历史容量另receipt。详见docs/FULL_CYCLE_P87_SINTERING_TIME_INTERFACE.md/json。
+
+P87勾选仅静态接口/源码review/预算完成，不是动态仿真勾选。P04和全模型未完成保持；真实static/adminwall=698.191852s，sciencewall/CPU=null。Git/Drive与终态fullallocation另receipt。
+
+
+### 2026-10-03T21:07:50.248072+00:00: P87 静态实现收束
+
+P87 独立烧结采样峰值时间比较producer55静态实现完成，原54源码普通bytes/strictloader/CLI/原758完整records及两冷却合同保持；0科学import/load/ctor/solve/rates/helper/势值和0窗口。独立sintering30s与未来300s/四science4MiB/full64MiB根政策已声明。未来同一P71实际115200s到126000s两原BDF60/30，各91个原120s采样，完整cell/surface/center温差峰；原输入、每条实际完整solver275维t0与signed delta分别保存。2strict51load/ctor/endpointdecodevalueinterval、182rates/182center及67方法条件循环源码forecast分开；内部solver工作当前未知。共享source55/config两effectivecases/context和完整input51subset来源明确，四science保守估算3934319B/4194304B、余量259985B，actual新输出/耗时未测。仅局部采样峰/端点，原P78newreference不冒充历史t0，原floors/signed负FAIL/drying.1358920787402553%>.1%/CaO nullfalse/P45/resources/0measured/highTassumed/wholefalse保持。完整可运行候选未采用未动态验证，当前不数值运行；GitDrive/恢复0/历史容量另receipt。详见docs/FULL_CYCLE_P87_SINTERING_TIME_INTERFACE.md/json。
+
+P87勾选仅静态接口/源码review/预算完成，不是动态仿真勾选。P04和全模型未完成保持；真实static/adminwall=871.467581s，sciencewall/CPU=null。Git/Drive与终态fullallocation另receipt。
+
+
+### 2026-10-03T21:10:56.365890+00:00: P87 静态实现收束
+
+P87 独立烧结采样峰值时间比较producer55静态实现完成，原54源码普通bytes/strictloader/CLI/原758完整records及两冷却合同保持；0科学import/load/ctor/solve/rates/helper/势值和0窗口。独立sintering30s与未来300s/四science4MiB/full64MiB根政策已声明。未来同一P71实际115200s到126000s两原BDF60/30，各91个原120s采样，完整cell/surface/center温差峰；原输入、每条实际完整solver275维t0与signed delta分别保存。2strict51load/ctor/endpointdecodevalueinterval、182rates/182center及67方法条件循环源码forecast分开；内部solver工作当前未知。共享source55/config两effectivecases/context和完整input51subset来源明确，四science保守估算3965444B/4194304B、余量228860B，actual新输出/耗时未测。仅局部采样峰/端点，原P78newreference不冒充历史t0，原floors/signed负FAIL/drying.1358920787402553%>.1%/CaO nullfalse/P45/resources/0measured/highTassumed/wholefalse保持。完整可运行候选未采用未动态验证，当前不数值运行；GitDrive/恢复0/历史容量另receipt。详见docs/FULL_CYCLE_P87_SINTERING_TIME_INTERFACE.md/json。
+
+P87勾选仅静态接口/源码review/预算完成，不是动态仿真勾选。P04和全模型未完成保持；真实static/adminwall=1057.585492s，sciencewall/CPU=null。Git/Drive与终态fullallocation另receipt。
