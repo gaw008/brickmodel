@@ -1483,8 +1483,26 @@ P70真实交付续勾依据：HEAD/remote=bebe45854be2624d3a92a16112463a0148e2b6
 - [x] **P71-C** 保存原始q/温度/public计数/带符号反应与边界能量熵账本，700Ksource越域/弱phase限制和全部失败保持。
 - [x] **P71-D** 根据真实reactions状态登记独立strict51load+1event15values候选120s4MiB64MiB，未采用/未启动。
 - [ ] **P71-E** 新51身份动态load/势与耦合功率、充分phase/完整8stage物理数值加密资格仍未完成。
-- [ ] **D71-GIT** 七明确本轮root/docs路径正常后继/普通push。
-- [ ] **D71-DRIVE** 原folder一次必要小增量，metadata不等实际恢复。
-- [ ] **P71-FINAL** 全source/root/input/freezes/原及stagedblob/一archive/末receipt自身收口。
+- [x] **D71-GIT** 七明确本轮root/docs路径正常后继/普通push。
+- [x] **D71-DRIVE** 原folder一次必要小增量，metadata不等实际恢复。
+- [x] **P71-FINAL** 全source/root/input/freezes/原及stagedblob/一archive/末receipt自身收口。
 
 P70-E中实际原生续算/新端点JSON部分由P71完成；新51身份实际load及phase/物理资格仍缺，不整项勾选。P69/P70历史科学资格不改，P01–P08未满足模型項和全部原工艺/资源失败保持。真正计算wall/CPU来自execution，不将报告读取称新科学运行。
+
+
+### P72 原reactions115200s同事件势功率
+
+P72 真实reactions115200s端点strict51load与同事件投影已完成：rc0/reaped，wall0.950378875s/CPU0.679432000s，科学全部1445502B/4194304B，120s窗口关闭。1load/ctor路径声明、0initial、实际1nativeRHS/rate/chart及15完整势，JacODEsummaryfitUQ0。Udot原生28.263728917584093W/投影28.26372891758409W/signed差-3.552713678800501e-15W；原Sdot=-0.000525131632333618W/K，投影对原全局signed差+4.336808689942018e-19W/K，派生Fdot差-7.105427357601002e-15W。CaO库存0.13241213422851839mol，实际phase功率3.6120133845024145e-25W仍极弱；qdot0.00498424–0.00660763/s。当前差未定位具体漏项，不证明浮点原因或独立PASS；下一价值在原sintering真实后续状态。758records未变/144literature614assumed0measured、OH700K越域assumed、旧失败与criterionNA/wholefalse保持。详见docs/FULL_CYCLE_P72_REACTIONS_DYNAMICS.json/md。
+
+P71真实交付续勾依据：HEAD/remote=7606af6a6243dd5834b889941ce624189323b478；actual=16206666B/conservative=45566794B；Drive=1656086B/id=1jz3CBdGGoR-EGkeg2xrZ7CUy6gAAhoUr，metadata匹配/access_not_verified/restore0。P71提案history0保持，P72另内部采用，持续授权不重复问。
+
+- [x] **P72-A** freshGit/磁盘/独立完整gate/51source输入与758records冻结保护。
+- [x] **P72-B** strict51load+1sameevent/15values实际完成，0initialODE，rc0/0.950379s/1445502B，窗口关闭。
+- [x] **P72-C** 保留原生/梯度U/S/newF/真实Vdot压功/带符号差和实际CaO/载体/弱phase；criterionNA不授独立PASS。
+- [x] **P72-D** 当前差未定位漏项，按实际qdot/弱phase登记下一原sintering115200→126000单段300s4MiB64MiB候选，未启动。
+- [ ] **P72-E** 充分phase/最新完整8stage守恒与受影响加密/比较反演及材料资格仍未完成。
+- [ ] **D72-GIT** 七本轮root/docs paths正常后继/普通push。
+- [ ] **D72-DRIVE** 原folder必要一次小增量metadata，实际恢复另列。
+- [ ] **P72-FINAL** 全source/root/input/freezes/oldstagedblob/archive/末receipt自身收口。
+
+P70-E/P71-E中strict51load与同事件势/功率部分由P72完成；充分phase和完整物理资格仍缺，不能整项勾选。0新物理参数、0测量、0下一科学窗口。后续推进原下一段获得有意义phase状态，而不是重复点诊断或仅流水号；全部旧process/physical/resource失败保持。

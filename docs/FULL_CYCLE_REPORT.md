@@ -1,5 +1,10 @@
 # 全流程近似模型交付报告
 
+P72 真实reactions115200s端点strict51load与同事件投影已完成：rc0/reaped，wall0.950378875s/CPU0.679432000s，科学全部1445502B/4194304B，120s窗口关闭。1load/ctor路径声明、0initial、实际1nativeRHS/rate/chart及15完整势，JacODEsummaryfitUQ0。Udot原生28.263728917584093W/投影28.26372891758409W/signed差-3.552713678800501e-15W；原Sdot=-0.000525131632333618W/K，投影对原全局signed差+4.336808689942018e-19W/K，派生Fdot差-7.105427357601002e-15W。CaO库存0.13241213422851839mol，实际phase功率3.6120133845024145e-25W仍极弱；qdot0.00498424–0.00660763/s。当前差未定位具体漏项，不证明浮点原因或独立PASS；下一价值在原sintering真实后续状态。758records未变/144literature614assumed0measured、OH700K越域assumed、旧失败与criterionNA/wholefalse保持。详见docs/FULL_CYCLE_P72_REACTIONS_DYNAMICS.json/md。
+
+### P71及更早当时记录
+
+
 P71 独立原reactions续算已真实完成：从P68实际97200s/y275续至115200s，0initial/1savedload构造声明/1BDFsolve，新y275与51source/config/context保存，0summary/势/state_dynamics/fit/UQ。rc0/reaped，wall35.968494625s/CPU35.703364000s，科学全部2006055B/4194304B，300s窗口关闭无重试；实际RHS9701/Jac56、nfev965/njev56/nlu157。温度1049.684203–1066.635128K，q=-60.621853至-57.591303，脱羟累计0.30503219151407235mol/新增0.30192904798592163mol，脱碳新增0.13241213422851836mol。q仍很负，未算液相/耦合功率；12endpoint均越700K hydroxide来源上限，旧assumed解析延拓不授domain/materialPASS。758records全保持、144literature/614assumed/0measured，原失败与criterionNA/wholefalse保持。详见docs/FULL_CYCLE_P71_REACTIONS_ENDPOINT.json/md。
 
 ### P70及更早当时记录
