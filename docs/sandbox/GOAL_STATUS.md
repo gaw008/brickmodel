@@ -2819,3 +2819,10 @@ P83同阶段独立AI审查已合并（非新人类批准/额度）：合法同�
 
 - [x] **P83-D1** 同态Fleft/Ru恒等式、非负旧c必要条件/负旧c与空区间、有限Newton连续和平衡区别合并；0新科学。
 首个451db523正常后继保留，追加普通后继；仅一次最终Drive增量，实际交付另finalreceipt。
+
+
+## 2026-10-03T18:36:28.344909+00:00：P84 静态最终冷却保温比较接口
+
+P84最终cooling_hold比较接口仅静态完成：新增独立producer54，原53含strictloader/CLI与758完整records保持，0productionimport/load/ctor/initial/decode/value/RHS/Jac/ODE/rates/helper/grad/summaryfitUQ。单独cooling_hold_half_step30s/assumed-policy声明，原root60s/rtol/atol和P80cooling-only合同原样。实际P80source53/context37/154800s与P78savedcoarse162000s字段审查完成，bulk权重porosity与org+char元素碳kg可用；shrinkage仅共用P78新declared初始bulk条件化可用，旧P68t0不可恢复，原历史shrinkage/null未伪造。原refined分母floors.01/1e-7kg/.001和strict<.02保持，signed原库存和负FAIL独立。未来1loadctor/1原finalBDF/1endpoint/decode/value/interval、0initial/baseline/reference重求的120s四文件4MiB完整64MiB候选已具体登记但未采用未运行。只覆盖原hold后两冷却段半步产品，前六段/continuouspeak/grid/整time/三方案反演/完整U_S未资格；P83BE暂停及干燥.1358920787402553%>.1%/CaO nullfalse/全部旧FAIL/0measured高温assumed/wholefalse保持。GitDrive/metadata/恢复0/历史容量另finalreceipt。详见docs/FULL_CYCLE_P84_COOLING_HOLD_INTERFACE.md/json。
+
+实际静态开发/adminwall=1163.998487s，sciencewall/CPU=null；未来0采用/0科学，最终交付与容量另receipt。

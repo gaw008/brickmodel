@@ -1702,9 +1702,9 @@ P83 原净状态/耗尽/氧共同域静态研究完成，0生产科学调用/新
 - [x] **P83-C** 三原率完整势及A/E/氧因子/donor、organic/char/O2真实零极限和有限图边界完成。
 - [x] **P83-D** 共同char/gas/机械氧域端点符号分类、具体左端及Ru阻碍完成；停止扩理论、单个未采用finalcooling_hold路线建议。
 - [ ] **P83-E** 联合求解器/零域/fullU_S/strict非负/最终time-grid-peak/三方案反演/材料/整模型未完成；本轮不自动实施。
-- [ ] **D83-GIT** 8root/docs路径正常后继与push，实际完成以另finalreceipt读取。
-- [ ] **D83-DRIVE** 原folder一次必要增量metadata；0实际恢复、历史容量独立。
-- [ ] **P83-FINAL** late完整fullbytes/self/archive/GitDrive封账以另finalreceipt为准，不递归提交该回执。
+- [x] **D83-GIT** 8root/docs路径正常后继与push，实际完成以另finalreceipt读取。
+- [x] **D83-DRIVE** 原folder一次必要增量metadata；0实际恢复、历史容量独立。
+- [x] **P83-FINAL** late完整fullbytes/self/archive/GitDrive封账以另finalreceipt为准，不递归提交该回执。
 
 变更8路径：root行政注记、spec/report/plan/goal、P83md/json及finalmatrix；生产53原bytes保持。preparation→report实际wall=676.536702s；sciencewall/CPU=null、0科学call。P82交付checkbox据已读真实finalreceipt补齐；P83本提交后实际交付状态另receipt。
 
@@ -1715,3 +1715,19 @@ P83同阶段独立AI审查已合并（非新人类批准/额度）：合法同�
 
 - [x] **P83-D1** 同态Fleft/Ru恒等式、非负旧c必要条件/负旧c与空区间、有限Newton连续和平衡区别合并；0新科学。
 首个451db523正常后继保留，追加普通后继；仅一次最终Drive增量，实际交付另finalreceipt。
+
+
+## 2026-10-03T18:36:28.344909+00:00：P84 静态最终cooling_hold接口
+
+P84最终cooling_hold比较接口仅静态完成：新增独立producer54，原53含strictloader/CLI与758完整records保持，0productionimport/load/ctor/initial/decode/value/RHS/Jac/ODE/rates/helper/grad/summaryfitUQ。单独cooling_hold_half_step30s/assumed-policy声明，原root60s/rtol/atol和P80cooling-only合同原样。实际P80source53/context37/154800s与P78savedcoarse162000s字段审查完成，bulk权重porosity与org+char元素碳kg可用；shrinkage仅共用P78新declared初始bulk条件化可用，旧P68t0不可恢复，原历史shrinkage/null未伪造。原refined分母floors.01/1e-7kg/.001和strict<.02保持，signed原库存和负FAIL独立。未来1loadctor/1原finalBDF/1endpoint/decode/value/interval、0initial/baseline/reference重求的120s四文件4MiB完整64MiB候选已具体登记但未采用未运行。只覆盖原hold后两冷却段半步产品，前六段/continuouspeak/grid/整time/三方案反演/完整U_S未资格；P83BE暂停及干燥.1358920787402553%>.1%/CaO nullfalse/全部旧FAIL/0measured高温assumed/wholefalse保持。GitDrive/metadata/恢复0/历史容量另finalreceipt。详见docs/FULL_CYCLE_P84_COOLING_HOLD_INTERFACE.md/json。
+
+- [x] **P84-A** freshGit/磁盘/独立full64MiB/root/source53/两完整候选/两actualfullinputs/正式授权冻结完成。
+- [x] **P84-B** 原三产品/单位bulk权重/原floor与strict门槛、saved字段/新参考及旧t0/峰网格缺口静态核对完成。
+- [x] **P84-C** 新独立producer54、独立30sfinalcondition、明确input53/output54/fullcases与1decode/value离线入口实现；AST/in-memorycompile不执行通过。
+- [x] **P84-D** 唯一未来120s/4sciencefiles4MiB/fresh64MiB完整计划和真实计数/失败reap0retry登记，仍未采用未启动。
+- [ ] **P84-E** 动态接口/部分终态time比较尚未执行；strict非负/fulltime/grid/continuouspeak/U_S/三方案反演/实材/整模型未完成。
+- [ ] **D84-GIT** 9明确root/source/docs路径正常后继push，实际据另finalreceipt。
+- [ ] **D84-DRIVE** 原folder一次必要静态增量metadata，0实际恢复/历史容量另列。
+- [ ] **P84-FINAL** 全必要physicalcopies/blobs/adminformal/archive/self封账以另finalreceipt为准。
+
+变更9路径：独立producer54、root独立conditional合同、spec/report/plan/goal、P84md/json及finalmatrix；旧53保持。实际静态开发/adminwall=1163.998487s，sciencewallCPU=null。P83交付checkbox据真实回执补齐。
