@@ -2750,3 +2750,8 @@ P72 真实reactions115200s端点strict51load与同事件投影已完成：rc0/re
 ## P73 实际原sintering续算
 
 P73 原sintering独立续算真实完成：从P71 reactions115200s/y275至126000s，strict51load/ctor路径声明、0initial/1原BDFsolve、1新y275/source51端点，势/state_dynamics/summary/fitUQ0。rc0/reaped，wall6.713187208s/CPU6.480378000s，科学全部2006326B/4194304B，300s窗口关闭无重试；实际RHS1672/Jac8，nfev/njev/nlu=424/8/50。T1217.111809–1221.681264K，q-0.525843740–-0.351902963，signed推进57.239400269–60.096009625；已取得有意义后续相变坐标，但未独立计算fraction/phase功率/守恒。12格均越portlandite700K/calcite1200K caloric及H2Oviscosity1173.15K原源上界，沿旧assumed延拓不授source/material/continuous资格。758records原样、144literature614assumed0measured、criterionNA/wholefalse与全部旧失败保持。下一同端点1event15values仅登记未启动。详见docs/FULL_CYCLE_P73_SINTERING_CONTINUATION.json/md。
+
+
+## P74 实际烧结端点同事件诊断
+
+P74 真实sintering126000s strict51load与同事件势功率完成：rc0/reaped，wall0.950319375s/CPU0.679611000s，科学全部1442851B/4194304B，120s唯一窗口关闭。1load/ctor路径声明、0initial、实际1nativeRHS/rate/chart与15完整值，JacODEsummaryfitUQ0。原生phase储能0.356702602691W/熵0.000296048798703W/K，phase_eigenstrain_sum1.67659607635e-06/s/phase_modulus_sum-231587.726914Pa/s；真实Vdot-2.80385376731e-11m3/s/外压功2.80385376731e-06W。Udot投影减原生signed4.440892098500626e-16, Sdot原归约差0.0,派生Fdot差0.0。实际phase/机械分项已观测，不等全interval或独立PASS；不同q/phase分区不直接相减认漏项。758records全保持/144literature614assumed0measured，三项源越域assumed、负库存/旧失败/criterionNA/wholefalse保持。下一原soak仅登记未启动。详见docs/FULL_CYCLE_P74_SINTERING_DYNAMICS.json/md。

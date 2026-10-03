@@ -1519,8 +1519,26 @@ P72真实交付续勾依据：HEAD/remote=34561a845757f960b6c651c2b8e243af834ea7
 - [x] **P73-C** rawq/temperature/counters及七反应、四gas、U/S累计槽signed归约，逐物种来源边界与旧失败保持。
 - [x] **P73-D** 依据actual nearzero q登记同端点strict51+1event15values候选120s4MiB64MiB，未启动。
 - [ ] **P73-E** 实际phase功率/机械coupling、最新完整8stage守恒和受影响加密/三方案/反演及材料资格仍未完成。
-- [ ] **D73-GIT** 七本轮root/docs paths正常后继/普通push。
-- [ ] **D73-DRIVE** 原folder一次必要小增量metadata，实际恢复另列。
-- [ ] **P73-FINAL** 全source/root/input/freezes/oldstagedblob/archive/末receipt自身收口。
+- [x] **D73-GIT** 七本轮root/docs paths正常后继/普通push。
+- [x] **D73-DRIVE** 原folder一次必要小增量metadata，实际恢复另列。
+- [x] **P73-FINAL** 全source/root/input/freezes/oldstagedblob/archive/末receipt自身收口。
 
 P72-E仍未整体勾选：P73取得真实烧结后续q，却未独立导出其phase储能和机械products。真实科学wall/CPU来自execution；报告是读取saved字段和原尺度归约，0新增科学调用。758原records与51生产源全部保持。
+
+
+### P74 原烧结126000s同事件phase/机械证据
+
+P74 真实sintering126000s strict51load与同事件势功率完成：rc0/reaped，wall0.950319375s/CPU0.679611000s，科学全部1442851B/4194304B，120s唯一窗口关闭。1load/ctor路径声明、0initial、实际1nativeRHS/rate/chart与15完整值，JacODEsummaryfitUQ0。原生phase储能0.356702602691W/熵0.000296048798703W/K，phase_eigenstrain_sum1.67659607635e-06/s/phase_modulus_sum-231587.726914Pa/s；真实Vdot-2.80385376731e-11m3/s/外压功2.80385376731e-06W。Udot投影减原生signed4.440892098500626e-16, Sdot原归约差0.0,派生Fdot差0.0。实际phase/机械分项已观测，不等全interval或独立PASS；不同q/phase分区不直接相减认漏项。758records全保持/144literature614assumed0measured，三项源越域assumed、负库存/旧失败/criterionNA/wholefalse保持。下一原soak仅登记未启动。详见docs/FULL_CYCLE_P74_SINTERING_DYNAMICS.json/md。
+
+P73真实交付续勾依据：HEAD/remote=16c99bed776d237ec55ed521b7345f39d691388a；actual=16704254B/conservative=46064382B；Drive=1660423B/id=1gnw88oEkIiUYVBakkl7hqgh8dmKPUlll，metadata匹配/access_not_verified/restore0。P73旧proposal0保持，P74另采用。
+
+- [x] **P74-A** freshGit/磁盘/完整gate/strict51完整输入与758records冻结保护。
+- [x] **P74-B** 实际1共享nativeevent/1projection/15values，0initialJacODE，120s唯一窗口关闭，无科学重试。
+- [x] **P74-C** actual非微弱phase储能/机械率/14x12产品/Vdot压功/原S与派生F/signed差、三项源越域及负库存/旧失败留存。
+- [x] **P74-D** 未定位具体漏项，不改核或参数；下一原soak独立300s4MiB64MiB候选已登记未启动。
+- [ ] **P74-E** 独立/完整8stage守恒、受影响加密、三方案反演与材料资格仍未完成。
+- [ ] **D74-GIT** 七root/docs正常后继与普通push。
+- [ ] **D74-DRIVE** 原folder一次必要增量metadata，actualrestore另列。
+- [ ] **P74-FINAL** 全necessarysource/input/blob/report/admin/archive/末self完整收口。
+
+P73-E中actualphase/机械分项在本点已观察，由P74完成此部分；独立interval/fullcycle和材料资格未完，不能整项勾选。0新science窗口；真实wall/CPU来自execution。行政JSON读取错误留证，与成功科学窗口分开。
