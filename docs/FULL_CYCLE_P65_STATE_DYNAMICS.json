@@ -1,0 +1,405 @@
+{
+  "schema": "P65_static_same_event_production_dynamics_v1",
+  "recorded_utc": "2026-10-03T02:28:05.761587+00:00",
+  "static_implementation_completed": true,
+  "dynamic_execution_completed": false,
+  "actual_new_science_calls": 0,
+  "actual_new_dynamic_values": null,
+  "syntax": [
+    {
+      "path": "src/sludge_vme/models/full_cycle_gas.py",
+      "syntax_parsed": true,
+      "production_function_locations": [
+        {
+          "name": "rates",
+          "line": 651
+        },
+        {
+          "name": "mechanical_rates",
+          "line": 775
+        },
+        {
+          "name": "_rhs_event",
+          "line": 807
+        },
+        {
+          "name": "rhs",
+          "line": 828
+        },
+        {
+          "name": "_native_storage_power",
+          "line": 832
+        }
+      ],
+      "import_or_execution": false
+    },
+    {
+      "path": "src/sludge_vme/models/full_cycle_solid.py",
+      "syntax_parsed": true,
+      "production_function_locations": [
+        {
+          "name": "mechanical_rates",
+          "line": 419
+        },
+        {
+          "name": "porous_mechanical_rates",
+          "line": 457
+        },
+        {
+          "name": "_mechanical_storage_terms",
+          "line": 518
+        },
+        {
+          "name": "_rhs_event",
+          "line": 537
+        },
+        {
+          "name": "state_dynamics",
+          "line": 549
+        },
+        {
+          "name": "instantaneous_potential_power",
+          "line": 576
+        },
+        {
+          "name": "_potential_state_from_decoded",
+          "line": 608
+        }
+      ],
+      "import_or_execution": false
+    },
+    {
+      "path": "src/sludge_vme/models/full_cycle.py",
+      "syntax_parsed": true,
+      "production_function_locations": [
+        {
+          "name": "export_initial_state_dynamics",
+          "line": 582
+        },
+        {
+          "name": "rates",
+          "line": 364
+        },
+        {
+          "name": "rhs",
+          "line": 405
+        }
+      ],
+      "import_or_execution": false
+    },
+    {
+      "path": "src/sludge_vme/cli.py",
+      "syntax_parsed": true,
+      "production_function_locations": [],
+      "import_or_execution": false
+    }
+  ],
+  "old_complete_parameter_records": 729,
+  "old_changed_parameter_records": [],
+  "current_parameter_records": 749,
+  "parameter_status_counts": {
+    "literature": 144,
+    "assumed": 605,
+    "measured": 0
+  },
+  "source_changes": [
+    "src/sludge_vme/models/full_cycle_gas.py",
+    "src/sludge_vme/models/full_cycle_solid.py",
+    "src/sludge_vme/models/full_cycle.py",
+    "src/sludge_vme/cli.py"
+  ],
+  "full_stage_paths": [
+    "src/sludge_vme/models/full_cycle_gas.py",
+    "src/sludge_vme/models/full_cycle_solid.py",
+    "src/sludge_vme/models/full_cycle.py",
+    "src/sludge_vme/cli.py",
+    "parameters.full_cycle.json",
+    "docs/BRICK_PHYSICS_PROJECT_SPEC.md",
+    "docs/FULL_CYCLE_REPORT.md",
+    "docs/FULL_CYCLE_DEVELOPMENT_PLAN.md",
+    "docs/sandbox/GOAL_STATUS.md",
+    "docs/FULL_CYCLE_P65_STATE_DYNAMICS.md",
+    "docs/FULL_CYCLE_P65_STATE_DYNAMICS.json"
+  ],
+  "implementation": {
+    "producer": "FiniteGasFullCycle.rhs -> virtual _rhs_event; ThermoelasticFullCycle._rhs_event -> same base native rate/RHS producer plus original liquid-coordinate branch.",
+    "ordinary_rhs": "Existing scalar/array expressions and order, seven mechanical return entries, original effective_capacity/mechanical_residual cache behavior, complex path and dy API retained. capture=False performs no new display/potential physics.",
+    "state_reuse": "rates(capture=True) exports same first unpack f,T,Ns,Ng,V,Vp,surface. Builder creates chart without third unpack/Newton. Original second unpack/q path retained.",
+    "chart": "Native physical fields T/water/kaolin/Ca/organic/char/eta/OH and q if active, fourgaslogs, real V/V0. Same dy for field/gas velocities and native db/V0. Cumulative f7/f8/extents/boundary/entropy excluded from storage but rawdy retained.",
+    "constraint": "Composition gradients fixedV and Vp=V-Ns.v; V gradient gets real Vdot/V0, never frozen speed0 or extra Vpdot.",
+    "Udot": "Unfold original native caloric/composition/gas/surface/elastics/internal-phase energy elimination from same arrays; independent external reference heat+flow-P*db, preserving original dy[-3] exterior pressure work.",
+    "Sdot": "Original global scalar and production/exchange reduction unchanged; new per-cell component reduction signed difference separately saved.",
+    "Fdot": "New derived cell Udot-T*Sdot-S*Tdot using this event h/s+mixing+binding+nativeelastic S. Not old native Fdot output/cache, mean-T, independent baseline or second EOS.",
+    "projection": "One explicit potential_derivatives(state) returns baseline+14directions15completevalues; products with sameevent chartvelocity, each cell/global and signed native/external differences. Ordinary RHS/state_dynamics do not call it.",
+    "new_operators": "Explicit projection/display algebra, no extra rate/thermo/elastic/unpack or debugger/profiler capture; no additional heat, property, state or new physical normalization."
+  },
+  "source_inferred_count_qualification": "Uninstrumented primitive/inheritance predictions only; P65 observed physics counts0. Future public natural completed counters separate.",
+  "preimplementation_gate": {
+    "complete_bytes": 33157527,
+    "limit_bytes": 67108864,
+    "original_reserves_bytes": 27262976,
+    "passed": true
+  },
+  "P64_actual_historical_context": {
+    "global_potential": {
+      "native_reduction_U_j": -3900077.8055708534,
+      "native_reduction_S_j_k": 305.2967543342309,
+      "sum_cell_U_j": -3900077.8055708543,
+      "sum_cell_S_j_k": 305.2967543342309,
+      "sum_cell_F_j": -3991102.0328756045,
+      "cell_minus_native_U_j": -9.313225746154785e-10,
+      "cell_minus_native_S_j_k": 0.0
+    },
+    "origin": "Actual P64 saved JSON, not a current P65 dynamic result; no recomputation or substitute event"
+  },
+  "administrative_errors": {
+    "stage": "administrative editor before execution",
+    "attempt": 1,
+    "error": "SyntaxError: unterminated string literal at line45; nested multiline quote",
+    "Research_source_writes": 0,
+    "science_calls": 0,
+    "correction": "Use triple single quotes for outer editing literals; target source docstrings remain triple double quoted. Editor syntax parsed, not production imported."
+  },
+  "additional_administrative_file_error": "Initial read named non-existing full_cycle_thermal.py; finite filename listing identified full_cycle_solid.py. No physics execution or source edit from that read.",
+  "proposed_unique_dynamic_window": {
+    "status": "not_adopted_not_launched",
+    "cwd": "/Users/wanggaoying/Research/brickmodel-github/src",
+    "argv": [
+      "/Users/wanggaoying/Research/brickmodel-github/.venv/bin/python",
+      "-B",
+      "-m",
+      "sludge_vme.cli",
+      "full-cycle",
+      "/Users/wanggaoying/Research/brickmodel-github/parameters.full_cycle.json",
+      "--state-dynamics",
+      "--out",
+      "/Users/wanggaoying/Research/brickmodel-github/runs/full-cycle/p66-state-dynamics-native"
+    ],
+    "case": "saved_reference_host_case(current full root), full root records plus declared physical_case and geometry_case full-record overrides; case-parameters.json genuinely written if launched.",
+    "material_physics_identity": "Original729 complete records unchanged; case physical overrides remain identical to actual P64 case, no replacement by a new recipe/seed or zero-carrier fix.",
+    "source_chart_identity": "Fresh same-event state/chart and fresh15values; no consumption of old P64 gradient dictionaries as new operator outputs.",
+    "cells": 13,
+    "geometry_mode": 3,
+    "calcium_mode": 1,
+    "native_initial_temperature_k": 298.15,
+    "jobs": 1,
+    "workers": 1,
+    "attempts": 1,
+    "logical_constructor": 1,
+    "native_initial": 1,
+    "state_dynamics": 1,
+    "ordinary_rhs_wrapper_direct_calls": 0,
+    "shared_native_RHS_logic_events": 1,
+    "existing_RHS_counter_increment": 1,
+    "native_rate_events": 1,
+    "original_native_unpack": 2,
+    "native_Newton_iterations": 16,
+    "additional_chart_unpack": 0,
+    "additional_chart_mechanical": 0,
+    "projection": 1,
+    "complete_value_calls": 15,
+    "baseline_calls": 1,
+    "direction_calls": 14,
+    "sixteenth_value_call": 0,
+    "Jacobian": 0,
+    "ODE": 0,
+    "trajectory_summary": 0,
+    "predict": 0,
+    "fit": 0,
+    "UQ": 0,
+    "launch_to_reap_seconds_limit": 120,
+    "scientific_output_total_limit_bytes": 2097152,
+    "scientific_output_scope": "Full actual case-parameters.json, state-dynamics.json, stdout/stderr and necessary scientific results; not partial JSON accounting.",
+    "estimated_output": "Current full case roughly0.62MB; native state/velocity/power and gradients/projection records below1MB anticipated, not observed. Total adopted candidate cap2MiB.",
+    "independent_complete_gate_limit_bytes": 67108864,
+    "all_original_eight_reserves_bytes": 27262976,
+    "failure_policy": "Any error/timeout/output excess closes the unique window without retry; no science adopted by P65.",
+    "saved_objects": "Raw native y/dy, chart14x13/velocity, Vdot/Vpdot/Tdot/dNs/dNg/extents, native U/S/F components/global/boundary, original Sdot and entropy sources, fresh baseline/components/14x13gradients and coordinate products/signed differences, sources/complete case/records/call distinction.",
+    "criterion": "criterion_not_applicable; no adopted independent threshold; no oldcached1e-11/P45/P50/cumulative-S reuse",
+    "zero_carrier_limitation": "Actual initial metakaolin carrier zero and q derivative zero do not qualify nonzero-carrier dynamics or fullcycle.",
+    "source_inferred_internal_calls": {
+      "status": "static_source_graph_forecast_not_runtime_observation",
+      "native_event": {
+        "logical_RHS": 1,
+        "native_rates": 1,
+        "native_unpack": 2,
+        "native_Newton_iterations": 16,
+        "elastic_response": 19,
+        "state_thermo": 1,
+        "state_caloric_capacity": 1,
+        "liquid_relaxation": 1,
+        "liquid_coordinate_rate": 2,
+        "additional_chart_unpack": 0,
+        "imaginary_Newton": 0,
+        "thermo_logical_chains": 2,
+        "thermo_inherited_entries": 6,
+        "source_caloric_integrals": 6,
+        "quartz_thermo": 3,
+        "quartz_polynomial": 15,
+        "thermal_strain": 22,
+        "quartz_phase": 25,
+        "phase_eigenstrain": 23,
+        "phase_reference_volume": 21,
+        "liquid_order": 49,
+        "liquid_phase": 3,
+        "liquid_equilibrium_log_odds": 6,
+        "liquid_contrast": 10,
+        "liquid_driving_log_odds": 3,
+        "water_retention": 2,
+        "water_binding": 2,
+        "water_fractions": 4,
+        "retention_sites": 4,
+        "transport": 1,
+        "gas_carried_enthalpy": 1,
+        "gas_diffusivity": 1,
+        "pore_limited_pair_diffusivity": 1,
+        "gas_pair_free_diffusivity": 1,
+        "gas_knudsen_diffusivity": 1,
+        "wall_friction_molecular_flux": 1,
+        "gas_wall_friction_matrix": 1,
+        "vectorized_gas_linear_solve": 1,
+        "gas_viscosity": 1,
+        "pure_gas_viscosity": 1,
+        "water_transport": 1,
+        "water_carried_enthalpy": 1,
+        "water_mobility_resistance": 1,
+        "state_heat_transfer": 1,
+        "phase_conductivity": 1,
+        "heat_transfer_from_conductivity": 1,
+        "pore_radiative_conductivity": 1,
+        "sintering_response": 1,
+        "liquid_state": 2,
+        "gas_molar_cp": 1,
+        "FiniteGas_caloric_capacity": 1,
+        "direct_carbonation_sources": 1,
+        "carbonate_rate": 1,
+        "hydroxide_rate": 1,
+        "chemical_coordinate_rates_logical": 1,
+        "chemical_coordinate_rates_inherited_entries": 2,
+        "condensed_state_logical": 2,
+        "condensed_state_inherited_entries": 4
+      },
+      "complete_value_projection": {
+        "status": "static_source_graph_forecast_not_runtime_observation; must enumerate actual final implementation before science",
+        "scope": "15 complete-value calls only; constructor/native-initial/chart helpers additional and separate",
+        "per_operator": {
+          "state_thermo": 1,
+          "thermo_logical_chain": 1,
+          "thermo_inherited_entries": 3,
+          "source_caloric_integrals": 2,
+          "quartz_thermo": 1,
+          "quartz_polynomial": 5,
+          "liquid_phase": 2,
+          "liquid_equilibrium_log_odds": 2,
+          "liquid_contrast_when_current_cp_nonzero": 4,
+          "liquid_order_in_hs": 1,
+          "raw_skeleton_liquid_order": 1,
+          "quartz_phase_in_hs": 1,
+          "raw_skeleton_quartz_phase": 1,
+          "water_fractions": 1,
+          "retention_sites": 1
+        },
+        "all_15_operator_calls": {
+          "state_thermo": 15,
+          "thermo_inherited_entries": 45,
+          "source_caloric_integrals": 30,
+          "quartz_thermo": 15,
+          "quartz_polynomial": 75,
+          "liquid_phase": 30,
+          "liquid_equilibrium_log_odds": 30,
+          "liquid_contrast": 60,
+          "liquid_order": 30,
+          "quartz_phase": 30,
+          "water_fractions": 15,
+          "retention_sites": 15
+        },
+        "additional_chart_and_directions": {
+          "native_unpack": 1,
+          "native_Newton_iterations": 8,
+          "native_elastic_response_in_current_nonzero_m_branch": 8,
+          "fixed_volume_direction_condensed_state_logical_calls": 14,
+          "baseline_reuses_chart_decoded_inventory": true,
+          "imaginary_Newton": 0,
+          "cached_mechanical_residual_attribute_read": 0
+        },
+        "constructor_initial_chart_nested_helpers": "Not independently observed in static work; all actual branches must be accounted separately in production execution record; neither allocated as a second instance nor called now",
+        "numpy_elementary_ops": "included inside each declared complete/primitive value call, not represented as solver Jacobian or zero science",
+        "no_generic_profile_frame_capture_checker": "explicit production value calls may emit their own counts; inherited uninstrumented entries remain source-inferred unless a real production counting path is separately adopted"
+      },
+      "constructor_and_initial": {
+        "logical_make_cycle": 1,
+        "inherited_constructor_entries": 3,
+        "source_caloric_coefficients": 2,
+        "constructor_quartz_phase": 2,
+        "constructor_liquid_phase": 1,
+        "constructor_liquid_equilibrium_log_odds": 1,
+        "constructor_liquid_contrast": 2,
+        "native_initial_logical": 1,
+        "inherited_initial_entries": 2,
+        "initial_liquid_equilibrium_log_odds": 1,
+        "initial_liquid_contrast": 1,
+        "initial_native_unpack": 0,
+        "source_identity": "Current declared13cell mode3/Ca1 case and current nonzero cp/m/g/a branches only; no runtime observation."
+      },
+      "not_observed": "No new model or physics execution in P65; actual counts unavailable until adopted CLI is run.",
+      "postprocessing": {
+        "captured_mechanical_storage_terms": 1,
+        "native_storage_power": 1,
+        "chart_assembly": 1,
+        "constrained_potential_derivatives": 1,
+        "complete_potential_values": 15,
+        "directions": 14,
+        "coordinatewise_gradient_velocity_products": 3,
+        "coordinate_reductions": 3,
+        "projected_global_reductions": 3,
+        "signed_native_comparisons": "Three per-cell, three sum-native-global, one original-S-global and one external-U-global; native cell/global arithmetic differences retained.",
+        "math_scope": "Additional explicit display/projection algebra only; no extra unpack, elastic, thermo, rates or cached-field fill. Ordinary RHS capture=False skips it."
+      },
+      "native_event_count_basis": {
+        "elastic_response": "16 in two original8-iteration unpack solves +1 skeleton chemical +1 porous mechanics +1 original q RHS =19.",
+        "thermal_strain": "18 from two unpack paths +1 skeleton elastic +1 porous elastic +1 porous explicit derivative +1 q elastic =22.",
+        "phase_order": "23 eigenstrain +21 reference-volume +state h/s +heat liquid-state +sintering liquid-state +capacity +relaxation =49.",
+        "thermo": "Current state h/s chain and boundary reservoir h/s chain each3 inherited entries. Their gas/mineral integrals4 plus gas/mineral capacity2; no new calls.",
+        "quartz": "Two h/s wrappers plus capacity wrapper, each5polynomial +phase; plus22 thermal_strain phase =25.",
+        "liquid": "Three equilibrium phase helpers; each equilibrium+C contrast2. Relaxation has2drive eq+owncontrast, RHS q has1drive eq:6eq/10contrast total.",
+        "qualification": "All predicted from source; completed primitive counts unavailable in P65. Constructor/initial and15value primitive forecasts are separate, not added to native-event counts."
+      }
+    }
+  },
+  "retained_failures": {
+    "P63": "preimport failure0physics",
+    "nominal_drying_water_percent": 0.1358920787402553,
+    "nominal_limit_percent": 0.1,
+    "CaO_relative": null,
+    "CaO_passed": false,
+    "P45_netU_relative": 3.039630569777313e-09,
+    "P45_original_limit": 1e-11,
+    "others": [
+      "P34",
+      "P40",
+      "P44",
+      "P50 withdrawals",
+      "P51",
+      "P58 resource",
+      "P60 completeprelaunch",
+      "P61 original32MiB"
+    ],
+    "exhausted_batches": [
+      "P21",
+      "P26"
+    ]
+  },
+  "whole_model_complete": false,
+  "material_applicability": "pending measured target material comparison;0measured",
+  "remaining_gaps": [
+    "new dynamic interface qualification",
+    "independent applicable instantaneous criteria",
+    "nonzero-carrier coupling",
+    "summary dynamics",
+    "latest eightstage affected conservation/thermodynamics",
+    "time/grid refinement",
+    "three condition comparisons",
+    "latest inverse/synthetic/UQ"
+  ],
+  "delivery": "One ordinary successor/push and one originalfolder minimal Drive static increment; no actualrestore. Late receipt outsidecommit/archive, no recursion."
+}

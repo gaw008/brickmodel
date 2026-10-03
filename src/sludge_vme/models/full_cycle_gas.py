@@ -648,7 +648,7 @@ class FiniteGasFullCycle(FullCycle):
         power[1:] += energy
         return flux, energy, flux*force, inventory_rate, power, coordinate_rate
 
-    def rates(self, t, y):
+    def rates(self, t, y, *, capture=False):
         fields, T, ns, bulk, pore, surface, cap = self.unpack(y)
         ng, partial, pressure = self.gas_state(y, T, pore)
         tf = float(np.interp(t, self.times, self.temperatures))
@@ -699,7 +699,9 @@ class FiniteGasFullCycle(FullCycle):
         dns[:,self.water_index] += water_rate
         flow += water_power
         heat, surface_T, qext, conductance, conductivity = self.state_heat_transfer(T, ns, bulk, tf, fields)
-        mechanical = self.mechanical_rates(fields,T,ns,ng,bulk,pore,cap,pressure,dns,dng,heat,flow,us,ug)
+        mechanical = self.mechanical_rates(fields,T,ns,ng,bulk,pore,cap,pressure,dns,dng,heat,flow,us,ug,capture=capture)
+        if capture:
+            mechanical,mechanical_storage=mechanical
         dT,db,dpore,capacity,extra_sdot,mechanical_entropy,coordinate_rate = mechanical
         sg = s[:, len(self.ns):]-self.R*np.log(partial/self.Pr)
         sdot = np.sum(capacity*dT/T)+np.sum(s[:, :len(self.ns)]*dns)+np.sum((sg-self.R)*dng)+np.sum(ng.sum(axis=1)*self.R*dpore/pore)+extra_sdot
@@ -710,7 +712,7 @@ class FiniteGasFullCycle(FullCycle):
         reaction_entropy = -np.sum(rate*dg/T[:, None])
         thermal_entropy = np.sum(conductance*np.diff(T)**2/(T[:-1]*T[1:]))+qext*(1/T[-1]-1/tf)
         production = reaction_entropy+mechanical_entropy+thermal_entropy+face_entropy.sum()+water_entropy.sum()
-        return {'direct_carbonation':direct, 'dT':dT, 'hazard':hazard, 'rate':rate, 'dns':dns, 'dng':dng, 'db':db, 'dpore':dpore,
+        result={'direct_carbonation':direct, 'dT':dT, 'hazard':hazard, 'rate':rate, 'dns':dns, 'dng':dng, 'db':db, 'dpore':dpore,
                 'heat':heat, 'flow':flow, 'gas_flux':flux, 'pressure':pressure, 'gas':ng, 'partial':partial,
                 'gas_fractions':ng/ng.sum(axis=1)[:, None], 'kiln_T':tf, 'surface_T':surface_T,
                 'boundary_gas_fractions':inlet, 'reservoir_mu_over_t':reservoir_mu_over_t,
@@ -738,6 +740,18 @@ class FiniteGasFullCycle(FullCycle):
                 'dsc':float(heat.real.sum())/self.total_initial_dry_mass, 'coordinate_rate':coordinate_rate,
                 'pore':pore, 'conductivity':conductivity, 'effective_capacity':self.effective_capacity,
                 'mechanical_residual':self.mechanical_residual}
+        if capture:
+            result['decoded_state']={'fields':fields,'temperature_k':T,'condensed_mol':ns,
+                'gas_mol':ng,'bulk_m3':bulk,'pore_m3':pore,'surface_energy_j':surface}
+            result['native_storage_inputs']={'h':h,'s':s,'condensed_partial_u':us,
+                'gas_partial_u':ug,'gas_partial_s':sg,'capillary_pressure':cap,
+                'water_mixing_log_activity':log_activity,'retention_entropy':retention_entropy,
+                'binding':binding,'mechanical':mechanical_storage,
+                'extra_entropy_rate_global_w_k':extra_sdot,'stored_entropy_rate_global_w_k':sdot,
+                'reaction_entropy_global_w_k':reaction_entropy,'thermal_entropy_global_w_k':thermal_entropy,
+                'mechanical_entropy_global_w_k':mechanical_entropy,
+                'gas_face_entropy_w_k':face_entropy}
+        return result
 
     def state_heat_transfer(self,T,ns,bulk,tf,fields):
         return self.heat_transfer(T,ns,bulk,tf)
@@ -758,7 +772,7 @@ class FiniteGasFullCycle(FullCycle):
             capacity+=self.binding_cp*water*sites/(water+sites)
         return capacity
 
-    def mechanical_rates(self,f,T,ns,ng,bulk,pore,cap,pressure,dns,dng,heat,flow,us,ug):
+    def mechanical_rates(self,f,T,ns,ng,bulk,pore,cap,pressure,dns,dng,heat,flow,us,ug,*,capture=False):
         force=pressure-self.P-cap
         db=self.ks*np.exp(-self.Es/self.R*(1/T-1/self.Tsref))*pore/cap*force
         dpore=db-dns@self.v
@@ -766,7 +780,14 @@ class FiniteGasFullCycle(FullCycle):
         dT=(heat+flow-self.P*db-np.sum(us*dns,axis=1)-np.sum(ug*dng,axis=1)-cap*dpore)/capacity
         self.effective_capacity=capacity
         self.mechanical_residual=np.zeros_like(T)
-        return dT,db,dpore,capacity,0.,np.sum(force*db/T),dpore/pore
+        result=(dT,db,dpore,capacity,0.,np.sum(force*db/T),dpore/pore)
+        if capture:
+            zero=np.zeros_like(T)
+            return result,{'elastic_storage_rate_w':zero,'phase_storage_rate_w':zero,
+                'elastic_entropy_rate_w_k':zero,'phase_entropy_rate_w_k':zero,
+                'stored_elastic_entropy_j_k':zero,
+                'source':'FiniteGasFullCycle.mechanical_rates; no elastic or internal-phase storage'}
+        return result
 
     def additional_storage(self,f,T,bulk):
         return np.zeros_like(T),np.zeros_like(T)
@@ -783,9 +804,9 @@ class FiniteGasFullCycle(FullCycle):
             y[3*self.n:4*self.n] = self.initial[:,self.calcium_coordinate_species]/self.calcium_pool
         return y
 
-    def rhs(self, t, y):
+    def _rhs_event(self, t, y, *, capture):
         self.rhs_calls += 1
-        r = self.rates(t, y)
+        r = self.rates(t, y,capture=capture)
         dy = np.zeros_like(y)
         f = dy[:self.gas_offset].reshape(-1, self.n)
         f[0] = r['dT']/self.Tr
@@ -802,7 +823,69 @@ class FiniteGasFullCycle(FullCycle):
         dy[self.last+self.g:self.last+2*self.g] = np.where(boundary.real > 0, boundary, 0)/self.nscale
         dy[-3] = -self.P*r['db'].sum()/self.escale
         dy[-2:] = np.array([r['production'],r['exchange']])*self.Tr/self.escale
-        return dy
+        return dy,r
+
+    def rhs(self, t, y):
+        """The solver and explicit dynamics consume the same native producer."""
+        return self._rhs_event(t,y,capture=False)[0]
+
+    def _native_storage_power(self, event):
+        """Expose the same event's constitutive and external power terms.
+
+        U parts unfold the native mechanical energy elimination. S keeps its
+        original scalar reduction independently of the new per-cell display.
+        No thermo, mechanics, rates or separate reaction heat is called here.
+        """
+        r=event; raw=r['native_storage_inputs']; state=r['decoded_state']
+        T=state['temperature_k']; ns=state['condensed_mol']; ng=state['gas_mol']
+        dns=r['dns']; dng=r['dng']; mechanics=raw['mechanical']; binding=raw['binding']
+        u_parts={'caloric_temperature':r['capacity']*r['dT'],
+            'condensed_composition_including_binding_partials':np.sum(raw['condensed_partial_u']*dns,axis=1),
+            'gas_composition':np.sum(raw['gas_partial_u']*dng,axis=1),
+            'pore_surface':raw['capillary_pressure']*r['dpore'],
+            'elastic':mechanics['elastic_storage_rate_w'],
+            'internal_phase':mechanics['phase_storage_rate_w']}
+        s_parts={'caloric_temperature':r['capacity']*r['dT']/T,
+            'condensed_composition':np.sum(raw['s'][:,:len(self.ns)]*dns,axis=1),
+            'gas_composition':np.sum((raw['gas_partial_s']-self.R)*dng,axis=1),
+            'gas_pore_volume':ng.sum(axis=1)*self.R*r['dpore']/r['pore'],
+            'water_mixing':-self.R*raw['water_mixing_log_activity']*dns[:,self.water_index],
+            'binding_water':binding['partial_s']*dns[:,self.water_index],
+            'binding_site_and_mixing_site':binding['kaolin_s']*dns[:,self.kaolin],
+            'elastic':mechanics['elastic_entropy_rate_w_k'],
+            'internal_phase':mechanics['phase_entropy_rate_w_k']}
+        u_cell=sum(u_parts.values()); s_cell=sum(s_parts.values())
+        stored_s_cell=(np.sum(ns*raw['s'][:,:len(self.ns)],axis=1)
+            +np.sum(ng*raw['gas_partial_s'],axis=1)+raw['retention_entropy']
+            +binding['entropy']+mechanics['stored_elastic_entropy_j_k'])
+        f_cell=u_cell-T*s_cell-r['dT']*stored_s_cell
+        external_parts={'heat':r['heat'],'gas_and_liquid_carried_energy':r['flow'],
+                        'external_pressure_work':-self.P*r['db']}
+        external_cell=sum(external_parts.values())
+        native_external_global=r['heat'].sum()+r['flow'].sum()-self.P*r['db'].sum()
+        return {'schema':'same_native_event_storage_power_v1',
+            'cell':{'Udot_w':u_cell,'Sdot_w_k':s_cell,'Fdot_w':f_cell},
+            'global':{'Udot_w':u_cell.sum(),
+                'Sdot_original_reduction_w_k':raw['stored_entropy_rate_global_w_k'],
+                'sum_cell_Sdot_w_k':s_cell.sum(),'Fdot_w':f_cell.sum(),
+                'cell_minus_original_Sdot_w_k':s_cell.sum()-raw['stored_entropy_rate_global_w_k']},
+            'Udot_components_w':u_parts,'Sdot_components_w_k':s_parts,
+            'stored_entropy_cell_j_k':stored_s_cell,
+            'external_power_components_w':external_parts,'external_power_cell_w':external_cell,
+            'native_external_power_global_w':native_external_global,
+            'constitutive_minus_external_cell_w':u_cell-external_cell,
+            'constitutive_minus_external_global_w':u_cell.sum()-native_external_global,
+            'entropy':{'production_global_w_k':r['production'],'exchange_global_w_k':r['exchange'],
+                'original_identity_residual_w_k':r['entropy_identity_residual'],
+                'reaction_global_w_k':raw['reaction_entropy_global_w_k'],
+                'mechanical_global_w_k':raw['mechanical_entropy_global_w_k'],
+                'thermal_global_w_k':raw['thermal_entropy_global_w_k'],
+                'gas_face_w_k':raw['gas_face_entropy_w_k'],'liquid_face_w_k':r['water_entropy']},
+            'mechanical_storage_terms':mechanics,
+            'source':'Same captured native rates/mechanical event and its exact existing arrays. Per-cell U unfolds constitutive elimination; external U is the original heat+flow-P*Vdot budget. Original Sdot scalar/order retained.',
+            'independence':'Same constitutive EOS and native rates; no independent thermodynamic data or second EOS. No duplicate phase/reaction heat.',
+            'Fdot_reference_source':'New per-cell Udot-T*Sdot-Tdot*S derived here, with S reconstructed from this event h/s, original mixing/binding and native elastic coefficients. No pre-existing independent native Fdot cache or mean-temperature substitution.',
+            'criterion':'criterion_not_applicable'}
 
     def jacobian(self, t, y):
         # The integrated diagnostic ledgers never feed back into physical RHS.

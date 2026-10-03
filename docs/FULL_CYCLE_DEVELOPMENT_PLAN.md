@@ -1342,10 +1342,34 @@ P63 preimport失败保留，不被P64重写；P45净U与P34/P40/P44/P50撤回/P5
 - [x] **P64-GATE** 完整应用源/事实/前失败和方案/协调证据/实际原Gitblob/所有原八reserve独立gate；prelaunch34518344B。
 - [x] **P64-B** 唯一合法src cwd生产CLI/native初态/15values导出，实际rc0/1.526735833s/701052B，窗口关闭。
 - [x] **P64-C** 真实数值/组件/14×13梯度/计数与signed无判据限定保存；原全部失败、工艺和待实测保留。
-- [ ] **D64-GIT** 七明确本轮路径普通后继及push，待真实收据。
-- [ ] **D64-DRIVE** 原目录一必要小包metadata/source_visibility，实际恢复另列。
-- [ ] **P64-FINAL** 全实际路径/完整原及暂存blob/一档案/末receipt自身收口，不递归commit/archive。
+- [x] **D64-GIT** 七明确本轮路径普通后继及push，待真实收据。
+- [x] **D64-DRIVE** 原目录一必要小包metadata/source_visibility，实际恢复另列。
+- [x] **P64-FINAL** 全实际路径/完整原及暂存blob/一档案/末receipt自身收口，不递归commit/archive。
 
 P63-C保持未完成。P64功能成功不能勾全周期/独立热力学判据；P01–P08剩余模型项保持原状态。下一state_dynamics候选尚未分配或启动。
 
 P63交付续勾依据：真实末收据HEAD/remote=7bce0e055b82d519bf89a3868e51a6d089f6be6b，actual13707446B、原八reserve27262976B；一Drive包1376779B，id=1-8YOHfR2eFCR_lqbRfnpfZrpYSUo4pM-，name/size/parent一致、access_not_verified/restore0。P63-C功能失败不变。
+
+
+### P65 同事件动态接口静态实施
+
+P65 同事件生产state_dynamics与显式势功率投影已静态实现（2026-10-03T02:28:05.761587+00:00），本轮科学0。rhs委托同一_rhs_event，原rate/机械/液相q分支、dy/complex求解器行为和算子表达次序保持；capture=False无新势/显示计算。state_dynamics复用rate同次f/T/Ns/Ng/V/Vp，保留原第二unpack，chart无第三机械解码。原Vdot进入Vdot/V0，q/eta/Ca/OH/char/gas/T全链保留，f7/f8及累计账本不入储存chart。
+
+原全局Sdot及生产/交换归约保持；新增逐格分项之和差值signed另列。Udot展开同一本构机械消元，外部参考heat+flow−P*db保留原dy[-3]外压功。Fdot逐格Udot−T*Sdot−S*Tdot由同事件h/s/mixing/binding/elasticS新派生，不是原独立Fdot缓存或第二EOS。显式instantaneous_potential_power才求baseline+14方向15完整值；普通rhs/state_dynamics不求势。互斥CLI --state-dynamics已接线但未运行。
+
+四源语法解析通过、旧729完整records未变；根749=144literature/605assumed/0measured，20新增仅操作policy/未来未采用方案。行政编辑程序首次多行引用语法错误在执行前停止，修正后完成，原失败留证；没有模型import/构造/unpack/rates/RHS/势/ODE/summary/fit/UQ。本轮无新动态signed值、物理或工艺PASS，criterion_not_applicable/wholefalse。原P63/P34/P40/P44/P45/P50撤回/P51/P58/P60/P61失败、名义余水0.1358920787402553%>0.1%、CaOnullfalse及材料待实测保持。
+
+下一只提出Research/src正常CLI --state-dynamics，合法13格mode3/Ca1/298.15K真初态：1job/worker/attempt/constructor/initial/nativeevent，原2unpack/16Newton/19elastic均源码预测、chart额外0；显式15values、0Jac/ODE/summary/predict/fit/UQ，120s launch-to-reap/科学总2MiB/独立完整64MiB与原八reserve27262976B。实际public计数与底层预测分列，q初态载体零限制保留。父采用前科学0。完整case/调用/源域/输出/projection数学范围详见docs/FULL_CYCLE_P65_STATE_DYNAMICS.json/md。
+
+独立事前33157527/67108864B，最终实际源/root增长、原及暂存blob/冻结/档案/收据自身另读runs/full-cycle/p65-state-dynamics-static/final-delivery-state.json。Git/Drive元数据/实际恢复/历史20GB与GitHub容量分列，恢复0。
+
+P64交付续勾依据：实际HEAD/remote48faa64e96d096a71f134b119c19420591203cc4，actual11223095B，conservative38486071B；Drive1073309B/name-size-parent一致/access_not_verified/restore0。P64独立热力学判据仍notapplicable。
+
+- [x] **P65-A** 独立完整gate/四源和原根冻结/当前规则Git磁盘保护。
+- [x] **P65-B** 共享原RHS事件、显式capture状态/Vdot/原Sdot/同源U与派生F功率，原普通dy路径保持。
+- [x] **P65-C** 真chart速度与显式15值投影/API及互斥CLI静态接线；四源语法解析，非动态资格。
+- [x] **P65-D** 下一唯一120s/2MiB/64MiB具体case/counts/源域/输出提案，未采用。
+- [ ] **P65-E** 动态state_dynamics/势功率资格；当前科学0，不可勾选。
+- [ ] **D65-GIT** 十一本轮明确paths正常后继/普通push待真实收据。
+- [ ] **D65-DRIVE** 原folder一次必要静态增量metadata；实际恢复另列。
+- [ ] **P65-FINAL** 最终全实际路径/原及暂存blob/一档案/末receipt自身收口，不递归提交打包。

@@ -416,9 +416,9 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
             potential[:,self.matrix]-=self.b0*self.phase_modulus_contrast*elastic['modulus']*elastic['eps']**2/2*phase_birth
         return potential
 
-    def mechanical_rates(self,f,T,ns,ng,bulk,pore,cap,pressure,dns,dng,heat,flow,us,ug):
+    def mechanical_rates(self,f,T,ns,ng,bulk,pore,cap,pressure,dns,dng,heat,flow,us,ug,*,capture=False):
         if self.modulus_exponent != 0 or ((self.liquid_strain != 0 or self.phase_modulus_contrast != 0) and self.liquid_active != 0):
-            return self.porous_mechanical_rates(f,T,ns,ng,bulk,pore,cap,pressure,dns,dng,heat,flow,us,ug)
+            return self.porous_mechanical_rates(f,T,ns,ng,bulk,pore,cap,pressure,dns,dng,heat,flow,us,ug,capture=capture)
         eps=self.elastic_strain(f,T,bulk)
         _,beta_prime,beta_second,_=self.thermal_strain(T)
         force=pressure-self.P-cap
@@ -444,9 +444,17 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         self.effective_capacity=effective
         self.mechanical_residual=self.modulus*eps-force
         production=np.sum(self.modulus*self.b0*eps*eta_dot/T)+np.sum(phase_production)
-        return dT,db,dpore,capacity,elastic_sdot.sum()+phase_sdot,production,eta_dot
+        result=(dT,db,dpore,capacity,elastic_sdot.sum()+phase_sdot,production,eta_dot)
+        if capture:
+            phase_energy=-phase_power if self.kinetic_liquid else np.zeros_like(T)
+            phase_entropy_rate=phase_entropy if self.kinetic_liquid else np.zeros_like(T)
+            details=self._mechanical_storage_terms(T,dT,db,self.modulus,eps,beta_prime,
+                elastic_sdot,eta_dot,0.,phase_energy,phase_entropy_rate)
+            details['source']='ThermoelasticFullCycle.mechanical_rates constant-stiffness native branch'
+            return result,details
+        return result
 
-    def porous_mechanical_rates(self,f,T,ns,ng,bulk,pore,cap,pressure,dns,dng,heat,flow,us,ug):
+    def porous_mechanical_rates(self,f,T,ns,ng,bulk,pore,cap,pressure,dns,dng,heat,flow,us,ug,*,capture=False):
         elastic=self.elastic_response(f,T,ns,bulk)
         modulus,eps=elastic['modulus'],elastic['eps']
         _,beta_prime,beta_second,_=self.thermal_strain(T)
@@ -494,7 +502,31 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         self.effective_capacity=effective
         self.mechanical_residual=elastic['stress']-(pressure-self.P-cap)
         production=np.sum(self.b0*sintering_force*eta_dot/T)+np.sum(phase_production)
-        return dT,db,dpore,capacity,elastic_sdot.sum()+phase_sdot,production,eta_dot
+        result=(dT,db,dpore,capacity,elastic_sdot.sum()+phase_sdot,production,eta_dot)
+        if capture:
+            modulus_rate=elastic['kv']*db+elastic['kd']*ddry+phase_modulus_rate
+            phase_entropy_rate=phase_entropy if self.kinetic_liquid else np.zeros_like(T)
+            details=self._mechanical_storage_terms(T,dT,db,modulus,eps,beta_prime,
+                elastic_sdot,inelastic_rate,modulus_rate,
+                -phase_power if self.kinetic_liquid else np.zeros_like(T),phase_entropy_rate)
+            details.update(source='ThermoelasticFullCycle.porous_mechanical_rates native branch',
+                permanent_strain_rate_per_s=eta_dot,phase_eigenstrain_rate_per_s=phase_strain_rate,
+                phase_modulus_rate_pa_s=phase_modulus_rate,dry_volume_rate_m3_s=ddry)
+            return result,details
+        return result
+
+    def _mechanical_storage_terms(self,T,dT,db,modulus,eps,beta_prime,
+                                  elastic_sdot,inelastic_rate,modulus_rate,phase_udot,phase_sdot):
+        """Explicit capture of Fdot+Tdot*S+T*Sdot using native coefficients."""
+        stored_entropy=self.b0*modulus*beta_prime*eps
+        free_rate=self.b0*(modulus_rate*eps**2/2
+            +modulus*eps*(db/self.b0-beta_prime*dT-inelastic_rate))
+        return {'elastic_storage_rate_w':free_rate+dT*stored_entropy+T*elastic_sdot,
+            'phase_storage_rate_w':phase_udot,'elastic_entropy_rate_w_k':elastic_sdot,
+            'phase_entropy_rate_w_k':phase_sdot,'stored_elastic_entropy_j_k':stored_entropy,
+            'elastic_free_energy_rate_w':free_rate,'total_modulus_rate_pa_s':modulus_rate,
+            'total_inelastic_eigenstrain_rate_per_s':inelastic_rate,
+            'derivation':'Original F_el=V0*K*eps^2/2; Kdot=K_V*Vdot+K_D*Ddot+K_C*Cdot. Bdot and eta_dot retained. Udot_el=Fdot_el+Tdot*S_el+T*Sdot_el. Phase Udot=-native relaxation power, once.'}
 
     def initial_state(self):
         state=super().initial_state()
@@ -502,8 +534,8 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
             state[self.liquid_coordinate*self.n:(self.liquid_coordinate+1)*self.n]=self.liquid_equilibrium_log_odds(self.temperatures[0])
         return state
 
-    def rhs(self,t,y):
-        dy=super().rhs(t,y)
+    def _rhs_event(self,t,y,*,capture):
+        dy,event=super()._rhs_event(t,y,capture=capture)
         if self.kinetic_liquid:
             f=y[:self.gas_offset].reshape(-1,self.n)
             affinity=0.
@@ -512,11 +544,69 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
                 elastic=self.elastic_response(f,T,ns,bulk)
                 affinity=self.elastic_phase_affinity(elastic)
             dy[self.liquid_coordinate*self.n:(self.liquid_coordinate+1)*self.n]=self.liquid_coordinate_rate(f[0]*self.Tr,f,affinity)
-        return dy
+        return dy,event
+
+    def state_dynamics(self,t,y):
+        """One native RHS event, explicit capture and reused decoded chart."""
+        dy,event=self._rhs_event(t,y,capture=True)
+        decoded=event['decoded_state']
+        state=self._potential_state_from_decoded(y,decoded['fields'],decoded['temperature_k'],
+            decoded['condensed_mol'],decoded['gas_mol'],decoded['bulk_m3'],
+            decoded['pore_m3'],decoded['surface_energy_j'],completed_native_unpack_calls=1)
+        native=state['native_field_coordinates']
+        field_dot=dy[:self.gas_offset].reshape(-1,self.n)
+        gas_log_dot=dy[self.gas_offset:self.extent_offset].reshape(self.g,self.n)
+        chart_dot=np.vstack([field_dot[item['field']] for item in native]+list(gas_log_dot)+[event['db']/self.b0])
+        return {'schema':'thermoelastic_same_native_state_dynamics_v1','time_s':t,'native_y':y,'dy_per_s':dy,
+            'state':state,'chart_velocity_per_s':chart_dot,'bulk_volume_rate_m3_s':event['db'],
+            'pore_volume_rate_m3_s':event['dpore'],'temperature_rate_k_s':event['dT'],
+            'condensed_inventory_rate_mol_s':event['dns'],'gas_inventory_rate_mol_s':event['dng'],
+            'reaction_extent_rate_mol_s':event['rate'],'gas_face_flux_mol_s':event['gas_flux'],
+            'native_power':self._native_storage_power(event),
+            'completed_production_calls':{'native_RHS_event':1,'native_rate_event':1,'chart_assembly':1,
+                'additional_chart_unpack':0,'additional_chart_mechanical_call':0,'potential_values_inside_native_event':0},
+            'chart_contract':{'velocity':'All native chart fields and gas log derivatives are taken from this exact dy. zVdot=Vdot/V0 from the native mechanical event.',
+                'pore_constraint':'Potential composition directions use Vp=V-Ns dot v at fixed V; independent V direction receives real Vdot/V0, not zero or a second Vpdot.',
+                'excluded_coordinates':'f7/f8 and reaction/boundary/entropy cumulative ledgers do not enter stored U/S/F; their rates remain in raw dy.',
+                'legacy_RHS_calls':'Original kinetic-liquid second unpack/elastic and qdot are retained in _rhs_event. Reused chart performs no third unpack or Newton.',
+                'liquid_carrier_scope':'A zero initial carrier does not qualify nonzero-carrier relaxation.',
+                'phase_heat':'Phase and reaction storage occur in original h/s plus native elastic/internal-phase derivative; no added heat source.'},
+            'criterion':'criterion_not_applicable','whole_model_complete':False}
+
+    def instantaneous_potential_power(self,dynamics):
+        """Explicit 15-value request; ordinary RHS/dynamics never invokes it."""
+        state=dynamics['state'];potential=self.potential_derivatives(state)
+        velocity=dynamics['chart_velocity_per_s'];native=dynamics['native_power']
+        names={'U_j':('Udot_w','W'),'S_j_k':('Sdot_w_k','W/K'),'F_j':('Fdot_w','W')}
+        projected={};products={};differences={}
+        for key,(rate_key,unit) in names.items():
+            product=potential['gradients'][key]*velocity
+            cell=product.sum(axis=0)
+            products[rate_key]=product
+            projected[rate_key]={'cell':cell,'global':cell.sum(),'unit':unit}
+            differences[rate_key]={'cell':cell-native['cell'][rate_key],
+                'global_vs_sum_native_cell':cell.sum()-native['cell'][rate_key].sum()}
+        differences['Sdot_w_k']['global_vs_original_native_reduction']=(
+            projected['Sdot_w_k']['global']-native['global']['Sdot_original_reduction_w_k'])
+        differences['Udot_w']['global_vs_native_external_power']=(
+            projected['Udot_w']['global']-native['native_external_power_global_w'])
+        return {'schema':'same_native_event_constrained_potential_power_v1','potential':potential,
+            'chart_velocity_per_s':velocity,'coordinate_products':products,'projected':projected,
+            'projected_minus_native_signed':differences,'criterion':'criterion_not_applicable',
+            'completed_value_calls':potential['method']['complete_value_calls'],
+            'independence':'Fresh complete-value constrained gradients, with shared root/constants/decoding/raw caloric primitives; compared to one native rate event. Not a second EOS or independent data.',
+            'phase_and_volume_scope':'Native q/eta/Ca/OH/gas/T and real Vdot retained; no duplicate pore derivative or extra heat.',
+            'whole_model_complete':False}
 
     def native_potential_state(self, y):
         """Decode one real native state; volume stays explicit in the chart."""
         f,T,ns,bulk,pore,surface,cap=self.unpack(y)
+        gas_log=y[self.gas_offset:self.extent_offset].reshape(self.g,self.n)
+        return self._potential_state_from_decoded(y,f,T,ns,self.initial_gas*np.exp(gas_log.T),
+            bulk,pore,surface,completed_native_unpack_calls=1)
+
+    def _potential_state_from_decoded(self,y,f,T,ns,ng,bulk,pore,surface,*,completed_native_unpack_calls):
+        """Chart assembly from already decoded arrays, without physics calls."""
         contract=self.config['production_potential_export']
         native=list(contract['native_fields'])
         if self.kinetic_liquid:
@@ -529,7 +619,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
         return {'schema':'thermoelastic_constrained_potential_state_v1','coordinates':coordinates,
                 'chart':z,'native_field_coordinates':native,'reference_fields':f.copy(),
                 'fields':f.copy(),'temperature_k':T,'condensed_mol':ns,
-                'gas_mol':self.initial_gas*np.exp(gas_log.T),'bulk_m3':bulk,
+                'gas_mol':ng,'bulk_m3':bulk,
                 'native_pore_m3':pore,'native_surface_energy_j':surface,
                 'reference_bulk_m3':bulk.copy(),'reference_chart':z.copy(),
                 'reference_scales':{'V0_m3':self.b0,'initial_dry_mass_kg':self.md,
@@ -539,7 +629,7 @@ class ThermoelasticFullCycle(FiniteGasFullCycle):
                 'active_branches':{'quartz_low':T.real<self.tc,'kinetic_liquid':self.kinetic_liquid,
                     'calcium_mode':self.calcium_coordinate_mode,
                     'calcium_fraction_coordinate':self.calcium_fraction_coordinate},
-                'completed_native_unpack_calls':1}
+                'completed_native_unpack_calls':completed_native_unpack_calls}
 
     def _potential_state_at_chart(self, state, z):
         native=state['native_field_coordinates']

@@ -579,6 +579,36 @@ def export_initial_potential(config: dict, out: Path, *, case_reference: str):
     return payload
 
 
+def export_initial_state_dynamics(config: dict, out: Path, *, case_reference: str):
+    """Export one genuine native event and explicit constrained power projection."""
+    case=saved_reference_host_case(config)
+    model=make_cycle(case)
+    y=model.initial_state()
+    dynamics=model.state_dynamics(model.times[0],y)
+    projection=model.instantaneous_potential_power(dynamics)
+    payload={'schema':'full_cycle_production_state_dynamics_export_v1',
+        'case_reference':case_reference,'case_builder':'saved_reference_host_case',
+        'named_case_declaration':case['public_reference_cases']['saved_reference_host'],
+        'dynamics':dynamics,'projection':projection,
+        'operation_contract':config['production_state_dynamics'],
+        'parameter_status_counts':{status:sum(record['status']==status for record in config['parameters'].values())
+                                  for status in ('literature','assumed','measured')},
+        'source_domain_contract':case['caloric_background'],'direct_channel':case['direct_carbonation'],
+        'parameter_sources':config['sources'],
+        'completed_production_calls':{'make_cycle':1,'native_initial_state':1,
+            **dynamics['completed_production_calls'],
+            'complete_vector_potential_values':model.potential_value_calls,
+            'own_value_helper_call_sites':model.potential_helper_calls,'native_RHS_counter':model.rhs_calls,
+            'Jacobian':0,'ODE':0,'trajectory_summary':0,'predict':0,'fit':0,'UQ':0},
+        'source_inferred_internal_calls':config['production_state_dynamics']['source_inferred_internal_calls'],
+        'counter_qualification':'Public completed producer/value calls and existing RHS counter; uninstrumented inheritance and nested primitives remain source-inferred, not runtime observed.',
+        'criterion':'criterion_not_applicable','whole_model_complete':False,
+        'material_applicability':'pending measured target material comparison; native initial zero carrier only'}
+    write_json(out/'case-parameters.json',case)
+    write_json(out/'state-dynamics.json',payload)
+    return payload
+
+
 def run_cycle(config: dict):
     return make_cycle(config).integrate()
 
