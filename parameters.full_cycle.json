@@ -16240,6 +16240,24 @@
       "scope": "Exact actual drying86400 to heating97200 only; rtol/atol, original stage/endpoints/sampling and all old numerical contracts unchanged.",
       "numerical_execution_status": "proposal_not_adopted",
       "current_science_windows": 0
+    },
+    "drying_half_step": {
+      "target_parameter": "numerics.max_step",
+      "record": {
+        "value": 30,
+        "unit": "s",
+        "range": [
+          30,
+          30
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "P93 independent originaldrying halfstep proposal only; no new numerical adoption, no parameter search."
+      },
+      "original_record_source": "P68.config.parameters.numerics.max_step and unchanged current parameters.numerics.max_step",
+      "scope": "Exact actual drying_ramp14400s to original drying86400s only; all physical conditions, rtol/atol and old numerical conditions unchanged.",
+      "numerical_execution_status": "static_contract_only_not_numerically_adopted",
+      "current_science_windows": 0
     }
   },
   "cooling_time_refinement": {
@@ -19682,5 +19700,700 @@
         "note": "This finalized original candidate/currentdeliveryreceipts necessary nextsource fullbytes; nextfullprompt counted in coordinator slot once."
       }
     }
+  },
+  "drying_time_comparison": {
+    "schema": "full_cycle_paired_original_drying_sampled_peak_comparison_v1",
+    "producer_source_path": "src/sludge_vme/models/full_cycle_sintering_time_comparison.py",
+    "implementation_parent_revision": "a0b46767f0c506151fbc6fd81393814783d9dee4",
+    "output_source_paths": [
+      "src/sludge_sandbox/__init__.py",
+      "src/sludge_sandbox/units.py",
+      "src/sludge_vme/__init__.py",
+      "src/sludge_vme/audit_evidence.py",
+      "src/sludge_vme/chemistry/__init__.py",
+      "src/sludge_vme/chemistry/formula.py",
+      "src/sludge_vme/chemistry/stoichiometry.py",
+      "src/sludge_vme/cli.py",
+      "src/sludge_vme/config.py",
+      "src/sludge_vme/entropy_ledger.py",
+      "src/sludge_vme/inverse/__init__.py",
+      "src/sludge_vme/inverse/case_conditions.py",
+      "src/sludge_vme/inverse/constraints.py",
+      "src/sludge_vme/inverse/full_cycle.py",
+      "src/sludge_vme/inverse/observations.py",
+      "src/sludge_vme/inverse/pareto.py",
+      "src/sludge_vme/inverse/search.py",
+      "src/sludge_vme/inverse/transforms.py",
+      "src/sludge_vme/io/__init__.py",
+      "src/sludge_vme/io/artifacts.py",
+      "src/sludge_vme/io/manifest.py",
+      "src/sludge_vme/models/__init__.py",
+      "src/sludge_vme/models/common.py",
+      "src/sludge_vme/models/direct_carbonation.py",
+      "src/sludge_vme/models/face_energy_sampling.py",
+      "src/sludge_vme/models/full_cycle.py",
+      "src/sludge_vme/models/full_cycle_diagnostics.py",
+      "src/sludge_vme/models/full_cycle_gas.py",
+      "src/sludge_vme/models/full_cycle_solid.py",
+      "src/sludge_vme/models/fvm.py",
+      "src/sludge_vme/models/initial_finite_volume.py",
+      "src/sludge_vme/models/instantaneous_diagnostics.py",
+      "src/sludge_vme/models/l0.py",
+      "src/sludge_vme/models/l1.py",
+      "src/sludge_vme/physics/__init__.py",
+      "src/sludge_vme/physics/kinetics.py",
+      "src/sludge_vme/physics/sintering.py",
+      "src/sludge_vme/physics/transport.py",
+      "src/sludge_vme/thermo/__init__.py",
+      "src/sludge_vme/thermo/coverage.py",
+      "src/sludge_vme/thermo/equilibrium.py",
+      "src/sludge_vme/thermo/minimal_backend.py",
+      "src/sludge_vme/types.py",
+      "src/sludge_vme/units.py",
+      "src/sludge_vme/uq/__init__.py",
+      "src/sludge_vme/uq/full_cycle.py",
+      "src/sludge_vme/uq/propagation.py",
+      "src/sludge_vme/uq/sampling.py",
+      "src/sludge_vme/validation.py",
+      "src/sludge_vme/models/full_cycle_checkpoint.py",
+      "src/sludge_vme/models/full_cycle_continue.py",
+      "src/sludge_vme/models/full_cycle_endpoint_ledgers.py",
+      "src/sludge_vme/models/full_cycle_cooling_refinement.py",
+      "src/sludge_vme/models/full_cycle_cooling_hold_comparison.py",
+      "src/sludge_vme/models/full_cycle_sintering_time_comparison.py"
+    ],
+    "checkpoint_input": "runs/full-cycle/p68-nominal-heating-checkpoints/native-checkpoints.json",
+    "inventory_input": "runs/full-cycle/p78-endpoint-ledger-acquisition/endpoint-ledgers.json",
+    "input_stage": "drying_ramp",
+    "output_stage": "drying",
+    "solver_method": "BDF",
+    "cases": {
+      "coarse": {
+        "condition_key": null
+      },
+      "refined": {
+        "condition_key": "drying_half_step"
+      }
+    },
+    "coarse_case_key": "coarse",
+    "refined_case_key": "refined",
+    "peak_product_key": "peak_temperature_difference_k",
+    "case_output_filename": "case-parameters.json",
+    "output_filename": "drying-time-comparison.json",
+    "root_scientific_identity_keys": [
+      "parameters",
+      "species",
+      "reactions",
+      "stages",
+      "sources",
+      "caloric_background",
+      "viscosity_background",
+      "binary_diffusion_background",
+      "initial_partition"
+    ],
+    "source_identity_rule": "Original strict loader verifies saved P68 source50 ordinary text twice. Shared current output55 unchanged from P90 HEAD2f05f37, including generalized producer55; no hashes.",
+    "input_source_text_reference": "#/source_version/source_text restricted to input_source_identity/source_paths; complete input50 subset of current full55 dictionary.",
+    "reference_qualification": "Exact actual P68/P78 drying_ramp14400 native275/inventory to two newly calculated drying86400 endpoints. P78 genuine newdeclaredinitial normalizes conditional quantities; no historicalinitial recovery or reference reevaluation.",
+    "original_t0_qualification": "OriginalP68initialnative_y/actualt0bulksnotpersisted;P78newdeclaredreferenceisnotbyte-levelhistoryrecovery.Onlysharednew-referenceconditionalshrinkageavailable.",
+    "peak_definition": "At each original absolute120s sample: max(cellT,originalrates.surface_T,originalcenter_temperature)-min(same), K; max over601 percase. Not continuouspeak.",
+    "products": {
+      "porosity": {
+        "unit": "1",
+        "definition": "np.average(native_pore_m3/bulk_m3,weights=bulk_m3)",
+        "original_source": "src/sludge_vme/models/full_cycle_gas.py:1246,1287",
+        "denominator_floor_parameter": "acceptance.floor.porosity",
+        "availability": "available_from_saved_final_arrays",
+        "reference_basis": "Actual final cellbulk-volume weights;not totalporeinclliquid or equalcellaverage."
+      },
+      "residual_carbon_kg": {
+        "unit": "kg",
+        "definition": "sum(((organic_mol+char_mol)*atomic.C).tolist())",
+        "original_source": "src/sludge_vme/models/full_cycle_gas.py:1225,1291",
+        "denominator_floor_parameter": "acceptance.floor.residual_carbon_kg",
+        "availability": "available_from_saved_signed_inventories",
+        "reference_basis": "Global elementalC mass in bothoriginalorganicandchar;not drynormalized and negative signs preserved."
+      },
+      "shrinkage": {
+        "unit": "1",
+        "definition": "1-sum(final_bulk_m3)/sum(P78_new_declared_initial_reference.bulk_m3)",
+        "original_source": "src/sludge_vme/models/full_cycle_gas.py:1168,1291",
+        "denominator_floor_parameter": "acceptance.floor.shrinkage",
+        "availability": "conditional_common_new_declared_initial_reference_only",
+        "reference_basis": "P78 new genuine declared initial reference;originalhistoricalP68t0statewasnotpersistedandisnotrecovered."
+      },
+      "peak_temperature_difference_k": {
+        "unit": "K",
+        "definition": "At each original absolute120s sample: max(cellT,originalrates.surface_T,originalcenter_temperature)-min(same), K; max over601 percase. Not continuouspeak.",
+        "original_source": "src/sludge_vme/models/full_cycle_gas.py:1168-1171,1288",
+        "denominator_floor_parameter": "acceptance.floor.peak_temperature_difference_k",
+        "availability": "future_original601sample_peak_percase",
+        "reference_basis": "Two future new originaldrying trajectories share one actual saved drying_ramp state; no historical sampledpeak baseline."
+      }
+    },
+    "convergence_threshold_parameter": "acceptance.convergence_relative",
+    "denominator_rule": "max(abs(refined_raw),originalrootpredeclaredpermetricfloor);noinventoryclippingornewfloor",
+    "scope_limits": "Original drying14400 to86400 local sampledpeak/endpoint halfstep only; no nominaldrying repair, wholecycle/grid/threecase/inverse/material/nonnegative qualification.",
+    "counter_qualification": "Future public paths and original RHS/Jac/value counters only. Nested method/branch primitives are source forecasts/unmeasured, not independent measured counts.",
+    "source_only_forecast": {
+      "qualification": "P93 current55 plain source/AST reviewed under exactly unchanged original physical selectors; source forecasts only,0 production calls.",
+      "public_future_completed_pair": {
+        "strict_checkpoint_load": 2,
+        "logical_constructor": 2,
+        "native_initial_state": 0,
+        "original_BDF_solve": 2,
+        "new_endpoints": 2,
+        "endpoint_decode": 2,
+        "complete_potential_values": 2,
+        "endpoint_interval_ledger": 2,
+        "public_sample_rates": 1202,
+        "center_temperature_helper": 1202,
+        "baseline_reference_decode_value_summary": 0,
+        "trajectory_summary": 0,
+        "gradient_directions": 0,
+        "extra_public_RHS_Jac_dynamics_projection": 0,
+        "predict": 0,
+        "fit": 0,
+        "UQ": 0
+      },
+      "full_public_sample_source_multiplicity": {
+        "qualification": "Source AST selected-case branch/call-site multiplicities only; not executed production or dynamic instrumentation. Counts include every inherited method entry, not just unpack; external vectorized NumPy primitives remain in full branch graph, unmeasured.",
+        "per_public_sample_rates_method_entries": {
+          "FiniteGasFullCycle.boundary_composition": 1,
+          "FiniteGasFullCycle.caloric_capacity": 1,
+          "FiniteGasFullCycle.carbonate_phase_mobility": 1,
+          "FiniteGasFullCycle.carbonate_rate": 1,
+          "FiniteGasFullCycle.condensed_state": 1,
+          "FiniteGasFullCycle.gas_carried_enthalpy": 1,
+          "FiniteGasFullCycle.gas_diffusivity": 1,
+          "FiniteGasFullCycle.gas_knudsen_diffusivity": 1,
+          "FiniteGasFullCycle.gas_logmean_pressure": 1,
+          "FiniteGasFullCycle.gas_molar_cp": 1,
+          "FiniteGasFullCycle.gas_pair_free_diffusivity": 1,
+          "FiniteGasFullCycle.gas_state": 1,
+          "FiniteGasFullCycle.gas_viscosity": 1,
+          "FiniteGasFullCycle.gas_wall_friction_matrix": 1,
+          "FiniteGasFullCycle.hydroxide_rate": 1,
+          "FiniteGasFullCycle.pore_limited_pair_diffusivity": 1,
+          "FiniteGasFullCycle.pure_gas_viscosity": 1,
+          "FiniteGasFullCycle.rates": 1,
+          "FiniteGasFullCycle.retention_sites": 4,
+          "FiniteGasFullCycle.thermo": 2,
+          "FiniteGasFullCycle.transport": 1,
+          "FiniteGasFullCycle.wall_friction_molecular_flux": 1,
+          "FiniteGasFullCycle.water_binding": 2,
+          "FiniteGasFullCycle.water_carried_enthalpy": 1,
+          "FiniteGasFullCycle.water_fractions": 4,
+          "FiniteGasFullCycle.water_mobility_resistance": 1,
+          "FiniteGasFullCycle.water_phase_drive": 1,
+          "FiniteGasFullCycle.water_retention": 2,
+          "FiniteGasFullCycle.water_transport": 1,
+          "FullCycle.condensed_state": 1,
+          "FullCycle.heat_transfer_from_conductivity": 1,
+          "FullCycle.pore_radiative_conductivity": 1,
+          "FullCycle.thermo": 2,
+          "ThermoelasticFullCycle.dry_temperature_conductivity_factor": 1,
+          "ThermoelasticFullCycle.elastic_phase_affinity": 1,
+          "ThermoelasticFullCycle.elastic_response": 10,
+          "ThermoelasticFullCycle.elastic_strain": 10,
+          "ThermoelasticFullCycle.liquid_contrast": 9,
+          "ThermoelasticFullCycle.liquid_coordinate_rate": 1,
+          "ThermoelasticFullCycle.liquid_driving_log_odds": 2,
+          "ThermoelasticFullCycle.liquid_equilibrium_log_odds": 5,
+          "ThermoelasticFullCycle.liquid_order": 30,
+          "ThermoelasticFullCycle.liquid_phase": 3,
+          "ThermoelasticFullCycle.liquid_relaxation": 1,
+          "ThermoelasticFullCycle.liquid_state": 2,
+          "ThermoelasticFullCycle.mechanical_rates": 1,
+          "ThermoelasticFullCycle.phase": 15,
+          "ThermoelasticFullCycle.phase_conductivity": 1,
+          "ThermoelasticFullCycle.phase_eigenstrain": 13,
+          "ThermoelasticFullCycle.phase_reference_volume": 12,
+          "ThermoelasticFullCycle.polynomial": 15,
+          "ThermoelasticFullCycle.porous_mechanical_rates": 1,
+          "ThermoelasticFullCycle.quartz_thermo": 3,
+          "ThermoelasticFullCycle.sintering_response": 1,
+          "ThermoelasticFullCycle.skeleton_chemical_potential": 1,
+          "ThermoelasticFullCycle.state_caloric_capacity": 1,
+          "ThermoelasticFullCycle.state_heat_transfer": 1,
+          "ThermoelasticFullCycle.state_thermo": 1,
+          "ThermoelasticFullCycle.thermal_strain": 12,
+          "ThermoelasticFullCycle.thermo": 2,
+          "ThermoelasticFullCycle.unpack": 1
+        },
+        "per_public_sample_external_source_caloric_integrals": {
+          "source_caloric_integrals": 6
+        },
+        "per_center_temperature_helper_method_entries": {
+          "FullCycle.center_temperature": 1
+        },
+        "branch_choices": {
+          "capture": false,
+          "not self.cellwise_partition": true,
+          "not self.kinetic_liquid": false,
+          "np.any(self.dry_cp_slope != 0)": true,
+          "ns is None": false,
+          "self._summary_face_capture is not None": false,
+          "self.calcium_coordinate_mode == 1": false,
+          "self.calcium_fraction_coordinate": true,
+          "self.carbonate_phase_resistance == 0": false,
+          "self.carbonation_factor != 0": true,
+          "self.direct_carbonation_enabled": false,
+          "self.dry_conductivity_temperature_exponent == 0": false,
+          "self.kinetic_liquid": true,
+          "self.liquid_active == 0": false,
+          "self.liquid_cp != 0": true,
+          "self.liquid_cp == 0": false,
+          "self.liquid_strain != 0 and self.liquid_active != 0": true,
+          "self.liquid_strain != 0 or self.phase_modulus_contrast != 0": true,
+          "self.liquid_strain == 0 or self.liquid_active == 0": false,
+          "self.modulus_exponent != 0 or ((self.liquid_strain != 0 or self.phase_modulus_contrast != 0) and self.liquid_active != 0)": true,
+          "self.modulus_exponent != 0 or (self.phase_modulus_contrast != 0 and self.liquid_active != 0)": true,
+          "self.modulus_exponent == 0 and self.liquid_strain == 0 and (self.phase_modulus_contrast == 0)": false,
+          "self.phase_conductivity_contrast == 0 and self.dry_conductivity_temperature_exponent == 0": false,
+          "self.phase_modulus_contrast != 0": true,
+          "self.pore_resistance == 0": false,
+          "self.retention_scale_value != 0": true,
+          "self.retention_scale_value == 0": false,
+          "self.viscosity_mixing == 0": false,
+          "self.wall_friction_mode == 1": true,
+          "self.water_cp_slope != 0": true
+        },
+        "loop_multiplicities": {
+          "range(self.mechanical_iterations)": 8,
+          "range(self.surface_iterations)": 6,
+          "enumerate(self.gas_pairs)": 6,
+          "self.binary_tables.items()": 2,
+          "self.viscosity_lemmon_species.items()": 2
+        },
+        "actual_dynamic_primitive_measurements": null,
+        "solver_RHS_Jac_Newton_work": null,
+        "mechanical_fixed_Newton_per_sample": 8,
+        "surface_fixed_Newton_per_sample": 6,
+        "all1202_public_sample_rates_method_entries": {
+          "FiniteGasFullCycle.boundary_composition": 1202,
+          "FiniteGasFullCycle.caloric_capacity": 1202,
+          "FiniteGasFullCycle.carbonate_phase_mobility": 1202,
+          "FiniteGasFullCycle.carbonate_rate": 1202,
+          "FiniteGasFullCycle.condensed_state": 1202,
+          "FiniteGasFullCycle.gas_carried_enthalpy": 1202,
+          "FiniteGasFullCycle.gas_diffusivity": 1202,
+          "FiniteGasFullCycle.gas_knudsen_diffusivity": 1202,
+          "FiniteGasFullCycle.gas_logmean_pressure": 1202,
+          "FiniteGasFullCycle.gas_molar_cp": 1202,
+          "FiniteGasFullCycle.gas_pair_free_diffusivity": 1202,
+          "FiniteGasFullCycle.gas_state": 1202,
+          "FiniteGasFullCycle.gas_viscosity": 1202,
+          "FiniteGasFullCycle.gas_wall_friction_matrix": 1202,
+          "FiniteGasFullCycle.hydroxide_rate": 1202,
+          "FiniteGasFullCycle.pore_limited_pair_diffusivity": 1202,
+          "FiniteGasFullCycle.pure_gas_viscosity": 1202,
+          "FiniteGasFullCycle.rates": 1202,
+          "FiniteGasFullCycle.retention_sites": 4808,
+          "FiniteGasFullCycle.thermo": 2404,
+          "FiniteGasFullCycle.transport": 1202,
+          "FiniteGasFullCycle.wall_friction_molecular_flux": 1202,
+          "FiniteGasFullCycle.water_binding": 2404,
+          "FiniteGasFullCycle.water_carried_enthalpy": 1202,
+          "FiniteGasFullCycle.water_fractions": 4808,
+          "FiniteGasFullCycle.water_mobility_resistance": 1202,
+          "FiniteGasFullCycle.water_phase_drive": 1202,
+          "FiniteGasFullCycle.water_retention": 2404,
+          "FiniteGasFullCycle.water_transport": 1202,
+          "FullCycle.condensed_state": 1202,
+          "FullCycle.heat_transfer_from_conductivity": 1202,
+          "FullCycle.pore_radiative_conductivity": 1202,
+          "FullCycle.thermo": 2404,
+          "ThermoelasticFullCycle.dry_temperature_conductivity_factor": 1202,
+          "ThermoelasticFullCycle.elastic_phase_affinity": 1202,
+          "ThermoelasticFullCycle.elastic_response": 12020,
+          "ThermoelasticFullCycle.elastic_strain": 12020,
+          "ThermoelasticFullCycle.liquid_contrast": 10818,
+          "ThermoelasticFullCycle.liquid_coordinate_rate": 1202,
+          "ThermoelasticFullCycle.liquid_driving_log_odds": 2404,
+          "ThermoelasticFullCycle.liquid_equilibrium_log_odds": 6010,
+          "ThermoelasticFullCycle.liquid_order": 36060,
+          "ThermoelasticFullCycle.liquid_phase": 3606,
+          "ThermoelasticFullCycle.liquid_relaxation": 1202,
+          "ThermoelasticFullCycle.liquid_state": 2404,
+          "ThermoelasticFullCycle.mechanical_rates": 1202,
+          "ThermoelasticFullCycle.phase": 18030,
+          "ThermoelasticFullCycle.phase_conductivity": 1202,
+          "ThermoelasticFullCycle.phase_eigenstrain": 15626,
+          "ThermoelasticFullCycle.phase_reference_volume": 14424,
+          "ThermoelasticFullCycle.polynomial": 18030,
+          "ThermoelasticFullCycle.porous_mechanical_rates": 1202,
+          "ThermoelasticFullCycle.quartz_thermo": 3606,
+          "ThermoelasticFullCycle.sintering_response": 1202,
+          "ThermoelasticFullCycle.skeleton_chemical_potential": 1202,
+          "ThermoelasticFullCycle.state_caloric_capacity": 1202,
+          "ThermoelasticFullCycle.state_heat_transfer": 1202,
+          "ThermoelasticFullCycle.state_thermo": 1202,
+          "ThermoelasticFullCycle.thermal_strain": 14424,
+          "ThermoelasticFullCycle.thermo": 2404,
+          "ThermoelasticFullCycle.unpack": 1202
+        },
+        "all1202_external_source_caloric_integrals": {
+          "source_caloric_integrals": 7212
+        },
+        "all1202_center_temperature_helper_method_entries": {
+          "FullCycle.center_temperature": 1202
+        }
+      },
+      "method_branch_graph_reference": "docs/FULL_CYCLE_P93_DRYING_INTERFACE.json#/source_route_review",
+      "additional_per_sample_routes": {
+        "state_thermo": "Thermoelastic.thermo ->FiniteGas.thermo ->FullCycle.thermo; source gas/mineral calorics, quartz polynomial5+phase, liquid equilibrium contrast; kinetic state replaces equilibrium once. Transport separately calls the same thermo at scalar furnaceT.",
+        "skeleton_chemical_potential": "Active porous elastic_response/elastic_strain/thermal_strain/phase_eigenstrain/phase_reference_volume, then carrier birth eigenstrain/reference again. No stored potential evaluation.",
+        "gas_flux": "transport ->gas_carried_enthalpy/source integrals; gas_diffusivity; pore_limited_pair_diffusivity ->gas_pair_free_diffusivity; gas_knudsen_diffusivity; wall_friction_molecular_flux ->gas_logmean_pressure+gas_wall_friction_matrix (6 pairs/12faces), original batched linear solve; gas_viscosity ->pure_gas_viscosity+Wilke mixing; thermo furnace reservoir. Darcy and entropy original arithmetic.",
+        "water_flux": "water_retention->water_fractions->retention_sites, water_carried_enthalpy, water_binding->water_fractions->retention_sites, water_mobility_resistance. Top rates has independent retention/binding calls; caloric capacity adds original binding-capacity arithmetic, no extra water_binding method call.",
+        "heat": "phase_conductivity->liquid_state->liquid_order and dry_temperature_conductivity_factor; pore_radiative_conductivity; heat_transfer_from_conductivity fixed numerics.surface_iterations Newton. No extra heat source.",
+        "mechanics": "porous_mechanical_rates ->elastic_response; thermal_strain; sintering_response->liquid_state->liquid_order; liquid_relaxation->liquid_order/liquid_coordinate_rate/liquid_driving_log_odds/liquid_equilibrium_log_odds/liquid_contrast; production calls driving separately; eigenstrain/reference birth; state_caloric_capacity->FiniteGas.caloric_capacity (gasCp/waterbinding), quartz polynomial5+phase, mineralcalorics, kinetic liquid_order. capture=False, no mechanical storage capture.",
+        "center": "FullCycle.center_temperature, original cellwise_partition=False ->(9*T0-T1)/8, K, no decode or thermo."
+      },
+      "original_case_selected_branches": {
+        "kinetic_liquid": true,
+        "direct_carbonation": false,
+        "calcium_coordinate_mode": 0,
+        "cellwise_partition": false,
+        "wall_friction_mode": 1,
+        "modulus_exponent": 2.0,
+        "phase_modulus_contrast": 4.0,
+        "phase_eigenstrain": 0.02,
+        "liquid_cp_contrast": 10.0,
+        "phase_conductivity_contrast": 2.0,
+        "dry_temperature_exponent": -0.2,
+        "capture": false,
+        "summary_face_capture": null
+      },
+      "constructor_each": {
+        "make_cycle_public": 1,
+        "Thermoelastic_constructor_entry": 1,
+        "FiniteGas_constructor_entry": 1,
+        "FullCycle_constructor_entry": 1,
+        "logical_constructor_instances": 1,
+        "source_caloric_coefficients": 2,
+        "quartz_phase": 2,
+        "liquid_phase": 1,
+        "liquid_equilibrium_log_odds": 1,
+        "liquid_contrast_nonzero_cp": 2,
+        "native_unpack": 0,
+        "native_potential_state": 0,
+        "potential_values": 0,
+        "state_thermo": 0,
+        "initial_state": 0,
+        "reference_mutation": "Constructs initial_partition/b0/md/initial/vs0/vp0/es0/initialgas/scales/layout and all thermoelastic references. Loader restores savednumeric37 then partition/phase0/liquidreference. Constructor derived constitutive arrays use the identical saved physical config."
+      },
+      "endpoint_decode_each": {
+        "native_potential_state": 1,
+        "native_unpack": 1,
+        "chart_assembly_from_decoded": 1,
+        "condensed_state_logical": 1,
+        "condensed_state_inherited_entries": 2,
+        "fixed_Newton_iterations_parameter": "numerics.mechanical_iterations",
+        "iterations_per_decode": 8,
+        "total_fixed_Newton_iterations": 8,
+        "elastic_response": 8,
+        "elastic_strain": 8,
+        "thermal_strain": 9,
+        "phase_eigenstrain": 9,
+        "phase_reference_volume": 8,
+        "quartz_phase": 9,
+        "liquid_order": 17
+      },
+      "endpoint_complete_value_each": {
+        "potential_values": 1,
+        "state_thermo": 1,
+        "thermo_logical": 1,
+        "thermo_inherited_entries": 3,
+        "source_caloric_integrals": 2,
+        "quartz_thermo": 1,
+        "quartz_polynomial": 5,
+        "liquid_phase": 2,
+        "liquid_equilibrium_log_odds": 2,
+        "liquid_contrast_nonzero_cp": 4,
+        "liquid_order_state_hs": 1,
+        "raw_skeleton_liquid_order": 1,
+        "quartz_phase_in_hs": 1,
+        "raw_skeleton_quartz_phase": 1,
+        "water_fractions": 1,
+        "retention_sites": 1,
+        "direct_skeleton_storage": 1,
+        "fixed_volume_direction_inventory_decode": 0,
+        "gradient_directions": 0,
+        "extra_newton": 0
+      },
+      "mechanical_Newton_total": 9616,
+      "surface_Newton_total": 7212,
+      "solver_internal_RHS_Jac_nfev_njev_nlu_and_Newton_work": null
+    },
+    "units": {
+      "sample_time": "s",
+      "temperature_and_span": "K",
+      "porosity_and_shrinkage": "1",
+      "residual_carbon": "kg",
+      "native_state": "original dimensionless layout; cumulative scales from unchanged context"
+    },
+    "future_policy_records": {
+      "future_four_science_bytes": {
+        "value": 8388608,
+        "unit": "byte",
+        "range": [
+          8388608,
+          8388608
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Independent laterdrying proposed capacity;601samples×2 cannot inherit P92 four-file4MiB. Current4MiB/attempt unchanged."
+      },
+      "future_launch_to_reap_seconds": {
+        "value": 720,
+        "unit": "s",
+        "range": [
+          720,
+          720
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Independent assumed policy from old P68 three-stage83.25144820800051s ×8=666.0115856640041s, rounded up to60s for later two dryingsolves/1202samples/IO; not new runtime measurement, guarantee or adoption."
+      },
+      "serialization_numeric_leaf_bytes": {
+        "value": 64,
+        "unit": "byte",
+        "range": [
+          64,
+          64
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Independent declared conservative finite-scalar plus prettyJSON allocation, not fabricated output."
+      },
+      "serialization_structure_reserve_bytes": {
+        "value": 262144,
+        "unit": "byte",
+        "range": [
+          262144,
+          262144
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Independent laterdrying solver/product/provenance/ledger structure allocation."
+      },
+      "serialization_logs_reserve_bytes": {
+        "value": 65536,
+        "unit": "byte",
+        "range": [
+          65536,
+          65536
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Independent combined laterstdout/stderr allocation."
+      },
+      "original_fixed_reserve_bytes": {
+        "value": 29360128,
+        "unit": "byte",
+        "range": [
+          29360128,
+          29360128
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Original fixed eight plus extra preserved without refund."
+      },
+      "complete_scope_bytes": {
+        "value": 83886080,
+        "unit": "byte",
+        "range": [
+          83886080,
+          83886080
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Independent future numerical complete selective scope; not P93 science adoption."
+      }
+    },
+    "failure_policy": "P93 static only, all production science0. Future separately adopted one720s/8MiB/full80MiB pair; launch-to-reap total including imports/reads/sampleJSON, no case reset, close/reap0retry on failure.",
+    "status": "P93_static_implemented_future_numeric_not_adopted",
+    "current_science_windows": 0,
+    "actual_scientific_calls": 0,
+    "source_ast_forecast_reference": "docs/FULL_CYCLE_P93_DRYING_INTERFACE.json#/source_route_review"
+  },
+  "p93_drying_interface_static_execution": {
+    "status": "static_implemented_no_numerical_adoption",
+    "baseline_HEAD": "a0b46767f0c506151fbc6fd81393814783d9dee4",
+    "contract_key": "drying_time_comparison",
+    "current_science_windows": 0,
+    "all_production_calls": {
+      "production_import": 0,
+      "strict_checkpoint_load": 0,
+      "constructor": 0,
+      "initial_state": 0,
+      "native_decode": 0,
+      "potential_value": 0,
+      "RHS": 0,
+      "Jacobian": 0,
+      "ODE": 0,
+      "rates": 0,
+      "center": 0,
+      "ledger": 0,
+      "summary": 0,
+      "predict": 0,
+      "fit": 0,
+      "UQ": 0
+    },
+    "science_wall_seconds": null,
+    "science_cpu_seconds": null,
+    "current_phase_slot_records": {
+      "new_static_root_common_growth": {
+        "value": 1048576,
+        "unit": "byte",
+        "range": [
+          1048576,
+          1048576
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "P93 actual full-byte matching slot; old unused stage allocations not inherited."
+      },
+      "new_static_documents_forecast_proposal": {
+        "value": 2097152,
+        "unit": "byte",
+        "range": [
+          2097152,
+          2097152
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "P93 actual full-byte matching slot; old unused stage allocations not inherited."
+      },
+      "new_distinct_Git_objects": {
+        "value": 4194304,
+        "unit": "byte",
+        "range": [
+          4194304,
+          4194304
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "P93 actual full-byte matching slot; old unused stage allocations not inherited."
+      },
+      "coordinator_program_formal_prompt_receipts_self": {
+        "value": 2097152,
+        "unit": "byte",
+        "range": [
+          2097152,
+          2097152
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "P93 actual full-byte matching slot; old unused stage allocations not inherited."
+      },
+      "writer_program_formal_records_self": {
+        "value": 2097152,
+        "unit": "byte",
+        "range": [
+          2097152,
+          2097152
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "P93 actual full-byte matching slot; old unused stage allocations not inherited."
+      },
+      "one_static_increment_archive": {
+        "value": 2097152,
+        "unit": "byte",
+        "range": [
+          2097152,
+          2097152
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "P93 actual full-byte matching slot; old unused stage allocations not inherited."
+      }
+    },
+    "future_growth_slot_records": {
+      "four_science_files": {
+        "value": 8388608,
+        "unit": "byte",
+        "range": [
+          8388608,
+          8388608
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Independent later numerical proposal matching full-byte allocation; not adopted in P93."
+      },
+      "root_common_growth": {
+        "value": 1048576,
+        "unit": "byte",
+        "range": [
+          1048576,
+          1048576
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Independent later numerical proposal matching full-byte allocation; not adopted in P93."
+      },
+      "new_numerical_documents_and_unique_proposal": {
+        "value": 2097152,
+        "unit": "byte",
+        "range": [
+          2097152,
+          2097152
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Independent later numerical proposal matching full-byte allocation; not adopted in P93."
+      },
+      "all_distinct_new_Git_objects": {
+        "value": 4194304,
+        "unit": "byte",
+        "range": [
+          4194304,
+          4194304
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Independent later numerical proposal matching full-byte allocation; not adopted in P93."
+      },
+      "coordinator_program_prompt_formal_self": {
+        "value": 2097152,
+        "unit": "byte",
+        "range": [
+          2097152,
+          2097152
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Independent later numerical proposal matching full-byte allocation; not adopted in P93."
+      },
+      "writer_program_gate_rootcopy_formal_receipts_self": {
+        "value": 2097152,
+        "unit": "byte",
+        "range": [
+          2097152,
+          2097152
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Independent later numerical proposal matching full-byte allocation; not adopted in P93."
+      },
+      "one_necessary_increment_archive": {
+        "value": 2097152,
+        "unit": "byte",
+        "range": [
+          2097152,
+          2097152
+        ],
+        "source": "policy",
+        "status": "assumed",
+        "note": "Independent later numerical proposal matching full-byte allocation; not adopted in P93."
+      }
+    },
+    "report": "docs/FULL_CYCLE_P93_DRYING_INTERFACE.json",
+    "future_candidate": "runs/full-cycle/p93-drying-interface-static/future-numerical-proposal.json",
+    "whole_model_complete": false,
+    "original_scientific_records758_unchanged": true,
+    "current_source55_unchanged": true,
+    "old_contracts_and_P92_consumed_scope_unchanged": true
   }
 }
