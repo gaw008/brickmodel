@@ -1,5 +1,9 @@
 # 全流程近似烧结砖模型：当前执行规范（2026-09-26）
 
+P95 源码/AST/保存JSON静态复核已完成，生产调用/ODE/生产源码及758科学参数修改均0。实际mode0、directoff；真实drying_ramp输入及两P94新端点各12格field3精确1、OH坐标均非零，精确仿射三相域要求此处OH=0，现CaO=-OH，每格至少一相为负。源码连续OH与signed脱水extent有线性不变量，保存输入已偏离，两新区间再有非零闭合残差；钙池守恒不等于相非负或phase–extent闭合。基本Fraction/binary64算术单列，不能仅由e-18大小判浮点噪声；未保存内部BDF/native轨迹/Newton残差/实际Jac/RHS，不唯一归因或宣称修复。P94局部time/端点预算PASS资格保持，严格非负FAIL、原干燥两组.1358920787402553%/.1358920759321227%>.1%FAIL、CaO零nullfalse/undefined、P45及全部旧FAIL、P78声明初态条件/历史t0未恢复、高温assumed/directsynthetic290–350K/0measured/wholefalse保持。唯一下一savedinput nativeRHS+实际Ca/Jac行导出仅proposal未采用，0新数值窗。完整审查docs/FULL_CYCLE_P95_CALCIUM_STATIC_REVIEW.json/md；fresh预算57864837B/80MiB含原29360128reserve及全部未填槽，独立静态archive2MiB。Git/Drive元数据/恢复0/历史容量分别记录。
+
+### P94及更早当时记录
+
 P94 唯一原drying14400→86400s两60/30实际窗口closed/reaped，wall49.395464333s/CPU49.116304000s，四science3928061B/8MiB，720s总窗，0retry/0postwindow科学。原55源码/strict50/context37/758完整records(144literature614assumed0measured)/全部旧合同保持。局部四产品原.02=True；两个端点原账本=True；严格非负=False。独立所有601×2原120s完整cell/surface/center采样、两实际solverfull275t0及signeddelta、原sharedinput275和三完整config保留；两峰均由共同14400s起点1.9603549201498254K控制，不证明内段相同；599/601span改变，最大signed差+.00017347601379924527K在14640s。公共生产计数与RHS/Jac/nfev/njev/nlu实际，内部primitive/MRO/loop/Newton只sourceforecast。干燥工艺采用每格终液态水/该格原初液态水最大比，原.1%门槛独立于timePASS；原nominal.1358920787402553%>.1%仍FAIL，不混干基/湿基。原CaO零nullfalse、signed负相、P45及全部旧FAIL、P78新declaredreference条件化/历史initialt0缺失、高温三源assumed/directsynthetic290–350K/0measured/wholefalse保持。U/S/F与区间平均功率/外压功signed、criterionNA，瞬时功率未存不补算。仅固定旧起点局部时间/保存采样峰/端点资格，不授连续峰/全cycle/grid/材料。新完整gate64862654B/80MiB含原29360128reserve，P94事前独立archive4MiB，不改P93历史2MiB。Git/Drive元数据/实际恢复0/历史容量分开；下一仅CaO/OH坐标/源映射静态候选未采用，无追加科学。
 
 ### P93及更早当时记录
