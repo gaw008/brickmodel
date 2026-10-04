@@ -1864,3 +1864,16 @@ P04/全模型仍未完成。GitDrive/恢复与容量另receipt，不以局部PAS
 P91 原加热段86400→97200s显式合同静态实现完成，现有producer55无需修改，原55源码/strict50 loader/758完整records(144literature614assumed0measured)/37context及旧sintering/reactions/cooling/hold合同不变。当前0productionimport/load/ctor/initial/decode/value/RHSJacODE/rates/center/ledger/summary/predictfitUQ，sciencewallCPU=null。P68drying86400完整275与P78对应native逐值相同，输入signed负CaO10格/OH2格及严格非负FAIL保留，不做pool/exp/势重构。新增独立heating_half_step30s，未来两新BDF60/30各91原120s完整cell/surface/center采样，182rates182center，完整方法/branch源码预测与solver内部未知分开。sharedactualinput275、两actualsolverfull275t0及signeddelta分别保存；P78新declaredreference条件化，不恢复历史initialt0。实际新根/完整source55/37context/三config/未来数组与账本序列化估算3935504B，独立四science4MiB；未来540s政策只由P68旧三stage83.25144820800051s×6再向60s上取整推导，非单heating或配对实测/保证。当前选择性80MiB事前登记53044446B，原29360128Breserve不减，无旧行政清单/archives递归继承；未来独立fullscope候选按最终必要字节在future-numerical-proposal.json登记、未采用未运行。原strict.02/floors、局部采样范围保持，drying.1358920787402553%>.1%/负库存/CaO零nullfalse/P45及全部旧FAIL/highT三源assumed/directsynthetic290–350K/0measured/wholefalse保持。Git/Drive元数据/恢复0/历史容量另receipt。详见docs/FULL_CYCLE_P91_HEATING_INTERFACE.md/json。
 
 本静态程序wall=0.552816s、CPU=0.196599s；整阶段墙钟与Git/Drive收据在final-delivery-state.json真实登记。P04/整个模型验收未完成。
+
+
+## 2026-10-04T01:07:37.988265+00:00: P92 唯一原加热配对窗口（已采用）
+
+- [x] **P92-A** 当前计划/规范/Git/磁盘与96必要路径/77既有Git对象登记；新root序列化和完整prelaunchgate待本次唯一launch前封存。
+- [x] **P92-B** 一个总540s窗口，两原BDF60/30、各91原120s完整采样，2端点账本，失败关闭/reap/0retry。
+- [x] **P92-C** 保存JSON独立signed四产品/端点账本/负库存/源域/真实计数，保留全部旧FAIL和限制。
+- [x] **P92-D** 显式参数/报告/矩阵、耗时限制及单个最小候选完成；Git/Drive/末self按实际finalreceipt另判断，不与模型勾选混成PASS。模型验收仍未完成。
+
+
+P92 唯一原加热86400→97200s paired60/30实际完成，wall111.823638666s/CPU111.453319s，四science3465376B/4194304B，540s总窗口closed/reaped/0retry/0postwindow科学。当前55源码/strict50/758完整records(144literature614assumed0measured)/37context及全部旧合同保持；2strictload/ctor/BDF/newendpointdecode/value/interval和182rates182center实际完成，0initial/baseline/reference重求/summary/fitUQ。原RHS30707/Jac184、nfev2003/njev184/nlu369实际，内部primitive仍sourceforecast/null未测。各91原120s完整cell/surface/center峰24.6279856871/24.6277137153K均在sample68/94560s内段，peakrelative1.104332104e-05；四产品strict<.02均通过，最坏残碳relative.0009620229073。两个端点mass/elements/U/S/4gas原.1%通过，最坏relativecoarse.0001133672518/refined8.846097264e-06，原残差/两种gas尺度/NA及std归约signed舍入差保留。严格非负均false，最负库存−1.913174097e−18→−2.474059758e−18mol更负，CaO负8格/OH负4格各自保留；不称非负改善。sharedactual275和两actualsolverfull275t0/signeddelta独立留存，全部同输入/delta0；coarse新终态逐值等于旧P68heating仅保存JSON对照，不是旧轨迹替代新求解。89/91温差样本改变，maxabs.0009142158498K在93840s；旧P78newreference条件化/历史initialt0缺失保持。U/S/F signed势与原生累计完整保存；既有producer未留瞬时功率，仅读累计除duration标注intervalmeanW，不补算/冒充瞬时。本阶段完整选择性gate58293816B/80MiB，actual新root820771B及完整serialization3935504B在launch前保存；原fixed29360128B不减、各实际填槽一次。原drying.1358920787402553%>.1%/CaO零nullfalse/P45及全部oldFAIL/highT三源assumed/directsynthetic290–350K/0measured/wholefalse保持。只原heating局部时间/采样峰/端点资格，各旧起点局部加密不串称wholecycle/grid。下一仅原drying14400→86400合同静态候选，未采用无追加科学。Git/Drive/恢复0/历史容量另receipt。详见docs/FULL_CYCLE_P92_HEATING_TIME_COMPARISON.md/json。
+
+P04/全模型仍未完成；本勾选仅唯一采用窗口和保存结果的局部验收/解释，实际Git/Drive在finalreceipt分别登记。
