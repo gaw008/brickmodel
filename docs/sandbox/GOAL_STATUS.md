@@ -1,3 +1,9 @@
+## 2026-10-04T19:14:52.270509+00:00：P97 静态分析完成，历史因果仍未证实
+
+P97 已完成项目实际安装 SciPy1.18.1 BDF/common 源码与P95/P96保存证据的静态审查，0模型/数值库导入或RHS/Jac/ODE/LU solve/新浮点案例/合成history/轨迹。有效差分常量模态、所有迭代RHS/所用Jac/实际校正满足同一左不变量时，精确BDF/NDF预测、Newton、历史更新、变步长/变阶和dense output保持输入既有常数；不自动修复声明初态缺口或保证非负。实际sum/dot/乘除/cumprod/LU/分别更新self.y与D0的浮点边界已列出，旧D/Newton/缓存LU/插值日志缺失，不能唯一归因负库存或宣称repair。P96单点OH精确闭合与P95输入已缺口分层保留。原严格负相/两干燥余水>.1%/CaO零nullfalse/全部旧FAIL、758科学records144literature614assumed0measured、高温assumed/directsynthetic290–350K/P78条件初态/wholefalse保持；55生产源码和根参数未改。唯一后续是独立授权的一步实际BDF观测提案，未采用；P98不启动。报告docs/FULL_CYCLE_P97_BDF_AFFINE_STATIC_REVIEW.md/json；新包/Drive/下载/恢复0，Git交付与模型/完整历史存储验收分开。
+
+### P96及更早记录（原文保持）
+
 ## 2026-09-30T22:50:14.487711+00:00：P19输运来源及当前分布缺口接续
 
 P62 inverse/UQ共享审计留存已实现并实际导出（2026-10-02T23:12:31.319549+00:00）。标准库模块`audit_evidence.py`完整deepcopy源Ca/entropy账本，保留signed/原尺度/各自origin/完整records/原qualification与局部nullfalse；present/absent/explicit-null明确区分，缺字段不造payload或PASS。inverse callback/evaluation/progress/final forward_*及三个synthetic truth audit、UQ每条newrecord.forward_audit/progress/final同源接线；原普通预算/气体缺失诊断/physicalflag/拟合判据/排名保持。一次实际stdlib直接文件CLI请求（runpy __main__，显式真实source/report路径）读取P60/P58合法wrapper.report，用时0.127491s、导出728073B；实际main/export各1、audit/summary/ledgercopy各2、0项目包导入/模型构造/RHS/Jac/ODE/predict/fit/UQ/新物理算子。P60完整121点S/Ip/Ie/原scale/两stage非零origin保留，P58 entropy_ledger absent/不回填；每个现存ledger的JSON值及signed-zero文本一致。ordinaryphysical=true仍与allCa=false/CaO零预算relative=null/false并列。explicit-null顶层分支仅实现未动态覆盖，真实嵌套CaOnullfalse保留。inverse/三demo/UQ数值入口未运行，不授新的科学资格。

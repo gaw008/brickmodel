@@ -1,0 +1,445 @@
+{
+  "schema": "P97_installed_BDF_affine_invariant_conditional_static_review_v1",
+  "recorded_utc": "2026-10-04T19:14:52.270509+00:00",
+  "baseline_HEAD": "0cc00a780239e405840d7b26cdb35f3af8ffbb2d",
+  "review_kind": "Source text/AST and existing evidence; paper algebra only, zero scientific execution.",
+  "installed_metadata_reference": "/Users/wanggaoying/Research/brickmodel-github/.venv/lib/python3.12/site-packages/scipy-1.18.1.dist-info/METADATA",
+  "installed_metadata_identity_lines": [
+    {
+      "line": 2,
+      "text": "Name: scipy"
+    },
+    {
+      "line": 3,
+      "text": "Version: 1.18.1"
+    }
+  ],
+  "source_AST_inventory": {
+    "/Users/wanggaoying/Research/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/bdf.py": [
+      {
+        "name": "compute_R",
+        "line_start": 18,
+        "line_end": 25
+      },
+      {
+        "name": "change_D",
+        "line_start": 28,
+        "line_end": 33
+      },
+      {
+        "name": "solve_bdf_system",
+        "line_start": 36,
+        "line_end": 69
+      },
+      {
+        "name": "BDF",
+        "line_start": 72,
+        "line_end": 459
+      },
+      {
+        "name": "BdfDenseOutput",
+        "line_start": 462,
+        "line_end": 484
+      },
+      {
+        "name": "__init__",
+        "line_start": 198,
+        "line_end": 256
+      },
+      {
+        "name": "_validate_jac",
+        "line_start": 258,
+        "line_end": 312
+      },
+      {
+        "name": "_step_impl",
+        "line_start": 314,
+        "line_end": 455
+      },
+      {
+        "name": "_dense_output_impl",
+        "line_start": 457,
+        "line_end": 459
+      },
+      {
+        "name": "__init__",
+        "line_start": 463,
+        "line_end": 468
+      },
+      {
+        "name": "_call_impl",
+        "line_start": 470,
+        "line_end": 484
+      },
+      {
+        "name": "lu",
+        "line_start": 222,
+        "line_end": 224
+      },
+      {
+        "name": "solve_lu",
+        "line_start": 226,
+        "line_end": 227
+      },
+      {
+        "name": "lu",
+        "line_start": 231,
+        "line_end": 233
+      },
+      {
+        "name": "solve_lu",
+        "line_start": 235,
+        "line_end": 236
+      },
+      {
+        "name": "jac_wrapped",
+        "line_start": 272,
+        "line_end": 278
+      },
+      {
+        "name": "jac_wrapped",
+        "line_start": 287,
+        "line_end": 290
+      },
+      {
+        "name": "jac_wrapped",
+        "line_start": 294,
+        "line_end": 296
+      }
+    ],
+    "/Users/wanggaoying/Research/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/common.py": [
+      {
+        "name": "validate_first_step",
+        "line_start": 10,
+        "line_end": 16
+      },
+      {
+        "name": "validate_max_step",
+        "line_start": 19,
+        "line_end": 23
+      },
+      {
+        "name": "warn_extraneous",
+        "line_start": 26,
+        "line_end": 41
+      },
+      {
+        "name": "validate_tol",
+        "line_start": 44,
+        "line_end": 60
+      },
+      {
+        "name": "norm",
+        "line_start": 63,
+        "line_end": 65
+      },
+      {
+        "name": "select_initial_step",
+        "line_start": 68,
+        "line_end": 134
+      },
+      {
+        "name": "OdeSolution",
+        "line_start": 137,
+        "line_end": 257
+      },
+      {
+        "name": "num_jac",
+        "line_start": 268,
+        "line_end": 340
+      },
+      {
+        "name": "_dense_num_jac",
+        "line_start": 343,
+        "line_end": 382
+      },
+      {
+        "name": "_sparse_num_jac",
+        "line_start": 385,
+        "line_end": 454
+      },
+      {
+        "name": "__init__",
+        "line_start": 174,
+        "line_end": 200
+      },
+      {
+        "name": "_call_single",
+        "line_start": 202,
+        "line_end": 212
+      },
+      {
+        "name": "__call__",
+        "line_start": 214,
+        "line_end": 257
+      }
+    ]
+  },
+  "source_excerpts": [
+    {
+      "path": "/Users/wanggaoying/Research/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/bdf.py",
+      "line_start": 18,
+      "line_end": 33,
+      "text": "def compute_R(order, factor):\n    \"\"\"Compute the matrix for changing the differences array.\"\"\"\n    I = np.arange(1, order + 1)[:, None]\n    J = np.arange(1, order + 1)\n    M = np.zeros((order + 1, order + 1))\n    M[1:, 1:] = (I - 1 - factor * J) / I\n    M[0] = 1\n    return np.cumprod(M, axis=0)\n\n\ndef change_D(D, order, factor):\n    \"\"\"Change differences array in-place when step size is changed.\"\"\"\n    R = compute_R(order, factor)\n    U = compute_R(order, 1)\n    RU = R.dot(U)\n    D[:order + 1] = np.dot(RU.T, D[:order + 1])"
+    },
+    {
+      "path": "/Users/wanggaoying/Research/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/bdf.py",
+      "line_start": 36,
+      "line_end": 69,
+      "text": "def solve_bdf_system(fun, t_new, y_predict, c, psi, LU, solve_lu, scale, tol):\n    \"\"\"Solve the algebraic system resulting from BDF method.\"\"\"\n    d = 0\n    y = y_predict.copy()\n    dy_norm_old = None\n    converged = False\n    for k in range(NEWTON_MAXITER):\n        f = fun(t_new, y)\n        if not np.all(np.isfinite(f)):\n            break\n\n        dy = solve_lu(LU, c * f - psi - d)\n        dy_norm = norm(dy / scale)\n\n        if dy_norm_old is None:\n            rate = None\n        else:\n            rate = dy_norm / dy_norm_old\n\n        if (rate is not None and (rate >= 1 or\n                rate ** (NEWTON_MAXITER - k) / (1 - rate) * dy_norm > tol)):\n            break\n\n        y += dy\n        d += dy\n\n        if (dy_norm == 0 or\n                rate is not None and rate / (1 - rate) * dy_norm < tol):\n            converged = True\n            break\n\n        dy_norm_old = dy_norm\n\n    return converged, k + 1, y, d"
+    },
+    {
+      "path": "/Users/wanggaoying/Research/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/bdf.py",
+      "line_start": 217,
+      "line_end": 256,
+      "text": "        self.newton_tol = max(10 * EPS / rtol, min(0.03, rtol ** 0.5))\n\n        self.jac_factor = None\n        self.jac, self.J = self._validate_jac(jac, jac_sparsity)\n        if issparse(self.J):\n            def lu(A):\n                self.nlu += 1\n                return splu(A)\n\n            def solve_lu(LU, b):\n                return LU.solve(b)\n\n            I = eye_array(self.n, format='csc', dtype=self.y.dtype)\n        else:\n            def lu(A):\n                self.nlu += 1\n                return lu_factor(A, overwrite_a=True)\n\n            def solve_lu(LU, b):\n                return lu_solve(LU, b, overwrite_b=True)\n\n            I = np.identity(self.n, dtype=self.y.dtype)\n\n        self.lu = lu\n        self.solve_lu = solve_lu\n        self.I = I\n\n        kappa = np.array([0, -0.1850, -1/9, -0.0823, -0.0415, 0])\n        self.gamma = np.hstack((0, np.cumsum(1 / np.arange(1, MAX_ORDER + 1))))\n        self.alpha = (1 - kappa) * self.gamma\n        self.error_const = kappa * self.gamma + 1 / np.arange(1, MAX_ORDER + 2)\n\n        D = np.empty((MAX_ORDER + 3, self.n), dtype=self.y.dtype)\n        D[0] = self.y\n        D[1] = f * self.h_abs * self.direction\n        self.D = D\n\n        self.order = 1\n        self.n_equal_steps = 0\n        self.LU = None"
+    },
+    {
+      "path": "/Users/wanggaoying/Research/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/bdf.py",
+      "line_start": 314,
+      "line_end": 415,
+      "text": "    def _step_impl(self):\n        t = self.t\n        D = self.D\n\n        max_step = self.max_step\n        min_step = 10 * np.abs(np.nextafter(t, self.direction * np.inf) - t)\n        if self.h_abs > max_step:\n            h_abs = max_step\n            change_D(D, self.order, max_step / self.h_abs)\n            self.n_equal_steps = 0\n        elif self.h_abs < min_step:\n            h_abs = min_step\n            change_D(D, self.order, min_step / self.h_abs)\n            self.n_equal_steps = 0\n        else:\n            h_abs = self.h_abs\n\n        atol = self.atol\n        rtol = self.rtol\n        order = self.order\n\n        alpha = self.alpha\n        gamma = self.gamma\n        error_const = self.error_const\n\n        J = self.J\n        LU = self.LU\n        current_jac = self.jac is None\n\n        step_accepted = False\n        while not step_accepted:\n            if h_abs < min_step:\n                return False, self.TOO_SMALL_STEP\n\n            h = h_abs * self.direction\n            t_new = t + h\n\n            if self.direction * (t_new - self.t_bound) > 0:\n                t_new = self.t_bound\n                change_D(D, order, np.abs(t_new - t) / h_abs)\n                self.n_equal_steps = 0\n                LU = None\n\n            h = t_new - t\n            h_abs = np.abs(h)\n\n            y_predict = np.sum(D[:order + 1], axis=0)\n\n            scale = atol + rtol * np.abs(y_predict)\n            psi = np.dot(D[1: order + 1].T, gamma[1: order + 1]) / alpha[order]\n\n            converged = False\n            c = h / alpha[order]\n            while not converged:\n                if LU is None:\n                    LU = self.lu(self.I - c * J)\n\n                converged, n_iter, y_new, d = solve_bdf_system(\n                    self.fun, t_new, y_predict, c, psi, LU, self.solve_lu,\n                    scale, self.newton_tol)\n\n                if not converged:\n                    if current_jac:\n                        break\n                    J = self.jac(t_new, y_predict)\n                    LU = None\n                    current_jac = True\n\n            if not converged:\n                factor = 0.5\n                h_abs *= factor\n                change_D(D, order, factor)\n                self.n_equal_steps = 0\n                LU = None\n                continue\n\n            safety = 0.9 * (2 * NEWTON_MAXITER + 1) / (2 * NEWTON_MAXITER\n                                                       + n_iter)\n\n            scale = atol + rtol * np.abs(y_new)\n            error = error_const[order] * d\n            error_norm = norm(error / scale)\n\n            if error_norm > 1:\n                factor = max(MIN_FACTOR,\n                             safety * error_norm ** (-1 / (order + 1)))\n                h_abs *= factor\n                change_D(D, order, factor)\n                self.n_equal_steps = 0\n                # As we didn't have problems with convergence, we don't\n                # reset LU here.\n            else:\n                step_accepted = True\n\n        self.n_equal_steps += 1\n\n        self.t = t_new\n        self.y = y_new\n\n        self.h_abs = h_abs\n        self.J = J\n        self.LU = LU"
+    },
+    {
+      "path": "/Users/wanggaoying/Research/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/bdf.py",
+      "line_start": 417,
+      "line_end": 484,
+      "text": "        # Update differences. The principal relation here is\n        # D^{j + 1} y_n = D^{j} y_n - D^{j} y_{n - 1}. Keep in mind that D\n        # contained difference for previous interpolating polynomial and\n        # d = D^{k + 1} y_n. Thus this elegant code follows.\n        D[order + 2] = d - D[order + 1]\n        D[order + 1] = d\n        for i in reversed(range(order + 1)):\n            D[i] += D[i + 1]\n\n        if self.n_equal_steps < order + 1:\n            return True, None\n\n        if order > 1:\n            error_m = error_const[order - 1] * D[order]\n            error_m_norm = norm(error_m / scale)\n        else:\n            error_m_norm = np.inf\n\n        if order < MAX_ORDER:\n            error_p = error_const[order + 1] * D[order + 2]\n            error_p_norm = norm(error_p / scale)\n        else:\n            error_p_norm = np.inf\n\n        error_norms = np.array([error_m_norm, error_norm, error_p_norm])\n        with np.errstate(divide='ignore'):\n            factors = error_norms ** (-1 / np.arange(order, order + 3))\n\n        delta_order = np.argmax(factors) - 1\n        order += delta_order\n        self.order = order\n\n        factor = min(MAX_FACTOR, safety * np.max(factors))\n        self.h_abs *= factor\n        change_D(D, order, factor)\n        self.n_equal_steps = 0\n        self.LU = None\n\n        return True, None\n\n    def _dense_output_impl(self):\n        return BdfDenseOutput(self.t_old, self.t, self.h_abs * self.direction,\n                              self.order, self.D[:self.order + 1].copy())\n\n\nclass BdfDenseOutput(DenseOutput):\n    def __init__(self, t_old, t, h, order, D):\n        super().__init__(t_old, t)\n        self.order = order\n        self.t_shift = self.t - h * np.arange(self.order)\n        self.denom = h * (1 + np.arange(self.order))\n        self.D = D\n\n    def _call_impl(self, t):\n        if t.ndim == 0:\n            x = (t - self.t_shift) / self.denom\n            p = np.cumprod(x)\n        else:\n            x = (t - self.t_shift[:, None]) / self.denom[:, None]\n            p = np.cumprod(x, axis=0)\n\n        y = np.dot(self.D[1:].T, p)\n        if y.ndim == 1:\n            y += self.D[0]\n        else:\n            y += self.D[0, :, None]\n\n        return y"
+    },
+    {
+      "path": "/Users/wanggaoying/Research/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/common.py",
+      "line_start": 44,
+      "line_end": 65,
+      "text": "def validate_tol(rtol, atol, n):\n    \"\"\"Validate tolerance values.\"\"\"\n\n    if np.any(rtol < 100 * EPS):\n        warn(\"At least one element of `rtol` is too small. \"\n             f\"Setting `rtol = np.maximum(rtol, {100 * EPS})`.\",\n             stacklevel=3)\n        rtol = np.maximum(rtol, 100 * EPS)\n\n    atol = np.asarray(atol)\n    if atol.ndim > 0 and atol.shape != (n,):\n        raise ValueError(\"`atol` has wrong shape.\")\n\n    if np.any(atol < 0):\n        raise ValueError(\"`atol` must be positive.\")\n\n    return rtol, atol\n\n\ndef norm(x):\n    \"\"\"Compute RMS norm.\"\"\"\n    return np.linalg.norm(x) / x.size ** 0.5"
+    },
+    {
+      "path": "/Users/wanggaoying/Research/brickmodel-github/.venv/lib/python3.12/site-packages/scipy/integrate/_ivp/common.py",
+      "line_start": 112,
+      "line_end": 134,
+      "text": "    interval_length = abs(t_bound - t0)\n    if interval_length == 0.0:\n        return 0.0\n\n    scale = atol + np.abs(y0) * rtol\n    d0 = norm(y0 / scale)\n    d1 = norm(f0 / scale)\n    if d0 < 1e-5 or d1 < 1e-5:\n        h0 = 1e-6\n    else:\n        h0 = 0.01 * d0 / d1\n    # Check t0+h0*direction doesn't take us beyond t_bound\n    h0 = min(h0, interval_length)\n    y1 = y0 + h0 * direction * f0\n    f1 = fun(t0 + h0 * direction, y1)\n    d2 = norm((f1 - f0) / scale) / h0\n\n    if d1 <= 1e-15 and d2 <= 1e-15:\n        h1 = max(1e-6, h0 * 1e-3)\n    else:\n        h1 = (0.01 / max(d1, d2)) ** (1 / (order + 1))\n\n    return min(100 * h0, h1, interval_length, max_step)"
+    }
+  ],
+  "actual_input_identity": {
+    "stage": "drying_ramp",
+    "time_s": 14400.0,
+    "native_count": 275,
+    "context_numeric_count": 37,
+    "signed_input_preserved": true,
+    "domain": "Actual P95-assessed input outside calcium simplex; unchanged."
+  },
+  "actual_input_path_stage_time": {
+    "path": "/Users/wanggaoying/Research/brickmodel-github/runs/full-cycle/p68-nominal-heating-checkpoints/native-checkpoints.json",
+    "stage": "drying_ramp",
+    "time_s": 14400.0,
+    "basis": "Actual saved P68 native275 returned by existing strict loader; unchanged signed input, no reconstruction."
+  },
+  "native_row_groups_from_original": {
+    "calcite_field3": [
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47
+    ],
+    "OH_field9": [
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119
+    ],
+    "decarbonation_extent": [
+      204,
+      205,
+      206,
+      207,
+      208,
+      209,
+      210,
+      211,
+      212,
+      213,
+      214,
+      215
+    ],
+    "lime_dehydration_extent": [
+      252,
+      253,
+      254,
+      255,
+      256,
+      257,
+      258,
+      259,
+      260,
+      261,
+      262,
+      263
+    ]
+  },
+  "weights_from_original_mol": {
+    "calcium_pool_mol_by_cell": [
+      0.01405029029773127,
+      0.01405029029773127,
+      0.01405029029773127,
+      0.01405029029773127,
+      0.01405029029773127,
+      0.01405029029773127,
+      0.01405029029773127,
+      0.01405029029773127,
+      0.01405029029773127,
+      0.01405029029773127,
+      0.01405029029773127,
+      0.01405029029773127
+    ],
+    "chemical_scale_mol": 1.5611080120226133,
+    "cell_extent_scale_mol_by_cell": [
+      1.5611080120226133,
+      1.5611080120226133,
+      1.5611080120226133,
+      1.5611080120226133,
+      1.5611080120226133,
+      1.5611080120226133,
+      1.5611080120226133,
+      1.5611080120226133,
+      1.5611080120226133,
+      1.5611080120226133,
+      1.5611080120226133,
+      1.5611080120226133
+    ]
+  },
+  "units_from_original": {
+    "native_y275": "1",
+    "native_RHS275": "1/s",
+    "Jacobian48x156": "1/s",
+    "calcium_pool": "mol",
+    "chemical_scale": "mol",
+    "cell_extent_scale": "mol",
+    "weighted_RHS_phase_extent_closure": "mol/s",
+    "weighted_Jacobian_phase_extent_row": "mol/s",
+    "time": "s",
+    "physical_columns_and_native_rows": "zero-based native index"
+  },
+  "invariant": {
+    "linear_mol": "L_i y = S*z_i + E_i*u_i",
+    "affine_declared_material_defect_mol": "L_i y - h_declared_i",
+    "dimensionless_only_for_saved_equal_scales": "z_i + u_i",
+    "exact_preservation_target": "Input inherited constant a_i, not automatically declared initial OH.",
+    "domain": "c,h,l>=0 iff 0<=x<=1 and 0<=S*z<=Q*(1-x). At x=1, necessarily z=0."
+  },
+  "conditional_algebra": {
+    "effective_history": "L D_0=a; L D_j=0 for active valid rows j>=1; no assumption for np.empty inactive rows.",
+    "transform": "first row R is ones; sum_i U_ij=(1-1)^j for j>=1, =1 for j=0; T=RU, e0^T T=e0^T, T^T e0=e0.",
+    "predictor_psi": "L sum(D)=a; L dot(D[1:].T,gamma)/alpha=0.",
+    "Newton": "L f=0, L psi=0, L d=0 and invertible A with L A=L imply L dy=L b=0; L J=0 is sufficient.",
+    "cached_LU": "Old c or old J alone does not break exact invariance if the actual cached matrix still obeys L A_cached=L.",
+    "inexact_correction": "For r=b-A*dy and L A=L, L dy=L b-L r; symbolic only, no residual calculation.",
+    "accept_history": "Kernel is closed under d-D[k+1] and reversed additions; self.y and D0 are separate floating update routes.",
+    "startup": "Only D0/D1 initialized. First accepted step writes D2, second writes valid D3; k=1 order selection waits two equal steps.",
+    "dense": "y_dense=D0+sum_j D[j+1]*p_j retains a for valid constant-mode history in exact algebra."
+  },
+  "previous_P96_weighted_results_without_recalculation": {
+    "calcite": {
+      "RHS_exact_nonzero_cells": 12,
+      "RHS_max_abs_exact_dyadic_mol_s": 6.723289881361413e-57,
+      "RHS_max_abs_binary64_product_then_add_mol_s": 1.0195788231247695e-56,
+      "Jacobian_exact_nonzero_weighted_entries": 145,
+      "Jacobian_max_abs_exact_dyadic_mol_s": 3.1806645300722436e-38,
+      "Jacobian_max_abs_binary64_product_then_add_mol_s": 4.70197740328915e-38
+    },
+    "OH": {
+      "RHS_exact_nonzero_cells": 0,
+      "RHS_max_abs_exact_dyadic_mol_s": 0.0,
+      "RHS_max_abs_binary64_product_then_add_mol_s": 0.0,
+      "Jacobian_exact_nonzero_weighted_entries": 0,
+      "Jacobian_max_abs_exact_dyadic_mol_s": 0.0,
+      "Jacobian_max_abs_binary64_product_then_add_mol_s": 0.0
+    }
+  },
+  "previous_P96_point_only_finding": {
+    "OH": "All12 weighted RHS identities and all12x156 weighted Jacobian entries exactly zero for these saved binary64 values. Resolved OH/extent derivatives are opposite at this point.",
+    "calcite": "Exact weighted machine values contain nonzero representation/operation differences; binary64 products-then-add separately recorded. Source mathematical identity is not the same as exact multiplication of already rounded derivatives.",
+    "excluded_at_this_point": "No evidence of a missing OH stoichiometric source or incompatible OH Jacobian row at this one actual input. This is not a proof for other states or historical internal solver updates.",
+    "remaining_gap": "P95 inherited native OH/extent state gap and negative phases remain. No accepted BDF histories, Newton residuals/LU updates or earlier RHS/Jacobian data are recovered.",
+    "repair": false,
+    "physical_domain_acceptance": false,
+    "whole_model_complete": false
+  },
+  "previous_P95_gap": {
+    "status": "located_not_repaired",
+    "domain": "All 12 saved drying-ramp input cells and all 12 cells of each actual P94 endpoint have x exactly 1 and z nonzero. Exact affine decoder forces l=-h: at least one signed phase is negative in each cell.",
+    "closure": "Independent OH native and cumulative signed dehydration coordinates fail the source continuous linear invariant at input and change it over both new intervals; this is present before affine decode product rounding.",
+    "admission": "load_native_checkpoint checks full source identity, restores saved context and returns raw y; paired producer passes that y to BDF. Source/schema identity admission is not physical simplex or phase–extent admission.",
+    "not_an_algebraic_stoichiometric_source_error": "Saved stoichiometry and native derivative formulas have matching exact continuous balances; current static evidence finds an evolved/discrete coordinate closure/domain gap, not a missing calcium reaction or added heat."
+  },
+  "previous_P95_preserved_verdicts": {
+    "local_time_four_products": true,
+    "endpoint_original_budgets": true,
+    "strict_nonnegative": false,
+    "drying_remaining_percent": {
+      "coarse": 0.1358920787402553,
+      "refined": 0.1358920759321227
+    },
+    "original_drying_threshold_percent": 0.1,
+    "CaO_zero_budget": {
+      "relative": null,
+      "passed": false,
+      "denominator_status": "undefined_zero_budget"
+    },
+    "original_failures": "P45/P34/P40/P44, resource failures and all historical failed cases retained; no tolerance search, clipping or seed.",
+    "material": "758 scientific records,144 literature,614 assumed,0 measured; high-temperature transfers assumed; direct synthetic290–350K only.",
+    "initial_reference": "P78 declared initial reference remains conditional; historical native t0 not recovered."
+  },
+  "missing_history": [
+    "accepted internal non-temperature native trajectories",
+    "BDF divided differences/order/step history",
+    "Newton iterations and residuals",
+    "actual endpoint/input Jacobian matrix",
+    "RHS values at saved input or accepted internal states",
+    "Accepted/rejected step-specific effective D, transform, predictor, psi and cached factor identity.",
+    "Per-Newton correction and solve residual; self.y versus D0 versus dense output.",
+    "First deviation before inherited14400s input."
+  ],
+  "conclusion": "Conditional exact invariant preservation established; historical cause and repair are not established.",
+  "next_single_scope": {
+    "status": "proposal_not_adopted",
+    "scope": "Separately authorize/register one original-input BDF accepted-step trace including its trials/rejections, effective D, RHS/J/cached matrix/corrections and self.y/D0/dense output. No source/parameter repair or search.",
+    "limitation": "Can locate a new step defect; cannot reconstruct original pre14400s history.",
+    "new_numerical_authorization_required": true
+  },
+  "production_numerical_calls": 0,
+  "model_NumPy_SciPy_imports": 0,
+  "new_float_cases_synthetic_histories_trajectories": 0,
+  "model_source_coordinates_parameter_edits": 0,
+  "new_tests_SHA_environment_injection": 0,
+  "new_archive_upload_Drive_download_restore_calls": 0,
+  "old_P96_original_and_receipts_protected": true,
+  "P82_P83_joint_BE_reopened": false,
+  "material_scientific_records": {
+    "total": 758,
+    "literature": 144,
+    "assumed": 614,
+    "measured": 0
+  },
+  "model_repaired": false,
+  "physical_numerical_acceptance_complete": false,
+  "whole_model_complete": false,
+  "P98_adopted": false,
+  "report_saved_utc": "2026-10-04T19:14:52.270509+00:00",
+  "science_wall_CPU_seconds": 0,
+  "resource_registration": "p97-before-report-delivery-gate.json"
+}

@@ -1921,3 +1921,12 @@ P95 源码/AST/保存JSON静态复核已完成，生产调用/ODE/生产源码�
 P96 唯一真实P68 drying_ramp14400s native275/context37单点RHS/Jac导出closed/reaped，wall1.203734916s/CPU.964839s/rc0，science2480216B/4MiB，120s单窗，0retry/0postwindow生产。实际RHS157/Jac1/156真实复扰动列，rates157、unpack314、condensed314、mechanical157、elastic_response2983是strictload后resolved-instance入口计数；构造/super/primitive/Newton内部未测。OH12格加权RHS及12×156Jac行保存dyadic精确零；CAL加权RHS最大6.723289881361413e-57mol/s、Jac145个非零最大3.1806645300722436e-38mol/s，binary64先乘后加单列，无新threshold/PASS。原signed输入越域和OH/extent状态缺口未修复，不恢复旧BDF/accepted/Newton/LU历史，不由单点证明物理有效或全轨迹非负。55源码/758科学records144literature614assumed0measured/物理tol/旧合同conditions保持，根仅新增p96独立export行政child。0initial/ODE/额外rates/decode/value/gradient/summary/predict/fit/UQ。原干燥两余水>.1%FAIL、CaO零nullfalse/undefined、P45及所有旧FAIL、P78声明初态/历史t0缺失、高温assumed/directsynthetic290–350K/wholefalse保持。必要总结docs/FULL_CYCLE_P96_CALCIUM_DERIVATIVE_JACOBIAN.md/json；完整scope60840389B/80MiB含29360128fixedreserve/全部未填槽。Git、localarchive2MiB、外发未授权/上传0、恢复0与模型验收分开。下一仅一个最小候选未采用，无追加科学。
 
 变更：独立根导出行政child、五项共同文档、P96 MD/JSON；无生产源码修改。证据：runs/full-cycle/p96-saved-calcium-derivative-Jacobian/science 和 execution.json、saved-output-interpretation.json。实际科学wall1.2037349161691964s/CPU.9648389999999998s；保存输出算术wall0.09084900002926588s/CPU0.056073s。下一步仅候选，不启动。
+
+
+## 2026-10-04T19:14:52.270509+00:00：P97 BDF仿射不变量静态审查
+
+- [x] **P97** 安装源码条件代数与证据边界审查完成；历史失效归因和模型修复未完成。
+
+P97 已完成项目实际安装 SciPy1.18.1 BDF/common 源码与P95/P96保存证据的静态审查，0模型/数值库导入或RHS/Jac/ODE/LU solve/新浮点案例/合成history/轨迹。有效差分常量模态、所有迭代RHS/所用Jac/实际校正满足同一左不变量时，精确BDF/NDF预测、Newton、历史更新、变步长/变阶和dense output保持输入既有常数；不自动修复声明初态缺口或保证非负。实际sum/dot/乘除/cumprod/LU/分别更新self.y与D0的浮点边界已列出，旧D/Newton/缓存LU/插值日志缺失，不能唯一归因负库存或宣称repair。P96单点OH精确闭合与P95输入已缺口分层保留。原严格负相/两干燥余水>.1%/CaO零nullfalse/全部旧FAIL、758科学records144literature614assumed0measured、高温assumed/directsynthetic290–350K/P78条件初态/wholefalse保持；55生产源码和根参数未改。唯一后续是独立授权的一步实际BDF观测提案，未采用；P98不启动。报告docs/FULL_CYCLE_P97_BDF_AFFINE_STATIC_REVIEW.md/json；新包/Drive/下载/恢复0，Git交付与模型/完整历史存储验收分开。
+
+变更仅五共同文档及两静态报告。物理/数值调用0；文本审查与行政耗时单列于末收据。下一提案未采用，不追加科学执行。
