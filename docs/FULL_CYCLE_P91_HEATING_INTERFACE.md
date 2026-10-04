@@ -1,0 +1,21 @@
+# P91 原加热段显式比较合同
+
+P91 原加热段86400→97200s显式合同静态实现完成，现有producer55无需修改，原55源码/strict50 loader/758完整records(144literature614assumed0measured)/37context及旧sintering/reactions/cooling/hold合同不变。当前0productionimport/load/ctor/initial/decode/value/RHSJacODE/rates/center/ledger/summary/predictfitUQ，sciencewallCPU=null。P68drying86400完整275与P78对应native逐值相同，输入signed负CaO10格/OH2格及严格非负FAIL保留，不做pool/exp/势重构。新增独立heating_half_step30s，未来两新BDF60/30各91原120s完整cell/surface/center采样，182rates182center，完整方法/branch源码预测与solver内部未知分开。sharedactualinput275、两actualsolverfull275t0及signeddelta分别保存；P78新declaredreference条件化，不恢复历史initialt0。实际新根/完整source55/37context/三config/未来数组与账本序列化估算3935504B，独立四science4MiB；未来540s政策只由P68旧三stage83.25144820800051s×6再向60s上取整推导，非单heating或配对实测/保证。当前选择性80MiB事前登记53044446B，原29360128Breserve不减，无旧行政清单/archives递归继承；未来独立fullscope候选按最终必要字节在future-numerical-proposal.json登记、未采用未运行。原strict.02/floors、局部采样范围保持，drying.1358920787402553%>.1%/负库存/CaO零nullfalse/P45及全部旧FAIL/highT三源assumed/directsynthetic290–350K/0measured/wholefalse保持。Git/Drive元数据/恢复0/历史容量另receipt。详见docs/FULL_CYCLE_P91_HEATING_INTERFACE.md/json。
+
+## 实现及输入
+
+只新增根heating_time_comparison、conditional_numerical_conditions.heating_half_step和P91静态政策记录；55份当前源码原字节保持。严格loader仍用P68自带config构造，恢复全部37numeric和partition/phase/liquid参考；coarse/refined仅各自完整max_step记录60/30不同。完整275输入、P78库存、signed负值与源50/当前55字节比较见JSON及saved-input-audit.json。没有动态loader、势值或重构。
+
+## 后续单次提案（本轮未采用）
+
+从同一个drying86400到heating97200，两次新的原BDF，各91个原绝对120s采样。完整cellT及surface/center温差峰，仅授局部保存采样范围。保留sharedactual275，以及各自实际sol.y[:,0]全275和signed输入差；不能用输入加差替代实际solver向量。2strictload/ctor/BDF/newendpointdecode/value/interval；182rates和182center。0initial/baseline/reference/summary/fit/UQ。所有源方法/条件循环/外部callsite在JSON，182次rates预测elastic1820、mechanicalNewton1456、surfaceNewton1092；两endpoint decode另16机械Newton。这些是源码预测，未来solverRHS/Jac/BDF/Newton实际工作未知。
+
+真实当前root serialization estimate=3935504B/4194304B，余258800B；共有source55/context/input一次、原savedconfig和两effectiveconfig各一次，91×2温度数组、实际t0和signed差、两个原端点/账本结构另列。原P68三阶段总wall83.25144820800051s作为偏保守假设代理，×6再向60s取整得540s；不是单段或配对新测量。future-numerical-proposal.json包含完整argv、cwd、参数、调用/输出/时间/fullscope独立额度。当前不执行。
+
+## 验收及交付界限
+
+原strict0.02及四项floor不改；端点质量/元素/U/S/四gas按原阈值。signed负库存、CaO零预算nullfalse和名义drying失败不裁剪。P78新declaredinitial只提供条件收缩和归一化，历史原生t0仍不可用。高温三源外推assumed，directsynthetic290–350K，758记录0实测。wholecycle/组合网格/三方案/反演/材料仍不完整；局部采样不能升级连续峰值/连续域/全模型PASS。
+
+当前独立80MiB选择性清单在实施前登记，仅本阶段必要依赖及61既有Git对象、原29,360,128B固定reserve和六本阶段槽。actual fills对应槽一次，不再叠加full cap。旧77.8MB候选、历史档案和未用余额原地保留，不递归继承或删除。Git提交推送、一次Drive元数据、实际恢复0和历史20GB/GitHub容量单列在final-delivery-state.json；不表示整个模型完成。
+
+提交前静态审阅：显式输入/输出stage与必填contract选择、严格bundled config/context恢复、完整actualsolver275与signed275差分、91采样完整温度及原floor接线均在既有生产入口中；源方法/MRO/全部branch与loader/端点/账本/产品函数AST图已保存，结构superset与实际选择multiplicity分列。没有新测试、assert、fixture、SHA或当前生产调用。此审阅不是动态/物理数值验收。
