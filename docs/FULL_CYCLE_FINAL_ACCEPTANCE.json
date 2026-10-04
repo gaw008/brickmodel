@@ -1,9 +1,9 @@
 {
   "schema": "full_cycle_final_acceptance_matrix_v1",
-  "recorded_utc": "2026-10-04T02:14:56.823992+00:00",
-  "status": "incomplete_current_drying_interface_static_only",
+  "recorded_utc": "2026-10-04T02:56:31.846702+00:00",
+  "status": "incomplete_current_local_drying_admission_only",
   "identity": "approximate_simulation_not_measured_material",
-  "parent_commit": "a0b46767f0c506151fbc6fd81393814783d9dee4",
+  "parent_commit": "169f6edee75dfb322a46a1389faa228c1a5dcd63",
   "parameter_file": "parameters.full_cycle.json",
   "parameter_count": 691,
   "parameter_status_counts": {
@@ -146,10 +146,10 @@
   },
   "timing_note": "Elapsed wall time from initial plan creation includes computation, parallel overlap, reviews and user-directed continuation; not summed CPU/scientific time. P16 and P18 execution receipts report separately measured batch times.",
   "delivery": {
-    "scope": "P93 separate normalbranchGit/one originalDrive static increment receipts",
-    "final_receipt": "runs/full-cycle/p93-drying-interface-static/final-delivery-state.json",
-    "delivery_not_model_PASS": true,
-    "actual_restores": 0
+    "scope": "P94 normalbranchGit/one originalDrive4MiB increment, separate actual final receipt",
+    "final_receipt": "runs/full-cycle/p94-drying-time-comparison/final-delivery-state.json",
+    "actual_restores": 0,
+    "not_model_acceptance": true
   },
   "P09": {
     "status": "completed_conditional_attribution_review",
@@ -203,7 +203,7 @@
     }
   },
   "base_model_complete": false,
-  "current_scope": "P93 explicit originaldrying static contract only; all production scientific calls0.",
+  "current_scope": "P94 originaldrying localtime/endpoint pair only",
   "P11": {
     "status": "base_model_complete_with_nominal_process_failure_and_future_material_calibration",
     "verification": {
@@ -16146,6 +16146,134 @@
     "future_time_seconds": 720,
     "future_science_bytes": 8388608,
     "report": "docs/FULL_CYCLE_P93_DRYING_INTERFACE.json",
+    "whole_model_complete": false
+  },
+  "P94": {
+    "local_four_product_time_passed": true,
+    "original_endpoint_budgets_passed": true,
+    "strict_nonnegative_passed": false,
+    "process_drying_actual_cases": {
+      "coarse": {
+        "cell_initial_water_mol": [
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994
+        ],
+        "cell_final_signed_water_mol": [
+          0.0002121512801671514,
+          0.00021215103192171977,
+          0.00021215054578981545,
+          0.00021214984249745615,
+          0.00021214895315393607,
+          0.00021214791927616687,
+          0.0002121467928211492,
+          0.00021214563622659382,
+          0.00021214452245969982,
+          0.0002121435350740969,
+          0.00021214276827491343,
+          0.00021214232699149534
+        ],
+        "cell_remaining_fraction": [
+          0.0013589207874025529,
+          0.0013589191972831005,
+          0.0013589160833978123,
+          0.0013589115785058036,
+          0.0013589058818755705,
+          0.0013588992594409045,
+          0.0013588920440088866,
+          0.0013588846355200824,
+          0.001358877501360989,
+          0.0013588711767287742,
+          0.0013588662650480651,
+          0.0013588634384367455
+        ],
+        "max_cell_remaining_fraction": 0.0013589207874025529,
+        "remaining_percent": 0.1358920787402553,
+        "original_threshold_record": {
+          "value": 0.001,
+          "unit": "1",
+          "range": [
+            0.001,
+            0.001
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Strict drying-end criterion: maximum cell liquid-water moles divided by that same cell liquid-water inventory at simulation t=0. This dimensionless fraction is not dry-basis or wet-basis moisture and excludes pore vapor and mineral-bound hydrogen. The equivalent dry-basis limit equals this value times material.water_dry_ratio. The drying-stage ledger starts at the drying_ramp endpoint; conditional_equilibrium.n_eq_over_n0 instead uses the current drying-end cell water as its denominator. These three time references must not be interchanged."
+        },
+        "passed": false,
+        "definition": "Max over cells of final liquid-water moles / same-cell original declared liquid-water inventory; not dry or wet basis, excludes pore vapor/mineral-bound H."
+      },
+      "refined": {
+        "cell_initial_water_mol": [
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994,
+          0.15611747361128994
+        ],
+        "cell_final_signed_water_mol": [
+          0.00021215127578316575,
+          0.00021215102753779124,
+          0.0002121505414059995,
+          0.00021214983811380337,
+          0.00021214894877048934,
+          0.00021214791489295934,
+          0.00021214678843820255,
+          0.00021214563184391544,
+          0.00021214451807727923,
+          0.0002121435306919051,
+          0.00021214276389289893,
+          0.00021214232260958343
+        ],
+        "cell_remaining_fraction": [
+          0.001358920759321227,
+          0.0013589191692021407,
+          0.0013589160553175734,
+          0.0013589115504266099,
+          0.0013589058537976967,
+          0.001358899231364563,
+          0.001358892015934216,
+          0.0013588846074471302,
+          0.0013588774732896881,
+          0.0013588711486589387,
+          0.0013588662369793654,
+          0.0013588634103687029
+        ],
+        "max_cell_remaining_fraction": 0.001358920759321227,
+        "remaining_percent": 0.1358920759321227,
+        "original_threshold_record": {
+          "value": 0.001,
+          "unit": "1",
+          "range": [
+            0.001,
+            0.001
+          ],
+          "source": "policy",
+          "status": "assumed",
+          "note": "Strict drying-end criterion: maximum cell liquid-water moles divided by that same cell liquid-water inventory at simulation t=0. This dimensionless fraction is not dry-basis or wet-basis moisture and excludes pore vapor and mineral-bound hydrogen. The equivalent dry-basis limit equals this value times material.water_dry_ratio. The drying-stage ledger starts at the drying_ramp endpoint; conditional_equilibrium.n_eq_over_n0 instead uses the current drying-end cell water as its denominator. These three time references must not be interchanged."
+        },
+        "passed": false,
+        "definition": "Max over cells of final liquid-water moles / same-cell original declared liquid-water inventory; not dry or wet basis, excludes pore vapor/mineral-bound H."
+      }
+    },
+    "execution": "runs/full-cycle/p94-drying-time-comparison/execution.json",
+    "report": "docs/FULL_CYCLE_P94_DRYING_TIME_COMPARISON.json",
     "whole_model_complete": false
   }
 }
