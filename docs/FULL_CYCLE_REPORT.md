@@ -1,5 +1,9 @@
 # 全流程近似模型交付报告
 
+P96 唯一真实P68 drying_ramp14400s native275/context37单点RHS/Jac导出closed/reaped，wall1.203734916s/CPU.964839s/rc0，science2480216B/4MiB，120s单窗，0retry/0postwindow生产。实际RHS157/Jac1/156真实复扰动列，rates157、unpack314、condensed314、mechanical157、elastic_response2983是strictload后resolved-instance入口计数；构造/super/primitive/Newton内部未测。OH12格加权RHS及12×156Jac行保存dyadic精确零；CAL加权RHS最大6.723289881361413e-57mol/s、Jac145个非零最大3.1806645300722436e-38mol/s，binary64先乘后加单列，无新threshold/PASS。原signed输入越域和OH/extent状态缺口未修复，不恢复旧BDF/accepted/Newton/LU历史，不由单点证明物理有效或全轨迹非负。55源码/758科学records144literature614assumed0measured/物理tol/旧合同conditions保持，根仅新增p96独立export行政child。0initial/ODE/额外rates/decode/value/gradient/summary/predict/fit/UQ。原干燥两余水>.1%FAIL、CaO零nullfalse/undefined、P45及所有旧FAIL、P78声明初态/历史t0缺失、高温assumed/directsynthetic290–350K/wholefalse保持。必要总结docs/FULL_CYCLE_P96_CALCIUM_DERIVATIVE_JACOBIAN.md/json；完整scope60840389B/80MiB含29360128fixedreserve/全部未填槽。Git、localarchive2MiB、外发未授权/上传0、恢复0与模型验收分开。下一仅一个最小候选未采用，无追加科学。
+
+### P95及更早当时记录
+
 P95 源码/AST/保存JSON静态复核已完成，生产调用/ODE/生产源码及758科学参数修改均0。实际mode0、directoff；真实drying_ramp输入及两P94新端点各12格field3精确1、OH坐标均非零，精确仿射三相域要求此处OH=0，现CaO=-OH，每格至少一相为负。源码连续OH与signed脱水extent有线性不变量，保存输入已偏离，两新区间再有非零闭合残差；钙池守恒不等于相非负或phase–extent闭合。基本Fraction/binary64算术单列，不能仅由e-18大小判浮点噪声；未保存内部BDF/native轨迹/Newton残差/实际Jac/RHS，不唯一归因或宣称修复。P94局部time/端点预算PASS资格保持，严格非负FAIL、原干燥两组.1358920787402553%/.1358920759321227%>.1%FAIL、CaO零nullfalse/undefined、P45及全部旧FAIL、P78声明初态条件/历史t0未恢复、高温assumed/directsynthetic290–350K/0measured/wholefalse保持。唯一下一savedinput nativeRHS+实际Ca/Jac行导出仅proposal未采用，0新数值窗。完整审查docs/FULL_CYCLE_P95_CALCIUM_STATIC_REVIEW.json/md；fresh预算57864837B/80MiB含原29360128reserve及全部未填槽，独立静态archive2MiB。Git/Drive元数据/恢复0/历史容量分别记录。
 
 ### P94及更早当时记录
